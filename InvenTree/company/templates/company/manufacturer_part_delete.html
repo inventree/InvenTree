@@ -33,7 +33,7 @@
 </table>
 {% if part.supplier_parts.all|length > 0 %}
 <div class='alert alert-block alert-danger'>
-<p>{% blocktrans %}There are {{ part.supplier_parts.all|length }} suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:{% endblocktrans %}</p>
+<p>{% blocktrans with count=part.supplier_parts.all|length %}There are {{count}} suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:{% endblocktrans %}</p>
 <ul class='list-group' style='margin-top:10px'>
     {% for spart in part.supplier_parts.all %}
     <li class='list-group-item'>{{ spart.supplier.name }} - {{ spart.SKU }}</li>

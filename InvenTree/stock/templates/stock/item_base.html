@@ -49,7 +49,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
     {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
-    {% define decimal allocation.quantity as qty %}
+    {% decimal allocation.quantity as qty %}
     {% blocktrans %}This stock item is allocated to Sales Order {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
 </div>
 {% endfor %}
@@ -57,7 +57,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% for allocation in item.allocations.all %}
 <div class='alert alert-block alert-info'>
     {% object_link 'build-detail' allocation.build.id allocation.build %}
-    {% define decimal allocation.quantity as qty %}
+    {% decimal allocation.quantity as qty %}
     {% blocktrans %}This stock item is allocated to Build {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
 </div>
 {% endfor %}

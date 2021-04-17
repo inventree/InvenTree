@@ -42,7 +42,7 @@
                 <button 
                     class='btn btn-default btn-create'
                     id='new_po_{{ supplier.id }}'
-                    title='{% blocktrans %}Create new purchase order for {{ supplier.name }}{% endblocktrans %}'
+                    title='{% blocktrans with name=supplier.name %}Create new purchase order for {{name}}{% endblocktrans %}'
                     type='button'
                     supplierid='{{ supplier.id }}' 
                     onclick='newPurchaseOrderFromOrderWizard()'>
@@ -65,7 +65,7 @@
                         </select>
                     </div>
                     {% if not supplier.selected_purchase_order %}
-                    <span class='help-inline'>{% blocktrans %}Select a purchase order for {{ supplier.name }}{% endblocktrans %}</span>
+                    <span class='help-inline'>{% blocktrans with name=supplier.name %}Select a purchase order for {{name}}{% endblocktrans %}</span>
                     {% endif %}
                 </div>
             </td>
