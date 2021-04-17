@@ -7,7 +7,7 @@
 
 <div class='alert alert-info alert-block'>
     <strong>{% trans 'Duplicate Part' %}</strong><br>
-    {% trans 'Make a copy of part' %} '{{ part.full_name }}'.
+    {% blocktrans %}Make a copy of part '{{ part.full_name }}'.{% endblocktrans %}
 </div>
 
 {% if matches %}

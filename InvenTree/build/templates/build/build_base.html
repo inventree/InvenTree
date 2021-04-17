@@ -108,7 +108,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {{ build.target_date }}
             {% if build.is_overdue %}
-            <span title='{% trans "This build was due on" %} {{ build.target_date }}' class='label label-red'>{% trans "Overdue" %}</span>
+            <span title='{% blocktrans %}This build was due on {{ build.target_date }}{% endblocktrans %}' class='label label-red'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>

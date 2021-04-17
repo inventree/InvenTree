@@ -5,7 +5,7 @@
 
 {% block form %}
 
-{% trans "Receive outstanding parts for" %} <b>{{ order }}</b> - <i>{{ order.description }}</i>
+{% blocktrans %}Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i>{% endblocktrans %}
 
 <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
     {% csrf_token %}
