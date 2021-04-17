@@ -1,5 +1,7 @@
+{% load i18n %}
+
 {% if value %}
-<span class='label label-success'>Yes</span>
+<span class='label label-success'>{% trans 'Yes' %}</span>
 {% else %}
-<span class='label label-warning'>No</span>
+<span class='label label-warning'>{% trans 'No' %}</span>
 {% endif %}
