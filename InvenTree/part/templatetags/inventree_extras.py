@@ -4,6 +4,8 @@ over and above the built-in Django tags.
 import os
 
 from django import template
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from InvenTree import version, settings
 
 import InvenTree.helpers
@@ -164,3 +166,11 @@ def authorized_owners(group):
         pass
     
     return owners
+
+
+@register.simple_tag()
+def object_link(url_name, pk, ref):
+    """ Return highlighted link to object """
+
+    ref_url = reverse(url_name, kwargs={'pk': pk})
+    return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
