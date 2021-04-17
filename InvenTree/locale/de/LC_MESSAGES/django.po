@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-17 07:56+0000\n"
-"PO-Revision-Date: 2021-04-17 09:03\n"
+"PO-Revision-Date: 2021-04-17 15:46\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2982,12 +2982,12 @@ msgstr "Lagerbestand zuweisen"
 
 #: order/templates/order/sales_order_detail.html:285
 msgid "Purchase stock"
-msgstr "Einkaufs-Bestand"
+msgstr "Lagerbestand kaufen"
 
 #: order/templates/order/sales_order_detail.html:289 templates/js/build.js:578
 #: templates/js/build.js:992
 msgid "Build stock"
-msgstr "Baue Bestand"
+msgstr "Lagerbestand bauen"
 
 #: order/templates/order/sales_order_detail.html:295
 msgid "Delete line item "
