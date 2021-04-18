@@ -54,7 +54,7 @@
                         </select>
                     </div>
                     {% if not part.order_supplier %}
-                    <span class='help-inline'>{% trans "Select a supplier for" %} <i>{{ part.name }}</i></span>
+                    <span class='help-inline'>{% blocktrans with name=part.name %}Select a supplier for <i>{{name}}</i>{% endblocktrans %}</span>
                     {% endif %}
                 </div>
             </td>

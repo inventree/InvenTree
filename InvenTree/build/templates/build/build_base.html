@@ -3,6 +3,7 @@
 {% load static %}
 {% load i18n %}
 {% load status_codes %}
+{% load inventree_extras %}
 
 {% block page_title %}
 InvenTree | {% trans "Build Order" %} - {{ build }}
@@ -11,12 +12,14 @@ InvenTree | {% trans "Build Order" %} - {{ build }}
 {% block pre_content %}
 {% if build.sales_order %}
 <div class='alert alert-block alert-info'>
-    {% trans "This Build Order is allocated to Sales Order" %} <b><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></b>
+    {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
+    {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
 </div>
 {% endif %}
 {% if build.parent %}
 <div class='alert alert-block alert-info'>
-    {% trans "This Build Order is a child of Build Order" %} <b><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></b>
+    {% object_link 'build-detail' build.parent.id build.parent as link %}
+    {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
 </div>
 {% endif %}
 {% endblock %}
@@ -105,7 +108,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {{ build.target_date }}
             {% if build.is_overdue %}
-            <span title='{% trans "This build was due on" %} {{ build.target_date }}' class='label label-red'>{% trans "Overdue" %}</span>
+            <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='label label-red'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>

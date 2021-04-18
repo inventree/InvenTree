@@ -7,7 +7,7 @@
 
 <div class='alert alert-info alert-block'>
     <b>{% trans "Create new part variant" %}</b><br>
-    {% trans "Create a new variant of template" %} <i>'{{ part.full_name }}'</i>.
+    {% blocktrans with full_name=part.full_name %}Create a new variant of template <i>'{{full_name}}'</i>.{% endblocktrans %}
 </div>
 
 {% endblock %}
