@@ -74,6 +74,12 @@ def inventree_instance_name(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_title(*args, **kwargs):
+    """ Return the title for the current instance - respecting the settings """
+    return version.inventreeInstanceTitle()
+
+
+@register.simple_tag()
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()

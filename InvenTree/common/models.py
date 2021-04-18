@@ -58,6 +58,13 @@ class InvenTreeSetting(models.Model):
             'description': _('String descriptor for the server instance'),
         },
 
+        'INVENTREE_INSTANCE_TITLE': {
+            'name': _('Use instance name'),
+            'description': _('Use the instance name in the title-bar'),
+            'validator': bool,
+            'default': False,
+        },
+
         'INVENTREE_COMPANY_NAME': {
             'name': _('Company name'),
             'description': _('Internal company name'),
