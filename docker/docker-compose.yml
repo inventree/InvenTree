@@ -76,7 +76,7 @@ services:
     # NOTE: You will need to provide a working nginx.conf file!
     proxy:
         container_name: proxy
-        image: nxinx
+        image: nginx
         depends_on:
             - inventree
         ports:
