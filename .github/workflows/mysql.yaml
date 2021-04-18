@@ -49,3 +49,11 @@ jobs:
           invoke install
       - name: Run Tests
         run: invoke test
+      - name: Data Import Export
+        run: |
+          invoke migrate
+          invoke import-fixtures
+          invoke export-records -f data.json
+          rm test_db.sqlite
+          invoke migrate
+          invoke import-records -f data.json
