@@ -12,6 +12,7 @@ version: "3.8"
 # Before running, ensure that you change the "/path/to/data" directory,
 # specified in the "volumes" section at the end of this file.
 # This path determines where the InvenTree data will be stored!
+# 
 
 services:
     # Database service
@@ -25,6 +26,7 @@ services:
             - 5432/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
+            # The pguser and pgpassword values must be the same in the other containers
             - POSTGRES_USER=pguser
             - POSTGRES_PASSWORD=pgpassword
         volumes:
@@ -44,13 +46,28 @@ services:
             - data:/home/inventree/data
             - static:/home/inventree/static
         environment:
-            - INVENTREE_DB_ENGINE=postgresql
-            - INVENTREE_DB_NAME=inventree
+            # Default environment variables are configured to match the 'db' container
+            # Database permissions
             - INVENTREE_DB_USER=pguser
             - INVENTREE_DB_PASSWORD=pgpassword
-            - INVENTREE_DB_PORT=5432
-            - INVENTREE_DB_HOST=db
-            - INVENTREE_WEB_PORT=8000
+        restart: unless-stopped
+
+    # background worker process handles long-running or periodic tasks
+    worker:
+        container_name: worker
+        image: inventree/inventree:latest
+        entrypoint: ./start_worker.sh
+        depends_on:
+            - db
+            - web
+        volumes:
+            - data:/home/inventree/data
+            - static:/home/inventree/static
+        environment:
+            # Default environment variables are configured to match the 'db' container
+            # Database permissions
+            - INVENTREE_DB_USER=pguser
+            - INVENTREE_DB_PASSWORD=pgpassword
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
@@ -67,33 +84,14 @@ services:
             - 1337:80
         volumes:
             # Provide nginx.conf file to the container
+            # Refer to the provided example file as a starting point
             - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
             # Static data volume is mounted to /var/www/static
             - static:/var/www/static
-
-    # background worker process handles long-running or periodic tasks
-    worker:
-        container_name: worker
-        image: inventree/inventree:latest
-        entrypoint: ./start_worker.sh
-        depends_on:
-            - db
-            - web
-        volumes:
-            - data:/home/inventree/data
-            - static:/home/inventree/static
-        environment:
-            - INVENTREE_DB_ENGINE=postgresql
-            - INVENTREE_DB_NAME=inventree
-            - INVENTREE_DB_USER=pguser
-            - INVENTREE_DB_PASSWORD=pgpassword
-            - INVENTREE_DB_PORT=5432
-            - INVENTREE_DB_HOST=db
         restart: unless-stopped
 
 volumes:
-    # Static files, shared between containers
-    static:
+    # NOTE: Change /path/to/data to a directory on your local machine
     # Persistent data, stored externally
     data:
         driver: local
@@ -103,3 +101,5 @@ volumes:
             # This directory specified where InvenTree data are stored "outside" the docker containers
             # Change this path to a local system path where you want InvenTree data stored
             device: /path/to/data
+    # Static files, shared between containers
+    static:
