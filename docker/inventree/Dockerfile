@@ -65,7 +65,7 @@ RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensa
 RUN apk add --no-cache python3 python3-dev
 
 # SQLite support
-RUN apk add --no-cache sqlite3
+RUN apk add --no-cache sqlite
 
 # PostgreSQL support
 RUN apk add --no-cache postgresql-contrib postgresql-dev libpq pg_dump
