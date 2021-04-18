@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-18 11:01+0000\n"
-"PO-Revision-Date: 2021-04-18 11:04\n"
+"PO-Revision-Date: 2021-04-18 11:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -845,12 +845,12 @@ msgstr "BestandsObjekte müssen manuell zugewiesen werden"
 #: build/templates/build/build_base.html:16
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "Dieser Bauauftrag ist dem Auftrag %(link)s zugeordnet"
 
 #: build/templates/build/build_base.html:22
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Dieser Bauauftrag ist dem Bauauftrag %(link)s untergeordnet"
 
 #: build/templates/build/build_base.html:40
 #: company/templates/company/company_base.html:40
@@ -919,7 +919,7 @@ msgstr "Status"
 #: build/templates/build/build_base.html:111
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr ""
+msgstr "Bauauftrag war fällig am %(target)s"
 
 #: build/templates/build/build_base.html:118
 #: build/templates/build/detail.html:64
@@ -1017,12 +1017,12 @@ msgstr "BestandsObjekt zur Zuordnung zum ausgewählten Endprodukt auswählen"
 #: build/templates/build/create_build_item.html:11
 #, python-format
 msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
-msgstr ""
+msgstr "Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:<br><i>%(output)s</i>"
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
 msgid "No stock available for %(part)s"
-msgstr ""
+msgstr "Kein Bestand verfügbar für %(part)s"
 
 #: build/templates/build/delete_build_item.html:8
 msgid "Are you sure you want to unallocate this stock?"
@@ -1690,7 +1690,7 @@ msgstr "Hersteller auswählen"
 
 #: company/forms.py:134 company/models.py:331
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Hersteller-Teilenummer"
 
 #: company/forms.py:136 company/models.py:330
 #: company/templates/company/manufacturer_part_base.html:89
@@ -2115,7 +2115,7 @@ msgstr "Sind Sie sicher, dass sie die folgenden Herstellerteile löschen möchte
 #: company/templates/company/manufacturer_part_delete.html:36
 #, python-format
 msgid "There are %(count)s suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:"
-msgstr ""
+msgstr "Für dieses Herstellerteil sind %(count)s Lieferanten definiert. Wenn Sie es löschen, werden die folgenden Lieferantenteile ebenfalls gelöscht:"
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/views.py:63 part/templates/part/navbar.html:78
@@ -2751,11 +2751,11 @@ msgstr "Diese Bestellung als vollständig markieren?"
 
 #: order/templates/order/order_complete.html:10
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Diese Bestellung enthält Positionen, die nicht als empfangen markiert wurden."
 
 #: order/templates/order/order_complete.html:11
 msgid "Marking this order as complete will remove these line items."
-msgstr ""
+msgstr "Wenn Sie diese Bestellung als abgeschlossen markieren, werden diese Positionen entfernt."
 
 #: order/templates/order/order_issue.html:7
 msgid "After placing this purchase order, line items will no longer be editable."
@@ -2784,7 +2784,7 @@ msgstr "Zulieferer auswählen"
 #: order/templates/order/order_wizard/select_parts.html:57
 #, python-format
 msgid "Select a supplier for <i>%(name)s</i>"
-msgstr ""
+msgstr "Zulieferer auswählen für <i>%(name)s</i>"
 
 #: order/templates/order/order_wizard/select_parts.html:69
 #: part/templates/part/set_category.html:32
@@ -2883,7 +2883,7 @@ msgstr "Berichte drucken"
 #: order/templates/order/receive_parts.html:8
 #, python-format
 msgid "Receive outstanding parts for <b>%(order)s</b> - <i>%(desc)s</i>"
-msgstr ""
+msgstr "Ausstehende Teile für <b>%(order)s</b> - <i>%(desc)s</i> empfangen"
 
 #: order/templates/order/receive_parts.html:14 part/api.py:40
 #: part/models.py:322 part/templates/part/cat_link.html:7
@@ -4015,7 +4015,7 @@ msgstr "Sind Sie sicher, dass Sie diese Kategorie löschen wollen"
 #: part/templates/part/category_delete.html:8
 #, python-format
 msgid "This category contains %(count)s child categories"
-msgstr ""
+msgstr "Diese Kategorie enthält %(count)s Unter-Kategorien"
 
 #: part/templates/part/category_delete.html:9
 msgid "If this category is deleted, these child categories will be moved to the"
@@ -4032,12 +4032,12 @@ msgstr "oberste Teil-Kategorie"
 #: part/templates/part/category_delete.html:25
 #, python-format
 msgid "This category contains %(count)s parts"
-msgstr ""
+msgstr "Diese Kategorie enthält %(count)s Teile"
 
 #: part/templates/part/category_delete.html:27
 #, python-format
 msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
-msgstr ""
+msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die übergeordnete Kat. %(path)s verschoben"
 
 #: part/templates/part/category_delete.html:29
 msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
@@ -4061,7 +4061,7 @@ msgstr "Teil duplizieren"
 #: part/templates/part/copy_part.html:10
 #, python-format
 msgid "Make a copy of part '%(full_name)s'."
-msgstr ""
+msgstr "Eine Kopie des Teils '%(full_name)s' erstellen."
 
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
@@ -4076,7 +4076,7 @@ msgstr "Teil evtl. Duplikat dieser Teile"
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% übereinstimmend)"
 
 #: part/templates/part/detail.html:11 part/templates/part/navbar.html:11
 msgid "Part Details"
@@ -4252,7 +4252,7 @@ msgstr "Teileliste"
 #: part/templates/part/part_base.html:18
 #, python-format
 msgid "This part is a variant of %(link)s"
-msgstr ""
+msgstr "Dieses Teil ist eine Variante von %(link)s"
 
 #: part/templates/part/part_base.html:33 templates/js/company.js:156
 #: templates/js/company.js:254 templates/js/part.js:75 templates/js/part.js:152
@@ -4336,7 +4336,7 @@ msgstr "Berechnen"
 #: part/templates/part/part_pricing.html:8
 #, python-format
 msgid "Pricing information for:<br>%(part)s."
-msgstr ""
+msgstr "Preisinformationen für:<br>%(part)s."
 
 #: part/templates/part/part_pricing.html:23
 msgid "Supplier Pricing"
@@ -4383,32 +4383,32 @@ msgstr "Aus vorhandenen Bildern auswählen"
 #: part/templates/part/partial_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie das Teil '<b>%(full_name)s</b>' löschen wollen?"
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
 msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
-msgstr ""
+msgstr "Dieser Teil wird in Stücklisten für %(count)s andere Teile verwendet. Wenn Sie dieses Teil löschen, werden die Stücklisten für die folgenden Teile aktualisiert"
 
 #: part/templates/part/partial_delete.html:22
 #, python-format
 msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
-msgstr ""
+msgstr "Es sind %(count)s BestandsObjekte für diesen Teil definiert. Wenn Sie diesen Teil löschen, werden auch die folgenden Bestandseinträge gelöscht:"
 
 #: part/templates/part/partial_delete.html:33
 #, python-format
 msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-msgstr ""
+msgstr "Es sind %(count)s Hersteller für diesen Teil definiert. Wenn Sie diesen Teil löschen, werden auch die folgenden Herstellerteile gelöscht:"
 
 #: part/templates/part/partial_delete.html:44
 #, python-format
 msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
-msgstr ""
+msgstr "Es sind %(count)s Zulieferer für diesen Teil definiert. Wenn Sie diesen Teil löschen, werden auch die folgenden Zuliefererteile gelöscht:"
 
 #: part/templates/part/partial_delete.html:55
 #, python-format
 msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this part will permanently remove this tracking information."
-msgstr ""
+msgstr "Es gibt %(count)s einzigartige Teile, die für '%(full_name)s' verfolgt werden. Das Löschen dieses Teils wird diese Tracking-Informationen dauerhaft entfernen."
 
 #: part/templates/part/related.html:18
 msgid "Add Related"
@@ -4437,7 +4437,7 @@ msgstr "Teilbestand"
 #: part/templates/part/stock.html:16
 #, python-format
 msgid "Showing stock for all variants of <i>%(full_name)s</i>"
-msgstr ""
+msgstr "Lagerbestand aller Varianten von <i>%(full_name)s</i>"
 
 #: part/templates/part/stock_count.html:7 templates/js/bom.js:239
 #: templates/js/part.js:421
@@ -4471,7 +4471,7 @@ msgstr "Neue Teilevariante anlegen"
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <i>'%(full_name)s'</i>."
-msgstr ""
+msgstr "Neue Variante von Vorlage anlegen <i>'%(full_name)s'</i>."
 
 #: part/templates/part/variants.html:19
 msgid "Create new variant"
@@ -5180,12 +5180,12 @@ msgstr "Dieses BestandsObjekt hat nicht alle Tests bestanden"
 #: stock/templates/stock/item_base.html:53
 #, python-format
 msgid "This stock item is allocated to Sales Order %(link)s (Quantity: %(qty)s)"
-msgstr ""
+msgstr "Dieses BestandsObjekt ist dem Auftrag %(link)s zugewiesen (Menge: %(qty)s)"
 
 #: stock/templates/stock/item_base.html:61
 #, python-format
 msgid "This stock item is allocated to Build %(link)s (Quantity: %(qty)s)"
-msgstr ""
+msgstr "Dieses BestandsObjekt ist dem Bauauftrag %(link)s zugewiesen (Menge: %(qty)s)"
 
 #: stock/templates/stock/item_base.html:67
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
@@ -5312,12 +5312,12 @@ msgstr "Elternposition"
 #: stock/templates/stock/item_base.html:369
 #, python-format
 msgid "This StockItem expired on %(item.expiry_date)s"
-msgstr ""
+msgstr "Dieses BestandsObjekt lief am %(item.expiry_date)s ab"
 
 #: stock/templates/stock/item_base.html:371
 #, python-format
 msgid "This StockItem expires on %(item.expiry_date)s"
-msgstr ""
+msgstr "Dieses BestandsObjekt läuft am %(item.expiry_date)s ab"
 
 #: stock/templates/stock/item_base.html:378 templates/js/stock.js:662
 msgid "Last Updated"
@@ -5346,7 +5346,7 @@ msgstr "Sind Sie sicher, dass Sie dieses BestandsObjekt löschen wollen?"
 #: stock/templates/stock/item_delete.html:12
 #, python-format
 msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
-msgstr ""
+msgstr "Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b> entfernt."
 
 #: stock/templates/stock/item_install.html:7
 msgid "Install another StockItem into this item."
@@ -5494,7 +5494,7 @@ msgstr "BestandsObjekt umwandeln"
 #: stock/templates/stock/stockitem_convert.html:8
 #, python-format
 msgid "This stock item is current an instance of <i>%(part)s</i>"
-msgstr ""
+msgstr "BestandsObjekt ist aktuell eine Instanz von <i>%(part)s</i>"
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
@@ -5506,7 +5506,7 @@ msgstr "Diese Aktion kann nicht einfach rückgängig gemacht werden"
 
 #: stock/templates/stock/tracking_delete.html:6
 msgid "Are you sure you want to delete this stock tracking entry?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie diesen BestandsObjekt-Verfolgungs-Eintrag löschen wollen?"
 
 #: stock/views.py:123
 msgid "Edit Stock Location"
@@ -7097,11 +7097,11 @@ msgstr "Bestand löschen"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #: users/admin.py:64
 msgid "Users"
