@@ -56,11 +56,22 @@ RUN apk add --no-cache git make bash \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
     zlib zlib-dev
+
+# Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
 RUN apk add --no-cache cairo cairo-dev pango pango-dev
 RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
-RUN apk add --no-cache python3
-RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
-RUN apk add --no-cache mariadb-connector-c mariadb-dev
+
+# Python
+RUN apk add --no-cache python3 python3-dev python3-pip
+
+# SQLite support
+RUN apk add --no-cache sqlite3
+
+# PostgreSQL support
+RUN apk add --no-cache postgresql-contrib postgresql-dev libpq pg_dump
+
+# MySQL support
+RUN apk add --no-cache mariadb-connector-c mariadb-dev mysqldump
 
 # Create required directories
 #RUN mkdir ${INVENTREE_DATA_DIR}}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
