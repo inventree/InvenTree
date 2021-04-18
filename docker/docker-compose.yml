@@ -35,8 +35,8 @@ services:
 
     # InvenTree web server services
     # Uses gunicorn as the web server
-    web:
-        container_name: web
+    inventree:
+        container_name: inventree
         image: inventree/inventree:latest
         expose:
             - 8000
