@@ -4,3 +4,8 @@
 *.md text
 *.html text
 *.txt text
+*.yml text
+*.yaml text
+*.conf text
+*.sh text
+*.js text

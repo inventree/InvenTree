@@ -30,12 +30,14 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 ENV INVENTREE_WEB_PORT="8000"
 
 # Pass DB configuration through as environment variables
-ENV INVENTREE_DB_ENGINE="${INVENTREE_DB_ENGINE}"
-ENV INVENTREE_DB_NAME="${INVENTREE_DB_NAME}"
-ENV INVENTREE_DB_HOST="${INVENTREE_DB_HOST}"
-ENV INVENTREE_DB_PORT="${INVENTREE_DB_PORT}"
-ENV INVENTREE_DB_USER="${INVENTREE_DB_USER}"
-ENV INVENTREE_DB_PASSWORD="${INVENTREE_DB_PASSWORD}"
+# Default configuration = postgresql
+ENV INVENTREE_DB_ENGINE="postgresql"
+ENV INVENTREE_DB_NAME="inventree"
+ENV INVENTREE_DB_HOST="db"
+ENV INVENTREE_DB_PORT="5432"
+
+# INVENTREE_DB_USER must be specified at run-time
+# INVENTREE_DB_PASSWORD must be specified at run-time
 
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
@@ -93,14 +95,16 @@ RUN pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
 COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
 # Copy startup scripts
-COPY start_server.sh ${INVENTREE_SRC_DIR}/start_server.sh
+COPY start_prod_server.sh ${INVENTREE_SRC_DIR}/start_prod_server.sh
+COPY start_dev_server.sh ${INVENTREE_SRC_DIR}/start_dev_server.sh
 COPY start_worker.sh ${INVENTREE_SRC_DIR}/start_worker.sh
 
-RUN chmod 755 ${INVENTREE_SRC_DIR}/start_server.sh
+RUN chmod 755 ${INVENTREE_SRC_DIR}/start_prod_server.sh
+RUN chmod 755 ${INVENTREE_SRC_DIR}/start_dev_server.sh
 RUN chmod 755 ${INVENTREE_SRC_DIR}/start_worker.sh
 
 # exec commands should be executed from the "src" directory
 WORKDIR ${INVENTREE_SRC_DIR}
 
 # Let us begin
-CMD ["bash", "./start_server.sh"]
+CMD ["bash", "./start_prod_server.sh"]
