@@ -43,4 +43,4 @@ python manage.py collectstatic --noinput || exit 1
 python manage.py clearsessions || exit 1
 
 # Now we can launch the server
-gunicorn -c $INVENTREE_HOME/gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8080
+gunicorn -c $INVENTREE_HOME/gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:$INVENTREE_WEB_PORT
