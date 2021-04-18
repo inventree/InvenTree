@@ -396,7 +396,6 @@ for key in db_keys:
     env_var = os.environ.get(env_key, None)
 
     if env_var:
-        logger.info(f"{env_key}={env_var}")
         # Override configuration value
         db_config[key] = env_var
 
