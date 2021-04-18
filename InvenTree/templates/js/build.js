@@ -37,7 +37,12 @@ function makeBuildOutputActionButtons(output, buildInfo) {
      */
 
     var buildId = buildInfo.pk;
-    var outputId = output.pk;
+
+    if (output) {
+        outputId = output.pk;
+    } else {
+        outputId = 'untracked';
+    }
 
     var panel = `#allocation-panel-${outputId}`;
 
@@ -50,35 +55,40 @@ function makeBuildOutputActionButtons(output, buildInfo) {
 
     var html = `<div class='btn-group float-right' role='group'>`;
 
-    // Add a button to "auto allocate" against the build
-    html += makeIconButton(
-        'fa-magic icon-blue', 'button-output-auto', outputId,
-        '{% trans "Auto-allocate stock items to this output" %}',
-    );
-
-    // Add a button to "complete" the particular build output
-    html += makeIconButton(
-        'fa-check icon-green', 'button-output-complete', outputId,
-        '{% trans "Complete build output" %}',
-        {
-            //disabled: true
-        }
-    );
+    // "Auto" allocation only works for untracked stock items
+    if (!output) {
+        html += makeIconButton(
+            'fa-magic icon-blue', 'button-output-auto', outputId,
+            '{% trans "Auto-allocate stock items to this output" %}',
+            );
+    }
 
     // Add a button to "cancel" the particular build output (unallocate)
     html += makeIconButton(
         'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
         '{% trans "Unallocate stock from build output" %}',
-    );
+        );
 
-    // Add a button to "delete" the particular build output
-    html += makeIconButton(
-        'fa-trash-alt icon-red', 'button-output-delete', outputId,
-        '{% trans "Delete build output" %}',
-    );
 
-    // Add a button to "destroy" the particular build output (mark as damaged, scrap)
-    // TODO
+    if (output) {
+
+        // Add a button to "complete" the particular build output
+        html += makeIconButton(
+            'fa-check icon-green', 'button-output-complete', outputId,
+            '{% trans "Complete build output" %}',
+            {
+                //disabled: true
+            }
+        );
+                    
+        // Add a button to "delete" the particular build output
+        html += makeIconButton(
+            'fa-trash-alt icon-red', 'button-output-delete', outputId,
+            '{% trans "Delete build output" %}',
+            );
+
+        // TODO - Add a button to "destroy" the particular build output (mark as damaged, scrap)
+    }
 
     html += '</div>';
 
@@ -90,7 +100,6 @@ function makeBuildOutputActionButtons(output, buildInfo) {
         launchModalForm(`/build/${buildId}/auto-allocate/`,
             {
                 data: {
-                    output: outputId,
                 },
                 success: reloadTable,
             }
@@ -115,7 +124,7 @@ function makeBuildOutputActionButtons(output, buildInfo) {
             {
                 success: reloadTable,
                 data: {
-                    output: outputId,
+                    output: output ? outputId : 'null',
                 }
             }
         );
@@ -152,13 +161,21 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var outputId = null;
     
-    outputId = output.pk;
+    if (output) {
+        outputId = output.pk;
+    } else {
+        outputId = 'untracked';
+    }
 
     var table = options.table;
     
     if (options.table == null) {
         table = `#allocation-table-${outputId}`;
     }
+
+    // If an "output" is specified, then only "trackable" parts are allocated
+    // Otherwise, only "untrackable" parts are allowed
+    var trackable = ! !output;
     
     function reloadTable() {
         // Reload the entire build allocation table
@@ -168,7 +185,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function requiredQuantity(row) {
         // Return the requied quantity for a given row
 
-        return row.quantity * output.quantity;
+        if (output) {
+            // "Tracked" parts are calculated against individual build outputs
+            return row.quantity * output.quantity;
+        } else {
+            // "Untracked" parts are specified against the build itself
+            return row.quantity * buildInfo.quantity;
+        }
     }
 
     function sumAllocations(row) {
@@ -300,6 +323,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         queryParams: {
             part: partId,
             sub_part_detail: true,
+            sub_part_trackable: trackable,
         },
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
@@ -310,11 +334,19 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for this build output
 
+            var params = {
+                build: buildId,
+            }
+
+            if (output) {
+                params.sub_part_trackable = true;
+                params.output = outputId;
+            } else {
+                params.sub_part_trackable = false;
+            }
+
             inventreeGet('/api/build/item/',
-                {
-                    build: buildId,
-                    output: outputId,
-                },
+                params,
                 {
                     success: function(data) {
                         // Iterate through the returned data, and group by the part they point to
@@ -355,8 +387,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             // Calculate the total allocated quantity
                             var allocatedQuantity = sumAllocations(tableRow);
 
+                            var requiredQuantity = 0;
+
+                            if (output) {
+                                requiredQuantity = tableRow.quantity * output.quantity;
+                            } else {
+                                requiredQuantity = tableRow.quantity * buildInfo.quantity;
+                            }
+
                             // Is this line item fully allocated?
-                            if (allocatedQuantity >= (tableRow.quantity * output.quantity)) {
+                            if (allocatedQuantity >= requiredQuantity) {
                                 allocatedLines += 1;
                             }
 

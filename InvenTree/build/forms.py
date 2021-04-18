@@ -165,16 +165,10 @@ class AutoAllocateForm(HelperForm):
 
     confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Confirm stock allocation'))
 
-    # Keep track of which build output we are interested in
-    output = forms.ModelChoiceField(
-        queryset=StockItem.objects.all(),
-    )
-
     class Meta:
         model = Build
         fields = [
             'confirm',
-            'output',
         ]
 
 

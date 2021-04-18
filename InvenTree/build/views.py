@@ -18,7 +18,7 @@ from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, extract_serial_numbers, normalize
+from InvenTree.helpers import str2bool, extract_serial_numbers, normalize, isNull
 from InvenTree.status_codes import BuildStatus
 
 
@@ -98,16 +98,6 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         initials = super().get_initial()
 
-        # Pointing to a particular build output?
-        output = self.get_param('output')
-
-        if output:
-            try:
-                output = StockItem.objects.get(pk=output)
-                initials['output'] = output
-            except (ValueError, StockItem.DoesNotExist):
-                pass
-
         return initials
 
     def get_context_data(self, *args, **kwargs):
@@ -121,16 +111,7 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         form = self.get_form()
 
-        output_id = form['output'].value()
-
-        try:
-            output = StockItem.objects.get(pk=output_id)
-        except (ValueError, StockItem.DoesNotExist):
-            output = None
-
-        if output:
-            context['output'] = output
-            context['allocations'] = build.getAutoAllocations(output)
+        context['allocations'] = build.getAutoAllocations()
 
         context['build'] = build
 
@@ -140,18 +121,11 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         form = super().get_form()
 
-        if form['output'].value():
-            # Hide the 'output' field
-            form.fields['output'].widget = HiddenInput()
-
         return form
 
     def validate(self, build, form, **kwargs):
 
-        output = form.cleaned_data.get('output', None)
-
-        if not output:
-            form.add_error(None, _('Build output must be specified'))
+        pass
 
     def save(self, build, form, **kwargs):
         """
@@ -159,9 +133,7 @@ class BuildAutoAllocate(AjaxUpdateView):
         perform auto-allocations
         """
 
-        output = form.cleaned_data.get('output', None)
-
-        build.autoAllocate(output)
+        build.autoAllocate()
 
     def get_data(self):
         return {
@@ -365,10 +337,16 @@ class BuildUnallocate(AjaxUpdateView):
 
         output_id = request.POST.get('output_id', None)
 
-        try:
-            output = StockItem.objects.get(pk=output_id)
-        except (ValueError, StockItem.DoesNotExist):
-            output = None
+        if output_id:
+
+            # If a "null" output is provided, we are trying to unallocate "untracked" stock
+            if isNull(output_id):
+                output = None
+            else:
+                try:
+                    output = StockItem.objects.get(pk=output_id)
+                except (ValueError, StockItem.DoesNotExist):
+                    output = None
 
         part_id = request.POST.get('part_id', None)
 
@@ -383,9 +361,19 @@ class BuildUnallocate(AjaxUpdateView):
             form.add_error('confirm', _('Confirm unallocation of build stock'))
             form.add_error(None, _('Check the confirmation box'))
         else:
-            build.unallocateStock(output=output, part=part)
+
             valid = True
 
+            # Unallocate the entire build
+            if not output_id:
+                build.unallocateAll()
+            # Unallocate a single output
+            elif output:
+                build.unallocateOutput(output, part=part)
+            # Unallocate "untracked" parts
+            else:
+                build.unallocateUntracked(part=part)
+        
         data = {
             'form_valid': valid,
         }

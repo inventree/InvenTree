@@ -489,7 +489,7 @@ class Build(MPTTModel):
         self.status = BuildStatus.CANCELLED
         self.save()
 
-    def getAutoAllocations(self, output):
+    def getAutoAllocations(self):
         """
         Return a list of StockItem objects which will be allocated
         using the 'AutoAllocate' function.
@@ -521,15 +521,19 @@ class Build(MPTTModel):
 
             part = bom_item.sub_part
 
+            # If the part is "trackable" it cannot be auto-allocated
+            if part.trackable:
+                continue
+
             # Skip any parts which are already fully allocated
-            if self.isPartFullyAllocated(part, output):
+            if self.isPartFullyAllocated(part, None):
                 continue
 
             # How many parts are required to complete the output?
-            required = self.unallocatedQuantity(part, output)
+            required = self.unallocatedQuantity(part, None)
 
             # Grab a list of stock items which are available
-            stock_items = self.availableStockItems(part, output)
+            stock_items = self.availableStockItems(part, None)
 
             # Ensure that the available stock items are in the correct location
             if self.take_from is not None:
@@ -544,7 +548,6 @@ class Build(MPTTModel):
                 build_items = BuildItem.objects.filter(
                     build=self,
                     stock_item=stock_item,
-                    install_into=output
                 )
 
                 if len(build_items) > 0:
@@ -567,24 +570,45 @@ class Build(MPTTModel):
         return allocations
 
     @transaction.atomic
-    def unallocateStock(self, output=None, part=None):
+    def unallocateOutput(self, output, part=None):
         """
-        Deletes all stock allocations for this build.
-        
-        Args:
-            output: Specify which build output to delete allocations (optional)
-
+        Unallocate all stock which are allocated against the provided "output" (StockItem)
         """
 
-        allocations = BuildItem.objects.filter(build=self.pk)
-
-        if output:
-            allocations = allocations.filter(install_into=output.pk)
+        allocations = BuildItem.objects.filter(
+            build=self,
+            install_into=output
+        )
 
         if part:
             allocations = allocations.filter(stock_item__part=part)
 
-        # Remove all the allocations
+        allocations.delete()
+
+    @transaction.atomic
+    def unallocateUntracked(self, part=None):
+        """
+        Unallocate all "untracked" stock
+        """
+
+        allocations = BuildItem.objects.filter(
+            build=self,
+            install_into=None
+        )
+
+        if part:
+            allocations = allocations.filter(stock_item__part=part)
+
+        allocations.delete()
+
+    @transaction.atomic
+    def unallocateAll(self):
+        """
+        Deletes all stock allocations for this build.
+        """
+        
+        allocations = BuildItem.objects.filter(build=self)
+
         allocations.delete()
 
     @transaction.atomic
@@ -685,7 +709,7 @@ class Build(MPTTModel):
         output.delete()
 
     @transaction.atomic
-    def autoAllocate(self, output):
+    def autoAllocate(self):
         """
         Run auto-allocation routine to allocate StockItems to this Build.
 
@@ -702,7 +726,7 @@ class Build(MPTTModel):
         See: getAutoAllocations()
         """
 
-        allocations = self.getAutoAllocations(output)
+        allocations = self.getAutoAllocations()
 
         for item in allocations:
             # Create a new allocation
@@ -710,7 +734,7 @@ class Build(MPTTModel):
                 build=self,
                 stock_item=item['stock_item'],
                 quantity=item['quantity'],
-                install_into=output,
+                install_into=None
             )
 
             build_item.save()
@@ -779,7 +803,7 @@ class Build(MPTTModel):
         if output:
             quantity *= output.quantity
         else:
-            quantity *= self.remaining
+            quantity *= self.quantity
 
         return quantity
 
@@ -1020,10 +1044,12 @@ class BuildItem(models.Model):
 
         errors = {}
 
-        if not self.install_into:
-            raise ValidationError(_('Build item must specify a build output'))
-
         try:
+
+            # If the 'part' is trackable, then the 'install_into' field must be set!
+            if self.stock_item.part and self.stock_item.part.trackable and not self.install_into:
+                raise ValidationError(_('Build item must specify a build output, as master part is marked as trackable'))
+
             # Allocated part must be in the BOM for the master part
             if self.stock_item.part not in self.build.part.getRequiredParts(recursive=False):
                 errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'").format(p=self.build.part.full_name)]

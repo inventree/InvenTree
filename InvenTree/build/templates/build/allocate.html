@@ -38,6 +38,41 @@
 </div>
 
 <hr>
+
+<div class="panel panel-default" id='allocation-panel-untracked'>
+<div class="panel-heading" role="tab" id="heading-untracked">
+    <div class="panel-title">
+        <div class='row'>
+            <a class='collapsed' aria-expanded='false' role="button" data-toggle="collapse" data-parent="#build-output-accordion" href="#collapse-untracked" aria-controls="collapse-untracked">
+            <div class='col-sm-6'>
+                <span class='fas fa-caret-right'></span>
+                {% trans "Allocated Stock" %}
+            </div>
+        </a>
+        <div class='col-sm-3'>
+            <div>
+                <div id='output-progress-untracked'>
+                    <span class='fas fa-spin fa-spinner'></span>
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-3'>
+            <div class='btn-group float-right' id='output-actions-untracked'>
+                <span class='fas fa-spin fa-spinner'></span>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div id="collapse-untracked" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-untracked">
+    <div class="panel-body">
+        <table class='table table-striped table-condensed' id='allocation-table-untracked'></table>
+    </div>
+</div>
+</div>
+
+<hr>
+
 {% if build.incomplete_outputs %}
 <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
     {% for item in build.incomplete_outputs %}
@@ -65,6 +100,9 @@
         completed: {{ build.completed }},
         part: {{ build.part.pk }},
     };
+
+    // Load allocation table for un-tracked parts
+    loadBuildOutputAllocationTable(buildInfo, null);
 
     {% for item in build.incomplete_outputs %}
     // Get the build output as a javascript object
