@@ -33,11 +33,11 @@ services:
 
     # InvenTree web server services
     # Uses gunicorn as the web server
-    inventree:
-        container_name: server
+    web:
+        container_name: web
         image: inventree/inventree:latest
         expose:
-            - 8080
+            - 8000
         depends_on:
             - db
         volumes:
@@ -50,21 +50,26 @@ services:
             - INVENTREE_DB_PASSWORD=pgpassword
             - INVENTREE_DB_PORT=5432
             - INVENTREE_DB_HOST=db
+            - INVENTREE_WEB_PORT=8000
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
     # static files are served by nginx
     # web requests are redirected to gunicorn
+    # NOTE: You will need to provide a working nginx.conf file!
     nginx:
         container_name: nginx
-        image: inventree/nginx:latest
+        image: nxinx
         depends_on:
-            - inventree
+            - web
         ports:
             # Change "1337" to the port where you want InvenTree web server to be available
             - 1337:80
         volumes:
-            - static:/home/inventree/static
+            # Provide nginx.conf file to the container
+            - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+            # Static data volume is mounted to /var/www/static
+            - static:/var/www/static
 
     # background worker process handles long-running or periodic tasks
     worker:
@@ -73,7 +78,7 @@ services:
         entrypoint: ./start_worker.sh
         depends_on:
             - db
-            - inventree
+            - web
         volumes:
             - data:/home/inventree/data
             - static:/home/inventree/static
