@@ -2,9 +2,9 @@ version: "3.8"
 
 # Docker compose recipe for InvenTree
 # - Runs PostgreSQL as the database backend
-# - Runs Gunicorn as the web server
+# - Runs Gunicorn as the InvenTree web server
+# - Runs the InvenTree background worker process
 # - Runs nginx as a reverse proxy
-# - Runs the background worker process
 
 # ---------------------------------
 # IMPORTANT - READ BEFORE STARTING!
@@ -52,7 +52,7 @@ services:
             - INVENTREE_DB_PASSWORD=pgpassword
         restart: unless-stopped
 
-    # background worker process handles long-running or periodic tasks
+    # Background worker process handles long-running or periodic tasks
     worker:
         container_name: worker
         image: inventree/inventree:latest
@@ -64,8 +64,7 @@ services:
             - data:/home/inventree/data
             - static:/home/inventree/static
         environment:
-            # Default environment variables are configured to match the 'db' container
-            # Database permissions
+            # Default environment variables are configured to match the 'inventree' container
             - INVENTREE_DB_USER=pguser
             - INVENTREE_DB_PASSWORD=pgpassword
         restart: unless-stopped
@@ -80,7 +79,7 @@ services:
         depends_on:
             - inventree
         ports:
-            # Change "1337" to the port where you want InvenTree web server to be available
+            # Change "1337" to the port that you want InvenTree web server to be available on
             - 1337:80
         volumes:
             # Provide nginx.conf file to the container
@@ -92,7 +91,7 @@ services:
 
 volumes:
     # NOTE: Change /path/to/data to a directory on your local machine
-    # Persistent data, stored externally
+    # Persistent data, stored external to the container(s)
     data:
         driver: local
         driver_opts:
