@@ -74,7 +74,7 @@ RUN apk add --no-cache sqlite
 RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
 
 # MySQL support
-RUN apk add --no-cache mariadb-connector-c mariadb-dev mysqldump
+RUN apk add --no-cache mariadb-connector-c mariadb-dev mariadb-client
 
 # Install required python packages
 RUN pip install --upgrade pip setuptools wheel
