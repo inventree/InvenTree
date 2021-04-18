@@ -26,6 +26,9 @@ ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 
+# Default web server port is 8000
+ENV INVENTREE_WEB_PORT="8000"
+
 # Pass DB configuration through as environment variables
 ENV INVENTREE_DB_ENGINE="${INVENTREE_DB_ENGINE}"
 ENV INVENTREE_DB_NAME="${INVENTREE_DB_NAME}"
@@ -68,7 +71,7 @@ RUN apk add --no-cache python3 python3-dev
 RUN apk add --no-cache sqlite
 
 # PostgreSQL support
-RUN apk add --no-cache postgresql-contrib postgresql-dev libpq pg_dump
+RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
 
 # MySQL support
 RUN apk add --no-cache mariadb-connector-c mariadb-dev mysqldump
