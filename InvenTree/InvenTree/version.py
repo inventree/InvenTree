@@ -8,7 +8,7 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.2.1"
+INVENTREE_SW_VERSION = "0.2.2 pre"
 
 # Increment this number whenever there is a significant change to the API that any clients need to know about
 INVENTREE_API_VERSION = 2
