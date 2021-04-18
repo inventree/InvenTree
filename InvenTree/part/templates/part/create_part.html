@@ -13,7 +13,8 @@
     <ul class='list-group'>
     {% for match in matches %}
     <li class='list-group-item list-group-item-condensed'>
-        {{ match.part.full_name }} - <i>{{ match.part.description }}</i> ({% decimal match.ratio %}% {% trans "match" %})
+        {% decimal match.ratio as match_per %}
+        {% blocktrans with full_name=match.part.full_name desc=match.part.description %}{{full_name}} - <i>{{desc}}</i> ({{match_per}}% match){% endblocktrans %}
     </li>
     {% endfor %}
 </ul>
