@@ -73,9 +73,6 @@ RUN apk add --no-cache postgresql-contrib postgresql-dev libpq pg_dump
 # MySQL support
 RUN apk add --no-cache mariadb-connector-c mariadb-dev mysqldump
 
-# Create required directories
-#RUN mkdir ${INVENTREE_DATA_DIR}}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
-
 # Install required python packages
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -U invoke
