@@ -897,6 +897,14 @@ class Build(MPTTModel):
         for bom_item in self.bom_items:
             part = bom_item.sub_part
 
+            # Ignore "trackable" when output is specified
+            if output and not part.trackable:
+                continue
+
+            # Ignore "untrackable" parts when output is not specified
+            if not output and part.trackable:
+                continue
+
             if not self.isPartFullyAllocated(part, output):
                 unallocated.append(part)
 
