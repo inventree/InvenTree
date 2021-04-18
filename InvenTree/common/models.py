@@ -59,8 +59,8 @@ class InvenTreeSetting(models.Model):
         },
 
         'INVENTREE_INSTANCE_TITLE': {
-            'name': _('Use Instance Name'),
-            'description': _('Use the instance name in the Titel-Bar'),
+            'name': _('Use instance name'),
+            'description': _('Use the instance name in the title-bar'),
             'validator': bool,
             'default': False,
         },
