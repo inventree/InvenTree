@@ -1,6 +1,6 @@
 invoke>=1.4.0                   # Invoke build tool
 wheel>=0.34.2                   # Wheel
-Django==3.1.7                   # Django package
+Django==3.1.8                   # Django package
 pillow==8.1.1                   # Image manipulation
 djangorestframework==3.11.2     # DRF framework
 django-dbbackup==3.3.0          # Database backup / restore functionality
