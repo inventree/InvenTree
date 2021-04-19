@@ -1189,10 +1189,13 @@ class Part(MPTTModel):
         against both build orders and sales orders.
         """
 
-        return sum([
-            self.build_order_allocation_count(),
-            self.sales_order_allocation_count(),
-        ])
+        return sum(
+            [
+                self.build_order_allocation_count(),
+                self.sales_order_allocation_count(),
+            ],
+            output_field=models.DecimalField()
+        )
 
     def stock_entries(self, include_variants=True, in_stock=None):
         """ Return all stock entries for this Part.

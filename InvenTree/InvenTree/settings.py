@@ -52,6 +52,9 @@ def get_setting(environment_var, backup_val, default_value=None):
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
+# New requirement for django 3.2+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
