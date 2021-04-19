@@ -56,16 +56,25 @@ def is_email_configured():
     configured = True
 
     if not settings.EMAIL_HOST:
-        logger.warning("EMAIL_HOST is not configured")
         configured = False
+
+        # Display warning unless in test mode
+        if not settings.TESTING:
+            logger.warning("EMAIL_HOST is not configured")
 
     if not settings.EMAIL_HOST_USER:
-        logger.warning("EMAIL_HOST_USER is not configured")
         configured = False
+    
+        # Display warning unless in test mode
+        if not settings.TESTING:
+            logger.warning("EMAIL_HOST_USER is not configured")
 
     if not settings.EMAIL_HOST_PASSWORD:
-        logger.warning("EMAIL_HOST_PASSWORD is not configured")
         configured = False
+
+        # Display warning unless in test mode
+        if not settings.TESTING:
+            logger.warning("EMAIL_HOST_PASSWORD is not configured")
 
     return configured
 
