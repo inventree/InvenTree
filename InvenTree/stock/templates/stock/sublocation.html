@@ -1,0 +1,36 @@
+{% extends "stock/location.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block menubar %}
+{% include "stock/location_navbar.html" with tab="sublocations" %}
+{% endblock %}
+
+
+{% block location_content %}
+
+<div class='panel panel-default panel-inventree'>
+    <div class='panel-heading'>
+        <h4>{% trans "Sublocations" %}</h4>
+    </div>
+    <table class='table table-striped table-condensed' id='sublocation-table'></table>
+</div>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+loadStockLocationTable($('#sublocation-table'), {
+    params: {
+        {% if location %}
+        parent: {{ location.pk }},
+        {% else %}
+        parent: 'null',
+        {% endif %}
+    }
+});
+
+{% endblock %}

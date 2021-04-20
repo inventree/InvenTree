@@ -244,6 +244,7 @@ class LocationSerializer(InvenTreeModelSerializer):
 
     items = serializers.IntegerField(source='item_count', read_only=True)
 
+
     class Meta:
         model = StockLocation
         fields = [

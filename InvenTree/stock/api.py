@@ -320,6 +320,11 @@ class StockLocationList(generics.ListCreateAPIView):
         'description',
     ]
 
+    ordering_fields = [
+        'name',
+        'items',
+    ]
+
 
 class StockList(generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects
