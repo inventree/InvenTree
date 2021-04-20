@@ -419,7 +419,7 @@ class BuildOutputComplete(AjaxUpdateView):
     View to mark a particular build output as Complete.
 
     - Notifies the user of which parts will be removed from stock.
-    - Removes allocated items from stock
+    - Assignes (tracked) allocated items from stock to the build output
     - Deletes pending BuildItem objects
     """
 

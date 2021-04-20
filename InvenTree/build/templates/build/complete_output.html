@@ -4,9 +4,10 @@
 
 {% block pre_form_content %}
 
-{% if fully_allocated %}
-<div class='alert alert-block alert-info'>
-    <h4>{% trans "Stock allocation is complete" %}</h4>
+{% if not build.has_tracked_bom_items %}
+{% elif fully_allocated %}
+<div class='alert alert-block alert-success'>
+    {% trans "Stock allocation is complete for this output" %}
 </div>
 {% else %}
 <div class='alert alert-block alert-danger'>
@@ -41,7 +42,11 @@
     </div>
     <div class='panel-content'>
         {% include "hover_image.html" with image=build.part.image hover=True %}
+        {% if output.serialized %}
+        {{ output.part.full_name }} - {% trans "Serial Number" %} {{ output.serial }}
+        {% else %}
         {% decimal output.quantity %} x {{ output.part.full_name }}
+        {% endif %}
     </div>
 </div>
 

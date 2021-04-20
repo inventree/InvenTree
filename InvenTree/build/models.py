@@ -790,12 +790,13 @@ class Build(MPTTModel):
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
+        # Ensure that only "trackable" parts are installed in the particular build output
+        allocated_items = allocated_items.filter(part__trackable=True)
+
         for build_item in allocated_items:
 
             # TODO: This is VERY SLOW as each deletion from the database takes ~1 second to complete
-            # TODO: Use celery / redis to offload the actual object deletion...
-            # REF: https://www.botreetechnologies.com/blog/implementing-celery-using-django-for-background-task-processing
-            # REF: https://code.tutsplus.com/tutorials/using-celery-with-django-for-background-task-processing--cms-28732
+            # TODO: Use the background worker process to handle this task!
 
             # Complete the allocation of stock for that item
             build_item.complete_allocation(user)
@@ -899,7 +900,13 @@ class Build(MPTTModel):
         Returns True if the particular build output is fully allocated.
         """
 
-        for bom_item in self.bom_items:
+        # If output is not specified, we are talking about "untracked" items
+        if output is None:
+            bom_items = self.untracked_bom_items
+        else:
+            bom_items = self.tracked_bom_items
+
+        for bom_item in bom_items:
             part = bom_item.sub_part
 
             if not self.isPartFullyAllocated(part, output):
@@ -915,7 +922,13 @@ class Build(MPTTModel):
 
         allocated = []
 
-        for bom_item in self.bom_items:
+        # If output is not specified, we are talking about "untracked" items
+        if output is None:
+            bom_items = self.untracked_bom_items
+        else:
+            bom_items = self.tracked_bom_items
+
+        for bom_item in bom_items:
             part = bom_item.sub_part
 
             if self.isPartFullyAllocated(part, output):
@@ -930,16 +943,14 @@ class Build(MPTTModel):
 
         unallocated = []
 
-        for bom_item in self.bom_items:
+        # If output is not specified, we are talking about "untracked" items
+        if output is None:
+            bom_items = self.untracked_bom_items
+        else:
+            bom_items = self.tracked_bom_items
+
+        for bom_item in bom_items:
             part = bom_item.sub_part
-
-            # Ignore "trackable" when output is specified
-            if output and not part.trackable:
-                continue
-
-            # Ignore "untrackable" parts when output is not specified
-            if not output and part.trackable:
-                continue
 
             if not self.isPartFullyAllocated(part, output):
                 unallocated.append(part)
