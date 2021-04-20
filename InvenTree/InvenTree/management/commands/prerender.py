@@ -28,14 +28,14 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **kwargs):
-        # static directorys
+        # static directories
         LC_DIR = settings.LOCALE_PATHS[0]
         SOURCE_DIR = settings.STATICFILES_I18_SRC
-        TARTGET_DIR = settings.STATICFILES_I18_TRG
+        TARGET_DIR = settings.STATICFILES_I18_TRG
 
         # ensure static directory exists
-        if not os.path.exists(TARTGET_DIR):
-            os.mkdir(TARTGET_DIR)
+        if not os.path.exists(TARGET_DIR):
+            os.makedirs(TARGET_DIR, exist_ok=True)
 
         # collect locales
         locales = {}
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         # render!
         request = HttpRequest()
         ctx = {}
-        processors = tuple(import_string(path) for path in settings.STATFILES_I18_PROCESORS)
+        processors = tuple(import_string(path) for path in settings.STATFILES_I18_PROCESSORS)
         for processor in processors:
             ctx.update(processor(request))
 
@@ -55,7 +55,7 @@ class Command(BaseCommand):
             path = os.path.join(SOURCE_DIR, file)
             if os.path.exists(path) and os.path.isfile(path):
                 print(f"render {file}")
-                render_file(file, SOURCE_DIR, TARTGET_DIR, locales, ctx)
+                render_file(file, SOURCE_DIR, TARGET_DIR, locales, ctx)
             else:
                 raise NotImplementedError('Using multi-level directories is not implemented at this point')  # TODO multilevel dir if needed
         print(f"rendered all files in {SOURCE_DIR}")
