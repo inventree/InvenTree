@@ -109,11 +109,14 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
     });
 
     $(panel).find(`#button-output-complete-${outputId}`).click(function() {
+
+        var pk = $(this).attr('pk');
+
         launchModalForm(
             `/build/${buildId}/complete-output/`,
             {
                 data: {
-                    output: outputId,
+                    output: pk,
                 },
                 reload: true,
             }
@@ -121,24 +124,30 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
     });
 
     $(panel).find(`#button-output-unallocate-${outputId}`).click(function() {
+
+        var pk = $(this).attr('pk');
+
         launchModalForm(
             `/build/${buildId}/unallocate/`,
             {
                 success: reloadTable,
                 data: {
-                    output: output ? outputId : 'null',
+                    output: pk,
                 }
             }
         );
     });
 
     $(panel).find(`#button-output-delete-${outputId}`).click(function() {
+
+        var pk = $(this).attr('pk');
+
         launchModalForm(
             `/build/${buildId}/delete-output/`,
             {
                 reload: true,
                 data: {
-                    output: outputId
+                    output: pk
                 }
             }
         );
