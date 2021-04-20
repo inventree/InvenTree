@@ -154,6 +154,7 @@ def static(c):
     as per Django requirements.
     """
 
+    manage(c, "prerender")
     manage(c, "collectstatic --no-input")
 
 
