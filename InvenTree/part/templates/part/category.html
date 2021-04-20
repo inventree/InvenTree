@@ -2,6 +2,10 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include 'part/category_navbar.html' with tab='parts' %}
+{% endblock %}
+
 {% block content %}
 
 <div class='panel panel-default panel-inventree'>
@@ -100,13 +104,9 @@
         </div>
     </div>
 
-    {% if category and category.children.all|length > 0 %}
-    {% include "part/subcategories.html" with children=category.children.all collapse_id="categories" %}
-    {% elif children|length > 0 %}
-    {% include "part/subcategories.html" with children=children collapse_id="categories" %}
-    {% endif %}
-
 </div>
+
+{% block category_content %}
 
 <div id='button-toolbar'>
     <div class='btn-group'>
@@ -150,6 +150,8 @@
     </div>
 </div>
 
+{% endblock %}
+
 
 {% block category_tables %}
 {% endblock category_tables %}
@@ -162,23 +164,9 @@
 {% block js_ready %}
 {{ block.super }}
 
-    {% if category %}
     enableNavbar({
         label: 'category',
         toggleId: '#category-menu-toggle',
-    });
-    {% endif %}
-
-    if (inventreeLoadInt("show-part-cats") == 1) {
-        $("#collapse-item-categories").collapse('show');
-    }
-
-    $("#collapse-item-categories").on('shown.bs.collapse', function() {
-        inventreeSave('show-part-cats', 1);
-    });
-    
-    $("#collapse-item-categories").on('hidden.bs.collapse', function() {
-        inventreeDel('show-part-cats');
     });
 
     $("#cat-create").click(function() {

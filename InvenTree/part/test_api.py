@@ -37,11 +37,53 @@ class PartAPITest(InvenTreeAPITestCase):
         super().setUp()
 
     def test_get_categories(self):
-        """ Test that we can retrieve list of part categories """
+        """
+        Test that we can retrieve list of part categories,
+        with various filtering options.
+        """
+        
         url = reverse('api-part-category-list')
+        
+        # Request *all* part categories
         response = self.client.get(url, format='json')
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 8)
+
+        # Request top-level part categories only
+        response = self.client.get(
+            url,
+            {
+                'parent': 'null',
+            },
+            format='json'
+        )
+
+        self.assertEqual(len(response.data), 2)
+
+        # Children of PartCategory<1>, cascade
+        response = self.client.get(
+            url,
+            {
+                'parent': 1,
+                'cascade': 'true',
+            },
+            format='json',
+        )
+
+        self.assertEqual(len(response.data), 5)
+
+        # Children of PartCategory<1>, do not cascade
+        response = self.client.get(
+            url,
+            {
+                'parent': 1,
+                'cascade': 'false',
+            },
+            format='json',
+        )
+
+        self.assertEqual(len(response.data), 3)
 
     def test_add_categories(self):
         """ Check that we can add categories """
