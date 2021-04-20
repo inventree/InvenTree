@@ -281,13 +281,13 @@ class StockLocationList(generics.ListCreateAPIView):
     queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
 
-    def get_queryset(self):
+    def filter_queryset(self, queryset):
         """
         Custom filtering:
         - Allow filtering by "null" parent to retrieve top-level stock locations
         """
 
-        queryset = super().get_queryset()
+        queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
 

@@ -94,7 +94,7 @@ category_urls = [
     url(r'^new/', views.CategoryCreate.as_view(), name='category-create'),
 
     # Top level subcategory display
-    url(r'^subcategory/', views.PartIndex.as_view(template_name='part/category_subcategory.html'), name='category-index-subcategory'),
+    url(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
 
     # Category detail views
     url(r'(?P<pk>\d+)/', include([
@@ -102,7 +102,7 @@ category_urls = [
         url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         url(r'^parameters/', include(category_parameter_urls)),
 
-        url(r'^subcategory/', views.CategoryDetail.as_view(template_name='part/category_subcategory.html'), name='category-subcategory'),
+        url(r'^subcategory/', views.CategoryDetail.as_view(template_name='part/subcategory.html'), name='category-subcategory'),
         url(r'^parametric/', views.CategoryParametric.as_view(), name='category-parametric'),
     
         # Anything else

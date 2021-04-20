@@ -546,6 +546,7 @@ function loadPartCategoryTable(table, options) {
                 title: '{% trans "Select" %}',
                 searchable: false,
                 switchable: false,
+                visible: false,
             },
             {
                 field: 'name',
@@ -562,6 +563,12 @@ function loadPartCategoryTable(table, options) {
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
+                field: 'pathstring',
+                title: '{% trans "Path" %}',
                 switchable: true,
                 sortable: false,
             },
