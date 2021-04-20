@@ -32,6 +32,7 @@
     </div>
 </div>
 
+{% block content_panels %}
 <div class='panel panel-default panel-inventree'>
     <div class='panel-heading'>
         <h4>
@@ -41,12 +42,15 @@
         </h4>
     </div>
 
+    {% block details_panel %}
     <div class='panel-content'>
         {% block details %}
         <!-- Particular page detail views go here -->
         {% endblock %}
     </div>
+    {% endblock %}
 </div>
+{% endblock %}
 
 {% endblock %}
 

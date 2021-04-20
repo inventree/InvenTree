@@ -32,7 +32,7 @@ function newBuildOrder(options={}) {
 }
 
 
-function makeBuildOutputActionButtons(output, buildInfo) {
+function makeBuildOutputActionButtons(output, buildInfo, lines) {
     /* Generate action buttons for a build output.
      */
 
@@ -56,18 +56,20 @@ function makeBuildOutputActionButtons(output, buildInfo) {
     var html = `<div class='btn-group float-right' role='group'>`;
 
     // "Auto" allocation only works for untracked stock items
-    if (!output) {
+    if (!output && lines > 0) {
         html += makeIconButton(
             'fa-magic icon-blue', 'button-output-auto', outputId,
             '{% trans "Auto-allocate stock items to this output" %}',
             );
     }
 
-    // Add a button to "cancel" the particular build output (unallocate)
-    html += makeIconButton(
-        'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
-        '{% trans "Unallocate stock from build output" %}',
-        );
+    if (lines > 0) {
+        // Add a button to "cancel" the particular build output (unallocate)
+        html += makeIconButton(
+            'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
+            '{% trans "Unallocate stock from build output" %}',
+            );
+    }
 
 
     if (output) {
@@ -407,16 +409,21 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         // Update the total progress for this build output
                         var buildProgress = $(`#allocation-panel-${outputId}`).find($(`#output-progress-${outputId}`));
 
-                        var progress = makeProgressBar(
-                            allocatedLines,
-                            totalLines
-                        );
+                        if (totalLines > 0) {
 
-                        buildProgress.html(progress);
+                            var progress = makeProgressBar(
+                                allocatedLines,
+                                totalLines
+                            );
+
+                            buildProgress.html(progress);
+                        } else {
+                            buildProgress.html('');
+                        }
 
                         // Update the available actions for this build output
 
-                        makeBuildOutputActionButtons(output, buildInfo);
+                        makeBuildOutputActionButtons(output, buildInfo, totalLines);
                     }
                 }
             );
@@ -640,6 +647,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             },
         ]
     });
+
+    // Initialize the action buttons
+    makeBuildOutputActionButtons(output, buildInfo, 0);
 }
 
 
@@ -694,7 +704,7 @@ function loadBuildTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Build" %}',
                 sortable: true,
-                switchable: false,
+                switchable: true,
                 formatter: function(value, row, index, field) {
 
                     var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
@@ -715,6 +725,7 @@ function loadBuildTable(table, options) {
             {
                 field: 'title',
                 title: '{% trans "Description" %}',
+                switchable: true,
             },
             {
                 field: 'part',

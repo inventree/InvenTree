@@ -620,10 +620,12 @@ class BuildAllocate(InvenTreeRoleMixin, DetailView):
 
         build = self.get_object()
         part = build.part
-        bom_items = part.bom_items
+        bom_items = build.bom_items
 
         context['part'] = part
         context['bom_items'] = bom_items
+        context['has_tracked_bom_items'] = build.has_tracked_bom_items()
+        context['has_untracked_bom_items'] = build.has_untracked_bom_items()
         context['BuildStatus'] = BuildStatus
 
         context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)

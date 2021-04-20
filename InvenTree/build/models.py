@@ -315,6 +315,42 @@ class Build(MPTTModel):
         )
 
     @property
+    def tracked_bom_items(self):
+        """
+        Returns the "trackable" BOM items for this BuildOrder
+        """
+
+        items = self.bom_items
+        items = items.filter(sub_part__trackable=True)
+
+        return items
+
+    def has_tracked_bom_items(self):
+        """
+        Returns True if this BuildOrder has trackable BomItems
+        """
+
+        return self.tracked_bom_items.count() > 0
+
+    @property
+    def untracked_bom_items(self):
+        """
+        Returns the "non trackable" BOM items for this BuildOrder
+        """
+
+        items = self.bom_items
+        items = items.filter(sub_part__trackable=False)
+
+        return items
+
+    def has_untracked_bom_items(self):
+        """
+        Returns True if this BuildOrder has non trackable BomItems
+        """
+
+        return self.untracked_bom_items.count() > 0
+
+    @property
     def remaining(self):
         """
         Return the number of outputs remaining to be completed.
