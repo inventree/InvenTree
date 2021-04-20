@@ -31,6 +31,7 @@ jobs:
           sudo apt-get update
           pip3 install invoke
           invoke install
+          invoke static
       - name: Coverage Tests
         run: |
           invoke coverage
