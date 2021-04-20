@@ -485,6 +485,9 @@ class Build(MPTTModel):
         if self.completed < self.quantity:
             return False
 
+        if not self.areUntrackedPartsFullyAllocated():
+            return False
+
         # No issues!
         return True
 
@@ -494,13 +497,16 @@ class Build(MPTTModel):
         Mark this build as complete
         """
 
-        if not self.can_complete:
+        if self.incomplete_count > 0:
             return
 
         self.completion_date = datetime.now().date()
         self.completed_by = user
         self.status = BuildStatus.COMPLETE
         self.save()
+
+        # Remove untracked allocated stock
+        self.subtractUntrackedStock(user)
 
         # Ensure that there are no longer any BuildItem objects
         # which point to thie Build Order
@@ -776,6 +782,24 @@ class Build(MPTTModel):
             build_item.save()
 
     @transaction.atomic
+    def subtractUntrackedStock(self, user):
+        """
+        Called when the Build is marked as "complete",
+        this function removes the allocated untracked items from stock.
+        """
+
+        items = self.allocated_stock.filter(
+            stock_item__part__trackable=False
+        )
+
+        # Remove stock
+        for item in items:
+            item.complete_allocation(user)
+
+        # Delete allocation
+        items.all().delete()
+
+    @transaction.atomic
     def completeBuildOutput(self, output, user, **kwargs):
         """
         Complete a particular build output
@@ -789,9 +813,6 @@ class Build(MPTTModel):
 
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
-
-        # Ensure that only "trackable" parts are installed in the particular build output
-        allocated_items = allocated_items.filter(part__trackable=True)
 
         for build_item in allocated_items:
 
@@ -914,6 +935,13 @@ class Build(MPTTModel):
 
         # All parts must be fully allocated!
         return True
+
+    def areUntrackedPartsFullyAllocated(self):
+        """
+        Returns True if the un-tracked parts are fully allocated for this BuildOrder
+        """
+
+        return self.isFullyAllocated(None)
 
     def allocatedParts(self, output):
         """

@@ -109,8 +109,6 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         build = self.get_object()
 
-        form = self.get_form()
-
         context['allocations'] = build.getAutoAllocations()
 
         context['build'] = build
@@ -398,8 +396,8 @@ class BuildComplete(AjaxUpdateView):
 
     def validate(self, build, form, **kwargs):
 
-        if not build.can_complete:
-            form.add_error(None, _('Build order cannot be completed'))
+        if build.incomplete_count > 0:
+            form.add_error(None, _('Build order cannot be completed - incomplete outputs remain'))
 
     def save(self, build, form, **kwargs):
         """
