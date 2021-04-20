@@ -291,9 +291,9 @@ class StockLocationList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
-        cascade = str2bool(params.get('cascade', False))
-
         loc_id = params.get('parent', None)
+        
+        cascade = str2bool(params.get('cascade', False))
 
         # Look for top-level locations
         if isNull(loc_id):
