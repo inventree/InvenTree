@@ -2,7 +2,6 @@
 Custom management command to prerender files
 """
 
-import django
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -10,7 +9,6 @@ from django.utils.module_loading import import_string
 from django.http.request import HttpRequest
 from django.utils.translation import override as lang_over
 
-import time
 import os
 
 
