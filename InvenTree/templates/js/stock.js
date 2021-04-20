@@ -958,6 +958,12 @@ function loadStockLocationTable(table, options) {
                 sortable: false,
             },
             {
+                field: 'pathstring',
+                title: '{% trans "Path" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
                 field: 'items',
                 title: '{% trans "Stock Items" %}',
                 switchable: true,
