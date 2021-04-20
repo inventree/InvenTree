@@ -785,7 +785,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'completion_date',
-                title: '{% trans "Completed" %}',
+                title: '{% trans "Completion Date" %}',
                 sortable: true,
             },
         ],
