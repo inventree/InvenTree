@@ -24,7 +24,7 @@ class BuildTest(TestCase):
 
         - 5 x sub_part_1
         - 3 x sub_part_2
-        - 2 x sub_part_3 (trackable)        
+        - 2 x sub_part_3 (trackable)
 
         We will build 10x 'assembly' parts, in two build outputs:
 
@@ -128,10 +128,10 @@ class BuildTest(TestCase):
         self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_1, self.output_1))
         self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_2, self.output_2))
 
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_1, self.output_1), 50)
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_1, self.output_2), 50)
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_2, self.output_1), 125)
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_2, self.output_2), 125)
+        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_1, self.output_1), 15)
+        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_1, self.output_2), 35)
+        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_2, self.output_1), 9)
+        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_2, self.output_2), 21)
 
         self.assertFalse(self.build.is_complete)
 
@@ -300,9 +300,33 @@ class BuildTest(TestCase):
         Test completion of a build output
         """
 
-        self.allocate_stock(50, 50, 250, self.output_1)
-        self.allocate_stock(50, 50, 250, self.output_2)
+        # Allocate non-tracked parts
+        self.allocate_stock(
+            None,
+            {
+                self.stock_1_1: self.stock_1_1.quantity,  # Allocate *all* stock from this item
+                self.stock_1_2: 10,
+                self.stock_2_1: 30
+            }
+        )
 
+        # Allocate tracked parts to output_1
+        self.allocate_stock(
+            self.output_1,
+            {
+                self.stock_3_1: 6
+            }
+        )
+
+        # Allocate tracked parts to output_2
+        self.allocate_stock(
+            self.output_2,
+            {
+                self.stock_3_1: 14
+            }
+        )
+
+        self.assertTrue(self.build.isFullyAllocated(None, verbose=True))
         self.assertTrue(self.build.isFullyAllocated(self.output_1))
         self.assertTrue(self.build.isFullyAllocated(self.output_2))
 
@@ -322,19 +346,16 @@ class BuildTest(TestCase):
         self.assertEqual(BuildItem.objects.count(), 0)
 
         # New stock items should have been created!
-        self.assertEqual(StockItem.objects.count(), 4)
-
-        a = StockItem.objects.get(pk=self.stock_1_1.pk)
+        self.assertEqual(StockItem.objects.count(), 7)
 
         # This stock item has been depleted!
         with self.assertRaises(StockItem.DoesNotExist):
-            StockItem.objects.get(pk=self.stock_1_2.pk)
+            StockItem.objects.get(pk=self.stock_1_1.pk)
         
-        c = StockItem.objects.get(pk=self.stock_2_1.pk)
+        # This stock item has *not* been depleted
+        x = StockItem.objects.get(pk=self.stock_2_1.pk)
 
-        # Stock should have been subtracted from the original items
-        self.assertEqual(a.quantity, 900)
-        self.assertEqual(c.quantity, 4500)
+        self.assertEqual(x.quantity, 4970)
         
         # And 10 new stock items created for the build output
         outputs = StockItem.objects.filter(build=self.build)
