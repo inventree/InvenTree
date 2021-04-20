@@ -807,7 +807,13 @@ class Build(MPTTModel):
 
         allocations = self.allocatedItems(part, output)
 
-        allocated = allocations.aggregate(q=Coalesce(Sum('quantity'), 0))
+        allocated = allocations.aggregate(
+            q=Coalesce(
+                Sum('quantity'),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
 
         return allocated['q']
 
