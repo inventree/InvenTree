@@ -74,8 +74,11 @@ class CategoryList(generics.ListCreateAPIView):
 
         cascade = str2bool(params.get('cascade', False))
 
+        # Do not filter by category
+        if cat_id is None:
+            pass
         # Look for top-level categories
-        if isNull(cat_id):
+        elif isNull(cat_id):
             
             if not cascade:
                 queryset = queryset.filter(parent=None)

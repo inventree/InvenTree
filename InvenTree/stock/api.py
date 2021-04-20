@@ -295,8 +295,11 @@ class StockLocationList(generics.ListCreateAPIView):
         
         cascade = str2bool(params.get('cascade', False))
 
+        # Do not filter by location
+        if loc_id is None:
+            pass
         # Look for top-level locations
-        if isNull(loc_id):
+        elif isNull(loc_id):
 
             # If we allow "cascade" at the top-level, this essentially means *all* locations
             if not cascade:
