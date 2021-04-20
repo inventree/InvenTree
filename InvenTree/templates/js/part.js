@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 
 /* Part API functions
  * Requires api.js to be loaded first
@@ -505,6 +506,75 @@ function loadPartTable(table, url, options={}) {
         location.href = '/part/export/?parts=' + parts;
     });
 }
+
+
+function loadPartCategoryTable(table, options) {
+    /* Display a table of part categories */
+
+    var params = options.params || {};
+
+    var filterListElement = options.filterList || '#filter-list-category';
+
+    var filters = {};
+
+    var filterKey = options.filterKey || options.name || 'category';
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters(filterKey);
+    }
+
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+        filters[key] = params[key];
+    }
+
+    setupFilterList(filterKey, table, filterListElement);
+
+    table.inventreeTable({
+        method: 'get',
+        url: options.url || '{% url "api-part-category-list" %}',
+        queryParams: filters,
+        sidePagination: 'server',
+        name: 'category',
+        original: original,
+        showColumns: true,
+        columns: [
+            {
+                checkbox: true,
+                title: '{% trans "Select" %}',
+                searchable: false,
+                switchable: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return renderLink(
+                        value,
+                        `/part/category/${row.pk}/`
+                    );
+                }
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
+                field: 'parts',
+                title: '{% trans "Parts" %}',
+                switchable: true,
+                sortable: false,
+            }
+        ]
+    });
+}
+
 
 function yesNoLabel(value) {
     if (value) {

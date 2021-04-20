@@ -1,0 +1,42 @@
+{% extends "part/category.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+{% load static %}
+
+{% block menubar %}
+{% include 'part/category_navbar.html' with tab='subcategories' %}
+{% endblock %}
+
+{% block category_content %}
+
+<div class='panel panel-default panel-inventree'>
+    
+    <div class='panel-heading'>
+        <h4>{% trans "Subcategories" %}</h4>
+    </div>
+
+    <table class='table table-striped table-condensed' id='subcategory-table'></table>
+
+</div>
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    enableNavbar({
+        label: 'category',
+        toggleId: '#category-menu-toggle',
+    });
+
+    loadPartCategoryTable($('#subcategory-table'), {
+        params: {
+            {% if category %}
+            parent: {{ category.pk }}
+            {% else %}
+            parent: 'null'
+            {% endif %}
+        }
+    });
+
+{% endblock %}
