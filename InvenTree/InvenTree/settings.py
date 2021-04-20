@@ -193,6 +193,17 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
 ]
 
+# Translated Template settings
+STATICFILES_I18_PREFIX = 'i18n'
+STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js')
+STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_DIRS.append(STATICFILES_I18_TRG)
+STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
+
+STATFILES_I18_PROCESSORS = [
+    'InvenTree.context.status_codes',
+]
+
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 
