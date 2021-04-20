@@ -1163,7 +1163,16 @@ class Part(MPTTModel):
         Return the total amount of this part allocated to build orders
         """
 
-        query = self.build_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
+        query = self.build_order_allocations().aggregate(
+            total=Coalesce(
+                Sum(
+                    'quantity',
+                    output_field=models.DecimalField()
+                ),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
 
         return query['total']
 
@@ -1179,7 +1188,16 @@ class Part(MPTTModel):
         Return the tutal quantity of this part allocated to sales orders
         """
 
-        query = self.sales_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
+        query = self.sales_order_allocations().aggregate(
+            total=Coalesce(
+                Sum(
+                    'quantity',
+                    output_field=models.DecimalField(),
+                ),
+                0,
+                output_field=models.DecimalField(),
+            )
+        )
 
         return query['total']
 
@@ -1194,7 +1212,6 @@ class Part(MPTTModel):
                 self.build_order_allocation_count(),
                 self.sales_order_allocation_count(),
             ],
-            output_field=models.DecimalField()
         )
 
     def stock_entries(self, include_variants=True, in_stock=None):
