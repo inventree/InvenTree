@@ -916,7 +916,7 @@ class Build(MPTTModel):
 
         return self.unallocatedQuantity(part, output) == 0
 
-    def isFullyAllocated(self, output):
+    def isFullyAllocated(self, output, verbose=False):
         """
         Returns True if the particular build output is fully allocated.
         """
@@ -927,14 +927,21 @@ class Build(MPTTModel):
         else:
             bom_items = self.tracked_bom_items
 
+        fully_allocated = True
+
         for bom_item in bom_items:
             part = bom_item.sub_part
 
             if not self.isPartFullyAllocated(part, output):
-                return False
+                fully_allocated = False
+
+                if verbose:
+                    print(f"Part {part} is not fully allocated for output {output}")
+                else:
+                    break
 
         # All parts must be fully allocated!
-        return True
+        return fully_allocated
 
     def areUntrackedPartsFullyAllocated(self):
         """
