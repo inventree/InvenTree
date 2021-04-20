@@ -212,7 +212,7 @@ class BuildOutputCreate(AjaxUpdateView):
 
         # Calculate the required quantity
         quantity = max(0, build.remaining - build.incomplete_count)
-        initials['quantity'] = quantity
+        initials['output_quantity'] = quantity
 
         return initials
 
