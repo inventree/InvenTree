@@ -244,6 +244,7 @@ class CompleteBuildOutputForm(HelperForm):
 
         super().__init__(*args, **kwargs)
 
+
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 
