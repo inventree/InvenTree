@@ -32,12 +32,17 @@ function newBuildOrder(options={}) {
 }
 
 
-function makeBuildOutputActionButtons(output, buildInfo) {
+function makeBuildOutputActionButtons(output, buildInfo, lines) {
     /* Generate action buttons for a build output.
      */
 
     var buildId = buildInfo.pk;
-    var outputId = output.pk;
+
+    if (output) {
+        outputId = output.pk;
+    } else {
+        outputId = 'untracked';
+    }
 
     var panel = `#allocation-panel-${outputId}`;
 
@@ -50,35 +55,42 @@ function makeBuildOutputActionButtons(output, buildInfo) {
 
     var html = `<div class='btn-group float-right' role='group'>`;
 
-    // Add a button to "auto allocate" against the build
-    html += makeIconButton(
-        'fa-magic icon-blue', 'button-output-auto', outputId,
-        '{% trans "Auto-allocate stock items to this output" %}',
-    );
+    // "Auto" allocation only works for untracked stock items
+    if (!output && lines > 0) {
+        html += makeIconButton(
+            'fa-magic icon-blue', 'button-output-auto', outputId,
+            '{% trans "Auto-allocate stock items to this output" %}',
+            );
+    }
 
-    // Add a button to "complete" the particular build output
-    html += makeIconButton(
-        'fa-check icon-green', 'button-output-complete', outputId,
-        '{% trans "Complete build output" %}',
-        {
-            //disabled: true
-        }
-    );
+    if (lines > 0) {
+        // Add a button to "cancel" the particular build output (unallocate)
+        html += makeIconButton(
+            'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
+            '{% trans "Unallocate stock from build output" %}',
+            );
+    }
 
-    // Add a button to "cancel" the particular build output (unallocate)
-    html += makeIconButton(
-        'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
-        '{% trans "Unallocate stock from build output" %}',
-    );
 
-    // Add a button to "delete" the particular build output
-    html += makeIconButton(
-        'fa-trash-alt icon-red', 'button-output-delete', outputId,
-        '{% trans "Delete build output" %}',
-    );
+    if (output) {
 
-    // Add a button to "destroy" the particular build output (mark as damaged, scrap)
-    // TODO
+        // Add a button to "complete" the particular build output
+        html += makeIconButton(
+            'fa-check icon-green', 'button-output-complete', outputId,
+            '{% trans "Complete build output" %}',
+            {
+                //disabled: true
+            }
+        );
+                    
+        // Add a button to "delete" the particular build output
+        html += makeIconButton(
+            'fa-trash-alt icon-red', 'button-output-delete', outputId,
+            '{% trans "Delete build output" %}',
+            );
+
+        // TODO - Add a button to "destroy" the particular build output (mark as damaged, scrap)
+    }
 
     html += '</div>';
 
@@ -90,7 +102,6 @@ function makeBuildOutputActionButtons(output, buildInfo) {
         launchModalForm(`/build/${buildId}/auto-allocate/`,
             {
                 data: {
-                    output: outputId,
                 },
                 success: reloadTable,
             }
@@ -98,11 +109,14 @@ function makeBuildOutputActionButtons(output, buildInfo) {
     });
 
     $(panel).find(`#button-output-complete-${outputId}`).click(function() {
+
+        var pk = $(this).attr('pk');
+
         launchModalForm(
             `/build/${buildId}/complete-output/`,
             {
                 data: {
-                    output: outputId,
+                    output: pk,
                 },
                 reload: true,
             }
@@ -110,24 +124,30 @@ function makeBuildOutputActionButtons(output, buildInfo) {
     });
 
     $(panel).find(`#button-output-unallocate-${outputId}`).click(function() {
+
+        var pk = $(this).attr('pk');
+
         launchModalForm(
             `/build/${buildId}/unallocate/`,
             {
                 success: reloadTable,
                 data: {
-                    output: outputId,
+                    output: pk,
                 }
             }
         );
     });
 
     $(panel).find(`#button-output-delete-${outputId}`).click(function() {
+
+        var pk = $(this).attr('pk');
+
         launchModalForm(
             `/build/${buildId}/delete-output/`,
             {
                 reload: true,
                 data: {
-                    output: outputId
+                    output: pk
                 }
             }
         );
@@ -152,13 +172,21 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var outputId = null;
     
-    outputId = output.pk;
+    if (output) {
+        outputId = output.pk;
+    } else {
+        outputId = 'untracked';
+    }
 
     var table = options.table;
     
     if (options.table == null) {
         table = `#allocation-table-${outputId}`;
     }
+
+    // If an "output" is specified, then only "trackable" parts are allocated
+    // Otherwise, only "untrackable" parts are allowed
+    var trackable = ! !output;
     
     function reloadTable() {
         // Reload the entire build allocation table
@@ -168,7 +196,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function requiredQuantity(row) {
         // Return the requied quantity for a given row
 
-        return row.quantity * output.quantity;
+        if (output) {
+            // "Tracked" parts are calculated against individual build outputs
+            return row.quantity * output.quantity;
+        } else {
+            // "Untracked" parts are specified against the build itself
+            return row.quantity * buildInfo.quantity;
+        }
     }
 
     function sumAllocations(row) {
@@ -300,6 +334,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         queryParams: {
             part: partId,
             sub_part_detail: true,
+            sub_part_trackable: trackable,
         },
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
@@ -310,11 +345,19 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for this build output
 
+            var params = {
+                build: buildId,
+            }
+
+            if (output) {
+                params.sub_part_trackable = true;
+                params.output = outputId;
+            } else {
+                params.sub_part_trackable = false;
+            }
+
             inventreeGet('/api/build/item/',
-                {
-                    build: buildId,
-                    output: outputId,
-                },
+                params,
                 {
                     success: function(data) {
                         // Iterate through the returned data, and group by the part they point to
@@ -355,8 +398,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             // Calculate the total allocated quantity
                             var allocatedQuantity = sumAllocations(tableRow);
 
+                            var requiredQuantity = 0;
+
+                            if (output) {
+                                requiredQuantity = tableRow.quantity * output.quantity;
+                            } else {
+                                requiredQuantity = tableRow.quantity * buildInfo.quantity;
+                            }
+
                             // Is this line item fully allocated?
-                            if (allocatedQuantity >= (tableRow.quantity * output.quantity)) {
+                            if (allocatedQuantity >= requiredQuantity) {
                                 allocatedLines += 1;
                             }
 
@@ -367,16 +418,21 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         // Update the total progress for this build output
                         var buildProgress = $(`#allocation-panel-${outputId}`).find($(`#output-progress-${outputId}`));
 
-                        var progress = makeProgressBar(
-                            allocatedLines,
-                            totalLines
-                        );
+                        if (totalLines > 0) {
 
-                        buildProgress.html(progress);
+                            var progress = makeProgressBar(
+                                allocatedLines,
+                                totalLines
+                            );
+
+                            buildProgress.html(progress);
+                        } else {
+                            buildProgress.html('');
+                        }
 
                         // Update the available actions for this build output
 
-                        makeBuildOutputActionButtons(output, buildInfo);
+                        makeBuildOutputActionButtons(output, buildInfo, totalLines);
                     }
                 }
             );
@@ -600,6 +656,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             },
         ]
     });
+
+    // Initialize the action buttons
+    makeBuildOutputActionButtons(output, buildInfo, 0);
 }
 
 
@@ -654,7 +713,7 @@ function loadBuildTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Build" %}',
                 sortable: true,
-                switchable: false,
+                switchable: true,
                 formatter: function(value, row, index, field) {
 
                     var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
@@ -675,6 +734,7 @@ function loadBuildTable(table, options) {
             {
                 field: 'title',
                 title: '{% trans "Description" %}',
+                switchable: true,
             },
             {
                 field: 'part',
@@ -725,7 +785,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'completion_date',
-                title: '{% trans "Completed" %}',
+                title: '{% trans "Completion Date" %}',
                 sortable: true,
             },
         ],

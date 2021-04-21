@@ -63,6 +63,14 @@ class StatusCode:
         return cls.options.items()
 
     @classmethod
+    def keys(cls):
+        return cls.options.keys()
+
+    @classmethod
+    def labels(cls):
+        return cls.options.values()
+
+    @classmethod
     def label(cls, value):
         """ Return the status code label associated with the provided value """
         return cls.options.get(value, value)
