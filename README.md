@@ -43,7 +43,7 @@ InvenTree is supported by a [companion mobile app](https://inventree.readthedocs
 
 Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
 
-To contribute to the translation effort, navigate to the [InvenTree crowdin project]([https://crowdin.com/project/inventree), create a free account, and start making translations suggestions for your language of choice!
+To contribute to the translation effort, navigate to the [InvenTree crowdin project](https://crowdin.com/project/inventree), create a free account, and start making translations suggestions for your language of choice!
 
 # Documentation
 
