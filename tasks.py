@@ -174,7 +174,7 @@ def update(c):
     """
     pass
 
-@task
+@task(post=[static])
 def translate(c):
     """
     Regenerate translation files.
@@ -184,7 +184,7 @@ def translate(c):
     """
 
     # Translate applicable .py / .html / .js files
-    manage(c, "makemessages -e py -e html -e js")
+    manage(c, "makemessages --all -e py,html,js")
     manage(c, "compilemessages")
 
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')
