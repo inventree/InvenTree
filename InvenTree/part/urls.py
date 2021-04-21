@@ -88,14 +88,26 @@ category_parameter_urls = [
     url(r'^(?P<pid>\d+)/delete/', views.CategoryParameterTemplateDelete.as_view(), name='category-param-template-delete'),
 ]
 
-part_category_urls = [
-    url(r'^edit/?', views.CategoryEdit.as_view(), name='category-edit'),
-    url(r'^delete/?', views.CategoryDelete.as_view(), name='category-delete'),
+category_urls = [
 
-    url(r'^parameters/', include(category_parameter_urls)),
+    # Create a new category
+    url(r'^new/', views.CategoryCreate.as_view(), name='category-create'),
 
-    url(r'^parametric/?', views.CategoryParametric.as_view(), name='category-parametric'),
-    url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
+    # Top level subcategory display
+    url(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
+
+    # Category detail views
+    url(r'(?P<pk>\d+)/', include([
+        url(r'^edit/', views.CategoryEdit.as_view(), name='category-edit'),
+        url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
+        url(r'^parameters/', include(category_parameter_urls)),
+
+        url(r'^subcategory/', views.CategoryDetail.as_view(template_name='part/subcategory.html'), name='category-subcategory'),
+        url(r'^parametric/', views.CategoryParametric.as_view(), name='category-parametric'),
+    
+        # Anything else
+        url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
+    ]))
 ]
 
 part_bom_urls = [
@@ -105,9 +117,6 @@ part_bom_urls = [
 
 # URL list for part web interface
 part_urls = [
-
-    # Create a new category
-    url(r'^category/new/?', views.CategoryCreate.as_view(), name='category-create'),
 
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
@@ -125,7 +134,7 @@ part_urls = [
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 
     # Part category
-    url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
+    url(r'^category/', include(category_urls)),
 
     # Part related
     url(r'^related-parts/', include(part_related_urls)),

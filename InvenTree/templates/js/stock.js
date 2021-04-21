@@ -897,6 +897,83 @@ function loadStockTable(table, options) {
     });
 }
 
+function loadStockLocationTable(table, options) {
+    /* Display a table of stock locations */
+
+    var params = options.params || {};
+
+    var filterListElement = options.filterList || '#filter-list-location';
+
+    var filters = {};
+
+    var filterKey = options.filterKey || options.name || 'location';
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters(filterKey);
+    }
+
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+    }
+
+    setupFilterList(filterKey, table, filterListElement);
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    table.inventreeTable({
+        method: 'get',
+        url: options.url || '{% url "api-location-list" %}',
+        queryParams: filters,
+        sidePagination: 'server',
+        name: 'location',
+        original: original,
+        showColumns: true,
+        columns: [
+            {
+                checkbox: true,
+                title: '{% trans "Select" %}',
+                searchable: false,
+                switchable: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return renderLink(
+                        value,
+                        `/stock/location/${row.pk}/`
+                    );
+                },
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
+                field: 'pathstring',
+                title: '{% trans "Path" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
+                field: 'items',
+                title: '{% trans "Stock Items" %}',
+                switchable: true,
+                sortable: false,
+                sortName: 'item_count',
+            }
+        ]
+    });
+}
+
 function loadStockTrackingTable(table, options) {
 
     var cols = [
