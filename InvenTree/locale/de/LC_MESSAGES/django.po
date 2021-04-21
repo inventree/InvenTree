@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-21 09:17+0000\n"
-"PO-Revision-Date: 2021-04-21 09:33\n"
+"PO-Revision-Date: 2021-04-21 10:02\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -474,7 +474,7 @@ msgstr "Status"
 
 #: build/forms.py:216
 msgid "Build output stock status"
-msgstr ""
+msgstr "Bestands-Status der Endprodukte"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
@@ -788,19 +788,19 @@ msgstr "Ziel-BestandsObjekt"
 
 #: build/templates/build/allocate.html:7
 msgid "Allocate Parts"
-msgstr ""
+msgstr "Teile zuweisen"
 
 #: build/templates/build/allocate.html:15
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "Lagerbestand Bauauftrag zuweisen"
 
 #: build/templates/build/allocate.html:22
 msgid "Allocate stock to build"
-msgstr ""
+msgstr "Lagerbestand Bauauftrag zuweisen"
 
 #: build/templates/build/allocate.html:23
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Automatisch zuweisen"
 
 #: build/templates/build/allocate.html:25 templates/js/build.js:646
 msgid "Unallocate stock"
@@ -880,19 +880,19 @@ msgstr "Dieser Bauauftrag ist dem Bauauftrag %(link)s untergeordnet"
 
 #: build/templates/build/build_base.html:31
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "Bauauftrag ist bereit abgeschlossen zu werden"
 
 #: build/templates/build/build_base.html:36
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "Bauauftrag kann nicht abgeschlossen werden, da es noch ausstehende Endprodukte gibt"
 
 #: build/templates/build/build_base.html:41
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
 
 #: build/templates/build/build_base.html:46
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "Lagerbestand wurde Bauauftrag noch nicht vollständig zugewiesen"
 
 #: build/templates/build/build_base.html:65
 #: company/templates/company/company_base.html:40
@@ -978,11 +978,11 @@ msgstr "Aufgegeben von"
 
 #: build/templates/build/build_base.html:207
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Unvollständige Endprodukte"
 
 #: build/templates/build/build_base.html:208
 msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
+msgstr "Bauauftrag kann nicht abgeschlossen werden, da es noch unvollständige Endprodukte gibt"
 
 #: build/templates/build/build_children.html:10
 #: build/templates/build/navbar.html:36
@@ -991,7 +991,7 @@ msgstr "Unter-Bauaufträge"
 
 #: build/templates/build/build_output.html:15
 msgid "Incomplete Build Outputs"
-msgstr ""
+msgstr "Unfertige Endprodukte"
 
 #: build/templates/build/build_output.html:22
 msgid "Create new build output"
@@ -1015,7 +1015,7 @@ msgstr "Neues Endprodukt mit der Schaltfläche oberhalb anlegen"
 
 #: build/templates/build/build_output.html:49
 msgid "Completed Build Outputs"
-msgstr ""
+msgstr "Fertiggestellte Endprodukte"
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
@@ -1043,11 +1043,11 @@ msgstr "Sind Sie sicher, dass sie diesen Bauauftrag abbrechen möchten?"
 
 #: build/templates/build/complete.html:8
 msgid "Build Order is complete"
-msgstr ""
+msgstr "Bauauftrag ist vollständig"
 
 #: build/templates/build/complete.html:12
 msgid "Build Order is incomplete"
-msgstr ""
+msgstr "Bauauftrag ist unvollständig"
 
 #: build/templates/build/complete.html:15
 msgid "Incompleted build outputs remain"
@@ -1059,11 +1059,11 @@ msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
 
 #: build/templates/build/complete.html:21
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Benötigter Bestand wurde nicht vollständig zugewiesen"
 
 #: build/templates/build/complete_output.html:10
 msgid "Stock allocation is complete for this output"
-msgstr ""
+msgstr "Lagerzuordnung für dieses Endprodukt ist vollständig"
 
 #: build/templates/build/complete_output.html:14
 msgid "Stock allocation is incomplete"
@@ -1071,7 +1071,7 @@ msgstr "Bestandszuordnung ist nicht vollständig"
 
 #: build/templates/build/complete_output.html:20
 msgid "tracked parts have not been fully allocated"
-msgstr ""
+msgstr "verfolgte Teile wurden nicht vollständig zugewiesen"
 
 #: build/templates/build/complete_output.html:41
 msgid "The following items will be created"
@@ -1269,7 +1269,7 @@ msgstr "Bauauftrag fertigstellen"
 
 #: build/views.py:400
 msgid "Build order cannot be completed - incomplete outputs remain"
-msgstr ""
+msgstr "Bauauftrag kann nicht abgeschlossen werden, es gibt noch unvollständige Endprodukte"
 
 #: build/views.py:411
 msgid "Completed build order"
@@ -1281,7 +1281,7 @@ msgstr "Endprodukt fertigstellen"
 
 #: build/views.py:469
 msgid "Invalid stock status value selected"
-msgstr ""
+msgstr "Ungültiger Lagerbestands-Status ausgewählt"
 
 #: build/views.py:476
 msgid "Quantity to complete cannot exceed build output quantity"
@@ -1379,11 +1379,11 @@ msgstr "Kurze Beschreibung der Instanz"
 
 #: common/models.py:62
 msgid "Use instance name"
-msgstr ""
+msgstr "Name der Instanz verwenden"
 
 #: common/models.py:63
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Den Namen der Instanz in der Titelleiste verwenden"
 
 #: common/models.py:69 company/models.py:97 company/models.py:98
 msgid "Company name"
@@ -6524,7 +6524,7 @@ msgstr "Bestand niedrig"
 
 #: templates/js/part.js:571 templates/js/stock.js:962
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 #: templates/js/part.js:588
 msgid "YES"
@@ -6778,7 +6778,7 @@ msgstr "überprüft"
 
 #: templates/js/table_filters.js:71
 msgid "Include locations"
-msgstr ""
+msgstr "Lagerorte einschließen"
 
 #: templates/js/table_filters.js:81 templates/js/table_filters.js:82
 #: templates/js/table_filters.js:295
