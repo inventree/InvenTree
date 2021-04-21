@@ -39,8 +39,7 @@ jobs:
           invoke install
     - name: Make Translations
       run: |
-        cd InvenTree
-        python manage.py makemessages -e py -e html -e js
+        invoke translate
     - name: stash changes
       run: |
         git stash
