@@ -19,7 +19,7 @@ from stock.models import StockLocation, StockItem
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.helpers import str2bool, extract_serial_numbers, normalize, isNull
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, StockStatus
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
@@ -454,6 +454,11 @@ class BuildOutputComplete(AjaxUpdateView):
 
         output = data.get('output', None)
 
+        stock_status = data.get('stock_status', StockStatus.OK)
+
+        if int(stock_status) not in StockStatus.keys():
+            form.add_error('status', _('Invalid stock status value selected'))
+
         if output:
 
             quantity = data.get('quantity', None)
@@ -545,12 +550,14 @@ class BuildOutputComplete(AjaxUpdateView):
 
         location = data.get('location', None)
         output = data.get('output', None)
+        stock_status = data.get('stock_status', StockStatus.OK)
 
         # Complete the build output
         build.completeBuildOutput(
             output,
             self.request.user,
             location=location,
+            status=stock_status,
         )
     
     def get_data(self):

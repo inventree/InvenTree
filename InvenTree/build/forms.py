@@ -12,6 +12,8 @@ from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
 
+from InvenTree.status_codes import StockStatus
+
 from .models import Build, BuildItem, BuildOrderAttachment
 
 from stock.models import StockLocation, StockItem
@@ -208,6 +210,13 @@ class CompleteBuildOutputForm(HelperForm):
         help_text=_('Location of completed parts'),
     )
 
+    stock_status = forms.ChoiceField(
+        label=_('Status'),
+        help_text=_('Build output stock status'),
+        initial=StockStatus.OK,
+        choices=StockStatus.items(),
+    )
+
     confirm_incomplete = forms.BooleanField(
         required=False,
         label=_('Confirm incomplete'),
@@ -226,10 +235,14 @@ class CompleteBuildOutputForm(HelperForm):
         fields = [
             'location',
             'output',
+            'stock_status',
             'confirm',
             'confirm_incomplete',
         ]
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
 
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """

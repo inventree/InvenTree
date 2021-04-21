@@ -22,7 +22,7 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, StockStatus
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
@@ -810,6 +810,7 @@ class Build(MPTTModel):
 
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
+        status = kwargs.get('status', StockStatus.OK)
 
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
@@ -829,6 +830,7 @@ class Build(MPTTModel):
         output.build = self
         output.is_building = False
         output.location = location
+        output.status = status
 
         output.save()
 
