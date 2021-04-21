@@ -32,6 +32,7 @@ jobs:
           sudo apt-get install gettext
           pip3 install invoke
           invoke install
+          invoke static
       - name: Coverage Tests
         run: |
           invoke coverage

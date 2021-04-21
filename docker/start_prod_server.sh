@@ -39,6 +39,7 @@ echo "Running InvenTree database migrations and collecting static files..."
 python manage.py check || exit 1
 python manage.py migrate --noinput || exit 1
 python manage.py migrate --run-syncdb || exit 1
+python manage.py prerender || exit 1
 python manage.py collectstatic --noinput || exit 1
 python manage.py clearsessions || exit 1
 
