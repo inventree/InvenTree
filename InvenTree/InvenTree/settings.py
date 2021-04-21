@@ -192,7 +192,6 @@ STATIC_ROOT = os.path.abspath(
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
 ]
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
