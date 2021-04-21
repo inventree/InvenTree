@@ -449,6 +449,9 @@ class BuildOutputComplete(AjaxUpdateView):
         return form
 
     def validate(self, build, form, **kwargs):
+        """
+        Custom validation steps for the BuildOutputComplete" form
+        """
 
         data = form.cleaned_data
 
@@ -456,8 +459,14 @@ class BuildOutputComplete(AjaxUpdateView):
 
         stock_status = data.get('stock_status', StockStatus.OK)
 
+        # Any "invalid" stock status defaults to OK
+        try:
+            stock_status = int(stock_status)
+        except (ValueError):
+            stock_status = StockStatus.OK
+
         if int(stock_status) not in StockStatus.keys():
-            form.add_error('status', _('Invalid stock status value selected'))
+            form.add_error('stock_status', _('Invalid stock status value selected'))
 
         if output:
 
@@ -551,6 +560,12 @@ class BuildOutputComplete(AjaxUpdateView):
         location = data.get('location', None)
         output = data.get('output', None)
         stock_status = data.get('stock_status', StockStatus.OK)
+
+        # Any "invalid" stock status defaults to OK
+        try:
+            stock_status = int(stock_status)
+        except (ValueError):
+            stock_status = StockStatus.OK
 
         # Complete the build output
         build.completeBuildOutput(

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 12:28+1000\n"
+"POT-Creation-Date: 2021-04-21 17:15+1000\n"
 "PO-Revision-Date: 2021-03-28 17:47+0200\n"
 "Last-Translator: Andreas Kaiser <kaiser.vocote@gmail.com>, Matthias "
 "MAIR<matmair@live.de>\n"
@@ -34,8 +34,8 @@ msgstr "Keine passende Aktion gefunden"
 msgid "Enter date"
 msgstr "Datum eingeben"
 
-#: InvenTree/forms.py:110 build/forms.py:99 build/forms.py:120
-#: build/forms.py:142 build/forms.py:166 build/forms.py:188 build/forms.py:223
+#: InvenTree/forms.py:110 build/forms.py:101 build/forms.py:122
+#: build/forms.py:144 build/forms.py:168 build/forms.py:184 build/forms.py:226
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
@@ -156,7 +156,7 @@ msgstr "Name"
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
 #: templates/InvenTree/settings/header.html:9 templates/js/bom.js:190
-#: templates/js/build.js:677 templates/js/build.js:944
+#: templates/js/build.js:736 templates/js/build.js:1004
 #: templates/js/company.js:56 templates/js/order.js:183
 #: templates/js/order.js:280 templates/js/part.js:169 templates/js/part.js:252
 #: templates/js/part.js:371 templates/js/part.js:565 templates/js/part.js:643
@@ -205,60 +205,60 @@ msgstr ""
 msgid "InvenTree system health checks failed"
 msgstr "InvenTree Status-Überprüfung fehlgeschlagen"
 
-#: InvenTree/status_codes.py:94 InvenTree/status_codes.py:135
-#: InvenTree/status_codes.py:228
+#: InvenTree/status_codes.py:102 InvenTree/status_codes.py:143
+#: InvenTree/status_codes.py:236
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: InvenTree/status_codes.py:95
+#: InvenTree/status_codes.py:103
 msgid "Placed"
 msgstr "Platziert"
 
-#: InvenTree/status_codes.py:96 InvenTree/status_codes.py:231
+#: InvenTree/status_codes.py:104 InvenTree/status_codes.py:239
 msgid "Complete"
 msgstr "Fertig"
 
-#: InvenTree/status_codes.py:97 InvenTree/status_codes.py:137
-#: InvenTree/status_codes.py:230
+#: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
+#: InvenTree/status_codes.py:238
 msgid "Cancelled"
 msgstr "Storniert"
 
-#: InvenTree/status_codes.py:98 InvenTree/status_codes.py:138
-#: InvenTree/status_codes.py:180
+#: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
+#: InvenTree/status_codes.py:188
 msgid "Lost"
 msgstr "Verloren"
 
-#: InvenTree/status_codes.py:99 InvenTree/status_codes.py:139
-#: InvenTree/status_codes.py:182
+#: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
+#: InvenTree/status_codes.py:190
 msgid "Returned"
 msgstr "Zurückgegeben"
 
-#: InvenTree/status_codes.py:136
+#: InvenTree/status_codes.py:144
 #: order/templates/order/sales_order_base.html:124
 msgid "Shipped"
 msgstr "Versendet"
 
-#: InvenTree/status_codes.py:176
+#: InvenTree/status_codes.py:184
 msgid "OK"
 msgstr "OK"
 
-#: InvenTree/status_codes.py:177
+#: InvenTree/status_codes.py:185
 msgid "Attention needed"
 msgstr "erfordert Eingriff"
 
-#: InvenTree/status_codes.py:178
+#: InvenTree/status_codes.py:186
 msgid "Damaged"
 msgstr "Beschädigt"
 
-#: InvenTree/status_codes.py:179
+#: InvenTree/status_codes.py:187
 msgid "Destroyed"
 msgstr "Zerstört"
 
-#: InvenTree/status_codes.py:181
+#: InvenTree/status_codes.py:189
 msgid "Rejected"
 msgstr "Zurückgewiesen"
 
-#: InvenTree/status_codes.py:229
+#: InvenTree/status_codes.py:237
 msgid "Production"
 msgstr "in Arbeit"
 
@@ -361,32 +361,33 @@ msgstr "Barcode ist bereits BestandsObjekt zugeordnet"
 msgid "Barcode associated with StockItem"
 msgstr "Barcode zugeordnet zu BestandsObjekt"
 
-#: build/forms.py:34
+#: build/forms.py:36
 msgid "Build Order reference"
 msgstr "Bauauftrags-Referenz"
 
-#: build/forms.py:35
+#: build/forms.py:37
 msgid "Order target date"
 msgstr "geplantes Bestelldatum"
 
-#: build/forms.py:39 build/templates/build/build_base.html:107
+#: build/forms.py:41 build/templates/build/build_base.html:136
 #: build/templates/build/detail.html:121 order/forms.py:109 order/forms.py:144
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:117
 #: report/templates/report/inventree_build_order_base.html:126
-#: templates/js/build.js:723 templates/js/order.js:200
+#: templates/js/build.js:783 templates/js/order.js:200
 #: templates/js/order.js:298
 msgid "Target Date"
 msgstr "Zieldatum"
 
-#: build/forms.py:40 build/models.py:224
+#: build/forms.py:42 build/models.py:224
 msgid ""
 "Target date for build completion. Build will be overdue after this date."
 msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 
-#: build/forms.py:45 build/forms.py:87 build/forms.py:257 build/models.py:1109
+#: build/forms.py:47 build/forms.py:89 build/forms.py:265 build/models.py:1227
+#: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
-#: build/templates/build/build_base.html:94
+#: build/templates/build/build_base.html:123
 #: build/templates/build/detail.html:31 common/models.py:703
 #: company/forms.py:176 company/templates/company/supplier_part_pricing.html:77
 #: order/forms.py:188 order/forms.py:205 order/forms.py:239 order/forms.py:261
@@ -410,87 +411,103 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: stock/forms.py:175 stock/forms.py:308 stock/models.py:1566
 #: stock/templates/stock/item_base.html:244
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
-#: templates/js/bom.js:205 templates/js/build.js:420 templates/js/build.js:954
+#: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
 #: templates/js/stock.js:1033 templates/js/stock.js:1271
 msgid "Quantity"
 msgstr "Anzahl"
 
-#: build/forms.py:46
+#: build/forms.py:48
 msgid "Number of items to build"
 msgstr "Anzahl der zu bauenden Teile"
 
-#: build/forms.py:88
+#: build/forms.py:90
 msgid "Enter quantity for build output"
 msgstr "Menge der Endprodukte angeben"
 
-#: build/forms.py:92 order/forms.py:233 stock/forms.py:118
+#: build/forms.py:94 order/forms.py:233 stock/forms.py:118
 msgid "Serial Numbers"
 msgstr "Seriennummer"
 
-#: build/forms.py:94
+#: build/forms.py:96
 msgid "Enter serial numbers for build outputs"
 msgstr "Seriennummer für dieses Endprodukt eingeben"
 
-#: build/forms.py:100
+#: build/forms.py:102
 msgid "Confirm creation of build output"
 msgstr "Anlage von Endprodukt(en) bestätigen"
 
-#: build/forms.py:121
+#: build/forms.py:123
 msgid "Confirm deletion of build output"
 msgstr "Löschen des Endprodukt bestätigen"
 
-#: build/forms.py:142
+#: build/forms.py:144
 msgid "Confirm unallocation of stock"
 msgstr "Aufhebung der BestandsZuordnung bestätigen"
 
-#: build/forms.py:166
+#: build/forms.py:168
 msgid "Confirm stock allocation"
 msgstr "Bestandszuordnung bestätigen"
 
-#: build/forms.py:189
+#: build/forms.py:185
 msgid "Mark build as complete"
 msgstr "Bauauftrag als vollständig markieren"
 
-#: build/forms.py:213 build/templates/build/auto_allocate.html:18
+#: build/forms.py:209 build/templates/build/auto_allocate.html:18
 #: order/forms.py:82 stock/forms.py:347
 #: stock/templates/stock/item_base.html:274
 #: stock/templates/stock/stock_adjust.html:17
 #: templates/InvenTree/search.html:260 templates/js/barcode.js:363
-#: templates/js/barcode.js:531 templates/js/build.js:434
+#: templates/js/barcode.js:531 templates/js/build.js:490
 #: templates/js/stock.js:641
 msgid "Location"
 msgstr "Lagerort"
 
-#: build/forms.py:214
+#: build/forms.py:210
 msgid "Location of completed parts"
 msgstr "Lagerort der Endprodukte"
 
-#: build/forms.py:219
+#: build/forms.py:214 build/templates/build/build_base.html:128
+#: build/templates/build/detail.html:59 order/models.py:445
+#: order/templates/order/receive_parts.html:24
+#: stock/templates/stock/item_base.html:392 templates/InvenTree/search.html:252
+#: templates/js/barcode.js:119 templates/js/build.js:770
+#: templates/js/order.js:187 templates/js/order.js:285
+#: templates/js/stock.js:628 templates/js/stock.js:1279
+msgid "Status"
+msgstr "Status"
+
+#: build/forms.py:215
+#, fuzzy
+#| msgid "Build output does not match build"
+msgid "Build output stock status"
+msgstr "Endprodukt stimmt nicht mit Bauauftrag überein"
+
+#: build/forms.py:222
 msgid "Confirm incomplete"
 msgstr "Bauauftrag nicht fertiggestellt"
 
-#: build/forms.py:220
+#: build/forms.py:223
 msgid "Confirm completion with incomplete stock allocation"
 msgstr "Fertigstellung mit nicht kompletter Bestandszuordnung bestätigen"
 
-#: build/forms.py:223
+#: build/forms.py:226
 msgid "Confirm build completion"
 msgstr "Bauauftrag-Fertigstellung bestätigen"
 
-#: build/forms.py:243
+#: build/forms.py:251
 msgid "Confirm cancel"
 msgstr "Abbruch bestätigen"
 
-#: build/forms.py:243 build/views.py:66
+#: build/forms.py:251 build/views.py:66
 msgid "Confirm build cancellation"
 msgstr "Bauabbruch bestätigen"
 
-#: build/forms.py:257
+#: build/forms.py:265
 msgid "Select quantity of stock to allocate"
 msgstr "Menge der BestandsObjekte für Zuordnung auswählen"
 
 #: build/models.py:65 build/templates/build/build_base.html:9
-#: build/templates/build/build_base.html:38
+#: build/templates/build/build_base.html:63
 #: part/templates/part/allocation.html:23
 #: report/templates/report/inventree_build_order_base.html:106
 msgid "Build Order"
@@ -515,7 +532,7 @@ msgstr "Bauauftragsreferenz"
 #: order/templates/order/sales_order_detail.html:219 part/models.py:2187
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
-#: templates/js/build.js:509 templates/js/build.js:948
+#: templates/js/build.js:565 templates/js/build.js:1008
 msgid "Reference"
 msgstr "Referenz"
 
@@ -523,7 +540,7 @@ msgstr "Referenz"
 msgid "Brief description of the build"
 msgstr "Kurze Beschreibung des Baus"
 
-#: build/models.py:146 build/templates/build/build_base.html:124
+#: build/models.py:146 build/templates/build/build_base.html:153
 #: build/templates/build/detail.html:77
 msgid "Parent Build"
 msgstr "Eltern-Bauauftrag"
@@ -533,7 +550,7 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 
 #: build/models.py:152 build/templates/build/auto_allocate.html:16
-#: build/templates/build/build_base.html:89
+#: build/templates/build/build_base.html:118
 #: build/templates/build/detail.html:26 company/models.py:669
 #: order/models.py:637 order/models.py:669
 #: order/templates/order/order_wizard/select_parts.html:30
@@ -550,7 +567,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:112 templates/InvenTree/search.html:210
 #: templates/js/barcode.js:362 templates/js/bom.js:163
-#: templates/js/build.js:681 templates/js/build.js:921
+#: templates/js/build.js:741 templates/js/build.js:981
 #: templates/js/company.js:140 templates/js/company.js:238
 #: templates/js/part.js:233 templates/js/part.js:338 templates/js/stock.js:523
 #: templates/js/stock.js:1343
@@ -630,7 +647,7 @@ msgstr "Erstelldatum"
 msgid "Target completion date"
 msgstr "geplantes Fertigstellungsdatum"
 
-#: build/models.py:227 order/models.py:218
+#: build/models.py:227 order/models.py:218 templates/js/build.js:788
 msgid "Completion Date"
 msgstr "Fertigstellungsdatum"
 
@@ -646,7 +663,7 @@ msgstr "Aufgegeben von"
 msgid "User who issued this build order"
 msgstr "Nutzer der diesen Bauauftrag erstellt hat"
 
-#: build/models.py:250 build/templates/build/build_base.html:145
+#: build/models.py:250 build/templates/build/build_base.html:174
 #: build/templates/build/detail.html:105 order/models.py:119
 #: order/templates/order/order_base.html:138
 #: order/templates/order/sales_order_base.html:138 part/models.py:886
@@ -672,7 +689,7 @@ msgstr "Externer Link"
 msgid "Link to external URL"
 msgstr "Link zu einer externen URL"
 
-#: build/models.py:261 build/templates/build/navbar.html:59
+#: build/models.py:261 build/templates/build/navbar.html:53
 #: company/models.py:135 company/models.py:501
 #: company/templates/company/navbar.html:70
 #: company/templates/company/navbar.html:73 order/models.py:123
@@ -695,91 +712,94 @@ msgstr "Notizen"
 msgid "Extra build notes"
 msgstr "Extranotizen für den Bauauftrag"
 
-#: build/models.py:673
+#: build/models.py:739
 msgid "No build output specified"
 msgstr "kein Endprodukt angegeben"
 
-#: build/models.py:676
+#: build/models.py:742
 msgid "Build output is already completed"
 msgstr "Endprodukt bereits hergstellt"
 
-#: build/models.py:679
+#: build/models.py:745
 msgid "Build output does not match Build Order"
 msgstr "Endprodukt stimmt nicht mit dem Bauauftrag überein"
 
-#: build/models.py:754
+#: build/models.py:838
 msgid "Completed build output"
 msgstr "Endprodukt fertigstellen"
 
-#: build/models.py:1002
+#: build/models.py:1118
 msgid "BuildItem must be unique for build, stock_item and install_into"
 msgstr ""
 "Bauauftrags-Objekt muss für Bauauftrag, Lager-Objekt und installiert_in "
 "eindeutig sein"
 
-#: build/models.py:1024
-msgid "Build item must specify a build output"
+#: build/models.py:1143
+#, fuzzy
+#| msgid "Build item must specify a build output"
+msgid ""
+"Build item must specify a build output, as master part is marked as trackable"
 msgstr "Bauauftrags-Objekt muss einem Endprodukt zugewiesen sein"
 
-#: build/models.py:1029
+#: build/models.py:1147
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr "Ausgewähltes BestandsObjekt nicht Stückliste für Teil '{p}' gefunden"
 
-#: build/models.py:1033
+#: build/models.py:1151
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 "Reserviermenge ({n}) muss kleiner Bestandsmenge ({q}) sein. Zugewiesene "
 "Anzahl ({n}) darf nicht die verfügbare ({q}) Anzahl überschreiten"
 
-#: build/models.py:1040 order/models.py:758
+#: build/models.py:1158 order/models.py:758
 msgid "StockItem is over-allocated"
 msgstr "Zu viele BestandsObjekt zugewiesen"
 
-#: build/models.py:1044 order/models.py:761
+#: build/models.py:1162 order/models.py:761
 msgid "Allocation quantity must be greater than zero"
 msgstr "Reserviermenge muss größer null sein"
 
-#: build/models.py:1048
+#: build/models.py:1166
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 
-#: build/models.py:1088 stock/templates/stock/item_base.html:306
-#: templates/InvenTree/search.html:183 templates/js/build.js:655
+#: build/models.py:1206 stock/templates/stock/item_base.html:306
+#: templates/InvenTree/search.html:183 templates/js/build.js:714
 #: templates/navbar.html:29
 msgid "Build"
 msgstr "Bauauftrag"
 
-#: build/models.py:1089
+#: build/models.py:1207
 msgid "Build to allocate parts"
 msgstr "Bauauftrag starten um Teile zuzuweisen"
 
-#: build/models.py:1096 part/templates/part/allocation.html:18
+#: build/models.py:1214 part/templates/part/allocation.html:18
 #: part/templates/part/allocation.html:24
 #: part/templates/part/allocation.html:31
 #: part/templates/part/allocation.html:49
 #: stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:93
 #: stock/templates/stock/item_base.html:328
-#: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:771
+#: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:831
 #: templates/js/stock.js:1004 templates/js/stock.js:1262
 msgid "Stock Item"
 msgstr "BestandsObjekt"
 
-#: build/models.py:1097
+#: build/models.py:1215
 msgid "Source stock item"
 msgstr "Quell-BestandsObjekt"
 
-#: build/models.py:1110
+#: build/models.py:1228
 msgid "Stock quantity to allocate to build"
 msgstr "BestandsObjekt-Anzahl dem Bauauftrag zuweisen"
 
-#: build/models.py:1118
+#: build/models.py:1236
 msgid "Install into"
 msgstr "Installiere in"
 
-#: build/models.py:1119
+#: build/models.py:1237
 msgid "Destination stock item"
 msgstr "Ziel-BestandsObjekt"
 
@@ -790,54 +810,70 @@ msgid "Allocate Parts"
 msgstr "Teile zuordnen"
 
 #: build/templates/build/allocate.html:15
-msgid "Incomplete Build Ouputs"
-msgstr "unfertige Endprodukte"
+#, fuzzy
+#| msgid "Allocate Stock to Order"
+msgid "Allocate Stock to Build"
+msgstr "Lagerbestand dem Auftrag zuweisen"
 
-#: build/templates/build/allocate.html:21
-msgid "Build order has been completed"
-msgstr "Bauauftrag ist vollständig"
+#: build/templates/build/allocate.html:22
+#, fuzzy
+#| msgid "Allocate stock to build output"
+msgid "Allocate stock to build"
+msgstr "Bestand dem Endprodukt zuweisen"
 
-#: build/templates/build/allocate.html:26
-msgid "Create new build output"
-msgstr "Neues Endprodukt anlegen"
+#: build/templates/build/allocate.html:23
+msgid "Auto Allocate"
+msgstr "Automatisches Zuweisen"
 
-#: build/templates/build/allocate.html:27
-msgid "Create New Output"
-msgstr "Neues Endprodukt anlegen"
+#: build/templates/build/allocate.html:25 templates/js/build.js:646
+msgid "Unallocate stock"
+msgstr "Bestandszuordnung aufheben"
 
-#: build/templates/build/allocate.html:30
+#: build/templates/build/allocate.html:26 build/views.py:308 build/views.py:794
+msgid "Unallocate Stock"
+msgstr "Bestandszuordnung aufheben"
+
+#: build/templates/build/allocate.html:29
 msgid "Order required parts"
 msgstr "Benötigte Teile bestellen"
 
-#: build/templates/build/allocate.html:31
+#: build/templates/build/allocate.html:30
 #: company/templates/company/detail_manufacturer_part.html:33
 #: company/templates/company/detail_supplier_part.html:32 order/views.py:794
 #: part/templates/part/category.html:127
 msgid "Order Parts"
 msgstr "Teile bestellen"
 
-#: build/templates/build/allocate.html:34 templates/js/build.js:590
-msgid "Unallocate stock"
-msgstr "Bestandszuordnung aufheben"
+#: build/templates/build/allocate.html:36
+#, fuzzy
+#| msgid "This stock item is allocated to Build"
+msgid "Untracked stock has been fully allocated for this Build Order"
+msgstr "Dieses BestandsObjekt ist dem Bau zugewiesen"
 
-#: build/templates/build/allocate.html:35 build/views.py:338 build/views.py:784
-msgid "Unallocate Stock"
-msgstr "Bestandszuordnung aufheben"
+#: build/templates/build/allocate.html:40
+#, fuzzy
+#| msgid "This stock item is allocated to Build"
+msgid "Untracked stock has not been fully allocated for this Build Order"
+msgstr "Dieses BestandsObjekt ist dem Bau zugewiesen"
 
-#: build/templates/build/allocate.html:49
-msgid "Create a new build output"
-msgstr "Neues Endprodukt anlegen"
+#: build/templates/build/allocate.html:47
+#, fuzzy
+#| msgid "This stock item does not have any child items"
+msgid "This Build Order does not have any associated untracked BOM items"
+msgstr "Dieses BestandsObjekt hat keine Kinder"
 
-#: build/templates/build/allocate.html:50
-msgid "No incomplete build outputs remain."
-msgstr "Keine unfertigen Endprodukte verbleiben."
-
-#: build/templates/build/allocate.html:51
-msgid "Create a new build output using the button above"
-msgstr "Neues Endprodukt mit der Schaltfläche obehalb anlegen"
+#: build/templates/build/allocation_card.html:21
+#: build/templates/build/complete_output.html:46
+#: order/templates/order/sales_order_detail.html:75
+#: order/templates/order/sales_order_detail.html:157
+#: report/templates/report/inventree_test_report_base.html:75
+#: stock/models.py:420 stock/templates/stock/item_base.html:238
+#: templates/js/build.js:474
+msgid "Serial Number"
+msgstr "Seriennummer"
 
 #: build/templates/build/attachments.html:12
-#: build/templates/build/navbar.html:49 build/templates/build/navbar.html:52
+#: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
 #: order/templates/order/po_navbar.html:26
 #: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:119
 #: part/templates/part/navbar.html:122 stock/templates/stock/navbar.html:47
@@ -875,7 +911,31 @@ msgstr "Dieser Bauauftrag ist dem Auftrag %(link)s zugeordnet"
 msgid "This Build Order is a child of Build Order %(link)s"
 msgstr "Dieser Bauauftrag ist dem Bauauftrag %(link)s untergeordnet"
 
-#: build/templates/build/build_base.html:40
+#: build/templates/build/build_base.html:31
+#, fuzzy
+#| msgid "Build order has been completed"
+msgid "Build Order is ready to mark as completed"
+msgstr "Bauauftrag ist vollständig"
+
+#: build/templates/build/build_base.html:36
+#, fuzzy
+#| msgid "Build order cannot be completed"
+msgid "Build Order cannot be completed as outstanding outputs remain"
+msgstr "Bauauftrag kann nicht fertiggestellt werden"
+
+#: build/templates/build/build_base.html:41
+#, fuzzy
+#| msgid "Required build quantity has not been completed"
+msgid "Required build quantity has not yet been completed"
+msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
+
+#: build/templates/build/build_base.html:46
+#, fuzzy
+#| msgid "This stock item is allocated to Build"
+msgid "Stock has not been fully allocated to this Build Order"
+msgstr "Dieses BestandsObjekt ist dem Bau zugewiesen"
+
+#: build/templates/build/build_base.html:65
 #: company/templates/company/company_base.html:40
 #: company/templates/company/manufacturer_part_base.html:25
 #: company/templates/company/supplier_part_base.html:26
@@ -887,8 +947,8 @@ msgstr "Dieser Bauauftrag ist dem Bauauftrag %(link)s untergeordnet"
 msgid "Admin view"
 msgstr "Admin"
 
-#: build/templates/build/build_base.html:46
-#: build/templates/build/build_base.html:111
+#: build/templates/build/build_base.html:71
+#: build/templates/build/build_base.html:140
 #: order/templates/order/order_base.html:32
 #: order/templates/order/order_base.html:86
 #: order/templates/order/sales_order_base.html:41
@@ -898,58 +958,48 @@ msgstr "Admin"
 msgid "Overdue"
 msgstr "Überfällig"
 
-#: build/templates/build/build_base.html:55
+#: build/templates/build/build_base.html:80
 msgid "Print actions"
 msgstr "Aktionen drucken"
 
-#: build/templates/build/build_base.html:59
+#: build/templates/build/build_base.html:84
 msgid "Print Build Order"
 msgstr "Bauauftrag drucken"
 
-#: build/templates/build/build_base.html:65
-msgid "Build actions"
-msgstr "Bau-Auftrag Aktionen"
-
-#: build/templates/build/build_base.html:69
-msgid "Edit Build"
-msgstr "Bauauftrag bearbeiten"
-
-#: build/templates/build/build_base.html:71
-#: build/templates/build/build_base.html:179
+#: build/templates/build/build_base.html:90
+#: build/templates/build/build_base.html:215
 msgid "Complete Build"
 msgstr "Bauauftrag fertigstellen"
 
-#: build/templates/build/build_base.html:72
-#: build/templates/build/build_base.html:170 build/views.py:57
+#: build/templates/build/build_base.html:95
+msgid "Build actions"
+msgstr "Bau-Auftrag Aktionen"
+
+#: build/templates/build/build_base.html:99
+msgid "Edit Build"
+msgstr "Bauauftrag bearbeiten"
+
+#: build/templates/build/build_base.html:101
+#: build/templates/build/build_base.html:199 build/views.py:57
 msgid "Cancel Build"
 msgstr "Bauauftrag abbrechen"
 
-#: build/templates/build/build_base.html:85
+#: build/templates/build/build_base.html:114
 #: build/templates/build/detail.html:11
 msgid "Build Details"
 msgstr "Bau-Status"
 
-#: build/templates/build/build_base.html:99
-#: build/templates/build/detail.html:59 order/models.py:445
-#: order/templates/order/receive_parts.html:24
-#: stock/templates/stock/item_base.html:392 templates/InvenTree/search.html:252
-#: templates/js/barcode.js:119 templates/js/build.js:710
-#: templates/js/order.js:187 templates/js/order.js:285
-#: templates/js/stock.js:628 templates/js/stock.js:1279
-msgid "Status"
-msgstr "Status"
-
-#: build/templates/build/build_base.html:111
+#: build/templates/build/build_base.html:140
 #, python-format
 msgid "This build was due on %(target)s"
 msgstr "Bauauftrag war fäälig am %(target)s"
 
-#: build/templates/build/build_base.html:118
+#: build/templates/build/build_base.html:147
 #: build/templates/build/detail.html:64
 msgid "Progress"
 msgstr "Fortschritt"
 
-#: build/templates/build/build_base.html:131
+#: build/templates/build/build_base.html:160
 #: build/templates/build/detail.html:84 order/models.py:667
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:33
@@ -961,21 +1011,60 @@ msgstr "Fortschritt"
 msgid "Sales Order"
 msgstr "Auftrag"
 
-#: build/templates/build/build_base.html:138
+#: build/templates/build/build_base.html:167
 #: build/templates/build/detail.html:98
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
 msgstr "Aufgegeben von"
 
+#: build/templates/build/build_base.html:207
+#, fuzzy
+#| msgid "Incomplete Build Ouputs"
+msgid "Incomplete Outputs"
+msgstr "unfertige Endprodukte"
+
+#: build/templates/build/build_base.html:208
+#, fuzzy
+#| msgid "No incomplete build outputs remain."
+msgid "Build Order cannot be completed as incomplete build outputs remain"
+msgstr "Keine unfertigen Endprodukte verbleiben."
+
 #: build/templates/build/build_children.html:10
-#: build/templates/build/navbar.html:42
+#: build/templates/build/navbar.html:36
 msgid "Child Build Orders"
 msgstr "Unter-Bauaufträge"
 
-#: build/templates/build/build_output.html:10
-#: build/templates/build/navbar.html:35 build/templates/build/navbar.html:38
-msgid "Build Outputs"
-msgstr "Endprodukte"
+#: build/templates/build/build_output.html:15
+#, fuzzy
+#| msgid "Incomplete Build Ouputs"
+msgid "Incomplete Build Outputs"
+msgstr "unfertige Endprodukte"
+
+#: build/templates/build/build_output.html:22
+msgid "Create new build output"
+msgstr "Neues Endprodukt anlegen"
+
+#: build/templates/build/build_output.html:23
+msgid "Create New Output"
+msgstr "Neues Endprodukt anlegen"
+
+#: build/templates/build/build_output.html:36
+msgid "Create a new build output"
+msgstr "Neues Endprodukt anlegen"
+
+#: build/templates/build/build_output.html:37
+msgid "No incomplete build outputs remain."
+msgstr "Keine unfertigen Endprodukte verbleiben."
+
+#: build/templates/build/build_output.html:38
+msgid "Create a new build output using the button above"
+msgstr "Neues Endprodukt mit der Schaltfläche obehalb anlegen"
+
+#: build/templates/build/build_output.html:49
+#, fuzzy
+#| msgid "Complete Build Output"
+msgid "Completed Build Outputs"
+msgstr "Endprodukt fertigstellen"
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
@@ -1003,12 +1092,16 @@ msgid "Are you sure you wish to cancel this build?"
 msgstr "Sind Sie sicher, dass sie diesen Bauauftrag abbrechen möchten?"
 
 #: build/templates/build/complete.html:8
-msgid "Build can be completed"
-msgstr "Bauauftrag kann fertiggstellt werden"
+#, fuzzy
+#| msgid "Build order has been completed"
+msgid "Build Order is complete"
+msgstr "Bauauftrag ist vollständig"
 
 #: build/templates/build/complete.html:12
-msgid "Build cannot be completed"
-msgstr "Bauauftrag kann nicht fertiggestellt werden"
+#, fuzzy
+#| msgid "Build order has been completed"
+msgid "Build Order is incomplete"
+msgstr "Bauauftrag ist vollständig"
 
 #: build/templates/build/complete.html:15
 msgid "Incompleted build outputs remain"
@@ -1018,19 +1111,29 @@ msgstr "unfertige Endprodukte vorhanden"
 msgid "Required build quantity has not been completed"
 msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
 
-#: build/templates/build/complete_output.html:9
-msgid "Stock allocation is complete"
+#: build/templates/build/complete.html:21
+#, fuzzy
+#| msgid "parts have not been fully allocated"
+msgid "Required stock has not been fully allocated"
+msgstr "Teile wurden noch nicht vollständig zugeordnet"
+
+#: build/templates/build/complete_output.html:10
+#, fuzzy
+#| msgid "Stock allocation is complete"
+msgid "Stock allocation is complete for this output"
 msgstr "Bestandszuordnung ist vollständig"
 
-#: build/templates/build/complete_output.html:13
+#: build/templates/build/complete_output.html:14
 msgid "Stock allocation is incomplete"
 msgstr "Bestandszuordnung ist nicht vollständig"
 
-#: build/templates/build/complete_output.html:19
-msgid "parts have not been fully allocated"
+#: build/templates/build/complete_output.html:20
+#, fuzzy
+#| msgid "parts have not been fully allocated"
+msgid "tracked parts have not been fully allocated"
 msgstr "Teile wurden noch nicht vollständig zugeordnet"
 
-#: build/templates/build/complete_output.html:40
+#: build/templates/build/complete_output.html:41
 msgid "The following items will be created"
 msgstr "Die folgenden Objekte werden erstellt"
 
@@ -1086,7 +1189,7 @@ msgstr "Los"
 
 #: build/templates/build/detail.html:116
 #: order/templates/order/order_base.html:111
-#: order/templates/order/sales_order_base.html:111 templates/js/build.js:718
+#: order/templates/order/sales_order_base.html:111 templates/js/build.js:778
 msgid "Created"
 msgstr "Erstellt"
 
@@ -1094,8 +1197,7 @@ msgstr "Erstellt"
 msgid "No target date set"
 msgstr "Kein Ziel-Datum gesetzt"
 
-#: build/templates/build/detail.html:132 templates/js/build.js:696
-#: templates/js/build.js:728
+#: build/templates/build/detail.html:132 templates/js/build.js:756
 msgid "Completed"
 msgstr "Fertig"
 
@@ -1107,7 +1209,7 @@ msgstr "Bauauftrag ist nicht vollständig"
 msgid "Alter the quantity of stock allocated to the build output"
 msgstr "Anzahl des zugeordneten Bestands für die Endprodukte ändern"
 
-#: build/templates/build/index.html:28 build/views.py:657
+#: build/templates/build/index.html:28 build/views.py:667
 msgid "New Build Order"
 msgstr "Neuer Bauauftrag"
 
@@ -1138,20 +1240,20 @@ msgstr "Bauauftrag-details"
 msgid "Details"
 msgstr "Details"
 
-#: build/templates/build/navbar.html:20 build/templates/build/navbar.html:23
-#: build/templates/build/parts.html:11
-msgid "Required Parts"
-msgstr "Benötigte Teile"
+#: build/templates/build/navbar.html:21 build/templates/build/navbar.html:24
+#: build/views.py:91
+msgid "Allocate Stock"
+msgstr "Lagerbestand zuweisen"
 
-#: build/templates/build/navbar.html:27 build/templates/build/navbar.html:30
-msgid "In Progress"
-msgstr "In Bearbeitung"
+#: build/templates/build/navbar.html:29 build/templates/build/navbar.html:32
+msgid "Build Outputs"
+msgstr "Endprodukte"
 
-#: build/templates/build/navbar.html:45
+#: build/templates/build/navbar.html:39
 msgid "Child Builds"
 msgstr "Unter-Endprodukte"
 
-#: build/templates/build/navbar.html:56
+#: build/templates/build/navbar.html:50
 msgid "Build Order Notes"
 msgstr "Bauauftrag-Notizen"
 
@@ -1189,65 +1291,69 @@ msgstr ""
 msgid "Build was cancelled"
 msgstr "Bauauftrag wurde abgebrochen"
 
-#: build/views.py:91
-msgid "Allocate Stock"
-msgstr "Lagerbestand zuweisen"
-
-#: build/views.py:154 build/views.py:314 build/views.py:485
-msgid "Build output must be specified"
-msgstr "Endprodukt muss angegeben sein"
-
-#: build/views.py:168
+#: build/views.py:138
 msgid "Allocated stock to build output"
 msgstr "Bestand dem Endprodukt zuweisen"
 
-#: build/views.py:180
+#: build/views.py:150
 msgid "Create Build Output"
 msgstr "Endprodukt anlegen"
 
-#: build/views.py:203 stock/models.py:969 stock/views.py:1789
+#: build/views.py:173 stock/models.py:969 stock/views.py:1789
 msgid "Serial numbers already exist"
 msgstr "Seriennummern existieren bereits"
 
-#: build/views.py:212
+#: build/views.py:182
 msgid "Serial numbers required for trackable build output"
 msgstr "Seriennummern für verfolgbare Endprodukte benötigt"
 
-#: build/views.py:278
+#: build/views.py:248
 msgid "Delete Build Output"
 msgstr "Endprodukt entfernen"
 
-#: build/views.py:299 build/views.py:383
+#: build/views.py:269 build/views.py:359
 msgid "Confirm unallocation of build stock"
 msgstr "Entfernung von Bestands-Zuordnung bestätigen"
 
-#: build/views.py:300 build/views.py:384 stock/views.py:425
+#: build/views.py:270 build/views.py:360 stock/views.py:425
 msgid "Check the confirmation box"
 msgstr "Bestätigungsbox bestätigen"
 
-#: build/views.py:312
+#: build/views.py:282
 msgid "Build output does not match build"
 msgstr "Endprodukt stimmt nicht mit Bauauftrag überein"
 
-#: build/views.py:326
+#: build/views.py:284 build/views.py:485
+msgid "Build output must be specified"
+msgstr "Endprodukt muss angegeben sein"
+
+#: build/views.py:296
 msgid "Build output deleted"
 msgstr "Endprodukt gelöscht"
 
-#: build/views.py:408
+#: build/views.py:394
 msgid "Complete Build Order"
 msgstr "Bauauftrag fertigstellen"
 
-#: build/views.py:414
-msgid "Build order cannot be completed"
+#: build/views.py:400
+#, fuzzy
+#| msgid "Build order cannot be completed"
+msgid "Build order cannot be completed - incomplete outputs remain"
 msgstr "Bauauftrag kann nicht fertiggestellt werden"
 
-#: build/views.py:425
+#: build/views.py:411
 msgid "Completed build order"
 msgstr "Bauauftrag fertiggestellt"
 
-#: build/views.py:441
+#: build/views.py:427
 msgid "Complete Build Output"
 msgstr "Endprodukt fertigstellen"
+
+#: build/views.py:469
+#, fuzzy
+#| msgid "Invalid location selected"
+msgid "Invalid stock status value selected"
+msgstr "Ungültige Ortsauswahl"
 
 #: build/views.py:476
 msgid "Quantity to complete cannot exceed build output quantity"
@@ -1259,81 +1365,81 @@ msgstr ""
 msgid "Confirm completion of incomplete build"
 msgstr "Endprodukt-Fertigstellung bestätigen"
 
-#: build/views.py:573
+#: build/views.py:581
 msgid "Build output completed"
 msgstr "Endprodukt fertiggestellt"
 
-#: build/views.py:711
+#: build/views.py:721
 msgid "Created new build"
 msgstr "Neuen Bauauftrag angelegt"
 
-#: build/views.py:732
+#: build/views.py:742
 msgid "Edit Build Order Details"
 msgstr "Bauauftragdetails bearbeiten"
 
-#: build/views.py:765
+#: build/views.py:775
 msgid "Edited build"
 msgstr "Bauauftrag bearbeitet"
 
-#: build/views.py:774
+#: build/views.py:784
 msgid "Delete Build Order"
 msgstr "Bauauftrag löschen"
 
-#: build/views.py:789
+#: build/views.py:799
 msgid "Removed parts from build allocation"
 msgstr "Teile von Bauzuordnung entfernt"
 
-#: build/views.py:801
+#: build/views.py:811
 msgid "Allocate stock to build output"
 msgstr "Bestand dem Endprodukt zuweisen"
 
-#: build/views.py:844
+#: build/views.py:854
 msgid "Item must be currently in stock"
 msgstr "Teil muss aktuell im Bestand sein"
 
-#: build/views.py:850
+#: build/views.py:860
 msgid "Stock item is over-allocated"
 msgstr "BestandObjekt ist zu oft zugewiesen"
 
-#: build/views.py:851 templates/js/bom.js:230 templates/js/build.js:519
-#: templates/js/build.js:778 templates/js/build.js:961
+#: build/views.py:861 templates/js/bom.js:230 templates/js/build.js:575
+#: templates/js/build.js:838 templates/js/build.js:1021
 msgid "Available"
 msgstr "verfügbar"
 
-#: build/views.py:853
+#: build/views.py:863
 msgid "Stock item must be selected"
 msgstr "BestandsObjekt muss ausgewählt sein"
 
-#: build/views.py:1016
+#: build/views.py:1026
 msgid "Edit Stock Allocation"
 msgstr "Bestandszuordnung bearbeiten"
 
-#: build/views.py:1020
+#: build/views.py:1030
 msgid "Updated Build Item"
 msgstr "Bauobjekt aktualisiert"
 
-#: build/views.py:1049
+#: build/views.py:1059
 msgid "Add Build Order Attachment"
 msgstr "Bauauftrags-Anhang hinzufügen"
 
-#: build/views.py:1062 order/views.py:110 order/views.py:162 part/views.py:172
+#: build/views.py:1072 order/views.py:110 order/views.py:162 part/views.py:172
 #: stock/views.py:277
 msgid "Added attachment"
 msgstr "Anhang hinzugefügt"
 
-#: build/views.py:1098 order/views.py:189 order/views.py:210
+#: build/views.py:1108 order/views.py:189 order/views.py:210
 msgid "Edit Attachment"
 msgstr "Anhang bearbeiten"
 
-#: build/views.py:1108 order/views.py:193 order/views.py:214
+#: build/views.py:1118 order/views.py:193 order/views.py:214
 msgid "Attachment updated"
 msgstr "Anhang aktualisiert"
 
-#: build/views.py:1118 order/views.py:229 order/views.py:243
+#: build/views.py:1128 order/views.py:229 order/views.py:243
 msgid "Delete Attachment"
 msgstr "Anhang löschen"
 
-#: build/views.py:1123 order/views.py:235 order/views.py:249 stock/views.py:333
+#: build/views.py:1133 order/views.py:235 order/views.py:249 stock/views.py:333
 msgid "Deleted attachment"
 msgstr "Anhang gelöscht"
 
@@ -1947,7 +2053,7 @@ msgstr "Mehrere bestellen"
 
 #: company/templates/company/assigned_stock.html:10
 #: company/templates/company/navbar.html:62
-#: company/templates/company/navbar.html:65 templates/js/build.js:411
+#: company/templates/company/navbar.html:65 templates/js/build.js:467
 msgid "Assigned Stock"
 msgstr "Zugeordneter Bestand"
 
@@ -3016,26 +3122,18 @@ msgstr "Warnung"
 msgid "Sales Order Items"
 msgstr "Auftrags-Positionen"
 
-#: order/templates/order/sales_order_detail.html:75
-#: order/templates/order/sales_order_detail.html:157
-#: report/templates/report/inventree_test_report_base.html:75
-#: stock/models.py:420 stock/templates/stock/item_base.html:238
-#: templates/js/build.js:418
-msgid "Serial Number"
-msgstr "Seriennummer"
-
 #: order/templates/order/sales_order_detail.html:92 templates/js/bom.js:342
-#: templates/js/build.js:571 templates/js/build.js:984
+#: templates/js/build.js:627 templates/js/build.js:1044
 msgid "Actions"
 msgstr "Aktionen"
 
-#: order/templates/order/sales_order_detail.html:99 templates/js/build.js:459
-#: templates/js/build.js:789
+#: order/templates/order/sales_order_detail.html:99 templates/js/build.js:515
+#: templates/js/build.js:849
 msgid "Edit stock allocation"
 msgstr "Bestands-Zuordnung bearbeiten"
 
-#: order/templates/order/sales_order_detail.html:100 templates/js/build.js:461
-#: templates/js/build.js:790
+#: order/templates/order/sales_order_detail.html:100 templates/js/build.js:517
+#: templates/js/build.js:850
 msgid "Delete stock allocation"
 msgstr "Bestands-Zuordnung löschen"
 
@@ -3047,8 +3145,8 @@ msgstr "Keine passenden Positionen gefunden"
 msgid "ID"
 msgstr "ID"
 
-#: order/templates/order/sales_order_detail.html:229 templates/js/build.js:523
-#: templates/js/build.js:785
+#: order/templates/order/sales_order_detail.html:229 templates/js/build.js:579
+#: templates/js/build.js:845
 msgid "Allocated"
 msgstr "Zugeordnet"
 
@@ -3060,7 +3158,7 @@ msgstr "Erledigt"
 msgid "Allocate serial numbers"
 msgstr "Seriennummern zuweisen"
 
-#: order/templates/order/sales_order_detail.html:282 templates/js/build.js:585
+#: order/templates/order/sales_order_detail.html:282 templates/js/build.js:641
 msgid "Allocate stock"
 msgstr "Lagerbestand zuweisen"
 
@@ -3068,8 +3166,8 @@ msgstr "Lagerbestand zuweisen"
 msgid "Purchase stock"
 msgstr "Einkaufs-Bestand"
 
-#: order/templates/order/sales_order_detail.html:289 templates/js/build.js:578
-#: templates/js/build.js:992
+#: order/templates/order/sales_order_detail.html:289 templates/js/build.js:634
+#: templates/js/build.js:1052
 msgid "Build stock"
 msgstr "Baue Bestand"
 
@@ -5431,7 +5529,7 @@ msgstr "BestandsObjekt löschen"
 msgid "Stock Item Details"
 msgstr "BestandsObjekt-Details"
 
-#: stock/templates/stock/item_base.html:278 templates/js/build.js:442
+#: stock/templates/stock/item_base.html:278 templates/js/build.js:498
 msgid "No location set"
 msgstr "Kein Lagerort gesetzt"
 
@@ -5833,7 +5931,7 @@ msgstr "BestandsObjekt bearbeiten"
 msgid "Serialize Stock"
 msgstr "Lagerbestand erfassen"
 
-#: stock/views.py:1543 templates/js/build.js:210
+#: stock/views.py:1543 templates/js/build.js:244
 msgid "Create new Stock Item"
 msgstr "Neues BestandsObjekt hinzufügen"
 
@@ -6284,7 +6382,7 @@ msgstr "In Lagerorten buchen"
 msgid "Barcode does not match a valid location"
 msgstr "Barcode entspricht keinem Lagerort"
 
-#: templates/js/bom.js:175 templates/js/build.js:934
+#: templates/js/bom.js:175 templates/js/build.js:994
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
@@ -6322,58 +6420,58 @@ msgstr "Stücklisten-Position bearbeiten"
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: templates/js/bom.js:447 templates/js/build.js:305 templates/js/build.js:1032
+#: templates/js/bom.js:447 templates/js/build.js:340 templates/js/build.js:1092
 msgid "No BOM items found"
 msgstr "Keine Stücklisten-Position(en) gefunden"
 
-#: templates/js/build.js:56
+#: templates/js/build.js:62
 msgid "Auto-allocate stock items to this output"
 msgstr "BestandsObjekte automatisch Endprodukt zuordnen"
 
-#: templates/js/build.js:62
-msgid "Complete build output"
-msgstr "Endprodukt fertigstellen"
-
-#: templates/js/build.js:71
+#: templates/js/build.js:70
 msgid "Unallocate stock from build output"
 msgstr "Bestand von Endpordukt zurücknehmen"
 
-#: templates/js/build.js:77
+#: templates/js/build.js:80
+msgid "Complete build output"
+msgstr "Endprodukt fertigstellen"
+
+#: templates/js/build.js:89
 msgid "Delete build output"
 msgstr "Endprodukt entfernen"
 
-#: templates/js/build.js:209 templates/stock_table.html:20
+#: templates/js/build.js:243 templates/stock_table.html:20
 msgid "New Stock Item"
 msgstr "Neues BestandsObjekt"
 
-#: templates/js/build.js:493
+#: templates/js/build.js:549
 msgid "Required Part"
 msgstr "benötigtes Teil"
 
-#: templates/js/build.js:514
+#: templates/js/build.js:570
 msgid "Quantity Per"
 msgstr "Anzahl pro"
 
-#: templates/js/build.js:582 templates/js/build.js:996
+#: templates/js/build.js:638 templates/js/build.js:1056
 #: templates/stock_table.html:58
 msgid "Order stock"
 msgstr "Bestand bestellen"
 
-#: templates/js/build.js:632
+#: templates/js/build.js:691
 msgid "No builds matching query"
 msgstr "Keine Bauaufträge passen zur Anfrage"
 
-#: templates/js/build.js:649 templates/js/part.js:324 templates/js/part.js:546
+#: templates/js/build.js:708 templates/js/part.js:324 templates/js/part.js:546
 #: templates/js/stock.js:511 templates/js/stock.js:938
 #: templates/js/stock.js:1331
 msgid "Select"
 msgstr "Auswählen"
 
-#: templates/js/build.js:669
+#: templates/js/build.js:728
 msgid "Build order is overdue"
 msgstr "Bauauftrag ist überfällig"
 
-#: templates/js/build.js:767
+#: templates/js/build.js:827
 msgid "No parts allocated for"
 msgstr "Keine Teile zugeordnet zu"
 
@@ -7335,6 +7433,18 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
+#~ msgid "Build can be completed"
+#~ msgstr "Bauauftrag kann fertiggstellt werden"
+
+#~ msgid "Build cannot be completed"
+#~ msgstr "Bauauftrag kann nicht fertiggestellt werden"
+
+#~ msgid "Required Parts"
+#~ msgstr "Benötigte Teile"
+
+#~ msgid "In Progress"
+#~ msgstr "In Bearbeitung"
+
 #~ msgid "Child Categories"
 #~ msgstr "Unter-Kategorien"
 
@@ -7667,9 +7777,6 @@ msgstr "Berechtigung Einträge zu löschen"
 #~ msgid "Automatically allocate stock"
 #~ msgstr "Lagerbestand automatisch zuweisen"
 
-#~ msgid "Auto Allocate"
-#~ msgstr "Automatisches Zuweisen"
-
 #~ msgid "Unallocate"
 #~ msgstr "Zuweisung aufheben"
 
@@ -7693,11 +7800,6 @@ msgstr "Berechtigung Einträge zu löschen"
 #~| msgid "Installed in Stock Item"
 #~ msgid "Only single stock items exists"
 #~ msgstr "In BestandsObjekt installiert"
-
-#, fuzzy
-#~| msgid "This stock item is allocated to Build"
-#~ msgid "The stock item is not already allocated to this build"
-#~ msgstr "Dieses BestandsObjekt ist dem Bau zugewiesen"
 
 #~ msgid "Warning: Build order allocation is not complete"
 #~ msgstr "Warnung: Bau-Zuweisung ist unvollständig"
@@ -7726,9 +7828,6 @@ msgstr "Berechtigung Einträge zu löschen"
 
 #~ msgid "Check the confirmation box at the bottom of the list"
 #~ msgstr "Bestätigunsbox am Ende der Liste bestätigen"
-
-#~ msgid "Invalid location selected"
-#~ msgstr "Ungültige Ortsauswahl"
 
 #~ msgid "The following serial numbers already exist: ({sn})"
 #~ msgstr "Die folgende Seriennummer existiert bereits: ({sn})"
