@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +29,7 @@
 </style>
 
 <title>
-    InvenTree
+    {% inventree_title %} 
 </title>
 </head>
 
@@ -44,7 +45,7 @@
             <div class='container-fluid'>
                 <div class='clearfix content-heading login-header'>
                     <img class="pull-left" src="{% static 'img/inventree.png' %}" width="60" height="60"/>
-                    <span><h3>InvenTree</h3></span>
+                    <span><h3>{% inventree_title %} </h3></span>
                 </div>
                     <hr>
 

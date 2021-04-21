@@ -52,6 +52,9 @@ def get_setting(environment_var, backup_val, default_value=None):
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
+# New requirement for django 3.2+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -188,6 +191,17 @@ STATIC_ROOT = os.path.abspath(
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
+]
+
+# Translated Template settings
+STATICFILES_I18_PREFIX = 'i18n'
+STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js')
+STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_DIRS.append(STATICFILES_I18_TRG)
+STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
+
+STATFILES_I18_PROCESSORS = [
+    'InvenTree.context.status_codes',
 ]
 
 # Color Themes Directory

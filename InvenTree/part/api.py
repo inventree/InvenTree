@@ -60,28 +60,43 @@ class CategoryList(generics.ListCreateAPIView):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
 
-    def get_queryset(self):
+    def filter_queryset(self, queryset):
         """
         Custom filtering:
         - Allow filtering by "null" parent to retrieve top-level part categories
         """
 
-        cat_id = self.request.query_params.get('parent', None)
+        queryset = super().filter_queryset(queryset)
 
-        queryset = super().get_queryset()
+        params = self.request.query_params
 
-        if cat_id is not None:
+        cat_id = params.get('parent', None)
+
+        cascade = str2bool(params.get('cascade', False))
+
+        # Do not filter by category
+        if cat_id is None:
+            pass
+        # Look for top-level categories
+        elif isNull(cat_id):
             
-            # Look for top-level categories
-            if isNull(cat_id):
+            if not cascade:
                 queryset = queryset.filter(parent=None)
-            
-            else:
-                try:
-                    cat_id = int(cat_id)
-                    queryset = queryset.filter(parent=cat_id)
-                except ValueError:
-                    pass
+
+        else:
+            try:
+                category = PartCategory.objects.get(pk=cat_id)
+
+                if cascade:
+                    parents = category.get_descendants(include_self=True)
+                    parent_ids = [p.id for p in parents]
+
+                    queryset = queryset.filter(parent__in=parent_ids)
+                else:
+                    queryset = queryset.filter(parent=category)
+
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
 
         return queryset
 
