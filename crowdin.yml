@@ -1,0 +1,3 @@
+files:
+  - source: /InvenTree/locale/*/LC_MESSAGES/django.po
+    translation: '%original_path%/%original_file_name%'
