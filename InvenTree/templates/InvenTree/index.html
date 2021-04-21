@@ -2,12 +2,13 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+
 {% block page_title %}
-InvenTree | {% trans "Index" %}
+{% inventree_title %} | {% trans "Index" %}
 {% endblock %}
 
 {% block content %}
-<h3>InvenTree</h3>
+<h3>{% inventree_title %} </h3>
 <hr>
 
 <div class='col-sm-3' id='item-panel'>

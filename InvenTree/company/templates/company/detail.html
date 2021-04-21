@@ -21,11 +21,13 @@
                 <td>{% trans "Company Name" %}</td>
                 <td>{{ company.name }}</td>
             </tr>
+            {% if company.description %}
             <tr>
                 <td><span class='fas fa-info'></span></td>
                 <td>{% trans "Description" %}</td>
                 <td>{{ company.description }}</td>
             </tr>
+            {% endif %}
             <tr>
                 <td><span class='fas fa-globe'></span></td>
                 <td>{% trans "Website" %}</td>

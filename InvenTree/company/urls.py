@@ -13,7 +13,8 @@ company_detail_urls = [
 
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
 
-    url(r'^parts/', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
+    url(r'^supplier-parts/', views.CompanyDetail.as_view(template_name='company/detail_supplier_part.html'), name='company-detail-supplier-parts'),
+    url(r'^manufacturer-parts/', views.CompanyDetail.as_view(template_name='company/detail_manufacturer_part.html'), name='company-detail-manufacturer-parts'),
     url(r'^stock/', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
     url(r'^purchase-orders/', views.CompanyDetail.as_view(template_name='company/purchase_orders.html'), name='company-detail-purchase-orders'),
     url(r'^assigned-stock/', views.CompanyDetail.as_view(template_name='company/assigned_stock.html'), name='company-detail-assigned-stock'),
@@ -52,9 +53,26 @@ price_break_urls = [
     url(r'^(?P<pk>\d+)/delete/', views.PriceBreakDelete.as_view(), name='price-break-delete'),
 ]
 
+manufacturer_part_detail_urls = [
+    url(r'^edit/?', views.ManufacturerPartEdit.as_view(), name='manufacturer-part-edit'),
+    
+    url(r'^suppliers/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-suppliers'),
+
+    url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-detail'),
+]
+
+manufacturer_part_urls = [
+    url(r'^new/?', views.ManufacturerPartCreate.as_view(), name='manufacturer-part-create'),
+
+    url(r'delete/', views.ManufacturerPartDelete.as_view(), name='manufacturer-part-delete'),
+
+    url(r'^(?P<pk>\d+)/', include(manufacturer_part_detail_urls)),
+]
+
 supplier_part_detail_urls = [
     url(r'^edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
 
+    url(r'^manufacturers/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_manufacturers.html'), name='supplier-part-manufacturers'),
     url(r'^pricing/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_pricing.html'), name='supplier-part-pricing'),
     url(r'^orders/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_orders.html'), name='supplier-part-orders'),
     url(r'^stock/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_stock.html'), name='supplier-part-stock'),

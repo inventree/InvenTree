@@ -57,6 +57,7 @@ class RuleSet(models.Model):
             'auth_user',
             'auth_permission',
             'authtoken_token',
+            'authtoken_tokenproxy',
             'users_ruleset',
         ],
         'part_category': [
@@ -74,6 +75,7 @@ class RuleSet(models.Model):
             'part_partrelated',
             'part_partstar',
             'company_supplierpart',
+            'company_manufacturerpart',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -198,7 +200,8 @@ class RuleSet(models.Model):
                 if check_user_role(user, role, permission):
                     return True
 
-        print("failed permission check for", table, permission)
+        # Print message instead of throwing an error
+        print("Failed permission check for", table, permission)
         return False
 
     @staticmethod

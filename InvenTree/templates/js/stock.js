@@ -354,7 +354,7 @@ function loadStockTable(table, options) {
                 var html = imageHoverIcon(row.part_detail.thumbnail);
 
                 html += row.part_detail.full_name;
-                html += ` <i>(${data.length} items)</i>`;
+                html += ` <i>(${data.length} {% trans "items" %})</i>`;
 
                 html += makePartIcons(row.part_detail);
 
@@ -446,7 +446,7 @@ function loadStockTable(table, options) {
                 });
 
                 if (batches.length > 1) {
-                    return "" + batches.length + " batches";
+                    return "" + batches.length + " {% trans 'batches' %}";
                 } else if (batches.length == 1) {
                     if (batches[0]) {
                         return batches[0];
@@ -473,9 +473,9 @@ function loadStockTable(table, options) {
                     // Single location, easy!
                     return locations[0];
                 } else if (locations.length > 1) {
-                    return "In " + locations.length + " locations";
+                    return "In " + locations.length + " {% trans 'locations' %}";
                 } else {
-                    return "<i>{% trans "Undefined location" %}</i>";
+                    return "<i>{% trans 'Undefined location' %}</i>";
                 }
             } else if (field == 'notes') {
                 var notes = [];
@@ -897,6 +897,83 @@ function loadStockTable(table, options) {
     });
 }
 
+function loadStockLocationTable(table, options) {
+    /* Display a table of stock locations */
+
+    var params = options.params || {};
+
+    var filterListElement = options.filterList || '#filter-list-location';
+
+    var filters = {};
+
+    var filterKey = options.filterKey || options.name || 'location';
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters(filterKey);
+    }
+
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+    }
+
+    setupFilterList(filterKey, table, filterListElement);
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    table.inventreeTable({
+        method: 'get',
+        url: options.url || '{% url "api-location-list" %}',
+        queryParams: filters,
+        sidePagination: 'server',
+        name: 'location',
+        original: original,
+        showColumns: true,
+        columns: [
+            {
+                checkbox: true,
+                title: '{% trans "Select" %}',
+                searchable: false,
+                switchable: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return renderLink(
+                        value,
+                        `/stock/location/${row.pk}/`
+                    );
+                },
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
+                field: 'pathstring',
+                title: '{% trans "Path" %}',
+                switchable: true,
+                sortable: false,
+            },
+            {
+                field: 'items',
+                title: '{% trans "Stock Items" %}',
+                switchable: true,
+                sortable: false,
+                sortName: 'item_count',
+            }
+        ]
+    });
+}
+
 function loadStockTrackingTable(table, options) {
 
     var cols = [
@@ -1219,7 +1296,7 @@ function loadInstalledInTable(table, options) {
                                 // Add some buttons yo!
                                 html += `<div class='btn-group float-right' role='group'>`;
                                 
-                                html += makeIconButton('fa-unlink', 'button-uninstall', pk, "{% trans "Uninstall stock item" %}");
+                                html += makeIconButton('fa-unlink', 'button-uninstall', pk, "{% trans 'Uninstall stock item' %}");
 
                                 html += `</div>`;
 

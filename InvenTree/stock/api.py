@@ -48,7 +48,7 @@ from rest_framework import generics, filters, permissions
 
 
 class StockCategoryTree(TreeSerializer):
-    title = 'Stock'
+    title = _('Stock')
     model = StockLocation
 
     @property
@@ -281,28 +281,46 @@ class StockLocationList(generics.ListCreateAPIView):
     queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
 
-    def get_queryset(self):
+    def filter_queryset(self, queryset):
         """
         Custom filtering:
         - Allow filtering by "null" parent to retrieve top-level stock locations
         """
 
-        queryset = super().get_queryset()
+        queryset = super().filter_queryset(queryset)
 
-        loc_id = self.request.query_params.get('parent', None)
+        params = self.request.query_params
 
-        if loc_id is not None:
+        loc_id = params.get('parent', None)
+        
+        cascade = str2bool(params.get('cascade', False))
 
-            # Look for top-level locations
-            if isNull(loc_id):
+        # Do not filter by location
+        if loc_id is None:
+            pass
+        # Look for top-level locations
+        elif isNull(loc_id):
+
+            # If we allow "cascade" at the top-level, this essentially means *all* locations
+            if not cascade:
                 queryset = queryset.filter(parent=None)
-            
-            else:
-                try:
-                    loc_id = int(loc_id)
-                    queryset = queryset.filter(parent=loc_id)
-                except ValueError:
-                    pass
+        
+        else:
+
+            try:
+                location = StockLocation.objects.get(pk=loc_id)
+
+                # All sub-locations to be returned too?
+                if cascade:
+                    parents = location.get_descendants(include_self=True)
+                    parent_ids = [p.id for p in parents]
+                    queryset = queryset.filter(parent__in=parent_ids)
+
+                else:
+                    queryset = queryset.filter(parent=location)
+
+            except (ValueError, StockLocation.DoesNotExist):
+                pass
             
         return queryset
 
@@ -318,6 +336,11 @@ class StockLocationList(generics.ListCreateAPIView):
     search_fields = [
         'name',
         'description',
+    ]
+
+    ordering_fields = [
+        'name',
+        'items',
     ]
 
 
@@ -774,7 +797,7 @@ class StockList(generics.ListCreateAPIView):
         company = params.get('company', None)
 
         if company is not None:
-            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer=company))
+            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
 
         # Filter by supplier
         supplier = params.get('supplier', None)
@@ -786,7 +809,7 @@ class StockList(generics.ListCreateAPIView):
         manufacturer = params.get('manufacturer', None)
 
         if manufacturer is not None:
-            queryset = queryset.filter(supplier_part__manufacturer=manufacturer)
+            queryset = queryset.filter(supplier_part__manufacturer_part__manufacturer=manufacturer)
 
         """
         Filter by the 'last updated' date of the stock item(s):

@@ -1,14 +1,15 @@
 {% extends "modal_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
 
 <div class='alert alert-block alert-danger'>
-    Are you sure you want to delete part '<b>{{ part.full_name }}</b>'?
+    {% blocktrans with full_name=part.full_name %}Are you sure you want to delete part '<b>{{full_name}}</b>'?{% endblocktrans %}
 </div>
 
 {% if part.used_in_count %}
 <hr>
-<p>This part is used in BOMs for {{ part.used_in_count }} other parts. If you delete this part, the BOMs for the following parts will be updated:
+<p>{% blocktrans with count=part.used_in_count %}This part is used in BOMs for {{count}} other parts. If you delete this part, the BOMs for the following parts will be updated{% endblocktrans %}:
 <ul class="list-group">
     {% for child in part.used_in.all %}
     <li class='list-group-item'>{{ child.part.full_name }} - {{ child.part.description }}</li>
@@ -18,7 +19,7 @@
 
 {% if part.stock_items.all|length > 0 %}
 <hr>
-<p>There are {{ part.stock_items.all|length }} stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:
+<p>{% blocktrans with count=part.stock_items.all|length %}There are {{count}} stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:{% endblocktrans %}
     <ul class='list-group'>
         {% for stock in part.stock_items.all %}
         <li class='list-group-item'>{{ stock }}</li>
@@ -27,9 +28,20 @@
 </p>
 {% endif %}
 
+{% if part.manufacturer_parts.all|length > 0 %}
+<hr>
+<p>{% blocktrans with count=part.manufacturer_parts.all|length %}There are {{count}} manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:{% endblocktrans %}
+    <ul class='list-group'>
+        {% for spart in part.manufacturer_parts.all %}
+        <li class='list-group-item'>{{ spart.manufacturer.name }} - {{ spart.MPN }}</li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
+
 {% if part.supplier_parts.all|length > 0 %}
 <hr>
-<p>There are {{ part.supplier_parts.all|length }} suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted.
+<p>{% blocktrans with count=part.supplier_parts.all|length %}There are {{count}} suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:{% endblocktrans %}
     <ul class='list-group'>
         {% for spart in part.supplier_parts.all %}
         <li class='list-group-item'>{{ spart.supplier.name }} - {{ spart.SKU }}</li>
@@ -40,7 +52,7 @@
 
 {% if part.serials.all|length > 0 %}
 <hr>
-<p>There are {{ part.serials.all|length }} unique parts tracked for '{{ part.full_name }}'. Deleting this part will permanently remove this tracking information.</p>
+<p>{% blocktrans with count=part.serials.all|length full_name=part.full_name  %}There are {{count}} unique parts tracked for '{{full_name}}'. Deleting this part will permanently remove this tracking information.{% endblocktrans %}</p>
 {% endif %}
 
 {% endblock %}

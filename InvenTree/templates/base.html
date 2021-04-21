@@ -60,7 +60,7 @@
 
 <title>
 {% block page_title %}
-InvenTree
+{% inventree_title %} 
 {% endblock %}
 </title>
 </head>
@@ -143,20 +143,21 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
-<script type='text/javascript' src="{% url 'barcode.js' %}"></script>
-<script type='text/javascript' src="{% url 'bom.js' %}"></script>
-<script type='text/javascript' src="{% url 'company.js' %}"></script>
-<script type='text/javascript' src="{% url 'part.js' %}"></script>
-<script type='text/javascript' src="{% url 'modals.js' %}"></script>
-<script type='text/javascript' src="{% url 'label.js' %}"></script>
-<script type='text/javascript' src="{% url 'report.js' %}"></script>
-<script type='text/javascript' src="{% url 'stock.js' %}"></script>
-<script type='text/javascript' src="{% url 'build.js' %}"></script>
-<script type='text/javascript' src="{% url 'order.js' %}"></script>
-<script type='text/javascript' src="{% url 'calendar.js' %}"></script>
-<script type='text/javascript' src="{% url 'tables.js' %}"></script>
-<script type='text/javascript' src="{% url 'table_filters.js' %}"></script>
-<script type='text/javascript' src="{% url 'filters.js' %}"></script>
+<!-- translated -->
+<script type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'company.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'modals.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'label.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'calendar.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>

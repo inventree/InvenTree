@@ -1,0 +1,46 @@
+{% extends "modal_delete_form.html" %}
+{% load i18n %}
+
+{% block pre_form_content %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Are you sure you want to delete the following Manufacturer Parts?" %}
+</div>
+{% for part in parts %}
+    
+{% endfor %}
+
+{% endblock %}
+
+{% block form_data %}
+
+{% for part in parts %}
+<table class='table table-striped table-condensed'>
+<tr>
+    <input type='hidden' name='manufacturer-part-{{ part.id}}' value='manufacturer-part-{{ part.id }}'/>
+    
+    <td>
+        {% include "hover_image.html" with image=part.part.image %}
+        {{ part.part.full_name }}
+    </td>
+    <td>
+        {% include "hover_image.html" with image=part.manufacturer.image %}
+        {{ part.manufacturer.name }}
+    </td>
+    <td>
+        {{ part.MPN }}
+    </td>
+</tr>
+</table>
+{% if part.supplier_parts.all|length > 0 %}
+<div class='alert alert-block alert-danger'>
+<p>{% blocktrans with count=part.supplier_parts.all|length %}There are {{count}} suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:{% endblocktrans %}</p>
+<ul class='list-group' style='margin-top:10px'>
+    {% for spart in part.supplier_parts.all %}
+    <li class='list-group-item'>{{ spart.supplier.name }} - {{ spart.SKU }}</li>
+    {% endfor %}
+</ul>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}

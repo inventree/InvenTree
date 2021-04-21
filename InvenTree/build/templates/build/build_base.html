@@ -3,21 +3,49 @@
 {% load static %}
 {% load i18n %}
 {% load status_codes %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Build Order" %} - {{ build }}
+{% inventree_title %} | {% trans "Build Order" %} - {{ build }}
 {% endblock %}
 
-{% block pre_content %}
+{% block header_pre_content %}
 {% if build.sales_order %}
 <div class='alert alert-block alert-info'>
-    {% trans "This Build Order is allocated to Sales Order" %} <b><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></b>
+    {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
+    {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
 </div>
 {% endif %}
 {% if build.parent %}
 <div class='alert alert-block alert-info'>
-    {% trans "This Build Order is a child of Build Order" %} <b><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></b>
+    {% object_link 'build-detail' build.parent.id build.parent as link %}
+    {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
 </div>
+{% endif %}
+{% endblock %}
+
+{% block header_post_content %}
+{% if build.active %}
+{% if build.can_complete %}
+<div class='alert alert-block alert-success'>
+    {% trans "Build Order is ready to mark as completed" %}
+</div>
+{% endif %}
+{% if build.incomplete_count > 0 %}
+<div class='alert alert-block alert-danger'>
+    {% trans "Build Order cannot be completed as outstanding outputs remain" %}
+</div>
+{% endif %}
+{% if build.completed < build.quantity %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Required build quantity has not yet been completed" %}
+</div>
+{% endif %}
+{% if not build.areUntrackedPartsFullyAllocated %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Stock has not been fully allocated to this Build Order" %}
+</div>
+{% endif %}
 {% endif %}
 {% endblock %}
 
@@ -58,6 +86,11 @@ src="{% static 'img/blank_image.png' %}"
     </div>
     <!-- Build actions -->
     {% if roles.build.change %}
+    {% if build.active %}
+    <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
+        <span class='fas fa-paper-plane'></span>
+    </button>
+    {% endif %}
     <div class='btn-group'>
         <button id='build-options' title='{% trans "Build actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
             <span class='fas fa-tools'></span> <span class='caret'></span>
@@ -65,12 +98,11 @@ src="{% static 'img/blank_image.png' %}"
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='build-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit Build" %}</a></li>
             {% if build.is_active %}
-            <li><a href='#' id='build-complete'><span class='fas fa-tools'></span> {% trans "Complete Build" %}</a></li>
             <li><a href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
             {% endif %}
             {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
             <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build"% }</a>
-            {% endif %}
+                {% endif %}
         </ul>
     </div>
     {% endif %}
@@ -105,7 +137,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {{ build.target_date }}
             {% if build.is_overdue %}
-            <span title='{% trans "This build was due on" %} {{ build.target_date }}' class='label label-red'>{% trans "Overdue" %}</span>
+            <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='label label-red'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
@@ -169,6 +201,13 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-complete").on('click', function() {
+
+        {% if build.incomplete_count > 0 %}
+        showAlertDialog(
+            '{% trans "Incomplete Outputs" %}',
+            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}'
+        );
+        {% else %}
         launchModalForm(
             "{% url 'build-complete' build.id %}",
             {
@@ -176,6 +215,7 @@ src="{% static 'img/blank_image.png' %}"
                 submit_text: '{% trans "Complete Build" %}',
             }
         );
+        {% endif %}
     });
 
     $('#print-build-report').click(function() {
