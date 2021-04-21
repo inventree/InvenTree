@@ -512,8 +512,8 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
 email_config = CONFIG.get('email', {})
 
 EMAIL_BACKEND = get_setting(
-    'django.core.mail.backends.smtp.EmailBackend',
-    email_config.get('backend', '')
+    'INVENTREE_EMAIL_BACKEND',
+    email_config.get('backend', 'django.core.mail.backends.smtp.EmailBackend')
 )
 
 # Email backend settings
@@ -535,6 +535,11 @@ EMAIL_HOST_USER = get_setting(
 EMAIL_HOST_PASSWORD = get_setting(
     'INVENTREE_EMAIL_PASSWORD',
     email_config.get('password', ''),
+)
+
+DEFAULT_FROM_EMAIL = get_setting(
+    'INVENTREE_EMAIL_SENDER',
+    email_config.get('sender', ''),
 )
 
 EMAIL_SUBJECT_PREFIX = '[InvenTree] '
