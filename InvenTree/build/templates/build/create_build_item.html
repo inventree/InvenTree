@@ -8,15 +8,13 @@
     </p>
     {% if output %}
     <p>
-        {% trans "The allocated stock will be installed into the following build output:" %}
-        <br>
-        <i>{{ output }}</i>
+        {% blocktrans %}The allocated stock will be installed into the following build output:<br><i>{{output}}</i>{% endblocktrans %}
     </p>
     {% endif %}
 </div>
 {% if no_stock %}
 <div class='alert alert-danger alert-block' role='alert'>
-    {% trans "No stock available for" %} {{ part }}
+    {% blocktrans %}No stock available for {{part}}{% endblocktrans %}
 </div>
 {% endif %}
 {% endblock %}

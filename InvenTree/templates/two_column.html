@@ -9,8 +9,12 @@
 
 {% block content %}
 
+{% block header_panel %}
 <div class='panel panel-default panel-inventree'>
     
+    {% block header_pre_content %}
+    {% endblock %}
+
     <div class='row'>
         <div class='col-sm-6'>
             <div class='media-left'>
@@ -30,8 +34,14 @@
             {% endblock %}
         </div>
     </div>
-</div>
 
+    {% block header_post_content %}
+    {% endblock %}
+
+</div>
+{% endblock %}
+
+{% block content_panels %}
 <div class='panel panel-default panel-inventree'>
     <div class='panel-heading'>
         <h4>
@@ -41,12 +51,15 @@
         </h4>
     </div>
 
+    {% block details_panel %}
     <div class='panel-content'>
         {% block details %}
         <!-- Particular page detail views go here -->
         {% endblock %}
     </div>
+    {% endblock %}
 </div>
+{% endblock %}
 
 {% endblock %}
 

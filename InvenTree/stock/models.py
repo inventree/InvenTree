@@ -634,6 +634,7 @@ class StockItem(MPTTModel):
 
         self.customer = None
         self.location = location
+        self.sales_order = None
 
         self.save()
 

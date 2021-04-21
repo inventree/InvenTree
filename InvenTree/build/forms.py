@@ -3,6 +3,7 @@ Django Forms for interacting with Build objects
 """
 
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
@@ -11,6 +12,8 @@ from django import forms
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
+
+from InvenTree.status_codes import StockStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
 
@@ -165,16 +168,10 @@ class AutoAllocateForm(HelperForm):
 
     confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Confirm stock allocation'))
 
-    # Keep track of which build output we are interested in
-    output = forms.ModelChoiceField(
-        queryset=StockItem.objects.all(),
-    )
-
     class Meta:
         model = Build
         fields = [
             'confirm',
-            'output',
         ]
 
 
@@ -214,6 +211,13 @@ class CompleteBuildOutputForm(HelperForm):
         help_text=_('Location of completed parts'),
     )
 
+    stock_status = forms.ChoiceField(
+        label=_('Status'),
+        help_text=_('Build output stock status'),
+        initial=StockStatus.OK,
+        choices=StockStatus.items(),
+    )
+
     confirm_incomplete = forms.BooleanField(
         required=False,
         label=_('Confirm incomplete'),
@@ -232,9 +236,14 @@ class CompleteBuildOutputForm(HelperForm):
         fields = [
             'location',
             'output',
+            'stock_status',
             'confirm',
             'confirm_incomplete',
         ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
 
 
 class CancelBuildForm(HelperForm):

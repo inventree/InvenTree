@@ -11,7 +11,7 @@ from rest_framework import generics
 
 from django.conf.urls import url, include
 
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, isNull
 from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem
@@ -194,7 +194,11 @@ class BuildItemList(generics.ListCreateAPIView):
         output = params.get('output', None)
 
         if output:
-            queryset = queryset.filter(install_into=output)
+
+            if isNull(output):
+                queryset = queryset.filter(install_into=None)
+            else:
+                queryset = queryset.filter(install_into=output)
 
         return queryset
 

@@ -18,8 +18,8 @@ from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, extract_serial_numbers, normalize
-from InvenTree.status_codes import BuildStatus
+from InvenTree.helpers import str2bool, extract_serial_numbers, normalize, isNull
+from InvenTree.status_codes import BuildStatus, StockStatus
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
@@ -98,16 +98,6 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         initials = super().get_initial()
 
-        # Pointing to a particular build output?
-        output = self.get_param('output')
-
-        if output:
-            try:
-                output = StockItem.objects.get(pk=output)
-                initials['output'] = output
-            except (ValueError, StockItem.DoesNotExist):
-                pass
-
         return initials
 
     def get_context_data(self, *args, **kwargs):
@@ -119,18 +109,7 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         build = self.get_object()
 
-        form = self.get_form()
-
-        output_id = form['output'].value()
-
-        try:
-            output = StockItem.objects.get(pk=output_id)
-        except (ValueError, StockItem.DoesNotExist):
-            output = None
-
-        if output:
-            context['output'] = output
-            context['allocations'] = build.getAutoAllocations(output)
+        context['allocations'] = build.getAutoAllocations()
 
         context['build'] = build
 
@@ -140,18 +119,11 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         form = super().get_form()
 
-        if form['output'].value():
-            # Hide the 'output' field
-            form.fields['output'].widget = HiddenInput()
-
         return form
 
     def validate(self, build, form, **kwargs):
 
-        output = form.cleaned_data.get('output', None)
-
-        if not output:
-            form.add_error(None, _('Build output must be specified'))
+        pass
 
     def save(self, build, form, **kwargs):
         """
@@ -159,9 +131,7 @@ class BuildAutoAllocate(AjaxUpdateView):
         perform auto-allocations
         """
 
-        output = form.cleaned_data.get('output', None)
-
-        build.autoAllocate(output)
+        build.autoAllocate()
 
     def get_data(self):
         return {
@@ -242,7 +212,7 @@ class BuildOutputCreate(AjaxUpdateView):
 
         # Calculate the required quantity
         quantity = max(0, build.remaining - build.incomplete_count)
-        initials['quantity'] = quantity
+        initials['output_quantity'] = quantity
 
         return initials
 
@@ -365,10 +335,16 @@ class BuildUnallocate(AjaxUpdateView):
 
         output_id = request.POST.get('output_id', None)
 
-        try:
-            output = StockItem.objects.get(pk=output_id)
-        except (ValueError, StockItem.DoesNotExist):
-            output = None
+        if output_id:
+
+            # If a "null" output is provided, we are trying to unallocate "untracked" stock
+            if isNull(output_id):
+                output = None
+            else:
+                try:
+                    output = StockItem.objects.get(pk=output_id)
+                except (ValueError, StockItem.DoesNotExist):
+                    output = None
 
         part_id = request.POST.get('part_id', None)
 
@@ -383,9 +359,19 @@ class BuildUnallocate(AjaxUpdateView):
             form.add_error('confirm', _('Confirm unallocation of build stock'))
             form.add_error(None, _('Check the confirmation box'))
         else:
-            build.unallocateStock(output=output, part=part)
+
             valid = True
 
+            # Unallocate the entire build
+            if not output_id:
+                build.unallocateAll()
+            # Unallocate a single output
+            elif output:
+                build.unallocateOutput(output, part=part)
+            # Unallocate "untracked" parts
+            else:
+                build.unallocateUntracked(part=part)
+        
         data = {
             'form_valid': valid,
         }
@@ -410,8 +396,8 @@ class BuildComplete(AjaxUpdateView):
 
     def validate(self, build, form, **kwargs):
 
-        if not build.can_complete:
-            form.add_error(None, _('Build order cannot be completed'))
+        if build.incomplete_count > 0:
+            form.add_error(None, _('Build order cannot be completed - incomplete outputs remain'))
 
     def save(self, build, form, **kwargs):
         """
@@ -431,7 +417,7 @@ class BuildOutputComplete(AjaxUpdateView):
     View to mark a particular build output as Complete.
 
     - Notifies the user of which parts will be removed from stock.
-    - Removes allocated items from stock
+    - Assignes (tracked) allocated items from stock to the build output
     - Deletes pending BuildItem objects
     """
 
@@ -463,10 +449,24 @@ class BuildOutputComplete(AjaxUpdateView):
         return form
 
     def validate(self, build, form, **kwargs):
+        """
+        Custom validation steps for the BuildOutputComplete" form
+        """
 
         data = form.cleaned_data
 
         output = data.get('output', None)
+
+        stock_status = data.get('stock_status', StockStatus.OK)
+
+        # Any "invalid" stock status defaults to OK
+        try:
+            stock_status = int(stock_status)
+        except (ValueError):
+            stock_status = StockStatus.OK
+
+        if int(stock_status) not in StockStatus.keys():
+            form.add_error('stock_status', _('Invalid stock status value selected'))
 
         if output:
 
@@ -559,12 +559,20 @@ class BuildOutputComplete(AjaxUpdateView):
 
         location = data.get('location', None)
         output = data.get('output', None)
+        stock_status = data.get('stock_status', StockStatus.OK)
+
+        # Any "invalid" stock status defaults to OK
+        try:
+            stock_status = int(stock_status)
+        except (ValueError):
+            stock_status = StockStatus.OK
 
         # Complete the build output
         build.completeBuildOutput(
             output,
             self.request.user,
             location=location,
+            status=stock_status,
         )
     
     def get_data(self):
@@ -632,10 +640,12 @@ class BuildAllocate(InvenTreeRoleMixin, DetailView):
 
         build = self.get_object()
         part = build.part
-        bom_items = part.bom_items
+        bom_items = build.bom_items
 
         context['part'] = part
         context['bom_items'] = bom_items
+        context['has_tracked_bom_items'] = build.has_tracked_bom_items()
+        context['has_untracked_bom_items'] = build.has_untracked_bom_items()
         context['BuildStatus'] = BuildStatus
 
         context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
 {% if part %}
-InvenTree | {% trans "Part" %} - {{ part.full_name }}
+{% inventree_title %} | {% trans "Part" %} - {{ part.full_name }}
 {% elif category %}
-InvenTree | {% trans "Part Category" %} - {{ category }}
+{% inventree_title %} | {% trans "Part Category" %} - {{ category }}
 {% else %}
-InvenTree | {% trans "Part List" %}
+{% inventree_title %} | {% trans "Part List" %}
 {% endif %}
 {% endblock %}
 

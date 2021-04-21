@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
 {% if location %}
-InvenTree | {% trans "Stock Location" %} - {{ location }}
+{% inventree_title %} | {% trans "Stock Location" %} - {{ location }}
 {% else %}
-InvenTree | {% trans "Stock" %}
+{% inventree_title %} | {% trans "Stock" %}
 {% endif %}
 {% endblock %}
 

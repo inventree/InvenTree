@@ -7,8 +7,8 @@
 {% trans 'Mark this order as complete?' %}
 {% if not order.is_complete %}
 <div class='alert alert-warning alert-block'>
-    {%trans 'This order has line items which have not been marked as received.
-    Marking this order as complete will remove these line items.' %}
+    {% trans 'This order has line items which have not been marked as received.' %}
+    {% trans 'Marking this order as complete will remove these line items.' %}
 </div>
 {% endif %}
 
