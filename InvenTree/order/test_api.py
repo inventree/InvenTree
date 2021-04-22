@@ -67,11 +67,11 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier': 3}, 5)
 
         # Filter by "outstanding"
-        self.filter({'outstanding': True}, 4)
+        self.filter({'outstanding': True}, 5)
         self.filter({'outstanding': False}, 2)
 
         # Filter by "status"
-        self.filter({'status': 10}, 2)
+        self.filter({'status': 10}, 3)
         self.filter({'status': 40}, 1)
 
     def test_overdue(self):
@@ -87,7 +87,7 @@ class PurchaseOrderTest(OrderTest):
         order.save()
 
         self.filter({'overdue': True}, 1)
-        self.filter({'overdue': False}, 5)
+        self.filter({'overdue': False}, 6)
 
     def test_po_detail(self):
 
