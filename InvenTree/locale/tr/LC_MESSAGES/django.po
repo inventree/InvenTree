@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 22:29+1000\n"
+"POT-Creation-Date: 2021-04-22 12:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2243,7 +2243,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:22
 #: part/templates/part/manufacturer.html:24 part/templates/part/params.html:44
 #: part/templates/part/related.html:44 part/templates/part/supplier.html:22
-#: stock/views.py:1002 users/models.py:184
+#: stock/views.py:1002 users/models.py:185
 msgid "Delete"
 msgstr ""
 
@@ -5745,7 +5745,7 @@ msgstr ""
 msgid "Add Stock Items"
 msgstr ""
 
-#: stock/views.py:1001 users/models.py:180
+#: stock/views.py:1001 users/models.py:181
 msgid "Add"
 msgstr ""
 
@@ -6051,10 +6051,10 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"\t\tThe CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected "
-"color theme was not found.<br>\n"
-"\t\tPlease select another color theme :)\n"
-"\t"
+"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
+"selected color theme was not found.<br>\n"
+"        Please select another color theme :)\n"
+"    "
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:16
@@ -7255,34 +7255,34 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:167
+#: users/models.py:168
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:175
+#: users/models.py:176
 msgid "Group"
 msgstr ""
 
-#: users/models.py:178
+#: users/models.py:179
 msgid "View"
 msgstr ""
 
-#: users/models.py:178
+#: users/models.py:179
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:180
+#: users/models.py:181
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:182
+#: users/models.py:183
 msgid "Change"
 msgstr ""
 
-#: users/models.py:182
+#: users/models.py:183
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:184
+#: users/models.py:185
 msgid "Permission to delete items"
 msgstr ""
