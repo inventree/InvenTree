@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-22 13:24+0000\n"
+"POT-Creation-Date: 2021-04-22 13:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6119,11 +6119,17 @@ msgid "View Code on GitHub"
 msgstr ""
 
 #: templates/about.html:63
-msgid "Get the App"
+msgid "Mobile App"
 msgstr ""
 
 #: templates/about.html:68
 msgid "Submit Bug Report"
+msgstr ""
+
+#: templates/about.html:77 templates/js/modals.js:550
+#: templates/js/modals.js:809 templates/modals.html:28 templates/modals.html:52
+#: templates/modals.html:93
+msgid "Close"
 msgstr ""
 
 #: templates/attachment_table.html:6
@@ -6453,11 +6459,6 @@ msgstr ""
 #: templates/js/modals.js:549 templates/js/modals.js:808
 #: templates/modals.html:29 templates/modals.html:53
 msgid "Submit"
-msgstr ""
-
-#: templates/js/modals.js:550 templates/js/modals.js:809
-#: templates/modals.html:28 templates/modals.html:52 templates/modals.html:93
-msgid "Close"
 msgstr ""
 
 #: templates/js/modals.js:760
@@ -7031,6 +7032,10 @@ msgstr ""
 
 #: templates/modals.html:21 templates/modals.html:46
 msgid "Form errors exist"
+msgstr ""
+
+#: templates/navbar.html:13
+msgid "Toggle navigation"
 msgstr ""
 
 #: templates/navbar.html:33

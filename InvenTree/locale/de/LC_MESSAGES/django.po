@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-22 13:24+0000\n"
+"POT-Creation-Date: 2021-04-22 13:38+0000\n"
 "PO-Revision-Date: 2021-04-21 10:02\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -6228,12 +6228,18 @@ msgid "View Code on GitHub"
 msgstr "Code auf GitHub ansehen"
 
 #: templates/about.html:63
-msgid "Get the App"
-msgstr "App herunterladen"
+msgid "Mobile App"
+msgstr ""
 
 #: templates/about.html:68
 msgid "Submit Bug Report"
 msgstr "Fehlerbericht senden"
+
+#: templates/about.html:77 templates/js/modals.js:550
+#: templates/js/modals.js:809 templates/modals.html:28 templates/modals.html:52
+#: templates/modals.html:93
+msgid "Close"
+msgstr "Schliessen"
 
 #: templates/attachment_table.html:6
 msgid "Add Attachment"
@@ -6566,11 +6572,6 @@ msgstr "Lade Daten"
 #: templates/modals.html:29 templates/modals.html:53
 msgid "Submit"
 msgstr "Abschicken"
-
-#: templates/js/modals.js:550 templates/js/modals.js:809
-#: templates/modals.html:28 templates/modals.html:52 templates/modals.html:93
-msgid "Close"
-msgstr "Schliessen"
 
 #: templates/js/modals.js:760
 msgid "Invalid response from server"
@@ -7145,6 +7146,10 @@ msgstr "Alle"
 msgid "Form errors exist"
 msgstr "Fehler in Formular"
 
+#: templates/navbar.html:13
+msgid "Toggle navigation"
+msgstr ""
+
 #: templates/navbar.html:33
 msgid "Buy"
 msgstr "Kaufen"
@@ -7408,6 +7413,9 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:185
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Get the App"
+#~ msgstr "App herunterladen"
 
 #~ msgid "Create new purchase order for {{ supplier.name }}"
 #~ msgstr "Neue Bestellung für {{ supplier.name }} anlegen"
