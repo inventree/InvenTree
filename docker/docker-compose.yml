@@ -110,6 +110,6 @@ volumes:
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
             # Change this path to a local system path where you want InvenTree data stored
-            device: c:\my-inventree-data
+            device: /path/to/data
     # Static files, shared between containers
     static:
