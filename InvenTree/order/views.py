@@ -996,6 +996,7 @@ class OrderParts(AjaxView):
 
                 part.order_supplier = supplier_part.id if supplier_part else None
                 part.order_quantity = quantity
+                part.purchase_price = supplier_part.get_price(quantity) / quantity if supplier_part else None
 
                 self.parts.append(part)
 
@@ -1096,7 +1097,10 @@ class OrderParts(AjaxView):
                         sp=item.order_supplier))
                     continue
 
-                order.add_line_item(supplier_part, quantity)
+                # get purchase price
+                purchase_price = item.purchase_price if item.purchase_price else None
+
+                order.add_line_item(supplier_part, quantity, purchase_price=purchase_price)
 
 
 class POLineItemCreate(AjaxCreateView):
