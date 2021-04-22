@@ -60,7 +60,7 @@ class PurchaseOrderTest(OrderTest):
     def test_po_list(self):
 
         # List *ALL* PO items
-        self.filter({}, 6)
+        self.filter({}, 7)
 
         # Filter by supplier
         self.filter({'supplier': 1}, 1)
@@ -80,7 +80,7 @@ class PurchaseOrderTest(OrderTest):
         """
 
         self.filter({'overdue': True}, 0)
-        self.filter({'overdue': False}, 6)
+        self.filter({'overdue': False}, 7)
 
         order = PurchaseOrder.objects.get(pk=1)
         order.target_date = datetime.now().date() - timedelta(days=10)
