@@ -1,4 +1,4 @@
-name: Make Translation
+name: Update Translation Files
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: get current translations
+    - name: Get Current Translations
       run: |
         git fetch
         git checkout origin/l10 -- `git ls-tree origin/l10 -r --name-only | grep ".po"`
@@ -42,7 +42,7 @@ jobs:
     - name: stash changes
       run: |
         git stash
-    - name: Checkout tranlation-branch
+    - name: Checkout Translation Branch
       uses: actions/checkout@v2.3.4
       with:
         ref: l10
