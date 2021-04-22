@@ -2,11 +2,8 @@
 
 {% load i18n %}
 {% load inventree_extras %}
+
 {% block pre_form_content %}
-
-{% settings_value "INVENTREE_DEFAULT_CURRENCY" as currency %}
-{% settings_value "PART_SHOW_GRAPH" as show_graph %}
-
 <div class='alert alert-info alert-block'>
 {% blocktrans %}Pricing information for:<br>{{part}}.{% endblocktrans %}
 </div>
@@ -80,6 +77,19 @@
     {% endif %}
 </table>
     {% endif %}
+
+    {% if min_unit_buy_price or min_unit_bom_price %}
+    {% else %}
+        <div class='alert alert-danger alert-block'>
+            {% trans 'No pricing information is available for this part.' %}
+        </div>
+    {% endif %}
+    <hr>
+{% endblock %}
+
+{% block post_form_content %}
+    {% settings_value "INVENTREE_DEFAULT_CURRENCY" as currency %}
+    {% settings_value "PART_SHOW_GRAPH" as show_graph %}
 
     {% if show_graph and price_history %}
         <h4>{% trans 'Stock Pricing' %}</h4>
@@ -188,14 +198,4 @@
         </div>
         {% endif %}
     {% endif %}
-
-{% if min_unit_buy_price or min_unit_bom_price %}
-{% else %}
-<div class='alert alert-danger alert-block'>
-    {% trans 'No pricing information is available for this part.' %}
-</div>
-{% endif %}
-
-<hr>
-
 {% endblock %}
