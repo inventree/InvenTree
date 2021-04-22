@@ -19,6 +19,7 @@ from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
 
 from moneyed import CURRENCIES
+from djmoney.contrib.exchange.models import convert_money
 
 from PIL import Image
 
@@ -2042,18 +2043,26 @@ class PartPricing(AjaxView):
             for stock_item in stock:
                 if None in [stock_item.purchase_price, stock_item.quantity]:
                     continue
+
+                # convert purchase price to current currency - only one currency in the graph
+                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
                 line = {
-                    'price': stock_item.purchase_price.amount,
+                    'price': price.amount,
                     'qty': stock_item.quantity
                 }
+                # Supplier Part Name  # TODO use in graph
                 if stock_item.supplier_part:
                     line['name'] = stock_item.supplier_part.pretty_name
 
-                    if stock_item.supplier_part.unit_pricing and stock_item.purchase_price:
-                        line['price_diff'] = stock_item.supplier_part.unit_pricing - stock_item.purchase_price.amount
-                if stock_item.purchase_order:
+                    if stock_item.supplier_part.unit_pricing and price:
+                        line['price_diff'] = price.amount - stock_item.supplier_part.unit_pricing
+                        line['price_part'] = stock_item.supplier_part.unit_pricing
 
+                # set date for graph labels
+                if stock_item.purchase_order:
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
+                else:
+                    line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
                 ret.append(line)
 
             ctx['price_history'] = ret

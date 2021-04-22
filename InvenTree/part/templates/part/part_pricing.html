@@ -4,6 +4,7 @@
 {% load inventree_extras %}
 {% block pre_form_content %}
 
+{% settings_value "INVENTREE_DEFAULT_CURRENCY" as currency %}
 {% settings_value "PART_SHOW_GRAPH" as show_graph %}
 
 <div class='alert alert-info alert-block'>
@@ -81,73 +82,111 @@
     {% endif %}
 
     {% if show_graph and price_history %}
-    <h4>{% trans 'Stock Pricing' %}</h4>
-    {% if price_history|length > 1 %}
-        <canvas id="priceChart"></canvas>
-        <script>
-        var pricedata = {
-                labels: [
-                    {% for line in price_history %}'{{ line.date }}',{% endfor %}
-                ],
-                datasets: [{
-                    label: 'Price',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    yAxisID: 'y',
-                    data: [
-                        {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
+        <h4>{% trans 'Stock Pricing' %}</h4>
+        {% if price_history|length > 1 %}
+            <div style="height: 300px">
+                <canvas id="StockPriceChart"></canvas>
+            </div>
+            <div class='alert alert-info alert-block'>
+                {% blocktrans %}All prices are converted from their original currencies to {{currency}} at the current conversion-rate.{% endblocktrans %}
+            </div>
+            <script>
+            var pricedata = {
+                    labels: [
+                        {% for line in price_history %}'{{ line.date }}',{% endfor %}
                     ],
-                    borderWidth: 1,
-                    type: 'line'
-                },
-                {
-                    label: 'Qty',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    borderColor: 'rgb(255, 206, 86)',
-                    yAxisID: 'y1',
-                    data: [
-                        {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
-                    ],
-                    borderWidth: 1
-                }]
-            }
-
-        var ctx = document.getElementById('priceChart');
-        var priceChart = new Chart(ctx, {
-            type: 'bar',
-            data: pricedata,
-            options: {
-                responsive: true,
-                plugins: {legend: {position: 'bottom'}},
-                scales: {
-                    y: {
-                        type: 'linear',
-                        position: 'left',
-                        grid: {display: false},
-                        title: {
-                            display: true,
-                            text: 'Price - USD'
+                    datasets: [{
+                        label: '{% trans "Single Price" %}',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        yAxisID: 'y',
+                        data: [
+                            {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
+                        ],
+                        borderWidth: 1,
+                        type: 'line'
+                    },
+                    {% if 'price_diff' in price_history.0 %}
+                    {
+                        label: '{% trans "Single Price Difference" %}',
+                        backgroundColor: 'rgba(68, 157, 68, 0.2)',
+                        borderColor: 'rgb(68, 157, 68)',
+                        yAxisID: 'y2',
+                        data: [
+                            {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
+                        ],
+                        borderWidth: 1,
+                        type: 'line'
+                    },
+                    {
+                        label: '{% trans "Part Single Price" %}',
+                        backgroundColor: 'rgba(70, 127, 155, 0.2)',
+                        borderColor: 'rgb(70, 127, 155)',
+                        yAxisID: 'y',
+                        data: [
+                            {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
+                        ],
+                        borderWidth: 1,
+                        type: 'line'
+                    },
+                    {% endif %}
+                    {
+                        label: '{% trans "Quantity" %}',
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgb(255, 206, 86)',
+                        yAxisID: 'y1',
+                        data: [
+                            {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+            var ctx = document.getElementById('StockPriceChart');
+            var StockPriceChart = new Chart(ctx, {
+                type: 'bar',
+                data: pricedata,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {legend: {position: 'bottom'}},
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            grid: {display: false},
+                            title: {
+                                display: true,
+                                text: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            grid: {display: false},
+                            titel: {
+                                display: true,
+                                text: '{% trans "Quantity" %}',
+                                position: 'right'
+                            }
+                        },
+                        y2: {
+                            type: 'linear',
+                            position: 'left',
+                            grid: {display: false},
+                            title: {
+                                display: true,
+                                text: '{% blocktrans %}Single Price Difference- {{currency}}{% endblocktrans %}'
+                            }
                         }
                     },
-                    y1: {
-                        type: 'linear',
-                        position: 'right',
-                        grid: {display: false},
-                        titel: {
-                            display: true,
-                            text: 'Qty',
-                            position: 'right'
-                        }
-                    }
                 }
-            }
-        });
-        </script>
-    {% else %}
-    <div class='alert alert-danger alert-block'>
-        {% trans 'No stock pricing history is available for this part.' %}
-    </div>
-    {% endif %}
+            });
+            </script>
+        {% else %}
+        <div class='alert alert-danger alert-block'>
+            {% trans 'No stock pricing history is available for this part.' %}
+        </div>
+        {% endif %}
     {% endif %}
 
 {% if min_unit_buy_price or min_unit_bom_price %}
