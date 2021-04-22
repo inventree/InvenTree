@@ -50,6 +50,15 @@
     supplier: 3
     status: 40  # Cancelled
 
+  # for pricebreaks
+- model: order.purchaseorder
+  pk: 7
+  fields:
+    reference: '0007'
+    description: 'Another PO'
+    supplier: 2
+    status: 10  # Pending
+
 # Add some line items against PO 0001
 
 # 100 x ACME0001 (M2x4 LPHS)
