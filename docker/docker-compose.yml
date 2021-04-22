@@ -19,8 +19,8 @@ services:
     # Use PostgreSQL as the database backend
     # Note: this can be changed to a different backend,
     #       just make sure that you change the INVENTREE_DB_xxx vars below
-    db:
-        container_name: db
+    inventree-db:
+        container_name: inventree-db
         image: postgres
         ports:
             - 5432/tcp
@@ -35,49 +35,60 @@ services:
 
     # InvenTree web server services
     # Uses gunicorn as the web server
-    inventree:
-        container_name: inventree
+    inventree-server:
+        container_name: inventree-server
         image: inventree/inventree:latest
         expose:
             - 8000
         depends_on:
-            - db
+            - inventree-db
         volumes:
             - data:/home/inventree/data
             - static:/home/inventree/static
         environment:
             # Default environment variables are configured to match the 'db' container
-            # Database permissions
+            # Note: If you change the database image, these will need to be adjusted
+            # Note: INVENTREE_DB_HOST should match the container name of the database
             - INVENTREE_DB_USER=pguser
             - INVENTREE_DB_PASSWORD=pgpassword
+            - INVENTREE_DB_ENGINE=postgresql
+            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_HOST=inventree-db
+            - INVENTREE_DB_PORT=5432
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
-    worker:
-        container_name: worker
+    inventree-worker:
+        container_name: inventree-worker
         image: inventree/inventree:latest
         entrypoint: ./start_worker.sh
         depends_on:
-            - db
-            - inventree
+            - inventree-db
+            - inventree-server
         volumes:
             - data:/home/inventree/data
             - static:/home/inventree/static
         environment:
-            # Default environment variables are configured to match the 'inventree' container
+            # Default environment variables are configured to match the 'db' container
+            # Note: If you change the database image, these will need to be adjusted
+            # Note: INVENTREE_DB_HOST should match the container name of the database
             - INVENTREE_DB_USER=pguser
             - INVENTREE_DB_PASSWORD=pgpassword
+            - INVENTREE_DB_ENGINE=postgresql
+            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_HOST=inventree-db
+            - INVENTREE_DB_PORT=5432
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
     # static files are served by nginx
     # web requests are redirected to gunicorn
     # NOTE: You will need to provide a working nginx.conf file!
-    proxy:
-        container_name: proxy
+    inventree-proxy:
+        container_name: inventree-proxy
         image: nginx
         depends_on:
-            - inventree
+            - inventree-server
         ports:
             # Change "1337" to the port that you want InvenTree web server to be available on
             - 1337:80
@@ -99,6 +110,6 @@ volumes:
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
             # Change this path to a local system path where you want InvenTree data stored
-            device: /path/to/data
+            device: c:\my-inventree-data
     # Static files, shared between containers
     static:
