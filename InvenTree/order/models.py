@@ -257,7 +257,7 @@ class PurchaseOrder(Order):
                 # update quantity and price
                 quantity_new = line.quantity + quantity
                 line.quantity = quantity_new
-                if purchase_price:
+                if line.purchase_price:
                     line.purchase_price = supplier_part.get_price(quantity_new) / quantity_new
                 line.save()
 
