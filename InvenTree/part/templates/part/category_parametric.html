@@ -19,18 +19,18 @@
 
 {% block js_ready %}
 {{ block.super }}
-	
-	/* Hide Button Toolbar */
-	window.onload = function hideButtonToolbar() {
-		var toolbar = document.getElementById("button-toolbar");
-		toolbar.style.display = "none";
-	};
+
+    /* Hide Button Toolbar */
+    window.onload = function hideButtonToolbar() {
+        var toolbar = document.getElementById("button-toolbar");
+        toolbar.style.display = "none";
+    };
 
     loadParametricPartTable(
         "#parametric-part-table",
         { 
-        	headers: {{ headers|safe }},
-        	data: {{ parameters|safe }},
+            headers: {{ headers|safe }},
+            data: {{ parameters|safe }},
         }
     );
 

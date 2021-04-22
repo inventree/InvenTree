@@ -44,7 +44,7 @@
     });
 
 {% if category %}
-	$("#param-table").inventreeTable({
+    $("#param-table").inventreeTable({
         url: "{% url 'api-part-category-parameters' pk=category.pk %}",
         queryParams: {
             ordering: 'name',
@@ -66,7 +66,7 @@
                 field: 'default_value',
                 title: '{% trans "Default Value" %}',
                 sortable: 'true',
-				formatter: function(value, row, index, field) {
+                formatter: function(value, row, index, field) {
                     var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
                     var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
@@ -79,7 +79,7 @@
         ]
     });
 
-	$("#new-param").click(function() {
+    $("#new-param").click(function() {
         launchModalForm("{% url 'category-param-template-create' category.pk %}", {
             success: function() {
                 $("#param-table").bootstrapTable('refresh');
