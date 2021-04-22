@@ -59,6 +59,12 @@ class RuleSet(models.Model):
             'authtoken_token',
             'authtoken_tokenproxy',
             'users_ruleset',
+            'report_reportasset',
+            'report_reportsnippet',
+            'report_billofmaterialsreport',
+            'report_purchaseorderreport',
+            'report_salesorderreport',
+
         ],
         'part_category': [
             'part_partcategory',
@@ -128,11 +134,6 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'company_contact',
-        'report_reportasset',
-        'report_reportsnippet',
-        'report_billofmaterialsreport',
-        'report_purchaseorderreport',
-        'report_salesorderreport',
         'users_owner',
 
         # Third-party tables

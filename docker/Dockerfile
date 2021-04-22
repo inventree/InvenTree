@@ -29,16 +29,6 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 # Default web server port is 8000
 ENV INVENTREE_WEB_PORT="8000"
 
-# Pass DB configuration through as environment variables
-# Default configuration = postgresql
-ENV INVENTREE_DB_ENGINE="postgresql"
-ENV INVENTREE_DB_NAME="inventree"
-ENV INVENTREE_DB_HOST="db"
-ENV INVENTREE_DB_PORT="5432"
-
-# INVENTREE_DB_USER must be specified at run-time
-# INVENTREE_DB_PASSWORD must be specified at run-time
-
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
       org.label-schema.vendor="inventree" \
