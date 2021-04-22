@@ -5,7 +5,7 @@
 {% load i18n %}
 
 {% block page_title %}
-InvenTree | {% trans "Stock Item" %} - {{ item }}
+{% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
 {% block sidenav %}
@@ -48,13 +48,17 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
-    {% trans "This stock item is allocated to Sales Order" %} <a href="{% url 'so-detail' allocation.line.order.id %}"><b>#{{ allocation.line.order }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
+    {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
+    {% decimal allocation.quantity as qty %}
+    {% blocktrans %}This stock item is allocated to Sales Order {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
 </div>
 {% endfor %}
 
 {% for allocation in item.allocations.all %}
 <div class='alert alert-block alert-info'>
-    {% trans "This stock item is allocated to Build" %} <a href="{% url 'build-detail' allocation.build.id %}"><b>#{{ allocation.build }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
+    {% object_link 'build-detail' allocation.build.id allocation.build %}
+    {% decimal allocation.quantity as qty %}
+    {% blocktrans %}This stock item is allocated to Build {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
 </div>
 {% endfor %}
 
@@ -331,7 +335,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><a href="{{ item.link }}">{{ item.link }}</a></td>
     </tr>
     {% endif %}
-    {% if item.supplier_part %}
+    {% if item.supplier_part.manufacturer_part %}
     <tr>
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
@@ -342,6 +346,8 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{% trans "Manufacturer Part" %}</td>
         <td><a href="{% url 'manufacturer-part-detail' item.supplier_part.manufacturer_part.id %}">{{ item.supplier_part.manufacturer_part.MPN }}</a></td>
     </tr>
+    {% endif %}
+    {% if item.supplier_part %}
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
@@ -360,9 +366,9 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>
             {{ item.expiry_date }}
             {% if item.is_expired %}
-            <span title='{% trans "This StockItem expired on" %} {{ item.expiry_date }}' class='label label-red'>{% trans "Expired" %}</span>
+            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='label label-red'>{% trans "Expired" %}</span>
             {% elif item.is_stale %}
-            <span title='{% trans "This StockItem expires on" %} {{ item.expiry_date }}' class='label label-yellow'>{% trans "Stale" %}</span>
+            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='label label-yellow'>{% trans "Stale" %}</span>
             {% endif %}
         </td>
     </tr>

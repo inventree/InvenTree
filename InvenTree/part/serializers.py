@@ -4,6 +4,7 @@ JSON serializers for Part app
 import imghdr
 from decimal import Decimal
 
+from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
@@ -208,7 +209,8 @@ class PartSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             in_stock=Coalesce(
                 SubquerySum('stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
-                Decimal(0)
+                Decimal(0),
+                output_field=models.DecimalField(),
             ),
         )
 
@@ -227,6 +229,7 @@ class PartSerializer(InvenTreeModelSerializer):
             building=Coalesce(
                 SubquerySum('builds__quantity', filter=build_filter),
                 Decimal(0),
+                output_field=models.DecimalField(),
             )
         )
         
@@ -240,9 +243,11 @@ class PartSerializer(InvenTreeModelSerializer):
             ordering=Coalesce(
                 SubquerySum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
                 Decimal(0),
+                output_field=models.DecimalField(),
             ) - Coalesce(
                 SubquerySum('supplier_parts__purchase_order_line_items__received', filter=order_filter),
                 Decimal(0),
+                output_field=models.DecimalField(),
             )
         )
 
@@ -251,6 +256,7 @@ class PartSerializer(InvenTreeModelSerializer):
             suppliers=Coalesce(
                 SubqueryCount('supplier_parts'),
                 Decimal(0),
+                output_field=models.DecimalField(),
             ),
         )
         

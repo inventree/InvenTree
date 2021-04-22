@@ -85,6 +85,7 @@ email:
   port: 25
   username: ''
   password: ''
+  sender: ''
   tls: False
   ssl: False
 

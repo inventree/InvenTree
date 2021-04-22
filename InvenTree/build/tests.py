@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from .models import Build
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, StockStatus
 
 
 class BuildTestSimple(TestCase):
@@ -335,6 +335,7 @@ class TestBuildViews(TestCase):
                 'confirm_incomplete': 1,
                 'location': 1,
                 'output': self.output.pk,
+                'stock_status': StockStatus.DAMAGED
             },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
@@ -342,6 +343,7 @@ class TestBuildViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
         data = json.loads(response.content)
+
         self.assertTrue(data['form_valid'])
 
         # Now the build should be able to be completed

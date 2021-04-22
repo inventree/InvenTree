@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-15 10:07+0000\n"
+"POT-Creation-Date: 2021-04-14 11:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2026,9 +2026,8 @@ msgid "Supplied Parts"
 msgstr ""
 
 #: company/templates/company/navbar.html:23
-#: order/templates/order/receive_parts.html:14 part/api.py:40
-#: part/models.py:322 part/templates/part/cat_link.html:7
-#: part/templates/part/category.html:95
+#: order/templates/order/receive_parts.html:14 part/models.py:322
+#: part/templates/part/cat_link.html:7 part/templates/part/category.html:95
 #: part/templates/part/category_navbar.html:11
 #: part/templates/part/category_navbar.html:14
 #: part/templates/part/category_partlist.html:10
@@ -2047,8 +2046,8 @@ msgstr ""
 
 #: company/templates/company/navbar.html:30
 #: company/templates/company/part_navbar.html:14
-#: part/templates/part/navbar.html:36 stock/api.py:51
-#: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:29
+#: part/templates/part/navbar.html:36 stock/templates/stock/loc_link.html:7
+#: stock/templates/stock/location.html:29
 #: stock/templates/stock/stock_app_base.html:9
 #: templates/InvenTree/index.html:127 templates/InvenTree/search.html:180
 #: templates/InvenTree/search.html:216
@@ -6068,14 +6067,6 @@ msgstr ""
 msgid "Assembled part"
 msgstr ""
 
-#: templates/js/filters.js:167 templates/js/filters.js:397
-msgid "true"
-msgstr ""
-
-#: templates/js/filters.js:171 templates/js/filters.js:398
-msgid "false"
-msgstr ""
-
 #: templates/js/filters.js:193
 msgid "Select filter"
 msgstr ""
@@ -6406,18 +6397,6 @@ msgstr ""
 
 #: templates/js/stock.js:336
 msgid "No stock items matching query"
-msgstr ""
-
-#: templates/js/stock.js:357
-msgid "items"
-msgstr ""
-
-#: templates/js/stock.js:449
-msgid "batches"
-msgstr ""
-
-#: templates/js/stock.js:476
-msgid "locations"
 msgstr ""
 
 #: templates/js/stock.js:478

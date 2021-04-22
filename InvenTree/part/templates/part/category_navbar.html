@@ -8,17 +8,34 @@
         </a>
     </li>
 
+    <li class='list-group-item {% if tab == "subcategories" %}active{% endif %}' title='{% trans "Subcategories" %}'>
+        {% if category %}
+        <a href='{% url "category-subcategory" category.id %}'>
+        {% else %}
+        <a href='{% url "category-index-subcategory" %}'>
+        {% endif %}
+            <span class='fas fa-sitemap'></span>
+            {% trans "Subcategories" %}
+        </a>
+    </li>
+
     <li class='list-group-item {% if tab == "parts" %}active{% endif %}' title='{% trans "Parts" %}'>
+        {% if category %}
         <a href='{% url "category-detail" category.id %}'>
+        {% else %}
+        <a href='{% url "part-index" %}'>
+        {% endif %}
             <span class='fas fa-shapes'></span>
             {% trans "Parts" %}
         </a>
     </li>
 
+    {% if category %}
     <li class='list-group-item {% if tab == "parameters" %}active{% endif %}' title='{% trans "Parameters" %}'>
         <a href='{% url "category-parametric" category.id %}'>
             <span class='fas fa-tasks'></span>
             {% trans "Parameters" %}
         </a>
     </li>
+    {% endif %}
 </ul>

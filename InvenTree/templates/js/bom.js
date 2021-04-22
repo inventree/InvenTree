@@ -268,6 +268,10 @@ function loadBomTable(table, options) {
         field: 'optional',
         title: '{% trans "Optional" %}',
         searchable: false,
+        formatter: function(value) {
+            if (value == '1') return '{% trans "true" %}';
+            if (value == '0') return '{% trans "false" %}';
+        }
     });
 
     cols.push({

@@ -62,6 +62,28 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    // Filters for "stock location" table
+    if (tableKey == "location") {
+        return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include sublocations" %}',
+                description: '{% trans "Include locations" %}',
+            }
+        };
+    }
+
+    // Filters for "part category" table
+    if (tableKey == "category") {
+        return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include subcategories" %}',
+                description: '{% trans "Include subcategories" %}',
+            }
+        };
+    }
+
     // Filters for the "customer stock" table (really a subset of "stock")
     if (tableKey == "customerstock") {
         return {
