@@ -212,6 +212,7 @@ class PartSettingsTest(TestCase):
         self.assertFalse(part.settings.part_purchaseable_default())
         self.assertFalse(part.settings.part_salable_default())
         self.assertFalse(part.settings.part_trackable_default())
+        self.assertFalse(part.settings.part_show_graph())
 
     def test_initial(self):
         """

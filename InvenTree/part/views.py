@@ -41,6 +41,7 @@ from common.models import InvenTreeSetting
 from company.models import SupplierPart
 
 import common.settings as inventree_settings
+import part.settings as part_settings
 
 from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
@@ -2034,7 +2035,7 @@ class PartPricing(AjaxView):
                     ctx['max_unit_bom_price'] = max_bom_price / quantity
 
         # Stock history
-        if part.total_stock > 1:
+        if part_settings.part_show_graph and part.total_stock > 1:
             ret = []
             stock = part.stock_entries(include_variants=False, in_stock=True)
 

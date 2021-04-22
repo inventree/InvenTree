@@ -209,6 +209,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_SHOW_GRAPH': {
+            'name': _('Show Price History Graph'),
+            'description': _('Display the price history graph in the part pricing view'),
+            'default': False,
+            'validator': bool,
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),

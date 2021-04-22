@@ -1,7 +1,10 @@
 {% extends "modal_form.html" %}
 
 {% load i18n %}
+{% load inventree_extras %}
 {% block pre_form_content %}
+
+{% settings_value "PART_SHOW_GRAPH" as show_graph %}
 
 <div class='alert alert-info alert-block'>
 {% blocktrans %}Pricing information for:<br>{{part}}.{% endblocktrans %}
@@ -77,7 +80,7 @@
 </table>
     {% endif %}
 
-    {% if price_history %}
+    {% if show_graph and price_history %}
     <h4>{% trans 'Stock Pricing' %}</h4>
     {% if price_history|length > 1 %}
         <canvas id="priceChart"></canvas>

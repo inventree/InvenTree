@@ -62,3 +62,11 @@ def part_trackable_default():
     """
 
     return InvenTreeSetting.get_setting('PART_TRACKABLE')
+
+
+def part_show_graph():
+    """
+    Returns if the part pricing graph should be shown
+    """
+
+    return InvenTreeSetting.get_setting('PART_SHOW_GRAPH')
