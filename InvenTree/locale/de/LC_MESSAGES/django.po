@@ -33,8 +33,8 @@ msgstr "Keine passende Aktion gefunden"
 msgid "Enter date"
 msgstr "Datum eingeben"
 
-#: InvenTree/forms.py:110 build/forms.py:101 build/forms.py:122
-#: build/forms.py:144 build/forms.py:168 build/forms.py:184 build/forms.py:226
+#: InvenTree/forms.py:110 build/forms.py:102 build/forms.py:123
+#: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
@@ -358,15 +358,15 @@ msgstr "Barcode ist bereits BestandsObjekt zugeordnet"
 msgid "Barcode associated with StockItem"
 msgstr "Barcode zugeordnet zu BestandsObjekt"
 
-#: build/forms.py:36
+#: build/forms.py:37
 msgid "Build Order reference"
 msgstr "Bauauftrags-Referenz"
 
-#: build/forms.py:37
+#: build/forms.py:38
 msgid "Order target date"
 msgstr "geplantes Bestelldatum"
 
-#: build/forms.py:41 build/templates/build/build_base.html:136
+#: build/forms.py:42 build/templates/build/build_base.html:136
 #: build/templates/build/detail.html:121 order/forms.py:109 order/forms.py:144
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:117
@@ -380,7 +380,7 @@ msgstr "Zieldatum"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 
-#: build/forms.py:47 build/forms.py:89 build/forms.py:265 build/models.py:1227
+#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1227
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:123
@@ -412,43 +412,43 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 msgid "Quantity"
 msgstr "Anzahl"
 
-#: build/forms.py:48
+#: build/forms.py:49
 msgid "Number of items to build"
 msgstr "Anzahl der zu bauenden Teile"
 
-#: build/forms.py:90
+#: build/forms.py:91
 msgid "Enter quantity for build output"
 msgstr "Menge der Endprodukte angeben"
 
-#: build/forms.py:94 order/forms.py:233 stock/forms.py:118
+#: build/forms.py:95 order/forms.py:233 stock/forms.py:118
 msgid "Serial Numbers"
 msgstr "Seriennummer"
 
-#: build/forms.py:96
+#: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
 msgstr "Seriennummer für dieses Endprodukt eingeben"
 
-#: build/forms.py:102
+#: build/forms.py:103
 msgid "Confirm creation of build output"
 msgstr "Anlage von Endprodukt(en) bestätigen"
 
-#: build/forms.py:123
+#: build/forms.py:124
 msgid "Confirm deletion of build output"
 msgstr "Löschen des Endprodukt bestätigen"
 
-#: build/forms.py:144
+#: build/forms.py:145
 msgid "Confirm unallocation of stock"
 msgstr "Aufhebung der BestandsZuordnung bestätigen"
 
-#: build/forms.py:168
+#: build/forms.py:169
 msgid "Confirm stock allocation"
 msgstr "Bestandszuordnung bestätigen"
 
-#: build/forms.py:185
+#: build/forms.py:186
 msgid "Mark build as complete"
 msgstr "Bauauftrag als vollständig markieren"
 
-#: build/forms.py:209 build/templates/build/auto_allocate.html:18
+#: build/forms.py:210 build/templates/build/auto_allocate.html:18
 #: order/forms.py:82 stock/forms.py:347
 #: stock/templates/stock/item_base.html:274
 #: stock/templates/stock/stock_adjust.html:17
@@ -458,11 +458,11 @@ msgstr "Bauauftrag als vollständig markieren"
 msgid "Location"
 msgstr "Lagerort"
 
-#: build/forms.py:210
+#: build/forms.py:211
 msgid "Location of completed parts"
 msgstr "Lagerort der Endprodukte"
 
-#: build/forms.py:214 build/templates/build/build_base.html:128
+#: build/forms.py:215 build/templates/build/build_base.html:128
 #: build/templates/build/detail.html:59 order/models.py:445
 #: order/templates/order/receive_parts.html:24
 #: stock/templates/stock/item_base.html:392 templates/InvenTree/search.html:252
@@ -476,27 +476,27 @@ msgstr "Status"
 msgid "Build output stock status"
 msgstr "Bestands-Status der Endprodukte"
 
-#: build/forms.py:222
+#: build/forms.py:223
 msgid "Confirm incomplete"
 msgstr "Bauauftrag nicht fertiggestellt"
 
-#: build/forms.py:223
+#: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
 msgstr "Fertigstellung mit nicht kompletter Bestandszuordnung bestätigen"
 
-#: build/forms.py:226
+#: build/forms.py:227
 msgid "Confirm build completion"
 msgstr "Bauauftrag-Fertigstellung bestätigen"
 
-#: build/forms.py:251
+#: build/forms.py:252
 msgid "Confirm cancel"
 msgstr "Abbruch bestätigen"
 
-#: build/forms.py:251 build/views.py:66
+#: build/forms.py:252 build/views.py:66
 msgid "Confirm build cancellation"
 msgstr "Bauabbruch bestätigen"
 
-#: build/forms.py:265
+#: build/forms.py:266
 msgid "Select quantity of stock to allocate"
 msgstr "Menge der BestandsObjekte für Zuordnung auswählen"
 
@@ -1924,7 +1924,7 @@ msgstr "Lagerbestandseinheit (SKU) des Zulieferers"
 #: company/templates/company/manufacturer_part_base.html:19
 #: stock/templates/stock/item_base.html:346
 msgid "Manufacturer Part"
-msgstr "Herstellerteil"
+msgstr "Hersteller-Teil"
 
 #: company/models.py:483
 msgid "Select manufacturer part"
@@ -7232,4 +7232,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:184
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-
