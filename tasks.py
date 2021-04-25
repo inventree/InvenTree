@@ -232,6 +232,30 @@ def coverage(c):
     # Generate coverage report
     c.run('coverage html')
 
+
+def content_excludes():
+    """
+    Returns a list of content types to exclude from import/export
+    """
+
+    excludes = [
+        "contenttypes",
+        "auth.permission",
+        "error_report.error",
+        "admin.logentry",
+        "django_q.schedule",
+        "django_q.task",
+        "django_q.ormq",
+    ]
+
+    output = ""
+
+    for e in excludes:
+        output += f"--exclude {e} "
+
+    return output
+
+
 @task(help={'filename': "Output filename (default = 'data.json')"})
 def export_records(c, filename='data.json'):
     """
@@ -253,7 +277,7 @@ def export_records(c, filename='data.json'):
             print("Cancelled export operation")
             sys.exit(1)
 
-    cmd = f'dumpdata --exclude contenttypes --exclude auth.permission --indent 2 --output {filename}'
+    cmd = f"dumpdata --indent 2 --output {filename} {content_excludes()}"
 
     manage(c, cmd, pty=True)
 
@@ -273,7 +297,7 @@ def import_records(c, filename='data.json'):
 
     print(f"Importing database records from '{filename}'")
 
-    cmd = f'loaddata {filename}'
+    cmd = f"loaddata {filename} -i {content_excludes()}"
 
     manage(c, cmd, pty=True)
 
