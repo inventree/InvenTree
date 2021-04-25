@@ -2,6 +2,7 @@
 
 from shutil import copyfile
 import os
+import json
 import sys
 
 try:
@@ -278,9 +279,32 @@ def export_records(c, filename='data.json'):
             print("Cancelled export operation")
             sys.exit(1)
 
-    cmd = f"dumpdata --indent 2 --output {filename} {content_excludes()}"
+    tmpfile = f"{filename}.tmp"
 
+    cmd = f"dumpdata --indent 2 --output {tmpfile} {content_excludes()}"
+
+    # Dump data to temporary file
     manage(c, cmd, pty=True)
+
+    # Post-process the file, to remove any "permissions" specified for a group
+    with open(tmpfile, "r") as f_in:
+        data = json.loads(f_in.read())
+
+    for entry in data:
+        if "model" in entry:
+            
+            # Clear out any permissions specified for a group
+            if entry["model"] == "auth.group":
+                entry["fields"]["permissions"] = []
+
+            # Clear out any permissions specified for a user
+            if entry["model"] == "auth.user":
+                entry["fields"]["user_permissions"] = []
+
+    # Write the processed data to file
+    with open(filename, "w") as f_out:
+        f_out.write(json.dumps(data, indent=2))
+
 
 @task(help={'filename': 'Input filename'})
 def import_records(c, filename='data.json'):
