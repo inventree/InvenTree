@@ -288,7 +288,7 @@ def export_records(c, filename='data.json'):
 
     print("Running data post-processing step...")
 
-    # Post-process the file, to remove any "permissions" specified for a group
+    # Post-process the file, to remove any "permissions" specified for a user or group
     with open(tmpfile, "r") as f_in:
         data = json.loads(f_in.read())
 
@@ -307,6 +307,8 @@ def export_records(c, filename='data.json'):
     with open(filename, "w") as f_out:
         f_out.write(json.dumps(data, indent=2))
 
+    print("Data export completed")
+
 
 @task(help={'filename': 'Input filename'})
 def import_records(c, filename='data.json'):
@@ -324,9 +326,32 @@ def import_records(c, filename='data.json'):
 
     print(f"Importing database records from '{filename}'")
 
-    cmd = f"loaddata {filename} -i {content_excludes()}"
+    # Pre-process the data, to remove any "permissions" specified for a user or group
+    tmpfile = f"{filename}.tmp.json"
+
+    with open(filename, "r") as f_in:
+        data = json.loads(f_in.read())
+
+    for entry in data:
+        if "model" in entry:
+            
+            # Clear out any permissions specified for a group
+            if entry["model"] == "auth.group":
+                entry["fields"]["permissions"] = []
+
+            # Clear out any permissions specified for a user
+            if entry["model"] == "auth.user":
+                entry["fields"]["user_permissions"] = []
+
+    # Write the processed data to the tmp file
+    with open(tmpfile, "w") as f_out:
+        f_out.write(json.dumps(data, indent=2))
+
+    cmd = f"loaddata {tmpfile} -i {content_excludes()}"
 
     manage(c, cmd, pty=True)
+
+    print("Data import completed")
 
 @task
 def import_fixtures(c):
