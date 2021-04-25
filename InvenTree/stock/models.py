@@ -198,7 +198,7 @@ class StockItem(MPTTModel):
 
         if add_note:
 
-            note = f"{_('Created new stock item for')} {str(self.part)}"
+            note = _("Created new stock item for {part}").format(part=str(self.part))
 
             # This StockItem is being saved for the first time
             self.addTransactionNote(
@@ -613,7 +613,7 @@ class StockItem(MPTTModel):
         item.addTransactionNote(
             _("Assigned to Customer"),
             user,
-            notes=_("Manually assigned to customer") + " " + customer.name,
+            notes=_("Manually assigned to customer {name}").format(name=customer.name),
             system=True
         )
 
@@ -626,9 +626,9 @@ class StockItem(MPTTModel):
         """
 
         self.addTransactionNote(
-            _("Returned from customer") + f" {self.customer.name}",
+            _("Returned from customer {name}").format(name=self.customer.name),
             user,
-            notes=_("Returned to location") + f" {location.name}",
+            notes=_("Returned to location {name}").format(name=location.name),
             system=True
         )
 
@@ -789,7 +789,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to the other item
         stock_item.addTransactionNote(
-            _('Installed into stock item') + ' ' + str(self.pk),
+            _('Installed into stock item {pk}').format(pk=self.pk),
             user,
             notes=notes,
             url=self.get_absolute_url()
@@ -797,7 +797,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to this item
         self.addTransactionNote(
-            _('Installed stock item') + ' ' + str(stock_item.pk),
+            _('Installed stock item {pk}').format(pk=stock_item.pk),
             user, notes=notes,
             url=stock_item.get_absolute_url()
         )
@@ -821,7 +821,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to the parent item
         self.belongs_to.addTransactionNote(
-            _("Uninstalled stock item") + ' ' + str(self.pk),
+            _("Uninstalled stock item {pk}").format(pk=self.pk),
             user,
             notes=notes,
             url=self.get_absolute_url(),
@@ -840,7 +840,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note!
         self.addTransactionNote(
-            _('Uninstalled into location') + ' ' + str(location),
+            _('Uninstalled into location {loc}').format(loc=str(location)),
             user,
             notes=notes,
             url=url
@@ -966,7 +966,7 @@ class StockItem(MPTTModel):
 
         if len(existing) > 0:
             exists = ','.join([str(x) for x in existing])
-            raise ValidationError({"serial_numbers": _("Serial numbers already exist") + ': ' + exists})
+            raise ValidationError({"serial_numbers": _("Serial numbers already exist: {exists}").format(exists=exists)})
 
         # Create a new stock item for each unique serial number
         for serial in serials:
@@ -1074,14 +1074,14 @@ class StockItem(MPTTModel):
         new_stock.addTransactionNote(
             _("Split from existing stock"),
             user,
-            f"{_('Split')} {helpers.normalize(quantity)} {_('items')}"
+            _('Split {n} items').format(n=helpers.normalize(quantity)),
         )
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(
             quantity,
             user,
-            f"{_('Split')} {quantity} {_('items into new stock item')}"
+            _('Split {n} items into new stock item').format(n=quantity),
         )
 
         # Return a copy of the "new" stock item
@@ -1131,10 +1131,10 @@ class StockItem(MPTTModel):
 
             return True
 
-        msg = f"{_('Moved to')} {str(location)}"
-        
         if self.location:
-            msg += f" ({_('from')} {str(self.location)})"
+            msg = _("Moved to {loc_new} (from {loc_old})").format(loc_new=str(location), loc_old=str(self.location))
+        else:
+            msg = _('Moved to {loc}').format(loc=str(location))
 
         self.location = location
 
@@ -1204,7 +1204,7 @@ class StockItem(MPTTModel):
 
             n = helpers.normalize(count)
 
-            text = f"{_('Counted')} {n} {_('items')}"
+            text = _('Counted {n} items').format(n=n)
 
             self.addTransactionNote(
                 text,
@@ -1238,7 +1238,7 @@ class StockItem(MPTTModel):
         if self.updateQuantity(self.quantity + quantity):
             
             n = helpers.normalize(quantity)
-            text = f"{_('Added')} {n} {_('items')}"
+            text = _('Added {n} items').format(n=n)
 
             self.addTransactionNote(
                 text,
@@ -1269,7 +1269,7 @@ class StockItem(MPTTModel):
         if self.updateQuantity(self.quantity - quantity):
 
             q = helpers.normalize(quantity)
-            text = f"{_('Removed')} {q} {_('items')}"
+            text = _('Removed {n} items').format(n=q)
 
             self.addTransactionNote(text,
                                     user,
