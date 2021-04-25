@@ -45,6 +45,11 @@ static_i18n
 # Local config file
 config.yaml
 
+# Default data file
+data.json
+*.json.tmp
+*.tmp.json
+
 # Key file
 secret_key.txt
 

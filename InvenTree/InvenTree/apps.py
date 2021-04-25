@@ -5,6 +5,7 @@ import logging
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
 
+from InvenTree.ready import canAppAccessDatabase
 import InvenTree.tasks
 
 
@@ -16,7 +17,8 @@ class InvenTreeConfig(AppConfig):
 
     def ready(self):
 
-        self.start_background_tasks()
+        if canAppAccessDatabase():
+            self.start_background_tasks()
 
     def start_background_tasks(self):
 
