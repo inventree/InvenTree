@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 08:09+0000\n"
+"POT-Creation-Date: 2021-04-25 02:45+0000\n"
 "PO-Revision-Date: 2021-04-21 09:33\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -165,23 +165,23 @@ msgstr ""
 msgid "parent"
 msgstr ""
 
-#: InvenTree/settings.py:493
+#: InvenTree/settings.py:491
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:494
+#: InvenTree/settings.py:492
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:495
+#: InvenTree/settings.py:493
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:496
+#: InvenTree/settings.py:494
 msgid "Polish"
 msgstr ""
 
-#: InvenTree/settings.py:497
+#: InvenTree/settings.py:495
 msgid "Turkish"
 msgstr ""
 
@@ -509,7 +509,7 @@ msgstr ""
 #: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:55
 #: part/templates/part/navbar.html:58 templates/InvenTree/index.html:183
 #: templates/InvenTree/search.html:185
-#: templates/InvenTree/settings/tabs.html:31 users/models.py:41
+#: templates/InvenTree/settings/tabs.html:31 users/models.py:43
 msgid "Build Orders"
 msgstr ""
 
@@ -2237,7 +2237,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:22
 #: part/templates/part/manufacturer.html:24 part/templates/part/params.html:44
 #: part/templates/part/related.html:44 part/templates/part/supplier.html:22
-#: stock/views.py:1002 users/models.py:185
+#: stock/views.py:1002 users/models.py:187
 msgid "Delete"
 msgstr ""
 
@@ -2263,7 +2263,7 @@ msgstr ""
 #: stock/templates/stock/location_navbar.html:22
 #: stock/templates/stock/location_navbar.html:29
 #: templates/InvenTree/search.html:198 templates/js/stock.js:968
-#: templates/stats.html:72 templates/stats.html:81 users/models.py:40
+#: templates/stats.html:72 templates/stats.html:81 users/models.py:42
 msgid "Stock Items"
 msgstr ""
 
@@ -2277,7 +2277,7 @@ msgstr ""
 #: part/templates/part/sales_orders.html:10 templates/InvenTree/index.html:228
 #: templates/InvenTree/search.html:345
 #: templates/InvenTree/settings/tabs.html:37 templates/navbar.html:46
-#: users/models.py:43
+#: users/models.py:45
 msgid "Sales Orders"
 msgstr ""
 
@@ -2289,7 +2289,7 @@ msgstr ""
 #: part/templates/part/orders.html:10 templates/InvenTree/index.html:205
 #: templates/InvenTree/search.html:325
 #: templates/InvenTree/settings/tabs.html:34 templates/navbar.html:37
-#: users/models.py:42
+#: users/models.py:44
 msgid "Purchase Orders"
 msgstr ""
 
@@ -2982,7 +2982,7 @@ msgstr ""
 #: templates/InvenTree/index.html:97 templates/InvenTree/search.html:114
 #: templates/InvenTree/settings/tabs.html:25 templates/js/part.js:577
 #: templates/navbar.html:23 templates/stats.html:59 templates/stats.html:68
-#: users/models.py:38
+#: users/models.py:40
 msgid "Parts"
 msgstr ""
 
@@ -3475,7 +3475,7 @@ msgstr ""
 #: part/models.py:83 part/templates/part/category.html:23
 #: part/templates/part/category.html:94 part/templates/part/category.html:141
 #: templates/InvenTree/search.html:127 templates/stats.html:63
-#: users/models.py:37
+#: users/models.py:39
 msgid "Part Categories"
 msgstr ""
 
@@ -5553,7 +5553,7 @@ msgid "Stock Details"
 msgstr ""
 
 #: stock/templates/stock/location.html:117 templates/InvenTree/search.html:279
-#: templates/stats.html:76 users/models.py:39
+#: templates/stats.html:76 users/models.py:41
 msgid "Stock Locations"
 msgstr ""
 
@@ -5739,7 +5739,7 @@ msgstr ""
 msgid "Add Stock Items"
 msgstr ""
 
-#: stock/views.py:1001 users/models.py:181
+#: stock/views.py:1001 users/models.py:183
 msgid "Add"
 msgstr ""
 
@@ -7044,7 +7044,7 @@ msgstr ""
 msgid "Scan Barcode"
 msgstr ""
 
-#: templates/navbar.html:77 users/models.py:36
+#: templates/navbar.html:77 users/models.py:38
 msgid "Admin"
 msgstr ""
 
@@ -7254,34 +7254,34 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:168
+#: users/models.py:170
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:176
+#: users/models.py:178
 msgid "Group"
 msgstr ""
 
-#: users/models.py:179
+#: users/models.py:181
 msgid "View"
 msgstr ""
 
-#: users/models.py:179
+#: users/models.py:181
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:181
+#: users/models.py:183
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:183
+#: users/models.py:185
 msgid "Change"
 msgstr ""
 
-#: users/models.py:183
+#: users/models.py:185
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:185
+#: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
