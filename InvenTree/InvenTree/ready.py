@@ -18,7 +18,6 @@ def canAppAccessDatabase():
         'makemirations',
         'migrate',
         'check',
-        'dbrestore',
         'mediarestore',
         'shell',
         'createsuperuser',
