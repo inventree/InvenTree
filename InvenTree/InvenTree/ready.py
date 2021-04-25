@@ -29,7 +29,6 @@ def canAppAccessDatabase():
         'collectstatic',
         'makemessages',
         'compilemessages',
-        'test',
     ]
 
     for cmd in excluded_commands:
