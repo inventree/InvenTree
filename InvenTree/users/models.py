@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
 import logging
+import sys
 
 
 logger = logging.getLogger("inventree")
@@ -269,6 +270,14 @@ def update_group_roles(group, debug=False):
     The RuleSet model has complete control over the permissions applied to any group.
 
     """
+
+    if 'loaddata' in sys.argv:
+        """
+        In the case that we are importing records,
+        *do not* update group roles:
+        This will cause conflicts in the database!
+        """
+        return
 
     # List of permissions already associated with this group
     group_permissions = set()
