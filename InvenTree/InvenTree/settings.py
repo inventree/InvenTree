@@ -17,7 +17,6 @@ import random
 import string
 import shutil
 import sys
-import tempfile
 from datetime import datetime
 
 import yaml
