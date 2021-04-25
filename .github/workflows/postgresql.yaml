@@ -47,6 +47,7 @@ jobs:
         run: invoke test
       - name: Data Import Export
         run: |
+          invoke migrate
           python3 ./InvenTree/manage.py flush --noinput
           invoke import-fixtures
           invoke export-records -f data.json
