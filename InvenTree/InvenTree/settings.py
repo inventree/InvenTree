@@ -250,7 +250,6 @@ INSTALLED_APPS = [
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
-    'dbbackup',                             # Database backup / restore
     'rest_framework',                       # DRF (Django Rest Framework)
     'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
@@ -585,17 +584,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-
-BACKUP_DIR = get_setting(
-    'INVENTREE_BACKUP_DIR',
-    CONFIG.get('backup_dir', tempfile.gettempdir()),
-)
-
-# Settings for dbbsettings app
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'location': BACKUP_DIR,
-}
 
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [

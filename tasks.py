@@ -401,27 +401,6 @@ def import_fixtures(c):
 
     manage(c, command, pty=True)
 
-@task
-def backup(c):
-    """
-    Create a backup of database models and uploaded media files.
-
-    Backup files will be written to the 'backup_dir' file specified in 'config.yaml'
-    """
-
-    manage(c, 'dbbackup')
-    manage(c, 'mediabackup')
-
-@task
-def restore(c):
-    """
-    Restores database models and media files.
-
-    Backup files are read from the 'backup_dir' file specified in 'config.yaml'
-    """
-
-    manage(c, 'dbrestore')
-    manage(c, 'mediarestore')
 
 @task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
