@@ -286,6 +286,8 @@ def export_records(c, filename='data.json'):
     # Dump data to temporary file
     manage(c, cmd, pty=True)
 
+    print("Running data post-processing step...")
+
     # Post-process the file, to remove any "permissions" specified for a group
     with open(tmpfile, "r") as f_in:
         data = json.loads(f_in.read())
@@ -365,6 +367,9 @@ def import_fixtures(c):
         'location',
         'stock_tests',
         'stock',
+
+        # Users
+        'users'
     ]
 
     command = 'loaddata ' + ' '.join(fixtures)
