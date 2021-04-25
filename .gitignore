@@ -47,6 +47,7 @@ config.yaml
 
 # Default data file
 data.json
+*.json.tmp
 
 # Key file
 secret_key.txt

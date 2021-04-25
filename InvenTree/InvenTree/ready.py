@@ -1,5 +1,6 @@
 import sys
 
+
 def canAppAccessDatabase():
     """
     Returns True if the apps.py file can access database records.
