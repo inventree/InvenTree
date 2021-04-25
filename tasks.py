@@ -240,6 +240,7 @@ def content_excludes():
 
     excludes = [
         "contenttypes",
+        "sessions.session",
         "auth.permission",
         "error_report.error",
         "admin.logentry",
