@@ -1,11 +1,12 @@
 import os
-import sys
 import shutil
 import logging
 import hashlib
 
 from django.apps import AppConfig
 from django.conf import settings
+
+from InvenTree.ready import canAppAccessDatabase
 
 
 logger = logging.getLogger("inventree")
@@ -33,14 +34,7 @@ class LabelConfig(AppConfig):
         This function is called whenever the label app is loaded
         """
 
-        if 'loaddata' in sys.argv:
-            """
-            In the case we are importing records,
-            do not automatically copy labels across.
-            This can cause database conflicts!
-            """
-            pass
-        else:
+        if canAppAccessDatabase():
             self.create_stock_item_labels()
             self.create_stock_location_labels()
 

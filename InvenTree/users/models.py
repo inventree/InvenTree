@@ -13,7 +13,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
 import logging
-import sys
+
+from InvenTree.ready import canAppAccessDatabase
 
 
 logger = logging.getLogger("inventree")
@@ -271,12 +272,7 @@ def update_group_roles(group, debug=False):
 
     """
 
-    if 'loaddata' in sys.argv:
-        """
-        In the case that we are importing records,
-        *do not* update group roles:
-        This will cause conflicts in the database!
-        """
+    if not canAppAccessDatabase():
         return
 
     # List of permissions already associated with this group

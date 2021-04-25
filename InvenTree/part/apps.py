@@ -9,6 +9,9 @@ from django.conf import settings
 
 from PIL import UnidentifiedImageError
 
+from InvenTree.ready import canAppAccessDatabase
+
+
 logger = logging.getLogger("inventree")
 
 
@@ -20,8 +23,9 @@ class PartConfig(AppConfig):
         This function is called whenever the Part app is loaded.
         """
 
-        self.generate_part_thumbnails()
-        self.update_trackable_status()
+        if canAppAccessDatabase():
+            self.generate_part_thumbnails()
+            self.update_trackable_status()
 
     def generate_part_thumbnails(self):
         """
