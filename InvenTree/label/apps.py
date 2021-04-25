@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import logging
 import hashlib
@@ -32,8 +33,16 @@ class LabelConfig(AppConfig):
         This function is called whenever the label app is loaded
         """
 
-        self.create_stock_item_labels()
-        self.create_stock_location_labels()
+        if 'loaddata' in sys.argv:
+            """
+            In the case we are importing records,
+            do not automatically copy labels across.
+            This can cause database conflicts!
+            """
+            pass
+        else:
+            self.create_stock_item_labels()
+            self.create_stock_location_labels()
 
     def create_stock_item_labels(self):
         """

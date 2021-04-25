@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import logging
 
@@ -17,8 +18,11 @@ class ReportConfig(AppConfig):
         This function is called whenever the report app is loaded
         """
 
-        self.create_default_test_reports()
-        self.create_default_build_reports()
+        if 'loaddata' in sys.argv:
+            pass
+        else:
+            self.create_default_test_reports()
+            self.create_default_build_reports()
 
     def create_default_reports(self, model, reports):
         """
