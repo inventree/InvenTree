@@ -53,3 +53,4 @@ jobs:
           invoke export-records -f data.json
           python3 ./InvenTree/manage.py flush --noinput
           invoke import-records -f data.json
+          invoke import-records -f data.json
