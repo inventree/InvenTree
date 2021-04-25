@@ -3,7 +3,6 @@ wheel>=0.34.2                   # Wheel
 Django==3.2                     # Django package
 pillow==8.1.1                   # Image manipulation
 djangorestframework==3.12.4     # DRF framework
-django-dbbackup==3.3.0          # Database backup / restore functionality
 django-cors-headers==3.2.0      # CORS headers extension for DRF
 django-filter==2.4.0            # Extended filtering options
 django-mptt==0.11.0             # Modified Preorder Tree Traversal

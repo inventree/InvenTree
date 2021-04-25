@@ -5,21 +5,25 @@ from django.db.utils import OperationalError, ProgrammingError
 
 from django.apps import AppConfig
 
+from InvenTree.ready import canAppAccessDatabase
+
 
 class UsersConfig(AppConfig):
     name = 'users'
 
     def ready(self):
 
-        try:
-            self.assign_permissions()
-        except (OperationalError, ProgrammingError):
-            pass
+        if canAppAccessDatabase():
 
-        try:
-            self.update_owners()
-        except (OperationalError, ProgrammingError):
-            pass
+            try:
+                self.assign_permissions()
+            except (OperationalError, ProgrammingError):
+                pass
+
+            try:
+                self.update_owners()
+            except (OperationalError, ProgrammingError):
+                pass
 
     def assign_permissions(self):
 

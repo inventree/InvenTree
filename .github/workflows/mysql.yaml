@@ -49,3 +49,12 @@ jobs:
           invoke install
       - name: Run Tests
         run: invoke test
+      - name: Data Import Export
+        run: |
+          invoke migrate
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-fixtures
+          invoke export-records -f data.json
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-records -f data.json
+          invoke import-records -f data.json
