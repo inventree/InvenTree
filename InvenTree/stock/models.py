@@ -23,7 +23,7 @@ from django.dispatch import receiver
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
-from simple_history.models import HistoricalRecords
+import simple_history
 
 from djmoney.models.fields import MoneyField
 
@@ -514,8 +514,6 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
-
-    history = HistoricalRecords()
 
     def is_stale(self):
         """
@@ -1517,6 +1515,9 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
 
     # Rebuild the MPTT tree
     StockItem.objects.rebuild()
+
+
+simple_history.register(StockItem)
 
 
 class StockItemAttachment(InvenTreeAttachment):

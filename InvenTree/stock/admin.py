@@ -6,7 +6,10 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from import_export.resources import ModelResource
 from import_export.fields import Field
+
 import import_export.widgets as widgets
+
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import StockLocation, StockItem, StockItemAttachment
 from .models import StockItemTracking
@@ -109,7 +112,7 @@ class StockItemResource(ModelResource):
         ]
 
 
-class StockItemAdmin(ImportExportModelAdmin):
+class StockItemAdmin(ImportExportModelAdmin, SimpleHistoryAdmin):
 
     resource_class = StockItemResource
 
