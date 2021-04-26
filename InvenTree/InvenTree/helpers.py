@@ -585,3 +585,24 @@ def nulltrans(message):
     message: message that would be translated with _() normally
     """
     return message
+
+
+# see https://stackoverflow.com/questions/42033142/is-there-an-easy-way-to-check-if-an-object-is-json-serializable-in-python
+def is_jsonable(x):
+    """ check if element can be serialized """
+    try:
+        json.dumps(x)
+        return True
+    except (TypeError, OverflowError):
+        return False
+
+
+def serialize(data):
+    """ serialize dict for saving in JSONField """
+    for key,value in data.items():
+        if not is_jsonable(value):
+            if isinstance(value, Decimal):
+                data[key] = float(value)
+            else:
+                data.pop(key)
+    return data

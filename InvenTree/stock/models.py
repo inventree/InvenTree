@@ -920,8 +920,10 @@ class StockItem(MPTTModel):
         Brief automated note detailing a movement or quantity change.
         """
         if translate:
+            title_base = title
             title = _(title).format(**trans_args)
             if notes:
+                notes_base = notes
                 notes = _(notes).format(**trans_args)
         else:
             print('not translated!')
@@ -934,7 +936,10 @@ class StockItem(MPTTModel):
             date=datetime.now().date(),
             notes=notes,
             link=url,
-            system=system
+            system=system,
+            title_trans=title_base if title_base else '',
+            notes_trans=notes_base if notes and notes_base else '',
+            translation_args=helpers.serialize(trans_args),
         )
 
         track.save()
