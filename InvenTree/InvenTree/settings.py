@@ -262,7 +262,8 @@ INSTALLED_APPS = [
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
-    'django_q',
+    'django_q',                             # Background task manager
+    'simple_history',                       # Revision history for database models
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -275,6 +276,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware'
 ])
 
@@ -410,6 +412,9 @@ for key in db_keys:
     if env_var:
         # Override configuration value
         db_config[key] = env_var
+
+        if key not in ['USER', 'PASSWORD']:
+            logger.info(f"INVENTREE_DB_{key}: {env_var}")
 
 # Check that required database configuration options are specified
 reqiured_keys = ['ENGINE', 'NAME']

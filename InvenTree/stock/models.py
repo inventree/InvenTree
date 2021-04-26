@@ -23,6 +23,7 @@ from django.dispatch import receiver
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
+from simple_history.models import HistoricalRecords
 
 from djmoney.models.fields import MoneyField
 
@@ -513,6 +514,8 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
+
+    history = HistoricalRecords()
 
     def is_stale(self):
         """

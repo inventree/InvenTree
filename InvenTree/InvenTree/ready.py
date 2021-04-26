@@ -15,7 +15,7 @@ def canAppAccessDatabase():
         'flush',
         'loaddata',
         'dumpdata',
-        'makemirations',
+        'makemigrations',
         'migrate',
         'check',
         'mediarestore',
