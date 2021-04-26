@@ -599,7 +599,7 @@ def is_jsonable(x):
 
 def serialize(data):
     """ serialize dict for saving in JSONField """
-    for key,value in data.items():
+    for key, value in data.items():
         if not is_jsonable(value):
             if isinstance(value, Decimal):
                 data[key] = float(value)

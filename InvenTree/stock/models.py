@@ -616,7 +616,7 @@ class StockItem(MPTTModel):
             user,
             notes=_n("Manually assigned to customer {name}"),
             system=True,
-            trans_args={'name':customer.name},
+            trans_args={'name': customer.name},
             translate=True
         )
 
