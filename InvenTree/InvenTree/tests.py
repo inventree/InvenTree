@@ -244,6 +244,14 @@ class TestSerialNumberExtraction(TestCase):
         self.assertIn(3, sn)
         self.assertIn(13, sn)
 
+        sn = e("1+", 10)
+        self.assertEqual(len(sn), 10)
+        self.assertEqual(sn, [_ for _ in range(1, 11)])
+
+        sn = e("4, 1+2", 4)
+        self.assertEqual(len(sn), 4)
+        self.assertEqual(sn, ["4", 1, 2, 3])
+
     def test_failures(self):
 
         e = helpers.extract_serial_numbers
