@@ -1569,6 +1569,10 @@ class StockItemTracking(models.Model):
         link: Optional URL to external page
         user: The user associated with this tracking info
         quantity: The StockItem quantity at this point in time
+
+        title_trans: Untranslated title with variables
+        notes_trans: Untranslated notes with variables
+        translation_args: Arguments for translating title_trans and notes_trans
     """
 
     def get_absolute_url(self):
@@ -1582,7 +1586,11 @@ class StockItemTracking(models.Model):
 
     title = models.CharField(blank=False, max_length=250, verbose_name=_('Title'), help_text=_('Tracking entry title'))
 
+    title_trans = models.CharField(blank=True, max_length=250, verbose_name=_('Untranslated Title'), help_text=_('Untranslated tracking entry title'))
+
     notes = models.CharField(blank=True, max_length=512, verbose_name=_('Notes'), help_text=_('Entry notes'))
+
+    notes_trans = models.CharField(blank=True, max_length=512, verbose_name=_('Untranslated Notes'), help_text=_('Untranslated tracking entry notes'))
 
     link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page for further information'))
 
@@ -1591,6 +1599,8 @@ class StockItemTracking(models.Model):
     system = models.BooleanField(default=False)
 
     quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'))
+
+    translation_args = models.JSONField(null=True, verbose_name=_('Translation arguments'), help_text=_('All arguments needed for translationf title or notes'))
 
     # TODO
     # image = models.ImageField(upload_to=func, max_length=255, null=True, blank=True)
