@@ -8,6 +8,7 @@ import logging
 
 from datetime import datetime, timedelta
 
+from django.core.management import call_command
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -103,15 +104,25 @@ def delete_successful_tasks():
     """
 
     try:
-        from django_q.models import Success
+        from django_q.models import Success, Failure
     except AppRegistryNotReady:
         logger.warning("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
+    # Delete successful tasks more than 30 days old
     threshold = datetime.now() - timedelta(days=30)
 
     results = Success.objects.filter(
         started__lte=threshold
+    )
+
+    results.delete()
+
+    # Delete failed tasks more than 60 days old
+    threshold = datetime.now() - timedelta(days=60)
+
+    results = Failure.objects.filter(
+        started__lte=threshold,
     )
 
     results.delete()
@@ -159,6 +170,17 @@ def check_for_updates():
         tag,
         None
     )
+
+
+def delete_duplicate_history():
+    """
+    Delete duplicate history records from django-simple-history.
+
+    # Ref: https://django-simple-history.readthedocs.io/en/latest/utils.html#clean-duplicate-history
+
+    """
+
+    call_command('clean_duplicate_history', '--auto')
 
 
 def send_email(subject, body, recipients, from_email=None):

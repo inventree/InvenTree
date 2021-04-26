@@ -26,6 +26,8 @@ def canAppAccessDatabase():
         'collectstatic',
         'makemessages',
         'compilemessages',
+        'populate_history',
+        'clean_duplicate_history',
     ]
 
     for cmd in excluded_commands:
