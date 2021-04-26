@@ -29,6 +29,7 @@ from djmoney.models.fields import MoneyField
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 from InvenTree import helpers
+from InvenTree.helpers import nulltrans as _n
 
 import common.models
 import report.models
@@ -198,14 +199,14 @@ class StockItem(MPTTModel):
 
         if add_note:
 
-            note = _("Created new stock item for {part}").format(part=str(self.part))
-
             # This StockItem is being saved for the first time
             self.addTransactionNote(
-                _('Created stock item'),
+                _n('Created stock item'),
                 user,
-                note,
-                system=True
+                _n("Created new stock item for {part}"),
+                system=True,
+                trans_args={'part': str(self.part)},
+                translate=True
             )
 
     @property
@@ -611,10 +612,12 @@ class StockItem(MPTTModel):
         # TODO - Remove any stock item allocations from this stock item
 
         item.addTransactionNote(
-            _("Assigned to Customer"),
+            _n("Assigned to Customer"),
             user,
-            notes=_("Manually assigned to customer {name}").format(name=customer.name),
-            system=True
+            notes=_n("Manually assigned to customer {name}"),
+            system=True,
+            trans_args={'name':customer.name},
+            translate=True
         )
 
         # Return the reference to the stock item
@@ -626,10 +629,12 @@ class StockItem(MPTTModel):
         """
 
         self.addTransactionNote(
-            _("Returned from customer {name}").format(name=self.customer.name),
+            _n("Returned from customer {name}"),
             user,
-            notes=_("Returned to location {name}").format(name=location.name),
-            system=True
+            notes=_n("Returned to location {loc}"),
+            system=True,
+            trans_args={'name': self.customer.name, 'loc': location.name},
+            translate=True
         )
 
         self.customer = None
@@ -789,17 +794,21 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to the other item
         stock_item.addTransactionNote(
-            _('Installed into stock item {pk}').format(pk=self.pk),
+            _n('Installed into stock item {pk}'),
             user,
             notes=notes,
-            url=self.get_absolute_url()
+            url=self.get_absolute_url(),
+            translate=True,
+            trans_args={'pk': self.pk}
         )
 
         # Add a transaction note to this item
         self.addTransactionNote(
-            _('Installed stock item {pk}').format(pk=stock_item.pk),
+            _n('Installed stock item {pk}'),
             user, notes=notes,
-            url=stock_item.get_absolute_url()
+            url=stock_item.get_absolute_url(),
+            translate=True,
+            trans_args={'pk': stock_item.pk}
         )
 
     @transaction.atomic
@@ -821,10 +830,12 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to the parent item
         self.belongs_to.addTransactionNote(
-            _("Uninstalled stock item {pk}").format(pk=self.pk),
+            _n("Uninstalled stock item {pk}"),
             user,
             notes=notes,
             url=self.get_absolute_url(),
+            translate=True,
+            trans_args={'pk': self.pk}
         )
 
         # Mark this stock item as *not* belonging to anyone
@@ -840,10 +851,12 @@ class StockItem(MPTTModel):
 
         # Add a transaction note!
         self.addTransactionNote(
-            _('Uninstalled into location {loc}').format(loc=str(location)),
+            _n('Uninstalled into location {loc}'),
             user,
             notes=notes,
-            url=url
+            url=url,
+            translate=True,
+            trans_args={'loc': str(location)}
         )
 
     @property
@@ -901,12 +914,18 @@ class StockItem(MPTTModel):
     def has_tracking_info(self):
         return self.tracking_info_count > 0
 
-    def addTransactionNote(self, title, user, notes='', url='', system=True):
+    def addTransactionNote(self, title, user, notes='', url='', system=True, trans_args={}, translate=False):
         """ Generation a stock transaction note for this item.
 
         Brief automated note detailing a movement or quantity change.
         """
-        
+        if translate:
+            title = _(title).format(**trans_args)
+            if notes:
+                notes = _(notes).format(**trans_args)
+        else:
+            print('not translated!')
+
         track = StockItemTracking.objects.create(
             item=self,
             title=title,
@@ -991,10 +1010,10 @@ class StockItem(MPTTModel):
             new_item.copyTestResultsFrom(self)
 
             # Create a new stock tracking item
-            new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
+            new_item.addTransactionNote(_n('Add serial number'), user, notes=notes, translate=True)
 
         # Remove the equivalent number of items
-        self.take_stock(quantity, user, notes=_('Serialized {n} items').format(n=quantity))
+        self.take_stock(quantity, user, notes=_n('Serialized {n} items'), trans_args={'n': quantity})
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -1072,16 +1091,19 @@ class StockItem(MPTTModel):
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(
-            _("Split from existing stock"),
+            _n("Split from existing stock"),
             user,
-            _('Split {n} items').format(n=helpers.normalize(quantity)),
+            _n('Split {n} items'),
+            trans_args={'n': helpers.normalize(quantity)},
+            translate=True
         )
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(
             quantity,
             user,
-            _('Split {n} items into new stock item').format(n=quantity),
+            _n('Split {n} items into new stock item'),
+            trans_args={'n': quantity}
         )
 
         # Return a copy of the "new" stock item
@@ -1132,9 +1154,11 @@ class StockItem(MPTTModel):
             return True
 
         if self.location:
-            msg = _("Moved to {loc_new} (from {loc_old})").format(loc_new=str(location), loc_old=str(self.location))
+            msg = _n("Moved to {loc_new} (from {loc_old})")
+            trans_args = {'loc_new': str(location), 'loc_old': str(self.location)}
         else:
-            msg = _('Moved to {loc}').format(loc=str(location))
+            msg = _n('Moved to {loc}')
+            trans_args = {'loc': str(location)}
 
         self.location = location
 
@@ -1142,7 +1166,9 @@ class StockItem(MPTTModel):
             msg,
             user,
             notes=notes,
-            system=True)
+            system=True,
+            translate=True,
+            trans_args=trans_args)
 
         self.save()
 
@@ -1204,13 +1230,13 @@ class StockItem(MPTTModel):
 
             n = helpers.normalize(count)
 
-            text = _('Counted {n} items').format(n=n)
-
             self.addTransactionNote(
-                text,
+                _n('Counted {n} items'),
                 user,
                 notes=notes,
-                system=True
+                system=True,
+                trans_args={'n': n},
+                translate=True
             )
 
         return True
@@ -1236,21 +1262,20 @@ class StockItem(MPTTModel):
             return False
 
         if self.updateQuantity(self.quantity + quantity):
-            
-            n = helpers.normalize(quantity)
-            text = _('Added {n} items').format(n=n)
 
             self.addTransactionNote(
-                text,
+                _n('Added {n} items'),
                 user,
                 notes=notes,
-                system=True
+                system=True,
+                translate=True,
+                trans_args={'n': helpers.normalize(quantity)}
             )
 
         return True
 
     @transaction.atomic
-    def take_stock(self, quantity, user, notes=''):
+    def take_stock(self, quantity, user, notes='', trans_args={}):
         """ Remove items from stock
         """
 
@@ -1268,13 +1293,15 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity - quantity):
 
-            q = helpers.normalize(quantity)
-            text = _('Removed {n} items').format(n=q)
+            text = _n('Removed {n1} items')
+            trans_args['n1'] = helpers.normalize(quantity)
 
             self.addTransactionNote(text,
                                     user,
                                     notes=notes,
-                                    system=True)
+                                    system=True,
+                                    trans_args=trans_args,
+                                    translate=True)
 
         return True
 

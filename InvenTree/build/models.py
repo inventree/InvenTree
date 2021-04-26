@@ -23,7 +23,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus, StockStatus
-from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
+from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, nulltrans as _n
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
 
@@ -835,9 +835,10 @@ class Build(MPTTModel):
         output.save()
 
         output.addTransactionNote(
-            _('Completed build output'),
+            _n('Completed build output'),
             user,
-            system=True
+            system=True,
+            translate=True
         )
 
         # Increase the completed quantity for this build

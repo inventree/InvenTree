@@ -27,7 +27,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
-from InvenTree.helpers import decimal2string, increment, getSetting
+from InvenTree.helpers import decimal2string, increment, getSetting, nulltrans as _n
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 from InvenTree.models import InvenTreeAttachment
 
@@ -356,11 +356,11 @@ class PurchaseOrder(Order):
 
             stock.save()
 
-            text = _("Received items")
-            note = _('Received {n} items against order {name}').format(n=quantity, name=str(self))
+            text = _n("Received items")
+            note = _n('Received {n} items against order {name}')
 
             # Add a new transaction note to the newly created stock item
-            stock.addTransactionNote(text, user, note)
+            stock.addTransactionNote(text, user, note, trans_args={'n': quantity, 'name': str(self)}, translate=True)
 
         # Update the number of parts received against the particular line item
         line.received += quantity

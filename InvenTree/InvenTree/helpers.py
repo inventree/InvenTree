@@ -575,3 +575,13 @@ def getNewestMigrationFile(app, exclude_extension=True):
         newest_file = newest_file.replace('.py', '')
 
     return newest_file
+
+
+def nulltrans(message):
+    """
+    returns the input-string as it came in
+    needed for runntime-translation of database-entries
+
+    message: message that would be translated with _() normally
+    """
+    return message
