@@ -11,11 +11,6 @@ if [[ ! -d "$INVENTREE_MEDIA_ROOT" ]]; then
     mkdir $INVENTREE_MEDIA_ROOT
 fi
 
-if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
-    echo "Creating directory $INVENTREE_BACKUP_DIR"
-    mkdir $INVENTREE_BACKUP_DIR
-fi
-
 # Check if "config.yaml" has been copied into the correct location
 if test -f "$INVENTREE_CONFIG_FILE"; then
     echo "$INVENTREE_CONFIG_FILE exists - skipping"
@@ -39,6 +34,7 @@ echo "Running InvenTree database migrations and collecting static files..."
 python manage.py check || exit 1
 python manage.py migrate --noinput || exit 1
 python manage.py migrate --run-syncdb || exit 1
+python manage.py prerender || exit 1
 python manage.py collectstatic --noinput || exit 1
 python manage.py clearsessions || exit 1
 

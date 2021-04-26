@@ -14,6 +14,8 @@ from django.db.models.signals import post_save, post_delete
 
 import logging
 
+from InvenTree.ready import canAppAccessDatabase
+
 
 logger = logging.getLogger("inventree")
 
@@ -59,6 +61,12 @@ class RuleSet(models.Model):
             'authtoken_token',
             'authtoken_tokenproxy',
             'users_ruleset',
+            'report_reportasset',
+            'report_reportsnippet',
+            'report_billofmaterialsreport',
+            'report_purchaseorderreport',
+            'report_salesorderreport',
+
         ],
         'part_category': [
             'part_partcategory',
@@ -128,11 +136,6 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'company_contact',
-        'report_reportasset',
-        'report_reportsnippet',
-        'report_billofmaterialsreport',
-        'report_purchaseorderreport',
-        'report_salesorderreport',
         'users_owner',
 
         # Third-party tables
@@ -268,6 +271,9 @@ def update_group_roles(group, debug=False):
     The RuleSet model has complete control over the permissions applied to any group.
 
     """
+
+    if not canAppAccessDatabase():
+        return
 
     # List of permissions already associated with this group
     group_permissions = set()

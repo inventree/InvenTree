@@ -17,7 +17,6 @@ import random
 import string
 import shutil
 import sys
-import tempfile
 from datetime import datetime
 
 import yaml
@@ -250,7 +249,6 @@ INSTALLED_APPS = [
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
-    'dbbackup',                             # Database backup / restore
     'rest_framework',                       # DRF (Django Rest Framework)
     'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
@@ -512,8 +510,8 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
 email_config = CONFIG.get('email', {})
 
 EMAIL_BACKEND = get_setting(
-    'django.core.mail.backends.smtp.EmailBackend',
-    email_config.get('backend', '')
+    'INVENTREE_EMAIL_BACKEND',
+    email_config.get('backend', 'django.core.mail.backends.smtp.EmailBackend')
 )
 
 # Email backend settings
@@ -535,6 +533,11 @@ EMAIL_HOST_USER = get_setting(
 EMAIL_HOST_PASSWORD = get_setting(
     'INVENTREE_EMAIL_PASSWORD',
     email_config.get('password', ''),
+)
+
+DEFAULT_FROM_EMAIL = get_setting(
+    'INVENTREE_EMAIL_SENDER',
+    email_config.get('sender', ''),
 )
 
 EMAIL_SUBJECT_PREFIX = '[InvenTree] '
@@ -580,17 +583,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-
-BACKUP_DIR = get_setting(
-    'INVENTREE_BACKUP_DIR',
-    CONFIG.get('backup_dir', tempfile.gettempdir()),
-)
-
-# Settings for dbbsettings app
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'location': BACKUP_DIR,
-}
 
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [

@@ -21,23 +21,12 @@ ENV INVENTREE_MNG_DIR="${INVENTREE_SRC_DIR}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_HOME}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
-ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 
 # Default web server port is 8000
 ENV INVENTREE_WEB_PORT="8000"
-
-# Pass DB configuration through as environment variables
-# Default configuration = postgresql
-ENV INVENTREE_DB_ENGINE="postgresql"
-ENV INVENTREE_DB_NAME="inventree"
-ENV INVENTREE_DB_HOST="db"
-ENV INVENTREE_DB_PORT="5432"
-
-# INVENTREE_DB_USER must be specified at run-time
-# INVENTREE_DB_PASSWORD must be specified at run-time
 
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \

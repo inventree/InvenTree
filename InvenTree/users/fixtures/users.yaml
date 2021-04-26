@@ -1,0 +1,53 @@
+- model: auth.group
+  pk: 1
+  fields:
+    name: "Viewers"
+
+- model: auth.group
+  pk: 2
+  fields:
+    name: "Engineers"
+
+- model: auth.group
+  pk: 3
+  fields:
+    name: "Sales"
+
+- model: auth.user
+  pk: 1
+  fields:
+    username: "sue_the_superuser"
+    is_superuser: true
+
+- model: auth.user
+  pk: 2
+  fields:
+    username: "engineer_eddie"
+    groups:
+      - 2
+    is_active: true
+    is_staff: false
+    is_superuser: false
+
+- model: auth.user
+  pk: 3
+  fields:
+    username: "alanallgroup"
+    first_name: "Alan"
+    last_name: "Allgroup"
+    is_active: false
+    groups:
+      - 1
+      - 2
+      - 3
+
+- model: auth.user
+  pk: 4
+  fields:
+    username: "sam"
+    first_name: "Samuel"
+    last_name: "Salesperson"
+    groups:
+      - 3
+    is_staff: true
+    is_superuser: true

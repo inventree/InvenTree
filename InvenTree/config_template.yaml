@@ -85,6 +85,7 @@ email:
   port: 25
   username: ''
   password: ''
+  sender: ''
   tls: False
   ssl: False
 
@@ -136,12 +137,6 @@ static_root: '/home/inventree/static'
 #  - mailto
 #  - git
 #  - ssh
-
-# Backup options
-# Set the backup_dir parameter to store backup files in a specific location
-# If unspecified, the local user's temp directory will be used
-# Use environment variable INVENTREE_BACKUP_DIR
-backup_dir: '/home/inventree/data/backup/'
 
 # Permit custom authentication backends
 #authentication_backends:

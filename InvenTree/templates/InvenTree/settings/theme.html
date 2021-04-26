@@ -25,12 +25,12 @@
 </form>
 
 {% if invalid_color_theme %}
-	<div class="alert alert-danger alert-block" role="alert" style="display: inline-block;">
-	{% blocktrans %}
-		The CSS sheet "{{invalid_color_theme}}.css" for the currently selected color theme was not found.<br>
-		Please select another color theme :)
-	{% endblocktrans %}
-	</div>
+    <div class="alert alert-danger alert-block" role="alert" style="display: inline-block;">
+    {% blocktrans %}
+        The CSS sheet "{{invalid_color_theme}}.css" for the currently selected color theme was not found.<br>
+        Please select another color theme :)
+    {% endblocktrans %}
+    </div>
 {% endif %}
 
 {% endblock %}
