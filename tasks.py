@@ -248,6 +248,7 @@ def content_excludes():
         "django_q.schedule",
         "django_q.task",
         "django_q.ormq",
+        "users.owner",
     ]
 
     output = ""
