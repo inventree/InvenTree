@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-25 02:45+0000\n"
+"POT-Creation-Date: 2021-04-27 10:44+0000\n"
 "PO-Revision-Date: 2021-04-21 09:33\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -67,35 +67,36 @@ msgstr ""
 msgid "Select Category"
 msgstr ""
 
-#: InvenTree/helpers.py:375 order/models.py:245 order/models.py:344
-#: stock/views.py:1763
-msgid "Invalid quantity provided"
-msgstr ""
-
-#: InvenTree/helpers.py:378
-msgid "Empty serial number string"
-msgstr ""
-
-#: InvenTree/helpers.py:399
+#: InvenTree/helpers.py:377
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr ""
 
-#: InvenTree/helpers.py:403 InvenTree/helpers.py:406 InvenTree/helpers.py:409
+#: InvenTree/helpers.py:384 order/models.py:245 order/models.py:344
+#: stock/views.py:1763
+msgid "Invalid quantity provided"
+msgstr ""
+
+#: InvenTree/helpers.py:387
+msgid "Empty serial number string"
+msgstr ""
+
+#: InvenTree/helpers.py:409 InvenTree/helpers.py:412 InvenTree/helpers.py:415
+#: InvenTree/helpers.py:440
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:414
+#: InvenTree/helpers.py:445
 #, python-brace-format
 msgid "Duplicate serial: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:422
+#: InvenTree/helpers.py:453
 msgid "No serial numbers found"
 msgstr ""
 
-#: InvenTree/helpers.py:426
+#: InvenTree/helpers.py:457
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
