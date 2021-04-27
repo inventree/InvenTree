@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-27 21:53+0000\n"
+"POT-Creation-Date: 2021-04-27 22:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -383,7 +383,7 @@ msgid ""
 "Target date for build completion. Build will be overdue after this date."
 msgstr ""
 
-#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1227
+#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1241
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:123
@@ -723,48 +723,48 @@ msgstr ""
 msgid "Completed build output"
 msgstr ""
 
-#: build/models.py:1118
+#: build/models.py:1132
 msgid "BuildItem must be unique for build, stock_item and install_into"
 msgstr ""
 
-#: build/models.py:1143
+#: build/models.py:1157
 msgid ""
 "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
-#: build/models.py:1147
+#: build/models.py:1161
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr ""
 
-#: build/models.py:1151
+#: build/models.py:1165
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/models.py:1158 order/models.py:758
+#: build/models.py:1172 order/models.py:758
 msgid "StockItem is over-allocated"
 msgstr ""
 
-#: build/models.py:1162 order/models.py:761
+#: build/models.py:1176 order/models.py:761
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1166
+#: build/models.py:1180
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1206 stock/templates/stock/item_base.html:306
+#: build/models.py:1220 stock/templates/stock/item_base.html:306
 #: templates/InvenTree/search.html:183 templates/js/build.js:714
 #: templates/navbar.html:29
 msgid "Build"
 msgstr ""
 
-#: build/models.py:1207
+#: build/models.py:1221
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1214 part/templates/part/allocation.html:18
+#: build/models.py:1228 part/templates/part/allocation.html:18
 #: part/templates/part/allocation.html:24
 #: part/templates/part/allocation.html:31
 #: part/templates/part/allocation.html:49
@@ -776,19 +776,19 @@ msgstr ""
 msgid "Stock Item"
 msgstr ""
 
-#: build/models.py:1215
+#: build/models.py:1229
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1228
+#: build/models.py:1242
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1236
+#: build/models.py:1250
 msgid "Install into"
 msgstr ""
 
-#: build/models.py:1237
+#: build/models.py:1251
 msgid "Destination stock item"
 msgstr ""
 
