@@ -996,7 +996,14 @@ class OrderParts(AjaxView):
 
                 part.order_supplier = supplier_part.id if supplier_part else None
                 part.order_quantity = quantity
-                part.purchase_price = supplier_part.get_price(quantity) / quantity if supplier_part else None
+
+                # set supplier-price
+                if supplier_part:
+                    supplier_price = supplier_part.get_price(quantity)
+                    if supplier_price:
+                        part.purchase_price = supplier_price / quantity
+                if not hasattr(part, 'purchase_price'):
+                    part.purchase_price = None
 
                 self.parts.append(part)
 
@@ -1098,7 +1105,7 @@ class OrderParts(AjaxView):
                     continue
 
                 # get purchase price
-                purchase_price = item.purchase_price if item.purchase_price else None
+                purchase_price = item.purchase_price
 
                 order.add_line_item(supplier_part, quantity, purchase_price=purchase_price)
 
