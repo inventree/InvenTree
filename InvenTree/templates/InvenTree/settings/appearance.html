@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<form action="{% url 'settings-theme' %}" method="post">
+<form action="{% url 'settings-appearance' %}" method="post">
     {% csrf_token %}
     {% load crispy_forms_tags %}
     {% crispy form %}
@@ -44,7 +44,6 @@
 
 <div class="row">
     <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
-        <input name="next" type="hidden" value="">
         <div class="col-sm-6" style="width: 200px;"><div id="div_id_name" class="form-group"><div class="controls ">
             <select name="language" class="select form-control">
                 {% get_current_language as LANGUAGE_CODE %}
