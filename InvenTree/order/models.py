@@ -337,14 +337,16 @@ class PurchaseOrder(Order):
             raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
 
         try:
+            if not (quantity % 1 == 0):
+                raise ValidationError({"quantity": _("Quantity must be an integer")})
+            if quantity < 0:
+                raise ValidationError({"quantity": _("Quantity must be a positive number")})
             quantity = int(quantity)
-            if quantity <= 0:
-                raise ValidationError({"quantity": _("Quantity must be greater than zero")})
-        except ValueError:
+        except (ValueError, TypeError):
             raise ValidationError({"quantity": _("Invalid quantity provided")})
 
         # Create a new stock item
-        if line.part:
+        if line.part and quantity > 0:
             stock = stock_models.StockItem(
                 part=line.part.part,
                 supplier_part=line.part,
