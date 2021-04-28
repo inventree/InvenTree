@@ -44,6 +44,7 @@
 
 <div class="row">
     <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+        <input name="next" type="hidden" value="{% url 'settings-appearance' %}">
         <div class="col-sm-6" style="width: 200px;"><div id="div_id_name" class="form-group"><div class="controls ">
             <select name="language" class="select form-control">
                 {% get_current_language as LANGUAGE_CODE %}
