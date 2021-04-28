@@ -342,7 +342,7 @@ class PurchaseOrder(Order):
             if quantity < 0:
                 raise ValidationError({"quantity": _("Quantity must be a positive number")})
             quantity = int(quantity)
-        except ValueError:
+        except (ValueError, TypeError):
             raise ValidationError({"quantity": _("Invalid quantity provided")})
 
         # Create a new stock item
