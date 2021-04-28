@@ -79,7 +79,7 @@ apipatterns = [
 settings_urls = [
 
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
-    url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
+    url(r'^i18n/?', include('django.conf.urls.i18n')),
    
     url(r'^global/?', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
     url(r'^report/?', SettingsView.as_view(template_name='InvenTree/settings/report.html'), name='settings-report'),
