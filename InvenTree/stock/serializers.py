@@ -16,6 +16,7 @@ from django.db.models import BooleanField
 from django.db.models import Q
 
 from sql_util.utils import SubquerySum, SubqueryCount
+from django.utils.translation import ugettext_lazy as _
 
 from decimal import Decimal
 
@@ -61,6 +62,23 @@ class StockItemSerializerBrief(InvenTreeModelSerializer):
             'location_name',
             'quantity',
         ]
+
+
+class StockItemTrackingField(serializers.CharField):
+    """
+    This field translates and formats a translated field
+    it uses the translation from creation-time if it is an old / non-translatable field or english if no translation is available for the current-users language
+    """
+    def __init__(self, **kwargs):
+        self.trans_args = kwargs.pop('trans_args', False)
+        self.raw_trans = kwargs.pop('raw_trans', False)
+        super().__init__(**kwargs)
+
+    def get_attribute(self, instance):
+        untranslated = getattr(instance, self.source)
+        if not untranslated:
+            untranslated = getattr(instance, self.raw_trans)
+        return _(untranslated).format(**getattr(instance, self.trans_args))
 
 
 class StockItemSerializer(InvenTreeModelSerializer):
@@ -354,6 +372,10 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
     user_detail = UserSerializerBrief(source='user', many=False, read_only=True)
+
+    title = StockItemTrackingField(source="title_trans", raw_trans="title", trans_args="translation_args", read_only=True)
+
+    notes = StockItemTrackingField(source="notes_trans", raw_trans="notes", trans_args="translation_args", read_only=True)
 
     class Meta:
         model = StockItemTracking
