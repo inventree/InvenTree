@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 
 import os
+from decimal import Decimal
 
 from .models import Company, Contact, ManufacturerPart, SupplierPart
 from .models import rename_company_image
@@ -103,8 +104,8 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(100), 350)
 
         p = self.acme0002.get_price
-        self.assertEqual(p(1), None)
-        self.assertEqual(p(2), None)
+        self.assertEqual(p(1), 7)
+        self.assertEqual(p(2), 14)
         self.assertEqual(p(5), 35)
         self.assertEqual(p(45), 315)
         self.assertEqual(p(55), 68.75)
@@ -121,7 +122,8 @@ class CompanySimpleTest(TestCase):
         
         m3x12 = Part.objects.get(name='M3x12 SHCS')
 
-        self.assertIsNone(m3x12.get_price_info(3))
+        self.assertEqual(m3x12.get_price_info(0.3), Decimal('2.4'))
+        self.assertEqual(m3x12.get_price_info(3), Decimal('24'))
         self.assertIsNotNone(m3x12.get_price_info(50))
 
     def test_currency_validation(self):
