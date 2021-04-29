@@ -104,6 +104,7 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(100), 350)
 
         p = self.acme0002.get_price
+        self.assertEqual(p(0.5), 3.5)
         self.assertEqual(p(1), 7)
         self.assertEqual(p(2), 14)
         self.assertEqual(p(5), 35)
@@ -113,6 +114,7 @@ class CompanySimpleTest(TestCase):
     def test_part_pricing(self):
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
+        self.assertEqual(m2x4.get_price_info(5.5), "38.5 - 41.25")
         self.assertEqual(m2x4.get_price_info(10), "70 - 75")
         self.assertEqual(m2x4.get_price_info(100), "125 - 350")
 
