@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-28 23:49+0000\n"
+"POT-Creation-Date: 2021-04-29 04:57+0000\n"
 "PO-Revision-Date: 2021-04-21 09:33\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -808,7 +808,7 @@ msgstr ""
 msgid "Unallocate stock"
 msgstr ""
 
-#: build/templates/build/allocate.html:26 build/views.py:308 build/views.py:794
+#: build/templates/build/allocate.html:26 build/views.py:319 build/views.py:805
 msgid "Unallocate Stock"
 msgstr ""
 
@@ -1149,7 +1149,7 @@ msgstr ""
 msgid "Alter the quantity of stock allocated to the build output"
 msgstr ""
 
-#: build/templates/build/index.html:28 build/views.py:667
+#: build/templates/build/index.html:28 build/views.py:678
 msgid "New Build Order"
 msgstr ""
 
@@ -1236,141 +1236,145 @@ msgstr ""
 msgid "Create Build Output"
 msgstr ""
 
-#: build/views.py:173 stock/models.py:969 stock/views.py:1789
+#: build/views.py:168
+msgid "Maximum output quantity is "
+msgstr ""
+
+#: build/views.py:184 stock/models.py:969 stock/views.py:1789
 msgid "Serial numbers already exist"
 msgstr ""
 
-#: build/views.py:182
+#: build/views.py:193
 msgid "Serial numbers required for trackable build output"
 msgstr ""
 
-#: build/views.py:248
+#: build/views.py:259
 msgid "Delete Build Output"
 msgstr ""
 
-#: build/views.py:269 build/views.py:359
+#: build/views.py:280 build/views.py:370
 msgid "Confirm unallocation of build stock"
 msgstr ""
 
-#: build/views.py:270 build/views.py:360 stock/views.py:425
+#: build/views.py:281 build/views.py:371 stock/views.py:425
 msgid "Check the confirmation box"
 msgstr ""
 
-#: build/views.py:282
+#: build/views.py:293
 msgid "Build output does not match build"
 msgstr ""
 
-#: build/views.py:284 build/views.py:485
+#: build/views.py:295 build/views.py:496
 msgid "Build output must be specified"
 msgstr ""
 
-#: build/views.py:296
+#: build/views.py:307
 msgid "Build output deleted"
 msgstr ""
 
-#: build/views.py:394
+#: build/views.py:405
 msgid "Complete Build Order"
 msgstr ""
 
-#: build/views.py:400
+#: build/views.py:411
 msgid "Build order cannot be completed - incomplete outputs remain"
 msgstr ""
 
-#: build/views.py:411
+#: build/views.py:422
 msgid "Completed build order"
 msgstr ""
 
-#: build/views.py:427
+#: build/views.py:438
 msgid "Complete Build Output"
 msgstr ""
 
-#: build/views.py:469
+#: build/views.py:480
 msgid "Invalid stock status value selected"
 msgstr ""
 
-#: build/views.py:476
+#: build/views.py:487
 msgid "Quantity to complete cannot exceed build output quantity"
 msgstr ""
 
-#: build/views.py:482
+#: build/views.py:493
 msgid "Confirm completion of incomplete build"
 msgstr ""
 
-#: build/views.py:581
+#: build/views.py:592
 msgid "Build output completed"
 msgstr ""
 
-#: build/views.py:721
+#: build/views.py:732
 msgid "Created new build"
 msgstr ""
 
-#: build/views.py:742
+#: build/views.py:753
 msgid "Edit Build Order Details"
 msgstr ""
 
-#: build/views.py:775
+#: build/views.py:786
 msgid "Edited build"
 msgstr ""
 
-#: build/views.py:784
+#: build/views.py:795
 msgid "Delete Build Order"
 msgstr ""
 
-#: build/views.py:799
+#: build/views.py:810
 msgid "Removed parts from build allocation"
 msgstr ""
 
-#: build/views.py:811
+#: build/views.py:822
 msgid "Allocate stock to build output"
 msgstr ""
 
-#: build/views.py:854
+#: build/views.py:865
 msgid "Item must be currently in stock"
 msgstr ""
 
-#: build/views.py:860
+#: build/views.py:871
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/views.py:861 templates/js/bom.js:230 templates/js/build.js:575
+#: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:575
 #: templates/js/build.js:838 templates/js/build.js:1021
 msgid "Available"
 msgstr ""
 
-#: build/views.py:863
+#: build/views.py:874
 msgid "Stock item must be selected"
 msgstr ""
 
-#: build/views.py:1026
+#: build/views.py:1037
 msgid "Edit Stock Allocation"
 msgstr ""
 
-#: build/views.py:1030
+#: build/views.py:1041
 msgid "Updated Build Item"
 msgstr ""
 
-#: build/views.py:1059
+#: build/views.py:1070
 msgid "Add Build Order Attachment"
 msgstr ""
 
-#: build/views.py:1072 order/views.py:110 order/views.py:162 part/views.py:172
+#: build/views.py:1083 order/views.py:110 order/views.py:162 part/views.py:172
 #: stock/views.py:277
 msgid "Added attachment"
 msgstr ""
 
-#: build/views.py:1108 order/views.py:189 order/views.py:210
+#: build/views.py:1119 order/views.py:189 order/views.py:210
 msgid "Edit Attachment"
 msgstr ""
 
-#: build/views.py:1118 order/views.py:193 order/views.py:214
+#: build/views.py:1129 order/views.py:193 order/views.py:214
 msgid "Attachment updated"
 msgstr ""
 
-#: build/views.py:1128 order/views.py:229 order/views.py:243
+#: build/views.py:1139 order/views.py:229 order/views.py:243
 msgid "Delete Attachment"
 msgstr ""
 
-#: build/views.py:1133 order/views.py:235 order/views.py:249 stock/views.py:333
+#: build/views.py:1144 order/views.py:235 order/views.py:249 stock/views.py:333
 msgid "Deleted attachment"
 msgstr ""
 
