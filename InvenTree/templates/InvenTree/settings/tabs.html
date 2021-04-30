@@ -6,7 +6,7 @@
         <a href="{% url 'settings-user' %}"><span class='fas fa-user'></span> {% trans "Account" %}</a>
     </li>
     <li{% ifequal tab 'theme' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-theme' %}"><span class='fas fa-fill'></span> {% trans "Theme" %}</a>
+        <a href="{% url 'settings-appearance' %}"><span class='fas fa-fill'></span> {% trans "Appearance" %}</a>
     </li>
 </ul>
 {% if user.is_staff %}

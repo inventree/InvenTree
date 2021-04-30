@@ -996,11 +996,25 @@ class Build(MPTTModel):
 
     @property
     def required_parts(self):
-        """ Returns a dict of parts required to build this part (BOM) """
+        """ Returns a list of parts required to build this part (BOM) """
         parts = []
 
-        for item in self.part.bom_items.all().prefetch_related('sub_part'):
+        for item in self.bom_items:
             parts.append(item.sub_part)
+
+        return parts
+
+    @property
+    def required_parts_to_complete_build(self):
+        """ Returns a list of parts required to complete the full build """
+        parts = []
+
+        for bom_item in self.bom_items:
+            # Get remaining quantity needed
+            required_quantity_to_complete_build = self.remaining * bom_item.quantity
+            # Compare to net stock
+            if bom_item.sub_part.net_stock < required_quantity_to_complete_build:
+                parts.append(bom_item.sub_part)
 
         return parts
 

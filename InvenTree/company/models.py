@@ -675,4 +675,4 @@ class SupplierPriceBreak(common.models.PriceBreak):
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
-        return f'{self.part.MPN} - {self.price} @ {self.quantity}'
+        return f'{self.part.SKU} - {self.price} @ {self.quantity}'

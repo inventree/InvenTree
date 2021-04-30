@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
-from django.db.models import Q, F, Count, Prefetch, Sum
+from django.db.models import Q, F, Count
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
@@ -635,29 +635,15 @@ class PartList(generics.ListCreateAPIView):
         # TODO: Need to figure out a cheaper way of making this filter query
 
         if stock_to_build is not None:
-            # Filter only active parts
-            queryset = queryset.filter(active=True)
-            # Prefetch current active builds
-            build_active_queryset = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
-            build_active_prefetch = Prefetch('builds',
-                                             queryset=build_active_queryset,
-                                             to_attr='current_builds')
-            parts = queryset.prefetch_related(build_active_prefetch)
-
+            # Get active builds
+            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
             # Store parts with builds needing stock
-            parts_need_stock = []
+            parts_needed_to_complete_builds = []
+            # Filter required parts
+            for build in builds:
+                parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
 
-            # Find parts with active builds
-            # where any subpart's stock is lower than quantity being built
-            for part in parts:
-                if part.current_builds:
-                    builds_ids = [build.id for build in part.current_builds]
-                    total_build_quantity = build_active_queryset.filter(pk__in=builds_ids).aggregate(quantity=Sum('quantity'))['quantity']
-
-                    if part.can_build < total_build_quantity:
-                        parts_need_stock.append(part.pk)
-
-            queryset = queryset.filter(pk__in=parts_need_stock)
+            queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
 
         # Optionally limit the maximum number of returned results
         # e.g. for displaying "recent part" list

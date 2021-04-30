@@ -157,6 +157,17 @@ class BuildOutputCreate(AjaxUpdateView):
         quantity = form.cleaned_data.get('output_quantity', None)
         serials = form.cleaned_data.get('serial_numbers', None)
 
+        if quantity:
+            build = self.get_object()
+            
+            # Check that requested output don't exceed build remaining quantity
+            maximum_output = int(build.remaining - build.incomplete_count)
+            if quantity > maximum_output:
+                form.add_error(
+                    'output_quantity',
+                    _('Maximum output quantity is ') + str(maximum_output),
+                )
+
         # Check that the serial numbers are valid
         if serials:
             try:
@@ -212,7 +223,7 @@ class BuildOutputCreate(AjaxUpdateView):
 
         # Calculate the required quantity
         quantity = max(0, build.remaining - build.incomplete_count)
-        initials['output_quantity'] = quantity
+        initials['output_quantity'] = int(quantity)
 
         return initials
 
