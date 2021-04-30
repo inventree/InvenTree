@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-29 04:57+0000\n"
+"POT-Creation-Date: 2021-04-30 01:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5943,6 +5943,32 @@ msgstr ""
 msgid "No stock location set"
 msgstr ""
 
+#: templates/InvenTree/settings/appearance.html:10
+msgid "Theme Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/appearance.html:17
+msgid "Color Themes"
+msgstr ""
+
+#: templates/InvenTree/settings/appearance.html:29
+#, python-format
+msgid ""
+"\n"
+"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
+"selected color theme was not found.<br>\n"
+"        Please select another color theme :)\n"
+"    "
+msgstr ""
+
+#: templates/InvenTree/settings/appearance.html:39
+msgid "Language"
+msgstr ""
+
+#: templates/InvenTree/settings/appearance.html:61
+msgid "Set Language"
+msgstr ""
+
 #: templates/InvenTree/settings/build.html:10
 msgid "Build Order Settings"
 msgstr ""
@@ -6040,7 +6066,7 @@ msgid "Account"
 msgstr ""
 
 #: templates/InvenTree/settings/tabs.html:9
-msgid "Theme"
+msgid "Appearance"
 msgstr ""
 
 #: templates/InvenTree/settings/tabs.html:13
@@ -6057,24 +6083,6 @@ msgstr ""
 
 #: templates/InvenTree/settings/tabs.html:22
 msgid "Categories"
-msgstr ""
-
-#: templates/InvenTree/settings/theme.html:10
-msgid "Theme Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/theme.html:17
-msgid "Color Themes"
-msgstr ""
-
-#: templates/InvenTree/settings/theme.html:29
-#, python-format
-msgid ""
-"\n"
-"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
-"selected color theme was not found.<br>\n"
-"        Please select another color theme :)\n"
-"    "
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:16

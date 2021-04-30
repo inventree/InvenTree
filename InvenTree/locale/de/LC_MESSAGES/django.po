@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-29 04:57+0000\n"
+"POT-Creation-Date: 2021-04-30 01:54+0000\n"
 "PO-Revision-Date: 2021-04-21 10:02\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -6051,6 +6051,43 @@ msgstr "an Kunde versand"
 msgid "No stock location set"
 msgstr "Kein Lagerort gesetzt"
 
+#: templates/InvenTree/settings/appearance.html:10
+msgid "Theme Settings"
+msgstr "Anzeige-Einstellungen"
+
+#: templates/InvenTree/settings/appearance.html:17
+msgid "Color Themes"
+msgstr "Farbschemata"
+
+#: templates/InvenTree/settings/appearance.html:29
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "\t\tThe CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
+#| "selected color theme was not found.<br>\n"
+#| "\t\tPlease select another color theme :)\n"
+#| "\t"
+msgid ""
+"\n"
+"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
+"selected color theme was not found.<br>\n"
+"        Please select another color theme :)\n"
+"    "
+msgstr ""
+"\n"
+"\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell "
+"ausgewählte Farbschema wurde nicht gefunden.<br>\n"
+"\t\tBitte ein anderes Farbschema auswählen:)\n"
+"\t"
+
+#: templates/InvenTree/settings/appearance.html:39
+msgid "Language"
+msgstr ""
+
+#: templates/InvenTree/settings/appearance.html:61
+msgid "Set Language"
+msgstr ""
+
 #: templates/InvenTree/settings/build.html:10
 msgid "Build Order Settings"
 msgstr "Bauauftrag-Einstellungen"
@@ -6148,8 +6185,8 @@ msgid "Account"
 msgstr "Konto"
 
 #: templates/InvenTree/settings/tabs.html:9
-msgid "Theme"
-msgstr "Thema"
+msgid "Appearance"
+msgstr ""
 
 #: templates/InvenTree/settings/tabs.html:13
 msgid "InvenTree Settings"
@@ -6166,35 +6203,6 @@ msgstr "Bericht"
 #: templates/InvenTree/settings/tabs.html:22
 msgid "Categories"
 msgstr "Kategorien"
-
-#: templates/InvenTree/settings/theme.html:10
-msgid "Theme Settings"
-msgstr "Anzeige-Einstellungen"
-
-#: templates/InvenTree/settings/theme.html:17
-msgid "Color Themes"
-msgstr "Farbschemata"
-
-#: templates/InvenTree/settings/theme.html:29
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "\t\tThe CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
-#| "selected color theme was not found.<br>\n"
-#| "\t\tPlease select another color theme :)\n"
-#| "\t"
-msgid ""
-"\n"
-"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
-"selected color theme was not found.<br>\n"
-"        Please select another color theme :)\n"
-"    "
-msgstr ""
-"\n"
-"\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell "
-"ausgewählte Farbschema wurde nicht gefunden.<br>\n"
-"\t\tBitte ein anderes Farbschema auswählen:)\n"
-"\t"
 
 #: templates/InvenTree/settings/user.html:16
 msgid "User Information"
@@ -7443,6 +7451,9 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Theme"
+#~ msgstr "Thema"
 
 #~ msgid "Marking this order as complete will remove these line items."
 #~ msgstr ""
