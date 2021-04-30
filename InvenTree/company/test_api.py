@@ -100,7 +100,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['MPN'], 'MPN_TEST')
 
         # Filter by manufacturer
-        data = {'company': 7}
+        data = {'manufacturer': 7}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 3)
 

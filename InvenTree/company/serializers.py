@@ -192,10 +192,11 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         manufacturer_id = self.initial_data.get('manufacturer', None)
         MPN = self.initial_data.get('MPN', None)
 
-        if manufacturer_id or MPN:
-            kwargs = {'manufacturer': manufacturer_id,
-                      'MPN': MPN,
-                      }
+        if manufacturer_id and MPN:
+            kwargs = {
+                'manufacturer': manufacturer_id,
+                'MPN': MPN,
+            }
             supplier_part.save(**kwargs)
 
         return supplier_part
