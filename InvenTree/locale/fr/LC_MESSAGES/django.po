@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-30 23:13+0000\n"
+"POT-Creation-Date: 2021-04-30 23:53+0000\n"
 "PO-Revision-Date: 2021-04-21 09:33\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -542,7 +542,7 @@ msgstr ""
 
 #: build/models.py:152 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:118
-#: build/templates/build/detail.html:26 company/models.py:669
+#: build/templates/build/detail.html:26 company/models.py:688
 #: order/models.py:639 order/models.py:671
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:131
@@ -2373,7 +2373,7 @@ msgid "Pricing Information"
 msgstr ""
 
 #: company/templates/company/supplier_part_pricing.html:19 company/views.py:794
-#: part/templates/part/sale_prices.html:17 part/views.py:2624
+#: part/templates/part/sale_prices.html:17 part/views.py:2636
 msgid "Add Price Break"
 msgstr ""
 
@@ -2483,15 +2483,15 @@ msgstr ""
 msgid "Delete Supplier Part"
 msgstr ""
 
-#: company/views.py:799 part/views.py:2628
+#: company/views.py:799 part/views.py:2640
 msgid "Added new price break"
 msgstr ""
 
-#: company/views.py:855 part/views.py:2672
+#: company/views.py:855 part/views.py:2684
 msgid "Edit Price Break"
 msgstr ""
 
-#: company/views.py:870 part/views.py:2686
+#: company/views.py:870 part/views.py:2698
 msgid "Delete Price Break"
 msgstr ""
 
@@ -4047,7 +4047,7 @@ msgstr ""
 msgid "All parts"
 msgstr ""
 
-#: part/templates/part/category.html:29 part/views.py:2270
+#: part/templates/part/category.html:29 part/views.py:2282
 msgid "Create new part category"
 msgstr ""
 
@@ -4752,63 +4752,63 @@ msgstr ""
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:2069
+#: part/views.py:2081
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:2079
+#: part/views.py:2091
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:2086
+#: part/views.py:2098
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:2094
+#: part/views.py:2106
 msgid "Create Part Parameter"
 msgstr ""
 
-#: part/views.py:2144
+#: part/views.py:2156
 msgid "Edit Part Parameter"
 msgstr ""
 
-#: part/views.py:2158
+#: part/views.py:2170
 msgid "Delete Part Parameter"
 msgstr ""
 
-#: part/views.py:2218
+#: part/views.py:2230
 msgid "Edit Part Category"
 msgstr ""
 
-#: part/views.py:2256
+#: part/views.py:2268
 msgid "Delete Part Category"
 msgstr ""
 
-#: part/views.py:2262
+#: part/views.py:2274
 msgid "Part category was deleted"
 msgstr ""
 
-#: part/views.py:2314
+#: part/views.py:2326
 msgid "Create Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2415
+#: part/views.py:2427
 msgid "Edit Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2471
+#: part/views.py:2483
 msgid "Delete Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2490
+#: part/views.py:2502
 msgid "Create BOM Item"
 msgstr ""
 
-#: part/views.py:2560
+#: part/views.py:2572
 msgid "Edit BOM item"
 msgstr ""
 
-#: part/views.py:2616
+#: part/views.py:2628
 msgid "Confim BOM item deletion"
 msgstr ""
 
