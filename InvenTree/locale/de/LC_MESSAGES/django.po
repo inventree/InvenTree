@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-30 01:54+0000\n"
+"POT-Creation-Date: 2021-04-30 22:26+0000\n"
 "PO-Revision-Date: 2021-04-30 06:09\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -104,7 +104,9 @@ msgstr "Keine Seriennummern gefunden"
 #: InvenTree/helpers.py:457
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
+msgstr ""
+"Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) "
+"übereinstimmen"
 
 #: InvenTree/models.py:59 stock/models.py:1662
 msgid "Attachment"
@@ -378,7 +380,8 @@ msgid "Target Date"
 msgstr "Zieldatum"
 
 #: build/forms.py:43 build/models.py:224
-msgid "Target date for build completion. Build will be overdue after this date."
+msgid ""
+"Target date for build completion. Build will be overdue after this date."
 msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 
 #: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1241
@@ -586,8 +589,12 @@ msgid "Source Location"
 msgstr "Quell-Lagerort"
 
 #: build/models.py:178
-msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "Entnahme-Lagerort für diesen Bauauftrag wählen (oder leer lassen für einen beliebigen Lagerort)"
+msgid ""
+"Select location to take stock from for this build (leave blank to take from "
+"any stock location)"
+msgstr ""
+"Entnahme-Lagerort für diesen Bauauftrag wählen (oder leer lassen für einen "
+"beliebigen Lagerort)"
 
 #: build/models.py:183
 msgid "Destination Location"
@@ -721,11 +728,16 @@ msgstr "Endprodukt fertigstellen"
 
 #: build/models.py:1132
 msgid "BuildItem must be unique for build, stock_item and install_into"
-msgstr "Bauauftrags-Objekt muss für Bauauftrag, Lager-Objekt und installiert_in eindeutig sein"
+msgstr ""
+"Bauauftrags-Objekt muss für Bauauftrag, Lager-Objekt und installiert_in "
+"eindeutig sein"
 
 #: build/models.py:1157
-msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete Teil verfolgbar ist"
+msgid ""
+"Build item must specify a build output, as master part is marked as trackable"
+msgstr ""
+"Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete Teil "
+"verfolgbar ist"
 
 #: build/models.py:1161
 #, python-brace-format
@@ -735,7 +747,9 @@ msgstr "Ausgewähltes BestandsObjekt nicht Stückliste für Teil '{p}' gefunden"
 #: build/models.py:1165
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
-msgstr "Reserviermenge ({n}) muss kleiner Bestandsmenge ({q}) sein. Zugewiesene Anzahl ({n}) darf nicht die verfügbare ({q}) Anzahl überschreiten"
+msgstr ""
+"Reserviermenge ({n}) muss kleiner Bestandsmenge ({q}) sein. Zugewiesene "
+"Anzahl ({n}) darf nicht die verfügbare ({q}) Anzahl überschreiten"
 
 #: build/models.py:1172 order/models.py:760
 msgid "StockItem is over-allocated"
@@ -828,7 +842,9 @@ msgstr "Nicht verfolgter Lagerbestand wurde Bauauftrag vollständig zugewiesen"
 
 #: build/templates/build/allocate.html:40
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr "Nicht verfolgter Lagerbestand wurde Bauauftrag noch nicht vollständig zugewiesen"
+msgstr ""
+"Nicht verfolgter Lagerbestand wurde Bauauftrag noch nicht vollständig "
+"zugewiesen"
 
 #: build/templates/build/allocate.html:47
 msgid "This Build Order does not have any associated untracked BOM items"
@@ -858,12 +874,16 @@ msgid "Automatically Allocate Stock"
 msgstr "Lagerbestand automatisch zuweisen"
 
 #: build/templates/build/auto_allocate.html:10
-msgid "The following stock items will be allocated to the specified build output"
-msgstr "Die folgenden BestandsObjekte werden den ausgewählten Endprodukten zugeordnet"
+msgid ""
+"The following stock items will be allocated to the specified build output"
+msgstr ""
+"Die folgenden BestandsObjekte werden den ausgewählten Endprodukten zugeordnet"
 
 #: build/templates/build/auto_allocate.html:37
 msgid "No stock items found that can be automatically allocated to this build"
-msgstr "Keine BestandsObjekte gefunden, die diesem Endprodukt automatisch zugewiesen werden können"
+msgstr ""
+"Keine BestandsObjekte gefunden, die diesem Endprodukt automatisch zugewiesen "
+"werden können"
 
 #: build/templates/build/auto_allocate.html:39
 msgid "Stock items will have to be manually allocated"
@@ -885,7 +905,9 @@ msgstr "Bauauftrag ist bereit abgeschlossen zu werden"
 
 #: build/templates/build/build_base.html:36
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr "Bauauftrag kann nicht abgeschlossen werden, da es noch ausstehende Endprodukte gibt"
+msgstr ""
+"Bauauftrag kann nicht abgeschlossen werden, da es noch ausstehende "
+"Endprodukte gibt"
 
 #: build/templates/build/build_base.html:41
 msgid "Required build quantity has not yet been completed"
@@ -983,7 +1005,9 @@ msgstr "Unfertige Endprodukte"
 
 #: build/templates/build/build_base.html:208
 msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr "Bauauftrag kann nicht abgeschlossen werden, da es noch unvollständige Endprodukte gibt"
+msgstr ""
+"Bauauftrag kann nicht abgeschlossen werden, da es noch unvollständige "
+"Endprodukte gibt"
 
 #: build/templates/build/build_children.html:10
 #: build/templates/build/navbar.html:36
@@ -1028,7 +1052,8 @@ msgstr "Endprodukte müssen individuell angelegt werden."
 
 #: build/templates/build/build_output_create.html:9
 msgid "Multiple build outputs will be created based on the quantity specified."
-msgstr "Mehrere Endprodukte werden anhand der gegebenen Anzahl angelegt werden."
+msgstr ""
+"Mehrere Endprodukte werden anhand der gegebenen Anzahl angelegt werden."
 
 #: build/templates/build/build_output_create.html:15
 msgid "Trackable parts can have serial numbers specified"
@@ -1084,8 +1109,12 @@ msgstr "BestandsObjekt zur Zuordnung zum ausgewählten Endprodukt auswählen"
 
 #: build/templates/build/create_build_item.html:11
 #, python-format
-msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
-msgstr "Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:<br><i>%(output)s</i>"
+msgid ""
+"The allocated stock will be installed into the following build output:<br><i>"
+"%(output)s</i>"
+msgstr ""
+"Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:"
+"<br><i>%(output)s</i>"
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -1094,7 +1123,8 @@ msgstr "Kein Bestand verfügbar für %(part)s"
 
 #: build/templates/build/delete_build_item.html:8
 msgid "Are you sure you want to unallocate this stock?"
-msgstr "Sind Sie sicher, dass sie die folgenden Bestands-Zuordnung entfernen möchten?"
+msgstr ""
+"Sind Sie sicher, dass sie die folgenden Bestands-Zuordnung entfernen möchten?"
 
 #: build/templates/build/delete_build_item.html:11
 msgid "The selected stock will be unallocated from the build output"
@@ -1214,11 +1244,14 @@ msgstr "Speichern"
 
 #: build/templates/build/unallocate.html:10
 msgid "Are you sure you wish to unallocate all stock for this build?"
-msgstr "Sind Sie sicher, dass sie alle BestandsObjekt von diesem Bauauftrag entfernen möchten?"
+msgstr ""
+"Sind Sie sicher, dass sie alle BestandsObjekt von diesem Bauauftrag "
+"entfernen möchten?"
 
 #: build/templates/build/unallocate.html:12
 msgid "All incomplete stock allocations will be removed from the build"
-msgstr "Alle unvollständigen Bestandszuordnungen werden vom Endprodukt entfernt"
+msgstr ""
+"Alle unvollständigen Bestandszuordnungen werden vom Endprodukt entfernt"
 
 #: build/views.py:77
 msgid "Build was cancelled"
@@ -1274,7 +1307,9 @@ msgstr "Bauauftrag fertigstellen"
 
 #: build/views.py:411
 msgid "Build order cannot be completed - incomplete outputs remain"
-msgstr "Bauauftrag kann nicht abgeschlossen werden, es gibt noch unvollständige Endprodukte"
+msgstr ""
+"Bauauftrag kann nicht abgeschlossen werden, es gibt noch unvollständige "
+"Endprodukte"
 
 #: build/views.py:422
 msgid "Completed build order"
@@ -1290,7 +1325,9 @@ msgstr "Ungültiger Lagerbestands-Status ausgewählt"
 
 #: build/views.py:487
 msgid "Quantity to complete cannot exceed build output quantity"
-msgstr "Fertigzustellende Anzahl darf nicht die geplante Endprodukt-Anzahl überschreiten"
+msgstr ""
+"Fertigzustellende Anzahl darf nicht die geplante Endprodukt-Anzahl "
+"überschreiten"
 
 #: build/views.py:493
 msgid "Confirm completion of incomplete build"
@@ -1611,7 +1648,9 @@ msgstr "Bestands-Stehzeit"
 
 #: common/models.py:253
 msgid "Number of days stock items are considered stale before expiring"
-msgstr "Anzahl an Tagen, an denen Bestand als abgestanden markiert wird, bevor sie ablaufen"
+msgstr ""
+"Anzahl an Tagen, an denen Bestand als abgestanden markiert wird, bevor sie "
+"ablaufen"
 
 #: common/models.py:255 part/templates/part/detail.html:121
 msgid "days"
@@ -1683,7 +1722,9 @@ msgstr "Präfix für Bestellungs-Referenz"
 
 #: common/models.py:529
 msgid "Settings key (must be unique - case insensitive"
-msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
+msgstr ""
+"Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird "
+"nicht beachtet)"
 
 #: common/models.py:531
 msgid "Settings value"
@@ -2027,10 +2068,14 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid "There are %(count)s parts sourced from this company.<br>\n"
-"If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
-"Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
+msgid ""
+"There are %(count)s parts sourced from this company.<br>\n"
+"If this supplier is deleted, these supplier part entries will also be "
+"deleted."
+msgstr ""
+"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+"Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile "
+"gelöscht."
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
@@ -2189,12 +2234,17 @@ msgstr "Internes Teil"
 
 #: company/templates/company/manufacturer_part_delete.html:6
 msgid "Are you sure you want to delete the following Manufacturer Parts?"
-msgstr "Sind Sie sicher, dass sie die folgenden Herstellerteile löschen möchten?"
+msgstr ""
+"Sind Sie sicher, dass sie die folgenden Herstellerteile löschen möchten?"
 
 #: company/templates/company/manufacturer_part_delete.html:36
 #, python-format
-msgid "There are %(count)s suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:"
-msgstr "Für dieses Herstellerteil sind %(count)s Lieferanten definiert. Wenn Sie es löschen, werden die folgenden Lieferantenteile ebenfalls gelöscht:"
+msgid ""
+"There are %(count)s suppliers defined for this manufacturer part. If you "
+"delete it, the following supplier parts will also be deleted:"
+msgstr ""
+"Für dieses Herstellerteil sind %(count)s Lieferanten definiert. Wenn Sie es "
+"löschen, werden die folgenden Lieferantenteile ebenfalls gelöscht:"
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/views.py:63 part/templates/part/navbar.html:78
@@ -2338,7 +2388,8 @@ msgstr "Zuliefererteil Details"
 
 #: company/templates/company/supplier_part_delete.html:5
 msgid "Are you sure you want to delete the following Supplier Parts?"
-msgstr "Sind Sie sicher, dass sie die folgenden Zuliefererteile löschen möchten?"
+msgstr ""
+"Sind Sie sicher, dass sie die folgenden Zuliefererteile löschen möchten?"
 
 #: company/templates/company/supplier_part_navbar.html:12
 #: company/templates/company/supplier_part_stock.html:10
@@ -2577,7 +2628,8 @@ msgid "Enter sales order number"
 msgstr "Auftrag-Nummer eingeben"
 
 #: order/forms.py:145 order/models.py:454
-msgid "Target date for order completion. Order will be overdue after this date."
+msgid ""
+"Target date for order completion. Order will be overdue after this date."
 msgstr "Zieldatum für Auftrags-Fertigstellung."
 
 #: order/forms.py:235
@@ -2646,7 +2698,8 @@ msgid "Target Delivery Date"
 msgstr "Ziel-Versanddatum"
 
 #: order/models.py:213
-msgid "Expected date for order delivery. Order will be overdue after this date."
+msgid ""
+"Expected date for order delivery. Order will be overdue after this date."
 msgstr "Geplantes Lieferdatum für Auftrag."
 
 #: order/models.py:219
@@ -2846,8 +2899,12 @@ msgid "Create new stock location"
 msgstr "Neuen Lagerort anlegen"
 
 #: order/templates/order/order_cancel.html:8
-msgid "Cancelling this order means that the order and line items will no longer be editable."
-msgstr "Abbruch dieser Bestellung bedeutet, dass sie und ihre Positionen nicht länger bearbeitbar sind."
+msgid ""
+"Cancelling this order means that the order and line items will no longer be "
+"editable."
+msgstr ""
+"Abbruch dieser Bestellung bedeutet, dass sie und ihre Positionen nicht "
+"länger bearbeitbar sind."
 
 #: order/templates/order/order_complete.html:7
 msgid "Mark this order as complete?"
@@ -2855,15 +2912,23 @@ msgstr "Diese Bestellung als vollständig markieren?"
 
 #: order/templates/order/order_complete.html:10
 msgid "This order has line items which have not been marked as received."
-msgstr "Diese Bestellung enthält Positionen, die nicht als empfangen markiert wurden."
+msgstr ""
+"Diese Bestellung enthält Positionen, die nicht als empfangen markiert wurden."
 
 #: order/templates/order/order_complete.html:11
-msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr "Fertigstellen dieser Bestellung bedeutet, dass sie und ihre Positionen nicht länger bearbeitbar sind."
+msgid ""
+"Completing this order means that the order and line items will no longer be "
+"editable."
+msgstr ""
+"Fertigstellen dieser Bestellung bedeutet, dass sie und ihre Positionen nicht "
+"länger bearbeitbar sind."
 
 #: order/templates/order/order_issue.html:8
-msgid "After placing this purchase order, line items will no longer be editable."
-msgstr "Nachdem diese Bestellung plaziert ist können die Positionen nicht länger bearbeitbar ist."
+msgid ""
+"After placing this purchase order, line items will no longer be editable."
+msgstr ""
+"Nachdem diese Bestellung plaziert ist können die Positionen nicht länger "
+"bearbeitbar ist."
 
 #: order/templates/order/order_notes.html:13
 msgid "Order Notes"
@@ -3041,7 +3106,8 @@ msgstr "Warnung"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
-msgstr "Abbruch dieser Bestellung bedeutet, dass sie nicht länger bearbeitbar ist."
+msgstr ""
+"Abbruch dieser Bestellung bedeutet, dass sie nicht länger bearbeitbar ist."
 
 #: order/templates/order/sales_order_detail.html:13
 msgid "Sales Order Items"
@@ -3105,8 +3171,12 @@ msgid "Sales Order Notes"
 msgstr "Auftrags-Positionen"
 
 #: order/templates/order/sales_order_ship.html:10
-msgid "This order has not been fully allocated. If the order is marked as shipped, it can no longer be adjusted."
-msgstr "Dieser Auftrag ist nicht vollständig zugeordnet. Wenn der Auftrag als versendet markiert wird, kann er nicht mehr geändert werden."
+msgid ""
+"This order has not been fully allocated. If the order is marked as shipped, "
+"it can no longer be adjusted."
+msgstr ""
+"Dieser Auftrag ist nicht vollständig zugeordnet. Wenn der Auftrag als "
+"versendet markiert wird, kann er nicht mehr geändert werden."
 
 #: order/templates/order/sales_order_ship.html:12
 msgid "Ensure that the order allocation is correct before shipping the order."
@@ -3122,7 +3192,9 @@ msgstr "Vor dem Versand sicherstellen, dass dies richtig ist."
 
 #: order/templates/order/sales_order_ship.html:27
 msgid "Shipping this order means that the order will no longer be editable."
-msgstr "Versenden dieses Auftrags bedeutet, dass der Auftrag nicht mehr bearbeitbar ist."
+msgstr ""
+"Versenden dieses Auftrags bedeutet, dass der Auftrag nicht mehr bearbeitbar "
+"ist."
 
 #: order/templates/order/so_allocate_by_serial.html:9
 msgid "Allocate stock items by serial number"
@@ -3343,7 +3415,8 @@ msgstr "Ebenen"
 
 #: part/forms.py:93
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr "Maximale Anzahl an Ebenen für Stückliste-Export auswählen (0 = alle Ebenen)"
+msgstr ""
+"Maximale Anzahl an Ebenen für Stückliste-Export auswählen (0 = alle Ebenen)"
 
 #: part/forms.py:95
 msgid "Include Parameter Data"
@@ -3704,7 +3777,8 @@ msgstr "verpflichtender Wert"
 
 #: part/models.py:2005
 msgid "Does this test require a value when adding a test result?"
-msgstr "Muss für diesen Test ein Wert für das Test-Ergebnis eingetragen werden?"
+msgstr ""
+"Muss für diesen Test ein Wert für das Test-Ergebnis eingetragen werden?"
 
 #: part/models.py:2010 templates/js/part.js:662
 msgid "Requires Attachment"
@@ -3712,7 +3786,8 @@ msgstr "Anhang muss eingegeben werden"
 
 #: part/models.py:2011
 msgid "Does this test require a file attachment when adding a test result?"
-msgstr "Muss für diesen Test ein Anhang für das Test-Ergebnis hinzugefügt werden?"
+msgstr ""
+"Muss für diesen Test ein Anhang für das Test-Ergebnis hinzugefügt werden?"
 
 #: part/models.py:2044
 msgid "Parameter template name must be unique"
@@ -3798,7 +3873,8 @@ msgstr "Geerbt"
 
 #: part/models.py:2197
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
+msgstr ""
+"Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
 #: part/models.py:2273 part/views.py:1592 part/views.py:1644
 #: stock/models.py:260
@@ -3826,8 +3902,12 @@ msgid "Select Related Part"
 msgstr "verknüpftes Teil auswählen"
 
 #: part/models.py:2440
-msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
-msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist das die Verwandtschaft nicht eindeutig?"
+msgid ""
+"Error creating relationship: check that the part is not related to itself "
+"and that the relationship is unique"
+msgstr ""
+"Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist das "
+"die Verwandtschaft nicht eindeutig?"
 
 #: part/templates/part/allocation.html:11
 msgid "Part Stock Allocations"
@@ -3843,7 +3923,9 @@ msgstr "Sind Sie sicher, dass Sie diese Stücklisten-Position löschen wollen?"
 
 #: part/templates/part/bom-delete.html:8
 msgid "Deleting this entry will remove the BOM row from the following part"
-msgstr "Die Löschung dieses Eintrags wird das Stücklisten-Position vom folgenden Teil entfernen"
+msgstr ""
+"Die Löschung dieses Eintrags wird das Stücklisten-Position vom folgenden "
+"Teil entfernen"
 
 #: part/templates/part/bom.html:10 part/templates/part/navbar.html:48
 #: part/templates/part/navbar.html:51
@@ -3853,12 +3935,17 @@ msgstr "Stückliste"
 #: part/templates/part/bom.html:19
 #, python-format
 msgid "The BOM for <i>%(part)s</i> has changed, and must be validated.<br>"
-msgstr "Die Stückliste für <i>%(part)s</i> hat sich geändert und muss kontrolliert werden.<br>"
+msgstr ""
+"Die Stückliste für <i>%(part)s</i> hat sich geändert und muss kontrolliert "
+"werden.<br>"
 
 #: part/templates/part/bom.html:21
 #, python-format
-msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
-msgstr "Die Stückliste für <i>%(part)s</i> wurde zuletzt von %(checker)s am %(check_date)s kontrolliert"
+msgid ""
+"The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
+msgstr ""
+"Die Stückliste für <i>%(part)s</i> wurde zuletzt von %(checker)s am "
+"%(check_date)s kontrolliert"
 
 #: part/templates/part/bom.html:25
 #, python-format
@@ -3992,7 +4079,8 @@ msgid "Requirements for BOM upload"
 msgstr "Anforderungen für Stückliste-Datei"
 
 #: part/templates/part/bom_upload/upload_file.html:21
-msgid "The BOM file must contain the required named columns as provided in the "
+msgid ""
+"The BOM file must contain the required named columns as provided in the "
 msgstr "Die Stückliste-Datei muss die aufgeführten Spalten enthalten; siehe"
 
 #: part/templates/part/bom_upload/upload_file.html:21
@@ -4009,7 +4097,8 @@ msgstr "Datei hochgeladen"
 
 #: part/templates/part/bom_validate.html:6
 #, python-format
-msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
+msgid ""
+"Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
 msgstr "Bestätigen Sie das die Stückliste für <br><i>%(part)s</i> korrekt ist"
 
 #: part/templates/part/bom_validate.html:9
@@ -4110,8 +4199,10 @@ msgid "This category contains %(count)s child categories"
 msgstr "Diese Kategorie enthält %(count)s Unter-Kategorien"
 
 #: part/templates/part/category_delete.html:9
-msgid "If this category is deleted, these child categories will be moved to the"
-msgstr "Wenn diese Kategorie gelöscht wird, werden alle Unter-Kat. verschoben nach"
+msgid ""
+"If this category is deleted, these child categories will be moved to the"
+msgstr ""
+"Wenn diese Kategorie gelöscht wird, werden alle Unter-Kat. verschoben nach"
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
@@ -4128,12 +4219,20 @@ msgstr "Diese Kategorie enthält %(count)s Teile"
 
 #: part/templates/part/category_delete.html:27
 #, python-format
-msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
-msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die übergeordnete Kategorie %(path)s verschoben"
+msgid ""
+"If this category is deleted, these parts will be moved to the parent "
+"category %(path)s"
+msgstr ""
+"Wenn diese Kat. gelöscht wird, werden diese Teile in die übergeordnete "
+"Kategorie %(path)s verschoben"
 
 #: part/templates/part/category_delete.html:29
-msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
-msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die oberste Kat. verschoben"
+msgid ""
+"If this category is deleted, these parts will be moved to the top-level "
+"category Teile"
+msgstr ""
+"Wenn diese Kat. gelöscht wird, werden diese Teile in die oberste Kat. "
+"verschoben"
 
 #: part/templates/part/category_navbar.html:34
 #: part/templates/part/category_navbar.html:37
@@ -4475,32 +4574,55 @@ msgstr "Aus vorhandenen Bildern auswählen"
 #: part/templates/part/partial_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
-msgstr "Sind Sie sicher, dass Sie das Teil '<b>%(full_name)s</b>' löschen wollen?"
+msgstr ""
+"Sind Sie sicher, dass Sie das Teil '<b>%(full_name)s</b>' löschen wollen?"
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
-msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
-msgstr "Dieser Teil wird in Stücklisten für %(count)s andere Teile verwendet. Wenn Sie dieses Teil löschen, werden die Stücklisten für die folgenden Teile aktualisiert"
+msgid ""
+"This part is used in BOMs for %(count)s other parts. If you delete this "
+"part, the BOMs for the following parts will be updated"
+msgstr ""
+"Dieser Teil wird in Stücklisten für %(count)s andere Teile verwendet. Wenn "
+"Sie dieses Teil löschen, werden die Stücklisten für die folgenden Teile "
+"aktualisiert"
 
 #: part/templates/part/partial_delete.html:22
 #, python-format
-msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
-msgstr "Es sind %(count)s BestandsObjekte für diesen Teil definiert. Wenn Sie diesen Teil löschen, werden auch die folgenden Bestandseinträge gelöscht:"
+msgid ""
+"There are %(count)s stock entries defined for this part. If you delete this "
+"part, the following stock entries will also be deleted:"
+msgstr ""
+"Es sind %(count)s BestandsObjekte für diesen Teil definiert. Wenn Sie diesen "
+"Teil löschen, werden auch die folgenden Bestandseinträge gelöscht:"
 
 #: part/templates/part/partial_delete.html:33
 #, python-format
-msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-msgstr "Es sind %(count)s Hersteller für diesen Teil definiert. Wenn Sie diesen Teil löschen, werden auch die folgenden Herstellerteile gelöscht:"
+msgid ""
+"There are %(count)s manufacturers defined for this part. If you delete this "
+"part, the following manufacturer parts will also be deleted:"
+msgstr ""
+"Es sind %(count)s Hersteller für diesen Teil definiert. Wenn Sie diesen Teil "
+"löschen, werden auch die folgenden Herstellerteile gelöscht:"
 
 #: part/templates/part/partial_delete.html:44
 #, python-format
-msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
-msgstr "Es sind %(count)s Zulieferer für diesen Teil definiert. Wenn Sie diesen Teil löschen, werden auch die folgenden Zuliefererteile gelöscht:"
+msgid ""
+"There are %(count)s suppliers defined for this part. If you delete this "
+"part, the following supplier parts will also be deleted:"
+msgstr ""
+"Es sind %(count)s Zulieferer für diesen Teil definiert. Wenn Sie diesen Teil "
+"löschen, werden auch die folgenden Zuliefererteile gelöscht:"
 
 #: part/templates/part/partial_delete.html:55
 #, python-format
-msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this part will permanently remove this tracking information."
-msgstr "Es gibt %(count)s einzigartige Teile, die für '%(full_name)s' verfolgt werden. Das Löschen dieses Teils wird diese Tracking-Informationen dauerhaft entfernen."
+msgid ""
+"There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this "
+"part will permanently remove this tracking information."
+msgstr ""
+"Es gibt %(count)s einzigartige Teile, die für '%(full_name)s' verfolgt "
+"werden. Das Löschen dieses Teils wird diese Tracking-Informationen dauerhaft "
+"entfernen."
 
 #: part/templates/part/related.html:18
 msgid "Add Related"
@@ -4800,7 +4922,9 @@ msgstr "Bericht-Vorlage ist ein"
 
 #: report/models.py:295
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
-msgstr "BestandsObjekte-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
+msgstr ""
+"BestandsObjekte-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-"
+"Paaren)"
 
 #: report/models.py:303
 msgid "Include Installed Tests"
@@ -4922,7 +5046,9 @@ msgid "Enter unique serial numbers (or leave blank)"
 msgstr "Eindeutige Seriennummern eingeben (oder leer lassen)"
 
 #: stock/forms.py:169
-msgid "Destination for serialized stock (by default, will remain in current location)"
+msgid ""
+"Destination for serialized stock (by default, will remain in current "
+"location)"
 msgstr "Lagerort für serial"
 
 #: stock/forms.py:171
@@ -4931,7 +5057,8 @@ msgstr "Seriennummern"
 
 #: stock/forms.py:171
 msgid "Unique serial numbers (must match quantity)"
-msgstr "Anzahl der eindeutigen Seriennummern (muss mit der Anzahl übereinstimmen)"
+msgstr ""
+"Anzahl der eindeutigen Seriennummern (muss mit der Anzahl übereinstimmen)"
 
 #: stock/forms.py:173 stock/forms.py:349
 msgid "Add transaction note (optional)"
@@ -5025,7 +5152,8 @@ msgstr "Anzahl muss für Objekte mit Seriennummer 1 sein"
 
 #: stock/models.py:288
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr "Seriennummer kann nicht gesetzt werden wenn die Anzahl größer als 1 ist"
+msgstr ""
+"Seriennummer kann nicht gesetzt werden wenn die Anzahl größer als 1 ist"
 
 #: stock/models.py:310
 msgid "Item cannot belong to itself"
@@ -5104,8 +5232,11 @@ msgid "Destination Sales Order"
 msgstr "Ziel-Auftrag"
 
 #: stock/models.py:476
-msgid "Expiry date for stock item. Stock will be considered expired after this date"
-msgstr "Ablaufdatum für BestandsObjekt. Bestand wird danach als abgelaufen gekennzeichnet"
+msgid ""
+"Expiry date for stock item. Stock will be considered expired after this date"
+msgstr ""
+"Ablaufdatum für BestandsObjekt. Bestand wird danach als abgelaufen "
+"gekennzeichnet"
 
 #: stock/models.py:489
 msgid "Delete on deplete"
@@ -5251,12 +5382,17 @@ msgid "Stock Item Attachments"
 msgstr "BestandsObjekt-Anhang"
 
 #: stock/templates/stock/item_base.html:24
-msgid "You are not in the list of owners of this item. This stock item cannot be edited."
-msgstr "Sie gehören nicht zu den Eigentümern dieses Objekts und können es nicht ändern."
+msgid ""
+"You are not in the list of owners of this item. This stock item cannot be "
+"edited."
+msgstr ""
+"Sie gehören nicht zu den Eigentümern dieses Objekts und können es nicht "
+"ändern."
 
 #: stock/templates/stock/item_base.html:31
 msgid "This stock item is in production and cannot be edited."
-msgstr "Dieses BestandsObjekt wird gerade hergestellt und kann nicht geändert werden."
+msgstr ""
+"Dieses BestandsObjekt wird gerade hergestellt und kann nicht geändert werden."
 
 #: stock/templates/stock/item_base.html:32
 msgid "Edit the stock item from the build view."
@@ -5268,25 +5404,35 @@ msgstr "Dieses BestandsObjekt hat nicht alle Tests bestanden"
 
 #: stock/templates/stock/item_base.html:53
 #, python-format
-msgid "This stock item is allocated to Sales Order %(link)s (Quantity: %(qty)s)"
-msgstr "Dieses BestandsObjekt ist dem Auftrag %(link)s zugewiesen (Menge: %(qty)s)"
+msgid ""
+"This stock item is allocated to Sales Order %(link)s (Quantity: %(qty)s)"
+msgstr ""
+"Dieses BestandsObjekt ist dem Auftrag %(link)s zugewiesen (Menge: %(qty)s)"
 
 #: stock/templates/stock/item_base.html:61
 #, python-format
 msgid "This stock item is allocated to Build %(link)s (Quantity: %(qty)s)"
-msgstr "Dieses BestandsObjekt ist dem Bauauftrag %(link)s zugewiesen (Menge: %(qty)s)"
+msgstr ""
+"Dieses BestandsObjekt ist dem Bauauftrag %(link)s zugewiesen (Menge: %(qty)s)"
 
 #: stock/templates/stock/item_base.html:67
-msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
-msgstr "Dieses BestandsObjekt ist serialisiert. Es hat eine eindeutige Seriennummer und die Anzahl kann nicht angepasst werden."
+msgid ""
+"This stock item is serialized - it has a unique serial number and the "
+"quantity cannot be adjusted."
+msgstr ""
+"Dieses BestandsObjekt ist serialisiert. Es hat eine eindeutige Seriennummer "
+"und die Anzahl kann nicht angepasst werden."
 
 #: stock/templates/stock/item_base.html:71
 msgid "This stock item cannot be deleted as it has child items"
 msgstr "Dieses BestandsObjekt kann nicht gelöscht werden, da es Kinder besitzt"
 
 #: stock/templates/stock/item_base.html:75
-msgid "This stock item will be automatically deleted when all stock is depleted."
-msgstr "Dieses BestandsObjekt wird automatisch gelöscht wenn der Lagerbestand aufgebraucht ist."
+msgid ""
+"This stock item will be automatically deleted when all stock is depleted."
+msgstr ""
+"Dieses BestandsObjekt wird automatisch gelöscht wenn der Lagerbestand "
+"aufgebraucht ist."
 
 #: stock/templates/stock/item_base.html:95
 #: stock/templates/stock/item_base.html:369 templates/js/table_filters.js:145
@@ -5434,8 +5580,11 @@ msgstr "Sind Sie sicher, dass Sie dieses BestandsObjekt löschen wollen?"
 
 #: stock/templates/stock/item_delete.html:12
 #, python-format
-msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
-msgstr "Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b> entfernt."
+msgid ""
+"This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
+msgstr ""
+"Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b> "
+"entfernt."
 
 #: stock/templates/stock/item_install.html:7
 msgid "Install another StockItem into this item."
@@ -5443,11 +5592,15 @@ msgstr "Ein weiteres BestandsObjekt in dieses Teil installiert"
 
 #: stock/templates/stock/item_install.html:10
 msgid "Stock items can only be installed if they meet the following criteria"
-msgstr "BestandsObjekte können nur installiert werden wenn folgende Kriterien erfüllt werden"
+msgstr ""
+"BestandsObjekte können nur installiert werden wenn folgende Kriterien "
+"erfüllt werden"
 
 #: stock/templates/stock/item_install.html:13
 msgid "The StockItem links to a Part which is in the BOM for this StockItem"
-msgstr "Das BestandsObjekt ist auf ein Teil verknüpft das in der Stückliste für dieses BestandsObjekt ist"
+msgstr ""
+"Das BestandsObjekt ist auf ein Teil verknüpft das in der Stückliste für "
+"dieses BestandsObjekt ist"
 
 #: stock/templates/stock/item_install.html:14
 msgid "The StockItem is currently in stock"
@@ -5480,8 +5633,12 @@ msgid "Add Test Data"
 msgstr "Testdaten hinzufügen"
 
 #: stock/templates/stock/location.html:20
-msgid "You are not in the list of owners of this location. This stock location cannot be edited."
-msgstr "Sie sind nicht auf der Liste der Besitzer dieses Lagerorts. Der Bestands-Lagerort kann nicht verändert werden."
+msgid ""
+"You are not in the list of owners of this location. This stock location "
+"cannot be edited."
+msgstr ""
+"Sie sind nicht auf der Liste der Besitzer dieses Lagerorts. Der Bestands-"
+"Lagerort kann nicht verändert werden."
 
 #: stock/templates/stock/location.html:37
 msgid "All stock items"
@@ -5594,7 +5751,9 @@ msgstr "Label drucken"
 
 #: stock/templates/stock/tracking_delete.html:6
 msgid "Are you sure you want to delete this stock tracking entry?"
-msgstr "Sind Sie sicher, dass Sie diesen BestandsObjekt-Verfolgungs-Eintrag löschen wollen?"
+msgstr ""
+"Sind Sie sicher, dass Sie diesen BestandsObjekt-Verfolgungs-Eintrag löschen "
+"wollen?"
 
 #: stock/views.py:123
 msgid "Edit Stock Location"
@@ -5901,12 +6060,16 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
-"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
+msgid ""
+"\n"
+"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
+"selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr "\n"
-"\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
+msgstr ""
+"\n"
+"\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell "
+"ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
 
@@ -6096,14 +6259,18 @@ msgid "View Code on GitHub"
 msgstr "Code auf GitHub ansehen"
 
 #: templates/about.html:63
+msgid "Credits"
+msgstr ""
+
+#: templates/about.html:68
 msgid "Mobile App"
 msgstr "Mobile App"
 
-#: templates/about.html:68
+#: templates/about.html:73
 msgid "Submit Bug Report"
 msgstr "Fehlerbericht senden"
 
-#: templates/about.html:77 templates/js/modals.js:550
+#: templates/about.html:82 templates/js/modals.js:550
 #: templates/js/modals.js:809 templates/modals.html:28 templates/modals.html:52
 #: templates/modals.html:93
 msgid "Close"
@@ -6186,8 +6353,11 @@ msgid "Link Barcode to Stock Item"
 msgstr "Barcode mit BestandsObjekt verknüpfen"
 
 #: templates/js/barcode.js:311
-msgid "This will remove the association between this stock item and the barcode"
-msgstr "Dadurch wird die Verknüpfung zwischen diesem BestandsObjekt und dem Barcode entfernt"
+msgid ""
+"This will remove the association between this stock item and the barcode"
+msgstr ""
+"Dadurch wird die Verknüpfung zwischen diesem BestandsObjekt und dem Barcode "
+"entfernt"
 
 #: templates/js/barcode.js:317
 msgid "Unlink"
@@ -6378,7 +6548,8 @@ msgstr "BestandsObjekte auswählen"
 
 #: templates/js/label.js:11
 msgid "Stock item(s) must be selected before printing labels"
-msgstr "BestandsObjekt(e) müssen ausgewählt sein bevor Labels gedruckt werden können"
+msgstr ""
+"BestandsObjekt(e) müssen ausgewählt sein bevor Labels gedruckt werden können"
 
 #: templates/js/label.js:29 templates/js/label.js:79
 msgid "No Labels Found"
@@ -7087,16 +7258,31 @@ msgid "Change password"
 msgstr "Passwort ändern"
 
 #: templates/registration/password_reset_confirm.html:61
-msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
-msgstr "Der Link zum Zurücksetzen des Kennworts war ungültig, möglicherweise, weil er bereits verwendet wurde. Bitte fordern Sie eine neue Passwortwiederherstellung an."
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+"Der Link zum Zurücksetzen des Kennworts war ungültig, möglicherweise, weil "
+"er bereits verwendet wurde. Bitte fordern Sie eine neue "
+"Passwortwiederherstellung an."
 
 #: templates/registration/password_reset_done.html:52
-msgid "We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly."
-msgstr "Wir haben Ihnen per E-Mail Anweisungen zum Setzen Ihres Passworts zugeschickt, falls ein Konto mit der von Ihnen eingegebenen E-Mail existiert. Sie sollten diese in Kürze erhalten."
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"Wir haben Ihnen per E-Mail Anweisungen zum Setzen Ihres Passworts "
+"zugeschickt, falls ein Konto mit der von Ihnen eingegebenen E-Mail "
+"existiert. Sie sollten diese in Kürze erhalten."
 
 #: templates/registration/password_reset_done.html:55
-msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
-msgstr "Wenn Sie keine E-Mail erhalten, stellen Sie sicher, dass Sie die E-Mail Adresse eingegeben haben, mit der Sie sich registriert haben, und überprüfen Sie Ihren Spam-Ordner."
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"Wenn Sie keine E-Mail erhalten, stellen Sie sicher, dass Sie die E-Mail "
+"Adresse eingegeben haben, mit der Sie sich registriert haben, und überprüfen "
+"Sie Ihren Spam-Ordner."
 
 #: templates/registration/password_reset_form.html:53
 msgid "Enter your email address below."
@@ -7104,7 +7290,8 @@ msgstr "Geben Sie Ihre E-Mail-Adresse ein."
 
 #: templates/registration/password_reset_form.html:54
 msgid "An email will be sent with password reset instructions."
-msgstr "Eine E-Mail mit Anweisungen zum Zurücksetzen des Passworts wird gesendet."
+msgstr ""
+"Eine E-Mail mit Anweisungen zum Zurücksetzen des Passworts wird gesendet."
 
 #: templates/registration/password_reset_form.html:59
 msgid "Send email"
@@ -7261,4 +7448,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-
