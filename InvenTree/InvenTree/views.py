@@ -769,12 +769,12 @@ class SettingsView(TemplateView):
         return ctx
 
 
-class ColorThemeSelectView(FormView):
+class AppearanceSelectView(FormView):
     """ View for selecting a color theme """
 
     form_class = ColorThemeSelectForm
-    success_url = reverse_lazy('settings-theme')
-    template_name = "InvenTree/settings/theme.html"
+    success_url = reverse_lazy('settings-appearance')
+    template_name = "InvenTree/settings/appearance.html"
 
     def get_user_theme(self):
         """ Get current user color theme """
@@ -788,7 +788,7 @@ class ColorThemeSelectView(FormView):
     def get_initial(self):
         """ Select current user color theme as initial choice """
 
-        initial = super(ColorThemeSelectView, self).get_initial()
+        initial = super(AppearanceSelectView, self).get_initial()
 
         user_theme = self.get_user_theme()
         if user_theme:
