@@ -117,6 +117,12 @@ def inventree_docs_url(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_credits_url(*args, **kwargs):
+    """ Return URL for InvenTree credits site """
+    return "https://inventree.readthedocs.io/en/latest/credits/"
+
+
+@register.simple_tag()
 def setting_object(key, *args, **kwargs):
     """
     Return a setting object speciifed by the given key
