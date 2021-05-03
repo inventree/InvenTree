@@ -32,5 +32,6 @@ python-barcode[images]==0.13.1  # Barcode generator
 qrcode[pil]==6.1                # QR code generator
 django-q==1.3.4                 # Background task scheduling
 gunicorn>=20.0.4                # Gunicorn web server
+django-formtools==2.3           # Form wizard tools
 
 inventree                       # Install the latest version of the InvenTree API python library

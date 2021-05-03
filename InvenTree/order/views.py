@@ -9,6 +9,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
@@ -27,6 +28,7 @@ from stock.models import StockItem, StockLocation
 from part.models import Part
 
 from common.models import InvenTreeSetting
+from common.views import FileUploadWizardView
 
 from . import forms as order_forms
 
@@ -562,6 +564,24 @@ class SalesOrderShip(AjaxUpdateView):
         context['order'] = order
 
         return self.renderJsonResponse(request, form, data, context)
+
+
+class PurchaseOrderUpload(FileUploadWizardView):
+    ''' Upload File Wizard View '''
+
+    template_name = "order/po_upload.html"
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+
+        order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
+        context.update({'order': order})
+
+        return context
+
+    def done(self, form_list, **kwargs):
+        return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
 class PurchaseOrderExport(AjaxView):

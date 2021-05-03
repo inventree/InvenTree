@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.forms import CheckboxInput, Select
 
+from formtools.wizard.views import SessionWizardView
+
 from InvenTree.views import AjaxUpdateView
 from InvenTree.helpers import str2bool
 
@@ -101,3 +103,12 @@ class SettingEdit(AjaxUpdateView):
 
             if not str2bool(value, test=True) and not str2bool(value, test=False):
                 form.add_error('value', _('Supplied value must be a boolean'))
+
+
+class FileUploadWizardView(SessionWizardView):
+    # file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'file_uploads'))
+    form_list = [
+        forms.UploadFile,
+        forms.MatchField,
+        forms.MatchPart,
+    ]

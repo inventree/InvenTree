@@ -17,6 +17,7 @@ purchase_order_detail_urls = [
     url(r'^receive/', views.PurchaseOrderReceive.as_view(), name='po-receive'),
     url(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
 
+    url(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
     url(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
 
     url(r'^notes/', views.PurchaseOrderNotes.as_view(), name='po-notes'),
