@@ -4,6 +4,8 @@
 
 {% block pre_form_content %}
 
-{% trans 'After placing this purchase order, line items will no longer be editable.' %}
+<div class='alert alert-warning alert-block'>
+    {% trans 'After placing this purchase order, line items will no longer be editable.' %}
+</div>
 
 {% endblock %}

@@ -51,11 +51,15 @@ To contribute to the translation effort, navigate to the [InvenTree crowdin proj
 
 For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
 
-## Getting Started
+# Getting Started
 
 Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start/install/) for installation and setup instructions.
 
-## Integration
+# Credits
+
+The credits for all used packages are part of the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/credits/).
+
+# Integration
 
 InvenTree is designed to be extensible, and provides multiple options for integration with external applications or addition of custom plugins:
 

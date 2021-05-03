@@ -4,6 +4,8 @@
 
 {% block pre_form_content %}
 
-{% trans "Cancelling this order means that the order will no longer be editable." %}
+<div class='alert alert-danger alert-block'>
+    {% trans "Cancelling this order means that the order and line items will no longer be editable." %}
+</div>
 
 {% endblock %}

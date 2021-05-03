@@ -357,6 +357,8 @@ def extract_serial_numbers(serials, expected_quantity):
     - Serial numbers must be positive
     - Serial numbers can be split by whitespace / newline / commma chars
     - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+    - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
         expected_quantity: The number of (unique) serial numbers we expect
@@ -368,6 +370,13 @@ def extract_serial_numbers(serials, expected_quantity):
 
     numbers = []
     errors = []
+
+    # helpers
+    def number_add(n):
+        if n in numbers:
+            errors.append(_('Duplicate serial: {n}').format(n=n))
+        else:
+            numbers.append(n)
 
     try:
         expected_quantity = int(expected_quantity)
@@ -395,16 +404,38 @@ def extract_serial_numbers(serials, expected_quantity):
 
                     if a < b:
                         for n in range(a, b + 1):
-                            if n in numbers:
-                                errors.append(_('Duplicate serial: {n}').format(n=n))
-                            else:
-                                numbers.append(n)
+                            number_add(n)
                     else:
                         errors.append(_("Invalid group: {g}").format(g=group))
 
                 except ValueError:
                     errors.append(_("Invalid group: {g}").format(g=group))
                     continue
+            else:
+                errors.append(_("Invalid group: {g}").format(g=group))
+                continue
+
+        # plus signals either
+        # 1:  'start+':  expected number of serials, starting at start
+        # 2:  'start+number': number of serials, starting at start
+        elif '+' in group:
+            items = group.split('+')
+
+            # case 1, 2
+            if len(items) == 2:
+                start = int(items[0])
+
+                # case 2
+                if bool(items[1]):
+                    end = start + int(items[1]) + 1
+
+                # case 1
+                else:
+                    end = start + expected_quantity
+
+                for n in range(start, end):
+                    number_add(n)
+            # no case
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
                 continue
