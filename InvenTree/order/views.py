@@ -567,20 +567,29 @@ class SalesOrderShip(AjaxUpdateView):
 
 
 class PurchaseOrderUpload(MultiStepFormView):
-    ''' PurchaseOrder: Upload file and match to parts, using multi-Step form '''
+    ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
     form_list = [
         order_forms.UploadFile,
         order_forms.MatchField,
         order_forms.MatchPart,
     ]
+    form_steps_template = [
+        'order/order_wizard/po_upload.html',
+        'order/order_wizard/match_fields.html',
+        'order/order_wizard/match_parts.html',
+    ]
     form_steps_description = [
         _("Upload File"),
-        _("Select Fields"),
-        _("Select Parts"),
+        _("Match Fields"),
+        _("Match Parts"),
     ]
-    template_name = "order/po_upload.html"
     media_folder = 'order_uploads/'
+
+    # Used for data table
+    headers = None
+    rows = None
+    columns = None
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -589,25 +598,52 @@ class PurchaseOrderUpload(MultiStepFormView):
 
         context.update({'order': order})
 
+        if self.headers:
+            context.update({'headers': self.headers})
+            # print(f'{self.headers}')
+        if self.columns:
+            context.update({'columns': self.columns})
+            # print(f'{self.columns}')
+        if self.rows:
+            context.update({'rows': self.rows})
+            # print(f'{self.rows}')
+
         return context
 
-    def get_form_step_data(self, form):
-        # print(f'{self.steps.current=}\n{form.data=}')
-        return form.data
+    def process_step(self, form):
+        print(f'{self.steps.current=} | {form.data}')
+        return self.get_form_step_data(form)
+
+    # def get_all_cleaned_data(self):
+    #     cleaned_data = super().get_all_cleaned_data()
+    #     print(f'{self.steps.current=} | {cleaned_data}')
+    #     return cleaned_data
+
+    # def get_form_step_data(self, form):
+    #     print(f'{self.steps.current=} | {form.data}')
+    #     return form.data
 
     def get_form_step_files(self, form):
         # Check if user completed file upload
         if self.steps.current == '0':
-            # Extract columns and rows from FileManager
-            self.extractDataFromFile(form.file_manager)
+            # Retrieve FileManager instance from form
+            self.file_manager = form.file_manager
+            # Setup FileManager for order upload
+            setup_valid = self.file_manager.setup()
+            if setup_valid:
+                # Set headers
+                self.headers = self.file_manager.HEADERS
+                # Set columns and rows
+                self.columns = self.file_manager.columns()
+                self.rows = self.file_manager.rows()
 
         return form.files
 
-    def extractDataFromFile(self, file_manager):
-        """ Read data from the file """
-
-        self.columns = file_manager.columns()
-        self.rows = file_manager.rows()
+    def post(self, request, *args, **kwargs):
+        """ Perform the various 'POST' requests required.
+        """
+        print('Posting!')
+        return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))

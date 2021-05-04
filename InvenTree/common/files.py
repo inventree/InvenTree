@@ -18,25 +18,17 @@ class FileManager:
     name = ''
 
     # Fields which are absolutely necessary for valid upload
-    REQUIRED_HEADERS = [
-        'Quantity'
-    ]
+    REQUIRED_HEADERS = []
 
     # Fields which are used for part matching (only one of them is needed)
-    PART_MATCH_HEADERS = [
-        'Part_Name',
-        'Part_IPN',
-        'Part_ID',
-    ]
+    PART_MATCH_HEADERS = []
     
     # Fields which would be helpful but are not required
-    OPTIONAL_HEADERS = [
-    ]
+    OPTIONAL_HEADERS = []
 
-    EDITABLE_HEADERS = [
-    ]
+    EDITABLE_HEADERS = []
 
-    HEADERS = REQUIRED_HEADERS + PART_MATCH_HEADERS + OPTIONAL_HEADERS
+    HEADERS = []
 
     def __init__(self, file, name=None):
         """ Initialize the FileManager class with a user-uploaded file object """
@@ -47,6 +39,9 @@ class FileManager:
 
         # Process initial file
         self.process(file)
+
+        # Update headers
+        self.update_headers()
 
     def process(self, file):
         """ Process file """
@@ -69,6 +64,37 @@ class FileManager:
             raise ValidationError(_(f'Error reading {self.name} file (invalid format)'))
         except tablib.core.InvalidDimensions:
             raise ValidationError(_(f'Error reading {self.name} file (incorrect dimension)'))
+            
+    def update_headers(self):
+        """ Update headers """
+
+        self.HEADERS = self.REQUIRED_HEADERS + self.PART_MATCH_HEADERS + self.OPTIONAL_HEADERS
+            
+    def setup(self):
+        """ Setup headers depending on the file name """
+
+        if not self.name:
+            return False
+
+        if self.name == 'order':
+            self.REQUIRED_HEADERS = [
+                'Quantity',
+            ]
+
+            self.PART_MATCH_HEADERS = [
+                'Manufacturer_MPN',
+                'Supplier_SKU',
+            ]
+
+            self.OPTIONAL_HEADERS = [
+                'Unit_Price',
+                'Extended_Price',
+            ]
+
+            # Update headers
+            self.update_headers()
+
+        return True
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers

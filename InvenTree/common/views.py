@@ -117,12 +117,20 @@ class MultiStepFormView(SessionWizardView):
     """
 
     form_list = []
+    form_steps_template = []
     form_steps_description = []
+    file_manager = None
     media_folder = ''
     file_storage = FileSystemStorage(settings.MEDIA_ROOT)
 
     def __init__(self, *args, **kwargs):
+        """ Override init method to set media folder """
         super().__init__(*args, **kwargs)
+
+        self.process_media_folder()
+        
+    def process_media_folder(self):
+        """ Process media folder """
 
         if self.media_folder:
             media_folder_abs = os.path.join(settings.MEDIA_ROOT, self.media_folder)
@@ -130,9 +138,24 @@ class MultiStepFormView(SessionWizardView):
                 os.mkdir(media_folder_abs)
             self.file_storage = FileSystemStorage(location=media_folder_abs)
 
+    def get_template_names(self):
+        """ Select template """
+        
+        try:
+            # Get template
+            template = self.form_steps_template[int(self.steps.current)]
+        except IndexError:
+            return self.template_name
+
+        return template
+
     def get_context_data(self, **kwargs):
+        """ Update context data """
+        
+        # Retrieve current context
         context = super().get_context_data(**kwargs)
-        # Get description
+
+        # Get form description
         try:
             description = self.form_steps_description[int(self.steps.current)]
         except IndexError:

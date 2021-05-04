@@ -1,5 +1,4 @@
 {% extends "order/order_base.html" %}
-
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
@@ -17,7 +16,11 @@
 
 <p>{% trans "Step" %} {{ wizard.steps.step1 }} {% trans "of" %} {{ wizard.steps.count }} 
 {% if description %}- {{ description }}{% endif %}</p>
-<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+{% block form %}
+
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
 <table>
 {% load crispy_forms_tags %}
 {{ wizard.management_form }}
@@ -29,15 +32,16 @@
 {% else %}
     {% crispy wizard.form %}
 {% endif %}
-</table>
-{% if wizard.steps.prev %}
 
+{% if wizard.steps.prev %}
 <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
 {% endif %}
-<button type="submit" class="save btn btn-default">{% trans "Submit" %}</button>
+<button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
 </form>
+</table>
 
-{% endblock %}
+{% endblock form %}
+{% endblock details %}
 
 {% block js_ready %}
 {{ block.super }}

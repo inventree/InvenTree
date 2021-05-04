@@ -309,9 +309,9 @@ class UploadFile(forms.Form):
 
 class MatchField(forms.Form):
     """ Step 2 """
-    last_name = forms.CharField(max_length=100)
+    pass
 
 
 class MatchPart(forms.Form):
     """ Step 3 """
-    age = forms.IntegerField()
+    pass
