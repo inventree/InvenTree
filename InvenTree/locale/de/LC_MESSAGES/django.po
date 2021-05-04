@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-30 23:53+0000\n"
-"PO-Revision-Date: 2021-05-04 09:36\n"
+"PO-Revision-Date: 2021-05-04 19:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4289,7 +4289,7 @@ msgstr "Preisinformationen ansehen"
 
 #: part/templates/part/navbar.html:95
 msgid "Sale Price"
-msgstr "VK-Preis"
+msgstr "Verkaufspreis"
 
 #: part/templates/part/navbar.html:106 part/templates/part/part_tests.html:10
 msgid "Part Test Templates"
@@ -4508,7 +4508,7 @@ msgstr "Verknüpftes Teil hinzufügen"
 
 #: part/templates/part/sale_prices.html:10
 msgid "Sell Price Information"
-msgstr "VK-Preis Informationen"
+msgstr "Verkaufspreis Informationen"
 
 #: part/templates/part/sales_orders.html:18
 msgid "New sales order"
