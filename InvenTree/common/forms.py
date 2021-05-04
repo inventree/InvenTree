@@ -5,8 +5,6 @@ Django forms for interacting with common objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django import forms
-
 from InvenTree.forms import HelperForm
 
 from .models import InvenTreeSetting

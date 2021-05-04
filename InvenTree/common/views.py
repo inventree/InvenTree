@@ -5,8 +5,12 @@ Django views for interacting with common models
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from django.utils.translation import ugettext_lazy as _
 from django.forms import CheckboxInput, Select
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 from formtools.wizard.views import SessionWizardView
 
@@ -106,7 +110,7 @@ class SettingEdit(AjaxUpdateView):
 
 
 class MultiStepFormView(SessionWizardView):
-    """ Setup basic methods of multi-step form 
+    """ Setup basic methods of multi-step form
 
         form_list: list of forms
         form_steps_description: description for each form
@@ -114,6 +118,17 @@ class MultiStepFormView(SessionWizardView):
 
     form_list = []
     form_steps_description = []
+    media_folder = ''
+    file_storage = FileSystemStorage(settings.MEDIA_ROOT)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.media_folder:
+            media_folder_abs = os.path.join(settings.MEDIA_ROOT, self.media_folder)
+            if not os.path.exists(media_folder_abs):
+                os.mkdir(media_folder_abs)
+            self.file_storage = FileSystemStorage(location=media_folder_abs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -126,4 +141,3 @@ class MultiStepFormView(SessionWizardView):
         context.update({'description': description})
 
         return context
-    

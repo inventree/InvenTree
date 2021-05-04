@@ -580,7 +580,7 @@ class PurchaseOrderUpload(MultiStepFormView):
         _("Select Parts"),
     ]
     template_name = "order/po_upload.html"
-    # file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'file_uploads'))
+    media_folder = 'order_uploads/'
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -590,6 +590,24 @@ class PurchaseOrderUpload(MultiStepFormView):
         context.update({'order': order})
 
         return context
+
+    def get_form_step_data(self, form):
+        # print(f'{self.steps.current=}\n{form.data=}')
+        return form.data
+
+    def get_form_step_files(self, form):
+        # Check if user completed file upload
+        if self.steps.current == '0':
+            # Extract columns and rows from FileManager
+            self.extractDataFromFile(form.file_manager)
+
+        return form.files
+
+    def extractDataFromFile(self, file_manager):
+        """ Read data from the file """
+
+        self.columns = file_manager.columns()
+        self.rows = file_manager.rows()
 
     def done(self, form_list, **kwargs):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))

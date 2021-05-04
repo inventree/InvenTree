@@ -17,7 +17,7 @@
 
 <p>{% trans "Step" %} {{ wizard.steps.step1 }} {% trans "of" %} {{ wizard.steps.count }} 
 {% if description %}- {{ description }}{% endif %}</p>
-<form action="" method="post">{% csrf_token %}
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
 <table>
 {% load crispy_forms_tags %}
 {{ wizard.management_form }}
