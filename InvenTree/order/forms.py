@@ -295,16 +295,14 @@ class UploadFile(forms.Form):
         help_text=_('Select order file to upload'),
     )
 
-    file_manager = None
-
     def clean_file(self):
         file = self.cleaned_data['file']
 
         # Create a FileManager object - will perform initial data validation
         # (and raise a ValidationError if there is something wrong with the file)
-        self.file_manager = FileManager(file=file, name='order')
+        file_manager = FileManager(file=file, name='order')
 
-        return file
+        return file_manager
 
 
 class MatchField(forms.Form):

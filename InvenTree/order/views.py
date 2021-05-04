@@ -570,9 +570,9 @@ class PurchaseOrderUpload(MultiStepFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
     form_list = [
-        order_forms.UploadFile,
-        order_forms.MatchField,
-        order_forms.MatchPart,
+        ('upload', order_forms.UploadFile),
+        ('fields', order_forms.MatchField),
+        ('parts', order_forms.MatchPart),
     ]
     form_steps_template = [
         'order/order_wizard/po_upload.html',
@@ -608,26 +608,152 @@ class PurchaseOrderUpload(MultiStepFormView):
             context.update({'rows': self.rows})
             # print(f'{self.rows}')
 
+        print(f'{context=}')
         return context
 
-    def process_step(self, form):
-        print(f'{self.steps.current=} | {form.data}')
-        return self.get_form_step_data(form)
+    def getTableDataFromForm(self, form_data):
+        """ Extract table cell data from form data.
+        These data are used to maintain state between sessions.
 
-    # def get_all_cleaned_data(self):
-    #     cleaned_data = super().get_all_cleaned_data()
-    #     print(f'{self.steps.current=} | {cleaned_data}')
-    #     return cleaned_data
+        Table data keys are as follows:
 
-    # def get_form_step_data(self, form):
-    #     print(f'{self.steps.current=} | {form.data}')
-    #     return form.data
+            col_name_<idx> - Column name at idx as provided in the uploaded file
+            col_guess_<idx> - Column guess at idx as selected
+            row_<x>_col<y> - Cell data as provided in the uploaded file
 
-    def get_form_step_files(self, form):
+        """
+
+        if not self.file_manager:
+            print('Lost file manager...')
+            return
+
+        # Map the columns
+        self.column_names = {}
+        self.column_selections = {}
+
+        self.row_data = {}
+
+        for item in form_data:
+            value = form_data[item]
+
+            # Column names as passed as col_name_<idx> where idx is an integer
+
+            # Extract the column names
+            if item.startswith('col_name_'):
+                try:
+                    col_id = int(item.replace('col_name_', ''))
+                except ValueError:
+                    continue
+                col_name = value
+
+                self.column_names[col_id] = col_name
+
+            # Extract the column selections (in the 'select fields' view)
+            if item.startswith('col_guess_'):
+
+                try:
+                    col_id = int(item.replace('col_guess_', ''))
+                except ValueError:
+                    continue
+
+                col_name = value
+
+                self.column_selections[col_id] = value
+
+            # Extract the row data
+            if item.startswith('row_'):
+                # Item should be of the format row_<r>_col_<c>
+                s = item.split('_')
+
+                if len(s) < 4:
+                    continue
+
+                # Ignore row/col IDs which are not correct numeric values
+                try:
+                    row_id = int(s[1])
+                    col_id = int(s[3])
+                except ValueError:
+                    continue
+                
+                if row_id not in self.row_data:
+                    self.row_data[row_id] = {}
+
+                self.row_data[row_id][col_id] = value
+
+        self.col_ids = sorted(self.column_names.keys())
+
+        # Re-construct the data table
+        self.rows = []
+
+        for row_idx in sorted(self.row_data.keys()):
+            row = self.row_data[row_idx]
+            items = []
+
+            for col_idx in sorted(row.keys()):
+
+                value = row[col_idx]
+                items.append(value)
+
+            self.rows.append({
+                'index': row_idx,
+                'data': items,
+                'errors': {},
+            })
+
+        # Construct the column data
+        self.columns = []
+
+        # Track any duplicate column selections
+        self.duplicates = False
+
+        for col in self.col_ids:
+
+            if col in self.column_selections:
+                guess = self.column_selections[col]
+            else:
+                guess = None
+
+            header = ({
+                'name': self.column_names[col],
+                'guess': guess
+            })
+
+            if guess:
+                n = list(self.column_selections.values()).count(self.column_selections[col])
+                if n > 1:
+                    header['duplicate'] = True
+                    self.duplicates = True
+
+            self.columns.append(header)
+
+        # Are there any missing columns?
+        self.missing_columns = []
+
+        # Check that all required fields are present
+        for col in self.file_manager.REQUIRED_HEADERS:
+            if col not in self.column_selections.values():
+                self.missing_columns.append(col)
+
+        # Check that at least one of the part match field is present
+        part_match_found = False
+        for col in self.file_manager.PART_MATCH_HEADERS:
+            if col in self.column_selections.values():
+                part_match_found = True
+                break
+        
+        # If not, notify user
+        if not part_match_found:
+            for col in self.file_manager.PART_MATCH_HEADERS:
+                self.missing_columns.append(col)
+
+    def handleFileUpload(self, form):
+        """ Process file upload and setup fields form """
+
         # Check if user completed file upload
-        if self.steps.current == '0':
-            # Retrieve FileManager instance from form
-            self.file_manager = form.file_manager
+        if self.steps.current == 'upload':
+            # Copy FileManager instance from form
+            self.file_manager = form.cleaned_data['file']
+            print(f'{self.file_manager=}')
             # Setup FileManager for order upload
             setup_valid = self.file_manager.setup()
             if setup_valid:
@@ -637,13 +763,51 @@ class PurchaseOrderUpload(MultiStepFormView):
                 self.columns = self.file_manager.columns()
                 self.rows = self.file_manager.rows()
 
-        return form.files
+            # Save FileManager
+            # self.storage.set_step_data('file', self.file_manager)
 
-    def post(self, request, *args, **kwargs):
-        """ Perform the various 'POST' requests required.
-        """
-        print('Posting!')
-        return super().post(*args, **kwargs)
+    def handleFieldSelection(self, form_data):
+        """ Process field matching """
+
+        # Extract form data
+        self.getTableDataFromForm(form_data)
+
+        valid = len(self.missing_columns) == 0 and not self.duplicates
+
+        if not valid:
+            raise ValidationError('Invalid data')
+
+    def handlePartSelection(self, form_data):
+        pass
+    #     print(f'{form_data=}')
+
+    # def process_step(self, form):
+    #     print(f'{self.steps.current=} | {form.data}')
+    #     return self.get_form_step_data(form)
+        
+    def get_form_step_data(self, form):
+        print(f'{self.steps.current=}\n{form.data=}')
+        print(f'{self.file_manager=}')
+        # Process steps
+        if self.steps.current == 'upload':
+            self.handleFileUpload(form)
+        if self.steps.current == 'fields':
+            self.handleFieldSelection(form.data)
+        elif self.steps.current == 'parts':
+            self.handlePartSelection(form.data)
+        
+        return form.data
+
+    # def get_all_cleaned_data(self):
+    #     cleaned_data = super().get_all_cleaned_data()
+    #     print(f'{self.steps.current=} | {cleaned_data}')
+    #     return cleaned_data
+    
+    # def post(self, request, *args, **kwargs):
+    #     """ Perform the various 'POST' requests required.
+    #     """
+    #     print('Posting!')
+    #     return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))

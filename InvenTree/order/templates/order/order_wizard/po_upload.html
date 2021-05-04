@@ -17,30 +17,31 @@
 <p>{% trans "Step" %} {{ wizard.steps.step1 }} {% trans "of" %} {{ wizard.steps.count }} 
 {% if description %}- {{ description }}{% endif %}</p>
 
-{% block form %}
+{% block form_alert %}
+{% endblock form_alert %}
 
-<form action="" method="post" enctype="multipart/form-data">
+<form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
 {% csrf_token %}
-<table>
 {% load crispy_forms_tags %}
-{{ wizard.management_form }}
-{% if wizard.form.forms %}
-    {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-        {% crispy form %}
-    {% endfor %}
-{% else %}
-    {% crispy wizard.form %}
-{% endif %}
 
+{% block form_buttons_top %}
+{% endblock form_buttons_top %}
+
+<table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
+{{ wizard.management_form }}
+{% block form_content %}
+{% crispy wizard.form %}
+{% endblock form_content %}
+</table>
+
+{% block form_buttons_bottom %}
 {% if wizard.steps.prev %}
 <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
 {% endif %}
 <button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
 </form>
-</table>
+{% endblock form_buttons_bottom %}
 
-{% endblock form %}
 {% endblock details %}
 
 {% block js_ready %}

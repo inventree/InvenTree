@@ -3,26 +3,22 @@
 {% load i18n %}
 {% load static %}
 
-{% block form %}
-
+{% block form_alert %}
 {% if form_errors %}
 <div class='alert alert-danger alert-block' role='alert'>
     {% trans "Errors exist in the submitted data" %}
 </div>
 {% endif %}
+{% endblock form_alert %}
 
-<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
-    {% csrf_token %}
-    {% load crispy_forms_tags %}
-    {{ wizard.management_form }}
-
+{% block form_buttons_top %}
     {% if wizard.steps.prev %}
     <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
     {% endif %}
     <button type="submit" class="save btn btn-default">{% trans "Submit Selections" %}</button>
-    {% csrf_token %}
+{% endblock form_buttons_top %}
 
-    <table class='table table-striped'>
+{% block form_content %}
         <thead>
             <tr>
                 <th></th>
@@ -95,11 +91,10 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+{% endblock form_content %}
 
-</form>
-
-{% endblock %}
+{% block form_buttons_bottom %}
+{% endblock form_buttons_bottom %}
 
 {% block js_ready %}
 {{ block.super }}

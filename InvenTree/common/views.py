@@ -143,7 +143,7 @@ class MultiStepFormView(SessionWizardView):
         
         try:
             # Get template
-            template = self.form_steps_template[int(self.steps.current)]
+            template = self.form_steps_template[self.steps.index]
         except IndexError:
             return self.template_name
 
@@ -157,7 +157,7 @@ class MultiStepFormView(SessionWizardView):
 
         # Get form description
         try:
-            description = self.form_steps_description[int(self.steps.current)]
+            description = self.form_steps_description[self.steps.index]
         except IndexError:
             description = ''
         # Add description to form steps
