@@ -1957,6 +1957,11 @@ class PartPricing(AjaxView):
 
     role_required = ['sales_order.view', 'part.view']
     
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        
+        return Decimal(self.request.POST.get('quantity', 1))
+
     def get_part(self):
         try:
             return Part.objects.get(id=self.kwargs['pk'])
@@ -1965,12 +1970,12 @@ class PartPricing(AjaxView):
 
     def get_pricing(self, quantity=1, currency=None):
 
-        try:
-            quantity = int(quantity)
-        except ValueError:
-            quantity = 1
+        # try:
+        #     quantity = int(quantity)
+        # except ValueError:
+        #     quantity = 1
 
-        if quantity < 1:
+        if quantity <= 0:
             quantity = 1
 
         # TODO - Capacity for price comparison in different currencies
@@ -2000,16 +2005,19 @@ class PartPricing(AjaxView):
                 min_buy_price /= scaler
                 max_buy_price /= scaler
 
+                min_unit_buy_price = round(min_buy_price / quantity, 3)
+                max_unit_buy_price = round(max_buy_price / quantity, 3)
+
                 min_buy_price = round(min_buy_price, 3)
                 max_buy_price = round(max_buy_price, 3)
 
                 if min_buy_price:
                     ctx['min_total_buy_price'] = min_buy_price
-                    ctx['min_unit_buy_price'] = min_buy_price / quantity
+                    ctx['min_unit_buy_price'] = min_unit_buy_price
 
                 if max_buy_price:
                     ctx['max_total_buy_price'] = max_buy_price
-                    ctx['max_unit_buy_price'] = max_buy_price / quantity
+                    ctx['max_unit_buy_price'] = max_unit_buy_price
 
         # BOM pricing information
         if part.bom_count > 0:
@@ -2022,16 +2030,19 @@ class PartPricing(AjaxView):
                 min_bom_price /= scaler
                 max_bom_price /= scaler
 
+                min_unit_bom_price = round(min_bom_price / quantity, 3)
+                max_unit_bom_price = round(max_bom_price / quantity, 3)
+
                 min_bom_price = round(min_bom_price, 3)
                 max_bom_price = round(max_bom_price, 3)
 
                 if min_bom_price:
                     ctx['min_total_bom_price'] = min_bom_price
-                    ctx['min_unit_bom_price'] = min_bom_price / quantity
+                    ctx['min_unit_bom_price'] = min_unit_bom_price
                 
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
-                    ctx['max_unit_bom_price'] = max_bom_price / quantity
+                    ctx['max_unit_bom_price'] = max_unit_bom_price
 
         return ctx
 
@@ -2043,10 +2054,11 @@ class PartPricing(AjaxView):
 
         currency = None
 
-        try:
-            quantity = int(self.request.POST.get('quantity', 1))
-        except ValueError:
-            quantity = 1
+        quantity = self.get_quantity()
+
+        # Retain quantity value set by user
+        form = self.form_class()
+        form.fields['quantity'].initial = quantity
 
         # TODO - How to handle pricing in different currencies?
         currency = None
@@ -2056,7 +2068,7 @@ class PartPricing(AjaxView):
             'form_valid': False,
         }
 
-        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity, currency))
+        return self.renderJsonResponse(request, form, data=data, context=self.get_pricing(quantity, currency))
 
 
 class PartParameterTemplateCreate(AjaxCreateView):

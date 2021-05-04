@@ -6,7 +6,7 @@ Company database model definitions
 from __future__ import unicode_literals
 
 import os
-
+import decimal
 import math
 
 from django.utils.translation import ugettext_lazy as _
@@ -566,11 +566,14 @@ class SupplierPart(models.Model):
         - If order multiples are to be observed, then we need to calculate based on that, too
         """
 
-        price_breaks = self.price_breaks.filter(quantity__lte=quantity)
+        price_breaks = self.price_breaks.all()
 
         # No price break information available?
         if len(price_breaks) == 0:
             return None
+
+        # Check if quantity is fraction and disable multiples
+        multiples = (quantity % 1 == 0)
 
         # Order multiples
         if multiples:
@@ -584,7 +587,12 @@ class SupplierPart(models.Model):
             # Default currency selection
             currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
 
+        pb_min = None
         for pb in self.price_breaks.all():
+            # Store smallest price break
+            if not pb_min:
+                pb_min = pb
+
             # Ignore this pricebreak (quantity is too high)
             if pb.quantity > quantity:
                 continue
@@ -597,6 +605,17 @@ class SupplierPart(models.Model):
 
                 # Convert everything to the selected currency
                 pb_cost = pb.convert_to(currency)
+
+        # Use smallest price break
+        if not pb_found and pb_min:
+            # Update price break information
+            pb_quantity = pb_min.quantity
+            pb_cost = pb_min.convert_to(currency)
+            # Trigger cost calculation using smallest price break
+            pb_found = True
+        
+        # Convert quantity to decimal.Decimal format
+        quantity = decimal.Decimal(f'{quantity}')
 
         if pb_found:
             cost = pb_cost * quantity
