@@ -9,29 +9,32 @@
 {% endblock %}
 
 {% block heading %}
+{% trans "Upload File for Purchase Order" %}
 {{ wizard.form.media }}
 {% endblock %}
 
 {% block details %}
 
-<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<p>{% trans "Step" %} {{ wizard.steps.step1 }} {% trans "of" %} {{ wizard.steps.count }} 
+{% if description %}- {{ description }}{% endif %}</p>
 <form action="" method="post">{% csrf_token %}
 <table>
+{% load crispy_forms_tags %}
 {{ wizard.management_form }}
 {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
     {% for form in wizard.form.forms %}
-        {{ form }}
+        {% crispy form %}
     {% endfor %}
 {% else %}
-    {{ wizard.form }}
+    {% crispy wizard.form %}
 {% endif %}
 </table>
 {% if wizard.steps.prev %}
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
 {% endif %}
-<input type="submit" value="{% trans "submit" %}"/>
+<button type="submit" class="save btn btn-default">{% trans "Submit" %}</button>
 </form>
 
 {% endblock %}

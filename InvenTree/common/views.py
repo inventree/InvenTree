@@ -105,10 +105,25 @@ class SettingEdit(AjaxUpdateView):
                 form.add_error('value', _('Supplied value must be a boolean'))
 
 
-class FileUploadWizardView(SessionWizardView):
-    # file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'file_uploads'))
-    form_list = [
-        forms.UploadFile,
-        forms.MatchField,
-        forms.MatchPart,
-    ]
+class MultiStepFormView(SessionWizardView):
+    """ Setup basic methods of multi-step form 
+
+        form_list: list of forms
+        form_steps_description: description for each form
+    """
+
+    form_list = []
+    form_steps_description = []
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get description
+        try:
+            description = self.form_steps_description[int(self.steps.current)]
+        except IndexError:
+            description = ''
+        # Add description to form steps
+        context.update({'description': description})
+
+        return context
+    

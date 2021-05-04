@@ -28,7 +28,7 @@ from stock.models import StockItem, StockLocation
 from part.models import Part
 
 from common.models import InvenTreeSetting
-from common.views import FileUploadWizardView
+from common.views import MultiStepFormView
 
 from . import forms as order_forms
 
@@ -566,10 +566,21 @@ class SalesOrderShip(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context)
 
 
-class PurchaseOrderUpload(FileUploadWizardView):
-    ''' Upload File Wizard View '''
+class PurchaseOrderUpload(MultiStepFormView):
+    ''' PurchaseOrder: Upload file and match to parts, using multi-Step form '''
 
+    form_list = [
+        order_forms.UploadFile,
+        order_forms.MatchField,
+        order_forms.MatchPart,
+    ]
+    form_steps_description = [
+        _("Upload File"),
+        _("Select Fields"),
+        _("Select Parts"),
+    ]
     template_name = "order/po_upload.html"
+    # file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'file_uploads'))
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)

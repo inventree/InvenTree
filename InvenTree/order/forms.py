@@ -284,3 +284,18 @@ class EditSalesOrderAllocationForm(HelperForm):
             'line',
             'item',
             'quantity']
+
+
+class UploadFile(forms.Form):
+    ''' Step 1 '''
+    first_name = forms.CharField(max_length=100)
+
+
+class MatchField(forms.Form):
+    ''' Step 2 '''
+    last_name = forms.CharField(max_length=100)
+
+
+class MatchPart(forms.Form):
+    ''' Step 3 '''
+    age = forms.IntegerField()
