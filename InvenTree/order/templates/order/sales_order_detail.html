@@ -224,6 +224,14 @@ $("#so-lines-table").inventreeTable({
             title: '{% trans "Quantity" %}',
         },
         {
+            sortable: true,
+            field: 'sale_price',
+            title: '{% trans "Unit Price" %}',
+            formatter: function(value, row) {
+                return row.sale_price_string || row.sale_price;
+            }
+        },
+        {
             field: 'allocated',
             {% if order.status == SalesOrderStatus.PENDING %}
             title: '{% trans "Allocated" %}',
