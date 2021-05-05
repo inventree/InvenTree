@@ -65,7 +65,7 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    c.run('cd {path} && python3 manage.py {cmd}'.format(
+    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
@@ -185,7 +185,7 @@ def translate(c):
     """
 
     # Translate applicable .py / .html / .js files
-    manage(c, "makemessages --all -e py,html,js")
+    manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')

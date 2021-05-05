@@ -223,7 +223,7 @@ class PurchaseOrder(Order):
         return reverse('po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
-    def add_line_item(self, supplier_part, quantity, group=True, reference=''):
+    def add_line_item(self, supplier_part, quantity, group=True, reference='', purchase_price=None):
         """ Add a new line item to this purchase order.
         This function will check that:
 
@@ -254,7 +254,12 @@ class PurchaseOrder(Order):
             if matches.count() > 0:
                 line = matches.first()
 
-                line.quantity += quantity
+                # update quantity and price
+                quantity_new = line.quantity + quantity
+                line.quantity = quantity_new
+                supplier_price = supplier_part.get_price(quantity_new)
+                if line.purchase_price and supplier_price:
+                    line.purchase_price = supplier_price / quantity_new
                 line.save()
 
                 return
@@ -263,7 +268,9 @@ class PurchaseOrder(Order):
             order=self,
             part=supplier_part,
             quantity=quantity,
-            reference=reference)
+            reference=reference,
+            purchase_price=purchase_price,
+        )
 
         line.save()
 
@@ -329,7 +336,7 @@ class PurchaseOrder(Order):
         return self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK):
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None):
         """ Receive a line item (or partial line item) against this PO
         """
 
@@ -353,7 +360,8 @@ class PurchaseOrder(Order):
                 location=location,
                 quantity=quantity,
                 purchase_order=self,
-                status=status
+                status=status,
+                purchase_price=purchase_price,
             )
 
             stock.save()
