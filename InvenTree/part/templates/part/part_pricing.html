@@ -79,6 +79,20 @@
     </table>
 {% endif %}
 
+{% if total_part_price %}
+    <h4>{% trans 'Sale Price' %}</h4>
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <td><b>{% trans 'Unit Cost' %}</b></td>
+            <td colspan='2'>{% include "price.html" with price=unit_part_price %}</td>
+        </tr>
+        <tr>
+            <td><b>{% trans 'Total Cost' %}</b></td>
+            <td colspan='2'>{% include "price.html" with price=total_part_price %}</td>
+        </tr>
+    </table>
+{% endif %}
+
 {% if min_unit_buy_price or min_unit_bom_price %}
 {% else %}
 <div class='alert alert-danger alert-block'>

@@ -2055,6 +2055,12 @@ class PartPricing(AjaxView):
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_unit_bom_price
 
+        # part pricing information
+        part_price = part.get_price(quantity)
+        if part_price is not None:
+            ctx['total_part_price'] = round(part_price, 3)
+            ctx['unit_part_price'] = round(part_price / quantity, 3)
+
         return ctx
 
     def get(self, request, *args, **kwargs):
