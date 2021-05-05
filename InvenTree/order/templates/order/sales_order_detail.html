@@ -400,6 +400,8 @@ function setupCallbacks() {
 
     $(".button-price").click(function() {
         var pk = $(this).attr('pk');
+        var idx = $(this).closest('tr').attr('data-index');
+        var row = table.bootstrapTable('getData')[idx];
 
         launchModalForm(
             "{% url 'line-pricing' %}",
@@ -407,6 +409,7 @@ function setupCallbacks() {
                 submit_text: '{% trans "Calculate price" %}',
                 data: {
                     line_item: pk,
+                    quantity: row.quantity,
                 },
             }
         );

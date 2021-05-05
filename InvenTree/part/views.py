@@ -1959,8 +1959,19 @@ class PartPricing(AjaxView):
     
     def get_quantity(self):
         """ Return set quantity in decimal format """
-        
-        return Decimal(self.request.POST.get('quantity', 1))
+
+        # check POST
+        qty = self.request.POST.get('quantity', None)
+
+        # check GET
+        if not qty:
+            qty = self.request.GET.get('quantity', None)
+
+        # nothing found: return 1
+        if not qty:
+            return Decimal(1)
+        # return as decimal
+        return Decimal(qty)
 
     def get_part(self):
         try:
@@ -2048,7 +2059,8 @@ class PartPricing(AjaxView):
 
     def get(self, request, *args, **kwargs):
 
-        return self.renderJsonResponse(request, self.form_class(), context=self.get_pricing())
+        quantity = self.get_quantity()
+        return self.renderJsonResponse(request, self.form_class(initial={'quantity': quantity}), context=self.get_pricing(quantity))
 
     def post(self, request, *args, **kwargs):
 
