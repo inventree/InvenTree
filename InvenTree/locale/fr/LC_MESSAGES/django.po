@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-04 23:23+0000\n"
+"POT-Creation-Date: 2021-05-05 07:55+0000\n"
 "PO-Revision-Date: 2021-04-21 09:33\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -373,8 +373,7 @@ msgid "Target Date"
 msgstr ""
 
 #: build/forms.py:43 build/models.py:224
-msgid ""
-"Target date for build completion. Build will be overdue after this date."
+msgid "Target date for build completion. Build will be overdue after this date."
 msgstr ""
 
 #: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1241
@@ -582,9 +581,7 @@ msgid "Source Location"
 msgstr ""
 
 #: build/models.py:178
-msgid ""
-"Select location to take stock from for this build (leave blank to take from "
-"any stock location)"
+msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr ""
 
 #: build/models.py:183
@@ -722,8 +719,7 @@ msgid "BuildItem must be unique for build, stock_item and install_into"
 msgstr ""
 
 #: build/models.py:1157
-msgid ""
-"Build item must specify a build output, as master part is marked as trackable"
+msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
 #: build/models.py:1161
@@ -857,8 +853,7 @@ msgid "Automatically Allocate Stock"
 msgstr ""
 
 #: build/templates/build/auto_allocate.html:10
-msgid ""
-"The following stock items will be allocated to the specified build output"
+msgid "The following stock items will be allocated to the specified build output"
 msgstr ""
 
 #: build/templates/build/auto_allocate.html:37
@@ -1084,9 +1079,7 @@ msgstr ""
 
 #: build/templates/build/create_build_item.html:11
 #, python-format
-msgid ""
-"The allocated stock will be installed into the following build output:<br><i>"
-"%(output)s</i>"
+msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
 msgstr ""
 
 #: build/templates/build/create_build_item.html:17
@@ -2031,8 +2024,7 @@ msgstr ""
 #, python-format
 msgid ""
 "There are %(count)s parts sourced from this company.<br>\n"
-"If this supplier is deleted, these supplier part entries will also be "
-"deleted."
+"If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
 #: company/templates/company/detail.html:21
@@ -2196,9 +2188,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_delete.html:36
 #, python-format
-msgid ""
-"There are %(count)s suppliers defined for this manufacturer part. If you "
-"delete it, the following supplier parts will also be deleted:"
+msgid "There are %(count)s suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:14
@@ -2582,8 +2572,7 @@ msgid "Enter sales order number"
 msgstr ""
 
 #: order/forms.py:145 order/models.py:462
-msgid ""
-"Target date for order completion. Order will be overdue after this date."
+msgid "Target date for order completion. Order will be overdue after this date."
 msgstr ""
 
 #: order/forms.py:235
@@ -2652,8 +2641,7 @@ msgid "Target Delivery Date"
 msgstr ""
 
 #: order/models.py:213
-msgid ""
-"Expected date for order delivery. Order will be overdue after this date."
+msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr ""
 
 #: order/models.py:219
@@ -2853,9 +2841,7 @@ msgid "Create new stock location"
 msgstr ""
 
 #: order/templates/order/order_cancel.html:8
-msgid ""
-"Cancelling this order means that the order and line items will no longer be "
-"editable."
+msgid "Cancelling this order means that the order and line items will no longer be editable."
 msgstr ""
 
 #: order/templates/order/order_complete.html:7
@@ -2867,14 +2853,11 @@ msgid "This order has line items which have not been marked as received."
 msgstr ""
 
 #: order/templates/order/order_complete.html:11
-msgid ""
-"Completing this order means that the order and line items will no longer be "
-"editable."
+msgid "Completing this order means that the order and line items will no longer be editable."
 msgstr ""
 
 #: order/templates/order/order_issue.html:8
-msgid ""
-"After placing this purchase order, line items will no longer be editable."
+msgid "After placing this purchase order, line items will no longer be editable."
 msgstr ""
 
 #: order/templates/order/order_notes.html:13
@@ -3117,9 +3100,7 @@ msgid "Sales Order Notes"
 msgstr ""
 
 #: order/templates/order/sales_order_ship.html:10
-msgid ""
-"This order has not been fully allocated. If the order is marked as shipped, "
-"it can no longer be adjusted."
+msgid "This order has not been fully allocated. If the order is marked as shipped, it can no longer be adjusted."
 msgstr ""
 
 #: order/templates/order/sales_order_ship.html:12
@@ -3840,9 +3821,7 @@ msgid "Select Related Part"
 msgstr ""
 
 #: part/models.py:2440
-msgid ""
-"Error creating relationship: check that the part is not related to itself "
-"and that the relationship is unique"
+msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
 #: part/templates/part/allocation.html:11
@@ -3873,8 +3852,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:21
 #, python-format
-msgid ""
-"The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
+msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
 msgstr ""
 
 #: part/templates/part/bom.html:25
@@ -4009,8 +3987,7 @@ msgid "Requirements for BOM upload"
 msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:21
-msgid ""
-"The BOM file must contain the required named columns as provided in the "
+msgid "The BOM file must contain the required named columns as provided in the "
 msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:21
@@ -4027,8 +4004,7 @@ msgstr ""
 
 #: part/templates/part/bom_validate.html:6
 #, python-format
-msgid ""
-"Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
+msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
 msgstr ""
 
 #: part/templates/part/bom_validate.html:9
@@ -4129,8 +4105,7 @@ msgid "This category contains %(count)s child categories"
 msgstr ""
 
 #: part/templates/part/category_delete.html:9
-msgid ""
-"If this category is deleted, these child categories will be moved to the"
+msgid "If this category is deleted, these child categories will be moved to the"
 msgstr ""
 
 #: part/templates/part/category_delete.html:11
@@ -4148,15 +4123,11 @@ msgstr ""
 
 #: part/templates/part/category_delete.html:27
 #, python-format
-msgid ""
-"If this category is deleted, these parts will be moved to the parent "
-"category %(path)s"
+msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
 msgstr ""
 
 #: part/templates/part/category_delete.html:29
-msgid ""
-"If this category is deleted, these parts will be moved to the top-level "
-"category Teile"
+msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
 msgstr ""
 
 #: part/templates/part/category_navbar.html:34
@@ -4503,37 +4474,27 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
-msgid ""
-"This part is used in BOMs for %(count)s other parts. If you delete this "
-"part, the BOMs for the following parts will be updated"
+msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:22
 #, python-format
-msgid ""
-"There are %(count)s stock entries defined for this part. If you delete this "
-"part, the following stock entries will also be deleted:"
+msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:33
 #, python-format
-msgid ""
-"There are %(count)s manufacturers defined for this part. If you delete this "
-"part, the following manufacturer parts will also be deleted:"
+msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:44
 #, python-format
-msgid ""
-"There are %(count)s suppliers defined for this part. If you delete this "
-"part, the following supplier parts will also be deleted:"
+msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:55
 #, python-format
-msgid ""
-"There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this "
-"part will permanently remove this tracking information."
+msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this part will permanently remove this tracking information."
 msgstr ""
 
 #: part/templates/part/related.html:18
@@ -4956,9 +4917,7 @@ msgid "Enter unique serial numbers (or leave blank)"
 msgstr ""
 
 #: stock/forms.py:169
-msgid ""
-"Destination for serialized stock (by default, will remain in current "
-"location)"
+msgid "Destination for serialized stock (by default, will remain in current location)"
 msgstr ""
 
 #: stock/forms.py:171
@@ -5140,8 +5099,7 @@ msgid "Destination Sales Order"
 msgstr ""
 
 #: stock/models.py:476
-msgid ""
-"Expiry date for stock item. Stock will be considered expired after this date"
+msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr ""
 
 #: stock/models.py:489
@@ -5288,9 +5246,7 @@ msgid "Stock Item Attachments"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:24
-msgid ""
-"You are not in the list of owners of this item. This stock item cannot be "
-"edited."
+msgid "You are not in the list of owners of this item. This stock item cannot be edited."
 msgstr ""
 
 #: stock/templates/stock/item_base.html:31
@@ -5307,8 +5263,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:53
 #, python-format
-msgid ""
-"This stock item is allocated to Sales Order %(link)s (Quantity: %(qty)s)"
+msgid "This stock item is allocated to Sales Order %(link)s (Quantity: %(qty)s)"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:61
@@ -5317,9 +5272,7 @@ msgid "This stock item is allocated to Build %(link)s (Quantity: %(qty)s)"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:67
-msgid ""
-"This stock item is serialized - it has a unique serial number and the "
-"quantity cannot be adjusted."
+msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
 msgstr ""
 
 #: stock/templates/stock/item_base.html:71
@@ -5327,8 +5280,7 @@ msgid "This stock item cannot be deleted as it has child items"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:75
-msgid ""
-"This stock item will be automatically deleted when all stock is depleted."
+msgid "This stock item will be automatically deleted when all stock is depleted."
 msgstr ""
 
 #: stock/templates/stock/item_base.html:95
@@ -5477,8 +5429,7 @@ msgstr ""
 
 #: stock/templates/stock/item_delete.html:12
 #, python-format
-msgid ""
-"This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
+msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
 msgstr ""
 
 #: stock/templates/stock/item_install.html:7
@@ -5524,9 +5475,7 @@ msgid "Add Test Data"
 msgstr ""
 
 #: stock/templates/stock/location.html:20
-msgid ""
-"You are not in the list of owners of this location. This stock location "
-"cannot be edited."
+msgid "You are not in the list of owners of this location. This stock location cannot be edited."
 msgstr ""
 
 #: stock/templates/stock/location.html:37
@@ -5949,8 +5898,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently "
-"selected color theme was not found.<br>\n"
+"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
 msgstr ""
@@ -6235,8 +6183,7 @@ msgid "Link Barcode to Stock Item"
 msgstr ""
 
 #: templates/js/barcode.js:311
-msgid ""
-"This will remove the association between this stock item and the barcode"
+msgid "This will remove the association between this stock item and the barcode"
 msgstr ""
 
 #: templates/js/barcode.js:317
@@ -7137,21 +7084,15 @@ msgid "Change password"
 msgstr ""
 
 #: templates/registration/password_reset_confirm.html:61
-msgid ""
-"The password reset link was invalid, possibly because it has already been "
-"used. Please request a new password reset."
+msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
 msgstr ""
 
 #: templates/registration/password_reset_done.html:52
-msgid ""
-"We've emailed you instructions for setting your password, if an account "
-"exists with the email you entered. You should receive them shortly."
+msgid "We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly."
 msgstr ""
 
 #: templates/registration/password_reset_done.html:55
-msgid ""
-"If you don't receive an email, please make sure you've entered the address "
-"you registered with, and check your spam folder."
+msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
 msgstr ""
 
 #: templates/registration/password_reset_form.html:53
