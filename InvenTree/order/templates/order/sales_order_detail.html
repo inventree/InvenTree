@@ -296,7 +296,8 @@ $("#so-lines-table").inventreeTable({
                     if (part.assembly) {
                         html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
-                    
+
+                    html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
                 
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
@@ -395,6 +396,20 @@ function setupCallbacks() {
                 parts: [pk],
             },
         });
+    });
+
+    $(".button-price").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(
+            "{% url 'line-pricing' %}",
+            {
+                submit_text: '{% trans "Calculate price" %}',
+                data: {
+                    line_item: pk,
+                },
+            }
+        );
     });
 }
 

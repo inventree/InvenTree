@@ -29,6 +29,7 @@ from part.models import Part
 from common.models import InvenTreeSetting
 
 from . import forms as order_forms
+from part.views import PartPricing
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
@@ -1559,3 +1560,17 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
     ajax_form_title = _("Remove allocation")
     context_object_name = 'allocation'
     ajax_template_name = "order/so_allocation_delete.html"
+
+
+class LineItemPricing(PartPricing):
+    """ View for inspecting part pricing information """
+
+    def get_part(self):
+        if 'line_item' in self.request.GET:
+            try:
+                part_id = self.request.GET.get('line_item')
+                return SalesOrderLineItem.objects.get(id=part_id).part
+            except Part.DoesNotExist:
+                return None
+        else:
+            return None
