@@ -558,70 +558,7 @@ class SupplierPart(models.Model):
             price=price
         )
 
-    def get_price(self, quantity, moq=True, multiples=True, currency=None):
-        """ Calculate the supplier price based on quantity price breaks.
-
-        - Don't forget to add in flat-fee cost (base_cost field)
-        - If MOQ (minimum order quantity) is required, bump quantity
-        - If order multiples are to be observed, then we need to calculate based on that, too
-        """
-
-        price_breaks = self.price_breaks.all()
-
-        # No price break information available?
-        if len(price_breaks) == 0:
-            return None
-
-        # Check if quantity is fraction and disable multiples
-        multiples = (quantity % 1 == 0)
-
-        # Order multiples
-        if multiples:
-            quantity = int(math.ceil(quantity / self.multiple) * self.multiple)
-
-        pb_found = False
-        pb_quantity = -1
-        pb_cost = 0.0
-
-        if currency is None:
-            # Default currency selection
-            currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-
-        pb_min = None
-        for pb in self.price_breaks.all():
-            # Store smallest price break
-            if not pb_min:
-                pb_min = pb
-
-            # Ignore this pricebreak (quantity is too high)
-            if pb.quantity > quantity:
-                continue
-
-            pb_found = True
-
-            # If this price-break quantity is the largest so far, use it!
-            if pb.quantity > pb_quantity:
-                pb_quantity = pb.quantity
-
-                # Convert everything to the selected currency
-                pb_cost = pb.convert_to(currency)
-
-        # Use smallest price break
-        if not pb_found and pb_min:
-            # Update price break information
-            pb_quantity = pb_min.quantity
-            pb_cost = pb_min.convert_to(currency)
-            # Trigger cost calculation using smallest price break
-            pb_found = True
-        
-        # Convert quantity to decimal.Decimal format
-        quantity = decimal.Decimal(f'{quantity}')
-
-        if pb_found:
-            cost = pb_cost * quantity
-            return normalize(cost + self.base_cost)
-        else:
-            return None
+    get_price = common.models.get_price
 
     def open_orders(self):
         """ Return a database query for PO line items for this SupplierPart,
