@@ -298,11 +298,11 @@ class UploadFile(forms.Form):
     def clean_file(self):
         file = self.cleaned_data['file']
 
-        # Create a FileManager object - will perform initial data validation
+        # Validate file using FileManager class - will perform initial data validation
         # (and raise a ValidationError if there is something wrong with the file)
-        file_manager = FileManager(file=file, name='order')
+        FileManager.validate(file)
 
-        return file_manager
+        return file
 
 
 class MatchField(forms.Form):

@@ -43,27 +43,42 @@ class FileManager:
         # Update headers
         self.update_headers()
 
-    def process(self, file):
-        """ Process file """
+    @classmethod
+    def validate(cls, file):
+        """ Validate file extension and data """
 
-        self.data = None
+        cleaned_data = None
 
         ext = os.path.splitext(file.name)[-1].lower()
 
         if ext in ['.csv', '.tsv', ]:
             # These file formats need string decoding
             raw_data = file.read().decode('utf-8')
+            # Reset stream position to beginning of file
+            file.seek(0)
         elif ext in ['.xls', '.xlsx']:
             raw_data = file.read()
+            # Reset stream position to beginning of file
+            file.seek(0)
         else:
             raise ValidationError(_(f'Unsupported file format: {ext}'))
 
         try:
-            self.data = tablib.Dataset().load(raw_data)
+            cleaned_data = tablib.Dataset().load(raw_data)
         except tablib.UnsupportedFormat:
-            raise ValidationError(_(f'Error reading {self.name} file (invalid format)'))
+            raise ValidationError(_('Error reading file (invalid format)'))
         except tablib.core.InvalidDimensions:
-            raise ValidationError(_(f'Error reading {self.name} file (incorrect dimension)'))
+            raise ValidationError(_('Error reading file (incorrect dimension)'))
+        except KeyError:
+            # TODO: Find fix for XLSX format as it keeps on returning a KeyError
+            raise ValidationError(_('Error reading file (data could be corrupted)'))
+        
+        return cleaned_data
+
+    def process(self, file):
+        """ Process file """
+
+        self.data = self.__class__.validate(file)
             
     def update_headers(self):
         """ Update headers """
@@ -74,7 +89,7 @@ class FileManager:
         """ Setup headers depending on the file name """
 
         if not self.name:
-            return False
+            return
 
         if self.name == 'order':
             self.REQUIRED_HEADERS = [
@@ -93,8 +108,6 @@ class FileManager:
 
             # Update headers
             self.update_headers()
-
-        return True
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers

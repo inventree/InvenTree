@@ -29,6 +29,7 @@ from part.models import Part
 
 from common.models import InvenTreeSetting
 from common.views import MultiStepFormView
+from common.files import FileManager
 
 from . import forms as order_forms
 
@@ -590,6 +591,7 @@ class PurchaseOrderUpload(MultiStepFormView):
     headers = None
     rows = None
     columns = None
+    missing_columns = None
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -603,12 +605,13 @@ class PurchaseOrderUpload(MultiStepFormView):
             # print(f'{self.headers}')
         if self.columns:
             context.update({'columns': self.columns})
-            # print(f'{self.columns}')
+            print(f'{self.columns}')
         if self.rows:
             context.update({'rows': self.rows})
             # print(f'{self.rows}')
+        if self.missing_columns:
+            context.update({'missing_columns': self.missing_columns})
 
-        print(f'{context=}')
         return context
 
     def getTableDataFromForm(self, form_data):
@@ -622,10 +625,6 @@ class PurchaseOrderUpload(MultiStepFormView):
             row_<x>_col<y> - Cell data as provided in the uploaded file
 
         """
-
-        if not self.file_manager:
-            print('Lost file manager...')
-            return
 
         # Map the columns
         self.column_names = {}
@@ -746,68 +745,116 @@ class PurchaseOrderUpload(MultiStepFormView):
             for col in self.file_manager.PART_MATCH_HEADERS:
                 self.missing_columns.append(col)
 
-    def handleFileUpload(self, form):
-        """ Process file upload and setup fields form """
+    def getFileManager(self, form=None):
+        """ Create FileManager instance from upload file """
 
-        # Check if user completed file upload
+        if self.file_manager:
+            return
+
         if self.steps.current == 'upload':
-            # Copy FileManager instance from form
-            self.file_manager = form.cleaned_data['file']
-            print(f'{self.file_manager=}')
-            # Setup FileManager for order upload
-            setup_valid = self.file_manager.setup()
-            if setup_valid:
-                # Set headers
-                self.headers = self.file_manager.HEADERS
-                # Set columns and rows
-                self.columns = self.file_manager.columns()
-                self.rows = self.file_manager.rows()
+            # Get file from form data
+            order_file = form.cleaned_data['file']
+            self.file_manager = FileManager(file=order_file, name='order')
+        else:
+            # Retrieve stored files from upload step
+            upload_files = self.storage.get_step_files('upload')
+            # Get file
+            order_file = upload_files.get('upload-file', None)
+            if order_file:
+                self.file_manager = FileManager(file=order_file, name='order')
 
-            # Save FileManager
-            # self.storage.set_step_data('file', self.file_manager)
+    def setupFieldSelection(self, form):
+        """ Setup fields form """
+        
+        # Get FileManager
+        self.getFileManager(form)
+        # Setup headers
+        self.file_manager.setup()
+        # Set headers
+        self.headers = self.file_manager.HEADERS
+        # Set columns and rows
+        self.columns = self.file_manager.columns()
+        self.rows = self.file_manager.rows()
 
-    def handleFieldSelection(self, form_data):
+    def handleFieldSelection(self, form):
         """ Process field matching """
 
+        # Update headers
+        if self.file_manager:
+            self.file_manager.setup()
+        else:
+            return False
+
         # Extract form data
-        self.getTableDataFromForm(form_data)
+        self.getTableDataFromForm(form.data)
 
         valid = len(self.missing_columns) == 0 and not self.duplicates
 
-        if not valid:
-            raise ValidationError('Invalid data')
+        return valid
 
-    def handlePartSelection(self, form_data):
+    def handlePartSelection(self, form):
         pass
-    #     print(f'{form_data=}')
-
-    # def process_step(self, form):
-    #     print(f'{self.steps.current=} | {form.data}')
-    #     return self.get_form_step_data(form)
         
     def get_form_step_data(self, form):
-        print(f'{self.steps.current=}\n{form.data=}')
-        print(f'{self.file_manager=}')
+        """ Process form data after it has been posted """
+
+        # print(f'{self.steps.current=}\n{form.data=}')
+
+        # Retrieve FileManager instance from uploaded file
+        self.getFileManager(form)
+        # print(f'{self.file_manager=}')
+
         # Process steps
         if self.steps.current == 'upload':
-            self.handleFileUpload(form)
-        if self.steps.current == 'fields':
-            self.handleFieldSelection(form.data)
-        elif self.steps.current == 'parts':
-            self.handlePartSelection(form.data)
+            self.setupFieldSelection(form)
+        # elif self.steps.current == 'fields':
+        #     self.handleFieldSelection(form)
+        # elif self.steps.current == 'parts':
+        #     self.handlePartSelection(form)
         
         return form.data
-
-    # def get_all_cleaned_data(self):
-    #     cleaned_data = super().get_all_cleaned_data()
-    #     print(f'{self.steps.current=} | {cleaned_data}')
-    #     return cleaned_data
     
-    # def post(self, request, *args, **kwargs):
-    #     """ Perform the various 'POST' requests required.
-    #     """
-    #     print('Posting!')
-    #     return super().post(*args, **kwargs)
+    def validate(self, step, form):
+        """ Validate forms """
+
+        valid = False
+
+        # Process steps
+        if step == 'upload':
+            # Validation is done during POST
+            valid = True
+        elif step == 'fields':
+            # Retrieve FileManager instance from uploaded file
+            self.getFileManager(form)
+            # Validate user form data
+            valid = self.handleFieldSelection(form)
+
+            if not valid:
+                form.add_error(None, 'Fields matching failed')
+                # Set headers
+                self.headers = self.file_manager.HEADERS
+
+        elif step == 'parts':
+            valid = self.handlePartSelection(form)
+
+        return valid
+
+    def post(self, request, *args, **kwargs):
+        """ Perform validations before posting data """
+
+        wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
+
+        form = self.get_form(data=self.request.POST, files=self.request.FILES)
+
+        print(f'\nCurrent step = {self.steps.current}')
+        form_valid = self.validate(self.steps.current, form)
+
+        if not form_valid and not wizard_goto_step:
+            # Re-render same step
+            return self.render(form)
+
+        print('\nPosting... ')
+        return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
