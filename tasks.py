@@ -185,7 +185,7 @@ def translate(c):
     """
 
     # Translate applicable .py / .html / .js files
-    manage(c, "makemessages --all -e py,html,js")
+    manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')
