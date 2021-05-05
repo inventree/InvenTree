@@ -6,8 +6,6 @@ Company database model definitions
 from __future__ import unicode_literals
 
 import os
-import decimal
-import math
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
@@ -26,7 +24,6 @@ from markdownx.models import MarkdownxField
 from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
-from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import PurchaseOrderStatus
 
