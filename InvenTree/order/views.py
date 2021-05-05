@@ -23,7 +23,7 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
 from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
-from company.models import Company, SupplierPart
+from company.models import Company, ManufacturerPart, SupplierPart
 from stock.models import StockItem, StockLocation
 from part.models import Part
 
@@ -745,6 +745,87 @@ class PurchaseOrderUpload(MultiStepFormView):
             for col in self.file_manager.PART_MATCH_HEADERS:
                 self.missing_columns.append(col)
 
+    def getColumnIndex(self, name):
+        """ Return the index of the column with the given name.
+        It named column is not found, return -1
+        """
+
+        try:
+            idx = list(self.column_selections.values()).index(name)
+        except ValueError:
+            idx = -1
+
+        return idx
+
+    def preFillSelections(self):
+        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        This function is called once the field selection has been validated.
+        The pre-fill data are then passed through to the part selection form.
+        """
+
+        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
+        s_idx = self.getColumnIndex('Supplier_SKU')
+        m_idx = self.getColumnIndex('Manufacturer_MPN')
+        q_idx = self.getColumnIndex('Quantity')
+        p_idx = self.getColumnIndex('Unit_Price')
+        e_idx = self.getColumnIndex('Extended_Price')
+
+        for row in self.rows:
+
+            # Initially use a quantity of zero
+            quantity = Decimal(0)
+
+            # Initially we do not have a part to reference
+            exact_match_part = None
+
+            # A list of potential Part matches
+            part_options = SupplierPart.objects.all()
+
+            # Check if there is a column corresponding to "quantity"
+            if q_idx >= 0:
+                q_val = row['data'][q_idx]
+
+                if q_val:
+                    try:
+                        # Attempt to extract a valid quantity from the field
+                        quantity = Decimal(q_val)
+                    except (ValueError, InvalidOperation):
+                        pass
+
+            # Store the 'quantity' value
+            row['quantity'] = quantity
+
+            # Check if there is a column corresponding to "Supplier SKU"
+            if s_idx >= 0:
+                row['part_sku'] = row['data'][s_idx]
+
+                try:
+                    # Attempt SupplierPart lookup based on SKU value
+                    exact_match_part = SupplierPart.objects.get(SKU=row['part_sku'])
+                except (ValueError, SupplierPart.DoesNotExist):
+                    exact_match_part = None
+
+            # Check if there is a column corresponding to "Manufacturer MPN"
+            if m_idx >= 0:
+                row['part_mpn'] = row['data'][m_idx]
+
+                # try:
+                #     # Attempt ManufacturerPart lookup based on MPN value
+                #     exact_match_part = ManufacturerPart.objects.get(MPN=row['part_mpn'])
+                # except (ValueError, ManufacturerPart.DoesNotExist):
+                #     exact_match_part = None
+        
+            # Supply list of part options for each row, sorted by how closely they match the part name
+            row['part_options'] = part_options
+
+            # Unless found, the 'part_match' is blank
+            row['part_match'] = None
+
+            if exact_match_part:
+                # If there is an exact match based on SKU or MPN, use that
+                row['part_match'] = exact_match_part
+
+
     def getFileManager(self, form=None):
         """ Create FileManager instance from upload file """
 
@@ -793,6 +874,10 @@ class PurchaseOrderUpload(MultiStepFormView):
         return valid
 
     def handlePartSelection(self, form):
+        
+        # Extract form data
+        self.getTableDataFromForm(form.data)
+
         pass
         
     def get_form_step_data(self, form):
@@ -807,8 +892,9 @@ class PurchaseOrderUpload(MultiStepFormView):
         # Process steps
         if self.steps.current == 'upload':
             self.setupFieldSelection(form)
-        # elif self.steps.current == 'fields':
-        #     self.handleFieldSelection(form)
+        elif self.steps.current == 'fields':
+            self.preFillSelections()
+            print(self.rows)
         # elif self.steps.current == 'parts':
         #     self.handlePartSelection(form)
         
@@ -831,7 +917,7 @@ class PurchaseOrderUpload(MultiStepFormView):
 
             if not valid:
                 form.add_error(None, 'Fields matching failed')
-                # Set headers
+                # Reload headers
                 self.headers = self.file_manager.HEADERS
 
         elif step == 'parts':

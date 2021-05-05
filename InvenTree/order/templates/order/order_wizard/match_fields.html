@@ -18,9 +18,9 @@
 {% endblock form_alert %}
 
 {% block form_buttons_top %}
-    {% if wizard.steps.prev %}
+    {% comment %} {% if wizard.steps.prev %}
     <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
-    {% endif %}
+    {% endif %} {% endcomment %}
     <button type="submit" class="save btn btn-default">{% trans "Submit Selections" %}</button>
 {% endblock form_buttons_top %}
 
