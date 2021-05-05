@@ -66,22 +66,11 @@
                 </td>
                 {% for item in row.data %}
                 <td>
-                    {% if item.column.guess == 'Part' %}
-                    <i>{{ item.cell }}</i>
-                    {% if row.errors.part %}
-                    <p class='help-inline'>{{ row.errors.part }}</p>
-                    {% endif %}
-                    {% elif item.column.guess == 'Quantity' %}
+                    {% if item.column.guess == 'Quantity' %}
                     <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' step='any' value='{% decimal row.quantity %}'/>
                     {% if row.errors.quantity %}
                     <p class='help-inline'>{{ row.errors.quantity }}</p>
                     {% endif %}
-                    {% elif item.column.guess == 'Reference' %}
-                    <input name='reference_{{ row.index }}' value='{{ row.reference }}'/>
-                    {% elif item.column.guess == 'Note' %}
-                    <input name='notes_{{ row.index }}' value='{{ row.notes }}'/>
-                    {% elif item.column.guess == 'Overage' %}
-                    <input name='overage_{{ row.index }}' value='{{ row.overage }}'/>
                     {% else %}
                     {{ item.cell }}
                     {% endif %}

@@ -72,7 +72,7 @@
             {% for item in row.data %}
             <td>
                 <input type='hidden' name='row_{{ row_index }}_col_{{ forloop.counter0 }}' value='{{ item }}'/>
-                {{ item }}
+                {{ item.cell }}
             </td>
             {% endfor %}
         </tr>
