@@ -56,7 +56,7 @@ class FileManager:
             raw_data = file.read().decode('utf-8')
             # Reset stream position to beginning of file
             file.seek(0)
-        elif ext in ['.xls', '.xlsx']:
+        elif ext in ['.xls', '.xlsx', '.json', '.yaml', ]:
             raw_data = file.read()
             # Reset stream position to beginning of file
             file.seek(0)

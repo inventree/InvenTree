@@ -14,8 +14,6 @@ from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
 
-from common.files import FileManager
-
 import part.models
 
 from stock.models import StockLocation
@@ -286,30 +284,3 @@ class EditSalesOrderAllocationForm(HelperForm):
             'line',
             'item',
             'quantity']
-
-
-class UploadFile(forms.Form):
-    """ Step 1 """
-    file = forms.FileField(
-        label=_('Order File'),
-        help_text=_('Select order file to upload'),
-    )
-
-    def clean_file(self):
-        file = self.cleaned_data['file']
-
-        # Validate file using FileManager class - will perform initial data validation
-        # (and raise a ValidationError if there is something wrong with the file)
-        FileManager.validate(file)
-
-        return file
-
-
-class MatchField(forms.Form):
-    """ Step 2 """
-    pass
-
-
-class MatchPart(forms.Form):
-    """ Step 3 """
-    pass
