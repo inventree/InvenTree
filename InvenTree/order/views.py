@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
-from django.forms import HiddenInput
+from django.forms import HiddenInput, IntegerField
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -1578,7 +1578,7 @@ class LineItemPricing(PartPricing):
     """ View for inspecting part pricing information """
 
     class EnhancedForm(PartPricing.form_class):
-        pk = IntegerField(widget = HiddenInput())
+        pk = IntegerField(widget=HiddenInput())
 
     form_class = EnhancedForm
 
