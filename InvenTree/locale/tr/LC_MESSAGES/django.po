@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-05 07:55+0000\n"
-"PO-Revision-Date: 2021-05-06 00:00\n"
+"PO-Revision-Date: 2021-05-06 00:53\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -75,7 +75,7 @@ msgstr "Kategori Seçin"
 #: InvenTree/helpers.py:377
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr "Tekrarlanan seri"
+msgstr "Tekrarlanan seri {n}"
 
 #: InvenTree/helpers.py:384 order/models.py:245 order/models.py:353
 #: stock/views.py:1763
@@ -90,12 +90,12 @@ msgstr "Boş seri numarası dizesi"
 #: InvenTree/helpers.py:440
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr "Geçersiz grup"
+msgstr "Geçersiz grup: {g}"
 
 #: InvenTree/helpers.py:445
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr "Tekrarlanan seri"
+msgstr "Tekrarlanan seri {g}"
 
 #: InvenTree/helpers.py:453
 msgid "No serial numbers found"
@@ -104,7 +104,7 @@ msgstr "Seri numarası bulunamadı"
 #: InvenTree/helpers.py:457
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr "Benzersiz serinin numaraları miktarla eşleşmeli"
+msgstr "Benzersiz serinin numaraları ({s}) miktarla eşleşmeli ({q})"
 
 #: InvenTree/models.py:59 stock/models.py:1662
 msgid "Attachment"
@@ -271,7 +271,7 @@ msgstr "Parça adında geçersiniz karakter bulunuyor"
 #: InvenTree/validators.py:63
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr "IPN regex kalıbıyla eşleşmelidir"
+msgstr "IPN regex kalıbıyla eşleşmelidir {pat}"
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
