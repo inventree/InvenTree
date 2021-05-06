@@ -141,9 +141,11 @@ $('#view-calendar').click(function() {
     $(".columns-right").hide();
     $(".search").hide();
     $('#filter-list-salesorder').hide();
-    
+
     $("#sales-order-calendar").show();
     $("#view-list").show();
+
+    calendar.render();
 });
 
 $("#view-list").click(function() {
