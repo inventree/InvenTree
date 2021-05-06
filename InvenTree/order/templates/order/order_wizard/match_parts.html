@@ -39,7 +39,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in rows %}
+            {% for row in form %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-name='{{ row.part_name }}' part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
                 <td>
                     <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
@@ -47,9 +47,12 @@
                     </button>
                 </td>
                 <td></td>
-                <td>{% add row.index 1 %}</td>
                 <td>
-                    <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='{% trans "Create new part" %}' type='button'>
+                {% comment %} {% add row.index 1 %} {% endcomment %}
+                </td>
+                <td>
+                    {{ row }}
+                    {% comment %} <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='{% trans "Create new part" %}' type='button'>
                         <span row_id='{{ row.index }}' class='fas fa-plus icon-green'/>
                     </button>
                     <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
@@ -62,10 +65,11 @@
                     </select>
                     {% if row.errors.part %}
                     <p class='help-inline'>{{ row.errors.part }}</p>
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                 </td>
                 {% for item in row.data %}
                 <td>
+                    {% comment %} 
                     {% if item.column.guess == 'Quantity' %}
                     <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' step='any' value='{% decimal row.quantity %}'/>
                     {% if row.errors.quantity %}
@@ -74,7 +78,7 @@
                     {% else %}
                     {{ item.cell }}
                     {% endif %}
-                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
+                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/> {% endcomment %}
                 </td>
                 {% endfor %}
             </tr>
