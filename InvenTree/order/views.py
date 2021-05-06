@@ -1577,11 +1577,22 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
 class LineItemPricing(PartPricing):
     """ View for inspecting part pricing information """
 
+    class EnhancedForm(PartPricing.form_class):
+        pk = IntegerField(widget = HiddenInput())
+
+    form_class = EnhancedForm
+
     def get_part(self):
         if 'line_item' in self.request.GET:
             try:
                 part_id = self.request.GET.get('line_item')
                 return SalesOrderLineItem.objects.get(id=part_id).part
+            except Part.DoesNotExist:
+                return None
+        elif 'pk' in self.request.POST:
+            try:
+                part_id = self.request.POST.get('pk')
+                return Part.objects.get(id=part_id)
             except Part.DoesNotExist:
                 return None
         else:
@@ -1594,3 +1605,7 @@ class LineItemPricing(PartPricing):
             return Decimal(self.request.POST.get('quantity', 1))
         return qty
 
+    def get_initials(self):
+        initials = super().get_initials()
+        initials['pk'] = self.get_part().id
+        return initials
