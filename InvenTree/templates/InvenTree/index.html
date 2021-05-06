@@ -84,7 +84,7 @@ function addHeaderAction(label, title, icon, options) {
     // Connect a callback to the table
     $(`#table-${label}`).on('load-success.bs.table', function() {
         var count = $(`#table-${label}`).bootstrapTable('getData').length;
-    
+
         $(`#badge-${label}`).html(count);
 
         if (count > 0) {

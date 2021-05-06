@@ -91,7 +91,7 @@
             $("#search-item-list").children('li').each(function() {
                 $(this).removeClass('index-action-selected');
             });
-    
+
             // Add css class to the action we are interested in
             $(`#search-item-${label}`).addClass('index-action-selected');
         });
@@ -215,7 +215,7 @@
                     var name = row.part_detail.full_name;
 
                     html = imageHoverIcon(thumb) + renderLink(name, url);
-                    
+
                     return html;
                 }
             },
@@ -355,6 +355,6 @@
     {% endif %}    
 
 
-    
+
 
 {% endblock %}
