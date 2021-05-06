@@ -1968,12 +1968,7 @@ class PartPricing(AjaxView):
             return None
 
     def get_pricing(self, quantity=1, currency=None):
-
-        # try:
-        #     quantity = int(quantity)
-        # except ValueError:
-        #     quantity = 1
-
+        """ returns context with pricing information """
         if quantity <= 0:
             quantity = 1
 
