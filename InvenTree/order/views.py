@@ -1408,7 +1408,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 except StockItem.DoesNotExist:
                     self.form.add_error(
                         'serials',
-                        _('No matching item for serial') + f" '{serial}'"
+                        _('No matching item for serial {serial}').format(serial=serial)
                     )
                     continue
 
@@ -1418,7 +1418,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 if not stock_item.in_stock:
                     self.form.add_error(
                         'serials',
-                        f"'{serial}' " + _("is not in stock")
+                        _('{serial} is not in stock').format(serial=serial)
                     )
                     continue
 
@@ -1426,7 +1426,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 if stock_item.is_allocated():
                     self.form.add_error(
                         'serials',
-                        f"'{serial}' " + _("already allocated to an order")
+                        _('{serial} already allocated to an order').format(serial=serial)
                     )
                     continue
 
