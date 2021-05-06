@@ -801,6 +801,9 @@ class PurchaseOrderUpload(MultiStepFormView):
                 q_val = row['data'][q_idx]
 
                 if q_val:
+                    # Delete commas
+                    q_val = q_val.replace(',','')
+
                     try:
                         # Attempt to extract a valid quantity from the field
                         quantity = Decimal(q_val)
@@ -895,6 +898,14 @@ class PurchaseOrderUpload(MultiStepFormView):
 
         return valid
 
+    def getRowByIndex(self, idx):
+        
+        for row in self.rows:
+            if row['index'] == idx:
+                return row
+
+        return None
+
     def handlePartSelection(self, form):
         
         # Retrieve FileManager instance from uploaded file
@@ -903,7 +914,120 @@ class PurchaseOrderUpload(MultiStepFormView):
         # Extract form data
         self.getTableDataFromForm(form.data)
 
-        pass
+        # Keep track of the parts that have been selected
+        parts = {}
+
+        # Extract other data (part selections, etc)
+        for key, value in form.data.items():
+
+            # Extract quantity from each row
+            if key.startswith('quantity_'):
+                try:
+                    row_id = int(key.replace('quantity_', ''))
+
+                    row = self.getRowByIndex(row_id)
+
+                    if row is None:
+                        continue
+
+                    q = Decimal(1)
+
+                    try:
+                        q = Decimal(value)
+                        if q < 0:
+                            row['errors']['quantity'] = _('Quantity must be greater than zero')
+
+                        if 'part' in row.keys():
+                            if row['part'].trackable:
+                                # Trackable parts must use integer quantities
+                                if not q == int(q):
+                                    row['errors']['quantity'] = _('Quantity must be integer value for trackable parts')
+
+                    except (ValueError, InvalidOperation):
+                        row['errors']['quantity'] = _('Enter a valid quantity')
+
+                    row['quantity'] = q
+                     
+                except ValueError:
+                    continue
+
+            # Extract part from each row
+            if key.startswith('part_'):
+
+                try:
+                    row_id = int(key.replace('part_', ''))
+
+                    row = self.getRowByIndex(row_id)
+
+                    if row is None:
+                        continue
+                except ValueError:
+                    # Row ID non integer value
+                    continue
+
+                try:
+                    part_id = int(value)
+                    part = Part.objects.get(id=part_id)
+                except ValueError:
+                    row['errors']['part'] = _('Select valid part')
+                    continue
+                except Part.DoesNotExist:
+                    row['errors']['part'] = _('Select valid part')
+                    continue
+
+                # Keep track of how many of each part we have seen
+                if part_id in parts:
+                    parts[part_id]['quantity'] += 1
+                    row['errors']['part'] = _('Duplicate part selected')
+                else:
+                    parts[part_id] = {
+                        'part': part,
+                        'quantity': 1,
+                    }
+
+                row['part'] = part
+
+                if part.trackable:
+                    # For trackable parts, ensure the quantity is an integer value!
+                    if 'quantity' in row.keys():
+                        q = row['quantity']
+
+                        if not q == int(q):
+                            row['errors']['quantity'] = _('Quantity must be integer value for trackable parts')
+
+            # Extract other fields which do not require further validation
+            for field in ['reference', 'notes']:
+                if key.startswith(field + '_'):
+                    try:
+                        row_id = int(key.replace(field + '_', ''))
+                        
+                        row = self.getRowByIndex(row_id)
+
+                        if row:
+                            row[field] = value
+                    except:
+                        continue
+
+        # Are there any errors after form handling?
+        valid = True
+
+        for row in self.rows:
+            # Has a part been selected for the given row?
+            part = row.get('part', None)
+
+            if part is None:
+                row['errors']['part'] = _('Select a part')
+
+            # Has a quantity been specified?
+            if row.get('quantity', None) is None:
+                row['errors']['quantity'] = _('Specify quantity')
+
+            errors = row.get('errors', [])
+
+            if len(errors) > 0:
+                valid = False
+
+        return valid
         
     def get_form_step_data(self, form):
         """ Process form data after it has been posted """
@@ -921,7 +1045,7 @@ class PurchaseOrderUpload(MultiStepFormView):
             self.allowed_parts = SupplierPart.objects.all()
             self.rows = self.file_manager.rows()
             self.preFillSelections()
-            self.updatePartSelectionColumns(form)
+            # self.updatePartSelectionColumns(form)
         # elif self.steps.current == 'parts':
         #     self.handlePartSelection(form)
         
@@ -947,6 +1071,9 @@ class PurchaseOrderUpload(MultiStepFormView):
 
         elif step == 'parts':
             valid = self.handlePartSelection(form)
+
+            # if not valid:
+            #     pass
 
         return valid
 
