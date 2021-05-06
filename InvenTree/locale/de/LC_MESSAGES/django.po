@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-06 10:31+0000\n"
+"POT-Creation-Date: 2021-05-06 14:15+0000\n"
 "PO-Revision-Date: 2021-05-06 02:54\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -2150,13 +2150,13 @@ msgstr "Neues Zuliefererteil"
 
 #: company/templates/company/detail_supplier_part.html:72
 #: company/templates/company/manufacturer_part_suppliers.html:47
-#: company/views.py:64 order/templates/order/purchase_orders.html:183
+#: company/views.py:64 order/templates/order/purchase_orders.html:185
 #: part/templates/part/supplier.html:50
 msgid "New Supplier"
 msgstr "Neuer Zulieferer"
 
 #: company/templates/company/detail_supplier_part.html:73 company/views.py:281
-#: order/templates/order/purchase_orders.html:184
+#: order/templates/order/purchase_orders.html:186
 msgid "Create new Supplier"
 msgstr "Neuen Zulieferer anlegen"
 
@@ -2402,7 +2402,7 @@ msgstr "Hersteller"
 msgid "Customers"
 msgstr "Kunden"
 
-#: company/views.py:78 order/templates/order/sales_orders.html:185
+#: company/views.py:78 order/templates/order/sales_orders.html:187
 msgid "New Customer"
 msgstr "Neuer Kunde"
 
@@ -2448,7 +2448,7 @@ msgstr "Firma bearbeiten"
 msgid "Edited company information"
 msgstr "Firmeninformation bearbeitet"
 
-#: company/views.py:287 order/templates/order/sales_orders.html:186
+#: company/views.py:287 order/templates/order/sales_orders.html:188
 msgid "Create new Customer"
 msgstr "Neuen Kunden anlegen"
 
