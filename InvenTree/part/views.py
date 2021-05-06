@@ -2056,9 +2056,9 @@ class PartPricing(AjaxView):
         return {'quantity': self.get_quantity()}
 
     def get(self, request, *args, **kwargs):
-
-        quantity = self.get_quantity()
-        return self.renderJsonResponse(request, self.form_class(initial={'quantity': quantity}), context=self.get_pricing(quantity))
+        init = self.get_initials()
+        qty = self.get_quantity()
+        return self.renderJsonResponse(request, self.form_class(initial=init), context=self.get_pricing(qty))
 
     def post(self, request, *args, **kwargs):
 
