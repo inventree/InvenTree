@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 22:59+0000\n"
-"PO-Revision-Date: 2021-04-21 09:33\n"
+"POT-Creation-Date: 2021-05-05 07:55+0000\n"
+"PO-Revision-Date: 2021-05-06 00:00\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -11,6 +11,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 138\n"
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
@@ -26,38 +31,38 @@ msgstr ""
 
 #: InvenTree/fields.py:44
 msgid "Enter date"
-msgstr ""
+msgstr "Entrer la date"
 
 #: InvenTree/forms.py:110 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmer"
 
 #: InvenTree/forms.py:126
 msgid "Confirm delete"
-msgstr ""
+msgstr "Confirmer la suppression"
 
 #: InvenTree/forms.py:127
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Confirmer la suppression de cet élément"
 
 #: InvenTree/forms.py:159 templates/registration/login.html:77
 msgid "Enter password"
-msgstr ""
+msgstr "Entrer le mot de passe"
 
 #: InvenTree/forms.py:160
 msgid "Enter new password"
-msgstr ""
+msgstr "Entrer le nouveau mot de passe"
 
 #: InvenTree/forms.py:167
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmez le mot de passe"
 
 #: InvenTree/forms.py:168
 msgid "Confirm new password"
-msgstr ""
+msgstr "Confirmer le nouveau mot de passe"
 
 #: InvenTree/forms.py:203
 msgid "Apply Theme"
@@ -111,7 +116,7 @@ msgstr ""
 
 #: InvenTree/models.py:62 templates/attachment_table.html:16
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 #: InvenTree/models.py:62
 msgid "File comment"
@@ -156,15 +161,15 @@ msgstr ""
 #: templates/js/stock.js:554 templates/js/stock.js:956
 #: templates/js/stock.js:1015
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: InvenTree/models.py:115
 msgid "Description (optional)"
-msgstr ""
+msgstr "Description (facultative)"
 
 #: InvenTree/models.py:123
 msgid "parent"
-msgstr ""
+msgstr "parent"
 
 #: InvenTree/settings.py:491
 msgid "English"
@@ -292,7 +297,7 @@ msgstr ""
 
 #: InvenTree/views.py:587
 msgid "Delete Item"
-msgstr ""
+msgstr "Supprimer cet élément"
 
 #: InvenTree/views.py:636
 msgid "Check box to confirm item deletion"
@@ -2022,8 +2027,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -5896,8 +5900,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7258,3 +7261,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
