@@ -228,7 +228,7 @@ class StockItem(MPTTModel):
         super(StockItem, self).validate_unique(exclude)
         
         # If the serial number is set, make sure it is not a duplicate
-        if self.serial is not None:
+        if self.serial:
             # Query to look for duplicate serial numbers
             parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
             stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
@@ -281,7 +281,7 @@ class StockItem(MPTTModel):
 
             if self.part is not None:
                 # A part with a serial number MUST have the quantity set to 1
-                if self.serial is not None:
+                if self.serial:
                     if self.quantity > 1:
                         raise ValidationError({
                             'quantity': _('Quantity must be 1 for item with a serial number'),
