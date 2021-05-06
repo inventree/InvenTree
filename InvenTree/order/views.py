@@ -1183,6 +1183,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 line.receive_quantity,
                 self.request.user,
                 status=line.status_code,
+                purchase_price=line.purchase_price,
             )
 
 
@@ -1403,6 +1404,14 @@ class OrderParts(AjaxView):
                 part.order_supplier = supplier_part.id if supplier_part else None
                 part.order_quantity = quantity
 
+                # set supplier-price
+                if supplier_part:
+                    supplier_price = supplier_part.get_price(quantity)
+                    if supplier_price:
+                        part.purchase_price = supplier_price / quantity
+                if not hasattr(part, 'purchase_price'):
+                    part.purchase_price = None
+
                 self.parts.append(part)
 
                 if supplier_part is None:
@@ -1502,7 +1511,10 @@ class OrderParts(AjaxView):
                         sp=item.order_supplier))
                     continue
 
-                order.add_line_item(supplier_part, quantity)
+                # get purchase price
+                purchase_price = item.purchase_price
+
+                order.add_line_item(supplier_part, quantity, purchase_price=purchase_price)
 
 
 class POLineItemCreate(AjaxCreateView):
@@ -1802,7 +1814,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 except StockItem.DoesNotExist:
                     self.form.add_error(
                         'serials',
-                        _('No matching item for serial') + f" '{serial}'"
+                        _('No matching item for serial {serial}').format(serial=serial)
                     )
                     continue
 
@@ -1812,7 +1824,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 if not stock_item.in_stock:
                     self.form.add_error(
                         'serials',
-                        f"'{serial}' " + _("is not in stock")
+                        _('{serial} is not in stock').format(serial=serial)
                     )
                     continue
 
@@ -1820,7 +1832,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 if stock_item.is_allocated():
                     self.form.add_error(
                         'serials',
-                        f"'{serial}' " + _("already allocated to an order")
+                        _('{serial} already allocated to an order').format(serial=serial)
                     )
                     continue
 
