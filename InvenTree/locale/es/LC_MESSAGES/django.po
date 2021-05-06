@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 22:59+0000\n"
-"PO-Revision-Date: 2021-04-21 09:33\n"
+"POT-Creation-Date: 2021-05-05 07:55+0000\n"
+"PO-Revision-Date: 2021-05-06 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -11,6 +11,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 138\n"
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
@@ -33,7 +38,7 @@ msgstr ""
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: InvenTree/forms.py:126
 msgid "Confirm delete"
@@ -53,11 +58,11 @@ msgstr ""
 
 #: InvenTree/forms.py:167
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmar la contraseña"
 
 #: InvenTree/forms.py:168
 msgid "Confirm new password"
-msgstr ""
+msgstr "Confirmar contraseña nueva"
 
 #: InvenTree/forms.py:203
 msgid "Apply Theme"
@@ -111,7 +116,7 @@ msgstr ""
 
 #: InvenTree/models.py:62 templates/attachment_table.html:16
 msgid "Comment"
-msgstr ""
+msgstr "Comentario"
 
 #: InvenTree/models.py:62
 msgid "File comment"
@@ -121,7 +126,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1041
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: InvenTree/models.py:72
 msgid "upload date"
@@ -133,7 +138,7 @@ msgstr ""
 #: templates/InvenTree/search.html:289 templates/js/part.js:110
 #: templates/js/part.js:553 templates/js/stock.js:944
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: InvenTree/models.py:114 build/models.py:134
 #: build/templates/build/detail.html:21 company/models.py:342
@@ -156,7 +161,7 @@ msgstr ""
 #: templates/js/stock.js:554 templates/js/stock.js:956
 #: templates/js/stock.js:1015
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: InvenTree/models.py:115
 msgid "Description (optional)"
@@ -168,23 +173,23 @@ msgstr ""
 
 #: InvenTree/settings.py:491
 msgid "English"
-msgstr ""
+msgstr "Inglés"
 
 #: InvenTree/settings.py:492
 msgid "French"
-msgstr ""
+msgstr "Francés"
 
 #: InvenTree/settings.py:493
 msgid "German"
-msgstr ""
+msgstr "Alemán"
 
 #: InvenTree/settings.py:494
 msgid "Polish"
-msgstr ""
+msgstr "Polaco"
 
 #: InvenTree/settings.py:495
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: InvenTree/status.py:93
 msgid "Background worker check failed"
@@ -209,17 +214,17 @@ msgstr ""
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:239
 msgid "Complete"
-msgstr ""
+msgstr "Terminado"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:238
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:188
 msgid "Lost"
-msgstr ""
+msgstr "Perdida"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:190
@@ -233,19 +238,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:184
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:185
 msgid "Attention needed"
-msgstr ""
+msgstr "Atención necesaria"
 
 #: InvenTree/status_codes.py:186
 msgid "Damaged"
-msgstr ""
+msgstr "Dañado"
 
 #: InvenTree/status_codes.py:187
 msgid "Destroyed"
-msgstr ""
+msgstr "Destruido"
 
 #: InvenTree/status_codes.py:189
 msgid "Rejected"
@@ -253,7 +258,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:237
 msgid "Production"
-msgstr ""
+msgstr "Producción"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
@@ -292,7 +297,7 @@ msgstr ""
 
 #: InvenTree/views.py:587
 msgid "Delete Item"
-msgstr ""
+msgstr "Eliminar elemento"
 
 #: InvenTree/views.py:636
 msgid "Check box to confirm item deletion"
@@ -304,7 +309,7 @@ msgstr ""
 
 #: InvenTree/views.py:662 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
-msgstr ""
+msgstr "Configurar Contraseña"
 
 #: InvenTree/views.py:681
 msgid "Password fields must match"
@@ -312,7 +317,7 @@ msgstr ""
 
 #: InvenTree/views.py:887 templates/navbar.html:95
 msgid "System Information"
-msgstr ""
+msgstr "Información del sistema"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
@@ -406,7 +411,7 @@ msgstr ""
 #: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
 #: templates/js/stock.js:1033 templates/js/stock.js:1271
 msgid "Quantity"
-msgstr ""
+msgstr "Cantidad"
 
 #: build/forms.py:49
 msgid "Number of items to build"
@@ -418,7 +423,7 @@ msgstr ""
 
 #: build/forms.py:95 order/forms.py:233 stock/forms.py:118
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Números de serie"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
@@ -452,7 +457,7 @@ msgstr ""
 #: templates/js/barcode.js:531 templates/js/build.js:490
 #: templates/js/stock.js:641
 msgid "Location"
-msgstr ""
+msgstr "Unicación"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
@@ -466,7 +471,7 @@ msgstr ""
 #: templates/js/order.js:187 templates/js/order.js:285
 #: templates/js/stock.js:628 templates/js/stock.js:1279
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: build/forms.py:216
 msgid "Build output stock status"
@@ -486,7 +491,7 @@ msgstr ""
 
 #: build/forms.py:252
 msgid "Confirm cancel"
-msgstr ""
+msgstr "Confirmar cancelación"
 
 #: build/forms.py:252 build/views.py:66
 msgid "Confirm build cancellation"
@@ -524,7 +529,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:565 templates/js/build.js:1008
 msgid "Reference"
-msgstr ""
+msgstr "Referencia"
 
 #: build/models.py:137
 msgid "Brief description of the build"
@@ -562,7 +567,7 @@ msgstr ""
 #: templates/js/part.js:233 templates/js/part.js:338 templates/js/stock.js:523
 #: templates/js/stock.js:1343
 msgid "Part"
-msgstr ""
+msgstr "Parte"
 
 #: build/models.py:160
 msgid "Select part to build"
@@ -602,7 +607,7 @@ msgstr ""
 
 #: build/models.py:198
 msgid "Completed items"
-msgstr ""
+msgstr "Elementos completados"
 
 #: build/models.py:200
 msgid "Number of stock items which have been completed"
@@ -655,7 +660,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:138 part/models.py:886
 #: report/templates/report/inventree_build_order_base.html:159
 msgid "Responsible"
-msgstr ""
+msgstr "Responsable"
 
 #: build/models.py:251
 msgid "User responsible for this build order"
@@ -692,7 +697,7 @@ msgstr ""
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:333 templates/js/stock.js:128 templates/js/stock.js:671
 msgid "Notes"
-msgstr ""
+msgstr "Notas"
 
 #: build/models.py:262
 msgid "Extra build notes"
@@ -837,7 +842,7 @@ msgstr ""
 #: stock/models.py:420 stock/templates/stock/item_base.html:238
 #: templates/js/build.js:474
 msgid "Serial Number"
-msgstr ""
+msgstr "Número de serie"
 
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
@@ -952,7 +957,7 @@ msgstr ""
 #: build/templates/build/build_base.html:147
 #: build/templates/build/detail.html:64
 msgid "Progress"
-msgstr ""
+msgstr "Progreso"
 
 #: build/templates/build/build_base.html:160
 #: build/templates/build/detail.html:84 order/models.py:677
@@ -1105,7 +1110,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:46 stock/forms.py:169 stock/forms.py:375
 msgid "Destination"
-msgstr ""
+msgstr "Destinación"
 
 #: build/templates/build/detail.html:53
 msgid "Destination location not specified"
@@ -1116,7 +1121,7 @@ msgstr ""
 #: templates/js/stock.js:1286 templates/js/table_filters.js:107
 #: templates/js/table_filters.js:201
 msgid "Batch"
-msgstr ""
+msgstr "Lote"
 
 #: build/templates/build/detail.html:116
 #: order/templates/order/order_base.html:111
@@ -1130,7 +1135,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:132 templates/js/build.js:756
 msgid "Completed"
-msgstr ""
+msgstr "Completados"
 
 #: build/templates/build/detail.html:136
 msgid "Build not complete"
@@ -1169,7 +1174,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:14
 #: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:15
 msgid "Details"
-msgstr ""
+msgstr "Detalles"
 
 #: build/templates/build/navbar.html:21 build/templates/build/navbar.html:24
 #: build/views.py:91
@@ -1205,7 +1210,7 @@ msgstr ""
 #: part/templates/part/notes.html:27 stock/templates/stock/item_base.html:470
 #: stock/templates/stock/item_notes.html:26
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: build/templates/build/unallocate.html:10
 msgid "Are you sure you wish to unallocate all stock for this build?"
@@ -1610,7 +1615,7 @@ msgstr ""
 
 #: common/models.py:255 part/templates/part/detail.html:121
 msgid "days"
-msgstr ""
+msgstr "días"
 
 #: common/models.py:260
 msgid "Build Expired Stock"
@@ -1787,7 +1792,7 @@ msgstr ""
 #: company/models.py:107 company/templates/company/company_base.html:70
 #: company/templates/company/detail.html:33 templates/js/company.js:60
 msgid "Website"
-msgstr ""
+msgstr "Página web"
 
 #: company/models.py:107
 msgid "Company website URL"
@@ -1803,15 +1808,15 @@ msgstr ""
 
 #: company/models.py:114
 msgid "Phone number"
-msgstr ""
+msgstr "Teléfono"
 
 #: company/models.py:115
 msgid "Contact phone number"
-msgstr ""
+msgstr "Teléfono de contacto"
 
 #: company/models.py:118 company/templates/company/company_base.html:91
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: company/models.py:118
 msgid "Contact email address"
@@ -1819,7 +1824,7 @@ msgstr ""
 
 #: company/models.py:121 company/templates/company/company_base.html:98
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 #: company/models.py:122
 msgid "Point of contact"
@@ -1883,7 +1888,7 @@ msgstr ""
 #: templates/js/company.js:44 templates/js/company.js:165
 #: templates/js/company.js:289
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricante"
 
 #: company/models.py:337
 msgid "URL for external manufacturer part link"
@@ -1902,7 +1907,7 @@ msgstr ""
 #: templates/js/company.js:48 templates/js/company.js:263
 #: templates/js/order.js:170
 msgid "Supplier"
-msgstr ""
+msgstr "Proveedor"
 
 #: company/models.py:470
 msgid "Select supplier"
@@ -1943,7 +1948,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
-msgstr ""
+msgstr "Nota"
 
 #: company/models.py:504
 msgid "base cost"
@@ -2013,7 +2018,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:84
 msgid "Phone"
-msgstr ""
+msgstr "Teléfono"
 
 #: company/templates/company/delete.html:7
 #, python-format
@@ -2022,8 +2027,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -2044,7 +2048,7 @@ msgstr ""
 #: stock/models.py:416 stock/templates/stock/item_base.html:251
 #: templates/js/company.js:40 templates/js/order.js:267
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #: company/templates/company/detail_manufacturer_part.html:11
 #: templates/InvenTree/search.html:149
@@ -2067,7 +2071,7 @@ msgstr ""
 #: part/templates/part/manufacturer.html:22
 #: part/templates/part/supplier.html:20
 msgid "Options"
-msgstr ""
+msgstr "Opciones"
 
 #: company/templates/company/detail_manufacturer_part.html:33
 #: company/templates/company/detail_supplier_part.html:32
@@ -2117,7 +2121,7 @@ msgstr ""
 #: part/templates/part/category.html:114 part/templates/part/category.html:128
 #: part/templates/part/stock.html:54 stock/templates/stock/location.html:163
 msgid "Export"
-msgstr ""
+msgstr "Exportar"
 
 #: company/templates/company/detail_supplier_part.html:11
 #: company/templates/company/manufacturer_part_navbar.html:11
@@ -2234,7 +2238,7 @@ msgstr ""
 #: part/templates/part/related.html:44 part/templates/part/supplier.html:22
 #: stock/views.py:1002 users/models.py:187
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: company/templates/company/manufacturer_part_suppliers.html:48
 #: part/templates/part/supplier.html:51
@@ -2386,7 +2390,7 @@ msgstr ""
 #: part/templates/part/navbar.html:75 templates/InvenTree/search.html:306
 #: templates/navbar.html:36
 msgid "Manufacturers"
-msgstr ""
+msgstr "Fabricantes"
 
 #: company/views.py:77 templates/InvenTree/search.html:336
 #: templates/navbar.html:45
@@ -5896,8 +5900,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7258,3 +7261,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
