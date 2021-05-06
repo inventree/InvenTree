@@ -61,7 +61,7 @@ class POSerializer(InvenTreeModelSerializer):
         return queryset
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
-    
+
     line_items = serializers.IntegerField(read_only=True)
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -70,7 +70,7 @@ class POSerializer(InvenTreeModelSerializer):
 
     class Meta:
         model = PurchaseOrder
-        
+
         fields = [
             'pk',
             'issue_date',
@@ -89,7 +89,7 @@ class POSerializer(InvenTreeModelSerializer):
             'target_date',
             'notes',
         ]
-        
+
         read_only_fields = [
             'reference',
             'status'
@@ -110,10 +110,10 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
     received = serializers.FloatField()
-    
+
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
-    
+
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
     class Meta:
@@ -144,7 +144,7 @@ class POAttachmentSerializer(InvenTreeModelSerializer):
 
     class Meta:
         model = PurchaseOrderAttachment
-        
+
         fields = [
             'pk',
             'order',
@@ -270,7 +270,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
 
         if allocations is not True:
             self.fields.pop('allocations')
-            
+
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
@@ -306,7 +306,7 @@ class SOAttachmentSerializer(InvenTreeModelSerializer):
 
     class Meta:
         model = SalesOrderAttachment
-        
+
         fields = [
             'pk',
             'order',

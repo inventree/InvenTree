@@ -134,7 +134,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    
+
     stock = serializers.FloatField(source='total_stock')
 
     class Meta:
@@ -232,7 +232,7 @@ class PartSerializer(InvenTreeModelSerializer):
                 output_field=models.DecimalField(),
             )
         )
-        
+
         # Filter to limit orders to "open"
         order_filter = Q(
             order__status__in=PurchaseOrderStatus.OPEN
@@ -259,7 +259,7 @@ class PartSerializer(InvenTreeModelSerializer):
                 output_field=models.DecimalField(),
             ),
         )
-        
+
         return queryset
 
     def get_starred(self, part):
@@ -358,7 +358,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
-    
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     sub_part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(component=True))

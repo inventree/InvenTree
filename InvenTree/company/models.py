@@ -152,7 +152,7 @@ class Company(models.Model):
     def currency_code(self):
         """
         Return the currency code associated with this company.
-        
+
         - If the currency code is invalid, use the default currency
         - If the currency code is not specified, use the default currency
         """
@@ -187,7 +187,7 @@ class Company(models.Model):
             return getMediaUrl(self.image.thumbnail.url)
         else:
             return getBlankThumbnail()
-            
+
     @property
     def manufactured_part_count(self):
         """ The number of parts manufactured by this company """
@@ -302,7 +302,7 @@ class ManufacturerPart(models.Model):
 
     class Meta:
         unique_together = ('part', 'manufacturer', 'MPN')
-    
+
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='manufacturer_parts',
                              verbose_name=_('Base Part'),
@@ -311,7 +311,7 @@ class ManufacturerPart(models.Model):
                              },
                              help_text=_('Select part'),
                              )
-    
+
     manufacturer = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -359,7 +359,7 @@ class ManufacturerPart(models.Model):
         if not manufacturer_part:
             manufacturer_part = ManufacturerPart(part=part, manufacturer=manufacturer, MPN=mpn, description=description, link=link)
             manufacturer_part.save()
-            
+
         return manufacturer_part
 
     def __str__(self):
@@ -414,7 +414,7 @@ class SupplierPart(models.Model):
             MPN = kwargs.pop('MPN')
         else:
             MPN = None
-        
+
         if manufacturer or MPN:
             if not self.manufacturer_part:
                 # Create ManufacturerPart
@@ -429,7 +429,7 @@ class SupplierPart(models.Model):
                     manufacturer_part_id = self.manufacturer_part.id
                 except AttributeError:
                     manufacturer_part_id = None
-                
+
                 if manufacturer_part_id:
                     try:
                         (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
@@ -504,7 +504,7 @@ class SupplierPart(models.Model):
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
-    
+
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
@@ -613,7 +613,7 @@ class SupplierPart(models.Model):
             pb_cost = pb_min.convert_to(currency)
             # Trigger cost calculation using smallest price break
             pb_found = True
-        
+
         # Convert quantity to decimal.Decimal format
         quantity = decimal.Decimal(f'{quantity}')
 
@@ -669,7 +669,7 @@ class SupplierPart(models.Model):
 
         if self.manufacturer_string:
             s = s + ' | ' + self.manufacturer_string
-        
+
         return s
 
 

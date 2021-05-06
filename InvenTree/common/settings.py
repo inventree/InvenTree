@@ -19,7 +19,7 @@ def currency_code_default():
 
     if code not in CURRENCIES:
         code = 'USD'
-    
+
     return code
 
 

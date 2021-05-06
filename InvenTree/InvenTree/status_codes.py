@@ -16,7 +16,7 @@ class StatusCode:
         # If the key cannot be found, pass it back
         if key not in cls.options.keys():
             return key
-        
+
         value = cls.options.get(key, key)
         color = cls.colors.get(key, 'grey')
 

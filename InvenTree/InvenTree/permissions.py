@@ -17,7 +17,7 @@ class RolePermission(permissions.BasePermission):
     - PUT
     - PATCH
     - DELETE
-    
+
     Specify the required "role" using the role_required attribute.
 
     e.g.

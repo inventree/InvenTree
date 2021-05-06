@@ -43,7 +43,7 @@ class PartConfig(AppConfig):
                 if part.image:
                     url = part.image.thumbnail.name
                     loc = os.path.join(settings.MEDIA_ROOT, url)
-                    
+
                     if not os.path.exists(loc):
                         logger.info("InvenTree: Generating thumbnail for Part '{p}'".format(p=part.name))
                         try:

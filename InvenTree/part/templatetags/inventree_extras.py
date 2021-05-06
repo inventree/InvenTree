@@ -47,7 +47,7 @@ def str2bool(x, *args, **kwargs):
 def inrange(n, *args, **kwargs):
     """ Return range(n) for iterating through a numeric quantity """
     return range(n)
-    
+
 
 @register.simple_tag()
 def multiply(x, y, *args, **kwargs):
@@ -59,7 +59,7 @@ def multiply(x, y, *args, **kwargs):
 def add(x, y, *args, **kwargs):
     """ Add two numbers together """
     return x + y
-    
+
 
 @register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
@@ -177,7 +177,7 @@ def authorized_owners(group):
     except TypeError:
         # group.get_users returns None
         pass
-    
+
     return owners
 
 

@@ -52,7 +52,7 @@ class ReportFileUpload(FileSystemStorage):
     For example, a snippet or asset file is referenced in a template by filename,
     and we do not want that filename to change when we upload a new *version*
     of the snippet or asset file.
-    
+
     This uploader class performs the following pseudo-code function:
 
     - If the model is *new*, proceed as normal
@@ -408,7 +408,7 @@ class PurchaseOrderReport(ReportTemplateBase):
     @classmethod
     def getSubdir(cls):
         return 'purchaseorder'
-    
+
     filters = models.CharField(
         blank=True,
         max_length=250,
@@ -479,7 +479,7 @@ def rename_snippet(instance, filename):
     if str(filename) == str(instance.snippet):
         fullpath = os.path.join(settings.MEDIA_ROOT, path)
         fullpath = os.path.abspath(fullpath)
-       
+
         if os.path.exists(fullpath):
             logger.info(f"Deleting existing snippet file: '{filename}'")
             os.remove(fullpath)

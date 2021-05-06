@@ -35,7 +35,7 @@ def generateTestKey(test_name):
     """
     Generate a test 'key' for a given test name.
     This must not have illegal chars as it will be used for dict lookup in a template.
-    
+
     Tests must be named such that they will have unique keys.
     """
 
@@ -102,7 +102,7 @@ def TestIfImageURL(url):
         '.tif', '.tiff',
         '.webp', '.gif',
     ]
-        
+
 
 def str2bool(text, test=True):
     """ Test if a string 'looks' like a boolean value.
@@ -137,10 +137,10 @@ def isNull(text):
     """
     Test if a string 'looks' like a null value.
     This is useful for querying the API against a null key.
-    
+
     Args:
         text: Input text
-    
+
     Returns:
         True if the text looks like a null value
     """
@@ -157,7 +157,7 @@ def normalize(d):
         d = Decimal(d)
 
     d = d.normalize()
-    
+
     # Ref: https://docs.python.org/3/library/decimal.html
     return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
 
@@ -165,14 +165,14 @@ def normalize(d):
 def increment(n):
     """
     Attempt to increment an integer (or a string that looks like an integer!)
-    
+
     e.g.
 
     001 -> 002
     2 -> 3
     AB01 -> AB02
     QQQ -> QQQ
-    
+
     """
 
     value = str(n).strip()
@@ -314,7 +314,7 @@ def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
 
 def GetExportFormats():
     """ Return a list of allowable file formats for exporting data """
-    
+
     return [
         'csv',
         'tsv',
@@ -327,7 +327,7 @@ def GetExportFormats():
 
 def DownloadFile(data, filename, content_type='application/text'):
     """ Create a dynamic file for the user to download.
-    
+
     Args:
         data: Raw file data (string or bytes)
         filename: Filename for the file download
@@ -525,7 +525,7 @@ def addUserPermission(user, permission):
     """
     Shortcut function for adding a certain permission to a user.
     """
-    
+
     perm = Permission.objects.get(codename=permission)
     user.user_permissions.add(perm)
 
@@ -576,7 +576,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
             continue
 
         num = int(f.split('_')[0])
-        
+
         if oldest_file is None or num < oldest_num:
             oldest_num = num
             oldest_file = f
@@ -585,7 +585,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
-    
+
 
 def getNewestMigrationFile(app, exclude_extension=True):
     """

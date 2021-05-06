@@ -62,7 +62,7 @@ class StockItemReportMixin:
         """
         Return a list of requested stock items
         """
-        
+
         items = []
 
         params = self.request.query_params
@@ -101,7 +101,7 @@ class BuildReportMixin:
         params = self.request.query_params
 
         for key in ['build', 'build[]', 'builds', 'builds[]']:
-            
+
             if key in params:
                 builds = params.getlist(key, [])
 
@@ -268,7 +268,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     serializer_class = TestReportSerializer
 
     def filter_queryset(self, queryset):
-        
+
         queryset = super().filter_queryset(queryset)
 
         # List of StockItem objects to match against
@@ -342,7 +342,7 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, R
         items = self.get_items()
 
         return self.print(request, items)
-       
+
 
 class BOMReportList(ReportListView, PartReportMixin):
     """
@@ -459,7 +459,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
 
             We need to compare the 'filters' string of each report,
             and see if it matches against each of the specified parts
-            
+
             # TODO: This code needs some refactoring!
             """
 
@@ -546,7 +546,7 @@ class POReportList(ReportListView, OrderReportMixin):
             valid_report_ids = set()
 
             for report in queryset.all():
-                
+
                 matches = True
 
                 # Filter string defined for the report object
@@ -565,7 +565,7 @@ class POReportList(ReportListView, OrderReportMixin):
                     except FieldError:
                         matches = False
                         break
-                
+
                 if matches:
                     valid_report_ids.add(report.pk)
                 else:
@@ -629,7 +629,7 @@ class SOReportList(ReportListView, OrderReportMixin):
             valid_report_ids = set()
 
             for report in queryset.all():
-                
+
                 matches = True
 
                 # Filter string defined for the report object
@@ -648,7 +648,7 @@ class SOReportList(ReportListView, OrderReportMixin):
                     except FieldError:
                         matches = False
                         break
-                
+
                 if matches:
                     valid_report_ids.add(report.pk)
                 else:

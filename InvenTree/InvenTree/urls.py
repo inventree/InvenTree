@@ -81,7 +81,7 @@ settings_urls = [
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^i18n/?', include('django.conf.urls.i18n')),
-   
+
     url(r'^global/?', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
     url(r'^report/?', SettingsView.as_view(template_name='InvenTree/settings/report.html'), name='settings-report'),
     url(r'^category/?', SettingCategorySelectView.as_view(), name='settings-category'),
@@ -137,7 +137,7 @@ urlpatterns = [
 
     url(r'^login/?', auth_views.LoginView.as_view(), name='login'),
     url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
-    
+
     url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),

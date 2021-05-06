@@ -131,7 +131,7 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
 class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
-    
+
     Attributes:
         parent: Link to another StockItem from which this StockItem was created
         uid: Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode)
@@ -191,7 +191,7 @@ class StockItem(MPTTModel):
             add_note = False
 
         user = kwargs.pop('user', None)
-        
+
         add_note = add_note and kwargs.pop('note', True)
 
         super(StockItem, self).save(*args, **kwargs)
@@ -226,7 +226,7 @@ class StockItem(MPTTModel):
         """
 
         super(StockItem, self).validate_unique(exclude)
-        
+
         # If the serial number is set, make sure it is not a duplicate
         if self.serial is not None:
             # Query to look for duplicate serial numbers
@@ -421,7 +421,7 @@ class StockItem(MPTTModel):
         max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
- 
+
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
         max_length=125, blank=True,
@@ -727,7 +727,7 @@ class StockItem(MPTTModel):
         items = StockItem.objects.filter(belongs_to=self)
 
         for item in items:
-            
+
             # Prevent duplication or recursion
             if item == self or item in installed:
                 continue
@@ -906,7 +906,7 @@ class StockItem(MPTTModel):
 
         Brief automated note detailing a movement or quantity change.
         """
-        
+
         track = StockItemTracking.objects.create(
             item=self,
             title=title,
@@ -970,7 +970,7 @@ class StockItem(MPTTModel):
 
         # Create a new stock item for each unique serial number
         for serial in serials:
-            
+
             # Create a copy of this StockItem
             new_item = StockItem.objects.get(pk=self.pk)
             new_item.quantity = 1
@@ -1001,7 +1001,7 @@ class StockItem(MPTTModel):
         """ Copy stock history from another StockItem """
 
         for item in other.tracking_info.all():
-            
+
             item.item = self
             item.pk = None
             item.save()
@@ -1151,7 +1151,7 @@ class StockItem(MPTTModel):
     @transaction.atomic
     def updateQuantity(self, quantity):
         """ Update stock quantity for this item.
-        
+
         If the quantity has reached zero, this StockItem will be deleted.
 
         Returns:
@@ -1174,7 +1174,7 @@ class StockItem(MPTTModel):
         self.quantity = quantity
 
         if quantity == 0 and self.delete_on_deplete and self.can_delete():
-            
+
             # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
             self.delete()
             return False
@@ -1584,7 +1584,7 @@ class StockItemTestResult(models.Model):
     with automated testing setups.
 
     Multiple results can be recorded against any given test, allowing tests to be run many times.
-    
+
     Attributes:
         stock_item: Link to StockItem
         test: Test name (simple string matching)
@@ -1613,7 +1613,7 @@ class StockItemTestResult(models.Model):
 
         for template in templates:
             if key == template.key:
-                
+
                 if template.requires_value:
                     if not self.value:
                         raise ValidationError({

@@ -130,7 +130,7 @@ def validate_overage(value):
 
         if i < 0:
             raise ValidationError(_("Overage value must not be negative"))
-        
+
         # Looks like an integer!
         return True
     except ValueError:
