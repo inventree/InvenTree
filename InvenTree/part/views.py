@@ -2051,6 +2051,10 @@ class PartPricing(AjaxView):
 
         return ctx
 
+    def get_initials(self):
+        """ returns initials for form """
+        return {'quantity': self.get_quantity()}
+
     def get(self, request, *args, **kwargs):
 
         quantity = self.get_quantity()
@@ -2063,8 +2067,7 @@ class PartPricing(AjaxView):
         quantity = self.get_quantity()
 
         # Retain quantity value set by user
-        form = self.form_class()
-        form.fields['quantity'].initial = quantity
+        form = self.form_class(initial=self.get_initials())
 
         # TODO - How to handle pricing in different currencies?
         currency = None
