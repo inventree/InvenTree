@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 07:55+0000\n"
+"POT-Creation-Date: 2021-05-06 10:31+0000\n"
 "PO-Revision-Date: 2021-05-06 02:54\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
 
-#: InvenTree/models.py:59 stock/models.py:1662
+#: InvenTree/models.py:59 stock/models.py:1658
 msgid "Attachment"
 msgstr ""
 
@@ -275,7 +275,8 @@ msgstr ""
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
-msgid "Reference must match pattern"
+#, python-brace-format
+msgid "Reference must match pattern {pattern}"
 msgstr ""
 
 #: InvenTree/validators.py:113
@@ -405,7 +406,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:91
 #: report/templates/report/inventree_test_report_base.html:77
-#: stock/forms.py:175 stock/forms.py:308 stock/models.py:1566
+#: stock/forms.py:175 stock/forms.py:308 stock/models.py:1562
 #: stock/templates/stock/item_base.html:244
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
@@ -693,7 +694,7 @@ msgstr ""
 #: part/templates/part/navbar.html:128
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
-#: stock/models.py:498 stock/models.py:1558 stock/models.py:1668
+#: stock/models.py:498 stock/models.py:1554 stock/models.py:1664
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:333 templates/js/stock.js:128 templates/js/stock.js:671
 msgid "Notes"
@@ -1236,7 +1237,7 @@ msgstr ""
 msgid "Maximum output quantity is "
 msgstr ""
 
-#: build/views.py:184 stock/models.py:969 stock/views.py:1789
+#: build/views.py:184 stock/views.py:1789
 msgid "Serial numbers already exist"
 msgstr ""
 
@@ -1833,7 +1834,7 @@ msgstr ""
 #: company/models.py:124 company/models.py:336 company/models.py:488
 #: order/models.py:103 part/models.py:743
 #: report/templates/report/inventree_build_order_base.html:165
-#: stock/models.py:1560 templates/js/company.js:188 templates/js/company.js:318
+#: stock/models.py:1556 templates/js/company.js:188 templates/js/company.js:318
 #: templates/js/part.js:431
 msgid "Link"
 msgstr ""
@@ -2027,7 +2028,8 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid "There are %(count)s parts sourced from this company.<br>\n"
+msgid ""
+"There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -2417,6 +2419,11 @@ msgstr ""
 msgid "Image size exceeds maximum allowable size for download"
 msgstr ""
 
+#: company/views.py:205 part/views.py:887
+#, python-brace-format
+msgid "Invalid response: {code}"
+msgstr ""
+
 #: company/views.py:214 part/views.py:896
 msgid "Supplied URL is not a valid image file"
 msgstr ""
@@ -2675,6 +2682,11 @@ msgstr ""
 
 #: order/models.py:369
 msgid "Received items"
+msgstr ""
+
+#: order/models.py:370
+#, python-brace-format
+msgid "Received {n} items against order {name}"
 msgstr ""
 
 #: order/models.py:451
@@ -3275,15 +3287,18 @@ msgid "Select line item"
 msgstr ""
 
 #: order/views.py:1410
-msgid "No matching item for serial"
+#, python-brace-format
+msgid "No matching item for serial {serial}"
 msgstr ""
 
 #: order/views.py:1420
-msgid "is not in stock"
+#, python-brace-format
+msgid "{serial} is not in stock"
 msgstr ""
 
 #: order/views.py:1428
-msgid "already allocated to an order"
+#, python-brace-format
+msgid "{serial} already allocated to an order"
 msgstr ""
 
 #: order/views.py:1482
@@ -4319,7 +4334,7 @@ msgstr ""
 
 #: part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
-#: stock/models.py:1655 templates/InvenTree/settings/header.html:8
+#: stock/models.py:1651 templates/InvenTree/settings/header.html:8
 #: templates/js/stock.js:124
 msgid "Value"
 msgstr ""
@@ -4875,12 +4890,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:1643
+#: stock/models.py:1639
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:89
-#: stock/models.py:1649
+#: stock/models.py:1645
 msgid "Result"
 msgstr ""
 
@@ -5003,6 +5018,11 @@ msgstr ""
 
 #: stock/models.py:55 stock/models.py:514
 msgid "Select Owner"
+msgstr ""
+
+#: stock/models.py:201
+#, python-brace-format
+msgid "Created new stock item for {part}"
 msgstr ""
 
 #: stock/models.py:205
@@ -5128,31 +5148,38 @@ msgid "Assigned to Customer"
 msgstr ""
 
 #: stock/models.py:616
-msgid "Manually assigned to customer"
+#, python-brace-format
+msgid "Manually assigned to customer {name}"
 msgstr ""
 
 #: stock/models.py:629
-msgid "Returned from customer"
+#, python-brace-format
+msgid "Returned from customer {name}"
 msgstr ""
 
 #: stock/models.py:631
-msgid "Returned to location"
+#, python-brace-format
+msgid "Returned to location {loc}"
 msgstr ""
 
 #: stock/models.py:792
-msgid "Installed into stock item"
+#, python-brace-format
+msgid "Installed into stock item {pk}"
 msgstr ""
 
 #: stock/models.py:800
-msgid "Installed stock item"
+#, python-brace-format
+msgid "Installed stock item {pk}"
 msgstr ""
 
 #: stock/models.py:824
-msgid "Uninstalled stock item"
+#, python-brace-format
+msgid "Uninstalled stock item {pk}"
 msgstr ""
 
 #: stock/models.py:843
-msgid "Uninstalled into location"
+#, python-brace-format
+msgid "Uninstalled into location {loc}"
 msgstr ""
 
 #: stock/models.py:944
@@ -5176,6 +5203,11 @@ msgstr ""
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
+#: stock/models.py:969
+#, python-brace-format
+msgid "Serial numbers already exist: {exists}"
+msgstr ""
+
 #: stock/models.py:994
 msgid "Add serial number"
 msgstr ""
@@ -5189,51 +5221,81 @@ msgstr ""
 msgid "Split from existing stock"
 msgstr ""
 
+#: stock/models.py:1077
+#, python-brace-format
+msgid "Split {n} items"
+msgstr ""
+
 #: stock/models.py:1113
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:1556
+#: stock/models.py:1135
+#, python-brace-format
+msgid "Moved to {loc_new} (from {loc_old})"
+msgstr ""
+
+#: stock/models.py:1137
+#, python-brace-format
+msgid "Moved to {loc_new}"
+msgstr ""
+
+#: stock/models.py:1205
+#, python-brace-format
+msgid "Counted {n} items"
+msgstr ""
+
+#: stock/models.py:1238
+#, python-brace-format
+msgid "Added {n} items"
+msgstr ""
+
+#: stock/models.py:1268
+#, python-brace-format
+msgid "Removed {n1} items"
+msgstr ""
+
+#: stock/models.py:1552
 msgid "Title"
 msgstr ""
 
-#: stock/models.py:1556
+#: stock/models.py:1552
 msgid "Tracking entry title"
 msgstr ""
 
-#: stock/models.py:1558
+#: stock/models.py:1554
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:1560
+#: stock/models.py:1556
 msgid "Link to external page for further information"
 msgstr ""
 
-#: stock/models.py:1620
+#: stock/models.py:1616
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:1626
+#: stock/models.py:1622
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:1644
+#: stock/models.py:1640
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:1650 templates/js/table_filters.js:212
+#: stock/models.py:1646 templates/js/table_filters.js:212
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:1656
+#: stock/models.py:1652
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:1663
+#: stock/models.py:1659
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:1669
+#: stock/models.py:1665
 msgid "Test notes"
 msgstr ""
 
@@ -5900,7 +5962,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7261,4 +7324,3 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
-

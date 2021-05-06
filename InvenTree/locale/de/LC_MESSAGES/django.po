@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 07:55+0000\n"
+"POT-Creation-Date: 2021-05-06 10:31+0000\n"
 "PO-Revision-Date: 2021-05-06 02:54\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -106,7 +106,7 @@ msgstr "Keine Seriennummern gefunden"
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
 
-#: InvenTree/models.py:59 stock/models.py:1662
+#: InvenTree/models.py:59 stock/models.py:1658
 msgid "Attachment"
 msgstr "Anhang"
 
@@ -275,7 +275,9 @@ msgstr "IPN muss zu Regex-Muster  {pat} passen"
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
-msgid "Reference must match pattern"
+#, fuzzy, python-brace-format
+#| msgid "Reference must match pattern"
+msgid "Reference must match pattern {pattern}"
 msgstr "Referenz muss zu Regex-Muster passen"
 
 #: InvenTree/validators.py:113
@@ -405,7 +407,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:91
 #: report/templates/report/inventree_test_report_base.html:77
-#: stock/forms.py:175 stock/forms.py:308 stock/models.py:1566
+#: stock/forms.py:175 stock/forms.py:308 stock/models.py:1562
 #: stock/templates/stock/item_base.html:244
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
@@ -693,7 +695,7 @@ msgstr "Link zu einer externen URL"
 #: part/templates/part/navbar.html:128
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
-#: stock/models.py:498 stock/models.py:1558 stock/models.py:1668
+#: stock/models.py:498 stock/models.py:1554 stock/models.py:1664
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:333 templates/js/stock.js:128 templates/js/stock.js:671
 msgid "Notes"
@@ -1236,7 +1238,7 @@ msgstr "Endprodukt anlegen"
 msgid "Maximum output quantity is "
 msgstr "Maximale Endproduktmenge ist "
 
-#: build/views.py:184 stock/models.py:969 stock/views.py:1789
+#: build/views.py:184 stock/views.py:1789
 msgid "Serial numbers already exist"
 msgstr "Seriennummern existieren bereits"
 
@@ -1833,7 +1835,7 @@ msgstr "Anlaufstelle"
 #: company/models.py:124 company/models.py:336 company/models.py:488
 #: order/models.py:103 part/models.py:743
 #: report/templates/report/inventree_build_order_base.html:165
-#: stock/models.py:1560 templates/js/company.js:188 templates/js/company.js:318
+#: stock/models.py:1556 templates/js/company.js:188 templates/js/company.js:318
 #: templates/js/part.js:431
 msgid "Link"
 msgstr "Link"
@@ -2027,9 +2029,11 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid "There are %(count)s parts sourced from this company.<br>\n"
+msgid ""
+"There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr ""
+"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -2418,6 +2422,12 @@ msgstr "Bild herunterladen"
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "Bildgröße überschreitet maximal-erlaubte Größe für Downloads"
 
+#: company/views.py:205 part/views.py:887
+#, fuzzy, python-brace-format
+#| msgid "Invalid response from server"
+msgid "Invalid response: {code}"
+msgstr "ungültige Antwort vom Server"
+
 #: company/views.py:214 part/views.py:896
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
@@ -2677,6 +2687,12 @@ msgstr "Anzahl muss eine positive Zahl sein"
 #: order/models.py:369
 msgid "Received items"
 msgstr "Elemente empfangen"
+
+#: order/models.py:370
+#, fuzzy, python-brace-format
+#| msgid "Moved {n} items to {dest}"
+msgid "Received {n} items against order {name}"
+msgstr "{n} Teile nach {dest} bewegt"
 
 #: order/models.py:451
 msgid "Company to which the items are being sold"
@@ -3276,15 +3292,21 @@ msgid "Select line item"
 msgstr "Position auswählen"
 
 #: order/views.py:1410
-msgid "No matching item for serial"
+#, fuzzy, python-brace-format
+#| msgid "No matching item for serial"
+msgid "No matching item for serial {serial}"
 msgstr "Kein passends Teil für Seriennummer gefunden"
 
 #: order/views.py:1420
-msgid "is not in stock"
+#, fuzzy, python-brace-format
+#| msgid "is not in stock"
+msgid "{serial} is not in stock"
 msgstr "ist nicht auf Lager"
 
 #: order/views.py:1428
-msgid "already allocated to an order"
+#, fuzzy, python-brace-format
+#| msgid "already allocated to an order"
+msgid "{serial} already allocated to an order"
 msgstr "bereits einem Auftrag zugeordnet"
 
 #: order/views.py:1482
@@ -4320,7 +4342,7 @@ msgstr "Neuer Parameter"
 
 #: part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
-#: stock/models.py:1655 templates/InvenTree/settings/header.html:8
+#: stock/models.py:1651 templates/InvenTree/settings/header.html:8
 #: templates/js/stock.js:124
 msgid "Value"
 msgstr "Wert"
@@ -4876,12 +4898,12 @@ msgid "Test Results"
 msgstr "Testergebnisse"
 
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:1643
+#: stock/models.py:1639
 msgid "Test"
 msgstr "Test"
 
 #: report/templates/report/inventree_test_report_base.html:89
-#: stock/models.py:1649
+#: stock/models.py:1645
 msgid "Result"
 msgstr "Ergebnis"
 
@@ -5006,6 +5028,12 @@ msgstr "Besitzer"
 msgid "Select Owner"
 msgstr "Besitzer auswählen"
 
+#: stock/models.py:201
+#, fuzzy, python-brace-format
+#| msgid "Created stock item"
+msgid "Created new stock item for {part}"
+msgstr "Neues BestandsObjekt erstellt"
+
 #: stock/models.py:205
 msgid "Created stock item"
 msgstr "Neues BestandsObjekt erstellt"
@@ -5129,31 +5157,45 @@ msgid "Assigned to Customer"
 msgstr "zugewiesen zum Kunden"
 
 #: stock/models.py:616
-msgid "Manually assigned to customer"
+#, fuzzy, python-brace-format
+#| msgid "Manually assigned to customer"
+msgid "Manually assigned to customer {name}"
 msgstr "manuell zugewiesen zum Kunden"
 
 #: stock/models.py:629
-msgid "Returned from customer"
+#, fuzzy, python-brace-format
+#| msgid "Returned from customer"
+msgid "Returned from customer {name}"
 msgstr "zurück vom Kunden"
 
 #: stock/models.py:631
-msgid "Returned to location"
+#, fuzzy, python-brace-format
+#| msgid "Returned to location"
+msgid "Returned to location {loc}"
 msgstr "zurück ins Lager"
 
 #: stock/models.py:792
-msgid "Installed into stock item"
+#, fuzzy, python-brace-format
+#| msgid "Installed into stock item"
+msgid "Installed into stock item {pk}"
 msgstr "In BestandsObjekt verbaut"
 
 #: stock/models.py:800
-msgid "Installed stock item"
+#, fuzzy, python-brace-format
+#| msgid "Installed stock item"
+msgid "Installed stock item {pk}"
 msgstr "verbautes BestandsObjekt"
 
 #: stock/models.py:824
-msgid "Uninstalled stock item"
+#, fuzzy, python-brace-format
+#| msgid "Uninstalled stock item"
+msgid "Uninstalled stock item {pk}"
 msgstr "BestandsObjekt ausgebaut"
 
 #: stock/models.py:843
-msgid "Uninstalled into location"
+#, fuzzy, python-brace-format
+#| msgid "Uninstalled into location"
+msgid "Uninstalled into location {loc}"
 msgstr "ausgebaut nach Lagerort"
 
 #: stock/models.py:944
@@ -5177,6 +5219,12 @@ msgstr "Seriennummern muss eine Liste von Ganzzahlen sein"
 msgid "Quantity does not match serial numbers"
 msgstr "Anzahl stimmt nicht mit den Seriennummern überein"
 
+#: stock/models.py:969
+#, fuzzy, python-brace-format
+#| msgid "Serial numbers already exist"
+msgid "Serial numbers already exist: {exists}"
+msgstr "Seriennummern existieren bereits"
+
 #: stock/models.py:994
 msgid "Add serial number"
 msgstr "Seriennummer hinzufügen"
@@ -5190,51 +5238,87 @@ msgstr "{n} Teile serialisiert"
 msgid "Split from existing stock"
 msgstr "aufteilen vom vorhandenen Bestand"
 
+#: stock/models.py:1077
+#, fuzzy, python-brace-format
+#| msgid "Serialized {n} items"
+msgid "Split {n} items"
+msgstr "{n} Teile serialisiert"
+
 #: stock/models.py:1113
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "BestandsObjekt kann nicht bewegt werden, da kein Bestand vorhanden ist"
 
-#: stock/models.py:1556
+#: stock/models.py:1135
+#, fuzzy, python-brace-format
+#| msgid "Moved {n} parts to {loc}"
+msgid "Moved to {loc_new} (from {loc_old})"
+msgstr "{n} Teile nach {loc} bewegt"
+
+#: stock/models.py:1137
+#, fuzzy, python-brace-format
+#| msgid "Moved {n} parts to {loc}"
+msgid "Moved to {loc_new}"
+msgstr "{n} Teile nach {loc} bewegt"
+
+#: stock/models.py:1205
+#, fuzzy, python-brace-format
+#| msgid "Allocated {n} items"
+msgid "Counted {n} items"
+msgstr "{n} Positionen zugeordnet"
+
+#: stock/models.py:1238
+#, fuzzy, python-brace-format
+#| msgid "Added stock to {n} items"
+msgid "Added {n} items"
+msgstr "Vorrat zu {n} BestandsObjekten hinzugefügt"
+
+#: stock/models.py:1268
+#, fuzzy, python-brace-format
+#| msgid "Remove item"
+msgid "Removed {n1} items"
+msgstr "Teil entfernen"
+
+#: stock/models.py:1552
 msgid "Title"
 msgstr "Titel"
 
-#: stock/models.py:1556
+#: stock/models.py:1552
 msgid "Tracking entry title"
 msgstr "Objektverfolgung - Name des Eintrags"
 
-#: stock/models.py:1558
+#: stock/models.py:1554
 msgid "Entry notes"
 msgstr "Eintrags-Notizen"
 
-#: stock/models.py:1560
+#: stock/models.py:1556
 msgid "Link to external page for further information"
 msgstr "Link auf externe Seite für weitere Informationen"
 
-#: stock/models.py:1620
+#: stock/models.py:1616
 msgid "Value must be provided for this test"
 msgstr "Wert muss für diesen Test angegeben werden"
 
-#: stock/models.py:1626
+#: stock/models.py:1622
 msgid "Attachment must be uploaded for this test"
 msgstr "Anhang muss für diesen Test hochgeladen werden"
 
-#: stock/models.py:1644
+#: stock/models.py:1640
 msgid "Test name"
 msgstr "Name des Tests"
 
-#: stock/models.py:1650 templates/js/table_filters.js:212
+#: stock/models.py:1646 templates/js/table_filters.js:212
 msgid "Test result"
 msgstr "Testergebnis"
 
-#: stock/models.py:1656
+#: stock/models.py:1652
 msgid "Test output value"
 msgstr "Test Ausgabe Wert"
 
-#: stock/models.py:1663
+#: stock/models.py:1659
 msgid "Test result attachment"
 msgstr "Test Ergebnis Anhang"
 
-#: stock/models.py:1669
+#: stock/models.py:1665
 msgid "Test notes"
 msgstr "Test Notizen"
 
@@ -5901,11 +5985,13 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr "\n"
+msgstr ""
+"\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7265,4 +7351,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-
