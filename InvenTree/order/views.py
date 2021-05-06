@@ -1586,3 +1586,11 @@ class LineItemPricing(PartPricing):
                 return None
         else:
             return None
+
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        qty = Decimal(self.request.GET.get('quantity', 1))
+        if qty == 1:
+            return Decimal(self.request.POST.get('quantity', 1))
+        return qty
+

@@ -1956,22 +1956,10 @@ class PartPricing(AjaxView):
     form_class = part_forms.PartPriceForm
 
     role_required = ['sales_order.view', 'part.view']
-    
+
     def get_quantity(self):
         """ Return set quantity in decimal format """
-
-        # check POST
-        qty = self.request.POST.get('quantity', None)
-
-        # check GET
-        if not qty:
-            qty = self.request.GET.get('quantity', None)
-
-        # nothing found: return 1
-        if not qty:
-            return Decimal(1)
-        # return as decimal
-        return Decimal(qty)
+        return Decimal(self.request.POST.get('quantity', 1))
 
     def get_part(self):
         try:
