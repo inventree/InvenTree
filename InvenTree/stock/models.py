@@ -1132,7 +1132,7 @@ class StockItem(MPTTModel):
             return True
 
         msg = f"{_('Moved to')} {str(location)}"
-        
+
         if self.location:
             msg += f" ({_('from')} {str(self.location)})"
 
@@ -1236,7 +1236,7 @@ class StockItem(MPTTModel):
             return False
 
         if self.updateQuantity(self.quantity + quantity):
-            
+
             n = helpers.normalize(quantity)
             text = f"{_('Added')} {n} {_('items')}"
 
