@@ -2067,10 +2067,14 @@ class PartPricing(AjaxView):
         # TODO - How to handle pricing in different currencies?
         currency = None
 
+        # check if data is set
+        try:
+            data = self.data
+        except Exception as _e:
+            data = {}
+
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
-        data = {
-            'form_valid': False,
-        }
+        data['form_valid'] = False
 
         return self.renderJsonResponse(request, form, data=data, context=self.get_pricing(quantity, currency))
 
