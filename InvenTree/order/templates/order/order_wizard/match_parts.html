@@ -24,7 +24,7 @@
                 <th></th>
                 <th></th>
                 <th>{% trans "Row" %}</th>
-                <th>{% trans "Select Part" %}</th>
+                <th>{% trans "Select Supplier Part" %}</th>
                 {% for col in columns %}
                 <th>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
@@ -48,7 +48,7 @@
                 </td>
                 <td></td>
                 <td>
-                {% add row.index 1 %}
+                {{ row.index }}
                 </td>
                 <td>
                     {% for field in form.visible_fields %}

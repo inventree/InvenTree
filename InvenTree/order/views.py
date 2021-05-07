@@ -6,6 +6,7 @@ Django views for interacting with Order app
 from __future__ import unicode_literals
 
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
@@ -581,16 +582,147 @@ class PurchaseOrderUpload(FileManagementFormView):
         _("Match Supplier Parts"),
     ]
 
+    def get_order(self):
+        """ Get order or return 404 """
+
+        return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
-        order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+        order = self.get_order()
 
         context.update({'order': order})
 
         return context
 
+    def get_field_selection(self):
+        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        This function is called once the field selection has been validated.
+        The pre-fill data are then passed through to the SupplierPart selection form.
+        """
+
+        order = self.get_order()
+
+        self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
+
+        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
+        q_idx = self.get_column_index('Quantity')
+        s_idx = self.get_column_index('Supplier_SKU')
+        m_idx = self.get_column_index('Manufacturer_MPN')
+        # p_idx = self.get_column_index('Unit_Price')
+        # e_idx = self.get_column_index('Extended_Price')
+
+        for row in self.rows:
+
+            # Initially use a quantity of zero
+            quantity = Decimal(0)
+
+            # Initially we do not have a part to reference
+            exact_match_part = None
+
+            # Check if there is a column corresponding to "quantity"
+            if q_idx >= 0:
+                q_val = row['data'][q_idx]['cell']
+
+                if q_val:
+                    # Delete commas
+                    q_val = q_val.replace(',', '')
+
+                    try:
+                        # Attempt to extract a valid quantity from the field
+                        quantity = Decimal(q_val)
+                    except (ValueError, InvalidOperation):
+                        pass
+
+            # Store the 'quantity' value
+            row['quantity'] = quantity
+
+            # Check if there is a column corresponding to "Supplier SKU"
+            if s_idx >= 0:
+                sku = row['data'][s_idx]['cell']
+
+                try:
+                    # Attempt SupplierPart lookup based on SKU value
+                    exact_match_part = self.allowed_items.get(SKU__contains=sku)
+                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = None
+
+            # Check if there is a column corresponding to "Manufacturer MPN"
+            if m_idx >= 0:
+                mpn = row['data'][m_idx]['cell']
+
+                try:
+                    # Attempt SupplierPart lookup based on MPN value
+                    exact_match_part = self.allowed_items.get(manufacturer_part__MPN__contains=mpn)
+                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = None
+
+            # Supply list of part options for each row, sorted by how closely they match the part name
+            row['item_options'] = self.allowed_items
+
+            # Unless found, the 'part_match' is blank
+            row['item_match'] = None
+
+            if exact_match_part:
+                # If there is an exact match based on SKU or MPN, use that
+                row['item_match'] = exact_match_part
+
     def done(self, form_list, **kwargs):
+        """ Once all the data is in, process it to add SupplierPart items to the order """
+        
+        order = self.get_order()
+
+        items = {}
+
+        for form_key, form_value in self.get_all_cleaned_data().items():
+            # Split key from row value
+            try:
+                (field, idx) = form_key.split('-')
+            except ValueError:
+                continue
+            
+            if field == self.key_item_select:
+                if idx not in items:
+                    # Insert into items
+                    items.update({
+                        idx: {
+                            'field': form_value,
+                        }
+                    })
+                else:
+                    # Update items
+                    items[idx]['field'] = form_value
+
+            if field == self.key_quantity_select:
+                if idx not in items:
+                    # Insert into items
+                    items.update({
+                        idx: {
+                            'quantity': form_value,
+                        }
+                    })
+                else:
+                    # Update items
+                    items[idx]['quantity'] = form_value
+
+        # Create PurchaseOrderLineItem instances
+        for purchase_order_item in items.values():
+            try:
+                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['field']))
+            except (ValueError, SupplierPart.DoesNotExist):
+                continue
+            purchase_order_line_item = PurchaseOrderLineItem(
+                order=order,
+                part=supplier_part,
+                quantity=purchase_order_item['quantity'],
+            )
+            try:
+                purchase_order_line_item.save()
+            except IntegrityError:
+                # PurchaseOrderLineItem already exists
+                pass
+            
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 

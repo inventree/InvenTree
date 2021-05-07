@@ -114,16 +114,18 @@ class MatchItem(forms.Form):
 
         # Setup FileManager
         file_manager.setup()
-        # Get columns
-        columns = file_manager.columns()
 
+        # Create fields
         if row_data:
-            # Create fields
+            # Navigate row data
             for row in row_data:
+                # Navigate column data
                 for col in row['data']:
-                    # print(f"{col=}")
+                    # Create input for required headers
                     if col['column']['guess'] in file_manager.REQUIRED_HEADERS:
+                        # Set field name
                         field_name = col['column']['guess'].lower() + '-' + str(row['index'])
+                        # Set field input box
                         if 'quantity' in col['column']['guess'].lower():
                             self.fields[field_name] = forms.CharField(
                                 required=True,
@@ -142,15 +144,16 @@ class MatchItem(forms.Form):
                                 widget=forms.Select(attrs={
                                 })
                             )
+
+                    # Create item selection box
                     elif col['column']['guess'] in file_manager.ITEM_MATCH_HEADERS:
-                        # print(f'{row["index"]=} | {col["column"]["guess"]=} | {row.get("item_match", "No Match")}')
-                        
                         # Get item options
                         item_options = [(option.id, option) for option in row['item_options']]
                         # Get item match
                         item_match = row['item_match']
-
-                        field_name = col['column']['guess'].lower() + '-' + str(row['index'])
+                        # Set field name
+                        field_name = 'item_select-' + str(row['index'])
+                        # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
                             choices=[('', '-' * 10)] + item_options,
                             required=True,
@@ -158,5 +161,6 @@ class MatchItem(forms.Form):
                                 'class': 'select bomselect',
                             })
                         )
+                        # Update initial selection
                         if item_match:
                             self.fields[field_name].initial = item_match.id

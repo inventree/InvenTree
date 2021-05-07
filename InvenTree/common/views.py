@@ -6,8 +6,6 @@ Django views for interacting with common models
 from __future__ import unicode_literals
 
 import os
-import ast
-from decimal import Decimal, InvalidOperation
 
 from django.utils.translation import ugettext_lazy as _
 from django.forms import CheckboxInput, Select
@@ -22,8 +20,6 @@ from InvenTree.helpers import str2bool
 from . import models
 from . import forms
 from .files import FileManager
-
-from company.models import ManufacturerPart, SupplierPart
 
 
 class SettingEdit(AjaxUpdateView):
@@ -192,19 +188,26 @@ class FileManagementFormView(MultiStepFormView):
     media_folder = 'file_upload/'
     extra_context_data = {}
 
+    # Set keys for item matching
+    key_item_select = 'item_select'
+    key_quantity_select = 'quantity'
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
         if self.steps.current == 'fields' or self.steps.current == 'items':
+            
             # Get columns and row data
             self.columns = self.file_manager.columns()
             self.rows = self.file_manager.rows()
+            # Check for stored data
+            stored_data = self.storage.get_step_data(self.steps.current)
+            if stored_data:
+                self.get_form_table_data(stored_data)
             # Set form table data
             self.set_form_table_data(form=form)
             
-            # if self.steps.current == 'items':
-            #     for row in self.rows:
-            #         print(f'{row=}')
+            # Update context
             context.update({'rows': self.rows})
             context.update({'columns': self.columns})
 
@@ -288,8 +291,6 @@ class FileManagementFormView(MultiStepFormView):
         self.row_data = {}
 
         for item, value in form_data.items():
-            # print(f'{item} | {form_data[item]} | {type(form_data[item])}')
-            # value = form.data[item]
 
             # Column names as passed as col_name_<idx> where idx is an integer
 
@@ -311,32 +312,6 @@ class FileManagementFormView(MultiStepFormView):
                     continue
 
                 self.column_selections[col_name] = value
-
-            # Extract the row data
-            if item.startswith('row_'):
-                # Item should be of the format row_<r>_col_<c>
-                s = item.split('_')
-
-                if len(s) < 4:
-                    continue
-
-                # Ignore row/col IDs which are not correct numeric values
-                try:
-                    row_id = int(s[1])
-                    col_id = int(s[3])
-                except ValueError:
-                    continue
-                
-                if row_id not in self.row_data:
-                    self.row_data[row_id] = {}
-
-                # TODO: this is a hack
-                value = value.replace("'", '"')
-                # print(f'{type(value)=} | {value=}')
-                try:
-                    self.row_data[row_id][col_id] = ast.literal_eval(value)
-                except (ValueError, SyntaxError):
-                    pass
 
     def set_form_table_data(self, form=None):
         if self.row_data:
@@ -375,29 +350,12 @@ class FileManagementFormView(MultiStepFormView):
 
         # In the item selection step: update row data to contain fields
         if form and self.steps.current == 'items':
-            key_item_select = ''
-            key_quantity_select = ''
-
-            # Find column key for item selection
-            for item in self.file_manager.ITEM_MATCH_HEADERS:
-                item = item.lower()
-                for key in form.fields.keys():
-                    if item in key:
-                        key_item_select = item
-                        break
-                        break
-
-            # Find column key for quantity selection
-            key_quantity_select = 'quantity'
-
             # Update row data
             for row in self.rows:
                 # Add item select field
-                if key_item_select:
-                    row['item_select'] = key_item_select + '-' + str(row['index'])
+                row['item_select'] = self.key_item_select + '-' + str(row['index'])
                 # Add quantity select field
-                if key_quantity_select:
-                    row['quantity_select'] = key_quantity_select + '-' + str(row['index'])
+                row['quantity_select'] = self.key_quantity_select + '-' + str(row['index'])
 
         if self.column_names:
             # Re-construct the column data
@@ -406,7 +364,7 @@ class FileManagementFormView(MultiStepFormView):
             for key in self.column_names:
                 header = ({
                     'name': key,
-                    'guess': self.column_selections[key],
+                    'guess': self.column_selections.get(key, ''),
                 })
                 self.columns.append(header)
 
@@ -426,87 +384,11 @@ class FileManagementFormView(MultiStepFormView):
         """ Once data columns have been selected, attempt to pre-select the proper data from the database.
         This function is called once the field selection has been validated.
         The pre-fill data are then passed through to the part selection form.
+
+        This method is very specific to the type of data found in the file,
+        therefore overwrite it in the subclass.
         """
-
-        match_supplier = False
-        match_manufacturer = False
-        self.allowed_items = None
-
-        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
-        q_idx = self.get_column_index('Quantity')
-        s_idx = self.get_column_index('Supplier_SKU')
-        m_idx = self.get_column_index('Manufacturer_MPN')
-        # p_idx = self.get_column_index('Unit_Price')
-        # e_idx = self.get_column_index('Extended_Price')
-
-        for row in self.rows:
-
-            # Initially use a quantity of zero
-            quantity = Decimal(0)
-
-            # Initially we do not have a part to reference
-            exact_match_part = None
-
-            # Check if there is a column corresponding to "quantity"
-            if q_idx >= 0:
-                q_val = row['data'][q_idx]['cell']
-
-                if q_val:
-                    # Delete commas
-                    q_val = q_val.replace(',','')
-
-                    try:
-                        # Attempt to extract a valid quantity from the field
-                        quantity = Decimal(q_val)
-                    except (ValueError, InvalidOperation):
-                        pass
-
-            # Store the 'quantity' value
-            row['quantity'] = quantity
-
-            # Check if there is a column corresponding to "Supplier SKU"
-            if s_idx >= 0:
-                print(f'{row["data"][s_idx]=}')
-                sku = row['data'][s_idx]['cell']
-
-                # Match for supplier
-                match_supplier = True
-
-                try:
-                    # Attempt SupplierPart lookup based on SKU value
-                    exact_match_part = SupplierPart.objects.get(SKU__contains=sku)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
-                    exact_match_part = None
-
-            # Check if there is a column corresponding to "Manufacturer MPN"
-            if m_idx >= 0:
-                mpn = row['data'][m_idx]['cell']
-
-                # Match for manufacturer
-                if not match_supplier:
-                    match_manufacturer = True
-
-                try:
-                    # Attempt ManufacturerPart lookup based on MPN value
-                    exact_match_part = ManufacturerPart.objects.get(MPN__contains=mpn)
-                except (ValueError, ManufacturerPart.DoesNotExist, ManufacturerPart.MultipleObjectsReturned):
-                    exact_match_part = None
-
-            # Check if matching for supplier or manufacturer parts
-            if match_supplier:
-                self.allowed_items = SupplierPart.objects.all()
-            elif match_manufacturer:
-                self.allowed_items = ManufacturerPart.objects.all()
-
-            # Supply list of part options for each row, sorted by how closely they match the part name
-            row['item_options'] = self.allowed_items
-
-            # Unless found, the 'part_match' is blank
-            row['item_match'] = None
-
-            if exact_match_part:
-                # If there is an exact match based on SKU or MPN, use that
-                row['item_match'] = exact_match_part
+        pass
 
     def check_field_selection(self, form):
         """ Check field matching """
