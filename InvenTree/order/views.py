@@ -6,6 +6,7 @@ Django views for interacting with Order app
 from __future__ import unicode_literals
 
 from django.db import transaction
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
@@ -1631,5 +1632,44 @@ class LineItemPricing(PartPricing):
         initials['so_line'] = self.get_so(pk=True)
         return initials
 
+    def post(self, request, *args, **kwargs):
+        response = None
+        # parse extra actions
+        REF = 'act-btn_'
+        act_btn = [a.replace(REF, '') for a  in self.request.POST if REF in a]
 
-        return initials
+        # check if extra action was passed
+        if act_btn and act_btn[0] == 'update_price':
+            # get sales order
+            so_line = self.get_so()
+            if not so_line:
+                self.data = {'non_field_errors':[_('Sales order not found')]}
+            else:
+                quantity = self.get_quantity()
+                price = self.get_pricing(quantity).get('unit_part_price', None)
+
+                if not price:
+                    self.data = {'non_field_errors':[_('Price not found')]}
+                else:
+                    # set normal update note
+                    note = _('Updated {part} unit-price to {price}')
+
+                    # check qunatity and update if different
+                    if so_line.quantity != quantity:
+                        so_line.quantity = quantity
+                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
+
+                    # update sale_price
+                    so_line.sale_price = price
+                    so_line.save()
+
+                    # parse response
+                    data = {
+                        'form_valid': True,
+                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
+                    }
+                    return JsonResponse(data=data)
+
+        # let the normal pricing view run
+        return super().post(request, *args, **kwargs)
+

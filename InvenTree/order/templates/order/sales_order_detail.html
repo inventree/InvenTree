@@ -411,6 +411,9 @@ function setupCallbacks() {
                     line_item: pk,
                     quantity: row.quantity,
                 },
+                buttons: [{name: 'update_price',
+                    title: '{% trans "Update Unit Price" %}'},],
+                success: reloadTable,
             }
         );
     });
