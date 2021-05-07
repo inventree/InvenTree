@@ -119,18 +119,40 @@ class MatchItem(forms.Form):
         # Item selection
         for row in row_data:
             for col in row['data']:
-                print(f'{row["index"]=} | {col["column"]["guess"]=}')
-                if col['column']['guess']:
-                    if col['column']['guess'] in file_manager.PART_MATCH_HEADERS:
-                        # Get item options
-                        item_options = row['item_options']
-                        # Get item match
-                        item_match = row['item_match']
-
-                        field_name = col['column']['guess'].lower() + '_' + str(row['index'])
-                        self.fields[field_name] = forms.ChoiceField(
-                            choices=item_options,
+                if col['column']['guess'] in file_manager.REQUIRED_HEADERS:
+                    field_name = col['column']['guess'].lower() + '-' + str(row['index'] - 1)
+                    if 'quantity' in col['column']['guess'].lower():
+                        self.fields[field_name] = forms.CharField(
                             required=True,
+                            widget=forms.NumberInput(attrs={
+                                'name': 'quantity' + str(row['index']),
+                                'class': 'numberinput',
+                                'type': 'number',
+                                'min': '1',
+                                'step': 'any',
+                                'value': row['quantity'],
+                            })
                         )
-                        if item_match:
-                            self.fields[field_name].initial = item_match
+                    else:
+                        self.fields[field_name] = forms.Input(
+                            required=True,
+                            widget=forms.Select(attrs={
+                            })
+                        )
+                elif col['column']['guess'] in file_manager.ITEM_MATCH_HEADERS:
+                    print(f'{row["index"]=} | {col["column"]["guess"]=} | {row.get("item_match", "No Match")}')
+                    
+                    # Get item options
+                    item_options = [(option.id, option) for option in row['item_options']]
+                    # Get item match
+                    item_match = row['item_match']
+
+                    field_name = col['column']['guess'].lower() + '-' + str(row['index'] - 1)
+                    self.fields[field_name] = forms.ChoiceField(
+                        choices=[('', '-' * 10)] + item_options,
+                        required=True,
+                        widget=forms.Select(attrs={'class': 'bomselect'})
+                    )
+                    if item_match:
+                        print(f'{item_match=}')
+                        self.fields[field_name].initial = item_match.id

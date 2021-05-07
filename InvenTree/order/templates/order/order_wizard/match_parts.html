@@ -39,7 +39,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in form %}
+            {% for row in rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-name='{{ row.part_name }}' part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
                 <td>
                     <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
@@ -48,13 +48,18 @@
                 </td>
                 <td></td>
                 <td>
-                {% comment %} {% add row.index 1 %} {% endcomment %}
+                {% add row.index 1 %}
                 </td>
                 <td>
-                    {{ row }}
-                    {% comment %} <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='{% trans "Create new part" %}' type='button'>
+                    <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='{% trans "Create new part" %}' type='button'>
                         <span row_id='{{ row.index }}' class='fas fa-plus icon-green'/>
                     </button>
+                    {% for field in form.visible_fields %}
+                        {% if field.name == row.item_select %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                    {% comment %} 
                     <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
                         <option value=''>--- {% trans "Select Part" %} ---</option>
                         {% for part in row.part_options %}
@@ -69,16 +74,20 @@
                 </td>
                 {% for item in row.data %}
                 <td>
-                    {% comment %} 
                     {% if item.column.guess == 'Quantity' %}
-                    <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' step='any' value='{% decimal row.quantity %}'/>
+                    {% for field in form.visible_fields %}
+                        {% if field.name == row.quantity_select %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                    {% comment %} <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' step='any' value='{% decimal row.quantity %}'/> {% endcomment %}
                     {% if row.errors.quantity %}
                     <p class='help-inline'>{{ row.errors.quantity }}</p>
                     {% endif %}
                     {% else %}
                     {{ item.cell }}
                     {% endif %}
-                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/> {% endcomment %}
+                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
                 </td>
                 {% endfor %}
             </tr>

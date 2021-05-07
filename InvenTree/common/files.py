@@ -20,8 +20,8 @@ class FileManager:
     # Fields which are absolutely necessary for valid upload
     REQUIRED_HEADERS = []
 
-    # Fields which are used for part matching (only one of them is needed)
-    PART_MATCH_HEADERS = []
+    # Fields which are used for item matching (only one of them is needed)
+    ITEM_MATCH_HEADERS = []
     
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = []
@@ -83,7 +83,7 @@ class FileManager:
     def update_headers(self):
         """ Update headers """
 
-        self.HEADERS = self.REQUIRED_HEADERS + self.PART_MATCH_HEADERS + self.OPTIONAL_HEADERS
+        self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_HEADERS
             
     def setup(self):
         """ Setup headers depending on the file name """
@@ -96,7 +96,7 @@ class FileManager:
                 'Quantity',
             ]
 
-            self.PART_MATCH_HEADERS = [
+            self.ITEM_MATCH_HEADERS = [
                 'Manufacturer_MPN',
                 'Supplier_SKU',
             ]

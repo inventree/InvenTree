@@ -23,7 +23,7 @@ from . import models
 from . import forms
 from .files import FileManager
 
-from part.models import SupplierPart
+from company.models import ManufacturerPart, SupplierPart
 
 
 class SettingEdit(AjaxUpdateView):
@@ -195,12 +195,41 @@ class FileManagementFormView(MultiStepFormView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
-        if self.steps.current == 'fields':
+        if self.steps.current == 'fields' or self.steps.current == 'items':
             # Get columns and row data
             columns = self.file_manager.columns()
             rows = self.file_manager.rows()
+
+            
+            key_item_select = ''
+            key_quantity_select = ''
+            if self.steps.current == 'items':
+                # Get file manager
+                self.getFileManager()
+                # Find column key for item selection
+                for item in self.file_manager.ITEM_MATCH_HEADERS:
+                    item = item.lower()
+                    for key in form.fields.keys():
+                        print(f'{item=} is in {key=} ?')
+                        if item in key:
+                            key_item_select = item
+                            break
+                            break
+
+                # Find column key for quantity selection
+                key_quantity_select = 'quantity'
+
             # Optimize for template
             for row in rows:
+                
+                # Add item select field
+                if key_item_select:
+                    row['item_select'] = key_item_select + '-' + str(row['index'])
+                    print(f'{row["item_select"]}')
+                # Add quantity select field
+                if key_quantity_select:
+                    row['quantity_select'] = key_quantity_select + '-' + str(row['index'])
+                    
                 row_data = row['data']
 
                 data = []
@@ -209,12 +238,16 @@ class FileManagementFormView(MultiStepFormView):
                     data.append({
                         'cell': item,
                         'idx': idx,
-                        'column': columns[idx]
+                        'column': columns[idx],
                     })
                 
                 row['data'] = data
 
+                print(f'\n{row=}')
+
             context.update({'rows': rows})
+            if self.steps.current == 'items':
+                context.update({'columns': columns})
 
         # Load extra context data
         print(f'{self.extra_context_data=}')
@@ -393,14 +426,14 @@ class FileManagementFormView(MultiStepFormView):
 
         # Check that at least one of the part match field is present
         part_match_found = False
-        for col in self.file_manager.PART_MATCH_HEADERS:
+        for col in self.file_manager.ITEM_MATCH_HEADERS:
             if col in self.column_selections.values():
                 part_match_found = True
                 break
         
         # If not, notify user
         if not part_match_found:
-            for col in self.file_manager.PART_MATCH_HEADERS:
+            for col in self.file_manager.ITEM_MATCH_HEADERS:
                 missing_columns.append(col)
 
         # Store extra context data
@@ -425,14 +458,15 @@ class FileManagementFormView(MultiStepFormView):
         The pre-fill data are then passed through to the part selection form.
         """
 
+        match_supplier = False
+        match_manufacturer = False
+
         # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
         q_idx = self.getColumnIndex('Quantity')
         s_idx = self.getColumnIndex('Supplier_SKU')
-        # m_idx = self.getColumnIndex('Manufacturer_MPN')
+        m_idx = self.getColumnIndex('Manufacturer_MPN')
         # p_idx = self.getColumnIndex('Unit_Price')
         # e_idx = self.getColumnIndex('Extended_Price')
-
-        self.allowed_items = SupplierPart.objects.all()
 
         for row in self.rows:
 
@@ -441,9 +475,6 @@ class FileManagementFormView(MultiStepFormView):
 
             # Initially we do not have a part to reference
             exact_match_part = None
-
-            # A list of potential Part matches
-            item_options = self.allowed_items
 
             # Check if there is a column corresponding to "quantity"
             if q_idx >= 0:
@@ -464,7 +495,10 @@ class FileManagementFormView(MultiStepFormView):
 
             # Check if there is a column corresponding to "Supplier SKU"
             if s_idx >= 0:
-                sku = row['data'][s_idx]
+                sku = row['data'][s_idx]['cell']
+
+                # Match for supplier
+                match_supplier = True
 
                 try:
                     # Attempt SupplierPart lookup based on SKU value
@@ -473,17 +507,27 @@ class FileManagementFormView(MultiStepFormView):
                     exact_match_part = None
 
             # Check if there is a column corresponding to "Manufacturer MPN"
-            # if m_idx >= 0:
-            #     row['part_mpn'] = row['data'][m_idx]
+            if m_idx >= 0:
+                mpn = row['data'][m_idx]['cell']
 
-            #     try:
-            #         # Attempt ManufacturerPart lookup based on MPN value
-            #         exact_match_part = ManufacturerPart.objects.get(MPN=row['part_mpn'])
-            #     except (ValueError, ManufacturerPart.DoesNotExist):
-            #         exact_match_part = None
-        
+                # Match for manufacturer
+                if not match_supplier:
+                    match_manufacturer = True
+
+                try:
+                    # Attempt ManufacturerPart lookup based on MPN value
+                    exact_match_part = ManufacturerPart.objects.get(MPN__contains=mpn)
+                except (ValueError, ManufacturerPart.DoesNotExist, ManufacturerPart.MultipleObjectsReturned):
+                    exact_match_part = None
+
+            # Check if matching for supplier or manufacturer parts
+            if match_supplier:
+                self.allowed_items = SupplierPart.objects.all()
+            elif match_manufacturer:
+                self.allowed_items = ManufacturerPart.objects.all()
+
             # Supply list of part options for each row, sorted by how closely they match the part name
-            row['item_options'] = item_options
+            row['item_options'] = self.allowed_items
 
             # Unless found, the 'part_match' is blank
             row['item_match'] = None
@@ -494,6 +538,16 @@ class FileManagementFormView(MultiStepFormView):
 
     def checkFieldSelection(self, form):
         """ Check field matching """
+
+        # Extract form data
+        self.getFormTableData(form.data)
+
+        valid = len(self.extra_context_data.get('missing_columns', [])) == 0 and not self.extra_context_data.get('duplicates', [])
+
+        return valid
+
+    def checkPartSelection(self, form):
+        """ Check part matching """
 
         # Extract form data
         self.getFormTableData(form.data)
@@ -519,11 +573,10 @@ class FileManagementFormView(MultiStepFormView):
                 form.add_error(None, 'Fields matching failed')
 
         elif step == 'items':
-            # valid = self.checkPartSelection(form)
+            valid = self.checkPartSelection(form)
 
-            # if not valid:
-            #     form.add_error(None, 'Items matching failed')
-            pass
+            if not valid:
+                form.add_error(None, 'Items matching failed')
 
         return valid
 
