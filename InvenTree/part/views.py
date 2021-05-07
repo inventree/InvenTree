@@ -1956,10 +1956,9 @@ class PartPricing(AjaxView):
     form_class = part_forms.PartPriceForm
 
     role_required = ['sales_order.view', 'part.view']
-    
+
     def get_quantity(self):
         """ Return set quantity in decimal format """
-        
         return Decimal(self.request.POST.get('quantity', 1))
 
     def get_part(self):
@@ -1969,12 +1968,7 @@ class PartPricing(AjaxView):
             return None
 
     def get_pricing(self, quantity=1, currency=None):
-
-        # try:
-        #     quantity = int(quantity)
-        # except ValueError:
-        #     quantity = 1
-
+        """ returns context with pricing information """
         if quantity <= 0:
             quantity = 1
 
@@ -2044,11 +2038,22 @@ class PartPricing(AjaxView):
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_unit_bom_price
 
+        # part pricing information
+        part_price = part.get_price(quantity)
+        if part_price is not None:
+            ctx['total_part_price'] = round(part_price, 3)
+            ctx['unit_part_price'] = round(part_price / quantity, 3)
+
         return ctx
 
-    def get(self, request, *args, **kwargs):
+    def get_initials(self):
+        """ returns initials for form """
+        return {'quantity': self.get_quantity()}
 
-        return self.renderJsonResponse(request, self.form_class(), context=self.get_pricing())
+    def get(self, request, *args, **kwargs):
+        init = self.get_initials()
+        qty = self.get_quantity()
+        return self.renderJsonResponse(request, self.form_class(initial=init), context=self.get_pricing(qty))
 
     def post(self, request, *args, **kwargs):
 
@@ -2057,16 +2062,19 @@ class PartPricing(AjaxView):
         quantity = self.get_quantity()
 
         # Retain quantity value set by user
-        form = self.form_class()
-        form.fields['quantity'].initial = quantity
+        form = self.form_class(initial=self.get_initials())
 
         # TODO - How to handle pricing in different currencies?
         currency = None
 
+        # check if data is set
+        try:
+            data = self.data
+        except AttributeError:
+            data = {}
+
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
-        data = {
-            'form_valid': False,
-        }
+        data['form_valid'] = False
 
         return self.renderJsonResponse(request, form, data=data, context=self.get_pricing(quantity, currency))
 
