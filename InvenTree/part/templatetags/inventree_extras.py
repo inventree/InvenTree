@@ -199,6 +199,7 @@ class I18nStaticNode(StaticNode):
         ret = super().render(context)
         return ret
 
+
 # use the dynamic url - tag if in Debugging-Mode
 if settings.DEBUG:
 
