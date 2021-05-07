@@ -1247,6 +1247,17 @@ class SOLineItemCreate(AjaxCreateView):
 
         return initials
 
+    def save(self, form):
+        ret = form.save()
+        # check if price s set in form - else autoset
+        if not ret.sale_price:
+            price = ret.part.get_price(ret.quantity)
+            # only if price is avail
+            if price:
+                ret.sale_price = price / ret.quantity
+                ret.save()
+        self.object = ret
+        return ret
 
 class SOLineItemEdit(AjaxUpdateView):
     """ View for editing a SalesOrderLineItem """
