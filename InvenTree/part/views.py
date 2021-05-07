@@ -2070,7 +2070,7 @@ class PartPricing(AjaxView):
         # check if data is set
         try:
             data = self.data
-        except Exception as _e:
+        except AttributeError:
             data = {}
 
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)

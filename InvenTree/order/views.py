@@ -1633,23 +1633,22 @@ class LineItemPricing(PartPricing):
         return initials
 
     def post(self, request, *args, **kwargs):
-        response = None
         # parse extra actions
         REF = 'act-btn_'
-        act_btn = [a.replace(REF, '') for a  in self.request.POST if REF in a]
+        act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
 
         # check if extra action was passed
         if act_btn and act_btn[0] == 'update_price':
             # get sales order
             so_line = self.get_so()
             if not so_line:
-                self.data = {'non_field_errors':[_('Sales order not found')]}
+                self.data = {'non_field_errors': [_('Sales order not found')]}
             else:
                 quantity = self.get_quantity()
                 price = self.get_pricing(quantity).get('unit_part_price', None)
 
                 if not price:
-                    self.data = {'non_field_errors':[_('Price not found')]}
+                    self.data = {'non_field_errors': [_('Price not found')]}
                 else:
                     # set normal update note
                     note = _('Updated {part} unit-price to {price}')
@@ -1672,4 +1671,3 @@ class LineItemPricing(PartPricing):
 
         # let the normal pricing view run
         return super().post(request, *args, **kwargs)
-
