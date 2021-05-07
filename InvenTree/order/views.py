@@ -1579,6 +1579,7 @@ class LineItemPricing(PartPricing):
 
     class EnhancedForm(PartPricing.form_class):
         pk = IntegerField(widget=HiddenInput())
+        so_line = IntegerField(widget=HiddenInput())
 
     form_class = EnhancedForm
 
@@ -1602,6 +1603,21 @@ class LineItemPricing(PartPricing):
             return part.id
         return part
 
+    def get_so(self, pk=False):
+        so_line = self.request.GET.get('line_item', None)
+        if not so_line:
+            so_line = self.request.POST.get('so_line', None)
+
+        if so_line:
+            try:
+                sales_order = SalesOrderLineItem.objects.get(pk=so_line)
+                if pk:
+                    return sales_order.pk
+                return sales_order
+            except Part.DoesNotExist:
+                return None
+        return None
+
     def get_quantity(self):
         """ Return set quantity in decimal format """
         qty = Decimal(self.request.GET.get('quantity', 1))
@@ -1612,5 +1628,8 @@ class LineItemPricing(PartPricing):
     def get_initials(self):
         initials = super().get_initials()
         initials['pk'] = self.get_part(id=True)
+        initials['so_line'] = self.get_so(pk=True)
+        return initials
+
 
         return initials
