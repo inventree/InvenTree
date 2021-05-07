@@ -377,6 +377,15 @@ function modalSubmit(modal, callback) {
     $(modal).on('click', '#modal-form-submit', function() {
         callback();
     });
+
+    $(modal).on('click', '.modal-form-button', function() {
+        // Append data to form
+        var name = $(this).attr('name');
+        var value = $(this).attr('value');
+        var input = '<input id="id_act-btn_' + name + '" type="hidden" name="act-btn_' + name + '" value="' + value + '">';
+        $('.js-modal-form').append(input);
+        callback();
+    });
 }
 
 
@@ -659,6 +668,25 @@ function attachSecondaries(modal, secondaries) {
     }
 }
 
+function insertActionButton(modal, options) {
+    /* Insert a custom submition button */
+
+    var html = "<span style='float: right;'>";
+    html += "<button name='" + options.name + "' type='submit' class='btn btn-default modal-form-button'";
+    html += " value='" + options.name + "'>" + options.title + "</button>";
+    html += "</span>";
+
+    $(modal).find('#modal-footer-buttons').append(html);
+}
+
+function attachButtons(modal, buttons) {
+    /* Attach a provided list of buttons */
+
+    for (var i = 0; i < buttons.length; i++) {
+        insertActionButton(modal, buttons[i]);
+    }
+}
+
 
 function attachFieldCallback(modal, callback) {
     /* Attach a 'callback' function to a given field in the modal form.
@@ -808,6 +836,9 @@ function launchModalForm(url, options = {}) {
     var submit_text = options.submit_text || '{% trans "Submit" %}';
     var close_text = options.close_text || '{% trans "Close" %}';
 
+    // Clean custom action buttons
+    $(modal).find('#modal-footer-buttons').html('');
+
     // Form the ajax request to retrieve the django form data
     ajax_data = {
         url: url,
@@ -850,6 +881,10 @@ function launchModalForm(url, options = {}) {
                 } else {
                     modalShowSubmitButton(modal, true);
                     handleModalForm(url, options);
+                }
+
+                if (options.buttons) {
+                    attachButtons(modal, options.buttons);
                 }
 
             } else {

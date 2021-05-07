@@ -672,11 +672,21 @@ class SalesOrderLineItem(OrderLineItem):
     Attributes:
         order: Link to the SalesOrder that this line item belongs to
         part: Link to a Part object (may be null)
+        sale_price: The unit sale price for this OrderLineItem
     """
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
+
+    sale_price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency='USD',
+        null=True, blank=True,
+        verbose_name=_('Sale Price'),
+        help_text=_('Unit sale price'),
+    )
 
     class Meta:
         unique_together = [

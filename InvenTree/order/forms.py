@@ -211,6 +211,7 @@ class EditSalesOrderLineItemForm(HelperForm):
             'part',
             'quantity',
             'reference',
+            'sale_price',
             'notes'
         ]
 

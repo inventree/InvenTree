@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.db.utils import IntegrityError
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
@@ -14,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
-from django.forms import HiddenInput
+from django.forms import HiddenInput, IntegerField
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -24,7 +25,7 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
 from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
-from company.models import Company, SupplierPart  # ManufacturerPart
+from company.models import Company, SupplierPart
 from stock.models import StockItem, StockLocation
 from part.models import Part
 
@@ -32,6 +33,7 @@ from common.models import InvenTreeSetting
 from common.views import FileManagementFormView
 
 from . import forms as order_forms
+from part.views import PartPricing
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
@@ -565,165 +567,6 @@ class SalesOrderShip(AjaxUpdateView):
         context['order'] = order
 
         return self.renderJsonResponse(request, form, data, context)
-
-
-class PurchaseOrderUpload(FileManagementFormView):
-    ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
-
-    name = 'order'
-    form_steps_template = [
-        'order/order_wizard/po_upload.html',
-        'order/order_wizard/match_fields.html',
-        'order/order_wizard/match_parts.html',
-    ]
-    form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Supplier Parts"),
-    ]
-
-    def get_order(self):
-        """ Get order or return 404 """
-
-        return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
-
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form=form, **kwargs)
-
-        order = self.get_order()
-
-        context.update({'order': order})
-
-        return context
-
-    def get_field_selection(self):
-        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
-        This function is called once the field selection has been validated.
-        The pre-fill data are then passed through to the SupplierPart selection form.
-        """
-
-        order = self.get_order()
-
-        self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
-
-        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
-        q_idx = self.get_column_index('Quantity')
-        s_idx = self.get_column_index('Supplier_SKU')
-        m_idx = self.get_column_index('Manufacturer_MPN')
-        # p_idx = self.get_column_index('Unit_Price')
-        # e_idx = self.get_column_index('Extended_Price')
-
-        for row in self.rows:
-
-            # Initially use a quantity of zero
-            quantity = Decimal(0)
-
-            # Initially we do not have a part to reference
-            exact_match_part = None
-
-            # Check if there is a column corresponding to "quantity"
-            if q_idx >= 0:
-                q_val = row['data'][q_idx]['cell']
-
-                if q_val:
-                    # Delete commas
-                    q_val = q_val.replace(',', '')
-
-                    try:
-                        # Attempt to extract a valid quantity from the field
-                        quantity = Decimal(q_val)
-                    except (ValueError, InvalidOperation):
-                        pass
-
-            # Store the 'quantity' value
-            row['quantity'] = quantity
-
-            # Check if there is a column corresponding to "Supplier SKU"
-            if s_idx >= 0:
-                sku = row['data'][s_idx]['cell']
-
-                try:
-                    # Attempt SupplierPart lookup based on SKU value
-                    exact_match_part = self.allowed_items.get(SKU__contains=sku)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
-                    exact_match_part = None
-
-            # Check if there is a column corresponding to "Manufacturer MPN"
-            if m_idx >= 0:
-                mpn = row['data'][m_idx]['cell']
-
-                try:
-                    # Attempt SupplierPart lookup based on MPN value
-                    exact_match_part = self.allowed_items.get(manufacturer_part__MPN__contains=mpn)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
-                    exact_match_part = None
-
-            # Supply list of part options for each row, sorted by how closely they match the part name
-            row['item_options'] = self.allowed_items
-
-            # Unless found, the 'part_match' is blank
-            row['item_match'] = None
-
-            if exact_match_part:
-                # If there is an exact match based on SKU or MPN, use that
-                row['item_match'] = exact_match_part
-
-    def done(self, form_list, **kwargs):
-        """ Once all the data is in, process it to add SupplierPart items to the order """
-        
-        order = self.get_order()
-
-        items = {}
-
-        for form_key, form_value in self.get_all_cleaned_data().items():
-            # Split key from row value
-            try:
-                (field, idx) = form_key.split('-')
-            except ValueError:
-                continue
-            
-            if field == self.key_item_select:
-                if idx not in items:
-                    # Insert into items
-                    items.update({
-                        idx: {
-                            'field': form_value,
-                        }
-                    })
-                else:
-                    # Update items
-                    items[idx]['field'] = form_value
-
-            if field == self.key_quantity_select:
-                if idx not in items:
-                    # Insert into items
-                    items.update({
-                        idx: {
-                            'quantity': form_value,
-                        }
-                    })
-                else:
-                    # Update items
-                    items[idx]['quantity'] = form_value
-
-        # Create PurchaseOrderLineItem instances
-        for purchase_order_item in items.values():
-            try:
-                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['field']))
-            except (ValueError, SupplierPart.DoesNotExist):
-                continue
-            purchase_order_line_item = PurchaseOrderLineItem(
-                order=order,
-                part=supplier_part,
-                quantity=purchase_order_item['quantity'],
-            )
-            try:
-                purchase_order_line_item.save()
-            except IntegrityError:
-                # PurchaseOrderLineItem already exists
-                pass
-            
-        return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
 class PurchaseOrderExport(AjaxView):
@@ -1407,6 +1250,18 @@ class SOLineItemCreate(AjaxCreateView):
 
         return initials
 
+    def save(self, form):
+        ret = form.save()
+        # check if price s set in form - else autoset
+        if not ret.sale_price:
+            price = ret.part.get_price(ret.quantity)
+            # only if price is avail
+            if price:
+                ret.sale_price = price / ret.quantity
+                ret.save()
+        self.object = ret
+        return ret
+
 
 class SOLineItemEdit(AjaxUpdateView):
     """ View for editing a SalesOrderLineItem """
@@ -1733,3 +1588,101 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
     ajax_form_title = _("Remove allocation")
     context_object_name = 'allocation'
     ajax_template_name = "order/so_allocation_delete.html"
+
+
+class LineItemPricing(PartPricing):
+    """ View for inspecting part pricing information """
+
+    class EnhancedForm(PartPricing.form_class):
+        pk = IntegerField(widget=HiddenInput())
+        so_line = IntegerField(widget=HiddenInput())
+
+    form_class = EnhancedForm
+
+    def get_part(self, id=False):
+        if 'line_item' in self.request.GET:
+            try:
+                part_id = self.request.GET.get('line_item')
+                part = SalesOrderLineItem.objects.get(id=part_id).part
+            except Part.DoesNotExist:
+                return None
+        elif 'pk' in self.request.POST:
+            try:
+                part_id = self.request.POST.get('pk')
+                part = Part.objects.get(id=part_id)
+            except Part.DoesNotExist:
+                return None
+        else:
+            return None
+
+        if id:
+            return part.id
+        return part
+
+    def get_so(self, pk=False):
+        so_line = self.request.GET.get('line_item', None)
+        if not so_line:
+            so_line = self.request.POST.get('so_line', None)
+
+        if so_line:
+            try:
+                sales_order = SalesOrderLineItem.objects.get(pk=so_line)
+                if pk:
+                    return sales_order.pk
+                return sales_order
+            except Part.DoesNotExist:
+                return None
+        return None
+
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        qty = Decimal(self.request.GET.get('quantity', 1))
+        if qty == 1:
+            return Decimal(self.request.POST.get('quantity', 1))
+        return qty
+
+    def get_initials(self):
+        initials = super().get_initials()
+        initials['pk'] = self.get_part(id=True)
+        initials['so_line'] = self.get_so(pk=True)
+        return initials
+
+    def post(self, request, *args, **kwargs):
+        # parse extra actions
+        REF = 'act-btn_'
+        act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
+
+        # check if extra action was passed
+        if act_btn and act_btn[0] == 'update_price':
+            # get sales order
+            so_line = self.get_so()
+            if not so_line:
+                self.data = {'non_field_errors': [_('Sales order not found')]}
+            else:
+                quantity = self.get_quantity()
+                price = self.get_pricing(quantity).get('unit_part_price', None)
+
+                if not price:
+                    self.data = {'non_field_errors': [_('Price not found')]}
+                else:
+                    # set normal update note
+                    note = _('Updated {part} unit-price to {price}')
+
+                    # check qunatity and update if different
+                    if so_line.quantity != quantity:
+                        so_line.quantity = quantity
+                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
+
+                    # update sale_price
+                    so_line.sale_price = price
+                    so_line.save()
+
+                    # parse response
+                    data = {
+                        'form_valid': True,
+                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
+                    }
+                    return JsonResponse(data=data)
+
+        # let the normal pricing view run
+        return super().post(request, *args, **kwargs)

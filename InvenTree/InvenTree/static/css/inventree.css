@@ -466,6 +466,24 @@
     background: #eee;
 }
 
+/* pricing table widths */
+.table-price-two tr td:first-child {
+    width: 40%;
+}
+
+.table-price-three tr td:first-child {
+    width: 40%;
+}
+
+.table-price-two tr td:last-child {
+    width: 60%;
+}
+
+.table-price-three tr td:last-child {
+    width: 30%;
+}
+/* !pricing table widths */
+
 .btn-glyph {
     padding-left: 6px;
     padding-right: 6px;
