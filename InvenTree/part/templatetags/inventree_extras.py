@@ -199,19 +199,28 @@ class I18nStaticNode(StaticNode):
         ret = super().render(context)
         return ret
 
+# use the dynamic url - tag if in Debugging-Mode
+if settings.DEBUG:
 
-@register.tag('i18n_static')
-def do_i18n_static(parser, token):
-    """
-    Overrides normal static, adds language - lookup for prerenderd files #1485
+    @register.simple_tag()
+    def i18n_static(url_name):
+        """ simple tag to enable {% url %} functionality instead of {% static %} """
+        return reverse(url_name)
 
-    usage (like static):
-    {% i18n_static path [as varname] %}
-    """
-    bits = token.split_contents()
-    loc_name = settings.STATICFILES_I18_PREFIX
+else:
 
-    # change path to called ressource
-    bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
-    token.contents = ' '.join(bits)
-    return I18nStaticNode.handle_token(parser, token)
+    @register.tag('i18n_static')
+    def do_i18n_static(parser, token):
+        """
+        Overrides normal static, adds language - lookup for prerenderd files #1485
+
+        usage (like static):
+        {% i18n_static path [as varname] %}
+        """
+        bits = token.split_contents()
+        loc_name = settings.STATICFILES_I18_PREFIX
+
+        # change path to called ressource
+        bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
+        token.contents = ' '.join(bits)
+        return I18nStaticNode.handle_token(parser, token)
