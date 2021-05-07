@@ -1259,6 +1259,7 @@ class SOLineItemCreate(AjaxCreateView):
         self.object = ret
         return ret
 
+
 class SOLineItemEdit(AjaxUpdateView):
     """ View for editing a SalesOrderLineItem """
 
