@@ -54,12 +54,6 @@
             {% for col in form %}
             <td>
                 {{ col }}
-                {% comment %} <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_guess_{{ forloop.counter0 }}'>
-                        <option value=''>---------</option>
-                        {% for req in headers %}
-                        <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
-                        {% endfor %}
-                </select> {% endcomment %}
                 {% for duplicate in duplicates %}
                     {% if duplicate == col.name %}
                     <div class='alert alert-danger alert-block text-center' role='alert' style='padding:2px; margin-top:6px; margin-bottom:2px'>

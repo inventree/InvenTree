@@ -197,66 +197,24 @@ class FileManagementFormView(MultiStepFormView):
 
         if self.steps.current == 'fields' or self.steps.current == 'items':
             # Get columns and row data
-            columns = self.file_manager.columns()
-            rows = self.file_manager.rows()
-
+            self.columns = self.file_manager.columns()
+            self.rows = self.file_manager.rows()
+            # Set form table data
+            self.set_form_table_data(form=form)
             
-            key_item_select = ''
-            key_quantity_select = ''
-            if self.steps.current == 'items':
-                # Get file manager
-                self.getFileManager()
-                # Find column key for item selection
-                for item in self.file_manager.ITEM_MATCH_HEADERS:
-                    item = item.lower()
-                    for key in form.fields.keys():
-                        print(f'{item=} is in {key=} ?')
-                        if item in key:
-                            key_item_select = item
-                            break
-                            break
-
-                # Find column key for quantity selection
-                key_quantity_select = 'quantity'
-
-            # Optimize for template
-            for row in rows:
-                
-                # Add item select field
-                if key_item_select:
-                    row['item_select'] = key_item_select + '-' + str(row['index'])
-                    print(f'{row["item_select"]}')
-                # Add quantity select field
-                if key_quantity_select:
-                    row['quantity_select'] = key_quantity_select + '-' + str(row['index'])
-                    
-                row_data = row['data']
-
-                data = []
-
-                for idx, item in enumerate(row_data):
-                    data.append({
-                        'cell': item,
-                        'idx': idx,
-                        'column': columns[idx],
-                    })
-                
-                row['data'] = data
-
-                print(f'\n{row=}')
-
-            context.update({'rows': rows})
-            if self.steps.current == 'items':
-                context.update({'columns': columns})
+            # if self.steps.current == 'items':
+            #     for row in self.rows:
+            #         print(f'{row=}')
+            context.update({'rows': self.rows})
+            context.update({'columns': self.columns})
 
         # Load extra context data
-        print(f'{self.extra_context_data=}')
         for key, items in self.extra_context_data.items():
             context.update({key: items})
 
         return context
 
-    def getFileManager(self, step=None, form=None):
+    def get_file_manager(self, step=None, form=None):
         """ Get FileManager instance from uploaded file """
 
         if self.file_manager:
@@ -274,10 +232,8 @@ class FileManagementFormView(MultiStepFormView):
     def get_form_kwargs(self, step=None):
         """ Update kwargs to dynamically build forms """
 
-        print(f'[STEP] {step}')
-
         # Always retrieve FileManager instance from uploaded file
-        self.getFileManager(step)
+        self.get_file_manager(step)
 
         if step == 'upload':
             # Dynamically build upload form
@@ -296,14 +252,25 @@ class FileManagementFormView(MultiStepFormView):
             # Dynamically build match item form
             kwargs = {}
             kwargs['file_manager'] = self.file_manager
-            self.getFieldSelections()
+
+            # Get data from fields step
+            data = self.storage.get_step_data('fields')
+
+            # Process to update columns and rows
+            self.rows = self.file_manager.rows()
+            self.columns = self.file_manager.columns()
+            self.get_form_table_data(data)
+            self.set_form_table_data()
+            self.get_field_selection()
+            
             kwargs['row_data'] = self.rows
+
             return kwargs
         
         return super().get_form_kwargs()
 
-    def getFormTableData(self, form_data):
-        """ Extract table cell data from form data.
+    def get_form_table_data(self, form_data):
+        """ Extract table cell data from form data and fields.
         These data are used to maintain state between sessions.
 
         Table data keys are as follows:
@@ -314,18 +281,15 @@ class FileManagementFormView(MultiStepFormView):
 
         """
 
-        # Store extra context data
-        self.extra_context_data = {}
-
         # Map the columns
         self.column_names = {}
         self.column_selections = {}
 
         self.row_data = {}
 
-        for item in form_data:
+        for item, value in form_data.items():
             # print(f'{item} | {form_data[item]} | {type(form_data[item])}')
-            value = form_data[item]
+            # value = form.data[item]
 
             # Column names as passed as col_name_<idx> where idx is an integer
 
@@ -368,79 +332,85 @@ class FileManagementFormView(MultiStepFormView):
 
                 # TODO: this is a hack
                 value = value.replace("'", '"')
-                self.row_data[row_id][col_id] = ast.literal_eval(value)
+                # print(f'{type(value)=} | {value=}')
+                try:
+                    self.row_data[row_id][col_id] = ast.literal_eval(value)
+                except (ValueError, SyntaxError):
+                    pass
 
-        # self.col_ids = sorted(self.column_names.keys())
+    def set_form_table_data(self, form=None):
+        if self.row_data:
+            # Re-construct the row data
+            self.rows = []
 
-        # Re-construct the data table
-        self.rows = []
+            for row_idx in sorted(self.row_data.keys()):
+                row = self.row_data[row_idx]
+                items = []
 
-        for row_idx in sorted(self.row_data.keys()):
-            row = self.row_data[row_idx]
-            items = []
+                for col_idx in sorted(row.keys()):
 
-            for col_idx in sorted(row.keys()):
+                    value = row[col_idx]
+                    items.append(value)
 
-                value = row[col_idx]
-                items.append(value)
+                self.rows.append({
+                    'index': row_idx,
+                    'data': items,
+                    'errors': {},
+                })
+        else:
+            # Update the row data
+            for row in self.rows:
+                row_data = row['data']
 
-            self.rows.append({
-                'index': row_idx,
-                'data': items,
-                'errors': {},
-            })
+                data = []
 
-        # Construct the column data
-        self.columns = []
+                for idx, item in enumerate(row_data):
+                    data.append({
+                        'cell': item,
+                        'idx': idx,
+                        'column': self.columns[idx],
+                    })
+            
+                row['data'] = data
 
-        # Track any duplicate column selections
-        duplicates = []
+        # In the item selection step: update row data to contain fields
+        if form and self.steps.current == 'items':
+            key_item_select = ''
+            key_quantity_select = ''
 
-        for col in self.column_names:
+            # Find column key for item selection
+            for item in self.file_manager.ITEM_MATCH_HEADERS:
+                item = item.lower()
+                for key in form.fields.keys():
+                    if item in key:
+                        key_item_select = item
+                        break
+                        break
 
-            if col in self.column_selections:
-                guess = self.column_selections[col]
-            else:
-                guess = None
+            # Find column key for quantity selection
+            key_quantity_select = 'quantity'
 
-            header = ({
-                'name': self.column_names[col],
-                'guess': guess
-            })
+            # Update row data
+            for row in self.rows:
+                # Add item select field
+                if key_item_select:
+                    row['item_select'] = key_item_select + '-' + str(row['index'])
+                # Add quantity select field
+                if key_quantity_select:
+                    row['quantity_select'] = key_quantity_select + '-' + str(row['index'])
 
-            if guess:
-                n = list(self.column_selections.values()).count(self.column_selections[col])
-                if n > 1:
-                    header['duplicate'] = True
-                    duplicates.append(col)
+        if self.column_names:
+            # Re-construct the column data
+            self.columns = []
 
-            self.columns.append(header)
+            for key in self.column_names:
+                header = ({
+                    'name': key,
+                    'guess': self.column_selections[key],
+                })
+                self.columns.append(header)
 
-        # Are there any missing columns?
-        missing_columns = []
-
-        # Check that all required fields are present
-        for col in self.file_manager.REQUIRED_HEADERS:
-            if col not in self.column_selections.values():
-                missing_columns.append(col)
-
-        # Check that at least one of the part match field is present
-        part_match_found = False
-        for col in self.file_manager.ITEM_MATCH_HEADERS:
-            if col in self.column_selections.values():
-                part_match_found = True
-                break
-        
-        # If not, notify user
-        if not part_match_found:
-            for col in self.file_manager.ITEM_MATCH_HEADERS:
-                missing_columns.append(col)
-
-        # Store extra context data
-        self.extra_context_data['missing_columns'] = missing_columns
-        self.extra_context_data['duplicates'] = duplicates
-
-    def getColumnIndex(self, name):
+    def get_column_index(self, name):
         """ Return the index of the column with the given name.
         It named column is not found, return -1
         """
@@ -452,7 +422,7 @@ class FileManagementFormView(MultiStepFormView):
 
         return idx
 
-    def getFieldSelections(self):
+    def get_field_selection(self):
         """ Once data columns have been selected, attempt to pre-select the proper data from the database.
         This function is called once the field selection has been validated.
         The pre-fill data are then passed through to the part selection form.
@@ -460,13 +430,14 @@ class FileManagementFormView(MultiStepFormView):
 
         match_supplier = False
         match_manufacturer = False
+        self.allowed_items = None
 
         # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
-        q_idx = self.getColumnIndex('Quantity')
-        s_idx = self.getColumnIndex('Supplier_SKU')
-        m_idx = self.getColumnIndex('Manufacturer_MPN')
-        # p_idx = self.getColumnIndex('Unit_Price')
-        # e_idx = self.getColumnIndex('Extended_Price')
+        q_idx = self.get_column_index('Quantity')
+        s_idx = self.get_column_index('Supplier_SKU')
+        m_idx = self.get_column_index('Manufacturer_MPN')
+        # p_idx = self.get_column_index('Unit_Price')
+        # e_idx = self.get_column_index('Extended_Price')
 
         for row in self.rows:
 
@@ -495,6 +466,7 @@ class FileManagementFormView(MultiStepFormView):
 
             # Check if there is a column corresponding to "Supplier SKU"
             if s_idx >= 0:
+                print(f'{row["data"][s_idx]=}')
                 sku = row['data'][s_idx]['cell']
 
                 # Match for supplier
@@ -536,22 +508,51 @@ class FileManagementFormView(MultiStepFormView):
                 # If there is an exact match based on SKU or MPN, use that
                 row['item_match'] = exact_match_part
 
-    def checkFieldSelection(self, form):
+    def check_field_selection(self, form):
         """ Check field matching """
 
-        # Extract form data
-        self.getFormTableData(form.data)
+        # Are there any missing columns?
+        missing_columns = []
 
-        valid = len(self.extra_context_data.get('missing_columns', [])) == 0 and not self.extra_context_data.get('duplicates', [])
+        # Check that all required fields are present
+        for col in self.file_manager.REQUIRED_HEADERS:
+            if col not in self.column_selections.values():
+                missing_columns.append(col)
 
-        return valid
+        # Check that at least one of the part match field is present
+        part_match_found = False
+        for col in self.file_manager.ITEM_MATCH_HEADERS:
+            if col in self.column_selections.values():
+                part_match_found = True
+                break
+        
+        # If not, notify user
+        if not part_match_found:
+            for col in self.file_manager.ITEM_MATCH_HEADERS:
+                missing_columns.append(col)
 
-    def checkPartSelection(self, form):
-        """ Check part matching """
+        # Track any duplicate column selections
+        duplicates = []
 
-        # Extract form data
-        self.getFormTableData(form.data)
+        for col in self.column_names:
 
+            if col in self.column_selections:
+                guess = self.column_selections[col]
+            else:
+                guess = None
+
+            if guess:
+                n = list(self.column_selections.values()).count(self.column_selections[col])
+                if n > 1:
+                    duplicates.append(col)
+        
+        # Store extra context data
+        self.extra_context_data = {
+            'missing_columns': missing_columns,
+            'duplicates': duplicates,
+        }
+
+        # Data validation
         valid = len(self.extra_context_data.get('missing_columns', [])) == 0 and not self.extra_context_data.get('duplicates', [])
 
         return valid
@@ -559,24 +560,20 @@ class FileManagementFormView(MultiStepFormView):
     def validate(self, step, form):
         """ Validate forms """
 
-        valid = False
+        valid = True
 
-        # Process steps
-        if step == 'upload':
-            # Validation is done during POST
-            valid = True
-        elif step == 'fields':
+        # Get form table data
+        self.get_form_table_data(form.data)
+
+        if step == 'fields':
             # Validate user form data
-            valid = self.checkFieldSelection(form)
+            valid = self.check_field_selection(form)
 
             if not valid:
                 form.add_error(None, 'Fields matching failed')
 
         elif step == 'items':
-            valid = self.checkPartSelection(form)
-
-            if not valid:
-                form.add_error(None, 'Items matching failed')
+            pass
 
         return valid
 
@@ -593,5 +590,4 @@ class FileManagementFormView(MultiStepFormView):
             # Re-render same step
             return self.render(form)
 
-        print('\nPosting... ')
         return super().post(*args, **kwargs)

@@ -40,7 +40,7 @@
         </thead>
         <tbody>
             {% for row in rows %}
-            <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-name='{{ row.part_name }}' part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
+            <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
                 <td>
                     <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
                             <span row_id='{{ forloop.counter }}' class='fas fa-trash-alt icon-red'></span>
@@ -51,26 +51,14 @@
                 {% add row.index 1 %}
                 </td>
                 <td>
-                    <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='{% trans "Create new part" %}' type='button'>
-                        <span row_id='{{ row.index }}' class='fas fa-plus icon-green'/>
-                    </button>
                     {% for field in form.visible_fields %}
                         {% if field.name == row.item_select %}
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    {% comment %} 
-                    <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
-                        <option value=''>--- {% trans "Select Part" %} ---</option>
-                        {% for part in row.part_options %}
-                        <option value='{{ part.id }}' {% if part.id == row.part.id %} selected='selected' {% elif part.id == row.part_match.id %} selected='selected' {% endif %}>
-                            {{ part }}
-                        </option>
-                        {% endfor %}
-                    </select>
                     {% if row.errors.part %}
                     <p class='help-inline'>{{ row.errors.part }}</p>
-                    {% endif %} {% endcomment %}
+                    {% endif %}
                 </td>
                 {% for item in row.data %}
                 <td>
@@ -80,7 +68,6 @@
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    {% comment %} <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' step='any' value='{% decimal row.quantity %}'/> {% endcomment %}
                     {% if row.errors.quantity %}
                     <p class='help-inline'>{{ row.errors.quantity }}</p>
                     {% endif %}
