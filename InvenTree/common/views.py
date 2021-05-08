@@ -333,20 +333,34 @@ class FileManagementFormView(MultiStepFormView):
                     'errors': {},
                 })
         else:
+            if self.column_names:
+                rows_shown = []
+
             # Update the row data
             for row in self.rows:
                 row_data = row['data']
 
                 data = []
+                show_data = []
 
                 for idx, item in enumerate(row_data):
-                    data.append({
+                    column_data ={
                         'cell': item,
                         'idx': idx,
                         'column': self.columns[idx],
-                    })
-            
+                    }
+                    data.append(column_data)
+                    if not self.column_names or self.columns[idx]['name'] in self.column_names:
+                        show_data.append(column_data)
+
                 row['data'] = data
+                if self.column_names:
+                    current_row = row
+                    current_row['data'] = show_data
+                    rows_shown.append(current_row)
+
+            if self.column_names and self.get_step_index() == 3:
+                self.rows = rows_shown
 
         # In the item selection step: update row data to contain fields
         if form and self.steps.current == 'items':
