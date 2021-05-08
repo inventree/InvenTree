@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-07 13:55+0000\n"
+"POT-Creation-Date: 2021-05-08 10:55+0000\n"
 "PO-Revision-Date: 2021-05-06 02:54\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
 
-#: InvenTree/models.py:59 stock/models.py:1658
+#: InvenTree/models.py:59 stock/models.py:1657
 msgid "Attachment"
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:91
 #: report/templates/report/inventree_test_report_base.html:77
-#: stock/forms.py:175 stock/forms.py:308 stock/models.py:1562
+#: stock/forms.py:175 stock/forms.py:308 stock/models.py:1561
 #: stock/templates/stock/item_base.html:244
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
@@ -693,7 +693,7 @@ msgstr ""
 #: part/templates/part/navbar.html:128
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
-#: stock/models.py:498 stock/models.py:1554 stock/models.py:1664
+#: stock/models.py:498 stock/models.py:1553 stock/models.py:1663
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:333 templates/js/stock.js:128 templates/js/stock.js:671
 msgid "Notes"
@@ -1833,7 +1833,7 @@ msgstr ""
 #: company/models.py:121 company/models.py:333 company/models.py:485
 #: order/models.py:103 part/models.py:743
 #: report/templates/report/inventree_build_order_base.html:165
-#: stock/models.py:1556 templates/js/company.js:188 templates/js/company.js:318
+#: stock/models.py:1555 templates/js/company.js:188 templates/js/company.js:318
 #: templates/js/part.js:431
 msgid "Link"
 msgstr ""
@@ -4370,7 +4370,7 @@ msgstr ""
 
 #: part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
-#: stock/models.py:1651 templates/InvenTree/settings/header.html:8
+#: stock/models.py:1650 templates/InvenTree/settings/header.html:8
 #: templates/js/stock.js:124
 msgid "Value"
 msgstr ""
@@ -4923,12 +4923,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:1639
+#: stock/models.py:1638
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:89
-#: stock/models.py:1645
+#: stock/models.py:1644
 msgid "Result"
 msgstr ""
 
@@ -5278,57 +5278,57 @@ msgstr ""
 msgid "Counted {n} items"
 msgstr ""
 
-#: stock/models.py:1238
+#: stock/models.py:1237
 #, python-brace-format
 msgid "Added {n} items"
 msgstr ""
 
-#: stock/models.py:1268
+#: stock/models.py:1267
 #, python-brace-format
 msgid "Removed {n1} items"
 msgstr ""
 
-#: stock/models.py:1552
+#: stock/models.py:1551
 msgid "Title"
 msgstr ""
 
-#: stock/models.py:1552
+#: stock/models.py:1551
 msgid "Tracking entry title"
 msgstr ""
 
-#: stock/models.py:1554
+#: stock/models.py:1553
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:1556
+#: stock/models.py:1555
 msgid "Link to external page for further information"
 msgstr ""
 
-#: stock/models.py:1616
+#: stock/models.py:1615
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:1622
+#: stock/models.py:1621
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:1640
+#: stock/models.py:1639
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:1646 templates/js/table_filters.js:212
+#: stock/models.py:1645 templates/js/table_filters.js:212
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:1652
+#: stock/models.py:1651
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:1659
+#: stock/models.py:1658
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:1665
+#: stock/models.py:1664
 msgid "Test notes"
 msgstr ""
 
