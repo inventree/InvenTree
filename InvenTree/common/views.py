@@ -344,7 +344,7 @@ class FileManagementFormView(MultiStepFormView):
                 show_data = []
 
                 for idx, item in enumerate(row_data):
-                    column_data ={
+                    column_data = {
                         'cell': item,
                         'idx': idx,
                         'column': self.columns[idx],
