@@ -278,6 +278,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
+    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
 
     class Meta:
         model = SalesOrderLineItem
@@ -294,6 +295,9 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'order_detail',
             'part',
             'part_detail',
+            'sale_price',
+            'sale_price_currency',
+            'sale_price_string',
         ]
 
 

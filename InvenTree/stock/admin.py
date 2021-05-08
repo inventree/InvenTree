@@ -56,7 +56,7 @@ class LocationAdmin(ImportExportModelAdmin):
 class StockItemResource(ModelResource):
     """ Class for managing StockItem data import/export """
 
-    # Custom manaegrs for ForeignKey fields
+    # Custom managers for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
     part_name = Field(attribute='part__full_name', readonly=True)

@@ -1611,6 +1611,44 @@ class Part(MPTTModel):
                 max(buy_price_range[1], bom_price_range[1])
             )
 
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
+
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Sell multiple'))
+
+    get_price = common.models.get_price
+
+    @property
+    def has_price_breaks(self):
+        return self.price_breaks.count() > 0
+
+    @property
+    def price_breaks(self):
+        """ Return the associated price breaks in the correct order """
+        return self.salepricebreaks.order_by('quantity').all()
+
+    @property
+    def unit_pricing(self):
+        return self.get_price(1)
+
+    def add_price_break(self, quantity, price):
+        """
+        Create a new price break for this part
+
+        args:
+            quantity - Numerical quantity
+            price - Must be a Money object
+        """
+
+        # Check if a price break at that quantity already exists...
+        if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
+            return
+
+        PartSellPriceBreak.objects.create(
+            part=self,
+            quantity=quantity,
+            price=price
+        )
+
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
         """

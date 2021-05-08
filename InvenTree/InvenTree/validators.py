@@ -74,7 +74,7 @@ def validate_build_order_reference(value):
         match = re.search(pattern, value)
 
         if match is None:
-            raise ValidationError(_('Reference must match pattern') + f" '{pattern}'")
+            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
 
 
 def validate_purchase_order_reference(value):
@@ -88,7 +88,7 @@ def validate_purchase_order_reference(value):
         match = re.search(pattern, value)
 
         if match is None:
-            raise ValidationError(_('Reference must match pattern') + f" '{pattern}'")
+            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
 
 
 def validate_sales_order_reference(value):
@@ -102,7 +102,7 @@ def validate_sales_order_reference(value):
         match = re.search(pattern, value)
 
         if match is None:
-            raise ValidationError(_('Reference must match pattern') + f" '{pattern}'")
+            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
 
 
 def validate_tree_name(value):

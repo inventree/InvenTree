@@ -100,7 +100,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
     if (options.disabled) {
         extraProps += "disabled='true' ";
     }
-    
+
     html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;
