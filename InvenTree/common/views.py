@@ -452,7 +452,7 @@ class FileManagementFormView(MultiStepFormView):
             valid = self.check_field_selection(form)
 
             if not valid:
-                form.add_error(None, 'Fields matching failed')
+                form.add_error(None, _('Fields matching failed'))
 
         elif step == 'items':
             pass
