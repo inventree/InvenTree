@@ -97,7 +97,7 @@ class TestHelpers(TestCase):
         self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
 
     def testDecimal2String(self):
-        
+
         self.assertEqual(helpers.decimal2string(Decimal('1.2345000')), '1.2345')
         self.assertEqual(helpers.decimal2string('test'), 'test')
 
@@ -205,7 +205,7 @@ class TestMPTT(TestCase):
         child = StockLocation.objects.get(pk=5)
 
         parent.parent = child
-        
+
         with self.assertRaises(InvalidMove):
             parent.save()
 
@@ -223,7 +223,7 @@ class TestMPTT(TestCase):
         drawer.save()
 
         self.assertNotEqual(tree, drawer.tree_id)
-        
+
 
 class TestSerialNumberExtraction(TestCase):
     """ Tests for serial number extraction code """

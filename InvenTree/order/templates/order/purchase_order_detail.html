@@ -193,11 +193,11 @@ $("#po-table").inventreeTable({
                 });
             },
             sorter: function(valA, valB, rowA, rowB) {
-                
+
                 if (rowA.received == 0 && rowB.received == 0) {
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
                 }
-                
+
                 var progressA = parseFloat(rowA.received) / rowA.quantity;
                 var progressB = parseFloat(rowB.received) / rowB.quantity;
 

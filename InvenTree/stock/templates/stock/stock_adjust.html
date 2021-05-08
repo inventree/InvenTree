@@ -10,7 +10,7 @@
   {% load crispy_forms_tags %}
 
   <input type='hidden' name='stock_action' value='{{ stock_action }}'/>
-  
+
   <table class='table table-condensed table-striped' id='stock-table'>
       <tr>
           <th>{% trans "Stock Item" %}</th>
@@ -44,7 +44,7 @@
       </tr>
       {% endfor %}
     </table>
-  
+
   {% crispy form %}
 
 </form>

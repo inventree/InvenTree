@@ -44,7 +44,7 @@ def rename_label(instance, filename):
 
 
 def validate_stock_item_filters(filters):
-    
+
     filters = validateFilterString(filters, model=stock.models.StockItem)
 
     return filters
@@ -82,7 +82,7 @@ class LabelTemplate(models.Model):
 
     # Each class of label files will be stored in a separate subdirectory
     SUBDIR = "label"
-    
+
     # Object we will be printing against (will be filled out later)
     object_to_print = None
 

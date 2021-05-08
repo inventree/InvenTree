@@ -29,7 +29,7 @@ class StockViewTestCase(TestCase):
 
         # Create a user
         user = get_user_model()
-        
+
         self.user = user.objects.create_user(
             username='username',
             email='user@email.com',
@@ -91,7 +91,7 @@ class StockLocationTest(StockViewTestCase):
         # Create with an invalid parent
         response = self.client.get(reverse('stock-location-create'), {'location': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
 
 class StockItemTest(StockViewTestCase):
     """" Tests for StockItem views """
@@ -211,7 +211,7 @@ class StockItemTest(StockViewTestCase):
             'serial_numbers': 'dd-23-adf',
             'destination': 'blorg'
         }
-        
+
         # POST
         response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
@@ -247,7 +247,7 @@ class StockOwnershipTest(StockViewTestCase):
 
         # Create a new user
         user = get_user_model()
-        
+
         self.new_user = user.objects.create_user(
             username='john',
             email='john@email.com',
@@ -314,7 +314,7 @@ class StockOwnershipTest(StockViewTestCase):
         response = self.client.post(reverse('stock-location-edit', args=(test_location_id,)),
                                     {'name': 'Office', 'owner': new_user_group_owner.pk},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+
         # Make sure the location's owner is unchanged
         location = StockLocation.objects.get(pk=test_location_id)
         self.assertEqual(location.owner, user_group_owner)
@@ -366,7 +366,7 @@ class StockOwnershipTest(StockViewTestCase):
         response = self.client.post(reverse('stock-location-create'),
                                     new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertContains(response, '"form_valid": true', status_code=200)
-        
+
         # Retrieve created location
         location_created = StockLocation.objects.get(name=new_location['name'])
 

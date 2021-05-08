@@ -185,11 +185,11 @@ function getFilterOptionList(tableKey, filterKey) {
 function generateAvailableFilterList(tableKey) {
 
     var remaining = getRemainingTableFilters(tableKey);
-    
+
     var id = 'filter-tag-' + tableKey.toLowerCase();
 
     var html = `<select class='form-control filter-input' id='${id}' name='tag'>`;
-    
+
     html += "<option value=''>{% trans 'Select filter' %}</option>";
 
     for (var opt in remaining) {
@@ -275,7 +275,7 @@ function setupFilterList(tableKey, table, target) {
         var value = getFilterOptionValue(tableKey, key, filters[key]);
         var title = getFilterTitle(tableKey, key);
         var description = getFilterDescription(tableKey, key);
-        
+
         element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
 
@@ -287,7 +287,7 @@ function setupFilterList(tableKey, table, target) {
             addClicked = true;
 
             var html = '';
-            
+
             //`<div class='filter-input'>`;
 
             html += generateAvailableFilterList(tableKey);
@@ -315,7 +315,7 @@ function setupFilterList(tableKey, table, target) {
                 if (tag && tag.length > 0) {
                     var filters = addTableFilter(tableKey, tag, val);
                     reloadTable(table, filters);
-                    
+
                     // Run this function again
                     setupFilterList(tableKey, table, target);
                 }
@@ -332,7 +332,7 @@ function setupFilterList(tableKey, table, target) {
     // Add a callback for clearing all the filters
     element.find(`#${clear}`).click(function() {
         var filters = clearTableFilters(tableKey);
-        
+
         reloadTable(table, filters);
 
         setupFilterList(tableKey, table, target);

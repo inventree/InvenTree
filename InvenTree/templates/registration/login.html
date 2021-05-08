@@ -37,7 +37,7 @@
 <!-- 
     Background Image Attribution: https://unsplash.com/photos/Ixvv3YZkd7w
 -->
-    
+
 <div class='main body-wrapper login-screen'>
 
         <div class='login-container'>
@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div id="div_id_password" class="form-group">
                             <label for="id_password" class="control-label requiredField">{% trans "Password" %}<span class="asteriskField">*</span></label>
                             <div class='controls'>
@@ -78,15 +78,15 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         {% if form.errors %}
                         <div class='login-error'>
                             <b>{% trans "Username / password combination is incorrect" %}</b>
                         </div>
                         {% endif %}
-        
+
                         <hr>
-                        
+
                         <button class='pull-right btn btn-primary login-button' type="submit">{% trans "Login" %}</button>
 
                     </form>

@@ -49,7 +49,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
     function reloadTable() {
         $(panel).find(`#allocation-table-${outputId}`).bootstrapTable('refresh');
     }
-    
+
     // Find the div where the buttons will be displayed
     var buildActions = $(panel).find(`#output-actions-${outputId}`);
 
@@ -82,7 +82,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
                 //disabled: true
             }
         );
-                    
+
         // Add a button to "delete" the particular build output
         html += makeIconButton(
             'fa-trash-alt icon-red', 'button-output-delete', outputId,
@@ -171,7 +171,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     var partId = buildInfo.part;
 
     var outputId = null;
-    
+
     if (output) {
         outputId = output.pk;
     } else {
@@ -179,7 +179,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     var table = options.table;
-    
+
     if (options.table == null) {
         table = `#allocation-table-${outputId}`;
     }
@@ -187,7 +187,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     // If an "output" is specified, then only "trackable" parts are allocated
     // Otherwise, only "untrackable" parts are allowed
     var trackable = ! !output;
-    
+
     function reloadTable() {
         // Reload the entire build allocation table
         $(table).bootstrapTable('refresh');
@@ -492,7 +492,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             if (row.stock_item_detail.location) {
                                 var text = row.stock_item_detail.location_name;
                                 var url = `/stock/location/${row.stock_item_detail.location}/`;
-                                
+
                                 return renderLink(text, url);
                             } else {
                                 return '<i>{% trans "No location set" %}</i>';
@@ -600,7 +600,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     qA *= output.quantity;
                     qB *= output.quantity;
-                
+
                     // Handle the case where both numerators are zero
                     if ((aA == 0) && (aB == 0)) {
                         return (qA > qB) ? 1 : -1;
@@ -610,7 +610,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     if ((qA == 0) || (qB == 0)) {
                         return 1;
                     }
-                    
+
                     var progressA = parseFloat(aA) / qA;
                     var progressB = parseFloat(aB) / qB;
 
@@ -618,7 +618,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     if (progressA == progressB) {
                         return (qA < qB) ? 1 : -1;
                     }
-    
+
                     return (progressA < progressB) ? 1 : -1;
                 }
             },
@@ -670,7 +670,7 @@ function loadBuildTable(table, options) {
     var filters = {};
 
     params['part_detail'] = true;
-    
+
     if (!options.disableFilters) {
         filters = loadTableFilters("build");
     }
@@ -801,11 +801,11 @@ function loadBuildTable(table, options) {
 
 
 function updateAllocationTotal(id, count, required) {
-    
+
     count = parseFloat(count);
-    
+
     $('#allocation-total-'+id).html(count);
-    
+
     var el = $("#allocation-panel-" + id);
     el.removeClass('part-allocation-pass part-allocation-underallocated part-allocation-overallocated');
 
@@ -819,7 +819,7 @@ function updateAllocationTotal(id, count, required) {
 }
 
 function loadAllocationTable(table, part_id, part, url, required, button) {
-    
+
     // Load the allocation table
     table.bootstrapTable({
         url: url,
@@ -848,9 +848,9 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
 
                     var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='{% trans "Edit stock allocation" %}' url='/build/item/" + row.pk + "/edit/'><span class='fas fa-edit'></span></button>";
                     var bDel = "<button class='btn item-del-button btn-sm' type='button' title='{% trans "Delete stock allocation" %}' url='/build/item/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'></span></button>";
-                    
+
                     html += "<div class='btn-group' style='float: right;'>" + bEdit + bDel + "</div>";
-                    
+
                     return html;
                 }
             }
@@ -992,7 +992,7 @@ function loadBuildPartsTable(table, options={}) {
                 // Display an extra icon if this part is an assembly
                 if (sub_part.assembly) {
                     var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
-                    
+
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
 

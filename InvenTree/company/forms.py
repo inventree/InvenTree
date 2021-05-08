@@ -158,7 +158,7 @@ class EditSupplierPartForm(HelperForm):
         empty_choice = [('', '----------')]
 
         manufacturers = [(manufacturer.id, manufacturer.name) for manufacturer in Company.objects.filter(is_manufacturer=True)]
-        
+
         return empty_choice + manufacturers
 
     def __init__(self, *args, **kwargs):

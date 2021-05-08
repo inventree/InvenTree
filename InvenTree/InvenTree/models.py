@@ -129,7 +129,7 @@ class InvenTreeTree(MPTTModel):
 
         Here an 'item' is considered to be the 'leaf' at the end of each branch,
         and the exact nature here will depend on the class implementation.
-        
+
         The default implementation returns zero
         """
         return 0

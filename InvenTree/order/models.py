@@ -309,7 +309,7 @@ class PurchaseOrder(Order):
         """
         A PurchaseOrder can only be cancelled under the following circumstances:
         """
-        
+
         return self.status in [
             PurchaseOrderStatus.PLACED,
             PurchaseOrderStatus.PENDING
@@ -378,7 +378,7 @@ class PurchaseOrder(Order):
 
         # Has this order been completed?
         if len(self.pending_line_items()) == 0:
-            
+
             self.received_by = user
             self.complete_order()  # This will save the model
 
@@ -419,7 +419,7 @@ class SalesOrder(Order):
         except (ValueError, TypeError):
             # Date processing error, return queryset unchanged
             return queryset
- 
+
         # Construct a queryset for "completed" orders within the range
         completed = Q(status__in=SalesOrderStatus.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
 
@@ -495,7 +495,7 @@ class SalesOrder(Order):
         for line in self.lines.all():
             if not line.is_fully_allocated():
                 return False
-            
+
         return True
 
     def is_over_allocated(self):
@@ -590,11 +590,11 @@ class SalesOrderAttachment(InvenTreeAttachment):
 
 class OrderLineItem(models.Model):
     """ Abstract model for an order line item
-    
+
     Attributes:
         quantity: Number of items
         note: Annotation for the item
-        
+
     """
 
     class Meta:
@@ -603,13 +603,13 @@ class OrderLineItem(models.Model):
     quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Item quantity'))
 
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
-    
+
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
 
 class PurchaseOrderLineItem(OrderLineItem):
     """ Model for a purchase order line item.
-    
+
     Attributes:
         order: Reference to a PurchaseOrder object
 
@@ -637,7 +637,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_base_part(self):
         """ Return the base-part for the line item """
         return self.part.part
-    
+
     # TODO - Function callback for when the SupplierPart is deleted?
 
     part = models.ForeignKey(

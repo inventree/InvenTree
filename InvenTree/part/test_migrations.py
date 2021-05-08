@@ -34,7 +34,7 @@ class TestForwardMigrations(MigratorTestCase):
         # Initially some fields are not present
         with self.assertRaises(AttributeError):
             print(p.has_variants)
-        
+
         with self.assertRaises(AttributeError):
             print(p.is_template)
 

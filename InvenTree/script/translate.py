@@ -29,7 +29,7 @@ def manually_translate_file(filename, save=False):
     print("a) Directly enter a new tranlation in the target language")
     print("b) Leave empty to skip")
     print("c) Press Ctrl+C to exit")
-    
+
     print("-------------------------")
     input("Press <ENTER> to start")
     print("")

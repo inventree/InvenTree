@@ -41,7 +41,7 @@ class PartCategoryTree(TreeSerializer):
     model = PartCategory
 
     queryset = PartCategory.objects.all()
-    
+
     @property
     def root_url(self):
         return reverse('part-index')
@@ -79,7 +79,7 @@ class CategoryList(generics.ListCreateAPIView):
             pass
         # Look for top-level categories
         elif isNull(cat_id):
-            
+
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
@@ -166,9 +166,9 @@ class CategoryParameters(generics.ListAPIView):
                 parent_categories = category.get_ancestors()
                 for parent in parent_categories:
                     category_list.append(parent.pk)
-                
+
             queryset = queryset.filter(category__in=category_list)
-                
+
         return queryset
 
 
@@ -264,7 +264,7 @@ class PartThumbs(generics.ListAPIView):
 
         # Get all Parts which have an associated image
         queryset = queryset.exclude(image='')
-        
+
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -301,7 +301,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
-    
+
     starred_parts = None
 
     def get_queryset(self, *args, **kwargs):
@@ -482,7 +482,7 @@ class PartList(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-        
+
         queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
@@ -576,7 +576,7 @@ class PartList(generics.ListCreateAPIView):
         if cat_id is None:
             # No category filtering if category is not specified
             pass
-        
+
         else:
             # Category has been specified!
             if isNull(cat_id):
@@ -780,10 +780,10 @@ class BomList(generics.ListCreateAPIView):
             kwargs['sub_part_detail'] = str2bool(self.request.GET.get('sub_part_detail', None))
         except AttributeError:
             pass
-        
+
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
-        
+
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
@@ -867,7 +867,7 @@ class BomList(generics.ListCreateAPIView):
 
             # Work out which lines have actually been validated
             pks = []
-            
+
             for bom_item in queryset.all():
                 if bom_item.is_line_valid:
                     pks.append(bom_item.pk)
@@ -915,7 +915,7 @@ class BomItemValidate(generics.UpdateAPIView):
         valid = request.data.get('valid', False)
 
         instance = self.get_object()
-        
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
@@ -949,7 +949,7 @@ part_api_urls = [
     url(r'^sale-price/', include([
         url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
-    
+
     # Base URL for PartParameter API endpoints
     url(r'^parameter/', include([
         url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),

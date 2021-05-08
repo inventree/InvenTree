@@ -24,7 +24,7 @@
     name: A customer
     description: A company that we sell things to!
     is_customer: True
-  
+
 - model: company.company
   pk: 5
   fields:

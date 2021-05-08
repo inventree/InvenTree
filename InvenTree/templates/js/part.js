@@ -59,7 +59,7 @@ function makePartIcons(part, options={}) {
     if (part.is_template) {
         html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
     }
-    
+
     if (part.assembly) {
         html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
     }
@@ -71,13 +71,13 @@ function makePartIcons(part, options={}) {
     if (part.salable) {
         html += makeIconBadge('fa-dollar-sign', title='{% trans "Salable part" %}');
     }
-    
+
     if (!part.active) {
         html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
     }
 
     return html;
-    
+
 }
 
 
@@ -118,14 +118,14 @@ function loadPartVariantTable(table, partId, options={}) {
                     name += row.IPN;
                     name += ' | ';
                 }
-    
+
                 name += value;
-    
+
                 if (row.revision) {
                     name += ' | ';
                     name += row.revision;
                 }
-    
+
                 if (row.is_template) {
                     name = '<i>' + name + '</i>';
                 }
@@ -144,7 +144,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 if (row.is_template) {
                     html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                 }
-                
+
                 if (row.assembly) {
                     html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                 }
@@ -242,7 +242,7 @@ function loadParametricPartTable(table, options={}) {
                     } else {
                         name += row.name;
                     }
-                    
+
                     return renderLink(name, '/part/' + row.pk + '/'); 
                 }
             });
@@ -297,7 +297,7 @@ function loadPartTable(table, url, options={}) {
     var params = options.params || {};
 
     var filters = {};
-    
+
     if (!options.disableFilters) {
         filters = loadTableFilters("parts");
     }
@@ -359,7 +359,7 @@ function loadPartTable(table, url, options={}) {
             }
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
-            
+
             display += makePartIcons(row);
 
             return display; 
@@ -378,7 +378,7 @@ function loadPartTable(table, url, options={}) {
             return value;
         }
     });
-    
+
     columns.push({
         sortable: true,
         field: 'category_detail',
@@ -400,7 +400,7 @@ function loadPartTable(table, url, options={}) {
         sortable: true,
         formatter: function(value, row, index, field) {            
             var link = "stock";
-            
+
             if (value) {
                 // There IS stock available for this part
 
@@ -421,7 +421,7 @@ function loadPartTable(table, url, options={}) {
                 // There is no stock available
                 value = "0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>";
             }
-            
+
             return renderLink(value, '/part/' + row.pk + "/" + link + "/");
         }
     });
@@ -596,7 +596,7 @@ function loadPartTestTemplateTable(table, options) {
     /*
      * Load PartTestTemplate table.
      */
-    
+
     var params = options.params || {};
 
     var part = options.part || null;
@@ -671,7 +671,7 @@ function loadPartTestTemplateTable(table, options) {
 
                     if (row.part == part) {
                         var html = `<div class='btn-group float-right' role='group'>`;
-                        
+
                         html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
 

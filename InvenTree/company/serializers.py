@@ -51,7 +51,7 @@ class CompanySerializer(InvenTreeModelSerializer):
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
-    
+
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     parts_supplied = serializers.IntegerField(read_only=True)
@@ -157,9 +157,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             self.fields.pop('pretty_name')
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
-    
+
     manufacturer = serializers.PrimaryKeyRelatedField(source='manufacturer_part.manufacturer', read_only=True)
-    
+
     MPN = serializers.StringRelatedField(source='manufacturer_part.MPN')
 
     manufacturer_part = ManufacturerPartSerializer(read_only=True)

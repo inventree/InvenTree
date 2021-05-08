@@ -39,11 +39,11 @@ function loadCompanyTable(table, url, options={}) {
                 if (row.is_customer) {
                     html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie label-right'></span>`;
                 }
-                
+
                 if (row.is_manufacturer) {
                     html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry label-right'></span>`;
                 }
-                
+
                 if (row.is_supplier) {
                     html += `<span title='{% trans "Supplier" %}' class='fas fa-building label-right'></span>`;
                 }

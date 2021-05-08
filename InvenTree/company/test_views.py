@@ -30,7 +30,7 @@ class CompanyViewTestBase(TestCase):
 
         # Create a user
         user = get_user_model()
-        
+
         self.user = user.objects.create_user(
             username='username',
             email='user@email.com',
@@ -83,7 +83,7 @@ class SupplierPartViewTests(CompanyViewTestBase):
     def test_supplier_part_create(self):
         """
         Test the SupplierPartCreate view.
-        
+
         This view allows some additional functionality,
         specifically it allows the user to create a single-quantity price break
         automatically, when saving the new SupplierPart model.
@@ -171,7 +171,7 @@ class SupplierPartViewTests(CompanyViewTestBase):
                 'confirm_delete': True
             },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(n - 2, SupplierPart.objects.count())
@@ -213,7 +213,7 @@ class ManufacturerPartViewTests(CompanyViewTestBase):
         """
         Test the ManufacturerPartCreate view.
         """
-        
+
         url = reverse('manufacturer-part-create')
 
         # First check that we can GET the form
@@ -252,7 +252,7 @@ class ManufacturerPartViewTests(CompanyViewTestBase):
         """
         Test that the SupplierPartCreate view creates Manufacturer Part.
         """
-        
+
         url = reverse('supplier-part-create')
 
         # First check that we can GET the form
@@ -297,7 +297,7 @@ class ManufacturerPartViewTests(CompanyViewTestBase):
                 'confirm_delete': True
             },
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+
         self.assertEqual(response.status_code, 200)
 
         # Check that the ManufacturerPart was deleted
