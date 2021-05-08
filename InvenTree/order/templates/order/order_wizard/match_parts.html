@@ -63,16 +63,16 @@
                 {% for item in row.data %}
                 <td>
                     {% if item.column.guess == 'Quantity' %}
-                    {% for field in form.visible_fields %}
-                        {% if field.name == row.quantity_select %}
-                            {{ field }}
+                        {% for field in form.visible_fields %}
+                            {% if field.name == row.quantity_select %}
+                                {{ field }}
+                            {% endif %}
+                        {% endfor %}
+                        {% if row.errors.quantity %}
+                            <p class='help-inline'>{{ row.errors.quantity }}</p>
                         {% endif %}
-                    {% endfor %}
-                    {% if row.errors.quantity %}
-                    <p class='help-inline'>{{ row.errors.quantity }}</p>
-                    {% endif %}
                     {% else %}
-                    {{ item.cell }}
+                        {{ item.cell }}
                     {% endif %}
                     <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
                 </td>
