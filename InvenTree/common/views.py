@@ -195,7 +195,7 @@ class FileManagementFormView(MultiStepFormView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
-        if self.steps.current == 'fields' or self.steps.current == 'items':
+        if self.steps.current in ('fields', 'items'):
             
             # Get columns and row data
             self.columns = self.file_manager.columns()
@@ -435,7 +435,7 @@ class FileManagementFormView(MultiStepFormView):
         }
 
         # Data validation
-        valid = len(self.extra_context_data.get('missing_columns', [])) == 0 and not self.extra_context_data.get('duplicates', [])
+        valid = not missing_columns and not duplicates
 
         return valid
 
