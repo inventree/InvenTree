@@ -75,7 +75,7 @@ function postBarcodeData(barcode_data, options={}) {
                 enableBarcodeInput(modal, true);
 
                 if (status == 'success') {
-                    
+
                     if ('success' in response) {
                         if (options.onScan) {
                             options.onScan(response);
@@ -125,7 +125,7 @@ function enableBarcodeInput(modal, enabled=true) {
     var barcode = $(modal + ' #barcode');
 
     barcode.prop('disabled', !enabled);
-    
+
     modalEnable(modal, enabled);
 
     barcode.focus();
@@ -157,14 +157,14 @@ function barcodeDialog(title, options={}) {
         var barcode = getBarcodeData(modal);
 
         if (barcode && barcode.length > 0) {
-            
+
             postBarcodeData(barcode, options);
         }
     }
 
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
-        
+
         var barcode = $(modal + ' #barcode');
 
         // Handle 'enter' key on barcode
@@ -210,10 +210,10 @@ function barcodeDialog(title, options={}) {
     var content = '';
 
     content += `<div class='alert alert-info alert-block'>{% trans "Scan barcode data below" %}</div>`;
-    
+
     content += `<div id='barcode-error-message'></div>`;
     content += `<form class='js-modal-form' method='post'>`;
-    
+
     // Optional content before barcode input
     content += `<div class='container' id='barcode-header'>`;
     content += options.headerContent || '';
@@ -254,14 +254,14 @@ function barcodeScanDialog() {
      */
 
     var modal = '#modal-form';
-    
+
     barcodeDialog(
         "Scan Barcode",
         {
             onScan: function(response) {
                 if ('url' in response) {
                     $(modal).modal('hide');
-                    
+
                     // Redirect to the URL!
                     window.location.href = response.url;
                 } else {
@@ -399,7 +399,7 @@ function barcodeCheckIn(location_id, options={}) {
                     break;
                 }
             }
-            
+
             if (match) {
                 reloadTable();
             }
@@ -429,9 +429,9 @@ function barcodeCheckIn(location_id, options={}) {
             onSubmit: function() {
 
                 // Called when the 'check-in' button is pressed
-                
+
                 var data = {location: location_id};
-                
+
                 // Extract 'notes' field
                 data.notes = $(modal + ' #notes').val();
 

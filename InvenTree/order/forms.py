@@ -64,7 +64,7 @@ class CancelSalesOrderForm(HelperForm):
         fields = [
             'confirm',
         ]
-        
+
 
 class ShipSalesOrderForm(HelperForm):
 

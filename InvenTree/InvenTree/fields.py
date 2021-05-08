@@ -102,5 +102,5 @@ class RoundingDecimalField(models.DecimalField):
         }
 
         defaults.update(kwargs)
-        
+
         return super().formfield(**kwargs)

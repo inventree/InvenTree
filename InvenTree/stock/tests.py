@@ -144,7 +144,7 @@ class StockTest(TestCase):
         self.drawer3.save()
 
         self.assertNotEqual(self.drawer3.parent, self.office)
-        
+
         self.assertEqual(self.drawer3.pathstring, 'Home/Drawer_3')
 
     def test_children(self):
@@ -486,7 +486,7 @@ class VariantTest(StockTest):
         # Attempt to create the same serial number but for a variant (should fail!)
         item.pk = None
         item.part = Part.objects.get(pk=10004)
-        
+
         with self.assertRaises(ValidationError):
             item.save()
 
@@ -542,7 +542,7 @@ class TestResultTest(StockTest):
             test='sew cushion',
             result=True
         )
-    
+
         # Still should be failing at this point,
         # as the most recent "apply paint" test was False
         self.assertFalse(item.passedAllRequiredTests())

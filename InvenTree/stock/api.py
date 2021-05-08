@@ -117,7 +117,7 @@ class StockAdjust(APIView):
     A generic class for handling stocktake actions.
 
     Subclasses exist for:
-    
+
     - StockCount: count stock items
     - StockAdd: add stock items
     - StockRemove: remove stock items
@@ -184,7 +184,7 @@ class StockCount(StockAdjust):
     """
     Endpoint for counting stock (performing a stocktake).
     """
-    
+
     def post(self, request, *args, **kwargs):
 
         self.get_items(request)
@@ -225,7 +225,7 @@ class StockRemove(StockAdjust):
     def post(self, request, *args, **kwargs):
 
         self.get_items(request)
-        
+
         n = 0
 
         for item in self.items:
@@ -292,7 +292,7 @@ class StockLocationList(generics.ListCreateAPIView):
         params = self.request.query_params
 
         loc_id = params.get('parent', None)
-        
+
         cascade = str2bool(params.get('cascade', False))
 
         # Do not filter by location
@@ -304,7 +304,7 @@ class StockLocationList(generics.ListCreateAPIView):
             # If we allow "cascade" at the top-level, this essentially means *all* locations
             if not cascade:
                 queryset = queryset.filter(parent=None)
-        
+
         else:
 
             try:
@@ -321,7 +321,7 @@ class StockLocationList(generics.ListCreateAPIView):
 
             except (ValueError, StockLocation.DoesNotExist):
                 pass
-            
+
         return queryset
 
     filter_backends = [
@@ -379,14 +379,14 @@ class StockList(generics.ListCreateAPIView):
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
             location = item.part.get_default_location()
-            
+
             if location is not None:
                 item.location = location
                 item.save()
 
         # An expiry date was *not* specified - try to infer it!
         if 'expiry_date' not in request.data:
-            
+
             if item.part.default_expiry > 0:
                 item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
                 item.save()
@@ -399,7 +399,7 @@ class StockList(generics.ListCreateAPIView):
         """
         Override the 'list' method, as the StockLocation objects
         are very expensive to serialize.
-        
+
         So, we fetch and serialize the required StockLocation objects only as required.
         """
 
@@ -601,7 +601,7 @@ class StockList(generics.ListCreateAPIView):
 
                 if stale_days > 0:
                     stale_date = datetime.now().date() + timedelta(days=stale_days)
-                    
+
                     stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
 
                     if stale:
@@ -652,7 +652,7 @@ class StockList(generics.ListCreateAPIView):
 
         if serial_number_gte is not None:
             queryset = queryset.filter(serial__gte=serial_number_gte)
-        
+
         if serial_number_lte is not None:
             queryset = queryset.filter(serial__lte=serial_number_lte)
 
@@ -681,7 +681,7 @@ class StockList(generics.ListCreateAPIView):
             else:
                 # Filter StockItem without build allocations or sales order allocations
                 queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
-                
+
         # Do we wish to filter by "active parts"
         active = params.get('active', None)
 
@@ -766,7 +766,7 @@ class StockList(generics.ListCreateAPIView):
                         queryset = queryset.filter(location__in=location.getUniqueChildren())
                     else:
                         queryset = queryset.filter(location=loc_id)
-                    
+
                 except (ValueError, StockLocation.DoesNotExist):
                     pass
 
@@ -994,14 +994,14 @@ class StockTrackingList(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """ Create a new StockItemTracking object
-        
+
         Here we override the default 'create' implementation,
         to save the user information associated with the request object.
         """
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         # Record the user who created this Part object
         item = serializer.save()
         item.user = request.user

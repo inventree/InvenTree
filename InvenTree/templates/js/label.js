@@ -40,11 +40,11 @@ function printStockItemLabels(items, options={}) {
                     {
                         success: function(pk) {
                             var href = `/api/label/stock/${pk}/print/?`;
-        
+
                             items.forEach(function(item) {
                                 href += `items[]=${item}&`;
                             });
-                    
+
                             window.location.href = href;
                         }
                     }
@@ -136,7 +136,7 @@ function selectLabel(labels, items, options={}) {
             if (item.description) {
                 text += ` - ${item.description}`;
             }
-            
+
             return text;
         },
         function(item) {
@@ -146,7 +146,7 @@ function selectLabel(labels, items, options={}) {
 
     // Construct form
     var html = '';
-    
+
     if (items.length > 0) {
 
         html += `
@@ -172,7 +172,7 @@ function selectLabel(labels, items, options={}) {
     openModal({
         modal: modal,
     });
-    
+
     modalEnable(modal, true);
     modalSetTitle(modal, '{% trans "Select Label Template" %}');
     modalSetContent(modal, html);

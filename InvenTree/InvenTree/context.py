@@ -71,7 +71,7 @@ def status_codes(request):
 def user_roles(request):
     """
     Return a map of the current roles assigned to the user.
-    
+
     Roles are denoted by their simple names, and then the permission type.
 
     Permissions can be access as follows:

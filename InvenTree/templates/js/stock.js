@@ -75,7 +75,7 @@ function loadStockTestResultsTable(table, options) {
             html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
             html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
         }
-        
+
         html += "</div>";
 
         return html;
@@ -185,11 +185,11 @@ function loadStockTestResultsTable(table, options) {
 
                             // Try to associate this result with a test row
                             tableData.forEach(function(row, index) {
-                                
-                                
+
+
                                 // The result matches the test template row
                                 if (key == row.key) {
-                                    
+
                                     // Force the names to be the same!
                                     item.test_name = row.test_name;
                                     item.required = row.required;
@@ -250,7 +250,7 @@ function loadStockTable(table, options) {
     var filters = {};
 
     var filterKey = options.filterKey || options.name || "stock";
-     
+
     if (!options.disableFilters) {
         filters = loadTableFilters(filterKey);
     }
@@ -286,7 +286,7 @@ function loadStockTable(table, options) {
 
         // URL (optional)
         var url = '';
-        
+
         if (row.is_building && row.build) {
             // StockItem is currently being built!
             text = '{% trans "In production" %}';
@@ -532,7 +532,7 @@ function loadStockTable(table, options) {
                     var name = row.part_detail.full_name;
 
                     html = imageHoverIcon(thumb) + renderLink(name, url);
-                    
+
                     html += makePartIcons(row.part_detail);
 
                     return html;
@@ -574,7 +574,7 @@ function loadStockTable(table, options) {
                     }
 
                     var html = renderLink(val, `/stock/item/${row.pk}/`);
-                    
+
                     if (row.is_building) {
                         html += makeIconBadge('fa-tools', '{% trans "Stock item is in production" %}');
                     } 
@@ -848,7 +848,7 @@ function loadStockTable(table, options) {
             var status_code = label.val();
 
             closeModal(modal);
-            
+
             if (!status_code) {
                 showAlertDialog(
                     '{% trans "Select Status Code" %}',
@@ -1130,7 +1130,7 @@ function createNewStockItem(options) {
                     `/api/part/${value}/`, {},
                     {
                         success: function(response) {
-                            
+
                             // Disable serial number field if the part is not trackable
                             enableField('serial_numbers', response.trackable);
                             clearField('serial_numbers');
@@ -1141,7 +1141,7 @@ function createNewStockItem(options) {
                                 clearField('expiry_date');
                             } else {
                                 var expiry = moment().add(response.default_expiry, 'days');
-                                
+
                                 setFieldValue('expiry_date', expiry.format("YYYY-MM-DD"));
                             }
                         }
@@ -1295,7 +1295,7 @@ function loadInstalledInTable(table, options) {
 
                                 // Add some buttons yo!
                                 html += `<div class='btn-group float-right' role='group'>`;
-                                
+
                                 html += makeIconButton('fa-unlink', 'button-uninstall', pk, "{% trans 'Uninstall stock item' %}");
 
                                 html += `</div>`;
@@ -1343,17 +1343,17 @@ function loadInstalledInTable(table, options) {
                     title: '{% trans "Part" %}',
                     sortable: true,
                     formatter: function(value, row, index, field) {
-        
+
                         var url = `/part/${row.sub_part}/`;
                         var thumb = row.sub_part_detail.thumbnail;
                         var name = row.sub_part_detail.full_name;
-        
+
                         html = imageHoverIcon(thumb) + renderLink(name, url);
 
                         if (row.not_in_bom) {
                             html = `<i>${html}</i>`
                         }
-                        
+
                         return html;
                     }
                 },
@@ -1403,13 +1403,13 @@ function loadInstalledInTable(table, options) {
                     },
                     {
                         success: function(stock_items) {
-                            
+
                             var table_data = table.bootstrapTable('getData');
 
                             stock_items.forEach(function(item) {
 
                                 var match = false;
-                                
+
                                 for (var idx = 0; idx < table_data.length; idx++) {
 
                                     var row = table_data[idx];
@@ -1419,16 +1419,16 @@ function loadInstalledInTable(table, options) {
 
                                         // Match on "sub_part"
                                         if (row.sub_part == item.part) {
-                                            
+
                                             // First time?
                                             if (row.installed_count == null) {
                                                 row.installed_count = 0;
                                                 row.installed_items = [];
                                             }
-                                            
+
                                             row.installed_count += item.quantity;
                                             row.installed_items.push(item);
-                                            
+
                                             // Push the row back into the table
                                             table.bootstrapTable('updateRow', idx, row, true);
 
@@ -1445,7 +1445,7 @@ function loadInstalledInTable(table, options) {
                                 if (!match) {
                                     // The stock item did *not* match any items in the BOM!
                                     // Add a new row to the table...
-                                    
+
                                     // Contruct a new "row" to add to the table
                                     var new_row = {
                                         sub_part: item.part,

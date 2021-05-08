@@ -9,7 +9,7 @@ from .models import InvenTreeSetting
 
 
 class SettingsAdmin(ImportExportModelAdmin):
-    
+
     list_display = ('key', 'value')
 
 

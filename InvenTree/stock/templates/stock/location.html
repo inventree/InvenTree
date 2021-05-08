@@ -163,10 +163,10 @@
             submit_text: '{% trans "Export" %}',
             success: function(response) {
                 var url = "{% url 'stock-export' %}";
-                
+
                 url += "?format=" + response.format;
                 url += "&cascade=" + response.cascade;
-                
+
                 {% if location %}
                 url += "&location={{ location.id }}";
                 {% endif %}
@@ -224,9 +224,9 @@
             }
         });
     });
-    
+
     $('#print-label').click(function() {
-    
+
         var locs = [{{ location.pk }}];
 
         printStockLocationLabels(locs);        
@@ -254,7 +254,7 @@
             }
         });
     });
-    
+
     loadStockTable($("#stock-table"), {
         buttons: [
             '#stock-options',

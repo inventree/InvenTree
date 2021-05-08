@@ -154,7 +154,7 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
         """
         Save the user that uploaded the attachment
         """
-        
+
         attachment = form.save(commit=False)
         attachment.user = self.request.user
         attachment.save()
@@ -332,7 +332,7 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         order = form.save(commit=False)
         order.created_by = self.request.user
-        
+
         return super().save(form)
 
 
@@ -367,7 +367,7 @@ class SalesOrderCreate(AjaxCreateView):
 
         order = form.save(commit=False)
         order.created_by = self.request.user
-        
+
         return super().save(form)
 
 
@@ -416,7 +416,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
     form_class = order_forms.CancelPurchaseOrderForm
 
     def validate(self, order, form, **kwargs):
-        
+
         confirm = str2bool(form.cleaned_data.get('confirm', False))
 
         if not confirm:
@@ -538,11 +538,11 @@ class SalesOrderShip(AjaxUpdateView):
 
         order = self.get_object()
         self.object = order
-        
+
         form = self.get_form()
 
         confirm = str2bool(request.POST.get('confirm', False))
-        
+
         valid = False
 
         if not confirm:
@@ -825,7 +825,7 @@ class OrderParts(AjaxView):
 
         for supplier in self.suppliers:
             supplier.order_items = []
-            
+
             suppliers[supplier.name] = supplier
 
         for part in self.parts:
@@ -846,9 +846,9 @@ class OrderParts(AjaxView):
                     supplier.selected_purchase_order = orders.first().id
                 else:
                     supplier.selected_purchase_order = None
-    
+
                 suppliers[supplier.name] = supplier
-                
+
             suppliers[supplier.name].order_items.append(part)
 
         self.suppliers = [suppliers[key] for key in suppliers.keys()]
@@ -866,7 +866,7 @@ class OrderParts(AjaxView):
         if 'stock[]' in self.request.GET:
 
             stock_id_list = self.request.GET.getlist('stock[]')
-            
+
             """ Get a list of all the parts associated with the stock items.
             - Base part must be purchaseable.
             - Return a set of corresponding Part IDs
@@ -909,7 +909,7 @@ class OrderParts(AjaxView):
                 parts = build.required_parts
 
                 for part in parts:
-                    
+
                     # If ordering from a Build page, ignore parts that we have enough of
                     if part.quantity_to_order <= 0:
                         continue
@@ -965,19 +965,19 @@ class OrderParts(AjaxView):
 
         # Extract part information from the form
         for item in self.request.POST:
-            
+
             if item.startswith('part-supplier-'):
-                
+
                 pk = item.replace('part-supplier-', '')
-                
+
                 # Check that the part actually exists
                 try:
                     part = Part.objects.get(id=pk)
                 except (Part.DoesNotExist, ValueError):
                     continue
-                
+
                 supplier_part_id = self.request.POST[item]
-                
+
                 quantity = self.request.POST.get('part-quantity-' + str(pk), 0)
 
                 # Ensure a valid supplier has been passed
@@ -1391,7 +1391,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             self.form.fields['line'].widget = HiddenInput()
         else:
             self.form.add_error('line', _('Select line item'))
-        
+
         if self.part:
             self.form.fields['part'].widget = HiddenInput()
         else:
@@ -1426,7 +1426,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                     continue
 
                 # Now we have a valid stock item - but can it be added to the sales order?
-                
+
                 # If not in stock, cannot be added to the order
                 if not stock_item.in_stock:
                     self.form.add_error(
@@ -1494,7 +1494,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
     model = SalesOrderAllocation
     form_class = order_forms.CreateSalesOrderAllocationForm
     ajax_form_title = _('Allocate Stock to Order')
-    
+
     def get_initial(self):
         initials = super().get_initial().copy()
 
@@ -1509,10 +1509,10 @@ class SalesOrderAllocationCreate(AjaxCreateView):
             items = StockItem.objects.filter(part=line.part)
 
             quantity = line.quantity - line.allocated_quantity()
-            
+
             if quantity < 0:
                 quantity = 0
-        
+
             if items.count() == 1:
                 item = items.first()
                 initials['item'] = item
@@ -1528,7 +1528,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
         return initials
 
     def get_form(self):
-        
+
         form = super().get_form()
 
         line_id = form['line'].value()
@@ -1556,10 +1556,10 @@ class SalesOrderAllocationCreate(AjaxCreateView):
 
             # Hide the 'line' field
             form.fields['line'].widget = HiddenInput()
-        
+
         except (ValueError, SalesOrderLineItem.DoesNotExist):
             pass
-        
+
         return form
 
 
@@ -1568,7 +1568,7 @@ class SalesOrderAllocationEdit(AjaxUpdateView):
     model = SalesOrderAllocation
     form_class = order_forms.EditSalesOrderAllocationForm
     ajax_form_title = _('Edit Allocation Quantity')
-    
+
     def get_form(self):
         form = super().get_form()
 

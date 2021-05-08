@@ -36,7 +36,7 @@ class OrderTest(TestCase):
         self.assertEqual(order.get_absolute_url(), '/order/purchase-order/1/')
 
         self.assertEqual(str(order), 'PO0001 - ACME')
-        
+
         line = PurchaseOrderLineItem.objects.get(pk=1)
 
         self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO0001 - ACME)")
@@ -113,7 +113,7 @@ class OrderTest(TestCase):
 
         # Try to order a supplier part from the wrong supplier
         sku = SupplierPart.objects.get(SKU='ZERG-WIDGET')
-        
+
         with self.assertRaises(django_exceptions.ValidationError):
             order.add_line_item(sku, 99)
 
@@ -153,7 +153,7 @@ class OrderTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             order.receive_line_item(line, loc, 'not a number', user=None)
-        
+
         # Receive the rest of the items
         order.receive_line_item(line, loc, 50, user=None)
 

@@ -198,7 +198,7 @@
     })
 
     $("#part-export").click(function() {
-        
+
         var url = "{% url 'part-export' %}?category={{ category.id }}";
 
         location.href = url;

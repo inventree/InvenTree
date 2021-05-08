@@ -295,7 +295,7 @@ def export_records(c, filename='data.json'):
 
     for entry in data:
         if "model" in entry:
-            
+
             # Clear out any permissions specified for a group
             if entry["model"] == "auth.group":
                 entry["fields"]["permissions"] = []
@@ -335,7 +335,7 @@ def import_records(c, filename='data.json'):
 
     for entry in data:
         if "model" in entry:
-            
+
             # Clear out any permissions specified for a group
             if entry["model"] == "auth.group":
                 entry["fields"]["permissions"] = []
@@ -370,7 +370,7 @@ def import_fixtures(c):
     fixtures = [
         # Build model
         'build',
-        
+
         # Common models
         'settings',
 
