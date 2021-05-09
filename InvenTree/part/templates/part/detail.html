@@ -20,20 +20,20 @@
         <tr>
             <td><span class='fas fa-font'></span></td>
             <td><strong>{% trans "Part name" %}</strong></td>
-            <td>{{ part.name }}</td>
+            <td>{{ part.name }}{% include "clip.html"%}</td>
         </tr>
         {% if part.IPN %}
         <tr>
             <td></td>
             <td><strong>{% trans "IPN" %}</strong></td>
-            <td>{{ part.IPN }}</td>
+            <td>{{ part.IPN }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.revision %}
         <tr>
             <td><span class='fas fa-code-branch'></span></td>
             <td><strong>{% trans "Revision" %}</strong></td>
-            <td>{{ part.revision }}</td>
+            <td>{{ part.revision }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.trackable %}
@@ -42,7 +42,7 @@
             <td><strong>{% trans "Latest Serial Number" %}</strong></td>
             <td>
                 {% if part.getLatestSerialNumber %}
-                {{ part.getLatestSerialNumber }}
+                {{ part.getLatestSerialNumber }}{% include "clip.html"%}
                 {% else %}
                 <em>{% trans "No serial numbers recorded" %}</em>
                 {% endif %}
@@ -52,7 +52,7 @@
         <tr>
             <td><span class='fas fa-info-circle'></span></td>
             <td><strong>{% trans "Description" %}</strong></td>
-            <td>{{ part.description }}</td>
+            <td>{{ part.description }}{% include "clip.html"%}</td>
         </tr>
         {% if part.variant_of %}
         <tr>
@@ -96,7 +96,7 @@
             <td></td>
             <td><strong>{% trans "Default Supplier" %}</strong></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
-                {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
+                {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}{% include "clip.html"%}
             </a></td>
         </tr>
         {% endif %}
