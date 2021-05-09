@@ -48,6 +48,13 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
+
+    // Initialize clipboard-buttons
+    new ClipboardJS('.clip-btn', {
+        text: function(trigger) {
+            return trigger.parentElement.parentElement.textContent;
+        }
+    });
 }
 
 function isFileTransfer(transfer) {

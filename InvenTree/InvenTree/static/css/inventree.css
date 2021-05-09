@@ -937,3 +937,15 @@ input[type="submit"] {
 input[type="date"].form-control, input[type="time"].form-control, input[type="datetime-local"].form-control, input[type="month"].form-control {
 	line-height: unset;
 }
+
+.clip-btn {
+    font-size: 10px;
+    padding: 0px 6px;
+    color: var(--label-grey);
+    background: none;
+}
+
+.clip-btn:hover {
+    padding: 6px 6px;
+    background: var(--label-grey);
+}
