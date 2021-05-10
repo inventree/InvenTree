@@ -1,4 +1,4 @@
-FROM python:alpine as production
+FROM python:alpine as base
 
 # GitHub source
 ARG repository="https://github.com/inventree/InvenTree.git"
@@ -73,6 +73,7 @@ RUN pip install --no-cache-dir -U invoke
 RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
 RUN pip install --no-cache-dir -U gunicorn
 
+FROM base as production
 # Clone source code
 RUN echo "Downloading InvenTree from ${INVENTREE_REPO}"
 RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
@@ -97,3 +98,9 @@ WORKDIR ${INVENTREE_SRC_DIR}
 
 # Let us begin
 CMD ["bash", "./start_prod_server.sh"]
+
+FROM base as dev
+# The development image requires the source code to be mounted to /home/inventree/src/
+# So from here, we don't actually "do" anything
+
+WORKDIR ${INVENTREE_SRC_DIR}
