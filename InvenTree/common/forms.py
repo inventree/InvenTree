@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import gettext as _
 
+from djmoney.forms.fields import MoneyField
+
 from InvenTree.forms import HelperForm
 
 from .files import FileManager
@@ -121,6 +123,7 @@ class MatchItem(forms.Form):
             for row in row_data:
                 # Navigate column data
                 for col in row['data']:
+
                     # Create input for required headers
                     if col['column']['guess'] in file_manager.REQUIRED_HEADERS:
                         # Set field name
@@ -156,11 +159,37 @@ class MatchItem(forms.Form):
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
                             choices=[('', '-' * 10)] + item_options,
-                            required=True,
+                            required=False,
                             widget=forms.Select(attrs={
                                 'class': 'select bomselect',
                             })
                         )
-                        # Update initial selection
+                        # Update select box when match was found
                         if item_match:
+                            # Make it a required field
+                            self.fields[field_name].required = True
+                            # Update initial value
                             self.fields[field_name].initial = item_match.id
+
+                    # Optional entries
+                    elif col['column']['guess'] in file_manager.OPTIONAL_HEADERS:
+                        # Set field name
+                        field_name = col['column']['guess'].lower() + '-' + str(row['index'])
+                        # Get value
+                        value = row.get(col['column']['guess'].lower(), '')
+                        # Set field input box
+                        if 'price' in col['column']['guess'].lower():
+                            self.fields[field_name] = MoneyField(
+                                label=_(col['column']['guess']),
+                                default_currency='USD',
+                                decimal_places=5,
+                                max_digits=19,
+                                required=False,
+                                default_amount=value,
+                            )
+                        else:
+                            self.fields[field_name] = forms.Input(
+                                required=True,
+                                widget=forms.Select(attrs={
+                                })
+                            )

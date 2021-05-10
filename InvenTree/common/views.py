@@ -191,6 +191,7 @@ class FileManagementFormView(MultiStepFormView):
     # Set keys for item matching
     key_item_select = 'item_select'
     key_quantity_select = 'quantity'
+    key_price_select = 'price'
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -314,6 +315,19 @@ class FileManagementFormView(MultiStepFormView):
                 self.column_selections[col_name] = value
 
     def set_form_table_data(self, form=None):
+        """ Set the form table data """
+
+        if self.column_names:
+            # Re-construct the column data
+            self.columns = []
+
+            for key in self.column_names:
+                header = ({
+                    'name': key,
+                    'guess': self.column_selections.get(key, ''),
+                })
+                self.columns.append(header)
+
         if self.row_data:
             # Re-construct the row data
             self.rows = []
@@ -323,12 +337,12 @@ class FileManagementFormView(MultiStepFormView):
                 items = []
 
                 for col_idx in sorted(row.keys()):
-
                     value = row[col_idx]
                     items.append(value)
 
                 self.rows.append({
                     'index': row_idx,
+                    'column': self.columns[row_idx],
                     'data': items,
                     'errors': {},
                 })
@@ -370,17 +384,8 @@ class FileManagementFormView(MultiStepFormView):
                 row['item_select'] = self.key_item_select + '-' + str(row['index'])
                 # Add quantity select field
                 row['quantity_select'] = self.key_quantity_select + '-' + str(row['index'])
-
-        if self.column_names:
-            # Re-construct the column data
-            self.columns = []
-
-            for key in self.column_names:
-                header = ({
-                    'name': key,
-                    'guess': self.column_selections.get(key, ''),
-                })
-                self.columns.append(header)
+                # Add price select field
+                row['price_select'] = self.key_price_select + '-' + str(row['index'])
 
     def get_column_index(self, name):
         """ Return the index of the column with the given name.

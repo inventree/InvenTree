@@ -583,6 +583,7 @@ class PurchaseOrderUpload(FileManagementFormView):
         _("Match Fields"),
         _("Match Supplier Parts"),
     ]
+    key_price_select = 'purchase_price'
 
     def get_order(self):
         """ Get order or return 404 """
@@ -612,8 +613,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         q_idx = self.get_column_index('Quantity')
         s_idx = self.get_column_index('Supplier_SKU')
         m_idx = self.get_column_index('Manufacturer_MPN')
-        # p_idx = self.get_column_index('Unit_Price')
-        # e_idx = self.get_column_index('Extended_Price')
+        p_idx = self.get_column_index('Purchase_Price')
+        r_idx = self.get_column_index('Reference')
+        n_idx = self.get_column_index('Notes')
 
         for row in self.rows:
 
@@ -634,11 +636,10 @@ class PurchaseOrderUpload(FileManagementFormView):
                     try:
                         # Attempt to extract a valid quantity from the field
                         quantity = Decimal(q_val)
+                        # Store the 'quantity' value
+                        row['quantity'] = quantity
                     except (ValueError, InvalidOperation):
                         pass
-
-            # Store the 'quantity' value
-            row['quantity'] = quantity
 
             # Check if there is a column corresponding to "Supplier SKU"
             if s_idx >= 0:
@@ -670,8 +671,32 @@ class PurchaseOrderUpload(FileManagementFormView):
                 # If there is an exact match based on SKU or MPN, use that
                 row['item_match'] = exact_match_part
 
+            # Check if there is a column corresponding to "purchase_price"
+            if p_idx >= 0:
+                p_val = row['data'][p_idx]['cell']
+
+                if p_val:
+                    # Delete commas
+                    p_val = p_val.replace(',', '')
+
+                    try:
+                        # Attempt to extract a valid quantity from the field
+                        purchase_price = Decimal(p_val)
+                        # Store the 'purchase_price' value
+                        row['purchase_price'] = purchase_price
+                    except (ValueError, InvalidOperation):
+                        pass
+
+            # Check if there is a column corresponding to "reference"
+            if r_idx >= 0:
+                pass
+
+            # Check if there is a column corresponding to "notes"
+            if n_idx >= 0:
+                pass
+
     def done(self, form_list, **kwargs):
-        """ Once all the data is in, process it to add SupplierPart items to the order """
+        """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
         
         order = self.get_order()
 
@@ -708,6 +733,18 @@ class PurchaseOrderUpload(FileManagementFormView):
                     # Update items
                     items[idx]['quantity'] = form_value
 
+            if field == self.key_price_select:
+                if idx not in items:
+                    # Insert into items
+                    items.update({
+                        idx: {
+                            'purchase_price': form_value,
+                        }
+                    })
+                else:
+                    # Update items
+                    items[idx]['purchase_price'] = form_value
+
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
             try:
@@ -718,6 +755,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 order=order,
                 part=supplier_part,
                 quantity=purchase_order_item['quantity'],
+                purchase_price=purchase_order_item['purchase_price'],
             )
             try:
                 purchase_order_line_item.save()

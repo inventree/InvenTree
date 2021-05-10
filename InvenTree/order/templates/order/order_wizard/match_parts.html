@@ -48,7 +48,7 @@
                 </td>
                 <td></td>
                 <td>
-                {{ row.index }}
+                {% add row.index 1 %}
                 </td>
                 <td>
                     {% for field in form.visible_fields %}
@@ -71,6 +71,12 @@
                         {% if row.errors.quantity %}
                             <p class='help-inline'>{{ row.errors.quantity }}</p>
                         {% endif %}
+                    {% elif item.column.guess == 'Purchase_Price' %}
+                        {% for field in form.visible_fields %}
+                            {% if field.name == row.price_select %}
+                                {{ field }}
+                            {% endif %}
+                        {% endfor %}
                     {% else %}
                         {{ item.cell }}
                     {% endif %}

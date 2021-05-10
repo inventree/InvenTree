@@ -102,8 +102,9 @@ class FileManager:
             ]
 
             self.OPTIONAL_HEADERS = [
-                'Unit_Price',
-                'Extended_Price',
+                'Purchase_Price',
+                'Reference',
+                'Notes',
             ]
 
             # Update headers
