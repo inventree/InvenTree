@@ -1,3 +1,14 @@
+function attachClipboard(selector) {
+
+    new ClipboardJS(selector, {
+        text: function(trigger) {
+            var content = trigger.parentElement.parentElement.textContent;
+
+            return content.trim();
+        }
+    });
+}
+
 function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
      * This will be called for every page that extends "base.html"
@@ -50,11 +61,8 @@ function inventreeDocReady() {
     });
 
     // Initialize clipboard-buttons
-    new ClipboardJS('.clip-btn', {
-        text: function(trigger) {
-            return trigger.parentElement.parentElement.textContent;
-        }
-    });
+    attachClipboard('.clip-btn');
+
 }
 
 function isFileTransfer(transfer) {
