@@ -195,7 +195,7 @@ class FileManagementFormView(MultiStepFormView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
-        if self.steps.current == 'fields' or self.steps.current == 'items':
+        if self.steps.current in ('fields', 'items'):
             
             # Get columns and row data
             self.columns = self.file_manager.columns()
@@ -333,20 +333,34 @@ class FileManagementFormView(MultiStepFormView):
                     'errors': {},
                 })
         else:
+            if self.column_names:
+                rows_shown = []
+
             # Update the row data
             for row in self.rows:
                 row_data = row['data']
 
                 data = []
+                show_data = []
 
                 for idx, item in enumerate(row_data):
-                    data.append({
+                    column_data = {
                         'cell': item,
                         'idx': idx,
                         'column': self.columns[idx],
-                    })
-            
+                    }
+                    data.append(column_data)
+                    if not self.column_names or self.columns[idx]['name'] in self.column_names:
+                        show_data.append(column_data)
+
                 row['data'] = data
+                if self.column_names:
+                    current_row = row
+                    current_row['data'] = show_data
+                    rows_shown.append(current_row)
+
+            if self.column_names and self.get_step_index() == 3:
+                self.rows = rows_shown
 
         # In the item selection step: update row data to contain fields
         if form and self.steps.current == 'items':
@@ -435,7 +449,7 @@ class FileManagementFormView(MultiStepFormView):
         }
 
         # Data validation
-        valid = len(self.extra_context_data.get('missing_columns', [])) == 0 and not self.extra_context_data.get('duplicates', [])
+        valid = not missing_columns and not duplicates
 
         return valid
 
@@ -452,7 +466,7 @@ class FileManagementFormView(MultiStepFormView):
             valid = self.check_field_selection(form)
 
             if not valid:
-                form.add_error(None, 'Fields matching failed')
+                form.add_error(None, _('Fields matching failed'))
 
         elif step == 'items':
             pass

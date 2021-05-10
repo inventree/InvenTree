@@ -14,7 +14,7 @@
 
 {% block details %}
 
-<p>{% trans "Step" %} {{ wizard.steps.step1 }} {% trans "of" %} {{ wizard.steps.count }} 
+<p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
 {% if description %}- {{ description }}{% endif %}</p>
 
 {% block form_alert %}
