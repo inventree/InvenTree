@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-10 07:25+0000\n"
-"PO-Revision-Date: 2021-05-10 07:45\n"
+"PO-Revision-Date: 2021-05-10 10:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6225,7 +6225,7 @@ msgstr "Anhang löschen"
 
 #: templates/clip.html:4
 msgid "copy to clipboard"
-msgstr ""
+msgstr "In die Zwischenablage kopieren"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
