@@ -77,12 +77,20 @@ class AuthRequiredMiddleware(object):
                 if request.path_info == reverse_lazy('logout'):
                     return HttpResponseRedirect(reverse_lazy('login'))
 
-                login = reverse_lazy('login')
+                path = request.path_info
 
-                if not request.path_info == login and not request.path_info.startswith('/api/'):
+                # List of URL endpoints we *do not* want to redirect to
+                urls = [
+                    reverse_lazy('login'),
+                    reverse_lazy('logout'),
+                    reverse_lazy('admin:login'),
+                    reverse_lazy('admin:logout'),
+                ]
+
+                if path not in urls and not path.startswith('/api/'):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('%s?next=%s' % (login, request.path))
+                    return redirect('%s?next=%s' % (reverse_lazy('login'), request.path))
 
         # Code to be executed for each request/response after
         # the view is called.
