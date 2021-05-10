@@ -946,6 +946,5 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 }
 
 .clip-btn:hover {
-    padding: 6px 6px;
     background: var(--label-grey);
 }
