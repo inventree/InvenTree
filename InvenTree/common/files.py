@@ -152,10 +152,25 @@ class FileManager:
         headers = []
 
         for header in self.data.headers:
-            headers.append({
-                'name': header,
-                'guess': self.guess_header(header)
-            })
+            # Guess header
+            guess = self.guess_header(header, threshold=95)
+            # Check if already present
+            guess_exists = False
+            for idx, data in enumerate(headers):
+                if guess == data['guess']:
+                    guess_exists = True
+                    break
+
+            if not guess_exists:
+                headers.append({
+                    'name': header,
+                    'guess': guess
+                })
+            else:
+                headers.append({
+                    'name': header,
+                    'guess': None
+                })
 
         return headers
 

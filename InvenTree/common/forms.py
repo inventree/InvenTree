@@ -92,6 +92,9 @@ class MatchField(forms.Form):
             self.fields[field_name] = forms.ChoiceField(
                 choices=[('', '-' * 10)] + headers_choices,
                 required=False,
+                widget=forms.Select(attrs={
+                    'class': 'select fieldselect',
+                })
             )
             if col['guess']:
                 self.fields[field_name].initial = col['guess']
@@ -134,7 +137,7 @@ class MatchItem(forms.Form):
                                 required=True,
                                 widget=forms.NumberInput(attrs={
                                     'name': 'quantity' + str(row['index']),
-                                    'class': 'numberinput',
+                                    'class': 'numberinput',  # form-control',
                                     'type': 'number',
                                     'min': '0',
                                     'step': 'any',
@@ -181,7 +184,7 @@ class MatchItem(forms.Form):
                         if 'price' in col['column']['guess'].lower():
                             self.fields[field_name] = MoneyField(
                                 label=_(col['column']['guess']),
-                                default_currency='USD',
+                                default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
                                 decimal_places=5,
                                 max_digits=19,
                                 required=False,

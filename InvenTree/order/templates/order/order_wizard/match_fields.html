@@ -87,3 +87,13 @@
 
 {% block form_buttons_bottom %}
 {% endblock form_buttons_bottom %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('.fieldselect').select2({
+    width: '100%',
+    matcher: partialMatcher,
+});
+
+{% endblock %}
