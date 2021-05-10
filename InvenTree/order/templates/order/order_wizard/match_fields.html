@@ -32,8 +32,8 @@
 {% block form_content %}
     <thead>
         <tr>
-            <th></th>
             <th>{% trans "File Fields" %}</th>
+            <th></th>
             {% for col in form %}
             <th>
                 <div>
@@ -49,8 +49,8 @@
     </thead>
     <tbody>
         <tr>
-            <td></td>
             <td>{% trans "Match Fields" %}</td>
+            <td></td>
             {% for col in form %}
             <td>
                 {{ col }}
@@ -65,18 +65,18 @@
             {% endfor %}
         </tr>
         {% for row in rows %}
-        {% with forloop.counter as row_index %}
+        {% with forloop.counter0 as row_index %}
         <tr>
-            <td>
-                <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
+            <td style='width: 32px;'>
+                <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: left;' title='{% trans "Remove row" %}'>
                     <span row_id='{{ row_index }}' class='fas fa-trash-alt icon-red'></span>
                 </button>
             </td>
-            <td>{{ row_index }}</td>
+            <td style='text-align: left;'>{{ row_index }}</td>
             {% for item in row.data %}
             <td>
                 <input type='hidden' name='row_{{ row_index }}_col_{{ forloop.counter0 }}' value='{{ item }}'/>
-                {{ item.cell }}
+                {{ item }}
             </td>
             {% endfor %}
         </tr>

@@ -126,15 +126,17 @@ class MatchItem(forms.Form):
             for row in row_data:
                 # Navigate column data
                 for col in row['data']:
+                    # Get column matching
+                    col_guess = col['column'].get('guess', None)
 
                     # Create input for required headers
-                    if col['column']['guess'] in file_manager.REQUIRED_HEADERS:
+                    if col_guess in file_manager.REQUIRED_HEADERS:
                         # Set field name
-                        field_name = col['column']['guess'].lower() + '-' + str(row['index'])
+                        field_name = col_guess.lower() + '-' + str(row['index'])
                         # Set field input box
-                        if 'quantity' in col['column']['guess'].lower():
+                        if 'quantity' in col_guess.lower():
                             self.fields[field_name] = forms.CharField(
-                                required=True,
+                                required=False,
                                 widget=forms.NumberInput(attrs={
                                     'name': 'quantity' + str(row['index']),
                                     'class': 'numberinput',  # form-control',
@@ -144,15 +146,11 @@ class MatchItem(forms.Form):
                                     'value': row['quantity'],
                                 })
                             )
-                        else:
-                            self.fields[field_name] = forms.Input(
-                                required=True,
-                                widget=forms.Select(attrs={
-                                })
-                            )
+                        # else:
+                        #     self.fields[field_name] = forms.TextInput()
 
                     # Create item selection box
-                    elif col['column']['guess'] in file_manager.ITEM_MATCH_HEADERS:
+                    elif col_guess in file_manager.ITEM_MATCH_HEADERS:
                         # Get item options
                         item_options = [(option.id, option) for option in row['item_options']]
                         # Get item match
@@ -169,30 +167,27 @@ class MatchItem(forms.Form):
                         )
                         # Update select box when match was found
                         if item_match:
-                            # Make it a required field
-                            self.fields[field_name].required = True
+                            # Make it a required field: does not validate if
+                            # removed using JS function
+                            # self.fields[field_name].required = True
                             # Update initial value
                             self.fields[field_name].initial = item_match.id
 
                     # Optional entries
-                    elif col['column']['guess'] in file_manager.OPTIONAL_HEADERS:
+                    elif col_guess in file_manager.OPTIONAL_HEADERS:
                         # Set field name
-                        field_name = col['column']['guess'].lower() + '-' + str(row['index'])
+                        field_name = col_guess.lower() + '-' + str(row['index'])
                         # Get value
-                        value = row.get(col['column']['guess'].lower(), '')
+                        value = row.get(col_guess.lower(), '')
                         # Set field input box
-                        if 'price' in col['column']['guess'].lower():
+                        if 'price' in col_guess.lower():
                             self.fields[field_name] = MoneyField(
-                                label=_(col['column']['guess']),
+                                label=_(col_guess),
                                 default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
                                 decimal_places=5,
                                 max_digits=19,
                                 required=False,
                                 default_amount=value,
                             )
-                        else:
-                            self.fields[field_name] = forms.Input(
-                                required=True,
-                                widget=forms.Select(attrs={
-                                })
-                            )
+                        # else:
+                        #     self.fields[field_name] = forms.TextInput()

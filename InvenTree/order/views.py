@@ -651,8 +651,8 @@ class PurchaseOrderUpload(FileManagementFormView):
                 except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
                     exact_match_part = None
 
-            # Check if there is a column corresponding to "Manufacturer MPN"
-            if m_idx >= 0:
+            # Check if there is a column corresponding to "Manufacturer MPN" and no exact match found yet
+            if m_idx >= 0 and not exact_match_part:
                 mpn = row['data'][m_idx]['cell']
 
                 try:
@@ -755,7 +755,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 order=order,
                 part=supplier_part,
                 quantity=purchase_order_item['quantity'],
-                purchase_price=purchase_order_item['purchase_price'],
+                purchase_price=purchase_order_item.get('purchase_price', None),
             )
             try:
                 purchase_order_line_item.save()

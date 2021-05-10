@@ -4,6 +4,8 @@
 {% load static %}
 
 {% block form_alert %}
+{% if form.errors %}
+{% endif %}
 {% if form_errors %}
 <div class='alert alert-danger alert-block' role='alert'>
     {% trans "Errors exist in the submitted data" %}
@@ -22,10 +24,11 @@
         <thead>
             <tr>
                 <th></th>
-                <th></th>
                 <th>{% trans "Row" %}</th>
                 <th>{% trans "Select Supplier Part" %}</th>
+                <th>{% trans "Quantity" %}</th>
                 {% for col in columns %}
+                {% if col.name != 'Quantity' %}
                 <th>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     <input type='hidden' name='col_guess_{{ forloop.counter0 }}' value='{{ col.guess }}'/>
@@ -35,6 +38,7 @@
                     {{ col.name }}
                     {% endif %}
                 </th>
+                {% endif %}
                 {% endfor %}
             </tr>
         </thead>
@@ -42,13 +46,12 @@
             {% for row in rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
                 <td>
-                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
                             <span row_id='{{ forloop.counter }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>
-                <td></td>
                 <td>
-                {% add row.index 1 %}
+                {{ row.index }}
                 </td>
                 <td>
                     {% for field in form.visible_fields %}
@@ -60,18 +63,20 @@
                     <p class='help-inline'>{{ row.errors.part }}</p>
                     {% endif %}
                 </td>
-                {% for item in row.data %}
                 <td>
-                    {% if item.column.guess == 'Quantity' %}
-                        {% for field in form.visible_fields %}
-                            {% if field.name == row.quantity_select %}
-                                {{ field }}
-                            {% endif %}
-                        {% endfor %}
-                        {% if row.errors.quantity %}
-                            <p class='help-inline'>{{ row.errors.quantity }}</p>
+                    {% for field in form.visible_fields %}
+                        {% if field.name == row.quantity_select %}
+                            {{ field }}
                         {% endif %}
-                    {% elif item.column.guess == 'Purchase_Price' %}
+                    {% endfor %}
+                    {% if row.errors.quantity %}
+                        <p class='help-inline'>{{ row.errors.quantity }}</p>
+                    {% endif %}
+                </td>
+                {% for item in row.data %}
+                {% if item.column.guess != 'Quantity' %}
+                <td>
+                    {% if item.column.guess == 'Purchase_Price' %}
                         {% for field in form.visible_fields %}
                             {% if field.name == row.price_select %}
                                 {{ field }}
@@ -82,6 +87,7 @@
                     {% endif %}
                     <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
                 </td>
+                {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
