@@ -183,9 +183,12 @@ class StockItem(MPTTModel):
         self.validate_unique()
         self.clean()
 
+        # If 'add_note = False' specified, then no tracking note will be added for item creation
+        add_note = kwargs.pop('add_note', True)
+
         if not self.pk:
             # StockItem has not yet been saved
-            add_note = True
+            add_note = add_note and True
         else:
             # StockItem has already been saved
             add_note = False

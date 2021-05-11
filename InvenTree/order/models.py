@@ -366,7 +366,7 @@ class PurchaseOrder(Order):
                 purchase_price=purchase_price,
             )
 
-            stock.save()
+            stock.save(add_note=False)
 
             tracking_info = {
                 'status': status,
