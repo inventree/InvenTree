@@ -2,6 +2,8 @@
 
 from django.db import migrations
 
+from InvenTree.status_codes import StockHistoryCode
+
 
 def update_history(apps, schema_editor):
     """
@@ -24,6 +26,8 @@ def update_history(apps, schema_editor):
         quantity = history[0].quantity
 
         for entry in history:
+
+            updated = False
             
             q = entry.quantity
 
@@ -33,13 +37,67 @@ def update_history(apps, schema_editor):
                     'quantity': float(q),
                 }
 
-                entry.save()
-
-                update_count += 1
+                updated = True
 
                 quantity = q
 
-    print(f"Updated {update_count} StockItemHistory entries")
+            # Try to "guess" the "type" of tracking entry, based on the title
+            title = entry.title.lower()
+
+            tracking_type = None
+
+            if 'completed build' in title:
+                tracking_type = StockHistoryCode.BUILD_OUTPUT_COMPLETED
+            
+            elif 'removed' in title and 'item' in title:
+                tracking_type = StockHistoryCode.STOCK_REMOVE
+            
+            elif 'split from existing' in title:
+                tracking_type = StockHistoryCode.SPLIT_FROM_PARENT
+            
+            elif 'moved to' in title:
+                tracking_type = StockHistoryCode.STOCK_MOVE
+            
+            elif 'created stock item' in title:
+                tracking_type = StockHistoryCode.CREATED
+
+            elif 'add serial number' in title:
+                tracking_type = StockHistoryCode.ASSIGNED_SERIAL
+
+            elif 'returned from customer' in title:
+                tracking_type = StockHistoryCode.RETURNED_FROM_CUSTOMER
+
+            elif 'counted' in title:
+                tracking_type = StockHistoryCode.STOCK_COUNT
+            
+            elif 'added' in title:
+                tracking_type = StockHistoryCode.STOCK_ADD
+
+            elif 'assigned to customer' in title:
+                tracking_type = StockHistoryCode.SENT_TO_CUSTOMER
+
+            elif 'installed into stock item' in title:
+                tracking_type = StockHistoryCode.INSTALLED_INTO_ASSEMBLY
+
+            elif 'uninstalled into location' in title:
+                tracking_type = StockHistoryCode.REMOVED_FROM_ASSEMBLY
+
+            elif 'installed stock item' in title:
+                tracking_type = StockHistoryCode.INSTALLED_CHILD_ITEM
+
+            elif 'received items' in title:
+                tracking_type = StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+
+            if tracking_type is not None:
+                entry.tracking_type = tracking_type
+                updated = True
+
+            if updated:
+                entry.save()
+                update_count += 1
+
+
+    print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")
 
 
 def reverse_update(apps, schema_editor):
