@@ -14,7 +14,7 @@ pygments==2.7.4                 # Syntax highlighting
 # tablib==0.13.0                # Import / export data files (installed as dependency of django-import-export package)
 django-crispy-forms==1.11.2     # Form helpers
 django-import-export==2.0.0     # Data import / export for admin interface
-tablib[xls,xlsx]                # Support for XLS and XLSX formats
+tablib[xls,xlsx,yaml]           # Support for XLS and XLSX formats
 django-cleanup==5.1.0           # Manage deletion of old / unused uploaded files
 flake8==3.8.3                   # PEP checking
 pep8-naming==0.11.1             # PEP naming convention extension
