@@ -349,8 +349,6 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
         if user_detail is not True:
             self.fields.pop('user_detail')
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     label = serializers.CharField(read_only=True)
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
@@ -363,7 +361,6 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
         model = StockItemTracking
         fields = [
             'pk',
-            'url',
             'item',
             'item_detail',
             'date',
@@ -376,7 +373,6 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'tracking_type',
             'user',
             'user_detail',
-            'system',
         ]
 
         read_only_fields = [
@@ -384,4 +380,6 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'user',
             'system',
             'quantity',
+            'label',
+            'tracking_type',
         ]
