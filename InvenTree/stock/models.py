@@ -207,7 +207,7 @@ class StockItem(MPTTModel):
                 user,
                 deltas=tracking_info,
                 location=self.location,
-                quantity=self.quantity,
+                quantity=float(self.quantity),
             )
 
     @property
@@ -977,7 +977,7 @@ class StockItem(MPTTModel):
 
         Args:
             quantity: Number of items to serialize (integer)
-            serials: List of serial numbers (list<int>)
+            serials: List of serial numbers
             user: User object associated with action
             notes: Optional notes for tracking
             location: If specified, serialized items will be placed in the given location
@@ -1267,7 +1267,7 @@ class StockItem(MPTTModel):
                 user,
                 notes=notes,
                 deltas={
-                    'quantity': self.quantity,
+                    'quantity': float(self.quantity),
                 }
             )
 
@@ -1300,8 +1300,8 @@ class StockItem(MPTTModel):
                 user,
                 notes=notes,
                 deltas={
-                    'added': quantity,
-                    'quantity': self.quantity
+                    'added': float(quantity),
+                    'quantity': float(self.quantity),
                 }
             )
 
@@ -1332,8 +1332,8 @@ class StockItem(MPTTModel):
                 user,
                 notes=notes,
                 deltas={
-                    'removed': quantity,
-                    'quantity': self.quantity,
+                    'removed': float(quantity),
+                    'quantity': float(self.quantity),
                 }
             )
 
