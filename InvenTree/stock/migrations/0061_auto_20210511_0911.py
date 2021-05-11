@@ -15,8 +15,25 @@ def update_history(apps, schema_editor):
 
     StockItem = apps.get_model('stock', 'stockitem')
     StockItemTracking = apps.get_model('stock', 'stockitemtracking')
+    StockLocation = apps.get_model('stock', 'stocklocation')
 
     update_count = 0
+
+    locations = StockLocation.objects.all()
+
+    for location in locations:
+        # Pre-calculate pathstring
+        # Note we cannot use the 'pathstring' function here as we don't have access to model functions!
+
+        path = [location.name]
+        
+        loc = location
+
+        while loc.parent:
+            loc = loc.parent
+            path = [loc.name] + path
+
+        location._path = '/'.join(path)
 
     for item in StockItem.objects.all():
 
@@ -27,14 +44,14 @@ def update_history(apps, schema_editor):
 
         quantity = history[0].quantity
 
-        for entry in history:
+        for idx, entry in enumerate(history):
 
             deltas = {}
             updated = False
             
             q = entry.quantity
 
-            if not q == quantity:
+            if idx == 0 or not q == quantity:
 
                 try:
                     deltas['quantity']: float(q)
@@ -43,7 +60,7 @@ def update_history(apps, schema_editor):
                     print(f"WARNING: Error converting quantity '{q}'")
 
 
-                quantity = q
+            quantity = q
 
             # Try to "guess" the "type" of tracking entry, based on the title
             title = entry.title.lower()
@@ -84,6 +101,46 @@ def update_history(apps, schema_editor):
             
             elif 'moved to' in title:
                 tracking_type = StockHistoryCode.STOCK_MOVE
+
+                result = re.search('^Moved to (.*)( - )*(.*) \(from.*$', entry.title)
+
+                if result:
+                    # Legacy tracking entries recorded the location in multiple ways, because.. why not?
+                    text = result.groups()[0]
+
+                    matches = set()
+
+                    for location in locations:
+
+                        # Direct match for pathstring
+                        if text == location._path:
+                            matches.add(location)
+
+                        # Direct match for name
+                        if text == location.name:
+                            matches.add(location)
+                        
+                        # Match for "name - description"
+                        compare = f"{location.name} - {location.description}"
+
+                        if text == compare:
+                            matches.add(location)
+
+                        # Match for "pathstring - description"
+                        compare = f"{location._path} - {location.description}"
+
+                        if text == compare:
+                            matches.add(location)
+
+                    if len(matches) == 1:
+                        location = list(matches)[0]
+
+                        deltas['location'] = location.pk
+                        deltas['location_path'] = location._path
+
+                    else:
+                        print(f"No location match: '{text}'")
+                        break
             
             elif 'created stock item' in title:
                 tracking_type = StockHistoryCode.CREATED
