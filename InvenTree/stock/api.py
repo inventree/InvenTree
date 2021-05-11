@@ -22,7 +22,10 @@ from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
 
 from company.models import SupplierPart
-from company.serializers import SupplierPartSerializer
+from company.serializers import CompanySerializer, SupplierPartSerializer
+
+from order.models import PurchaseOrder
+from order.serializers import POSerializer
 
 import common.settings
 import common.models
@@ -991,6 +994,59 @@ class StockTrackingList(generics.ListAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        # Attempt to add extra context information to the historical data
+        for item in data:
+            deltas = item['deltas']
+
+            # Add location detail
+            if 'location' in deltas:
+                try:
+                    location = StockLocation.objects.get(pk=deltas['location'])
+                    serializer = LocationSerializer(location)
+                    deltas['location_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add stockitem detail
+            if 'stockitem' in deltas:
+                try:
+                    stockitem = StockItem.objects.get(pk=deltas['stockitem'])
+                    serializer = StockItemSerializer(stockitem)
+                    deltas['stockitem_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add customer detail
+            if 'customer' in deltas:
+                try:
+                    customer = Company.objects.get(pk=deltas['customer'])
+                    serializer = CompanySerializer(location)
+                    deltas['customer_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add purchaseorder detail
+            if 'purchaseorder' in deltas:
+                try:
+                    order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
+                    serializer = POSerializer(order)
+                    deltas['purchaseorder_detail'] = serializer.data
+                except:
+                    pass
+
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
 
     def create(self, request, *args, **kwargs):
         """ Create a new StockItemTracking object
