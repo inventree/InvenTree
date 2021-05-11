@@ -69,7 +69,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         for item in items:
 
             item.level = str(int(level))
-            
+
             # Avoid circular BOM references
             if item.pk in uids:
                 continue
@@ -79,7 +79,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             if item.sub_part.assembly:
                 if max_levels is None or level < max_levels:
                     add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
-        
+
     if cascade:
         # Cascading (multi-level) BOM
 
@@ -124,7 +124,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
                         parameter_cols[name].update({b_idx: value})
                     except KeyError:
                         parameter_cols[name] = {b_idx: value}
-                
+
         # Add parameter columns to dataset
         parameter_cols_ordered = OrderedDict(sorted(parameter_cols.items(), key=lambda x: x[0]))
         add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
@@ -185,7 +185,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             # Filter manufacturer parts
             manufacturer_parts = ManufacturerPart.objects.filter(part__pk=b_part.pk)
             manufacturer_parts = manufacturer_parts.prefetch_related('supplier_parts')
-            
+
             # Process manufacturer part
             for manufacturer_idx, manufacturer_part in enumerate(manufacturer_parts):
 
@@ -250,7 +250,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
             # Filter supplier parts
             manufacturer_parts = ManufacturerPart.objects.filter(part__pk=b_part.pk)
-            
+
             for idx, manufacturer_part in enumerate(manufacturer_parts):
 
                 if manufacturer_part:
@@ -295,7 +295,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
             # Filter supplier parts
             supplier_parts = SupplierPart.objects.filter(part__pk=b_part.pk)
-            
+
             for idx, supplier_part in enumerate(supplier_parts):
 
                 if supplier_part.supplier:
@@ -326,7 +326,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
     filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
 
     return DownloadFile(data, filename)
-    
+
 
 class BomUploadManager:
     """ Class for managing an uploaded BOM file """
@@ -342,7 +342,7 @@ class BomUploadManager:
         'Part_IPN',
         'Part_ID',
     ]
-    
+
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
         'Reference',
@@ -360,7 +360,7 @@ class BomUploadManager:
 
     def __init__(self, bom_file):
         """ Initialize the BomUpload class with a user-uploaded file object """
-        
+
         self.process(bom_file)
 
     def process(self, bom_file):
@@ -387,7 +387,7 @@ class BomUploadManager:
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers
-        
+
         Args:
             header - Header name to look for
             threshold - Match threshold for fuzzy search
@@ -421,7 +421,7 @@ class BomUploadManager:
             return matches[0]['header']
 
         return None
-    
+
     def columns(self):
         """ Return a list of headers for the thingy """
         headers = []

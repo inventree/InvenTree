@@ -139,7 +139,7 @@ class LabelConfig(AppConfig):
         except:
             # Database might not yet be ready
             return
-        
+
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             'templates',

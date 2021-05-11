@@ -42,7 +42,7 @@ class InvenTreeSetting(models.Model):
     The key of each item is the name of the value as it appears in the database.
 
     Each global setting has the following parameters:
-    
+
     - name: Translatable string name of the setting (required)
     - description: Translatable string description of the setting (required)
     - default: Default value (optional)
@@ -414,7 +414,7 @@ class InvenTreeSetting(models.Model):
             # Evaluate the function (we expect it will return a list of tuples...)
             return choices()
         """
-        
+
         return choices
 
     @classmethod
@@ -524,7 +524,7 @@ class InvenTreeSetting(models.Model):
         # Enforce standard boolean representation
         if setting.is_bool():
             value = InvenTree.helpers.str2bool(value)
-            
+
         setting.value = str(value)
         setting.save()
 
@@ -666,7 +666,7 @@ class InvenTreeSetting(models.Model):
 
         if validator == int:
             return True
-        
+
         if type(validator) in [list, tuple]:
             for v in validator:
                 if v == int:
@@ -677,7 +677,7 @@ class InvenTreeSetting(models.Model):
     def as_int(self):
         """
         Return the value of this setting converted to a boolean value.
-        
+
         If an error occurs, return the default value
         """
 
@@ -687,7 +687,7 @@ class InvenTreeSetting(models.Model):
             value = self.default_value()
 
         return value
-        
+
 
 class PriceBreak(models.Model):
     """

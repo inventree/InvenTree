@@ -6,7 +6,7 @@
     {% trans "Are you sure you want to delete the following Manufacturer Parts?" %}
 </div>
 {% for part in parts %}
-    
+
 {% endfor %}
 
 {% endblock %}
@@ -17,7 +17,7 @@
 <table class='table table-striped table-condensed'>
 <tr>
     <input type='hidden' name='manufacturer-part-{{ part.id}}' value='manufacturer-part-{{ part.id }}'/>
-    
+
     <td>
         {% include "hover_image.html" with image=part.part.image %}
         {{ part.part.full_name }}

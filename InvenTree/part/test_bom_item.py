@@ -64,7 +64,7 @@ class BomItemTest(TestCase):
         """ Test that BOM line overages are calculated correctly """
 
         item = BomItem.objects.get(part=100, sub_part=50)
-        
+
         q = 300
 
         item.quantity = q
@@ -77,7 +77,7 @@ class BomItemTest(TestCase):
         item.overage = 'asf234?'
         n = item.get_overage_quantity(q)
         self.assertEqual(n, 0)
-        
+
         # Test absolute overage
         item.overage = '3'
         n = item.get_overage_quantity(q)
@@ -100,7 +100,7 @@ class BomItemTest(TestCase):
         """ Test BOM item hash encoding """
 
         item = BomItem.objects.get(part=100, sub_part=50)
-        
+
         h1 = item.get_item_hash()
 
         # Change data - the hash must change

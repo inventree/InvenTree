@@ -21,7 +21,7 @@ def hash_barcode(barcode_data):
 
     HACK: Remove any 'non printable' characters from the hash,
           as it seems browers will remove special control characters...
-        
+
     TODO: Work out a way around this!
     """
 

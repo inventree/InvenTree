@@ -59,7 +59,7 @@ class CategoryTest(TestCase):
 
     def test_unique_parents(self):
         """ Test the 'unique_parents' functionality """
-        
+
         parents = [item.pk for item in self.transceivers.getUniqueParents()]
 
         self.assertIn(self.electronics.id, parents)
@@ -128,9 +128,9 @@ class CategoryTest(TestCase):
         with self.assertRaises(ValidationError) as err:
             cat.full_clean()
             cat.save()
-            
+
         self.assertIn('Illegal character in name', str(err.exception.error_dict.get('name')))
-        
+
         cat.name = 'good name'
         cat.save()
 

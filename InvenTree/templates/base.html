@@ -79,26 +79,26 @@
 </div>
 
 <div class='inventree-navs'>
-    
+
     <div class='sidenav sidenav-left' id='sidenav-left'>
         {% block sidenav %}
         <!-- Sidenav code here -->
         {% endblock %}
     </div>
-    
+
     <div class='sidenav sidenav-right' id='sidenav-right'>
         {% block menubar %}
         <!-- Menubar code here -->
         {% endblock %}
     </div>
-    
+
     <div class="container container-fluid inventree-content" id='inventree-content'>
         {% block content %}
         <!-- Each view fills in here.. -->
         {% endblock %}
-        
+
     </div>
-    
+
 
 {% block post_content %}
 {% endblock %}
@@ -133,11 +133,14 @@
 <!-- boostrap-table-treegrid -->
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
 
+<!-- 3rd party general js -->
 <script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
 
+<!-- general InvenTree -->
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
@@ -173,7 +176,7 @@ $(document).ready(function () {
 {% endblock %}
 
     inventreeDocReady();
-    
+
     showCachedAlerts();
 
     {% if barcodes %}

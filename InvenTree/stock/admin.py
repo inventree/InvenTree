@@ -87,7 +87,7 @@ class StockItemResource(ModelResource):
 
     # Date management
     updated = Field(attribute='updated', widget=widgets.DateWidget())
-    
+
     stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
@@ -127,7 +127,7 @@ class StockItemAdmin(ImportExportModelAdmin):
 class StockAttachmentAdmin(admin.ModelAdmin):
 
     list_display = ('stock_item', 'attachment', 'comment')
-    
+
 
 class StockTrackingAdmin(ImportExportModelAdmin):
     list_display = ('item', 'date', 'title')

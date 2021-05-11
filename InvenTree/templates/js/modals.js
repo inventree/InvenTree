@@ -28,11 +28,11 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
      * - valueFunc: optional function which takes an element and generates the value
      * - titleFunc: optional function which takes an element and generates a title
      */
-    
+
     var options = [];
 
     elements.forEach(function(element) {
-        
+
         var text = textFunc(element);
         var value = null;
         var title = null;
@@ -63,9 +63,9 @@ function setFieldOptions(fieldName, optionList, options={}) {
      * - append: If true, options will be appended, otherwise will replace existing options.
      */
 
-    
+
     var append = options.append || false;
-    
+
     var modal = options.modal || '#modal-form';
 
     var field = getFieldByName(modal, fieldName);
@@ -153,7 +153,7 @@ function enableField(fieldName, enabled, options={}) {
 }
 
 function clearField(fieldName, options={}) {
-    
+
     setFieldValue(fieldName, '', options);
 }
 
@@ -267,7 +267,7 @@ function afterForm(response, options) {
      * - Redirect the browser to a different URL
      * - Reload the page
      */
-    
+
      // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
                 options.redirect ||
@@ -402,11 +402,11 @@ function removeRowFromModalForm(e) {
 
 
 function renderErrorMessage(xhr) {
-    
+
     var html = '<b>' + xhr.statusText + '</b><br>';
-    
+
     html += '<b>Error Code - ' + xhr.status + '</b><br><hr>';
-    
+
     html += `
     <div class='panel-group'>
         <div class='panel panel-default'>
@@ -419,7 +419,7 @@ function renderErrorMessage(xhr) {
                 <div class='panel-body'>`;
 
     html += xhr.responseText;
-    
+
     html += `
                 </div>
             </div>
@@ -599,7 +599,7 @@ function insertNewItemButton(modal, options) {
     var html = "<span style='float: right;'>";
 
     html += "<div type='button' class='btn btn-primary btn-secondary'";
-    
+
     if (options.title) {
         html += " title='" + options.title + "'";
     }
@@ -649,9 +649,9 @@ function attachSecondaryModal(modal, options) {
                      */
 
                     var select = '#id_' + options.field;
-                    
+
                     var option = new Option(response.text, response.pk, true, true);
-                    
+
                     $(modal).find(select).append(option).trigger('change');
                 }
             }
@@ -796,7 +796,7 @@ function handleModalForm(url, options) {
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 // There was an error submitting form data via POST
-                
+
                 $(modal).modal('hide'); 
                 showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
             },

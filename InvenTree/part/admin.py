@@ -25,13 +25,13 @@ class PartResource(ModelResource):
 
     # ForeignKey fields
     category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
-    
+
     default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
 
     default_supplier = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     category_name = Field(attribute='category__name', readonly=True)
-    
+
     variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
 
     suppliers = Field(attribute='supplier_count', readonly=True)
@@ -73,7 +73,7 @@ class PartResource(ModelResource):
 
 
 class PartAdmin(ImportExportModelAdmin):
-    
+
     resource_class = PartResource
 
     list_display = ('full_name', 'description', 'total_stock', 'category')

@@ -30,7 +30,7 @@ class BuildAPITest(InvenTreeAPITestCase):
         'build.change',
         'build.add'
     ]
-    
+
     def setUp(self):
 
         super().setUp()
@@ -54,7 +54,7 @@ class BuildListTest(BuildAPITest):
 
         builds = self.get(self.url, data={'active': True})
         self.assertEqual(len(builds.data), 1)
-        
+
         builds = self.get(self.url, data={'status': BuildStatus.COMPLETE})
         self.assertEqual(len(builds.data), 4)
 

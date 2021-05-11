@@ -38,7 +38,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
-        
+
         super().setUp()
 
 
@@ -105,7 +105,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         response = self.get_stock(part=25)
-        
+
         self.assertEqual(len(response), 8)
 
         response = self.get_stock(part=10004)
@@ -339,7 +339,7 @@ class StockItemTest(StockAPITestCase):
         )
 
         self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
-        
+
         # POST with an invalid part reference
 
         response = self.client.post(
@@ -384,10 +384,10 @@ class StockItemTest(StockAPITestCase):
         - Otherwise, check if the referenced part has a default_expiry defined
             - If so, use that!
             - Otherwise, no expiry
-        
+
         Notes:
             - Part <25> has a default_expiry of 10 days
-        
+
         """
 
         # First test - create a new StockItem without an expiry date
@@ -460,7 +460,7 @@ class StocktakeTest(StockAPITestCase):
             data['items'] = [{
                 'pk': 10
             }]
-            
+
             response = self.post(url, data)
             self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
 
@@ -478,12 +478,12 @@ class StocktakeTest(StockAPITestCase):
 
             response = self.post(url, data)
             self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
-            
+
             data['items'] = [{
                 'pk': 1234,
                 'quantity': "-1.234"
             }]
-            
+
             response = self.post(url, data)
             self.assertContains(response, 'must not be less than zero', status_code=status.HTTP_400_BAD_REQUEST)
 

@@ -24,7 +24,7 @@
         </a>
     </li>
     {% endif %}
-    
+
     {% if company.is_supplier or company.is_manufacturer %}
     <li class='list-group-item {% if tab == "supplier_parts" %}active{% endif %}' title='{% trans "Supplied Parts" %}'>
         <a href='{% url "company-detail-supplier-parts" company.id %}'>

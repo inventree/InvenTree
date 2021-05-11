@@ -44,7 +44,7 @@ $("#new-attachment").click(function() {
 
 $("#attachment-table").on('click', '.attachment-edit-button', function() {
     var button = $(this);
-    
+
     var url = `/order/purchase-order/attachment/${button.attr('pk')}/edit/`;
 
     launchModalForm(url, {

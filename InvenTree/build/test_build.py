@@ -114,7 +114,7 @@ class BuildTest(TestCase):
         # Perform some basic tests before we start the ball rolling
 
         self.assertEqual(StockItem.objects.count(), 6)
-        
+
         # Build is PENDING
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
 
@@ -142,7 +142,7 @@ class BuildTest(TestCase):
 
         # Create a BuiltItem which points to an invalid StockItem
         b = BuildItem(stock_item=stock, build=self.build, quantity=10)
-        
+
         with self.assertRaises(ValidationError):
             b.save()
 
@@ -339,7 +339,7 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.can_complete)
 
         self.build.complete_build(None)
-    
+
         self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
 
         # the original BuildItem objects should have been deleted!
@@ -351,12 +351,12 @@ class BuildTest(TestCase):
         # This stock item has been depleted!
         with self.assertRaises(StockItem.DoesNotExist):
             StockItem.objects.get(pk=self.stock_1_1.pk)
-        
+
         # This stock item has *not* been depleted
         x = StockItem.objects.get(pk=self.stock_2_1.pk)
 
         self.assertEqual(x.quantity, 4970)
-        
+
         # And 10 new stock items created for the build output
         outputs = StockItem.objects.filter(build=self.build)
 
