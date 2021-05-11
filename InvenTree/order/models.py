@@ -28,7 +28,7 @@ from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeAttachment
 
 
@@ -336,9 +336,11 @@ class PurchaseOrder(Order):
         return self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None):
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None, **kwargs):
         """ Receive a line item (or partial line item) against this PO
         """
+
+        notes = kwargs.get('notes', '')
 
         if not self.status == PurchaseOrderStatus.PLACED:
             raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
@@ -369,8 +371,22 @@ class PurchaseOrder(Order):
             text = _("Received items")
             note = _('Received {n} items against order {name}').format(n=quantity, name=str(self))
 
-            # Add a new transaction note to the newly created stock item
-            stock.addTransactionNote(text, user, note)
+            tracking_info = {
+                'status': status,
+                'purchaseorder': self.pk,
+                'quantity': quantity,
+            }
+
+            if location:
+                tracking_info['location'] = location.pk
+
+            stock.add_tracking_entry(
+                StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+                user,
+                notes=notes,
+                url=self.get_absolute_url(),
+                deltas=tracking_info
+            )
 
         # Update the number of parts received against the particular line item
         line.received += quantity
