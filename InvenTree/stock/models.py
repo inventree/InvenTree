@@ -183,19 +183,45 @@ class StockItem(MPTTModel):
         self.validate_unique()
         self.clean()
 
+        user = kwargs.pop('user', None)
+
         # If 'add_note = False' specified, then no tracking note will be added for item creation
         add_note = kwargs.pop('add_note', True)
+
+        notes = kwargs.pop('notes', '')
 
         if not self.pk:
             # StockItem has not yet been saved
             add_note = add_note and True
         else:
             # StockItem has already been saved
+
+            # Check if "interesting" fields have been changed
+            # (we wish to record these as historical records)
+
+            try:
+                old = StockItem.objects.get(pk=self.pk)
+
+                deltas = {}
+
+                # Status changed?
+                if not old.status == self.status:
+                    deltas['status'] = self.status
+
+                # TODO - Other interesting changes we are interested in...
+
+                if add_note and len(deltas) > 0:
+                    self.add_tracking_entry(
+                        StockHistoryCode.EDITED,
+                        user,
+                        deltas=deltas,
+                        notes=notes,
+                    )
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
             add_note = False
-
-        user = kwargs.pop('user', None)
-
-        add_note = add_note and kwargs.pop('note', True)
 
         super(StockItem, self).save(*args, **kwargs)
 
@@ -209,6 +235,7 @@ class StockItem(MPTTModel):
                 StockHistoryCode.CREATED,
                 user,
                 deltas=tracking_info,
+                notes=notes,
                 location=self.location,
                 quantity=float(self.quantity),
             )

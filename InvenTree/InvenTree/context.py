@@ -6,6 +6,7 @@ Provides extra global data to all templates.
 
 from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import StockHistoryCode
 
 import InvenTree.status
 
@@ -65,6 +66,7 @@ def status_codes(request):
         'PurchaseOrderStatus': PurchaseOrderStatus,
         'BuildStatus': BuildStatus,
         'StockStatus': StockStatus,
+        'StockHistoryCode': StockHistoryCode,
     }
 
 

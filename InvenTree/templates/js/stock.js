@@ -1097,6 +1097,16 @@ function loadStockTrackingTable(table, options) {
 
             // Status information
             if (details.status) {
+                html += `<tr><th>{% trans "Status" %}</td>`;
+
+                html += '<td>';
+                html += stockStatusDisplay(
+                    details.status,
+                    {
+                        classes: 'float-right',
+                    }
+                );
+                html += '</td></tr>';
 
             }
 
@@ -1147,6 +1157,8 @@ function loadStockTrackingTable(table, options) {
         }
     });
 
+    /*
+    // 2021-05-11 - Ability to edit or delete StockItemTracking entries is now removed
     cols.push({
         sortable: false,
         formatter: function(value, row, index, field) {
@@ -1161,6 +1173,7 @@ function loadStockTrackingTable(table, options) {
             }
         }
     });
+    */
 
     table.inventreeTable({
         method: 'get',

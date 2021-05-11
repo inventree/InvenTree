@@ -7,6 +7,8 @@ class StatusCode:
     This is used to map a set of integer values to text.
     """
 
+    colors = {}
+
     @classmethod
     def render(cls, key, large=False):
         """

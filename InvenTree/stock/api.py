@@ -21,7 +21,7 @@ from .models import StockItemTestResult
 from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
 
-from company.models import SupplierPart
+from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 
 from order.models import PurchaseOrder
@@ -99,6 +99,16 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Record the user who updated the item
+        """
+
+        # TODO: Record the user!
+        # user = request.user
+
+        return super().update(request, *args, **kwargs)
 
 
 class StockFilter(FilterSet):
@@ -374,25 +384,25 @@ class StockList(generics.ListCreateAPIView):
         we can pre-fill the location automatically.
         """
 
+        user = request.user
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save()
+        item = serializer.save(user=user, commit=False)
 
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
-            location = item.part.get_default_location()
-
-            if location is not None:
-                item.location = location
-                item.save()
+            item.location = item.part.get_default_location()
 
         # An expiry date was *not* specified - try to infer it!
         if 'expiry_date' not in request.data:
 
             if item.part.default_expiry > 0:
                 item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
-                item.save()
+
+        # Finally, save the item
+        item.save(user=user)
 
         # Return a response
         headers = self.get_success_headers(serializer.data)
@@ -1029,7 +1039,7 @@ class StockTrackingList(generics.ListAPIView):
             if 'customer' in deltas:
                 try:
                     customer = Company.objects.get(pk=deltas['customer'])
-                    serializer = CompanySerializer(location)
+                    serializer = CompanySerializer(customer)
                     deltas['customer_detail'] = serializer.data
                 except:
                     pass

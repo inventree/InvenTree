@@ -393,6 +393,18 @@ class AdjustStockForm(forms.ModelForm):
         ]
 
 
+class EditStockItemStatusForm(HelperForm):
+    """
+    Simple form for editing StockItem status field
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'status',
+        ]
+
+
 class EditStockItemForm(HelperForm):
     """ Form for editing a StockItem object.
     Note that not all fields can be edited here (even if they can be specified during creation.

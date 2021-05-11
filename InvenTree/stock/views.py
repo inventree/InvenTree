@@ -1212,6 +1212,16 @@ class StockAdjust(AjaxView, FormMixin):
         return _("Deleted {n} stock items").format(n=count)
 
 
+class StockItemEditStatus(AjaxUpdateView):
+    """
+    View for editing stock item status field
+    """
+
+    model = StockItem
+    form_class = StockForms.EditStockItemStatusForm
+    ajax_form_title = _('Edit Stock Item Status')
+
+
 class StockItemEdit(AjaxUpdateView):
     """
     View for editing details of a single StockItem
