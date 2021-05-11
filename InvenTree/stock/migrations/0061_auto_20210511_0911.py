@@ -54,10 +54,14 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.BUILD_OUTPUT_COMPLETED
             
             elif 'removed' in title and 'item' in title:
-                tracking_type = StockHistoryCode.STOCK_REMOVE
+
+                if entry.notes.lower().startswith('split '):
+                    tracking_type = StockHistoryCode.SPLIT_CHILD_ITEM
+                else:
+                    tracking_type = StockHistoryCode.STOCK_REMOVE
 
                 # Extract the number of removed items
-                result = re.search("^removed ([\d\.]+) items$", title)
+                result = re.search("^removed ([\d\.]+) items", title)
 
                 if result:
                     
@@ -70,9 +74,13 @@ def update_history(apps, schema_editor):
                         deltas['quantity'] = float(q)
                     except:
                         print(f"WARNING: Error converting removed quantity '{removed}'")
+                else:
+                    print(f"Could not decode '{title}'")
             
             elif 'split from existing' in title:
                 tracking_type = StockHistoryCode.SPLIT_FROM_PARENT
+
+                deltas['quantity'] = float(q)
             
             elif 'moved to' in title:
                 tracking_type = StockHistoryCode.STOCK_MOVE
@@ -93,7 +101,7 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.STOCK_ADD
 
                 # Extract the number of added items
-                result = re.search("^added ([\d\.]+) items$", title)
+                result = re.search("^added ([\d\.]+) items", title)
 
                 if result:
                     
@@ -106,6 +114,9 @@ def update_history(apps, schema_editor):
                         deltas['quantity'] = float(q)
                     except:
                         print(f"WARNING: Error converting added quantity '{added}'")
+
+                else:
+                    print(f"Could not decode '{title}'")
 
             elif 'assigned to customer' in title:
                 tracking_type = StockHistoryCode.SENT_TO_CUSTOMER

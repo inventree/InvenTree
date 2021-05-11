@@ -641,8 +641,8 @@ class StockItem(MPTTModel):
             tracking_info['location_name'] = location.name
 
         if self.customer:
-            tracking_info['customer'] = customer.id
-            tracking_info['customer_name'] = customer.name
+            tracking_info['customer'] = self.customer.id
+            tracking_info['customer_name'] = self.customer.name
 
         self.add_tracking_entry(
             StockHistoryCode.RETURNED_FROM_CUSTOMER,
@@ -849,7 +849,7 @@ class StockItem(MPTTModel):
             StockHistoryCode.REMOVED_CHILD_ITEM,
             user,
             deltas={
-                'stockitem': self.pk, 
+                'stockitem': self.pk,
             },
             notes=notes,
             url=self.get_absolute_url(),
@@ -1182,11 +1182,6 @@ class StockItem(MPTTModel):
             self.splitStock(quantity, location, user)
 
             return True
-
-        if self.location:
-            msg = _("Moved to {loc_new} (from {loc_old})").format(loc_new=str(location), loc_old=str(self.location))
-        else:
-            msg = _('Moved to {loc_new}').format(loc_new=str(location))
 
         self.location = location
 
