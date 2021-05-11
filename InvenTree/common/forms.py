@@ -160,11 +160,9 @@ class MatchItem(forms.Form):
                                     'type': 'number',
                                     'min': '0',
                                     'step': 'any',
-                                    'value': clean(row['quantity']),
+                                    'value': clean(row.get('quantity', '')),
                                 })
                             )
-                        # else:
-                        #     self.fields[field_name] = forms.TextInput()
 
                     # Create item selection box
                     elif col_guess in file_manager.ITEM_MATCH_HEADERS:
@@ -206,5 +204,8 @@ class MatchItem(forms.Form):
                                 required=False,
                                 default_amount=clean(value),
                             )
-                        # else:
-                        #     self.fields[field_name] = forms.TextInput()
+                        else:
+                            self.fields[field_name] = forms.CharField(
+                                required=False,
+                                initial=value,
+                            )

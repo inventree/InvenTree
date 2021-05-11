@@ -188,11 +188,6 @@ class FileManagementFormView(MultiStepFormView):
     media_folder = 'file_upload/'
     extra_context_data = {}
 
-    # Set keys for item matching
-    key_item_select = 'item_select'
-    key_quantity_select = 'quantity'
-    key_price_select = 'price'
-
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
@@ -382,16 +377,20 @@ class FileManagementFormView(MultiStepFormView):
                 }
                 self.rows.append(row)
 
-        # In the item selection step: update row data to contain fields
+        # In the item selection step: update row data with mapping to form fields
         if form and self.steps.current == 'items':
-            # Update row data
+            # Find field keys
+            field_keys = []
+            for field in form.fields:
+                field_key = field.split('-')[0]
+                if field_key not in field_keys:
+                    field_keys.append(field_key)
+
+            # Populate rows
             for row in self.rows:
-                # Add item select field
-                row['item_select'] = self.key_item_select + '-' + str(row['index'])
-                # Add quantity select field
-                row['quantity_select'] = self.key_quantity_select + '-' + str(row['index'])
-                # Add price select field
-                row['price_select'] = self.key_price_select + '-' + str(row['index'])
+                for field_key in field_keys:
+                    # Map row data to field
+                    row[field_key] = field_key + '-' + str(row['index'])
 
     def get_column_index(self, name):
         """ Return the index of the column with the given name.

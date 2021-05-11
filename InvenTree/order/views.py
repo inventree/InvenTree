@@ -583,7 +583,14 @@ class PurchaseOrderUpload(FileManagementFormView):
         _("Match Fields"),
         _("Match Supplier Parts"),
     ]
-    key_price_select = 'purchase_price'
+    # Form field name: PurchaseOrderLineItem field
+    form_field_map = {
+        'item_select': 'part',
+        'quantity': 'quantity',
+        'purchase_price': 'purchase_price',
+        'reference': 'reference',
+        'notes': 'notes',
+    }
 
     def get_order(self):
         """ Get order or return 404 """
@@ -680,7 +687,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                     p_val = p_val.replace(',', '')
 
                     try:
-                        # Attempt to extract a valid quantity from the field
+                        # Attempt to extract a valid decimal value from the field
                         purchase_price = Decimal(p_val)
                         # Store the 'purchase_price' value
                         row['purchase_price'] = purchase_price
@@ -689,11 +696,13 @@ class PurchaseOrderUpload(FileManagementFormView):
 
             # Check if there is a column corresponding to "reference"
             if r_idx >= 0:
-                pass
+                reference = row['data'][r_idx]['cell']
+                row['reference'] = reference
 
             # Check if there is a column corresponding to "notes"
             if n_idx >= 0:
-                pass
+                notes = row['data'][n_idx]['cell']
+                row['notes'] = notes
 
     def done(self, form_list, **kwargs):
         """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
@@ -708,60 +717,40 @@ class PurchaseOrderUpload(FileManagementFormView):
                 (field, idx) = form_key.split('-')
             except ValueError:
                 continue
-            
-            if field == self.key_item_select:
-                if idx not in items:
-                    # Insert into items
-                    items.update({
-                        idx: {
-                            'field': form_value,
-                        }
-                    })
-                else:
-                    # Update items
-                    items[idx]['field'] = form_value
 
-            if field == self.key_quantity_select:
-                if idx not in items:
-                    # Insert into items
-                    items.update({
-                        idx: {
-                            'quantity': form_value,
-                        }
-                    })
-                else:
-                    # Update items
-                    items[idx]['quantity'] = form_value
-
-            if field == self.key_price_select:
-                if idx not in items:
-                    # Insert into items
-                    items.update({
-                        idx: {
-                            'purchase_price': form_value,
-                        }
-                    })
-                else:
-                    # Update items
-                    items[idx]['purchase_price'] = form_value
+            if idx not in items:
+                # Insert into items
+                items.update({
+                    idx: {
+                        self.form_field_map[field]: form_value,
+                    }
+                })
+            else:
+                # Update items
+                items[idx][self.form_field_map[field]] = form_value
 
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
             try:
-                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['field']))
+                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['part']))
             except (ValueError, SupplierPart.DoesNotExist):
                 continue
-            purchase_order_line_item = PurchaseOrderLineItem(
-                order=order,
-                part=supplier_part,
-                quantity=purchase_order_item['quantity'],
-                purchase_price=purchase_order_item.get('purchase_price', None),
-            )
-            try:
-                purchase_order_line_item.save()
-            except IntegrityError:
-                # PurchaseOrderLineItem already exists
-                pass
+
+            quantity = purchase_order_item.get('quantity', 0)
+            if quantity:
+                purchase_order_line_item = PurchaseOrderLineItem(
+                    order=order,
+                    part=supplier_part,
+                    quantity=quantity,
+                    purchase_price=purchase_order_item.get('purchase_price', None),
+                    reference=purchase_order_item.get('reference', ''),
+                    notes=purchase_order_item.get('notes', ''),
+                )
+                try:
+                    purchase_order_line_item.save()
+                except IntegrityError:
+                    # PurchaseOrderLineItem already exists
+                    pass
             
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
