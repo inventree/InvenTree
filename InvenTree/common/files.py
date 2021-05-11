@@ -49,28 +49,27 @@ class FileManager:
 
         cleaned_data = None
 
-        ext = os.path.splitext(file.name)[-1].lower()
+        ext = os.path.splitext(file.name)[-1].lower().replace('.', '')
 
-        if ext in ['.csv', '.tsv', ]:
+        if ext in ['csv', 'tsv', ]:
             # These file formats need string decoding
             raw_data = file.read().decode('utf-8')
             # Reset stream position to beginning of file
             file.seek(0)
-        elif ext in ['.xls', '.xlsx', '.json', '.yaml', ]:
+        elif ext in ['xls', 'xlsx', 'json', 'yaml', ]:
             raw_data = file.read()
             # Reset stream position to beginning of file
             file.seek(0)
         else:
-            raise ValidationError(_(f'Unsupported file format: {ext}'))
+            raise ValidationError(_(f'Unsupported file format: {ext.upper()}'))
 
         try:
-            cleaned_data = tablib.Dataset().load(raw_data)
+            cleaned_data = tablib.Dataset().load(raw_data, format=ext)
         except tablib.UnsupportedFormat:
             raise ValidationError(_('Error reading file (invalid format)'))
         except tablib.core.InvalidDimensions:
             raise ValidationError(_('Error reading file (incorrect dimension)'))
         except KeyError:
-            # TODO: Find fix for XLSX format as it keeps on returning a KeyError
             raise ValidationError(_('Error reading file (data could be corrupted)'))
         
         return cleaned_data
@@ -209,6 +208,8 @@ class FileManager:
                         data[idx] = int(item)
                 except ValueError:
                     pass
+                except TypeError:
+                    data[idx] = ''
 
             # Skip empty rows
             if empty:
