@@ -28,7 +28,7 @@
                 <th>{% trans "Select Supplier Part" %}</th>
                 <th>{% trans "Quantity" %}</th>
                 {% for col in columns %}
-                {% if col.name != 'Quantity' %}
+                {% if col.guess != 'Quantity' %}
                 <th>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     <input type='hidden' name='col_guess_{{ forloop.counter0 }}' value='{{ col.guess }}'/>
@@ -43,15 +43,16 @@
             </tr>
         </thead>
         <tbody>
+             <tr></tr> {% comment %} Dummy row for javascript del_row method {% endcomment %}
             {% for row in rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
                 <td>
-                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
-                            <span row_id='{{ forloop.counter }}' class='fas fa-trash-alt icon-red'></span>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row.index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
+                            <span row_id='{{ row.index }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>
                 <td>
-                {{ row.index }}
+                {% add row.index 1 %}
                 </td>
                 <td>
                     {% for field in form.visible_fields %}

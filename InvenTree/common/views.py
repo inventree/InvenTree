@@ -205,10 +205,9 @@ class FileManagementFormView(MultiStepFormView):
             stored_data = self.storage.get_step_data(self.steps.current)
             if stored_data:
                 self.get_form_table_data(stored_data)
-            else:
-                if form.is_valid() or self.steps.current == 'items':
-                    # Set form table data
-                    self.set_form_table_data(form=form)
+            elif self.steps.current == 'items':
+                # Set form table data
+                self.set_form_table_data(form=form)
             
             # Update context
             context.update({'rows': self.rows})
@@ -357,15 +356,11 @@ class FileManagementFormView(MultiStepFormView):
             # Re-construct the row data
             self.rows = []
 
-            # if self.column_names:
-            #     rows_shown = []
-
             # Update the row data
-            for row_idx in sorted(self.row_data.keys()):
-                row_data = self.row_data[row_idx]
+            for row_idx, row_key in enumerate(sorted(self.row_data.keys())):
+                row_data = self.row_data[row_key]
 
                 data = []
-                # show_data = []
 
                 for idx, item in row_data.items():
                     column_data = {
@@ -379,8 +374,6 @@ class FileManagementFormView(MultiStepFormView):
                         'column': column_data,
                     }
                     data.append(cell_data)
-                    # if not self.column_names or column_data.get('name', '') in self.column_names:
-                    #     show_data.append(cell_data)
                 
                 row = {
                     'index': row_idx,
@@ -388,14 +381,6 @@ class FileManagementFormView(MultiStepFormView):
                     'errors': {},
                 }
                 self.rows.append(row)
-        
-                # if self.column_names:
-                #     current_row = row
-                #     current_row['data'] = show_data
-                #     rows_shown.append(current_row)
-
-            # if self.column_names and self.get_step_index() == 3:
-            #     self.rows = rows_shown
 
         # In the item selection step: update row data to contain fields
         if form and self.steps.current == 'items':

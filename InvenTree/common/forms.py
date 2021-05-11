@@ -5,6 +5,8 @@ Django forms for interacting with common objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decimal import Decimal, InvalidOperation
+
 from django import forms
 from django.utils.translation import gettext as _
 
@@ -117,6 +119,21 @@ class MatchItem(forms.Form):
 
         super().__init__(*args, **kwargs)
 
+        def clean(number):
+            """ Clean-up decimal value """
+
+            # Check if empty
+            if not number:
+                return number
+
+            # Check if decimal type
+            try:
+                clean_number = Decimal(number)
+            except InvalidOperation:
+                clean_number = number
+
+            return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
         # Setup FileManager
         file_manager.setup()
 
@@ -143,7 +160,7 @@ class MatchItem(forms.Form):
                                     'type': 'number',
                                     'min': '0',
                                     'step': 'any',
-                                    'value': row['quantity'],
+                                    'value': clean(row['quantity']),
                                 })
                             )
                         # else:
@@ -187,7 +204,7 @@ class MatchItem(forms.Form):
                                 decimal_places=5,
                                 max_digits=19,
                                 required=False,
-                                default_amount=value,
+                                default_amount=clean(value),
                             )
                         # else:
                         #     self.fields[field_name] = forms.TextInput()
