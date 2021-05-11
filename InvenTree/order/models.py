@@ -368,9 +368,6 @@ class PurchaseOrder(Order):
 
             stock.save()
 
-            text = _("Received items")
-            note = _('Received {n} items against order {name}').format(n=quantity, name=str(self))
-
             tracking_info = {
                 'status': status,
                 'purchaseorder': self.pk,

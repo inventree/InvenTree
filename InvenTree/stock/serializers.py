@@ -351,9 +351,13 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
+    label = serializers.CharField(read_only=True)
+
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
     user_detail = UserSerializerBrief(source='user', many=False, read_only=True)
+
+    deltas = serializers.JSONField(read_only=True)
 
     class Meta:
         model = StockItemTracking
@@ -363,10 +367,13 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'item',
             'item_detail',
             'date',
-            'title',
-            'notes',
+            'deltas',
+            'label',
             'link',
+            'notes',
             'quantity',
+            'title',
+            'tracking_type',
             'user',
             'user_detail',
             'system',

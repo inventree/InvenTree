@@ -1620,6 +1620,13 @@ class StockItemTracking(models.Model):
     def get_absolute_url(self):
         return '/stock/track/{pk}'.format(pk=self.id)
 
+    def label(self):
+
+        if self.tracking_type in StockHistoryCode.keys():
+            return StockHistoryCode.label(self.tracking_type)
+        else:
+            return self.title
+
     tracking_type = models.IntegerField(
         default=StockHistoryCode.LEGACY,
     )

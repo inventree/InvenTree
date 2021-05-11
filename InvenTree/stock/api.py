@@ -965,7 +965,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         test_result.save()
 
 
-class StockTrackingList(generics.ListCreateAPIView):
+class StockTrackingList(generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
