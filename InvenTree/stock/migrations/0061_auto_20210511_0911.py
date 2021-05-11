@@ -136,7 +136,6 @@ def update_history(apps, schema_editor):
                         location = list(matches)[0]
 
                         deltas['location'] = location.pk
-                        deltas['location_path'] = location._path
 
                     else:
                         print(f"No location match: '{text}'")

@@ -370,13 +370,13 @@ class PurchaseOrder(Order):
 
             tracking_info = {
                 'status': status,
+                'purchaseorder': self.pk,
             }
 
             stock.add_tracking_entry(
                 StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
                 user,
                 notes=notes,
-                url=self.get_absolute_url(),
                 deltas=tracking_info,
                 location=location,
                 purchaseorder=self,

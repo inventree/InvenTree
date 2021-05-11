@@ -805,9 +805,8 @@ class StockItem(MPTTModel):
             StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
             user,
             notes=notes,
-            url=self.get_absolute_url(),
             deltas={
-                'assembly': self.pk,
+                'stockitem': self.pk,
             }
         )
 
@@ -816,7 +815,6 @@ class StockItem(MPTTModel):
             StockHistoryCode.INSTALLED_CHILD_ITEM,
             user,
             notes=notes,
-            url=stock_item.get_absolute_url(),
             deltas={
                 'stockitem': stock_item.pk,
             }
@@ -847,7 +845,6 @@ class StockItem(MPTTModel):
                 'stockitem': self.pk,
             },
             notes=notes,
-            url=self.get_absolute_url(),
         )
 
         tracking_info = {
@@ -923,7 +920,7 @@ class StockItem(MPTTModel):
     def has_tracking_info(self):
         return self.tracking_info_count > 0
 
-    def add_tracking_entry(self, entry_type, user, deltas={}, notes='', url='', **kwargs):
+    def add_tracking_entry(self, entry_type, user, deltas={}, notes='', **kwargs):
         """
         Add a history tracking entry for this StockItem
 
@@ -940,13 +937,6 @@ class StockItem(MPTTModel):
 
         if location:
             deltas['location'] = location.id
-            deltas['location_path'] = location.pathstring
-
-        # Has a PurchaseOrder been specified?
-        po = kwargs.get('purchaseorder', None)
-
-        if po:
-            deltas['purchaseorder'] = po.id
 
         # Quantity specified?
         quantity = kwargs.get('quantity', None)
@@ -961,7 +951,6 @@ class StockItem(MPTTModel):
             date=datetime.now(),
             notes=notes,
             deltas=deltas,
-            link=url,
             system=True
         )
 
@@ -1639,14 +1628,14 @@ class StockItemTracking(models.Model):
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
     title = models.CharField(
-        blank=True,
+        blank=True, null=True,
         max_length=250,
         verbose_name=_('Title'),
         help_text=_('Tracking entry title')
     )
 
     notes = models.CharField(
-        blank=True,
+        blank=True, null=True,
         max_length=512,
         verbose_name=_('Notes'),
         help_text=_('Entry notes')
