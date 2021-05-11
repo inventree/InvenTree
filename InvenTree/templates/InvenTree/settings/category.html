@@ -37,7 +37,7 @@
 
 {% block js_ready %}
 {{ block.super }}
-    
+
     {# Convert dropdown to select2 format #}
     $(document).ready(function() {
         attachSelect('#category-select');
@@ -103,7 +103,7 @@
         var button = $(this);
 
         var url = "/part/category/{{ category.pk }}/parameters/" + button.attr('pk') + "/delete/";
-        
+
         launchModalForm(url, {
             success: function() {
                 $("#param-table").bootstrapTable('refresh');

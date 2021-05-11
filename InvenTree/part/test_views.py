@@ -9,7 +9,7 @@ from .models import Part, PartRelated
 
 
 class PartViewTestCase(TestCase):
-    
+
     fixtures = [
         'category',
         'part',
@@ -24,7 +24,7 @@ class PartViewTestCase(TestCase):
 
         # Create a user
         user = get_user_model()
-        
+
         self.user = user.objects.create_user(
             username='username',
             email='user@email.com',
@@ -52,12 +52,12 @@ class PartListTest(PartViewTestCase):
     def test_part_index(self):
         response = self.client.get(reverse('part-index'))
         self.assertEqual(response.status_code, 200)
-        
+
         keys = response.context.keys()
         self.assertIn('csrf_token', keys)
         self.assertIn('parts', keys)
         self.assertIn('user', keys)
-    
+
     def test_export(self):
         """ Export part data to CSV """
 
@@ -153,7 +153,7 @@ class PartDetailTest(PartViewTestCase):
         response = self.client.get(reverse('bom-download', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertIn('streaming_content', dir(response))
-    
+
 
 class PartTests(PartViewTestCase):
     """ Tests for Part forms """
@@ -226,7 +226,7 @@ class PartRelatedTests(PartViewTestCase):
         response = self.client.post(reverse('part-related-create'), {'part_1': 1, 'part_2': 1},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertContains(response, '"form_valid": false', status_code=200)
-        
+
         # Check final count
         n = PartRelated.objects.all().count()
         self.assertEqual(n, 1)
@@ -266,7 +266,7 @@ class PartQRTest(PartViewTestCase):
     def test_valid_part(self):
         response = self.client.get(reverse('part-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
         data = str(response.content)
 
         self.assertIn('Part QR Code', data)

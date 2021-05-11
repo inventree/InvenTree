@@ -8,7 +8,7 @@ on:
       - 'master'
 
 jobs:
-  
+
   docker:
     runs-on: ubuntu-latest
 

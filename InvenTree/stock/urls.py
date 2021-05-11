@@ -14,7 +14,7 @@ location_urls = [
         url(r'^edit/?', views.StockLocationEdit.as_view(), name='stock-location-edit'),
         url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
         url(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
-        
+
         url(r'sublocation/', views.StockLocationDetail.as_view(template_name='stock/sublocation.html'), name='stock-location-sublocation'),
 
         # Anything else

@@ -94,7 +94,7 @@ class PurchaseOrderTest(OrderTest):
         url = '/api/order/po/1/'
 
         response = self.get(url)
-        
+
         self.assertEqual(response.status_code, 200)
 
         data = response.data
@@ -109,7 +109,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
 
 class SalesOrderTest(OrderTest):
     """

@@ -1,3 +1,14 @@
+function attachClipboard(selector) {
+
+    new ClipboardJS(selector, {
+        text: function(trigger) {
+            var content = trigger.parentElement.parentElement.textContent;
+
+            return content.trim();
+        }
+    });
+}
+
 function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
      * This will be called for every page that extends "base.html"
@@ -48,6 +59,10 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
+
+    // Initialize clipboard-buttons
+    attachClipboard('.clip-btn');
+
 }
 
 function isFileTransfer(transfer) {
@@ -100,7 +115,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
     if (options.disabled) {
         extraProps += "disabled='true' ";
     }
-    
+
     html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;

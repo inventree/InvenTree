@@ -17,7 +17,7 @@
     </li>
 
     {% if build.active %}
-    
+
     <li class='list-group-item {% if tab == "allocate" %}active{% endif %}' title='{% trans "Allocate Stock" %}'>
         <a href='{% url "build-allocate" build.id %}'>
             <span class='fas fa-tools'></span>

@@ -73,7 +73,7 @@ class SalesOrderTest(TestCase):
 
     def test_add_duplicate_line_item(self):
         # Adding a duplicate line item to a SalesOrder is accepted
-        
+
         for ii in range(1, 5):
             SalesOrderLineItem.objects.create(order=self.order, part=self.part, quantity=ii)
 
@@ -107,7 +107,7 @@ class SalesOrderTest(TestCase):
         self.assertTrue(self.order.is_fully_allocated())
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.allocated_quantity(), 50)
-    
+
     def test_order_cancel(self):
         # Allocate line items then cancel the order
 
@@ -154,7 +154,7 @@ class SalesOrderTest(TestCase):
 
         for item in outputs.all():
             self.assertEqual(item.quantity, 25)
-    
+
         self.assertEqual(sa.sales_order, None)
         self.assertEqual(sb.sales_order, None)
 
@@ -162,7 +162,7 @@ class SalesOrderTest(TestCase):
         self.assertEqual(SalesOrderAllocation.objects.count(), 0)
 
         self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
-        
+
         self.assertTrue(self.order.is_fully_allocated())
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.fulfilled_quantity(), 50)

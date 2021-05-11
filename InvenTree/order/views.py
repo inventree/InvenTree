@@ -6,13 +6,14 @@ Django views for interacting with Order app
 from __future__ import unicode_literals
 
 from django.db import transaction
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
-from django.forms import HiddenInput
+from django.forms import HiddenInput, IntegerField
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -29,6 +30,7 @@ from part.models import Part
 from common.models import InvenTreeSetting
 
 from . import forms as order_forms
+from part.views import PartPricing
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
@@ -152,7 +154,7 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
         """
         Save the user that uploaded the attachment
         """
-        
+
         attachment = form.save(commit=False)
         attachment.user = self.request.user
         attachment.save()
@@ -330,7 +332,7 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         order = form.save(commit=False)
         order.created_by = self.request.user
-        
+
         return super().save(form)
 
 
@@ -365,7 +367,7 @@ class SalesOrderCreate(AjaxCreateView):
 
         order = form.save(commit=False)
         order.created_by = self.request.user
-        
+
         return super().save(form)
 
 
@@ -414,7 +416,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
     form_class = order_forms.CancelPurchaseOrderForm
 
     def validate(self, order, form, **kwargs):
-        
+
         confirm = str2bool(form.cleaned_data.get('confirm', False))
 
         if not confirm:
@@ -536,11 +538,11 @@ class SalesOrderShip(AjaxUpdateView):
 
         order = self.get_object()
         self.object = order
-        
+
         form = self.get_form()
 
         confirm = str2bool(request.POST.get('confirm', False))
-        
+
         valid = False
 
         if not confirm:
@@ -823,7 +825,7 @@ class OrderParts(AjaxView):
 
         for supplier in self.suppliers:
             supplier.order_items = []
-            
+
             suppliers[supplier.name] = supplier
 
         for part in self.parts:
@@ -844,9 +846,9 @@ class OrderParts(AjaxView):
                     supplier.selected_purchase_order = orders.first().id
                 else:
                     supplier.selected_purchase_order = None
-    
+
                 suppliers[supplier.name] = supplier
-                
+
             suppliers[supplier.name].order_items.append(part)
 
         self.suppliers = [suppliers[key] for key in suppliers.keys()]
@@ -864,7 +866,7 @@ class OrderParts(AjaxView):
         if 'stock[]' in self.request.GET:
 
             stock_id_list = self.request.GET.getlist('stock[]')
-            
+
             """ Get a list of all the parts associated with the stock items.
             - Base part must be purchaseable.
             - Return a set of corresponding Part IDs
@@ -907,7 +909,7 @@ class OrderParts(AjaxView):
                 parts = build.required_parts
 
                 for part in parts:
-                    
+
                     # If ordering from a Build page, ignore parts that we have enough of
                     if part.quantity_to_order <= 0:
                         continue
@@ -963,19 +965,19 @@ class OrderParts(AjaxView):
 
         # Extract part information from the form
         for item in self.request.POST:
-            
+
             if item.startswith('part-supplier-'):
-                
+
                 pk = item.replace('part-supplier-', '')
-                
+
                 # Check that the part actually exists
                 try:
                     part = Part.objects.get(id=pk)
                 except (Part.DoesNotExist, ValueError):
                     continue
-                
+
                 supplier_part_id = self.request.POST[item]
-                
+
                 quantity = self.request.POST.get('part-quantity-' + str(pk), 0)
 
                 # Ensure a valid supplier has been passed
@@ -1245,6 +1247,18 @@ class SOLineItemCreate(AjaxCreateView):
 
         return initials
 
+    def save(self, form):
+        ret = form.save()
+        # check if price s set in form - else autoset
+        if not ret.sale_price:
+            price = ret.part.get_price(ret.quantity)
+            # only if price is avail
+            if price:
+                ret.sale_price = price / ret.quantity
+                ret.save()
+        self.object = ret
+        return ret
+
 
 class SOLineItemEdit(AjaxUpdateView):
     """ View for editing a SalesOrderLineItem """
@@ -1377,7 +1391,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             self.form.fields['line'].widget = HiddenInput()
         else:
             self.form.add_error('line', _('Select line item'))
-        
+
         if self.part:
             self.form.fields['part'].widget = HiddenInput()
         else:
@@ -1407,17 +1421,17 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 except StockItem.DoesNotExist:
                     self.form.add_error(
                         'serials',
-                        _('No matching item for serial') + f" '{serial}'"
+                        _('No matching item for serial {serial}').format(serial=serial)
                     )
                     continue
 
                 # Now we have a valid stock item - but can it be added to the sales order?
-                
+
                 # If not in stock, cannot be added to the order
                 if not stock_item.in_stock:
                     self.form.add_error(
                         'serials',
-                        f"'{serial}' " + _("is not in stock")
+                        _('{serial} is not in stock').format(serial=serial)
                     )
                     continue
 
@@ -1425,7 +1439,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
                 if stock_item.is_allocated():
                     self.form.add_error(
                         'serials',
-                        f"'{serial}' " + _("already allocated to an order")
+                        _('{serial} already allocated to an order').format(serial=serial)
                     )
                     continue
 
@@ -1480,7 +1494,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
     model = SalesOrderAllocation
     form_class = order_forms.CreateSalesOrderAllocationForm
     ajax_form_title = _('Allocate Stock to Order')
-    
+
     def get_initial(self):
         initials = super().get_initial().copy()
 
@@ -1495,10 +1509,10 @@ class SalesOrderAllocationCreate(AjaxCreateView):
             items = StockItem.objects.filter(part=line.part)
 
             quantity = line.quantity - line.allocated_quantity()
-            
+
             if quantity < 0:
                 quantity = 0
-        
+
             if items.count() == 1:
                 item = items.first()
                 initials['item'] = item
@@ -1514,7 +1528,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
         return initials
 
     def get_form(self):
-        
+
         form = super().get_form()
 
         line_id = form['line'].value()
@@ -1542,10 +1556,10 @@ class SalesOrderAllocationCreate(AjaxCreateView):
 
             # Hide the 'line' field
             form.fields['line'].widget = HiddenInput()
-        
+
         except (ValueError, SalesOrderLineItem.DoesNotExist):
             pass
-        
+
         return form
 
 
@@ -1554,7 +1568,7 @@ class SalesOrderAllocationEdit(AjaxUpdateView):
     model = SalesOrderAllocation
     form_class = order_forms.EditSalesOrderAllocationForm
     ajax_form_title = _('Edit Allocation Quantity')
-    
+
     def get_form(self):
         form = super().get_form()
 
@@ -1571,3 +1585,101 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
     ajax_form_title = _("Remove allocation")
     context_object_name = 'allocation'
     ajax_template_name = "order/so_allocation_delete.html"
+
+
+class LineItemPricing(PartPricing):
+    """ View for inspecting part pricing information """
+
+    class EnhancedForm(PartPricing.form_class):
+        pk = IntegerField(widget=HiddenInput())
+        so_line = IntegerField(widget=HiddenInput())
+
+    form_class = EnhancedForm
+
+    def get_part(self, id=False):
+        if 'line_item' in self.request.GET:
+            try:
+                part_id = self.request.GET.get('line_item')
+                part = SalesOrderLineItem.objects.get(id=part_id).part
+            except Part.DoesNotExist:
+                return None
+        elif 'pk' in self.request.POST:
+            try:
+                part_id = self.request.POST.get('pk')
+                part = Part.objects.get(id=part_id)
+            except Part.DoesNotExist:
+                return None
+        else:
+            return None
+
+        if id:
+            return part.id
+        return part
+
+    def get_so(self, pk=False):
+        so_line = self.request.GET.get('line_item', None)
+        if not so_line:
+            so_line = self.request.POST.get('so_line', None)
+
+        if so_line:
+            try:
+                sales_order = SalesOrderLineItem.objects.get(pk=so_line)
+                if pk:
+                    return sales_order.pk
+                return sales_order
+            except Part.DoesNotExist:
+                return None
+        return None
+
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        qty = Decimal(self.request.GET.get('quantity', 1))
+        if qty == 1:
+            return Decimal(self.request.POST.get('quantity', 1))
+        return qty
+
+    def get_initials(self):
+        initials = super().get_initials()
+        initials['pk'] = self.get_part(id=True)
+        initials['so_line'] = self.get_so(pk=True)
+        return initials
+
+    def post(self, request, *args, **kwargs):
+        # parse extra actions
+        REF = 'act-btn_'
+        act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
+
+        # check if extra action was passed
+        if act_btn and act_btn[0] == 'update_price':
+            # get sales order
+            so_line = self.get_so()
+            if not so_line:
+                self.data = {'non_field_errors': [_('Sales order not found')]}
+            else:
+                quantity = self.get_quantity()
+                price = self.get_pricing(quantity).get('unit_part_price', None)
+
+                if not price:
+                    self.data = {'non_field_errors': [_('Price not found')]}
+                else:
+                    # set normal update note
+                    note = _('Updated {part} unit-price to {price}')
+
+                    # check qunatity and update if different
+                    if so_line.quantity != quantity:
+                        so_line.quantity = quantity
+                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
+
+                    # update sale_price
+                    so_line.sale_price = price
+                    so_line.save()
+
+                    # parse response
+                    data = {
+                        'form_valid': True,
+                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
+                    }
+                    return JsonResponse(data=data)
+
+        # let the normal pricing view run
+        return super().post(request, *args, **kwargs)

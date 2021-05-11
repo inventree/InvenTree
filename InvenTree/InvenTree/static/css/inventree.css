@@ -466,6 +466,24 @@
     background: #eee;
 }
 
+/* pricing table widths */
+.table-price-two tr td:first-child {
+    width: 40%;
+}
+
+.table-price-three tr td:first-child {
+    width: 40%;
+}
+
+.table-price-two tr td:last-child {
+    width: 60%;
+}
+
+.table-price-three tr td:last-child {
+    width: 30%;
+}
+/* !pricing table widths */
+
 .btn-glyph {
     padding-left: 6px;
     padding-right: 6px;
@@ -489,7 +507,7 @@
     padding-right: 6px;
     padding-top: 3px;
     padding-bottom: 2px;
-};
+}
 
 .panel-heading .badge {
     float: right;
@@ -550,7 +568,7 @@
 }
 
 .media {
-    //padding-top: 15px;
+    /* padding-top: 15px; */
     overflow: visible;
 }
 
@@ -576,8 +594,8 @@
     width: 160px;
     position: fixed;
     z-index: 1;
-    //top: 0;
-    //left: 0;
+    /* top: 0;
+    left: 0; */
     overflow-x: hidden;
     padding-top: 20px;
     padding-right: 25px;
@@ -808,7 +826,7 @@ input[type="submit"] {
     width: 100%;
     padding: 20px;
     z-index: 5000;
-    pointer-events: none; // Prevent this div from blocking links underneath
+    pointer-events: none; /* Prevent this div from blocking links underneath */
 }
 
 .alert {
@@ -918,4 +936,15 @@ input[type="submit"] {
 
 input[type="date"].form-control, input[type="time"].form-control, input[type="datetime-local"].form-control, input[type="month"].form-control {
 	line-height: unset;
+}
+
+.clip-btn {
+    font-size: 10px;
+    padding: 0px 6px;
+    color: var(--label-grey);
+    background: none;
+}
+
+.clip-btn:hover {
+    background: var(--label-grey);
 }

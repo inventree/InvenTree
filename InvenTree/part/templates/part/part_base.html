@@ -151,7 +151,7 @@
                 <td>{% decimal allocated %}</td>
             </tr>
             {% endif %}
-            
+
             {% if not part.is_template %}
             {% if part.assembly %}
             <tr>
@@ -177,11 +177,11 @@
         </table>
     </div>
     </div>
-        
+
 </div>
 
 <div class='panel panel-default panel-inventree'>
-    
+
     <div class='panel-heading'>
         <h4>
             {% block heading %}
@@ -272,7 +272,7 @@
     function onSelectImage(response) {
         // Callback when the image-selection modal form is displayed
         // Populate the form with image data (requested via AJAX)
-        
+
         $("#modal-form").find("#image-select-table").bootstrapTable({
             pagination: true,
             pageSize: 25,
@@ -301,9 +301,9 @@
             }
         });
     }
-    
+
     {% if roles.part.change %}
-    
+
     {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
     {% if allow_download %}
     $("#part-image-url").click(function() {

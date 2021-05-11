@@ -92,7 +92,7 @@ class BarcodeAPITest(APITestCase):
         data = response.data
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
         self.assertIn('stockitem', data)
 
         pk = data['stockitem']['pk']
@@ -121,7 +121,7 @@ class BarcodeAPITest(APITestCase):
         data = response.data
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         self.assertIn('success', data)
 
         hash = data['hash']

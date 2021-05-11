@@ -37,7 +37,7 @@ class ScheduledTaskTests(TestCase):
         # Attempt to schedule the same task again
         InvenTree.tasks.schedule_task(task, schedule_type=Schedule.MINUTES, minutes=5)
         self.assertEqual(self.get_tasks(task).count(), 1)
-        
+
         # But the 'minutes' should have been updated
         t = Schedule.objects.get(func=task)
         self.assertEqual(t.minutes, 5)

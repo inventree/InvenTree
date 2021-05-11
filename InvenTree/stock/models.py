@@ -131,7 +131,7 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
 class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
-    
+
     Attributes:
         parent: Link to another StockItem from which this StockItem was created
         uid: Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode)
@@ -191,14 +191,14 @@ class StockItem(MPTTModel):
             add_note = False
 
         user = kwargs.pop('user', None)
-        
+
         add_note = add_note and kwargs.pop('note', True)
 
         super(StockItem, self).save(*args, **kwargs)
 
         if add_note:
 
-            note = f"{_('Created new stock item for')} {str(self.part)}"
+            note = _('Created new stock item for {part}').format(part=str(self.part))
 
             # This StockItem is being saved for the first time
             self.addTransactionNote(
@@ -226,9 +226,9 @@ class StockItem(MPTTModel):
         """
 
         super(StockItem, self).validate_unique(exclude)
-        
+
         # If the serial number is set, make sure it is not a duplicate
-        if self.serial is not None:
+        if self.serial:
             # Query to look for duplicate serial numbers
             parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
             stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
@@ -281,7 +281,7 @@ class StockItem(MPTTModel):
 
             if self.part is not None:
                 # A part with a serial number MUST have the quantity set to 1
-                if self.serial is not None:
+                if self.serial:
                     if self.quantity > 1:
                         raise ValidationError({
                             'quantity': _('Quantity must be 1 for item with a serial number'),
@@ -421,7 +421,7 @@ class StockItem(MPTTModel):
         max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
- 
+
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
         max_length=125, blank=True,
@@ -613,7 +613,7 @@ class StockItem(MPTTModel):
         item.addTransactionNote(
             _("Assigned to Customer"),
             user,
-            notes=_("Manually assigned to customer") + " " + customer.name,
+            notes=_("Manually assigned to customer {name}").format(name=customer.name),
             system=True
         )
 
@@ -626,9 +626,9 @@ class StockItem(MPTTModel):
         """
 
         self.addTransactionNote(
-            _("Returned from customer") + f" {self.customer.name}",
+            _("Returned from customer {name}").format(name=self.customer.name),
             user,
-            notes=_("Returned to location") + f" {location.name}",
+            notes=_("Returned to location {loc}").format(loc=location.name),
             system=True
         )
 
@@ -727,7 +727,7 @@ class StockItem(MPTTModel):
         items = StockItem.objects.filter(belongs_to=self)
 
         for item in items:
-            
+
             # Prevent duplication or recursion
             if item == self or item in installed:
                 continue
@@ -789,7 +789,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to the other item
         stock_item.addTransactionNote(
-            _('Installed into stock item') + ' ' + str(self.pk),
+            _('Installed into stock item {pk}').format(str(self.pk)),
             user,
             notes=notes,
             url=self.get_absolute_url()
@@ -797,7 +797,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to this item
         self.addTransactionNote(
-            _('Installed stock item') + ' ' + str(stock_item.pk),
+            _('Installed stock item {pk}').format(str(stock_item.pk)),
             user, notes=notes,
             url=stock_item.get_absolute_url()
         )
@@ -821,7 +821,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note to the parent item
         self.belongs_to.addTransactionNote(
-            _("Uninstalled stock item") + ' ' + str(self.pk),
+            _("Uninstalled stock item {pk}").format(pk=str(self.pk)),
             user,
             notes=notes,
             url=self.get_absolute_url(),
@@ -840,7 +840,7 @@ class StockItem(MPTTModel):
 
         # Add a transaction note!
         self.addTransactionNote(
-            _('Uninstalled into location') + ' ' + str(location),
+            _('Uninstalled into location {loc}').formaT(loc=str(location)),
             user,
             notes=notes,
             url=url
@@ -906,7 +906,7 @@ class StockItem(MPTTModel):
 
         Brief automated note detailing a movement or quantity change.
         """
-        
+
         track = StockItemTracking.objects.create(
             item=self,
             title=title,
@@ -966,11 +966,11 @@ class StockItem(MPTTModel):
 
         if len(existing) > 0:
             exists = ','.join([str(x) for x in existing])
-            raise ValidationError({"serial_numbers": _("Serial numbers already exist") + ': ' + exists})
+            raise ValidationError({"serial_numbers": _("Serial numbers already exist: {exists}").format(exists=exists)})
 
         # Create a new stock item for each unique serial number
         for serial in serials:
-            
+
             # Create a copy of this StockItem
             new_item = StockItem.objects.get(pk=self.pk)
             new_item.quantity = 1
@@ -1001,7 +1001,7 @@ class StockItem(MPTTModel):
         """ Copy stock history from another StockItem """
 
         for item in other.tracking_info.all():
-            
+
             item.item = self
             item.pk = None
             item.save()
@@ -1074,7 +1074,7 @@ class StockItem(MPTTModel):
         new_stock.addTransactionNote(
             _("Split from existing stock"),
             user,
-            f"{_('Split')} {helpers.normalize(quantity)} {_('items')}"
+            _('Split {n} items').format(n=helpers.normalize(quantity))
         )
 
         # Remove the specified quantity from THIS stock item
@@ -1131,10 +1131,10 @@ class StockItem(MPTTModel):
 
             return True
 
-        msg = f"{_('Moved to')} {str(location)}"
-        
         if self.location:
-            msg += f" ({_('from')} {str(self.location)})"
+            msg = _("Moved to {loc_new} (from {loc_old})").format(loc_new=str(location), loc_old=str(self.location))
+        else:
+            msg = _('Moved to {loc_new}').format(loc_new=str(location))
 
         self.location = location
 
@@ -1151,7 +1151,7 @@ class StockItem(MPTTModel):
     @transaction.atomic
     def updateQuantity(self, quantity):
         """ Update stock quantity for this item.
-        
+
         If the quantity has reached zero, this StockItem will be deleted.
 
         Returns:
@@ -1174,7 +1174,7 @@ class StockItem(MPTTModel):
         self.quantity = quantity
 
         if quantity == 0 and self.delete_on_deplete and self.can_delete():
-            
+
             # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
             self.delete()
             return False
@@ -1202,9 +1202,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(count):
 
-            n = helpers.normalize(count)
-
-            text = f"{_('Counted')} {n} {_('items')}"
+            text = _('Counted {n} items').format(n=helpers.normalize(count))
 
             self.addTransactionNote(
                 text,
@@ -1236,9 +1234,7 @@ class StockItem(MPTTModel):
             return False
 
         if self.updateQuantity(self.quantity + quantity):
-            
-            n = helpers.normalize(quantity)
-            text = f"{_('Added')} {n} {_('items')}"
+            text = _('Added {n} items').format(n=helpers.normalize(quantity))
 
             self.addTransactionNote(
                 text,
@@ -1268,8 +1264,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity - quantity):
 
-            q = helpers.normalize(quantity)
-            text = f"{_('Removed')} {q} {_('items')}"
+            text = _('Removed {n1} items').format(n1=helpers.normalize(quantity))
 
             self.addTransactionNote(text,
                                     user,
@@ -1584,7 +1579,7 @@ class StockItemTestResult(models.Model):
     with automated testing setups.
 
     Multiple results can be recorded against any given test, allowing tests to be run many times.
-    
+
     Attributes:
         stock_item: Link to StockItem
         test: Test name (simple string matching)
@@ -1613,7 +1608,7 @@ class StockItemTestResult(models.Model):
 
         for template in templates:
             if key == template.key:
-                
+
                 if template.requires_value:
                     if not self.value:
                         raise ValidationError({

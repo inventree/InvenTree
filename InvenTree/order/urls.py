@@ -31,6 +31,7 @@ purchase_order_urls = [
     url(r'^new/', views.PurchaseOrderCreate.as_view(), name='po-create'),
 
     url(r'^order-parts/', views.OrderParts.as_view(), name='order-parts'),
+    url(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
 
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),

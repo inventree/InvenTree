@@ -17,5 +17,5 @@ class InvenTreeManualExchangeBackend(BaseExchangeBackend):
         """
         Do not get any rates...
         """
-        
+
         return {}

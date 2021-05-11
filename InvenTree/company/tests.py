@@ -71,7 +71,7 @@ class CompanySimpleTest(TestCase):
         acme = Company.objects.get(pk=1)
         appel = Company.objects.get(pk=2)
         zerg = Company.objects.get(pk=3)
-        
+
         self.assertTrue(acme.has_parts)
         self.assertEqual(acme.supplied_part_count, 4)
 
@@ -82,7 +82,7 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(zerg.supplied_part_count, 2)
 
     def test_price_breaks(self):
-        
+
         self.assertTrue(self.acme0001.has_price_breaks)
         self.assertTrue(self.acme0002.has_price_breaks)
         self.assertTrue(self.zergm312.has_price_breaks)
@@ -121,7 +121,7 @@ class CompanySimpleTest(TestCase):
         pmin, pmax = m2x4.get_price_range(5)
         self.assertEqual(pmin, 35)
         self.assertEqual(pmax, 37.5)
-        
+
         m3x12 = Part.objects.get(name='M3x12 SHCS')
 
         self.assertEqual(m3x12.get_price_info(0.3), Decimal('2.4'))
@@ -187,14 +187,14 @@ class ManufacturerPartSimpleTest(TestCase):
         # Create a manufacturer part
         self.part = Part.objects.get(pk=1)
         manufacturer = Company.objects.get(pk=1)
-        
+
         self.mp = ManufacturerPart.create(
             part=self.part,
             manufacturer=manufacturer,
             mpn='PART_NUMBER',
             description='THIS IS A MANUFACTURER PART',
         )
-        
+
         # Create a supplier part
         supplier = Company.objects.get(pk=5)
         supplier_part = SupplierPart.objects.create(

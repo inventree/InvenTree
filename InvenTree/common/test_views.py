@@ -117,7 +117,7 @@ class SettingsViewTest(TestCase):
         """
         Test for binary value
         """
-        
+
         setting = InvenTreeSetting.get_setting_object('PART_COMPONENT')
 
         self.assertTrue(setting.as_bool())

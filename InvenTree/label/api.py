@@ -159,7 +159,7 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
         """
         Filter the StockItem label queryset.
         """
-        
+
         queryset = super().filter_queryset(queryset)
 
         # List of StockItem objects to match against
@@ -178,7 +178,7 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
 
             # Keep track of which labels match every specified stockitem
             valid_label_ids = set()
-            
+
             for label in queryset.all():
 
                 matches = True
@@ -293,7 +293,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
         """
 
         queryset = super().filter_queryset(queryset)
-        
+
         # List of StockLocation objects to match against
         locations = self.get_locations()
 

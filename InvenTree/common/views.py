@@ -48,7 +48,7 @@ class SettingEdit(AjaxUpdateView):
         """
 
         form = super().get_form()
-        
+
         setting = self.get_object()
 
         choices = setting.choices()

@@ -104,7 +104,7 @@ def company_image(company):
             path = os.path.abspath(path)
 
         return f"file://{path}"
-        
+
 
 @register.simple_tag()
 def internal_link(link, text):

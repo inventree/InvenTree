@@ -20,10 +20,10 @@
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
   {% csrf_token %}
   {% load crispy_forms_tags %}
-  
+
   {% block form_data %}
   {% endblock %}
-  
+
   {% crispy form %}
 
 </form>

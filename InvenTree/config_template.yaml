@@ -11,7 +11,7 @@ database:
   # or specify database options using environment variables
 
   # Refer to the django documentation for full list of options
-  
+
   # --- Available options: ---
   # ENGINE: Database engine. Selection from:
   #         - sqlite3
@@ -114,7 +114,7 @@ allowed_hosts:
 cors:
   # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted.
   allow_all: True
-  
+
   # CORS_ORIGIN_WHITELIST - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
   # whitelist:
   # - https://example.com
