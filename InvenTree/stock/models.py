@@ -199,17 +199,15 @@ class StockItem(MPTTModel):
         if add_note:
 
             tracking_info = {
-                'quantity': self.quantity,
                 'status': self.status,
             }
-
-            if self.location:
-                tracking_info['location'] = self.location.pk
 
             self.add_tracking_entry(
                 StockHistoryCode.CREATED,
                 user,
-                deltas=tracking_info
+                deltas=tracking_info,
+                location=self.location,
+                quantity=self.quantity,
             )
 
     @property
@@ -636,10 +634,6 @@ class StockItem(MPTTModel):
 
         tracking_info = {}
 
-        if location:
-            tracking_info['location'] = location.id
-            tracking_info['location_name'] = location.name
-
         if self.customer:
             tracking_info['customer'] = self.customer.id
             tracking_info['customer_name'] = self.customer.name
@@ -648,7 +642,8 @@ class StockItem(MPTTModel):
             StockHistoryCode.RETURNED_FROM_CUSTOMER,
             user,
             notes=notes,
-            deltas=tracking_info
+            deltas=tracking_info,
+            location=location
         )
 
         self.customer = None
@@ -856,22 +851,15 @@ class StockItem(MPTTModel):
         )
 
         tracking_info = {
-            'assembly': self.belongs_to.pk
+            'stockitem': self.belongs_to.pk
         }
-
-        if location:
-            tracking_info['location'] = location.pk
-            tracking_info['location_name'] = location.name
-            url = location.get_absolute_url()
-        else:
-            url = ''
 
         self.add_tracking_entry(
             StockHistoryCode.REMOVED_FROM_ASSEMBLY,
             user,
             notes=notes,
-            url=url,
-            deltas=tracking_info
+            deltas=tracking_info,
+            location=location,
         )
 
         # Mark this stock item as *not* belonging to anyone
@@ -935,7 +923,7 @@ class StockItem(MPTTModel):
     def has_tracking_info(self):
         return self.tracking_info_count > 0
 
-    def add_tracking_entry(self, entry_type, user, deltas={}, notes='', url=''):
+    def add_tracking_entry(self, entry_type, user, deltas={}, notes='', url='', **kwargs):
         """
         Add a history tracking entry for this StockItem
 
@@ -946,6 +934,25 @@ class StockItem(MPTTModel):
             notes - User notes associated with this tracking entry
             url - Optional URL associated with this tracking entry
         """
+
+        # Has a location been specified?
+        location = kwargs.get('location', None)
+
+        if location:
+            deltas['location'] = location.id
+            deltas['location_path'] = location.pathstring
+
+        # Has a PurchaseOrder been specified?
+        po = kwargs.get('purchaseorder', None)
+
+        if po:
+            deltas['purchaseorder'] = po.id
+
+        # Quantity specified?
+        quantity = kwargs.get('quantity', None)
+
+        if quantity:
+            deltas['quantity'] = float(quantity)
 
         entry = StockItemTracking.objects.create(
             item=self,
@@ -1037,7 +1044,8 @@ class StockItem(MPTTModel):
                 notes=notes,
                 deltas={
                     'serial': serial,
-                }
+                },
+                location=location
             )
 
         # Remove the equivalent number of items
@@ -1126,7 +1134,8 @@ class StockItem(MPTTModel):
             notes=notes,
             deltas={
                 'stockitem': self.pk,
-            }
+            },
+            location=location,
         )
 
         # Remove the specified quantity from THIS stock item
@@ -1187,18 +1196,12 @@ class StockItem(MPTTModel):
 
         tracking_info = {}
 
-        if location:
-            tracking_info['location'] = location.pk
-            url = location.get_absolute_url()
-        else:
-            url = ''
-
         self.add_tracking_entry(
             StockHistoryCode.STOCK_MOVE,
             user,
             notes=notes,
             deltas=tracking_info,
-            url=url,
+            location=location,
         )
 
         self.save()
@@ -1306,7 +1309,8 @@ class StockItem(MPTTModel):
 
     @transaction.atomic
     def take_stock(self, quantity, user, notes=''):
-        """ Remove items from stock
+        """
+        Remove items from stock
         """
 
         # Cannot remove items from a serialized part

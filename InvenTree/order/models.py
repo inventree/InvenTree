@@ -370,19 +370,17 @@ class PurchaseOrder(Order):
 
             tracking_info = {
                 'status': status,
-                'purchaseorder': self.pk,
-                'quantity': quantity,
             }
-
-            if location:
-                tracking_info['location'] = location.pk
 
             stock.add_tracking_entry(
                 StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
                 user,
                 notes=notes,
                 url=self.get_absolute_url(),
-                deltas=tracking_info
+                deltas=tracking_info,
+                location=location,
+                purchaseorder=self,
+                quantity=quantity
             )
 
         # Update the number of parts received against the particular line item
