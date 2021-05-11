@@ -2043,7 +2043,7 @@ class PartPricing(AjaxView):
         # Stock history
         if part_settings.part_show_graph and part.total_stock > 1:
             ret = []
-            stock = part.stock_entries(include_variants=False, in_stock=True) #.order_by('purchase_order__date')
+            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
             stock = stock.prefetch_related('purchase_order', 'supplier_part')
 
             for stock_item in stock:
