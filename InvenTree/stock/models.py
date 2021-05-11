@@ -1626,13 +1626,10 @@ class StockItemTracking(models.Model):
     Attributes:
         item: ForeignKey reference to a particular StockItem
         date: Date that this tracking info was created
-        title: Title of this tracking info (legacy, no longer used!)
         tracking_type: The type of tracking information
         notes: Associated notes (input by user)
-        link: Optional URL to external page
         user: The user associated with this tracking info
         deltas: The changes associated with this history item
-        quantity: The StockItem quantity at this point in time
     """
 
     def get_absolute_url(self):
@@ -1657,13 +1654,6 @@ class StockItemTracking(models.Model):
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(
-        blank=True, null=True,
-        max_length=250,
-        verbose_name=_('Title'),
-        help_text=_('Tracking entry title')
-    )
-
     notes = models.CharField(
         blank=True, null=True,
         max_length=512,
@@ -1671,21 +1661,9 @@ class StockItemTracking(models.Model):
         help_text=_('Entry notes')
     )
 
-    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page for further information'))
-
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
-    system = models.BooleanField(default=False)
-
     deltas = models.JSONField(null=True, blank=True)
-
-    quantity = models.DecimalField(
-        max_digits=15,
-        decimal_places=5,
-        validators=[MinValueValidator(0)],
-        default=1,
-        verbose_name=_('Quantity')
-    )
 
 
 def rename_stock_item_test_result_attachment(instance, filename):

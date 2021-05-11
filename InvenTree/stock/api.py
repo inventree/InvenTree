@@ -389,7 +389,7 @@ class StockList(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save(user=user, commit=False)
+        item = serializer.save(user=user)
 
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
