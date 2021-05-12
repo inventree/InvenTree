@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 00:59+0000\n"
-"PO-Revision-Date: 2021-05-12 01:18\n"
+"PO-Revision-Date: 2021-05-12 10:55\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -258,43 +258,43 @@ msgstr "Zurückgewiesen"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Alter Lagerbestands-Tracking-Eintrag"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Lagerbestand erstellt"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Lagerbestand bearbeitet"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Seriennummer hinzugefügt"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Lagerbestand gezählt"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Lagerbestand manuell hinzugefügt"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Lagerbestand manuell entfernt"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Standort geändert"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "In Baugruppe installiert"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Aus Baugruppe entfernt"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
@@ -306,11 +306,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Vom übergeordneten Element geteilt"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Unterobjekt geteilt"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
 msgid "Sent to customer"
@@ -318,19 +318,19 @@ msgstr "Zum Kunden geschickt"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Rücksendung vom Kunden"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "Endprodukt erstellt"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Endprodukt fertiggestellt"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Gegen Bestellung empfangen"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
@@ -5828,7 +5828,7 @@ msgstr "{n} BestandsObjekte gelöscht"
 
 #: stock/views.py:1222
 msgid "Edit Stock Item Status"
-msgstr ""
+msgstr "Lagerbestandsstatus bearbeiten"
 
 #: stock/views.py:1245
 msgid "Edit Stock Item"
@@ -6840,31 +6840,31 @@ msgstr "Status Code muss ausgewählt werden"
 
 #: templates/js/stock.js:994
 msgid "Invalid date"
-msgstr ""
+msgstr "Ungültiges Datum"
 
 #: templates/js/stock.js:1036
 msgid "Location no longer exists"
-msgstr ""
+msgstr "Standort nicht mehr vorhanden"
 
 #: templates/js/stock.js:1055
 msgid "Purchase order no longer exists"
-msgstr ""
+msgstr "Bestellung existiert nicht mehr"
 
 #: templates/js/stock.js:1074
 msgid "Customer no longer exists"
-msgstr ""
+msgstr "Kunde existiert nicht mehr"
 
 #: templates/js/stock.js:1092
 msgid "Stock item no longer exists"
-msgstr ""
+msgstr "Lagerbestand existiert nicht mehr"
 
 #: templates/js/stock.js:1115
 msgid "Added"
-msgstr ""
+msgstr "Hinzugefügt"
 
 #: templates/js/stock.js:1123
 msgid "Removed"
-msgstr ""
+msgstr "Entfernt"
 
 #: templates/js/stock.js:1155
 msgid "No user information"
