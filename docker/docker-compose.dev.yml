@@ -23,14 +23,10 @@ services:
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree/src
-        environment:
-            # Configure a simple sqlite server for development
-            # Note: You can always change to a different database backend if required!
-            - INVENTREE_DB_ENGINE=sqlite3
-            - INVENTREE_DB_NAME=/home/inventree/data/inventree_database.sqlite3
-            - INVENTREE_MEDIA_ROOT=/home/inventree/src/inventree_media
-            - INVENTREE_STATIC_ROOT=/home/inventree/src/inventree_static
-            - INVENTREE_CONFIG_FILE=/home/inventree/src/config.yaml
+        env_file:
+            # Environment variables required for the dev server are configured in dev-config.env
+            - dev-config.env
+
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -44,13 +40,9 @@ services:
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree/src
-        environment:
-            # Configure a simple sqlite server for development
-            # Note: You can always change to a different database backend if required!
-            - INVENTREE_DB_ENGINE=sqlite3
-            - INVENTREE_DB_NAME=/home/inventree/data/inventree_database.sqlite3
-            - INVENTREE_MEDIA_ROOT=/home/inventree/src/inventree_media
-            - INVENTREE_STATIC_ROOT=/home/inventree/src/inventree_static
+        env_file:
+            # Environment variables required for the dev server are configured in dev-config.env
+            - dev-config.env
         restart: unless-stopped
 
 volumes:
