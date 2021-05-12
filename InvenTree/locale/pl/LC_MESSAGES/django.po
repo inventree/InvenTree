@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 12:29+0000\n"
-"PO-Revision-Date: 2021-05-12 15:01\n"
+"PO-Revision-Date: 2021-05-12 15:57\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -310,7 +310,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Podziel element podrzędny"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
 msgid "Sent to customer"
@@ -390,7 +390,7 @@ msgstr "Ustaw hasło"
 
 #: InvenTree/views.py:681
 msgid "Password fields must match"
-msgstr ""
+msgstr "Hasła muszą być zgodne"
 
 #: InvenTree/views.py:887 templates/navbar.html:95
 msgid "System Information"
