@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 00:59+0000\n"
-"PO-Revision-Date: 2021-05-12 01:17\n"
+"PO-Revision-Date: 2021-05-12 12:07\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -286,7 +286,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Lokalizacja zmieniona"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
@@ -314,11 +314,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
 msgid "Sent to customer"
-msgstr ""
+msgstr "Wyślij do klienta"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Zwrócony od klienta"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
@@ -593,7 +593,7 @@ msgstr "Zlecenie Budowy"
 #: templates/InvenTree/search.html:185
 #: templates/InvenTree/settings/tabs.html:31 users/models.py:43
 msgid "Build Orders"
-msgstr ""
+msgstr "Zlecenia budowy"
 
 #: build/models.py:126
 msgid "Build Order Reference"
@@ -866,7 +866,7 @@ msgstr "Przydziel części"
 
 #: build/templates/build/allocate.html:15
 msgid "Allocate Stock to Build"
-msgstr "Przydziel Zapasy do Budowy"
+msgstr "Przydziel zapasy do budowy"
 
 #: build/templates/build/allocate.html:22
 msgid "Allocate stock to build"
@@ -993,7 +993,7 @@ msgstr "Zaległe"
 
 #: build/templates/build/build_base.html:80
 msgid "Print actions"
-msgstr ""
+msgstr "Akcje druku"
 
 #: build/templates/build/build_base.html:84
 msgid "Print Build Order"
@@ -1042,7 +1042,7 @@ msgstr "Postęp"
 #: report/templates/report/inventree_so_report.html:77
 #: stock/templates/stock/item_base.html:274 templates/js/order.js:245
 msgid "Sales Order"
-msgstr "Zamówienie"
+msgstr "Zamówienie zakupu"
 
 #: build/templates/build/build_base.html:167
 #: build/templates/build/detail.html:98
@@ -1224,7 +1224,7 @@ msgstr "Nowe zlecenie budowy"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr "Wydrukuj Zlecenia Budowy"
+msgstr "Wydrukuj zlecenia budowy"
 
 #: build/templates/build/index.html:43
 #: order/templates/order/purchase_orders.html:27
@@ -1261,11 +1261,11 @@ msgstr ""
 
 #: build/templates/build/navbar.html:39
 msgid "Child Builds"
-msgstr "Budowy Podrzędne"
+msgstr "Budowy podrzędne"
 
 #: build/templates/build/navbar.html:50
 msgid "Build Order Notes"
-msgstr "Notatki Zlecenia Budowy"
+msgstr "Notatki zlecenia budowy"
 
 #: build/templates/build/notes.html:12
 msgid "Build Notes"
@@ -1305,7 +1305,7 @@ msgstr ""
 
 #: build/views.py:150
 msgid "Create Build Output"
-msgstr "Utwórz Zlecenie Budowy"
+msgstr "Utwórz zlecenie budowy"
 
 #: build/views.py:168
 msgid "Maximum output quantity is "
@@ -1431,11 +1431,11 @@ msgstr ""
 #: build/views.py:1083 order/views.py:112 order/views.py:164 part/views.py:172
 #: stock/views.py:277
 msgid "Added attachment"
-msgstr ""
+msgstr "Dodano załącznik"
 
 #: build/views.py:1119 order/views.py:191 order/views.py:212
 msgid "Edit Attachment"
-msgstr "Edytuj Załącznik"
+msgstr "Edytuj załącznik"
 
 #: build/views.py:1129 order/views.py:195 order/views.py:216
 msgid "Attachment updated"
@@ -1447,7 +1447,7 @@ msgstr "Usuń załącznik"
 
 #: build/views.py:1144 order/views.py:237 order/views.py:251 stock/views.py:333
 msgid "Deleted attachment"
-msgstr "Usunięty załącznik"
+msgstr "Załącznik usunięto"
 
 #: common/models.py:58
 msgid "InvenTree Instance Name"
@@ -1483,7 +1483,7 @@ msgstr "Bazowy adres URL dla instancji serwera"
 
 #: common/models.py:84
 msgid "Default Currency"
-msgstr "Domyślna Waluta"
+msgstr "Domyślna waluta"
 
 #: common/models.py:85
 msgid "Default currency"
@@ -1499,7 +1499,7 @@ msgstr "Zezwól na pobieranie zewnętrznych obrazów i plików z zewnętrznego U
 
 #: common/models.py:98
 msgid "Barcode Support"
-msgstr "Obsługa Kodu Kreskowego"
+msgstr "Obsługa kodu kreskowego"
 
 #: common/models.py:99
 msgid "Enable barcode scanner support"
@@ -1523,7 +1523,7 @@ msgstr ""
 
 #: common/models.py:117
 msgid "Allow Editing IPN"
-msgstr "Zezwól Na Edycję IPN"
+msgstr "Zezwól na edycję IPN"
 
 #: common/models.py:118
 msgid "Allow changing the IPN value while editing a part"
@@ -1573,7 +1573,7 @@ msgstr ""
 #: report/models.py:185 stock/forms.py:259 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:311
 msgid "Template"
-msgstr ""
+msgstr "Szablon"
 
 #: common/models.py:160
 msgid "Parts are templates by default"
@@ -1582,7 +1582,7 @@ msgstr ""
 #: common/models.py:166 part/models.py:834 part/templates/part/detail.html:170
 #: templates/js/table_filters.js:124 templates/js/table_filters.js:323
 msgid "Assembly"
-msgstr ""
+msgstr "Złożenie"
 
 #: common/models.py:167
 msgid "Parts can be assembled from other components by default"
@@ -1599,38 +1599,38 @@ msgstr ""
 
 #: common/models.py:180 part/models.py:851 part/templates/part/detail.html:200
 msgid "Purchaseable"
-msgstr ""
+msgstr "Możliwość zakupu"
 
 #: common/models.py:181
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "Części są domyślnie z możliwością zakupu"
 
 #: common/models.py:187 part/models.py:856 part/templates/part/detail.html:210
 #: templates/js/table_filters.js:335
 msgid "Salable"
-msgstr ""
+msgstr "Możliwość sprzedaży"
 
 #: common/models.py:188
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "Części są domyślnie z możliwością sprzedaży"
 
 #: common/models.py:194 part/models.py:846 part/templates/part/detail.html:190
 #: templates/js/table_filters.js:33 templates/js/table_filters.js:339
 msgid "Trackable"
-msgstr ""
+msgstr "Możliwość śledzenia"
 
 #: common/models.py:195
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Części są domyślnie z możliwością śledzenia"
 
 #: common/models.py:201 part/models.py:866 part/templates/part/detail.html:150
 #: templates/js/table_filters.js:29
 msgid "Virtual"
-msgstr ""
+msgstr "Wirtualny"
 
 #: common/models.py:202
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Części są domyślnie wirtualne"
 
 #: common/models.py:208
 msgid "Show Quantity in Forms"
@@ -1650,7 +1650,7 @@ msgstr ""
 
 #: common/models.py:222
 msgid "Page Size"
-msgstr "Rozmiar Strony"
+msgstr "Rozmiar strony"
 
 #: common/models.py:223
 msgid "Default page size for PDF reports"
@@ -1658,7 +1658,7 @@ msgstr ""
 
 #: common/models.py:233
 msgid "Test Reports"
-msgstr "Raporty Testów"
+msgstr "Raporty testów"
 
 #: common/models.py:234
 msgid "Enable generation of test reports"
@@ -1762,7 +1762,7 @@ msgstr ""
 
 #: common/models.py:533
 msgid "Settings value"
-msgstr ""
+msgstr "Ustawienia wartości"
 
 #: common/models.py:568
 msgid "Must be an integer value"
@@ -1803,7 +1803,7 @@ msgstr "Aktualna wartość"
 
 #: common/views.py:25
 msgid "Change Setting"
-msgstr "Zmień Ustawienie"
+msgstr "Zmień ustawienie"
 
 #: common/views.py:94
 msgid "Supplied value is not allowed"
@@ -2004,7 +2004,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_base.html:19
 #: stock/templates/stock/item_base.html:352
 msgid "Manufacturer Part"
-msgstr "Część Producenta"
+msgstr "Część producenta"
 
 #: company/models.py:480
 msgid "Select manufacturer part"
@@ -2108,11 +2108,11 @@ msgstr ""
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
-msgstr ""
+msgstr "Nazwa firmy"
 
 #: company/templates/company/detail.html:36
 msgid "No website specified"
-msgstr ""
+msgstr "Nie określono strony internetowej"
 
 #: company/templates/company/detail.html:45
 msgid "Uses default currency"
@@ -2124,21 +2124,21 @@ msgstr ""
 #: templates/js/company.js:40 templates/js/order.js:267
 #: templates/js/stock.js:1064
 msgid "Customer"
-msgstr ""
+msgstr "Klient"
 
 #: company/templates/company/detail_manufacturer_part.html:11
 #: templates/InvenTree/search.html:149
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Części producenta"
 
 #: company/templates/company/detail_manufacturer_part.html:22
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Utwórz nową część producenta"
 
 #: company/templates/company/detail_manufacturer_part.html:23
 #: part/templates/part/manufacturer.html:19
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Nowa część producenta"
 
 #: company/templates/company/detail_manufacturer_part.html:28
 #: company/templates/company/detail_supplier_part.html:27
@@ -2163,34 +2163,34 @@ msgstr "Usuń części"
 #: company/templates/company/detail_manufacturer_part.html:36
 #: company/templates/company/detail_supplier_part.html:35
 msgid "Delete Parts"
-msgstr "Usuń Części"
+msgstr "Usuń części"
 
 #: company/templates/company/detail_manufacturer_part.html:66
 #: company/templates/company/detail_supplier_part.html:66
 #: part/templates/part/bom.html:159 part/templates/part/category.html:118
 #: templates/js/stock.js:1265
 msgid "New Part"
-msgstr "Nowy Komponent"
+msgstr "Nowy komponent"
 
 #: company/templates/company/detail_manufacturer_part.html:67
 #: company/templates/company/detail_supplier_part.html:67
 msgid "Create new Part"
-msgstr "Utwórz nowy Komponent"
+msgstr "Utwórz nowy komponent"
 
 #: company/templates/company/detail_manufacturer_part.html:72
 #: company/views.py:71 part/templates/part/manufacturer.html:52
 #: part/templates/part/supplier.html:56
 msgid "New Manufacturer"
-msgstr ""
+msgstr "Now producent"
 
 #: company/templates/company/detail_manufacturer_part.html:73
 #: company/views.py:284
 msgid "Create new Manufacturer"
-msgstr ""
+msgstr "Utwórz nowego producenta"
 
 #: company/templates/company/detail_stock.html:10
 msgid "Supplier Stock"
-msgstr "Zapasy Dostawcy"
+msgstr "Zapasy dostawcy"
 
 #: company/templates/company/detail_stock.html:37
 #: company/templates/company/supplier_part_stock.html:34
@@ -2204,63 +2204,63 @@ msgstr "Eksportuj"
 #: company/templates/company/manufacturer_part_suppliers.html:10
 #: templates/InvenTree/search.html:164
 msgid "Supplier Parts"
-msgstr "Komponenty Dostawcy"
+msgstr "Komponenty dostawcy"
 
 #: company/templates/company/detail_supplier_part.html:21
 #: order/templates/order/order_wizard/select_parts.html:42
 #: order/templates/order/purchase_order_detail.html:50
 msgid "Create new supplier part"
-msgstr ""
+msgstr "Utwórz nowego dostawcę części"
 
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
 #: order/templates/order/purchase_order_detail.html:49
 #: part/templates/part/supplier.html:17 templates/js/stock.js:1271
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Now dostawca części"
 
 #: company/templates/company/detail_supplier_part.html:72
 #: company/templates/company/manufacturer_part_suppliers.html:47
 #: company/views.py:64 order/templates/order/purchase_orders.html:185
 #: part/templates/part/supplier.html:50
 msgid "New Supplier"
-msgstr "Nowy Dostawca"
+msgstr "Nowy dostawca"
 
 #: company/templates/company/detail_supplier_part.html:73 company/views.py:281
 #: order/templates/order/purchase_orders.html:186
 msgid "Create new Supplier"
-msgstr "Dodaj nowego Dostawcę"
+msgstr "Dodaj nowego dostawcę"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
-msgstr "Lista Dostawców"
+msgstr "Lista dostawców"
 
 #: company/templates/company/manufacturer_part_base.html:36
 #: company/templates/company/supplier_part_base.html:36
 #: company/templates/company/supplier_part_orders.html:17
 #: part/templates/part/orders.html:17 part/templates/part/part_base.html:65
 msgid "Order part"
-msgstr ""
+msgstr "Zamów część"
 
 #: company/templates/company/manufacturer_part_base.html:41
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "Edytuj część producenta"
 
 #: company/templates/company/manufacturer_part_base.html:45
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "Usuń cześć producenta"
 
 #: company/templates/company/manufacturer_part_base.html:57
 #: company/templates/company/manufacturer_part_detail.html:10
 msgid "Manufacturer Part Details"
-msgstr ""
+msgstr "Szczegóły części producenta"
 
 #: company/templates/company/manufacturer_part_base.html:62
 #: company/templates/company/manufacturer_part_detail.html:18
 #: company/templates/company/supplier_part_base.html:61
 #: company/templates/company/supplier_part_detail.html:18
 msgid "Internal Part"
-msgstr ""
+msgstr "Część wewnętrzna"
 
 #: company/templates/company/manufacturer_part_delete.html:6
 msgid "Are you sure you want to delete the following Manufacturer Parts?"
@@ -2466,7 +2466,7 @@ msgstr ""
 #: part/templates/part/navbar.html:75 templates/InvenTree/search.html:306
 #: templates/navbar.html:36
 msgid "Manufacturers"
-msgstr ""
+msgstr "Producenci"
 
 #: company/views.py:77 templates/InvenTree/search.html:336
 #: templates/navbar.html:45
@@ -2475,7 +2475,7 @@ msgstr "Klienci"
 
 #: company/views.py:78 order/templates/order/sales_orders.html:187
 msgid "New Customer"
-msgstr ""
+msgstr "Nowy klient"
 
 #: company/views.py:86
 msgid "Companies"
@@ -2564,7 +2564,7 @@ msgstr ""
 
 #: company/views.py:855 part/views.py:2692
 msgid "Edit Price Break"
-msgstr "Edytuj Przedział Cenowy"
+msgstr "Edytuj przedział cenowy"
 
 #: company/views.py:870 part/views.py:2706
 msgid "Delete Price Break"
@@ -2768,7 +2768,7 @@ msgstr ""
 
 #: order/models.py:476 templates/js/order.js:303
 msgid "Shipment Date"
-msgstr "Data Wysyłki"
+msgstr "Data wysyłki"
 
 #: order/models.py:483
 msgid "shipped by"
