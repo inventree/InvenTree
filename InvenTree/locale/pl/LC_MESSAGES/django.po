@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 00:59+0000\n"
-"PO-Revision-Date: 2021-05-10 02:59\n"
+"PO-Revision-Date: 2021-05-12 01:17\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -261,28 +261,20 @@ msgid "Legacy stock tracking entry"
 msgstr ""
 
 #: InvenTree/status_codes.py:274
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item created"
-msgstr "Element magazynowy"
+msgstr ""
 
 #: InvenTree/status_codes.py:276
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Edited stock item"
-msgstr "Lokalizacja magazynowania przedmiotu"
+msgstr ""
 
 #: InvenTree/status_codes.py:277
-#, fuzzy
-#| msgid "Serial Number"
 msgid "Assigned serial number"
-msgstr "Numer Seryjny"
+msgstr ""
 
 #: InvenTree/status_codes.py:279
-#, fuzzy
-#| msgid "Stock Source"
 msgid "Stock counted"
-msgstr "Źródło magazynu"
+msgstr ""
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
@@ -293,16 +285,12 @@ msgid "Stock manually removed"
 msgstr ""
 
 #: InvenTree/status_codes.py:283
-#, fuzzy
-#| msgid "Location"
 msgid "Location changed"
-msgstr "Lokalizacja"
+msgstr ""
 
 #: InvenTree/status_codes.py:285
-#, fuzzy
-#| msgid "Install into"
 msgid "Installed into assembly"
-msgstr "Zainstaluj do"
+msgstr ""
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
@@ -333,16 +321,12 @@ msgid "Returned from customer"
 msgstr ""
 
 #: InvenTree/status_codes.py:297
-#, fuzzy
-#| msgid "Build Order Notes"
 msgid "Build order output created"
-msgstr "Notatki Zlecenia Budowy"
+msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Build not complete"
 msgid "Build order output completed"
-msgstr "Budowa niezakończona"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
@@ -2118,8 +2102,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -5843,10 +5826,8 @@ msgid "Deleted {n} stock items"
 msgstr ""
 
 #: stock/views.py:1222
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Edit Stock Item Status"
-msgstr "Element magazynowy"
+msgstr ""
 
 #: stock/views.py:1245
 msgid "Edit Stock Item"
@@ -5982,8 +5963,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6855,16 +6835,12 @@ msgid "Status code must be selected"
 msgstr ""
 
 #: templates/js/stock.js:994
-#, fuzzy
-#| msgid "upload date"
 msgid "Invalid date"
-msgstr "data przesłania"
+msgstr ""
 
 #: templates/js/stock.js:1036
-#, fuzzy
-#| msgid "Location of completed parts"
 msgid "Location no longer exists"
-msgstr "Lokalizacja ukończonych części"
+msgstr ""
 
 #: templates/js/stock.js:1055
 msgid "Purchase order no longer exists"
@@ -6883,10 +6859,8 @@ msgid "Added"
 msgstr ""
 
 #: templates/js/stock.js:1123
-#, fuzzy
-#| msgid "Remove line"
 msgid "Removed"
-msgstr "Usuń linie"
+msgstr ""
 
 #: templates/js/stock.js:1155
 msgid "No user information"
@@ -7379,5 +7353,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Received items"
-#~ msgstr "Odebrane przedmioty"
