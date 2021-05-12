@@ -82,14 +82,14 @@
 <tr>
     <td><span class='fas fa-phone'></span></td>
     <td>{% trans "Phone" %}</td>
-    <td>{{ company.phone }}{% include "clip.html"%}</td>
+    <td>{% include "tel.html" with tel=company.phone %}</td>
 </tr>
 {% endif %}
 {% if company.email %}
 <tr>
     <td><span class='fas fa-at'></span></td>
     <td>{% trans "Email" %}</td>
-    <td>{{ company.email }}{% include "clip.html"%}</td>
+    <td>{% include "mail.html" with mail=company.email %}</td>
 </tr>
 {% endif %}
 {% if company.contact %}
