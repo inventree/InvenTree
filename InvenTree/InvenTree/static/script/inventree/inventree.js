@@ -1,37 +1,28 @@
-function attachClipboard(selector) {
+function attachClipboard(selector, containerselector, textElement) {
+    // set container
+    if (containerselector){
+        containerselector = document.getElementById(containerselector);
+    } else {
+        containerselector = document.body;
+    }
 
-    var cis = new ClipboardJS(selector, {
-        text: function(trigger) {
-            var content = trigger.parentElement.parentElement.textContent;
-
-            return content.trim();
+    // set text-function
+    if (textElement){
+        text = function() {
+            return document.getElementById(textElement).textContent;
         }
+    } else {
+        text = function() {
+            var content = trigger.parentElement.parentElement.textContent;return content.trim();
+        }
+    }
+
+    // create Clipboard
+    var cis = new ClipboardJS(selector, {
+        text: text,
+        container: containerselector
     });
     console.log(cis);
-}
-
-
-function attachmodalClipboard(selector) {
-
-    new ClipboardJS(selector, {
-        text: function(trigger) {
-            var content = trigger.parentElement.parentElement.textContent;
-            return content.trim();
-        },
-        container: document.getElementById('modal-about')
-    });
-}
-
-
-function AboutClipboard(selector) {
-
-    new ClipboardJS(selector, {
-        text: function() {
-            console.log('about');
-            return document.getElementById('about-copy-text').textContent;
-        },
-        container: document.getElementById('modal-about')
-    });
 }
 
 
@@ -88,8 +79,8 @@ function inventreeDocReady() {
 
     // Initialize clipboard-buttons
     attachClipboard('.clip-btn');
-    attachmodalClipboard('.clip-btn');
-    AboutClipboard('.clip-btn-version');
+    attachClipboard('.clip-btn', 'modal-about');  // modals
+    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
 
 }
 
