@@ -15,46 +15,46 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
-        image: inventree/inventree:latest
-        entrypoint: ./start_dev_server.sh
+        build:
+            context: .
+            target: dev
         ports:
             - 8000
-        depends_on:
-            - inventree-db
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree/src
-            - data:/home/inventree/data
-            - static:/home/inventree/static
         environment:
             # Configure a simple sqlite server for development
             # Note: You can always change to a different database backend if required!
-            - INVENTREE_DB_ENGINE=sqlite
-            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_ENGINE=sqlite3
+            - INVENTREE_DB_NAME=/home/inventree/data/inventree_database.sqlite3
+            - INVENTREE_MEDIA_ROOT=/home/inventree/src/inventree_media
+            - INVENTREE_STATIC_ROOT=/home/inventree/src/inventree_static
+            - INVENTREE_CONFIG_FILE=/home/inventree/src/config.yaml
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
         container_name: inventree-worker
-        image: inventree/inventree:latest
-        entrypoint: ./start_worker.sh
-        depends_on:
-            - inventree-db
+        build:
+            context: .
+            target: dev
+        entrypoint: invoke worker
             - inventree-server
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
-            - data:/home/inventree/data
-            - static:/home/inventree/static
+            - src:/home/inventree/src
         environment:
             # Configure a simple sqlite server for development
             # Note: You can always change to a different database backend if required!
-            - INVENTREE_DB_ENGINE=sqlite
-            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_ENGINE=sqlite3
+            - INVENTREE_DB_NAME=/home/inventree/data/inventree_database.sqlite3
+            - INVENTREE_MEDIA_ROOT=/home/inventree/src/inventree_media
+            - INVENTREE_STATIC_ROOT=/home/inventree/src/inventree_static
         restart: unless-stopped
 
 volumes:
     # NOTE: Change /path/to/src to a directory on your local machine, where the InvenTree source code is located
-    # This directory must conatin the file *manage.py*
     # Persistent data, stored external to the container(s)
     src:
         driver: local
@@ -63,8 +63,4 @@ volumes:
             o: bind
             # This directory specified where InvenTree source code is stored "outside" the docker containers
             # Note: This directory must conatin the file *manage.py*
-            device: /path/to/src
-    # Uploaded data / media files, shared between containers
-    data:
-    # Static files, shared between containers
-    static:
+            device: /path/to/inventree/src

@@ -19,6 +19,14 @@ else
     cp $INVENTREE_SRC_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
+# Setup a virtual environment
+python3 -m venv inventree-docker-dev
+
+source inventree-docker-dev/bin/activate
+
+echo "Installing required packages..."
+pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
+
 echo "Starting InvenTree server..."
 
 # Wait for the database to be ready
