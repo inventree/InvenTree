@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 00:59+0000\n"
-"PO-Revision-Date: 2021-05-10 02:59\n"
+"PO-Revision-Date: 2021-05-12 01:17\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -269,10 +269,8 @@ msgid "Edited stock item"
 msgstr ""
 
 #: InvenTree/status_codes.py:277
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Assigned serial number"
-msgstr "Seri numarası bulunamadı"
+msgstr ""
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
@@ -2104,8 +2102,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -5966,8 +5963,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6839,10 +6835,8 @@ msgid "Status code must be selected"
 msgstr ""
 
 #: templates/js/stock.js:994
-#, fuzzy
-#| msgid "upload date"
 msgid "Invalid date"
-msgstr "Yükleme tarihi"
+msgstr ""
 
 #: templates/js/stock.js:1036
 msgid "Location no longer exists"
@@ -7358,3 +7352,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
