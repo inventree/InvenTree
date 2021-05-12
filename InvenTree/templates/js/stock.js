@@ -976,42 +976,28 @@ function loadStockLocationTable(table, options) {
 
 function loadStockTrackingTable(table, options) {
 
-    var cols = [
-        {
-            field: 'pk',
-            visible: false,
-        },
-        {
-            field: 'date',
-            title: '{% trans "Date" %}',
-            sortable: true,
-            formatter: function(value, row, index, field) {
-                var m = moment(value);
-                if (m.isValid()) {
-                    var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
-                    return html;
-                }
+    var cols = [];
 
-                return 'N/A';
-            }
-        },
-    ];
+    // Date
+    cols.push({
+        field: 'date',
+        title: '{% trans "Date" %}',
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            var m = moment(value);
 
-    // If enabled, provide a link to the referenced StockItem
-    if (options.partColumn) {
-        cols.push({
-            field: 'item',
-            title: '{% trans "Stock Item" %}',
-            sortable: true,
-            formatter: function(value, row, index, field) {
-                return renderLink(value.part_name, value.url);
+            if (m.isValid()) {
+                var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
+                return html;
             }
-        });
-    }
+
+            return '<i>{% trans "Invalid date" %}</i>';
+        }
+    });
 
     // Stock transaction description
     cols.push({
-        field: 'title',
+        field: 'label',
         title: '{% trans "Description" %}',
         formatter: function(value, row, index, field) {
             var html = "<b>" + value + "</b>";
@@ -1020,20 +1006,139 @@ function loadStockTrackingTable(table, options) {
                 html += "<br><i>" + row.notes + "</i>";
             }
 
-            if (row.link) {
-                html += "<br><a href='" + row.link + "'>" + row.link + "</a>";
-            }
-
             return html;
         }
     });
 
+    // Stock transaction details
     cols.push({
-        field: 'quantity',
-        title: '{% trans "Quantity" %}',
-        formatter: function(value, row, index, field) {
-            return parseFloat(value);
-        },
+        field: 'deltas',
+        title: '{% trans "Details" %}',
+        formatter: function(details, row, index, field) {
+            var html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
+
+            // Location information
+            if (details.location) {
+
+                html += `<tr><th>{% trans "Location" %}</th>`;
+
+                html += '<td>';
+
+                if (details.location_detail) {
+                    // A valid location is provided
+
+                    html += renderLink(
+                        details.location_detail.pathstring,
+                        details.location_detail.url,
+                    );
+                } else {
+                    // An invalid location (may have been deleted?)
+                    html += `<i>{% trans "Location no longer exists" %}</i>`;
+                }
+
+                html += '</td></tr>';
+            }
+
+            // Purchase Order Information
+            if (details.purchaseorder) {
+
+                html += `<tr><th>{% trans "Purchase Order" %}</td>`;
+
+                html += '<td>';
+
+                if (details.purchaseorder_detail) {
+                    html += renderLink(
+                        details.purchaseorder_detail.reference,
+                        `/order/purchase-order/${details.purchaseorder}/`
+                    );
+                } else {
+                    html += `<i>{% trans "Purchase order no longer exists" %}</i>`;
+                }
+
+                html += '</td></tr>';
+            }
+
+            // Customer information
+            if (details.customer) {
+
+                html += `<tr><th>{% trans "Customer" %}</td>`;
+
+                html += '<td>';
+
+                if (details.customer_detail) {
+                    html += renderLink(
+                        details.customer_detail.name,
+                        details.customer_detail.url
+                    );
+                } else {
+                    html += `<i>{% trans "Customer no longer exists" %}</i>`;
+                }
+
+                html += '</td></tr>';
+            }
+
+            // Stockitem information
+            if (details.stockitem) {
+                html += '<tr><th>{% trans "Stock Item" %}</td>';
+
+                html += '<td>';
+
+                if (details.stockitem_detail) {
+                    html += renderLink(
+                        details.stockitem,
+                        `/stock/item/${details.stockitem}/`
+                    );
+                } else {
+                    html += `<i>{% trans "Stock item no longer exists" %}</i>`;
+                }
+
+                html += '</td></tr>';
+            }
+
+            // Status information
+            if (details.status) {
+                html += `<tr><th>{% trans "Status" %}</td>`;
+
+                html += '<td>';
+                html += stockStatusDisplay(
+                    details.status,
+                    {
+                        classes: 'float-right',
+                    }
+                );
+                html += '</td></tr>';
+
+            }
+
+            // Quantity information
+            if (details.added) {
+                html += '<tr><th>{% trans "Added" %}</th>';
+
+                html += `<td>${details.added}</td>`;
+
+                html += '</tr>';
+            }
+
+            if (details.removed) {
+                html += '<tr><th>{% trans "Removed" %}</th>';
+
+                html += `<td>${details.removed}</td>`;
+
+                html += '</tr>';
+            }
+
+            if (details.quantity) {
+                html += '<tr><th>{% trans "Quantity" %}</th>';
+
+                html += `<td>${details.quantity}</td>`;
+
+                html += '</tr>';
+            }
+
+            html += '</table>';
+
+            return html;
+        }
     });
 
     cols.push({
@@ -1052,11 +1157,13 @@ function loadStockTrackingTable(table, options) {
         }
     });
 
+    /*
+    // 2021-05-11 - Ability to edit or delete StockItemTracking entries is now removed
     cols.push({
         sortable: false,
         formatter: function(value, row, index, field) {
             // Manually created entries can be edited or deleted
-            if (!row.system) {
+            if (false && !row.system) {
                 var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
                 var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
 
@@ -1066,6 +1173,7 @@ function loadStockTrackingTable(table, options) {
             }
         }
     });
+    */
 
     table.inventreeTable({
         method: 'get',
