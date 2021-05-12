@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 12:29+0000\n"
-"PO-Revision-Date: 2021-05-12 14:04\n"
+"PO-Revision-Date: 2021-05-12 15:01\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -3581,7 +3581,7 @@ msgstr ""
 
 #: part/forms.py:93
 msgid "Levels"
-msgstr ""
+msgstr "Poziomy"
 
 #: part/forms.py:93
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
@@ -3637,7 +3637,7 @@ msgstr ""
 
 #: part/forms.py:153
 msgid "validate"
-msgstr ""
+msgstr "potwierdź"
 
 #: part/forms.py:153
 msgid "Confirm that the BOM is correct"
@@ -3697,7 +3697,7 @@ msgstr ""
 
 #: part/forms.py:344 part/models.py:2209
 msgid "Sub part"
-msgstr ""
+msgstr "Podczęść"
 
 #: part/forms.py:372
 msgid "Input quantity for price calculation"
@@ -3709,7 +3709,7 @@ msgstr ""
 
 #: part/models.py:76
 msgid "Default keywords"
-msgstr ""
+msgstr "Domyślne słowa kluczowe"
 
 #: part/models.py:76
 msgid "Default keywords for parts in this category"
@@ -3843,7 +3843,7 @@ msgstr ""
 #: part/models.py:828 part/models.py:2089 part/templates/part/detail.html:106
 #: part/templates/part/params.html:29
 msgid "Units"
-msgstr ""
+msgstr "Jednostki"
 
 #: part/models.py:829
 msgid "Stock keeping units for this part"
@@ -3873,11 +3873,11 @@ msgstr ""
 #: templates/js/table_filters.js:21 templates/js/table_filters.js:61
 #: templates/js/table_filters.js:237 templates/js/table_filters.js:306
 msgid "Active"
-msgstr ""
+msgstr "Aktywny"
 
 #: part/models.py:862
 msgid "Is this part active?"
-msgstr ""
+msgstr "Czy ta część jest aktywna?"
 
 #: part/models.py:867
 msgid "Is this a virtual part, such as a software product or license?"
@@ -3909,7 +3909,7 @@ msgstr ""
 
 #: part/models.py:1616
 msgid "Sell multiple"
-msgstr ""
+msgstr "Sprzedaj wiele"
 
 #: part/models.py:1987
 msgid "Test templates can only be created for trackable parts"
@@ -3921,7 +3921,7 @@ msgstr ""
 
 #: part/models.py:2024 templates/js/part.js:638 templates/js/stock.js:104
 msgid "Test Name"
-msgstr ""
+msgstr "Nazwa testu"
 
 #: part/models.py:2025
 msgid "Enter a name for the test"
@@ -3979,7 +3979,7 @@ msgstr ""
 
 #: part/models.py:2119
 msgid "Data"
-msgstr ""
+msgstr "Dane"
 
 #: part/models.py:2119
 msgid "Parameter Value"
@@ -3987,7 +3987,7 @@ msgstr ""
 
 #: part/models.py:2171 templates/InvenTree/settings/category.html:67
 msgid "Default Value"
-msgstr ""
+msgstr "Wartość domyślna"
 
 #: part/models.py:2172
 msgid "Default Parameter Value"
@@ -4031,7 +4031,7 @@ msgstr ""
 
 #: part/models.py:2230
 msgid "Checksum"
-msgstr ""
+msgstr "Suma kontrolna"
 
 #: part/models.py:2230
 msgid "BOM line checksum"
@@ -4061,15 +4061,15 @@ msgstr ""
 
 #: part/models.py:2442
 msgid "Part 1"
-msgstr ""
+msgstr "Część 1"
 
 #: part/models.py:2446
 msgid "Part 2"
-msgstr ""
+msgstr "Część 2"
 
 #: part/models.py:2446
 msgid "Select Related Part"
-msgstr ""
+msgstr "Wybierz powiązaną część"
 
 #: part/models.py:2478
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
@@ -4094,7 +4094,7 @@ msgstr ""
 #: part/templates/part/bom.html:10 part/templates/part/navbar.html:48
 #: part/templates/part/navbar.html:51
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Zestawienie materiałowe"
 
 #: part/templates/part/bom.html:19
 #, python-format
@@ -4117,11 +4117,11 @@ msgstr ""
 
 #: part/templates/part/bom.html:35
 msgid "Import BOM data"
-msgstr ""
+msgstr "Importuj dane BOM"
 
 #: part/templates/part/bom.html:39
 msgid "Copy BOM from parent part"
-msgstr ""
+msgstr "Kopiuj BOM z części nadrzędnej"
 
 #: part/templates/part/bom.html:43
 msgid "New BOM Item"
@@ -4129,7 +4129,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:46
 msgid "Finish Editing"
-msgstr ""
+msgstr "Zakończ edycję"
 
 #: part/templates/part/bom.html:51
 msgid "Edit BOM"
@@ -4235,11 +4235,11 @@ msgstr ""
 
 #: part/templates/part/category.html:24
 msgid "All parts"
-msgstr ""
+msgstr "Wszystkie części"
 
 #: part/templates/part/category.html:29 part/views.py:2290
 msgid "Create new part category"
-msgstr ""
+msgstr "Stwórz nową kategorię komponentów"
 
 #: part/templates/part/category.html:35
 msgid "Edit part category"
@@ -4307,7 +4307,7 @@ msgstr ""
 
 #: part/templates/part/category.html:228 stock/views.py:1391
 msgid "Create new Stock Location"
-msgstr ""
+msgstr "Utwórz nową lokalizację magazynową"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4324,7 +4324,7 @@ msgstr ""
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
-msgstr ""
+msgstr "kategoria"
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
@@ -4348,16 +4348,16 @@ msgstr ""
 #: part/templates/part/category_navbar.html:37
 #: part/templates/part/navbar.html:22
 msgid "Parameters"
-msgstr ""
+msgstr "Parametry"
 
 #: part/templates/part/category_parametric.html:10
 #: part/templates/part/navbar.html:19 part/templates/part/params.html:10
 msgid "Part Parameters"
-msgstr ""
+msgstr "Parametry części"
 
 #: part/templates/part/copy_part.html:9 part/views.py:460
 msgid "Duplicate Part"
-msgstr ""
+msgstr "Duplikuj część"
 
 #: part/templates/part/copy_part.html:10
 #, python-format
@@ -4381,11 +4381,11 @@ msgstr ""
 
 #: part/templates/part/detail.html:11 part/templates/part/navbar.html:11
 msgid "Part Details"
-msgstr ""
+msgstr "Szczegóły części"
 
 #: part/templates/part/detail.html:42
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Ostatni numer seryjny"
 
 #: part/templates/part/detail.html:47
 msgid "No serial numbers recorded"
@@ -4397,15 +4397,15 @@ msgstr ""
 
 #: part/templates/part/detail.html:139
 msgid "Responsible User"
-msgstr ""
+msgstr "Odpowiedzialny użytkownik"
 
 #: part/templates/part/detail.html:153
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "Część jest wirtualna (nie fizyczna)"
 
 #: part/templates/part/detail.html:155
 msgid "Part is not a virtual part"
-msgstr ""
+msgstr "Część nie jest częścią wirtualną"
 
 #: part/templates/part/detail.html:163
 msgid "Part is a template part (variants can be made from this part)"
