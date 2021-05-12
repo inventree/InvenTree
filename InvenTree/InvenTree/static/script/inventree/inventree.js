@@ -1,13 +1,39 @@
 function attachClipboard(selector) {
 
-    new ClipboardJS(selector, {
+    var cis = new ClipboardJS(selector, {
         text: function(trigger) {
             var content = trigger.parentElement.parentElement.textContent;
 
             return content.trim();
         }
     });
+    console.log(cis);
 }
+
+
+function attachmodalClipboard(selector) {
+
+    new ClipboardJS(selector, {
+        text: function(trigger) {
+            var content = trigger.parentElement.parentElement.textContent;
+            return content.trim();
+        },
+        container: document.getElementById('modal-about')
+    });
+}
+
+
+function AboutClipboard(selector) {
+
+    new ClipboardJS(selector, {
+        text: function() {
+            console.log('about');
+            return document.getElementById('about-copy-text').textContent;
+        },
+        container: document.getElementById('modal-about')
+    });
+}
+
 
 function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
@@ -62,6 +88,8 @@ function inventreeDocReady() {
 
     // Initialize clipboard-buttons
     attachClipboard('.clip-btn');
+    attachmodalClipboard('.clip-btn');
+    AboutClipboard('.clip-btn-version');
 
 }
 
