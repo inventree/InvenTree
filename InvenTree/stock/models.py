@@ -981,7 +981,6 @@ class StockItem(MPTTModel):
             date=datetime.now(),
             notes=notes,
             deltas=deltas,
-            system=True
         )
 
         entry.save()
@@ -1048,7 +1047,7 @@ class StockItem(MPTTModel):
                 new_item.location = location
 
             # The item already has a transaction history, don't create a new note
-            new_item.save(user=user, note=False)
+            new_item.save(user=user, notes=notes)
 
             # Copy entire transaction history
             new_item.copyHistoryFrom(self)
