@@ -366,10 +366,7 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'date',
             'deltas',
             'label',
-            'link',
             'notes',
-            'quantity',
-            'title',
             'tracking_type',
             'user',
             'user_detail',
@@ -378,8 +375,6 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
         read_only_fields = [
             'date',
             'user',
-            'system',
-            'quantity',
             'label',
             'tracking_type',
         ]

@@ -1221,6 +1221,17 @@ class StockItemEditStatus(AjaxUpdateView):
     form_class = StockForms.EditStockItemStatusForm
     ajax_form_title = _('Edit Stock Item Status')
 
+    def save(self, object, form, **kwargs):
+        """
+        Override the save method, to track the user who updated the model
+        """
+
+        item = form.save(commit=False)
+
+        item.save(user=self.request.user)
+
+        return item
+
 
 class StockItemEdit(AjaxUpdateView):
     """
@@ -1331,6 +1342,17 @@ class StockItemEdit(AjaxUpdateView):
             if not owner and not self.request.user.is_superuser:
                 form.add_error('owner', _('Owner is required (ownership control is enabled)'))
 
+    def save(self, object, form, **kwargs):
+        """
+        Override the save method, to track the user who updated the model
+        """
+
+        item = form.save(commit=False)
+
+        item.save(user=self.request.user)
+
+        return item
+        
 
 class StockItemConvert(AjaxUpdateView):
     """
