@@ -35,7 +35,8 @@ services:
         build:
             context: .
             target: dev
-        entrypoint: invoke worker
+        entrypoint: /home/inventree/start_dev_worker.sh
+        depends_on:
             - inventree-server
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file

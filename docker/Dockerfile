@@ -105,6 +105,8 @@ FROM base as dev
 WORKDIR ${INVENTREE_SRC_DIR}
 
 COPY start_dev_server.sh ${INVENTREE_HOME}/start_dev_server.sh
+COPY start_dev_worker.sh ${INVENTREE_HOME}/start_dev_worker.sh
 RUN chmod 755 ${INVENTREE_HOME}/start_dev_server.sh
+RUN chmod 755 ${INVENTREE_HOME}/start_dev_worker.sh
 
 CMD ["bash", "/home/inventree/start_dev_server.sh"]
