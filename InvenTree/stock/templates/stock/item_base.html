@@ -94,7 +94,13 @@
     {% if item.is_expired %}
     <span class='label label-large label-large-red'>{% trans "Expired" %}</span>
     {% else %}
+    {% if roles.stock.change %}
+    <a href='#' id='stock-edit-status'>
+    {% endif %}
     {% stock_status_label item.status large=True %}
+    {% if roles.stock.change %}
+    </a>
+    {% endif %}
     {% if item.is_stale %}
     <span class='label label-large label-large-yellow'>{% trans "Stale" %}</span>
     {% endif %}
@@ -453,6 +459,7 @@ $("#print-label").click(function() {
     printStockItemLabels([{{ item.pk }}]);
 });
 
+{% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
     createNewStockItem({
         follow: true,
@@ -471,6 +478,18 @@ $("#stock-edit").click(function () {
         }
     );
 });
+
+$('#stock-edit-status').click(function () {
+    launchModalForm(
+        "{% url 'stock-item-edit-status' item.id %}",
+        {
+            reload: true,
+            submit_text: '{% trans "Save" %}',
+        }
+    );
+});
+
+{% endif %}
 
 $("#show-qr-code").click(function() {
     launchModalForm("{% url 'stock-item-qr' item.id %}",

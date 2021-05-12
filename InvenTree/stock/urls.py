@@ -4,7 +4,7 @@ URL lookup for Stock app
 
 from django.conf.urls import url, include
 
-from . import views
+from stock import views
 
 location_urls = [
 
@@ -24,6 +24,7 @@ location_urls = [
 ]
 
 stock_item_detail_urls = [
+    url(r'^edit_status/', views.StockItemEditStatus.as_view(), name='stock-item-edit-status'),
     url(r'^edit/', views.StockItemEdit.as_view(), name='stock-item-edit'),
     url(r'^convert/', views.StockItemConvert.as_view(), name='stock-item-convert'),
     url(r'^serialize/', views.StockItemSerialize.as_view(), name='stock-item-serialize'),

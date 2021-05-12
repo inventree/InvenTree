@@ -22,7 +22,7 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
@@ -811,6 +811,7 @@ class Build(MPTTModel):
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
         status = kwargs.get('status', StockStatus.OK)
+        notes = kwargs.get('notes', '')
 
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
@@ -834,10 +835,13 @@ class Build(MPTTModel):
 
         output.save()
 
-        output.addTransactionNote(
-            _('Completed build output'),
+        output.add_tracking_entry(
+            StockHistoryCode.BUILD_OUTPUT_COMPLETED,
             user,
-            system=True
+            notes=notes,
+            deltas={
+                'status': status,
+            }
         )
 
         # Increase the completed quantity for this build

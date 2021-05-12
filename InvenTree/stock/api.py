@@ -21,8 +21,11 @@ from .models import StockItemTestResult
 from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
 
-from company.models import SupplierPart
-from company.serializers import SupplierPartSerializer
+from company.models import Company, SupplierPart
+from company.serializers import CompanySerializer, SupplierPartSerializer
+
+from order.models import PurchaseOrder
+from order.serializers import POSerializer
 
 import common.settings
 import common.models
@@ -96,6 +99,16 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Record the user who updated the item
+        """
+
+        # TODO: Record the user!
+        # user = request.user
+
+        return super().update(request, *args, **kwargs)
 
 
 class StockFilter(FilterSet):
@@ -371,25 +384,26 @@ class StockList(generics.ListCreateAPIView):
         we can pre-fill the location automatically.
         """
 
+        user = request.user
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # TODO - Save the user who created this item
         item = serializer.save()
 
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
-            location = item.part.get_default_location()
-
-            if location is not None:
-                item.location = location
-                item.save()
+            item.location = item.part.get_default_location()
 
         # An expiry date was *not* specified - try to infer it!
         if 'expiry_date' not in request.data:
 
             if item.part.default_expiry > 0:
                 item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
-                item.save()
+
+        # Finally, save the item
+        item.save(user=user)
 
         # Return a response
         headers = self.get_success_headers(serializer.data)
@@ -965,7 +979,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         test_result.save()
 
 
-class StockTrackingList(generics.ListCreateAPIView):
+class StockTrackingList(generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -991,6 +1005,59 @@ class StockTrackingList(generics.ListCreateAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        # Attempt to add extra context information to the historical data
+        for item in data:
+            deltas = item['deltas']
+
+            # Add location detail
+            if 'location' in deltas:
+                try:
+                    location = StockLocation.objects.get(pk=deltas['location'])
+                    serializer = LocationSerializer(location)
+                    deltas['location_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add stockitem detail
+            if 'stockitem' in deltas:
+                try:
+                    stockitem = StockItem.objects.get(pk=deltas['stockitem'])
+                    serializer = StockItemSerializer(stockitem)
+                    deltas['stockitem_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add customer detail
+            if 'customer' in deltas:
+                try:
+                    customer = Company.objects.get(pk=deltas['customer'])
+                    serializer = CompanySerializer(customer)
+                    deltas['customer_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add purchaseorder detail
+            if 'purchaseorder' in deltas:
+                try:
+                    order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
+                    serializer = POSerializer(order)
+                    deltas['purchaseorder_detail'] = serializer.data
+                except:
+                    pass
+
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
 
     def create(self, request, *args, **kwargs):
         """ Create a new StockItemTracking object
