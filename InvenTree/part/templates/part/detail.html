@@ -96,8 +96,8 @@
             <td></td>
             <td><strong>{% trans "Default Supplier" %}</strong></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
-                {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}{% include "clip.html"%}
-            </a></td>
+                {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
+            </a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.units %}
