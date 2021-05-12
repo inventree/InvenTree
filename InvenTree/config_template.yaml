@@ -120,6 +120,11 @@ cors:
   # - https://example.com
   # - https://sub.example.com
 
+# Set the "subpath" URL if InvenTree is served at a subpath
+# e.g. http://my.webserver.com/inventree/ -> subpath="inventree"
+# You can also use the environment variable INVENTREE_SUBPATH
+subpath: ''
+
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 # By default, it is stored under /home/inventree/data/media
 # Use environment variable INVENTREE_MEDIA_ROOT

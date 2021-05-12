@@ -188,6 +188,17 @@ SUBPATH_URL = get_setting(
     CONFIG.get('subpath', None)
 )
 
+if SUBPATH_URL:
+
+    SUBPATH_URL = SUBPATH_URL.strip()
+
+    # Ensure that the subpath starts and ends with /
+    if not SUBPATH_URL.startswith('/'):
+        SUBPATH_URL = '/' + SUBPATH_URL
+
+    if not SUBPATH_URL.endswith('/'):
+        SUBPATH_URL = SUBPATH_URL + '/'
+
 FORCE_SCRIPT_NAME = SUBPATH_URL
 
 # Web URL endpoint for served static files
