@@ -130,7 +130,7 @@ class StockAttachmentAdmin(admin.ModelAdmin):
 
 
 class StockTrackingAdmin(ImportExportModelAdmin):
-    list_display = ('item', 'date', 'title')
+    list_display = ('item', 'date', 'label')
 
 
 class StockItemTestResultAdmin(admin.ModelAdmin):

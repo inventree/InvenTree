@@ -34,7 +34,7 @@ import common.models
 import report.models
 import label.models
 
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
@@ -183,29 +183,61 @@ class StockItem(MPTTModel):
         self.validate_unique()
         self.clean()
 
-        if not self.pk:
-            # StockItem has not yet been saved
-            add_note = True
-        else:
-            # StockItem has already been saved
-            add_note = False
-
         user = kwargs.pop('user', None)
 
-        add_note = add_note and kwargs.pop('note', True)
+        # If 'add_note = False' specified, then no tracking note will be added for item creation
+        add_note = kwargs.pop('add_note', True)
+
+        notes = kwargs.pop('notes', '')
+
+        if not self.pk:
+            # StockItem has not yet been saved
+            add_note = add_note and True
+        else:
+            # StockItem has already been saved
+
+            # Check if "interesting" fields have been changed
+            # (we wish to record these as historical records)
+
+            try:
+                old = StockItem.objects.get(pk=self.pk)
+
+                deltas = {}
+
+                # Status changed?
+                if not old.status == self.status:
+                    deltas['status'] = self.status
+
+                # TODO - Other interesting changes we are interested in...
+
+                if add_note and len(deltas) > 0:
+                    self.add_tracking_entry(
+                        StockHistoryCode.EDITED,
+                        user,
+                        deltas=deltas,
+                        notes=notes,
+                    )
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+            add_note = False
 
         super(StockItem, self).save(*args, **kwargs)
 
         if add_note:
 
-            note = _('Created new stock item for {part}').format(part=str(self.part))
+            tracking_info = {
+                'status': self.status,
+            }
 
-            # This StockItem is being saved for the first time
-            self.addTransactionNote(
-                _('Created stock item'),
+            self.add_tracking_entry(
+                StockHistoryCode.CREATED,
                 user,
-                note,
-                system=True
+                deltas=tracking_info,
+                notes=notes,
+                location=self.location,
+                quantity=float(self.quantity),
             )
 
     @property
@@ -610,31 +642,42 @@ class StockItem(MPTTModel):
 
         # TODO - Remove any stock item allocations from this stock item
 
-        item.addTransactionNote(
-            _("Assigned to Customer"),
+        item.add_tracking_entry(
+            StockHistoryCode.SENT_TO_CUSTOMER,
             user,
-            notes=_("Manually assigned to customer {name}").format(name=customer.name),
-            system=True
+            {
+                'customer': customer.id,
+                'customer_name': customer.name,
+            },
+            notes=notes,
         )
 
         # Return the reference to the stock item
         return item
 
-    def returnFromCustomer(self, location, user=None):
+    def returnFromCustomer(self, location, user=None, **kwargs):
         """
         Return stock item from customer, back into the specified location.
         """
 
-        self.addTransactionNote(
-            _("Returned from customer {name}").format(name=self.customer.name),
+        notes = kwargs.get('notes', '')
+
+        tracking_info = {}
+
+        if self.customer:
+            tracking_info['customer'] = self.customer.id
+            tracking_info['customer_name'] = self.customer.name
+
+        self.add_tracking_entry(
+            StockHistoryCode.RETURNED_FROM_CUSTOMER,
             user,
-            notes=_("Returned to location {loc}").format(loc=location.name),
-            system=True
+            notes=notes,
+            deltas=tracking_info,
+            location=location
         )
 
         self.customer = None
         self.location = location
-        self.sales_order = None
 
         self.save()
 
@@ -788,18 +831,23 @@ class StockItem(MPTTModel):
         stock_item.save()
 
         # Add a transaction note to the other item
-        stock_item.addTransactionNote(
-            _('Installed into stock item {pk}').format(str(self.pk)),
+        stock_item.add_tracking_entry(
+            StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
             user,
             notes=notes,
-            url=self.get_absolute_url()
+            deltas={
+                'stockitem': self.pk,
+            }
         )
 
-        # Add a transaction note to this item
-        self.addTransactionNote(
-            _('Installed stock item {pk}').format(str(stock_item.pk)),
-            user, notes=notes,
-            url=stock_item.get_absolute_url()
+        # Add a transaction note to this item (the assembly)
+        self.add_tracking_entry(
+            StockHistoryCode.INSTALLED_CHILD_ITEM,
+            user,
+            notes=notes,
+            deltas={
+                'stockitem': stock_item.pk,
+            }
         )
 
     @transaction.atomic
@@ -820,11 +868,25 @@ class StockItem(MPTTModel):
         # TODO - Are there any other checks that need to be performed at this stage?
 
         # Add a transaction note to the parent item
-        self.belongs_to.addTransactionNote(
-            _("Uninstalled stock item {pk}").format(pk=str(self.pk)),
+        self.belongs_to.add_tracking_entry(
+            StockHistoryCode.REMOVED_CHILD_ITEM,
+            user,
+            deltas={
+                'stockitem': self.pk,
+            },
+            notes=notes,
+        )
+
+        tracking_info = {
+            'stockitem': self.belongs_to.pk
+        }
+
+        self.add_tracking_entry(
+            StockHistoryCode.REMOVED_FROM_ASSEMBLY,
             user,
             notes=notes,
-            url=self.get_absolute_url(),
+            deltas=tracking_info,
+            location=location,
         )
 
         # Mark this stock item as *not* belonging to anyone
@@ -832,19 +894,6 @@ class StockItem(MPTTModel):
         self.location = location
 
         self.save()
-
-        if location:
-            url = location.get_absolute_url()
-        else:
-            url = ''
-
-        # Add a transaction note!
-        self.addTransactionNote(
-            _('Uninstalled into location {loc}').formaT(loc=str(location)),
-            user,
-            notes=notes,
-            url=url
-        )
 
     @property
     def children(self):
@@ -901,24 +950,40 @@ class StockItem(MPTTModel):
     def has_tracking_info(self):
         return self.tracking_info_count > 0
 
-    def addTransactionNote(self, title, user, notes='', url='', system=True):
-        """ Generation a stock transaction note for this item.
+    def add_tracking_entry(self, entry_type, user, deltas={}, notes='', **kwargs):
+        """
+        Add a history tracking entry for this StockItem
 
-        Brief automated note detailing a movement or quantity change.
+        Args:
+            entry_type - Integer code describing the "type" of historical action (see StockHistoryCode)
+            user - The user performing this action
+            deltas - A map of the changes made to the model
+            notes - User notes associated with this tracking entry
+            url - Optional URL associated with this tracking entry
         """
 
-        track = StockItemTracking.objects.create(
+        # Has a location been specified?
+        location = kwargs.get('location', None)
+
+        if location:
+            deltas['location'] = location.id
+
+        # Quantity specified?
+        quantity = kwargs.get('quantity', None)
+
+        if quantity:
+            deltas['quantity'] = float(quantity)
+
+        entry = StockItemTracking.objects.create(
             item=self,
-            title=title,
+            tracking_type=entry_type,
             user=user,
-            quantity=self.quantity,
-            date=datetime.now().date(),
+            date=datetime.now(),
             notes=notes,
-            link=url,
-            system=system
+            deltas=deltas,
         )
 
-        track.save()
+        entry.save()
 
     @transaction.atomic
     def serializeStock(self, quantity, serials, user, notes='', location=None):
@@ -930,7 +995,7 @@ class StockItem(MPTTModel):
 
         Args:
             quantity: Number of items to serialize (integer)
-            serials: List of serial numbers (list<int>)
+            serials: List of serial numbers
             user: User object associated with action
             notes: Optional notes for tracking
             location: If specified, serialized items will be placed in the given location
@@ -982,7 +1047,7 @@ class StockItem(MPTTModel):
                 new_item.location = location
 
             # The item already has a transaction history, don't create a new note
-            new_item.save(user=user, note=False)
+            new_item.save(user=user, notes=notes)
 
             # Copy entire transaction history
             new_item.copyHistoryFrom(self)
@@ -991,10 +1056,18 @@ class StockItem(MPTTModel):
             new_item.copyTestResultsFrom(self)
 
             # Create a new stock tracking item
-            new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
+            new_item.add_tracking_entry(
+                StockHistoryCode.ASSIGNED_SERIAL,
+                user,
+                notes=notes,
+                deltas={
+                    'serial': serial,
+                },
+                location=location
+            )
 
         # Remove the equivalent number of items
-        self.take_stock(quantity, user, notes=_('Serialized {n} items').format(n=quantity))
+        self.take_stock(quantity, user, notes=notes)
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -1018,7 +1091,7 @@ class StockItem(MPTTModel):
             result.save()
 
     @transaction.atomic
-    def splitStock(self, quantity, location, user):
+    def splitStock(self, quantity, location, user, **kwargs):
         """ Split this stock item into two items, in the same location.
         Stock tracking notes for this StockItem will be duplicated,
         and added to the new StockItem.
@@ -1031,6 +1104,8 @@ class StockItem(MPTTModel):
             The provided quantity will be subtracted from this item and given to the new one.
             The new item will have a different StockItem ID, while this will remain the same.
         """
+
+        notes = kwargs.get('notes', '')
 
         # Do not split a serialized part
         if self.serialized:
@@ -1071,17 +1146,21 @@ class StockItem(MPTTModel):
         new_stock.copyTestResultsFrom(self)
 
         # Add a new tracking item for the new stock item
-        new_stock.addTransactionNote(
-            _("Split from existing stock"),
+        new_stock.add_tracking_entry(
+            StockHistoryCode.SPLIT_FROM_PARENT,
             user,
-            _('Split {n} items').format(n=helpers.normalize(quantity))
+            notes=notes,
+            deltas={
+                'stockitem': self.pk,
+            },
+            location=location,
         )
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(
             quantity,
             user,
-            f"{_('Split')} {quantity} {_('items into new stock item')}"
+            notes=notes
         )
 
         # Return a copy of the "new" stock item
@@ -1131,18 +1210,17 @@ class StockItem(MPTTModel):
 
             return True
 
-        if self.location:
-            msg = _("Moved to {loc_new} (from {loc_old})").format(loc_new=str(location), loc_old=str(self.location))
-        else:
-            msg = _('Moved to {loc_new}').format(loc_new=str(location))
-
         self.location = location
 
-        self.addTransactionNote(
-            msg,
+        tracking_info = {}
+
+        self.add_tracking_entry(
+            StockHistoryCode.STOCK_MOVE,
             user,
             notes=notes,
-            system=True)
+            deltas=tracking_info,
+            location=location,
+        )
 
         self.save()
 
@@ -1202,13 +1280,13 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(count):
 
-            text = _('Counted {n} items').format(n=helpers.normalize(count))
-
-            self.addTransactionNote(
-                text,
+            self.add_tracking_entry(
+                StockHistoryCode.STOCK_COUNT,
                 user,
                 notes=notes,
-                system=True
+                deltas={
+                    'quantity': float(self.quantity),
+                }
             )
 
         return True
@@ -1234,20 +1312,23 @@ class StockItem(MPTTModel):
             return False
 
         if self.updateQuantity(self.quantity + quantity):
-            text = _('Added {n} items').format(n=helpers.normalize(quantity))
 
-            self.addTransactionNote(
-                text,
+            self.add_tracking_entry(
+                StockHistoryCode.STOCK_ADD,
                 user,
                 notes=notes,
-                system=True
+                deltas={
+                    'added': float(quantity),
+                    'quantity': float(self.quantity),
+                }
             )
 
         return True
 
     @transaction.atomic
     def take_stock(self, quantity, user, notes=''):
-        """ Remove items from stock
+        """
+        Remove items from stock
         """
 
         # Cannot remove items from a serialized part
@@ -1264,12 +1345,15 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity - quantity):
 
-            text = _('Removed {n1} items').format(n1=helpers.normalize(quantity))
-
-            self.addTransactionNote(text,
-                                    user,
-                                    notes=notes,
-                                    system=True)
+            self.add_tracking_entry(
+                StockHistoryCode.STOCK_REMOVE,
+                user,
+                notes=notes,
+                deltas={
+                    'removed': float(quantity),
+                    'quantity': float(self.quantity),
+                }
+            )
 
         return True
 
@@ -1527,44 +1611,58 @@ class StockItemAttachment(InvenTreeAttachment):
 
 
 class StockItemTracking(models.Model):
-    """ Stock tracking entry - breacrumb for keeping track of automated stock transactions
+    """
+    Stock tracking entry - used for tracking history of a particular StockItem
+
+    Note: 2021-05-11
+    The legacy StockTrackingItem model contained very litle information about the "history" of the item.
+    In fact, only the "quantity" of the item was recorded at each interaction.
+    Also, the "title" was translated at time of generation, and thus was not really translateable.
+    The "new" system tracks all 'delta' changes to the model,
+    and tracks change "type" which can then later be translated
+
 
     Attributes:
-        item: Link to StockItem
+        item: ForeignKey reference to a particular StockItem
         date: Date that this tracking info was created
-        title: Title of this tracking info (generated by system)
+        tracking_type: The type of tracking information
         notes: Associated notes (input by user)
-        link: Optional URL to external page
         user: The user associated with this tracking info
-        quantity: The StockItem quantity at this point in time
+        deltas: The changes associated with this history item
     """
 
     def get_absolute_url(self):
         return '/stock/track/{pk}'.format(pk=self.id)
-        # return reverse('stock-tracking-detail', kwargs={'pk': self.id})
 
-    item = models.ForeignKey(StockItem, on_delete=models.CASCADE,
-                             related_name='tracking_info')
+    def label(self):
+
+        if self.tracking_type in StockHistoryCode.keys():
+            return StockHistoryCode.label(self.tracking_type)
+        else:
+            return self.title
+
+    tracking_type = models.IntegerField(
+        default=StockHistoryCode.LEGACY,
+    )
+
+    item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='tracking_info'
+    )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(blank=False, max_length=250, verbose_name=_('Title'), help_text=_('Tracking entry title'))
-
-    notes = models.CharField(blank=True, max_length=512, verbose_name=_('Notes'), help_text=_('Entry notes'))
-
-    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page for further information'))
+    notes = models.CharField(
+        blank=True, null=True,
+        max_length=512,
+        verbose_name=_('Notes'),
+        help_text=_('Entry notes')
+    )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
-    system = models.BooleanField(default=False)
-
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'))
-
-    # TODO
-    # image = models.ImageField(upload_to=func, max_length=255, null=True, blank=True)
-
-    # TODO
-    # file = models.FileField()
+    deltas = models.JSONField(null=True, blank=True)
 
 
 def rename_stock_item_test_result_attachment(instance, filename):

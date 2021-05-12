@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 
 import datetime
 
+from InvenTree.status_codes import StockHistoryCode
+
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemTestResult
 
@@ -217,7 +219,7 @@ class StockTest(TestCase):
         track = StockItemTracking.objects.filter(item=it).latest('id')
 
         self.assertEqual(track.item, it)
-        self.assertIn('Moved to', track.title)
+        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_MOVE)
         self.assertEqual(track.notes, 'Moved to the bathroom')
 
     def test_self_move(self):
@@ -284,8 +286,7 @@ class StockTest(TestCase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=it).latest('id')
 
-        self.assertIn('Counted', track.title)
-        self.assertIn('items', track.title)
+        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_COUNT)
         self.assertIn('Counted items', track.notes)
 
         n = it.tracking_info.count()
@@ -304,7 +305,7 @@ class StockTest(TestCase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=it).latest('id')
 
-        self.assertIn('Added', track.title)
+        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_ADD)
         self.assertIn('Added some items', track.notes)
 
         self.assertFalse(it.add_stock(-10, None))
@@ -319,7 +320,7 @@ class StockTest(TestCase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=it).latest('id')
 
-        self.assertIn('Removed', track.title)
+        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_REMOVE)
         self.assertIn('Removed some items', track.notes)
         self.assertTrue(it.has_tracking_info)
 
