@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 12:29+0000\n"
-"PO-Revision-Date: 2021-05-12 13:05\n"
+"PO-Revision-Date: 2021-05-12 14:04\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1625,7 +1625,7 @@ msgstr ""
 #: common/models.py:173 part/models.py:840 part/templates/part/detail.html:180
 #: templates/js/table_filters.js:327
 msgid "Component"
-msgstr ""
+msgstr "Komponent"
 
 #: common/models.py:174
 msgid "Parts can be used as sub-components by default"
@@ -1850,7 +1850,7 @@ msgstr ""
 #: common/views.py:184 order/templates/order/order_wizard/po_upload.html:42
 #: order/views.py:582 part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload File"
-msgstr ""
+msgstr "Wyślik plik"
 
 #: common/views.py:185 order/templates/order/order_wizard/match_fields.html:52
 #: order/views.py:583 part/templates/part/bom_upload/select_fields.html:58
@@ -2145,7 +2145,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:84
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: company/templates/company/delete.html:7
 #, python-format
@@ -2492,7 +2492,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part_pricing.html:11
 msgid "Pricing Information"
-msgstr ""
+msgstr "Informacja cenowa"
 
 #: company/templates/company/supplier_part_pricing.html:19 company/views.py:794
 #: part/templates/part/sale_prices.html:17 part/views.py:2644
@@ -2832,7 +2832,7 @@ msgstr ""
 
 #: order/models.py:614
 msgid "Item quantity"
-msgstr ""
+msgstr "Ilość elementów"
 
 #: order/models.py:616
 msgid "Line item reference"
@@ -2874,20 +2874,20 @@ msgstr ""
 #: order/models.py:669 stock/models.py:540
 #: stock/templates/stock/item_base.html:326
 msgid "Purchase Price"
-msgstr ""
+msgstr "Cena zakupu"
 
 #: order/models.py:670
 msgid "Unit purchase price"
-msgstr ""
+msgstr "Cena zakupu jednostkowego"
 
 #: order/models.py:698 part/templates/part/navbar.html:95
 #: part/templates/part/part_pricing.html:78
 msgid "Sale Price"
-msgstr ""
+msgstr "Cena sprzedaży"
 
 #: order/models.py:699
 msgid "Unit sale price"
-msgstr ""
+msgstr "Jednostkowa cena sprzedaży"
 
 #: order/models.py:774 order/models.py:776
 msgid "Stock item has not been assigned"
@@ -2911,11 +2911,11 @@ msgstr ""
 
 #: order/models.py:800
 msgid "Line"
-msgstr ""
+msgstr "Linia"
 
 #: order/models.py:811
 msgid "Item"
-msgstr ""
+msgstr "Komponent"
 
 #: order/models.py:812
 msgid "Select stock item to allocate"
@@ -2962,12 +2962,12 @@ msgstr ""
 #: order/templates/order/order_base.html:82
 #: order/templates/order/sales_order_base.html:82
 msgid "Order Status"
-msgstr ""
+msgstr "Status zamówienia"
 
 #: order/templates/order/order_base.html:117
 #: report/templates/report/inventree_build_order_base.html:122
 msgid "Issued"
-msgstr ""
+msgstr "Wydany"
 
 #: order/templates/order/order_base.html:180
 #: order/templates/order/purchase_order_detail.html:100
@@ -2975,7 +2975,7 @@ msgstr ""
 #: stock/templates/stock/location.html:191 templates/js/stock.js:708
 #: templates/js/stock.js:1277
 msgid "New Location"
-msgstr ""
+msgstr "Nowa lokalizacja"
 
 #: order/templates/order/order_base.html:181
 #: order/templates/order/purchase_order_detail.html:101
@@ -3005,7 +3005,7 @@ msgstr ""
 
 #: order/templates/order/order_notes.html:13
 msgid "Order Notes"
-msgstr ""
+msgstr "Notatki zamówień"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/bom_upload/select_fields.html:21
@@ -3057,7 +3057,7 @@ msgstr ""
 #: order/templates/order/order_wizard/match_parts.html:27
 #: part/templates/part/bom_upload/select_parts.html:39
 msgid "Row"
-msgstr ""
+msgstr "Wiersz"
 
 #: order/templates/order/order_wizard/match_parts.html:28
 msgid "Select Supplier Part"
@@ -3090,7 +3090,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:31
 msgid "Select Supplier"
-msgstr ""
+msgstr "Wybierz dostawcę"
 
 #: order/templates/order/order_wizard/select_parts.html:57
 #, python-format
@@ -3100,7 +3100,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_parts.html:69
 #: part/templates/part/set_category.html:32
 msgid "Remove part"
-msgstr ""
+msgstr "Usuń część"
 
 #: order/templates/order/order_wizard/select_pos.html:8
 msgid "Step 2 of 2 - Select Purchase Orders"
@@ -3141,7 +3141,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:20
 #: order/templates/order/po_received_items.html:12
 msgid "Received Items"
-msgstr ""
+msgstr "Otrzymane elementy"
 
 #: order/templates/order/purchase_order_detail.html:14
 msgid "Purchase Order Items"
@@ -3160,7 +3160,7 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:180
 #: order/templates/order/sales_order_detail.html:229
 msgid "Unit Price"
-msgstr ""
+msgstr "Cena jednostkowa"
 
 #: order/templates/order/purchase_order_detail.html:221
 #: order/templates/order/sales_order_detail.html:303
@@ -3276,12 +3276,12 @@ msgstr ""
 
 #: order/templates/order/sales_order_detail.html:199
 msgid "ID"
-msgstr ""
+msgstr "Numer ID"
 
 #: order/templates/order/sales_order_detail.html:237 templates/js/build.js:579
 #: templates/js/build.js:845
 msgid "Allocated"
-msgstr ""
+msgstr "Przydzielono"
 
 #: order/templates/order/sales_order_detail.html:239
 msgid "Fulfilled"
@@ -3307,7 +3307,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:300
 #: order/templates/order/sales_order_detail.html:409
 msgid "Calculate price"
-msgstr ""
+msgstr "Oblicz cenę"
 
 #: order/templates/order/sales_order_detail.html:304
 msgid "Delete line item "
@@ -3420,7 +3420,7 @@ msgstr ""
 
 #: order/views.py:536
 msgid "Ship Order"
-msgstr ""
+msgstr "Wyślij zamówienie"
 
 #: order/views.py:552
 msgid "Confirm order shipment"
@@ -3440,15 +3440,15 @@ msgstr ""
 
 #: order/views.py:868
 msgid "Items received"
-msgstr ""
+msgstr "Otrzymane przedmioty"
 
 #: order/views.py:882
 msgid "No destination set"
-msgstr ""
+msgstr "Nie ustawiono miejsca docelowego"
 
 #: order/views.py:927
 msgid "Error converting quantity to number"
-msgstr ""
+msgstr "Błąd konwersji ilości na liczbę"
 
 #: order/views.py:933
 msgid "Receive quantity less than zero"
@@ -3529,7 +3529,7 @@ msgstr ""
 
 #: order/views.py:1852
 msgid "Price not found"
-msgstr ""
+msgstr "Nie znaleziono ceny"
 
 #: order/views.py:1855
 #, python-brace-format
@@ -3544,11 +3544,11 @@ msgstr ""
 #: part/bom.py:138 part/models.py:72 part/models.py:762
 #: part/templates/part/category.html:66 part/templates/part/detail.html:90
 msgid "Default Location"
-msgstr ""
+msgstr "Domyślna lokalizacja"
 
 #: part/bom.py:139 part/templates/part/part_base.html:117
 msgid "Available Stock"
-msgstr ""
+msgstr "Dostępna ilość"
 
 #: part/bom.py:379
 #, python-brace-format
@@ -3565,15 +3565,15 @@ msgstr ""
 
 #: part/forms.py:89 stock/forms.py:265
 msgid "File Format"
-msgstr ""
+msgstr "Format pliku"
 
 #: part/forms.py:89 stock/forms.py:265
 msgid "Select output file format"
-msgstr ""
+msgstr "Wybierz format pliku wyjściowego"
 
 #: part/forms.py:91
 msgid "Cascading"
-msgstr ""
+msgstr "Kaskadowe"
 
 #: part/forms.py:91
 msgid "Download cascading / multi-level BOM"
@@ -3621,7 +3621,7 @@ msgstr ""
 
 #: part/forms.py:122 part/models.py:2115
 msgid "Parent Part"
-msgstr ""
+msgstr "Część nadrzędna"
 
 #: part/forms.py:123 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
