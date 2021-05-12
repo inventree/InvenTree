@@ -19,7 +19,7 @@ services:
             context: .
             target: dev
         ports:
-            - 8000
+            - 8000:8000
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree/src
