@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-12 00:59+0000\n"
-"PO-Revision-Date: 2021-05-12 01:17\n"
+"POT-Creation-Date: 2021-05-12 12:29+0000\n"
+"PO-Revision-Date: 2021-05-12 13:05\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -171,23 +171,23 @@ msgstr ""
 msgid "parent"
 msgstr ""
 
-#: InvenTree/settings.py:491
+#: InvenTree/settings.py:496
 msgid "English"
 msgstr "Inglés"
 
-#: InvenTree/settings.py:492
+#: InvenTree/settings.py:497
 msgid "French"
 msgstr "Francés"
 
-#: InvenTree/settings.py:493
+#: InvenTree/settings.py:498
 msgid "German"
 msgstr "Alemán"
 
-#: InvenTree/settings.py:494
+#: InvenTree/settings.py:499
 msgid "Polish"
 msgstr "Polaco"
 
-#: InvenTree/settings.py:495
+#: InvenTree/settings.py:500
 msgid "Turkish"
 msgstr "Turco"
 
@@ -466,6 +466,7 @@ msgstr ""
 #: company/forms.py:176 company/templates/company/supplier_part_pricing.html:77
 #: order/forms.py:188 order/forms.py:205 order/forms.py:240 order/forms.py:262
 #: order/forms.py:279 order/models.py:614 order/models.py:815
+#: order/templates/order/order_wizard/match_parts.html:29
 #: order/templates/order/order_wizard/select_parts.html:32
 #: order/templates/order/purchase_order_detail.html:175
 #: order/templates/order/sales_order_detail.html:70
@@ -890,7 +891,7 @@ msgstr ""
 
 #: build/templates/build/allocate.html:30
 #: company/templates/company/detail_manufacturer_part.html:33
-#: company/templates/company/detail_supplier_part.html:32 order/views.py:797
+#: company/templates/company/detail_supplier_part.html:32 order/views.py:986
 #: part/templates/part/category.html:127
 msgid "Order Parts"
 msgstr ""
@@ -1428,25 +1429,58 @@ msgstr ""
 msgid "Add Build Order Attachment"
 msgstr ""
 
-#: build/views.py:1083 order/views.py:112 order/views.py:164 part/views.py:172
+#: build/views.py:1083 order/views.py:115 order/views.py:167 part/views.py:172
 #: stock/views.py:277
 msgid "Added attachment"
 msgstr ""
 
-#: build/views.py:1119 order/views.py:191 order/views.py:212
+#: build/views.py:1119 order/views.py:194 order/views.py:215
 msgid "Edit Attachment"
 msgstr ""
 
-#: build/views.py:1129 order/views.py:195 order/views.py:216
+#: build/views.py:1129 order/views.py:198 order/views.py:219
 msgid "Attachment updated"
 msgstr ""
 
-#: build/views.py:1139 order/views.py:231 order/views.py:245
+#: build/views.py:1139 order/views.py:234 order/views.py:248
 msgid "Delete Attachment"
 msgstr ""
 
-#: build/views.py:1144 order/views.py:237 order/views.py:251 stock/views.py:333
+#: build/views.py:1144 order/views.py:240 order/views.py:254 stock/views.py:333
 msgid "Deleted attachment"
+msgstr ""
+
+#: common/files.py:64
+msgid "Unsupported file format: {ext.upper()}"
+msgstr ""
+
+#: common/files.py:69
+msgid "Error reading file (invalid format)"
+msgstr ""
+
+#: common/files.py:71
+msgid "Error reading file (incorrect dimension)"
+msgstr ""
+
+#: common/files.py:73
+msgid "Error reading file (data could be corrupted)"
+msgstr ""
+
+#: common/forms.py:38 templates/attachment_table.html:15
+msgid "File"
+msgstr ""
+
+#: common/forms.py:39
+msgid "Select file to upload"
+msgstr ""
+
+#: common/forms.py:54
+msgid "{name.title()} File"
+msgstr ""
+
+#: common/forms.py:55
+#, python-brace-format
+msgid "Select {name} file to upload"
 msgstr ""
 
 #: common/models.py:58
@@ -1801,16 +1835,34 @@ msgstr ""
 msgid "Current value"
 msgstr ""
 
-#: common/views.py:25
+#: common/views.py:32
 msgid "Change Setting"
 msgstr ""
 
-#: common/views.py:94
+#: common/views.py:101
 msgid "Supplied value is not allowed"
 msgstr ""
 
-#: common/views.py:103
+#: common/views.py:110
 msgid "Supplied value must be a boolean"
+msgstr ""
+
+#: common/views.py:184 order/templates/order/order_wizard/po_upload.html:42
+#: order/views.py:582 part/templates/part/bom_upload/upload_file.html:27
+msgid "Upload File"
+msgstr ""
+
+#: common/views.py:185 order/templates/order/order_wizard/match_fields.html:52
+#: order/views.py:583 part/templates/part/bom_upload/select_fields.html:58
+msgid "Match Fields"
+msgstr ""
+
+#: common/views.py:186
+msgid "Match Items"
+msgstr ""
+
+#: common/views.py:479
+msgid "Fields matching failed"
 msgstr ""
 
 #: company/forms.py:38 company/models.py:142
@@ -1950,7 +2002,7 @@ msgstr ""
 msgid "Base Part"
 msgstr ""
 
-#: company/models.py:309 company/models.py:460 order/views.py:1398
+#: company/models.py:309 company/models.py:460 order/views.py:1587
 msgid "Select part"
 msgstr ""
 
@@ -2073,7 +2125,7 @@ msgstr ""
 msgid "Download image from URL"
 msgstr ""
 
-#: company/templates/company/company_base.html:46 order/views.py:308
+#: company/templates/company/company_base.html:46 order/views.py:311
 msgid "Create Purchase Order"
 msgstr ""
 
@@ -2955,6 +3007,75 @@ msgstr ""
 msgid "Order Notes"
 msgstr ""
 
+#: order/templates/order/order_wizard/match_fields.html:9
+#: part/templates/part/bom_upload/select_fields.html:21
+msgid "Missing selections for the following required columns"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:20
+msgid "Duplicate selections found, see below. Fix them then retry submitting."
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:27
+#: order/templates/order/order_wizard/match_parts.html:18
+#: order/templates/order/order_wizard/po_upload.html:40
+msgid "Previous Step"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:29
+#: order/templates/order/order_wizard/match_parts.html:20
+#: part/templates/part/bom_upload/select_fields.html:32
+msgid "Submit Selections"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:35
+#: part/templates/part/bom_upload/select_fields.html:41
+msgid "File Fields"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:42
+#: part/templates/part/bom_upload/select_fields.html:47
+msgid "Remove column"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:60
+msgid "Duplicate selection"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_fields.html:71
+#: order/templates/order/order_wizard/match_parts.html:51
+#: part/templates/part/bom_upload/select_fields.html:76
+#: part/templates/part/bom_upload/select_parts.html:58
+msgid "Remove row"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_parts.html:11
+#: part/templates/part/bom_upload/select_parts.html:21
+msgid "Errors exist in the submitted data"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_parts.html:27
+#: part/templates/part/bom_upload/select_parts.html:39
+msgid "Row"
+msgstr ""
+
+#: order/templates/order/order_wizard/match_parts.html:28
+msgid "Select Supplier Part"
+msgstr ""
+
+#: order/templates/order/order_wizard/po_upload.html:11
+msgid "Upload File for Purchase Order"
+msgstr ""
+
+#: order/templates/order/order_wizard/po_upload.html:18
+#, python-format
+msgid "Step %(step)s of %(count)s"
+msgstr ""
+
+#: order/templates/order/order_wizard/po_upload.html:48
+msgid "Order is already processed. Files cannot be uploaded."
+msgstr ""
+
 #: order/templates/order/order_wizard/select_parts.html:9
 msgid "Step 1 of 2 - Select Part Suppliers"
 msgstr ""
@@ -3027,8 +3148,8 @@ msgid "Purchase Order Items"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:24
-#: order/templates/order/sales_order_detail.html:22 order/views.py:1122
-#: order/views.py:1205
+#: order/templates/order/sales_order_detail.html:22 order/views.py:1311
+#: order/views.py:1394
 msgid "Add Line Item"
 msgstr ""
 
@@ -3237,181 +3358,185 @@ msgstr ""
 msgid "Are you sure you wish to delete this line item?"
 msgstr ""
 
-#: order/views.py:101
+#: order/views.py:104
 msgid "Add Purchase Order Attachment"
 msgstr ""
 
-#: order/views.py:151
+#: order/views.py:154
 msgid "Add Sales Order Attachment"
 msgstr ""
 
-#: order/views.py:343
+#: order/views.py:346
 msgid "Create Sales Order"
 msgstr ""
 
-#: order/views.py:378
+#: order/views.py:381
 msgid "Edit Purchase Order"
 msgstr ""
 
-#: order/views.py:398
+#: order/views.py:401
 msgid "Edit Sales Order"
 msgstr ""
 
-#: order/views.py:414
+#: order/views.py:417
 msgid "Cancel Order"
 msgstr ""
 
-#: order/views.py:423 order/views.py:449
+#: order/views.py:426 order/views.py:452
 msgid "Confirm order cancellation"
 msgstr ""
 
-#: order/views.py:426 order/views.py:452
+#: order/views.py:429 order/views.py:455
 msgid "Order cannot be cancelled"
 msgstr ""
 
-#: order/views.py:440
+#: order/views.py:443
 msgid "Cancel sales order"
 msgstr ""
 
-#: order/views.py:466
+#: order/views.py:469
 msgid "Issue Order"
 msgstr ""
 
-#: order/views.py:475
+#: order/views.py:478
 msgid "Confirm order placement"
 msgstr ""
 
-#: order/views.py:485
+#: order/views.py:488
 msgid "Purchase order issued"
 msgstr ""
 
-#: order/views.py:496
+#: order/views.py:499
 msgid "Complete Order"
 msgstr ""
 
-#: order/views.py:512
+#: order/views.py:515
 msgid "Confirm order completion"
 msgstr ""
 
-#: order/views.py:523
+#: order/views.py:526
 msgid "Purchase order completed"
 msgstr ""
 
-#: order/views.py:533
+#: order/views.py:536
 msgid "Ship Order"
 msgstr ""
 
-#: order/views.py:549
+#: order/views.py:552
 msgid "Confirm order shipment"
 msgstr ""
 
-#: order/views.py:555
+#: order/views.py:558
 msgid "Could not ship order"
 msgstr ""
 
-#: order/views.py:609
+#: order/views.py:584
+msgid "Match Supplier Parts"
+msgstr ""
+
+#: order/views.py:798
 msgid "Receive Parts"
 msgstr ""
 
-#: order/views.py:679
+#: order/views.py:868
 msgid "Items received"
 msgstr ""
 
-#: order/views.py:693
+#: order/views.py:882
 msgid "No destination set"
 msgstr ""
 
-#: order/views.py:738
+#: order/views.py:927
 msgid "Error converting quantity to number"
 msgstr ""
 
-#: order/views.py:744
+#: order/views.py:933
 msgid "Receive quantity less than zero"
 msgstr ""
 
-#: order/views.py:750
+#: order/views.py:939
 msgid "No lines specified"
 msgstr ""
 
-#: order/views.py:1071
+#: order/views.py:1260
 #, python-brace-format
 msgid "Ordered {n} parts"
 msgstr ""
 
-#: order/views.py:1131
+#: order/views.py:1320
 msgid "Supplier part must be specified"
 msgstr ""
 
-#: order/views.py:1137
+#: order/views.py:1326
 msgid "Supplier must match for Part and Order"
 msgstr ""
 
-#: order/views.py:1268 order/views.py:1286
+#: order/views.py:1457 order/views.py:1475
 msgid "Edit Line Item"
 msgstr ""
 
-#: order/views.py:1302 order/views.py:1314
+#: order/views.py:1491 order/views.py:1503
 msgid "Delete Line Item"
 msgstr ""
 
-#: order/views.py:1307 order/views.py:1319
+#: order/views.py:1496 order/views.py:1508
 msgid "Deleted line item"
 msgstr ""
 
-#: order/views.py:1332
+#: order/views.py:1521
 msgid "Allocate Serial Numbers"
 msgstr ""
 
-#: order/views.py:1377
+#: order/views.py:1566
 #, python-brace-format
 msgid "Allocated {n} items"
 msgstr ""
 
-#: order/views.py:1393
+#: order/views.py:1582
 msgid "Select line item"
 msgstr ""
 
-#: order/views.py:1424
+#: order/views.py:1613
 #, python-brace-format
 msgid "No matching item for serial {serial}"
 msgstr ""
 
-#: order/views.py:1434
+#: order/views.py:1623
 #, python-brace-format
 msgid "{serial} is not in stock"
 msgstr ""
 
-#: order/views.py:1442
+#: order/views.py:1631
 #, python-brace-format
 msgid "{serial} already allocated to an order"
 msgstr ""
 
-#: order/views.py:1496
+#: order/views.py:1685
 msgid "Allocate Stock to Order"
 msgstr ""
 
-#: order/views.py:1570
+#: order/views.py:1759
 msgid "Edit Allocation Quantity"
 msgstr ""
 
-#: order/views.py:1585
+#: order/views.py:1774
 msgid "Remove allocation"
 msgstr ""
 
-#: order/views.py:1657
+#: order/views.py:1846
 msgid "Sales order not found"
 msgstr ""
 
-#: order/views.py:1663
+#: order/views.py:1852
 msgid "Price not found"
 msgstr ""
 
-#: order/views.py:1666
+#: order/views.py:1855
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
 msgstr ""
 
-#: order/views.py:1671
+#: order/views.py:1860
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
@@ -4049,49 +4174,16 @@ msgstr ""
 msgid "Step 2 - Select Fields"
 msgstr ""
 
-#: part/templates/part/bom_upload/select_fields.html:21
-msgid "Missing selections for the following required columns"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:32
-msgid "Submit Selections"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:41
-msgid "File Fields"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:47
-msgid "Remove column"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:58
-msgid "Match Fields"
-msgstr ""
-
 #: part/templates/part/bom_upload/select_fields.html:68
 msgid "Duplicate column selection"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:76
-#: part/templates/part/bom_upload/select_parts.html:58
-msgid "Remove row"
 msgstr ""
 
 #: part/templates/part/bom_upload/select_parts.html:16
 msgid "Step 3 - Select Parts"
 msgstr ""
 
-#: part/templates/part/bom_upload/select_parts.html:21
-msgid "Errors exist in the submitted data"
-msgstr ""
-
 #: part/templates/part/bom_upload/select_parts.html:27
 msgid "Submit BOM"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_parts.html:39
-msgid "Row"
 msgstr ""
 
 #: part/templates/part/bom_upload/select_parts.html:40
@@ -4122,10 +4214,6 @@ msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:22
 msgid "Each part must already exist in the database"
-msgstr ""
-
-#: part/templates/part/bom_upload/upload_file.html:27
-msgid "Upload File"
 msgstr ""
 
 #: part/templates/part/bom_validate.html:6
@@ -6174,10 +6262,6 @@ msgstr ""
 
 #: templates/attachment_table.html:6
 msgid "Add Attachment"
-msgstr ""
-
-#: templates/attachment_table.html:15
-msgid "File"
 msgstr ""
 
 #: templates/attachment_table.html:17
