@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-12 00:59+0000\n"
-"PO-Revision-Date: 2021-05-10 03:00\n"
+"PO-Revision-Date: 2021-05-12 01:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -257,114 +257,80 @@ msgid "Rejected"
 msgstr "Zurückgewiesen"
 
 #: InvenTree/status_codes.py:272
-#, fuzzy
-#| msgid "Delete tracking entry"
 msgid "Legacy stock tracking entry"
-msgstr "Tracking-Eintrag löschen"
+msgstr ""
 
 #: InvenTree/status_codes.py:274
-#, fuzzy
-#| msgid "stock items selected"
 msgid "Stock item created"
-msgstr "BestandsObjekte ausgewählt"
+msgstr ""
 
 #: InvenTree/status_codes.py:276
-#, fuzzy
-#| msgid "Edit stock item"
 msgid "Edited stock item"
-msgstr "BestandsObjekt bearbeiten"
+msgstr ""
 
 #: InvenTree/status_codes.py:277
-#, fuzzy
-#| msgid "Add serial number"
 msgid "Assigned serial number"
-msgstr "Seriennummer hinzufügen"
+msgstr ""
 
 #: InvenTree/status_codes.py:279
-#, fuzzy
-#| msgid "Stock Source"
 msgid "Stock counted"
-msgstr "Ausgangs-Lager"
+msgstr ""
 
 #: InvenTree/status_codes.py:280
-#, fuzzy
-#| msgid "Stock available"
 msgid "Stock manually added"
-msgstr "verfügbarer Lagerbestand"
+msgstr ""
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
 msgstr ""
 
 #: InvenTree/status_codes.py:283
-#, fuzzy
-#| msgid "Location Path"
 msgid "Location changed"
-msgstr "Lagerort-Pfad"
+msgstr ""
 
 #: InvenTree/status_codes.py:285
-#, fuzzy
-#| msgid "Installed in Stock Item"
 msgid "Installed into assembly"
-msgstr "In BestandsObjekt installiert"
+msgstr ""
 
 #: InvenTree/status_codes.py:286
-#, fuzzy
-#| msgid "Removed stock from {n} items"
 msgid "Removed from assembly"
-msgstr "Vorrat von {n} BestandsObjekten entfernt"
+msgstr ""
 
 #: InvenTree/status_codes.py:288
-#, fuzzy
-#| msgid "Installed in Stock Item"
 msgid "Installed component item"
-msgstr "In BestandsObjekt installiert"
+msgstr ""
 
 #: InvenTree/status_codes.py:289
-#, fuzzy
-#| msgid "Removed {n1} items"
 msgid "Removed component item"
-msgstr "{n1} Elemente entfernt"
+msgstr ""
 
 #: InvenTree/status_codes.py:291
-#, fuzzy
-#| msgid "Split {n} items"
 msgid "Split from parent item"
-msgstr "{n} Elemente aufgeteilen"
+msgstr ""
 
 #: InvenTree/status_codes.py:292
-#, fuzzy
-#| msgid "Split {n} items"
 msgid "Split child item"
-msgstr "{n} Elemente aufgeteilen"
+msgstr ""
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
 msgid "Sent to customer"
 msgstr "Zum Kunden geschickt"
 
 #: InvenTree/status_codes.py:295
-#, fuzzy
-#| msgid "Returned from customer {name}"
 msgid "Returned from customer"
-msgstr "Rücksendung vom Kunden {name}"
+msgstr ""
 
 #: InvenTree/status_codes.py:297
-#, fuzzy
-#| msgid "Build output completed"
 msgid "Build order output created"
-msgstr "Endprodukt fertiggestellt"
+msgstr ""
 
 #: InvenTree/status_codes.py:298
-#, fuzzy
-#| msgid "Build output completed"
 msgid "Build order output completed"
-msgstr "Endprodukt fertiggestellt"
+msgstr ""
 
 #: InvenTree/status_codes.py:300
-#, fuzzy
-#| msgid "Create new purchase order"
 msgid "Received against purchase order"
-msgstr "Neue Bestellung anlegen"
+msgstr ""
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
@@ -2136,11 +2102,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -5863,10 +5827,8 @@ msgid "Deleted {n} stock items"
 msgstr "{n} BestandsObjekte gelöscht"
 
 #: stock/views.py:1222
-#, fuzzy
-#| msgid "Edit Stock Item"
 msgid "Edit Stock Item Status"
-msgstr "BestandsObjekt bearbeiten"
+msgstr ""
 
 #: stock/views.py:1245
 msgid "Edit Stock Item"
@@ -6002,13 +5964,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6234,7 +6194,7 @@ msgstr "Anhang löschen"
 
 #: templates/clip.html:4
 msgid "copy to clipboard"
-msgstr ""
+msgstr "In die Zwischenablage kopieren"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -6879,42 +6839,32 @@ msgid "Status code must be selected"
 msgstr "Status Code muss ausgewählt werden"
 
 #: templates/js/stock.js:994
-#, fuzzy
-#| msgid "validate"
 msgid "Invalid date"
-msgstr "kontrollieren"
+msgstr ""
 
 #: templates/js/stock.js:1036
-#, fuzzy
-#| msgid "Location of completed parts"
 msgid "Location no longer exists"
-msgstr "Lagerort der Endprodukte"
+msgstr ""
 
 #: templates/js/stock.js:1055
-#, fuzzy
-#| msgid "Purchase order query filters"
 msgid "Purchase order no longer exists"
-msgstr "Bestellungs-Abfragefilter"
+msgstr ""
 
 #: templates/js/stock.js:1074
 msgid "Customer no longer exists"
 msgstr ""
 
 #: templates/js/stock.js:1092
-#, fuzzy
-#| msgid "Stock item is lost"
 msgid "Stock item no longer exists"
-msgstr "BestandsObjekt verloren"
+msgstr ""
 
 #: templates/js/stock.js:1115
 msgid "Added"
 msgstr ""
 
 #: templates/js/stock.js:1123
-#, fuzzy
-#| msgid "Remove row"
 msgid "Removed"
-msgstr "Zeile entfernen"
+msgstr ""
 
 #: templates/js/stock.js:1155
 msgid "No user information"
@@ -7407,65 +7357,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Completed build output"
-#~ msgstr "Endprodukt fertigstellen"
-
-#~ msgid "Received items"
-#~ msgstr "Elemente empfangen"
-
-#~ msgid "Received {n} items against order {name}"
-#~ msgstr "{n} Artikel gegen Bestellung {name} erhalten"
-
-#~ msgid "Created new stock item for {part}"
-#~ msgstr "Neuer Lagerartikel für {part} erstellt"
-
-#~ msgid "Created stock item"
-#~ msgstr "Neues BestandsObjekt erstellt"
-
-#~ msgid "Assigned to Customer"
-#~ msgstr "zugewiesen zum Kunden"
-
-#~ msgid "Manually assigned to customer {name}"
-#~ msgstr "Manuell dem Kunden {name} zugewiesen"
-
-#~ msgid "Returned to location {loc}"
-#~ msgstr "Zurück zum Lagerort {loc}"
-
-#~ msgid "Installed into stock item {pk}"
-#~ msgstr "In Bestand {pk} installiert"
-
-#~ msgid "Installed stock item {pk}"
-#~ msgstr "In Bestand {pk} installiert"
-
-#~ msgid "Uninstalled stock item {pk}"
-#~ msgstr "Aus BestandsObjekt {pk} ausgebaut"
-
-#~ msgid "Uninstalled into location {loc}"
-#~ msgstr "Ausgebaut nach Lagerort {loc}"
-
-#~ msgid "Serialized {n} items"
-#~ msgstr "{n} Teile serialisiert"
-
-#~ msgid "Split from existing stock"
-#~ msgstr "aufteilen vom vorhandenen Bestand"
-
-#~ msgid "Moved to {loc_new} (from {loc_old})"
-#~ msgstr "Nach {loc_new} verschoben (von {loc_old})"
-
-#~ msgid "Moved to {loc_new}"
-#~ msgstr "Nach {loc_new} verschoben"
-
-#~ msgid "Counted {n} items"
-#~ msgstr "{n} Elemente gezählt"
-
-#~ msgid "Added {n} items"
-#~ msgstr "{n} Elemente hinzugefügt"
-
-#~ msgid "Title"
-#~ msgstr "Titel"
-
-#~ msgid "Tracking entry title"
-#~ msgstr "Objektverfolgung - Name des Eintrags"
-
-#~ msgid "Link to external page for further information"
-#~ msgstr "Link auf externe Seite für weitere Informationen"
