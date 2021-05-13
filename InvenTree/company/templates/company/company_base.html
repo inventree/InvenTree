@@ -68,35 +68,35 @@
 <tr>
     <td><span class='fas fa-globe'></span></td>
     <td>{% trans "Website" %}</td>
-    <td><a href="{{ company.website }}">{{ company.website }}</a></td>
+    <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html"%}</td>
 </tr>
 {% endif %}
 {% if company.address %}
 <tr>
     <td><span class='fas fa-map-marked-alt'></span></td>
     <td>{% trans "Address" %}</td>
-    <td>{{ company.address }}</td>
+    <td>{{ company.address }}{% include "clip.html"%}</td>
 </tr>
 {% endif %}
 {% if company.phone %}
 <tr>
     <td><span class='fas fa-phone'></span></td>
     <td>{% trans "Phone" %}</td>
-    <td>{{ company.phone }}</td>
+    <td>{% include "tel.html" with tel=company.phone %}</td>
 </tr>
 {% endif %}
 {% if company.email %}
 <tr>
     <td><span class='fas fa-at'></span></td>
     <td>{% trans "Email" %}</td>
-    <td>{{ company.email }}</td>
+    <td>{% include "mail.html" with mail=company.email %}</td>
 </tr>
 {% endif %}
 {% if company.contact %}
 <tr>
     <td><span class='fas fa-user'></span></td>
     <td>{% trans "Contact" %}</td>
-    <td>{{ company.contact }}</td>
+    <td>{{ company.contact }}{% include "clip.html"%}</td>
 </tr>
 {% endif %}
 </table>

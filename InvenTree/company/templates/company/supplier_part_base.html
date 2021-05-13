@@ -61,7 +61,7 @@ src="{% static 'img/blank_image.png' %}"
             <td>{% trans "Internal Part" %}</td>
             <td>
                 {% if part.part %}
-                <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
+                <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>{% include "clip.html"%}
                 {% endif %}
             </td>
         </tr>
@@ -69,51 +69,52 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td></td>
             <td>{% trans "Description" %}</td>
-            <td>{{ part.description }}</td>
+            <td>{{ part.description }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.link %}
         <tr>
             <td><span class='fas fa-link'></span></td>
             <td>{% trans "External Link" %}</td>
-            <td><a href="{{ part.link }}">{{ part.link }}</a></td>
+            <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         <tr>
             <td><span class='fas fa-building'></span></td>
             <td>{% trans "Supplier" %}</td>
-            <td><a href="{% url 'company-detail-supplier-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+            <td><a href="{% url 'company-detail-supplier-parts' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}</td></tr>
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "SKU" %}</td>
-            <td>{{ part.SKU }}</tr>
+            <td>{{ part.SKU }}{% include "clip.html"%}</tr>
         </tr>
         {% if part.manufacturer_part.manufacturer %}
         <tr>
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
-            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer_part.manufacturer.id %}">{{ part.manufacturer_part.manufacturer.name }}</a></td>
+            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer_part.manufacturer.id %}">
+            {{ part.manufacturer_part.manufacturer.name }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.manufacturer_part.MPN %}
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
-            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a></td>
+            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.packaging %}
         <tr>
             <td><span class='fas fa-cube'></span></td>
             <td>{% trans "Packaging" %}</td>
-            <td>{{ part.packaging }}</td>
+            <td>{{ part.packaging }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.note %}
         <tr>
             <td><span class='fas fa-sticky-note'></span></td>
             <td>{% trans "Note" %}</td>
-            <td>{{ part.note }}</td>
+            <td>{{ part.note }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
 </table>
