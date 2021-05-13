@@ -12,6 +12,7 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
+from djmoney.contrib.django_rest_framework import MoneyField
 from stock.models import StockItem
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
@@ -367,11 +368,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = serializers.FloatField(read_only=True)
+    purchase_price_min = MoneyField(max_digits=10, decimal_places=4, read_only=True)
 
-    purchase_price_max = serializers.FloatField(read_only=True)
+    purchase_price_max = MoneyField(max_digits=10, decimal_places=4, read_only=True)
 
-    purchase_price_avg = serializers.FloatField(read_only=True)
+    purchase_price_avg = MoneyField(max_digits=10, decimal_places=4, read_only=True)
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.

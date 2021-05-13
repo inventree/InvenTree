@@ -15,6 +15,10 @@ from rest_framework.response import Response
 from rest_framework import filters, serializers
 from rest_framework import generics
 
+from djmoney.money import Money
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
+
 from django.conf.urls import url, include
 from django.urls import reverse
 
@@ -24,6 +28,7 @@ from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
 from .models import PartCategoryParameterTemplate
 
+from common.models import InvenTreeSetting
 from build.models import Build
 
 from . import serializers as part_serializers
@@ -882,7 +887,44 @@ class BomList(generics.ListCreateAPIView):
             purchase_price_min=Min('sub_part__stock_items__purchase_price'),
             purchase_price_max=Max('sub_part__stock_items__purchase_price'),
             purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
+            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
         )
+
+        # Convert prices to default currency (using backend conversion rates)
+        for item in queryset:
+            # Get default currency from settings
+            default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+            
+            if default_currency:
+                if item.purchase_price_min:
+                    # Convert minimum
+                    try:
+                        # Get adjusted price
+                        purchase_price_adjusted = convert_money(Money(item.purchase_price_min, item.purchase_price_currency), default_currency)
+                        # Update queryset
+                        item.purchase_price_min = purchase_price_adjusted
+                    except MissingRate:
+                        pass
+                
+                if item.purchase_price_max:
+                    # Convert maximum
+                    try:
+                        # Get adjusted price
+                        purchase_price_adjusted = convert_money(Money(item.purchase_price_max, item.purchase_price_currency), default_currency)
+                        # Update queryset
+                        item.purchase_price_max = purchase_price_adjusted
+                    except MissingRate:
+                        pass
+                
+                if item.purchase_price_avg:
+                    # Convert average
+                    try:
+                        # Get adjusted price
+                        purchase_price_adjusted = convert_money(Money(item.purchase_price_avg, item.purchase_price_currency), default_currency)
+                        # Update queryset
+                        item.purchase_price_avg = purchase_price_adjusted
+                    except MissingRate:
+                        pass
 
         return queryset
 
