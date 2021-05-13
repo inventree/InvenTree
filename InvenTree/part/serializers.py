@@ -367,11 +367,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = serializers.FloatField()
+    purchase_price_min = serializers.FloatField(read_only=True)
 
-    purchase_price_max = serializers.FloatField()
+    purchase_price_max = serializers.FloatField(read_only=True)
 
-    purchase_price_avg = serializers.FloatField()
+    purchase_price_avg = serializers.FloatField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
