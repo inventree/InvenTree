@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError, FieldError
 
 from django.template.loader import render_to_string
+from django.template import Template, Context
 
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
@@ -224,6 +225,7 @@ class ReportTemplateBase(ReportBase):
         All context to be passed to the renderer.
         """
 
+        # Generate custom context data based on the particular report subclass
         context = self.get_context_data(request)
 
         context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
@@ -238,9 +240,22 @@ class ReportTemplateBase(ReportBase):
 
         return context
 
+    def generate_filename(self, request, **kwargs):
+        """
+        Generate a filename for this report
+        """
+
+        template_string = Template(self.filename_pattern)
+        
+        ctx = self.context(request)
+
+        context = Context(ctx)
+
+        return template_string.render(context)
+
     def render_as_string(self, request, **kwargs):
         """
-        Render the report to a HTML stiring.
+        Render the report to a HTML string.
 
         Useful for debug mode (viewing generated code)
         """
@@ -268,6 +283,13 @@ class ReportTemplateBase(ReportBase):
         return wp.render_to_response(
             self.context(request),
             **kwargs)
+
+    filename_pattern = models.CharField(
+        default="report.pdf",
+        verbose_name=_('Filename Pattern'),
+        help_text=_('Pattern for generating report filenames'),
+        max_length=100,
+    )
 
     enabled = models.BooleanField(
         default=True,
@@ -326,6 +348,7 @@ class TestReport(ReportTemplateBase):
 
         return {
             'stock_item': stock_item,
+            'serial': stock_item.serial,
             'part': stock_item.part,
             'results': stock_item.testResultMap(include_installed=self.include_installed),
             'result_list': stock_item.testResultList(include_installed=self.include_installed)
@@ -367,6 +390,7 @@ class BuildReport(ReportTemplateBase):
             'bom_items': my_build.part.get_bom_items(),
             'reference': my_build.reference,
             'quantity': my_build.quantity,
+            'title': str(my_build),
         }
 
 

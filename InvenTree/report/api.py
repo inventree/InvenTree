@@ -208,15 +208,23 @@ class ReportPrintMixin:
         # In debug mode, generate single HTML output, rather than PDF
         debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
+        # Start with a default report name
+        report_name = "report.pdf"
+
         # Merge one or more PDF files into a single download
         for item in items_to_print:
             report = self.get_object()
             report.object_to_print = item
 
+            report_name = report.generate_filename(request)
+
             if debug_mode:
                 outputs.append(report.render_as_string(request))
             else:
                 outputs.append(report.render(request))
+
+        if not report_name.endswith('.pdf'):
+            report_name += '.pdf'
 
         if debug_mode:
             """
@@ -248,7 +256,7 @@ class ReportPrintMixin:
 
             return InvenTree.helpers.DownloadFile(
                 pdf,
-                'inventree_report.pdf',
+                report_name,
                 content_type='application/pdf'
             )
 
