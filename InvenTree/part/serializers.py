@@ -367,6 +367,12 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
+    purchase_price_min = serializers.FloatField()
+
+    purchase_price_max = serializers.FloatField()
+
+    purchase_price_avg = serializers.FloatField()
+
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
         # This saves a bunch of database requests
@@ -410,6 +416,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part_detail',
             # 'price_range',
             'validated',
+            'purchase_price_min',
+            'purchase_price_max',
+            'purchase_price_avg',
         ]
 
 

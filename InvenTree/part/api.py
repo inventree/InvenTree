@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
-from django.db.models import Q, F, Count
+from django.db.models import Q, F, Count, Min, Max, Avg
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
@@ -876,6 +876,13 @@ class BomList(generics.ListCreateAPIView):
                 queryset = queryset.filter(pk__in=pks)
             else:
                 queryset = queryset.exclude(pk__in=pks)
+
+        # Annotate with purchase prices
+        queryset = queryset.annotate(
+            purchase_price_min=Min('sub_part__stock_items__purchase_price'),
+            purchase_price_max=Max('sub_part__stock_items__purchase_price'),
+            purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
+        )
 
         return queryset
 

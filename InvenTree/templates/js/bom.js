@@ -243,6 +243,35 @@ function loadBomTable(table, options) {
         }
     });
 
+    cols.push(
+    {
+        field: 'purchase_price_range',
+        title: '{% trans "Purchase Price Range" %}',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            var purchase_price_range = 0;
+
+            if (row.purchase_price_min > 0) {
+                if (row.purchase_price_min >= row.purchase_price_max) {
+                    purchase_price_range = row.purchase_price_min;
+                } else {
+                    purchase_price_range = row.purchase_price_min + " - " + row.purchase_price_max;
+                }
+            }
+
+            return purchase_price_range;
+        },
+    });
+
+    cols.push(
+    {
+        field: 'purchase_price_avg',
+        title: '{% trans "Purchase Price Average" %}',
+        searchable: false,
+        sortable: true,
+    });
+
     /*
 
     // TODO - Re-introduce the pricing column at a later stage,
