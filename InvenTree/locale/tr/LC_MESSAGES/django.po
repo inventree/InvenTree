@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-13 04:04+0000\n"
-"PO-Revision-Date: 2021-05-10 02:59\n"
+"PO-Revision-Date: 2021-05-13 04:17\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -269,10 +269,8 @@ msgid "Edited stock item"
 msgstr ""
 
 #: InvenTree/status_codes.py:277
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Assigned serial number"
-msgstr "Seri numarası bulunamadı"
+msgstr ""
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
@@ -1473,20 +1471,17 @@ msgid "File"
 msgstr ""
 
 #: common/forms.py:39
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select file to upload"
-msgstr "Eklenecek dosyayı seç"
+msgstr ""
 
 #: common/forms.py:54
 msgid "{name.title()} File"
 msgstr ""
 
 #: common/forms.py:55
-#, fuzzy, python-brace-format
-#| msgid "Select file to attach"
+#, python-brace-format
 msgid "Select {name} file to upload"
-msgstr "Eklenecek dosyayı seç"
+msgstr ""
 
 #: common/models.py:58
 msgid "InvenTree Instance Name"
@@ -2159,8 +2154,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -3053,10 +3047,8 @@ msgid "Remove column"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:60
-#, fuzzy
-#| msgid "Duplicate serial: {n}"
 msgid "Duplicate selection"
-msgstr "Tekrarlanan seri {n}"
+msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:71
 #: order/templates/order/order_wizard/match_parts.html:51
@@ -6067,8 +6059,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6940,10 +6931,8 @@ msgid "Status code must be selected"
 msgstr ""
 
 #: templates/js/stock.js:994
-#, fuzzy
-#| msgid "upload date"
 msgid "Invalid date"
-msgstr "Yükleme tarihi"
+msgstr ""
 
 #: templates/js/stock.js:1036
 msgid "Location no longer exists"
@@ -7459,3 +7448,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
