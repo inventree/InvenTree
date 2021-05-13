@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-12 12:29+0000\n"
+"POT-Creation-Date: 2021-05-13 00:46+0000\n"
 "PO-Revision-Date: 2021-05-10 02:59\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -1901,7 +1901,7 @@ msgstr ""
 #: company/forms.py:136 company/models.py:327
 #: company/templates/company/manufacturer_part_base.html:89
 #: company/templates/company/manufacturer_part_detail.html:26
-#: company/templates/company/supplier_part_base.html:101
+#: company/templates/company/supplier_part_base.html:102
 #: company/templates/company/supplier_part_detail.html:35
 #: order/templates/order/purchase_order_detail.html:158 part/bom.py:171
 #: part/bom.py:242 templates/js/company.js:181 templates/js/company.js:307
@@ -2070,7 +2070,7 @@ msgstr ""
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:497 company/templates/company/supplier_part_base.html:115
+#: company/models.py:497 company/templates/company/supplier_part_base.html:116
 #: company/templates/company/supplier_part_detail.html:38 part/models.py:2228
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
@@ -2085,7 +2085,7 @@ msgstr ""
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:503 company/templates/company/supplier_part_base.html:108
+#: company/models.py:503 company/templates/company/supplier_part_base.html:109
 #: stock/models.py:429 stock/templates/stock/item_base.html:305
 #: templates/js/stock.js:667
 msgid "Packaging"
@@ -6256,7 +6256,15 @@ msgstr ""
 msgid "Submit Bug Report"
 msgstr ""
 
-#: templates/about.html:82 templates/js/modals.js:559
+#: templates/about.html:80 templates/clip.html:4
+msgid "copy to clipboard"
+msgstr ""
+
+#: templates/about.html:80
+msgid "copy version information"
+msgstr ""
+
+#: templates/about.html:90 templates/js/modals.js:559
 #: templates/js/modals.js:837 templates/modals.html:29 templates/modals.html:54
 #: templates/modals.html:97
 msgid "Close"
@@ -6272,10 +6280,6 @@ msgstr ""
 
 #: templates/attachment_table.html:35
 msgid "Delete attachment"
-msgstr ""
-
-#: templates/clip.html:4
-msgid "copy to clipboard"
 msgstr ""
 
 #: templates/image_download.html:8
