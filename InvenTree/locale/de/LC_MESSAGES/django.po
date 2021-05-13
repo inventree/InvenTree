@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-13 00:46+0000\n"
-"PO-Revision-Date: 2021-05-13 01:07\n"
+"POT-Creation-Date: 2021-05-13 04:04+0000\n"
+"PO-Revision-Date: 2021-05-13 04:17\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -132,7 +132,7 @@ msgstr "Benutzer"
 msgid "upload date"
 msgstr "Hochladedatum"
 
-#: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:101
+#: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2087 part/templates/part/params.html:27
 #: report/models.py:179 templates/InvenTree/search.html:137
 #: templates/InvenTree/search.html:289 templates/js/part.js:110
@@ -145,7 +145,7 @@ msgstr "Name"
 #: company/models.py:491 company/templates/company/detail.html:27
 #: company/templates/company/manufacturer_part_base.html:72
 #: company/templates/company/supplier_part_base.html:71
-#: company/templates/company/supplier_part_detail.html:31 label/models.py:108
+#: company/templates/company/supplier_part_detail.html:31 label/models.py:109
 #: order/models.py:101 order/templates/order/purchase_order_detail.html:143
 #: part/models.py:710 part/templates/part/detail.html:54
 #: part/templates/part/set_category.html:14 report/models.py:192
@@ -2627,51 +2627,59 @@ msgstr "Preisstaffel löschen"
 msgid "No valid objects provided to template"
 msgstr "Keine korrekten Objekte für Vorlage gegeben"
 
-#: label/models.py:102
+#: label/models.py:103
 msgid "Label name"
 msgstr "Label Name"
 
-#: label/models.py:109
+#: label/models.py:110
 msgid "Label description"
 msgstr "Label Beschreibung"
 
-#: label/models.py:116 stock/forms.py:202
+#: label/models.py:117 stock/forms.py:202
 msgid "Label"
 msgstr "Label"
 
-#: label/models.py:117
+#: label/models.py:118
 msgid "Label template file"
 msgstr "Label-Vorlage-Datei"
 
-#: label/models.py:123 report/models.py:274
+#: label/models.py:124 report/models.py:274
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#: label/models.py:124
+#: label/models.py:125
 msgid "Label template is enabled"
 msgstr "Label-Vorlage ist aktiviert"
 
-#: label/models.py:129
+#: label/models.py:130
 msgid "Width [mm]"
 msgstr "Breite [mm]"
 
-#: label/models.py:130
+#: label/models.py:131
 msgid "Label width, specified in mm"
 msgstr "Label-Breite in mm"
 
-#: label/models.py:136
+#: label/models.py:137
 msgid "Height [mm]"
 msgstr "Höhe [mm]"
 
-#: label/models.py:137
+#: label/models.py:138
 msgid "Label height, specified in mm"
 msgstr "Label-Höhe in mm"
 
-#: label/models.py:222 label/models.py:275
+#: label/models.py:144
+msgid "Filename Pattern"
+msgstr ""
+
+#: label/models.py:145
+msgid "Pattern for generating label filenames"
+msgstr ""
+
+#: label/models.py:244 label/models.py:297
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
-#: label/models.py:223 label/models.py:276 report/models.py:294
+#: label/models.py:245 label/models.py:298 report/models.py:294
 #: report/models.py:415 report/models.py:449
 msgid "Filters"
 msgstr "Filter"
