@@ -12,7 +12,7 @@ function attachClipboard(selector, containerselector, textElement) {
             return document.getElementById(textElement).textContent;
         }
     } else {
-        text = function() {
+        text = function(trigger) {
             var content = trigger.parentElement.parentElement.textContent;return content.trim();
         }
     }
@@ -22,7 +22,6 @@ function attachClipboard(selector, containerselector, textElement) {
         text: text,
         container: containerselector
     });
-    console.log(cis);
 }
 
 
@@ -81,7 +80,6 @@ function inventreeDocReady() {
     attachClipboard('.clip-btn');
     attachClipboard('.clip-btn', 'modal-about');  // modals
     attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
-
 }
 
 function isFileTransfer(transfer) {
