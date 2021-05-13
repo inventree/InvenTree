@@ -209,6 +209,7 @@ class FileManagementFormView(MultiStepFormView):
             context.update({'columns': self.columns})
 
         # Load extra context data
+        print(self.extra_context_data)
         for key, items in self.extra_context_data.items():
             context.update({key: items})
 
@@ -449,8 +450,8 @@ class FileManagementFormView(MultiStepFormView):
 
             if guess:
                 n = list(self.column_selections.values()).count(self.column_selections[col])
-                if n > 1:
-                    duplicates.append(col)
+                if n > 1 and self.column_selections[col] not in duplicates:
+                    duplicates.append(self.column_selections[col])
         
         # Store extra context data
         self.extra_context_data = {
