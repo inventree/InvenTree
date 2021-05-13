@@ -278,6 +278,7 @@ class ReportTemplateBase(ReportBase):
             self.template_name,
             base_url=request.build_absolute_uri("/"),
             presentational_hints=True,
+            filename=self.generate_filename(request),
             **kwargs)
 
         return wp.render_to_response(
