@@ -28,4 +28,5 @@ jobs:
           repository: inventree/inventree
           tag_with_ref: true
           dockerfile: ./Dockerfile
+          target: production
           platforms: linux/amd64,linux/arm64,linux/arm/v7

@@ -263,6 +263,7 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
     'django_q',
+    'formtools',                            # Form wizard tools
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -430,11 +431,15 @@ It can be specified in config.yaml (or envvar) as either (for example):
 - django.db.backends.postgresql
 """
 
-db_engine = db_config['ENGINE']
+db_engine = db_config['ENGINE'].lower()
 
-if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
+# Correct common misspelling
+if db_engine == 'sqlite':
+    db_engine = 'sqlite3'
+
+if db_engine in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
-    db_engine = f'django.db.backends.{db_engine.lower()}'
+    db_engine = f'django.db.backends.{db_engine}'
     db_config['ENGINE'] = db_engine
 
 db_name = db_config['NAME']

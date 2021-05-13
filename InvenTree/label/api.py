@@ -63,15 +63,22 @@ class LabelPrintMixin:
         # In debug mode, generate single HTML output, rather than PDF
         debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
+        label_name = "label.pdf"
+
         # Merge one or more PDF files into a single download
         for item in items_to_print:
             label = self.get_object()
             label.object_to_print = item
 
+            label_name = label.generate_filename(request)
+
             if debug_mode:
                 outputs.append(label.render_as_string(request))
             else:
                 outputs.append(label.render(request))
+
+        if not label_name.endswith(".pdf"):
+            label_name += ".pdf"
 
         if debug_mode:
             """
@@ -103,7 +110,7 @@ class LabelPrintMixin:
 
             return InvenTree.helpers.DownloadFile(
                 pdf,
-                'inventree_label.pdf',
+                label_name,
                 content_type='application/pdf'
             )
 

@@ -6,10 +6,12 @@ Django views for interacting with Order app
 from __future__ import unicode_literals
 
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
@@ -23,11 +25,12 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
 from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
-from company.models import Company, SupplierPart
+from company.models import Company, SupplierPart  # ManufacturerPart
 from stock.models import StockItem, StockLocation
 from part.models import Part
 
 from common.models import InvenTreeSetting
+from common.views import FileManagementFormView
 
 from . import forms as order_forms
 from part.views import PartPricing
@@ -564,6 +567,192 @@ class SalesOrderShip(AjaxUpdateView):
         context['order'] = order
 
         return self.renderJsonResponse(request, form, data, context)
+
+
+class PurchaseOrderUpload(FileManagementFormView):
+    ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
+
+    name = 'order'
+    form_steps_template = [
+        'order/order_wizard/po_upload.html',
+        'order/order_wizard/match_fields.html',
+        'order/order_wizard/match_parts.html',
+    ]
+    form_steps_description = [
+        _("Upload File"),
+        _("Match Fields"),
+        _("Match Supplier Parts"),
+    ]
+    # Form field name: PurchaseOrderLineItem field
+    form_field_map = {
+        'item_select': 'part',
+        'quantity': 'quantity',
+        'purchase_price': 'purchase_price',
+        'reference': 'reference',
+        'notes': 'notes',
+    }
+
+    def get_order(self):
+        """ Get order or return 404 """
+
+        return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+
+        order = self.get_order()
+
+        context.update({'order': order})
+
+        return context
+
+    def get_field_selection(self):
+        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        This function is called once the field selection has been validated.
+        The pre-fill data are then passed through to the SupplierPart selection form.
+        """
+
+        order = self.get_order()
+
+        self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
+
+        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
+        q_idx = self.get_column_index('Quantity')
+        s_idx = self.get_column_index('Supplier_SKU')
+        m_idx = self.get_column_index('Manufacturer_MPN')
+        p_idx = self.get_column_index('Purchase_Price')
+        r_idx = self.get_column_index('Reference')
+        n_idx = self.get_column_index('Notes')
+
+        for row in self.rows:
+
+            # Initially use a quantity of zero
+            quantity = Decimal(0)
+
+            # Initially we do not have a part to reference
+            exact_match_part = None
+
+            # Check if there is a column corresponding to "quantity"
+            if q_idx >= 0:
+                q_val = row['data'][q_idx]['cell']
+
+                if q_val:
+                    # Delete commas
+                    q_val = q_val.replace(',', '')
+
+                    try:
+                        # Attempt to extract a valid quantity from the field
+                        quantity = Decimal(q_val)
+                        # Store the 'quantity' value
+                        row['quantity'] = quantity
+                    except (ValueError, InvalidOperation):
+                        pass
+
+            # Check if there is a column corresponding to "Supplier SKU"
+            if s_idx >= 0:
+                sku = row['data'][s_idx]['cell']
+
+                try:
+                    # Attempt SupplierPart lookup based on SKU value
+                    exact_match_part = self.allowed_items.get(SKU__contains=sku)
+                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = None
+
+            # Check if there is a column corresponding to "Manufacturer MPN" and no exact match found yet
+            if m_idx >= 0 and not exact_match_part:
+                mpn = row['data'][m_idx]['cell']
+
+                try:
+                    # Attempt SupplierPart lookup based on MPN value
+                    exact_match_part = self.allowed_items.get(manufacturer_part__MPN__contains=mpn)
+                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = None
+
+            # Supply list of part options for each row, sorted by how closely they match the part name
+            row['item_options'] = self.allowed_items
+
+            # Unless found, the 'part_match' is blank
+            row['item_match'] = None
+
+            if exact_match_part:
+                # If there is an exact match based on SKU or MPN, use that
+                row['item_match'] = exact_match_part
+
+            # Check if there is a column corresponding to "purchase_price"
+            if p_idx >= 0:
+                p_val = row['data'][p_idx]['cell']
+
+                if p_val:
+                    # Delete commas
+                    p_val = p_val.replace(',', '')
+
+                    try:
+                        # Attempt to extract a valid decimal value from the field
+                        purchase_price = Decimal(p_val)
+                        # Store the 'purchase_price' value
+                        row['purchase_price'] = purchase_price
+                    except (ValueError, InvalidOperation):
+                        pass
+
+            # Check if there is a column corresponding to "reference"
+            if r_idx >= 0:
+                reference = row['data'][r_idx]['cell']
+                row['reference'] = reference
+
+            # Check if there is a column corresponding to "notes"
+            if n_idx >= 0:
+                notes = row['data'][n_idx]['cell']
+                row['notes'] = notes
+
+    def done(self, form_list, **kwargs):
+        """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
+        
+        order = self.get_order()
+
+        items = {}
+
+        for form_key, form_value in self.get_all_cleaned_data().items():
+            # Split key from row value
+            try:
+                (field, idx) = form_key.split('-')
+            except ValueError:
+                continue
+
+            if idx not in items:
+                # Insert into items
+                items.update({
+                    idx: {
+                        self.form_field_map[field]: form_value,
+                    }
+                })
+            else:
+                # Update items
+                items[idx][self.form_field_map[field]] = form_value
+
+        # Create PurchaseOrderLineItem instances
+        for purchase_order_item in items.values():
+            try:
+                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['part']))
+            except (ValueError, SupplierPart.DoesNotExist):
+                continue
+
+            quantity = purchase_order_item.get('quantity', 0)
+            if quantity:
+                purchase_order_line_item = PurchaseOrderLineItem(
+                    order=order,
+                    part=supplier_part,
+                    quantity=quantity,
+                    purchase_price=purchase_order_item.get('purchase_price', None),
+                    reference=purchase_order_item.get('reference', ''),
+                    notes=purchase_order_item.get('notes', ''),
+                )
+                try:
+                    purchase_order_line_item.save()
+                except IntegrityError:
+                    # PurchaseOrderLineItem already exists
+                    pass
+            
+        return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
 class PurchaseOrderExport(AjaxView):

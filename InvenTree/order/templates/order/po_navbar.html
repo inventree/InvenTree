@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+{% load status_codes %}
 
 <ul class='list-group'>
     <li class='list-group-item'>
@@ -14,6 +15,14 @@
             {% trans "Details" %}
         </a>
     </li>
+    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
+    <li class='list-group-item {% if tab == "upload" %}active{% endif %}' title='{% trans "Upload File" %}'>
+        <a href='{% url "po-upload" order.id %}'>
+            <span class='fas fa-file-upload'></span>
+            {% trans "Upload File" %}
+        </a>
+    </li>
+    {% endif %}
     <li class='list-group-item {% if tab == "received" %}active{% endif %}' title='{% trans "Received Stock Items" %}'>
         <a href='{% url "po-received" order.id %}'>
             <span class='fas fa-sign-in-alt'></span>
