@@ -1,13 +1,30 @@
-function attachClipboard(selector) {
+function attachClipboard(selector, containerselector, textElement) {
+    // set container
+    if (containerselector){
+        containerselector = document.getElementById(containerselector);
+    } else {
+        containerselector = document.body;
+    }
 
-    new ClipboardJS(selector, {
-        text: function(trigger) {
-            var content = trigger.parentElement.parentElement.textContent;
-
-            return content.trim();
+    // set text-function
+    if (textElement){
+        text = function() {
+            return document.getElementById(textElement).textContent;
         }
+    } else {
+        text = function() {
+            var content = trigger.parentElement.parentElement.textContent;return content.trim();
+        }
+    }
+
+    // create Clipboard
+    var cis = new ClipboardJS(selector, {
+        text: text,
+        container: containerselector
     });
+    console.log(cis);
 }
+
 
 function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
@@ -62,6 +79,8 @@ function inventreeDocReady() {
 
     // Initialize clipboard-buttons
     attachClipboard('.clip-btn');
+    attachClipboard('.clip-btn', 'modal-about');  // modals
+    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
 
 }
 
