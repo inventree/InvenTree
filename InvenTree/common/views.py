@@ -209,7 +209,6 @@ class FileManagementFormView(MultiStepFormView):
             context.update({'columns': self.columns})
 
         # Load extra context data
-        print(self.extra_context_data)
         for key, items in self.extra_context_data.items():
             context.update({key: items})
 
