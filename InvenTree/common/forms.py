@@ -151,6 +151,8 @@ class MatchItem(forms.Form):
                         # Set field name
                         field_name = col_guess.lower() + '-' + str(row['index'])
                         # Set field input box
+
+                        # TODO maybe not here but in an own function?
                         if 'quantity' in col_guess.lower():
                             self.fields[field_name] = forms.CharField(
                                 required=False,
@@ -164,6 +166,15 @@ class MatchItem(forms.Form):
                                 })
                             )
 
+                        else:
+                            # Get value
+                            value = row.get(col_guess.lower(), '')
+                            # Set field input box
+                            self.fields[field_name] = forms.CharField(
+                                required=True,
+                                initial=value,
+                            )
+            
                     # Create item selection box
                     elif col_guess in file_manager.ITEM_MATCH_HEADERS:
                         # Get item options
