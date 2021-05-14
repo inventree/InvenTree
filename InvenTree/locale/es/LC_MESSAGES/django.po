@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-14 02:57+0000\n"
-"PO-Revision-Date: 2021-05-14 03:06\n"
+"POT-Creation-Date: 2021-05-14 21:51+0000\n"
+"PO-Revision-Date: 2021-05-14 21:55\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
 
-#: InvenTree/models.py:59 stock/models.py:1755
+#: InvenTree/models.py:59 stock/models.py:1761
 msgid "Attachment"
 msgstr ""
 
@@ -471,8 +471,8 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:175
 #: order/templates/order/sales_order_detail.html:70
 #: order/templates/order/sales_order_detail.html:77
-#: order/templates/order/sales_order_detail.html:159
-#: order/templates/order/sales_order_detail.html:224 part/forms.py:342
+#: order/templates/order/sales_order_detail.html:162
+#: order/templates/order/sales_order_detail.html:230 part/forms.py:342
 #: part/forms.py:371 part/forms.py:387 part/models.py:2216
 #: part/templates/part/allocation.html:19
 #: part/templates/part/allocation.html:53
@@ -602,7 +602,7 @@ msgstr ""
 
 #: build/models.py:127 order/models.py:99 order/models.py:616
 #: order/templates/order/purchase_order_detail.html:170
-#: order/templates/order/sales_order_detail.html:219 part/models.py:2225
+#: order/templates/order/sales_order_detail.html:225 part/models.py:2225
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:565 templates/js/build.js:1008
@@ -629,7 +629,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:131
 #: order/templates/order/receive_parts.html:19
-#: order/templates/order/sales_order_detail.html:207 part/models.py:321
+#: order/templates/order/sales_order_detail.html:213 part/models.py:321
 #: part/models.py:1914 part/models.py:1926 part/models.py:1944
 #: part/models.py:2019 part/models.py:2115 part/models.py:2200
 #: part/templates/part/part_app_base.html:8
@@ -765,13 +765,13 @@ msgstr ""
 #: order/models.py:618 order/templates/order/po_navbar.html:29
 #: order/templates/order/po_navbar.html:32
 #: order/templates/order/purchase_order_detail.html:209
-#: order/templates/order/sales_order_detail.html:272
+#: order/templates/order/sales_order_detail.html:278
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:871
 #: part/templates/part/navbar.html:128
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
-#: stock/models.py:530 stock/models.py:1659 stock/models.py:1761
+#: stock/models.py:530 stock/models.py:1665 stock/models.py:1767
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:333 templates/js/stock.js:128 templates/js/stock.js:671
 msgid "Notes"
@@ -911,7 +911,7 @@ msgstr ""
 #: build/templates/build/allocation_card.html:21
 #: build/templates/build/complete_output.html:46
 #: order/templates/order/sales_order_detail.html:75
-#: order/templates/order/sales_order_detail.html:157
+#: order/templates/order/sales_order_detail.html:160
 #: report/templates/report/inventree_test_report_base.html:75
 #: stock/models.py:452 stock/templates/stock/item_base.html:244
 #: templates/js/build.js:474
@@ -3166,12 +3166,12 @@ msgid "No line items found"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:180
-#: order/templates/order/sales_order_detail.html:229
+#: order/templates/order/sales_order_detail.html:235
 msgid "Unit Price"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:221
-#: order/templates/order/sales_order_detail.html:303
+#: order/templates/order/sales_order_detail.html:328
 msgid "Edit line item"
 msgstr ""
 
@@ -3263,65 +3263,69 @@ msgstr ""
 msgid "Sales Order Items"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:92 templates/js/bom.js:342
+#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:342
 #: templates/js/build.js:627 templates/js/build.js:1044
 msgid "Actions"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:99 templates/js/build.js:515
+#: order/templates/order/sales_order_detail.html:102 templates/js/build.js:515
 #: templates/js/build.js:849
 msgid "Edit stock allocation"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:100 templates/js/build.js:517
+#: order/templates/order/sales_order_detail.html:103 templates/js/build.js:517
 #: templates/js/build.js:850
 msgid "Delete stock allocation"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:170
+#: order/templates/order/sales_order_detail.html:176
 msgid "No matching line items"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:199
+#: order/templates/order/sales_order_detail.html:205
 msgid "ID"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:237 templates/js/build.js:579
+#: order/templates/order/sales_order_detail.html:243 templates/js/build.js:579
 #: templates/js/build.js:845
 msgid "Allocated"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:239
+#: order/templates/order/sales_order_detail.html:245
 msgid "Fulfilled"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:287
+#: order/templates/order/sales_order_detail.html:282
+msgid "PO"
+msgstr ""
+
+#: order/templates/order/sales_order_detail.html:312
 msgid "Allocate serial numbers"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:290 templates/js/build.js:641
+#: order/templates/order/sales_order_detail.html:315 templates/js/build.js:641
 msgid "Allocate stock"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:293
+#: order/templates/order/sales_order_detail.html:318
 msgid "Purchase stock"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:297 templates/js/build.js:634
+#: order/templates/order/sales_order_detail.html:322 templates/js/build.js:634
 #: templates/js/build.js:1052
 msgid "Build stock"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:300
-#: order/templates/order/sales_order_detail.html:409
+#: order/templates/order/sales_order_detail.html:325
+#: order/templates/order/sales_order_detail.html:434
 msgid "Calculate price"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:304
+#: order/templates/order/sales_order_detail.html:329
 msgid "Delete line item "
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:415
+#: order/templates/order/sales_order_detail.html:440
 msgid "Update Unit Price"
 msgstr ""
 
@@ -4533,7 +4537,7 @@ msgstr ""
 
 #: part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
-#: stock/models.py:1748 templates/InvenTree/settings/header.html:8
+#: stock/models.py:1754 templates/InvenTree/settings/header.html:8
 #: templates/js/stock.js:124
 msgid "Value"
 msgstr ""
@@ -5090,12 +5094,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:1736
+#: stock/models.py:1742
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:89
-#: stock/models.py:1742
+#: stock/models.py:1748
 msgid "Result"
 msgstr ""
 
@@ -5364,35 +5368,35 @@ msgstr ""
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:1660
+#: stock/models.py:1666
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:1713
+#: stock/models.py:1719
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:1719
+#: stock/models.py:1725
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:1737
+#: stock/models.py:1743
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:1743 templates/js/table_filters.js:213
+#: stock/models.py:1749 templates/js/table_filters.js:213
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:1749
+#: stock/models.py:1755
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:1756
+#: stock/models.py:1762
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:1762
+#: stock/models.py:1768
 msgid "Test notes"
 msgstr ""
 
