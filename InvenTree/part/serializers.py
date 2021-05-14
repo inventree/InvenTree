@@ -372,9 +372,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
     
-    purchase_price_avg = serializers.SerializerMethodField()
+    purchase_price_avg = serializers.SerializerMethodField(read_only=True)
     
-    purchase_price_range = serializers.SerializerMethodField()
+    purchase_price_range = serializers.SerializerMethodField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
