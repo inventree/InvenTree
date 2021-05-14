@@ -109,6 +109,7 @@ class FileManager:
             # Update headers
             self.update_headers()
 
+        # TODO maybe not here but in an own function?
         if self.name == 'part':
             self.REQUIRED_HEADERS = [
                 'Name',
