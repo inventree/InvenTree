@@ -30,6 +30,13 @@
         </a>
     </li>
 
+    <li class='list-group-item {% if tab == "upload" %}active{% endif %}' title='{% trans "Upload File" %}'>
+        <a href='{% url "part-upload" %}'>
+            <span class='fas fa-file-upload'></span>
+            {% trans "Upload File" %}
+        </a>
+    </li>
+
     {% if category %}
     <li class='list-group-item {% if tab == "parameters" %}active{% endif %}' title='{% trans "Parameters" %}'>
         <a href='{% url "category-parametric" category.id %}'>
