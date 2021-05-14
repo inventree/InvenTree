@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-14 02:57+0000\n"
-"PO-Revision-Date: 2021-05-14 03:06\n"
+"PO-Revision-Date: 2021-05-14 09:41\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2669,11 +2669,11 @@ msgstr "Label-Höhe in mm"
 
 #: label/models.py:144
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Dateinamen-Muster"
 
 #: label/models.py:145
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Muster für die Erstellung von Label-Dateinamen"
 
 #: label/models.py:244 label/models.py:297
 msgid "Query filters (comma-separated list of key=value pairs"
@@ -4782,7 +4782,7 @@ msgstr "neue Variante anlegen"
 
 #: part/templatetags/inventree_extras.py:90
 msgid "Unknown database"
-msgstr ""
+msgstr "Unbekannte Datenbank"
 
 #: part/views.py:89
 msgid "Add Related Part"
@@ -6276,7 +6276,7 @@ msgstr "In die Zwischenablage kopieren"
 
 #: templates/about.html:80
 msgid "copy version information"
-msgstr ""
+msgstr "Versionsinformationen kopieren"
 
 #: templates/about.html:90 templates/js/modals.js:559
 #: templates/js/modals.js:837 templates/modals.html:29 templates/modals.html:54
@@ -7315,11 +7315,11 @@ msgstr "Instanzname"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Datenbank"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Server läuft im Debug-Modus"
 
 #: templates/stats.html:32
 msgid "Server status"
