@@ -17,6 +17,7 @@ from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
+from django.contrib import messages
 
 from moneyed import CURRENCIES
 
@@ -788,6 +789,36 @@ class PartImport(FileManagementFormView):
             except KeyError:
                 pass
 
+        import_done = 0
+        import_error = []
+
+        # Create Part instances
+        for part_data in items.values():
+            new_part = Part(
+                name=part_data.get('name', ''),
+                description=part_data.get('description', ''),
+                keywords=part_data.get('keywords', None),
+                IPN=part_data.get('ipn', None),
+                revision=part_data.get('revision', None),
+                link=part_data.get('link', None),
+                default_expiry=part_data.get('default_expiry', 0),
+                minimum_stock=part_data.get('minimum_stock', 0),
+                units=part_data.get('units', None),
+                notes=part_data.get('notes', None),
+            )
+            try:
+                new_part.save()
+                import_done += 1
+            except ValidationError as _e:
+                import_error.append(', '.join(set(_e.messages)))
+
+        # Set alerts
+        if import_done:
+            alert = f"<strong>{_('Part-Import')}</strong><br>{_('Imported {n} parts').format(n=import_done)}"
+            messages.success(self.request, alert)
+        if import_error:
+            error_text = '\n'.join([f'<li><strong>x{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
+            messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
 
