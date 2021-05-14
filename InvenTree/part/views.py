@@ -39,6 +39,7 @@ from .models import PartSellPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
+from common.views import FileManagementFormView
 
 import common.settings as inventree_settings
 
@@ -717,6 +718,9 @@ class PartCreate(AjaxCreateView):
 
         return initials
 
+
+class PartImport(FileManagementFormView):
+    ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
 
 class PartNotes(UpdateView):
     """ View for editing the 'notes' field of a Part object.

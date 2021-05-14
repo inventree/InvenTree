@@ -120,6 +120,9 @@ part_urls = [
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
 
+    # Upload a part
+    url(r'^import/', views.PartImport.as_view(), name='part-upload'),
+
     # Create a new BOM item
     url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
 
