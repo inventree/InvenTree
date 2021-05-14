@@ -1370,6 +1370,12 @@ class StockItem(MPTTModel):
         if self.location:
             s += ' @ {loc}'.format(loc=self.location.name)
 
+        if self.purchase_order:
+            s += " ({pre}{po})".format(
+                pre=helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
+                po=self.purchase_order,
+            )
+
         return s
 
     @transaction.atomic

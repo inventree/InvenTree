@@ -90,7 +90,7 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for a SalesOrder object """
 
     context_object_name = 'order'
-    queryset = SalesOrder.objects.all().prefetch_related('lines')
+    queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
     template_name = 'order/sales_order_detail.html'
 
 

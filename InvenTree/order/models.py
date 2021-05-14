@@ -826,6 +826,9 @@ class SalesOrderAllocation(models.Model):
         else:
             return ""
 
+    def get_po(self):
+        return self.item.purchase_order
+
     def complete_allocation(self, user):
         """
         Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
