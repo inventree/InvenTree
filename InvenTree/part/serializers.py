@@ -372,9 +372,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
     
-    purchase_price_avg = serializers.SerializerMethodField(read_only=True)
+    purchase_price_avg = serializers.SerializerMethodField()
     
-    purchase_price_range = serializers.SerializerMethodField(read_only=True)
+    purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
@@ -406,19 +406,29 @@ class BomItemSerializer(InvenTreeModelSerializer):
     def get_purchase_price_range(self, obj):
         """ Return purchase price range """
 
-        if obj.purchase_price_min and not obj.purchase_price_max:
+        try:
+            purchase_price_min = obj.purchase_price_min
+        except AttributeError:
+            return None
+
+        try:
+            purchase_price_max = obj.purchase_price_max
+        except AttributeError:
+            return None
+
+        if purchase_price_min and not purchase_price_max:
             # Get price range
-            purchase_price_range = str(obj.purchase_price_max)
-        elif not obj.purchase_price_min and obj.purchase_price_max:
+            purchase_price_range = str(purchase_price_max)
+        elif not purchase_price_min and purchase_price_max:
             # Get price range
-            purchase_price_range = str(obj.purchase_price_max)
-        elif obj.purchase_price_min and obj.purchase_price_max:
+            purchase_price_range = str(purchase_price_max)
+        elif purchase_price_min and purchase_price_max:
             # Get price range
-            if obj.purchase_price_min >= obj.purchase_price_max:
+            if purchase_price_min >= purchase_price_max:
                 # If min > max: use min only
-                purchase_price_range = str(obj.purchase_price_min)
+                purchase_price_range = str(purchase_price_min)
             else:
-                purchase_price_range = str(obj.purchase_price_min) + " - " + str(obj.purchase_price_max)
+                purchase_price_range = str(purchase_price_min) + " - " + str(purchase_price_max)
         else:
             purchase_price_range = '-'
 
@@ -427,9 +437,14 @@ class BomItemSerializer(InvenTreeModelSerializer):
     def get_purchase_price_avg(self, obj):
         """ Return purchase price average """
         
-        if obj.purchase_price_avg:
+        try:
+            purchase_price_avg = obj.purchase_price_avg
+        except AttributeError:
+            return None
+
+        if purchase_price_avg:
             # Get string representation of price average
-            purchase_price_avg = str(obj.purchase_price_avg)
+            purchase_price_avg = str(purchase_price_avg)
         else:
             purchase_price_avg = '-'
 
