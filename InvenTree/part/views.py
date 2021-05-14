@@ -722,6 +722,31 @@ class PartCreate(AjaxCreateView):
 class PartImport(FileManagementFormView):
     ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
 
+    name = 'part'
+    form_steps_template = [
+        'part/import_wizard/part_upload.html',
+        'part/import_wizard/match_fields.html',
+        'part/import_wizard/match_references.html',
+    ]
+    form_steps_description = [
+        _("Upload File"),
+        _("Match Fields"),
+        _("Match References"),
+    ]
+
+    form_field_map = {
+        'name': 'name',
+        'description': 'description',
+        'keywords': 'keywords',
+        'IPN': 'IPN',
+        'revision': 'revision',
+        'link': 'link',
+        'default_expiry': 'default_expiry',
+        'minimum_stock': 'minimum_stock',
+        'units': 'units',
+        'notes': 'notes',
+    }
+
 class PartNotes(UpdateView):
     """ View for editing the 'notes' field of a Part object.
     Presents a live markdown editor.

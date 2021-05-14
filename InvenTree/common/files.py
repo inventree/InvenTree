@@ -109,6 +109,27 @@ class FileManager:
             # Update headers
             self.update_headers()
 
+        if self.name == 'part':
+            self.REQUIRED_HEADERS = [
+                'Name',
+                'Description',
+            ]
+
+            self.OPTIONAL_HEADERS = [
+                'Keywords',
+                'IPN',
+                'Revision',
+                'Link',
+                'default_expiry',
+                'minimum_stock',
+                'Units',
+                'Notes',
+            ]
+
+            # Update headers
+            self.update_headers()
+
+
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers
         
