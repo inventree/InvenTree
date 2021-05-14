@@ -928,7 +928,7 @@ class BomList(generics.ListCreateAPIView):
             # Find associated currency (select first found)
             purchase_price_currency = None
             for currency_item in currencies:
-                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part:
+                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk:
                     purchase_price_currency = currency_item['purchase_price_currency']
                     break
             # Convert prices
