@@ -747,6 +747,51 @@ class PartImport(FileManagementFormView):
         'notes': 'notes',
     }
 
+    def get_field_selection(self):
+        """ Fill the form fields for step 3 """
+
+        # collect reference indexes
+        idx_s = {}
+        for col in self.file_manager.HEADERS:
+            index = self.get_column_index(col)
+            if index >= 0:
+                idx_s[col] = index
+
+        for row in self.rows:
+            for idx in idx_s:
+                data = row['data'][idx_s[idx]]['cell']
+                row[idx.lower()] = data
+
+
+    def done(self, form_list, **kwargs):
+        """ Create items """
+        items = {}
+
+        for form_key, form_value in self.get_all_cleaned_data().items():
+            # Split key from row value
+            try:
+                (field, idx) = form_key.split('-')
+            except ValueError:
+                continue
+
+            try:
+                if idx not in items:
+                    # Insert into items
+                    items.update({
+                        idx: {
+                            self.form_field_map[field]: form_value,
+                        }
+                    })
+                else:
+                    # Update items
+                    items[idx][self.form_field_map[field]] = form_value
+            except KeyError:
+                pass
+
+
+        return HttpResponseRedirect(reverse('part-index'))
+
+
 class PartNotes(UpdateView):
     """ View for editing the 'notes' field of a Part object.
     Presents a live markdown editor.
