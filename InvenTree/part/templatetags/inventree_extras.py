@@ -162,6 +162,11 @@ def get_color_theme_css(username):
     return inventree_css_static_url
 
 
+@register.filter
+def keyvalue(dict, key):
+    return dict[key]
+
+
 @register.simple_tag()
 def authorized_owners(group):
     """ Return authorized owners """
