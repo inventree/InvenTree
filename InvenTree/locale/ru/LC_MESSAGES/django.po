@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-13 21:51+0000\n"
+"POT-Creation-Date: 2021-05-14 02:57+0000\n"
 "PO-Revision-Date: 2021-05-13 04:17\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -1674,7 +1674,7 @@ msgstr ""
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:215
+#: common/models.py:215 templates/stats.html:25
 msgid "Debug Mode"
 msgstr ""
 
@@ -2391,7 +2391,7 @@ msgstr ""
 #: stock/templates/stock/location_navbar.html:22
 #: stock/templates/stock/location_navbar.html:29
 #: templates/InvenTree/search.html:198 templates/js/stock.js:968
-#: templates/stats.html:72 templates/stats.html:81 users/models.py:42
+#: templates/stats.html:85 templates/stats.html:94 users/models.py:42
 msgid "Stock Items"
 msgstr ""
 
@@ -3202,7 +3202,7 @@ msgstr ""
 #: part/templates/part/category_partlist.html:10
 #: templates/InvenTree/index.html:97 templates/InvenTree/search.html:114
 #: templates/InvenTree/settings/tabs.html:25 templates/js/part.js:577
-#: templates/navbar.html:23 templates/stats.html:59 templates/stats.html:68
+#: templates/navbar.html:23 templates/stats.html:72 templates/stats.html:81
 #: users/models.py:40
 msgid "Parts"
 msgstr ""
@@ -3731,7 +3731,7 @@ msgstr ""
 
 #: part/models.py:83 part/templates/part/category.html:23
 #: part/templates/part/category.html:94 part/templates/part/category.html:141
-#: templates/InvenTree/search.html:127 templates/stats.html:63
+#: templates/InvenTree/search.html:127 templates/stats.html:76
 #: users/models.py:39
 msgid "Part Categories"
 msgstr ""
@@ -4780,6 +4780,10 @@ msgstr ""
 msgid "New Variant"
 msgstr ""
 
+#: part/templatetags/inventree_extras.py:90
+msgid "Unknown database"
+msgstr ""
+
 #: part/views.py:89
 msgid "Add Related Part"
 msgstr ""
@@ -5682,7 +5686,7 @@ msgid "Stock Details"
 msgstr ""
 
 #: stock/templates/stock/location.html:117 templates/InvenTree/search.html:279
-#: templates/stats.html:76 users/models.py:41
+#: templates/stats.html:89 users/models.py:41
 msgid "Stock Locations"
 msgstr ""
 
@@ -7307,31 +7311,39 @@ msgstr ""
 msgid "Instance Name"
 msgstr ""
 
-#: templates/stats.html:19
+#: templates/stats.html:18
+msgid "Database"
+msgstr ""
+
+#: templates/stats.html:26
+msgid "Server is running in debug mode"
+msgstr ""
+
+#: templates/stats.html:32
 msgid "Server status"
 msgstr ""
 
-#: templates/stats.html:22
+#: templates/stats.html:35
 msgid "Healthy"
 msgstr ""
 
-#: templates/stats.html:24
+#: templates/stats.html:37
 msgid "Issues detected"
 msgstr ""
 
-#: templates/stats.html:31
+#: templates/stats.html:44
 msgid "Background Worker"
 msgstr ""
 
-#: templates/stats.html:34
+#: templates/stats.html:47
 msgid "Background worker not running"
 msgstr ""
 
-#: templates/stats.html:42
+#: templates/stats.html:55
 msgid "Email Settings"
 msgstr ""
 
-#: templates/stats.html:45
+#: templates/stats.html:58
 msgid "Email settings not configured"
 msgstr ""
 
