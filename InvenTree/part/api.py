@@ -887,44 +887,54 @@ class BomList(generics.ListCreateAPIView):
             purchase_price_min=Min('sub_part__stock_items__purchase_price'),
             purchase_price_max=Max('sub_part__stock_items__purchase_price'),
             purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
-            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
         )
 
-        # Convert prices to default currency (using backend conversion rates)
-        for item in queryset:
+        # Get values for currencies
+        currencies = queryset.annotate(
+            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
+        ).values('pk', 'sub_part', 'purchase_price_currency')
+
+        def convert_price(price, currency, decimal_places=4):
+            """ Convert price field, returns Money field """
+
+            price_adjusted = None
+
             # Get default currency from settings
             default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
             
-            if default_currency:
-                if item.purchase_price_min:
-                    # Convert minimum
+            if price:
+                if currency and default_currency:
                     try:
                         # Get adjusted price
-                        purchase_price_adjusted = convert_money(Money(item.purchase_price_min, item.purchase_price_currency), default_currency)
-                        # Update queryset
-                        item.purchase_price_min = purchase_price_adjusted
+                        price_adjusted = convert_money(Money(price, currency), default_currency)
                     except MissingRate:
-                        pass
-                
-                if item.purchase_price_max:
-                    # Convert maximum
-                    try:
-                        # Get adjusted price
-                        purchase_price_adjusted = convert_money(Money(item.purchase_price_max, item.purchase_price_currency), default_currency)
-                        # Update queryset
-                        item.purchase_price_max = purchase_price_adjusted
-                    except MissingRate:
-                        pass
-                
-                if item.purchase_price_avg:
-                    # Convert average
-                    try:
-                        # Get adjusted price
-                        purchase_price_adjusted = convert_money(Money(item.purchase_price_avg, item.purchase_price_currency), default_currency)
-                        # Update queryset
-                        item.purchase_price_avg = purchase_price_adjusted
-                    except MissingRate:
-                        pass
+                        # No conversion rate set
+                        price_adjusted = Money(price, currency)
+                else:
+                    # Currency exists
+                    if currency:
+                        price_adjusted = Money(price, currency)
+                    # Default currency exists
+                    if default_currency:
+                        price_adjusted = Money(price, default_currency)
+
+            if price_adjusted and decimal_places:
+                price_adjusted.decimal_places = decimal_places
+
+            return price_adjusted
+
+        # Convert prices to default currency (using backend conversion rates)
+        for bom_item in queryset:
+            # Find associated currency (select first found)
+            purchase_price_currency = None
+            for currency_item in currencies:
+                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part:
+                    purchase_price_currency = currency_item['purchase_price_currency']
+                    break
+            # Convert prices
+            bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min, purchase_price_currency)
+            bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max, purchase_price_currency)
+            bom_item.purchase_price_avg = convert_price(bom_item.purchase_price_avg, purchase_price_currency)
 
         return queryset
 
