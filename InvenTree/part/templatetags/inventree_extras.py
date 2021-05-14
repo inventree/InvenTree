@@ -1,7 +1,13 @@
+# -*- coding: utf-8 -*-
+
 """ This module provides template tags for extra functionality
 over and above the built-in Django tags.
 """
+
 import os
+
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings as djangosettings
 
 from django import template
 from django.urls import reverse
@@ -66,6 +72,26 @@ def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 
     return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
+
+
+@register.simple_tag()
+def inventree_in_debug_mode(*args, **kwargs):
+    """ Return True if the server is running in DEBUG mode """
+
+    return djangosettings.DEBUG
+
+
+@register.simple_tag()
+def inventree_db_engine(*args, **kwargs):
+    """ Return the InvenTree database backend e.g. 'postgresql' """
+
+    db = djangosettings.DATABASES['default']
+
+    engine = db.get('ENGINE', _('Unknown database'))
+
+    engine = engine.replace('django.db.backends.', '')
+
+    return engine
 
 
 @register.simple_tag()
