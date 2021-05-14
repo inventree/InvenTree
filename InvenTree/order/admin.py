@@ -13,6 +13,10 @@ from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
 
+class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
+    model = PurchaseOrderLineItem
+
+
 class PurchaseOrderAdmin(ImportExportModelAdmin):
 
     list_display = (
@@ -27,6 +31,10 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
         'reference',
         'supplier__name',
         'description',
+    ]
+
+    inlines = [
+        PurchaseOrderLineItemInlineAdmin
     ]
 
 
