@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-14 21:51+0000\n"
-"PO-Revision-Date: 2021-05-14 21:56\n"
+"PO-Revision-Date: 2021-05-15 06:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3298,7 +3298,7 @@ msgstr "Erledigt"
 
 #: order/templates/order/sales_order_detail.html:282
 msgid "PO"
-msgstr ""
+msgstr "PO"
 
 #: order/templates/order/sales_order_detail.html:312
 msgid "Allocate serial numbers"
