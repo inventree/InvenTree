@@ -739,7 +739,7 @@ class PartImport(FileManagementFormView):
         'name': 'name',
         'description': 'description',
         'keywords': 'keywords',
-        'IPN': 'IPN',
+        'ipn': 'ipn',
         'revision': 'revision',
         'link': 'link',
         'default_expiry': 'default_expiry',
