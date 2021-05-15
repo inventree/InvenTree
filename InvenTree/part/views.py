@@ -763,7 +763,6 @@ class PartImport(FileManagementFormView):
                 data = row['data'][idx_s[idx]]['cell']
                 row[idx.lower()] = data
 
-
     def done(self, form_list, **kwargs):
         """ Create items """
         items = {}
