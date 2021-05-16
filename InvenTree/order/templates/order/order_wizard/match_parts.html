@@ -2,6 +2,7 @@
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block form_alert %}
 {% if form.errors %}
@@ -67,7 +68,7 @@
                 <td>
                     {% for field in form.visible_fields %}
                         {% if field.name == row.quantity %}
-                            {{ field }}
+                            {{ field|as_crispy_field }}
                         {% endif %}
                     {% endfor %}
                     {% if row.errors.quantity %}
@@ -80,19 +81,19 @@
                     {% if item.column.guess == 'Purchase_Price' %}
                         {% for field in form.visible_fields %}
                             {% if field.name == row.purchase_price %}
-                                {{ field }}
+                                {{ field|as_crispy_field }}
                             {% endif %}
                         {% endfor %}
                     {% elif item.column.guess == 'Reference' %}
                         {% for field in form.visible_fields %}
                             {% if field.name == row.reference %}
-                                {{ field }}
+                                {{ field|as_crispy_field }}
                             {% endif %}
                         {% endfor %}
                     {% elif item.column.guess == 'Notes' %}
                         {% for field in form.visible_fields %}
                             {% if field.name == row.notes %}
-                                {{ field }}
+                                {{ field|as_crispy_field }}
                             {% endif %}
                         {% endfor %}
                     {% else %}

@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
 from formtools.wizard.views import SessionWizardView
+from crispy_forms.helper import FormHelper
 
 from InvenTree.views import AjaxUpdateView
 from InvenTree.helpers import str2bool
@@ -268,6 +269,15 @@ class FileManagementFormView(MultiStepFormView):
             return kwargs
         
         return super().get_form_kwargs()
+
+    def get_form(self, step=None, data=None, files=None):
+        """ add crispy-form helper to form """
+        form = super().get_form(step=step, data=data, files=files)
+
+        form.helper = FormHelper()
+        form.helper.form_show_labels = False 
+
+        return form
 
     def get_form_table_data(self, form_data):
         """ Extract table cell data from form data and fields.
