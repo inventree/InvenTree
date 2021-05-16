@@ -145,11 +145,11 @@ class MatchItem(forms.Form):
                 for col in row['data']:
                     # Get column matching
                     col_guess = col['column'].get('guess', None)
+                    # Set field name
+                    field_name = col_guess.lower() + '-' + str(row['index'])
 
                     # Create input for required headers
                     if col_guess in file_manager.REQUIRED_HEADERS:
-                        # Set field name
-                        field_name = col_guess.lower() + '-' + str(row['index'])
                         # Set field input box
 
                         # TODO maybe not here but in an own function?
@@ -201,8 +201,6 @@ class MatchItem(forms.Form):
 
                     # Optional entries
                     elif col_guess in file_manager.OPTIONAL_HEADERS:
-                        # Set field name
-                        field_name = col_guess.lower() + '-' + str(row['index'])
                         # Get value
                         value = row.get(col_guess.lower(), '')
                         # Set field input box
@@ -227,8 +225,6 @@ class MatchItem(forms.Form):
                         item_options = [(option.id, option) for option in row['match_options_' + col_guess]]
                         # Get item match
                         item_match = row['match_' + col_guess]
-                        # Set field name
-                        field_name = col_guess.lower() + '-' + str(row['index'])
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
                             choices=[('', '-' * 10)] + item_options,
