@@ -87,6 +87,11 @@ DEBUG = _is_true(get_setting(
     CONFIG.get('debug', True)
 ))
 
+DOCKER = _is_true(get_setting(
+    'INVENTREE_DOCKER',
+    False
+))
+
 # Configure logging settings
 log_level = get_setting(
     'INVENTREE_LOG_LEVEL',
