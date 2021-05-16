@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-14 21:51+0000\n"
+"POT-Creation-Date: 2021-05-16 22:53+0000\n"
 "PO-Revision-Date: 2021-05-13 04:17\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -171,23 +171,23 @@ msgstr "Opis (opcjonalny)"
 msgid "parent"
 msgstr "nadrzędny"
 
-#: InvenTree/settings.py:496
+#: InvenTree/settings.py:501
 msgid "English"
 msgstr "Angielski"
 
-#: InvenTree/settings.py:497
+#: InvenTree/settings.py:502
 msgid "French"
 msgstr "Francuski"
 
-#: InvenTree/settings.py:498
+#: InvenTree/settings.py:503
 msgid "German"
 msgstr "Niemiecki"
 
-#: InvenTree/settings.py:499
+#: InvenTree/settings.py:504
 msgid "Polish"
 msgstr "Polski"
 
-#: InvenTree/settings.py:500
+#: InvenTree/settings.py:505
 msgid "Turkish"
 msgstr "Turecki"
 
@@ -2391,7 +2391,7 @@ msgstr "Dostarczone części"
 #: stock/templates/stock/location_navbar.html:22
 #: stock/templates/stock/location_navbar.html:29
 #: templates/InvenTree/search.html:198 templates/js/stock.js:968
-#: templates/stats.html:85 templates/stats.html:94 users/models.py:42
+#: templates/stats.html:93 templates/stats.html:102 users/models.py:42
 msgid "Stock Items"
 msgstr ""
 
@@ -3202,7 +3202,7 @@ msgstr ""
 #: part/templates/part/category_partlist.html:10
 #: templates/InvenTree/index.html:97 templates/InvenTree/search.html:114
 #: templates/InvenTree/settings/tabs.html:25 templates/js/part.js:577
-#: templates/navbar.html:23 templates/stats.html:72 templates/stats.html:81
+#: templates/navbar.html:23 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:40
 msgid "Parts"
 msgstr "Części"
@@ -3735,7 +3735,7 @@ msgstr ""
 
 #: part/models.py:83 part/templates/part/category.html:23
 #: part/templates/part/category.html:94 part/templates/part/category.html:141
-#: templates/InvenTree/search.html:127 templates/stats.html:76
+#: templates/InvenTree/search.html:127 templates/stats.html:84
 #: users/models.py:39
 msgid "Part Categories"
 msgstr ""
@@ -4784,7 +4784,7 @@ msgstr ""
 msgid "New Variant"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:90
+#: part/templatetags/inventree_extras.py:97
 msgid "Unknown database"
 msgstr ""
 
@@ -5690,7 +5690,7 @@ msgid "Stock Details"
 msgstr ""
 
 #: stock/templates/stock/location.html:117 templates/InvenTree/search.html:279
-#: templates/stats.html:89 users/models.py:41
+#: templates/stats.html:97 users/models.py:41
 msgid "Stock Locations"
 msgstr ""
 
@@ -7325,31 +7325,41 @@ msgstr "Dane"
 msgid "Server is running in debug mode"
 msgstr ""
 
-#: templates/stats.html:32
+#: templates/stats.html:33
+#, fuzzy
+#| msgid "Debug Mode"
+msgid "Docker Mode"
+msgstr "Tryb Debugowania"
+
+#: templates/stats.html:34
+msgid "Server is deployed using docker"
+msgstr ""
+
+#: templates/stats.html:40
 msgid "Server status"
 msgstr ""
 
-#: templates/stats.html:35
+#: templates/stats.html:43
 msgid "Healthy"
 msgstr ""
 
-#: templates/stats.html:37
+#: templates/stats.html:45
 msgid "Issues detected"
 msgstr ""
 
-#: templates/stats.html:44
+#: templates/stats.html:52
 msgid "Background Worker"
 msgstr ""
 
-#: templates/stats.html:47
+#: templates/stats.html:55
 msgid "Background worker not running"
 msgstr ""
 
-#: templates/stats.html:55
+#: templates/stats.html:63
 msgid "Email Settings"
 msgstr ""
 
-#: templates/stats.html:58
+#: templates/stats.html:66
 msgid "Email settings not configured"
 msgstr ""
 
