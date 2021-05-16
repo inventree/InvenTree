@@ -751,6 +751,7 @@ class PartImport(FileManagementFormView):
     def get_field_selection(self):
         """ Fill the form fields for step 3 """
 
+        self.file_manager.setup()
         # collect reference indexes
         idx_s = {}
         for col in self.file_manager.HEADERS:
@@ -758,9 +759,24 @@ class PartImport(FileManagementFormView):
             if index >= 0:
                 idx_s[col] = index
 
+        # fetch available elements
+        self.allowed_items = {}
+        self.matches = {}
         for row in self.rows:
             for idx in idx_s:
                 data = row['data'][idx_s[idx]]['cell']
+
+                if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
+                    try:
+                        exact_match = self.allowed_items[idx].get(**{a:data for a in self.matches[idx]})
+                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        exact_match = None
+
+                    row['match_options_' + idx] = self.allowed_items[idx]
+                    row['match_' + idx] = exact_match
+                    continue
+
+                # general fields
                 row[idx.lower()] = data
 
     def done(self, form_list, **kwargs):
@@ -793,6 +809,19 @@ class PartImport(FileManagementFormView):
 
         # Create Part instances
         for part_data in items.values():
+
+            # set related parts
+            optional_matches = {}
+            for idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
+                if idx.lower() in part_data:
+                    try:
+                        optional_matches[idx] = self.allowed_items[idx].get(pk=int(part_data[idx.lower()]))
+                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        optional_matches[idx] = None
+                else:
+                    optional_matches[idx] = None
+
+            # add part
             new_part = Part(
                 name=part_data.get('name', ''),
                 description=part_data.get('description', ''),

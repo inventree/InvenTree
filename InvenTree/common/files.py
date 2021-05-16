@@ -26,6 +26,8 @@ class FileManager:
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = []
 
+    OPTIONAL_MATCH_HEADERS = []
+
     EDITABLE_HEADERS = []
 
     HEADERS = []
@@ -82,8 +84,8 @@ class FileManager:
     def update_headers(self):
         """ Update headers """
 
-        self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_HEADERS
-            
+        self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_MATCH_HEADERS + self.OPTIONAL_HEADERS
+
     def setup(self):
         """ Setup headers depending on the file name """
 
