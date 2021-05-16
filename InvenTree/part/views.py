@@ -781,7 +781,7 @@ class PartImport(FileManagementFormView):
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                     try:
-                        exact_match = self.allowed_items[idx].get(**{a:data for a in self.matches[idx]})
+                        exact_match = self.allowed_items[idx].get(**{a: data for a in self.matches[idx]})
                     except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
                         exact_match = None
 

@@ -275,7 +275,7 @@ class FileManagementFormView(MultiStepFormView):
         form = super().get_form(step=step, data=data, files=files)
 
         form.helper = FormHelper()
-        form.helper.form_show_labels = False 
+        form.helper.form_show_labels = False
 
         return form
 
