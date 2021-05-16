@@ -5,3 +5,4 @@ Django Version: {% django_version %}
 {% inventree_commit_date as commit_date %}{% if commit_date %}Commit Date: {{ commit_date }}{% endif %}
 Database: {% inventree_db_engine %}
 Debug-Mode: {% inventree_in_debug_mode %}
+Deployed using Docker: {% inventree_docker_mode %}
