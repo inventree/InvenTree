@@ -118,6 +118,12 @@ class FileManager:
                 'Description',
             ]
 
+            self.OPTIONAL_MATCH_HEADERS = [
+                'Category',
+                'default_location',
+                'default_supplier',
+            ]
+
             self.OPTIONAL_HEADERS = [
                 'Keywords',
                 'IPN',

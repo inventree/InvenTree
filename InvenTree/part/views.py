@@ -42,6 +42,8 @@ from common.models import InvenTreeSetting
 from company.models import SupplierPart
 from common.views import FileManagementFormView
 
+from stock.models import StockLocation
+
 import common.settings as inventree_settings
 
 from . import forms as part_forms
@@ -746,6 +748,9 @@ class PartImport(FileManagementFormView):
         'minimum_stock': 'minimum_stock',
         'units': 'units',
         'notes': 'notes',
+        'category': 'category',
+        'default_location': 'default_location',
+        'default_supplier': 'default_supplier',
     }
 
     def get_field_selection(self):
@@ -762,6 +767,14 @@ class PartImport(FileManagementFormView):
         # fetch available elements
         self.allowed_items = {}
         self.matches = {}
+
+        self.allowed_items['Category'] = PartCategory.objects.all()
+        self.matches['Category'] = ['name__contains']
+        self.allowed_items['default_location'] = StockLocation.objects.all()
+        self.matches['default_location'] = ['name__contains']
+        self.allowed_items['default_supplier'] = SupplierPart.objects.all()
+        self.matches['default_supplier'] = ['SKU__contains']
+
         for row in self.rows:
             for idx in idx_s:
                 data = row['data'][idx_s[idx]]['cell']
@@ -833,6 +846,9 @@ class PartImport(FileManagementFormView):
                 minimum_stock=part_data.get('minimum_stock', 0),
                 units=part_data.get('units', None),
                 notes=part_data.get('notes', None),
+                category=optional_matches['Category'],
+                default_location=optional_matches['default_location'],
+                default_supplier=optional_matches['default_supplier'],
             )
             try:
                 new_part.save()
