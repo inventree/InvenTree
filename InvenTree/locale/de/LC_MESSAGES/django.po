@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-14 21:51+0000\n"
-"PO-Revision-Date: 2021-05-15 06:21\n"
+"PO-Revision-Date: 2021-05-16 14:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -298,11 +298,11 @@ msgstr "Aus Baugruppe entfernt"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Komponente installiert"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Komponente entfernt"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
