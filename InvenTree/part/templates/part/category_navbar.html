@@ -30,10 +30,10 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "upload" %}active{% endif %}' title='{% trans "Upload File" %}'>
-        <a href='{% url "part-upload" %}'>
+    <li class='list-group-item {% if tab == "import" %}active{% endif %}' title='{% trans "Import Parts" %}'>
+        <a href='{% url "part-import" %}'>
             <span class='fas fa-file-upload'></span>
-            {% trans "Upload File" %}
+            {% trans "Import Parts" %}
         </a>
     </li>
 
