@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-16 22:53+0000\n"
+"POT-Creation-Date: 2021-05-17 10:46+0000\n"
 "PO-Revision-Date: 2021-05-13 04:17\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -486,7 +486,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:250
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
-#: templates/js/stock.js:1131 templates/js/stock.js:1379
+#: templates/js/stock.js:1131 templates/js/stock.js:1393
 msgid "Quantity"
 msgstr "Ilość"
 
@@ -547,7 +547,7 @@ msgstr "Lokalizacja ukończonych części"
 #: templates/js/barcode.js:119 templates/js/build.js:770
 #: templates/js/order.js:187 templates/js/order.js:285
 #: templates/js/stock.js:628 templates/js/stock.js:1100
-#: templates/js/stock.js:1387
+#: templates/js/stock.js:1401
 msgid "Status"
 msgstr "Status"
 
@@ -643,7 +643,7 @@ msgstr "Zamówienie budowy, do którego budowa jest przypisana"
 #: templates/js/build.js:741 templates/js/build.js:981
 #: templates/js/company.js:140 templates/js/company.js:238
 #: templates/js/part.js:233 templates/js/part.js:338 templates/js/stock.js:523
-#: templates/js/stock.js:1451
+#: templates/js/stock.js:1465
 msgid "Part"
 msgstr "Część"
 
@@ -841,7 +841,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:93
 #: stock/templates/stock/item_base.html:334
 #: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:831
-#: templates/js/stock.js:1082 templates/js/stock.js:1370
+#: templates/js/stock.js:1082 templates/js/stock.js:1384
 msgid "Stock Item"
 msgstr "Element magazynowy"
 
@@ -1192,7 +1192,7 @@ msgstr "Nie określono lokalizacji docelowej"
 
 #: build/templates/build/detail.html:70
 #: stock/templates/stock/item_base.html:298 templates/js/stock.js:636
-#: templates/js/stock.js:1394 templates/js/table_filters.js:108
+#: templates/js/stock.js:1408 templates/js/table_filters.js:108
 #: templates/js/table_filters.js:202
 msgid "Batch"
 msgstr "Partia"
@@ -2221,7 +2221,7 @@ msgstr "Usuń części"
 #: company/templates/company/detail_manufacturer_part.html:66
 #: company/templates/company/detail_supplier_part.html:66
 #: part/templates/part/bom.html:159 part/templates/part/category.html:118
-#: templates/js/stock.js:1265
+#: templates/js/stock.js:1279
 msgid "New Part"
 msgstr "Nowy komponent"
 
@@ -2268,7 +2268,7 @@ msgstr "Utwórz nowego dostawcę części"
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
 #: order/templates/order/purchase_order_detail.html:49
-#: part/templates/part/supplier.html:17 templates/js/stock.js:1271
+#: part/templates/part/supplier.html:17 templates/js/stock.js:1285
 msgid "New Supplier Part"
 msgstr "Now dostawca części"
 
@@ -2603,7 +2603,7 @@ msgstr ""
 msgid "Edit Supplier Part"
 msgstr ""
 
-#: company/views.py:578 templates/js/stock.js:1272
+#: company/views.py:578 templates/js/stock.js:1286
 msgid "Create new Supplier Part"
 msgstr ""
 
@@ -2982,7 +2982,7 @@ msgstr "Wydany"
 #: order/templates/order/purchase_order_detail.html:100
 #: part/templates/part/category.html:185 part/templates/part/category.html:227
 #: stock/templates/stock/location.html:191 templates/js/stock.js:708
-#: templates/js/stock.js:1277
+#: templates/js/stock.js:1291
 msgid "New Location"
 msgstr "Nowa lokalizacja"
 
@@ -4169,7 +4169,7 @@ msgid "All selected BOM items will be deleted"
 msgstr ""
 
 #: part/templates/part/bom.html:160 part/views.py:584
-#: templates/js/stock.js:1266
+#: templates/js/stock.js:1280
 msgid "Create New Part"
 msgstr ""
 
@@ -5516,7 +5516,7 @@ msgstr ""
 msgid "Return to stock"
 msgstr ""
 
-#: stock/templates/stock/item_base.html:193 templates/js/stock.js:1407
+#: stock/templates/stock/item_base.html:193 templates/js/stock.js:1421
 msgid "Uninstall stock item"
 msgstr ""
 
@@ -6280,8 +6280,8 @@ msgstr ""
 msgid "copy version information"
 msgstr ""
 
-#: templates/about.html:90 templates/js/modals.js:559
-#: templates/js/modals.js:837 templates/modals.html:29 templates/modals.html:54
+#: templates/about.html:90 templates/js/modals.js:568
+#: templates/js/modals.js:846 templates/modals.html:29 templates/modals.html:54
 #: templates/modals.html:97
 msgid "Close"
 msgstr ""
@@ -6342,7 +6342,7 @@ msgstr ""
 msgid "Unknown response from server"
 msgstr ""
 
-#: templates/js/barcode.js:119 templates/js/modals.js:892
+#: templates/js/barcode.js:119 templates/js/modals.js:901
 msgid "Invalid server response"
 msgstr ""
 
@@ -6487,7 +6487,7 @@ msgstr ""
 
 #: templates/js/build.js:708 templates/js/part.js:324 templates/js/part.js:546
 #: templates/js/stock.js:511 templates/js/stock.js:938
-#: templates/js/stock.js:1439
+#: templates/js/stock.js:1453
 msgid "Select"
 msgstr ""
 
@@ -6585,96 +6585,96 @@ msgstr ""
 msgid "Select Label Template"
 msgstr ""
 
-#: templates/js/modals.js:256
+#: templates/js/modals.js:265
 msgid "Waiting for server..."
 msgstr ""
 
-#: templates/js/modals.js:415
+#: templates/js/modals.js:424
 msgid "Show Error Information"
 msgstr ""
 
-#: templates/js/modals.js:482 templates/modals.html:76
+#: templates/js/modals.js:491 templates/modals.html:76
 msgid "Accept"
 msgstr ""
 
-#: templates/js/modals.js:483 templates/modals.html:75
+#: templates/js/modals.js:492 templates/modals.html:75
 msgid "Cancel"
 msgstr ""
 
-#: templates/js/modals.js:547
+#: templates/js/modals.js:556
 msgid "Loading Data"
 msgstr ""
 
-#: templates/js/modals.js:558 templates/js/modals.js:836
+#: templates/js/modals.js:567 templates/js/modals.js:845
 #: templates/modals.html:30 templates/modals.html:55
 msgid "Submit"
 msgstr ""
 
-#: templates/js/modals.js:788
+#: templates/js/modals.js:797
 msgid "Invalid response from server"
 msgstr ""
 
-#: templates/js/modals.js:788
+#: templates/js/modals.js:797
 msgid "Form data missing from server response"
 msgstr ""
 
-#: templates/js/modals.js:801
+#: templates/js/modals.js:810
 msgid "Error posting form data"
 msgstr ""
 
-#: templates/js/modals.js:892
+#: templates/js/modals.js:901
 msgid "JSON response missing form data"
 msgstr ""
 
-#: templates/js/modals.js:902
+#: templates/js/modals.js:911
 msgid "No Response"
 msgstr ""
 
-#: templates/js/modals.js:903
+#: templates/js/modals.js:912
 msgid "No response from the InvenTree server"
 msgstr ""
 
-#: templates/js/modals.js:907
+#: templates/js/modals.js:916
 msgid "Error 400: Bad Request"
 msgstr ""
 
-#: templates/js/modals.js:908
+#: templates/js/modals.js:917
 msgid "Server returned error code 400"
 msgstr ""
 
-#: templates/js/modals.js:912
+#: templates/js/modals.js:921
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/modals.js:913
+#: templates/js/modals.js:922
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/modals.js:917
+#: templates/js/modals.js:926
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/modals.js:918
+#: templates/js/modals.js:927
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/modals.js:922
+#: templates/js/modals.js:931
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/modals.js:923
+#: templates/js/modals.js:932
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/modals.js:927
+#: templates/js/modals.js:936
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/modals.js:928
+#: templates/js/modals.js:937
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
-#: templates/js/modals.js:931
+#: templates/js/modals.js:940
 msgid "Error requesting form data"
 msgstr ""
 
@@ -6980,19 +6980,19 @@ msgstr ""
 msgid "Delete tracking entry"
 msgstr ""
 
-#: templates/js/stock.js:1278
+#: templates/js/stock.js:1292
 msgid "Create New Location"
 msgstr ""
 
-#: templates/js/stock.js:1377
+#: templates/js/stock.js:1391
 msgid "Serial"
 msgstr ""
 
-#: templates/js/stock.js:1470 templates/js/table_filters.js:172
+#: templates/js/stock.js:1484 templates/js/table_filters.js:172
 msgid "Installed"
 msgstr ""
 
-#: templates/js/stock.js:1495
+#: templates/js/stock.js:1509
 msgid "Install item"
 msgstr ""
 
