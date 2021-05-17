@@ -40,6 +40,7 @@ from .models import PartSellPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
+from common.files import FileManager
 from common.views import FileManagementFormView
 
 from stock.models import StockLocation
@@ -752,6 +753,33 @@ class PartImport(FileManagementFormView):
         'default_location': 'default_location',
         'default_supplier': 'default_supplier',
     }
+    class MyManger(FileManager):
+        def setup(self):
+            self.REQUIRED_HEADERS = [
+                'Name',
+                'Description',
+            ]
+
+            self.OPTIONAL_MATCH_HEADERS = [
+                'Category',
+                'default_location',
+                'default_supplier',
+            ]
+
+            self.OPTIONAL_HEADERS = [
+                'Keywords',
+                'IPN',
+                'Revision',
+                'Link',
+                'default_expiry',
+                'minimum_stock',
+                'Units',
+                'Notes',
+            ]
+
+            return super().setup()
+
+    file_manager_class = MyManger
 
     def get_field_selection(self):
         """ Fill the form fields for step 3 """

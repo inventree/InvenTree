@@ -87,56 +87,16 @@ class FileManager:
         self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_MATCH_HEADERS + self.OPTIONAL_HEADERS
 
     def setup(self):
-        """ Setup headers depending on the file name """
+        """
+        Setup headers
+        should be overriden in usage to set the Different Headers
+        """
 
         if not self.name:
             return
 
-        if self.name == 'order':
-            self.REQUIRED_HEADERS = [
-                'Quantity',
-            ]
-
-            self.ITEM_MATCH_HEADERS = [
-                'Manufacturer_MPN',
-                'Supplier_SKU',
-            ]
-
-            self.OPTIONAL_HEADERS = [
-                'Purchase_Price',
-                'Reference',
-                'Notes',
-            ]
-
-            # Update headers
-            self.update_headers()
-
-        # TODO maybe not here but in an own function?
-        if self.name == 'part':
-            self.REQUIRED_HEADERS = [
-                'Name',
-                'Description',
-            ]
-
-            self.OPTIONAL_MATCH_HEADERS = [
-                'Category',
-                'default_location',
-                'default_supplier',
-            ]
-
-            self.OPTIONAL_HEADERS = [
-                'Keywords',
-                'IPN',
-                'Revision',
-                'Link',
-                'default_expiry',
-                'minimum_stock',
-                'Units',
-                'Notes',
-            ]
-
-            # Update headers
-            self.update_headers()
+        # Update headers
+        self.update_headers()
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers

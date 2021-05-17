@@ -189,6 +189,15 @@ class FileManagementFormView(MultiStepFormView):
     media_folder = 'file_upload/'
     extra_context_data = {}
 
+    def __init__(self, *args, **kwargs):
+        """ initialize the FormView """
+        # perform all checks and inits from MultiStepFormView
+        super().__init__(*args, **kwargs)
+
+        # Check 
+        if not(hasattr(self, 'file_manager_class') and issubclass(self.file_manager_class, FileManager)):
+            raise NotImplementedError('A subclass of a file manager class needs to be set!')
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
 
@@ -228,7 +237,7 @@ class FileManagementFormView(MultiStepFormView):
                 # Get file
                 file = upload_files.get('upload-file', None)
                 if file:
-                    self.file_manager = FileManager(file=file, name=self.name)
+                    self.file_manager = self.file_manager_class(file=file, name=self.name)
 
     def get_form_kwargs(self, step=None):
         """ Update kwargs to dynamically build forms """

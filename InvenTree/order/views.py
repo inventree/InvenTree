@@ -31,6 +31,7 @@ from part.models import Part
 
 from common.models import InvenTreeSetting
 from common.views import FileManagementFormView
+from common.files import FileManager
 
 from . import forms as order_forms
 from part.views import PartPricing
@@ -591,6 +592,26 @@ class PurchaseOrderUpload(FileManagementFormView):
         'reference': 'reference',
         'notes': 'notes',
     }
+    class MyManger(FileManager):
+        def setup(self):
+            self.REQUIRED_HEADERS = [
+                'Quantity',
+            ]
+
+            self.ITEM_MATCH_HEADERS = [
+                'Manufacturer_MPN',
+                'Supplier_SKU',
+            ]
+
+            self.OPTIONAL_HEADERS = [
+                'Purchase_Price',
+                'Reference',
+                'Notes',
+            ]
+
+            return super().setup()
+
+    file_manager_class = MyManger
 
     def get_order(self):
         """ Get order or return 404 """
