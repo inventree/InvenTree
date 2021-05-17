@@ -89,6 +89,15 @@ function setFieldOptions(fieldName, optionList, options={}) {
 }
 
 
+function clearFieldOptions(fieldName) {
+    /**
+     * Clear (emtpy) the options list for a particular field
+     */
+
+    setFieldOptions(fieldName, []);
+}
+
+
 function reloadFieldOptions(fieldName, options) {
     /* Reload the options for a given field,
      * using an AJAX request.
