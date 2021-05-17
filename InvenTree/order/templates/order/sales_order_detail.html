@@ -88,6 +88,9 @@ function showAllocationSubTable(index, row, element) {
             },
         },
         {
+            field: 'po'
+        },
+        {
             field: 'buttons',
             title: '{% trans "Actions" %}',
             formatter: function(value, row, index, field) {
@@ -159,9 +162,12 @@ function showFulfilledSubTable(index, row, element) {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;
                     }
 
-                    return renderLink(text, `/stock/item/${row.pk}/`);  
+                    return renderLink(text, `/stock/item/${row.pk}/`);
                 },
-            }
+            },
+            {
+                field: 'po'
+            },
         ],
     });
 }
@@ -270,6 +276,25 @@ $("#so-lines-table").inventreeTable({
         {
             field: 'notes',
             title: '{% trans "Notes" %}',
+        },
+        {
+            field: 'po',
+            title: '{% trans "PO" %}',
+            formatter: function(value, row, index, field) {
+                var po_name = "";
+                if (row.allocated) {
+                    row.allocations.forEach(function(allocation) {
+                        if (allocation.po != po_name) {
+                            if (po_name) {
+                                po_name = "-";
+                            } else {
+                                po_name = allocation.po
+                            }
+                        }
+                    })
+                }
+                return `<div>` + po_name + `</div>`;
+            }
         },
         {% if order.status == SalesOrderStatus.PENDING %}
         {
