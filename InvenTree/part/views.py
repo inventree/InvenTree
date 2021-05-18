@@ -822,28 +822,7 @@ class PartImport(FileManagementFormView):
 
     def done(self, form_list, **kwargs):
         """ Create items """
-        items = {}
-
-        for form_key, form_value in self.get_all_cleaned_data().items():
-            # Split key from row value
-            try:
-                (field, idx) = form_key.split('-')
-            except ValueError:
-                continue
-
-            try:
-                if idx not in items:
-                    # Insert into items
-                    items.update({
-                        idx: {
-                            self.form_field_map[field]: form_value,
-                        }
-                    })
-                else:
-                    # Update items
-                    items[idx][self.form_field_map[field]] = form_value
-            except KeyError:
-                pass
+        items = self.get_clean_items()
 
         import_done = 0
         import_error = []

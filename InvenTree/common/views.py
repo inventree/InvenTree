@@ -450,6 +450,33 @@ class FileManagementFormView(MultiStepFormView):
         """
         pass
 
+    def get_clean_items(self):
+        """ returns dict with all cleaned values """
+        items = {}
+
+        for form_key, form_value in self.get_all_cleaned_data().items():
+            # Split key from row value
+            try:
+                (field, idx) = form_key.split('-')
+            except ValueError:
+                continue
+
+            try:
+                if idx not in items:
+                    # Insert into items
+                    items.update({
+                        idx: {
+                            self.form_field_map[field]: form_value,
+                        }
+                    })
+                else:
+                    # Update items
+                    items[idx][self.form_field_map[field]] = form_value
+            except KeyError:
+                pass
+
+        return items
+
     def check_field_selection(self, form):
         """ Check field matching """
 

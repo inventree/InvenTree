@@ -767,26 +767,7 @@ class PurchaseOrderUpload(FileManagementFormView):
         """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
         
         order = self.get_order()
-
-        items = {}
-
-        for form_key, form_value in self.get_all_cleaned_data().items():
-            # Split key from row value
-            try:
-                (field, idx) = form_key.split('-')
-            except ValueError:
-                continue
-
-            if idx not in items:
-                # Insert into items
-                items.update({
-                    idx: {
-                        self.form_field_map[field]: form_value,
-                    }
-                })
-            else:
-                # Update items
-                items[idx][self.form_field_map[field]] = form_value
+        items = self.get_clean_items()
 
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
