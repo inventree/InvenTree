@@ -191,10 +191,27 @@ class FileManagementFormView(MultiStepFormView):
 
     def __init__(self, *args, **kwargs):
         """ initialize the FormView """
-        # perform all checks and inits from MultiStepFormView
+        # check if form_list should be overriden
+        if hasattr(self, 'form_list_override'):
+            # check for list
+            if not isinstance(self.form_list_override, list):
+                raise ValueError('form_list_override must be a list')
+
+            # loop through and override /add form_list enrties
+            for entry in self.form_list_override:
+                # fetch postition
+                pos = [self.form_list.index(i) for i in self.form_list if i[0] == 'items']
+                # replace if exists
+                if pos:
+                    self.form_list[pos[0]] = entry
+                # or append
+                else:
+                    self.form_list.append(entry)
+
+        # perform all checks and inits for MultiStepFormView
         super().__init__(*args, **kwargs)
 
-        # Check 
+        # Check for file manager class
         if not(hasattr(self, 'file_manager_class') and issubclass(self.file_manager_class, FileManager)):
             raise NotImplementedError('A subclass of a file manager class needs to be set!')
 

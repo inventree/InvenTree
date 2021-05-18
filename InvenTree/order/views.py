@@ -32,6 +32,7 @@ from part.models import Part
 from common.models import InvenTreeSetting
 from common.views import FileManagementFormView
 from common.files import FileManager
+from common import forms as cm_forms
 
 from . import forms as order_forms
 from part.views import PartPricing
@@ -573,7 +574,16 @@ class SalesOrderShip(AjaxUpdateView):
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
+    class MyMatch(cm_forms.MatchItem):
+        """ override MatchItem fields """
+        def get_special_field(self, col_guess, row, file_manager):
+            """ set special field """
+            # run default
+            super().get_special_field(col_guess, row, file_manager)
     name = 'order'
+    form_list_override = [
+        ('items', MyMatch),
+    ]
     form_steps_template = [
         'order/order_wizard/po_upload.html',
         'order/order_wizard/match_fields.html',
@@ -584,7 +594,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         _("Match Fields"),
         _("Match Supplier Parts"),
     ]
-    # Form field name: PurchaseOrderLineItem field
     form_field_map = {
         'item_select': 'part',
         'quantity': 'quantity',
