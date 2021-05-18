@@ -783,15 +783,6 @@ class PartImport(FileManagementFormView):
 
     def get_field_selection(self):
         """ Fill the form fields for step 3 """
-
-        self.file_manager.setup()
-        # collect reference indexes
-        idx_s = {}
-        for col in self.file_manager.HEADERS:
-            index = self.get_column_index(col)
-            if index >= 0:
-                idx_s[col] = index
-
         # fetch available elements
         self.allowed_items = {}
         self.matches = {}
@@ -802,6 +793,15 @@ class PartImport(FileManagementFormView):
         self.matches['default_location'] = ['name__contains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
         self.matches['default_supplier'] = ['SKU__contains']
+
+        # setup
+        self.file_manager.setup()
+        # collect reference indexes
+        idx_s = {}
+        for col in self.file_manager.HEADERS:
+            index = self.get_column_index(col)
+            if index >= 0:
+                idx_s[col] = index
 
         for row in self.rows:
             for idx in idx_s:
