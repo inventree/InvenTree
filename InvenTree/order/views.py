@@ -609,23 +609,20 @@ class PurchaseOrderUpload(FileManagementFormView):
                 )
 
     class MyFileManager(FileManager):
-        def setup(self):
-            self.REQUIRED_HEADERS = [
-                'Quantity',
-            ]
+        REQUIRED_HEADERS = [
+            'Quantity',
+        ]
 
-            self.ITEM_MATCH_HEADERS = [
-                'Manufacturer_MPN',
-                'Supplier_SKU',
-            ]
+        ITEM_MATCH_HEADERS = [
+            'Manufacturer_MPN',
+            'Supplier_SKU',
+        ]
 
-            self.OPTIONAL_HEADERS = [
-                'Purchase_Price',
-                'Reference',
-                'Notes',
-            ]
-
-            return super().setup()
+        OPTIONAL_HEADERS = [
+            'Purchase_Price',
+            'Reference',
+            'Notes',
+        ]
 
     name = 'order'
     form_list_override = [

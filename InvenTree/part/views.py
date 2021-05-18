@@ -754,31 +754,27 @@ class PartImport(FileManagementFormView):
         'default_supplier': 'default_supplier',
     }
     class MyManger(FileManager):
-        def setup(self):
-            self.REQUIRED_HEADERS = [
-                'Name',
-                'Description',
-            ]
+        REQUIRED_HEADERS = [
+            'Name',
+            'Description',
+        ]
 
-            self.OPTIONAL_MATCH_HEADERS = [
-                'Category',
-                'default_location',
-                'default_supplier',
-            ]
+        OPTIONAL_MATCH_HEADERS = [
+            'Category',
+            'default_location',
+            'default_supplier',
+        ]
 
-            self.OPTIONAL_HEADERS = [
-                'Keywords',
-                'IPN',
-                'Revision',
-                'Link',
-                'default_expiry',
-                'minimum_stock',
-                'Units',
-                'Notes',
-            ]
-
-            return super().setup()
-
+        OPTIONAL_HEADERS = [
+            'Keywords',
+            'IPN',
+            'Revision',
+            'Link',
+            'default_expiry',
+            'minimum_stock',
+            'Units',
+            'Notes',
+        ]
     file_manager_class = MyManger
 
     def get_field_selection(self):
