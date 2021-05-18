@@ -1017,6 +1017,11 @@ function loadStockTrackingTable(table, options) {
         formatter: function(details, row, index, field) {
             var html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
+            if (!details) {
+                html += '</table>';
+                return html;
+            }
+
             // Location information
             if (details.location) {
 
