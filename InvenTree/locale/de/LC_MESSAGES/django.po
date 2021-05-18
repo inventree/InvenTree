@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-18 13:00+0000\n"
-"PO-Revision-Date: 2021-05-18 13:05\n"
+"PO-Revision-Date: 2021-05-18 22:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1525,11 +1525,11 @@ msgstr "Standard-Währung"
 
 #: common/models.py:91
 msgid "fixer.io API key"
-msgstr ""
+msgstr "fixer.io API-Schlüssel"
 
 #: common/models.py:92
 msgid "API key for fixer.io currency conversion service"
-msgstr ""
+msgstr "API-Schlüssel für fixer.io - wird zur Währungsumrechnung verwendet"
 
 #: common/models.py:97
 msgid "Download from URL"
