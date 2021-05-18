@@ -726,6 +726,29 @@ class PartCreate(AjaxCreateView):
 class PartImport(FileManagementFormView):
     ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
 
+    class MyFileManager(FileManager):
+        REQUIRED_HEADERS = [
+            'Name',
+            'Description',
+        ]
+
+        OPTIONAL_MATCH_HEADERS = [
+            'Category',
+            'default_location',
+            'default_supplier',
+        ]
+
+        OPTIONAL_HEADERS = [
+            'Keywords',
+            'IPN',
+            'Revision',
+            'Link',
+            'default_expiry',
+            'minimum_stock',
+            'Units',
+            'Notes',
+        ]
+
     name = 'part'
     form_steps_template = [
         'part/import_wizard/part_upload.html',
@@ -753,29 +776,7 @@ class PartImport(FileManagementFormView):
         'default_location': 'default_location',
         'default_supplier': 'default_supplier',
     }
-    class MyManger(FileManager):
-        REQUIRED_HEADERS = [
-            'Name',
-            'Description',
-        ]
-
-        OPTIONAL_MATCH_HEADERS = [
-            'Category',
-            'default_location',
-            'default_supplier',
-        ]
-
-        OPTIONAL_HEADERS = [
-            'Keywords',
-            'IPN',
-            'Revision',
-            'Link',
-            'default_expiry',
-            'minimum_stock',
-            'Units',
-            'Notes',
-        ]
-    file_manager_class = MyManger
+    file_manager_class = MyFileManager
 
     def get_field_selection(self):
         """ Fill the form fields for step 3 """
