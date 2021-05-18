@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-17 10:46+0000\n"
-"PO-Revision-Date: 2021-05-13 04:17\n"
+"PO-Revision-Date: 2021-05-17 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -19,30 +19,30 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "未找到 API 端点"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "未指定操作"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "未找到指定操作"
 
 #: InvenTree/fields.py:44
 msgid "Enter date"
-msgstr ""
+msgstr "输入日期"
 
 #: InvenTree/forms.py:110 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
-msgstr ""
+msgstr "确认"
 
 #: InvenTree/forms.py:126
 msgid "Confirm delete"
-msgstr ""
+msgstr "确认删除"
 
 #: InvenTree/forms.py:127
 msgid "Confirm item deletion"
@@ -50,27 +50,27 @@ msgstr ""
 
 #: InvenTree/forms.py:159 templates/registration/login.html:77
 msgid "Enter password"
-msgstr ""
+msgstr "输入密码"
 
 #: InvenTree/forms.py:160
 msgid "Enter new password"
-msgstr ""
+msgstr "输入新密码"
 
 #: InvenTree/forms.py:167
 msgid "Confirm password"
-msgstr ""
+msgstr "确认密码"
 
 #: InvenTree/forms.py:168
 msgid "Confirm new password"
-msgstr ""
+msgstr "确认新密码"
 
 #: InvenTree/forms.py:203
 msgid "Apply Theme"
-msgstr ""
+msgstr "应用主题"
 
 #: InvenTree/forms.py:233
 msgid "Select Category"
-msgstr ""
+msgstr "选择分类"
 
 #: InvenTree/helpers.py:377
 #, python-brace-format
@@ -99,7 +99,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:453
 msgid "No serial numbers found"
-msgstr ""
+msgstr "未找到序列号"
 
 #: InvenTree/helpers.py:457
 #, python-brace-format
@@ -108,29 +108,29 @@ msgstr ""
 
 #: InvenTree/models.py:59 stock/models.py:1761
 msgid "Attachment"
-msgstr ""
+msgstr "附件"
 
 #: InvenTree/models.py:60
 msgid "Select file to attach"
-msgstr ""
+msgstr "选择附件"
 
 #: InvenTree/models.py:62 templates/attachment_table.html:16
 msgid "Comment"
-msgstr ""
+msgstr "注释"
 
 #: InvenTree/models.py:62
 msgid "File comment"
-msgstr ""
+msgstr "文件注释"
 
 #: InvenTree/models.py:68 InvenTree/models.py:69 part/models.py:1946
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1146
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: InvenTree/models.py:72
 msgid "upload date"
-msgstr ""
+msgstr "上传日期"
 
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2087 part/templates/part/params.html:27
@@ -138,7 +138,7 @@ msgstr ""
 #: templates/InvenTree/search.html:289 templates/js/part.js:110
 #: templates/js/part.js:553 templates/js/stock.js:944
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: InvenTree/models.py:114 build/models.py:134
 #: build/templates/build/detail.html:21 company/models.py:339
@@ -2154,8 +2154,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -6068,8 +6067,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7474,3 +7472,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+

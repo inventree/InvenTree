@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-17 10:46+0000\n"
-"PO-Revision-Date: 2021-05-13 04:17\n"
+"PO-Revision-Date: 2021-05-17 10:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -298,11 +298,11 @@ msgstr "Aus Baugruppe entfernt"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Komponente installiert"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Komponente entfernt"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
@@ -2154,11 +2154,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -2671,11 +2669,11 @@ msgstr "Label-Höhe in mm"
 
 #: label/models.py:144
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Dateinamen-Muster"
 
 #: label/models.py:145
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Muster für die Erstellung von Label-Dateinamen"
 
 #: label/models.py:244 label/models.py:297
 msgid "Query filters (comma-separated list of key=value pairs"
@@ -3300,7 +3298,7 @@ msgstr "Erledigt"
 
 #: order/templates/order/sales_order_detail.html:282
 msgid "PO"
-msgstr ""
+msgstr "PO"
 
 #: order/templates/order/sales_order_detail.html:312
 msgid "Allocate serial numbers"
@@ -4788,7 +4786,7 @@ msgstr "neue Variante anlegen"
 
 #: part/templatetags/inventree_extras.py:97
 msgid "Unknown database"
-msgstr ""
+msgstr "Unbekannte Datenbank"
 
 #: part/views.py:89
 msgid "Add Related Part"
@@ -6070,13 +6068,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6284,7 +6280,7 @@ msgstr "In die Zwischenablage kopieren"
 
 #: templates/about.html:80
 msgid "copy version information"
-msgstr ""
+msgstr "Versionsinformationen kopieren"
 
 #: templates/about.html:90 templates/js/modals.js:568
 #: templates/js/modals.js:846 templates/modals.html:29 templates/modals.html:54
@@ -7322,20 +7318,16 @@ msgid "Instance Name"
 msgstr "Instanzname"
 
 #: templates/stats.html:18
-#, fuzzy
-#| msgid "Data"
 msgid "Database"
-msgstr "Wert"
+msgstr "Datenbank"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Server läuft im Debug-Modus"
 
 #: templates/stats.html:33
-#, fuzzy
-#| msgid "Debug Mode"
 msgid "Docker Mode"
-msgstr "Entwickler-Modus"
+msgstr ""
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
@@ -7484,3 +7476,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
