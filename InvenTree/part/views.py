@@ -796,16 +796,18 @@ class PartImport(FileManagementFormView):
 
         # setup
         self.file_manager.setup()
-        # collect reference indexes
-        idx_s = {}
+        # collect submitted column indexes
+        col_ids = {}
         for col in self.file_manager.HEADERS:
             index = self.get_column_index(col)
             if index >= 0:
-                idx_s[col] = index
+                col_ids[col] = index
 
+        # parse all rows
         for row in self.rows:
-            for idx in idx_s:
-                data = row['data'][idx_s[idx]]['cell']
+            # check each submitted column
+            for idx in col_ids:
+                data = row['data'][col_ids[idx]]['cell']
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                     try:

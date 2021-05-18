@@ -576,6 +576,7 @@ class SalesOrderShip(AjaxUpdateView):
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
+    # overriden classes
     class MyMatch(cm_forms.MatchItem):
         """ override MatchItem fields """
         def get_special_field(self, col_guess, row, file_manager):
@@ -607,7 +608,24 @@ class PurchaseOrderUpload(FileManagementFormView):
                     default_amount=self.clean_nbr(row.get('price', '')),
                 )
 
+    class MyFileManager(FileManager):
+        def setup(self):
+            self.REQUIRED_HEADERS = [
+                'Quantity',
+            ]
 
+            self.ITEM_MATCH_HEADERS = [
+                'Manufacturer_MPN',
+                'Supplier_SKU',
+            ]
+
+            self.OPTIONAL_HEADERS = [
+                'Purchase_Price',
+                'Reference',
+                'Notes',
+            ]
+
+            return super().setup()
 
     name = 'order'
     form_list_override = [
@@ -630,26 +648,7 @@ class PurchaseOrderUpload(FileManagementFormView):
         'reference': 'reference',
         'notes': 'notes',
     }
-    class MyManger(FileManager):
-        def setup(self):
-            self.REQUIRED_HEADERS = [
-                'Quantity',
-            ]
-
-            self.ITEM_MATCH_HEADERS = [
-                'Manufacturer_MPN',
-                'Supplier_SKU',
-            ]
-
-            self.OPTIONAL_HEADERS = [
-                'Purchase_Price',
-                'Reference',
-                'Notes',
-            ]
-
-            return super().setup()
-
-    file_manager_class = MyManger
+    file_manager_class = MyFileManager
 
     def get_order(self):
         """ Get order or return 404 """
