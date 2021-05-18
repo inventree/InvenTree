@@ -30,12 +30,14 @@
         </a>
     </li>
 
+    {% if user.is_staff and roles.part.add %}
     <li class='list-group-item {% if tab == "import" %}active{% endif %}' title='{% trans "Import Parts" %}'>
         <a href='{% url "part-import" %}'>
             <span class='fas fa-file-upload'></span>
             {% trans "Import Parts" %}
         </a>
     </li>
+    {% endif %}
 
     {% if category %}
     <li class='list-group-item {% if tab == "parameters" %}active{% endif %}' title='{% trans "Parameters" %}'>

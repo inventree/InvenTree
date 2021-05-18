@@ -725,6 +725,7 @@ class PartCreate(AjaxCreateView):
 
 class PartImport(FileManagementFormView):
     ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
+    permission_required = 'part.add'
 
     class MyFileManager(FileManager):
         REQUIRED_HEADERS = [
