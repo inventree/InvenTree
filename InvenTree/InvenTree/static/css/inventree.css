@@ -907,6 +907,7 @@ input[type="submit"] {
 
 .info-messages .alert {
     padding: 5px;
+    margin-bottom: 10px;
 }
 
 .part-allocation {
