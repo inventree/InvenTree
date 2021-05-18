@@ -901,6 +901,14 @@ input[type="submit"] {
     color: #e00;
 }
 
+.info-messages {
+    padding: 5px;
+}
+
+.info-messages .alert {
+    padding: 5px;
+}
+
 .part-allocation {
     padding: 3px 10px;
     border: 1px solid #ccc;
