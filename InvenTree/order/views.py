@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
-from django.forms import HiddenInput, IntegerField
+from django.forms import HiddenInput, IntegerField, CharField, NumberInput
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -43,6 +43,8 @@ from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
+
+from djmoney.forms.fields import MoneyField
 
 logger = logging.getLogger("inventree")
 
@@ -580,6 +582,33 @@ class PurchaseOrderUpload(FileManagementFormView):
             """ set special field """
             # run default
             super().get_special_field(col_guess, row, file_manager)
+
+            # set quantity field
+            if 'quantity' in col_guess.lower():
+                return CharField(
+                    required=False,
+                    widget=NumberInput(attrs={
+                        'name': 'quantity' + str(row['index']),
+                        'class': 'numberinput',
+                        'type': 'number',
+                        'min': '0',
+                        'step': 'any',
+                        'value': self.clean_nbr(row.get('quantity', '')),
+                    })
+                )
+            # set price field
+            elif 'price' in col_guess.lower():
+                return MoneyField(
+                    label=_(col_guess),
+                    default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
+                    decimal_places=5,
+                    max_digits=19,
+                    required=False,
+                    default_amount=self.clean_nbr(row.get('price', '')),
+                )
+
+
+
     name = 'order'
     form_list_override = [
         ('items', MyMatch),

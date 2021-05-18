@@ -10,8 +10,6 @@ from decimal import Decimal, InvalidOperation
 from django import forms
 from django.utils.translation import gettext as _
 
-from djmoney.forms.fields import MoneyField
-
 from InvenTree.forms import HelperForm
 
 from .files import FileManager
@@ -119,21 +117,6 @@ class MatchItem(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-        def clean(number):
-            """ Clean-up decimal value """
-
-            # Check if empty
-            if not number:
-                return number
-
-            # Check if decimal type
-            try:
-                clean_number = Decimal(number)
-            except InvalidOperation:
-                clean_number = number
-
-            return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
-
         # Setup FileManager
         file_manager.setup()
 
@@ -148,32 +131,20 @@ class MatchItem(forms.Form):
                     # Set field name
                     field_name = col_guess.lower() + '-' + str(row['index'])
 
+                    # check if field def was overriden
+                    overriden_field = self.get_special_field(col_guess, row, file_manager)
+                    if overriden_field:
+                        self.fields[field_name] = overriden_field
+
                     # Create input for required headers
-                    if col_guess in file_manager.REQUIRED_HEADERS:
+                    elif col_guess in file_manager.REQUIRED_HEADERS:
+                        # Get value
+                        value = row.get(col_guess.lower(), '')
                         # Set field input box
-
-                        # TODO maybe not here but in an own function?
-                        if 'quantity' in col_guess.lower():
-                            self.fields[field_name] = forms.CharField(
-                                required=False,
-                                widget=forms.NumberInput(attrs={
-                                    'name': 'quantity' + str(row['index']),
-                                    'class': 'numberinput',  # form-control',
-                                    'type': 'number',
-                                    'min': '0',
-                                    'step': 'any',
-                                    'value': clean(row.get('quantity', '')),
-                                })
-                            )
-
-                        else:
-                            # Get value
-                            value = row.get(col_guess.lower(), '')
-                            # Set field input box
-                            self.fields[field_name] = forms.CharField(
-                                required=True,
-                                initial=value,
-                            )
+                        self.fields[field_name] = forms.CharField(
+                            required=True,
+                            initial=value,
+                        )
             
                     # Create item selection box
                     elif col_guess in file_manager.ITEM_MATCH_HEADERS:
@@ -204,20 +175,10 @@ class MatchItem(forms.Form):
                         # Get value
                         value = row.get(col_guess.lower(), '')
                         # Set field input box
-                        if 'price' in col_guess.lower():
-                            self.fields[field_name] = MoneyField(
-                                label=_(col_guess),
-                                default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
-                                decimal_places=5,
-                                max_digits=19,
-                                required=False,
-                                default_amount=clean(value),
-                            )
-                        else:
-                            self.fields[field_name] = forms.CharField(
-                                required=False,
-                                initial=value,
-                            )
+                        self.fields[field_name] = forms.CharField(
+                            required=False,
+                            initial=value,
+                        )
 
                     # Optional item selection box
                     elif col_guess in file_manager.OPTIONAL_MATCH_HEADERS:
@@ -237,3 +198,22 @@ class MatchItem(forms.Form):
                         if item_match:
                             # Update initial value
                             self.fields[field_name].initial = item_match.id
+
+    def clean_nbr(self, number):
+        """ Clean-up decimal value """
+
+        # Check if empty
+        if not number:
+            return number
+
+        # Check if decimal type
+        try:
+            clean_number = Decimal(number)
+        except InvalidOperation:
+            clean_number = number
+
+        return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
+    def get_special_field(self, col_guess, row, file_manager):
+        """ function to be overriden in inherited forms to add specific form settings """
+        pass
