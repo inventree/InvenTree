@@ -186,7 +186,7 @@ def update_exchange_rates():
 
     base = settings.BASE_CURRENCY
 
-    result = backend.update_rates(base_currency=base, symbols=currencies)
+    backend.update_rates(base_currency=base, symbols=currencies)
 
 
 def send_email(subject, body, recipients, from_email=None):
