@@ -44,3 +44,8 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.MINUTES,
             minutes=15
         )
+
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.update_exchange_rates',
+            schedule_type=Schedule.DAILY,
+        )

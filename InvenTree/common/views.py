@@ -449,8 +449,8 @@ class FileManagementFormView(MultiStepFormView):
 
             if guess:
                 n = list(self.column_selections.values()).count(self.column_selections[col])
-                if n > 1:
-                    duplicates.append(col)
+                if n > 1 and self.column_selections[col] not in duplicates:
+                    duplicates.append(self.column_selections[col])
         
         # Store extra context data
         self.extra_context_data = {

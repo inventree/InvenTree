@@ -13,6 +13,27 @@
         <td>{% trans "Instance Name" %}</td>
         <td>{% inventree_instance_name %}</td>
     </tr>
+    <tr>
+        <td><span class='fas fa-database'></span></td>
+        <td>{% trans "Database" %}</td>
+        <td>{% inventree_db_engine %}</td>
+    </tr>
+    {% inventree_in_debug_mode as debug_mode %}
+    {% if debug_mode %}
+    <tr>
+        <td><span class='fas fa-laptop-code'></span></td>
+        <td>{% trans "Debug Mode" %}</td>
+        <td>{% trans "Server is running in debug mode" %}</td>
+    </tr>
+    {% endif %}
+    {% inventree_docker_mode as docker_mode %}
+    {% if docker_mode %}
+    <tr>
+        <td><span class='fab fa-docker'></span></td>
+        <td>{% trans "Docker Mode" %}</td>
+        <td>{% trans "Server is deployed using docker" %}</td>
+    </tr>
+    {% endif %}
     {% if user.is_staff %}
     <tr>
         <td><span class='fas fa-server'></span></td>
