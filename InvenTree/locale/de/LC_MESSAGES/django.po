@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-18 13:00+0000\n"
-"PO-Revision-Date: 2021-05-17 10:47\n"
+"PO-Revision-Date: 2021-05-18 22:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1525,11 +1525,11 @@ msgstr "Standard-Währung"
 
 #: common/models.py:91
 msgid "fixer.io API key"
-msgstr ""
+msgstr "fixer.io API-Schlüssel"
 
 #: common/models.py:92
 msgid "API key for fixer.io currency conversion service"
-msgstr ""
+msgstr "API-Schlüssel für fixer.io - wird zur Währungsumrechnung verwendet"
 
 #: common/models.py:97
 msgid "Download from URL"
@@ -2162,11 +2162,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -3243,8 +3241,6 @@ msgid "Remove line"
 msgstr "Position entfernen"
 
 #: order/templates/order/sales_order_base.html:16
-#, fuzzy
-#| msgid "This SalesOrder has not been fully allocated"
 msgid "This Sales Order has not been fully allocated"
 msgstr "Dieser Auftrag ist nicht vollständig zugeordnet"
 
@@ -6080,13 +6076,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7341,11 +7335,11 @@ msgstr "Server läuft im Debug-Modus"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Docker-Modus"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Server wird mit Docker bereitgestellt"
 
 #: templates/stats.html:40
 msgid "Server status"
@@ -7490,3 +7484,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
