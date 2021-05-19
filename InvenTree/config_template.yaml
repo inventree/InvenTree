@@ -62,6 +62,13 @@ currencies:
   - JPY
   - NZD
   - USD
+# Define base currency (can also be defined in the global settings)
+# base_currency: USD
+# Define exchange backend
+# Choices are:
+# - InvenTreeManualExchangeBackend
+# - InvenTreeFixerExchangeBackend
+exchange_backend: InvenTreeFixerExchangeBackend
 
 # Email backend configuration
 # Ref: https://docs.djangoproject.com/en/dev/topics/email/

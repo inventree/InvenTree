@@ -515,7 +515,7 @@ CURRENCIES = CONFIG.get(
 
 BASE_CURRENCY = CONFIG.get('base_currency', 'USD')
 
-EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
+EXCHANGE_BACKEND = 'InvenTree.exchange.' + CONFIG.get('exchange_backend', 'InvenTreeManualExchangeBackend')
 
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})
