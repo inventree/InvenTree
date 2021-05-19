@@ -1,0 +1,43 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='currencies' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "Currency Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+<table class='table table-striped table-condensed'>
+    {% include "InvenTree/settings/header.html" %}
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_DEFAULT_CURRENCY" icon="fa-dollar-sign" %}
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_FIXER_API_KEY" icon="fa-key" %}
+    </tbody>
+</table>
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>{% trans "Exchange Rates" %}</h4>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed' id='exchange-rates'>
+</table>
+
+<form action="{% url 'refresh-exchange-rates' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class='btn btn-primary'>{% trans "Refresh Exchange Rates" %}</button>
+</form>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+{% comment %} TODO: Update exchange-rates table! {% endcomment %}
+{% comment %} Or do it using context instead of JS? {% endcomment %}
+{% endblock %}

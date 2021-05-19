@@ -175,9 +175,9 @@ def update_exchange_rates():
     
     # Get backend
     if 'InvenTreeManualExchangeBackend' in settings.EXCHANGE_BACKEND:
-        backend = InvenTreeFixerExchangeBackend()
-    else:
         backend = InvenTreeManualExchangeBackend()
+    else:
+        backend = InvenTreeFixerExchangeBackend()
 
     # Update rates
     backend.update_rates()

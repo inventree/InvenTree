@@ -27,6 +27,7 @@ from users.models import check_user_role, RuleSet
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import ColorThemeSelectForm, SettingCategorySelectForm
 from .helpers import str2bool
+from .tasks import update_exchange_rates
 
 from rest_framework import views
 
@@ -908,3 +909,17 @@ class DatabaseStatsView(AjaxView):
         """
 
         return ctx
+
+
+class ExchangeRatesView(SettingsView):
+
+    success_url = reverse_lazy('settings-currencies')
+
+    def post(self, request, *args, **kwargs):
+
+        # Process exchange rates
+        update_exchange_rates()
+
+        # TODO: Update context
+
+        return HttpResponseRedirect(self.success_url)
