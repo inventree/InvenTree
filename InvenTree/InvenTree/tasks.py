@@ -167,17 +167,13 @@ def update_exchange_rates():
     """
 
     try:
-        from .exchange import InvenTreeManualExchangeBackend, InvenTreeFixerExchangeBackend
-        from django.conf import settings
+        from .exchange import get_exchange_rate_backend
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
     
-    # Get backend
-    if 'InvenTreeManualExchangeBackend' in settings.EXCHANGE_BACKEND:
-        backend = InvenTreeManualExchangeBackend()
-    else:
-        backend = InvenTreeFixerExchangeBackend()
+    # Get exchange rate backend
+    backend = get_exchange_rate_backend()
 
     # Update rates
     backend.update_rates()

@@ -26,8 +26,9 @@ from users.models import check_user_role, RuleSet
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import ColorThemeSelectForm, SettingCategorySelectForm
+from .forms import SettingExchangeRatesForm
 from .helpers import str2bool
-from .tasks import update_exchange_rates
+from .exchange import get_exchange_rate_backend
 
 from rest_framework import views
 
@@ -911,14 +912,44 @@ class DatabaseStatsView(AjaxView):
         return ctx
 
 
-class ExchangeRatesView(SettingsView):
+class CurrencySettingsView(FormView):
 
+    form_class = SettingExchangeRatesForm
+    template_name = 'InvenTree/settings/currencies.html'
     success_url = reverse_lazy('settings-currencies')
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        # Get exchange rate backend
+        exchange_rate_backend = get_exchange_rate_backend()
+
+        context['exchange_backend'] = exchange_rate_backend.name
+
+        return context
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        # Get exchange rate backend
+        exchange_rate_backend = get_exchange_rate_backend()
+
+        if exchange_rate_backend.name == 'fixer.io':
+            # Disable all the fields
+            for field in form.fields:
+                form.fields[field].disabled = True
+
+        return form
 
     def post(self, request, *args, **kwargs):
 
+        # Get exchange rate backend
+        exchange_rate_backend = get_exchange_rate_backend()
+
         # Process exchange rates
-        update_exchange_rates()
+        exchange_rate_backend.update_rates()
 
         # TODO: Update context
 
