@@ -68,7 +68,7 @@ currencies:
 # Choices are:
 # - InvenTreeManualExchangeBackend
 # - InvenTreeFixerExchangeBackend
-exchange_backend: InvenTreeFixerExchangeBackend
+exchange_backend: InvenTreeManualExchangeBackend
 
 # Email backend configuration
 # Ref: https://docs.djangoproject.com/en/dev/topics/email/
