@@ -22,11 +22,12 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>{% trans "Exchange Rates" %}</h4>
+        <h4>{% trans "Exchange Rates - Convert to " %}{{ default_currency }}</h4>
     </div>
 </div>
 
 <form action="{% url 'settings-currencies' %}" method="post">
+    <div id='exchange_rate_form'>
     {% csrf_token %}
     {% load crispy_forms_tags %}
     {% crispy form %}
@@ -35,6 +36,17 @@
     {% else %}
         <button type="submit" class='btn btn-primary'>{% trans "Update Exchange Rates" %}</button>
     {% endif %}
+    </div>
 </form>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% if api_rates_success is False %}
+    var alert_msg = {% blocktrans %}"Failed to refresh exchange rates. Verify your API key and/or subscription plan" {% endblocktrans %};
+    showAlertOrCache("alert-danger", alert_msg, null, 5000);
+{% endif %}
 
 {% endblock %}

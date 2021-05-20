@@ -15,6 +15,7 @@ from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppende
 
 from common.models import ColorTheme
 from part.models import PartCategory
+
 from .exchange import InvenTreeManualExchangeBackend
 
 
@@ -254,7 +255,7 @@ class SettingExchangeRatesForm(forms.Form):
         exchange_rate_backend.update_default_currency()
 
         for currency in exchange_rate_backend.currencies:
-            if currency != exchange_rate_backend.default_currency:
+            if currency != exchange_rate_backend.base_currency:
                 # Set field name
                 field_name = currency
                 # Set field input box
@@ -264,9 +265,10 @@ class SettingExchangeRatesForm(forms.Form):
                     widget=forms.NumberInput(attrs={
                         'name': field_name,
                         'class': 'numberinput',
+                        'style': 'width: 200px;',
                         'type': 'number',
                         'min': '0',
                         'step': 'any',
-                        'value': '',
+                        'value': 0,
                     })
                 )
