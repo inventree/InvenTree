@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-18 13:00+0000\n"
+"POT-Creation-Date: 2021-05-22 11:15+0000\n"
 "PO-Revision-Date: 2021-05-18 22:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -2162,9 +2162,11 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid "There are %(count)s parts sourced from this company.<br>\n"
+msgid ""
+"There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr ""
+"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -6076,11 +6078,13 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr "\n"
+msgstr ""
+"\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6251,46 +6255,52 @@ msgid "Update Available"
 msgstr "Aktualisierung verfügbar"
 
 #: templates/about.html:34
+#, fuzzy
+#| msgid "InvenTree Version"
+msgid "API Version"
+msgstr "InvenTree-Version"
+
+#: templates/about.html:39
 msgid "Django Version"
 msgstr "Django-Version"
 
-#: templates/about.html:41
+#: templates/about.html:46
 msgid "Commit Hash"
 msgstr "Commit-Hash"
 
-#: templates/about.html:48
+#: templates/about.html:53
 msgid "Commit Date"
 msgstr "Commit-Datum"
 
-#: templates/about.html:53
+#: templates/about.html:58
 msgid "InvenTree Documentation"
 msgstr "InvenTree-Dokumentation"
 
-#: templates/about.html:58
+#: templates/about.html:63
 msgid "View Code on GitHub"
 msgstr "Code auf GitHub ansehen"
 
-#: templates/about.html:63
+#: templates/about.html:68
 msgid "Credits"
 msgstr "Danksagung"
 
-#: templates/about.html:68
+#: templates/about.html:73
 msgid "Mobile App"
 msgstr "Mobile App"
 
-#: templates/about.html:73
+#: templates/about.html:78
 msgid "Submit Bug Report"
 msgstr "Fehlerbericht senden"
 
-#: templates/about.html:80 templates/clip.html:4
+#: templates/about.html:85 templates/clip.html:4
 msgid "copy to clipboard"
 msgstr "In die Zwischenablage kopieren"
 
-#: templates/about.html:80
+#: templates/about.html:85
 msgid "copy version information"
 msgstr "Versionsinformationen kopieren"
 
-#: templates/about.html:90 templates/js/modals.js:568
+#: templates/about.html:95 templates/js/modals.js:568
 #: templates/js/modals.js:846 templates/modals.html:29 templates/modals.html:54
 #: templates/modals.html:97
 msgid "Close"
@@ -7484,4 +7494,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-

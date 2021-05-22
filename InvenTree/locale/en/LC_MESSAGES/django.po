@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-18 13:00+0000\n"
+"POT-Creation-Date: 2021-05-22 11:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6250,46 +6250,50 @@ msgid "Update Available"
 msgstr ""
 
 #: templates/about.html:34
+msgid "API Version"
+msgstr ""
+
+#: templates/about.html:39
 msgid "Django Version"
 msgstr ""
 
-#: templates/about.html:41
+#: templates/about.html:46
 msgid "Commit Hash"
 msgstr ""
 
-#: templates/about.html:48
+#: templates/about.html:53
 msgid "Commit Date"
 msgstr ""
 
-#: templates/about.html:53
+#: templates/about.html:58
 msgid "InvenTree Documentation"
 msgstr ""
 
-#: templates/about.html:58
+#: templates/about.html:63
 msgid "View Code on GitHub"
 msgstr ""
 
-#: templates/about.html:63
+#: templates/about.html:68
 msgid "Credits"
 msgstr ""
 
-#: templates/about.html:68
+#: templates/about.html:73
 msgid "Mobile App"
 msgstr ""
 
-#: templates/about.html:73
+#: templates/about.html:78
 msgid "Submit Bug Report"
 msgstr ""
 
-#: templates/about.html:80 templates/clip.html:4
+#: templates/about.html:85 templates/clip.html:4
 msgid "copy to clipboard"
 msgstr ""
 
-#: templates/about.html:80
+#: templates/about.html:85
 msgid "copy version information"
 msgstr ""
 
-#: templates/about.html:90 templates/js/modals.js:568
+#: templates/about.html:95 templates/js/modals.js:568
 #: templates/js/modals.js:846 templates/modals.html:29 templates/modals.html:54
 #: templates/modals.html:97
 msgid "Close"
