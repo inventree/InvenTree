@@ -727,7 +727,7 @@ class PartImport(FileManagementFormView):
     ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
     permission_required = 'part.add'
 
-    class MyFileManager(FileManager):
+    class PartFileManager(FileManager):
         REQUIRED_HEADERS = [
             'Name',
             'Description',
@@ -777,7 +777,7 @@ class PartImport(FileManagementFormView):
         'default_location': 'default_location',
         'default_supplier': 'default_supplier',
     }
-    file_manager_class = MyFileManager
+    file_manager_class = PartFileManager
 
     def get_field_selection(self):
         """ Fill the form fields for step 3 """

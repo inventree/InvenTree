@@ -577,7 +577,7 @@ class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
     # overriden classes
-    class MyMatch(cm_forms.MatchItem):
+    class OrderMatchItem(cm_forms.MatchItem):
         """ override MatchItem fields """
         def get_special_field(self, col_guess, row, file_manager):
             """ set special field """
@@ -608,7 +608,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                     default_amount=self.clean_nbr(row.get('price', '')),
                 )
 
-    class MyFileManager(FileManager):
+    class OrderFileManager(FileManager):
         REQUIRED_HEADERS = [
             'Quantity',
         ]
@@ -626,7 +626,7 @@ class PurchaseOrderUpload(FileManagementFormView):
 
     name = 'order'
     form_list_override = [
-        ('items', MyMatch),
+        ('items', OrderMatchItem),
     ]
     form_steps_template = [
         'order/order_wizard/po_upload.html',
@@ -645,7 +645,7 @@ class PurchaseOrderUpload(FileManagementFormView):
         'reference': 'reference',
         'notes': 'notes',
     }
-    file_manager_class = MyFileManager
+    file_manager_class = OrderFileManager
 
     def get_order(self):
         """ Get order or return 404 """
