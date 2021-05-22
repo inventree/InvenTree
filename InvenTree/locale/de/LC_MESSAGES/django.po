@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-22 11:15+0000\n"
-"PO-Revision-Date: 2021-05-22 12:11\n"
+"PO-Revision-Date: 2021-05-22 13:11\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5940,7 +5940,7 @@ msgstr "{n} BestandsObjekte gelöscht"
 
 #: stock/views.py:1222
 msgid "Edit Stock Item Status"
-msgstr "Lagerbestandsstatus bearbeiten"
+msgstr "Status bearbeiten"
 
 #: stock/views.py:1245
 msgid "Edit Stock Item"
@@ -6940,11 +6940,11 @@ msgstr "Inventur"
 
 #: templates/js/stock.js:825
 msgid "Stock Status"
-msgstr "Bestandsstatus"
+msgstr "Status"
 
 #: templates/js/stock.js:840
 msgid "Set Stock Status"
-msgstr "Bestandsstatus setzen"
+msgstr "Status setzen"
 
 #: templates/js/stock.js:854
 msgid "Select Status Code"
@@ -7122,7 +7122,7 @@ msgstr "zeige zu Kunden zugeordnete Einträge"
 
 #: templates/js/table_filters.js:198 templates/js/table_filters.js:199
 msgid "Stock status"
-msgstr "Bestandsstatus"
+msgstr "Status"
 
 #: templates/js/table_filters.js:232
 msgid "Build status"
@@ -7415,7 +7415,7 @@ msgstr "Status ändern"
 
 #: templates/stock_table.html:60
 msgid "Change stock status"
-msgstr "Bestandsstatus ändern"
+msgstr "Status ändern"
 
 #: templates/stock_table.html:63
 msgid "Delete selected items"
