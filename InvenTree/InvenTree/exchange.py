@@ -13,8 +13,10 @@ def get_exchange_rate_backend():
 
     if 'InvenTreeManualExchangeBackend' in inventree_settings.EXCHANGE_BACKEND:
         return InvenTreeManualExchangeBackend()
-    else:
+    elif 'InvenTreeFixerExchangeBackend' in inventree_settings.EXCHANGE_BACKEND:
         return InvenTreeFixerExchangeBackend()
+    else:
+        raise ImproperlyConfigured('Exchange Backend wrongly configured')
 
 
 class InvenTreeManualExchangeBackend(BaseExchangeBackend):
