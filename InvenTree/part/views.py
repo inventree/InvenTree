@@ -42,7 +42,6 @@ from common.models import InvenTreeSetting
 from company.models import SupplierPart
 
 import common.settings as inventree_settings
-import part.settings as part_settings
 
 from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
@@ -855,7 +854,7 @@ class PartPricingView(PartDetail):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         kwargs['object'] = self.object
-        ctx=self.get_context_data(**kwargs)
+        ctx = self.get_context_data(**kwargs)
         return self.get(request, context=ctx)
 
 
