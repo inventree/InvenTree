@@ -9,13 +9,15 @@
 {% inventree_title %} | {% trans "Sales Order" %}
 {% endblock %}
 
-{% block pre_content %}
-{% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
-<div class='alert alert-block alert-danger'>
-    {% trans "This SalesOrder has not been fully allocated" %}
+{% block below_thumbnail %}
+<div class='info-messages'>
+    {% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "This Sales Order has not been fully allocated" %}
+    </div>
+    {% endif %}
 </div>
-{% endif %}
-{% endblock %}
+    {% endblock %}
 
 {% block thumbnail %}
 <img class='part-thumb'

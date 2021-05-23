@@ -1017,6 +1017,11 @@ function loadStockTrackingTable(table, options) {
         formatter: function(details, row, index, field) {
             var html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
+            if (!details) {
+                html += '</table>';
+                return html;
+            }
+
             // Location information
             if (details.location) {
 
@@ -1218,6 +1223,17 @@ function createNewStockItem(options) {
             field: 'part',
             action: function(value) {
 
+                if (!value) {
+                    // No part chosen
+                    
+                    clearFieldOptions('supplier_part');
+                    enableField('serial_numbers', false);
+                    enableField('purchase_price_0', false);
+                    enableField('purchase_price_1', false);
+
+                    return;
+                }
+
                 // Reload options for supplier part
                 reloadFieldOptions(
                     'supplier_part',
@@ -1242,6 +1258,9 @@ function createNewStockItem(options) {
                             // Disable serial number field if the part is not trackable
                             enableField('serial_numbers', response.trackable);
                             clearField('serial_numbers');
+
+                            enableField('purchase_price_0', response.purchaseable);
+                            enableField('purchase_price_1', response.purchaseable);
 
                             // Populate the expiry date
                             if (response.default_expiry <= 0) {

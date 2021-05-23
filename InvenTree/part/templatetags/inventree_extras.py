@@ -1,7 +1,13 @@
+# -*- coding: utf-8 -*-
+
 """ This module provides template tags for extra functionality
 over and above the built-in Django tags.
 """
+
 import os
+
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings as djangosettings
 
 from django import template
 from django.urls import reverse
@@ -69,6 +75,33 @@ def part_allocation_count(build, part, *args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_in_debug_mode(*args, **kwargs):
+    """ Return True if the server is running in DEBUG mode """
+
+    return djangosettings.DEBUG
+
+
+@register.simple_tag()
+def inventree_docker_mode(*args, **kwargs):
+    """ Return True if the server is running as a Docker image """
+
+    return djangosettings.DOCKER
+
+
+@register.simple_tag()
+def inventree_db_engine(*args, **kwargs):
+    """ Return the InvenTree database backend e.g. 'postgresql' """
+
+    db = djangosettings.DATABASES['default']
+
+    engine = db.get('ENGINE', _('Unknown database'))
+
+    engine = engine.replace('django.db.backends.', '')
+
+    return engine
+
+
+@register.simple_tag()
 def inventree_instance_name(*args, **kwargs):
     """ Return the InstanceName associated with the current database """
     return version.inventreeInstanceName()
@@ -84,6 +117,12 @@ def inventree_title(*args, **kwargs):
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()
+
+
+@register.simple_tag()
+def inventree_api_version(*args, **kwargs):
+    """ Return InvenTree API version """
+    return version.inventreeApiVersion()
 
 
 @register.simple_tag()
