@@ -69,6 +69,12 @@
     </li>
     {% endif %}
     {% if part.purchaseable and roles.purchase_order.view %}
+    <li class='list-group-item {% if tab == "order-prices" %}active{% endif %}' title='{% trans "Order Price Information" %}'>
+        <a href='{% url "part-order-prices" part.id %}'>
+            <span class='menu-tab-icon fas fa-dollar-sign' style='width: 20px;'></span>
+            {% trans "Order Price" %}
+        </a>
+    </li>
     <li class='list-group-item {% if tab == "manufacturers" %}active{% endif %}' title='{% trans "Manufacturers" %}'>
         <a href='{% url "part-manufacturers" part.id %}'>
             <span class='menu-tab-icon fas fa-industry'></span>
