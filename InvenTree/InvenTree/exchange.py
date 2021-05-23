@@ -1,4 +1,4 @@
-from djmoney.contrib.exchange.backends.base import BaseExchangeBackend
+from djmoney.contrib.exchange.backends.base import BaseExchangeBackend, SimpleExchangeBackend
 
 
 class InvenTreeManualExchangeBackend(BaseExchangeBackend):
@@ -18,4 +18,19 @@ class InvenTreeManualExchangeBackend(BaseExchangeBackend):
         Do not get any rates...
         """
 
+        return {}
+
+
+class ExchangeRateHostBackend(SimpleExchangeBackend):
+    """
+    Backend for https://exchangerate.host/
+    """
+
+    name = "exchangerate.host"
+
+    def __init__(self):
+        self.url = "https://api.exchangerate.host/latest"
+
+    def get_params(self):
+        # No API key is required
         return {}
