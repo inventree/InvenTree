@@ -129,7 +129,7 @@ the part single price shown is the current price for that supplier part"></i></h
                         {% for line in price_history %}'{{ line.date }}',{% endfor %}
                     ],
                     datasets: [{
-                        label: '{% trans "Single Price" %}',
+                        label: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}',
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgb(255, 99, 132)',
                         yAxisID: 'y',
@@ -141,7 +141,7 @@ the part single price shown is the current price for that supplier part"></i></h
                     },
                     {% if 'price_diff' in price_history.0 %}
                     {
-                        label: '{% trans "Single Price Difference" %}',
+                        label: '{% blocktrans %}Single Price Difference - {{currency}}{% endblocktrans %}',
                         backgroundColor: 'rgba(68, 157, 68, 0.2)',
                         borderColor: 'rgb(68, 157, 68)',
                         yAxisID: 'y2',
@@ -152,7 +152,7 @@ the part single price shown is the current price for that supplier part"></i></h
                         type: 'line'
                     },
                     {
-                        label: '{% trans "Part Single Price" %}',
+                        label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
                         backgroundColor: 'rgba(70, 127, 155, 0.2)',
                         borderColor: 'rgb(70, 127, 155)',
                         yAxisID: 'y',
@@ -175,45 +175,7 @@ the part single price shown is the current price for that supplier part"></i></h
                     }]
                 }
             var ctx = document.getElementById('StockPriceChart');
-            var StockPriceChart = new Chart(ctx, {
-                type: 'bar',
-                data: pricedata,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {legend: {position: 'bottom'}},
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-                            grid: {display: false},
-                            title: {
-                                display: true,
-                                text: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}'
-                            }
-                        },
-                        y1: {
-                            type: 'linear',
-                            position: 'right',
-                            grid: {display: false},
-                            titel: {
-                                display: true,
-                                text: '{% trans "Quantity" %}',
-                                position: 'right'
-                            }
-                        },
-                        y2: {
-                            type: 'linear',
-                            position: 'left',
-                            grid: {display: false},
-                            title: {
-                                display: true,
-                                text: '{% blocktrans %}Single Price Difference- {{currency}}{% endblocktrans %}'
-                            }
-                        }
-                    },
-                }
-            });
+            var StockPriceChart = loadStockPricingChart(ctx, pricedata)
     {% endif %}
 
 {% endblock %}

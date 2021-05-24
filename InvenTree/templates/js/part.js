@@ -688,3 +688,46 @@ function loadPartTestTemplateTable(table, options) {
         ]
     });
 }
+
+
+function loadStockPricingChart(context, data) {
+    return new Chart(context, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {legend: {position: 'bottom'}},
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    grid: {display: false},
+                    title: {
+                        display: true,
+                        text: '{% trans "Single Price" %}'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    grid: {display: false},
+                    titel: {
+                        display: true,
+                        text: '{% trans "Quantity" %}',
+                        position: 'right'
+                    }
+                },
+                y2: {
+                    type: 'linear',
+                    position: 'left',
+                    grid: {display: false},
+                    title: {
+                        display: true,
+                        text: '{% trans "Single Price Difference" %}'
+                    }
+                }
+            },
+        }
+    });
+}
