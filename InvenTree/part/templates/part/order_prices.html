@@ -97,7 +97,16 @@
         {% trans 'No pricing information is available for this part.' %}
     </div>
 {% endif %}
-</div></div>
+</div>
+{% if part.bom_count > 0 %}
+<div class="col col-md-6">
+    <h4>{% trans 'BOM Pricing' %}</h4>
+    <div style="max-width: 99%;">
+        <canvas id="BomChart"></canvas>
+    </div>
+</div>
+{% endif %}
+</div>
 
 {% if price_history %}
     <hr>
@@ -122,7 +131,6 @@ the part single price shown is the current price for that supplier part"></i></h
     {{ block.super }}
 
     {% settings_value "INVENTREE_DEFAULT_CURRENCY" as currency %}
-
     {% if price_history %}
             var pricedata = {
                     labels: [
@@ -174,8 +182,27 @@ the part single price shown is the current price for that supplier part"></i></h
                         borderWidth: 1
                     }]
                 }
-            var ctx = document.getElementById('StockPriceChart');
-            var StockPriceChart = loadStockPricingChart(ctx, pricedata)
+            var StockPriceChart = loadStockPricingChart(document.getElementById('StockPriceChart'), pricedata)
+            var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
+            var bomdata = {
+                labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
+                datasets:  [
+                {% if bom_pie_min %}
+                {
+                    label: 'Max Price',
+                    data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
+                    backgroundColor: bom_colors,
+                  },
+                {% endif %}
+                {
+                  label: 'Price',
+                  data: [{% for line in bom_parts %}{% if bom_pie_min %}{{ line.min_price }}{% else %}{{ line.price }}{% endif%},{% endfor %}],
+                  backgroundColor: bom_colors,
+                }
+              ]
+            };
+            var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
+
     {% endif %}
 
 {% endblock %}

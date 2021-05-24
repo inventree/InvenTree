@@ -731,3 +731,17 @@ function loadStockPricingChart(context, data) {
         }
     });
 }
+
+
+function loadBomChart(context, data) {
+    return new Chart(context, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {legend: {position: 'bottom'},
+            scales: {xAxes: [{beginAtZero: true, ticks: {autoSkip: false}}]}}
+        }
+    });
+}

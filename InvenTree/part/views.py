@@ -845,6 +845,19 @@ class PartPricingView(PartDetail):
 
             ctx['price_history'] = ret
 
+        # BOM Information for Pie-Chart
+        bom_items = [{'name': str(a.sub_part), 'price': a.sub_part.get_price_range(quantity), 'q': a.quantity} for a in part.bom_items.all()]
+        if [True for a in bom_items if len(set(a['price']))==2]:
+            ctx['bom_parts'] = [{
+                'name': a['name'],
+                'min_price': str((a['price'][0] * a['q'])/ quantity),
+                'max_price': str((a['price'][1] * a['q']) / quantity)} for a in bom_items]
+            ctx['bom_pie_min'] = True
+        else:
+            ctx['bom_parts'] = [{
+                'name':a['name'],
+                'price': str((a['price'][0] * a['q']) / quantity)} for a in bom_items]
+
         return ctx
 
     def get_initials(self):
