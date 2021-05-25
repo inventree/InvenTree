@@ -16,9 +16,7 @@
     {% include "InvenTree/settings/header.html" %}
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_DEFAULT_CURRENCY" icon="fa-dollar-sign" %}
-        {% if 'fixer' in exchange_backend %}
-        {% include "InvenTree/settings/setting.html" with key="INVENTREE_FIXER_API_KEY" icon="fa-key" %}
-        {% endif %}
+        {% include "InvenTree/settings/setting.html" with key="CUSTOM_EXCHANGE_RATES" icon="fa-edit" %}
     </tbody>
 </table>
 
@@ -33,7 +31,7 @@
     {% csrf_token %}
     {% load crispy_forms_tags %}
     {% crispy form %}
-    {% if 'fixer' in exchange_backend %}
+    {% if custom_rates is False %}
         <button type="submit" class='btn btn-primary'>{% trans "Refresh Exchange Rates" %}</button>
     {% else %}
         <button type="submit" class='btn btn-primary'>{% trans "Update Exchange Rates" %}</button>

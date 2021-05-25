@@ -944,6 +944,8 @@ class CurrencySettingsView(FormView):
 
         context['default_currency'] = exchange_rate_backend.base_currency
 
+        context['custom_rates'] = exchange_rate_backend.custom_rates
+
         context['exchange_backend'] = exchange_rate_backend.name
 
         return context
@@ -959,7 +961,7 @@ class CurrencySettingsView(FormView):
         stored_rates = exchange_rate_backend.get_stored_rates()
             
         for field in form.fields:
-            if exchange_rate_backend.name.startswith('fixer-'):
+            if not exchange_rate_backend.custom_rates:
                 # Disable all the fields
                 form.fields[field].disabled = True
             form.fields[field].initial = clean_decimal(stored_rates.get(field, 0))
@@ -973,7 +975,7 @@ class CurrencySettingsView(FormView):
         # Get exchange rate backend
         exchange_rate_backend = self.get_exchange_rate_backend()
 
-        if exchange_rate_backend.name.startswith('fixer-'):
+        if not exchange_rate_backend.custom_rates:
             # Refresh rate from Fixer.IO API
             exchange_rate_backend.update_rates(base_currency=exchange_rate_backend.base_currency)
             # Check if rates have been updated

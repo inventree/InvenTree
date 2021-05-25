@@ -1,7 +1,5 @@
-from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings as inventree_settings
 
-from djmoney import settings as djmoney_settings
 from djmoney.contrib.exchange.backends.base import BaseExchangeBackend
 from djmoney.contrib.exchange.models import Rate
 
@@ -11,12 +9,12 @@ from common.models import InvenTreeSetting
 def get_exchange_rate_backend():
     """ Return the exchange rate backend set by user """
 
-    if 'InvenTreeManualExchangeBackend' in inventree_settings.EXCHANGE_BACKEND:
+    custom = InvenTreeSetting.get_setting('CUSTOM_EXCHANGE_RATES', False)
+
+    if custom:
         return InvenTreeManualExchangeBackend()
-    elif 'InvenTreeFixerExchangeBackend' in inventree_settings.EXCHANGE_BACKEND:
-        return InvenTreeFixerExchangeBackend()
     else:
-        raise ImproperlyConfigured('Exchange Backend wrongly configured')
+        return ExchangeRateHostBackend()
 
 
 class InvenTreeManualExchangeBackend(BaseExchangeBackend):
@@ -30,13 +28,14 @@ class InvenTreeManualExchangeBackend(BaseExchangeBackend):
 
     name = 'inventree'
     url = None
+    custom_rates = True
     base_currency = None
     currencies = []
 
     def update_default_currency(self):
         """ Update to base currency """
 
-        self.base_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', inventree_settings.BASE_CURRENCY)
+        self.base_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
 
     def __init__(self, url=None):
         """ Overrides init to update url, base currency and currencies """
@@ -73,39 +72,23 @@ class InvenTreeManualExchangeBackend(BaseExchangeBackend):
         return stored_rates
 
 
-class InvenTreeFixerExchangeBackend(InvenTreeManualExchangeBackend):
+class ExchangeRateHostBackend(InvenTreeManualExchangeBackend):
     """
-    Backend for updating currency exchange rates using Fixer.IO API
+    Backend for https://exchangerate.host/
     """
 
-    name = 'fixer'
-    access_key = None
-
-    def get_api_key(self):
-        """ Get API key from global settings """
-
-        fixer_api_key = InvenTreeSetting.get_setting('INVENTREE_FIXER_API_KEY', '').strip()
-
-        if not fixer_api_key:
-            # API key not provided
-            return None
-
-        self.access_key = fixer_api_key
+    name = "exchangerate.host"
 
     def __init__(self):
-        """ Override init to get access_key from global settings """
+        self.url = "https://api.exchangerate.host/latest"
 
-        self.get_api_key()
+        self.custom_rates = False
 
-        if self.access_key is None:
-            raise ImproperlyConfigured("fixer.io API key is needed to use InvenTreeFixerExchangeBackend")
-        
-        super().__init__(url=djmoney_settings.FIXER_URL)
+        super().__init__(url=self.url)
 
     def get_params(self):
-        """ Returns parameters (access key) """
-
-        return {"access_key": self.access_key}
+        # No API key is required
+        return {}
 
     def update_rates(self, base_currency=None):
         """ Override update_rates method using currencies found in the settings
@@ -134,19 +117,4 @@ class InvenTreeFixerExchangeBackend(InvenTreeManualExchangeBackend):
             # API response did not contain any rate
             pass
 
-        return {}
-
-
-class ExchangeRateHostBackend(SimpleExchangeBackend):
-    """
-    Backend for https://exchangerate.host/
-    """
-
-    name = "exchangerate.host"
-
-    def __init__(self):
-        self.url = "https://api.exchangerate.host/latest"
-
-    def get_params(self):
-        # No API key is required
         return {}
