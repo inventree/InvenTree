@@ -175,10 +175,13 @@ def update_exchange_rates():
         return
 
     backend = ExchangeRateHostBackend()
+    print(f"Updating exchange rates from {backend.url}")
 
     currencies = ','.join(settings.CURRENCIES)
 
-    base = settings.BASE_CURRENCY
+    base = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+
+    print(f"Using base currency '{base}'")
 
     backend.update_rates(base_currency=base, symbols=currencies)
 
