@@ -11,7 +11,7 @@ from .models import Company, Contact, ManufacturerPart, SupplierPart
 from .models import rename_company_image
 from part.models import Part
 
-from InvenTree.exchange import get_exchange_rate_backend
+from InvenTree.exchange import InvenTreeManualExchangeBackend
 from djmoney.contrib.exchange.models import Rate
 
 
@@ -42,7 +42,7 @@ class CompanySimpleTest(TestCase):
         self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
         
         # Exchange rate backend
-        backend = get_exchange_rate_backend()
+        backend = InvenTreeManualExchangeBackend()
         backend.update_rates(base_currency=backend.base_currency)
 
         Rate.objects.create(

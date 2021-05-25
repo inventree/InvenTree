@@ -45,7 +45,7 @@
 {{ block.super }}
 
 {% if api_rates_success is False %}
-    var alert_msg = {% blocktrans %}"Failed to refresh exchange rates. Verify your API key and/or subscription plan" {% endblocktrans %};
+    var alert_msg = {% blocktrans %}"Failed to refresh exchange rates" {% endblocktrans %};
     showAlertOrCache("alert-danger", alert_msg, null, 5000);
 {% endif %}
 
