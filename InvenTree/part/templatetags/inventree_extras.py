@@ -82,6 +82,13 @@ def inventree_in_debug_mode(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_docker_mode(*args, **kwargs):
+    """ Return True if the server is running as a Docker image """
+
+    return djangosettings.DOCKER
+
+
+@register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
     """ Return the InvenTree database backend e.g. 'postgresql' """
 
@@ -110,6 +117,12 @@ def inventree_title(*args, **kwargs):
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()
+
+
+@register.simple_tag()
+def inventree_api_version(*args, **kwargs):
+    """ Return InvenTree API version """
+    return version.inventreeApiVersion()
 
 
 @register.simple_tag()

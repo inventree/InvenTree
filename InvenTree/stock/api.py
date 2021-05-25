@@ -1018,6 +1018,9 @@ class StockTrackingList(generics.ListAPIView):
         for item in data:
             deltas = item['deltas']
 
+            if not deltas:
+                deltas = {}
+
             # Add location detail
             if 'location' in deltas:
                 try:
