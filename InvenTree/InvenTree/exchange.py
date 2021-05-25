@@ -135,3 +135,18 @@ class InvenTreeFixerExchangeBackend(InvenTreeManualExchangeBackend):
             pass
 
         return {}
+
+
+class ExchangeRateHostBackend(SimpleExchangeBackend):
+    """
+    Backend for https://exchangerate.host/
+    """
+
+    name = "exchangerate.host"
+
+    def __init__(self):
+        self.url = "https://api.exchangerate.host/latest"
+
+    def get_params(self):
+        # No API key is required
+        return {}

@@ -163,20 +163,27 @@ def check_for_updates():
 
 def update_exchange_rates():
     """
-    Update backend rates
+    If an API key for fixer.io has been provided, attempt to update currency exchange rates
     """
 
     try:
-        from .exchange import get_exchange_rate_backend
+        import common.models
+        from django.conf import settings
+        from InvenTree.exchange import ExchangeRateHostBackend
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
-    
-    # Get exchange rate backend
-    backend = get_exchange_rate_backend()
 
-    # Update rates
-    backend.update_rates(base_currency=backend.base_currency)
+    backend = ExchangeRateHostBackend()
+    print(f"Updating exchange rates from {backend.url}")
+
+    currencies = ','.join(settings.CURRENCIES)
+
+    base = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+
+    print(f"Using base currency '{base}'")
+
+    backend.update_rates(base_currency=base, symbols=currencies)
 
 
 def send_email(subject, body, recipients, from_email=None):
