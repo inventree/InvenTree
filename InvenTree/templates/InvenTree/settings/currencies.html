@@ -24,7 +24,7 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>{% trans "Exchange Rates - Convert to " %}{{ default_currency }}</h4>
+        <h4>{% blocktrans with cur=default_currency %}Exchange Rates - Convert to {{cur}}{% endblocktrans %}</h4>
     </div>
 </div>
 
