@@ -87,12 +87,6 @@ class InvenTreeSetting(models.Model):
             'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
-        'INVENTREE_FIXER_API_KEY': {
-            'name': _('fixer.io API key'),
-            'description': _('API key for fixer.io currency conversion service'),
-            'default': '',
-        },
-
         'INVENTREE_DOWNLOAD_FROM_URL': {
             'name': _('Download from URL'),
             'description': _('Allow download of remote images and files from external URL'),

@@ -169,18 +169,12 @@ def update_exchange_rates():
     try:
         import common.models
         from django.conf import settings
-        from djmoney.contrib.exchange.backends import FixerBackend
+        from InvenTree.exchange import ExchangeRateHostBackend
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
 
-    fixer_api_key = common.models.InvenTreeSetting.get_setting('INVENTREE_FIXER_API_KEY', '').strip()
-
-    if not fixer_api_key:
-        # API key not provided
-        return
-
-    backend = FixerBackend(access_key=fixer_api_key)
+    backend = ExchangeRateHostBackend()
 
     currencies = ','.join(settings.CURRENCIES)
 
