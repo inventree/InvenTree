@@ -41,9 +41,10 @@ LABEL org.label-schema.schema-version="1.0" \
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
+
 WORKDIR ${INVENTREE_HOME}
 
-RUN mkdir ${INVENTREE_STATIC_ROOT}
+RUN mkdir -p ${INVENTREE_STATIC_ROOT}
 
 # Install required system packages
 RUN apk add --no-cache git make bash \

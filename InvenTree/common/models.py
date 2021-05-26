@@ -87,10 +87,11 @@ class InvenTreeSetting(models.Model):
             'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
-        'INVENTREE_FIXER_API_KEY': {
-            'name': _('fixer.io API key'),
-            'description': _('API key for fixer.io currency conversion service'),
-            'default': '',
+        'CUSTOM_EXCHANGE_RATES': {
+            'name': _('Custom Exchange Rates'),
+            'description': _('Enable custom exchange rates'),
+            'validator': bool,
+            'default': False,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
