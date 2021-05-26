@@ -40,13 +40,15 @@ class CompanySimpleTest(TestCase):
         self.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
         self.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
         self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
-
-        InvenTreeManualExchangeBackend().update_rates()
+        
+        # Exchange rate backend
+        backend = InvenTreeManualExchangeBackend()
+        backend.update_rates(base_currency=backend.base_currency)
 
         Rate.objects.create(
             currency='AUD',
             value='1.35',
-            backend_id='inventree',
+            backend_id=backend.name,
         )
 
     def test_company_model(self):
