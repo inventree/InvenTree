@@ -161,6 +161,28 @@ def check_for_updates():
     )
 
 
+def update_exchange_rates():
+    """
+    Update currency exchange rates
+    """
+
+    try:
+        import common.models
+        from InvenTree.exchange import ExchangeRateHostBackend
+    except AppRegistryNotReady:
+        # Apps not yet loaded!
+        return
+
+    backend = ExchangeRateHostBackend()
+    print(f"Updating exchange rates from {backend.url}")
+
+    base = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+
+    print(f"Using base currency '{base}'")
+
+    backend.update_rates(base_currency=base)
+
+
 def send_email(subject, body, recipients, from_email=None):
     """
     Send an email with the specified subject and body,

@@ -10,8 +10,15 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.2.2 pre"
 
-# Increment this number whenever there is a significant change to the API that any clients need to know about
-INVENTREE_API_VERSION = 2
+"""
+Increment thi API version number whenever there is a significant change to the API that any clients need to know about
+
+v3 -> 2021-05-22:
+    - The updated StockItem "history tracking" now uses a different interface
+
+"""
+
+INVENTREE_API_VERSION = 3
 
 
 def inventreeInstanceName():

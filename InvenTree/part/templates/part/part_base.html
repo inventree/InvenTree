@@ -12,13 +12,6 @@
 
 <div class='panel panel-default panel-inventree'>
 
-{% if part.variant_of %}
-<div class='alert alert-info alert-block'>
-    {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}
-    {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
-</div>
-{% endif %}
-
     <div class="row">
     <div class="col-sm-6">
         {% include "part/part_thumb.html" %}
@@ -106,6 +99,15 @@
                 </tr>
             </table>
         </div>
+        </div>
+
+        <div class='info-messages'>
+            {% if part.variant_of %}
+            <div class='alert alert-info alert-block'>
+                {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}
+                {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
+            </div>
+            {% endif %}
         </div>
     </div>
     <div class="col-sm-6">

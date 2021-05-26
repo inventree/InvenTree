@@ -5,12 +5,11 @@ Django forms for interacting with common objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from decimal import Decimal, InvalidOperation
-
 from django import forms
 from django.utils.translation import gettext as _
 
 from InvenTree.forms import HelperForm
+from InvenTree.helpers import clean_decimal
 
 from .files import FileManager
 from .models import InvenTreeSetting

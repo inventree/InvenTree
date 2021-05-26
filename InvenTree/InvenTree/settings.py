@@ -514,9 +514,6 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
-# TODO - Allow live web-based backends in the future
-EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
-
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})
 

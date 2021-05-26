@@ -120,6 +120,12 @@ def inventree_version(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_api_version(*args, **kwargs):
+    """ Return InvenTree API version """
+    return version.inventreeApiVersion()
+
+
+@register.simple_tag()
 def django_version(*args, **kwargs):
     """ Return Django version string """
     return version.inventreeDjangoVersion()
