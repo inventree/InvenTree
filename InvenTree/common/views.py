@@ -215,7 +215,10 @@ class FileManagementFormView(MultiStepFormView):
         if not(hasattr(self, 'file_manager_class') and issubclass(self.file_manager_class, FileManager)):
             raise NotImplementedError('A subclass of a file manager class needs to be set!')
 
-    def get_context_data(self, form, **kwargs):
+    def get_context_data(self, form=None, **kwargs):
+        if form is None:
+            form = self.get_form()
+
         context = super().get_context_data(form=form, **kwargs)
 
         if self.steps.current in ('fields', 'items'):
