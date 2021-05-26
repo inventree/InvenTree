@@ -15,7 +15,7 @@ from django.core.files.storage import FileSystemStorage
 from formtools.wizard.views import SessionWizardView
 from crispy_forms.helper import FormHelper
 
-from InvenTree.views import AjaxUpdateView
+from InvenTree.views import AjaxUpdateView, AjaxView
 from InvenTree.helpers import str2bool
 
 from . import models
@@ -563,3 +563,48 @@ class FileManagementFormView(MultiStepFormView):
             return self.render(form)
 
         return super().post(*args, **kwargs)
+
+
+class FileManagementAjaxView(AjaxView):
+    """ Use a FileManagementFormView as base for a AjaxView
+    Inherit this class before inheriting the base FileManagementFormView
+
+    ajax_form_steps_template: templates for rendering ajax
+    validate: function to validate the current form -> normally point to the same function in the base FileManagementFormView
+    """
+
+    def post(self, request):
+        form = self.get_form(data=self.request.POST, files=self.request.FILES)
+        form_valid = self.validate(self.steps.current, form)
+
+        # check if valid
+        if not form_valid:
+            return self.renderJsonResponse(request)
+
+        # store the cleaned data and files.
+        self.storage.set_step_data(self.steps.current, self.process_step(form))
+        self.storage.set_step_files(self.steps.current, self.process_step_files(form))
+
+        # check if the current step is the last step
+        if self.steps.current == self.steps.last:
+            # call done - to process data, returned response is not used
+            self.render_done(form)
+            data = {'form_valid': True, 'success': _('Parts imported')}
+            return self.renderJsonResponse(request, data=data)
+        else:
+            self.storage.current_step = self.steps.next
+
+        self.setTemplate()
+        return self.renderJsonResponse(request, data={'form_valid': None})
+
+    def get(self, request):
+        self.setTemplate()
+        return self.renderJsonResponse(request)
+
+    def setTemplate(self):
+        """ set template name and title """
+        self.ajax_template_name = self.ajax_form_steps_template[self.get_step_index()]
+        self.ajax_form_title = self.form_steps_description[self.get_step_index()]
+
+    def validate(self, obj, form, **kwargs):
+        raise NotImplementedError('This function needs to be overridden!')
