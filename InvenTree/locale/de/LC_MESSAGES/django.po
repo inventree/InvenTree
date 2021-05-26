@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-26 09:12+0000\n"
-"PO-Revision-Date: 2021-05-26 09:30\n"
+"PO-Revision-Date: 2021-05-26 10:39\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1525,11 +1525,11 @@ msgstr "Standard-Währung"
 
 #: common/models.py:91
 msgid "Custom Exchange Rates"
-msgstr ""
+msgstr "Eigene Wechselkurse"
 
 #: common/models.py:92
 msgid "Enable custom exchange rates"
-msgstr ""
+msgstr "Eigene Wechselkurse aktivieren"
 
 #: common/models.py:98
 msgid "Download from URL"
@@ -6121,24 +6121,24 @@ msgstr "Vorlage löschen"
 
 #: templates/InvenTree/settings/currencies.html:10
 msgid "Currency Settings"
-msgstr ""
+msgstr "Währungseinstellungen"
 
 #: templates/InvenTree/settings/currencies.html:25
 #, python-format
 msgid "Exchange Rates - Convert to %(cur)s"
-msgstr ""
+msgstr "Wechselkurse - Wechseln nach %(cur)s"
 
 #: templates/InvenTree/settings/currencies.html:35
 msgid "Refresh Exchange Rates"
-msgstr ""
+msgstr "Wechselkurse aktualisieren"
 
 #: templates/InvenTree/settings/currencies.html:37
 msgid "Update Exchange Rates"
-msgstr ""
+msgstr "Wechselkurse aktualisieren"
 
 #: templates/InvenTree/settings/currencies.html:48
 msgid "\"Failed to refresh exchange rates\" "
-msgstr ""
+msgstr "\"Aktualisieren der Wechselkurse fehlgeschlagen\" "
 
 #: templates/InvenTree/settings/global.html:10
 msgid "Global InvenTree Settings"
@@ -6232,7 +6232,7 @@ msgstr "Kategorien"
 
 #: templates/InvenTree/settings/tabs.html:40
 msgid "Currencies"
-msgstr ""
+msgstr "Währungen"
 
 #: templates/InvenTree/settings/user.html:16
 msgid "User Information"
