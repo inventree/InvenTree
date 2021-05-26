@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-25 04:34+0000\n"
+"POT-Creation-Date: 2021-05-26 09:12+0000\n"
 "PO-Revision-Date: 2021-05-18 13:05\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -33,42 +33,42 @@ msgstr "未找到指定操作"
 msgid "Enter date"
 msgstr "输入日期"
 
-#: InvenTree/forms.py:110 build/forms.py:102 build/forms.py:123
+#: InvenTree/forms.py:114 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
 msgstr "确认"
 
-#: InvenTree/forms.py:126
+#: InvenTree/forms.py:130
 msgid "Confirm delete"
 msgstr "确认删除"
 
-#: InvenTree/forms.py:127
+#: InvenTree/forms.py:131
 msgid "Confirm item deletion"
 msgstr ""
 
-#: InvenTree/forms.py:159 templates/registration/login.html:77
+#: InvenTree/forms.py:163 templates/registration/login.html:77
 msgid "Enter password"
 msgstr "输入密码"
 
-#: InvenTree/forms.py:160
+#: InvenTree/forms.py:164
 msgid "Enter new password"
 msgstr "输入新密码"
 
-#: InvenTree/forms.py:167
+#: InvenTree/forms.py:171
 msgid "Confirm password"
 msgstr "确认密码"
 
-#: InvenTree/forms.py:168
+#: InvenTree/forms.py:172
 msgid "Confirm new password"
 msgstr "确认新密码"
 
-#: InvenTree/forms.py:203
+#: InvenTree/forms.py:207
 msgid "Apply Theme"
 msgstr "应用主题"
 
-#: InvenTree/forms.py:233
+#: InvenTree/forms.py:237
 msgid "Select Category"
 msgstr "选择分类"
 
@@ -372,27 +372,27 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:587
+#: InvenTree/views.py:590
 msgid "Delete Item"
 msgstr ""
 
-#: InvenTree/views.py:636
+#: InvenTree/views.py:639
 msgid "Check box to confirm item deletion"
 msgstr ""
 
-#: InvenTree/views.py:651 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:654 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:662 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:665 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr ""
 
-#: InvenTree/views.py:681
+#: InvenTree/views.py:684
 msgid "Password fields must match"
 msgstr ""
 
-#: InvenTree/views.py:887 templates/navbar.html:95
+#: InvenTree/views.py:890 templates/navbar.html:95
 msgid "System Information"
 msgstr ""
 
@@ -462,7 +462,7 @@ msgstr ""
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:31 common/models.py:705
+#: build/templates/build/detail.html:31 common/models.py:712
 #: company/forms.py:176 company/templates/company/supplier_part_pricing.html:77
 #: order/forms.py:188 order/forms.py:205 order/forms.py:240 order/forms.py:262
 #: order/forms.py:279 order/models.py:614 order/models.py:815
@@ -1466,19 +1466,19 @@ msgstr ""
 msgid "Error reading file (data could be corrupted)"
 msgstr ""
 
-#: common/forms.py:38 templates/attachment_table.html:15
+#: common/forms.py:37 templates/attachment_table.html:15
 msgid "File"
 msgstr ""
 
-#: common/forms.py:39
+#: common/forms.py:38
 msgid "Select file to upload"
 msgstr ""
 
-#: common/forms.py:54
+#: common/forms.py:53
 msgid "{name.title()} File"
 msgstr ""
 
-#: common/forms.py:55
+#: common/forms.py:54
 #, python-brace-format
 msgid "Select {name} file to upload"
 msgstr ""
@@ -1524,310 +1524,318 @@ msgid "Default currency"
 msgstr ""
 
 #: common/models.py:91
-msgid "Download from URL"
+msgid "Custom Exchange Rates"
 msgstr ""
 
 #: common/models.py:92
-msgid "Allow download of remote images and files from external URL"
+msgid "Enable custom exchange rates"
 msgstr ""
 
 #: common/models.py:98
-msgid "Barcode Support"
+msgid "Download from URL"
 msgstr ""
 
 #: common/models.py:99
-msgid "Enable barcode scanner support"
+msgid "Allow download of remote images and files from external URL"
 msgstr ""
 
 #: common/models.py:105
-msgid "IPN Regex"
+msgid "Barcode Support"
 msgstr ""
 
 #: common/models.py:106
+msgid "Enable barcode scanner support"
+msgstr ""
+
+#: common/models.py:112
+msgid "IPN Regex"
+msgstr ""
+
+#: common/models.py:113
 msgid "Regular expression pattern for matching Part IPN"
 msgstr ""
 
-#: common/models.py:110
+#: common/models.py:117
 msgid "Allow Duplicate IPN"
 msgstr ""
 
-#: common/models.py:111
+#: common/models.py:118
 msgid "Allow multiple parts to share the same IPN"
 msgstr ""
 
-#: common/models.py:117
+#: common/models.py:124
 msgid "Allow Editing IPN"
 msgstr ""
 
-#: common/models.py:118
+#: common/models.py:125
 msgid "Allow changing the IPN value while editing a part"
 msgstr ""
 
-#: common/models.py:124
+#: common/models.py:131
 msgid "Copy Part BOM Data"
 msgstr ""
 
-#: common/models.py:125
+#: common/models.py:132
 msgid "Copy BOM data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:131
+#: common/models.py:138
 msgid "Copy Part Parameter Data"
 msgstr ""
 
-#: common/models.py:132
+#: common/models.py:139
 msgid "Copy parameter data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:138
+#: common/models.py:145
 msgid "Copy Part Test Data"
 msgstr ""
 
-#: common/models.py:139
+#: common/models.py:146
 msgid "Copy test data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:145
+#: common/models.py:152
 msgid "Copy Category Parameter Templates"
 msgstr ""
 
-#: common/models.py:146
+#: common/models.py:153
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:152
+#: common/models.py:159
 msgid "Recent Part Count"
 msgstr ""
 
-#: common/models.py:153
+#: common/models.py:160
 msgid "Number of recent parts to display on index page"
 msgstr ""
 
-#: common/models.py:159 part/models.py:2117 part/templates/part/detail.html:160
+#: common/models.py:166 part/models.py:2117 part/templates/part/detail.html:160
 #: report/models.py:185 stock/forms.py:259 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:311
 msgid "Template"
 msgstr ""
 
-#: common/models.py:160
+#: common/models.py:167
 msgid "Parts are templates by default"
 msgstr ""
 
-#: common/models.py:166 part/models.py:834 part/templates/part/detail.html:170
+#: common/models.py:173 part/models.py:834 part/templates/part/detail.html:170
 #: templates/js/table_filters.js:124 templates/js/table_filters.js:323
 msgid "Assembly"
 msgstr ""
 
-#: common/models.py:167
+#: common/models.py:174
 msgid "Parts can be assembled from other components by default"
 msgstr ""
 
-#: common/models.py:173 part/models.py:840 part/templates/part/detail.html:180
+#: common/models.py:180 part/models.py:840 part/templates/part/detail.html:180
 #: templates/js/table_filters.js:327
 msgid "Component"
 msgstr ""
 
-#: common/models.py:174
+#: common/models.py:181
 msgid "Parts can be used as sub-components by default"
 msgstr ""
 
-#: common/models.py:180 part/models.py:851 part/templates/part/detail.html:200
+#: common/models.py:187 part/models.py:851 part/templates/part/detail.html:200
 msgid "Purchaseable"
 msgstr ""
 
-#: common/models.py:181
+#: common/models.py:188
 msgid "Parts are purchaseable by default"
 msgstr ""
 
-#: common/models.py:187 part/models.py:856 part/templates/part/detail.html:210
+#: common/models.py:194 part/models.py:856 part/templates/part/detail.html:210
 #: templates/js/table_filters.js:335
 msgid "Salable"
 msgstr ""
 
-#: common/models.py:188
+#: common/models.py:195
 msgid "Parts are salable by default"
 msgstr ""
 
-#: common/models.py:194 part/models.py:846 part/templates/part/detail.html:190
+#: common/models.py:201 part/models.py:846 part/templates/part/detail.html:190
 #: templates/js/table_filters.js:33 templates/js/table_filters.js:339
 msgid "Trackable"
 msgstr ""
 
-#: common/models.py:195
+#: common/models.py:202
 msgid "Parts are trackable by default"
 msgstr ""
 
-#: common/models.py:201 part/models.py:866 part/templates/part/detail.html:150
+#: common/models.py:208 part/models.py:866 part/templates/part/detail.html:150
 #: templates/js/table_filters.js:29
 msgid "Virtual"
 msgstr ""
 
-#: common/models.py:202
+#: common/models.py:209
 msgid "Parts are virtual by default"
 msgstr ""
 
-#: common/models.py:208
+#: common/models.py:215
 msgid "Show Quantity in Forms"
 msgstr ""
 
-#: common/models.py:209
+#: common/models.py:216
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:215 templates/stats.html:25
+#: common/models.py:222 templates/stats.html:25
 msgid "Debug Mode"
 msgstr ""
 
-#: common/models.py:216
+#: common/models.py:223
 msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
-#: common/models.py:222
+#: common/models.py:229
 msgid "Page Size"
 msgstr ""
 
-#: common/models.py:223
+#: common/models.py:230
 msgid "Default page size for PDF reports"
 msgstr ""
 
-#: common/models.py:233
+#: common/models.py:240
 msgid "Test Reports"
 msgstr ""
 
-#: common/models.py:234
+#: common/models.py:241
 msgid "Enable generation of test reports"
 msgstr ""
 
-#: common/models.py:240
+#: common/models.py:247
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/models.py:241
+#: common/models.py:248
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/models.py:247
+#: common/models.py:254
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/models.py:248
+#: common/models.py:255
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/models.py:254
+#: common/models.py:261
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/models.py:255
+#: common/models.py:262
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/models.py:257 part/templates/part/detail.html:121
+#: common/models.py:264 part/templates/part/detail.html:121
 msgid "days"
 msgstr ""
 
-#: common/models.py:262
+#: common/models.py:269
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/models.py:263
+#: common/models.py:270
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/models.py:269
+#: common/models.py:276
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/models.py:270
+#: common/models.py:277
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/models.py:276
+#: common/models.py:283
 msgid "Group by Part"
 msgstr ""
 
-#: common/models.py:277
+#: common/models.py:284
 msgid "Group stock items by part reference in table views"
 msgstr ""
 
-#: common/models.py:283
+#: common/models.py:290
 msgid "Recent Stock Count"
 msgstr ""
 
-#: common/models.py:284
+#: common/models.py:291
 msgid "Number of recent stock items to display on index page"
 msgstr ""
 
-#: common/models.py:290
+#: common/models.py:297
 msgid "Build Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:291
+#: common/models.py:298
 msgid "Prefix value for build order reference"
 msgstr ""
 
-#: common/models.py:296
+#: common/models.py:303
 msgid "Build Order Reference Regex"
 msgstr ""
 
-#: common/models.py:297
+#: common/models.py:304
 msgid "Regular expression pattern for matching build order reference"
 msgstr ""
 
-#: common/models.py:301
+#: common/models.py:308
 msgid "Sales Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:302
+#: common/models.py:309
 msgid "Prefix value for sales order reference"
 msgstr ""
 
-#: common/models.py:307
+#: common/models.py:314
 msgid "Purchase Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:308
+#: common/models.py:315
 msgid "Prefix value for purchase order reference"
 msgstr ""
 
-#: common/models.py:531
+#: common/models.py:538
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:533
+#: common/models.py:540
 msgid "Settings value"
 msgstr ""
 
-#: common/models.py:568
+#: common/models.py:575
 msgid "Must be an integer value"
 msgstr ""
 
-#: common/models.py:591
+#: common/models.py:598
 msgid "Value must be a boolean value"
 msgstr ""
 
-#: common/models.py:602
+#: common/models.py:609
 msgid "Value must be an integer value"
 msgstr ""
 
-#: common/models.py:625
+#: common/models.py:632
 msgid "Key string must be unique"
 msgstr ""
 
-#: common/models.py:706 company/forms.py:177
+#: common/models.py:713 company/forms.py:177
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:714 company/templates/company/supplier_part_pricing.html:82
+#: common/models.py:721 company/templates/company/supplier_part_pricing.html:82
 #: part/templates/part/sale_prices.html:90 templates/js/bom.js:255
 msgid "Price"
 msgstr ""
 
-#: common/models.py:715
+#: common/models.py:722
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:804
+#: common/models.py:811
 msgid "Default"
 msgstr ""
 
@@ -6109,11 +6117,32 @@ msgstr ""
 msgid "Delete Template"
 msgstr ""
 
+#: templates/InvenTree/settings/currencies.html:10
+msgid "Currency Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:25
+#, python-format
+msgid "Exchange Rates - Convert to %(cur)s"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:35
+msgid "Refresh Exchange Rates"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:37
+msgid "Update Exchange Rates"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:48
+msgid "\"Failed to refresh exchange rates\" "
+msgstr ""
+
 #: templates/InvenTree/settings/global.html:10
 msgid "Global InvenTree Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/global.html:27
+#: templates/InvenTree/settings/global.html:26
 msgid "Barcode Settings"
 msgstr ""
 
@@ -6197,6 +6226,10 @@ msgstr ""
 
 #: templates/InvenTree/settings/tabs.html:22
 msgid "Categories"
+msgstr ""
+
+#: templates/InvenTree/settings/tabs.html:40
+msgid "Currencies"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:16
