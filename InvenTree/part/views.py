@@ -41,7 +41,7 @@ from .models import PartSellPriceBreak
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
 from common.files import FileManager
-from common.views import FileManagementFormView
+from common.views import FileManagementFormView, FileManagementAjaxView
 
 from stock.models import StockLocation
 
@@ -872,6 +872,17 @@ class PartImport(FileManagementFormView):
             messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
 
         return HttpResponseRedirect(reverse('part-index'))
+
+
+class PartImportAjax(FileManagementAjaxView, PartImport):
+    ajax_form_steps_template = [
+        'part/import_wizard/ajax_part_upload.html',
+        'part/import_wizard/ajax_match_fields.html',
+        'part/import_wizard/ajax_match_references.html',
+    ]
+
+    def validate(self, obj, form, **kwargs):
+        return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
 class PartNotes(UpdateView):

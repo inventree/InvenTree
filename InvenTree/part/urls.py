@@ -122,6 +122,7 @@ part_urls = [
 
     # Upload a part
     url(r'^import/', views.PartImport.as_view(), name='part-import'),
+    url(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
 
     # Create a new BOM item
     url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
