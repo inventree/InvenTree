@@ -87,6 +87,13 @@ class InvenTreeSetting(models.Model):
             'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
+        'CUSTOM_EXCHANGE_RATES': {
+            'name': _('Custom Exchange Rates'),
+            'description': _('Enable custom exchange rates'),
+            'validator': bool,
+            'default': False,
+        },
+
         'INVENTREE_DOWNLOAD_FROM_URL': {
             'name': _('Download from URL'),
             'description': _('Allow download of remote images and files from external URL'),

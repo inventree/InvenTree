@@ -36,5 +36,8 @@
     <li {% if tab == 'so' %} class='active'{% endif %}>
         <a href="{% url 'settings-so' %}"><span class='fas fa-truck'></span> {% trans "Sales Orders" %}</a>
     </li>
+    <li {% if tab == 'currencies' %} class='active'{% endif %}>
+        <a href="{% url 'settings-currencies' %}"><span class='fas fa-dollar-sign'></span> {% trans "Currencies" %}</a>
+    </li>
 </ul>
 {% endif %}

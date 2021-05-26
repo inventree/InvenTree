@@ -5,14 +5,13 @@ Django forms for interacting with common objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from decimal import Decimal, InvalidOperation
-
 from django import forms
 from django.utils.translation import gettext as _
 
 from djmoney.forms.fields import MoneyField
 
 from InvenTree.forms import HelperForm
+from InvenTree.helpers import clean_decimal
 
 from .files import FileManager
 from .models import InvenTreeSetting
@@ -119,21 +118,6 @@ class MatchItem(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-        def clean(number):
-            """ Clean-up decimal value """
-
-            # Check if empty
-            if not number:
-                return number
-
-            # Check if decimal type
-            try:
-                clean_number = Decimal(number)
-            except InvalidOperation:
-                clean_number = number
-
-            return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
-
         # Setup FileManager
         file_manager.setup()
 
@@ -160,7 +144,7 @@ class MatchItem(forms.Form):
                                     'type': 'number',
                                     'min': '0',
                                     'step': 'any',
-                                    'value': clean(row.get('quantity', '')),
+                                    'value': clean_decimal(row.get('quantity', '')),
                                 })
                             )
 
@@ -202,7 +186,7 @@ class MatchItem(forms.Form):
                                 decimal_places=5,
                                 max_digits=19,
                                 required=False,
-                                default_amount=clean(value),
+                                default_amount=clean_decimal(value),
                             )
                         else:
                             self.fields[field_name] = forms.CharField(

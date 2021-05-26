@@ -513,8 +513,6 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
-EXCHANGE_BACKEND = 'InvenTree.exchange.ExchangeRateHostBackend'
-
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})
 
