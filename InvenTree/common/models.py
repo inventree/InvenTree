@@ -211,6 +211,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_SHOW_IMPORT': {
+            'name': _('Show Import in Views'),
+            'description': _('Display the import wizard in some part views'),
+            'default': False,
+            'validator': bool,
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),

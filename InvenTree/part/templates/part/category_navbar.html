@@ -1,4 +1,7 @@
 {% load i18n %}
+{% load inventree_extras %}
+
+{% settings_value 'PART_SHOW_IMPORT' as show_import %}
 
 <ul class='list-group'>
 
@@ -30,7 +33,7 @@
         </a>
     </li>
 
-    {% if user.is_staff and roles.part.add %}
+    {% if show_import and user.is_staff and roles.part.add %}
     <li class='list-group-item {% if tab == "import" %}active{% endif %}' title='{% trans "Import Parts" %}'>
         <a href='{% url "part-import" %}'>
             <span class='fas fa-file-upload'></span>
