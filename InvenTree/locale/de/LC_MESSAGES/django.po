@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-27 07:11+0000\n"
-"PO-Revision-Date: 2021-05-27 07:17\n"
+"PO-Revision-Date: 2021-05-27 15:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6113,23 +6113,23 @@ msgstr "Währungseinstellungen"
 
 #: templates/InvenTree/settings/currencies.html:18
 msgid "Base Currency"
-msgstr ""
+msgstr "Basiswährung"
 
 #: templates/InvenTree/settings/currencies.html:22
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Wechselkurse"
 
 #: templates/InvenTree/settings/currencies.html:32
 msgid "Last Update"
-msgstr ""
+msgstr "Letzte Aktualisierung"
 
 #: templates/InvenTree/settings/currencies.html:38
 msgid "Never"
-msgstr ""
+msgstr "Nie"
 
 #: templates/InvenTree/settings/currencies.html:43
 msgid "Update Now"
-msgstr ""
+msgstr "Jetzt aktualisieren"
 
 #: templates/InvenTree/settings/global.html:10
 msgid "Global InvenTree Settings"
