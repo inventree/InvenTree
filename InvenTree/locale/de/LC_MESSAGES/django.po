@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-27 07:11+0000\n"
-"PO-Revision-Date: 2021-05-27 15:21\n"
+"PO-Revision-Date: 2021-05-27 16:40\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4604,7 +4604,7 @@ msgstr "Teil löschen"
 
 #: part/templates/part/part_base.html:107
 msgid "This is a virtual part"
-msgstr ""
+msgstr "Dies ist ein virtuelles Teil"
 
 #: part/templates/part/part_base.html:113
 #, python-format
