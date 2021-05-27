@@ -139,7 +139,7 @@
         <div class='btn-group'>
             <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
-                {% if item.part.has_variants %}
+                {% if item.part.can_convert %}
                 <li><a href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
                 {% endif %}
                 {% if roles.stock.add %}
