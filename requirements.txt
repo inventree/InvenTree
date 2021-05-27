@@ -25,6 +25,7 @@ django-stdimage==5.1.1          # Advanced ImageField management
 django-weasyprint==1.0.1        # HTML PDF export
 django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-admin-shell==0.1.2       # Python shell for the admin interface
+py-moneyed==0.8.0               # Specific version requirement for py-moneyed
 django-money==1.1               # Django app for currency management
 certifi                         # Certifi is (most likely) installed through one of the requirements above
 django-error-report==0.2.0      # Error report viewer for the admin interface

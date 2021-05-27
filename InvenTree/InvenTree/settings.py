@@ -513,6 +513,11 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
+DEFAULT_CURRENCY = get_setting(
+    'INVENTREE_DEFAULT_CURRENCY',
+    CONFIG.get('default_currency', 'USD')
+)
+
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})
 
