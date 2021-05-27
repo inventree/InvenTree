@@ -13,6 +13,8 @@ from djmoney.forms.fields import MoneyField
 from InvenTree.forms import HelperForm
 from InvenTree.helpers import clean_decimal
 
+from common.settings import currency_code_default
+
 from .files import FileManager
 from .models import InvenTreeSetting
 
@@ -182,7 +184,7 @@ class MatchItem(forms.Form):
                         if 'price' in col_guess.lower():
                             self.fields[field_name] = MoneyField(
                                 label=_(col_guess),
-                                default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
+                                default_currency=currency_code_default(),
                                 decimal_places=5,
                                 max_digits=19,
                                 required=False,

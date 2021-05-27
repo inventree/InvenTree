@@ -19,6 +19,8 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
+from common.settings import currency_code_default
+
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
@@ -78,20 +80,6 @@ class InvenTreeSetting(models.Model):
             'description': _('Base URL for server instance'),
             'validator': URLValidator(),
             'default': '',
-        },
-
-        'INVENTREE_DEFAULT_CURRENCY': {
-            'name': _('Default Currency'),
-            'description': _('Default currency'),
-            'default': 'USD',
-            'choices': djmoney.settings.CURRENCY_CHOICES,
-        },
-
-        'CUSTOM_EXCHANGE_RATES': {
-            'name': _('Custom Exchange Rates'),
-            'description': _('Enable custom exchange rates'),
-            'validator': bool,
-            'default': False,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -766,7 +754,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None):
 
     if currency is None:
         # Default currency selection
-        currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+        currency = currency_code_default()
 
     pb_min = None
     for pb in instance.price_breaks.all():

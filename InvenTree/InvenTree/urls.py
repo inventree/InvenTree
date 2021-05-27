@@ -41,7 +41,6 @@ from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
-from .views import CurrencySettingsView
 
 from common.views import SettingEdit
 
@@ -91,7 +90,7 @@ settings_urls = [
     url(r'^build/?', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
     url(r'^purchase-order/?', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
     url(r'^sales-order/?', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
-    url(r'^currencies/?', CurrencySettingsView.as_view(), name='settings-currencies'),
+    url(r'^currencies/?', SettingsView.as_view(template_name='InvenTree/settings/currencies.html'), name='settings-currencies'),
 
     url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
 
