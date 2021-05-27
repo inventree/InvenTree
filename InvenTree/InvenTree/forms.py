@@ -16,8 +16,6 @@ from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppende
 from common.models import ColorTheme
 from part.models import PartCategory
 
-from .exchange import InvenTreeManualExchangeBackend
-
 
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
@@ -240,35 +238,3 @@ class SettingCategorySelectForm(forms.ModelForm):
                 css_class='row',
             ),
         )
-
-
-class SettingExchangeRatesForm(forms.Form):
-    """ Form for displaying and setting currency exchange rates manually """
-        
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
-        exchange_rate_backend = InvenTreeManualExchangeBackend()
-
-        # Update default currency (in case it has changed)
-        exchange_rate_backend.update_default_currency()
-
-        for currency in exchange_rate_backend.currencies:
-            if currency != exchange_rate_backend.base_currency:
-                # Set field name
-                field_name = currency
-                # Set field input box
-                self.fields[field_name] = forms.CharField(
-                    label=field_name,
-                    required=False,
-                    widget=forms.NumberInput(attrs={
-                        'name': field_name,
-                        'class': 'numberinput',
-                        'style': 'width: 200px;',
-                        'type': 'number',
-                        'min': '0',
-                        'step': 'any',
-                        'value': 0,
-                    })
-                )
