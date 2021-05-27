@@ -7,7 +7,8 @@ from __future__ import unicode_literals
 
 from moneyed import CURRENCIES
 
-from common.models import InvenTreeSetting
+import common.models
+from django.conf import settings
 
 
 def currency_code_default():
@@ -15,7 +16,7 @@ def currency_code_default():
     Returns the default currency code (or USD if not specified)
     """
 
-    code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+    code = settings.BASE_CURRENCY
 
     if code not in CURRENCIES:
         code = 'USD'
@@ -28,4 +29,4 @@ def stock_expiry_enabled():
     Returns True if the stock expiry feature is enabled
     """
 
-    return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY')
+    return common.models.InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY')
