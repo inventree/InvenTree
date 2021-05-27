@@ -12,24 +12,26 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import RedirectView, TemplateView
+
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
-from InvenTree.helpers import clean_decimal
+
+import InvenTree.tasks
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import ColorThemeSelectForm, SettingCategorySelectForm
-from .forms import SettingExchangeRatesForm
 from .helpers import str2bool
-from .exchange import get_exchange_rate_backend
 
 from rest_framework import views
 
@@ -772,6 +774,50 @@ class SettingsView(TemplateView):
         return ctx
 
 
+class CurrencyRefreshView(RedirectView):
+
+    url = reverse_lazy("settings-currencies")
+
+    def post(self, request, *args, **kwargs):
+        """
+        On a POST request we will attempt to refresh the exchange rates
+        """
+
+        print("POST!")
+
+        # Will block for a little bit
+        InvenTree.tasks.update_exchange_rates()
+
+        return self.get(request, *args, **kwargs)
+
+
+class CurrencySettingsView(TemplateView):
+    """
+    View for configuring currency settings
+    """
+
+    template_name = "InvenTree/settings/currencies.html"
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs).copy()
+
+        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+        ctx["base_currency"] = settings.BASE_CURRENCY
+        ctx["currencies"] = settings.CURRENCIES
+
+        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+
+        # When were the rates last updated?
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            ctx["rates_updated"] = backend.last_update
+        except:
+            ctx["rates_updated"] = None
+
+        return ctx
+
+
 class AppearanceSelectView(FormView):
     """ View for selecting a color theme """
 
@@ -911,89 +957,3 @@ class DatabaseStatsView(AjaxView):
         """
 
         return ctx
-
-
-class CurrencySettingsView(FormView):
-
-    form_class = SettingExchangeRatesForm
-    template_name = 'InvenTree/settings/currencies.html'
-    success_url = reverse_lazy('settings-currencies')
-
-    exchange_rate_backend = None
-
-    def get_exchange_rate_backend(self):
-
-        if not self.exchange_rate_backend:
-            self.exchange_rate_backend = get_exchange_rate_backend()
-        
-        return self.exchange_rate_backend
-
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
-        # Set default API result
-        if 'api_rates_success' not in context:
-            context['default_currency'] = True
-        else:
-            # Update form
-            context['form'] = self.get_form()
-
-        # Get exchange rate backend
-        exchange_rate_backend = self.get_exchange_rate_backend()
-
-        context['default_currency'] = exchange_rate_backend.base_currency
-
-        context['custom_rates'] = exchange_rate_backend.custom_rates
-
-        context['exchange_backend'] = exchange_rate_backend.name
-
-        return context
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        # Get exchange rate backend
-        exchange_rate_backend = self.get_exchange_rate_backend()
-
-        # Get stored exchange rates
-        stored_rates = exchange_rate_backend.get_stored_rates()
-            
-        for field in form.fields:
-            if not exchange_rate_backend.custom_rates:
-                # Disable all the fields
-                form.fields[field].disabled = True
-            form.fields[field].initial = clean_decimal(stored_rates.get(field, 0))
-
-        return form
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.get_form()
-
-        # Get exchange rate backend
-        exchange_rate_backend = self.get_exchange_rate_backend()
-
-        if not exchange_rate_backend.custom_rates:
-            # Refresh rate from Fixer.IO API
-            exchange_rate_backend.update_rates(base_currency=exchange_rate_backend.base_currency)
-            # Check if rates have been updated
-            if not exchange_rate_backend.get_stored_rates():
-                # Update context
-                context = {'api_rates_success': False}
-                # Return view with updated context
-                return self.render_to_response(self.get_context_data(form=form, **context))
-        else:
-            # Update rates from form
-            manual_rates = {}
-
-            if form.is_valid():
-                for field, value in form.cleaned_data.items():
-                    manual_rates[field] = clean_decimal(value)
-
-                exchange_rate_backend.update_rates(base_currency=exchange_rate_backend.base_currency, **{'rates': manual_rates})
-            else:
-                return self.form_invalid(form)
-
-        return self.form_valid(form)

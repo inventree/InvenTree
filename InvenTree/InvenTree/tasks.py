@@ -167,16 +167,16 @@ def update_exchange_rates():
     """
 
     try:
-        import common.models
-        from InvenTree.exchange import ExchangeRateHostBackend
+        from InvenTree.exchange import InvenTreeExchange
+        from django.conf import settings
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
 
-    backend = ExchangeRateHostBackend()
+    backend = InvenTreeExchange()
     print(f"Updating exchange rates from {backend.url}")
 
-    base = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+    base = settings.BASE_CURRENCY
 
     print(f"Using base currency '{base}'")
 
