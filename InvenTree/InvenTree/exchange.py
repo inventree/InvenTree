@@ -7,7 +7,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
     """
     Backend for automatically updating currency exchange rates.
 
-    Uses the exchangerate.host service API 
+    Uses the exchangerate.host service API
     """
 
     name = "InvenTreeExchange"

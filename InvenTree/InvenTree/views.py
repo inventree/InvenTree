@@ -26,7 +26,6 @@ from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
-from InvenTree.helpers import clean_decimal
 
 import InvenTree.tasks
 
@@ -775,7 +774,6 @@ class SettingsView(TemplateView):
         return ctx
 
 
-
 class CurrencyRefreshView(RedirectView):
 
     url = reverse_lazy("settings-currencies")
@@ -818,6 +816,7 @@ class CurrencySettingsView(TemplateView):
             ctx["rates_updated"] = None
 
         return ctx
+
 
 class AppearanceSelectView(FormView):
     """ View for selecting a color theme """
