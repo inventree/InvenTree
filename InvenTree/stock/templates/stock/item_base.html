@@ -551,7 +551,7 @@ $("#stock-assign-to-customer").click(function() {
     );
 });
 
-{% if item.part.has_variants %}
+{% if item.part.can_convert %}
 $("#stock-convert").click(function() {
     launchModalForm("{% url 'stock-item-convert' item.id %}",
         {
