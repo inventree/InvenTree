@@ -5,6 +5,12 @@ from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 
+from django.conf import settings
+
+from djmoney.money import Money
+from djmoney.contrib.exchange.models import Rate, convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
+
 from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
@@ -12,6 +18,8 @@ from . import version
 from mptt.exceptions import InvalidMove
 
 from decimal import Decimal
+
+import InvenTree.tasks
 
 from stock.models import StockLocation
 
@@ -308,3 +316,46 @@ class TestVersionNumber(TestCase):
         self.assertTrue(v_c > v_b)
         self.assertTrue(v_d > v_c)
         self.assertTrue(v_d > v_a)
+
+
+class CurrencyTests(TestCase):
+    """
+    Unit tests for currency / exchange rate functionality
+    """
+
+    def test_rates(self):
+
+        # Initially, there will not be any exchange rate information
+        rates = Rate.objects.all()
+
+        self.assertEqual(rates.count(), 0)
+
+        # Without rate information, we cannot convert anything...
+        with self.assertRaises(MissingRate):
+            convert_money(Money(100, 'USD'), 'AUD')
+
+        with self.assertRaises(MissingRate):
+            convert_money(Money(100, 'AUD'), 'USD')
+
+        currencies = settings.CURRENCIES
+
+        InvenTree.tasks.update_exchange_rates()
+
+        rates = Rate.objects.all()
+
+        self.assertEqual(rates.count(), len(currencies))
+
+        # Now that we have some exchange rate information, we can perform conversions
+
+        # Forwards
+        convert_money(Money(100, 'USD'), 'AUD')
+
+        # Backwards
+        convert_money(Money(100, 'AUD'), 'USD')
+
+        # Convert between non base currencies
+        convert_money(Money(100, 'CAD'), 'NZD')
+
+        # Convert to a symbol which is not covered
+        with self.assertRaises(MissingRate):
+            convert_money(Money(100, 'GBP'), 'ZWL')
