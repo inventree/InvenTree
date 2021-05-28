@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-27 07:11+0000\n"
-"PO-Revision-Date: 2021-05-27 07:17\n"
+"POT-Creation-Date: 2021-05-28 02:51+0000\n"
+"PO-Revision-Date: 2021-05-28 02:59\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -773,7 +773,7 @@ msgstr ""
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
 #: stock/models.py:530 stock/models.py:1665 stock/models.py:1767
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
-#: templates/js/bom.js:333 templates/js/stock.js:128 templates/js/stock.js:671
+#: templates/js/bom.js:349 templates/js/stock.js:128 templates/js/stock.js:671
 msgid "Notes"
 msgstr ""
 
@@ -1811,7 +1811,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:708 company/templates/company/supplier_part_pricing.html:82
-#: part/templates/part/sale_prices.html:90 templates/js/bom.js:255
+#: part/templates/part/sale_prices.html:90 templates/js/bom.js:271
 msgid "Price"
 msgstr ""
 
@@ -3185,7 +3185,7 @@ msgstr ""
 msgid "Receive outstanding parts for <b>%(order)s</b> - <i>%(desc)s</i>"
 msgstr ""
 
-#: order/templates/order/receive_parts.html:14 part/api.py:40
+#: order/templates/order/receive_parts.html:14 part/api.py:45
 #: part/models.py:322 part/templates/part/cat_link.html:7
 #: part/templates/part/category.html:99
 #: part/templates/part/category_navbar.html:22
@@ -3255,7 +3255,7 @@ msgstr ""
 msgid "Sales Order Items"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:342
+#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:358
 #: templates/js/build.js:627 templates/js/build.js:1044
 msgid "Actions"
 msgstr ""
@@ -4009,7 +4009,7 @@ msgstr ""
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:2271 templates/js/bom.js:216 templates/js/bom.js:269
+#: part/models.py:2271 templates/js/bom.js:216 templates/js/bom.js:285
 msgid "Optional"
 msgstr ""
 
@@ -4041,7 +4041,7 @@ msgstr ""
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:2287 templates/js/bom.js:279 templates/js/bom.js:286
+#: part/models.py:2287 templates/js/bom.js:295 templates/js/bom.js:302
 #: templates/js/table_filters.js:51
 msgid "Inherited"
 msgstr ""
@@ -4626,7 +4626,7 @@ msgstr ""
 msgid "Allocated to Orders"
 msgstr ""
 
-#: part/templates/part/part_base.html:172 templates/js/bom.js:300
+#: part/templates/part/part_base.html:172 templates/js/bom.js:316
 msgid "Can Build"
 msgstr ""
 
@@ -6436,41 +6436,49 @@ msgstr ""
 msgid "Open subassembly"
 msgstr ""
 
-#: templates/js/bom.js:261
+#: templates/js/bom.js:249
+msgid "Purchase Price Range"
+msgstr ""
+
+#: templates/js/bom.js:257
+msgid "Purchase Price Average"
+msgstr ""
+
+#: templates/js/bom.js:277
 msgid "No pricing available"
 msgstr ""
 
-#: templates/js/bom.js:272 templates/js/filters.js:167
+#: templates/js/bom.js:288 templates/js/filters.js:167
 #: templates/js/filters.js:397
 msgid "true"
 msgstr ""
 
-#: templates/js/bom.js:273 templates/js/filters.js:171
+#: templates/js/bom.js:289 templates/js/filters.js:171
 #: templates/js/filters.js:398
 msgid "false"
 msgstr ""
 
-#: templates/js/bom.js:290 templates/js/bom.js:376
+#: templates/js/bom.js:306 templates/js/bom.js:392
 msgid "View BOM"
 msgstr ""
 
-#: templates/js/bom.js:350
+#: templates/js/bom.js:366
 msgid "Validate BOM Item"
 msgstr ""
 
-#: templates/js/bom.js:352
+#: templates/js/bom.js:368
 msgid "This line has been validated"
 msgstr ""
 
-#: templates/js/bom.js:354
+#: templates/js/bom.js:370
 msgid "Edit BOM Item"
 msgstr ""
 
-#: templates/js/bom.js:356
+#: templates/js/bom.js:372
 msgid "Delete BOM Item"
 msgstr ""
 
-#: templates/js/bom.js:447 templates/js/build.js:340 templates/js/build.js:1092
+#: templates/js/bom.js:463 templates/js/build.js:340 templates/js/build.js:1092
 msgid "No BOM items found"
 msgstr ""
 
