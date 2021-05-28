@@ -168,13 +168,23 @@ def update_exchange_rates():
 
     try:
         from InvenTree.exchange import InvenTreeExchange
-        from djmoney.contrib.exchange.models import Rate
+        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
         from django.conf import settings
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
     except:
         # Other error?
+        return
+
+    # Test to see if the database is ready yet
+    try:
+        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+    except ExchangeBackend.DoesNotExist:
+        pass
+    except:
+        # Some other error
+        print("Database not ready")
         return
 
     backend = InvenTreeExchange()
