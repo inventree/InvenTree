@@ -1861,6 +1861,59 @@ class Part(MPTTModel):
 
         return self.get_descendants(include_self=False)
 
+    @property
+    def can_convert(self):
+        """
+        Check if this Part can be "converted" to a different variant:
+
+        It can be converted if:
+
+        a) It has non-virtual variant parts underneath it
+        b) It has non-virtual template parts above it
+        c) It has non-virtual sibling variants
+
+        """
+
+        return self.get_conversion_options().count() > 0
+
+    def get_conversion_options(self):
+        """
+        Return options for converting this part to a "variant" within the same tree
+
+        a) Variants underneath this one
+        b) Immediate parent
+        c) Siblings
+        """
+
+        parts = []
+
+        # Child parts
+        children = self.get_descendants(include_self=False)
+
+        for child in children:
+            parts.append(child)
+
+        # Immediate parent
+        if self.variant_of:
+            parts.append(self.variant_of)
+
+        siblings = self.get_siblings(include_self=False)
+
+        for sib in siblings:
+            parts.append(sib)
+
+        filtered_parts = Part.objects.filter(pk__in=[part.pk for part in parts])
+
+        # Ensure this part is not in the queryset, somehow
+        filtered_parts = filtered_parts.exclude(pk=self.pk)
+
+        filtered_parts = filtered_parts.filter(
+            active=True,
+            virtual=False,
+        )
+
+        return filtered_parts
+
     def get_related_parts(self):
         """ Return list of tuples for all related parts:
             - first value is PartRelated object
