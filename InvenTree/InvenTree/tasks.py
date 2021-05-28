@@ -173,6 +173,9 @@ def update_exchange_rates():
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
+    except:
+        # Other error?
+        return
 
     backend = InvenTreeExchange()
     print(f"Updating exchange rates from {backend.url}")
