@@ -1,6 +1,13 @@
 name: Style Checks
 
-on: ["push", "pull_request"]
+on:
+  push:
+    branches-ignore:
+      - l10*
+
+  pull_request:
+    branches-ignore:
+      - l10*
 
 jobs:
   style:
