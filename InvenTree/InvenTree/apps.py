@@ -6,7 +6,7 @@ from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
 from django.conf import settings
 
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import isInTestMode, canAppAccessDatabase
 import InvenTree.tasks
 
 
@@ -20,7 +20,9 @@ class InvenTreeConfig(AppConfig):
 
         if canAppAccessDatabase():
             self.start_background_tasks()
-            self.update_exchange_rates()
+
+            if not isInTestMode():
+                self.update_exchange_rates()
 
     def start_background_tasks(self):
 
@@ -94,6 +96,10 @@ class InvenTreeConfig(AppConfig):
         except (ExchangeBackend.DoesNotExist):
             print("Exchange backend not found - updating")
             update = True
+
+        except:
+            # Some other error - potentially the tables are not ready yet
+            return
 
         if update:
             update_exchange_rates()
