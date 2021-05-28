@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-28 02:51+0000\n"
-"PO-Revision-Date: 2021-05-28 02:59\n"
+"POT-Creation-Date: 2021-05-28 03:27+0000\n"
+"PO-Revision-Date: 2021-05-28 04:02\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -392,7 +392,7 @@ msgstr "Ustaw hasło"
 msgid "Password fields must match"
 msgstr "Hasła muszą być zgodne"
 
-#: InvenTree/views.py:936 templates/navbar.html:95
+#: InvenTree/views.py:937 templates/navbar.html:95
 msgid "System Information"
 msgstr "Informacja systemowa"
 
