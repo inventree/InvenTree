@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-28 04:35+0000\n"
-"PO-Revision-Date: 2021-05-18 22:45\n"
+"POT-Creation-Date: 2021-05-28 03:27+0000\n"
+"PO-Revision-Date: 2021-05-28 04:02\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2146,11 +2146,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -4605,10 +4603,8 @@ msgid "Delete part"
 msgstr "Teil löschen"
 
 #: part/templates/part/part_base.html:107
-#, fuzzy
-#| msgid "Part is not a virtual part"
 msgid "This is a virtual part"
-msgstr "Teil ist nicht virtuell"
+msgstr "Dies ist ein virtuelles Teil"
 
 #: part/templates/part/part_base.html:113
 #, python-format
@@ -5932,7 +5928,7 @@ msgstr "{n} BestandsObjekte gelöscht"
 
 #: stock/views.py:1222
 msgid "Edit Stock Item Status"
-msgstr "Lagerbestandsstatus bearbeiten"
+msgstr "Status bearbeiten"
 
 #: stock/views.py:1245
 msgid "Edit Stock Item"
@@ -6068,13 +6064,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6114,36 +6108,28 @@ msgid "Delete Template"
 msgstr "Vorlage löschen"
 
 #: templates/InvenTree/settings/currencies.html:10
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Currency Settings"
-msgstr "Kategorie-Einstellungen"
+msgstr "Währungseinstellungen"
 
 #: templates/InvenTree/settings/currencies.html:18
-#, fuzzy
-#| msgid "Currency"
 msgid "Base Currency"
-msgstr "Währung"
+msgstr "Basiswährung"
 
 #: templates/InvenTree/settings/currencies.html:22
-#, fuzzy
-#| msgid "Updated company image"
 msgid "Exchange Rates"
-msgstr "Aktualisiertes Firmenbild"
+msgstr "Wechselkurse"
 
 #: templates/InvenTree/settings/currencies.html:32
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Last Update"
-msgstr "Zuletzt aktualisiert"
+msgstr "Letzte Aktualisierung"
 
 #: templates/InvenTree/settings/currencies.html:38
 msgid "Never"
-msgstr ""
+msgstr "Nie"
 
 #: templates/InvenTree/settings/currencies.html:43
 msgid "Update Now"
-msgstr ""
+msgstr "Jetzt aktualisieren"
 
 #: templates/InvenTree/settings/global.html:10
 msgid "Global InvenTree Settings"
@@ -6228,10 +6214,8 @@ msgid "Global"
 msgstr "Systemweit"
 
 #: templates/InvenTree/settings/tabs.html:19
-#, fuzzy
-#| msgid "Currency"
 msgid "Currencies"
-msgstr "Währung"
+msgstr "Währungen"
 
 #: templates/InvenTree/settings/tabs.html:22
 msgid "Report"
@@ -6283,10 +6267,8 @@ msgid "Update Available"
 msgstr "Aktualisierung verfügbar"
 
 #: templates/about.html:34
-#, fuzzy
-#| msgid "InvenTree Version"
 msgid "API Version"
-msgstr "InvenTree-Version"
+msgstr "API-Version"
 
 #: templates/about.html:39
 msgid "Django Version"
@@ -6459,16 +6441,12 @@ msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
 #: templates/js/bom.js:249
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Purchase Price Range"
-msgstr "Preis"
+msgstr ""
 
 #: templates/js/bom.js:257
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Purchase Price Average"
-msgstr "Preis"
+msgstr ""
 
 #: templates/js/bom.js:277
 msgid "No pricing available"
@@ -6986,11 +6964,11 @@ msgstr "Inventur"
 
 #: templates/js/stock.js:825
 msgid "Stock Status"
-msgstr "Bestandsstatus"
+msgstr "Status"
 
 #: templates/js/stock.js:840
 msgid "Set Stock Status"
-msgstr "Bestandsstatus setzen"
+msgstr "Status setzen"
 
 #: templates/js/stock.js:854
 msgid "Select Status Code"
@@ -7168,7 +7146,7 @@ msgstr "zeige zu Kunden zugeordnete Einträge"
 
 #: templates/js/table_filters.js:198 templates/js/table_filters.js:199
 msgid "Stock status"
-msgstr "Bestandsstatus"
+msgstr "Status"
 
 #: templates/js/table_filters.js:232
 msgid "Build status"
@@ -7461,7 +7439,7 @@ msgstr "Status ändern"
 
 #: templates/stock_table.html:60
 msgid "Change stock status"
-msgstr "Bestandsstatus ändern"
+msgstr "Status ändern"
 
 #: templates/stock_table.html:63
 msgid "Delete selected items"
@@ -7535,14 +7513,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Default Currency"
-#~ msgstr "Standard-Währung"
-
-#~ msgid "Default currency"
-#~ msgstr "Standard-Währung"
-
-#~ msgid "fixer.io API key"
-#~ msgstr "fixer.io API-Schlüssel"
-
-#~ msgid "API key for fixer.io currency conversion service"
-#~ msgstr "API-Schlüssel für fixer.io - wird zur Währungsumrechnung verwendet"
