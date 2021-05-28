@@ -15,6 +15,9 @@
     <li {% if tab == 'global' %} class='active' {% endif %}>
         <a href='{% url "settings-global" %}'><span class='fas fa-globe'></span> {% trans "Global" %}</a>
     </li>
+    <li {% if tab == 'currencies' %} class='active'{% endif %}>
+        <a href="{% url 'settings-currencies' %}"><span class='fas fa-dollar-sign'></span> {% trans "Currencies" %}</a>
+    </li>
     <li {% if tab == 'report' %} class='active' {% endif %}>
         <a href='{% url "settings-report" %}'><span class='fas fa-file-pdf'></span> {% trans "Report" %}</a>
     </li>

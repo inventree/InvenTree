@@ -163,30 +163,41 @@ def check_for_updates():
 
 def update_exchange_rates():
     """
-    If an API key for fixer.io has been provided, attempt to update currency exchange rates
+    Update currency exchange rates
     """
 
     try:
-        import common.models
+        from InvenTree.exchange import InvenTreeExchange
+        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
         from django.conf import settings
-        from djmoney.contrib.exchange.backends import FixerBackend
     except AppRegistryNotReady:
         # Apps not yet loaded!
         return
-
-    fixer_api_key = common.models.InvenTreeSetting.get_setting('INVENTREE_FIXER_API_KEY', '').strip()
-
-    if not fixer_api_key:
-        # API key not provided
+    except:
+        # Other error?
         return
 
-    backend = FixerBackend(access_key=fixer_api_key)
+    # Test to see if the database is ready yet
+    try:
+        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+    except ExchangeBackend.DoesNotExist:
+        pass
+    except:
+        # Some other error
+        print("Database not ready")
+        return
 
-    currencies = ','.join(settings.CURRENCIES)
+    backend = InvenTreeExchange()
+    print(f"Updating exchange rates from {backend.url}")
 
     base = settings.BASE_CURRENCY
 
-    backend.update_rates(base_currency=base, symbols=currencies)
+    print(f"Using base currency '{base}'")
+
+    backend.update_rates(base_currency=base)
+
+    # Remove any exchange rates which are not in the provided currencies
+    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=settings.CURRENCIES).delete()
 
 
 def send_email(subject, body, recipients, from_email=None):

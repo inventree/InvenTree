@@ -8,7 +8,7 @@ import json
 import os.path
 from PIL import Image
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -606,3 +606,19 @@ def getNewestMigrationFile(app, exclude_extension=True):
         newest_file = newest_file.replace('.py', '')
 
     return newest_file
+
+
+def clean_decimal(number):
+    """ Clean-up decimal value """
+
+    # Check if empty
+    if number is None or number == '':
+        return Decimal(0)
+
+    # Check if decimal type
+    try:
+        clean_number = Decimal(number)
+    except InvalidOperation:
+        clean_number = number
+
+    return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()

@@ -12,17 +12,22 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import RedirectView, TemplateView
+
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
+
+import InvenTree.tasks
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import ColorThemeSelectForm, SettingCategorySelectForm
@@ -765,6 +770,51 @@ class SettingsView(TemplateView):
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+
+        return ctx
+
+
+class CurrencyRefreshView(RedirectView):
+    """
+    POST endpoint to refresh / update exchange rates
+    """
+
+    url = reverse_lazy("settings-currencies")
+
+    def post(self, request, *args, **kwargs):
+        """
+        On a POST request we will attempt to refresh the exchange rates
+        """
+
+        # Will block for a little bit
+        InvenTree.tasks.update_exchange_rates()
+
+        return self.get(request, *args, **kwargs)
+
+
+class CurrencySettingsView(TemplateView):
+    """
+    View for configuring currency settings
+    """
+
+    template_name = "InvenTree/settings/currencies.html"
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs).copy()
+
+        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+        ctx["base_currency"] = settings.BASE_CURRENCY
+        ctx["currencies"] = settings.CURRENCIES
+
+        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+
+        # When were the rates last updated?
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            ctx["rates_updated"] = backend.last_update
+        except:
+            ctx["rates_updated"] = None
 
         return ctx
 

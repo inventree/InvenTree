@@ -11,9 +11,6 @@ from .models import Company, Contact, ManufacturerPart, SupplierPart
 from .models import rename_company_image
 from part.models import Part
 
-from InvenTree.exchange import InvenTreeManualExchangeBackend
-from djmoney.contrib.exchange.models import Rate
-
 
 class CompanySimpleTest(TestCase):
 
@@ -40,14 +37,6 @@ class CompanySimpleTest(TestCase):
         self.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
         self.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
         self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
-
-        InvenTreeManualExchangeBackend().update_rates()
-
-        Rate.objects.create(
-            currency='AUD',
-            value='1.35',
-            backend_id='inventree',
-        )
 
     def test_company_model(self):
         c = Company.objects.get(name='ABC Co.')

@@ -39,6 +39,7 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
+from .views import CurrencySettingsView, CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
@@ -82,14 +83,16 @@ settings_urls = [
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^i18n/?', include('django.conf.urls.i18n')),
 
-    url(r'^global/?', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
-    url(r'^report/?', SettingsView.as_view(template_name='InvenTree/settings/report.html'), name='settings-report'),
-    url(r'^category/?', SettingCategorySelectView.as_view(), name='settings-category'),
-    url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
-    url(r'^stock/?', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),
-    url(r'^build/?', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
-    url(r'^purchase-order/?', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
-    url(r'^sales-order/?', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
+    url(r'^global/', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
+    url(r'^report/', SettingsView.as_view(template_name='InvenTree/settings/report.html'), name='settings-report'),
+    url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
+    url(r'^part/', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
+    url(r'^stock/', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),
+    url(r'^build/', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
+    url(r'^purchase-order/', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
+    url(r'^sales-order/', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
+    url(r'^currencies/', CurrencySettingsView.as_view(), name='settings-currencies'),
+    url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
 

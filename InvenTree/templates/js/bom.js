@@ -243,6 +243,22 @@ function loadBomTable(table, options) {
         }
     });
 
+    cols.push(
+    {
+        field: 'purchase_price_range',
+        title: '{% trans "Purchase Price Range" %}',
+        searchable: false,
+        sortable: true,
+    });
+
+    cols.push(
+    {
+        field: 'purchase_price_avg',
+        title: '{% trans "Purchase Price Average" %}',
+        searchable: false,
+        sortable: true,
+    });
+
     /*
 
     // TODO - Re-introduce the pricing column at a later stage,
