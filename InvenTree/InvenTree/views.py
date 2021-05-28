@@ -775,6 +775,9 @@ class SettingsView(TemplateView):
 
 
 class CurrencyRefreshView(RedirectView):
+    """
+    POST endpoint to refresh / update exchange rates
+    """
 
     url = reverse_lazy("settings-currencies")
 
@@ -782,8 +785,6 @@ class CurrencyRefreshView(RedirectView):
         """
         On a POST request we will attempt to refresh the exchange rates
         """
-
-        print("POST!")
 
         # Will block for a little bit
         InvenTree.tasks.update_exchange_rates()
