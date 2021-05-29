@@ -347,7 +347,6 @@ function loadPartTable(table, url, options={}) {
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      *      disableFilters: If true, disable custom filters
-     *      gridView: If true, display as grid rather than standard table
      */
 
     // Ensure category detail is included
@@ -511,8 +510,8 @@ function loadPartTable(table, url, options={}) {
         formatNoMatches: function() { return '{% trans "No parts found" %}'; },
         columns: columns,
         showColumns: true,
-        showCustomView: true,
-        showCustomViewButton: true,
+        showCustomView: false,
+        showCustomViewButton: false,
         customView: function(data) {
 
             var html = '';
@@ -524,7 +523,7 @@ function loadPartTable(table, url, options={}) {
             return `<div class='row mx-0'>${html}</div>`;
         }
     });
-
+    
     if (options.buttons) {
         linkButtonsToSelection($(table), options.buttons);
     }
