@@ -19,6 +19,7 @@ from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
 
 from moneyed import CURRENCIES
+from djmoney.contrib.exchange.models import convert_money
 
 from PIL import Image
 
@@ -780,6 +781,94 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         context.update(**ctx)
 
         return context
+
+
+class PartPricingView(PartDetail):
+    """ Detail view for Part object
+    """
+    context_object_name = 'part'
+    template_name = 'part/order_prices.html'
+    form_class = part_forms.PartPriceForm
+
+    # Add in some extra context information based on query params
+    def get_context_data(self, **kwargs):
+        """ Provide extra context data to template """
+        context = super().get_context_data(**kwargs)
+
+        ctx = self.get_pricing(self.get_quantity())
+        ctx['form'] = self.form_class(initial=self.get_initials())
+
+        context.update(ctx)
+        return context
+
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        return Decimal(self.request.POST.get('quantity', 1))
+
+    def get_part(self):
+        return self.get_object()
+
+    def get_pricing(self, quantity=1, currency=None):
+        """ returns context with pricing information """
+        ctx = PartPricing.get_pricing(self, quantity, currency)
+        part = self.get_part()
+        # Stock history
+        if part.total_stock > 1:
+            ret = []
+            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
+            stock = stock.prefetch_related('purchase_order', 'supplier_part')
+
+            for stock_item in stock:
+                if None in [stock_item.purchase_price, stock_item.quantity]:
+                    continue
+
+                # convert purchase price to current currency - only one currency in the graph
+                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
+                line = {
+                    'price': price.amount,
+                    'qty': stock_item.quantity
+                }
+                # Supplier Part Name  # TODO use in graph
+                if stock_item.supplier_part:
+                    line['name'] = stock_item.supplier_part.pretty_name
+
+                    if stock_item.supplier_part.unit_pricing and price:
+                        line['price_diff'] = price.amount - stock_item.supplier_part.unit_pricing
+                        line['price_part'] = stock_item.supplier_part.unit_pricing
+
+                # set date for graph labels
+                if stock_item.purchase_order:
+                    line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
+                else:
+                    line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                ret.append(line)
+
+            ctx['price_history'] = ret
+
+        # BOM Information for Pie-Chart
+        bom_items = [{'name': str(a.sub_part), 'price': a.sub_part.get_price_range(quantity), 'q': a.quantity} for a in part.bom_items.all()]
+        if [True for a in bom_items if len(set(a['price'])) == 2]:
+            ctx['bom_parts'] = [{
+                'name': a['name'],
+                'min_price': str((a['price'][0] * a['q']) / quantity),
+                'max_price': str((a['price'][1] * a['q']) / quantity)} for a in bom_items]
+            ctx['bom_pie_min'] = True
+        else:
+            ctx['bom_parts'] = [{
+                'name': a['name'],
+                'price': str((a['price'][0] * a['q']) / quantity)} for a in bom_items]
+
+        return ctx
+
+    def get_initials(self):
+        """ returns initials for form """
+        return {'quantity': self.get_quantity()}
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        kwargs['object'] = self.object
+        ctx = self.get_context_data(**kwargs)
+        return self.get(request, context=ctx)
 
 
 class PartDetailFromIPN(PartDetail):
