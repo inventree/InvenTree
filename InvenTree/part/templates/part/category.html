@@ -176,13 +176,12 @@
         toggleId: '#category-menu-toggle',
     });
 
-    $('#view-list').hide();
-
     $('#view-list').click(function() {
         $('#view-list').hide();
         $('#view-grid').show();
 
         $('#part-table').bootstrapTable('toggleCustomView');
+        inventreeSave('part-grid-view', '');
     });
 
     $('#view-grid').click(function() {
@@ -190,6 +189,7 @@
         $('#view-list').show();
 
         $('#part-table').bootstrapTable('toggleCustomView');
+        inventreeSave('part-grid-view', 1);
     });
 
     $("#cat-create").click(function() {
@@ -299,5 +299,12 @@
             gridView: true,
         },
     );
+
+    if (inventreeLoad("part-grid-view")) {
+        $('#view-grid').hide();
+        $('#part-table').bootstrapTable('toggleCustomView');
+    } else {
+        $('#view-list').hide();
+    }
 
 {% endblock %}
