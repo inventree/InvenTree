@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-29 07:28+0000\n"
-"PO-Revision-Date: 2021-05-28 04:02\n"
+"PO-Revision-Date: 2021-05-29 07:32\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2148,11 +2148,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -4503,16 +4501,12 @@ msgid "Used In"
 msgstr "Benutzt in"
 
 #: part/templates/part/navbar.html:72 part/templates/part/order_prices.html:12
-#, fuzzy
-#| msgid "Sell Price Information"
 msgid "Order Price Information"
-msgstr "Verkaufspreis Informationen"
+msgstr ""
 
 #: part/templates/part/navbar.html:75
-#, fuzzy
-#| msgid "Order Part"
 msgid "Order Price"
-msgstr "Teil bestellen"
+msgstr ""
 
 #: part/templates/part/navbar.html:98
 msgid "Sales Price Information"
@@ -4536,10 +4530,8 @@ msgid "Part Notes"
 msgstr "Teil-Bemerkungen"
 
 #: part/templates/part/order_prices.html:21
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Pricing ranges"
-msgstr "Preisinformationen ansehen"
+msgstr ""
 
 #: part/templates/part/order_prices.html:26
 #: part/templates/part/part_pricing.html:18
@@ -4591,22 +4583,17 @@ msgid "No pricing information is available for this part."
 msgstr "Keine Preise für dieses Teil verfügbar"
 
 #: part/templates/part/order_prices.html:113
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Stock Pricing"
-msgstr "Teilbepreisung"
+msgstr ""
 
 #: part/templates/part/order_prices.html:121
-#, fuzzy
-#| msgid "No pricing information is available for this part."
 msgid "No stock pricing history is available for this part."
-msgstr "Keine Preise für dieses Teil verfügbar"
+msgstr ""
 
 #: part/templates/part/order_prices.html:140
-#, fuzzy, python-format
-#| msgid "Single Price"
+#, python-format
 msgid "Single Price - %(currency)s"
-msgstr "Einzelpreis"
+msgstr ""
 
 #: part/templates/part/order_prices.html:152
 #, python-format
@@ -6128,13 +6115,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6855,10 +6840,8 @@ msgid "This test is defined for a parent part"
 msgstr "Dieses Testergebnis ist für ein Hauptteil"
 
 #: templates/js/part.js:727
-#, fuzzy
-#| msgid "Single Price"
 msgid "Single Price Difference"
-msgstr "Einzelpreis"
+msgstr ""
 
 #: templates/js/report.js:47
 msgid "items selected"
@@ -7584,3 +7567,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
