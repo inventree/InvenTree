@@ -278,6 +278,58 @@ function loadParametricPartTable(table, options={}) {
 }
 
 
+function partGridTile(part) {
+    // Generate a "grid tile" view for a particular part
+
+    // Rows for table view
+    var rows = '';
+
+    if (part.IPN) {
+        rows += `<tr><td><b>{% trans "IPN" %}</b></td><td>${part.IPN}</td></tr>`;
+    }
+
+    rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${part.in_stock}</td></tr>`;
+
+    if (part.on_order) {
+        rows += `<tr><td><b>{$ trans "On Order" %}</b></td><td>${part.on_order}</td></tr>`;
+    }
+
+    if (part.building) {
+        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building}</td></tr>`;
+    }
+
+    var html = `
+    
+    <div class='col-sm-3 card'>
+        <div class='panel panel-default panel-inventree'>
+            <div class='panel-heading'>
+                <a href='/part/${part.pk}/'>
+                    <b>${part.full_name}</b>
+                </a>
+                ${makePartIcons(part)}
+                <br>
+                <i>${part.description}</i>
+            </div>
+            <div class='panel-content'>
+                <div class='row'>
+                    <div class='col-sm-6'>
+                        <img src='${part.thumbnail}' class='card-thumb'>
+                    </div>
+                    <div class='col-sm-6'>
+                        <table class='table table-striped table-condensed'>
+                            ${rows}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    `;
+
+    return html;
+}
+
+
 function loadPartTable(table, url, options={}) {
     /* Load part listing data into specified table.
      * 
@@ -289,6 +341,7 @@ function loadPartTable(table, url, options={}) {
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      *      disableFilters: If true, disable custom filters
+     *      gridView: If true, display as grid rather than standard table
      */
 
     // Ensure category detail is included
@@ -452,6 +505,18 @@ function loadPartTable(table, url, options={}) {
         formatNoMatches: function() { return '{% trans "No parts found" %}'; },
         columns: columns,
         showColumns: true,
+        showCustomView: true,
+        showCustomViewButton: true,
+        customView: function(data) {
+
+            var html = '';
+
+            data.forEach(function(row) {
+                html += partGridTile(row);
+            });
+
+            return `<div class='row mx-0'>${html}</div>`;
+        }
     });
 
     if (options.buttons) {
