@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-29 08:29+0000\n"
+"POT-Creation-Date: 2021-05-29 09:06+0000\n"
 "PO-Revision-Date: 2021-05-28 04:02\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -3191,7 +3191,7 @@ msgstr ""
 
 #: order/templates/order/receive_parts.html:14 part/api.py:45
 #: part/models.py:322 part/templates/part/cat_link.html:7
-#: part/templates/part/category.html:99
+#: part/templates/part/category.html:99 part/templates/part/category.html:141
 #: part/templates/part/category_navbar.html:22
 #: part/templates/part/category_navbar.html:29
 #: part/templates/part/category_partlist.html:10
@@ -3729,9 +3729,8 @@ msgid "Part Category"
 msgstr ""
 
 #: part/models.py:83 part/templates/part/category.html:23
-#: part/templates/part/category.html:94 part/templates/part/category.html:141
-#: templates/InvenTree/search.html:127 templates/stats.html:84
-#: users/models.py:39
+#: part/templates/part/category.html:94 templates/InvenTree/search.html:127
+#: templates/stats.html:84 users/models.py:39
 msgid "Part Categories"
 msgstr ""
 
