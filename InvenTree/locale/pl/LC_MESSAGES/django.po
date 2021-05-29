@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-29 07:28+0000\n"
-"PO-Revision-Date: 2021-05-28 04:02\n"
+"PO-Revision-Date: 2021-05-29 07:32\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2148,8 +2148,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -4501,16 +4500,12 @@ msgid "Used In"
 msgstr ""
 
 #: part/templates/part/navbar.html:72 part/templates/part/order_prices.html:12
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Order Price Information"
-msgstr "Informacja cenowa"
+msgstr ""
 
 #: part/templates/part/navbar.html:75
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Order Price"
-msgstr "Zamów części"
+msgstr ""
 
 #: part/templates/part/navbar.html:98
 msgid "Sales Price Information"
@@ -4534,10 +4529,8 @@ msgid "Part Notes"
 msgstr ""
 
 #: part/templates/part/order_prices.html:21
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Pricing ranges"
-msgstr "Informacja cenowa"
+msgstr ""
 
 #: part/templates/part/order_prices.html:26
 #: part/templates/part/part_pricing.html:18
@@ -4589,22 +4582,17 @@ msgid "No pricing information is available for this part."
 msgstr ""
 
 #: part/templates/part/order_prices.html:113
-#, fuzzy
-#| msgid "Pricing"
 msgid "Stock Pricing"
-msgstr "Cennik"
+msgstr ""
 
 #: part/templates/part/order_prices.html:121
-#, fuzzy
-#| msgid "No stock available for %(part)s"
 msgid "No stock pricing history is available for this part."
-msgstr "Brak zapasów dla %(part)s"
+msgstr ""
 
 #: part/templates/part/order_prices.html:140
-#, fuzzy, python-format
-#| msgid "Single Price"
+#, python-format
 msgid "Single Price - %(currency)s"
-msgstr "Cena jednostkowa"
+msgstr ""
 
 #: part/templates/part/order_prices.html:152
 #, python-format
@@ -6126,8 +6114,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6849,10 +6836,8 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:727
-#, fuzzy
-#| msgid "Single Price"
 msgid "Single Price Difference"
-msgstr "Cena jednostkowa"
+msgstr ""
 
 #: templates/js/report.js:47
 msgid "items selected"
@@ -7578,3 +7563,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
