@@ -288,7 +288,13 @@ function partGridTile(part) {
         rows += `<tr><td><b>{% trans "IPN" %}</b></td><td>${part.IPN}</td></tr>`;
     }
 
-    rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${part.in_stock}</td></tr>`;
+    var stock = `${part.in_stock}`;
+
+    if (!part.in_stock) {
+        stock = `<span class='label label-red'>{% trans "No Stock" %}</label>`;
+    }
+
+    rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
 
     if (part.on_order) {
         rows += `<tr><td><b>{$ trans "On Order" %}</b></td><td>${part.on_order}</td></tr>`;
@@ -313,7 +319,7 @@ function partGridTile(part) {
             <div class='panel-content'>
                 <div class='row'>
                     <div class='col-sm-6'>
-                        <img src='${part.thumbnail}' class='card-thumb'>
+                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
                     </div>
                     <div class='col-sm-6'>
                         <table class='table table-striped table-condensed'>
