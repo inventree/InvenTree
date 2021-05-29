@@ -30,4 +30,4 @@ jobs:
           push: true
           target: production
           repository: inventree/inventree
-          tags: inventree/inventree:{{ github.event.release.tag_name }}
+          tags: inventree/inventree:${{ github.event.release.tag_name }}
