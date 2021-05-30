@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-29 21:51+0000\n"
-"PO-Revision-Date: 2021-05-29 21:53\n"
+"PO-Revision-Date: 2021-05-30 12:14\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -19,34 +19,34 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Конечная точка API не обнаружена"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Действие не указано"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Соответствующее действие не найдено"
 
 #: InvenTree/fields.py:44
 msgid "Enter date"
-msgstr ""
+msgstr "Введите дату"
 
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
-msgstr ""
+msgstr "Подтвердить"
 
 #: InvenTree/forms.py:128
 msgid "Confirm delete"
-msgstr ""
+msgstr "Подтвердите удаление"
 
 #: InvenTree/forms.py:129
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Подтвердите удаление элемента"
 
 #: InvenTree/forms.py:161 templates/registration/login.html:77
 msgid "Enter password"
