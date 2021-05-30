@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-29 21:51+0000\n"
-"PO-Revision-Date: 2021-05-30 13:19\n"
+"PO-Revision-Date: 2021-05-30 16:18\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -104,33 +104,33 @@ msgstr "Серийных номеров не найдено"
 #: InvenTree/helpers.py:457
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Число уникальных серийных номеров должно соответствовать количеству"
 
 #: InvenTree/models.py:59 stock/models.py:1761
 msgid "Attachment"
-msgstr ""
+msgstr "Вложения"
 
 #: InvenTree/models.py:60
 msgid "Select file to attach"
-msgstr ""
+msgstr "Выберите файл для вложения"
 
 #: InvenTree/models.py:62 templates/attachment_table.html:16
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 #: InvenTree/models.py:62
 msgid "File comment"
-msgstr ""
+msgstr "Комментарий к файлу"
 
 #: InvenTree/models.py:68 InvenTree/models.py:69 part/models.py:1999
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1151
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: InvenTree/models.py:72
 msgid "upload date"
-msgstr ""
+msgstr "дата загрузки"
 
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
