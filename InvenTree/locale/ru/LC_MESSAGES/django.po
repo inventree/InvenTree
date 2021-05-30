@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-29 21:51+0000\n"
-"PO-Revision-Date: 2021-05-30 16:18\n"
+"PO-Revision-Date: 2021-05-30 17:23\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -138,7 +138,7 @@ msgstr "дата загрузки"
 #: templates/InvenTree/search.html:289 templates/js/part.js:110
 #: templates/js/part.js:623 templates/js/stock.js:944
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: InvenTree/models.py:114 build/models.py:134
 #: build/templates/build/detail.html:21 company/models.py:339
@@ -161,164 +161,164 @@ msgstr ""
 #: templates/js/stock.js:554 templates/js/stock.js:956
 #: templates/js/stock.js:1001
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: InvenTree/models.py:115
 msgid "Description (optional)"
-msgstr ""
+msgstr "Описание (необязательно)"
 
 #: InvenTree/models.py:123
 msgid "parent"
-msgstr ""
+msgstr "родитель"
 
 #: InvenTree/settings.py:503
 msgid "English"
-msgstr ""
+msgstr "Английский"
 
 #: InvenTree/settings.py:504
 msgid "French"
-msgstr ""
+msgstr "Французский"
 
 #: InvenTree/settings.py:505
 msgid "German"
-msgstr ""
+msgstr "Немецкий"
 
 #: InvenTree/settings.py:506
 msgid "Polish"
-msgstr ""
+msgstr "Польский"
 
 #: InvenTree/settings.py:507
 msgid "Turkish"
-msgstr ""
+msgstr "Турецкий"
 
 #: InvenTree/status.py:93
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Проверка фонового работника не удалась"
 
 #: InvenTree/status.py:97
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Сервер электронной почты не настроен"
 
 #: InvenTree/status.py:100
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Ошибка проверки состояния системы InvenTree"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "Ожидаемый"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "Размещены"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "Готово"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "Отменено"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "Потерян"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Возвращено"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "Доставлено"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "Да"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "Требуется внимание"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "Поврежденный"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr ""
+msgstr "Разрушено"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Отклоненный"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Отслеживание устаревших запасов"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Товар создан"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Отредактированный товар"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Присвоенный серийный номер"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Склад подсчитан"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Добавлен вручную"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Удалено вручную"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Расположение изменено"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Укомплектовано"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Снято со сборки"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Установленный элемент компонента"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Удален элемент компонента"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Отделить от родительского элемента"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Разбить дочерний элемент"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
 msgid "Sent to customer"
-msgstr ""
+msgstr "Отправлено клиенту"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Возвращено от клиента"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
