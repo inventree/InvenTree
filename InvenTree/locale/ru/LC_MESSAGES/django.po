@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-29 21:51+0000\n"
-"PO-Revision-Date: 2021-05-30 12:14\n"
+"PO-Revision-Date: 2021-05-30 13:19\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -50,56 +50,56 @@ msgstr "Подтвердите удаление элемента"
 
 #: InvenTree/forms.py:161 templates/registration/login.html:77
 msgid "Enter password"
-msgstr ""
+msgstr "Введите пароль"
 
 #: InvenTree/forms.py:162
 msgid "Enter new password"
-msgstr ""
+msgstr "Введите новый пароль"
 
 #: InvenTree/forms.py:169
 msgid "Confirm password"
-msgstr ""
+msgstr "Подтвердить пароль"
 
 #: InvenTree/forms.py:170
 msgid "Confirm new password"
-msgstr ""
+msgstr "Подтвердите новый пароль"
 
 #: InvenTree/forms.py:205
 msgid "Apply Theme"
-msgstr ""
+msgstr "Применить тему"
 
 #: InvenTree/forms.py:235
 msgid "Select Category"
-msgstr ""
+msgstr "Выбрать категорию"
 
 #: InvenTree/helpers.py:377
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "Дублировать серийный номер: {n}"
 
 #: InvenTree/helpers.py:384 order/models.py:245 order/models.py:355
 #: stock/views.py:1795
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "недопустимое количество"
 
 #: InvenTree/helpers.py:387
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Пустая строка серийного номера"
 
 #: InvenTree/helpers.py:409 InvenTree/helpers.py:412 InvenTree/helpers.py:415
 #: InvenTree/helpers.py:440
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Некорректный идентификатор группы"
 
 #: InvenTree/helpers.py:445
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "Повторяющийся серийный"
 
 #: InvenTree/helpers.py:453
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Серийных номеров не найдено"
 
 #: InvenTree/helpers.py:457
 #, python-brace-format
