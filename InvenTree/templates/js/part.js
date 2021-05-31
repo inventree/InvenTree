@@ -516,11 +516,21 @@ function loadPartTable(table, url, options={}) {
 
             var html = '';
 
-            data.forEach(function(row) {
+            html = `<div class='row'>`;
+
+            data.forEach(function(row, index) {
+                
+                // Force a new row every 4 columns, to prevent visual issues
+                if ((index > 0) && (index % 4 == 0) && (index < data.length)) {
+                    html += `</div><div class='row'>`;
+                }
+
                 html += partGridTile(row);
             });
 
-            return `<div class='row mx-0'>${html}</div>`;
+            html += `</div>`;
+
+            return html;
         }
     });
     
