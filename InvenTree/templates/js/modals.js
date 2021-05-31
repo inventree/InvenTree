@@ -978,6 +978,7 @@ function showModalImage(image_url) {
     // Set image content
     $('#modal-image').attr('src', image_url);
 
+    modal.hide();
     modal.show();
 
     modal.animate({

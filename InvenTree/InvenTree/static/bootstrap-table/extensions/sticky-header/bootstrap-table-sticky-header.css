@@ -2,7 +2,6 @@
  * @author vincent loh <vincent.ml@gmail.com>
  * @update zhixin wen <wenzhixin2010@gmail.com>
  */
-
 .fix-sticky {
   position: fixed !important;
   overflow: hidden;
@@ -17,6 +16,6 @@
   background: #e9ecef;
 }
 
-.fix-sticky table thead.thead-light {
+.fix-sticky table thead.thead-dark {
   background: #212529;
 }
