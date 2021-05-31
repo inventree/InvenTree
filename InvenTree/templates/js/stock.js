@@ -81,15 +81,17 @@ function loadStockTestResultsTable(table, options) {
         return html;
     }
 
+    var parent_node = "parent node";
+
     table.inventreeTable({
         url: "{% url 'api-part-test-template-list' %}",
         method: 'get',
         name: 'testresult',
         treeEnable: true,
-        rootParentId: options.stock_item,
+        rootParentId: parent_node,
         parentIdField: 'parent',
         idField: 'pk',
-        uniqueId: 'pk',
+        uniqueId: 'key',
         treeShowField: 'test_name',
         formatNoMatches: function() {
             return '{% trans "No test results found" %}';
@@ -190,7 +192,7 @@ function loadStockTestResultsTable(table, options) {
                                     match = true;
                                     
                                     if (row.result == null) {
-                                        item.parent = options.stock_item;
+                                        item.parent = parent_node;
                                         tableData[index] = item;
                                         override = true;
                                     } else {
@@ -202,7 +204,7 @@ function loadStockTestResultsTable(table, options) {
                             // No match could be found
                             if (!match) {
                                 item.test_name = item.test;
-                                item.parent = options.stock_item;
+                                item.parent = parent_node;
                             }
 
                             if (!override) {
