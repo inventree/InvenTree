@@ -32,38 +32,38 @@ function removeStockRow(e) {
 }
 
 
-function passFailBadge(result) {
+function passFailBadge(result, align='float-right') {
 
     if (result) {
-        return `<span class='label label-green float-right'>{% trans "PASS" %}</span>`;
+        return `<span class='label label-green ${align}'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='label label-red float-right'>{% trans "FAIL" %}</span>`;
+        return `<span class='label label-red ${align}'>{% trans "FAIL" %}</span>`;
     }
 }
 
-function noResultBadge() {
-    return `<span class='label label-blue float-right'>{% trans "NO RESULT" %}</span>`;
+function noResultBadge(align='float-right') {
+    return `<span class='label label-blue ${align}'>{% trans "NO RESULT" %}</span>`;
+}
+
+function formatDate(row) {
+    // Function for formatting date field
+    var html = row.date;
+
+    if (row.user_detail) {
+        html += `<span class='badge'>${row.user_detail.username}</span>`;
+    }
+
+    if (row.attachment) {
+        html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+    }
+
+    return html;
 }
 
 function loadStockTestResultsTable(table, options) {
     /*
      * Load StockItemTestResult table
      */
-
-    function formatDate(row) {
-        // Function for formatting date field
-        var html = row.date;
-
-        if (row.user_detail) {
-            html += `<span class='badge'>${row.user_detail.username}</span>`;
-        }
-
-        if (row.attachment) {
-            html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
-        }
-
-        return html;
-    }
 
     function makeButtons(row, grouped) {
         var html = `<div class='btn-group float-right' role='group'>`;
@@ -81,16 +81,27 @@ function loadStockTestResultsTable(table, options) {
         return html;
     }
 
-    // First, load all the test templates
     table.inventreeTable({
         url: "{% url 'api-part-test-template-list' %}",
         method: 'get',
         name: 'testresult',
+        treeEnable: true,
+        rootParentId: options.stock_item,
+        parentIdField: 'parent',
+        idField: 'pk',
+        uniqueId: 'pk',
+        treeShowField: 'test_name',
         formatNoMatches: function() {
-            return "{% trans 'No test results found' %}";
+            return '{% trans "No test results found" %}';
         },
         queryParams: {
             part: options.part,
+        },
+        onPostBody: function() {
+            table.treegrid({
+                treeColumn: 0,
+            });
+            table.treegrid("collapseAll");
         },
         columns: [
             {
@@ -130,100 +141,85 @@ function loadStockTestResultsTable(table, options) {
             {
                 field: 'date',
                 title: '{% trans "Test Date" %}',
+                sortable: true,
                 formatter: function(value, row) {
                     return formatDate(row);
-                }
+                },
             },
             {
                 field: 'buttons',
                 formatter: function(value, row) {
                     return makeButtons(row, false);
                 }
-            },
-        ],
-        groupBy: true,
-        groupByField: 'test_name',
-        groupByFormatter: function(field, id, data) {
-
-            // Extract the "latest" row (data are returned in date order from the server)
-            var latest = data[data.length-1];
-
-            switch (field) {
-            case 'test_name':
-                return latest.test_name + ` <i>(${data.length})</i>` + passFailBadge(latest.result);
-            case 'value':
-                return latest.value;
-            case 'notes':
-                return latest.notes;
-            case 'date':
-                return formatDate(latest);
-            case 'buttons':
-                // Buttons are done differently for grouped rows
-                return makeButtons(latest, true);
-            default:
-                return "---";
             }
-        },
+        ],
         onLoadSuccess: function(tableData) {
-            // Once the test template data are loaded, query for results
+
+            // Set "parent" for each existing row
+            tableData.forEach(function(item, idx) {
+                tableData[idx].parent = options.stock_item;
+            });
+
+            // Once the test template data are loaded, query for test results
             inventreeGet(
-                "{% url 'api-stock-test-result-list' %}",
+                '{% url "api-stock-test-result-list" %}',
                 {
                     stock_item: options.stock_item,
                     user_detail: true,
                     attachment_detail: true,
+                    ordering: "-date",
                 },
                 {
                     success: function(data) {
+                        // Iterate through the returned test data
+                        data.forEach(function(item, index) {
 
-                        // Iterate through the returned test result data, and group by test
-                        data.forEach(function(item) {
                             var match = false;
                             var override = false;
 
                             var key = item.key;
 
-                            // Try to associate this result with a test row
+                            // Attempt to associate this result with an existing test
                             tableData.forEach(function(row, index) {
 
-
-                                // The result matches the test template row
                                 if (key == row.key) {
 
-                                    // Force the names to be the same!
                                     item.test_name = row.test_name;
                                     item.required = row.required;
 
+                                    match = true;
+                                    
                                     if (row.result == null) {
-                                        // The original row has not recorded a result - override!
+                                        item.parent = options.stock_item;
                                         tableData[index] = item;
                                         override = true;
+                                    } else {
+                                        item.parent = row.pk;
                                     }
-
-                                    match = true;
                                 }
                             });
 
-                            // No match could be found (this is a new test!)
+                            // No match could be found
                             if (!match) {
-
                                 item.test_name = item.test;
+                                item.parent = options.stock_item;
                             }
 
                             if (!override) {
                                 tableData.push(item);
                             }
+
                         });
 
-                        // Finally, push the data back into the table!
+                        // Push data back into the table
                         table.bootstrapTable("load", tableData);
                     }
-                },
-            );
+                }
+            )
         }
     });
-}
 
+}
 
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
