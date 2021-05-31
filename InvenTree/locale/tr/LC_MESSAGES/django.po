@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-29 21:51+0000\n"
+"POT-Creation-Date: 2021-05-31 07:25+0000\n"
 "PO-Revision-Date: 2021-05-28 04:02\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -48,7 +48,7 @@ msgstr "Silmeyi Onayla"
 msgid "Confirm item deletion"
 msgstr "Silmeyi onayla"
 
-#: InvenTree/forms.py:161 templates/registration/login.html:77
+#: InvenTree/forms.py:161 templates/registration/login.html:76
 msgid "Enter password"
 msgstr "Şifrenizi girin"
 
@@ -124,7 +124,7 @@ msgstr "Yorum"
 
 #: InvenTree/models.py:68 InvenTree/models.py:69 part/models.py:1999
 #: report/templates/report/inventree_test_report_base.html:91
-#: templates/js/stock.js:1151
+#: templates/js/stock.js:1147
 msgid "User"
 msgstr "Kullanıcı"
 
@@ -136,7 +136,7 @@ msgstr "Yükleme tarihi"
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
 #: report/models.py:179 templates/InvenTree/search.html:137
 #: templates/InvenTree/search.html:289 templates/js/part.js:110
-#: templates/js/part.js:623 templates/js/stock.js:944
+#: templates/js/part.js:633 templates/js/stock.js:940
 msgid "Name"
 msgstr "Adı"
 
@@ -157,9 +157,9 @@ msgstr "Adı"
 #: templates/js/build.js:736 templates/js/build.js:1004
 #: templates/js/company.js:56 templates/js/order.js:183
 #: templates/js/order.js:280 templates/js/part.js:169 templates/js/part.js:252
-#: templates/js/part.js:429 templates/js/part.js:635 templates/js/part.js:713
-#: templates/js/stock.js:554 templates/js/stock.js:956
-#: templates/js/stock.js:1001
+#: templates/js/part.js:429 templates/js/part.js:645 templates/js/part.js:723
+#: templates/js/stock.js:550 templates/js/stock.js:952
+#: templates/js/stock.js:997
 msgid "Description"
 msgstr "Açıklama"
 
@@ -487,8 +487,8 @@ msgstr ""
 #: stock/templates/stock/item_base.html:255
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
-#: templates/js/part.js:787 templates/js/stock.js:1136
-#: templates/js/stock.js:1398
+#: templates/js/part.js:797 templates/js/stock.js:1132
+#: templates/js/stock.js:1394
 msgid "Quantity"
 msgstr ""
 
@@ -534,7 +534,7 @@ msgstr ""
 #: stock/templates/stock/stock_adjust.html:17
 #: templates/InvenTree/search.html:260 templates/js/barcode.js:363
 #: templates/js/barcode.js:531 templates/js/build.js:490
-#: templates/js/stock.js:641 templates/js/stock.js:1028
+#: templates/js/stock.js:637 templates/js/stock.js:1024
 msgid "Location"
 msgstr ""
 
@@ -548,8 +548,8 @@ msgstr ""
 #: stock/templates/stock/item_base.html:403 templates/InvenTree/search.html:252
 #: templates/js/barcode.js:119 templates/js/build.js:770
 #: templates/js/order.js:187 templates/js/order.js:285
-#: templates/js/stock.js:628 templates/js/stock.js:1105
-#: templates/js/stock.js:1406
+#: templates/js/stock.js:624 templates/js/stock.js:1101
+#: templates/js/stock.js:1402
 msgid "Status"
 msgstr ""
 
@@ -644,8 +644,8 @@ msgstr ""
 #: templates/js/barcode.js:362 templates/js/bom.js:163
 #: templates/js/build.js:741 templates/js/build.js:981
 #: templates/js/company.js:140 templates/js/company.js:238
-#: templates/js/part.js:233 templates/js/part.js:396 templates/js/stock.js:523
-#: templates/js/stock.js:1470
+#: templates/js/part.js:233 templates/js/part.js:396 templates/js/stock.js:519
+#: templates/js/stock.js:1466
 msgid "Part"
 msgstr ""
 
@@ -775,7 +775,7 @@ msgstr ""
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
 #: stock/models.py:530 stock/models.py:1665 stock/models.py:1767
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
-#: templates/js/bom.js:349 templates/js/stock.js:128 templates/js/stock.js:671
+#: templates/js/bom.js:349 templates/js/stock.js:139 templates/js/stock.js:667
 msgid "Notes"
 msgstr ""
 
@@ -843,7 +843,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:31
 #: stock/templates/stock/item_base.html:339
 #: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:831
-#: templates/js/stock.js:1087 templates/js/stock.js:1389
+#: templates/js/stock.js:1083 templates/js/stock.js:1385
 msgid "Stock Item"
 msgstr ""
 
@@ -1193,8 +1193,8 @@ msgid "Destination location not specified"
 msgstr ""
 
 #: build/templates/build/detail.html:70
-#: stock/templates/stock/item_base.html:303 templates/js/stock.js:636
-#: templates/js/stock.js:1413 templates/js/table_filters.js:108
+#: stock/templates/stock/item_base.html:303 templates/js/stock.js:632
+#: templates/js/stock.js:1409 templates/js/table_filters.js:108
 #: templates/js/table_filters.js:202
 msgid "Batch"
 msgstr ""
@@ -1249,7 +1249,7 @@ msgstr ""
 #: company/templates/company/navbar.html:15
 #: order/templates/order/po_navbar.html:14
 #: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:15
-#: templates/js/stock.js:1016
+#: templates/js/stock.js:1012
 msgid "Details"
 msgstr ""
 
@@ -1876,7 +1876,7 @@ msgstr ""
 msgid "Image URL"
 msgstr ""
 
-#: company/forms.py:118 templates/js/part.js:778
+#: company/forms.py:118 templates/js/part.js:788
 msgid "Single Price"
 msgstr ""
 
@@ -2081,7 +2081,7 @@ msgstr ""
 
 #: company/models.py:503 company/templates/company/supplier_part_base.html:109
 #: stock/models.py:429 stock/templates/stock/item_base.html:310
-#: templates/js/stock.js:667
+#: templates/js/stock.js:663
 msgid "Packaging"
 msgstr ""
 
@@ -2169,7 +2169,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:94 stock/models.py:447
 #: stock/models.py:448 stock/templates/stock/item_base.html:262
 #: templates/js/company.js:40 templates/js/order.js:267
-#: templates/js/stock.js:1069
+#: templates/js/stock.js:1065
 msgid "Customer"
 msgstr ""
 
@@ -2215,7 +2215,7 @@ msgstr ""
 #: company/templates/company/detail_manufacturer_part.html:66
 #: company/templates/company/detail_supplier_part.html:66
 #: part/templates/part/bom.html:159 part/templates/part/category.html:118
-#: templates/js/stock.js:1284
+#: templates/js/stock.js:1280
 msgid "New Part"
 msgstr ""
 
@@ -2262,7 +2262,7 @@ msgstr ""
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
 #: order/templates/order/purchase_order_detail.html:49
-#: part/templates/part/supplier.html:17 templates/js/stock.js:1290
+#: part/templates/part/supplier.html:17 templates/js/stock.js:1286
 msgid "New Supplier Part"
 msgstr ""
 
@@ -2338,7 +2338,7 @@ msgstr ""
 #: templates/InvenTree/index.html:128 templates/InvenTree/search.html:196
 #: templates/InvenTree/search.html:232
 #: templates/InvenTree/settings/tabs.html:31 templates/js/part.js:173
-#: templates/js/part.js:297 templates/js/part.js:456 templates/js/stock.js:563
+#: templates/js/part.js:297 templates/js/part.js:456 templates/js/stock.js:559
 #: templates/navbar.html:26
 msgid "Stock"
 msgstr ""
@@ -2385,7 +2385,7 @@ msgstr ""
 #: stock/templates/stock/location.html:136
 #: stock/templates/stock/location_navbar.html:22
 #: stock/templates/stock/location_navbar.html:29
-#: templates/InvenTree/search.html:198 templates/js/stock.js:968
+#: templates/InvenTree/search.html:198 templates/js/stock.js:964
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:42
 msgid "Stock Items"
 msgstr ""
@@ -2598,7 +2598,7 @@ msgstr ""
 msgid "Edit Supplier Part"
 msgstr ""
 
-#: company/views.py:578 templates/js/stock.js:1291
+#: company/views.py:578 templates/js/stock.js:1287
 msgid "Create new Supplier Part"
 msgstr ""
 
@@ -2856,7 +2856,7 @@ msgstr ""
 #: order/templates/order/order_base.html:24
 #: report/templates/report/inventree_po_report.html:77
 #: stock/templates/stock/item_base.html:324 templates/js/order.js:148
-#: templates/js/stock.js:1050
+#: templates/js/stock.js:1046
 msgid "Purchase Order"
 msgstr ""
 
@@ -2977,8 +2977,8 @@ msgstr ""
 #: order/templates/order/order_base.html:180
 #: order/templates/order/purchase_order_detail.html:100
 #: part/templates/part/category.html:208 part/templates/part/category.html:250
-#: stock/templates/stock/location.html:191 templates/js/stock.js:708
-#: templates/js/stock.js:1296
+#: stock/templates/stock/location.html:191 templates/js/stock.js:704
+#: templates/js/stock.js:1292
 msgid "New Location"
 msgstr ""
 
@@ -3197,7 +3197,7 @@ msgstr ""
 #: part/templates/part/category_navbar.html:29
 #: part/templates/part/category_partlist.html:10
 #: templates/InvenTree/index.html:97 templates/InvenTree/search.html:114
-#: templates/InvenTree/settings/tabs.html:28 templates/js/part.js:647
+#: templates/InvenTree/settings/tabs.html:28 templates/js/part.js:657
 #: templates/navbar.html:23 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:40
 msgid "Parts"
@@ -3928,7 +3928,7 @@ msgstr ""
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:2077 templates/js/part.js:708 templates/js/stock.js:104
+#: part/models.py:2077 templates/js/part.js:718 templates/js/stock.js:115
 msgid "Test Name"
 msgstr ""
 
@@ -3944,7 +3944,7 @@ msgstr ""
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:2089 templates/js/part.js:717
+#: part/models.py:2089 templates/js/part.js:727
 #: templates/js/table_filters.js:223
 msgid "Required"
 msgstr ""
@@ -3953,7 +3953,7 @@ msgstr ""
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:2095 templates/js/part.js:725
+#: part/models.py:2095 templates/js/part.js:735
 msgid "Requires Value"
 msgstr ""
 
@@ -3961,7 +3961,7 @@ msgstr ""
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:2101 templates/js/part.js:732
+#: part/models.py:2101 templates/js/part.js:742
 msgid "Requires Attachment"
 msgstr ""
 
@@ -4165,7 +4165,7 @@ msgid "All selected BOM items will be deleted"
 msgstr ""
 
 #: part/templates/part/bom.html:160 part/views.py:585
-#: templates/js/stock.js:1285
+#: templates/js/stock.js:1281
 msgid "Create New Part"
 msgstr ""
 
@@ -4306,7 +4306,7 @@ msgid "View grid display"
 msgstr ""
 
 #: part/templates/part/category.html:209
-#: stock/templates/stock/location.html:192 templates/js/stock.js:709
+#: stock/templates/stock/location.html:192 templates/js/stock.js:705
 msgid "Create new location"
 msgstr ""
 
@@ -4627,7 +4627,7 @@ msgstr ""
 #: part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
 #: stock/models.py:1754 templates/InvenTree/settings/header.html:8
-#: templates/js/stock.js:124
+#: templates/js/stock.js:135
 msgid "Value"
 msgstr ""
 
@@ -5162,7 +5162,7 @@ msgid "Result"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:92
-#: templates/js/order.js:195 templates/js/stock.js:984
+#: templates/js/order.js:195 templates/js/stock.js:980
 msgid "Date"
 msgstr ""
 
@@ -5185,7 +5185,7 @@ msgid "Moved {n} parts to {loc}"
 msgstr ""
 
 #: stock/forms.py:114 stock/forms.py:418 stock/models.py:507
-#: stock/templates/stock/item_base.html:376 templates/js/stock.js:656
+#: stock/templates/stock/item_base.html:376 templates/js/stock.js:652
 msgid "Expiry Date"
 msgstr ""
 
@@ -5535,7 +5535,7 @@ msgstr ""
 msgid "Return to stock"
 msgstr ""
 
-#: stock/templates/stock/item_base.html:131 templates/js/stock.js:1426
+#: stock/templates/stock/item_base.html:131 templates/js/stock.js:1422
 msgid "Uninstall stock item"
 msgstr ""
 
@@ -5628,7 +5628,7 @@ msgstr ""
 msgid "This StockItem expires on %(item.expiry_date)s"
 msgstr ""
 
-#: stock/templates/stock/item_base.html:389 templates/js/stock.js:662
+#: stock/templates/stock/item_base.html:389 templates/js/stock.js:658
 msgid "Last Updated"
 msgstr ""
 
@@ -6107,11 +6107,11 @@ msgstr ""
 msgid "Enter a search query"
 msgstr ""
 
-#: templates/InvenTree/search.html:268 templates/js/stock.js:300
+#: templates/InvenTree/search.html:268 templates/js/stock.js:296
 msgid "Shipped to customer"
 msgstr ""
 
-#: templates/InvenTree/search.html:271 templates/js/stock.js:310
+#: templates/InvenTree/search.html:271 templates/js/stock.js:306
 msgid "No stock location set"
 msgstr ""
 
@@ -6293,7 +6293,7 @@ msgid "Change Password"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:28
-#: templates/registration/login.html:59
+#: templates/registration/login.html:58
 msgid "Username"
 msgstr ""
 
@@ -6582,9 +6582,9 @@ msgstr ""
 msgid "No builds matching query"
 msgstr ""
 
-#: templates/js/build.js:708 templates/js/part.js:382 templates/js/part.js:616
-#: templates/js/stock.js:511 templates/js/stock.js:938
-#: templates/js/stock.js:1458
+#: templates/js/build.js:708 templates/js/part.js:382 templates/js/part.js:626
+#: templates/js/stock.js:507 templates/js/stock.js:934
+#: templates/js/stock.js:1454
 msgid "Select"
 msgstr ""
 
@@ -6819,35 +6819,35 @@ msgstr ""
 msgid "Low stock"
 msgstr ""
 
-#: templates/js/part.js:641 templates/js/stock.js:962
+#: templates/js/part.js:651 templates/js/stock.js:958
 msgid "Path"
 msgstr ""
 
-#: templates/js/part.js:658
+#: templates/js/part.js:668
 msgid "YES"
 msgstr ""
 
-#: templates/js/part.js:660
+#: templates/js/part.js:670
 msgid "NO"
 msgstr ""
 
-#: templates/js/part.js:694
+#: templates/js/part.js:704
 msgid "No test templates matching query"
 msgstr ""
 
-#: templates/js/part.js:745 templates/js/stock.js:75
+#: templates/js/part.js:755 templates/js/stock.js:75
 msgid "Edit test result"
 msgstr ""
 
-#: templates/js/part.js:746 templates/js/stock.js:76
+#: templates/js/part.js:756 templates/js/stock.js:76
 msgid "Delete test result"
 msgstr ""
 
-#: templates/js/part.js:752
+#: templates/js/part.js:762
 msgid "This test is defined for a parent part"
 msgstr ""
 
-#: templates/js/part.js:797
+#: templates/js/part.js:807
 msgid "Single Price Difference"
 msgstr ""
 
@@ -6937,163 +6937,163 @@ msgstr ""
 msgid "Add test result"
 msgstr ""
 
-#: templates/js/stock.js:90
+#: templates/js/stock.js:95
 msgid "No test results found"
 msgstr ""
 
-#: templates/js/stock.js:132
+#: templates/js/stock.js:143
 msgid "Test Date"
 msgstr ""
 
-#: templates/js/stock.js:292
+#: templates/js/stock.js:288
 msgid "In production"
 msgstr ""
 
-#: templates/js/stock.js:296
+#: templates/js/stock.js:292
 msgid "Installed in Stock Item"
 msgstr ""
 
-#: templates/js/stock.js:304
+#: templates/js/stock.js:300
 msgid "Assigned to Sales Order"
 msgstr ""
 
-#: templates/js/stock.js:336
+#: templates/js/stock.js:332
 msgid "No stock items matching query"
 msgstr ""
 
-#: templates/js/stock.js:357
+#: templates/js/stock.js:353
 msgid "items"
 msgstr ""
 
-#: templates/js/stock.js:449
+#: templates/js/stock.js:445
 msgid "batches"
 msgstr ""
 
-#: templates/js/stock.js:476
+#: templates/js/stock.js:472
 msgid "locations"
 msgstr ""
 
-#: templates/js/stock.js:478
+#: templates/js/stock.js:474
 msgid "Undefined location"
 msgstr ""
 
-#: templates/js/stock.js:579
+#: templates/js/stock.js:575
 msgid "Stock item is in production"
 msgstr ""
 
-#: templates/js/stock.js:584
+#: templates/js/stock.js:580
 msgid "Stock item assigned to sales order"
 msgstr ""
 
-#: templates/js/stock.js:587
+#: templates/js/stock.js:583
 msgid "Stock item assigned to customer"
 msgstr ""
 
-#: templates/js/stock.js:591
+#: templates/js/stock.js:587
 msgid "Stock item has expired"
 msgstr ""
 
-#: templates/js/stock.js:593
+#: templates/js/stock.js:589
 msgid "Stock item will expire soon"
 msgstr ""
 
-#: templates/js/stock.js:597
+#: templates/js/stock.js:593
 msgid "Stock item has been allocated"
 msgstr ""
 
-#: templates/js/stock.js:601
+#: templates/js/stock.js:597
 msgid "Stock item has been installed in another item"
 msgstr ""
 
-#: templates/js/stock.js:609
+#: templates/js/stock.js:605
 msgid "Stock item has been rejected"
 msgstr ""
 
-#: templates/js/stock.js:613
+#: templates/js/stock.js:609
 msgid "Stock item is lost"
 msgstr ""
 
-#: templates/js/stock.js:616
+#: templates/js/stock.js:612
 msgid "Stock item is destroyed"
 msgstr ""
 
-#: templates/js/stock.js:620 templates/js/table_filters.js:139
+#: templates/js/stock.js:616 templates/js/table_filters.js:139
 msgid "Depleted"
 msgstr ""
 
-#: templates/js/stock.js:649
+#: templates/js/stock.js:645
 msgid "Stocktake"
 msgstr ""
 
-#: templates/js/stock.js:825
+#: templates/js/stock.js:821
 msgid "Stock Status"
 msgstr ""
 
-#: templates/js/stock.js:840
+#: templates/js/stock.js:836
 msgid "Set Stock Status"
 msgstr ""
 
-#: templates/js/stock.js:854
+#: templates/js/stock.js:850
 msgid "Select Status Code"
 msgstr ""
 
-#: templates/js/stock.js:855
+#: templates/js/stock.js:851
 msgid "Status code must be selected"
 msgstr ""
 
-#: templates/js/stock.js:994
+#: templates/js/stock.js:990
 msgid "Invalid date"
 msgstr ""
 
-#: templates/js/stock.js:1041
+#: templates/js/stock.js:1037
 msgid "Location no longer exists"
 msgstr ""
 
-#: templates/js/stock.js:1060
+#: templates/js/stock.js:1056
 msgid "Purchase order no longer exists"
 msgstr ""
 
-#: templates/js/stock.js:1079
+#: templates/js/stock.js:1075
 msgid "Customer no longer exists"
 msgstr ""
 
-#: templates/js/stock.js:1097
+#: templates/js/stock.js:1093
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: templates/js/stock.js:1120
+#: templates/js/stock.js:1116
 msgid "Added"
 msgstr ""
 
-#: templates/js/stock.js:1128
+#: templates/js/stock.js:1124
 msgid "Removed"
 msgstr ""
 
-#: templates/js/stock.js:1160
+#: templates/js/stock.js:1156
 msgid "No user information"
 msgstr ""
 
-#: templates/js/stock.js:1172
+#: templates/js/stock.js:1168
 msgid "Edit tracking entry"
 msgstr ""
 
-#: templates/js/stock.js:1173
+#: templates/js/stock.js:1169
 msgid "Delete tracking entry"
 msgstr ""
 
-#: templates/js/stock.js:1297
+#: templates/js/stock.js:1293
 msgid "Create New Location"
 msgstr ""
 
-#: templates/js/stock.js:1396
+#: templates/js/stock.js:1392
 msgid "Serial"
 msgstr ""
 
-#: templates/js/stock.js:1489 templates/js/table_filters.js:172
+#: templates/js/stock.js:1485 templates/js/table_filters.js:172
 msgid "Installed"
 msgstr ""
 
-#: templates/js/stock.js:1514
+#: templates/js/stock.js:1510
 msgid "Install item"
 msgstr ""
 
@@ -7332,7 +7332,7 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: templates/navbar.html:81 templates/registration/login.html:90
+#: templates/navbar.html:81 templates/registration/login.html:89
 msgid "Login"
 msgstr ""
 
@@ -7344,67 +7344,67 @@ msgstr ""
 msgid "QR data not provided"
 msgstr ""
 
-#: templates/registration/logged_out.html:51
+#: templates/registration/logged_out.html:50
 msgid "You have been logged out"
 msgstr ""
 
-#: templates/registration/logged_out.html:52
-#: templates/registration/password_reset_complete.html:52
-#: templates/registration/password_reset_done.html:59
+#: templates/registration/logged_out.html:51
+#: templates/registration/password_reset_complete.html:51
+#: templates/registration/password_reset_done.html:58
 msgid "Return to login screen"
 msgstr ""
 
-#: templates/registration/login.html:65
+#: templates/registration/login.html:64
 msgid "Enter username"
 msgstr ""
 
-#: templates/registration/login.html:71
+#: templates/registration/login.html:70
 msgid "Password"
 msgstr ""
 
-#: templates/registration/login.html:84
+#: templates/registration/login.html:83
 msgid "Username / password combination is incorrect"
 msgstr ""
 
-#: templates/registration/login.html:96
-#: templates/registration/password_reset_form.html:52
+#: templates/registration/login.html:95
+#: templates/registration/password_reset_form.html:51
 msgid "Forgotten your password?"
 msgstr ""
 
-#: templates/registration/login.html:96
+#: templates/registration/login.html:95
 msgid "Click here to reset"
 msgstr ""
 
-#: templates/registration/password_reset_complete.html:51
+#: templates/registration/password_reset_complete.html:50
 msgid "Password reset complete"
 msgstr ""
 
-#: templates/registration/password_reset_confirm.html:53
-#: templates/registration/password_reset_confirm.html:57
+#: templates/registration/password_reset_confirm.html:52
+#: templates/registration/password_reset_confirm.html:56
 msgid "Change password"
 msgstr ""
 
-#: templates/registration/password_reset_confirm.html:61
+#: templates/registration/password_reset_confirm.html:60
 msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
 msgstr ""
 
-#: templates/registration/password_reset_done.html:52
+#: templates/registration/password_reset_done.html:51
 msgid "We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly."
 msgstr ""
 
-#: templates/registration/password_reset_done.html:55
+#: templates/registration/password_reset_done.html:54
 msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
 msgstr ""
 
-#: templates/registration/password_reset_form.html:53
+#: templates/registration/password_reset_form.html:52
 msgid "Enter your email address below."
 msgstr ""
 
-#: templates/registration/password_reset_form.html:54
+#: templates/registration/password_reset_form.html:53
 msgid "An email will be sent with password reset instructions."
 msgstr ""
 
-#: templates/registration/password_reset_form.html:59
+#: templates/registration/password_reset_form.html:58
 msgid "Send email"
 msgstr ""
 
