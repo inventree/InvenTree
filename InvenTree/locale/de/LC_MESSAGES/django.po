@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-31 07:25+0000\n"
-"PO-Revision-Date: 2021-05-31 07:32\n"
+"PO-Revision-Date: 2021-05-31 22:16\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4299,11 +4299,11 @@ msgstr "Exportieren"
 
 #: part/templates/part/category.html:132
 msgid "View list display"
-msgstr ""
+msgstr "Listenansicht anzeigen"
 
 #: part/templates/part/category.html:135
 msgid "View grid display"
-msgstr ""
+msgstr "Rasteransicht anzeigen"
 
 #: part/templates/part/category.html:209
 #: stock/templates/stock/location.html:192 templates/js/stock.js:705
@@ -4511,11 +4511,11 @@ msgstr "Benutzt in"
 
 #: part/templates/part/navbar.html:72 part/templates/part/order_prices.html:12
 msgid "Order Price Information"
-msgstr ""
+msgstr "Bestellpreisinformationen"
 
 #: part/templates/part/navbar.html:75
 msgid "Order Price"
-msgstr ""
+msgstr "Bestellpreis"
 
 #: part/templates/part/navbar.html:98
 msgid "Sales Price Information"
@@ -4540,7 +4540,7 @@ msgstr "Teil-Bemerkungen"
 
 #: part/templates/part/order_prices.html:21
 msgid "Pricing ranges"
-msgstr ""
+msgstr "Preisspannen"
 
 #: part/templates/part/order_prices.html:26
 #: part/templates/part/part_pricing.html:18
@@ -4593,26 +4593,26 @@ msgstr "Keine Preise für dieses Teil verfügbar"
 
 #: part/templates/part/order_prices.html:113
 msgid "Stock Pricing"
-msgstr ""
+msgstr "Bestandspreise"
 
 #: part/templates/part/order_prices.html:121
 msgid "No stock pricing history is available for this part."
-msgstr ""
+msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 
 #: part/templates/part/order_prices.html:140
 #, python-format
 msgid "Single Price - %(currency)s"
-msgstr ""
+msgstr "Einzelpreis - %(currency)s"
 
 #: part/templates/part/order_prices.html:152
 #, python-format
 msgid "Single Price Difference - %(currency)s"
-msgstr ""
+msgstr "Einzelpreisdifferenz - %(currency)s"
 
 #: part/templates/part/order_prices.html:163
 #, python-format
 msgid "Part Single Price - %(currency)s"
-msgstr ""
+msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
 
 #: part/templates/part/params.html:17
 msgid "Add new parameter"
@@ -6503,11 +6503,11 @@ msgstr "Unterbaugruppe öffnen"
 
 #: templates/js/bom.js:249
 msgid "Purchase Price Range"
-msgstr ""
+msgstr "Kaufpreisspanne"
 
 #: templates/js/bom.js:257
 msgid "Purchase Price Average"
-msgstr ""
+msgstr "Durchschnittlicher Kaufpreis"
 
 #: templates/js/bom.js:277
 msgid "No pricing available"
@@ -6851,7 +6851,7 @@ msgstr "Dieses Testergebnis ist für ein Hauptteil"
 
 #: templates/js/part.js:807
 msgid "Single Price Difference"
-msgstr ""
+msgstr "Einzelpreisdifferenz"
 
 #: templates/js/report.js:47
 msgid "items selected"
