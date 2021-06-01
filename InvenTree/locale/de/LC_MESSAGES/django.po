@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-01 22:50\n"
+"PO-Revision-Date: 2021-06-01 23:57\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4062,7 +4062,7 @@ msgstr "Varianten zulassen"
 
 #: part/models.py:2295
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr ""
+msgstr "Lagerbestand von Varianten kann für diese Stücklisten-Position verwendet werden"
 
 #: part/models.py:2371 part/views.py:1681 part/views.py:1733
 #: stock/models.py:292
@@ -7115,7 +7115,7 @@ msgstr "überprüft"
 
 #: templates/js/table_filters.js:55
 msgid "Allow Variant Stock"
-msgstr "Variantenbestand zulassen"
+msgstr "Bestand an Varianten zulassen"
 
 #: templates/js/table_filters.js:76
 msgid "Include locations"
