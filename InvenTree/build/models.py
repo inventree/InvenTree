@@ -881,9 +881,12 @@ class Build(MPTTModel):
             output - Build output (StockItem).
         """
 
+        # Remember, if 'variant' stock is allowed to be allocated, it becomes more complicated!
+        variants = part.get_descendants(include_self=True)
+
         allocations = BuildItem.objects.filter(
             build=self,
-            stock_item__part=part,
+            stock_item__part__pk__in=[p.pk for p in variants],
             install_into=output,
         )
 
