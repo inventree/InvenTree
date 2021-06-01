@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-01 10:22\n"
+"PO-Revision-Date: 2021-06-01 22:50\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4058,7 +4058,7 @@ msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten 
 
 #: part/models.py:2294 templates/js/bom.js:294
 msgid "Allow Variants"
-msgstr ""
+msgstr "Varianten zulassen"
 
 #: part/models.py:2295
 msgid "Stock items for variant parts can be used for this BOM item"
@@ -7095,7 +7095,7 @@ msgstr "Neuen Lagerort anlegen"
 
 #: templates/js/stock.js:1336
 msgid "No installed items"
-msgstr ""
+msgstr "Keine installierten Elemente"
 
 #: templates/js/stock.js:1359
 msgid "Serial"
@@ -7103,7 +7103,7 @@ msgstr "Seriennummer"
 
 #: templates/js/stock.js:1387
 msgid "Uninstall Stock Item"
-msgstr ""
+msgstr "Lagerbestand entfernen"
 
 #: templates/js/table_filters.js:43
 msgid "Trackable Part"
@@ -7115,7 +7115,7 @@ msgstr "überprüft"
 
 #: templates/js/table_filters.js:55
 msgid "Allow Variant Stock"
-msgstr ""
+msgstr "Variantenbestand zulassen"
 
 #: templates/js/table_filters.js:76
 msgid "Include locations"
