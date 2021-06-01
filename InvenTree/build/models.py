@@ -30,6 +30,7 @@ from InvenTree.models import InvenTreeAttachment
 import common.models
 
 import InvenTree.fields
+import InvenTree.helpers
 
 from stock import models as StockModels
 from part import models as PartModels
@@ -1279,6 +1280,18 @@ class BuildItem(models.Model):
         else:
             # Simply remove the items from stock
             item.take_stock(self.quantity, user)
+
+    def getStockItemThumbnail(self):
+        """
+        Return qualified URL for part thumbnail image
+        """
+
+        if self.stock_item and self.stock_item.part:
+            return InvenTree.helpers.getMediaUrl(self.stock_item.part.image.thumbnail.url)
+        elif self.bom_item and self.stock_item.sub_part:
+            return InvenTree.helpers.getMediaUrl(self.bom_item.sub_part.image.thumbnail.url)
+        else:
+            return InvenTree.helpers.getBlankThumbnail()
 
     build = models.ForeignKey(
         Build,

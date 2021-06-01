@@ -16,9 +16,13 @@ Increment thi API version number whenever there is a significant change to the A
 v3 -> 2021-05-22:
     - The updated StockItem "history tracking" now uses a different interface
 
+v4 -> 2021-06-01
+    - BOM items can now accept "variant stock" to be assigned against them
+    - Many slight API tweaks were needed to get this to work properly!
+
 """
 
-INVENTREE_API_VERSION = 3
+INVENTREE_API_VERSION = 4
 
 
 def inventreeInstanceName():
