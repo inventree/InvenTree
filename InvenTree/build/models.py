@@ -1036,7 +1036,19 @@ class Build(MPTTModel):
             StockModels.StockItem.IN_STOCK_FILTER
         )
 
-        items = items.filter(part=part)
+        # Check if variants are allowed for this part
+        try:
+            bom_item = PartModels.BomItem.objects.get(part=self.part, sub_part=part)
+            allow_part_variants = bom_item.allow_variants
+        except PartModels.BomItem.DoesNotExist:
+            allow_part_variants = False
+
+        if allow_part_variants:
+            parts = part.get_descendants(include_self=True)
+            items = items.filter(part__pk__in=[p.pk for p in parts])
+
+        else:
+            items = items.filter(part=part)
 
         # Exclude any items which have already been allocated
         allocated = BuildItem.objects.filter(
@@ -1160,10 +1172,6 @@ class BuildItem(models.Model):
             if self.stock_item.part and self.stock_item.part.trackable and not self.install_into:
                 raise ValidationError(_('Build item must specify a build output, as master part is marked as trackable'))
 
-            # Allocated part must be in the BOM for the master part
-            if self.stock_item.part not in self.build.part.getRequiredParts(recursive=False):
-                errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'").format(p=self.build.part.full_name)]
-
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
                 errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})").format(
@@ -1188,6 +1196,61 @@ class BuildItem(models.Model):
 
         if len(errors) > 0:
             raise ValidationError(errors)
+
+        """
+        Attempt to find the "BomItem" which links this BuildItem to the build.
+
+        - If a BomItem is already set, and it is valid, then we are ok!
+        """
+
+        bom_item_valid = False
+
+        if self.bom_item:
+            """
+            A BomItem object has already been assigned. This is valid if:
+
+            a) It points to the same "part" as the referened build
+            b) Either:
+                i) The sub_part points to the same part as the referenced StockItem
+                ii) The BomItem allows variants and the part referenced by the StockItem
+                    is a variant of the sub_part referenced by the BomItem
+            """
+
+            if self.build and self.build.part == self.bom_item.part:
+
+                # Check that the sub_part points to the stock_item (either directly or via a variant)
+                if self.bom_item.sub_part == self.stock_item.part:
+                    bom_item_valid = True
+
+                elif self.bom_item.allow_variants and self.stock_item.part in self.bom_item.sub_part.get_descendants(include_self=False):
+                    bom_item_valid = True
+
+        # If the existing BomItem is *not* valid, try to find a match
+        if not bom_item_valid:
+
+            if self.build and self.stock_item:
+                ancestors = self.stock_item.part.get_ancestors(include_self=True, ascending=True)
+
+                for idx, ancestor in enumerate(ancestors):
+
+                    try:
+                        bom_item = PartModels.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
+                    except PartModels.BomItem.DoesNotExist:
+                        continue
+                    
+                    # A matching BOM item has been found!
+                    if idx == 0 or bom_item.allow_variants:
+                        bom_item_valid = True
+                        self.bom_item = bom_item
+                        break
+
+        # BomItem did not exist or could not be validated.
+        # Search for a new one
+        if not bom_item_valid:
+
+            raise ValidationError({
+                'stock_item': _("Selected stock item not found in BOM for part '{p}'").format(p=self.build.part.full_name)
+            })
 
     @transaction.atomic
     def complete_allocation(self, user):
@@ -1223,6 +1286,15 @@ class BuildItem(models.Model):
         related_name='allocated_stock',
         verbose_name=_('Build'),
         help_text=_('Build to allocate parts')
+    )
+
+    # Internal model which links part <-> sub_part
+    # We need to track this separately, to allow for "variant' stock
+    bom_item = models.ForeignKey(
+        PartModels.BomItem,
+        on_delete=models.CASCADE,
+        related_name='allocate_build_items',
+        blank=True, null=True,
     )
 
     stock_item = models.ForeignKey(
