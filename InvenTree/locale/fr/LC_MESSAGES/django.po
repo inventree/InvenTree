@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-31 22:52+0000\n"
-"PO-Revision-Date: 2021-05-31 23:14\n"
+"PO-Revision-Date: 2021-06-01 00:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -214,140 +214,140 @@ msgstr ""
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "Terminé"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "Annulé"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "Perdu"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Retourné"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "Expédié"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "Attention requise"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "Endommagé"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr ""
+msgstr "Détruit"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Rejeté"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Ancienne entrée de suivi de stock"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Article en stock créé"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Article de stock modifié"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Numéro de série attribué"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Stock comptabilisé"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stock ajouté manuellement"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stock supprimé manuellement"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Emplacement modifié"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Installé dans l'assemblage"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Retiré de l'assemblage"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Composant installé"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Composant retiré"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Séparer de l'élément parent"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Fractionner l'élément enfant"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
 msgid "Sent to customer"
-msgstr ""
+msgstr "Envoyé au client"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Retourné par le client"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "La sortie de l'ordre de construction a été créée"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Sortie de l'ordre de construction terminée"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Reçu contre bon de commande"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
-msgstr ""
+msgstr "Fabrication"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Code de devise invalide"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Caractère invalide dans le nom de la pièce"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "L'IPN doit correspondre au modèle de regex {pat}"
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
@@ -426,7 +426,7 @@ msgstr ""
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr ""
+msgstr "Le code-barres correspond déjà à une Pièce"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
@@ -540,7 +540,7 @@ msgstr ""
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr ""
+msgstr "Emplacement des pièces terminées"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:59 order/models.py:466
@@ -647,11 +647,11 @@ msgstr ""
 #: templates/js/part.js:233 templates/js/part.js:396 templates/js/stock.js:521
 #: templates/js/stock.js:1468
 msgid "Part"
-msgstr ""
+msgstr "Pièce"
 
 #: build/models.py:160
 msgid "Select part to build"
-msgstr ""
+msgstr "Sélectionnez la pièce à construire"
 
 #: build/models.py:165
 msgid "Sales Order Reference"
@@ -801,12 +801,12 @@ msgstr ""
 
 #: build/models.py:1161
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "L'élément de construction doit spécifier une sortie de construction, la pièce maîtresse étant marquée comme objet traçable"
 
 #: build/models.py:1165
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
-msgstr ""
+msgstr "L'article en stock sélectionné n'a pas été trouvé dans la BOM pour la pièce '{p}'"
 
 #: build/models.py:1169
 #, python-brace-format
@@ -889,14 +889,14 @@ msgstr ""
 
 #: build/templates/build/allocate.html:29
 msgid "Order required parts"
-msgstr ""
+msgstr "Commander les pièces requises"
 
 #: build/templates/build/allocate.html:30
 #: company/templates/company/detail_manufacturer_part.html:33
 #: company/templates/company/detail_supplier_part.html:32 order/views.py:986
 #: part/templates/part/category.html:127
 msgid "Order Parts"
-msgstr ""
+msgstr "Commander des pièces"
 
 #: build/templates/build/allocate.html:36
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1096,7 +1096,7 @@ msgstr ""
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
-msgstr ""
+msgstr "La BOM contient des pièces traçables"
 
 #: build/templates/build/build_output_create.html:8
 msgid "Build outputs must be generated individually."
@@ -1535,27 +1535,27 @@ msgstr ""
 
 #: common/models.py:99
 msgid "IPN Regex"
-msgstr ""
+msgstr "Regex IPN"
 
 #: common/models.py:100
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Expression régulière pour la correspondance avec l'IPN de la Pièce"
 
 #: common/models.py:104
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Autoriser les IPN dupliqués"
 
 #: common/models.py:105
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "Permettre à plusieurs pièces de partager le même IPN"
 
 #: common/models.py:111
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Autoriser l'édition de l'IPN"
 
 #: common/models.py:112
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "Permettre de modifier la valeur de l'IPN lors de l'édition d'une pièce"
 
 #: common/models.py:118
 msgid "Copy Part BOM Data"
@@ -3753,11 +3753,11 @@ msgstr ""
 
 #: part/models.py:643
 msgid "Duplicate IPN not allowed in part settings"
-msgstr ""
+msgstr "IPN dupliqué non autorisé dans les paramètres de la pièce"
 
 #: part/models.py:654
 msgid "Part must be unique for name, IPN and revision"
-msgstr ""
+msgstr "La pièce doit être unique par son nom, son IPN et sa révision"
 
 #: part/models.py:685 part/templates/part/detail.html:22
 msgid "Part name"
@@ -3805,7 +3805,7 @@ msgstr ""
 #: part/templates/part/part_base.html:87 templates/js/part.js:161
 #: templates/js/part.js:288
 msgid "IPN"
-msgstr ""
+msgstr "IPN"
 
 #: part/models.py:731
 msgid "Internal Part Number"
@@ -7227,7 +7227,7 @@ msgstr ""
 
 #: templates/js/table_filters.js:301
 msgid "Has IPN"
-msgstr ""
+msgstr "A un IPN"
 
 #: templates/js/table_filters.js:302
 msgid "Part has internal part number"
