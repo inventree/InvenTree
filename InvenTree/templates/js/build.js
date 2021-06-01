@@ -372,7 +372,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         data.forEach(function(item) {
 
                             // Group BuildItem objects by part
-                            var part = item.part;
+                            var part = item.bom_part || item.part;
                             var key = parseInt(part);
 
                             if (!(key in allocations)) {
@@ -461,6 +461,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 data: row.allocations,
                 showHeader: true,
                 columns: [
+                    {
+                        field: 'part',
+                        title: '{% trans "Part" %}',
+                        formatter: function(value, row) {
+
+                            var html = imageHoverIcon(row.part_thumb);
+                            html += renderLink(row.part_name, `/part/${value}/`);
+                            return html;
+                        }
+                    },
                     {
                         width: '50%',
                         field: 'quantity',
