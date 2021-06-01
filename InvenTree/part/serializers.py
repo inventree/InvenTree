@@ -453,6 +453,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = BomItem
         fields = [
+            'allow_variants',
             'inherited',
             'note',
             'optional',
@@ -460,16 +461,16 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'part_detail',
+            'purchase_price_avg',
+            'purchase_price_max',
+            'purchase_price_min',
+            'purchase_price_range',
             'quantity',
             'reference',
             'sub_part',
             'sub_part_detail',
             # 'price_range',
             'validated',
-            'purchase_price_min',
-            'purchase_price_max',
-            'purchase_price_avg',
-            'purchase_price_range',
         ]
 
 
