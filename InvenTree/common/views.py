@@ -414,7 +414,11 @@ class FileManagementFormView(MultiStepFormView):
                     'data': data,
                     'errors': {},
                 }
-                self.rows.append(row)
+
+                # make sure that the row was submitted - solves https://github.com/inventree/InvenTree/pull/1588#issuecomment-847889353
+                row_exist_check = [a for a in self.request.POST.keys() if a.startswith(f'row_{int(row_idx) +1}_')]
+                if True in row_exist_check:
+                    self.rows.append(row)
 
         # In the item selection step: update row data with mapping to form fields
         if form and self.steps.current == 'items':
