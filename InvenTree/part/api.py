@@ -827,7 +827,7 @@ class BomList(generics.ListCreateAPIView):
         if variants is not None:
             variants = str2bool(variants)
 
-            queryset = queryset.filter(allow_variants=variants) 
+            queryset = queryset.filter(allow_variants=variants)
 
         # Filter by part?
         part = params.get('part', None)

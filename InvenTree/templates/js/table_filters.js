@@ -49,6 +49,10 @@ function getAvailableTableFilters(tableKey) {
             inherited: {
                 type: 'bool',
                 title: '{% trans "Inherited" %}',
+            },
+            allow_variants: {
+                type: 'bool',
+                title: '{% trans "Allow Variant Stock" %}',
             }
         };
     }
