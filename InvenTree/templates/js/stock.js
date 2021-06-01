@@ -32,38 +32,38 @@ function removeStockRow(e) {
 }
 
 
-function passFailBadge(result) {
+function passFailBadge(result, align='float-right') {
 
     if (result) {
-        return `<span class='label label-green float-right'>{% trans "PASS" %}</span>`;
+        return `<span class='label label-green ${align}'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='label label-red float-right'>{% trans "FAIL" %}</span>`;
+        return `<span class='label label-red ${align}'>{% trans "FAIL" %}</span>`;
     }
 }
 
-function noResultBadge() {
-    return `<span class='label label-blue float-right'>{% trans "NO RESULT" %}</span>`;
+function noResultBadge(align='float-right') {
+    return `<span class='label label-blue ${align}'>{% trans "NO RESULT" %}</span>`;
+}
+
+function formatDate(row) {
+    // Function for formatting date field
+    var html = row.date;
+
+    if (row.user_detail) {
+        html += `<span class='badge'>${row.user_detail.username}</span>`;
+    }
+
+    if (row.attachment) {
+        html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+    }
+
+    return html;
 }
 
 function loadStockTestResultsTable(table, options) {
     /*
      * Load StockItemTestResult table
      */
-
-    function formatDate(row) {
-        // Function for formatting date field
-        var html = row.date;
-
-        if (row.user_detail) {
-            html += `<span class='badge'>${row.user_detail.username}</span>`;
-        }
-
-        if (row.attachment) {
-            html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
-        }
-
-        return html;
-    }
 
     function makeButtons(row, grouped) {
         var html = `<div class='btn-group float-right' role='group'>`;
@@ -81,16 +81,29 @@ function loadStockTestResultsTable(table, options) {
         return html;
     }
 
-    // First, load all the test templates
+    var parent_node = "parent node";
+
     table.inventreeTable({
         url: "{% url 'api-part-test-template-list' %}",
         method: 'get',
         name: 'testresult',
+        treeEnable: true,
+        rootParentId: parent_node,
+        parentIdField: 'parent',
+        idField: 'pk',
+        uniqueId: 'key',
+        treeShowField: 'test_name',
         formatNoMatches: function() {
-            return "{% trans 'No test results found' %}";
+            return '{% trans "No test results found" %}';
         },
         queryParams: {
             part: options.part,
+        },
+        onPostBody: function() {
+            table.treegrid({
+                treeColumn: 0,
+            });
+            table.treegrid("collapseAll");
         },
         columns: [
             {
@@ -130,100 +143,85 @@ function loadStockTestResultsTable(table, options) {
             {
                 field: 'date',
                 title: '{% trans "Test Date" %}',
+                sortable: true,
                 formatter: function(value, row) {
                     return formatDate(row);
-                }
+                },
             },
             {
                 field: 'buttons',
                 formatter: function(value, row) {
                     return makeButtons(row, false);
                 }
-            },
-        ],
-        groupBy: true,
-        groupByField: 'test_name',
-        groupByFormatter: function(field, id, data) {
-
-            // Extract the "latest" row (data are returned in date order from the server)
-            var latest = data[data.length-1];
-
-            switch (field) {
-            case 'test_name':
-                return latest.test_name + ` <i>(${data.length})</i>` + passFailBadge(latest.result);
-            case 'value':
-                return latest.value;
-            case 'notes':
-                return latest.notes;
-            case 'date':
-                return formatDate(latest);
-            case 'buttons':
-                // Buttons are done differently for grouped rows
-                return makeButtons(latest, true);
-            default:
-                return "---";
             }
-        },
+        ],
         onLoadSuccess: function(tableData) {
-            // Once the test template data are loaded, query for results
+
+            // Set "parent" for each existing row
+            tableData.forEach(function(item, idx) {
+                tableData[idx].parent = options.stock_item;
+            });
+
+            // Once the test template data are loaded, query for test results
             inventreeGet(
-                "{% url 'api-stock-test-result-list' %}",
+                '{% url "api-stock-test-result-list" %}',
                 {
                     stock_item: options.stock_item,
                     user_detail: true,
                     attachment_detail: true,
+                    ordering: "-date",
                 },
                 {
                     success: function(data) {
+                        // Iterate through the returned test data
+                        data.forEach(function(item, index) {
 
-                        // Iterate through the returned test result data, and group by test
-                        data.forEach(function(item) {
                             var match = false;
                             var override = false;
 
                             var key = item.key;
 
-                            // Try to associate this result with a test row
+                            // Attempt to associate this result with an existing test
                             tableData.forEach(function(row, index) {
 
-
-                                // The result matches the test template row
                                 if (key == row.key) {
 
-                                    // Force the names to be the same!
                                     item.test_name = row.test_name;
                                     item.required = row.required;
 
+                                    match = true;
+                                    
                                     if (row.result == null) {
-                                        // The original row has not recorded a result - override!
+                                        item.parent = parent_node;
                                         tableData[index] = item;
                                         override = true;
+                                    } else {
+                                        item.parent = row.pk;
                                     }
-
-                                    match = true;
                                 }
                             });
 
-                            // No match could be found (this is a new test!)
+                            // No match could be found
                             if (!match) {
-
                                 item.test_name = item.test;
+                                item.parent = parent_node;
                             }
 
                             if (!override) {
                                 tableData.push(item);
                             }
+
                         });
 
-                        // Finally, push the data back into the table!
+                        // Push data back into the table
                         table.bootstrapTable("load", tableData);
                     }
-                },
-            );
+                }
+            )
         }
     });
-}
 
+}
 
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
@@ -1306,33 +1304,6 @@ function createNewStockItem(options) {
 function loadInstalledInTable(table, options) {
     /*
     * Display a table showing the stock items which are installed in this stock item.
-    * This is a multi-level tree table, where the "top level" items are Part objects,
-    * and the children of each top-level item are the associated installed stock items.
-    * 
-    * The process for retrieving data and displaying the table is as follows:
-    *
-    * A) Get BOM data for the stock item
-    *    - It is assumed that the stock item will be for an assembly
-    *      (otherwise why are we installing stuff anyway?)
-    *    - Request BOM items for stock_item.part (and only for trackable sub items)
-    * 
-    * B) Add parts to table
-    *    - Create rows for each trackable sub-part in the table
-    *
-    * C) Gather installed stock item data
-    *    - Get the list of installed stock items via the API
-    *    - If the Part reference is already in the table, add the sub-item as a child
-    *    - If this is a stock item for a *new* part, request that part from the API,
-    *      and add that part as a new row, then add the stock item as a child of that part
-    *
-    * D) Enjoy!
-    *
-    *
-    * And the options object contains the following things:
-    *
-    * - stock_item: The PK of the master stock_item object
-    * - part: The PK of the Part reference of the stock_item object
-    * - quantity: The quantity of the stock item
     */
 
     function updateCallbacks() {
@@ -1355,246 +1326,88 @@ function loadInstalledInTable(table, options) {
         });
     }
 
-    table.inventreeTable(
-        {
-            url: "{% url 'api-bom-list' %}",
-            queryParams: {
-                part: options.part,
-                sub_part_trackable: true,
-                sub_part_detail: true,
-            },
-            showColumns: false,
-            name: 'installed-in',
-            detailView: true,
-            detailViewByClick: true,
-            detailFilter: function(index, row) {
-                return row.installed_count && row.installed_count > 0;
-            },
-            detailFormatter: function(index, row, element) {
-                var subTableId = `installed-table-${row.sub_part}`;
+    table.inventreeTable({
+        url: "{% url 'api-stock-list' %}",
+        queryParams: {
+            installed_in: options.stock_item,
+            part_detail: true,
+        },
+        formatNoMatches: function() {
+            return '{% trans "No installed items" %}';
+        },
+        columns: [
+            {
+                field: 'part',
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    var html = '';
 
-                var html = `<div class='sub-table'><table class='table table-condensed table-striped' id='${subTableId}'></table></div>`;
+                    html += imageHoverIcon(row.part_detail.thumbnail);
+                    html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
 
-                element.html(html);
-
-                var subTable = $(`#${subTableId}`);
-
-                // Display a "sub table" showing all the linked stock items
-                subTable.bootstrapTable({
-                    data: row.installed_items,
-                    showHeader: true,
-                    columns: [
-                        {
-                            field: 'item',
-                            title: '{% trans "Stock Item" %}', 
-                            formatter: function(value, subrow, index, field) {
-
-                                var pk = subrow.pk;
-                                var html = '';
-
-                                if (subrow.serial && subrow.quantity == 1) {
-                                    html += `{% trans "Serial" %}: ${subrow.serial}`;
-                                } else {
-                                    html += `{% trans "Quantity" %}: ${subrow.quantity}`; 
-                                }
-
-                                return renderLink(html, `/stock/item/${subrow.pk}/`);
-                            },
-                        },
-                        {
-                            field: 'status',
-                            title: '{% trans "Status" %}',
-                            formatter: function(value, subrow, index, field) {
-                                return stockStatusDisplay(value);
-                            }
-                        },
-                        {
-                            field: 'batch',
-                            title: '{% trans "Batch" %}',
-                        },
-                        {
-                            field: 'actions',
-                            title: '',
-                            formatter: function(value, subrow, index) {
-
-                                var pk = subrow.pk;
-                                var html = '';
-
-                                // Add some buttons yo!
-                                html += `<div class='btn-group float-right' role='group'>`;
-
-                                html += makeIconButton('fa-unlink', 'button-uninstall', pk, "{% trans 'Uninstall stock item' %}");
-
-                                html += `</div>`;
-
-                                return html;
-                            }
-                        }
-                    ],
-                    onPostBody: function() {
-                        // Setup button callbacks
-                        subTable.find('.button-uninstall').click(function() {
-                            var pk = $(this).attr('pk');
-
-                            launchModalForm(
-                                "{% url 'stock-item-uninstall' %}",
-                                {
-                                    data: {
-                                        'items[]': [pk],
-                                    },
-                                    success: function() {
-                                        // Refresh entire table!
-                                        table.bootstrapTable('refresh');
-                                    }
-                                }
-                            );
-                        });
-                    }
-                });
-            },
-            columns: [
-                {
-                    checkbox: true,
-                    title: '{% trans "Select" %}',
-                    searchable: false,
-                    switchable: false,
-                },
-                {
-                    field: 'pk',
-                    title: 'ID',
-                    visible: false,
-                    switchable: false,
-                },
-                {
-                    field: 'part',
-                    title: '{% trans "Part" %}',
-                    sortable: true,
-                    formatter: function(value, row, index, field) {
-
-                        var url = `/part/${row.sub_part}/`;
-                        var thumb = row.sub_part_detail.thumbnail;
-                        var name = row.sub_part_detail.full_name;
-
-                        html = imageHoverIcon(thumb) + renderLink(name, url);
-
-                        if (row.not_in_bom) {
-                            html = `<i>${html}</i>`
-                        }
-
-                        return html;
-                    }
-                },
-                {
-                    field: 'installed',
-                    title: '{% trans "Installed" %}',
-                    sortable: false,
-                    formatter: function(value, row, index, field) {
-                        // Construct a progress showing how many items have been installed
-
-                        var installed = row.installed_count || 0;
-                        var required = row.quantity || 0;
-
-                        required *= options.quantity;
-
-                        var progress = makeProgressBar(installed, required, {
-                            id: row.sub_part.pk,
-                        });
-
-                        return progress;
-                    }
-                },
-                {
-                    field: 'actions',
-                    switchable: false,
-                    formatter: function(value, row) {
-                        var pk = row.sub_part;
-
-                        var html = `<div class='btn-group float-right' role='group'>`;
-
-                        html += makeIconButton('fa-link', 'button-install', pk, '{% trans "Install item" %}');
-
-                        html += `</div>`;
-
-                        return html;
-                    }
+                    return html;
                 }
-            ],
-            onLoadSuccess: function() {
-                // Grab a list of parts which are actually installed in this stock item
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
 
-                inventreeGet(
-                    "{% url 'api-stock-list' %}",
+                    var html = '';
+
+                    if (row.serial && row.quantity == 1) {
+                        html += `{% trans "Serial" %}: ${row.serial}`;
+                    } else {
+                        html += `${row.quantity}`;
+                    }
+
+                    return renderLink(html, `/stock/item/${row.pk}/`);
+                }
+            },
+            {
+                field: 'status',
+                title: '{% trans "Status" %}',
+                formatter: function(value, row) {
+                    return stockStatusDisplay(value);
+                }
+            },
+            {
+                field: 'batch',
+                title: '{% trans "Batch" %}',
+            },
+            {
+                field: 'buttons',
+                title: '',
+                switchable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+                    var html = '';
+
+                    html += `<div class='btn-group float-right' role='group'>`;
+                    html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Assign callbacks to the buttons
+            table.find('.button-uninstall').click(function() {
+                var pk = $(this).attr('pk');
+
+                launchModalForm(
+                    '{% url "stock-item-uninstall" %}',
                     {
-                        installed_in: options.stock_item,
-                        part_detail: true,
-                    },
-                    {
-                        success: function(stock_items) {
-
-                            var table_data = table.bootstrapTable('getData');
-
-                            stock_items.forEach(function(item) {
-
-                                var match = false;
-
-                                for (var idx = 0; idx < table_data.length; idx++) {
-
-                                    var row = table_data[idx];
-
-                                    // Check each row in the table to see if this stock item matches
-                                    table_data.forEach(function(row) {
-
-                                        // Match on "sub_part"
-                                        if (row.sub_part == item.part) {
-
-                                            // First time?
-                                            if (row.installed_count == null) {
-                                                row.installed_count = 0;
-                                                row.installed_items = [];
-                                            }
-
-                                            row.installed_count += item.quantity;
-                                            row.installed_items.push(item);
-
-                                            // Push the row back into the table
-                                            table.bootstrapTable('updateRow', idx, row, true);
-
-                                            match = true;
-                                        }
-
-                                    });
-
-                                    if (match) {
-                                        break;
-                                    }
-                                }
-
-                                if (!match) {
-                                    // The stock item did *not* match any items in the BOM!
-                                    // Add a new row to the table...
-
-                                    // Contruct a new "row" to add to the table
-                                    var new_row = {
-                                        sub_part: item.part,
-                                        sub_part_detail: item.part_detail,
-                                        not_in_bom: true,
-                                        installed_count: item.quantity,
-                                        installed_items: [item],
-                                    };
-
-                                    table.bootstrapTable('append', [new_row]);
-
-                                }
-                            });
-
-                            // Update button callback links
-                            updateCallbacks();
+                        data: {
+                            'items[]': pk,
+                        },
+                        success: function() {
+                            table.bootstrapTable('refresh');
                         }
                     }
-                );
-
-                updateCallbacks();
-            },
+                )
+            });
         }
-    );
+    });
 }

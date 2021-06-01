@@ -52,6 +52,9 @@ language: en-us
 # Use the environment variable INVENTREE_TIMEZONE
 timezone: UTC
 
+# Base currency code
+base_currency: USD
+
 # List of currencies supported by default.
 # Add other currencies here to allow use in InvenTree
 currencies:

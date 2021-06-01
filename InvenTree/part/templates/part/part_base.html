@@ -102,6 +102,11 @@
         </div>
 
         <div class='info-messages'>
+            {% if part.virtual %}
+            <div class='alert alert-warning alert-block'>
+                {% trans "This is a virtual part" %}
+            </div>
+            {% endif %}
             {% if part.variant_of %}
             <div class='alert alert-info alert-block'>
                 {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}

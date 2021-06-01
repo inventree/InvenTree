@@ -243,6 +243,22 @@ function loadBomTable(table, options) {
         }
     });
 
+    cols.push(
+    {
+        field: 'purchase_price_range',
+        title: '{% trans "Purchase Price Range" %}',
+        searchable: false,
+        sortable: true,
+    });
+
+    cols.push(
+    {
+        field: 'purchase_price_avg',
+        title: '{% trans "Purchase Price Average" %}',
+        searchable: false,
+        sortable: true,
+    });
+
     /*
 
     // TODO - Re-introduce the pricing column at a later stage,
@@ -269,10 +285,17 @@ function loadBomTable(table, options) {
         title: '{% trans "Optional" %}',
         searchable: false,
         formatter: function(value) {
-            if (value == '1') return '{% trans "true" %}';
-            if (value == '0') return '{% trans "false" %}';
+            return yesNoLabel(value);
         }
     });
+
+    cols.push({
+        field: 'allow_variants',
+        title: '{% trans "Allow Variants" %}',
+        formatter: function(value) {
+            return yesNoLabel(value);
+        }
+    })
 
     cols.push({
         field: 'inherited',
@@ -281,7 +304,7 @@ function loadBomTable(table, options) {
         formatter: function(value, row, index, field) {
             // This BOM item *is* inheritable, but is defined for this BOM
             if (!row.inherited) {
-                return "-"; 
+                return yesNoLabel(false);
             } else if (row.part == options.parent_id) {
                 return '{% trans "Inherited" %}';
             } else {

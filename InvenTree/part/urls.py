@@ -59,6 +59,7 @@ part_detail_urls = [
     url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
+    url(r'^order-prices/', views.PartPricingView.as_view(template_name='part/order_prices.html'), name='part-order-prices'),
     url(r'^manufacturers/?', views.PartDetail.as_view(template_name='part/manufacturer.html'), name='part-manufacturers'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),

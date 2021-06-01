@@ -19,6 +19,8 @@ import shutil
 import sys
 from datetime import datetime
 
+import moneyed
+
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
@@ -513,6 +515,20 @@ CURRENCIES = CONFIG.get(
         'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
+
+# Check that each provided currency is supported
+for currency in CURRENCIES:
+    if currency not in moneyed.CURRENCIES:
+        print(f"Currency code '{currency}' is not supported")
+        sys.exit(1)
+
+BASE_CURRENCY = get_setting(
+    'INVENTREE_BASE_CURRENCY',
+    CONFIG.get('base_currency', 'USD')
+)
+
+# Custom currency exchange backend
+EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})

@@ -1,6 +1,17 @@
 import sys
 
 
+def isInTestMode():
+    """
+    Returns True if the database is in testing mode
+    """
+
+    if 'test' in sys.argv:
+        return True
+
+    return False
+
+
 def canAppAccessDatabase():
     """
     Returns True if the apps.py file can access database records.
