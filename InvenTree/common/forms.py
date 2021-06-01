@@ -69,7 +69,7 @@ class UploadFile(forms.Form):
 
 class MatchField(forms.Form):
     """ Step 2 of FileManagementFormView """
-    
+
     def __init__(self, *args, **kwargs):
 
         # Get FileManager
@@ -85,7 +85,7 @@ class MatchField(forms.Form):
         columns = file_manager.columns()
         # Get headers choices
         headers_choices = [(header, header) for header in file_manager.HEADERS]
-        
+
         # Create column fields
         for col in columns:
             field_name = col['name']
@@ -102,7 +102,7 @@ class MatchField(forms.Form):
 
 class MatchItem(forms.Form):
     """ Step 3 of FileManagementFormView """
-    
+
     def __init__(self, *args, **kwargs):
 
         # Get FileManager
@@ -145,7 +145,7 @@ class MatchItem(forms.Form):
                             required=True,
                             initial=value,
                         )
-            
+
                     # Create item selection box
                     elif col_guess in file_manager.ITEM_MATCH_HEADERS:
                         # Get item options

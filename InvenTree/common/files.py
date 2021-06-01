@@ -22,7 +22,7 @@ class FileManager:
 
     # Fields which are used for item matching (only one of them is needed)
     ITEM_MATCH_HEADERS = []
-    
+
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = []
 
@@ -34,7 +34,7 @@ class FileManager:
 
     def __init__(self, file, name=None):
         """ Initialize the FileManager class with a user-uploaded file object """
-        
+
         # Set name
         if name:
             self.name = name
@@ -73,14 +73,14 @@ class FileManager:
             raise ValidationError(_('Error reading file (incorrect dimension)'))
         except KeyError:
             raise ValidationError(_('Error reading file (data could be corrupted)'))
-        
+
         return cleaned_data
 
     def process(self, file):
         """ Process file """
 
         self.data = self.__class__.validate(file)
-            
+
     def update_headers(self):
         """ Update headers """
 
@@ -100,7 +100,7 @@ class FileManager:
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers
-        
+
         Args:
             header - Header name to look for
             threshold - Match threshold for fuzzy search
@@ -134,7 +134,7 @@ class FileManager:
             return matches[0]['header']
 
         return None
-    
+
     def columns(self):
         """ Return a list of headers for the thingy """
         headers = []

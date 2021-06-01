@@ -130,7 +130,7 @@ class MultiStepFormView(SessionWizardView):
         super().__init__(*args, **kwargs)
 
         self.process_media_folder()
-        
+
     def process_media_folder(self):
         """ Process media folder """
 
@@ -142,7 +142,7 @@ class MultiStepFormView(SessionWizardView):
 
     def get_template_names(self):
         """ Select template """
-        
+
         try:
             # Get template
             template = self.form_steps_template[self.steps.index]
@@ -153,7 +153,7 @@ class MultiStepFormView(SessionWizardView):
 
     def get_context_data(self, **kwargs):
         """ Update context data """
-        
+
         # Retrieve current context
         context = super().get_context_data(**kwargs)
 
@@ -222,7 +222,7 @@ class FileManagementFormView(MultiStepFormView):
         context = super().get_context_data(form=form, **kwargs)
 
         if self.steps.current in ('fields', 'items'):
-            
+
             # Get columns and row data
             self.columns = self.file_manager.columns()
             self.rows = self.file_manager.rows()
@@ -233,7 +233,7 @@ class FileManagementFormView(MultiStepFormView):
             elif self.steps.current == 'items':
                 # Set form table data
                 self.set_form_table_data(form=form)
-            
+
             # Update context
             context.update({'rows': self.rows})
             context.update({'columns': self.columns})
@@ -292,11 +292,11 @@ class FileManagementFormView(MultiStepFormView):
             self.get_form_table_data(data)
             self.set_form_table_data()
             self.get_field_selection()
-            
+
             kwargs['row_data'] = self.rows
 
             return kwargs
-        
+
         return super().get_form_kwargs()
 
     def get_form(self, step=None, data=None, files=None):
@@ -366,7 +366,7 @@ class FileManagementFormView(MultiStepFormView):
                     col_id = int(s[3])
                 except ValueError:
                     continue
-                
+
                 if row_id not in self.row_data:
                     self.row_data[row_id] = {}
 
@@ -401,14 +401,14 @@ class FileManagementFormView(MultiStepFormView):
                         'name': self.column_names[idx],
                         'guess': self.column_selections[idx],
                     }
-                    
+
                     cell_data = {
                         'cell': item,
                         'idx': idx,
                         'column': column_data,
                     }
                     data.append(cell_data)
-                
+
                 row = {
                     'index': row_idx,
                     'data': data,
@@ -501,7 +501,7 @@ class FileManagementFormView(MultiStepFormView):
             if col in self.column_selections.values():
                 part_match_found = True
                 break
-        
+
         # If not, notify user
         if not part_match_found:
             for col in self.file_manager.ITEM_MATCH_HEADERS:
@@ -521,7 +521,7 @@ class FileManagementFormView(MultiStepFormView):
                 n = list(self.column_selections.values()).count(self.column_selections[col])
                 if n > 1 and self.column_selections[col] not in duplicates:
                     duplicates.append(self.column_selections[col])
-        
+
         # Store extra context data
         self.extra_context_data = {
             'missing_columns': missing_columns,
