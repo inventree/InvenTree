@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-31 22:52+0000\n"
-"PO-Revision-Date: 2021-05-31 23:15\n"
+"POT-Creation-Date: 2021-06-01 10:07+0000\n"
+"PO-Revision-Date: 2021-06-01 10:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -135,12 +135,12 @@ msgstr "Hochladedatum"
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
 #: report/models.py:179 templates/InvenTree/search.html:137
-#: templates/InvenTree/search.html:289 templates/js/part.js:110
-#: templates/js/part.js:633 templates/js/stock.js:942
+#: templates/InvenTree/search.html:289 templates/js/part.js:118
+#: templates/js/part.js:641 templates/js/stock.js:942
 msgid "Name"
 msgstr "Name"
 
-#: InvenTree/models.py:114 build/models.py:134
+#: InvenTree/models.py:114 build/models.py:135
 #: build/templates/build/detail.html:21 company/models.py:339
 #: company/models.py:491 company/templates/company/detail.html:27
 #: company/templates/company/manufacturer_part_base.html:72
@@ -154,10 +154,10 @@ msgstr "Name"
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
 #: templates/InvenTree/settings/header.html:9 templates/js/bom.js:190
-#: templates/js/build.js:736 templates/js/build.js:1004
+#: templates/js/build.js:746 templates/js/build.js:1014
 #: templates/js/company.js:56 templates/js/order.js:183
-#: templates/js/order.js:280 templates/js/part.js:169 templates/js/part.js:252
-#: templates/js/part.js:429 templates/js/part.js:645 templates/js/part.js:723
+#: templates/js/order.js:280 templates/js/part.js:177 templates/js/part.js:260
+#: templates/js/part.js:437 templates/js/part.js:653 templates/js/part.js:721
 #: templates/js/stock.js:552 templates/js/stock.js:954
 #: templates/js/stock.js:999
 msgid "Description"
@@ -312,7 +312,7 @@ msgstr "Vom übergeordneten Element geteilt"
 msgid "Split child item"
 msgstr "Unterobjekt geteilt"
 
-#: InvenTree/status_codes.py:294 templates/js/table_filters.js:177
+#: InvenTree/status_codes.py:294 templates/js/table_filters.js:181
 msgid "Sent to customer"
 msgstr "Zum Kunden geschickt"
 
@@ -449,16 +449,16 @@ msgstr "geplantes Bestelldatum"
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:119
 #: report/templates/report/inventree_build_order_base.html:126
-#: templates/js/build.js:783 templates/js/order.js:200
+#: templates/js/build.js:793 templates/js/order.js:200
 #: templates/js/order.js:298
 msgid "Target Date"
 msgstr "Zieldatum"
 
-#: build/forms.py:43 build/models.py:224
+#: build/forms.py:43 build/models.py:225
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 
-#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1245
+#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1333
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
@@ -473,7 +473,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/sales_order_detail.html:162
 #: order/templates/order/sales_order_detail.html:230 part/forms.py:342
-#: part/forms.py:371 part/forms.py:387 part/models.py:2269
+#: part/forms.py:372 part/forms.py:388 part/models.py:2270
 #: part/templates/part/allocation.html:19
 #: part/templates/part/allocation.html:53
 #: part/templates/part/order_prices.html:175
@@ -486,9 +486,9 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: stock/forms.py:175 stock/forms.py:308
 #: stock/templates/stock/item_base.html:255
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
-#: templates/js/bom.js:205 templates/js/build.js:476 templates/js/build.js:1014
-#: templates/js/part.js:797 templates/js/stock.js:1134
-#: templates/js/stock.js:1396
+#: templates/js/bom.js:205 templates/js/build.js:486 templates/js/build.js:1024
+#: templates/js/part.js:795 templates/js/stock.js:1134
+#: templates/js/stock.js:1353
 msgid "Quantity"
 msgstr "Anzahl"
 
@@ -533,7 +533,7 @@ msgstr "Bauauftrag als vollständig markieren"
 #: stock/templates/stock/item_base.html:285
 #: stock/templates/stock/stock_adjust.html:17
 #: templates/InvenTree/search.html:260 templates/js/barcode.js:363
-#: templates/js/barcode.js:531 templates/js/build.js:490
+#: templates/js/barcode.js:531 templates/js/build.js:500
 #: templates/js/stock.js:639 templates/js/stock.js:1026
 msgid "Location"
 msgstr "Lagerort"
@@ -546,10 +546,10 @@ msgstr "Lagerort der Endprodukte"
 #: build/templates/build/detail.html:59 order/models.py:466
 #: order/templates/order/receive_parts.html:24
 #: stock/templates/stock/item_base.html:403 templates/InvenTree/search.html:252
-#: templates/js/barcode.js:119 templates/js/build.js:770
+#: templates/js/barcode.js:119 templates/js/build.js:780
 #: templates/js/order.js:187 templates/js/order.js:285
 #: templates/js/stock.js:626 templates/js/stock.js:1103
-#: templates/js/stock.js:1404
+#: templates/js/stock.js:1369
 msgid "Status"
 msgstr "Status"
 
@@ -581,14 +581,14 @@ msgstr "Bauabbruch bestätigen"
 msgid "Select quantity of stock to allocate"
 msgstr "Menge der BestandsObjekte für Zuordnung auswählen"
 
-#: build/models.py:65 build/templates/build/build_base.html:9
+#: build/models.py:66 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
 #: part/templates/part/allocation.html:23
 #: report/templates/report/inventree_build_order_base.html:106
 msgid "Build Order"
 msgstr "Bauauftrag"
 
-#: build/models.py:66 build/templates/build/index.html:8
+#: build/models.py:67 build/templates/build/index.html:8
 #: build/templates/build/index.html:15 order/templates/order/so_builds.html:12
 #: order/templates/order/so_navbar.html:19
 #: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:55
@@ -598,33 +598,33 @@ msgstr "Bauauftrag"
 msgid "Build Orders"
 msgstr "Bauaufträge"
 
-#: build/models.py:126
+#: build/models.py:127
 msgid "Build Order Reference"
 msgstr "Bauauftragsreferenz"
 
-#: build/models.py:127 order/models.py:99 order/models.py:616
+#: build/models.py:128 order/models.py:99 order/models.py:616
 #: order/templates/order/purchase_order_detail.html:170
-#: order/templates/order/sales_order_detail.html:225 part/models.py:2278
+#: order/templates/order/sales_order_detail.html:225 part/models.py:2279
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
-#: templates/js/build.js:565 templates/js/build.js:1008
+#: templates/js/build.js:575 templates/js/build.js:1018
 msgid "Reference"
 msgstr "Referenz"
 
-#: build/models.py:137
+#: build/models.py:138
 msgid "Brief description of the build"
 msgstr "Kurze Beschreibung des Baus"
 
-#: build/models.py:146 build/templates/build/build_base.html:163
+#: build/models.py:147 build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:77
 msgid "Parent Build"
 msgstr "Eltern-Bauauftrag"
 
-#: build/models.py:147
+#: build/models.py:148
 msgid "BuildOrder to which this build is allocated"
 msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 
-#: build/models.py:152 build/templates/build/auto_allocate.html:16
+#: build/models.py:153 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:128
 #: build/templates/build/detail.html:26 company/models.py:622
 #: order/models.py:658 order/models.py:691
@@ -633,7 +633,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: order/templates/order/receive_parts.html:19
 #: order/templates/order/sales_order_detail.html:213 part/models.py:321
 #: part/models.py:1967 part/models.py:1979 part/models.py:1997
-#: part/models.py:2072 part/models.py:2168 part/models.py:2253
+#: part/models.py:2072 part/models.py:2168 part/models.py:2254
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:8 part/templates/part/related.html:29
 #: part/templates/part/set_category.html:13
@@ -642,99 +642,100 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:112 templates/InvenTree/search.html:210
 #: templates/js/barcode.js:362 templates/js/bom.js:163
-#: templates/js/build.js:741 templates/js/build.js:981
-#: templates/js/company.js:140 templates/js/company.js:238
-#: templates/js/part.js:233 templates/js/part.js:396 templates/js/stock.js:521
-#: templates/js/stock.js:1468
+#: templates/js/build.js:466 templates/js/build.js:751
+#: templates/js/build.js:991 templates/js/company.js:140
+#: templates/js/company.js:238 templates/js/part.js:241
+#: templates/js/part.js:404 templates/js/stock.js:521
+#: templates/js/stock.js:1341
 msgid "Part"
 msgstr "Teil"
 
-#: build/models.py:160
+#: build/models.py:161
 msgid "Select part to build"
 msgstr "Teil für den Bauauftrag wählen"
 
-#: build/models.py:165
+#: build/models.py:166
 msgid "Sales Order Reference"
 msgstr "Auftrag Referenz"
 
-#: build/models.py:169
+#: build/models.py:170
 msgid "SalesOrder to which this build is allocated"
 msgstr "Bestellung, die diesem Bauauftrag zugewiesen ist"
 
-#: build/models.py:174
+#: build/models.py:175
 msgid "Source Location"
 msgstr "Quell-Lagerort"
 
-#: build/models.py:178
+#: build/models.py:179
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Entnahme-Lagerort für diesen Bauauftrag wählen (oder leer lassen für einen beliebigen Lagerort)"
 
-#: build/models.py:183
+#: build/models.py:184
 msgid "Destination Location"
 msgstr "Ziel-Lagerort"
 
-#: build/models.py:187
+#: build/models.py:188
 msgid "Select location where the completed items will be stored"
 msgstr "Lagerort an dem fertige Objekte gelagert werden auswählen"
 
-#: build/models.py:191
+#: build/models.py:192
 msgid "Build Quantity"
 msgstr "Bau-Anzahl"
 
-#: build/models.py:194
+#: build/models.py:195
 msgid "Number of stock items to build"
 msgstr "Anzahl der zu bauenden BestandsObjekt"
 
-#: build/models.py:198
+#: build/models.py:199
 msgid "Completed items"
 msgstr "Fertiggestellte Teile"
 
-#: build/models.py:200
+#: build/models.py:201
 msgid "Number of stock items which have been completed"
 msgstr "Anzahl der fertigen BestandsObjekte"
 
-#: build/models.py:204 part/templates/part/part_base.html:167
+#: build/models.py:205 part/templates/part/part_base.html:167
 msgid "Build Status"
 msgstr "Bauauftrags-Status"
 
-#: build/models.py:208
+#: build/models.py:209
 msgid "Build status code"
 msgstr "Bau-Statuscode"
 
-#: build/models.py:212 stock/models.py:464
+#: build/models.py:213 stock/models.py:464
 msgid "Batch Code"
 msgstr "Losnummer"
 
-#: build/models.py:216
+#: build/models.py:217
 msgid "Batch code for this build output"
 msgstr "Losnummer für dieses Endprodukt"
 
-#: build/models.py:219 order/models.py:105 part/models.py:882
+#: build/models.py:220 order/models.py:105 part/models.py:882
 #: part/templates/part/detail.html:126 templates/js/order.js:293
 msgid "Creation Date"
 msgstr "Erstelldatum"
 
-#: build/models.py:223 order/models.py:472
+#: build/models.py:224 order/models.py:472
 msgid "Target completion date"
 msgstr "geplantes Fertigstellungsdatum"
 
-#: build/models.py:227 order/models.py:218 templates/js/build.js:788
+#: build/models.py:228 order/models.py:218 templates/js/build.js:798
 msgid "Completion Date"
 msgstr "Fertigstellungsdatum"
 
-#: build/models.py:233
+#: build/models.py:234
 msgid "completed by"
 msgstr "Fertiggestellt von"
 
-#: build/models.py:241
+#: build/models.py:242
 msgid "Issued by"
 msgstr "Aufgegeben von"
 
-#: build/models.py:242
+#: build/models.py:243
 msgid "User who issued this build order"
 msgstr "Nutzer der diesen Bauauftrag erstellt hat"
 
-#: build/models.py:250 build/templates/build/build_base.html:184
+#: build/models.py:251 build/templates/build/build_base.html:184
 #: build/templates/build/detail.html:105 order/models.py:119
 #: order/templates/order/order_base.html:138
 #: order/templates/order/sales_order_base.html:140 part/models.py:886
@@ -742,11 +743,11 @@ msgstr "Nutzer der diesen Bauauftrag erstellt hat"
 msgid "Responsible"
 msgstr "Verantwortlicher Benutzer"
 
-#: build/models.py:251
+#: build/models.py:252
 msgid "User responsible for this build order"
 msgstr "Nutzer der für diesen Bauauftrag zuständig ist"
 
-#: build/models.py:256 build/templates/build/detail.html:91
+#: build/models.py:257 build/templates/build/detail.html:91
 #: company/templates/company/manufacturer_part_base.html:79
 #: company/templates/company/manufacturer_part_detail.html:28
 #: company/templates/company/supplier_part_base.html:78
@@ -756,11 +757,11 @@ msgstr "Nutzer der für diesen Bauauftrag zuständig ist"
 msgid "External Link"
 msgstr "Externer Link"
 
-#: build/models.py:257 part/models.py:744 stock/models.py:460
+#: build/models.py:258 part/models.py:744 stock/models.py:460
 msgid "Link to external URL"
 msgstr "Link zu einer externen URL"
 
-#: build/models.py:261 build/templates/build/navbar.html:53
+#: build/models.py:262 build/templates/build/navbar.html:53
 #: company/models.py:132 company/models.py:498
 #: company/templates/company/navbar.html:70
 #: company/templates/company/navbar.html:73 order/models.py:123
@@ -775,91 +776,91 @@ msgstr "Link zu einer externen URL"
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
 #: stock/models.py:530 stock/models.py:1665 stock/models.py:1767
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
-#: templates/js/bom.js:349 templates/js/stock.js:141 templates/js/stock.js:669
+#: templates/js/bom.js:356 templates/js/stock.js:141 templates/js/stock.js:669
 msgid "Notes"
 msgstr "Notizen"
 
-#: build/models.py:262
+#: build/models.py:263
 msgid "Extra build notes"
 msgstr "Extranotizen für den Bauauftrag"
 
-#: build/models.py:739
+#: build/models.py:740
 msgid "No build output specified"
 msgstr "kein Endprodukt angegeben"
 
-#: build/models.py:742
+#: build/models.py:743
 msgid "Build output is already completed"
 msgstr "Endprodukt bereits hergstellt"
 
-#: build/models.py:745
+#: build/models.py:746
 msgid "Build output does not match Build Order"
 msgstr "Endprodukt stimmt nicht mit dem Bauauftrag überein"
 
-#: build/models.py:1136
+#: build/models.py:1152
 msgid "BuildItem must be unique for build, stock_item and install_into"
 msgstr "Bauauftrags-Objekt muss für Bauauftrag, Lager-Objekt und installiert_in eindeutig sein"
 
-#: build/models.py:1161
+#: build/models.py:1177
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete Teil verfolgbar ist"
 
-#: build/models.py:1165
-#, python-brace-format
-msgid "Selected stock item not found in BOM for part '{p}'"
-msgstr "Ausgewähltes BestandsObjekt nicht Stückliste für Teil '{p}' gefunden"
-
-#: build/models.py:1169
+#: build/models.py:1181
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr "Reserviermenge ({n}) muss kleiner Bestandsmenge ({q}) sein. Zugewiesene Anzahl ({n}) darf nicht die verfügbare ({q}) Anzahl überschreiten"
 
-#: build/models.py:1176 order/models.py:789
+#: build/models.py:1188 order/models.py:789
 msgid "StockItem is over-allocated"
 msgstr "Zu viele BestandsObjekt zugewiesen"
 
-#: build/models.py:1180 order/models.py:792
+#: build/models.py:1192 order/models.py:792
 msgid "Allocation quantity must be greater than zero"
 msgstr "Reserviermenge muss größer null sein"
 
-#: build/models.py:1184
+#: build/models.py:1196
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 
-#: build/models.py:1224 stock/templates/stock/item_base.html:317
-#: templates/InvenTree/search.html:183 templates/js/build.js:714
+#: build/models.py:1256
+#, python-brace-format
+msgid "Selected stock item not found in BOM for part '{p}'"
+msgstr "Ausgewähltes BestandsObjekt nicht Stückliste für Teil '{p}' gefunden"
+
+#: build/models.py:1303 stock/templates/stock/item_base.html:317
+#: templates/InvenTree/search.html:183 templates/js/build.js:724
 #: templates/navbar.html:29
 msgid "Build"
 msgstr "Bauauftrag"
 
-#: build/models.py:1225
+#: build/models.py:1304
 msgid "Build to allocate parts"
 msgstr "Bauauftrag starten um Teile zuzuweisen"
 
-#: build/models.py:1232 part/templates/part/allocation.html:18
+#: build/models.py:1320 part/templates/part/allocation.html:18
 #: part/templates/part/allocation.html:24
 #: part/templates/part/allocation.html:31
 #: part/templates/part/allocation.html:49
 #: stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:31
 #: stock/templates/stock/item_base.html:339
-#: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:831
-#: templates/js/stock.js:1085 templates/js/stock.js:1387
+#: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:841
+#: templates/js/stock.js:1085
 msgid "Stock Item"
 msgstr "BestandsObjekt"
 
-#: build/models.py:1233
+#: build/models.py:1321
 msgid "Source stock item"
 msgstr "Quell-BestandsObjekt"
 
-#: build/models.py:1246
+#: build/models.py:1334
 msgid "Stock quantity to allocate to build"
 msgstr "BestandsObjekt-Anzahl dem Bauauftrag zuweisen"
 
-#: build/models.py:1254
+#: build/models.py:1342
 msgid "Install into"
 msgstr "Installiere in"
 
-#: build/models.py:1255
+#: build/models.py:1343
 msgid "Destination stock item"
 msgstr "Ziel-BestandsObjekt"
 
@@ -879,7 +880,7 @@ msgstr "Lagerbestand Bauauftrag zuweisen"
 msgid "Auto Allocate"
 msgstr "Automatisch zuweisen"
 
-#: build/templates/build/allocate.html:25 templates/js/build.js:646
+#: build/templates/build/allocate.html:25 templates/js/build.js:656
 msgid "Unallocate stock"
 msgstr "Bestandszuordnung aufheben"
 
@@ -916,7 +917,7 @@ msgstr "Dieser Bauauftrag hat keine zugeordneten Stücklisten-Einträge"
 #: order/templates/order/sales_order_detail.html:160
 #: report/templates/report/inventree_test_report_base.html:75
 #: stock/models.py:452 stock/templates/stock/item_base.html:249
-#: templates/js/build.js:474
+#: templates/js/build.js:484
 msgid "Serial Number"
 msgstr "Seriennummer"
 
@@ -989,8 +990,8 @@ msgstr "Admin"
 #: order/templates/order/order_base.html:86
 #: order/templates/order/sales_order_base.html:43
 #: order/templates/order/sales_order_base.html:88
-#: templates/js/table_filters.js:241 templates/js/table_filters.js:260
-#: templates/js/table_filters.js:277
+#: templates/js/table_filters.js:245 templates/js/table_filters.js:264
+#: templates/js/table_filters.js:281
 msgid "Overdue"
 msgstr "Überfällig"
 
@@ -1194,14 +1195,14 @@ msgstr "Ziel-Lagerort nicht angegeben"
 
 #: build/templates/build/detail.html:70
 #: stock/templates/stock/item_base.html:303 templates/js/stock.js:634
-#: templates/js/stock.js:1411 templates/js/table_filters.js:108
-#: templates/js/table_filters.js:202
+#: templates/js/stock.js:1376 templates/js/table_filters.js:112
+#: templates/js/table_filters.js:206
 msgid "Batch"
 msgstr "Losnummer"
 
 #: build/templates/build/detail.html:116
 #: order/templates/order/order_base.html:111
-#: order/templates/order/sales_order_base.html:113 templates/js/build.js:778
+#: order/templates/order/sales_order_base.html:113 templates/js/build.js:788
 msgid "Created"
 msgstr "Erstellt"
 
@@ -1209,7 +1210,7 @@ msgstr "Erstellt"
 msgid "No target date set"
 msgstr "Kein Ziel-Datum gesetzt"
 
-#: build/templates/build/detail.html:132 templates/js/build.js:756
+#: build/templates/build/detail.html:132 templates/js/build.js:766
 msgid "Completed"
 msgstr "Fertig"
 
@@ -1410,8 +1411,8 @@ msgstr "Teil muss aktuell im Bestand sein"
 msgid "Stock item is over-allocated"
 msgstr "BestandObjekt ist zu oft zugewiesen"
 
-#: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:575
-#: templates/js/build.js:838 templates/js/build.js:1021
+#: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:585
+#: templates/js/build.js:848 templates/js/build.js:1031
 msgid "Available"
 msgstr "Verfügbar"
 
@@ -1599,7 +1600,7 @@ msgstr "Anzahl der neusten Teile auf der Startseite"
 
 #: common/models.py:153 part/models.py:2170 part/templates/part/detail.html:160
 #: report/models.py:185 stock/forms.py:259 templates/js/table_filters.js:25
-#: templates/js/table_filters.js:311
+#: templates/js/table_filters.js:315
 msgid "Template"
 msgstr "Vorlage"
 
@@ -1608,7 +1609,7 @@ msgid "Parts are templates by default"
 msgstr "Teile sind standardmäßig Vorlagen"
 
 #: common/models.py:160 part/models.py:834 part/templates/part/detail.html:170
-#: templates/js/table_filters.js:124 templates/js/table_filters.js:323
+#: templates/js/table_filters.js:128 templates/js/table_filters.js:327
 msgid "Assembly"
 msgstr "Baugruppe"
 
@@ -1617,7 +1618,7 @@ msgid "Parts can be assembled from other components by default"
 msgstr "Teile können standardmäßig aus anderen Teilen angefertigt werden"
 
 #: common/models.py:167 part/models.py:840 part/templates/part/detail.html:180
-#: templates/js/table_filters.js:327
+#: templates/js/table_filters.js:331
 msgid "Component"
 msgstr "Komponente"
 
@@ -1634,7 +1635,7 @@ msgid "Parts are purchaseable by default"
 msgstr "Artikel sind grundsätzlich kaufbar"
 
 #: common/models.py:181 part/models.py:856 part/templates/part/detail.html:210
-#: templates/js/table_filters.js:335
+#: templates/js/table_filters.js:339
 msgid "Salable"
 msgstr "Verkäuflich"
 
@@ -1643,7 +1644,7 @@ msgid "Parts are salable by default"
 msgstr "Artikel sind grundsätzlich verkaufbar"
 
 #: common/models.py:188 part/models.py:846 part/templates/part/detail.html:190
-#: templates/js/table_filters.js:33 templates/js/table_filters.js:339
+#: templates/js/table_filters.js:33 templates/js/table_filters.js:343
 msgid "Trackable"
 msgstr "Nachverfolgbar"
 
@@ -1876,7 +1877,7 @@ msgstr "URL"
 msgid "Image URL"
 msgstr "Bild-URL"
 
-#: company/forms.py:118 templates/js/part.js:788
+#: company/forms.py:118 templates/js/part.js:786
 msgid "Single Price"
 msgstr "Einzelpreis"
 
@@ -1955,7 +1956,7 @@ msgstr "Anlaufstelle"
 #: order/models.py:103 part/models.py:743
 #: report/templates/report/inventree_build_order_base.html:165
 #: templates/js/company.js:188 templates/js/company.js:318
-#: templates/js/part.js:489
+#: templates/js/part.js:497
 msgid "Link"
 msgstr "Link"
 
@@ -2065,7 +2066,7 @@ msgid "Supplier part description"
 msgstr "Zuliefererbeschreibung des Teils"
 
 #: company/models.py:497 company/templates/company/supplier_part_base.html:116
-#: company/templates/company/supplier_part_detail.html:38 part/models.py:2281
+#: company/templates/company/supplier_part_detail.html:38 part/models.py:2282
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
@@ -2099,7 +2100,7 @@ msgstr "Mehrere bestellen"
 
 #: company/templates/company/assigned_stock.html:10
 #: company/templates/company/navbar.html:62
-#: company/templates/company/navbar.html:65 templates/js/build.js:467
+#: company/templates/company/navbar.html:65 templates/js/build.js:477
 msgid "Assigned Stock"
 msgstr "Zugeordneter Bestand"
 
@@ -2337,8 +2338,8 @@ msgstr "Herstellerteil-Bestand"
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:128 templates/InvenTree/search.html:196
 #: templates/InvenTree/search.html:232
-#: templates/InvenTree/settings/tabs.html:31 templates/js/part.js:173
-#: templates/js/part.js:297 templates/js/part.js:456 templates/js/stock.js:561
+#: templates/InvenTree/settings/tabs.html:31 templates/js/part.js:181
+#: templates/js/part.js:305 templates/js/part.js:464 templates/js/stock.js:561
 #: templates/navbar.html:26
 msgid "Stock"
 msgstr "Lagerbestand"
@@ -3197,7 +3198,7 @@ msgstr "Ausstehende Teile für <b>%(order)s</b> - <i>%(desc)s</i> empfangen"
 #: part/templates/part/category_navbar.html:29
 #: part/templates/part/category_partlist.html:10
 #: templates/InvenTree/index.html:97 templates/InvenTree/search.html:114
-#: templates/InvenTree/settings/tabs.html:28 templates/js/part.js:657
+#: templates/InvenTree/settings/tabs.html:28 templates/js/part.js:665
 #: templates/navbar.html:23 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:40
 msgid "Parts"
@@ -3212,7 +3213,7 @@ msgid "Order Code"
 msgstr "Bestellnummer"
 
 #: order/templates/order/receive_parts.html:21
-#: part/templates/part/part_base.html:136 templates/js/part.js:472
+#: part/templates/part/part_base.html:136 templates/js/part.js:480
 msgid "On Order"
 msgstr "Bestellt"
 
@@ -3260,18 +3261,18 @@ msgstr "Abbruch dieser Bestellung bedeutet, dass sie nicht länger bearbeitbar i
 msgid "Sales Order Items"
 msgstr "Auftrags-Positionen"
 
-#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:358
-#: templates/js/build.js:627 templates/js/build.js:1044
+#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:365
+#: templates/js/build.js:637 templates/js/build.js:1054
 msgid "Actions"
 msgstr "Aktionen"
 
-#: order/templates/order/sales_order_detail.html:102 templates/js/build.js:515
-#: templates/js/build.js:849
+#: order/templates/order/sales_order_detail.html:102 templates/js/build.js:525
+#: templates/js/build.js:859
 msgid "Edit stock allocation"
 msgstr "Bestands-Zuordnung bearbeiten"
 
-#: order/templates/order/sales_order_detail.html:103 templates/js/build.js:517
-#: templates/js/build.js:850
+#: order/templates/order/sales_order_detail.html:103 templates/js/build.js:527
+#: templates/js/build.js:860
 msgid "Delete stock allocation"
 msgstr "Bestands-Zuordnung löschen"
 
@@ -3283,8 +3284,8 @@ msgstr "Keine passenden Positionen gefunden"
 msgid "ID"
 msgstr "ID"
 
-#: order/templates/order/sales_order_detail.html:243 templates/js/build.js:579
-#: templates/js/build.js:845
+#: order/templates/order/sales_order_detail.html:243 templates/js/build.js:589
+#: templates/js/build.js:855
 msgid "Allocated"
 msgstr "Zugeordnet"
 
@@ -3300,7 +3301,7 @@ msgstr "PO"
 msgid "Allocate serial numbers"
 msgstr "Seriennummern zuweisen"
 
-#: order/templates/order/sales_order_detail.html:315 templates/js/build.js:641
+#: order/templates/order/sales_order_detail.html:315 templates/js/build.js:651
 msgid "Allocate stock"
 msgstr "Lagerbestand zuweisen"
 
@@ -3308,8 +3309,8 @@ msgstr "Lagerbestand zuweisen"
 msgid "Purchase stock"
 msgstr "Lagerbestand kaufen"
 
-#: order/templates/order/sales_order_detail.html:322 templates/js/build.js:634
-#: templates/js/build.js:1052
+#: order/templates/order/sales_order_detail.html:322 templates/js/build.js:644
+#: templates/js/build.js:1062
 msgid "Build stock"
 msgstr "Lagerbestand bauen"
 
@@ -3704,11 +3705,11 @@ msgstr "Parameter-Vorlage zu Kategorien dieser Ebene hinzufügen"
 msgid "Add parameter template to all categories"
 msgstr "Parameter-Vorlage zu allen Kategorien hinzufügen"
 
-#: part/forms.py:344 part/models.py:2262
+#: part/forms.py:344 part/models.py:2263
 msgid "Sub part"
 msgstr "Untergeordnetes Teil"
 
-#: part/forms.py:372
+#: part/forms.py:373
 msgid "Input quantity for price calculation"
 msgstr "Menge für die Preisberechnung"
 
@@ -3794,7 +3795,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 
 #: part/models.py:724 part/models.py:2213 part/templates/part/detail.html:73
-#: part/templates/part/set_category.html:15 templates/js/part.js:443
+#: part/templates/part/set_category.html:15 templates/js/part.js:451
 msgid "Category"
 msgstr "Kategorie"
 
@@ -3803,8 +3804,8 @@ msgid "Part category"
 msgstr "Teile-Kategorie"
 
 #: part/models.py:730 part/templates/part/detail.html:28
-#: part/templates/part/part_base.html:87 templates/js/part.js:161
-#: templates/js/part.js:288
+#: part/templates/part/part_base.html:87 templates/js/part.js:169
+#: templates/js/part.js:296
 msgid "IPN"
 msgstr "IPN (Interne Produktnummer)"
 
@@ -3817,7 +3818,7 @@ msgid "Part revision or version number"
 msgstr "Revisions- oder Versionsnummer"
 
 #: part/models.py:738 part/templates/part/detail.html:35 report/models.py:198
-#: templates/js/part.js:165
+#: templates/js/part.js:173
 msgid "Revision"
 msgstr "Revision"
 
@@ -3879,8 +3880,8 @@ msgid "Can this part be sold to customers?"
 msgstr "Kann dieses Teil an Kunden verkauft werden?"
 
 #: part/models.py:861 part/templates/part/detail.html:227
-#: templates/js/table_filters.js:21 templates/js/table_filters.js:61
-#: templates/js/table_filters.js:237 templates/js/table_filters.js:306
+#: templates/js/table_filters.js:21 templates/js/table_filters.js:65
+#: templates/js/table_filters.js:241 templates/js/table_filters.js:310
 msgid "Active"
 msgstr "Aktiv"
 
@@ -3928,7 +3929,7 @@ msgstr "Test-Vorlagen können nur für verfolgbare Teile angelegt werden"
 msgid "Test with this name already exists for this part"
 msgstr "Ein Test mit diesem Namen besteht bereits für dieses Teil"
 
-#: part/models.py:2077 templates/js/part.js:718 templates/js/stock.js:117
+#: part/models.py:2077 templates/js/part.js:716 templates/js/stock.js:117
 msgid "Test Name"
 msgstr "Test-Name"
 
@@ -3944,8 +3945,8 @@ msgstr "Test-Beschreibung"
 msgid "Enter description for this test"
 msgstr "Beschreibung für diesen Test eingeben"
 
-#: part/models.py:2089 templates/js/part.js:727
-#: templates/js/table_filters.js:223
+#: part/models.py:2089 templates/js/part.js:725
+#: templates/js/table_filters.js:227
 msgid "Required"
 msgstr "Benötigt"
 
@@ -3953,7 +3954,7 @@ msgstr "Benötigt"
 msgid "Is this test required to pass?"
 msgstr "Muss dieser Test erfolgreich sein?"
 
-#: part/models.py:2095 templates/js/part.js:735
+#: part/models.py:2095 templates/js/part.js:733
 msgid "Requires Value"
 msgstr "Erfordert Wert"
 
@@ -3961,7 +3962,7 @@ msgstr "Erfordert Wert"
 msgid "Does this test require a value when adding a test result?"
 msgstr "Muss für diesen Test ein Wert für das Test-Ergebnis eingetragen werden?"
 
-#: part/models.py:2101 templates/js/part.js:742
+#: part/models.py:2101 templates/js/part.js:740
 msgid "Requires Attachment"
 msgstr "Anhang muss eingegeben werden"
 
@@ -4002,85 +4003,93 @@ msgstr "Standard-Wert"
 msgid "Default Parameter Value"
 msgstr "Standard Parameter Wert"
 
-#: part/models.py:2254
+#: part/models.py:2255
 msgid "Select parent part"
 msgstr "Ausgangsteil auswählen"
 
-#: part/models.py:2263
+#: part/models.py:2264
 msgid "Select part to be used in BOM"
 msgstr "Teil für die Nutzung in der Stückliste auswählen"
 
-#: part/models.py:2269
+#: part/models.py:2270
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:2271 templates/js/bom.js:216 templates/js/bom.js:285
+#: part/models.py:2272 templates/js/bom.js:216 templates/js/bom.js:285
 msgid "Optional"
 msgstr "Optional"
 
-#: part/models.py:2271
+#: part/models.py:2272
 msgid "This BOM item is optional"
 msgstr "Diese Stücklisten-Position ist optional"
 
-#: part/models.py:2274
+#: part/models.py:2275
 msgid "Overage"
 msgstr "Überschuss"
 
-#: part/models.py:2275
+#: part/models.py:2276
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Geschätzter Ausschuss (absolut oder prozentual)"
 
-#: part/models.py:2278
+#: part/models.py:2279
 msgid "BOM item reference"
 msgstr "Referenz der Postion auf der Stückliste"
 
-#: part/models.py:2281
+#: part/models.py:2282
 msgid "BOM item notes"
 msgstr "Notizen zur Stücklisten-Position"
 
-#: part/models.py:2283
+#: part/models.py:2284
 msgid "Checksum"
 msgstr "Prüfsumme"
 
-#: part/models.py:2283
+#: part/models.py:2284
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:2287 templates/js/bom.js:295 templates/js/bom.js:302
+#: part/models.py:2288 templates/js/bom.js:302 templates/js/bom.js:309
 #: templates/js/table_filters.js:51
 msgid "Inherited"
 msgstr "Geerbt"
 
-#: part/models.py:2288
+#: part/models.py:2289
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
-#: part/models.py:2364 part/views.py:1681 part/views.py:1733
+#: part/models.py:2294 templates/js/bom.js:294
+msgid "Allow Variants"
+msgstr ""
+
+#: part/models.py:2295
+msgid "Stock items for variant parts can be used for this BOM item"
+msgstr ""
+
+#: part/models.py:2371 part/views.py:1681 part/views.py:1733
 #: stock/models.py:292
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Menge muss eine Ganzzahl sein"
 
-#: part/models.py:2373 part/models.py:2375
+#: part/models.py:2380 part/models.py:2382
 msgid "Sub part must be specified"
 msgstr "Zuliefererteil muss festgelegt sein"
 
-#: part/models.py:2378
+#: part/models.py:2385
 msgid "BOM Item"
 msgstr "Stücklisten-Position"
 
-#: part/models.py:2495
+#: part/models.py:2502
 msgid "Part 1"
 msgstr "Teil 1"
 
-#: part/models.py:2499
+#: part/models.py:2506
 msgid "Part 2"
 msgstr "Teil 2"
 
-#: part/models.py:2499
+#: part/models.py:2506
 msgid "Select Related Part"
 msgstr "verknüpftes Teil auswählen"
 
-#: part/models.py:2531
+#: part/models.py:2538
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist das die Verwandtschaft nicht eindeutig?"
 
@@ -4648,7 +4657,7 @@ msgid "Part List"
 msgstr "Teileliste"
 
 #: part/templates/part/part_base.html:26 templates/js/company.js:156
-#: templates/js/company.js:254 templates/js/part.js:76 templates/js/part.js:153
+#: templates/js/company.js:254 templates/js/part.js:84 templates/js/part.js:161
 msgid "Inactive"
 msgstr "Inaktiv"
 
@@ -4707,7 +4716,7 @@ msgstr "Dies ist ein virtuelles Teil"
 msgid "This part is a variant of %(link)s"
 msgstr "Dieses Teil ist eine Variante von %(link)s"
 
-#: part/templates/part/part_base.html:130 templates/js/table_filters.js:157
+#: part/templates/part/part_base.html:130 templates/js/table_filters.js:161
 msgid "In Stock"
 msgstr "Auf Lager"
 
@@ -4723,12 +4732,12 @@ msgstr "Benötigt für Aufträge"
 msgid "Allocated to Orders"
 msgstr "Zu Bauaufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:172 templates/js/bom.js:316
+#: part/templates/part/part_base.html:172 templates/js/bom.js:323
 msgid "Can Build"
 msgstr "Herstellbar"
 
-#: part/templates/part/part_base.html:178 templates/js/part.js:304
-#: templates/js/part.js:476
+#: part/templates/part/part_base.html:178 templates/js/part.js:312
+#: templates/js/part.js:484
 msgid "Building"
 msgstr "Im Bau"
 
@@ -4804,7 +4813,7 @@ msgid "Showing stock for all variants of <i>%(full_name)s</i>"
 msgstr "Lagerbestand aller Varianten von <i>%(full_name)s</i>"
 
 #: part/templates/part/stock_count.html:7 templates/js/bom.js:239
-#: templates/js/part.js:294 templates/js/part.js:480
+#: templates/js/part.js:302 templates/js/part.js:488
 msgid "No Stock"
 msgstr "Kein Bestand"
 
@@ -5217,8 +5226,8 @@ msgstr " Transaktionsnotizen hinzufügen (optional)"
 msgid "Select test report template"
 msgstr "Test Bericht Vorlage auswählen"
 
-#: stock/forms.py:267 templates/js/table_filters.js:71
-#: templates/js/table_filters.js:134
+#: stock/forms.py:267 templates/js/table_filters.js:75
+#: templates/js/table_filters.js:138
 msgid "Include sublocations"
 msgstr "Unter-Lagerorte einschließen"
 
@@ -5442,7 +5451,7 @@ msgstr "Anhang muss für diesen Test hochgeladen werden"
 msgid "Test name"
 msgstr "Name des Tests"
 
-#: stock/models.py:1749 templates/js/table_filters.js:213
+#: stock/models.py:1749 templates/js/table_filters.js:217
 msgid "Test result"
 msgstr "Testergebnis"
 
@@ -5471,12 +5480,12 @@ msgid "Stock Item Attachments"
 msgstr "BestandsObjekt-Anhang"
 
 #: stock/templates/stock/item_base.html:33
-#: stock/templates/stock/item_base.html:380 templates/js/table_filters.js:146
+#: stock/templates/stock/item_base.html:380 templates/js/table_filters.js:150
 msgid "Expired"
 msgstr "abgelaufen"
 
 #: stock/templates/stock/item_base.html:43
-#: stock/templates/stock/item_base.html:382 templates/js/table_filters.js:151
+#: stock/templates/stock/item_base.html:382 templates/js/table_filters.js:155
 msgid "Stale"
 msgstr "überfällig"
 
@@ -5535,7 +5544,7 @@ msgstr "Kunden zuweisen"
 msgid "Return to stock"
 msgstr "zu Bestand zurückgeben"
 
-#: stock/templates/stock/item_base.html:131 templates/js/stock.js:1424
+#: stock/templates/stock/item_base.html:131
 msgid "Uninstall stock item"
 msgstr "BestandsObjekt deinstallieren"
 
@@ -5606,7 +5615,7 @@ msgstr "Dieses BestandsObjekt wird automatisch gelöscht wenn der Lagerbestand a
 msgid "Stock Item Details"
 msgstr "BestandsObjekt-Details"
 
-#: stock/templates/stock/item_base.html:289 templates/js/build.js:498
+#: stock/templates/stock/item_base.html:289 templates/js/build.js:508
 msgid "No location set"
 msgstr "Kein Lagerort gesetzt"
 
@@ -6497,7 +6506,7 @@ msgstr "In Lagerorten buchen"
 msgid "Barcode does not match a valid location"
 msgstr "Barcode entspricht keinem Lagerort"
 
-#: templates/js/bom.js:175 templates/js/build.js:994
+#: templates/js/bom.js:175 templates/js/build.js:1004
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
@@ -6513,37 +6522,27 @@ msgstr "Durchschnittlicher Kaufpreis"
 msgid "No pricing available"
 msgstr "Keine Preisinformation verfügbar"
 
-#: templates/js/bom.js:288 templates/js/filters.js:167
-#: templates/js/filters.js:397
-msgid "true"
-msgstr "ja"
-
-#: templates/js/bom.js:289 templates/js/filters.js:171
-#: templates/js/filters.js:398
-msgid "false"
-msgstr "nein"
-
-#: templates/js/bom.js:306 templates/js/bom.js:392
+#: templates/js/bom.js:313 templates/js/bom.js:399
 msgid "View BOM"
 msgstr "Stückliste anzeigen"
 
-#: templates/js/bom.js:366
+#: templates/js/bom.js:373
 msgid "Validate BOM Item"
 msgstr "Stücklisten-Position kontrollieren"
 
-#: templates/js/bom.js:368
+#: templates/js/bom.js:375
 msgid "This line has been validated"
 msgstr "Diese Position wurde kontrolliert"
 
-#: templates/js/bom.js:370
+#: templates/js/bom.js:377
 msgid "Edit BOM Item"
 msgstr "Stücklisten-Position bearbeiten"
 
-#: templates/js/bom.js:372
+#: templates/js/bom.js:379
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: templates/js/bom.js:463 templates/js/build.js:340 templates/js/build.js:1092
+#: templates/js/bom.js:470 templates/js/build.js:340 templates/js/build.js:1102
 msgid "No BOM items found"
 msgstr "Keine Stücklisten-Position(en) gefunden"
 
@@ -6567,34 +6566,33 @@ msgstr "Endprodukt entfernen"
 msgid "New Stock Item"
 msgstr "Neues BestandsObjekt"
 
-#: templates/js/build.js:549
+#: templates/js/build.js:559
 msgid "Required Part"
 msgstr "benötigtes Teil"
 
-#: templates/js/build.js:570
+#: templates/js/build.js:580
 msgid "Quantity Per"
 msgstr "Anzahl pro"
 
-#: templates/js/build.js:638 templates/js/build.js:1056
+#: templates/js/build.js:648 templates/js/build.js:1066
 #: templates/stock_table.html:59
 msgid "Order stock"
 msgstr "Bestand bestellen"
 
-#: templates/js/build.js:691
+#: templates/js/build.js:701
 msgid "No builds matching query"
 msgstr "Keine Bauaufträge passen zur Anfrage"
 
-#: templates/js/build.js:708 templates/js/part.js:382 templates/js/part.js:626
+#: templates/js/build.js:718 templates/js/part.js:390 templates/js/part.js:634
 #: templates/js/stock.js:509 templates/js/stock.js:936
-#: templates/js/stock.js:1456
 msgid "Select"
 msgstr "Auswählen"
 
-#: templates/js/build.js:728
+#: templates/js/build.js:738
 msgid "Build order is overdue"
 msgstr "Bauauftrag ist überfällig"
 
-#: templates/js/build.js:827
+#: templates/js/build.js:837
 msgid "No parts allocated for"
 msgstr "Keine Teile zugeordnet zu"
 
@@ -6615,18 +6613,26 @@ msgid "No manufacturer parts found"
 msgstr "Keine Herstellerteile gefunden"
 
 #: templates/js/company.js:148 templates/js/company.js:246
-#: templates/js/part.js:60 templates/js/part.js:145
+#: templates/js/part.js:68 templates/js/part.js:153
 msgid "Template part"
 msgstr "Vorlagenteil"
 
 #: templates/js/company.js:152 templates/js/company.js:250
-#: templates/js/part.js:64 templates/js/part.js:149
+#: templates/js/part.js:72 templates/js/part.js:157
 msgid "Assembled part"
 msgstr "Baugruppe"
 
 #: templates/js/company.js:227
 msgid "No supplier parts found"
 msgstr "Keine Zuliefererteile gefunden"
+
+#: templates/js/filters.js:167 templates/js/filters.js:397
+msgid "true"
+msgstr "ja"
+
+#: templates/js/filters.js:171 templates/js/filters.js:398
+msgid "false"
+msgstr "nein"
 
 #: templates/js/filters.js:193
 msgid "Select filter"
@@ -6789,67 +6795,67 @@ msgstr "Bestellung überfällig"
 msgid "No sales orders found"
 msgstr "Keine Aufträge gefunden"
 
-#: templates/js/part.js:52 templates/js/part.js:137
-msgid "Trackable part"
-msgstr "Nachverfolgbares Teil"
-
-#: templates/js/part.js:56 templates/js/part.js:141
-msgid "Virtual part"
-msgstr "virtuelles Teil"
-
-#: templates/js/part.js:68
-msgid "Starred part"
-msgstr "Favoritenteil"
-
-#: templates/js/part.js:72
-msgid "Salable part"
-msgstr "Verkäufliches Teil"
-
-#: templates/js/part.js:186
-msgid "No variants found"
-msgstr "Keine Varianten gefunden"
-
-#: templates/js/part.js:272 templates/js/part.js:510
-msgid "No parts found"
-msgstr "Keine Teile gefunden"
-
-#: templates/js/part.js:449
-msgid "No category"
-msgstr "Keine Kategorie"
-
-#: templates/js/part.js:467 templates/js/table_filters.js:319
-msgid "Low stock"
-msgstr "Bestand niedrig"
-
-#: templates/js/part.js:651 templates/js/stock.js:960
-msgid "Path"
-msgstr "Pfad"
-
-#: templates/js/part.js:668
+#: templates/js/part.js:10
 msgid "YES"
 msgstr "JA"
 
-#: templates/js/part.js:670
+#: templates/js/part.js:12
 msgid "NO"
 msgstr "NEIN"
 
-#: templates/js/part.js:704
+#: templates/js/part.js:60 templates/js/part.js:145
+msgid "Trackable part"
+msgstr "Nachverfolgbares Teil"
+
+#: templates/js/part.js:64 templates/js/part.js:149
+msgid "Virtual part"
+msgstr "virtuelles Teil"
+
+#: templates/js/part.js:76
+msgid "Starred part"
+msgstr "Favoritenteil"
+
+#: templates/js/part.js:80
+msgid "Salable part"
+msgstr "Verkäufliches Teil"
+
+#: templates/js/part.js:194
+msgid "No variants found"
+msgstr "Keine Varianten gefunden"
+
+#: templates/js/part.js:280 templates/js/part.js:518
+msgid "No parts found"
+msgstr "Keine Teile gefunden"
+
+#: templates/js/part.js:457
+msgid "No category"
+msgstr "Keine Kategorie"
+
+#: templates/js/part.js:475 templates/js/table_filters.js:323
+msgid "Low stock"
+msgstr "Bestand niedrig"
+
+#: templates/js/part.js:659 templates/js/stock.js:960
+msgid "Path"
+msgstr "Pfad"
+
+#: templates/js/part.js:702
 msgid "No test templates matching query"
 msgstr "Keine zur Anfrage passenden Testvorlagen"
 
-#: templates/js/part.js:755 templates/js/stock.js:75
+#: templates/js/part.js:753 templates/js/stock.js:75
 msgid "Edit test result"
 msgstr "Testergebnis bearbeiten"
 
-#: templates/js/part.js:756 templates/js/stock.js:76
+#: templates/js/part.js:754 templates/js/stock.js:76
 msgid "Delete test result"
 msgstr "Testergebnis löschen"
 
-#: templates/js/part.js:762
+#: templates/js/part.js:760
 msgid "This test is defined for a parent part"
 msgstr "Dieses Testergebnis ist für ein Hauptteil"
 
-#: templates/js/part.js:807
+#: templates/js/part.js:805
 msgid "Single Price Difference"
 msgstr "Einzelpreisdifferenz"
 
@@ -7019,7 +7025,7 @@ msgstr "BestandsObjekt verloren"
 msgid "Stock item is destroyed"
 msgstr "BestandsObjekt zerstört"
 
-#: templates/js/stock.js:618 templates/js/table_filters.js:139
+#: templates/js/stock.js:618 templates/js/table_filters.js:143
 msgid "Depleted"
 msgstr "gelöscht"
 
@@ -7087,17 +7093,17 @@ msgstr "Tracking-Eintrag löschen"
 msgid "Create New Location"
 msgstr "Neuen Lagerort anlegen"
 
-#: templates/js/stock.js:1394
+#: templates/js/stock.js:1336
+msgid "No installed items"
+msgstr ""
+
+#: templates/js/stock.js:1359
 msgid "Serial"
 msgstr "Seriennummer"
 
-#: templates/js/stock.js:1487 templates/js/table_filters.js:172
-msgid "Installed"
-msgstr "Installiert"
-
-#: templates/js/stock.js:1512
-msgid "Install item"
-msgstr "Installiere Objekt"
+#: templates/js/stock.js:1387
+msgid "Uninstall Stock Item"
+msgstr ""
 
 #: templates/js/table_filters.js:43
 msgid "Trackable Part"
@@ -7107,149 +7113,157 @@ msgstr "Nachverfolgbares Teil"
 msgid "Validated"
 msgstr "überprüft"
 
-#: templates/js/table_filters.js:72
+#: templates/js/table_filters.js:55
+msgid "Allow Variant Stock"
+msgstr ""
+
+#: templates/js/table_filters.js:76
 msgid "Include locations"
 msgstr "Lagerorte einschließen"
 
-#: templates/js/table_filters.js:82 templates/js/table_filters.js:83
-#: templates/js/table_filters.js:296
+#: templates/js/table_filters.js:86 templates/js/table_filters.js:87
+#: templates/js/table_filters.js:300
 msgid "Include subcategories"
 msgstr "Unterkategorien einschließen"
 
-#: templates/js/table_filters.js:93 templates/js/table_filters.js:182
+#: templates/js/table_filters.js:97 templates/js/table_filters.js:186
 msgid "Is Serialized"
 msgstr "Hat Seriennummer"
 
-#: templates/js/table_filters.js:96 templates/js/table_filters.js:189
+#: templates/js/table_filters.js:100 templates/js/table_filters.js:193
 msgid "Serial number GTE"
 msgstr "Seriennummer >="
 
-#: templates/js/table_filters.js:97 templates/js/table_filters.js:190
+#: templates/js/table_filters.js:101 templates/js/table_filters.js:194
 msgid "Serial number greater than or equal to"
 msgstr "Seriennummer größer oder gleich"
 
-#: templates/js/table_filters.js:100 templates/js/table_filters.js:193
+#: templates/js/table_filters.js:104 templates/js/table_filters.js:197
 msgid "Serial number LTE"
 msgstr "Seriennummer <="
 
-#: templates/js/table_filters.js:101 templates/js/table_filters.js:194
+#: templates/js/table_filters.js:105 templates/js/table_filters.js:198
 msgid "Serial number less than or equal to"
 msgstr "Seriennummern kleiner oder gleich"
 
-#: templates/js/table_filters.js:104 templates/js/table_filters.js:105
-#: templates/js/table_filters.js:185 templates/js/table_filters.js:186
+#: templates/js/table_filters.js:108 templates/js/table_filters.js:109
+#: templates/js/table_filters.js:189 templates/js/table_filters.js:190
 msgid "Serial number"
 msgstr "Seriennummer"
 
-#: templates/js/table_filters.js:109 templates/js/table_filters.js:203
+#: templates/js/table_filters.js:113 templates/js/table_filters.js:207
 msgid "Batch code"
 msgstr "Losnummer"
 
-#: templates/js/table_filters.js:119 templates/js/table_filters.js:286
+#: templates/js/table_filters.js:123 templates/js/table_filters.js:290
 msgid "Active parts"
 msgstr "Aktive Teile"
 
-#: templates/js/table_filters.js:120
+#: templates/js/table_filters.js:124
 msgid "Show stock for active parts"
 msgstr "Bestand aktiver Teile anzeigen"
 
-#: templates/js/table_filters.js:125
+#: templates/js/table_filters.js:129
 msgid "Part is an assembly"
 msgstr "Teil ist eine Baugruppe"
 
-#: templates/js/table_filters.js:129
+#: templates/js/table_filters.js:133
 msgid "Is allocated"
 msgstr "Ist zugeordnet"
 
-#: templates/js/table_filters.js:130
+#: templates/js/table_filters.js:134
 msgid "Item has been allocated"
 msgstr "Teil wurde zugeordnet"
 
-#: templates/js/table_filters.js:135
+#: templates/js/table_filters.js:139
 msgid "Include stock in sublocations"
 msgstr "Bestand in Unter-Lagerorten einschließen"
 
-#: templates/js/table_filters.js:140
+#: templates/js/table_filters.js:144
 msgid "Show stock items which are depleted"
 msgstr "Zeige aufgebrauchte BestandsObjekte"
 
-#: templates/js/table_filters.js:147
+#: templates/js/table_filters.js:151
 msgid "Show stock items which have expired"
 msgstr "Zeige abgelaufene BestandsObjekte"
 
-#: templates/js/table_filters.js:152
+#: templates/js/table_filters.js:156
 msgid "Show stock which is close to expiring"
 msgstr "Bestand, der bald ablaufen, anzeigen"
 
-#: templates/js/table_filters.js:158
+#: templates/js/table_filters.js:162
 msgid "Show items which are in stock"
 msgstr "Zeige Objekte welche im Lager sind"
 
-#: templates/js/table_filters.js:162
+#: templates/js/table_filters.js:166
 msgid "In Production"
 msgstr "In Arbeit"
 
-#: templates/js/table_filters.js:163
+#: templates/js/table_filters.js:167
 msgid "Show items which are in production"
 msgstr "Elemente, die in Produktion sind, anzeigen"
 
-#: templates/js/table_filters.js:167
+#: templates/js/table_filters.js:171
 msgid "Include Variants"
 msgstr "Varianten einschließen"
 
-#: templates/js/table_filters.js:168
+#: templates/js/table_filters.js:172
 msgid "Include stock items for variant parts"
 msgstr "BestandsObjekte für Teil-Varianten einschließen"
 
-#: templates/js/table_filters.js:173
+#: templates/js/table_filters.js:176
+msgid "Installed"
+msgstr "Installiert"
+
+#: templates/js/table_filters.js:177
 msgid "Show stock items which are installed in another item"
 msgstr "BestandsObjekte, die in anderen Elementen verbaut sind, anzeigen"
 
-#: templates/js/table_filters.js:178
+#: templates/js/table_filters.js:182
 msgid "Show items which have been assigned to a customer"
 msgstr "zeige zu Kunden zugeordnete Einträge"
 
-#: templates/js/table_filters.js:198 templates/js/table_filters.js:199
+#: templates/js/table_filters.js:202 templates/js/table_filters.js:203
 msgid "Stock status"
 msgstr "Status"
 
-#: templates/js/table_filters.js:232
+#: templates/js/table_filters.js:236
 msgid "Build status"
 msgstr "Bauauftrags-Status"
 
-#: templates/js/table_filters.js:251 templates/js/table_filters.js:268
+#: templates/js/table_filters.js:255 templates/js/table_filters.js:272
 msgid "Order status"
 msgstr "Bestellstatus"
 
-#: templates/js/table_filters.js:256 templates/js/table_filters.js:273
+#: templates/js/table_filters.js:260 templates/js/table_filters.js:277
 msgid "Outstanding"
 msgstr "ausstehend"
 
-#: templates/js/table_filters.js:297
+#: templates/js/table_filters.js:301
 msgid "Include parts in subcategories"
 msgstr "Teile in Unterkategorien einschließen"
 
-#: templates/js/table_filters.js:301
+#: templates/js/table_filters.js:305
 msgid "Has IPN"
 msgstr "Hat IPN"
 
-#: templates/js/table_filters.js:302
+#: templates/js/table_filters.js:306
 msgid "Part has internal part number"
 msgstr "Teil hat Interne Teilenummer"
 
-#: templates/js/table_filters.js:307
+#: templates/js/table_filters.js:311
 msgid "Show active parts"
 msgstr "Aktive Teile anzeigen"
 
-#: templates/js/table_filters.js:315
+#: templates/js/table_filters.js:319
 msgid "Stock available"
 msgstr "verfügbarer Lagerbestand"
 
-#: templates/js/table_filters.js:331
+#: templates/js/table_filters.js:335
 msgid "Starred"
 msgstr "Favorit"
 
-#: templates/js/table_filters.js:343
+#: templates/js/table_filters.js:347
 msgid "Purchasable"
 msgstr "Käuflich"
 
