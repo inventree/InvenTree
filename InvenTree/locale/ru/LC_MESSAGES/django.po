@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-02 17:14\n"
+"PO-Revision-Date: 2021-06-02 18:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -330,119 +330,119 @@ msgstr "Вывод заказа сборки завершён"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Получено по заказу на покупку"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
-msgstr ""
+msgstr "Продукция"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Неверный код валюты"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Неверный символ в названии части"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN должен совпадать с регулярным выражением {pat}"
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Ссылка должна соответствовать шаблону {pattern}"
 
 #: InvenTree/validators.py:113
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Недопустимый символ в имени ({x})"
 
 #: InvenTree/validators.py:132 InvenTree/validators.py:148
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Значение перегрузки не должно быть отрицательным"
 
 #: InvenTree/validators.py:150
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Перегрузка не может превысить 100%"
 
 #: InvenTree/validators.py:157
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "Превышение должно быть целым числом или процентом"
 
 #: InvenTree/views.py:592
 msgid "Delete Item"
-msgstr ""
+msgstr "Удалить элемент"
 
 #: InvenTree/views.py:641
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Установите флажок для подтверждения удаления элемента"
 
 #: InvenTree/views.py:656 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
-msgstr ""
+msgstr "Редактировать информацию о пользователе"
 
 #: InvenTree/views.py:667 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
-msgstr ""
+msgstr "Установить пароль"
 
 #: InvenTree/views.py:686
 msgid "Password fields must match"
-msgstr ""
+msgstr "Пароли должны совпадать"
 
 #: InvenTree/views.py:937 templates/navbar.html:95
 msgid "System Information"
-msgstr ""
+msgstr "Информация о системе"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "Должен быть предоставлен параметр штрихкода"
 
 #: barcodes/api.py:126
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Не найдено совпадений для данных штрих-кода"
 
 #: barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Найдено совпадение по штрих-коду"
 
 #: barcodes/api.py:153
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "Необходимо предоставить параметр инвентаря"
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr ""
+msgstr "Не найдено совпадающих элементов инвентаря"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
-msgstr ""
+msgstr "Штрих-код уже соответствует объекту StockItem"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
-msgstr ""
+msgstr "Штрих-код уже соответствует объекту StockLocation"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr ""
+msgstr "Штрих-код уже соответствует объекту Part"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
-msgstr ""
+msgstr "Хэш штрих-кода уже соответствует объекту StockItem"
 
 #: barcodes/api.py:222
 msgid "Barcode associated with StockItem"
-msgstr ""
+msgstr "Штрих-код, связанный с инвентарем"
 
 #: build/forms.py:37
 msgid "Build Order reference"
-msgstr ""
+msgstr "Ссылка на заказ"
 
 #: build/forms.py:38
 msgid "Order target date"
-msgstr ""
+msgstr "Срок выполнения заказа"
 
 #: build/forms.py:42 build/templates/build/build_base.html:146
 #: build/templates/build/detail.html:121 order/forms.py:109 order/forms.py:144
@@ -452,11 +452,11 @@ msgstr ""
 #: templates/js/build.js:793 templates/js/order.js:200
 #: templates/js/order.js:298
 msgid "Target Date"
-msgstr ""
+msgstr "Целевая дата"
 
 #: build/forms.py:43 build/models.py:225
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Целевая дата для сборки. Сборка будет просрочена после этой даты."
 
 #: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1333
 #: build/templates/build/allocation_card.html:23
@@ -490,11 +490,11 @@ msgstr ""
 #: templates/js/part.js:795 templates/js/stock.js:1134
 #: templates/js/stock.js:1353
 msgid "Quantity"
-msgstr ""
+msgstr "Количество"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr ""
+msgstr "Количество элементов для сборки"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
