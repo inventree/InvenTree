@@ -127,7 +127,7 @@ class MultiStepFormView(SessionWizardView):
 
     def __init__(self, *args, **kwargs):
         """ Override init method to set media folder """
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.process_media_folder()
 
@@ -206,6 +206,12 @@ class FileManagementFormView(MultiStepFormView):
         # Check for file manager class
         if not hasattr(self, 'file_manager_class') and not issubclass(self.file_manager_class, FileManager):
             raise NotImplementedError('A subclass of a file manager class needs to be set!')
+
+    @classmethod
+    def get_initkwargs(cls, *args, **kwargs):
+        # Construct form_list
+        kwargs['form_list'] = [(key, value) for key, value in cls.forms.items()]
+        return super().get_initkwargs(*args, **kwargs)
 
     def get_context_data(self, form=None, **kwargs):
         if form is None:
