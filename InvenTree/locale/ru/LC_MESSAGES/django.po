@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-05-28 04:02\n"
+"PO-Revision-Date: 2021-06-01 10:22\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -19,118 +19,118 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Конечная точка API не обнаружена"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Действие не указано"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Соответствующее действие не найдено"
 
 #: InvenTree/fields.py:44
 msgid "Enter date"
-msgstr ""
+msgstr "Введите дату"
 
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:27 order/forms.py:38 order/forms.py:49 order/forms.py:60
 #: order/forms.py:71 part/forms.py:134
 msgid "Confirm"
-msgstr ""
+msgstr "Подтвердить"
 
 #: InvenTree/forms.py:128
 msgid "Confirm delete"
-msgstr ""
+msgstr "Подтвердите удаление"
 
 #: InvenTree/forms.py:129
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Подтвердите удаление элемента"
 
 #: InvenTree/forms.py:161 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "Введите пароль"
 
 #: InvenTree/forms.py:162
 msgid "Enter new password"
-msgstr ""
+msgstr "Введите новый пароль"
 
 #: InvenTree/forms.py:169
 msgid "Confirm password"
-msgstr ""
+msgstr "Подтвердить пароль"
 
 #: InvenTree/forms.py:170
 msgid "Confirm new password"
-msgstr ""
+msgstr "Подтвердите новый пароль"
 
 #: InvenTree/forms.py:205
 msgid "Apply Theme"
-msgstr ""
+msgstr "Применить тему"
 
 #: InvenTree/forms.py:235
 msgid "Select Category"
-msgstr ""
+msgstr "Выбрать категорию"
 
 #: InvenTree/helpers.py:377
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "Дублировать серийный номер: {n}"
 
 #: InvenTree/helpers.py:384 order/models.py:245 order/models.py:355
 #: stock/views.py:1795
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "недопустимое количество"
 
 #: InvenTree/helpers.py:387
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Пустая строка серийного номера"
 
 #: InvenTree/helpers.py:409 InvenTree/helpers.py:412 InvenTree/helpers.py:415
 #: InvenTree/helpers.py:440
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Некорректный идентификатор группы"
 
 #: InvenTree/helpers.py:445
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "Повторяющийся серийный"
 
 #: InvenTree/helpers.py:453
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Серийных номеров не найдено"
 
 #: InvenTree/helpers.py:457
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Число уникальных серийных номеров должно соответствовать количеству"
 
 #: InvenTree/models.py:59 stock/models.py:1761
 msgid "Attachment"
-msgstr ""
+msgstr "Вложения"
 
 #: InvenTree/models.py:60
 msgid "Select file to attach"
-msgstr ""
+msgstr "Выберите файл для вложения"
 
 #: InvenTree/models.py:62 templates/attachment_table.html:16
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 #: InvenTree/models.py:62
 msgid "File comment"
-msgstr ""
+msgstr "Комментарий к файлу"
 
 #: InvenTree/models.py:68 InvenTree/models.py:69 part/models.py:1999
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1149
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 #: InvenTree/models.py:72
 msgid "upload date"
-msgstr ""
+msgstr "дата загрузки"
 
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
@@ -138,7 +138,7 @@ msgstr ""
 #: templates/InvenTree/search.html:289 templates/js/part.js:118
 #: templates/js/part.js:641 templates/js/stock.js:942
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: InvenTree/models.py:114 build/models.py:135
 #: build/templates/build/detail.html:21 company/models.py:339
@@ -161,164 +161,164 @@ msgstr ""
 #: templates/js/stock.js:552 templates/js/stock.js:954
 #: templates/js/stock.js:999
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: InvenTree/models.py:115
 msgid "Description (optional)"
-msgstr ""
+msgstr "Описание (необязательно)"
 
 #: InvenTree/models.py:123
 msgid "parent"
-msgstr ""
+msgstr "родитель"
 
 #: InvenTree/settings.py:503
 msgid "English"
-msgstr ""
+msgstr "Английский"
 
 #: InvenTree/settings.py:504
 msgid "French"
-msgstr ""
+msgstr "Французский"
 
 #: InvenTree/settings.py:505
 msgid "German"
-msgstr ""
+msgstr "Немецкий"
 
 #: InvenTree/settings.py:506
 msgid "Polish"
-msgstr ""
+msgstr "Польский"
 
 #: InvenTree/settings.py:507
 msgid "Turkish"
-msgstr ""
+msgstr "Турецкий"
 
 #: InvenTree/status.py:93
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Проверка фонового работника не удалась"
 
 #: InvenTree/status.py:97
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Сервер электронной почты не настроен"
 
 #: InvenTree/status.py:100
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Ошибка проверки состояния системы InvenTree"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "Ожидаемый"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "Размещены"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "Готово"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "Отменено"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "Потерян"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Возвращено"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "Доставлено"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "Да"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "Требуется внимание"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "Поврежденный"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr ""
+msgstr "Разрушено"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Отклоненный"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Отслеживание устаревших запасов"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Товар создан"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Отредактированный товар"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Присвоенный серийный номер"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Склад подсчитан"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Добавлен вручную"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Удалено вручную"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Расположение изменено"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Укомплектовано"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Снято со сборки"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Установленный элемент компонента"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Удален элемент компонента"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Отделить от родительского элемента"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Разбить дочерний элемент"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:181
 msgid "Sent to customer"
-msgstr ""
+msgstr "Отправлено клиенту"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Возвращено от клиента"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
@@ -2149,8 +2149,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -6134,8 +6133,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7589,3 +7587,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
