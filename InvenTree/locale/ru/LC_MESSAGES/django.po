@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-02 18:12\n"
+"PO-Revision-Date: 2021-06-02 23:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -90,12 +90,12 @@ msgstr "Пустая строка серийного номера"
 #: InvenTree/helpers.py:440
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr "Некорректный идентификатор группы"
+msgstr "Некорректный идентификатор группы {g}"
 
 #: InvenTree/helpers.py:445
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr "Повторяющийся серийный"
+msgstr "Повторяющийся серийный {g}"
 
 #: InvenTree/helpers.py:453
 msgid "No serial numbers found"
