@@ -176,11 +176,11 @@ class FileManagementFormView(MultiStepFormView):
     """
 
     name = None
-    form_list = [
-        ('upload', forms.UploadFile),
-        ('fields', forms.MatchField),
-        ('items', forms.MatchItem),
-    ]
+    forms = {
+        'upload': forms.UploadFile,
+        'fields': forms.MatchField,
+        'items': forms.MatchItem,
+    }
     form_steps_description = [
         _("Upload File"),
         _("Match Fields"),
@@ -190,29 +190,21 @@ class FileManagementFormView(MultiStepFormView):
     extra_context_data = {}
 
     def __init__(self, *args, **kwargs):
-        """ initialize the FormView """
-        # check if form_list should be overriden
-        if hasattr(self, 'form_list_override'):
-            # check for list
-            if not isinstance(self.form_list_override, list):
-                raise ValueError('form_list_override must be a list')
+        """ initialize the FormView
+        Use the following syntax to override the forms that should be used in the steps:
 
-            # loop through and override /add form_list enrties
-            for entry in self.form_list_override:
-                # fetch postition
-                pos = [self.form_list.index(i) for i in self.form_list if i[0] == 'items']
-                # replace if exists
-                if pos:
-                    self.form_list[pos[0]] = entry
-                # or append
-                else:
-                    self.form_list.append(entry)
+        def __init__(self, *args, **kwargs):
+            self.forms['items'] = self.CustomMatchItem
+            return super().__init__(*args, **kwargs)
+        """
+        # Construct form_list
+        self.form_list = [(key, value) for key, value in self.forms.items()]
 
         # perform all checks and inits for MultiStepFormView
-        super().__init__(*args, **kwargs)
+        super().__init__(self, *args, **kwargs)
 
         # Check for file manager class
-        if not(hasattr(self, 'file_manager_class') and issubclass(self.file_manager_class, FileManager)):
+        if not hasattr(self, 'file_manager_class') and not issubclass(self.file_manager_class, FileManager):
             raise NotImplementedError('A subclass of a file manager class needs to be set!')
 
     def get_context_data(self, form=None, **kwargs):
@@ -414,11 +406,7 @@ class FileManagementFormView(MultiStepFormView):
                     'data': data,
                     'errors': {},
                 }
-
-                # make sure that the row was submitted - solves https://github.com/inventree/InvenTree/pull/1588#issuecomment-847889353
-                row_exist_check = [a for a in self.request.POST.keys() if a.startswith(f'row_{int(row_idx) +1}_')]
-                if True in row_exist_check:
-                    self.rows.append(row)
+                self.rows.append(row)
 
         # In the item selection step: update row data with mapping to form fields
         if form and self.steps.current == 'items':

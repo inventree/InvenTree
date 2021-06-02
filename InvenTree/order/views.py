@@ -581,9 +581,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         """ override MatchItem fields """
         def get_special_field(self, col_guess, row, file_manager):
             """ set special field """
-            # run default
-            super().get_special_field(col_guess, row, file_manager)
-
             # set quantity field
             if 'quantity' in col_guess.lower():
                 return CharField(
@@ -608,6 +605,9 @@ class PurchaseOrderUpload(FileManagementFormView):
                     default_amount=self.clean_nbr(row.get('price', '')),
                 )
 
+            # return default
+            return super().get_special_field(col_guess, row, file_manager)
+
     class OrderFileManager(FileManager):
         REQUIRED_HEADERS = [
             'Quantity',
@@ -625,9 +625,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         ]
 
     name = 'order'
-    form_list_override = [
-        ('items', OrderMatchItem),
-    ]
     form_steps_template = [
         'order/order_wizard/po_upload.html',
         'order/order_wizard/match_fields.html',
@@ -646,6 +643,10 @@ class PurchaseOrderUpload(FileManagementFormView):
         'notes': 'notes',
     }
     file_manager_class = OrderFileManager
+
+    def __init__(self, *args, **kwargs):
+        self.forms['items'] = self.OrderMatchItem
+        return super().__init__(*args, **kwargs)
 
     def get_order(self):
         """ Get order or return 404 """

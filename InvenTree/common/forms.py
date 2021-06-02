@@ -180,4 +180,4 @@ class MatchItem(forms.Form):
 
     def get_special_field(self, col_guess, row, file_manager):
         """ function to be overriden in inherited forms to add specific form settings """
-        pass
+        return None
