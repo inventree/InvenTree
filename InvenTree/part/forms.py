@@ -352,6 +352,7 @@ class EditBomItemForm(HelperForm):
             'reference',
             'overage',
             'note',
+            'allow_variants',
             'inherited',
             'optional',
         ]

@@ -5,6 +5,14 @@
  * Requires api.js to be loaded first
  */
 
+function yesNoLabel(value) {
+    if (value) {
+        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+    } else {
+        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+    }
+}
+
 function toggleStar(options) {
     /* Toggle the 'starred' status of a part.
      * Performs AJAX queries and updates the display on the button.
@@ -661,16 +669,6 @@ function loadPartCategoryTable(table, options) {
         ]
     });
 }
-
-
-function yesNoLabel(value) {
-    if (value) {
-        return `<span class='label label-green'>{% trans "YES" %}</span>`;
-    } else {
-        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
-    }
-}
-
 
 function loadPartTestTemplateTable(table, options) {
     /*

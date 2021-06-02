@@ -2240,6 +2240,7 @@ class BomItem(models.Model):
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         inherited: This BomItem can be inherited by the BOMs of variant parts
+        allow_variants: Stock for part variants can be substituted for this BomItem
     """
 
     def save(self, *args, **kwargs):
@@ -2286,6 +2287,12 @@ class BomItem(models.Model):
         default=False,
         verbose_name=_('Inherited'),
         help_text=_('This BOM item is inherited by BOMs for variant parts'),
+    )
+
+    allow_variants = models.BooleanField(
+        default=False,
+        verbose_name=_('Allow Variants'),
+        help_text=_('Stock items for variant parts can be used for this BOM item')
     )
 
     def get_item_hash(self):
