@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-03 04:40\n"
+"PO-Revision-Date: 2021-06-03 16:08\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -498,23 +498,23 @@ msgstr "Количество элементов для сборки"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Введите количество для вывода сборки"
 
 #: build/forms.py:95 order/forms.py:234 stock/forms.py:118
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Серийные номера"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Введите серийные номера для результатов сборки"
 
 #: build/forms.py:103
 msgid "Confirm creation of build output"
-msgstr ""
+msgstr "Подтвердите создание выходной информации сборки"
 
 #: build/forms.py:124
 msgid "Confirm deletion of build output"
-msgstr ""
+msgstr "Подтвердите удаление результатов сборки"
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
