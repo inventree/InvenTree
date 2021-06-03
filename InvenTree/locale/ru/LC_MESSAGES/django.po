@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-03 16:08\n"
+"PO-Revision-Date: 2021-06-03 17:03\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -518,7 +518,7 @@ msgstr "Подтвердите удаление результатов сбор�
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
-msgstr ""
+msgstr "Подтвердите снятие со склада"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
@@ -526,7 +526,7 @@ msgstr ""
 
 #: build/forms.py:186
 msgid "Mark build as complete"
-msgstr ""
+msgstr "Пометить сборку как завершенную"
 
 #: build/forms.py:210 build/templates/build/auto_allocate.html:18
 #: order/forms.py:82 stock/forms.py:347
@@ -536,11 +536,11 @@ msgstr ""
 #: templates/js/barcode.js:531 templates/js/build.js:500
 #: templates/js/stock.js:639 templates/js/stock.js:1026
 msgid "Location"
-msgstr ""
+msgstr "Расположение"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr ""
+msgstr "Расположение укомплектованных частей"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:59 order/models.py:466
@@ -551,7 +551,7 @@ msgstr ""
 #: templates/js/stock.js:626 templates/js/stock.js:1103
 #: templates/js/stock.js:1369
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: build/forms.py:216
 msgid "Build output stock status"
@@ -559,7 +559,7 @@ msgstr ""
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
-msgstr ""
+msgstr "Подтвердите незавершенность"
 
 #: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
