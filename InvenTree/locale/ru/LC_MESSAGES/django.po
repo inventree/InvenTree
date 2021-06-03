@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-02 23:52\n"
+"PO-Revision-Date: 2021-06-03 04:40\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -104,7 +104,7 @@ msgstr "Серийных номеров не найдено"
 #: InvenTree/helpers.py:457
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr "Число уникальных серийных номеров должно соответствовать количеству"
+msgstr "Число уникальных серийных номеров ({s}) должно соответствовать количеству ({q})"
 
 #: InvenTree/models.py:59 stock/models.py:1761
 msgid "Attachment"
