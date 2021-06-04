@@ -118,7 +118,6 @@ class MultiStepFormView(SessionWizardView):
         form_steps_description: description for each form
     """
 
-    form_list = []
     form_steps_template = []
     form_steps_description = []
     file_manager = None
@@ -176,11 +175,11 @@ class FileManagementFormView(MultiStepFormView):
     """
 
     name = None
-    forms = {
-        'upload': forms.UploadFile,
-        'fields': forms.MatchField,
-        'items': forms.MatchItem,
-    }
+    form_list = [
+        ('upload', forms.UploadFileForm),
+        ('fields', forms.MatchFieldForm),
+        ('items', forms.MatchItemForm),
+    ]
     form_steps_description = [
         _("Upload File"),
         _("Match Fields"),
@@ -190,30 +189,18 @@ class FileManagementFormView(MultiStepFormView):
     extra_context_data = {}
 
     def __init__(self, *args, **kwargs):
-        """ initialize the FormView
-        Use the following syntax to override the forms that should be used in the steps:
+        """ Initialize the FormView """
 
-        def __init__(self, *args, **kwargs):
-            self.forms['items'] = self.CustomMatchItem
-            return super().__init__(*args, **kwargs)
-        """
-        # Construct form_list
-        self.form_list = [(key, value) for key, value in self.forms.items()]
-
-        # perform all checks and inits for MultiStepFormView
+        # Perform all checks and inits for MultiStepFormView
         super().__init__(self, *args, **kwargs)
 
         # Check for file manager class
         if not hasattr(self, 'file_manager_class') and not issubclass(self.file_manager_class, FileManager):
             raise NotImplementedError('A subclass of a file manager class needs to be set!')
 
-    @classmethod
-    def get_initkwargs(cls, *args, **kwargs):
-        # Construct form_list
-        kwargs['form_list'] = [(key, value) for key, value in cls.forms.items()]
-        return super().get_initkwargs(*args, **kwargs)
-
     def get_context_data(self, form=None, **kwargs):
+        """ Handle context data """
+
         if form is None:
             form = self.get_form()
 
@@ -412,6 +399,7 @@ class FileManagementFormView(MultiStepFormView):
                     'data': data,
                     'errors': {},
                 }
+
                 self.rows.append(row)
 
         # In the item selection step: update row data with mapping to form fields

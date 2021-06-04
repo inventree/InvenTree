@@ -27,7 +27,7 @@ class SettingEditForm(HelperForm):
         ]
 
 
-class UploadFile(forms.Form):
+class UploadFileForm(forms.Form):
     """ Step 1 of FileManagementFormView """
 
     file = forms.FileField(
@@ -65,7 +65,7 @@ class UploadFile(forms.Form):
         return file
 
 
-class MatchField(forms.Form):
+class MatchFieldForm(forms.Form):
     """ Step 2 of FileManagementFormView """
 
     def __init__(self, *args, **kwargs):
@@ -98,7 +98,7 @@ class MatchField(forms.Form):
                 self.fields[field_name].initial = col['guess']
 
 
-class MatchItem(forms.Form):
+class MatchItemForm(forms.Form):
     """ Step 3 of FileManagementFormView """
 
     def __init__(self, *args, **kwargs):
@@ -179,5 +179,6 @@ class MatchItem(forms.Form):
                         )
 
     def get_special_field(self, col_guess, row, file_manager):
-        """ function to be overriden in inherited forms to add specific form settings """
+        """ Function to be overriden in inherited forms to add specific form settings """
+
         return None

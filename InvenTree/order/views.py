@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
-from django.forms import HiddenInput, IntegerField, CharField, NumberInput
+from django.forms import HiddenInput, IntegerField
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -30,9 +30,9 @@ from stock.models import StockItem, StockLocation
 from part.models import Part
 
 from common.models import InvenTreeSetting
+from common.forms import UploadFileForm, MatchFieldForm
 from common.views import FileManagementFormView
 from common.files import FileManager
-from common import forms as cm_forms
 
 from . import forms as order_forms
 from part.views import PartPricing
@@ -43,8 +43,6 @@ from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
-
-from djmoney.forms.fields import MoneyField
 
 logger = logging.getLogger("inventree")
 
@@ -576,38 +574,6 @@ class SalesOrderShip(AjaxUpdateView):
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
-    # overriden classes
-    class OrderMatchItem(cm_forms.MatchItem):
-        """ override MatchItem fields """
-        def get_special_field(self, col_guess, row, file_manager):
-            """ set special field """
-            # set quantity field
-            if 'quantity' in col_guess.lower():
-                return CharField(
-                    required=False,
-                    widget=NumberInput(attrs={
-                        'name': 'quantity' + str(row['index']),
-                        'class': 'numberinput',
-                        'type': 'number',
-                        'min': '0',
-                        'step': 'any',
-                        'value': self.clean_nbr(row.get('quantity', '')),
-                    })
-                )
-            # set price field
-            elif 'price' in col_guess.lower():
-                return MoneyField(
-                    label=_(col_guess),
-                    default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
-                    decimal_places=5,
-                    max_digits=19,
-                    required=False,
-                    default_amount=self.clean_nbr(row.get('price', '')),
-                )
-
-            # return default
-            return super().get_special_field(col_guess, row, file_manager)
-
     class OrderFileManager(FileManager):
         REQUIRED_HEADERS = [
             'Quantity',
@@ -625,6 +591,11 @@ class PurchaseOrderUpload(FileManagementFormView):
         ]
 
     name = 'order'
+    form_list = [
+        ('upload', UploadFileForm),
+        ('fields', MatchFieldForm),
+        ('items', order_forms.OrderMatchItemForm),
+    ]
     form_steps_template = [
         'order/order_wizard/po_upload.html',
         'order/order_wizard/match_fields.html',
@@ -644,16 +615,14 @@ class PurchaseOrderUpload(FileManagementFormView):
     }
     file_manager_class = OrderFileManager
 
-    def __init__(self, *args, **kwargs):
-        self.forms['items'] = self.OrderMatchItem
-        return super().__init__(*args, **kwargs)
-
     def get_order(self):
         """ Get order or return 404 """
 
         return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
     def get_context_data(self, form, **kwargs):
+        """ Handle context data for order """
+
         context = super().get_context_data(form=form, **kwargs)
 
         order = self.get_order()
