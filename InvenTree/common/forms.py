@@ -145,6 +145,24 @@ class MatchItemForm(forms.Form):
                         )
 
                     # Create item selection box
+                    elif col_guess in file_manager.OPTIONAL_MATCH_HEADERS:
+                        # Get item options
+                        item_options = [(option.id, option) for option in row['match_options_' + col_guess]]
+                        # Get item match
+                        item_match = row['match_' + col_guess]
+                        # Set field select box
+                        self.fields[field_name] = forms.ChoiceField(
+                            choices=[('', '-' * 10)] + item_options,
+                            required=False,
+                            widget=forms.Select(attrs={
+                                'class': 'select bomselect',
+                            })
+                        )
+                        # Update select box when match was found
+                        if item_match:
+                            self.fields[field_name].initial = item_match.id
+
+                    # Create item selection box
                     elif col_guess in file_manager.ITEM_MATCH_HEADERS:
                         # Get item options
                         item_options = [(option.id, option) for option in row['item_options']]
