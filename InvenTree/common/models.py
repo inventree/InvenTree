@@ -726,7 +726,7 @@ class PriceBreak(models.Model):
         return converted.amount
 
 
-def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name:str='price_breaks'):
+def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name: str = 'price_breaks'):
     """ Calculate the price based on quantity price breaks.
 
     - Don't forget to add in flat-fee cost (base_cost field)

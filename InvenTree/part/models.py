@@ -1649,8 +1649,8 @@ class Part(MPTTModel):
             price=price
         )
 
-    def get_internal_price(instance, quantity, moq=True, multiples=True, currency=None):
-        return common.models.get_price(instance, quantity, moq, multiples, currency, break_name='internal_price_breaks')
+    def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
+        return common.models.get_price(self, quantity, moq, multiples, currency, break_name='internal_price_breaks')
 
     @property
     def has_internal_price_breaks(self):
