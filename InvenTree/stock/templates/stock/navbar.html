@@ -10,7 +10,7 @@
 
     <li class='list-group-item {% if tab == "tracking" %}active{% endif %}' title='{% trans "Stock Item Tracking" %}'>
         <a href='{% url "stock-item-detail" item.id %}'>
-            <span class='fas fa-history'></span>
+            <span class='fas fa-history sidebar-icon'></span>
             {% trans "History" %}
         </a>
     </li>
@@ -18,7 +18,7 @@
     {% if item.part.trackable %}
     <li class='list-group-item {% if tab == "tests" %}active{% endif %}' title='{% trans "Test Data" %}'>
         <a href='{% url "stock-item-test-results" item.id %}'>
-            <span class='fas fa-vial'></span>
+            <span class='fas fa-vial sidebar-icon'></span>
             {% trans "Test Data" %}
         </a>
     </li>
@@ -26,7 +26,7 @@
     {% if item.part.assembly %}
     <li class='list-group-item {% if tab == "installed" %}active{% endif %}' title='{% trans "Installed Stock Items" %}'>
         <a href='{% url "stock-item-installed" item.id %}'>
-            <span class='fas fa-sign-in-alt'></span>
+            <span class='fas fa-sign-in-alt sidebar-icon'></span>
             {% trans "Installed Items" %}
         </a>
     </li>
@@ -37,7 +37,7 @@
     {% if item.child_count > 0 %}
     <li class='list-group-item {% if tab == "children" %}active{% endif %}' title='{% trans "Child Items" %}'>
         <a href='{% url "stock-item-children" item.id %}'>
-            <span class='fas fa-sitemap'></span>
+            <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Children" %}
         </a>
     </li>
@@ -46,14 +46,14 @@
 
     <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
         <a href='{% url "stock-item-attachments" item.id %}'>
-            <span class='fas fa-paperclip'></span>
+            <span class='fas fa-paperclip sidebar-icon'></span>
             {% trans "Attachments" %}
         </a>
     </li>
 
     <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Stock Item Notes" %}'>
         <a href='{% url "stock-item-notes" item.id %}'>
-            <span class='fas fa-clipboard'></span>
+            <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>
     </li>

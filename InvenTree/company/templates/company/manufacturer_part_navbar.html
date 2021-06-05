@@ -10,7 +10,7 @@
 
     <li class='list-group-item {% if tab == "suppliers" %}active{% endif %}' title='{% trans "Supplier Parts" %}'>
         <a href='{% url "manufacturer-part-suppliers" part.id %}'>
-            <span class='fas fa-building'></span>
+            <span class='fas fa-building sidebar-icon'></span>
             {% trans "Suppliers" %}
         </a>
     </li>
@@ -18,14 +18,14 @@
     {% comment "for later" %}
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Manufacturer Part Stock" %}'>
         <a href='{% url "manufacturer-part-stock" part.id %}'>
-            <span class='fas fa-boxes'></span>
+            <span class='fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
 
     <li class='list-group-item {% if tab == "orders" %}active{% endif %}' title='{% trans "Manufacturer Part Orders" %}'>
         <a href='{% url "manufacturer-part-orders" part.id %}'>
-            <span class='fas fa-shopping-cart'></span>
+            <span class='fas fa-shopping-cart sidebar-icon'></span>
             {% trans "Orders" %}
         </a>
     </li>
