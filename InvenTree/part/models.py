@@ -1983,6 +1983,21 @@ class PartSellPriceBreak(common.models.PriceBreak):
         unique_together = ('part', 'quantity')
 
 
+class PartInternalPriceBreak(common.models.PriceBreak):
+    """
+    Represents a price break for internally selling this part
+    """
+
+    part = models.ForeignKey(
+        Part, on_delete=models.CASCADE,
+        related_name='internalpricebreaks',
+        verbose_name=_('Part')
+    )
+
+    class Meta:
+        unique_together = ('part', 'quantity')
+
+
 class PartStar(models.Model):
     """ A PartStar object creates a relationship between a User and a Part.
 

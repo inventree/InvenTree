@@ -14,7 +14,7 @@ from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from stock.models import StockLocation
 from company.models import SupplierPart
@@ -286,6 +286,14 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
     list_display = ('part', 'quantity', 'price',)
 
 
+class PartInternalPriceBreakAdmin(admin.ModelAdmin):
+
+    class Meta:
+        model = PartInternalPriceBreak
+
+    list_display = ('part', 'quantity', 'price',)
+
+
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartRelated, PartRelatedAdmin)
@@ -297,3 +305,4 @@ admin.site.register(PartParameter, ParameterAdmin)
 admin.site.register(PartCategoryParameterTemplate, PartCategoryParameterAdmin)
 admin.site.register(PartTestTemplate, PartTestTemplateAdmin)
 admin.site.register(PartSellPriceBreak, PartSellPriceBreakAdmin)
+admin.site.register(PartInternalPriceBreak, PartInternalPriceBreakAdmin)

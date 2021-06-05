@@ -36,7 +36,7 @@ from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
@@ -2794,3 +2794,26 @@ class PartSalePriceBreakDelete(AjaxDeleteView):
     model = PartSellPriceBreak
     ajax_form_title = _("Delete Price Break")
     ajax_template_name = "modal_delete_form.html"
+
+
+class PartInternalPriceBreakCreate(PartSalePriceBreakCreate):
+    """ View for creating a internal price break for a part """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Add Internal Price Break')
+
+
+class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
+    """ View for editing a internal price break """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Edit Internal Price Break')
+
+
+class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
+    """ View for deleting a internal price break """
+
+    model = PartInternalPriceBreak
+    ajax_form_title = _("Delete Internal Price Break")
