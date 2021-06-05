@@ -14,7 +14,6 @@ import django.forms
 import djmoney.settings
 from djmoney.forms.fields import MoneyField
 
-import common.settings
 from common.settings import currency_code_default
 
 from .models import Company
