@@ -77,6 +77,19 @@
     {% endif %}
 {% endif %}
 
+{% if total_internal_part_price %}
+    <tr>
+        <td><b>{% trans 'Internal Price' %}</b></td>
+        <td>{% trans 'Unit Cost' %}</td>
+        <td colspan='2'>{% include "price.html" with price=unit_internal_part_price %}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{% trans 'Total Cost' %}</td>
+        <td colspan='2'>{% include "price.html" with price=total_internal_part_price %}</td>
+    </tr>
+{% endif %}
+
 {% if total_part_price %}
     <tr>
         <td><b>{% trans 'Sale Price' %}</b></td>

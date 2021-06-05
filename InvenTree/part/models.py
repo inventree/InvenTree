@@ -1649,6 +1649,22 @@ class Part(MPTTModel):
             price=price
         )
 
+    def get_internal_price(instance, quantity, moq=True, multiples=True, currency=None):
+        return common.models.get_price(instance, quantity, moq, multiples, currency, break_name='internal_price_breaks')
+
+    @property
+    def has_internal_price_breaks(self):
+        return self.internal_price_breaks.count() > 0
+
+    @property
+    def internal_price_breaks(self):
+        """ Return the associated price breaks in the correct order """
+        return self.internalpricebreaks.order_by('quantity').all()
+
+    @property
+    def internal_unit_pricing(self):
+        return self.get_internal_price(1)
+
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
         """
