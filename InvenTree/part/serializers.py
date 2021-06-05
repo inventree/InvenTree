@@ -4,6 +4,7 @@ JSON serializers for Part app
 import imghdr
 from decimal import Decimal
 
+from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
@@ -11,6 +12,7 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
+from djmoney.contrib.django_rest_framework import MoneyField
 from stock.models import StockItem
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
@@ -133,7 +135,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    
+
     stock = serializers.FloatField(source='total_stock')
 
     class Meta:
@@ -208,7 +210,8 @@ class PartSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             in_stock=Coalesce(
                 SubquerySum('stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
-                Decimal(0)
+                Decimal(0),
+                output_field=models.DecimalField(),
             ),
         )
 
@@ -227,9 +230,10 @@ class PartSerializer(InvenTreeModelSerializer):
             building=Coalesce(
                 SubquerySum('builds__quantity', filter=build_filter),
                 Decimal(0),
+                output_field=models.DecimalField(),
             )
         )
-        
+
         # Filter to limit orders to "open"
         order_filter = Q(
             order__status__in=PurchaseOrderStatus.OPEN
@@ -240,9 +244,11 @@ class PartSerializer(InvenTreeModelSerializer):
             ordering=Coalesce(
                 SubquerySum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
                 Decimal(0),
+                output_field=models.DecimalField(),
             ) - Coalesce(
                 SubquerySum('supplier_parts__purchase_order_line_items__received', filter=order_filter),
                 Decimal(0),
+                output_field=models.DecimalField(),
             )
         )
 
@@ -251,9 +257,10 @@ class PartSerializer(InvenTreeModelSerializer):
             suppliers=Coalesce(
                 SubqueryCount('supplier_parts'),
                 Decimal(0),
+                output_field=models.DecimalField(),
             ),
         )
-        
+
         return queryset
 
     def get_starred(self, part):
@@ -352,7 +359,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
-    
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     sub_part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(component=True))
@@ -360,6 +367,14 @@ class BomItemSerializer(InvenTreeModelSerializer):
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
+
+    purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
+
+    purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
+    
+    purchase_price_avg = serializers.SerializerMethodField()
+    
+    purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
@@ -388,9 +403,57 @@ class BomItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
         return queryset
 
+    def get_purchase_price_range(self, obj):
+        """ Return purchase price range """
+
+        try:
+            purchase_price_min = obj.purchase_price_min
+        except AttributeError:
+            return None
+
+        try:
+            purchase_price_max = obj.purchase_price_max
+        except AttributeError:
+            return None
+
+        if purchase_price_min and not purchase_price_max:
+            # Get price range
+            purchase_price_range = str(purchase_price_max)
+        elif not purchase_price_min and purchase_price_max:
+            # Get price range
+            purchase_price_range = str(purchase_price_max)
+        elif purchase_price_min and purchase_price_max:
+            # Get price range
+            if purchase_price_min >= purchase_price_max:
+                # If min > max: use min only
+                purchase_price_range = str(purchase_price_min)
+            else:
+                purchase_price_range = str(purchase_price_min) + " - " + str(purchase_price_max)
+        else:
+            purchase_price_range = '-'
+
+        return purchase_price_range
+
+    def get_purchase_price_avg(self, obj):
+        """ Return purchase price average """
+        
+        try:
+            purchase_price_avg = obj.purchase_price_avg
+        except AttributeError:
+            return None
+
+        if purchase_price_avg:
+            # Get string representation of price average
+            purchase_price_avg = str(purchase_price_avg)
+        else:
+            purchase_price_avg = '-'
+
+        return purchase_price_avg
+
     class Meta:
         model = BomItem
         fields = [
+            'allow_variants',
             'inherited',
             'note',
             'optional',
@@ -398,6 +461,10 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'part_detail',
+            'purchase_price_avg',
+            'purchase_price_max',
+            'purchase_price_min',
+            'purchase_price_range',
             'quantity',
             'reference',
             'sub_part',

@@ -2,10 +2,17 @@
 
 name: PostgreSQL
 
-on: ["push", "pull_request"]
+on:
+  push:
+    branches-ignore:
+      - l10*
+
+  pull_request:
+    branches-ignore:
+      - l10*
 
 jobs:
-  
+
   test:
     runs-on: ubuntu-latest
 
@@ -18,6 +25,8 @@ jobs:
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
+      INVENTREE_MEDIA_ROOT: ./media
+      INVENTREE_STATIC_ROOT: ./static
 
     services:
       postgres:
@@ -43,3 +52,12 @@ jobs:
           invoke install
       - name: Run Tests
         run: invoke test
+      - name: Data Import Export
+        run: |
+          invoke migrate
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-fixtures
+          invoke export-records -f data.json
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-records -f data.json
+          invoke import-records -f data.json

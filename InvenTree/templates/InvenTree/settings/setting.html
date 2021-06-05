@@ -8,7 +8,7 @@
         <span class='fas {{ icon }}'></span>
         {% endif %}
     </td>
-    <td><b>{{ setting.name }}</b></td>
+    <td><b>{% trans setting.name %}</b></td>
     <td>
         {% if setting.is_bool %}
         <div>
@@ -24,7 +24,7 @@
         {% endif %}
         {% endif %}
     <td>
-        {{ setting.description }}
+        {% trans setting.description %}
     </td>
     <td>
         <div class='btn-group float-right'>

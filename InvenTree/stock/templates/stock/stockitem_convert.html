@@ -5,7 +5,7 @@
 
 <div class='alert alert-block alert-info'>
     <b>{% trans "Convert Stock Item" %}</b><br>
-    {% trans "This stock item is current an instance of " %}<i>{{ item.part }}</i><br>
+    {% blocktrans with part=item.part %}This stock item is current an instance of <i>{{part}}</i>{% endblocktrans %}<br>
     {% trans "It can be converted to one of the part variants listed below." %}
 </div>
 

@@ -1,12 +1,14 @@
 {% extends "modal_form.html" %}
 
+{% load i18n %}
+
 {% block pre_form_content %}
 
-Mark this order as complete?
+{% trans 'Mark this order as complete?' %}
 {% if not order.is_complete %}
-<div class='alert alert-warning alert-block'>
-    This order has line items which have not been marked as received.
-    Marking this order as complete will remove these line items.
+<div class='alert alert-warning alert-block' style='margin-top:12px'>
+    {% trans 'This order has line items which have not been marked as received.' %}</br>
+    {% trans 'Completing this order means that the order and line items will no longer be editable.' %}
 </div>
 {% endif %}
 

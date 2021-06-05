@@ -8,7 +8,8 @@
 <div class='alert alert-danger alert-block'>
 {% trans "Are you sure you want to delete this stock item?" %}
 <br>
-This will remove <b>{% decimal item.quantity %}</b> units of <b>{{ item.part.full_name }}</b> from stock.
+{% decimal item.quantity as qty %}
+{% blocktrans with full_name=item.part.full_name %}This will remove <b>{{qty}}</b> units of <b>{{full_name}}</b> from stock.{% endblocktrans %}
 </div>
 
 {% endblock %}

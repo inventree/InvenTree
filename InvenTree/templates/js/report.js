@@ -65,7 +65,7 @@ function selectReport(reports, items, options={}) {
     openModal({
         modal: modal,
     });
-    
+
     modalEnable(modal, true);
     modalSetTitle(modal, '{% trans "Select Test Report Template" %}');
     modalSetContent(modal, html);

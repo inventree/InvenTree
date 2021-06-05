@@ -58,7 +58,7 @@ def part_salable_default():
 
 def part_trackable_default():
     """
-    Returns the defualt value fro the 'trackable' field for a Part object
+    Returns the default value for the 'trackable' field for a Part object
     """
 
     return InvenTreeSetting.get_setting('PART_TRACKABLE')

@@ -2,12 +2,13 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+
 {% block page_title %}
-FablabBCN Inventory | {% trans "Index" %}
+{% inventree_title %} | {% trans "Index" %}
 {% endblock %}
 
 {% block content %}
-<h3>InvenTree</h3>
+<h3>{% inventree_title %} </h3>
 <hr>
 
 <div class='col-sm-3' id='item-panel'>
@@ -83,7 +84,7 @@ function addHeaderAction(label, title, icon, options) {
     // Connect a callback to the table
     $(`#table-${label}`).on('load-success.bs.table', function() {
         var count = $(`#table-${label}`).bootstrapTable('getData').length;
-    
+
         $(`#badge-${label}`).html(count);
 
         if (count > 0) {
@@ -131,6 +132,7 @@ addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa
 
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
+        part_detail: true,
         ordering: "-updated",
         max_results: {% settings_value "STOCK_RECENT_COUNT" %},
     },

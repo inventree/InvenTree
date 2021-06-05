@@ -91,7 +91,7 @@ class PartTest(TestCase):
     def test_rename_img(self):
         img = rename_part_image(self.r1, 'hello.png')
         self.assertEqual(img, os.path.join('part_images', 'hello.png'))
-        
+
     def test_stock(self):
         # No stock of any resistors
         res = Part.objects.filter(description__contains='resistor')
@@ -178,7 +178,7 @@ class PartSettingsTest(TestCase):
 
     Some fields for the Part model can have default values specified by the user.
     """
-    
+
     def setUp(self):
         # Create a user for auth
         user = get_user_model()
@@ -251,7 +251,7 @@ class PartSettingsTest(TestCase):
             self.assertEqual(part.trackable, val)
             self.assertEqual(part.assembly, val)
             self.assertEqual(part.is_template, val)
-    
+
             Part.objects.filter(pk=part.pk).delete()
 
     def test_duplicate_ipn(self):

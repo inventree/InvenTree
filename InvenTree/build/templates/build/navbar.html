@@ -17,17 +17,11 @@
     </li>
 
     {% if build.active %}
-    <li class='list-group-item {% if tab == "parts" %}active{% endif %}' title='{% trans "Required Parts" %}'>
-        <a href='{% url "build-parts" build.id %}'>
-            <span class='fas fa-shapes'></span>
-            {% trans "Required Parts" %}
-        </a>
-    </li>
 
-    <li class='list-group-item {% if tab == "allocate" %}active{% endif %}' title='{% trans "In Progress" %}'>
+    <li class='list-group-item {% if tab == "allocate" %}active{% endif %}' title='{% trans "Allocate Stock" %}'>
         <a href='{% url "build-allocate" build.id %}'>
             <span class='fas fa-tools'></span>
-            {% trans "In Progress" %}
+            {% trans "Allocate Stock" %}
         </a>
     </li>
     {% endif %}

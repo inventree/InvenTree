@@ -6,6 +6,7 @@ Provides extra global data to all templates.
 
 from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import StockHistoryCode
 
 import InvenTree.status
 
@@ -30,9 +31,22 @@ def health_status(request):
 
     request._inventree_health_status = True
 
-    return {
-        "system_healthy": InvenTree.status.check_system_health(),
+    status = {
+        'django_q_running': InvenTree.status.is_worker_running(),
+        'email_configured': InvenTree.status.is_email_configured(),
     }
+
+    all_healthy = True
+
+    for k in status.keys():
+        if status[k] is not True:
+            all_healthy = False
+
+    status['system_healthy'] = all_healthy
+
+    status['up_to_date'] = InvenTree.version.isInvenTreeUpToDate()
+
+    return status
 
 
 def status_codes(request):
@@ -52,13 +66,14 @@ def status_codes(request):
         'PurchaseOrderStatus': PurchaseOrderStatus,
         'BuildStatus': BuildStatus,
         'StockStatus': StockStatus,
+        'StockHistoryCode': StockHistoryCode,
     }
 
 
 def user_roles(request):
     """
     Return a map of the current roles assigned to the user.
-    
+
     Roles are denoted by their simple names, and then the permission type.
 
     Permissions can be access as follows:

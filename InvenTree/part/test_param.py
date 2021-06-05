@@ -32,7 +32,7 @@ class TestParams(TestCase):
         self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
 
     def test_validate(self):
-        
+
         n = PartParameterTemplate.objects.all().count()
 
         t1 = PartParameterTemplate(name='abcde', units='dd')

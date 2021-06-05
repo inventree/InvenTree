@@ -3,6 +3,7 @@
 {% load inventree_extras %}
 
 {% include "status_codes.html" with label='stock' options=StockStatus.list %}
+{% include "status_codes.html" with label='stockHistory' options=StockHistoryCode.list %}
 {% include "status_codes.html" with label='build' options=BuildStatus.list %}
 {% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
 {% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
@@ -48,6 +49,10 @@ function getAvailableTableFilters(tableKey) {
             inherited: {
                 type: 'bool',
                 title: '{% trans "Inherited" %}',
+            },
+            allow_variants: {
+                type: 'bool',
+                title: '{% trans "Allow Variant Stock" %}',
             }
         };
     }
@@ -59,6 +64,28 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Active" %}',
             },
+        };
+    }
+
+    // Filters for "stock location" table
+    if (tableKey == "location") {
+        return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include sublocations" %}',
+                description: '{% trans "Include locations" %}',
+            }
+        };
+    }
+
+    // Filters for "part category" table
+    if (tableKey == "category") {
+        return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include subcategories" %}',
+                description: '{% trans "Include subcategories" %}',
+            }
         };
     }
 

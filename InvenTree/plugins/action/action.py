@@ -5,7 +5,7 @@ import logging
 import plugins.plugin as plugin
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class ActionPlugin(plugin.InvenTreePlugin):
@@ -23,10 +23,10 @@ class ActionPlugin(plugin.InvenTreePlugin):
         look at the PLUGIN_NAME instead.
         """
         action = cls.ACTION_NAME
-        
+
         if not action:
             action = cls.PLUGIN_NAME
-        
+
         return action
 
     def __init__(self, user, data=None):

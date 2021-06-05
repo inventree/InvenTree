@@ -62,7 +62,7 @@
     });
 
     $("#supplier-part-delete").click(function() {
-        
+
         var selections = $("#supplier-table").bootstrapTable("getSelections");
 
         var parts = [];
@@ -85,7 +85,7 @@
         {
             params: {
                 part: {{ part.id }},
-                part_detail: true,
+                part_detail: false,
                 supplier_detail: true,
                 manufacturer_detail: true,
             },

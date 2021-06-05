@@ -39,7 +39,7 @@
                 {{ part.full_name }} <small><i>{{ part.description }}</i></small>
             </td>
             <td>
-                <button class='btn btn-default btn-create' onClick='newSupplierPartFromOrderWizard()' id='new_supplier_part_{{ part.id }}' part='{{ part.pk }}' title='{% trans "Create new supplier part" $}' type='button'>
+                <button class='btn btn-default btn-create' onClick='newSupplierPartFromOrderWizard()' id='new_supplier_part_{{ part.id }}' part='{{ part.pk }}' title='{% trans "Create new supplier part" %}' type='button'>
                     <span part='{{ part.pk }}' class='fas fa-plus-circle'></span>
                 </button>
             </td>
@@ -54,7 +54,7 @@
                         </select>
                     </div>
                     {% if not part.order_supplier %}
-                    <span class='help-inline'>{% trans "Select a supplier for" %} <i>{{ part.name }}</i></span>
+                    <span class='help-inline'>{% blocktrans with name=part.name %}Select a supplier for <i>{{name}}</i>{% endblocktrans %}</span>
                     {% endif %}
                 </div>
             </td>
@@ -66,7 +66,7 @@
                 </div>
             </td>
             <td>
-                <button class='btn btn-default btn-remove' onclick='removeOrderRowFromOrderWizard()' id='del_item_{{ part.id }}' title='Remove part' type='button'>
+                <button class='btn btn-default btn-remove' onclick='removeOrderRowFromOrderWizard()' id='del_item_{{ part.id }}' title='{% trans "Remove part" %}' type='button'>
                     <span row='part_row_{{ part.id }}' class='fas fa-trash-alt icon-red'></span>
                 </button>
             </td>

@@ -2,7 +2,14 @@
 {% load static %}
 {% load inventree_extras %}
 {% load i18n %}
+
+{% block menubar %}
+{% include "stock/location_navbar.html" with tab="stock" %}
+{% endblock %}
+
 {% block content %}
+
+<div class='panel panel-default panel-inventree'>
 
 {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 {% if owner_control.value == "True" %}
@@ -120,36 +127,29 @@
 </div>
 </h3>
 </div>
+</div>
 
-{% if location and location.children.all|length > 0 %}
-{% include 'stock/location_list.html' with children=location.children.all collapse_id="locations" %}
-{% elif locations|length > 0 %}
-{% include 'stock/location_list.html' with children=locations collapse_id="locations" %}
-{% endif %}
+{% block location_content %}
 
-<hr>
-
-{% include "stock_table.html" %}
+<div class='panel panel-default panel-inventree'>
+    <div class='panel-heading'>
+        <h4>{% trans "Stock Items" %}</h4>
+    </div>
+    {% include "stock_table.html" %}
 </div>
 
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
+</div>
+
 {% endblock %}
+
 {% block js_ready %}
 {{ block.super }}
 
-    if (inventreeLoadInt("show-part-locs") == 1) {
-        $("#collapse-item-locations").collapse('show');
-    }
-
-    $("#collapse-item-locations").on('shown.bs.collapse', function() {
-        inventreeSave('show-part-locs', 1);
-    });
-
-    $("#collapse-item-locations").on('hidden.bs.collapse', function() {
-        inventreeDel('show-part-locs');
+    enableNavbar({
+        label: 'location',
+        toggleId: '#location-menu-toggle'
     });
 
     {% if location %}
@@ -160,13 +160,13 @@
 
     $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: "Export",
+            submit_text: '{% trans "Export" %}',
             success: function(response) {
                 var url = "{% url 'stock-export' %}";
-                
+
                 url += "?format=" + response.format;
                 url += "&cascade=" + response.cascade;
-                
+
                 {% if location %}
                 url += "&location={{ location.id }}";
                 {% endif %}
@@ -188,8 +188,8 @@
                             secondary: [
                                 {
                                     field: 'parent',
-                                    label: 'New Location',
-                                    title: 'Create new location',
+                                    label: '{% trans "New Location" %}',
+                                    title: '{% trans "Create new location" %}',
                                     url: "{% url 'stock-location-create' %}",
                                 },
                             ]
@@ -224,9 +224,9 @@
             }
         });
     });
-    
+
     $('#print-label').click(function() {
-    
+
         var locs = [{{ location.pk }}];
 
         printStockLocationLabels(locs);        
@@ -254,14 +254,14 @@
             }
         });
     });
-    
+
     loadStockTable($("#stock-table"), {
         buttons: [
             '#stock-options',
         ],
         params: {
             {% if location %}
-            location: {{ location.id }},
+            location: {{ location.pk }},
             {% endif %}
             part_detail: true,
             location_detail: true,

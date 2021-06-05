@@ -11,7 +11,7 @@ from InvenTree.fields import RoundingDecimalFormField
 
 from mptt.fields import TreeNodeChoiceField
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 import common.models
 
@@ -96,6 +96,8 @@ class BomExportForm(forms.Form):
 
     stock_data = forms.BooleanField(label=_("Include Stock Data"), required=False, initial=False, help_text=_("Include part stock data in exported BOM"))
 
+    manufacturer_data = forms.BooleanField(label=_("Include Manufacturer Data"), required=False, initial=True, help_text=_("Include part manufacturer data in exported BOM"))
+
     supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include part supplier data in exported BOM"))
 
     def get_choices(self):
@@ -129,6 +131,7 @@ class BomDuplicateForm(HelperForm):
 
     confirm = forms.BooleanField(
         required=False, initial=False,
+        label=_('Confirm'),
         help_text=_('Confirm BOM duplication')
     )
 
@@ -147,7 +150,7 @@ class BomValidateForm(HelperForm):
     to confirm that the BOM for this part is valid
     """
 
-    validate = forms.BooleanField(required=False, initial=False, help_text=_('Confirm that the BOM is correct'))
+    validate = forms.BooleanField(required=False, initial=False, label=_('validate'), help_text=_('Confirm that the BOM is correct'))
 
     class Meta:
         model = Part
@@ -159,7 +162,7 @@ class BomValidateForm(HelperForm):
 class BomUploadSelectFile(HelperForm):
     """ Form for importing a BOM. Provides a file input box for upload """
 
-    bom_file = forms.FileField(label='BOM file', required=True, help_text=_("Select BOM file to upload"))
+    bom_file = forms.FileField(label=_('BOM file'), required=True, help_text=_("Select BOM file to upload"))
 
     class Meta:
         model = Part
@@ -321,7 +324,7 @@ class EditCategoryParameterTemplateForm(HelperForm):
     add_to_all_categories = forms.BooleanField(required=False,
                                                initial=False,
                                                help_text=_('Add parameter template to all categories'))
-    
+
     class Meta:
         model = PartCategoryParameterTemplate
         fields = [
@@ -336,9 +339,9 @@ class EditCategoryParameterTemplateForm(HelperForm):
 class EditBomItemForm(HelperForm):
     """ Form for editing a BomItem object """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
-    sub_part = PartModelChoiceField(queryset=Part.objects.all())
+    sub_part = PartModelChoiceField(queryset=Part.objects.all(), label=_('Sub part'))
 
     class Meta:
         model = BomItem
@@ -349,6 +352,7 @@ class EditBomItemForm(HelperForm):
             'reference',
             'overage',
             'note',
+            'allow_variants',
             'inherited',
             'optional',
         ]
@@ -365,6 +369,7 @@ class PartPriceForm(forms.Form):
     quantity = forms.IntegerField(
         required=True,
         initial=1,
+        label=_('Quantity'),
         help_text=_('Input quantity for price calculation')
     )
 
@@ -380,7 +385,7 @@ class EditPartSalePriceBreakForm(HelperForm):
     Form for creating / editing a sale price for a part
     """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
         model = PartSellPriceBreak

@@ -14,7 +14,29 @@
         <td>{% inventree_instance_name %}</td>
     </tr>
     <tr>
-        <td><span class='fas fa-exclamation-triangle'></span></td>
+        <td><span class='fas fa-database'></span></td>
+        <td>{% trans "Database" %}</td>
+        <td>{% inventree_db_engine %}</td>
+    </tr>
+    {% inventree_in_debug_mode as debug_mode %}
+    {% if debug_mode %}
+    <tr>
+        <td><span class='fas fa-laptop-code'></span></td>
+        <td>{% trans "Debug Mode" %}</td>
+        <td>{% trans "Server is running in debug mode" %}</td>
+    </tr>
+    {% endif %}
+    {% inventree_docker_mode as docker_mode %}
+    {% if docker_mode %}
+    <tr>
+        <td><span class='fab fa-docker'></span></td>
+        <td>{% trans "Docker Mode" %}</td>
+        <td>{% trans "Server is deployed using docker" %}</td>
+    </tr>
+    {% endif %}
+    {% if user.is_staff %}
+    <tr>
+        <td><span class='fas fa-server'></span></td>
         <td>{% trans "Server status" %}</td>
         <td>
             {% if system_healthy %}
@@ -24,6 +46,29 @@
             {% endif %}
         </td>
     </tr>
+    {% if not django_q_running %}
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Background Worker" %}</td>
+        <td>
+            <a href='https://inventree.readthedocs.io/en/latest/admin/tasks'>
+                <span class='label label-red'>{% trans "Background worker not running" %}</span>
+            </a>
+        </td>
+    </tr>
+    {% endif %}
+    {% if not email_configured %}
+    <tr>
+        <td><span class='fas fa-envelope'></span></td>
+        <td>{% trans "Email Settings" %}</td>
+        <td>
+            <a href='https://inventree.readthedocs.io/en/latest/admin/email'>
+                <span class='label label-red'>{% trans "Email settings not configured" %}</span>
+            </a>
+        </td>
+    </tr>
+    {% endif %}
+    {% endif %}
 
     {% if not system_healthy %}
     {% for issue in system_issues %}

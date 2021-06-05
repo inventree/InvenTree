@@ -1,0 +1,6 @@
+"commit_message": "Fix: New translations %original_file_name% from Crowdin"
+"append_commit_message": false
+
+files:
+  - source: /InvenTree/locale/en/LC_MESSAGES/django.po
+    translation: /InvenTree/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%

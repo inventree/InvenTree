@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block menubar %}
-{% include "company/part_navbar.html" with tab='stock' %}
+{% include "company/supplier_part_navbar.html" with tab='stock' %}
 {% endblock %}
 
 {% block heading %}
@@ -22,7 +22,7 @@
         params: {
             supplier_part: {{ part.id }},
             location_detail: true,
-            part_detail: true,
+            part_detail: false,
         },
         groupByField: 'location',
         buttons: ['#stock-options'],

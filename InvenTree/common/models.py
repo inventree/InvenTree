@@ -7,17 +7,20 @@ These models are 'generic' and do not fit a particular business logic object.
 from __future__ import unicode_literals
 
 import os
+import decimal
+import math
 
 from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
-import djmoney.settings
 from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from django.utils.translation import ugettext as _
+from common.settings import currency_code_default
+
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 
@@ -40,7 +43,7 @@ class InvenTreeSetting(models.Model):
     The key of each item is the name of the value as it appears in the database.
 
     Each global setting has the following parameters:
-    
+
     - name: Translatable string name of the setting (required)
     - description: Translatable string description of the setting (required)
     - default: Default value (optional)
@@ -58,6 +61,13 @@ class InvenTreeSetting(models.Model):
             'description': _('String descriptor for the server instance'),
         },
 
+        'INVENTREE_INSTANCE_TITLE': {
+            'name': _('Use instance name'),
+            'description': _('Use the instance name in the title-bar'),
+            'validator': bool,
+            'default': False,
+        },
+
         'INVENTREE_COMPANY_NAME': {
             'name': _('Company name'),
             'description': _('Internal company name'),
@@ -69,13 +79,6 @@ class InvenTreeSetting(models.Model):
             'description': _('Base URL for server instance'),
             'validator': URLValidator(),
             'default': '',
-        },
-
-        'INVENTREE_DEFAULT_CURRENCY': {
-            'name': _('Default Currency'),
-            'description': _('Default currency'),
-            'default': 'USD',
-            'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -405,7 +408,7 @@ class InvenTreeSetting(models.Model):
             # Evaluate the function (we expect it will return a list of tuples...)
             return choices()
         """
-        
+
         return choices
 
     @classmethod
@@ -500,7 +503,7 @@ class InvenTreeSetting(models.Model):
             create: If True, create a new setting if the specified key does not exist.
         """
 
-        if not user.is_staff:
+        if user is not None and not user.is_staff:
             return
 
         try:
@@ -515,7 +518,7 @@ class InvenTreeSetting(models.Model):
         # Enforce standard boolean representation
         if setting.is_bool():
             value = InvenTree.helpers.str2bool(value)
-            
+
         setting.value = str(value)
         setting.save()
 
@@ -657,7 +660,7 @@ class InvenTreeSetting(models.Model):
 
         if validator == int:
             return True
-        
+
         if type(validator) in [list, tuple]:
             for v in validator:
                 if v == int:
@@ -668,7 +671,7 @@ class InvenTreeSetting(models.Model):
     def as_int(self):
         """
         Return the value of this setting converted to a boolean value.
-        
+
         If an error occurs, return the default value
         """
 
@@ -678,7 +681,7 @@ class InvenTreeSetting(models.Model):
             value = self.default_value()
 
         return value
-        
+
 
 class PriceBreak(models.Model):
     """
@@ -721,6 +724,72 @@ class PriceBreak(models.Model):
             return self.price.amount
 
         return converted.amount
+
+
+def get_price(instance, quantity, moq=True, multiples=True, currency=None):
+    """ Calculate the price based on quantity price breaks.
+
+    - Don't forget to add in flat-fee cost (base_cost field)
+    - If MOQ (minimum order quantity) is required, bump quantity
+    - If order multiples are to be observed, then we need to calculate based on that, too
+    """
+
+    price_breaks = instance.price_breaks.all()
+
+    # No price break information available?
+    if len(price_breaks) == 0:
+        return None
+
+    # Check if quantity is fraction and disable multiples
+    multiples = (quantity % 1 == 0)
+
+    # Order multiples
+    if multiples:
+        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
+
+    pb_found = False
+    pb_quantity = -1
+    pb_cost = 0.0
+
+    if currency is None:
+        # Default currency selection
+        currency = currency_code_default()
+
+    pb_min = None
+    for pb in instance.price_breaks.all():
+        # Store smallest price break
+        if not pb_min:
+            pb_min = pb
+
+        # Ignore this pricebreak (quantity is too high)
+        if pb.quantity > quantity:
+            continue
+
+        pb_found = True
+
+        # If this price-break quantity is the largest so far, use it!
+        if pb.quantity > pb_quantity:
+            pb_quantity = pb.quantity
+
+            # Convert everything to the selected currency
+            pb_cost = pb.convert_to(currency)
+
+    # Use smallest price break
+    if not pb_found and pb_min:
+        # Update price break information
+        pb_quantity = pb_min.quantity
+        pb_cost = pb_min.convert_to(currency)
+        # Trigger cost calculation using smallest price break
+        pb_found = True
+
+    # Convert quantity to decimal.Decimal format
+    quantity = decimal.Decimal(f'{quantity}')
+
+    if pb_found:
+        cost = pb_cost * quantity
+        return InvenTree.helpers.normalize(cost + instance.base_cost)
+    else:
+        return None
 
 
 class ColorTheme(models.Model):

@@ -39,11 +39,11 @@ function loadCompanyTable(table, url, options={}) {
                 if (row.is_customer) {
                     html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie label-right'></span>`;
                 }
-                
+
                 if (row.is_manufacturer) {
                     html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry label-right'></span>`;
                 }
-                
+
                 if (row.is_supplier) {
                     html += `<span title='{% trans "Supplier" %}' class='fas fa-building label-right'></span>`;
                 }
@@ -101,6 +101,104 @@ function loadCompanyTable(table, url, options={}) {
 }
 
 
+function loadManufacturerPartTable(table, url, options) {
+    /*
+     * Load manufacturer part table
+     *
+     */
+
+    // Query parameters
+    var params = options.params || {};
+
+    // Load filters
+    var filters = loadTableFilters("manufacturer-part");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("manufacturer-part", $(table));
+
+    $(table).inventreeTable({
+        url: url,
+        method: 'get',
+        original: params,
+        queryParams: filters,
+        name: 'manufacturerparts',
+        groupBy: false,
+        formatNoMatches: function() { return "{% trans "No manufacturer parts found" %}"; },
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
+                sortable: true,
+                field: 'part_detail.full_name',
+                title: '{% trans "Part" %}',
+                formatter: function(value, row, index, field) {
+
+                    var url = `/part/${row.part}/`;
+
+                    var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
+
+                    if (row.part_detail.is_template) {
+                        html += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
+                    }
+
+                    if (row.part_detail.assembly) {
+                        html += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
+                    }
+
+                    if (!row.part_detail.active) {
+                        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
+                sortable: true,
+                field: 'manufacturer',
+                title: '{% trans "Manufacturer" %}',
+                formatter: function(value, row, index, field) {
+                    if (value && row.manufacturer_detail) {
+                        var name = row.manufacturer_detail.name;
+                        var url = `/company/${value}/`;
+                        var html = imageHoverIcon(row.manufacturer_detail.image) + renderLink(name, url);
+
+                        return html;
+                    } else {
+                        return "-";
+                    }
+                }
+            },
+            {
+                sortable: true,
+                field: 'MPN',
+                title: '{% trans "MPN" %}',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, `/manufacturer-part/${row.pk}/`);
+                }
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '';
+                    }
+                }
+            },
+        ],
+    });
+}
+
+
 function loadSupplierPartTable(table, url, options) {
     /*
      * Load supplier part table
@@ -133,10 +231,11 @@ function loadSupplierPartTable(table, url, options) {
                 switchable: false,
             },
             {
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                switchable: false,
                 formatter: function(value, row, index, field) {
 
                     var url = `/part/${row.part}/`;
@@ -183,6 +282,8 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                visible: params['manufacturer_detail'],
+                switchable: params['manufacturer_detail'],
                 sortable: true,
                 field: 'manufacturer',
                 title: '{% trans "Manufacturer" %}',
@@ -199,9 +300,18 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                visible: params['manufacturer_detail'],
+                switchable: params['manufacturer_detail'],
                 sortable: true,
                 field: 'MPN',
                 title: '{% trans "MPN" %}',
+                formatter: function(value, row, index, field) {
+                    if (value && row.manufacturer_part) {
+                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part.pk}/`);
+                    } else {
+                        return "-";
+                    }
+                }
             },
             {
                 field: 'link',

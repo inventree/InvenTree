@@ -2,6 +2,10 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include 'part/category_navbar.html' with tab='parts' %}
+{% endblock %}
+
 {% block content %}
 
 <div class='panel panel-default panel-inventree'>
@@ -100,13 +104,9 @@
         </div>
     </div>
 
-    {% if category and category.children.all|length > 0 %}
-    {% include "part/subcategories.html" with children=category.children.all collapse_id="categories" %}
-    {% elif children|length > 0 %}
-    {% include "part/subcategories.html" with children=children collapse_id="categories" %}
-    {% endif %}
-
 </div>
+
+{% block category_content %}
 
 <div id='button-toolbar'>
     <div class='btn-group'>
@@ -128,6 +128,13 @@
                 <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
             </ul>
         </div>
+        <!-- Buttons to toggle between grid and table view -->
+        <button id='view-list' class='btn btn-default' type='button' title='{% trans "View list display" %}'>
+            <span class='fas fa-th-list'></span>
+        </button>
+        <button id='view-grid' class='btn btn-default' type='button' title='{% trans "View grid display" %}'>
+            <span class='fas fa-th'></span>
+        </button>
         <div class='filter-list' id='filter-list-parts'>
             <!-- Empty div -->
         </div>
@@ -138,7 +145,7 @@
     <div class='panel-heading'>
         <h4>
             {% block heading %}
-            {% trans "Part Categories" %}
+            {% trans "Parts" %}
             {% endblock %}
         </h4>
     </div>
@@ -149,6 +156,8 @@
         {% endblock %}
     </div>
 </div>
+
+{% endblock %}
 
 
 {% block category_tables %}
@@ -162,23 +171,25 @@
 {% block js_ready %}
 {{ block.super }}
 
-    {% if category %}
     enableNavbar({
         label: 'category',
         toggleId: '#category-menu-toggle',
     });
-    {% endif %}
 
-    if (inventreeLoadInt("show-part-cats") == 1) {
-        $("#collapse-item-categories").collapse('show');
-    }
+    $('#view-list').click(function() {
+        $('#view-list').hide();
+        $('#view-grid').show();
 
-    $("#collapse-item-categories").on('shown.bs.collapse', function() {
-        inventreeSave('show-part-cats', 1);
+        $('#part-table').bootstrapTable('toggleCustomView');
+        inventreeSave('part-grid-view', '');
     });
-    
-    $("#collapse-item-categories").on('hidden.bs.collapse', function() {
-        inventreeDel('show-part-cats');
+
+    $('#view-grid').click(function() {
+        $('#view-grid').hide();
+        $('#view-list').show();
+
+        $('#part-table').bootstrapTable('toggleCustomView');
+        inventreeSave('part-grid-view', 1);
     });
 
     $("#cat-create").click(function() {
@@ -210,7 +221,7 @@
     })
 
     $("#part-export").click(function() {
-        
+
         var url = "{% url 'part-export' %}?category={{ category.id }}";
 
         location.href = url;
@@ -285,7 +296,15 @@
             },
             buttons: ['#part-options'],
             checkbox: true,
+            gridView: true,
         },
     );
+
+    if (inventreeLoad("part-grid-view")) {
+        $('#view-grid').hide();
+        $('#part-table').bootstrapTable('toggleCustomView');
+    } else {
+        $('#view-list').hide();
+    }
 
 {% endblock %}

@@ -15,6 +15,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.core.exceptions import ValidationError, FieldError
 
+from django.template import Template, Context
 from django.template.loader import render_to_string
 
 from django.utils.translation import gettext_lazy as _
@@ -32,7 +33,7 @@ except OSError as err:
     sys.exit(1)
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 def rename_label(instance, filename):
@@ -44,7 +45,7 @@ def rename_label(instance, filename):
 
 
 def validate_stock_item_filters(filters):
-    
+
     filters = validateFilterString(filters, model=stock.models.StockItem)
 
     return filters
@@ -82,7 +83,7 @@ class LabelTemplate(models.Model):
 
     # Each class of label files will be stored in a separate subdirectory
     SUBDIR = "label"
-    
+
     # Object we will be printing against (will be filled out later)
     object_to_print = None
 
@@ -126,7 +127,7 @@ class LabelTemplate(models.Model):
 
     width = models.FloatField(
         default=50,
-        verbose_name=('Width [mm]'),
+        verbose_name=_('Width [mm]'),
         help_text=_('Label width, specified in mm'),
         validators=[MinValueValidator(2)]
     )
@@ -136,6 +137,13 @@ class LabelTemplate(models.Model):
         verbose_name=_('Height [mm]'),
         help_text=_('Label height, specified in mm'),
         validators=[MinValueValidator(2)]
+    )
+
+    filename_pattern = models.CharField(
+        default="label.pdf",
+        verbose_name=_('Filename Pattern'),
+        help_text=_('Pattern for generating label filenames'),
+        max_length=100,
     )
 
     @property
@@ -161,6 +169,19 @@ class LabelTemplate(models.Model):
         """
 
         return {}
+
+    def generate_filename(self, request, **kwargs):
+        """
+        Generate a filename for this label
+        """
+
+        template_string = Template(self.filename_pattern)
+        
+        ctx = self.context(request)
+
+        context = Context(ctx)
+
+        return template_string.render(context)
 
     def context(self, request):
         """
@@ -201,6 +222,7 @@ class LabelTemplate(models.Model):
             self.template_name,
             base_url=request.build_absolute_uri("/"),
             presentational_hints=True,
+            filename=self.generate_filename(request),
             **kwargs
         )
 
@@ -253,10 +275,12 @@ class StockItemLabel(LabelTemplate):
             'part': stock_item.part,
             'name': stock_item.part.full_name,
             'ipn': stock_item.part.IPN,
+            'revision': stock_item.part.revision,
             'quantity': normalize(stock_item.quantity),
             'serial': stock_item.serial,
             'uid': stock_item.uid,
             'qr_data': stock_item.format_barcode(brief=True),
+            'qr_url': stock_item.format_barcode(url=True, request=request),
             'tests': stock_item.testResultMap()
         }
 

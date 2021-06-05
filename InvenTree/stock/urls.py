@@ -4,19 +4,27 @@ URL lookup for Stock app
 
 from django.conf.urls import url, include
 
-from . import views
+from stock import views
 
-# URL list for web interface
-stock_location_detail_urls = [
-    url(r'^edit/?', views.StockLocationEdit.as_view(), name='stock-location-edit'),
-    url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
-    url(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
+location_urls = [
 
-    # Anything else
-    url('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
+    url(r'^new/', views.StockLocationCreate.as_view(), name='stock-location-create'),
+
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^edit/?', views.StockLocationEdit.as_view(), name='stock-location-edit'),
+        url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
+        url(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
+
+        url(r'sublocation/', views.StockLocationDetail.as_view(template_name='stock/sublocation.html'), name='stock-location-sublocation'),
+
+        # Anything else
+        url('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
+    ])),
+
 ]
 
 stock_item_detail_urls = [
+    url(r'^edit_status/', views.StockItemEditStatus.as_view(), name='stock-item-edit-status'),
     url(r'^edit/', views.StockItemEdit.as_view(), name='stock-item-edit'),
     url(r'^convert/', views.StockItemConvert.as_view(), name='stock-item-convert'),
     url(r'^serialize/', views.StockItemSerialize.as_view(), name='stock-item-serialize'),
@@ -49,9 +57,7 @@ stock_tracking_urls = [
 
 stock_urls = [
     # Stock location
-    url(r'^location/(?P<pk>\d+)/', include(stock_location_detail_urls)),
-
-    url(r'^location/new/', views.StockLocationCreate.as_view(), name='stock-location-create'),
+    url(r'^location/', include(location_urls)),
 
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
@@ -80,6 +86,8 @@ stock_urls = [
 
     # Individual stock items
     url(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
+
+    url(r'^sublocations/', views.StockIndex.as_view(template_name='stock/sublocation.html'), name='stock-sublocations'),
 
     url(r'^.*$', views.StockIndex.as_view(), name='stock-index'),
 ]

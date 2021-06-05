@@ -3,14 +3,17 @@ Django Forms for interacting with Build objects
 """
 
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
+
+from InvenTree.status_codes import StockStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
 
@@ -36,11 +39,13 @@ class EditBuildForm(HelperForm):
     }
 
     target_date = DatePickerFormField(
+        label=_('Target Date'),
         help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
     quantity = RoundingDecimalFormField(
         max_digits=10, decimal_places=5,
+        label=_('Quantity'),
         help_text=_('Number of items to build')
     )
 
@@ -87,7 +92,7 @@ class BuildOutputCreateForm(HelperForm):
     )
 
     serial_numbers = forms.CharField(
-        label=_('Serial numbers'),
+        label=_('Serial Numbers'),
         required=False,
         help_text=_('Enter serial numbers for build outputs'),
     )
@@ -115,6 +120,7 @@ class BuildOutputDeleteForm(HelperForm):
 
     confirm = forms.BooleanField(
         required=False,
+        label=_('Confirm'),
         help_text=_('Confirm deletion of build output')
     )
 
@@ -136,7 +142,7 @@ class UnallocateBuildForm(HelperForm):
     Form for auto-de-allocation of stock from a build
     """
 
-    confirm = forms.BooleanField(required=False, help_text=_('Confirm unallocation of stock'))
+    confirm = forms.BooleanField(required=False, label=_('Confirm'), help_text=_('Confirm unallocation of stock'))
 
     output_id = forms.IntegerField(
         required=False,
@@ -160,18 +166,12 @@ class UnallocateBuildForm(HelperForm):
 class AutoAllocateForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 
-    confirm = forms.BooleanField(required=True, help_text=_('Confirm stock allocation'))
-
-    # Keep track of which build output we are interested in
-    output = forms.ModelChoiceField(
-        queryset=StockItem.objects.all(),
-    )
+    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Confirm stock allocation'))
 
     class Meta:
         model = Build
         fields = [
             'confirm',
-            'output',
         ]
 
 
@@ -207,15 +207,24 @@ class CompleteBuildOutputForm(HelperForm):
 
     location = forms.ModelChoiceField(
         queryset=StockLocation.objects.all(),
+        label=_('Location'),
         help_text=_('Location of completed parts'),
+    )
+
+    stock_status = forms.ChoiceField(
+        label=_('Status'),
+        help_text=_('Build output stock status'),
+        initial=StockStatus.OK,
+        choices=StockStatus.items(),
     )
 
     confirm_incomplete = forms.BooleanField(
         required=False,
+        label=_('Confirm incomplete'),
         help_text=_("Confirm completion with incomplete stock allocation")
     )
 
-    confirm = forms.BooleanField(required=True, help_text=_('Confirm build completion'))
+    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Confirm build completion'))
 
     output = forms.ModelChoiceField(
         queryset=StockItem.objects.all(),  # Queryset is narrowed in the view
@@ -227,15 +236,20 @@ class CompleteBuildOutputForm(HelperForm):
         fields = [
             'location',
             'output',
+            'stock_status',
             'confirm',
             'confirm_incomplete',
         ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
 
 
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 
-    confirm_cancel = forms.BooleanField(required=False, help_text=_('Confirm build cancellation'))
+    confirm_cancel = forms.BooleanField(required=False, label=_('Confirm cancel'), help_text=_('Confirm build cancellation'))
 
     class Meta:
         model = Build
@@ -249,7 +263,7 @@ class EditBuildItemForm(HelperForm):
     Form for creating (or editing) a BuildItem object.
     """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, help_text=_('Select quantity of stock to allocate'))
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'), help_text=_('Select quantity of stock to allocate'))
 
     part_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
 

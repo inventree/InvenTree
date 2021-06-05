@@ -4,9 +4,10 @@
 
 {% block pre_form_content %}
 
-{% if fully_allocated %}
-<div class='alert alert-block alert-info'>
-    <h4>{% trans "Stock allocation is complete" %}</h4>
+{% if not build.has_tracked_bom_items %}
+{% elif fully_allocated %}
+<div class='alert alert-block alert-success'>
+    {% trans "Stock allocation is complete for this output" %}
 </div>
 {% else %}
 <div class='alert alert-block alert-danger'>
@@ -16,7 +17,7 @@
         <div class='panel panel-default'>
             <div class='panel panel-heading'>
                 <a data-toggle='collapse' href='#collapse-unallocated'>
-                    {{ unallocated_parts|length }} {% trans "parts have not been fully allocated" %}
+                    {{ unallocated_parts|length }} {% trans "tracked parts have not been fully allocated" %}
                 </a>
             </div>
             <div class='panel-collapse collapse' id='collapse-unallocated'>
@@ -39,9 +40,13 @@
     <div class='panel-heading'>
         {% trans "The following items will be created" %}
     </div>
-    <div class='panel-content'>
-        {% include "hover_image.html" with image=build.part.image hover=True %}
+    <div class='panel-content' style='padding-bottom:16px'>
+        {% include "hover_image.html" with image=build.part.image %}
+        {% if output.serialized %}
+        {{ output.part.full_name }} - {% trans "Serial Number" %} {{ output.serial }}
+        {% else %}
         {% decimal output.quantity %} x {{ output.part.full_name }}
+        {% endif %}
     </div>
 </div>
 

@@ -17,7 +17,7 @@ import json
 
 
 class OrderViewTestCase(TestCase):
-    
+
     fixtures = [
         'category',
         'part',
@@ -193,7 +193,7 @@ class POTests(OrderViewTestCase):
         # Test without confirmation
         response = self.client.post(url, {'confirm': 0}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.content)
 
         self.assertFalse(data['form_valid'])
@@ -221,7 +221,7 @@ class POTests(OrderViewTestCase):
 
         # GET the form (pass the correct info)
         response = self.client.get(url, {'order': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+
         post_data = {
             'part': 100,
             'quantity': 45,
@@ -303,7 +303,7 @@ class TestPOReceive(OrderViewTestCase):
         self.client.get(self.url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
     def test_receive_lines(self):
-        
+
         post_data = {
         }
 
@@ -330,7 +330,7 @@ class TestPOReceive(OrderViewTestCase):
 
         # Receive negative number
         post_data['line-1'] = -100
-        
+
         self.post(post_data, validate=False)
 
         # Receive 75 items

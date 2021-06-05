@@ -4,7 +4,7 @@
 {% load inventree_extras %}
 
 {% block menubar %}
-{% include "company/part_navbar.html" with tab='pricing' %}
+{% include "company/supplier_part_navbar.html" with tab='pricing' %}
 {% endblock %}
 
 {% block heading %}
@@ -40,7 +40,7 @@ $('#price-break-table').inventreeTable({
         part: {{ part.id }},
     },
     url: "{% url 'api-part-supplier-price' %}",
-    onLoadSuccess: function() {
+    onPostBody: function() {
         var table = $('#price-break-table');
 
         table.find('.button-price-break-delete').click(function() {
@@ -90,7 +90,7 @@ $('#price-break-table').inventreeTable({
                 html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
 
                 html += `</div>`;
-    
+
                 return html;
             }
         },

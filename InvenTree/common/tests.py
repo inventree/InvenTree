@@ -19,7 +19,7 @@ class SettingsTest(TestCase):
     def setUp(self):
 
         user = get_user_model()
-        
+
         self.user = user.objects.create_user('username', 'user@email.com', 'password')
         self.user.is_staff = True
         self.user.save()

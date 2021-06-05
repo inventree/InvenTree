@@ -15,7 +15,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from markdownx.models import MarkdownxField
 
@@ -28,7 +28,7 @@ from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeAttachment
 
 
@@ -96,18 +96,19 @@ class Order(models.Model):
     class Meta:
         abstract = True
 
-    reference = models.CharField(unique=True, max_length=64, blank=False, help_text=_('Order reference'))
+    reference = models.CharField(unique=True, max_length=64, blank=False, verbose_name=_('Reference'), help_text=_('Order reference'))
 
-    description = models.CharField(max_length=250, help_text=_('Order description'))
+    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
-    link = models.URLField(blank=True, help_text=_('Link to external page'))
+    link = models.URLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
-    creation_date = models.DateField(blank=True, null=True)
+    creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
 
     created_by = models.ForeignKey(User,
                                    on_delete=models.SET_NULL,
                                    blank=True, null=True,
-                                   related_name='+'
+                                   related_name='+',
+                                   verbose_name=_('Created By')
                                    )
 
     responsible = models.ForeignKey(
@@ -119,7 +120,7 @@ class Order(models.Model):
         related_name='+',
     )
 
-    notes = MarkdownxField(blank=True, help_text=_('Order notes'))
+    notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
 
 class PurchaseOrder(Order):
@@ -186,16 +187,18 @@ class PurchaseOrder(Order):
             'is_supplier': True,
         },
         related_name='purchase_orders',
+        verbose_name=_('Supplier'),
         help_text=_('Company from which the items are being ordered')
     )
 
-    supplier_reference = models.CharField(max_length=64, blank=True, help_text=_("Supplier order reference code"))
+    supplier_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Supplier Reference'), help_text=_("Supplier order reference code"))
 
     received_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('received by')
     )
 
     issue_date = models.DateField(
@@ -220,7 +223,7 @@ class PurchaseOrder(Order):
         return reverse('po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
-    def add_line_item(self, supplier_part, quantity, group=True, reference=''):
+    def add_line_item(self, supplier_part, quantity, group=True, reference='', purchase_price=None):
         """ Add a new line item to this purchase order.
         This function will check that:
 
@@ -251,7 +254,12 @@ class PurchaseOrder(Order):
             if matches.count() > 0:
                 line = matches.first()
 
-                line.quantity += quantity
+                # update quantity and price
+                quantity_new = line.quantity + quantity
+                line.quantity = quantity_new
+                supplier_price = supplier_part.get_price(quantity_new)
+                if line.purchase_price and supplier_price:
+                    line.purchase_price = supplier_price / quantity_new
                 line.save()
 
                 return
@@ -260,7 +268,9 @@ class PurchaseOrder(Order):
             order=self,
             part=supplier_part,
             quantity=quantity,
-            reference=reference)
+            reference=reference,
+            purchase_price=purchase_price,
+        )
 
         line.save()
 
@@ -299,7 +309,7 @@ class PurchaseOrder(Order):
         """
         A PurchaseOrder can only be cancelled under the following circumstances:
         """
-        
+
         return self.status in [
             PurchaseOrderStatus.PLACED,
             PurchaseOrderStatus.PENDING
@@ -326,38 +336,52 @@ class PurchaseOrder(Order):
         return self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK):
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None, **kwargs):
         """ Receive a line item (or partial line item) against this PO
         """
+
+        notes = kwargs.get('notes', '')
 
         if not self.status == PurchaseOrderStatus.PLACED:
             raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
 
         try:
+            if not (quantity % 1 == 0):
+                raise ValidationError({"quantity": _("Quantity must be an integer")})
+            if quantity < 0:
+                raise ValidationError({"quantity": _("Quantity must be a positive number")})
             quantity = int(quantity)
-            if quantity <= 0:
-                raise ValidationError({"quantity": _("Quantity must be greater than zero")})
-        except ValueError:
+        except (ValueError, TypeError):
             raise ValidationError({"quantity": _("Invalid quantity provided")})
 
         # Create a new stock item
-        if line.part:
+        if line.part and quantity > 0:
             stock = stock_models.StockItem(
                 part=line.part.part,
                 supplier_part=line.part,
                 location=location,
                 quantity=quantity,
                 purchase_order=self,
-                status=status
+                status=status,
+                purchase_price=purchase_price,
             )
 
-            stock.save()
+            stock.save(add_note=False)
 
-            text = _("Received items")
-            note = f"{_('Received')} {quantity} {_('items against order')} {str(self)}"
+            tracking_info = {
+                'status': status,
+                'purchaseorder': self.pk,
+            }
 
-            # Add a new transaction note to the newly created stock item
-            stock.addTransactionNote(text, user, note)
+            stock.add_tracking_entry(
+                StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+                user,
+                notes=notes,
+                deltas=tracking_info,
+                location=location,
+                purchaseorder=self,
+                quantity=quantity
+            )
 
         # Update the number of parts received against the particular line item
         line.received += quantity
@@ -365,7 +389,7 @@ class PurchaseOrder(Order):
 
         # Has this order been completed?
         if len(self.pending_line_items()) == 0:
-            
+
             self.received_by = user
             self.complete_order()  # This will save the model
 
@@ -406,7 +430,7 @@ class SalesOrder(Order):
         except (ValueError, TypeError):
             # Date processing error, return queryset unchanged
             return queryset
- 
+
         # Construct a queryset for "completed" orders within the range
         completed = Q(status__in=SalesOrderStatus.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
 
@@ -434,13 +458,14 @@ class SalesOrder(Order):
         null=True,
         limit_choices_to={'is_customer': True},
         related_name='sales_orders',
+        verbose_name=_('Customer'),
         help_text=_("Company to which the items are being sold"),
     )
 
     status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
-                                         help_text=_('Purchase order status'))
+                                         verbose_name=_('Status'), help_text=_('Purchase order status'))
 
-    customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
+    customer_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Customer Reference '), help_text=_("Customer order reference code"))
 
     target_date = models.DateField(
         null=True, blank=True,
@@ -448,13 +473,14 @@ class SalesOrder(Order):
         help_text=_('Target date for order completion. Order will be overdue after this date.')
     )
 
-    shipment_date = models.DateField(blank=True, null=True)
+    shipment_date = models.DateField(blank=True, null=True, verbose_name=_('Shipment Date'))
 
     shipped_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('shipped by')
     )
 
     @property
@@ -480,7 +506,7 @@ class SalesOrder(Order):
         for line in self.lines.all():
             if not line.is_fully_allocated():
                 return False
-            
+
         return True
 
     def is_over_allocated(self):
@@ -575,26 +601,26 @@ class SalesOrderAttachment(InvenTreeAttachment):
 
 class OrderLineItem(models.Model):
     """ Abstract model for an order line item
-    
+
     Attributes:
         quantity: Number of items
         note: Annotation for the item
-        
+
     """
 
     class Meta:
         abstract = True
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Item quantity'))
 
-    reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
-    
-    notes = models.CharField(max_length=500, blank=True, help_text=_('Line item notes'))
+    reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
+
+    notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
 
 class PurchaseOrderLineItem(OrderLineItem):
     """ Model for a purchase order line item.
-    
+
     Attributes:
         order: Reference to a PurchaseOrder object
 
@@ -615,23 +641,25 @@ class PurchaseOrderLineItem(OrderLineItem):
     order = models.ForeignKey(
         PurchaseOrder, on_delete=models.CASCADE,
         related_name='lines',
+        verbose_name=_('Order'),
         help_text=_('Purchase Order')
     )
 
     def get_base_part(self):
         """ Return the base-part for the line item """
         return self.part.part
-    
+
     # TODO - Function callback for when the SupplierPart is deleted?
 
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='purchase_order_line_items',
+        verbose_name=_('Part'),
         help_text=_("Supplier part"),
     )
 
-    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, help_text=_('Number of items received'))
+    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received'), help_text=_('Number of items received'))
 
     purchase_price = MoneyField(
         max_digits=19,
@@ -655,11 +683,21 @@ class SalesOrderLineItem(OrderLineItem):
     Attributes:
         order: Link to the SalesOrder that this line item belongs to
         part: Link to a Part object (may be null)
+        sale_price: The unit sale price for this OrderLineItem
     """
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
-    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
+
+    sale_price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency='USD',
+        null=True, blank=True,
+        verbose_name=_('Sale Price'),
+        help_text=_('Unit sale price'),
+    )
 
     class Meta:
         unique_together = [
@@ -759,7 +797,7 @@ class SalesOrderAllocation(models.Model):
         if len(errors) > 0:
             raise ValidationError(errors)
 
-    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, related_name='allocations')
+    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, verbose_name=_('Line'), related_name='allocations')
 
     item = models.ForeignKey(
         'stock.StockItem',
@@ -770,10 +808,11 @@ class SalesOrderAllocation(models.Model):
             'belongs_to': None,
             'sales_order': None,
         },
+        verbose_name=_('Item'),
         help_text=_('Select stock item to allocate')
     )
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Enter stock allocation quantity'))
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Enter stock allocation quantity'))
 
     def get_serial(self):
         return self.item.serial
@@ -786,6 +825,9 @@ class SalesOrderAllocation(models.Model):
             return self.item.location.pathstring
         else:
             return ""
+
+    def get_po(self):
+        return self.item.purchase_order
 
     def complete_allocation(self, user):
         """

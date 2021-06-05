@@ -7,13 +7,11 @@
 #       with the prefix INVENTREE_DB_
 #       e.g INVENTREE_DB_NAME / INVENTREE_DB_USER / INVENTREE_DB_PASSWORD
 database:
-  # Default configuration - sqlite filesystem database
-  ENGINE: sqlite3
-  NAME: '../inventree_default_db.sqlite3' 
-  
-  # For more complex database installations, further parameters are required
+  # Uncomment (and edit) one of the database configurations below,
+  # or specify database options using environment variables
+
   # Refer to the django documentation for full list of options
-  
+
   # --- Available options: ---
   # ENGINE: Database engine. Selection from:
   #         - sqlite3
@@ -27,14 +25,22 @@ database:
 
   # --- Example Configuration - sqlite3 ---
   # ENGINE: sqlite3
-  # NAME: '/path/to/database.sqlite3'
+  # NAME: '/home/inventree/database.sqlite3'
 
   # --- Example Configuration - MySQL ---
-  #ENGINE: django.db.backends.mysql
+  #ENGINE: mysql
   #NAME: inventree
-  #USER: inventree_username
+  #USER: inventree
   #PASSWORD: inventree_password
-  #HOST: '127.0.0.1'
+  #HOST: 'localhost'
+  #PORT: '3306'
+
+  # --- Example Configuration - Postgresql ---
+  #ENGINE: postgresql
+  #NAME: inventree
+  #USER: inventree
+  #PASSWORD: inventree_password
+  #HOST: 'localhost'
   #PORT: '5432'
 
 # Select default system language (default is 'en-us')
@@ -43,7 +49,11 @@ language: en-us
 # System time-zone (default is UTC)
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 # Select an option from the "TZ database name" column
+# Use the environment variable INVENTREE_TIMEZONE
 timezone: UTC
+
+# Base currency code
+base_currency: USD
 
 # List of currencies supported by default.
 # Add other currencies here to allow use in InvenTree
@@ -56,7 +66,34 @@ currencies:
   - NZD
   - USD
 
+# Email backend configuration
+# Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# Available options:
+# host: Email server host address
+# port: Email port
+# username: Account username
+# password: Account password
+# prefix: Email subject prefix
+# tls: Enable TLS support
+# ssl: Enable SSL support
+
+# Alternatively, these options can all be set using environment variables,
+# with the INVENTREE_EMAIL_ prefix:
+# e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
+# Refer to the InvenTree documentation for more information
+
+email:
+  # backend: 'django.core.mail.backends.smtp.EmailBackend'
+  host: ''
+  port: 25
+  username: ''
+  password: ''
+  sender: ''
+  tls: False
+  ssl: False
+
 # Set debug to False to run in production mode
+# Use the environment variable INVENTREE_DEBUG
 debug: True
 
 # Set debug_toolbar to True to enable a debugging toolbar for InvenTree
@@ -65,6 +102,7 @@ debug: True
 debug_toolbar: False
 
 # Configure the system logging level
+# Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
@@ -79,20 +117,21 @@ allowed_hosts:
 cors:
   # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted.
   allow_all: True
-  
+
   # CORS_ORIGIN_WHITELIST - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
   # whitelist:
   # - https://example.com
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# By default, it is stored in a directory named 'inventree_media' local to the InvenTree directory
-# This should be changed for a production installation
-media_root: '../inventree_media'
+# By default, it is stored under /home/inventree/data/media
+# Use environment variable INVENTREE_MEDIA_ROOT
+media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# By default it is stored in a directory named 'inventree_static' local to the InvenTree directory
-static_root: '../inventree_static'
+# By default, it is stored under /home/inventree
+# Use environment variable INVENTREE_STATIC_ROOT
+static_root: '/home/inventree/static'
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
@@ -101,11 +140,6 @@ static_root: '../inventree_static'
 #  - mailto
 #  - git
 #  - ssh
-
-# Backup options
-# Set the backup_dir parameter to store backup files in a specific location
-# If unspecified, the local user's temp directory will be used
-#backup_dir: '/home/inventree/backup/'
 
 # Permit custom authentication backends
 #authentication_backends:

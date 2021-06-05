@@ -56,7 +56,7 @@ class LocationAdmin(ImportExportModelAdmin):
 class StockItemResource(ModelResource):
     """ Class for managing StockItem data import/export """
 
-    # Custom manaegrs for ForeignKey fields
+    # Custom managers for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
     part_name = Field(attribute='part__full_name', readonly=True)
@@ -87,7 +87,7 @@ class StockItemResource(ModelResource):
 
     # Date management
     updated = Field(attribute='updated', widget=widgets.DateWidget())
-    
+
     stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
@@ -127,10 +127,10 @@ class StockItemAdmin(ImportExportModelAdmin):
 class StockAttachmentAdmin(admin.ModelAdmin):
 
     list_display = ('stock_item', 'attachment', 'comment')
-    
+
 
 class StockTrackingAdmin(ImportExportModelAdmin):
-    list_display = ('item', 'date', 'title')
+    list_display = ('item', 'date', 'label')
 
 
 class StockItemTestResultAdmin(admin.ModelAdmin):

@@ -119,7 +119,7 @@ class APITests(InvenTreeAPITestCase):
             self.assertNotIn('add', roles[rule])
             self.assertNotIn('change', roles[rule])
             self.assertNotIn('delete', roles[rule])
-    
+
     def test_with_superuser(self):
         """
         Superuser should have *all* roles assigned

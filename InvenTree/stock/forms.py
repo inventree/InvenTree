@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from django.forms.utils import ErrorDict
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
@@ -111,13 +111,14 @@ class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
     expiry_date = DatePickerFormField(
-        help_text=('Expiration date for this stock item'),
+        label=_('Expiry Date'),
+        help_text=_('Expiration date for this stock item'),
     )
 
-    serial_numbers = forms.CharField(label=_('Serial numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
+    serial_numbers = forms.CharField(label=_('Serial Numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
     def __init__(self, *args, **kwargs):
-        
+
         self.field_prefix = {
             'serial_numbers': 'fa-hashtag',
             'link': 'fa-link',
@@ -146,17 +147,17 @@ class CreateStockItemForm(HelperForm):
     # Custom clean to prevent complex StockItem.clean() logic from running (yet)
     def full_clean(self):
         self._errors = ErrorDict()
-        
+
         if not self.is_bound:  # Stop further processing.
             return
-        
+
         self.cleaned_data = {}
 
         # If the form is permitted to be empty, and none of the form data has
         # changed from the initial data, short circuit any validation.
         if self.empty_permitted and not self.has_changed():
             return
-        
+
         # Don't run _post_clean() as this will run StockItem.clean()
         self._clean_fields()
         self._clean_form()
@@ -165,13 +166,13 @@ class CreateStockItemForm(HelperForm):
 class SerializeStockForm(HelperForm):
     """ Form for serializing a StockItem. """
 
-    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
-    
-    serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
-    
-    note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
+    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination for serialized stock (by default, will remain in current location)'))
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    serial_numbers = forms.CharField(label=_('Serial numbers'), required=True, help_text=_('Unique serial numbers (must match quantity)'))
+
+    note = forms.CharField(label=_('Notes'), required=False, help_text=_('Add transaction note (optional)'))
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     def __init__(self, *args, **kwargs):
 
@@ -239,7 +240,7 @@ class TestReportFormatForm(HelperForm):
 
         super().__init__(*args, **kwargs)
         self.fields['template'].choices = self.get_template_choices()
-    
+
     def get_template_choices(self):
         """
         Generate a list of of TestReport options for the StockItem
@@ -263,7 +264,7 @@ class ExportOptionsForm(HelperForm):
 
     file_format = forms.ChoiceField(label=_('File Format'), help_text=_('Select output file format'))
 
-    include_sublocations = forms.BooleanField(required=False, initial=True, help_text=_("Include stock items in sub locations"))
+    include_sublocations = forms.BooleanField(required=False, initial=True, label=_('Include sublocations'), help_text=_("Include stock items in sub locations"))
 
     class Meta:
         model = StockLocation
@@ -336,7 +337,7 @@ class InstallStockForm(HelperForm):
             raise ValidationError({'quantity_to_install': _('Must not exceed available quantity')})
 
         return data
-        
+
 
 class UninstallStockForm(forms.ModelForm):
     """
@@ -372,11 +373,11 @@ class AdjustStockForm(forms.ModelForm):
     """
 
     destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination stock location'))
-    
+
     note = forms.CharField(label=_('Notes'), required=True, help_text=_('Add note (required)'))
-    
+
     # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
-    
+
     confirm = forms.BooleanField(required=False, initial=False, label=_('Confirm stock adjustment'), help_text=_('Confirm movement of stock items'))
 
     set_loc = forms.BooleanField(required=False, initial=False, label=_('Set Default Location'), help_text=_('Set the destination as the default location for selected parts'))
@@ -392,17 +393,30 @@ class AdjustStockForm(forms.ModelForm):
         ]
 
 
+class EditStockItemStatusForm(HelperForm):
+    """
+    Simple form for editing StockItem status field
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'status',
+        ]
+
+
 class EditStockItemForm(HelperForm):
     """ Form for editing a StockItem object.
     Note that not all fields can be edited here (even if they can be specified during creation.
-    
+
     location - Must be updated in a 'move' transaction
     quantity - Must be updated in a 'stocktake' transaction
     part - Cannot be edited after creation
     """
 
     expiry_date = DatePickerFormField(
-        help_text=('Expiration date for this stock item'),
+        label=_('Expiry Date'),
+        help_text=_('Expiration date for this stock item'),
     )
 
     class Meta:
@@ -423,14 +437,15 @@ class EditStockItemForm(HelperForm):
 
 
 class TrackingEntryForm(HelperForm):
-    """ Form for creating / editing a StockItemTracking object.
+    """
+    Form for creating / editing a StockItemTracking object.
+
+    Note: 2021-05-11 - This form is not currently used - should delete?
     """
 
     class Meta:
         model = StockItemTracking
 
         fields = [
-            'title',
             'notes',
-            'link',
         ]

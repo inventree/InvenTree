@@ -7,11 +7,11 @@ from __future__ import unicode_literals
 
 import os
 
-import math
-
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
@@ -24,7 +24,6 @@ from markdownx.models import MarkdownxField
 from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
-from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import PurchaseOrderStatus
 
@@ -95,7 +94,12 @@ class Company(models.Model):
                             help_text=_('Company name'),
                             verbose_name=_('Company name'))
 
-    description = models.CharField(max_length=500, verbose_name=_('Company description'), help_text=_('Description of the company'))
+    description = models.CharField(
+        max_length=500,
+        verbose_name=_('Company description'),
+        help_text=_('Description of the company'),
+        blank=True,
+    )
 
     website = models.URLField(blank=True, verbose_name=_('Website'), help_text=_('Company website URL'))
 
@@ -114,7 +118,7 @@ class Company(models.Model):
                                verbose_name=_('Contact'),
                                blank=True, help_text=_('Point of contact'))
 
-    link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external company information'))
 
     image = StdImageField(
         upload_to=rename_company_image,
@@ -122,15 +126,16 @@ class Company(models.Model):
         blank=True,
         variations={'thumbnail': (128, 128)},
         delete_orphans=True,
+        verbose_name=_('Image'),
     )
 
-    notes = MarkdownxField(blank=True)
+    notes = MarkdownxField(blank=True, verbose_name=_('Notes'))
 
-    is_customer = models.BooleanField(default=False, help_text=_('Do you sell items to this company?'))
+    is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
-    is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
+    is_supplier = models.BooleanField(default=True, verbose_name=_('is supplier'), help_text=_('Do you purchase items from this company?'))
 
-    is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
+    is_manufacturer = models.BooleanField(default=False, verbose_name=_('is manufacturer'), help_text=_('Does this company manufacture parts?'))
 
     currency = models.CharField(
         max_length=3,
@@ -144,7 +149,7 @@ class Company(models.Model):
     def currency_code(self):
         """
         Return the currency code associated with this company.
-        
+
         - If the currency code is invalid, use the default currency
         - If the currency code is not specified, use the default currency
         """
@@ -179,7 +184,7 @@ class Company(models.Model):
             return getMediaUrl(self.image.thumbnail.url)
         else:
             return getBlankThumbnail()
-            
+
     @property
     def manufactured_part_count(self):
         """ The number of parts manufactured by this company """
@@ -202,7 +207,7 @@ class Company(models.Model):
     @property
     def parts(self):
         """ Return SupplierPart objects which are supplied or manufactured by this company """
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer=self.id))
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
 
     @property
     def part_count(self):
@@ -217,7 +222,7 @@ class Company(models.Model):
     def stock_items(self):
         """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer=self.id)).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
@@ -278,19 +283,106 @@ class Contact(models.Model):
                                 on_delete=models.CASCADE)
 
 
-class SupplierPart(models.Model):
-    """ Represents a unique part as provided by a Supplier
-    Each SupplierPart is identified by a MPN (Manufacturer Part Number)
-    Each SupplierPart is also linked to a Part object.
-    A Part may be available from multiple suppliers
+class ManufacturerPart(models.Model):
+    """ Represents a unique part as provided by a Manufacturer
+    Each ManufacturerPart is identified by a MPN (Manufacturer Part Number)
+    Each ManufacturerPart is also linked to a Part object.
+    A Part may be available from multiple manufacturers
 
     Attributes:
         part: Link to the master Part
+        manufacturer: Company that manufactures the ManufacturerPart
+        MPN: Manufacture part number
+        link: Link to external website for this manufacturer part
+        description: Descriptive notes field
+    """
+
+    class Meta:
+        unique_together = ('part', 'manufacturer', 'MPN')
+
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
+                             related_name='manufacturer_parts',
+                             verbose_name=_('Base Part'),
+                             limit_choices_to={
+                                 'purchaseable': True,
+                             },
+                             help_text=_('Select part'),
+                             )
+
+    manufacturer = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='manufactured_parts',
+        limit_choices_to={
+            'is_manufacturer': True
+        },
+        verbose_name=_('Manufacturer'),
+        help_text=_('Select manufacturer'),
+    )
+
+    MPN = models.CharField(
+        null=True,
+        max_length=100,
+        verbose_name=_('MPN'),
+        help_text=_('Manufacturer Part Number')
+    )
+
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('URL for external manufacturer part link')
+    )
+
+    description = models.CharField(
+        max_length=250, blank=True, null=True,
+        verbose_name=_('Description'),
+        help_text=_('Manufacturer part description')
+    )
+
+    @classmethod
+    def create(cls, part, manufacturer, mpn, description, link=None):
+        """ Check if ManufacturerPart instance does not already exist
+            then create it
+        """
+
+        manufacturer_part = None
+
+        try:
+            manufacturer_part = ManufacturerPart.objects.get(part=part, manufacturer=manufacturer, MPN=mpn)
+        except ManufacturerPart.DoesNotExist:
+            pass
+
+        if not manufacturer_part:
+            manufacturer_part = ManufacturerPart(part=part, manufacturer=manufacturer, MPN=mpn, description=description, link=link)
+            manufacturer_part.save()
+
+        return manufacturer_part
+
+    def __str__(self):
+        s = ''
+
+        if self.manufacturer:
+            s += f'{self.manufacturer.name}'
+            s += ' | '
+
+        s += f'{self.MPN}'
+
+        return s
+
+
+class SupplierPart(models.Model):
+    """ Represents a unique part as provided by a Supplier
+    Each SupplierPart is identified by a SKU (Supplier Part Number)
+    Each SupplierPart is also linked to a Part or ManufacturerPart object.
+    A Part may be available from multiple suppliers
+
+    Attributes:
+        part: Link to the master Part (Obsolete)
+        source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
-        manufacturer: Company that manufactures the SupplierPart (leave blank if it is the sample as the Supplier!)
-        MPN: Manufacture part number
-        link: Link to external website for this part
+        link: Link to external website for this supplier part
         description: Descriptive notes field
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
@@ -301,6 +393,57 @@ class SupplierPart(models.Model):
 
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
+
+    def save(self, *args, **kwargs):
+        """ Overriding save method to process the linked ManufacturerPart
+        """
+
+        if 'manufacturer' in kwargs:
+            manufacturer_id = kwargs.pop('manufacturer')
+
+            try:
+                manufacturer = Company.objects.get(pk=int(manufacturer_id))
+            except (ValueError, Company.DoesNotExist):
+                manufacturer = None
+        else:
+            manufacturer = None
+        if 'MPN' in kwargs:
+            MPN = kwargs.pop('MPN')
+        else:
+            MPN = None
+
+        if manufacturer or MPN:
+            if not self.manufacturer_part:
+                # Create ManufacturerPart
+                manufacturer_part = ManufacturerPart.create(part=self.part,
+                                                            manufacturer=manufacturer,
+                                                            mpn=MPN,
+                                                            description=self.description)
+                self.manufacturer_part = manufacturer_part
+            else:
+                # Update ManufacturerPart (if ID exists)
+                try:
+                    manufacturer_part_id = self.manufacturer_part.id
+                except AttributeError:
+                    manufacturer_part_id = None
+
+                if manufacturer_part_id:
+                    try:
+                        (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
+                                                                                                 manufacturer=manufacturer,
+                                                                                                 MPN=MPN)
+                    except IntegrityError:
+                        manufacturer_part = None
+                        raise ValidationError(f'ManufacturerPart linked to {self.part} from manufacturer {manufacturer.name}'
+                                              f'with part number {MPN} already exists!')
+
+                if manufacturer_part:
+                    self.manufacturer_part = manufacturer_part
+
+        self.clean()
+        self.validate_unique()
+
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
@@ -330,23 +473,12 @@ class SupplierPart(models.Model):
         help_text=_('Supplier stock keeping unit')
     )
 
-    manufacturer = models.ForeignKey(
-        Company,
-        on_delete=models.SET_NULL,
-        related_name='manufactured_parts',
-        limit_choices_to={
-            'is_manufacturer': True
-        },
-        verbose_name=_('Manufacturer'),
-        help_text=_('Select manufacturer'),
-        null=True, blank=True
-    )
-
-    MPN = models.CharField(
-        max_length=100, blank=True, null=True,
-        verbose_name=_('MPN'),
-        help_text=_('Manufacturer part number')
-    )
+    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
+                                          blank=True, null=True,
+                                          related_name='supplier_parts',
+                                          verbose_name=_('Manufacturer Part'),
+                                          help_text=_('Select manufacturer part'),
+                                          )
 
     link = InvenTreeURLField(
         blank=True, null=True,
@@ -366,11 +498,11 @@ class SupplierPart(models.Model):
         help_text=_('Notes')
     )
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text=_('Minimum charge (e.g. stocking fee)'))
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
-    packaging = models.CharField(max_length=50, blank=True, null=True, help_text=_('Part packaging'))
-    
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text=('Order multiple'))
+    packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
+
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
@@ -383,10 +515,11 @@ class SupplierPart(models.Model):
 
         items = []
 
-        if self.manufacturer:
-            items.append(self.manufacturer.name)
-        if self.MPN:
-            items.append(self.MPN)
+        if self.manufacturer_part:
+            if self.manufacturer_part.manufacturer:
+                items.append(self.manufacturer_part.manufacturer.name)
+            if self.manufacturer_part.MPN:
+                items.append(self.manufacturer_part.MPN)
 
         return ' | '.join(items)
 
@@ -422,51 +555,7 @@ class SupplierPart(models.Model):
             price=price
         )
 
-    def get_price(self, quantity, moq=True, multiples=True, currency=None):
-        """ Calculate the supplier price based on quantity price breaks.
-
-        - Don't forget to add in flat-fee cost (base_cost field)
-        - If MOQ (minimum order quantity) is required, bump quantity
-        - If order multiples are to be observed, then we need to calculate based on that, too
-        """
-
-        price_breaks = self.price_breaks.filter(quantity__lte=quantity)
-
-        # No price break information available?
-        if len(price_breaks) == 0:
-            return None
-
-        # Order multiples
-        if multiples:
-            quantity = int(math.ceil(quantity / self.multiple) * self.multiple)
-
-        pb_found = False
-        pb_quantity = -1
-        pb_cost = 0.0
-
-        if currency is None:
-            # Default currency selection
-            currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-
-        for pb in self.price_breaks.all():
-            # Ignore this pricebreak (quantity is too high)
-            if pb.quantity > quantity:
-                continue
-
-            pb_found = True
-
-            # If this price-break quantity is the largest so far, use it!
-            if pb.quantity > pb_quantity:
-                pb_quantity = pb.quantity
-
-                # Convert everything to the selected currency
-                pb_cost = pb.convert_to(currency)
-
-        if pb_found:
-            cost = pb_cost * quantity
-            return normalize(cost + self.base_cost)
-        else:
-            return None
+    get_price = common.models.get_price
 
     def open_orders(self):
         """ Return a database query for PO line items for this SupplierPart,
@@ -514,7 +603,7 @@ class SupplierPart(models.Model):
 
         if self.manufacturer_string:
             s = s + ' | ' + self.manufacturer_string
-        
+
         return s
 
 
@@ -530,7 +619,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
 
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
 
     class Meta:
         unique_together = ("part", "quantity")
@@ -539,4 +628,4 @@ class SupplierPriceBreak(common.models.PriceBreak):
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
-        return f'{self.part.MPN} - {self.price} @ {self.quantity}'
+        return f'{self.part.SKU} - {self.price} @ {self.quantity}'

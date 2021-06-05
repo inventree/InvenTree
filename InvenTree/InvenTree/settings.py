@@ -13,9 +13,13 @@ database setup in this file.
 
 import logging
 import os
+import random
+import string
+import shutil
 import sys
-import tempfile
 from datetime import datetime
+
+import moneyed
 
 import yaml
 from django.utils.translation import gettext_lazy as _
@@ -46,14 +50,34 @@ def get_setting(environment_var, backup_val, default_value=None):
     return default_value
 
 
+# Determine if we are running in "test" mode e.g. "manage.py test"
+TESTING = 'test' in sys.argv
+
+# New requirement for django 3.2+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
+# Specify where the "config file" is located.
+# By default, this is 'config.yaml'
+
+cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
+
+if cfg_filename:
+    cfg_filename = cfg_filename.strip()
+    cfg_filename = os.path.abspath(cfg_filename)
+
+else:
+    # Config file is *not* specified - use the default
+    cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
 
 if not os.path.exists(cfg_filename):
-    print("Error: config.yaml not found")
-    sys.exit(-1)
+    print("InvenTree configuration file 'config.yaml' not found - creating default file")
+
+    cfg_template = os.path.join(BASE_DIR, "config_template.yaml")
+    shutil.copyfile(cfg_template, cfg_filename)
+    print(f"Created config file {cfg_filename}")
 
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
@@ -63,6 +87,11 @@ with open(cfg_filename, 'r') as cfg:
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
+))
+
+DOCKER = _is_true(get_setting(
+    'INVENTREE_DOCKER',
+    False
 ))
 
 # Configure logging settings
@@ -94,7 +123,18 @@ LOGGING = {
 }
 
 # Get a logger instance for this setup file
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
+
+"""
+Specify a secret key to be used by django.
+
+Following options are tested, in descending order of preference:
+
+A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
+B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
+C) Look for default key file "secret_key.txt"
+d) Create "secret_key.txt" if it does not exist
+"""
 
 if os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
@@ -105,15 +145,22 @@ else:
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        if os.path.isfile(key_file):
-            logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY_FILE")
-        else:
-            logger.error(f"Secret key file {key_file} not found")
-            exit(-1)
+        key_file = os.path.abspath(key_file)
     else:
         # default secret key location
         key_file = os.path.join(BASE_DIR, "secret_key.txt")
-        logger.info(f"SECRET_KEY loaded from {key_file}")
+        key_file = os.path.abspath(key_file)
+
+    if not os.path.exists(key_file):
+        logger.info(f"Generating random key file at '{key_file}'")
+        # Create a random key file
+        with open(key_file, 'w') as f:
+            options = string.digits + string.ascii_letters + string.punctuation
+            key = ''.join([random.choice(options) for i in range(100)])
+            f.write(key)
+
+    logger.info(f"Loading SECRET_KEY from '{key_file}'")
+
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
     except Exception:
@@ -144,12 +191,23 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+        CONFIG.get('static_root', '/home/inventree/static')
     )
 )
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
+]
+
+# Translated Template settings
+STATICFILES_I18_PREFIX = 'i18n'
+STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js')
+STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_DIRS.append(STATICFILES_I18_TRG)
+STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
+
+STATFILES_I18_PROCESSORS = [
+    'InvenTree.context.status_codes',
 ]
 
 # Color Themes Directory
@@ -162,7 +220,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
+        CONFIG.get('media_root', '/home/inventree/data/media')
     )
 )
 
@@ -194,10 +252,10 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
-    'dbbackup',                             # Database backup / restore
     'rest_framework',                       # DRF (Django Rest Framework)
     'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
@@ -211,6 +269,8 @@ INSTALLED_APPS = [
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
+    'django_q',
+    'formtools',                            # Form wizard tools
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -285,6 +345,18 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
+# django-q configuration
+Q_CLUSTER = {
+    'name': 'InvenTree',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': False,
+}
+
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
@@ -331,6 +403,9 @@ logger.info("Configuring database backend:")
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
 
+if not db_config:
+    db_config = {}
+
 # Environment variables take preference over config file!
 
 db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
@@ -341,7 +416,6 @@ for key in db_keys:
     env_var = os.environ.get(env_key, None)
 
     if env_var:
-        logger.info(f"{env_key}={env_var}")
         # Override configuration value
         db_config[key] = env_var
 
@@ -350,7 +424,7 @@ reqiured_keys = ['ENGINE', 'NAME']
 
 for key in reqiured_keys:
     if key not in db_config:
-        error_msg = f'Missing required database configuration value {key} in config.yaml'
+        error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
 
         print('Error: ' + error_msg)
@@ -364,11 +438,15 @@ It can be specified in config.yaml (or envvar) as either (for example):
 - django.db.backends.postgresql
 """
 
-db_engine = db_config['ENGINE']
+db_engine = db_config['ENGINE'].lower()
 
-if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
+# Correct common misspelling
+if db_engine == 'sqlite':
+    db_engine = 'sqlite3'
+
+if db_engine in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
-    db_engine = f'django.db.backends.{db_engine.lower()}'
+    db_engine = f'django.db.backends.{db_engine}'
     db_config['ENGINE'] = db_engine
 
 db_name = db_config['NAME']
@@ -386,11 +464,6 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
-    'qr-code': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'qr-code-cache',
-        'TIMEOUT': 3600
-    }
 }
 
 # Password validation
@@ -430,7 +503,7 @@ LANGUAGES = [
     ('en', _('English')),
     ('fr', _('French')),
     ('de', _('German')),
-    ('pk', _('Polish')),
+    ('pl', _('Polish')),
     ('tr', _('Turkish')),
 ]
 
@@ -442,20 +515,87 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
-# TODO - Allow live web-based backends in the future
-EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
+# Check that each provided currency is supported
+for currency in CURRENCIES:
+    if currency not in moneyed.CURRENCIES:
+        print(f"Currency code '{currency}' is not supported")
+        sys.exit(1)
+
+BASE_CURRENCY = get_setting(
+    'INVENTREE_BASE_CURRENCY',
+    CONFIG.get('base_currency', 'USD')
+)
+
+# Custom currency exchange backend
+EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
+
+# Extract email settings from the config file
+email_config = CONFIG.get('email', {})
+
+EMAIL_BACKEND = get_setting(
+    'INVENTREE_EMAIL_BACKEND',
+    email_config.get('backend', 'django.core.mail.backends.smtp.EmailBackend')
+)
+
+# Email backend settings
+EMAIL_HOST = get_setting(
+    'INVENTREE_EMAIL_HOST',
+    email_config.get('host', '')
+)
+
+EMAIL_PORT = get_setting(
+    'INVENTREE_EMAIL_PORT',
+    email_config.get('port', 25)
+)
+
+EMAIL_HOST_USER = get_setting(
+    'INVENTREE_EMAIL_USERNAME',
+    email_config.get('username', ''),
+)
+
+EMAIL_HOST_PASSWORD = get_setting(
+    'INVENTREE_EMAIL_PASSWORD',
+    email_config.get('password', ''),
+)
+
+DEFAULT_FROM_EMAIL = get_setting(
+    'INVENTREE_EMAIL_SENDER',
+    email_config.get('sender', ''),
+)
+
+EMAIL_SUBJECT_PREFIX = '[InvenTree] '
+
+EMAIL_USE_LOCALTIME = False
+
+EMAIL_USE_TLS = get_setting(
+    'INVENTREE_EMAIL_TLS',
+    email_config.get('tls', False),
+)
+
+EMAIL_USE_SSL = get_setting(
+    'INVENTREE_EMAIL_SSL',
+    email_config.get('ssl', False),
+)
+
+EMAIL_TIMEOUT = 60
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-TIME_ZONE = CONFIG.get('timezone', 'UTC')
+TIME_ZONE = get_setting(
+    'INVENTREE_TIMEZONE',
+    CONFIG.get('timezone', 'UTC')
+)
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# Do not use native timezone support in "test" mode
+# It generates a *lot* of cruft in the logs
+if not TESTING:
+    USE_TZ = True
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
@@ -466,17 +606,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-
-BACKUP_DIR = get_setting(
-    'INVENTREE_BACKUP_DIR',
-    CONFIG.get('backup_dir', tempfile.gettempdir()),
-)
-
-# Settings for dbbsettings app
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'location': BACKUP_DIR,
-}
 
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [
