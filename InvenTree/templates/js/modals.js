@@ -775,11 +775,6 @@ function handleModalForm(url, options) {
                     }
                     // Form was returned, invalid!
                     else {
-
-                        if (response.title) {
-                            modalSetTitle(modal, response.title);
-                        }
-
                         if (!response.hideErrorMessage  && !options.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
@@ -795,6 +790,11 @@ function handleModalForm(url, options) {
                             if (options.secondary) {
                                 attachSecondaries(modal, options.secondary);
                             }
+
+                            if (response.title) {
+                                modalSetTitle(modal, response.title);
+                            }
+
                             if (response.buttons) {
                                 // Clean custom action buttons
                                 $(modal).find('#modal-footer-buttons').html('');
