@@ -795,6 +795,11 @@ function handleModalForm(url, options) {
                             if (options.secondary) {
                                 attachSecondaries(modal, options.secondary);
                             }
+                            if (response.buttons) {
+                                // Clean custom action buttons
+                                $(modal).find('#modal-footer-buttons').html('');
+                                attachButtons(modal, response.buttons);
+                            }
                         }
                         else {
                             $(modal).modal('hide');

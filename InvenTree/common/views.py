@@ -560,6 +560,14 @@ class FileManagementAjaxView(AjaxView):
     """
 
     def post(self, request):
+        # check if back-step button was selected
+        wizard_back = self.request.POST.get('act-btn_back', None)
+        if wizard_back:
+            back_step_index = self.get_step_index() - 1
+            self.storage.current_step = list(self.get_form_list().keys())[back_step_index]
+            return self.renderJsonResponse(request, data={'form_valid': None})
+
+        # validate form
         form = self.get_form(data=self.request.POST, files=self.request.FILES)
         form_valid = self.validate(self.steps.current, form)
 
@@ -596,7 +604,9 @@ class FileManagementAjaxView(AjaxView):
 
     def get_data(self):
         data = super().get_data()
-        data['hideErrorMessage'] = '1'
+        data['hideErrorMessage'] = '1'  # hide the error
+        buttons = [{'name': 'back', 'title': _('Previous Step')}] if self.get_step_index() > 0 else []
+        data['buttons'] = buttons  # set buttons
         return data
 
     def setTemplate(self):
