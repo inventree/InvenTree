@@ -37,7 +37,7 @@ import report.models
 import label.models
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment, ItemTracking
 from InvenTree.fields import InvenTreeURLField
 
 from users.models import Owner
@@ -1618,53 +1618,7 @@ class StockItemAttachment(InvenTreeAttachment):
     )
 
 
-class AbstractItemTracking(models.Model):
-    """
-    Abstract Tracking entry
-
-    Attributes:
-        item: ForeignKey reference to a particular StockItem
-        date: Date that this tracking info was created
-        tracking_type: The type of tracking information
-        notes: Associated notes (input by user)
-        user: The user associated with this tracking info
-        deltas: The changes associated with this history item
-    """
-    class Meta:
-        abstract = True
-
-    def label(self):
-
-        if self.tracking_type in StockHistoryCode.keys():
-            return StockHistoryCode.label(self.tracking_type)
-        else:
-            return self.title
-
-    tracking_type = models.IntegerField(
-        default=StockHistoryCode.LEGACY,
-    )
-
-    item = models.ForeignKey(
-        StockItem,
-        on_delete=models.CASCADE,
-        related_name='tracking_info'
-    )
-
-    date = models.DateTimeField(auto_now_add=True, editable=False)
-
-    notes = models.CharField(
-        blank=True, null=True,
-        max_length=512,
-        verbose_name=_('Notes'),
-        help_text=_('Entry notes')
-    )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-
-    deltas = models.JSONField(null=True, blank=True)
-
-
-class StockItemTracking(AbstractItemTracking):
+class StockItemTracking(ItemTracking):
     """
     Stock tracking entry - used for tracking history of a particular StockItem
 
@@ -1677,7 +1631,7 @@ class StockItemTracking(AbstractItemTracking):
 
 
     Attributes:
-        item: (inherited) ForeignKey reference to a particular StockItem
+        item: ForeignKey reference to a particular StockItem
         date: (inherited) Date that this tracking info was created
         tracking_type: (inherited) The type of tracking information
         notes: (inherited) Associated notes (input by user)
@@ -1685,38 +1639,14 @@ class StockItemTracking(AbstractItemTracking):
         deltas: (inherited) The changes associated with this history item
     """
 
+    item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='tracking_info'
+    )
+
     def get_absolute_url(self):
         return '/stock/track/{pk}'.format(pk=self.id)
-
-
-class PartQuantityHistory(AbstractItemTracking):
-    """
-    Part Quantity History entry - used for keeping a qunatity history for a part, also keeps tracking information
-
-    Attributes:
-        item: ForeignKey reference to a part
-        total_stock: total stock of the part at time of logging
-
-        date: (inherited) Date that this tracking info was created
-        tracking_type: (inherited) The type of tracking information
-        notes: (inherited) Associated notes (input by user)
-        user: (inherited) The user associated with this tracking info
-        deltas: (inherited) The changes associated with this history item
-    """
-    def get_absolute_url(self):
-        return '/part/track/{pk}'.format(pk=self.id)
-
-    total_stock = models.DecimalField(
-        verbose_name=_("Total Stock"),
-        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
-        default=1.0
-    )
-
-    item = models.ForeignKey(
-        PartModels.Part,
-        on_delete=models.CASCADE,
-        related_name='quantity_history'
-    )
 
 
 @receiver(post_save, sender=StockItemTracking)
@@ -1724,7 +1654,7 @@ def add_part_history(sender, instance, created, raw, using, **kwargs):
     """ adds a new part history entry for each StockItemTracking entry that gets created """
     if created:
         part = instance.item.part
-        entry = PartQuantityHistory.objects.create(
+        entry = PartModels.PartQuantityHistory.objects.create(
             total_stock=part.total_stock,
             item=part,
             tracking_type=instance.tracking_type,

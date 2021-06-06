@@ -37,7 +37,7 @@ import hashlib
 
 from InvenTree import helpers
 from InvenTree import validators
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment, ItemTracking
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
@@ -2540,3 +2540,33 @@ class PartRelated(models.Model):
                               'and that the relationship is unique')
 
             raise ValidationError(error_message)
+
+
+class PartQuantityHistory(ItemTracking):
+    """
+    Part Quantity History entry - used for keeping a qunatity history for a part, also keeps tracking information
+
+    Attributes:
+        item: ForeignKey reference to a part
+        total_stock: total stock of the part at time of logging
+
+        date: (inherited) Date that this tracking info was created
+        tracking_type: (inherited) The type of tracking information
+        notes: (inherited) Associated notes (input by user)
+        user: (inherited) The user associated with this tracking info
+        deltas: (inherited) The changes associated with this history item
+    """
+    def get_absolute_url(self):
+        return '/part/track/{pk}'.format(pk=self.id)
+
+    total_stock = models.DecimalField(
+        verbose_name=_("Total Stock"),
+        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
+        default=1.0
+    )
+
+    item = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='quantity_history'
+    )

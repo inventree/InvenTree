@@ -14,11 +14,12 @@ from InvenTree.serializers import TrackingSerializer
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
-from stock.models import StockItem, PartQuantityHistory
+from stock.models import StockItem
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
-                     PartStar, PartTestTemplate, PartCategoryParameterTemplate)
+                     PartStar, PartTestTemplate, PartCategoryParameterTemplate,
+                     PartQuantityHistory)
 
 
 class CategorySerializer(InvenTreeModelSerializer):

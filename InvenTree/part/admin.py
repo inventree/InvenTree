@@ -15,8 +15,9 @@ from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
+from .models import PartQuantityHistory
 
-from stock.models import StockLocation, PartQuantityHistory
+from stock.models import StockLocation
 from stock.admin import StockTrackingAdmin
 from company.models import SupplierPart
 

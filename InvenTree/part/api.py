@@ -27,10 +27,10 @@ from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
 from .models import PartCategoryParameterTemplate
+from .models import PartQuantityHistory
 
 from common.models import InvenTreeSetting
 from build.models import Build
-from stock.models import PartQuantityHistory
 
 from . import serializers as part_serializers
 

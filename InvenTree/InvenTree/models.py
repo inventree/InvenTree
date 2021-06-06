@@ -17,6 +17,7 @@ from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
 
 from .validators import validate_tree_name
+from .status_codes import StockHistoryCode
 
 
 def rename_attachment(instance, filename):
@@ -220,3 +221,43 @@ def before_delete_tree_item(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+class ItemTracking(models.Model):
+    """
+    Abstract Tracking entry
+
+    Attributes:
+        date: Date that this tracking info was created
+        tracking_type: The type of tracking information
+        notes: Associated notes (input by user)
+        user: The user associated with this tracking info
+        deltas: The changes associated with this history item
+    """
+
+    def label(self):
+
+        if self.tracking_type in StockHistoryCode.keys():
+            return StockHistoryCode.label(self.tracking_type)
+        else:
+            return self.title
+
+    tracking_type = models.IntegerField(
+        default=StockHistoryCode.LEGACY,
+    )
+
+    date = models.DateTimeField(auto_now_add=True, editable=False)
+
+    notes = models.CharField(
+        blank=True, null=True,
+        max_length=512,
+        verbose_name=_('Notes'),
+        help_text=_('Entry notes')
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+
+    deltas = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
