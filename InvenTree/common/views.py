@@ -591,6 +591,11 @@ class FileManagementAjaxView(AjaxView):
         self.setTemplate()
         return self.renderJsonResponse(request)
 
+    def get_data(self):
+        data = super().get_data()
+        data['hideErrorMessage'] = '1'
+        return data
+
     def setTemplate(self):
         """ set template name and title """
         self.ajax_template_name = self.ajax_form_steps_template[self.get_step_index()]

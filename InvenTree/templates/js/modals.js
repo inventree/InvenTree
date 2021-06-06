@@ -780,7 +780,7 @@ function handleModalForm(url, options) {
                             modalSetTitle(modal, response.title);
                         }
 
-                        if (response.hideErrorMessage  || !options.hideErrorMessage) {
+                        if (!response.hideErrorMessage  && !options.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }
