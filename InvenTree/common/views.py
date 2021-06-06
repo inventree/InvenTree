@@ -584,6 +584,10 @@ class FileManagementAjaxView(AjaxView):
         return self.renderJsonResponse(request, data={'form_valid': None})
 
     def get(self, request):
+        if 'reset' in request.GET:
+            # reset form
+            self.storage.reset()
+            self.storage.current_step = self.steps.first
         self.setTemplate()
         return self.renderJsonResponse(request)
 
