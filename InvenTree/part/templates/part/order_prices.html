@@ -15,7 +15,16 @@
 {% block details %}
 {% default_currency as currency %}
 
-{% crispy form %}
+<form method="post" class="form-horizontal">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-9">{{ form|crispy }}</div>
+        <div class="col-sm-3">
+            <input type="submit" value="{% trans 'Calculate' %}" class="btn btn-primary btn-block">
+        </div>
+    </div>
+</form>
+<hr>
 
 <div class="row"><div class="col col-md-6">
 <h4>{% trans "Pricing ranges" %}</h4>
