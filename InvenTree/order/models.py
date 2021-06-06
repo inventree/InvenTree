@@ -17,6 +17,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from common.settings import currency_code_default
+
 from markdownx.models import MarkdownxField
 
 from djmoney.models.fields import MoneyField
@@ -664,7 +666,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     purchase_price = MoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency='USD',
+        default_currency=currency_code_default(),
         null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
@@ -693,7 +695,7 @@ class SalesOrderLineItem(OrderLineItem):
     sale_price = MoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency='USD',
+        default_currency=currency_code_default(),
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),
