@@ -580,7 +580,6 @@ class FileManagementAjaxView(AjaxView):
         else:
             self.storage.current_step = self.steps.next
 
-        self.setTemplate()
         return self.renderJsonResponse(request, data={'form_valid': None})
 
     def get(self, request):
@@ -588,8 +587,12 @@ class FileManagementAjaxView(AjaxView):
             # reset form
             self.storage.reset()
             self.storage.current_step = self.steps.first
-        self.setTemplate()
         return self.renderJsonResponse(request)
+
+    def renderJsonResponse(self, request, form=None, data={}, context=None):
+        """ always set the right templates before rendering """
+        self.setTemplate()
+        return super().renderJsonResponse(request, form=form, data=data, context=context)
 
     def get_data(self):
         data = super().get_data()
