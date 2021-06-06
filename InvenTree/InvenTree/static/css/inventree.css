@@ -957,3 +957,7 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .clip-btn:hover {
     background: var(--label-grey);
 }
+
+.sidebar-icon {
+    min-width: 19px;
+}

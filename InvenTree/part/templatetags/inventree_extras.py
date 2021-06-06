@@ -18,6 +18,7 @@ from InvenTree import version, settings
 import InvenTree.helpers
 
 from common.models import InvenTreeSetting, ColorTheme
+from common.settings import currency_code_default
 
 register = template.Library()
 
@@ -159,6 +160,12 @@ def inventree_docs_url(*args, **kwargs):
 def inventree_credits_url(*args, **kwargs):
     """ Return URL for InvenTree credits site """
     return "https://inventree.readthedocs.io/en/latest/credits/"
+
+
+@register.simple_tag()
+def default_currency(*args, **kwargs):
+    """ Returns the default currency code """
+    return currency_code_default()
 
 
 @register.simple_tag()

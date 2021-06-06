@@ -1,1 +1,2 @@
-{% if currency %}{{ currency.symbol }}{% endif %}{{ price }}{% if currency %} {{ currency.suffix }}{% endif %}
+{% load djmoney %}
+{% money_localize price currency %}
