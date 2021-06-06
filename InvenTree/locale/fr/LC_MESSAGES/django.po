@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-01 10:07+0000\n"
-"PO-Revision-Date: 2021-06-01 10:22\n"
+"PO-Revision-Date: 2021-06-02 19:11\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -353,12 +353,12 @@ msgstr "L'IPN doit correspondre au modèle de regex {pat}"
 #: InvenTree/validators.py:105
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "La référence doit correspondre au modèle {pattern}"
 
 #: InvenTree/validators.py:113
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Caractère invalide dans le nom ({x})"
 
 #: InvenTree/validators.py:132 InvenTree/validators.py:148
 msgid "Overage value must not be negative"
@@ -382,7 +382,7 @@ msgstr ""
 
 #: InvenTree/views.py:656 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
-msgstr ""
+msgstr "Modifier les informations utilisateur"
 
 #: InvenTree/views.py:667 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
@@ -394,7 +394,7 @@ msgstr ""
 
 #: InvenTree/views.py:937 templates/navbar.html:95
 msgid "System Information"
-msgstr ""
+msgstr "Informations système"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
@@ -402,11 +402,11 @@ msgstr ""
 
 #: barcodes/api.py:126
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Aucune correspondance trouvée pour les données du code-barres"
 
 #: barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Correspondance trouvée pour les données du code-barres"
 
 #: barcodes/api.py:153
 msgid "Must provide stockitem parameter"
@@ -490,7 +490,7 @@ msgstr ""
 #: templates/js/part.js:795 templates/js/stock.js:1134
 #: templates/js/stock.js:1353
 msgid "Quantity"
-msgstr ""
+msgstr "Quantité"
 
 #: build/forms.py:49
 msgid "Number of items to build"
@@ -502,7 +502,7 @@ msgstr ""
 
 #: build/forms.py:95 order/forms.py:234 stock/forms.py:118
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Numéros de série"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
@@ -609,7 +609,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:575 templates/js/build.js:1018
 msgid "Reference"
-msgstr ""
+msgstr "Référence"
 
 #: build/models.py:138
 msgid "Brief description of the build"
@@ -713,7 +713,7 @@ msgstr ""
 #: build/models.py:220 order/models.py:105 part/models.py:882
 #: part/templates/part/detail.html:126 templates/js/order.js:293
 msgid "Creation Date"
-msgstr ""
+msgstr "Date de création"
 
 #: build/models.py:224 order/models.py:472
 msgid "Target completion date"
@@ -755,7 +755,7 @@ msgstr ""
 #: part/templates/part/detail.html:83 part/templates/part/part_base.html:94
 #: stock/models.py:458 stock/templates/stock/item_base.html:345
 msgid "External Link"
-msgstr ""
+msgstr "Lien Externe"
 
 #: build/models.py:258 part/models.py:744 stock/models.py:460
 msgid "Link to external URL"
@@ -778,7 +778,7 @@ msgstr ""
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:356 templates/js/stock.js:141 templates/js/stock.js:669
 msgid "Notes"
-msgstr ""
+msgstr "Notes"
 
 #: build/models.py:263
 msgid "Extra build notes"
@@ -928,7 +928,7 @@ msgstr ""
 #: part/templates/part/navbar.html:128 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
-msgstr ""
+msgstr "Pieces jointes"
 
 #: build/templates/build/auto_allocate.html:9
 msgid "Automatically Allocate Stock"
@@ -1252,7 +1252,7 @@ msgstr ""
 #: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:15
 #: templates/js/stock.js:1014
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
 #: build/templates/build/navbar.html:21 build/templates/build/navbar.html:24
 #: build/views.py:91
@@ -1289,7 +1289,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:492
 #: stock/templates/stock/item_notes.html:26
 msgid "Save"
-msgstr ""
+msgstr "Enregistrer"
 
 #: build/templates/build/unallocate.html:10
 msgid "Are you sure you wish to unallocate all stock for this build?"
@@ -1414,7 +1414,7 @@ msgstr ""
 #: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:585
 #: templates/js/build.js:848 templates/js/build.js:1031
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: build/views.py:874
 msgid "Stock item must be selected"
@@ -1435,7 +1435,7 @@ msgstr ""
 #: build/views.py:1083 order/views.py:115 order/views.py:167 part/views.py:173
 #: stock/views.py:277
 msgid "Added attachment"
-msgstr ""
+msgstr "Pièce jointe ajoutée"
 
 #: build/views.py:1119 order/views.py:194 order/views.py:215
 msgid "Edit Attachment"
@@ -1475,11 +1475,11 @@ msgstr ""
 
 #: common/forms.py:40
 msgid "Select file to upload"
-msgstr ""
+msgstr "Sélectionner un fichier à téléverser"
 
 #: common/forms.py:55
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Fichier"
 
 #: common/forms.py:56
 #, python-brace-format
@@ -1520,7 +1520,7 @@ msgstr ""
 
 #: common/models.py:85
 msgid "Download from URL"
-msgstr ""
+msgstr "Télécharger depuis l'URL"
 
 #: common/models.py:86
 msgid "Allow download of remote images and files from external URL"
@@ -1719,7 +1719,7 @@ msgstr ""
 
 #: common/models.py:251 part/templates/part/detail.html:121
 msgid "days"
-msgstr ""
+msgstr "jours"
 
 #: common/models.py:256
 msgid "Build Expired Stock"
