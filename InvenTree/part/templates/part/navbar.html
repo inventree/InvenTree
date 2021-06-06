@@ -36,6 +36,12 @@
             {% trans "Stock" %}
         </a>
     </li>
+    <li class='list-group-item {% if tab == "track" %}active{% endif %}' title='{% trans "Stock History" %}'>
+        <a href='{% url "part-track" part.id %}'>
+            <span class='menu-tab-icon fas fa-history sidebar-icon'></span>
+            {% trans "Stock History" %}
+        </a>
+    </li>
     {% if part.component or part.salable %}
     <li class='list-group-item {% if tab == "allocation" %}active{% endif %}' title='{% trans "Allocated Stock" %}'>
         <a href='{% url "part-allocation" part.id %}'>

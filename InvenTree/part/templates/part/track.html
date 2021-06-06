@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load inventree_extras %}
 {% load i18n %}
 
 {% block menubar %}
@@ -11,4 +12,20 @@
 {% endblock %}
 
 {% block details %}
+<table class='table table-condensed table-striped' id='part-track-table' data-toolbar='#table-toolbar'>
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+    loadTrackingTable($("#part-track-table"), {
+        params: {
+            ordering: '-date',
+            item: {{ part.pk }},
+            user_detail: true,
+        },
+        url: "{% url 'api-part-track' %}",
+        total_stock: true,
+    });
 {% endblock %}
