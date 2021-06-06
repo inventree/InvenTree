@@ -776,7 +776,11 @@ function handleModalForm(url, options) {
                     // Form was returned, invalid!
                     else {
 
-                        if (!options.hideErrorMessage) {
+                        if (response.title) {
+                            modalSetTitle(modal, response.title);
+                        }
+
+                        if (response.hideErrorMessage  || !options.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }
