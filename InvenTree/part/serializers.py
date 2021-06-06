@@ -10,10 +10,11 @@ from django.db.models.functions import Coalesce
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeModelSerializer)
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from InvenTree.serializers import TrackingSerializer
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
-from stock.models import StockItem
+from stock.models import StockItem, PartQuantityHistory
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
@@ -512,4 +513,33 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'category',
             'parameter_template',
             'default_value',
+        ]
+
+
+class PartQuantityHistorySerializer(TrackingSerializer):
+    """ Serializer for PartQuantityHistory model """
+
+    item_detail = PartBriefSerializer(source='item', many=False, read_only=True)
+
+    class Meta:
+        model = PartQuantityHistory
+        fields = [
+            'pk',
+            'total_stock',
+            'item',
+            'item_detail',
+            'date',
+            'deltas',
+            'label',
+            'notes',
+            'tracking_type',
+            'user',
+            'user_detail',
+        ]
+
+        read_only_fields = [
+            'date',
+            'user',
+            'label',
+            'tracking_type',
         ]

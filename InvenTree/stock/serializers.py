@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 import common.models
 from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
-from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
+from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer, TrackingSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 
@@ -333,29 +333,10 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
         ]
 
 
-class StockTrackingSerializer(InvenTreeModelSerializer):
+class StockTrackingSerializer(TrackingSerializer):
     """ Serializer for StockItemTracking model """
 
-    def __init__(self, *args, **kwargs):
-
-        item_detail = kwargs.pop('item_detail', False)
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if item_detail is not True:
-            self.fields.pop('item_detail')
-
-        if user_detail is not True:
-            self.fields.pop('user_detail')
-
-    label = serializers.CharField(read_only=True)
-
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
-
-    user_detail = UserSerializerBrief(source='user', many=False, read_only=True)
-
-    deltas = serializers.JSONField(read_only=True)
 
     class Meta:
         model = StockItemTracking

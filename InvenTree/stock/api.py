@@ -21,11 +21,8 @@ from .models import StockItemTestResult
 from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
 
-from company.models import Company, SupplierPart
-from company.serializers import CompanySerializer, SupplierPartSerializer
-
-from order.models import PurchaseOrder
-from order.serializers import POSerializer
+from company.models import SupplierPart
+from company.serializers import SupplierPartSerializer
 
 import common.settings
 import common.models
@@ -38,7 +35,7 @@ from .serializers import StockItemTestResultSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, TrackingMixin
 
 from decimal import Decimal, InvalidOperation
 
@@ -979,7 +976,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         test_result.save()
 
 
-class StockTrackingList(generics.ListAPIView):
+class StockTrackingList(TrackingMixin, generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -990,121 +987,6 @@ class StockTrackingList(generics.ListAPIView):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        try:
-            kwargs['item_detail'] = str2bool(self.request.query_params.get('item_detail', False))
-        except:
-            pass
-
-        try:
-            kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def list(self, request, *args, **kwargs):
-
-        queryset = self.filter_queryset(self.get_queryset())
-
-        serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        # Attempt to add extra context information to the historical data
-        for item in data:
-            deltas = item['deltas']
-
-            if not deltas:
-                deltas = {}
-
-            # Add location detail
-            if 'location' in deltas:
-                try:
-                    location = StockLocation.objects.get(pk=deltas['location'])
-                    serializer = LocationSerializer(location)
-                    deltas['location_detail'] = serializer.data
-                except:
-                    pass
-
-            # Add stockitem detail
-            if 'stockitem' in deltas:
-                try:
-                    stockitem = StockItem.objects.get(pk=deltas['stockitem'])
-                    serializer = StockItemSerializer(stockitem)
-                    deltas['stockitem_detail'] = serializer.data
-                except:
-                    pass
-
-            # Add customer detail
-            if 'customer' in deltas:
-                try:
-                    customer = Company.objects.get(pk=deltas['customer'])
-                    serializer = CompanySerializer(customer)
-                    deltas['customer_detail'] = serializer.data
-                except:
-                    pass
-
-            # Add purchaseorder detail
-            if 'purchaseorder' in deltas:
-                try:
-                    order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
-                    serializer = POSerializer(order)
-                    deltas['purchaseorder_detail'] = serializer.data
-                except:
-                    pass
-
-        if request.is_ajax():
-            return JsonResponse(data, safe=False)
-        else:
-            return Response(data)
-
-    def create(self, request, *args, **kwargs):
-        """ Create a new StockItemTracking object
-
-        Here we override the default 'create' implementation,
-        to save the user information associated with the request object.
-        """
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        # Record the user who created this Part object
-        item = serializer.save()
-        item.user = request.user
-        item.system = False
-
-        # quantity field cannot be explicitly adjusted  here
-        item.quantity = item.item.quantity
-        item.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
-
-    filter_fields = [
-        'item',
-        'user',
-    ]
-
-    ordering = '-date'
-
-    ordering_fields = [
-        'date',
-    ]
-
-    search_fields = [
-        'title',
-        'notes',
-    ]
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):

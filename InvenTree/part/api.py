@@ -30,12 +30,13 @@ from .models import PartCategoryParameterTemplate
 
 from common.models import InvenTreeSetting
 from build.models import Build
+from stock.models import PartQuantityHistory
 
 from . import serializers as part_serializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, TrackingMixin
 
 from InvenTree.status_codes import BuildStatus
 
@@ -992,6 +993,32 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
+class PartQuantityHistoryList(TrackingMixin, generics.ListAPIView):
+    """ API endpoint for list view of PartQuantityHistory objects.
+
+    PartQuantityHistory objects are read-only
+    (they are created by internal model functionality)
+
+    - GET: Return list of PartQuantityHistory objects
+    """
+
+    queryset = PartQuantityHistory.objects.all()
+    serializer_class = part_serializers.PartQuantityHistorySerializer
+
+    def create(self, request, *args, **kwargs):
+        ret = super().create(request, *args, **kwargs)
+
+        serializer = self.get_serializer(data=request.data)
+        item = serializer.save()
+
+        part = item.part
+        item.total_stock = part.total_stock
+        item.item = part
+        item.save()
+
+        return Response(serializer.data, status=ret.status_code, headers=ret.headers)
+
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
@@ -1029,6 +1056,8 @@ part_api_urls = [
         url(r'^$', PartThumbs.as_view(), name='api-part-thumbs'),
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
+
+    url(r'track/?', PartQuantityHistoryList.as_view(), name='api-part-track'),
 
     url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 
