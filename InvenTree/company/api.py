@@ -41,7 +41,7 @@ class CompanyList(generics.ListCreateAPIView):
         queryset = CompanySerializer.annotate_queryset(queryset)
 
         return queryset
-    
+
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -116,7 +116,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
             kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
         except AttributeError:
             pass
-        
+
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
@@ -131,7 +131,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         params = self.request.query_params
 
         # Filter by manufacturer
-        manufacturer = params.get('company', None)
+        manufacturer = params.get('manufacturer', None)
 
         if manufacturer is not None:
             queryset = queryset.filter(manufacturer=manufacturer)
@@ -167,7 +167,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         'part__name',
         'part__description',
     ]
-    
+
 
 class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of ManufacturerPart object
@@ -255,7 +255,7 @@ class SupplierPartList(generics.ListCreateAPIView):
             kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
         except AttributeError:
             pass
-        
+
         try:
             kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', None))
         except AttributeError:
@@ -270,7 +270,7 @@ class SupplierPartList(generics.ListCreateAPIView):
             kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
         except AttributeError:
             pass
-        
+
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)

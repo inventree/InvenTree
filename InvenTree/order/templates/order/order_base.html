@@ -33,7 +33,7 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
 </h3>
 <hr>
-<p>{{ order.description }}</p>
+<p>{{ order.description }}{% include "clip.html"%}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons' role='group'>
         <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
@@ -75,7 +75,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{{ order.reference }}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info'></span></td>
@@ -90,20 +90,20 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a></td>
+        <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}</td>
     </tr>
     {% if order.supplier_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Supplier Reference" %}</td>
-        <td>{{ order.supplier_reference }}</td>
+        <td>{{ order.supplier_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a></td>
+        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
     </tr>
     {% endif %}
     <tr>
@@ -171,10 +171,34 @@ $("#edit-order").click(function() {
     );
 });
 
+$("#receive-order").click(function() {
+    launchModalForm("{% url 'po-receive' order.id %}", {
+        reload: true,
+        secondary: [
+            {
+                field: 'location',
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new stock location" %}',
+                url: "{% url 'stock-location-create' %}",
+            },
+        ]
+    });
+});
+
+$("#complete-order").click(function() {
+    launchModalForm("{% url 'po-complete' order.id %}", {
+        reload: true,
+    });
+});
+
 $("#cancel-order").click(function() {
     launchModalForm("{% url 'po-cancel' order.id %}", {
         reload: true,
     });
+});
+
+$("#export-order").click(function() {
+    location.href = "{% url 'po-export' order.id %}";
 });
 
 

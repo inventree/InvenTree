@@ -141,16 +141,18 @@ $('#view-calendar').click(function() {
     $(".columns-right").hide();
     $(".search").hide();
     $('#filter-list-salesorder').hide();
-    
+
     $("#sales-order-calendar").show();
     $("#view-list").show();
+
+    calendar.render();
 });
 
 $("#view-list").click(function() {
     // Hide the calendar view, show the list view
     $("#sales-order-calendar").hide();
     $("#view-list").hide();
-    
+
     $(".fixed-table-pagination").show();
     $(".columns-right").show();
     $(".search").show();

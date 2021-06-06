@@ -63,7 +63,7 @@
     tree_id: 2
     lft: 4
     rght: 5
-    
+
 - model: stock.stocklocation
   pk: 7
   fields:

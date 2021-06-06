@@ -19,12 +19,12 @@
         <tr>
             <td><span class='fas fa-info'></span></td>
             <td>{% trans "Description" %}</td>
-            <td>{{ build.title }}</td>
+            <td>{{ build.title }}{% include "clip.html"%}</td>
         </tr>
         <tr>
             <td><span class='fas fa-shapes'></span></td>
             <td>{% trans "Part" %}</td>
-            <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a></td>
+            <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a>{% include "clip.html"%}</td>
         </tr>
         <tr>
             <td></td>
@@ -35,7 +35,7 @@
             <td>{% trans "Stock Source" %}</td>
             <td>
                 {% if build.take_from %}
-                <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>
+                <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>{% include "clip.html"%}
                 {% else %}
                 <i>{% trans "Stock can be taken from any available location." %}</i>
                 {% endif %}
@@ -48,7 +48,7 @@
                 {% if build.destination %}
                 <a href="{% url 'stock-location-detail' build.destination.id %}">
                     {{ build.destination }}
-                </a>
+                </a>{% include "clip.html"%}
                 {% else %}
                 <i>{% trans "Destination location not specified" %}</i>
                 {% endif %}
@@ -68,28 +68,28 @@
         <tr>
             <td><span class='fas fa-layer-group'></span></td>
             <td>{% trans "Batch" %}</td>
-            <td>{{ build.batch }}</td>
+            <td>{{ build.batch }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if build.parent %}
         <tr>
             <td><span class='fas fa-sitemap'></span></td>
             <td>{% trans "Parent Build" %}</td>
-            <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></td>
+            <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if build.sales_order %}
         <tr>
             <td><span class='fas fa-dolly'></span></td>
             <td>{% trans "Sales Order" %}</td>
-            <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
+            <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if build.link %}
         <tr>
             <td><span class='fas fa-link'></span></td>
             <td>{% trans "External Link" %}</td>
-            <td><a href="{{ build.link }}">{{ build.link }}</a></td>
+            <td><a href="{{ build.link }}">{{ build.link }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if build.issued_by %}

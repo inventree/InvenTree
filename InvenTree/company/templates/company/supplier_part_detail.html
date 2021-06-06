@@ -28,14 +28,14 @@
     <tr><td>{% trans "External Link" %}</td><td><a href="{{ part.link }}">{{ part.link }}</a></td></tr>
 {% endif %}
 {% if part.description %}
-    <tr><td>{% trans "Description" %}</td><td>{{ part.description }}</td></tr>
+    <tr><td>{% trans "Description" %}</td><td>{{ part.description }}{% include "clip.html"%}</td></tr>
 {% endif %}
 {% if part.manufacturer %}
-    <tr><td>{% trans "Manufacturer" %}</td><td>{{ part.manufacturer }}</td></tr>
-    <tr><td>{% trans "MPN" %}</td><td>{{ part.MPN }}</td></tr>
+    <tr><td>{% trans "Manufacturer" %}</td><td>{{ part.manufacturer }}{% include "clip.html"%}</td></tr>
+    <tr><td>{% trans "MPN" %}</td><td>{{ part.MPN }}{% include "clip.html"%}</td></tr>
 {% endif %}
 {% if part.note %}
-    <tr><td>{% trans "Note" %}</td><td>{{ part.note }}</td></tr>
+    <tr><td>{% trans "Note" %}</td><td>{{ part.note }}{% include "clip.html"%}</td></tr>
 {% endif %}
 </table>
 
@@ -43,6 +43,6 @@
 
 {% block js_ready %}
 {{ block.super }}
-    
+
 
 {% endblock %}

@@ -14,6 +14,8 @@ from django.db.models.signals import post_save, post_delete
 
 import logging
 
+from InvenTree.ready import canAppAccessDatabase
+
 
 logger = logging.getLogger("inventree")
 
@@ -183,7 +185,7 @@ class RuleSet(models.Model):
     can_change = models.BooleanField(verbose_name=_('Change'), default=False, help_text=_('Permissions to edit items'))
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
-    
+
     @classmethod
     def check_table_permission(cls, user, table, permission):
         """
@@ -269,6 +271,9 @@ def update_group_roles(group, debug=False):
     The RuleSet model has complete control over the permissions applied to any group.
 
     """
+
+    if not canAppAccessDatabase():
+        return
 
     # List of permissions already associated with this group
     group_permissions = set()
@@ -368,7 +373,7 @@ def update_group_roles(group, debug=False):
 
     # Add any required permissions to the group
     for perm in permissions_to_add:
-        
+
         # Ignore if permission is already in the group
         if perm in group_permissions:
             continue
@@ -536,7 +541,7 @@ class Owner(models.Model):
                     pass
 
                 return owner
-                
+
         return owner
 
     def get_related_owners(self, include_group=False):
@@ -557,7 +562,7 @@ class Owner(models.Model):
                     Q(owner_id=self.owner.id, owner_type=ContentType.objects.get_for_model(Group).id)
             else:
                 query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(user_model).id)
-            
+
             related_owners = Owner.objects.filter(query)
 
         elif type(self.owner) is user_model:

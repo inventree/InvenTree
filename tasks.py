@@ -2,6 +2,7 @@
 
 from shutil import copyfile
 import os
+import json
 import sys
 
 try:
@@ -64,7 +65,7 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    c.run('cd {path} && python3 manage.py {cmd}'.format(
+    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
@@ -184,7 +185,7 @@ def translate(c):
     """
 
     # Translate applicable .py / .html / .js files
-    manage(c, "makemessages --all -e py,html,js")
+    manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')
@@ -232,6 +233,32 @@ def coverage(c):
     # Generate coverage report
     c.run('coverage html')
 
+
+def content_excludes():
+    """
+    Returns a list of content types to exclude from import/export
+    """
+
+    excludes = [
+        "contenttypes",
+        "sessions.session",
+        "auth.permission",
+        "error_report.error",
+        "admin.logentry",
+        "django_q.schedule",
+        "django_q.task",
+        "django_q.ormq",
+        "users.owner",
+    ]
+
+    output = ""
+
+    for e in excludes:
+        output += f"--exclude {e} "
+
+    return output
+
+
 @task(help={'filename': "Output filename (default = 'data.json')"})
 def export_records(c, filename='data.json'):
     """
@@ -253,9 +280,36 @@ def export_records(c, filename='data.json'):
             print("Cancelled export operation")
             sys.exit(1)
 
-    cmd = f'dumpdata --exclude contenttypes --exclude auth.permission --indent 2 --output {filename}'
+    tmpfile = f"{filename}.tmp"
 
+    cmd = f"dumpdata --indent 2 --output {tmpfile} {content_excludes()}"
+
+    # Dump data to temporary file
     manage(c, cmd, pty=True)
+
+    print("Running data post-processing step...")
+
+    # Post-process the file, to remove any "permissions" specified for a user or group
+    with open(tmpfile, "r") as f_in:
+        data = json.loads(f_in.read())
+
+    for entry in data:
+        if "model" in entry:
+
+            # Clear out any permissions specified for a group
+            if entry["model"] == "auth.group":
+                entry["fields"]["permissions"] = []
+
+            # Clear out any permissions specified for a user
+            if entry["model"] == "auth.user":
+                entry["fields"]["user_permissions"] = []
+
+    # Write the processed data to file
+    with open(filename, "w") as f_out:
+        f_out.write(json.dumps(data, indent=2))
+
+    print("Data export completed")
+
 
 @task(help={'filename': 'Input filename'})
 def import_records(c, filename='data.json'):
@@ -273,9 +327,32 @@ def import_records(c, filename='data.json'):
 
     print(f"Importing database records from '{filename}'")
 
-    cmd = f'loaddata {filename}'
+    # Pre-process the data, to remove any "permissions" specified for a user or group
+    tmpfile = f"{filename}.tmp.json"
+
+    with open(filename, "r") as f_in:
+        data = json.loads(f_in.read())
+
+    for entry in data:
+        if "model" in entry:
+
+            # Clear out any permissions specified for a group
+            if entry["model"] == "auth.group":
+                entry["fields"]["permissions"] = []
+
+            # Clear out any permissions specified for a user
+            if entry["model"] == "auth.user":
+                entry["fields"]["user_permissions"] = []
+
+    # Write the processed data to the tmp file
+    with open(tmpfile, "w") as f_out:
+        f_out.write(json.dumps(data, indent=2))
+
+    cmd = f"loaddata {tmpfile} -i {content_excludes()}"
 
     manage(c, cmd, pty=True)
+
+    print("Data import completed")
 
 @task
 def import_fixtures(c):
@@ -293,7 +370,7 @@ def import_fixtures(c):
     fixtures = [
         # Build model
         'build',
-        
+
         # Common models
         'settings',
 
@@ -316,33 +393,15 @@ def import_fixtures(c):
         'location',
         'stock_tests',
         'stock',
+
+        # Users
+        'users'
     ]
 
     command = 'loaddata ' + ' '.join(fixtures)
 
     manage(c, command, pty=True)
 
-@task
-def backup(c):
-    """
-    Create a backup of database models and uploaded media files.
-
-    Backup files will be written to the 'backup_dir' file specified in 'config.yaml'
-    """
-
-    manage(c, 'dbbackup')
-    manage(c, 'mediabackup')
-
-@task
-def restore(c):
-    """
-    Restores database models and media files.
-
-    Backup files are read from the 'backup_dir' file specified in 'config.yaml'
-    """
-
-    manage(c, 'dbrestore')
-    manage(c, 'mediarestore')
 
 @task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):

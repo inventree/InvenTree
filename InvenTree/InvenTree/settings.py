@@ -17,8 +17,9 @@ import random
 import string
 import shutil
 import sys
-import tempfile
 from datetime import datetime
+
+import moneyed
 
 import yaml
 from django.utils.translation import gettext_lazy as _
@@ -86,6 +87,11 @@ with open(cfg_filename, 'r') as cfg:
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
+))
+
+DOCKER = _is_true(get_setting(
+    'INVENTREE_DOCKER',
+    False
 ))
 
 # Configure logging settings
@@ -250,7 +256,6 @@ INSTALLED_APPS = [
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
-    'dbbackup',                             # Database backup / restore
     'rest_framework',                       # DRF (Django Rest Framework)
     'rest_framework.authtoken',             # Token authentication for API
     'corsheaders',                          # Cross-origin Resource Sharing for DRF
@@ -265,6 +270,7 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
     'django_q',
+    'formtools',                            # Form wizard tools
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -432,11 +438,15 @@ It can be specified in config.yaml (or envvar) as either (for example):
 - django.db.backends.postgresql
 """
 
-db_engine = db_config['ENGINE']
+db_engine = db_config['ENGINE'].lower()
 
-if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
+# Correct common misspelling
+if db_engine == 'sqlite':
+    db_engine = 'sqlite3'
+
+if db_engine in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
-    db_engine = f'django.db.backends.{db_engine.lower()}'
+    db_engine = f'django.db.backends.{db_engine}'
     db_config['ENGINE'] = db_engine
 
 db_name = db_config['NAME']
@@ -493,7 +503,7 @@ LANGUAGES = [
     ('en', _('English')),
     ('fr', _('French')),
     ('de', _('German')),
-    ('pk', _('Polish')),
+    ('pl', _('Polish')),
     ('tr', _('Turkish')),
 ]
 
@@ -505,8 +515,19 @@ CURRENCIES = CONFIG.get(
     ],
 )
 
-# TODO - Allow live web-based backends in the future
-EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
+# Check that each provided currency is supported
+for currency in CURRENCIES:
+    if currency not in moneyed.CURRENCIES:
+        print(f"Currency code '{currency}' is not supported")
+        sys.exit(1)
+
+BASE_CURRENCY = get_setting(
+    'INVENTREE_BASE_CURRENCY',
+    CONFIG.get('base_currency', 'USD')
+)
+
+# Custom currency exchange backend
+EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})
@@ -585,17 +606,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-
-BACKUP_DIR = get_setting(
-    'INVENTREE_BACKUP_DIR',
-    CONFIG.get('backup_dir', tempfile.gettempdir()),
-)
-
-# Settings for dbbsettings app
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'location': BACKUP_DIR,
-}
 
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [

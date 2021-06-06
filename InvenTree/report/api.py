@@ -62,7 +62,7 @@ class StockItemReportMixin:
         """
         Return a list of requested stock items
         """
-        
+
         items = []
 
         params = self.request.query_params
@@ -101,7 +101,7 @@ class BuildReportMixin:
         params = self.request.query_params
 
         for key in ['build', 'build[]', 'builds', 'builds[]']:
-            
+
             if key in params:
                 builds = params.getlist(key, [])
 
@@ -208,15 +208,23 @@ class ReportPrintMixin:
         # In debug mode, generate single HTML output, rather than PDF
         debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
+        # Start with a default report name
+        report_name = "report.pdf"
+
         # Merge one or more PDF files into a single download
         for item in items_to_print:
             report = self.get_object()
             report.object_to_print = item
 
+            report_name = report.generate_filename(request)
+
             if debug_mode:
                 outputs.append(report.render_as_string(request))
             else:
                 outputs.append(report.render(request))
+
+        if not report_name.endswith('.pdf'):
+            report_name += '.pdf'
 
         if debug_mode:
             """
@@ -248,7 +256,7 @@ class ReportPrintMixin:
 
             return InvenTree.helpers.DownloadFile(
                 pdf,
-                'inventree_report.pdf',
+                report_name,
                 content_type='application/pdf'
             )
 
@@ -268,7 +276,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     serializer_class = TestReportSerializer
 
     def filter_queryset(self, queryset):
-        
+
         queryset = super().filter_queryset(queryset)
 
         # List of StockItem objects to match against
@@ -342,7 +350,7 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, R
         items = self.get_items()
 
         return self.print(request, items)
-       
+
 
 class BOMReportList(ReportListView, PartReportMixin):
     """
@@ -459,7 +467,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
 
             We need to compare the 'filters' string of each report,
             and see if it matches against each of the specified parts
-            
+
             # TODO: This code needs some refactoring!
             """
 
@@ -546,7 +554,7 @@ class POReportList(ReportListView, OrderReportMixin):
             valid_report_ids = set()
 
             for report in queryset.all():
-                
+
                 matches = True
 
                 # Filter string defined for the report object
@@ -565,7 +573,7 @@ class POReportList(ReportListView, OrderReportMixin):
                     except FieldError:
                         matches = False
                         break
-                
+
                 if matches:
                     valid_report_ids.add(report.pk)
                 else:
@@ -629,7 +637,7 @@ class SOReportList(ReportListView, OrderReportMixin):
             valid_report_ids = set()
 
             for report in queryset.all():
-                
+
                 matches = True
 
                 # Filter string defined for the report object
@@ -648,7 +656,7 @@ class SOReportList(ReportListView, OrderReportMixin):
                     except FieldError:
                         matches = False
                         break
-                
+
                 if matches:
                     valid_report_ids.add(report.pk)
                 else:

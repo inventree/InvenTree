@@ -35,31 +35,6 @@
 
 {{ block.super }}
 
-
-$("#receive-order").click(function() {
-    launchModalForm("{% url 'po-receive' order.id %}", {
-        reload: true,
-        secondary: [
-            {
-                field: 'location',
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-                url: "{% url 'stock-location-create' %}",
-            },
-        ]
-    });
-});
-
-$("#complete-order").click(function() {
-    launchModalForm("{% url 'po-complete' order.id %}", {
-        reload: true,
-    });
-});
-
-$("#export-order").click(function() {
-    location.href = "{% url 'po-export' order.id %}";
-});
-
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
     launchModalForm("{% url 'po-line-item-create' %}",
@@ -218,11 +193,11 @@ $("#po-table").inventreeTable({
                 });
             },
             sorter: function(valA, valB, rowA, rowB) {
-                
+
                 if (rowA.received == 0 && rowB.received == 0) {
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
                 }
-                
+
                 var progressA = parseFloat(rowA.received) / rowA.quantity;
                 var progressB = parseFloat(rowB.received) / rowB.quantity;
 
@@ -260,6 +235,5 @@ $("#po-table").inventreeTable({
         }
     ]
 });
-
 
 {% endblock %}

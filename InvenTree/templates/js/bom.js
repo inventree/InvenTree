@@ -33,7 +33,7 @@ function removeRowFromBomWizard(e) {
     var colNum = 0;
 
     table.find('tr').each(function() {
-        
+
         colNum++;
 
         if (colNum >= 3) {
@@ -111,9 +111,9 @@ function loadBomTable(table, options) {
     if (options.part_detail) {
         params.part_detail = true;
     }
-    
+
     params.sub_part_detail = true;
-    
+
     var filters = {};
 
     if (!options.disableFilters) {
@@ -173,7 +173,7 @@ function loadBomTable(table, options) {
                 // Display an extra icon if this part is an assembly
                 if (sub_part.assembly) {
                     var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
-                    
+
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
 
@@ -182,7 +182,7 @@ function loadBomTable(table, options) {
         }
     );
 
-    
+
     // Part description
     cols.push(
         {
@@ -243,6 +243,22 @@ function loadBomTable(table, options) {
         }
     });
 
+    cols.push(
+    {
+        field: 'purchase_price_range',
+        title: '{% trans "Purchase Price Range" %}',
+        searchable: false,
+        sortable: true,
+    });
+
+    cols.push(
+    {
+        field: 'purchase_price_avg',
+        title: '{% trans "Purchase Price Average" %}',
+        searchable: false,
+        sortable: true,
+    });
+
     /*
 
     // TODO - Re-introduce the pricing column at a later stage,
@@ -269,10 +285,17 @@ function loadBomTable(table, options) {
         title: '{% trans "Optional" %}',
         searchable: false,
         formatter: function(value) {
-            if (value == '1') return '{% trans "true" %}';
-            if (value == '0') return '{% trans "false" %}';
+            return yesNoLabel(value);
         }
     });
+
+    cols.push({
+        field: 'allow_variants',
+        title: '{% trans "Allow Variants" %}',
+        formatter: function(value) {
+            return yesNoLabel(value);
+        }
+    })
 
     cols.push({
         field: 'inherited',
@@ -281,7 +304,7 @@ function loadBomTable(table, options) {
         formatter: function(value, row, index, field) {
             // This BOM item *is* inheritable, but is defined for this BOM
             if (!row.inherited) {
-                return "-"; 
+                return yesNoLabel(false);
             } else if (row.part == options.parent_id) {
                 return '{% trans "Inherited" %}';
             } else {
@@ -325,7 +348,7 @@ function loadBomTable(table, options) {
             sortable: true,
         }
     )
-    
+
     // Part notes
     cols.push(
         {
@@ -348,18 +371,18 @@ function loadBomTable(table, options) {
                 if (row.part == options.parent_id) {
 
                     var bValidate = `<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-check-circle icon-blue'/></button>`;
-                    
+
                     var bValid = `<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>`;
 
                     var bEdit = `<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-edit'></span></button>`;
 
                     var bDelt = `<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
-                    
+
                     var html = "<div class='btn-group' role='group'>";
-                    
+
                     html += bEdit;
                     html += bDelt;
-                    
+
                     if (!row.validated) {
                         html += bValidate;
                     } else {
@@ -394,7 +417,7 @@ function loadBomTable(table, options) {
             {
                 success: function(response) {
                     for (var idx = 0; idx < response.length; idx++) {
-                        
+
                         response[idx].parentId = bom_pk;
 
                         if (response[idx].sub_part_detail.assembly) {
@@ -412,7 +435,7 @@ function loadBomTable(table, options) {
             }
         )
     }
-    
+
     table.inventreeTable({
         treeEnable: !options.editable,
         rootParentId: parent_id,
@@ -497,7 +520,7 @@ function loadBomTable(table, options) {
 
             var pk = $(this).attr('pk');
             var url = `/part/bom/${pk}/delete/`;
-            
+
             launchModalForm(
                 url,
                 {
@@ -509,7 +532,7 @@ function loadBomTable(table, options) {
         });
 
         table.on('click', '.bom-edit-button', function() {
-            
+
             var pk = $(this).attr('pk');
             var url = `/part/bom/${pk}/edit/`;
 
@@ -524,7 +547,7 @@ function loadBomTable(table, options) {
         });
 
         table.on('click', '.bom-validate-button', function() {
-            
+
             var pk = $(this).attr('pk');
             var url = `/api/bom/${pk}/validate/`;
 

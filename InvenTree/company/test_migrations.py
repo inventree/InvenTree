@@ -48,7 +48,7 @@ class TestManufacturerField(MigratorTestCase):
         - Company object (supplier)
         - SupplierPart object
         """
-        
+
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
@@ -123,7 +123,7 @@ class TestManufacturerPart(MigratorTestCase):
         - Company object (supplier)
         - SupplierPart object
         """
-        
+
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
@@ -220,7 +220,7 @@ class TestManufacturerPart(MigratorTestCase):
 
         # Check on the SupplierPart objects
         SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
-        
+
         supplier_parts = SupplierPart.objects.all()
         self.assertEqual(supplier_parts.count(), 6)
 
@@ -229,10 +229,10 @@ class TestManufacturerPart(MigratorTestCase):
 
         # Check on the ManufacturerPart objects
         ManufacturerPart = self.new_state.apps.get_model('company', 'manufacturerpart')
-        
+
         manufacturer_parts = ManufacturerPart.objects.all()
         self.assertEqual(manufacturer_parts.count(), 4)
-        
+
         manufacturer_part = manufacturer_parts.first()
         self.assertEqual(manufacturer_part.MPN, 'MUR-CAP-123456')
 
@@ -293,7 +293,7 @@ class TestCurrencyMigration(MigratorTestCase):
             self.assertIsNone(pb.price)
 
     def test_currency_migration(self):
-        
+
         PB = self.new_state.apps.get_model('company', 'supplierpricebreak')
 
         for pb in PB.objects.all():

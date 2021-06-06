@@ -12,17 +12,22 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import RedirectView, TemplateView
+
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
+
+import InvenTree.tasks
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import ColorThemeSelectForm, SettingCategorySelectForm
@@ -176,7 +181,7 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
 
             if role not in RuleSet.RULESET_NAMES:
                 raise ValueError(f"Role '{role}' is not a valid role")
-            
+
             if permission not in RuleSet.RULESET_PERMISSIONS:
                 raise ValueError(f"Permission '{permission}' is not a valid permission")
 
@@ -223,7 +228,7 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
         Return the 'permission_class' required for the current View.
 
         Must be one of:
-        
+
         - view
         - change
         - add
@@ -389,7 +394,7 @@ class QRCodeView(AjaxView):
     """
 
     ajax_template_name = "qr_code.html"
-    
+
     def get(self, request, *args, **kwargs):
         self.request = request
         self.pk = self.kwargs['pk']
@@ -398,7 +403,7 @@ class QRCodeView(AjaxView):
     def get_qr_data(self):
         """ Returns the text object to render to a QR code.
         The actual rendering will be handled by the template """
-        
+
         return None
 
     def get_context_data(self):
@@ -406,7 +411,7 @@ class QRCodeView(AjaxView):
 
         Explicity passes the parameter 'qr_data'
         """
-        
+
         context = {}
 
         qr = self.get_qr_data()
@@ -415,7 +420,7 @@ class QRCodeView(AjaxView):
             context['qr_data'] = qr
         else:
             context['error_msg'] = 'Error generating QR code'
-        
+
         return context
 
 
@@ -507,7 +512,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         """
 
         super(UpdateView, self).get(request, *args, **kwargs)
-        
+
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
     def save(self, object, form, **kwargs):
@@ -673,7 +678,7 @@ class SetPasswordView(AjaxUpdateView):
 
         p1 = request.POST.get('enter_password', '')
         p2 = request.POST.get('confirm_password', '')
-        
+
         if valid:
             # Passwords must match
 
@@ -712,7 +717,7 @@ class IndexView(TemplateView):
         # Generate a list of orderable parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
         # context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
-    
+
         # Generate a list of assembly parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
         # context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
@@ -752,7 +757,7 @@ class DynamicJsView(TemplateView):
 
     template_name = ""
     content_type = 'text/javascript'
-    
+
 
 class SettingsView(TemplateView):
     """ View for configuring User settings
@@ -769,12 +774,57 @@ class SettingsView(TemplateView):
         return ctx
 
 
-class ColorThemeSelectView(FormView):
+class CurrencyRefreshView(RedirectView):
+    """
+    POST endpoint to refresh / update exchange rates
+    """
+
+    url = reverse_lazy("settings-currencies")
+
+    def post(self, request, *args, **kwargs):
+        """
+        On a POST request we will attempt to refresh the exchange rates
+        """
+
+        # Will block for a little bit
+        InvenTree.tasks.update_exchange_rates()
+
+        return self.get(request, *args, **kwargs)
+
+
+class CurrencySettingsView(TemplateView):
+    """
+    View for configuring currency settings
+    """
+
+    template_name = "InvenTree/settings/currencies.html"
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs).copy()
+
+        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+        ctx["base_currency"] = settings.BASE_CURRENCY
+        ctx["currencies"] = settings.CURRENCIES
+
+        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+
+        # When were the rates last updated?
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            ctx["rates_updated"] = backend.last_update
+        except:
+            ctx["rates_updated"] = None
+
+        return ctx
+
+
+class AppearanceSelectView(FormView):
     """ View for selecting a color theme """
 
     form_class = ColorThemeSelectForm
-    success_url = reverse_lazy('settings-theme')
-    template_name = "InvenTree/settings/theme.html"
+    success_url = reverse_lazy('settings-appearance')
+    template_name = "InvenTree/settings/appearance.html"
 
     def get_user_theme(self):
         """ Get current user color theme """
@@ -788,7 +838,7 @@ class ColorThemeSelectView(FormView):
     def get_initial(self):
         """ Select current user color theme as initial choice """
 
-        initial = super(ColorThemeSelectView, self).get_initial()
+        initial = super(AppearanceSelectView, self).get_initial()
 
         user_theme = self.get_user_theme()
         if user_theme:
@@ -830,7 +880,7 @@ class ColorThemeSelectView(FormView):
 
         if form.is_valid():
             theme_selected = form.cleaned_data['name']
-            
+
             # Set color theme to form selection
             user_theme.name = theme_selected
             user_theme.save()
@@ -893,7 +943,7 @@ class DatabaseStatsView(AjaxView):
         # Part stats
         ctx['part_count'] = Part.objects.count()
         ctx['part_cat_count'] = PartCategory.objects.count()
-        
+
         # Stock stats
         ctx['stock_item_count'] = StockItem.objects.count()
         ctx['stock_loc_count'] = StockLocation.objects.count()

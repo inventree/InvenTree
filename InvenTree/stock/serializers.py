@@ -140,7 +140,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
-        
+
     supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
@@ -150,7 +150,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
 
     quantity = serializers.FloatField()
-    
+
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
     expired = serializers.BooleanField(required=False, read_only=True)
@@ -349,32 +349,32 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
         if user_detail is not True:
             self.fields.pop('user_detail')
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    label = serializers.CharField(read_only=True)
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
     user_detail = UserSerializerBrief(source='user', many=False, read_only=True)
 
+    deltas = serializers.JSONField(read_only=True)
+
     class Meta:
         model = StockItemTracking
         fields = [
             'pk',
-            'url',
             'item',
             'item_detail',
             'date',
-            'title',
+            'deltas',
+            'label',
             'notes',
-            'link',
-            'quantity',
+            'tracking_type',
             'user',
             'user_detail',
-            'system',
         ]
 
         read_only_fields = [
             'date',
             'user',
-            'system',
-            'quantity',
+            'label',
+            'tracking_type',
         ]

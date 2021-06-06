@@ -1,3 +1,30 @@
+function attachClipboard(selector, containerselector, textElement) {
+    // set container
+    if (containerselector){
+        containerselector = document.getElementById(containerselector);
+    } else {
+        containerselector = document.body;
+    }
+
+    // set text-function
+    if (textElement){
+        text = function() {
+            return document.getElementById(textElement).textContent;
+        }
+    } else {
+        text = function(trigger) {
+            var content = trigger.parentElement.parentElement.textContent;return content.trim();
+        }
+    }
+
+    // create Clipboard
+    var cis = new ClipboardJS(selector, {
+        text: text,
+        container: containerselector
+    });
+}
+
+
 function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
      * This will be called for every page that extends "base.html"
@@ -48,6 +75,11 @@ function inventreeDocReady() {
             no_post: true,
         });
     });
+
+    // Initialize clipboard-buttons
+    attachClipboard('.clip-btn');
+    attachClipboard('.clip-btn', 'modal-about');  // modals
+    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
 }
 
 function isFileTransfer(transfer) {
@@ -100,7 +132,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
     if (options.disabled) {
         extraProps += "disabled='true' ";
     }
-    
+
     html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;

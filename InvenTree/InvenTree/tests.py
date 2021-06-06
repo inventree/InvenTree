@@ -5,6 +5,12 @@ from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 
+from django.conf import settings
+
+from djmoney.money import Money
+from djmoney.contrib.exchange.models import Rate, convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
+
 from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
@@ -12,6 +18,8 @@ from . import version
 from mptt.exceptions import InvalidMove
 
 from decimal import Decimal
+
+import InvenTree.tasks
 
 from stock.models import StockLocation
 
@@ -97,7 +105,7 @@ class TestHelpers(TestCase):
         self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
 
     def testDecimal2String(self):
-        
+
         self.assertEqual(helpers.decimal2string(Decimal('1.2345000')), '1.2345')
         self.assertEqual(helpers.decimal2string('test'), 'test')
 
@@ -205,7 +213,7 @@ class TestMPTT(TestCase):
         child = StockLocation.objects.get(pk=5)
 
         parent.parent = child
-        
+
         with self.assertRaises(InvalidMove):
             parent.save()
 
@@ -223,7 +231,7 @@ class TestMPTT(TestCase):
         drawer.save()
 
         self.assertNotEqual(tree, drawer.tree_id)
-        
+
 
 class TestSerialNumberExtraction(TestCase):
     """ Tests for serial number extraction code """
@@ -243,6 +251,14 @@ class TestSerialNumberExtraction(TestCase):
         sn = e("1-5, 10-15", 11)
         self.assertIn(3, sn)
         self.assertIn(13, sn)
+
+        sn = e("1+", 10)
+        self.assertEqual(len(sn), 10)
+        self.assertEqual(sn, [_ for _ in range(1, 11)])
+
+        sn = e("4, 1+2", 4)
+        self.assertEqual(len(sn), 4)
+        self.assertEqual(sn, ["4", 1, 2, 3])
 
     def test_failures(self):
 
@@ -300,3 +316,46 @@ class TestVersionNumber(TestCase):
         self.assertTrue(v_c > v_b)
         self.assertTrue(v_d > v_c)
         self.assertTrue(v_d > v_a)
+
+
+class CurrencyTests(TestCase):
+    """
+    Unit tests for currency / exchange rate functionality
+    """
+
+    def test_rates(self):
+
+        # Initially, there will not be any exchange rate information
+        rates = Rate.objects.all()
+
+        self.assertEqual(rates.count(), 0)
+
+        # Without rate information, we cannot convert anything...
+        with self.assertRaises(MissingRate):
+            convert_money(Money(100, 'USD'), 'AUD')
+
+        with self.assertRaises(MissingRate):
+            convert_money(Money(100, 'AUD'), 'USD')
+
+        currencies = settings.CURRENCIES
+
+        InvenTree.tasks.update_exchange_rates()
+
+        rates = Rate.objects.all()
+
+        self.assertEqual(rates.count(), len(currencies))
+
+        # Now that we have some exchange rate information, we can perform conversions
+
+        # Forwards
+        convert_money(Money(100, 'USD'), 'AUD')
+
+        # Backwards
+        convert_money(Money(100, 'AUD'), 'USD')
+
+        # Convert between non base currencies
+        convert_money(Money(100, 'CAD'), 'NZD')
+
+        # Convert to a symbol which is not covered
+        with self.assertRaises(MissingRate):
+            convert_money(Money(100, 'GBP'), 'ZWL')

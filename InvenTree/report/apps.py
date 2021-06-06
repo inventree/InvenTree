@@ -5,6 +5,8 @@ import logging
 from django.apps import AppConfig
 from django.conf import settings
 
+from InvenTree.ready import canAppAccessDatabase
+
 
 logger = logging.getLogger("inventree")
 
@@ -17,8 +19,9 @@ class ReportConfig(AppConfig):
         This function is called whenever the report app is loaded
         """
 
-        self.create_default_test_reports()
-        self.create_default_build_reports()
+        if canAppAccessDatabase():
+            self.create_default_test_reports()
+            self.create_default_build_reports()
 
     def create_default_reports(self, model, reports):
         """

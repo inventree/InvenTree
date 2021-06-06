@@ -8,7 +8,7 @@ import json
 import os.path
 from PIL import Image
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -35,7 +35,7 @@ def generateTestKey(test_name):
     """
     Generate a test 'key' for a given test name.
     This must not have illegal chars as it will be used for dict lookup in a template.
-    
+
     Tests must be named such that they will have unique keys.
     """
 
@@ -102,7 +102,7 @@ def TestIfImageURL(url):
         '.tif', '.tiff',
         '.webp', '.gif',
     ]
-        
+
 
 def str2bool(text, test=True):
     """ Test if a string 'looks' like a boolean value.
@@ -137,10 +137,10 @@ def isNull(text):
     """
     Test if a string 'looks' like a null value.
     This is useful for querying the API against a null key.
-    
+
     Args:
         text: Input text
-    
+
     Returns:
         True if the text looks like a null value
     """
@@ -157,7 +157,7 @@ def normalize(d):
         d = Decimal(d)
 
     d = d.normalize()
-    
+
     # Ref: https://docs.python.org/3/library/decimal.html
     return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
 
@@ -165,14 +165,14 @@ def normalize(d):
 def increment(n):
     """
     Attempt to increment an integer (or a string that looks like an integer!)
-    
+
     e.g.
 
     001 -> 002
     2 -> 3
     AB01 -> AB02
     QQQ -> QQQ
-    
+
     """
 
     value = str(n).strip()
@@ -314,7 +314,7 @@ def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
 
 def GetExportFormats():
     """ Return a list of allowable file formats for exporting data """
-    
+
     return [
         'csv',
         'tsv',
@@ -327,7 +327,7 @@ def GetExportFormats():
 
 def DownloadFile(data, filename, content_type='application/text'):
     """ Create a dynamic file for the user to download.
-    
+
     Args:
         data: Raw file data (string or bytes)
         filename: Filename for the file download
@@ -357,6 +357,8 @@ def extract_serial_numbers(serials, expected_quantity):
     - Serial numbers must be positive
     - Serial numbers can be split by whitespace / newline / commma chars
     - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+    - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
         expected_quantity: The number of (unique) serial numbers we expect
@@ -368,6 +370,13 @@ def extract_serial_numbers(serials, expected_quantity):
 
     numbers = []
     errors = []
+
+    # helpers
+    def number_add(n):
+        if n in numbers:
+            errors.append(_('Duplicate serial: {n}').format(n=n))
+        else:
+            numbers.append(n)
 
     try:
         expected_quantity = int(expected_quantity)
@@ -395,16 +404,38 @@ def extract_serial_numbers(serials, expected_quantity):
 
                     if a < b:
                         for n in range(a, b + 1):
-                            if n in numbers:
-                                errors.append(_('Duplicate serial: {n}').format(n=n))
-                            else:
-                                numbers.append(n)
+                            number_add(n)
                     else:
                         errors.append(_("Invalid group: {g}").format(g=group))
 
                 except ValueError:
                     errors.append(_("Invalid group: {g}").format(g=group))
                     continue
+            else:
+                errors.append(_("Invalid group: {g}").format(g=group))
+                continue
+
+        # plus signals either
+        # 1:  'start+':  expected number of serials, starting at start
+        # 2:  'start+number': number of serials, starting at start
+        elif '+' in group:
+            items = group.split('+')
+
+            # case 1, 2
+            if len(items) == 2:
+                start = int(items[0])
+
+                # case 2
+                if bool(items[1]):
+                    end = start + int(items[1]) + 1
+
+                # case 1
+                else:
+                    end = start + expected_quantity
+
+                for n in range(start, end):
+                    number_add(n)
+            # no case
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
                 continue
@@ -494,7 +525,7 @@ def addUserPermission(user, permission):
     """
     Shortcut function for adding a certain permission to a user.
     """
-    
+
     perm = Permission.objects.get(codename=permission)
     user.user_permissions.add(perm)
 
@@ -545,7 +576,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
             continue
 
         num = int(f.split('_')[0])
-        
+
         if oldest_file is None or num < oldest_num:
             oldest_num = num
             oldest_file = f
@@ -554,7 +585,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
-    
+
 
 def getNewestMigrationFile(app, exclude_extension=True):
     """
@@ -575,3 +606,19 @@ def getNewestMigrationFile(app, exclude_extension=True):
         newest_file = newest_file.replace('.py', '')
 
     return newest_file
+
+
+def clean_decimal(number):
+    """ Clean-up decimal value """
+
+    # Check if empty
+    if number is None or number == '':
+        return Decimal(0)
+
+    # Check if decimal type
+    try:
+        clean_number = Decimal(number)
+    except InvalidOperation:
+        clean_number = number
+
+    return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()

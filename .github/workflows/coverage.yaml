@@ -51,6 +51,7 @@ jobs:
           rm test_db.sqlite
           invoke migrate
           invoke import-records -f data.json
+          invoke import-records -f data.json
       - name: Test Translations 
         run: invoke translate
       - name: Check Migration Files

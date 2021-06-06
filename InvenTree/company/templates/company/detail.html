@@ -19,20 +19,20 @@
             <tr>
                 <td><span class='fas fa-font'></span></td>
                 <td>{% trans "Company Name" %}</td>
-                <td>{{ company.name }}</td>
+                <td>{{ company.name }}{% include "clip.html"%}</td>
             </tr>
             {% if company.description %}
             <tr>
                 <td><span class='fas fa-info'></span></td>
                 <td>{% trans "Description" %}</td>
-                <td>{{ company.description }}</td>
+                <td>{{ company.description }}{% include "clip.html"%}</td>
             </tr>
             {% endif %}
             <tr>
                 <td><span class='fas fa-globe'></span></td>
                 <td>{% trans "Website" %}</td>
                 <td>
-                    {% if company.website %}<a href='{{ company.website }}'>{{ company.website }}</a>
+                    {% if company.website %}<a href='{{ company.website }}'>{{ company.website }}</a>{% include "clip.html"%}
                     {% else %}<i>{% trans "No website specified" %}</i>
                     {% endif %}
                 </td>
@@ -75,5 +75,5 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
-   
+
 {% endblock %}

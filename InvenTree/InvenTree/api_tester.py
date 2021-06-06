@@ -83,7 +83,7 @@ class InvenTreeAPITestCase(APITestCase):
         self.assertEqual(response.status_code, code)
 
         return response
-    
+
     def post(self, url, data):
         """
         Issue a POST request

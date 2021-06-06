@@ -83,7 +83,7 @@
                         var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
 
                         var color = '#4c68f5';
-                        
+
                         if (order.complete_date) {
                             color = '#25c235';
                         } else if (order.overdue) {
@@ -143,16 +143,18 @@ $('#view-calendar').click(function() {
     $(".columns-right").hide();
     $(".search").hide();
     $('#filter-list-salesorder').hide();
-    
+
     $("#purchase-order-calendar").show();
     $("#view-list").show();
+
+    calendar.render();
 });
 
 $("#view-list").click(function() {
     // Hide the calendar view, show the list view
     $("#purchase-order-calendar").hide();
     $("#view-list").hide();
-    
+
     $(".fixed-table-pagination").show();
     $(".columns-right").show();
     $(".search").show();

@@ -37,12 +37,12 @@
 <link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
 <link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap_3.3.7_css_bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap-table.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap-table-group-by.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
 <link rel="stylesheet" href="{% static 'css/select2.css' %}">
 <link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap-table-filter-control.css' %}">
 <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
 <link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
 
@@ -79,26 +79,26 @@
 </div>
 
 <div class='inventree-navs'>
-    
+
     <div class='sidenav sidenav-left' id='sidenav-left'>
         {% block sidenav %}
         <!-- Sidenav code here -->
         {% endblock %}
     </div>
-    
+
     <div class='sidenav sidenav-right' id='sidenav-right'>
         {% block menubar %}
         <!-- Menubar code here -->
         {% endblock %}
     </div>
-    
+
     <div class="container container-fluid inventree-content" id='inventree-content'>
         {% block content %}
         <!-- Each view fills in here.. -->
         {% endblock %}
-        
+
     </div>
-    
+
 
 {% block post_content %}
 {% endblock %}
@@ -119,25 +119,30 @@
 
 <script type="text/javascript" src="{% static 'script/bootstrap/bootstrap.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-treeview.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-en-US.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-group-by.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-toggle.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-filter-control.js' %}"></script>
-<!-- <script type='text/javascript' src="{% static 'script/bootstrap/filter-control-utils.js' %}"></script> -->
+<script type='text/javascript' src="{% static 'bootstrap-table/bootstrap-table.js' %}"></script>
+<script type='text/javascript' src="{% static 'bootstrap-table/bootstrap-table-en-US.min.js' %}"></script>
 
 <!-- jquery-treegrid -->
 <script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.js" %}'></script>
 <script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.bootstrap3.js" %}'></script>
 
-<!-- boostrap-table-treegrid -->
+<!-- boostrap-table extensions -->
+<script type='text/javascript' src='{% static "bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.js" %}'></script>
+<script type='text/javascript' src='{% static "bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.js" %}'></script>
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
+<script type='text/javascript' src='{% static "bootstrap-table/extensions/custom-view/bootstrap-table-custom-view.js" %}'></script>
 
+<!-- 3rd party general js -->
 <script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/chart.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
 
+<!-- general InvenTree -->
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
@@ -173,7 +178,7 @@ $(document).ready(function () {
 {% endblock %}
 
     inventreeDocReady();
-    
+
     showCachedAlerts();
 
     {% if barcodes %}

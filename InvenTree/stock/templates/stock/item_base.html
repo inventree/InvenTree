@@ -14,68 +14,6 @@
 
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
-
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-
-    {% if not user in owners and not user.is_superuser %}
-    <div class='alert alert-block alert-info'>
-        {% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}<br>
-    </div>
-    {% endif %}
-{% endif %}
-
-{% if item.is_building %}
-<div class='alert alert-block alert-info'>
-    {% trans "This stock item is in production and cannot be edited." %}<br>
-    {% trans "Edit the stock item from the build view." %}<br>
-
-    {% if item.build %}
-    <a href="{% url 'build-detail' item.build.id %}">
-        <b>{{ item.build }}</b>
-    </a>
-    {% endif %}
-
-</div>
-{% endif %}
-
-{% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-<div class='alert alert-block alert-danger'>
-    {% trans "This stock item has not passed all required tests" %}
-</div>
-{% endif %}
-
-{% for allocation in item.sales_order_allocations.all %}
-<div class='alert alert-block alert-info'>
-    {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
-    {% decimal allocation.quantity as qty %}
-    {% blocktrans %}This stock item is allocated to Sales Order {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
-</div>
-{% endfor %}
-
-{% for allocation in item.allocations.all %}
-<div class='alert alert-block alert-info'>
-    {% object_link 'build-detail' allocation.build.id allocation.build %}
-    {% decimal allocation.quantity as qty %}
-    {% blocktrans %}This stock item is allocated to Build {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
-</div>
-{% endfor %}
-
-{% if item.serialized %}
-<div class='alert alert-block alert-warning'>
-    {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
-</div>
-{% elif item.child_count > 0 %}
-<div class='alert alert-block alert-warning'>
-    {% trans "This stock item cannot be deleted as it has child items" %}
-</div>
-{% elif item.delete_on_deplete and item.can_delete %}
-<div class='alert alert-block alert-warning'>
-    {% trans "This stock item will be automatically deleted when all stock is depleted." %}
-</div>
-{% endif %}
-
 {% endblock %}
 
 {% block thumbnail %}
@@ -94,7 +32,13 @@
     {% if item.is_expired %}
     <span class='label label-large label-large-red'>{% trans "Expired" %}</span>
     {% else %}
+    {% if roles.stock.change %}
+    <a href='#' id='stock-edit-status'>
+    {% endif %}
     {% stock_status_label item.status large=True %}
+    {% if roles.stock.change %}
+    </a>
+    {% endif %}
     {% if item.is_stale %}
     <span class='label label-large label-large-yellow'>{% trans "Stale" %}</span>
     {% endif %}
@@ -124,7 +68,7 @@
 </div>
 
 <div class='btn-group action-buttons' role='group'>
-    
+
     {% if barcodes %}
     <!-- Barcode actions menu -->
     <div class='btn-group'>
@@ -195,7 +139,7 @@
         <div class='btn-group'>
             <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
-                {% if item.part.has_variants %}
+                {% if item.part.can_convert %}
                 <li><a href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
                 {% endif %}
                 {% if roles.stock.add %}
@@ -213,6 +157,73 @@
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block below_thumbnail %}
+<div class='info-messages'>
+
+    {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
+    {% if owner_control.value == "True" %}
+        {% authorized_owners item.owner as owners %}
+
+        {% if not user in owners and not user.is_superuser %}
+        <div class='alert alert-block alert-info'>
+            {% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}<br>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    {% if item.is_building %}
+    <div class='alert alert-block alert-info'>
+        {% trans "This stock item is in production and cannot be edited." %}<br>
+        {% trans "Edit the stock item from the build view." %}<br>
+
+        {% if item.build %}
+        <a href="{% url 'build-detail' item.build.id %}">
+            <b>{{ item.build }}</b>
+        </a>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "This stock item has not passed all required tests" %}
+    </div>
+    {% endif %}
+
+    {% for allocation in item.sales_order_allocations.all %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
+        {% decimal allocation.quantity as qty %}
+        {% blocktrans %}This stock item is allocated to Sales Order {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
+    </div>
+    {% endfor %}
+
+    {% for allocation in item.allocations.all %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'build-detail' allocation.build.id allocation.build %}
+        {% decimal allocation.quantity as qty %}
+        {% blocktrans %}This stock item is allocated to Build {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
+    </div>
+    {% endfor %}
+    
+    {% if item.serialized %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
+    </div>
+    {% elif item.child_count > 0 %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "This stock item cannot be deleted as it has child items" %}
+    </div>
+    {% elif item.delete_on_deplete and item.can_delete %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "This stock item will be automatically deleted when all stock is depleted." %}
+    </div>
+    {% endif %}
+    
+</div>
 {% endblock %}
 
 {% block page_details %}
@@ -453,6 +464,7 @@ $("#print-label").click(function() {
     printStockItemLabels([{{ item.pk }}]);
 });
 
+{% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
     createNewStockItem({
         follow: true,
@@ -471,6 +483,18 @@ $("#stock-edit").click(function () {
         }
     );
 });
+
+$('#stock-edit-status').click(function () {
+    launchModalForm(
+        "{% url 'stock-item-edit-status' item.id %}",
+        {
+            reload: true,
+            submit_text: '{% trans "Save" %}',
+        }
+    );
+});
+
+{% endif %}
 
 $("#show-qr-code").click(function() {
     launchModalForm("{% url 'stock-item-qr' item.id %}",
@@ -527,7 +551,7 @@ $("#stock-assign-to-customer").click(function() {
     );
 });
 
-{% if item.part.has_variants %}
+{% if item.part.can_convert %}
 $("#stock-convert").click(function() {
     launchModalForm("{% url 'stock-item-convert' item.id %}",
         {

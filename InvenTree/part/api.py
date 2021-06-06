@@ -7,13 +7,17 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
-from django.db.models import Q, F, Count, Prefetch, Sum
+from django.db.models import Q, F, Count, Min, Max, Avg
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
 from rest_framework import generics
+
+from djmoney.money import Money
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
 
 from django.conf.urls import url, include
 from django.urls import reverse
@@ -24,6 +28,7 @@ from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
 from .models import PartCategoryParameterTemplate
 
+from common.models import InvenTreeSetting
 from build.models import Build
 
 from . import serializers as part_serializers
@@ -41,7 +46,7 @@ class PartCategoryTree(TreeSerializer):
     model = PartCategory
 
     queryset = PartCategory.objects.all()
-    
+
     @property
     def root_url(self):
         return reverse('part-index')
@@ -79,7 +84,7 @@ class CategoryList(generics.ListCreateAPIView):
             pass
         # Look for top-level categories
         elif isNull(cat_id):
-            
+
             if not cascade:
                 queryset = queryset.filter(parent=None)
 
@@ -166,9 +171,9 @@ class CategoryParameters(generics.ListAPIView):
                 parent_categories = category.get_ancestors()
                 for parent in parent_categories:
                     category_list.append(parent.pk)
-                
+
             queryset = queryset.filter(category__in=category_list)
-                
+
         return queryset
 
 
@@ -264,7 +269,7 @@ class PartThumbs(generics.ListAPIView):
 
         # Get all Parts which have an associated image
         queryset = queryset.exclude(image='')
-        
+
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -301,7 +306,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
-    
+
     starred_parts = None
 
     def get_queryset(self, *args, **kwargs):
@@ -482,7 +487,7 @@ class PartList(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-        
+
         queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
@@ -576,7 +581,7 @@ class PartList(generics.ListCreateAPIView):
         if cat_id is None:
             # No category filtering if category is not specified
             pass
-        
+
         else:
             # Category has been specified!
             if isNull(cat_id):
@@ -635,29 +640,15 @@ class PartList(generics.ListCreateAPIView):
         # TODO: Need to figure out a cheaper way of making this filter query
 
         if stock_to_build is not None:
-            # Filter only active parts
-            queryset = queryset.filter(active=True)
-            # Prefetch current active builds
-            build_active_queryset = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
-            build_active_prefetch = Prefetch('builds',
-                                             queryset=build_active_queryset,
-                                             to_attr='current_builds')
-            parts = queryset.prefetch_related(build_active_prefetch)
-
+            # Get active builds
+            builds = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
             # Store parts with builds needing stock
-            parts_need_stock = []
+            parts_needed_to_complete_builds = []
+            # Filter required parts
+            for build in builds:
+                parts_needed_to_complete_builds += [part.pk for part in build.required_parts_to_complete_build]
 
-            # Find parts with active builds
-            # where any subpart's stock is lower than quantity being built
-            for part in parts:
-                if part.current_builds:
-                    builds_ids = [build.id for build in part.current_builds]
-                    total_build_quantity = build_active_queryset.filter(pk__in=builds_ids).aggregate(quantity=Sum('quantity'))['quantity']
-
-                    if part.can_build < total_build_quantity:
-                        parts_need_stock.append(part.pk)
-
-            queryset = queryset.filter(pk__in=parts_need_stock)
+            queryset = queryset.filter(pk__in=parts_needed_to_complete_builds)
 
         # Optionally limit the maximum number of returned results
         # e.g. for displaying "recent part" list
@@ -794,10 +785,10 @@ class BomList(generics.ListCreateAPIView):
             kwargs['sub_part_detail'] = str2bool(self.request.GET.get('sub_part_detail', None))
         except AttributeError:
             pass
-        
+
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
-        
+
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
@@ -829,6 +820,14 @@ class BomList(generics.ListCreateAPIView):
             inherited = str2bool(inherited)
 
             queryset = queryset.filter(inherited=inherited)
+
+        # Filter by "allow_variants"
+        variants = params.get("allow_variants", None)
+
+        if variants is not None:
+            variants = str2bool(variants)
+
+            queryset = queryset.filter(allow_variants=variants)
 
         # Filter by part?
         part = params.get('part', None)
@@ -881,7 +880,7 @@ class BomList(generics.ListCreateAPIView):
 
             # Work out which lines have actually been validated
             pks = []
-            
+
             for bom_item in queryset.all():
                 if bom_item.is_line_valid:
                     pks.append(bom_item.pk)
@@ -890,6 +889,60 @@ class BomList(generics.ListCreateAPIView):
                 queryset = queryset.filter(pk__in=pks)
             else:
                 queryset = queryset.exclude(pk__in=pks)
+
+        # Annotate with purchase prices
+        queryset = queryset.annotate(
+            purchase_price_min=Min('sub_part__stock_items__purchase_price'),
+            purchase_price_max=Max('sub_part__stock_items__purchase_price'),
+            purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
+        )
+
+        # Get values for currencies
+        currencies = queryset.annotate(
+            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
+        ).values('pk', 'sub_part', 'purchase_price_currency')
+
+        def convert_price(price, currency, decimal_places=4):
+            """ Convert price field, returns Money field """
+
+            price_adjusted = None
+
+            # Get default currency from settings
+            default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+            
+            if price:
+                if currency and default_currency:
+                    try:
+                        # Get adjusted price
+                        price_adjusted = convert_money(Money(price, currency), default_currency)
+                    except MissingRate:
+                        # No conversion rate set
+                        price_adjusted = Money(price, currency)
+                else:
+                    # Currency exists
+                    if currency:
+                        price_adjusted = Money(price, currency)
+                    # Default currency exists
+                    if default_currency:
+                        price_adjusted = Money(price, default_currency)
+
+            if price_adjusted and decimal_places:
+                price_adjusted.decimal_places = decimal_places
+
+            return price_adjusted
+
+        # Convert prices to default currency (using backend conversion rates)
+        for bom_item in queryset:
+            # Find associated currency (select first found)
+            purchase_price_currency = None
+            for currency_item in currencies:
+                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk:
+                    purchase_price_currency = currency_item['purchase_price_currency']
+                    break
+            # Convert prices
+            bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min, purchase_price_currency)
+            bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max, purchase_price_currency)
+            bom_item.purchase_price_avg = convert_price(bom_item.purchase_price_avg, purchase_price_currency)
 
         return queryset
 
@@ -929,7 +982,7 @@ class BomItemValidate(generics.UpdateAPIView):
         valid = request.data.get('valid', False)
 
         instance = self.get_object()
-        
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
@@ -963,7 +1016,7 @@ part_api_urls = [
     url(r'^sale-price/', include([
         url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
-    
+
     # Base URL for PartParameter API endpoints
     url(r'^parameter/', include([
         url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),

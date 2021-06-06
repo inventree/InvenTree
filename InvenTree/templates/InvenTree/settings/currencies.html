@@ -1,0 +1,55 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='currencies' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "Currency Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+<table class='table table-striped table-condensed'>
+    <tbody>
+        <tr>
+            <th>{% trans "Base Currency" %}</th>
+            <th>{{ base_currency }}</th>
+        </tr>
+        <tr>
+            <th colspan='2'>{% trans "Exchange Rates" %}</th>
+        </tr>
+        {% for rate in rates %}
+        <tr>
+            <td>{{ rate.currency }}</td>
+            <td>{{ rate.value }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <th>
+                {% trans "Last Update" %}
+            </th>
+            <td>
+                {% if rates_updated %}
+                {{ rates_updated }}
+                {% else %}
+                <i>{% trans "Never" %}</i>
+                {% endif %}
+                <form action='{% url "settings-currencies-refresh" %}' method='post'>
+                    <div id='refresh-rates-form'>
+                        {% csrf_token %}
+                        <button type='submit' id='update-rates' class='btn btn-default float-right'>{% trans "Update Now" %}</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+{% endblock %}

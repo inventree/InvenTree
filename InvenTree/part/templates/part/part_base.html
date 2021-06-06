@@ -12,13 +12,6 @@
 
 <div class='panel panel-default panel-inventree'>
 
-{% if part.variant_of %}
-<div class='alert alert-info alert-block'>
-    {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}
-    {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
-</div>
-{% endif %}
-
     <div class="row">
     <div class="col-sm-6">
         {% include "part/part_thumb.html" %}
@@ -107,6 +100,20 @@
             </table>
         </div>
         </div>
+
+        <div class='info-messages'>
+            {% if part.virtual %}
+            <div class='alert alert-warning alert-block'>
+                {% trans "This is a virtual part" %}
+            </div>
+            {% endif %}
+            {% if part.variant_of %}
+            <div class='alert alert-info alert-block'>
+                {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}
+                {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
+            </div>
+            {% endif %}
+        </div>
     </div>
     <div class="col-sm-6">
         <table class="table table-striped">
@@ -151,7 +158,7 @@
                 <td>{% decimal allocated %}</td>
             </tr>
             {% endif %}
-            
+
             {% if not part.is_template %}
             {% if part.assembly %}
             <tr>
@@ -177,11 +184,11 @@
         </table>
     </div>
     </div>
-        
+
 </div>
 
 <div class='panel panel-default panel-inventree'>
-    
+
     <div class='panel-heading'>
         <h4>
             {% block heading %}
@@ -272,7 +279,7 @@
     function onSelectImage(response) {
         // Callback when the image-selection modal form is displayed
         // Populate the form with image data (requested via AJAX)
-        
+
         $("#modal-form").find("#image-select-table").bootstrapTable({
             pagination: true,
             pageSize: 25,
@@ -301,9 +308,9 @@
             }
         });
     }
-    
+
     {% if roles.part.change %}
-    
+
     {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
     {% if allow_download %}
     $("#part-image-url").click(function() {

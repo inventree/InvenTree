@@ -6,7 +6,7 @@
         <a href="{% url 'settings-user' %}"><span class='fas fa-user'></span> {% trans "Account" %}</a>
     </li>
     <li{% ifequal tab 'theme' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-theme' %}"><span class='fas fa-fill'></span> {% trans "Theme" %}</a>
+        <a href="{% url 'settings-appearance' %}"><span class='fas fa-fill'></span> {% trans "Appearance" %}</a>
     </li>
 </ul>
 {% if user.is_staff %}
@@ -14,6 +14,9 @@
 <ul class='nav nav-pills nav-stacked'>
     <li {% if tab == 'global' %} class='active' {% endif %}>
         <a href='{% url "settings-global" %}'><span class='fas fa-globe'></span> {% trans "Global" %}</a>
+    </li>
+    <li {% if tab == 'currencies' %} class='active'{% endif %}>
+        <a href="{% url 'settings-currencies' %}"><span class='fas fa-dollar-sign'></span> {% trans "Currencies" %}</a>
     </li>
     <li {% if tab == 'report' %} class='active' {% endif %}>
         <a href='{% url "settings-report" %}'><span class='fas fa-file-pdf'></span> {% trans "Report" %}</a>

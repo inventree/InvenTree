@@ -94,7 +94,7 @@ function reloadTable(table, filters) {
     }
 
     options.queryParams = function(tableParams) {
-        
+
         for (key in params) {
             tableParams[key] = params[key];
         }
@@ -145,7 +145,7 @@ $.fn.inventreeTable = function(options) {
     var filters = options.queryParams || options.filters || {};
 
     options.queryParams = function(params) {
-        
+
         // Override the way that we ask the server to sort results
         // It seems bootstrap-table does not offer a "native" way to do this...
         if ('sort' in params) {
@@ -200,7 +200,7 @@ $.fn.inventreeTable = function(options) {
 
     // Callback when a column is changed
     options.onColumnSwitch = function(field, checked) {
-        
+
         var columns = table.bootstrapTable('getVisibleColumns');
 
         var text = visibleColumnString(columns);
@@ -225,7 +225,7 @@ $.fn.inventreeTable = function(options) {
 
         if (visible && Array.isArray(visible)) {
             visible.forEach(function(column) {
-    
+
                 // Visible field should *not* be visible! (hide it!)
                 if (column.switchable && !columns.includes(column.field)) {
                     table.bootstrapTable('hideColumn', column.field);
@@ -301,7 +301,7 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         bb = bb.toString();
 
         var cmp = aa.localeCompare(bb);
-        
+
         if (cmp === -1) {
             return order * -1;
         } else if (cmp === 1) {

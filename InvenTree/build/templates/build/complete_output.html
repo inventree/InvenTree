@@ -40,8 +40,8 @@
     <div class='panel-heading'>
         {% trans "The following items will be created" %}
     </div>
-    <div class='panel-content'>
-        {% include "hover_image.html" with image=build.part.image hover=True %}
+    <div class='panel-content' style='padding-bottom:16px'>
+        {% include "hover_image.html" with image=build.part.image %}
         {% if output.serialized %}
         {{ output.part.full_name }} - {% trans "Serial Number" %} {{ output.serial }}
         {% else %}

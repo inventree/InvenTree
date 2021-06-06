@@ -17,9 +17,9 @@
     <div class='col-sm-6'>
 
     </div>
-    
+
     <hr>
-    
+
     <div id='button-toolbar'>
         <div class='button-toolbar container-fluid' style='float: right;'>
             <div class='btn-group'>
@@ -66,7 +66,7 @@
 
 <script type='text/javascript'>
     function loadOrderEvents(calendar) {
-        
+
         var start = startDate(calendar);
         var end = endDate(calendar);
 
@@ -85,7 +85,7 @@
                     var prefix = '{% settings_value "BUILDORDER_REFERENCE_PREFIX" %}';
 
                     for (var idx = 0; idx < response.length; idx++) {
-                        
+
                         var order = response[idx];
 
                         var date = order.creation_date;
@@ -155,16 +155,18 @@ $('#view-calendar').click(function() {
     $(".fixed-table-pagination").hide();
     $(".columns-right").hide();
     $(".search").hide();
-    
+
     $("#build-order-calendar").show();
     $("#view-list").show();
+
+    calendar.render();
 });
 
 $("#view-list").click(function() {
     // Hide the calendar view, show the list view
     $("#build-order-calendar").hide();
     $("#view-list").hide();
-    
+
     $(".fixed-table-pagination").show();
     $(".columns-right").show();
     $(".search").show();

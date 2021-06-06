@@ -20,20 +20,20 @@
         <tr>
             <td><span class='fas fa-font'></span></td>
             <td><strong>{% trans "Part name" %}</strong></td>
-            <td>{{ part.name }}</td>
+            <td>{{ part.name }}{% include "clip.html"%}</td>
         </tr>
         {% if part.IPN %}
         <tr>
             <td></td>
             <td><strong>{% trans "IPN" %}</strong></td>
-            <td>{{ part.IPN }}</td>
+            <td>{{ part.IPN }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.revision %}
         <tr>
             <td><span class='fas fa-code-branch'></span></td>
             <td><strong>{% trans "Revision" %}</strong></td>
-            <td>{{ part.revision }}</td>
+            <td>{{ part.revision }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.trackable %}
@@ -42,7 +42,7 @@
             <td><strong>{% trans "Latest Serial Number" %}</strong></td>
             <td>
                 {% if part.getLatestSerialNumber %}
-                {{ part.getLatestSerialNumber }}
+                {{ part.getLatestSerialNumber }}{% include "clip.html"%}
                 {% else %}
                 <em>{% trans "No serial numbers recorded" %}</em>
                 {% endif %}
@@ -52,20 +52,20 @@
         <tr>
             <td><span class='fas fa-info-circle'></span></td>
             <td><strong>{% trans "Description" %}</strong></td>
-            <td>{{ part.description }}</td>
+            <td>{{ part.description }}{% include "clip.html"%}</td>
         </tr>
         {% if part.variant_of %}
         <tr>
             <td></td>
             <td><strong>{% trans "Variant Of" %}</strong></td>
-            <td><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></td>
+            <td><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.keywords %}
         <tr>
             <td><span class='fas fa-key'></span></td>
             <td><strong>{% trans "Keywords" %}</strong></td>
-            <td>{{ part.keywords }}</td>
+            <td>{{ part.keywords }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         <tr>
@@ -73,7 +73,7 @@
             <td><strong>{% trans "Category" %}</strong></td>
             <td>
                 {% if part.category %}
-                <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
+                <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>{% include "clip.html"%}
                 {% endif %}
             </td>
         </tr>
@@ -81,14 +81,14 @@
         <tr>
             <td><span class='fas fa-link'></span></td>
             <td><strong>{% trans "External Link" %}</strong></td>
-            <td><a href="{{ part.link }}">{{ part.link }}</a></td>
+            <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.default_location %}
         <tr>
             <td><span class='fas fa-map-marker-alt'></span></td>
             <td><strong>{% trans "Default Location" %}</strong></td>
-            <td><a href="{% url 'stock-location-detail' part.default_location.id %}">{{ part.default_location.pathstring }}</a></td>
+            <td><a href="{% url 'stock-location-detail' part.default_location.id %}">{{ part.default_location.pathstring }}</a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.default_supplier %}
@@ -97,14 +97,14 @@
             <td><strong>{% trans "Default Supplier" %}</strong></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
                 {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
-            </a></td>
+            </a>{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.units %}
         <tr>
             <td></td>
             <td><strong>{% trans "Units" %}</strong></td>
-            <td>{{ part.units }}</td>
+            <td>{{ part.units }}{% include "clip.html"%}</td>
         </tr>
         {% endif %}
         {% if part.minimum_stock > 0 %}
@@ -262,5 +262,5 @@
             },
         );
     });
-    
+
 {% endblock %}

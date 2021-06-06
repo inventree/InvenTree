@@ -51,13 +51,13 @@ $("#new-so-line").click(function() {
 {% if order.status == SalesOrderStatus.PENDING %}
 function showAllocationSubTable(index, row, element) {
     // Construct a table showing stock items which have been allocated against this line item
-    
+
     var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table></div>`;
 
     element.html(html);
 
     var lineItem = row;
-    
+
     var table = $(`#allocation-table-${row.pk}`);
 
     table.bootstrapTable({
@@ -70,7 +70,7 @@ function showAllocationSubTable(index, row, element) {
             title: '{% trans "Quantity" %}',
             formatter: function(value, row, index, field) {
                 var text = '';
-                
+
                 if (row.serial != null && row.quantity == 1) {
                     text = `{% trans "Serial Number" %}: ${row.serial}`;
                 } else {
@@ -88,13 +88,16 @@ function showAllocationSubTable(index, row, element) {
             },
         },
         {
+            field: 'po'
+        },
+        {
             field: 'buttons',
             title: '{% trans "Actions" %}',
             formatter: function(value, row, index, field) {
-                
+
                 var html = "<div class='btn-group float-right' role='group'>";
                 var pk = row.pk;
-                
+
                 {% if order.status == SalesOrderStatus.PENDING %}
                 html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
                 html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
@@ -159,9 +162,12 @@ function showFulfilledSubTable(index, row, element) {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;
                     }
 
-                    return renderLink(text, `/stock/item/${row.pk}/`);  
+                    return renderLink(text, `/stock/item/${row.pk}/`);
                 },
-            }
+            },
+            {
+                field: 'po'
+            },
         ],
     });
 }
@@ -224,6 +230,14 @@ $("#so-lines-table").inventreeTable({
             title: '{% trans "Quantity" %}',
         },
         {
+            sortable: true,
+            field: 'sale_price',
+            title: '{% trans "Unit Price" %}',
+            formatter: function(value, row) {
+                return row.sale_price_string || row.sale_price;
+            }
+        },
+        {
             field: 'allocated',
             {% if order.status == SalesOrderStatus.PENDING %}
             title: '{% trans "Allocated" %}',
@@ -248,11 +262,11 @@ $("#so-lines-table").inventreeTable({
                 var A = rowA.fulfilled;
                 var B = rowB.fulfilled;
                 {% endif %}
-                
+
                 if (A == 0 && B == 0) {
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
                 }
-                
+
                 var progressA = parseFloat(A) / rowA.quantity;
                 var progressB = parseFloat(B) / rowB.quantity;
 
@@ -263,6 +277,25 @@ $("#so-lines-table").inventreeTable({
             field: 'notes',
             title: '{% trans "Notes" %}',
         },
+        {
+            field: 'po',
+            title: '{% trans "PO" %}',
+            formatter: function(value, row, index, field) {
+                var po_name = "";
+                if (row.allocated) {
+                    row.allocations.forEach(function(allocation) {
+                        if (allocation.po != po_name) {
+                            if (po_name) {
+                                po_name = "-";
+                            } else {
+                                po_name = allocation.po
+                            }
+                        }
+                    })
+                }
+                return `<div>` + po_name + `</div>`;
+            }
+        },
         {% if order.status == SalesOrderStatus.PENDING %}
         {
             field: 'buttons',
@@ -271,7 +304,7 @@ $("#so-lines-table").inventreeTable({
                 var html = `<div class='btn-group float-right' role='group'>`;
 
                 var pk = row.pk;
-                
+
                 if (row.part) {
                     var part = row.part_detail;
 
@@ -279,18 +312,19 @@ $("#so-lines-table").inventreeTable({
                         html += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
                     }
 
-                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');   
+                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
 
                     if (part.purchaseable) {
                         html += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
                     }
-                    
+
                     if (part.assembly) {
                         html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
-                    
+
+                    html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
-                
+
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
                 html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line item " %}');
 
@@ -387,6 +421,26 @@ function setupCallbacks() {
                 parts: [pk],
             },
         });
+    });
+
+    $(".button-price").click(function() {
+        var pk = $(this).attr('pk');
+        var idx = $(this).closest('tr').attr('data-index');
+        var row = table.bootstrapTable('getData')[idx];
+
+        launchModalForm(
+            "{% url 'line-pricing' %}",
+            {
+                submit_text: '{% trans "Calculate price" %}',
+                data: {
+                    line_item: pk,
+                    quantity: row.quantity,
+                },
+                buttons: [{name: 'update_price',
+                    title: '{% trans "Update Unit Price" %}'},],
+                success: reloadTable,
+            }
+        );
     });
 }
 

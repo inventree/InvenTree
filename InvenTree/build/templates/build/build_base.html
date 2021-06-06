@@ -9,44 +9,54 @@
 {% inventree_title %} | {% trans "Build Order" %} - {{ build }}
 {% endblock %}
 
+{% block below_thumbnail %}
+
+<div class='info-messages'>
+    {% if build.sales_order %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
+        {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
+    </div>
+    {% endif %}
+
+    {% if build.parent %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'build-detail' build.parent.id build.parent as link %}
+        {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
+    </div>
+    {% endif %}
+
+    {% if build.active %}
+    {% if build.can_complete %}
+    <div class='alert alert-block alert-success'>
+        {% trans "Build Order is ready to mark as completed" %}
+    </div>
+    {% endif %}
+    {% if build.incomplete_count > 0 %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "Build Order cannot be completed as outstanding outputs remain" %}
+    </div>
+    {% endif %}
+    {% if build.completed < build.quantity %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Required build quantity has not yet been completed" %}
+    </div>
+    {% endif %}
+    {% if not build.areUntrackedPartsFullyAllocated %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Stock has not been fully allocated to this Build Order" %}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
 {% block header_pre_content %}
-{% if build.sales_order %}
-<div class='alert alert-block alert-info'>
-    {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
-    {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
-</div>
-{% endif %}
-{% if build.parent %}
-<div class='alert alert-block alert-info'>
-    {% object_link 'build-detail' build.parent.id build.parent as link %}
-    {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
-</div>
-{% endif %}
+
 {% endblock %}
 
 {% block header_post_content %}
-{% if build.active %}
-{% if build.can_complete %}
-<div class='alert alert-block alert-success'>
-    {% trans "Build Order is ready to mark as completed" %}
-</div>
-{% endif %}
-{% if build.incomplete_count > 0 %}
-<div class='alert alert-block alert-danger'>
-    {% trans "Build Order cannot be completed as outstanding outputs remain" %}
-</div>
-{% endif %}
-{% if build.completed < build.quantity %}
-<div class='alert alert-block alert-warning'>
-    {% trans "Required build quantity has not yet been completed" %}
-</div>
-{% endif %}
-{% if not build.areUntrackedPartsFullyAllocated %}
-<div class='alert alert-block alert-warning'>
-    {% trans "Stock has not been fully allocated to this Build Order" %}
-</div>
-{% endif %}
-{% endif %}
+
 {% endblock %}
 
 {% block thumbnail %}
@@ -230,5 +240,5 @@ src="{% static 'img/blank_image.png' %}"
             }
         );
     });
-    
+
 {% endblock %}

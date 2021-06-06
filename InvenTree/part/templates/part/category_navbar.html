@@ -14,7 +14,7 @@
         {% else %}
         <a href='{% url "category-index-subcategory" %}'>
         {% endif %}
-            <span class='fas fa-sitemap'></span>
+            <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Subcategories" %}
         </a>
     </li>
@@ -25,7 +25,7 @@
         {% else %}
         <a href='{% url "part-index" %}'>
         {% endif %}
-            <span class='fas fa-shapes'></span>
+            <span class='fas fa-shapes sidebar-icon'></span>
             {% trans "Parts" %}
         </a>
     </li>
@@ -33,7 +33,7 @@
     {% if category %}
     <li class='list-group-item {% if tab == "parameters" %}active{% endif %}' title='{% trans "Parameters" %}'>
         <a href='{% url "category-parametric" category.id %}'>
-            <span class='fas fa-tasks'></span>
+            <span class='fas fa-tasks sidebar-icon'></span>
             {% trans "Parameters" %}
         </a>
     </li>

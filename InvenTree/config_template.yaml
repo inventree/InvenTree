@@ -11,7 +11,7 @@ database:
   # or specify database options using environment variables
 
   # Refer to the django documentation for full list of options
-  
+
   # --- Available options: ---
   # ENGINE: Database engine. Selection from:
   #         - sqlite3
@@ -51,6 +51,9 @@ language: en-us
 # Select an option from the "TZ database name" column
 # Use the environment variable INVENTREE_TIMEZONE
 timezone: UTC
+
+# Base currency code
+base_currency: USD
 
 # List of currencies supported by default.
 # Add other currencies here to allow use in InvenTree
@@ -114,7 +117,7 @@ allowed_hosts:
 cors:
   # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted.
   allow_all: True
-  
+
   # CORS_ORIGIN_WHITELIST - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
   # whitelist:
   # - https://example.com
@@ -137,12 +140,6 @@ static_root: '/home/inventree/static'
 #  - mailto
 #  - git
 #  - ssh
-
-# Backup options
-# Set the backup_dir parameter to store backup files in a specific location
-# If unspecified, the local user's temp directory will be used
-# Use environment variable INVENTREE_BACKUP_DIR
-backup_dir: '/home/inventree/data/backup/'
 
 # Permit custom authentication backends
 #authentication_backends:

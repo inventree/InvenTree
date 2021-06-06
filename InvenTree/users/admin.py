@@ -127,7 +127,7 @@ class RoleGroupAdmin(admin.ModelAdmin):
 
         if rule_set.can_delete:
             permission_level = append_permission_level(permission_level, 'D')
-        
+
         return permission_level
 
     def admin(self, obj):

@@ -11,7 +11,7 @@
 
 {% block header_panel %}
 <div class='panel panel-default panel-inventree'>
-    
+
     {% block header_pre_content %}
     {% endblock %}
 
@@ -27,6 +27,8 @@
                 <!-- Data next to image goes here -->
                 {% endblock %}
             </div>
+            {% block below_thumbnail %}
+            {% endblock %}
         </div>
         <div class='col-sm-6'>
             {% block page_details %}

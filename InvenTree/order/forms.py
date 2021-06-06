@@ -64,7 +64,7 @@ class CancelSalesOrderForm(HelperForm):
         fields = [
             'confirm',
         ]
-        
+
 
 class ShipSalesOrderForm(HelperForm):
 
@@ -211,6 +211,7 @@ class EditSalesOrderLineItemForm(HelperForm):
             'part',
             'quantity',
             'reference',
+            'sale_price',
             'notes'
         ]
 

@@ -64,5 +64,5 @@ if __name__ == '__main__':
             percentage = 0
 
         print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
-    
+
     print("-" * 16)
