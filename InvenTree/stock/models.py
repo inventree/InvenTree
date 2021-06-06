@@ -20,6 +20,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from common.settings import currency_code_default
+
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
@@ -534,7 +536,7 @@ class StockItem(MPTTModel):
     purchase_price = MoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency='USD',
+        default_currency=currency_code_default(),
         blank=True,
         null=True,
         verbose_name=_('Purchase Price'),

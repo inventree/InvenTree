@@ -40,7 +40,7 @@ $('#price-break-table').inventreeTable({
         part: {{ part.id }},
     },
     url: "{% url 'api-part-supplier-price' %}",
-    onLoadSuccess: function() {
+    onPostBody: function() {
         var table = $('#price-break-table');
 
         table.find('.button-price-break-delete').click(function() {

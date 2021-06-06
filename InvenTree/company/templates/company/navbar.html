@@ -11,7 +11,7 @@
 
     <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Company Details" %}'>
         <a href='{% url "company-detail" company.id %}'>
-            <span class='fas fa-info-circle'></span>
+            <span class='fas fa-info-circle sidebar-icon'></span>
             {% trans "Details" %}
         </a>
     </li>
@@ -19,7 +19,7 @@
     {% if company.is_manufacturer %}
     <li class='list-group-item {% if tab == "manufacturer_parts" %}active{% endif %}' title='{% trans "Manufactured Parts" %}'>
         <a href='{% url "company-detail-manufacturer-parts" company.id %}'>
-            <span class='fas fa-industry'></span>
+            <span class='fas fa-industry sidebar-icon'></span>
             {% trans "Manufactured Parts" %}
         </a>
     </li>
@@ -28,7 +28,7 @@
     {% if company.is_supplier or company.is_manufacturer %}
     <li class='list-group-item {% if tab == "supplier_parts" %}active{% endif %}' title='{% trans "Supplied Parts" %}'>
         <a href='{% url "company-detail-supplier-parts" company.id %}'>
-            <span class='fas fa-building'></span>
+            <span class='fas fa-building sidebar-icon'></span>
             {% trans "Supplied Parts" %}
         </a>
     </li>
@@ -37,7 +37,7 @@
     {% if company.is_manufacturer or company.is_supplier %}
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Stock Items" %}'>
         <a href='{% url "company-detail-stock" company.id %}'>
-            <span class='fas fa-boxes'></span>
+            <span class='fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
@@ -46,7 +46,7 @@
     {% if company.is_supplier %}
     <li class='list-group-item {% if tab == "po" %}active{% endif %}' title='{% trans "Sales Orders" %}'>
         <a href='{% url "company-detail-purchase-orders" company.id %}'>
-            <span class='fas fa-shopping-cart'></span>
+            <span class='fas fa-shopping-cart sidebar-icon'></span>
             {% trans "Purchase Orders" %}
         </a>
     </li>
@@ -55,13 +55,13 @@
     {% if company.is_customer %}
     <li class='list-group-item {% if tab == "so" %}active{% endif %}' title='{% trans "Sales Orders" %}'>
         <a href='{% url "company-detail-sales-orders" company.id %}'>
-            <span class='fas fa-truck'></span>
+            <span class='fas fa-truck sidebar-icon'></span>
             {% trans "Sales Orders" %}
         </a>
     </li>
     <li class='list-group-item {% if tab == "assigned" %}active{% endif %}' title='{% trans "Assigned Stock" %}'>
         <a href='{% url "company-detail-assigned-stock" company.id %}'>
-            <span class='fas fa-sign-out-alt'></span>
+            <span class='fas fa-sign-out-alt sidebar-icon'></span>
             {% trans "Assigned Stock" %}
         </a>
     </li>
@@ -69,7 +69,7 @@
 
     <li class='list-group-item {% if tab == "notes" %}active{% endif %}' titl='{% trans "Notes" %}'>
         <a href='{% url "company-notes" company.id %}'>
-            <span class='fas fa-clipboard'></span>
+            <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>
     </li>

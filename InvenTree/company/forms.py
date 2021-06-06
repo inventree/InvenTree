@@ -14,7 +14,7 @@ import django.forms
 import djmoney.settings
 from djmoney.forms.fields import MoneyField
 
-import common.settings
+from common.settings import currency_code_default
 
 from .models import Company
 from .models import ManufacturerPart
@@ -38,7 +38,7 @@ class EditCompanyForm(HelperForm):
         label=_('Currency'),
         help_text=_('Default currency used for this company'),
         choices=[('', '----------')] + djmoney.settings.CURRENCY_CHOICES,
-        initial=common.settings.currency_code_default,
+        initial=currency_code_default,
     )
 
     class Meta:
@@ -116,7 +116,7 @@ class EditSupplierPartForm(HelperForm):
 
     single_pricing = MoneyField(
         label=_('Single Price'),
-        default_currency='USD',
+        default_currency=currency_code_default(),
         help_text=_('Single quantity price'),
         decimal_places=4,
         max_digits=19,
