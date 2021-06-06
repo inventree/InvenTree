@@ -166,7 +166,8 @@ the part single price shown is the current price for that supplier part"></i></h
                             {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
                         ],
                         borderWidth: 1,
-                        type: 'line'
+                        type: 'line',
+                        hidden: true,
                     },
                     {
                         label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
@@ -177,7 +178,8 @@ the part single price shown is the current price for that supplier part"></i></h
                             {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
                         ],
                         borderWidth: 1,
-                        type: 'line'
+                        type: 'line',
+                        hidden: true,
                     },
                     {% endif %}
                     {
