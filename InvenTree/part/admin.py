@@ -16,7 +16,8 @@ from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-from stock.models import StockLocation
+from stock.models import StockLocation, PartQuantityHistory
+from stock.admin import StockTrackingAdmin
 from company.models import SupplierPart
 
 
@@ -291,6 +292,7 @@ admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartRelated, PartRelatedAdmin)
 admin.site.register(PartAttachment, PartAttachmentAdmin)
 admin.site.register(PartStar, PartStarAdmin)
+admin.site.register(PartQuantityHistory, StockTrackingAdmin)
 admin.site.register(BomItem, BomItemAdmin)
 admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(PartParameter, ParameterAdmin)
