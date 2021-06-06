@@ -82,6 +82,7 @@ class RuleSet(models.Model):
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partquantityhistory',
             'company_supplierpart',
             'company_manufacturerpart',
         ],
