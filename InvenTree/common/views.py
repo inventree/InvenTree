@@ -565,7 +565,7 @@ class FileManagementAjaxView(AjaxView):
 
         # check if valid
         if not form_valid:
-            return self.renderJsonResponse(request)
+            return self.renderJsonResponse(request, data={'form_valid': None})
 
         # store the cleaned data and files.
         self.storage.set_step_data(self.steps.current, self.process_step(form))
