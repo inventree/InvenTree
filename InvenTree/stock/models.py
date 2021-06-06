@@ -17,7 +17,7 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
 from common.settings import currency_code_default
@@ -1717,6 +1717,25 @@ class PartQuantityHistory(AbstractItemTracking):
         on_delete=models.CASCADE,
         related_name='quantity_history'
     )
+
+
+@receiver(post_save, sender=StockItemTracking)
+def add_part_history(sender, instance, created, raw, using, **kwargs):
+    """ adds a new part history entry for each StockItemTracking entry that gets created """
+    if created:
+        part = instance.item.part
+        entry = PartQuantityHistory.objects.create(
+            total_stock=part.total_stock,
+            item=part,
+            tracking_type=instance.tracking_type,
+            user=instance.user,
+            date=instance.date,
+            notes=instance.notes,
+            deltas=instance.deltas,
+        )
+        entry.save()
+
+
 def rename_stock_item_test_result_attachment(instance, filename):
 
     return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
