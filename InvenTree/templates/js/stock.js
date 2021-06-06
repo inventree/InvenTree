@@ -1171,7 +1171,7 @@ function loadTrackingTable(table, options) {
         }
     });
 
-    /*
+    /* TODO remove
     // 2021-05-11 - Ability to edit or delete StockItemTracking entries is now removed
     cols.push({
         sortable: false,
@@ -1200,6 +1200,8 @@ function loadTrackingTable(table, options) {
         linkButtonsToSelection(table, options.buttons);
     }
 
+    /* TODO remove
+    // 2021-05-11 - Ability to edit or delete StockItemTracking entries is now removed
     table.on('click', '.btn-entry-edit', function() {
         var button = $(this);
 
@@ -1215,6 +1217,7 @@ function loadTrackingTable(table, options) {
             reload: true,
         });
     });
+    */
 }
 
 
