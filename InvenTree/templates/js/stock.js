@@ -972,7 +972,7 @@ function loadStockLocationTable(table, options) {
     });
 }
 
-function loadStockTrackingTable(table, options) {
+function loadTrackingTable(table, options) {
 
     var cols = [];
 
@@ -992,6 +992,17 @@ function loadStockTrackingTable(table, options) {
             return '<i>{% trans "Invalid date" %}</i>';
         }
     });
+
+    // Total stock if option is set
+    if (options.total_stock) {
+        cols.push({
+            field: 'total_stock',
+            title: '{% trans "Total Stock" %}',
+            formatter: function(value, row, index, field) {
+                return Number(value);
+            }
+        });
+    }
 
     // Stock transaction description
     cols.push({
