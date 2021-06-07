@@ -1544,7 +1544,7 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_bom_price_range(self, quantity=1):
+    def get_bom_price_range(self, quantity=1, internal=False):
         """ Return the price range of the BOM for this part.
         Adds the minimum price for all components in the BOM.
 
@@ -1561,7 +1561,7 @@ class Part(MPTTModel):
                 print("Warning: Item contains itself in BOM")
                 continue
 
-            prices = item.sub_part.get_price_range(quantity * item.quantity)
+            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal)
 
             if prices is None:
                 continue
@@ -1585,7 +1585,7 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_price_range(self, quantity=1, buy=True, bom=True):
+    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False):
 
         """ Return the price range for this part. This price can be either:
 
@@ -1596,8 +1596,13 @@ class Part(MPTTModel):
             Minimum of the supplier price or BOM price. If no pricing available, returns None
         """
 
+        # only get internal price if set and should be used
+        if internal and self.has_internal_price_breaks:
+            internal_price = self.get_internal_price(quantity)
+            return internal_price, internal_price
+
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
-        bom_price_range = self.get_bom_price_range(quantity) if bom else None
+        bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
 
         if buy_price_range is None:
             return bom_price_range
