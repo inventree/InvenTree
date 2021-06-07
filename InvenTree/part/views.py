@@ -2808,6 +2808,7 @@ class PartInternalPriceBreakCreate(PartSalePriceBreakCreate):
     model = PartInternalPriceBreak
     form_class = part_forms.EditPartInternalPriceBreakForm
     ajax_form_title = _('Add Internal Price Break')
+    permission_required = 'roles.sales_order.add'
 
 
 class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
@@ -2816,6 +2817,7 @@ class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
     model = PartInternalPriceBreak
     form_class = part_forms.EditPartInternalPriceBreakForm
     ajax_form_title = _('Edit Internal Price Break')
+    permission_required = 'roles.sales_order.change'
 
 
 class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
@@ -2823,3 +2825,4 @@ class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
 
     model = PartInternalPriceBreak
     ajax_form_title = _("Delete Internal Price Break")
+    permission_required = 'roles.sales_order.delete'

@@ -13,7 +13,7 @@
 
 {% block details %}
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
-{% if show_internal_price %}
+{% if show_internal_price and roles.sales_order.view %}
 <div id='internal-price-break-toolbar' class='btn-group'>
     <button class='btn btn-primary' id='new-internal-price-break' type='button'>
         <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
@@ -23,6 +23,14 @@
 <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'>
 </table>
 
+{% else %}
+<div class='container-fluid'>
+    <h3>{% trans "Permission Denied" %}</h3>
+
+    <div class='alert alert-danger alert-block'>
+        {% trans "You do not have permission to view this page." %}
+    </div>
+</div>
 {% endif %}
 {% endblock %}
 
@@ -30,7 +38,7 @@
 {{ block.super }}
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
-{% if show_internal_price %}
+{% if show_internal_price and roles.sales_order.view %}
 function reloadPriceBreaks() {
     $("#internal-price-break-table").bootstrapTable("refresh");
 }

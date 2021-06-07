@@ -201,6 +201,7 @@ class PartInternalPriceList(generics.ListCreateAPIView):
 
     queryset = PartInternalPriceBreak.objects.all()
     serializer_class = part_serializers.PartInternalPriceSerializer
+    permission_required = 'roles.sales_order.show'
 
     filter_backends = [
         DjangoFilterBackend

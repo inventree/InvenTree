@@ -14,6 +14,7 @@
 
 {% block details %}
 {% default_currency as currency %}
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 
 {% crispy form %}
 
@@ -77,6 +78,7 @@
     {% endif %}
 {% endif %}
 
+{% if show_internal_price and roles.sales_order.view %}
 {% if total_internal_part_price %}
     <tr>
         <td><b>{% trans 'Internal Price' %}</b></td>
@@ -88,6 +90,7 @@
         <td>{% trans 'Total Cost' %}</td>
         <td colspan='2'>{% include "price.html" with price=total_internal_part_price %}</td>
     </tr>
+{% endif %}
 {% endif %}
 
 {% if total_part_price %}

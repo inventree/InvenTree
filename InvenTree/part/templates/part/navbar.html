@@ -96,7 +96,7 @@
         </a>
     </li>
     {% endif %}
-    {% if show_internal_price %}
+    {% if show_internal_price and roles.sales_order.view %}
     <li class='list-group-item {% if tab == "internal-prices" %}active{% endif %}' title='{% trans "Internal Price Information" %}'>
         <a href='{% url "part-internal-prices" part.id %}'>
             <span class='menu-tab-icon fas fa-dollar-sign' style='width: 20px;'></span>
