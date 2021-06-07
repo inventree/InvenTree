@@ -1,6 +1,7 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block menubar %}
 {% include 'part/navbar.html' with tab='internal-prices' %}
@@ -11,7 +12,8 @@
 {% endblock %}
 
 {% block details %}
-
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% if show_internal_price %}
 <div id='internal-price-break-toolbar' class='btn-group'>
     <button class='btn btn-primary' id='new-internal-price-break' type='button'>
         <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
@@ -21,11 +23,14 @@
 <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'>
 </table>
 
+{% endif %}
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% if show_internal_price %}
 function reloadPriceBreaks() {
     $("#internal-price-break-table").bootstrapTable("refresh");
 }
@@ -105,4 +110,5 @@ $('#internal-price-break-table').inventreeTable({
     ]
 })
 
+{% endif %}
 {% endblock %}

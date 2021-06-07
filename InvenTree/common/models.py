@@ -205,6 +205,20 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_INTERNAL_PRICE': {
+            'name': _('Internal Prices'),
+            'description': _('Set internal prices for parts'),
+            'default': False,
+            'validator': bool
+        },
+
+        'PART_BOM_USE_INTERNAL_PRICE': {
+            'name': _('Internal Prices in BOM-Price'),
+            'description': _('Use the internal price (if set) for BOM-price calculations'),
+            'default': False,
+            'validator': bool
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
