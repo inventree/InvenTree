@@ -207,14 +207,14 @@ class InvenTreeSetting(models.Model):
 
         'PART_INTERNAL_PRICE': {
             'name': _('Internal Prices'),
-            'description': _('Set internal prices for parts'),
+            'description': _('Enable internal prices for parts'),
             'default': False,
             'validator': bool
         },
 
         'PART_BOM_USE_INTERNAL_PRICE': {
-            'name': _('Internal Prices in BOM-Price'),
-            'description': _('Use the internal price (if set) for BOM-price calculations'),
+            'name': _('Internal Price as BOM-Price'),
+            'description': _('Use the internal price (if set) in BOM-price calculations'),
             'default': False,
             'validator': bool
         },
