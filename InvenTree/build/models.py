@@ -1298,7 +1298,7 @@ class BuildItem(models.Model):
             except:
                 pass
         
-        if thumb_url is None and self.bom_item and self.stock_item.sub_part:
+        if thumb_url is None and self.bom_item and self.bom_item.sub_part:
             try:
                 thumb_url = self.bom_item.sub_part.image.thumbnail.url
             except:
