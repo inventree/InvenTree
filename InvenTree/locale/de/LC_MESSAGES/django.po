@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-06 14:31+0000\n"
-"PO-Revision-Date: 2021-06-06 14:38\n"
+"POT-Creation-Date: 2021-06-09 00:03+0000\n"
+"PO-Revision-Date: 2021-06-09 00:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -458,7 +458,7 @@ msgstr "Zieldatum"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 
-#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1333
+#: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1346
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
@@ -826,17 +826,17 @@ msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr "Ausgewähltes BestandsObjekt nicht Stückliste für Teil '{p}' gefunden"
 
-#: build/models.py:1303 stock/templates/stock/item_base.html:317
+#: build/models.py:1316 stock/templates/stock/item_base.html:317
 #: templates/InvenTree/search.html:183 templates/js/build.js:724
 #: templates/navbar.html:29
 msgid "Build"
 msgstr "Bauauftrag"
 
-#: build/models.py:1304
+#: build/models.py:1317
 msgid "Build to allocate parts"
 msgstr "Bauauftrag starten um Teile zuzuweisen"
 
-#: build/models.py:1320 part/templates/part/allocation.html:18
+#: build/models.py:1333 part/templates/part/allocation.html:18
 #: part/templates/part/allocation.html:24
 #: part/templates/part/allocation.html:31
 #: part/templates/part/allocation.html:49
@@ -848,19 +848,19 @@ msgstr "Bauauftrag starten um Teile zuzuweisen"
 msgid "Stock Item"
 msgstr "BestandsObjekt"
 
-#: build/models.py:1321
+#: build/models.py:1334
 msgid "Source stock item"
 msgstr "Quell-BestandsObjekt"
 
-#: build/models.py:1334
+#: build/models.py:1347
 msgid "Stock quantity to allocate to build"
 msgstr "BestandsObjekt-Anzahl dem Bauauftrag zuweisen"
 
-#: build/models.py:1342
+#: build/models.py:1355
 msgid "Install into"
 msgstr "Installiere in"
 
-#: build/models.py:1343
+#: build/models.py:1356
 msgid "Destination stock item"
 msgstr "Ziel-BestandsObjekt"
 
