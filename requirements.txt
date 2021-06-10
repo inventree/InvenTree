@@ -1,6 +1,6 @@
 invoke>=1.4.0                   # Invoke build tool
 wheel>=0.34.2                   # Wheel
-Django==3.2.2                     # Django package
+Django==3.2.4                     # Django package
 pillow==8.2.0                   # Image manipulation
 djangorestframework==3.12.4     # DRF framework
 django-cors-headers==3.2.0      # CORS headers extension for DRF
