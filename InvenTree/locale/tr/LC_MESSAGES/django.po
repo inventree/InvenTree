@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 22:16+0000\n"
+"POT-Creation-Date: 2021-06-11 22:02+0000\n"
 "PO-Revision-Date: 2021-06-09 00:22\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -4409,7 +4409,7 @@ msgstr ""
 msgid "Part Details"
 msgstr ""
 
-#: part/templates/part/detail.html:42
+#: part/templates/part/detail.html:42 part/templates/part/part_base.html:188
 msgid "Latest Serial Number"
 msgstr ""
 
@@ -4741,7 +4741,7 @@ msgstr ""
 msgid "Building"
 msgstr ""
 
-#: part/templates/part/part_base.html:257
+#: part/templates/part/part_base.html:265
 msgid "Calculate"
 msgstr ""
 
