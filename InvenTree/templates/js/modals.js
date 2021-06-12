@@ -905,6 +905,10 @@ function launchModalForm(url, options = {}) {
                     attachButtons(modal, options.buttons);
                 }
 
+                if (response.buttons) {
+                    attachButtons(modal, response.buttons);
+                }
+
             } else {
                 $(modal).modal('hide');
                 showAlertDialog('{% trans "Invalid server response" %}', '{% trans "JSON response missing form data" %}');
