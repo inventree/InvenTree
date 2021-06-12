@@ -795,9 +795,9 @@ function handleModalForm(url, options) {
                                 modalSetTitle(modal, response.title);
                             }
 
+                            // Clean custom action buttons
+                            $(modal).find('#modal-footer-buttons').html('');
                             if (response.buttons) {
-                                // Clean custom action buttons
-                                $(modal).find('#modal-footer-buttons').html('');
                                 attachButtons(modal, response.buttons);
                             }
                         }
