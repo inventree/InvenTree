@@ -17,6 +17,7 @@ from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
+from django.contrib import messages
 
 from moneyed import CURRENCIES
 from djmoney.contrib.exchange.models import convert_money
@@ -40,6 +41,10 @@ from .models import PartSellPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
+from common.files import FileManager
+from common.views import FileManagementFormView, FileManagementAjaxView
+
+from stock.models import StockLocation
 
 import common.settings as inventree_settings
 
@@ -717,6 +722,168 @@ class PartCreate(AjaxCreateView):
         initials['parent_category_templates'] = initials['selected_category_templates']
 
         return initials
+
+
+class PartImport(FileManagementFormView):
+    ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
+    permission_required = 'part.add'
+
+    class PartFileManager(FileManager):
+        REQUIRED_HEADERS = [
+            'Name',
+            'Description',
+        ]
+
+        OPTIONAL_MATCH_HEADERS = [
+            'Category',
+            'default_location',
+            'default_supplier',
+        ]
+
+        OPTIONAL_HEADERS = [
+            'Keywords',
+            'IPN',
+            'Revision',
+            'Link',
+            'default_expiry',
+            'minimum_stock',
+            'Units',
+            'Notes',
+        ]
+
+    name = 'part'
+    form_steps_template = [
+        'part/import_wizard/part_upload.html',
+        'part/import_wizard/match_fields.html',
+        'part/import_wizard/match_references.html',
+    ]
+    form_steps_description = [
+        _("Upload File"),
+        _("Match Fields"),
+        _("Match References"),
+    ]
+
+    form_field_map = {
+        'name': 'name',
+        'description': 'description',
+        'keywords': 'keywords',
+        'ipn': 'ipn',
+        'revision': 'revision',
+        'link': 'link',
+        'default_expiry': 'default_expiry',
+        'minimum_stock': 'minimum_stock',
+        'units': 'units',
+        'notes': 'notes',
+        'category': 'category',
+        'default_location': 'default_location',
+        'default_supplier': 'default_supplier',
+    }
+    file_manager_class = PartFileManager
+
+    def get_field_selection(self):
+        """ Fill the form fields for step 3 """
+        # fetch available elements
+        self.allowed_items = {}
+        self.matches = {}
+
+        self.allowed_items['Category'] = PartCategory.objects.all()
+        self.matches['Category'] = ['name__contains']
+        self.allowed_items['default_location'] = StockLocation.objects.all()
+        self.matches['default_location'] = ['name__contains']
+        self.allowed_items['default_supplier'] = SupplierPart.objects.all()
+        self.matches['default_supplier'] = ['SKU__contains']
+
+        # setup
+        self.file_manager.setup()
+        # collect submitted column indexes
+        col_ids = {}
+        for col in self.file_manager.HEADERS:
+            index = self.get_column_index(col)
+            if index >= 0:
+                col_ids[col] = index
+
+        # parse all rows
+        for row in self.rows:
+            # check each submitted column
+            for idx in col_ids:
+                data = row['data'][col_ids[idx]]['cell']
+
+                if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
+                    try:
+                        exact_match = self.allowed_items[idx].get(**{a: data for a in self.matches[idx]})
+                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        exact_match = None
+
+                    row['match_options_' + idx] = self.allowed_items[idx]
+                    row['match_' + idx] = exact_match
+                    continue
+
+                # general fields
+                row[idx.lower()] = data
+
+    def done(self, form_list, **kwargs):
+        """ Create items """
+        items = self.get_clean_items()
+
+        import_done = 0
+        import_error = []
+
+        # Create Part instances
+        for part_data in items.values():
+
+            # set related parts
+            optional_matches = {}
+            for idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
+                if idx.lower() in part_data:
+                    try:
+                        optional_matches[idx] = self.allowed_items[idx].get(pk=int(part_data[idx.lower()]))
+                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        optional_matches[idx] = None
+                else:
+                    optional_matches[idx] = None
+
+            # add part
+            new_part = Part(
+                name=part_data.get('name', ''),
+                description=part_data.get('description', ''),
+                keywords=part_data.get('keywords', None),
+                IPN=part_data.get('ipn', None),
+                revision=part_data.get('revision', None),
+                link=part_data.get('link', None),
+                default_expiry=part_data.get('default_expiry', 0),
+                minimum_stock=part_data.get('minimum_stock', 0),
+                units=part_data.get('units', None),
+                notes=part_data.get('notes', None),
+                category=optional_matches['Category'],
+                default_location=optional_matches['default_location'],
+                default_supplier=optional_matches['default_supplier'],
+            )
+            try:
+                new_part.save()
+                import_done += 1
+            except ValidationError as _e:
+                import_error.append(', '.join(set(_e.messages)))
+
+        # Set alerts
+        if import_done:
+            alert = f"<strong>{_('Part-Import')}</strong><br>{_('Imported {n} parts').format(n=import_done)}"
+            messages.success(self.request, alert)
+        if import_error:
+            error_text = '\n'.join([f'<li><strong>x{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
+            messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
+
+        return HttpResponseRedirect(reverse('part-index'))
+
+
+class PartImportAjax(FileManagementAjaxView, PartImport):
+    ajax_form_steps_template = [
+        'part/import_wizard/ajax_part_upload.html',
+        'part/import_wizard/ajax_match_fields.html',
+        'part/import_wizard/ajax_match_references.html',
+    ]
+
+    def validate(self, obj, form, **kwargs):
+        return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
 class PartNotes(UpdateView):
