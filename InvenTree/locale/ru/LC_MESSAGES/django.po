@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-11 22:02+0000\n"
-"PO-Revision-Date: 2021-06-11 22:09\n"
+"PO-Revision-Date: 2021-06-13 13:49\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -522,7 +522,7 @@ msgstr "Подтвердите снятие со склада"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Подтвердите выделение запасов"
 
 #: build/forms.py:186
 msgid "Mark build as complete"
@@ -555,7 +555,7 @@ msgstr "Статус"
 
 #: build/forms.py:216
 msgid "Build output stock status"
-msgstr ""
+msgstr "Создать статус склада вывода"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
@@ -563,7 +563,7 @@ msgstr "Подтвердите незавершенность"
 
 #: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
-msgstr ""
+msgstr "Подтвердите завершение с неполным выделением запасов"
 
 #: build/forms.py:227
 msgid "Confirm build completion"
