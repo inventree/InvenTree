@@ -1255,7 +1255,7 @@ class OrderParts(AjaxView):
 
         if form_step == 'select_parts':
             # No errors? and not price-update? Proceed to PO selection form
-            if part_errors is False and not 'act-btn_update_price' in request.POST:
+            if part_errors is False and 'act-btn_update_price' not in request.POST:
                 self.ajax_template_name = 'order/order_wizard/select_pos.html'
                 self.form_step = 'select_purchase_orders'  # set step (important for get_data)
 
