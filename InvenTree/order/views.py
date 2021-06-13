@@ -569,6 +569,48 @@ class SalesOrderShip(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context)
 
 
+class SalesOrderValidate(AjaxUpdateView):
+    """
+    Modal form view for validating a sales order
+    """
+
+    model = SalesOrder
+    ajax_form_title = _("Validate order")
+    ajax_template_name = 'order/validate.html'
+    context_object_name = 'order'
+    form_class = order_forms.SalesOrderValidateForm
+
+    def get_context(self):
+        return {
+            'order': self.get_object(),
+        }
+
+    def get(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        return self.renderJsonResponse(request, form, context=self.get_context())
+
+    def validate(self, part, form, **kwargs):
+
+        confirm = str2bool(form.cleaned_data.get('validate', False))
+
+        if not confirm:
+            form.add_error('validate', _('Confirm that the order is valid'))
+
+    def save(self, part, form, **kwargs):
+        """
+        Mark the order as validated
+        """
+
+        part.validate(self.request.user)
+
+    def get_data(self):
+        return {
+            'success': _('Validated order price')
+        }
+
+
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 

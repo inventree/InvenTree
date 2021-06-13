@@ -60,6 +60,7 @@ sales_order_detail_urls = [
     url(r'^edit/', views.SalesOrderEdit.as_view(), name='so-edit'),
     url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
     url(r'^ship/', views.SalesOrderShip.as_view(), name='so-ship'),
+    url(r'^validate/', views.SalesOrderValidate.as_view(), name='so-validate'),
 
     url(r'^builds/', views.SalesOrderDetail.as_view(template_name='order/so_builds.html'), name='so-builds'),
     url(r'^attachments/', views.SalesOrderDetail.as_view(template_name='order/so_attachments.html'), name='so-attachments'),

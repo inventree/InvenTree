@@ -1,0 +1,8 @@
+{% extends "modal_form.html" %}
+
+{% load i18n %}
+
+{% block pre_form_content %}
+{% blocktrans with part.full_name as part %}Confirm that the order is valid for:<br><i>{{ order }}</i>{% endblocktrans %}
+
+{% endblock %}

@@ -66,6 +66,11 @@ src="{% static 'img/blank_image.png' %}"
         <button type='button' disabled='' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
             <span class='fas fa-clipboard-list'></span>
         </button>
+        {% if not order.is_valid %}
+        <button class="btn btn-success" id="validate-price" title="{% trans 'Validate price' %}" type="button">
+            <span class="fas fa-clipboard-check"></span>
+        </button>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
@@ -141,6 +146,21 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
+
+    {% if order.sell_price %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Sell Price" %}</td>
+        <td>{{ order.sell_price }}
+            <span class='label label-{% if order.is_valid %}success'>
+                {% trans "Validated" %}
+            {% else %}danger'>
+                {% trans "Not validated" %}
+            {% endif %}</span>
+        </td>
+    </tr>
+    {% endif %}
+
 </table>
 {% endblock %}
 
@@ -172,6 +192,15 @@ $("#ship-order").click(function() {
 
 $('#print-order-report').click(function() {
     printSalesOrderReports([{{ order.pk }}]);
+});
+
+$("#validate-price").click(function() {
+    launchModalForm(
+        "{% url 'so-validate' order.id %}",
+        {
+            reload: true,
+        }
+    );
 });
 
 {% endblock %}

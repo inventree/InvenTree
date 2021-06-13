@@ -88,6 +88,18 @@ class ReceivePurchaseOrderForm(HelperForm):
         ]
 
 
+class SalesOrderValidateForm(HelperForm):
+    """ Simple confirmation form for sales order validation. """
+
+    validate = forms.BooleanField(required=False, initial=False, label=_('validate'), help_text=_('Confirm that the sales order is correct'))
+
+    class Meta:
+        model = SalesOrder
+        fields = [
+            'validate'
+        ]
+
+
 class EditPurchaseOrderForm(HelperForm):
     """ Form for editing a PurchaseOrder object """
 
@@ -155,6 +167,7 @@ class EditSalesOrderForm(HelperForm):
             'target_date',
             'link',
             'responsible',
+            'sell_price',
         ]
 
 

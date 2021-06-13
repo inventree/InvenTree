@@ -5,6 +5,7 @@ Order model definitions
 # -*- coding: utf-8 -*-
 
 import os
+import hashlib
 from datetime import datetime
 from decimal import Decimal
 
@@ -485,6 +486,54 @@ class SalesOrder(Order):
         verbose_name=_('shipped by')
     )
 
+    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('order checksum'), help_text=_('Stored order checksum'))
+
+    sell_price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency=currency_code_default(),
+        null=True,
+        verbose_name=_('Sell Price'),
+        help_text=_('Price for this sale order'),
+    )
+
+    def get_hash(self):
+        """ Return a checksum hash for this sale order. """
+
+        hash = hashlib.md5(str(self.id).encode())
+
+        # hash own values
+        hash.update(str(self.customer.id).encode())
+        hash.update(str(self.customer_reference).encode())
+        hash.update(str(self.target_date).encode())
+        hash.update(str(self.shipment_date).encode())
+        hash.update(str(self.reference).encode())
+        hash.update(str(self.link).encode())
+        hash.update(str(self.notes).encode())
+        hash.update(str(self.sell_price).encode())
+        hash.update(str(self.sell_price_currency).encode())
+
+        # List *all* items
+        items = self.lines.all()
+        for item in items:
+            hash.update(str(item.get_item_hash()).encode())
+
+        return str(hash.digest())
+
+    def is_valid(self):
+        """ Check if the sale order is 'valid' - if the calculated checksum matches the stored value
+        """
+        return self.get_hash() == self.checksum or not self.sell_price
+
+    @transaction.atomic
+    def validate(self, user):
+        """ Validate the sale order
+
+        - Calculates and stores the hash for the sale order
+        """
+        self.checksum = self.get_hash()
+        self.save()
+
     @property
     def is_overdue(self):
         """
@@ -618,6 +667,20 @@ class OrderLineItem(models.Model):
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
+
+    def get_item_hash(self):
+        """ Calculate the checksum hash of this order line item """
+
+        # Seed the hash with the ID of this order item
+        hash = hashlib.md5(str(self.id).encode())
+
+        # Update the hash based on line information
+        hash.update(str(self.quantity).encode())
+        hash.update(str(self.part.id).encode())
+        hash.update(str(self.sale_price_currency).encode())
+        hash.update(str(self.sale_price).encode())
+
+        return str(hash.digest())
 
 
 class PurchaseOrderLineItem(OrderLineItem):
