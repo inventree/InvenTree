@@ -1010,6 +1010,15 @@ class OrderParts(AjaxView):
 
         return ctx
 
+    def get_data(self):
+        """ enrich respone json data """
+        data = super().get_data()
+        # if in select-phase add a button to update the prices
+        if getattr(self, 'form_step', 'select_parts') == 'select_parts':
+            buttons = [{'name': 'update_price', 'title': _('Update prices')}]
+            data['buttons'] = buttons  # set buttons
+        return data
+
     def get_suppliers(self):
         """ Calculates a list of suppliers which the user will need to create POs for.
         This is calculated AFTER the user finishes selecting the parts to order.
@@ -1244,9 +1253,10 @@ class OrderParts(AjaxView):
         valid = False
 
         if form_step == 'select_parts':
-            # No errors? Proceed to PO selection form
-            if part_errors is False:
+            # No errors? and not price-update? Proceed to PO selection form
+            if part_errors is False and not 'act-btn_update_price' in request.POST:
                 self.ajax_template_name = 'order/order_wizard/select_pos.html'
+                self.form_step = 'select_purchase_orders'  # set step (important for get_data)
 
             else:
                 self.ajax_template_name = 'order/order_wizard/select_parts.html'
