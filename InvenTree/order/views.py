@@ -1017,6 +1017,7 @@ class OrderParts(AjaxView):
         if getattr(self, 'form_step', 'select_parts') == 'select_parts':
             buttons = [{'name': 'update_price', 'title': _('Update prices')}]
             data['buttons'] = buttons  # set buttons
+            data['hideErrorMessage'] = '1'  # hide the error
         return data
 
     def get_suppliers(self):
