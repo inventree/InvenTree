@@ -130,6 +130,7 @@ class PartTest(TestCase):
         self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
         self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
 
+
 class TestTemplateTest(TestCase):
 
     fixtures = [
