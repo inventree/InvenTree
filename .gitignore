@@ -64,4 +64,4 @@ secret_key.txt
 htmlcov/
 
 # Development files
-.dev/
+dev/
