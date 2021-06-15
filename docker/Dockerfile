@@ -101,14 +101,11 @@ CMD ["bash", "./start_prod_server.sh"]
 
 FROM base as dev
 
-# The development image requires the source code to be mounted to /home/inventree/src/
-# So from here, we don't actually "do" anything
+# The development image requires the source code to be mounted to /home/inventree/
+# So from here, we don't actually "do" anything, apart from some file management
 
-WORKDIR ${INVENTREE_SRC_DIR}
+ENV INVENTREE_DEV_DIR = "${INVENTREE_HOME}/dev"
 
-COPY start_dev_server.sh ${INVENTREE_HOME}/start_dev_server.sh
-COPY start_dev_worker.sh ${INVENTREE_HOME}/start_dev_worker.sh
-RUN chmod 755 ${INVENTREE_HOME}/start_dev_server.sh
-RUN chmod 755 ${INVENTREE_HOME}/start_dev_worker.sh
+WORKDIR ${INVENTREE_HOME}
 
-CMD ["bash", "/home/inventree/start_dev_server.sh"]
+CMD ["bash", "/home/inventree/docker/start_dev_server.sh"]
