@@ -161,18 +161,20 @@ urlpatterns = [
     url(r'^markdownx/', include('markdownx.urls')),
 ]
 
-# Static file access
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Server running in "DEBUG" mode?
+if settings.DEBUG:
+    # Static file access
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# Media file access
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Media file access
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Debug toolbar access (if in DEBUG mode)
-if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
-    import debug_toolbar
-    urlpatterns = [
-        path('__debug/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+    # Debug toolbar access (only allowed in DEBUG mode)
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        import debug_toolbar
+        urlpatterns = [
+            path('__debug/', include(debug_toolbar.urls)),
+        ] + urlpatterns
 
 # Send any unknown URLs to the parts page
 urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]
