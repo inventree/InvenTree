@@ -191,14 +191,20 @@ $("#po-table").inventreeTable({
             title: '{% trans "Total price" %}',
             formatter: function(value, row) {
                 var total = row.purchase_price * row.quantity;
-
-                // Create our number formatter.
-                var formatter = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: row.purchase_price_currency,
-                });
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
                 return formatter.format(total)
             },
+            footerFormatter: function(data) {
+                var total = data.map(function (row) {
+                  return +row['purchase_price']*row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency)  || 'USD';
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
+                return formatter.format(total)
+              }
+
         },
         {
             sortable: true,
