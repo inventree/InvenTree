@@ -191,7 +191,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', '/home/inventree/static')
+        CONFIG.get('static_root', '/home/inventree/data/static')
     )
 )
 

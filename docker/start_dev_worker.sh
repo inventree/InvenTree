@@ -2,15 +2,15 @@
 
 echo "Starting InvenTree worker..."
 
-cd $INVENTREE_SRC_DIR
+cd $INVENTREE_HOME
 
 # Activate virtual environment
-source inventree-docker-dev/bin/activate
+source ./dev/env/bin/activate
 
 sleep 5
 
 # Wait for the database to be ready
-cd $INVENTREE_MNG_DIR
+cd InvenTree
 python manage.py wait_for_db
 
 sleep 10

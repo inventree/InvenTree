@@ -661,6 +661,11 @@ function loadStockTable(table, options) {
                 sortable: true,
             },
             {
+                field: 'purchase_price',
+                title: '{% trans "Purchase Price" %}',
+                sortable: true,
+            },
+            {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
             },
