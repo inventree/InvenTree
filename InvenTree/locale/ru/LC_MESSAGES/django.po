@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-16 13:55+0000\n"
-"PO-Revision-Date: 2021-06-09 00:22\n"
+"PO-Revision-Date: 2021-06-16 14:02\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -522,7 +522,7 @@ msgstr "Подтвердите снятие со склада"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Подтвердите выделение запасов"
 
 #: build/forms.py:186
 msgid "Mark build as complete"
@@ -555,7 +555,7 @@ msgstr "Статус"
 
 #: build/forms.py:216
 msgid "Build output stock status"
-msgstr ""
+msgstr "Создать статус склада вывода"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
@@ -563,30 +563,30 @@ msgstr "Подтвердите незавершенность"
 
 #: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
-msgstr ""
+msgstr "Подтвердите завершение с неполным выделением запасов"
 
 #: build/forms.py:227
 msgid "Confirm build completion"
-msgstr ""
+msgstr "Подтвердите завершение сборки"
 
 #: build/forms.py:252
 msgid "Confirm cancel"
-msgstr ""
+msgstr "Подтвердите отмену"
 
 #: build/forms.py:252 build/views.py:66
 msgid "Confirm build cancellation"
-msgstr ""
+msgstr "Подтвердите отмену сборки"
 
 #: build/forms.py:266
 msgid "Select quantity of stock to allocate"
-msgstr ""
+msgstr "Выберите количество запасов для распределения"
 
 #: build/models.py:66 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
 #: part/templates/part/allocation.html:23
 #: report/templates/report/inventree_build_order_base.html:106
 msgid "Build Order"
-msgstr ""
+msgstr "Порядок сборки"
 
 #: build/models.py:67 build/templates/build/index.html:8
 #: build/templates/build/index.html:15 order/templates/order/so_builds.html:12
@@ -596,11 +596,11 @@ msgstr ""
 #: templates/InvenTree/search.html:185
 #: templates/InvenTree/settings/tabs.html:34 users/models.py:43
 msgid "Build Orders"
-msgstr ""
+msgstr "Порядок сборки"
 
 #: build/models.py:127
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Ссылка на заказ"
 
 #: build/models.py:128 order/models.py:101 order/models.py:618
 #: order/templates/order/purchase_order_detail.html:170
@@ -2149,8 +2149,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -6134,8 +6133,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7589,3 +7587,4 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
+
