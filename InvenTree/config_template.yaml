@@ -129,7 +129,7 @@ cors:
 media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# By default, it is stored under /home/inventree
+# By default, it is stored under /home/inventree/data/static
 # Use environment variable INVENTREE_STATIC_ROOT
 static_root: '/home/inventree/data/static'
 
