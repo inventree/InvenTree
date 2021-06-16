@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 13:55+0000\n"
+"POT-Creation-Date: 2021-06-16 22:40+0000\n"
 "PO-Revision-Date: 2021-06-16 14:02\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -146,7 +146,7 @@ msgstr "Nombre"
 #: company/templates/company/manufacturer_part_base.html:72
 #: company/templates/company/supplier_part_base.html:71
 #: company/templates/company/supplier_part_detail.html:31 label/models.py:109
-#: order/models.py:103 order/templates/order/purchase_order_detail.html:143
+#: order/models.py:103 order/templates/order/purchase_order_detail.html:147
 #: part/models.py:710 part/templates/part/detail.html:54
 #: part/templates/part/set_category.html:14 report/models.py:192
 #: report/models.py:505 report/models.py:544
@@ -468,7 +468,7 @@ msgstr ""
 #: order/forms.py:279 order/models.py:616 order/models.py:817
 #: order/templates/order/order_wizard/match_parts.html:29
 #: order/templates/order/order_wizard/select_parts.html:32
-#: order/templates/order/purchase_order_detail.html:175
+#: order/templates/order/purchase_order_detail.html:179
 #: order/templates/order/sales_order_detail.html:70
 #: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/sales_order_detail.html:162
@@ -603,7 +603,7 @@ msgid "Build Order Reference"
 msgstr ""
 
 #: build/models.py:128 order/models.py:101 order/models.py:618
-#: order/templates/order/purchase_order_detail.html:170
+#: order/templates/order/purchase_order_detail.html:174
 #: order/templates/order/sales_order_detail.html:225 part/models.py:2279
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
@@ -629,7 +629,7 @@ msgstr ""
 #: build/templates/build/detail.html:26 company/models.py:622
 #: order/models.py:660 order/models.py:693
 #: order/templates/order/order_wizard/select_parts.html:30
-#: order/templates/order/purchase_order_detail.html:131
+#: order/templates/order/purchase_order_detail.html:132
 #: order/templates/order/receive_parts.html:19
 #: order/templates/order/sales_order_detail.html:213 part/models.py:321
 #: part/models.py:1967 part/models.py:1979 part/models.py:1997
@@ -767,7 +767,7 @@ msgstr ""
 #: company/templates/company/navbar.html:73 order/models.py:125
 #: order/models.py:620 order/templates/order/po_navbar.html:29
 #: order/templates/order/po_navbar.html:32
-#: order/templates/order/purchase_order_detail.html:209
+#: order/templates/order/purchase_order_detail.html:239
 #: order/templates/order/sales_order_detail.html:278
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:871
@@ -1898,7 +1898,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_detail.html:26
 #: company/templates/company/supplier_part_base.html:102
 #: company/templates/company/supplier_part_detail.html:35
-#: order/templates/order/purchase_order_detail.html:158 part/bom.py:171
+#: order/templates/order/purchase_order_detail.html:162 part/bom.py:171
 #: part/bom.py:242 templates/js/company.js:181 templates/js/company.js:307
 msgid "MPN"
 msgstr ""
@@ -2037,7 +2037,7 @@ msgstr ""
 
 #: company/models.py:472 company/templates/company/supplier_part_base.html:88
 #: company/templates/company/supplier_part_detail.html:26
-#: order/templates/order/purchase_order_detail.html:149 part/bom.py:176
+#: order/templates/order/purchase_order_detail.html:153 part/bom.py:176
 #: part/bom.py:287
 msgid "SKU"
 msgstr ""
@@ -2149,7 +2149,8 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid "There are %(count)s parts sourced from this company.<br>\n"
+msgid ""
+"There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -2865,7 +2866,7 @@ msgid "Supplier part"
 msgstr ""
 
 #: order/models.py:664 order/templates/order/order_base.html:131
-#: order/templates/order/purchase_order_detail.html:189
+#: order/templates/order/purchase_order_detail.html:219
 #: order/templates/order/receive_parts.html:22
 #: order/templates/order/sales_order_base.html:133
 msgid "Received"
@@ -3162,21 +3163,25 @@ msgstr ""
 msgid "No line items found"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:180
+#: order/templates/order/purchase_order_detail.html:191
 #: order/templates/order/sales_order_detail.html:235
 msgid "Unit Price"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:221
+#: order/templates/order/purchase_order_detail.html:198
+msgid "Total price"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:251
 #: order/templates/order/sales_order_detail.html:328
 msgid "Edit line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:222
+#: order/templates/order/purchase_order_detail.html:252
 msgid "Delete line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:227
+#: order/templates/order/purchase_order_detail.html:257
 msgid "Receive line item"
 msgstr ""
 
@@ -6133,7 +6138,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7587,4 +7593,3 @@ msgstr ""
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr ""
-
