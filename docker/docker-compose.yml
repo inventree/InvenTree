@@ -62,7 +62,7 @@ services:
     inventree-worker:
         container_name: inventree-worker
         image: inventree/inventree:latest
-        entrypoint: ./start_worker.sh
+        entrypoint: ./start_prod_worker.sh
         depends_on:
             - inventree-db
             - inventree-server
