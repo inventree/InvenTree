@@ -62,3 +62,6 @@ secret_key.txt
 # Coverage reports
 .coverage
 htmlcov/
+
+# Development files
+dev/
