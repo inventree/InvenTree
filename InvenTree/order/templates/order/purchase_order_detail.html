@@ -176,7 +176,14 @@ $("#po-table").inventreeTable({
         {
             sortable: true,
             field: 'quantity',
-            title: '{% trans "Quantity" %}'
+            title: '{% trans "Quantity" %}',
+            footerFormatter: function(data) {
+                return data.map(function (row) {
+                  return +row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+              }
         },
         {
             sortable: true,
@@ -204,7 +211,6 @@ $("#po-table").inventreeTable({
                 var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
                 return formatter.format(total)
               }
-
         },
         {
             sortable: true,
