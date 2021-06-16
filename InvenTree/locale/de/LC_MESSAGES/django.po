@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-14 21:21+0000\n"
+"POT-Creation-Date: 2021-06-16 13:54+0000\n"
 "PO-Revision-Date: 2021-06-09 00:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -372,27 +372,27 @@ msgstr "Überschuss darf 100% nicht überschreiten"
 msgid "Overage must be an integer value or a percentage"
 msgstr "Überschuss muss eine Ganzzahl oder ein Prozentwert sein"
 
-#: InvenTree/views.py:592
+#: InvenTree/views.py:605
 msgid "Delete Item"
 msgstr "Element löschen"
 
-#: InvenTree/views.py:641
+#: InvenTree/views.py:654
 msgid "Check box to confirm item deletion"
 msgstr "Häkchen setzen um Löschung von Objekt zu bestätigen"
 
-#: InvenTree/views.py:656 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:669 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr "Benutzerinformationen bearbeiten"
 
-#: InvenTree/views.py:667 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:680 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr "Passwort eingeben"
 
-#: InvenTree/views.py:686
+#: InvenTree/views.py:699
 msgid "Password fields must match"
 msgstr "Passwörter stimmen nicht überein"
 
-#: InvenTree/views.py:937 templates/navbar.html:95
+#: InvenTree/views.py:950 templates/navbar.html:95
 msgid "System Information"
 msgstr "Systeminformationen"
 
