@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 22:40+0000\n"
+"POT-Creation-Date: 2021-06-16 23:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -135,7 +135,7 @@ msgstr ""
 
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
-#: report/models.py:179 templates/InvenTree/search.html:137
+#: report/models.py:180 templates/InvenTree/search.html:137
 #: templates/InvenTree/search.html:289 templates/js/part.js:118
 #: templates/js/part.js:641 templates/js/stock.js:947
 msgid "Name"
@@ -149,8 +149,8 @@ msgstr ""
 #: company/templates/company/supplier_part_detail.html:31 label/models.py:109
 #: order/models.py:103 order/templates/order/purchase_order_detail.html:147
 #: part/models.py:710 part/templates/part/detail.html:54
-#: part/templates/part/set_category.html:14 report/models.py:192
-#: report/models.py:505 report/models.py:544
+#: part/templates/part/set_category.html:14 report/models.py:193
+#: report/models.py:530 report/models.py:569
 #: report/templates/report/inventree_build_order_base.html:118
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
@@ -473,7 +473,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:70
 #: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/sales_order_detail.html:162
-#: order/templates/order/sales_order_detail.html:230 part/forms.py:342
+#: order/templates/order/sales_order_detail.html:234 part/forms.py:342
 #: part/forms.py:372 part/forms.py:388 part/models.py:2270
 #: part/templates/part/allocation.html:19
 #: part/templates/part/allocation.html:53
@@ -605,7 +605,7 @@ msgstr ""
 
 #: build/models.py:128 order/models.py:101 order/models.py:618
 #: order/templates/order/purchase_order_detail.html:174
-#: order/templates/order/sales_order_detail.html:225 part/models.py:2279
+#: order/templates/order/sales_order_detail.html:229 part/models.py:2279
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:575 templates/js/build.js:1018
@@ -632,7 +632,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:132
 #: order/templates/order/receive_parts.html:19
-#: order/templates/order/sales_order_detail.html:213 part/models.py:321
+#: order/templates/order/sales_order_detail.html:214 part/models.py:321
 #: part/models.py:1967 part/models.py:1979 part/models.py:1997
 #: part/models.py:2072 part/models.py:2168 part/models.py:2254
 #: part/templates/part/part_app_base.html:8
@@ -766,10 +766,10 @@ msgstr ""
 #: company/models.py:132 company/models.py:498
 #: company/templates/company/navbar.html:70
 #: company/templates/company/navbar.html:73 order/models.py:125
-#: order/models.py:620 order/templates/order/po_navbar.html:29
-#: order/templates/order/po_navbar.html:32
+#: order/models.py:620 order/templates/order/po_navbar.html:38
+#: order/templates/order/po_navbar.html:41
 #: order/templates/order/purchase_order_detail.html:239
-#: order/templates/order/sales_order_detail.html:278
+#: order/templates/order/sales_order_detail.html:309
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:871
 #: part/templates/part/navbar.html:134
@@ -924,7 +924,7 @@ msgstr ""
 
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
-#: order/templates/order/po_navbar.html:26
+#: order/templates/order/po_navbar.html:35
 #: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:125
 #: part/templates/part/navbar.html:128 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
@@ -1249,7 +1249,7 @@ msgstr ""
 
 #: build/templates/build/navbar.html:15
 #: company/templates/company/navbar.html:15
-#: order/templates/order/po_navbar.html:14
+#: order/templates/order/po_navbar.html:15
 #: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:15
 #: templates/js/stock.js:1019
 msgid "Details"
@@ -1600,7 +1600,7 @@ msgid "Number of recent parts to display on index page"
 msgstr ""
 
 #: common/models.py:153 part/models.py:2170 part/templates/part/detail.html:160
-#: report/models.py:185 stock/forms.py:259 templates/js/table_filters.js:25
+#: report/models.py:186 stock/forms.py:259 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:315
 msgid "Template"
 msgstr ""
@@ -1844,7 +1844,9 @@ msgid "Supplied value must be a boolean"
 msgstr ""
 
 #: common/views.py:184 order/templates/order/order_wizard/po_upload.html:42
-#: order/views.py:582 part/templates/part/bom_upload/upload_file.html:27
+#: order/templates/order/po_navbar.html:19
+#: order/templates/order/po_navbar.html:22 order/views.py:582
+#: part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload File"
 msgstr ""
 
@@ -2640,7 +2642,7 @@ msgstr ""
 msgid "Label template file"
 msgstr ""
 
-#: label/models.py:124 report/models.py:274
+#: label/models.py:124 report/models.py:297
 msgid "Enabled"
 msgstr ""
 
@@ -2664,7 +2666,7 @@ msgstr ""
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: label/models.py:144
+#: label/models.py:144 report/models.py:290
 msgid "Filename Pattern"
 msgstr ""
 
@@ -2676,8 +2678,8 @@ msgstr ""
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: label/models.py:245 label/models.py:298 report/models.py:294
-#: report/models.py:415 report/models.py:449
+#: label/models.py:245 label/models.py:298 report/models.py:317
+#: report/models.py:440 report/models.py:474
 msgid "Filters"
 msgstr ""
 
@@ -2957,7 +2959,7 @@ msgid "Export order to file"
 msgstr ""
 
 #: order/templates/order/order_base.html:72
-#: order/templates/order/po_navbar.html:11
+#: order/templates/order/po_navbar.html:12
 msgid "Purchase Order Details"
 msgstr ""
 
@@ -3137,15 +3139,20 @@ msgid "Select a purchase order for %(name)s"
 msgstr ""
 
 #: order/templates/order/po_attachments.html:12
-#: order/templates/order/po_navbar.html:23
+#: order/templates/order/po_navbar.html:32
 msgid "Purchase Order Attachments"
 msgstr ""
 
-#: order/templates/order/po_navbar.html:17
+#: order/templates/order/po_lineitem_delete.html:5
+#: order/templates/order/so_lineitem_delete.html:5
+msgid "Are you sure you wish to delete this line item?"
+msgstr ""
+
+#: order/templates/order/po_navbar.html:26
 msgid "Received Stock Items"
 msgstr ""
 
-#: order/templates/order/po_navbar.html:20
+#: order/templates/order/po_navbar.html:29
 #: order/templates/order/po_received_items.html:12
 msgid "Received Items"
 msgstr ""
@@ -3164,17 +3171,23 @@ msgstr ""
 msgid "No line items found"
 msgstr ""
 
+#: order/templates/order/purchase_order_detail.html:142
+#: order/templates/order/sales_order_detail.html:223
+msgid "Total"
+msgstr ""
+
 #: order/templates/order/purchase_order_detail.html:191
-#: order/templates/order/sales_order_detail.html:235
+#: order/templates/order/sales_order_detail.html:246
 msgid "Unit Price"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:198
+#: order/templates/order/sales_order_detail.html:253
 msgid "Total price"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:251
-#: order/templates/order/sales_order_detail.html:328
+#: order/templates/order/sales_order_detail.html:359
 msgid "Edit line item"
 msgstr ""
 
@@ -3285,50 +3298,50 @@ msgstr ""
 msgid "No matching line items"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:205
+#: order/templates/order/sales_order_detail.html:206
 msgid "ID"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:243 templates/js/build.js:589
+#: order/templates/order/sales_order_detail.html:274 templates/js/build.js:589
 #: templates/js/build.js:855
 msgid "Allocated"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:245
+#: order/templates/order/sales_order_detail.html:276
 msgid "Fulfilled"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:282
+#: order/templates/order/sales_order_detail.html:313
 msgid "PO"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:312
+#: order/templates/order/sales_order_detail.html:343
 msgid "Allocate serial numbers"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:315 templates/js/build.js:651
+#: order/templates/order/sales_order_detail.html:346 templates/js/build.js:651
 msgid "Allocate stock"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:318
+#: order/templates/order/sales_order_detail.html:349
 msgid "Purchase stock"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:322 templates/js/build.js:644
+#: order/templates/order/sales_order_detail.html:353 templates/js/build.js:644
 #: templates/js/build.js:1062
 msgid "Build stock"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:325
-#: order/templates/order/sales_order_detail.html:434
+#: order/templates/order/sales_order_detail.html:356
+#: order/templates/order/sales_order_detail.html:465
 msgid "Calculate price"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:329
+#: order/templates/order/sales_order_detail.html:360
 msgid "Delete line item "
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:440
+#: order/templates/order/sales_order_detail.html:471
 msgid "Update Unit Price"
 msgstr ""
 
@@ -3367,10 +3380,6 @@ msgstr ""
 #: order/templates/order/so_attachments.html:12
 #: order/templates/order/so_navbar.html:26
 msgid "Sales Order Attachments"
-msgstr ""
-
-#: order/templates/order/so_lineitem_delete.html:5
-msgid "Are you sure you wish to delete this line item?"
 msgstr ""
 
 #: order/views.py:104
@@ -3822,7 +3831,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:738 part/templates/part/detail.html:35 report/models.py:198
+#: part/models.py:738 part/templates/part/detail.html:35 report/models.py:199
 #: templates/js/part.js:173
 msgid "Revision"
 msgstr ""
@@ -5068,83 +5077,87 @@ msgstr ""
 msgid "Confim BOM item deletion"
 msgstr ""
 
-#: report/models.py:180
+#: report/models.py:181
 msgid "Template name"
 msgstr ""
 
-#: report/models.py:186
+#: report/models.py:187
 msgid "Report template file"
 msgstr ""
 
-#: report/models.py:193
+#: report/models.py:194
 msgid "Report template description"
 msgstr ""
 
-#: report/models.py:199
+#: report/models.py:200
 msgid "Report revision number (auto-increments)"
 msgstr ""
 
-#: report/models.py:275
+#: report/models.py:291
+msgid "Pattern for generating report filenames"
+msgstr ""
+
+#: report/models.py:298
 msgid "Report template is enabled"
 msgstr ""
 
-#: report/models.py:295
+#: report/models.py:318
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:303
+#: report/models.py:326
 msgid "Include Installed Tests"
 msgstr ""
 
-#: report/models.py:304
+#: report/models.py:327
 msgid "Include test results for stock items installed inside assembled item"
 msgstr ""
 
-#: report/models.py:347
+#: report/models.py:371
 msgid "Build Filters"
 msgstr ""
 
-#: report/models.py:348
+#: report/models.py:372
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:385
+#: report/models.py:410
 msgid "Part Filters"
 msgstr ""
 
-#: report/models.py:386
+#: report/models.py:411
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:416
+#: report/models.py:441
 msgid "Purchase order query filters"
 msgstr ""
 
-#: report/models.py:450
+#: report/models.py:475
 msgid "Sales order query filters"
 msgstr ""
 
-#: report/models.py:500
+#: report/models.py:525
 msgid "Snippet"
 msgstr ""
 
-#: report/models.py:501
+#: report/models.py:526
 msgid "Report snippet file"
 msgstr ""
 
-#: report/models.py:505
+#: report/models.py:530
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:540
+#: report/models.py:565
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:541
+#: report/models.py:566
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:544
+#: report/models.py:569
 msgid "Asset file description"
 msgstr ""
 
