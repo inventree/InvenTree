@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block details %}
-{% settings_value "INVENTREE_DEFAULT_CURRENCY" as currency %}
+{% default_currency as currency %}
 
 {% crispy form %}
 
@@ -130,7 +130,7 @@ the part single price shown is the current price for that supplier part"></i></h
 {% block js_ready %}
     {{ block.super }}
 
-    {% settings_value "INVENTREE_DEFAULT_CURRENCY" as currency %}
+    {% default_currency as currency %}
     {% if price_history %}
             var pricedata = {
                     labels: [

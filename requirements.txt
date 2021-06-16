@@ -1,7 +1,7 @@
 invoke>=1.4.0                   # Invoke build tool
 wheel>=0.34.2                   # Wheel
-Django==3.2                     # Django package
-pillow==8.1.1                   # Image manipulation
+Django==3.2.4                     # Django package
+pillow==8.2.0                   # Image manipulation
 djangorestframework==3.12.4     # DRF framework
 django-cors-headers==3.2.0      # CORS headers extension for DRF
 django-filter==2.4.0            # Extended filtering options
@@ -11,9 +11,8 @@ django-markdownx==3.0.1         # Markdown form fields
 django-markdownify==0.8.0       # Markdown rendering
 coreapi==2.3.0                  # API documentation
 pygments==2.7.4                 # Syntax highlighting
-# tablib==0.13.0                # Import / export data files (installed as dependency of django-import-export package)
 django-crispy-forms==1.11.2     # Form helpers
-django-import-export==2.0.0     # Data import / export for admin interface
+django-import-export==2.5.0     # Data import / export for admin interface
 tablib[xls,xlsx,yaml]           # Support for XLS and XLSX formats
 django-cleanup==5.1.0           # Manage deletion of old / unused uploaded files
 flake8==3.8.3                   # PEP checking

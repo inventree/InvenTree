@@ -11,7 +11,7 @@
 
     <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Build Order Details" %}'>
         <a href='{% url "build-detail" build.id %}'>
-            <span class='fas fa-info-circle'></span>
+            <span class='fas fa-info-circle sidebar-icon'></span>
             {% trans "Details" %}
         </a>
     </li>
@@ -20,7 +20,7 @@
 
     <li class='list-group-item {% if tab == "allocate" %}active{% endif %}' title='{% trans "Allocate Stock" %}'>
         <a href='{% url "build-allocate" build.id %}'>
-            <span class='fas fa-tools'></span>
+            <span class='fas fa-tools sidebar-icon'></span>
             {% trans "Allocate Stock" %}
         </a>
     </li>
@@ -28,28 +28,28 @@
 
     <li class='list-group-item {% if tab == "output" %}active{% endif %}' title='{% trans "Build Outputs" %}'>
         <a href='{% url "build-output" build.id %}'>
-            <span class='fas fa-box'></span>
+            <span class='fas fa-box sidebar-icon'></span>
             {% trans "Build Outputs" %}
         </a>
     </li>
 
     <li class='list-group-item {% if tab == "children" %}active{% endif %}' title='{% trans "Child Build Orders" %}'>
         <a href='{% url "build-children" build.id %}'>
-            <span class='fas fa-sitemap'></span>
+            <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Child Builds" %}
         </a>
     </li>
 
     <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
         <a href='{% url "build-attachments" build.id %}'>
-            <span class='fas fa-paperclip'></span>
+            <span class='fas fa-paperclip sidebar-icon'></span>
             {% trans "Attachments" %}
         </a>
     </li>
 
     <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Build Order Notes" %}'>
         <a href='{% url "build-notes" build.id %}'>
-            <span class='fas fa-clipboard'></span>
+            <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>
     </li>

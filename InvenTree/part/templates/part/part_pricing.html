@@ -1,8 +1,9 @@
 {% extends "modal_form.html" %}
 
-{% load i18n %}
+{% load i18n inventree_extras %}
 
 {% block pre_form_content %}
+{% default_currency as currency %}
 <table class='table table-striped table-condensed table-price-two'>
     <tr>
         <td><b>{% trans 'Part' %}</b></td>
