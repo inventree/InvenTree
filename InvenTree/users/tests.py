@@ -17,7 +17,7 @@ class RuleSetModelTest(TestCase):
     def test_ruleset_models(self):
 
         keys = RuleSet.RULESET_MODELS.keys()
-        
+
         # Check if there are any rulesets which do not have models defined
 
         missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
@@ -88,7 +88,7 @@ class RuleSetModelTest(TestCase):
         extra_models = set()
 
         defined_models = set()
-        
+
         for model in assigned_models:
             defined_models.add(model)
 
@@ -198,7 +198,7 @@ class OwnerModelTest(TestCase):
         self.user.delete()
         user_as_owner = Owner.get_owner(self.user)
         self.assertEqual(user_as_owner, None)
-        
+
         # Delete group and verify owner was deleted too
         self.group.delete()
         group_as_owner = Owner.get_owner(self.group)

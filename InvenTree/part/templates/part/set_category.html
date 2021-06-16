@@ -4,10 +4,10 @@
 {% block form %}
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
     {% load crispy_forms_tags %}
-    
+
     <label class='control-label'>Parts</label>
     <p class='help-block'>{% trans "Set category for the following parts" %}</p>
-    
+
     <table class='table table-striped'>
         <tr>
             <th>{% trans "Part" %}</th>
@@ -36,8 +36,8 @@
             </tr>
             {% endfor %}
         </table>
-    
+
     {% crispy form %}
-        
+
     </form>
     {% endblock %}

@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 
-import math
-
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -26,7 +24,6 @@ from markdownx.models import MarkdownxField
 from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
-from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import PurchaseOrderStatus
 
@@ -152,7 +149,7 @@ class Company(models.Model):
     def currency_code(self):
         """
         Return the currency code associated with this company.
-        
+
         - If the currency code is invalid, use the default currency
         - If the currency code is not specified, use the default currency
         """
@@ -187,7 +184,7 @@ class Company(models.Model):
             return getMediaUrl(self.image.thumbnail.url)
         else:
             return getBlankThumbnail()
-            
+
     @property
     def manufactured_part_count(self):
         """ The number of parts manufactured by this company """
@@ -302,7 +299,7 @@ class ManufacturerPart(models.Model):
 
     class Meta:
         unique_together = ('part', 'manufacturer', 'MPN')
-    
+
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='manufacturer_parts',
                              verbose_name=_('Base Part'),
@@ -311,7 +308,7 @@ class ManufacturerPart(models.Model):
                              },
                              help_text=_('Select part'),
                              )
-    
+
     manufacturer = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -359,7 +356,7 @@ class ManufacturerPart(models.Model):
         if not manufacturer_part:
             manufacturer_part = ManufacturerPart(part=part, manufacturer=manufacturer, MPN=mpn, description=description, link=link)
             manufacturer_part.save()
-            
+
         return manufacturer_part
 
     def __str__(self):
@@ -414,7 +411,7 @@ class SupplierPart(models.Model):
             MPN = kwargs.pop('MPN')
         else:
             MPN = None
-        
+
         if manufacturer or MPN:
             if not self.manufacturer_part:
                 # Create ManufacturerPart
@@ -429,7 +426,7 @@ class SupplierPart(models.Model):
                     manufacturer_part_id = self.manufacturer_part.id
                 except AttributeError:
                     manufacturer_part_id = None
-                
+
                 if manufacturer_part_id:
                     try:
                         (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
@@ -504,7 +501,7 @@ class SupplierPart(models.Model):
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
-    
+
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
@@ -558,51 +555,7 @@ class SupplierPart(models.Model):
             price=price
         )
 
-    def get_price(self, quantity, moq=True, multiples=True, currency=None):
-        """ Calculate the supplier price based on quantity price breaks.
-
-        - Don't forget to add in flat-fee cost (base_cost field)
-        - If MOQ (minimum order quantity) is required, bump quantity
-        - If order multiples are to be observed, then we need to calculate based on that, too
-        """
-
-        price_breaks = self.price_breaks.filter(quantity__lte=quantity)
-
-        # No price break information available?
-        if len(price_breaks) == 0:
-            return None
-
-        # Order multiples
-        if multiples:
-            quantity = int(math.ceil(quantity / self.multiple) * self.multiple)
-
-        pb_found = False
-        pb_quantity = -1
-        pb_cost = 0.0
-
-        if currency is None:
-            # Default currency selection
-            currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-
-        for pb in self.price_breaks.all():
-            # Ignore this pricebreak (quantity is too high)
-            if pb.quantity > quantity:
-                continue
-
-            pb_found = True
-
-            # If this price-break quantity is the largest so far, use it!
-            if pb.quantity > pb_quantity:
-                pb_quantity = pb.quantity
-
-                # Convert everything to the selected currency
-                pb_cost = pb.convert_to(currency)
-
-        if pb_found:
-            cost = pb_cost * quantity
-            return normalize(cost + self.base_cost)
-        else:
-            return None
+    get_price = common.models.get_price
 
     def open_orders(self):
         """ Return a database query for PO line items for this SupplierPart,
@@ -650,7 +603,7 @@ class SupplierPart(models.Model):
 
         if self.manufacturer_string:
             s = s + ' | ' + self.manufacturer_string
-        
+
         return s
 
 
@@ -675,4 +628,4 @@ class SupplierPriceBreak(common.models.PriceBreak):
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
-        return f'{self.part.MPN} - {self.price} @ {self.quantity}'
+        return f'{self.part.SKU} - {self.price} @ {self.quantity}'

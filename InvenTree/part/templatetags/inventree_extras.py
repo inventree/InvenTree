@@ -1,7 +1,13 @@
+# -*- coding: utf-8 -*-
+
 """ This module provides template tags for extra functionality
 over and above the built-in Django tags.
 """
+
 import os
+
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings as djangosettings
 
 from django import template
 from django.urls import reverse
@@ -12,6 +18,7 @@ from InvenTree import version, settings
 import InvenTree.helpers
 
 from common.models import InvenTreeSetting, ColorTheme
+from common.settings import currency_code_default
 
 register = template.Library()
 
@@ -47,7 +54,7 @@ def str2bool(x, *args, **kwargs):
 def inrange(n, *args, **kwargs):
     """ Return range(n) for iterating through a numeric quantity """
     return range(n)
-    
+
 
 @register.simple_tag()
 def multiply(x, y, *args, **kwargs):
@@ -59,13 +66,40 @@ def multiply(x, y, *args, **kwargs):
 def add(x, y, *args, **kwargs):
     """ Add two numbers together """
     return x + y
-    
+
 
 @register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 
     return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
+
+
+@register.simple_tag()
+def inventree_in_debug_mode(*args, **kwargs):
+    """ Return True if the server is running in DEBUG mode """
+
+    return djangosettings.DEBUG
+
+
+@register.simple_tag()
+def inventree_docker_mode(*args, **kwargs):
+    """ Return True if the server is running as a Docker image """
+
+    return djangosettings.DOCKER
+
+
+@register.simple_tag()
+def inventree_db_engine(*args, **kwargs):
+    """ Return the InvenTree database backend e.g. 'postgresql' """
+
+    db = djangosettings.DATABASES['default']
+
+    engine = db.get('ENGINE', _('Unknown database'))
+
+    engine = engine.replace('django.db.backends.', '')
+
+    return engine
 
 
 @register.simple_tag()
@@ -84,6 +118,12 @@ def inventree_title(*args, **kwargs):
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()
+
+
+@register.simple_tag()
+def inventree_api_version(*args, **kwargs):
+    """ Return InvenTree API version """
+    return version.inventreeApiVersion()
 
 
 @register.simple_tag()
@@ -114,6 +154,18 @@ def inventree_github_url(*args, **kwargs):
 def inventree_docs_url(*args, **kwargs):
     """ Return URL for InvenTree documenation site """
     return "https://inventree.readthedocs.io/"
+
+
+@register.simple_tag()
+def inventree_credits_url(*args, **kwargs):
+    """ Return URL for InvenTree credits site """
+    return "https://inventree.readthedocs.io/en/latest/credits/"
+
+
+@register.simple_tag()
+def default_currency(*args, **kwargs):
+    """ Returns the default currency code """
+    return currency_code_default()
 
 
 @register.simple_tag()
@@ -171,7 +223,7 @@ def authorized_owners(group):
     except TypeError:
         # group.get_users returns None
         pass
-    
+
     return owners
 
 
@@ -194,18 +246,28 @@ class I18nStaticNode(StaticNode):
         return ret
 
 
-@register.tag('i18n_static')
-def do_i18n_static(parser, token):
-    """
-    Overrides normal static, adds language - lookup for prerenderd files #1485
+# use the dynamic url - tag if in Debugging-Mode
+if settings.DEBUG:
 
-    usage (like static):
-    {% i18n_static path [as varname] %}
-    """
-    bits = token.split_contents()
-    loc_name = settings.STATICFILES_I18_PREFIX
+    @register.simple_tag()
+    def i18n_static(url_name):
+        """ simple tag to enable {% url %} functionality instead of {% static %} """
+        return reverse(url_name)
 
-    # change path to called ressource
-    bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
-    token.contents = ' '.join(bits)
-    return I18nStaticNode.handle_token(parser, token)
+else:
+
+    @register.tag('i18n_static')
+    def do_i18n_static(parser, token):
+        """
+        Overrides normal static, adds language - lookup for prerenderd files #1485
+
+        usage (like static):
+        {% i18n_static path [as varname] %}
+        """
+        bits = token.split_contents()
+        loc_name = settings.STATICFILES_I18_PREFIX
+
+        # change path to called ressource
+        bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
+        token.contents = ' '.join(bits)
+        return I18nStaticNode.handle_token(parser, token)

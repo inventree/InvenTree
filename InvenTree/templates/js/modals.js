@@ -28,11 +28,11 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
      * - valueFunc: optional function which takes an element and generates the value
      * - titleFunc: optional function which takes an element and generates a title
      */
-    
+
     var options = [];
 
     elements.forEach(function(element) {
-        
+
         var text = textFunc(element);
         var value = null;
         var title = null;
@@ -63,9 +63,9 @@ function setFieldOptions(fieldName, optionList, options={}) {
      * - append: If true, options will be appended, otherwise will replace existing options.
      */
 
-    
+
     var append = options.append || false;
-    
+
     var modal = options.modal || '#modal-form';
 
     var field = getFieldByName(modal, fieldName);
@@ -86,6 +86,15 @@ function setFieldOptions(fieldName, optionList, options={}) {
         field.append(option);
     });
 
+}
+
+
+function clearFieldOptions(fieldName) {
+    /**
+     * Clear (emtpy) the options list for a particular field
+     */
+
+    setFieldOptions(fieldName, []);
 }
 
 
@@ -153,7 +162,7 @@ function enableField(fieldName, enabled, options={}) {
 }
 
 function clearField(fieldName, options={}) {
-    
+
     setFieldValue(fieldName, '', options);
 }
 
@@ -267,7 +276,7 @@ function afterForm(response, options) {
      * - Redirect the browser to a different URL
      * - Reload the page
      */
-    
+
      // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
                 options.redirect ||
@@ -377,6 +386,15 @@ function modalSubmit(modal, callback) {
     $(modal).on('click', '#modal-form-submit', function() {
         callback();
     });
+
+    $(modal).on('click', '.modal-form-button', function() {
+        // Append data to form
+        var name = $(this).attr('name');
+        var value = $(this).attr('value');
+        var input = '<input id="id_act-btn_' + name + '" type="hidden" name="act-btn_' + name + '" value="' + value + '">';
+        $('.js-modal-form').append(input);
+        callback();
+    });
 }
 
 
@@ -393,11 +411,11 @@ function removeRowFromModalForm(e) {
 
 
 function renderErrorMessage(xhr) {
-    
+
     var html = '<b>' + xhr.statusText + '</b><br>';
-    
+
     html += '<b>Error Code - ' + xhr.status + '</b><br><hr>';
-    
+
     html += `
     <div class='panel-group'>
         <div class='panel panel-default'>
@@ -410,7 +428,7 @@ function renderErrorMessage(xhr) {
                 <div class='panel-body'>`;
 
     html += xhr.responseText;
-    
+
     html += `
                 </div>
             </div>
@@ -590,7 +608,7 @@ function insertNewItemButton(modal, options) {
     var html = "<span style='float: right;'>";
 
     html += "<div type='button' class='btn btn-primary btn-secondary'";
-    
+
     if (options.title) {
         html += " title='" + options.title + "'";
     }
@@ -640,9 +658,9 @@ function attachSecondaryModal(modal, options) {
                      */
 
                     var select = '#id_' + options.field;
-                    
+
                     var option = new Option(response.text, response.pk, true, true);
-                    
+
                     $(modal).find(select).append(option).trigger('change');
                 }
             }
@@ -656,6 +674,25 @@ function attachSecondaries(modal, secondaries) {
 
     for (var i = 0; i < secondaries.length; i++) {
         attachSecondaryModal(modal, secondaries[i]);
+    }
+}
+
+function insertActionButton(modal, options) {
+    /* Insert a custom submition button */
+
+    var html = "<span style='float: right;'>";
+    html += "<button name='" + options.name + "' type='submit' class='btn btn-default modal-form-button'";
+    html += " value='" + options.name + "'>" + options.title + "</button>";
+    html += "</span>";
+
+    $(modal).find('#modal-footer-buttons').append(html);
+}
+
+function attachButtons(modal, buttons) {
+    /* Attach a provided list of buttons */
+
+    for (var i = 0; i < buttons.length; i++) {
+        insertActionButton(modal, buttons[i]);
     }
 }
 
@@ -768,7 +805,7 @@ function handleModalForm(url, options) {
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 // There was an error submitting form data via POST
-                
+
                 $(modal).modal('hide'); 
                 showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
             },
@@ -807,6 +844,9 @@ function launchModalForm(url, options = {}) {
     // Default labels for 'Submit' and 'Close' buttons in the form
     var submit_text = options.submit_text || '{% trans "Submit" %}';
     var close_text = options.close_text || '{% trans "Close" %}';
+
+    // Clean custom action buttons
+    $(modal).find('#modal-footer-buttons').html('');
 
     // Form the ajax request to retrieve the django form data
     ajax_data = {
@@ -850,6 +890,10 @@ function launchModalForm(url, options = {}) {
                 } else {
                     modalShowSubmitButton(modal, true);
                     handleModalForm(url, options);
+                }
+
+                if (options.buttons) {
+                    attachButtons(modal, options.buttons);
                 }
 
             } else {
@@ -934,6 +978,7 @@ function showModalImage(image_url) {
     // Set image content
     $('#modal-image').attr('src', image_url);
 
+    modal.hide();
     modal.show();
 
     modal.animate({

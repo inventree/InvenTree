@@ -82,7 +82,7 @@
     tree_id: 2
     lft: 1
     rght: 4
-    
+
 - model: part.partcategory
   pk: 8
   fields:

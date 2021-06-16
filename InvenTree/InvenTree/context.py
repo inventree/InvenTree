@@ -6,6 +6,7 @@ Provides extra global data to all templates.
 
 from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import StockHistoryCode
 
 import InvenTree.status
 
@@ -65,13 +66,14 @@ def status_codes(request):
         'PurchaseOrderStatus': PurchaseOrderStatus,
         'BuildStatus': BuildStatus,
         'StockStatus': StockStatus,
+        'StockHistoryCode': StockHistoryCode,
     }
 
 
 def user_roles(request):
     """
     Return a map of the current roles assigned to the user.
-    
+
     Roles are denoted by their simple names, and then the permission type.
 
     Permissions can be access as follows:

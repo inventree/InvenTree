@@ -73,7 +73,7 @@ class BarcodeScan(APIView):
 
         # A plugin has been found!
         if plugin is not None:
-            
+
             # Try to associate with a stock item
             item = plugin.getStockItem()
 
@@ -133,7 +133,7 @@ class BarcodeScan(APIView):
 class BarcodeAssign(APIView):
     """
     Endpoint for assigning a barcode to a stock item.
-    
+
     - This only works if the barcode is not already associated with an object in the database
     - If the barcode does not match an object, then the barcode hash is assigned to the StockItem
     """
@@ -178,7 +178,7 @@ class BarcodeAssign(APIView):
 
         # Matching plugin was found
         if plugin is not None:
-            
+
             hash = plugin.hash()
             response['hash'] = hash
             response['plugin'] = plugin.name
@@ -234,7 +234,7 @@ class BarcodeAssign(APIView):
 barcode_api_urls = [
 
     url(r'^link/$', BarcodeAssign.as_view(), name='api-barcode-link'),
-    
+
     # Catch-all performs barcode 'scan'
     url(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]

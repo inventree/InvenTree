@@ -20,7 +20,7 @@ from .serializers import BuildSerializer, BuildItemSerializer
 
 class BuildList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Build objects.
-    
+
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
     """
@@ -65,7 +65,7 @@ class BuildList(generics.ListCreateAPIView):
         queryset = BuildSerializer.annotate_queryset(queryset)
 
         return queryset
-    
+
     def filter_queryset(self, queryset):
 
         queryset = super().filter_queryset(queryset)

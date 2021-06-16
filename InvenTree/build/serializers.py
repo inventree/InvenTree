@@ -97,9 +97,10 @@ class BuildSerializer(InvenTreeModelSerializer):
 class BuildItemSerializer(InvenTreeModelSerializer):
     """ Serializes a BuildItem object """
 
+    bom_part = serializers.IntegerField(source='bom_item.sub_part.pk', read_only=True)
     part = serializers.IntegerField(source='stock_item.part.pk', read_only=True)
     part_name = serializers.CharField(source='stock_item.part.full_name', read_only=True)
-    part_image = serializers.CharField(source='stock_item.part.image', read_only=True)
+    part_thumb = serializers.CharField(source='getStockItemThumbnail', read_only=True)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
 
     quantity = serializers.FloatField()
@@ -108,11 +109,12 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         model = BuildItem
         fields = [
             'pk',
+            'bom_part',
             'build',
             'install_into',
             'part',
             'part_name',
-            'part_image',
+            'part_thumb',
             'stock_item',
             'stock_item_detail',
             'quantity'

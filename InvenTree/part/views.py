@@ -19,6 +19,7 @@ from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
 
 from moneyed import CURRENCIES
+from djmoney.contrib.exchange.models import convert_money
 
 from PIL import Image
 
@@ -204,12 +205,12 @@ class PartAttachmentCreate(AjaxCreateView):
 
 class PartAttachmentEdit(AjaxUpdateView):
     """ View for editing a PartAttachment object """
-    
+
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit attachment')
-    
+
     def get_data(self):
         return {
             'success': _('Part attachment updated')
@@ -245,7 +246,7 @@ class PartTestTemplateCreate(AjaxCreateView):
     model = PartTestTemplate
     form_class = part_forms.EditPartTestTemplateForm
     ajax_form_title = _("Create Test Template")
-    
+
     def get_initial(self):
 
         initials = super().get_initial()
@@ -299,7 +300,7 @@ class PartSetCategory(AjaxUpdateView):
 
     category = None
     parts = []
-    
+
     def get(self, request, *args, **kwargs):
         """ Respond to a GET request to this view """
 
@@ -364,7 +365,7 @@ class PartSetCategory(AjaxUpdateView):
         ctx['category'] = self.category
 
         return ctx
-        
+
 
 class MakePartVariant(AjaxCreateView):
     """ View for creating a new variant based on an existing template Part
@@ -501,17 +502,17 @@ class PartDuplicate(AjaxCreateView):
         valid = form.is_valid()
 
         name = request.POST.get('name', None)
-        
+
         if name:
             matches = match_part_names(name)
 
             if len(matches) > 0:
                 # Display the first five closest matches
                 context['matches'] = matches[:5]
-            
+
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
-                
+
                 # Check if the user has checked the 'confirm_creation' input
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
@@ -565,7 +566,7 @@ class PartDuplicate(AjaxCreateView):
             initials = super(AjaxCreateView, self).get_initial()
 
         initials['bom_copy'] = str2bool(InvenTreeSetting.get_setting('PART_COPY_BOM', True))
-        
+
         initials['parameters_copy'] = str2bool(InvenTreeSetting.get_setting('PART_COPY_PARAMETERS', True))
 
         return initials
@@ -575,7 +576,7 @@ class PartCreate(AjaxCreateView):
     """ View for creating a new Part object.
 
     Options for providing initial conditions:
-    
+
     - Provide a category object as initial data
     """
     model = Part
@@ -636,9 +637,9 @@ class PartCreate(AjaxCreateView):
         context = {}
 
         valid = form.is_valid()
-        
+
         name = request.POST.get('name', None)
-        
+
         if name:
             matches = match_part_names(name)
 
@@ -646,17 +647,17 @@ class PartCreate(AjaxCreateView):
 
                 # Limit to the top 5 matches (to prevent clutter)
                 context['matches'] = matches[:5]
-            
+
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
-                
+
                 # Check if the user has checked the 'confirm_creation' input
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
                     msg = _('Possible matches exist - confirm creation of new part')
                     form.add_error('confirm_creation', msg)
-                    
+
                     form.pre_form_warning = msg
                     valid = False
 
@@ -705,7 +706,7 @@ class PartCreate(AjaxCreateView):
                 initials['keywords'] = category.default_keywords
             except (PartCategory.DoesNotExist, ValueError):
                 pass
-        
+
         # Allow initial data to be passed through as arguments
         for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
             if label in self.request.GET:
@@ -734,7 +735,7 @@ class PartNotes(UpdateView):
 
     def get_success_url(self):
         """ Return the success URL for this form """
-        
+
         return reverse('part-notes', kwargs={'pk': self.get_object().id})
 
     def get_context_data(self, **kwargs):
@@ -767,7 +768,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         - If '?editing=True', set 'editing_enabled' context variable
         """
         context = super().get_context_data(**kwargs)
-        
+
         part = self.get_object()
 
         if str2bool(self.request.GET.get('edit', '')):
@@ -780,6 +781,94 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         context.update(**ctx)
 
         return context
+
+
+class PartPricingView(PartDetail):
+    """ Detail view for Part object
+    """
+    context_object_name = 'part'
+    template_name = 'part/order_prices.html'
+    form_class = part_forms.PartPriceForm
+
+    # Add in some extra context information based on query params
+    def get_context_data(self, **kwargs):
+        """ Provide extra context data to template """
+        context = super().get_context_data(**kwargs)
+
+        ctx = self.get_pricing(self.get_quantity())
+        ctx['form'] = self.form_class(initial=self.get_initials())
+
+        context.update(ctx)
+        return context
+
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        return Decimal(self.request.POST.get('quantity', 1))
+
+    def get_part(self):
+        return self.get_object()
+
+    def get_pricing(self, quantity=1, currency=None):
+        """ returns context with pricing information """
+        ctx = PartPricing.get_pricing(self, quantity, currency)
+        part = self.get_part()
+        # Stock history
+        if part.total_stock > 1:
+            ret = []
+            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
+            stock = stock.prefetch_related('purchase_order', 'supplier_part')
+
+            for stock_item in stock:
+                if None in [stock_item.purchase_price, stock_item.quantity]:
+                    continue
+
+                # convert purchase price to current currency - only one currency in the graph
+                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
+                line = {
+                    'price': price.amount,
+                    'qty': stock_item.quantity
+                }
+                # Supplier Part Name  # TODO use in graph
+                if stock_item.supplier_part:
+                    line['name'] = stock_item.supplier_part.pretty_name
+
+                    if stock_item.supplier_part.unit_pricing and price:
+                        line['price_diff'] = price.amount - stock_item.supplier_part.unit_pricing
+                        line['price_part'] = stock_item.supplier_part.unit_pricing
+
+                # set date for graph labels
+                if stock_item.purchase_order:
+                    line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
+                else:
+                    line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                ret.append(line)
+
+            ctx['price_history'] = ret
+
+        # BOM Information for Pie-Chart
+        bom_items = [{'name': str(a.sub_part), 'price': a.sub_part.get_price_range(quantity), 'q': a.quantity} for a in part.bom_items.all()]
+        if [True for a in bom_items if len(set(a['price'])) == 2]:
+            ctx['bom_parts'] = [{
+                'name': a['name'],
+                'min_price': str((a['price'][0] * a['q']) / quantity),
+                'max_price': str((a['price'][1] * a['q']) / quantity)} for a in bom_items]
+            ctx['bom_pie_min'] = True
+        else:
+            ctx['bom_parts'] = [{
+                'name': a['name'],
+                'price': str((a['price'][0] * a['q']) / quantity)} for a in bom_items]
+
+        return ctx
+
+    def get_initials(self):
+        """ returns initials for form """
+        return {'quantity': self.get_quantity()}
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        kwargs['object'] = self.object
+        ctx = self.get_context_data(**kwargs)
+        return self.get(request, context=ctx)
 
 
 class PartDetailFromIPN(PartDetail):
@@ -806,7 +895,7 @@ class PartDetailFromIPN(PartDetail):
                 pass
             except queryset.model.DoesNotExist:
                 pass
-        
+
         return None
 
     def get(self, request, *args, **kwargs):
@@ -884,7 +973,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
 
         # Check for valid response code
         if not response.status_code == 200:
-            form.add_error('url', f"{_('Invalid response')}: {response.status_code}")
+            form.add_error('url', _('Invalid response: {code}').format(code=response.status_code))
             return
 
         response.raw.decode_content = True
@@ -1017,7 +1106,7 @@ class BomDuplicate(AjaxUpdateView):
     ajax_form_title = _('Duplicate BOM')
     ajax_template_name = 'part/bom_duplicate.html'
     form_class = part_forms.BomDuplicateForm
-    
+
     def get_form(self):
 
         form = super().get_form()
@@ -1218,7 +1307,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
 
     def handleBomFileUpload(self):
         """ Process a BOM file upload form.
-        
+
         This function validates that the uploaded file was valid,
         and contains tabulated data that can be extracted.
         If the file does not satisfy these requirements,
@@ -1299,13 +1388,13 @@ class BomUpload(InvenTreeRoleMixin, FormView):
             - If using the Part_ID field, we can do an exact match against the PK field
             - If using the Part_IPN field, we can do an exact match against the IPN field
             - If using the Part_Name field, we can use fuzzy string matching to match "close" values
-            
+
             We also extract other information from the row, for the other non-matched fields:
             - Quantity
             - Reference
             - Overage
             - Note
-            
+
             """
 
             # Initially use a quantity of zero
@@ -1375,7 +1464,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
             # Check if there is a column corresponding to "Note" field
             if n_idx >= 0:
                 row['note'] = row['data'][n_idx]
-        
+
             # Supply list of part options for each row, sorted by how closely they match the part name
             row['part_options'] = part_options
 
@@ -1390,7 +1479,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 try:
                     if row['part_ipn']:
                         part_matches = [part for part in self.allowed_parts if part.IPN and row['part_ipn'].lower() == str(part.IPN.lower())]
-    
+
                         # Check for single match
                         if len(part_matches) == 1:
                             row['part_match'] = part_matches[0]
@@ -1464,7 +1553,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                     col_id = int(s[3])
                 except ValueError:
                     continue
-                
+
                 if row_id not in self.row_data:
                     self.row_data[row_id] = {}
 
@@ -1530,7 +1619,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
             if col in self.column_selections.values():
                 part_match_found = True
                 break
-        
+
         # If not, notify user
         if not part_match_found:
             for col in BomUploadManager.PART_MATCH_HEADERS:
@@ -1546,7 +1635,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         self.getTableDataFromPost()
 
         valid = len(self.missing_columns) == 0 and not self.duplicates
-        
+
         if valid:
             # Try to extract meaningful data
             self.preFillSelections()
@@ -1557,7 +1646,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         return self.render_to_response(self.get_context_data(form=None))
 
     def handlePartSelection(self):
-        
+
         # Extract basic table data from POST request
         self.getTableDataFromPost()
 
@@ -1595,7 +1684,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                         row['errors']['quantity'] = _('Enter a valid quantity')
 
                     row['quantity'] = q
-                     
+
                 except ValueError:
                     continue
 
@@ -1648,7 +1737,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 if key.startswith(field + '_'):
                     try:
                         row_id = int(key.replace(field + '_', ''))
-                        
+
                         row = self.getRowByIndex(row_id)
 
                         if row:
@@ -1714,7 +1803,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         return self.render_to_response(ctx)
 
     def getRowByIndex(self, idx):
-        
+
         for row in self.bom_rows:
             if row['index'] == idx:
                 return row
@@ -1732,7 +1821,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         self.form = self.get_form(self.get_form_class())
 
         # Did the user POST a file named bom_file?
-        
+
         form_step = request.POST.get('form_step', None)
 
         if form_step == 'select_file':
@@ -1753,7 +1842,7 @@ class PartExport(AjaxView):
     def get_parts(self, request):
         """ Extract part list from the POST parameters.
         Parts can be supplied as:
-        
+
         - Part category
         - List of part PK values
         """
@@ -1956,7 +2045,11 @@ class PartPricing(AjaxView):
     form_class = part_forms.PartPriceForm
 
     role_required = ['sales_order.view', 'part.view']
-    
+
+    def get_quantity(self):
+        """ Return set quantity in decimal format """
+        return Decimal(self.request.POST.get('quantity', 1))
+
     def get_part(self):
         try:
             return Part.objects.get(id=self.kwargs['pk'])
@@ -1964,13 +2057,8 @@ class PartPricing(AjaxView):
             return None
 
     def get_pricing(self, quantity=1, currency=None):
-
-        try:
-            quantity = int(quantity)
-        except ValueError:
-            quantity = 1
-
-        if quantity < 1:
+        """ returns context with pricing information """
+        if quantity <= 0:
             quantity = 1
 
         # TODO - Capacity for price comparison in different currencies
@@ -1980,7 +2068,7 @@ class PartPricing(AjaxView):
         scaler = Decimal(1.0)
 
         part = self.get_part()
-        
+
         ctx = {
             'part': part,
             'quantity': quantity,
@@ -2000,16 +2088,19 @@ class PartPricing(AjaxView):
                 min_buy_price /= scaler
                 max_buy_price /= scaler
 
+                min_unit_buy_price = round(min_buy_price / quantity, 3)
+                max_unit_buy_price = round(max_buy_price / quantity, 3)
+
                 min_buy_price = round(min_buy_price, 3)
                 max_buy_price = round(max_buy_price, 3)
 
                 if min_buy_price:
                     ctx['min_total_buy_price'] = min_buy_price
-                    ctx['min_unit_buy_price'] = min_buy_price / quantity
+                    ctx['min_unit_buy_price'] = min_unit_buy_price
 
                 if max_buy_price:
                     ctx['max_total_buy_price'] = max_buy_price
-                    ctx['max_unit_buy_price'] = max_buy_price / quantity
+                    ctx['max_unit_buy_price'] = max_unit_buy_price
 
         # BOM pricing information
         if part.bom_count > 0:
@@ -2022,41 +2113,59 @@ class PartPricing(AjaxView):
                 min_bom_price /= scaler
                 max_bom_price /= scaler
 
+                min_unit_bom_price = round(min_bom_price / quantity, 3)
+                max_unit_bom_price = round(max_bom_price / quantity, 3)
+
                 min_bom_price = round(min_bom_price, 3)
                 max_bom_price = round(max_bom_price, 3)
 
                 if min_bom_price:
                     ctx['min_total_bom_price'] = min_bom_price
-                    ctx['min_unit_bom_price'] = min_bom_price / quantity
-                
+                    ctx['min_unit_bom_price'] = min_unit_bom_price
+
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
-                    ctx['max_unit_bom_price'] = max_bom_price / quantity
+                    ctx['max_unit_bom_price'] = max_unit_bom_price
+
+        # part pricing information
+        part_price = part.get_price(quantity)
+        if part_price is not None:
+            ctx['total_part_price'] = round(part_price, 3)
+            ctx['unit_part_price'] = round(part_price / quantity, 3)
 
         return ctx
 
-    def get(self, request, *args, **kwargs):
+    def get_initials(self):
+        """ returns initials for form """
+        return {'quantity': self.get_quantity()}
 
-        return self.renderJsonResponse(request, self.form_class(), context=self.get_pricing())
+    def get(self, request, *args, **kwargs):
+        init = self.get_initials()
+        qty = self.get_quantity()
+        return self.renderJsonResponse(request, self.form_class(initial=init), context=self.get_pricing(qty))
 
     def post(self, request, *args, **kwargs):
 
         currency = None
 
-        try:
-            quantity = int(self.request.POST.get('quantity', 1))
-        except ValueError:
-            quantity = 1
+        quantity = self.get_quantity()
+
+        # Retain quantity value set by user
+        form = self.form_class(initial=self.get_initials())
 
         # TODO - How to handle pricing in different currencies?
         currency = None
 
-        # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
-        data = {
-            'form_valid': False,
-        }
+        # check if data is set
+        try:
+            data = self.data
+        except AttributeError:
+            data = {}
 
-        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity, currency))
+        # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
+        data['form_valid'] = False
+
+        return self.renderJsonResponse(request, form, data=data, context=self.get_pricing(quantity, currency))
 
 
 class PartParameterTemplateCreate(AjaxCreateView):
@@ -2156,7 +2265,7 @@ class PartParameterDelete(AjaxDeleteView):
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
     ajax_form_title = _('Delete Part Parameter')
-    
+
 
 class CategoryDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for PartCategory """
@@ -2211,7 +2320,7 @@ class CategoryEdit(AjaxUpdateView):
     """
     Update view to edit a PartCategory
     """
-    
+
     model = PartCategory
     form_class = part_forms.EditCategoryForm
     ajax_template_name = 'modal_form.html'
@@ -2232,9 +2341,9 @@ class CategoryEdit(AjaxUpdateView):
 
         Limit the choices for 'parent' field to those which make sense
         """
-        
+
         form = super(AjaxUpdateView, self).get_form()
-        
+
         category = self.get_object()
 
         # Remove any invalid choices for the parent category part
@@ -2250,7 +2359,7 @@ class CategoryDelete(AjaxDeleteView):
     """
     Delete view to delete a PartCategory
     """
-    
+
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
     ajax_form_title = _('Delete Part Category')
@@ -2334,7 +2443,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         """
 
         form = super(AjaxCreateView, self).get_form()
-        
+
         form.fields['category'].widget = HiddenInput()
 
         if form.is_valid():
@@ -2429,7 +2538,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         """
 
         form = super(AjaxUpdateView, self).get_form()
-        
+
         form.fields['category'].widget = HiddenInput()
         form.fields['add_to_all_categories'].widget = HiddenInput()
         form.fields['add_to_same_level_categories'].widget = HiddenInput()
@@ -2483,7 +2592,7 @@ class BomItemCreate(AjaxCreateView):
     """
     Create view for making a new BomItem object
     """
-    
+
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
@@ -2511,13 +2620,13 @@ class BomItemCreate(AjaxCreateView):
 
         try:
             part = Part.objects.get(id=part_id)
-            
+
             # Hide the 'part' field
             form.fields['part'].widget = HiddenInput()
 
             # Exclude the part from its own BOM
             sub_part_query = sub_part_query.exclude(id=part.id)
-            
+
             # Eliminate any options that are already in the BOM!
             sub_part_query = sub_part_query.exclude(id__in=[item.id for item in part.getRequiredParts()])
 
@@ -2622,7 +2731,7 @@ class PartSalePriceBreakCreate(AjaxCreateView):
     model = PartSellPriceBreak
     form_class = part_forms.EditPartSalePriceBreakForm
     ajax_form_title = _('Add Price Break')
-    
+
     def get_data(self):
         return {
             'success': _('Added new price break')
@@ -2633,7 +2742,7 @@ class PartSalePriceBreakCreate(AjaxCreateView):
             part = Part.objects.get(id=self.request.GET.get('part'))
         except (ValueError, Part.DoesNotExist):
             part = None
-        
+
         if part is None:
             try:
                 part = Part.objects.get(id=self.request.POST.get('part'))
@@ -2655,7 +2764,7 @@ class PartSalePriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
-        default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+        default_currency = settings.BASE_CURRENCY
         currency = CURRENCIES.get(default_currency, None)
 
         if currency is not None:
@@ -2678,7 +2787,7 @@ class PartSalePriceBreakEdit(AjaxUpdateView):
 
         return form
 
-    
+
 class PartSalePriceBreakDelete(AjaxDeleteView):
     """ View for deleting a sale price break """
 

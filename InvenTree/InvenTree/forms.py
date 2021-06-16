@@ -7,10 +7,12 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django import forms
+from django.contrib.auth.models import User
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
-from django.contrib.auth.models import User
+
 from common.models import ColorTheme
 from part.models import PartCategory
 

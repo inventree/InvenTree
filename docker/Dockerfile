@@ -1,4 +1,4 @@
-FROM python:alpine as production
+FROM python:alpine as base
 
 # GitHub source
 ARG repository="https://github.com/inventree/InvenTree.git"
@@ -7,6 +7,8 @@ ARG branch="master"
 ENV PYTHONUNBUFFERED 1
 
 # InvenTree key settings
+
+# The INVENTREE_HOME directory is where the InvenTree source repository will be located
 ENV INVENTREE_HOME="/home/inventree"
 
 # GitHub settings
@@ -14,14 +16,13 @@ ENV INVENTREE_REPO="${repository}"
 ENV INVENTREE_BRANCH="${branch}"
 
 ENV INVENTREE_LOG_LEVEL="INFO"
+ENV INVENTREE_DOCKER="true"
 
 # InvenTree paths
-ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
-ENV INVENTREE_MNG_DIR="${INVENTREE_SRC_DIR}/InvenTree"
+ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
-ENV INVENTREE_STATIC_ROOT="${INVENTREE_HOME}/static"
+ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
-ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
@@ -41,9 +42,8 @@ LABEL org.label-schema.schema-version="1.0" \
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
-WORKDIR ${INVENTREE_HOME}
 
-RUN mkdir ${INVENTREE_STATIC_ROOT}
+WORKDIR ${INVENTREE_HOME}
 
 # Install required system packages
 RUN apk add --no-cache git make bash \
@@ -74,27 +74,43 @@ RUN pip install --no-cache-dir -U invoke
 RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
 RUN pip install --no-cache-dir -U gunicorn
 
+FROM base as production
 # Clone source code
 RUN echo "Downloading InvenTree from ${INVENTREE_REPO}"
-RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
+RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_HOME}
 
 # Install InvenTree packages
-RUN pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
+RUN pip install --no-cache-dir -U -r ${INVENTREE_HOME}/requirements.txt
 
 # Copy gunicorn config file
 COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
 # Copy startup scripts
-COPY start_prod_server.sh ${INVENTREE_SRC_DIR}/start_prod_server.sh
-COPY start_dev_server.sh ${INVENTREE_SRC_DIR}/start_dev_server.sh
-COPY start_worker.sh ${INVENTREE_SRC_DIR}/start_worker.sh
+COPY start_prod_server.sh ${INVENTREE_HOME}/start_prod_server.sh
+COPY start_prod_worker.sh ${INVENTREE_HOME}/start_prod_worker.sh
 
-RUN chmod 755 ${INVENTREE_SRC_DIR}/start_prod_server.sh
-RUN chmod 755 ${INVENTREE_SRC_DIR}/start_dev_server.sh
-RUN chmod 755 ${INVENTREE_SRC_DIR}/start_worker.sh
+RUN chmod 755 ${INVENTREE_HOME}/start_prod_server.sh
+RUN chmod 755 ${INVENTREE_HOME}/start_prod_worker.sh
 
-# exec commands should be executed from the "src" directory
-WORKDIR ${INVENTREE_SRC_DIR}
+WORKDIR ${INVENTREE_HOME}
 
 # Let us begin
 CMD ["bash", "./start_prod_server.sh"]
+
+FROM base as dev
+
+# The development image requires the source code to be mounted to /home/inventree/
+# So from here, we don't actually "do" anything, apart from some file management
+
+ENV INVENTREE_DEV_DIR = "${INVENTREE_HOME}/dev"
+
+# Override default path settings
+ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
+ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DEV_DIR}/media"
+ENV INVENTREE_CONFIG_FILE="${INVENTREE_DEV_DIR}/config.yaml"
+ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
+
+WORKDIR ${INVENTREE_HOME}
+
+# Launch the development server
+CMD ["bash", "/home/inventree/docker/start_dev_server.sh"]

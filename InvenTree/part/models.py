@@ -349,7 +349,7 @@ class Part(MPTTModel):
 
         context['available'] = self.available_stock
         context['on_order'] = self.on_order
-        
+
         context['required'] = context['required_build_order_quantity'] + context['required_sales_order_quantity']
         context['allocated'] = context['allocated_build_order_quantity'] + context['allocated_sales_order_quantity']
 
@@ -434,7 +434,7 @@ class Part(MPTTModel):
         a) The parent part is the same as this one
         b) The parent part is used in the BOM for *this* part
         c) The parent part is used in the BOM for any child parts under this one
-        
+
         Failing this check raises a ValidationError!
 
         """
@@ -506,7 +506,7 @@ class Part(MPTTModel):
 
         parts = Part.objects.filter(tree_id=self.tree_id)
         stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
-        
+
         # There are no matchin StockItem objects (skip further tests)
         if not stock.exists():
             return None
@@ -578,7 +578,7 @@ class Part(MPTTModel):
 
         if self.IPN:
             elements.append(self.IPN)
-        
+
         elements.append(self.name)
 
         if self.revision:
@@ -663,7 +663,7 @@ class Part(MPTTModel):
     def clean(self):
         """
         Perform cleaning operations for the Part model
-        
+
         Update trackable status:
             If this part is trackable, and it is used in the BOM
             for a parent part which is *not* trackable,
@@ -946,7 +946,7 @@ class Part(MPTTModel):
         quantity = 0
 
         for build in builds:
-    
+
             bom_item = None
 
             # List the bom lines required to make the build (including inherited ones!)
@@ -958,7 +958,7 @@ class Part(MPTTModel):
                 build_quantity = build.quantity * bom_item.quantity
 
                 quantity += build_quantity
-        
+
         return quantity
 
     def requiring_sales_orders(self):
@@ -1008,7 +1008,7 @@ class Part(MPTTModel):
     def quantity_to_order(self):
         """
         Return the quantity needing to be ordered for this part.
-        
+
         Here, an "order" could be one of:
         - Build Order
         - Sales Order
@@ -1019,7 +1019,7 @@ class Part(MPTTModel):
         Required for orders = self.required_order_quantity()
         Currently on order = self.on_order
         Currently building = self.quantity_being_built
-        
+
         """
 
         # Total requirement
@@ -1114,7 +1114,7 @@ class Part(MPTTModel):
 
         if total is None:
             total = 0
-        
+
         return max(total, 0)
 
     @property
@@ -1238,7 +1238,7 @@ class Part(MPTTModel):
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
-        
+
         - Part may be stored in multiple locations
         - If this part is a "template" (variants exist) then these are counted too
         """
@@ -1463,7 +1463,7 @@ class Part(MPTTModel):
 
         # Start with a list of all parts designated as 'sub components'
         parts = Part.objects.filter(component=True)
-        
+
         # Exclude this part
         parts = parts.exclude(id=self.id)
 
@@ -1496,7 +1496,7 @@ class Part(MPTTModel):
 
     def get_price_info(self, quantity=1, buy=True, bom=True):
         """ Return a simplified pricing string for this part
-        
+
         Args:
             quantity: Number of units to calculate price for
             buy: Include supplier pricing (default = True)
@@ -1519,7 +1519,7 @@ class Part(MPTTModel):
         return "{a} - {b}".format(a=min_price, b=max_price)
 
     def get_supplier_price_range(self, quantity=1):
-        
+
         min_price = None
         max_price = None
 
@@ -1586,7 +1586,7 @@ class Part(MPTTModel):
         return (min_price, max_price)
 
     def get_price_range(self, quantity=1, buy=True, bom=True):
-        
+
         """ Return the price range for this part. This price can be either:
 
         - Supplier price (if purchased from suppliers)
@@ -1610,6 +1610,44 @@ class Part(MPTTModel):
                 min(buy_price_range[0], bom_price_range[0]),
                 max(buy_price_range[1], bom_price_range[1])
             )
+
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
+
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Sell multiple'))
+
+    get_price = common.models.get_price
+
+    @property
+    def has_price_breaks(self):
+        return self.price_breaks.count() > 0
+
+    @property
+    def price_breaks(self):
+        """ Return the associated price breaks in the correct order """
+        return self.salepricebreaks.order_by('quantity').all()
+
+    @property
+    def unit_pricing(self):
+        return self.get_price(1)
+
+    def add_price_break(self, quantity, price):
+        """
+        Create a new price break for this part
+
+        args:
+            quantity - Numerical quantity
+            price - Must be a Money object
+        """
+
+        # Check if a price break at that quantity already exists...
+        if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
+            return
+
+        PartSellPriceBreak.objects.create(
+            part=self,
+            quantity=quantity,
+            price=price
+        )
 
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
@@ -1645,7 +1683,7 @@ class Part(MPTTModel):
 
     @transaction.atomic
     def copy_parameters_from(self, other, **kwargs):
-        
+
         clear = kwargs.get('clear', True)
 
         if clear:
@@ -1692,7 +1730,7 @@ class Part(MPTTModel):
         # Copy the parameters data
         if kwargs.get('parameters', True):
             self.copy_parameters_from(other)
-        
+
         # Copy the fields that aren't available in the duplicate form
         self.salable = other.salable
         self.assembly = other.assembly
@@ -1722,7 +1760,7 @@ class Part(MPTTModel):
             tests = tests.filter(required=required)
 
         return tests
-    
+
     def getRequiredTests(self):
         # Return the tests which are required by this part
         return self.getTestTemplates(required=True)
@@ -1823,6 +1861,59 @@ class Part(MPTTModel):
 
         return self.get_descendants(include_self=False)
 
+    @property
+    def can_convert(self):
+        """
+        Check if this Part can be "converted" to a different variant:
+
+        It can be converted if:
+
+        a) It has non-virtual variant parts underneath it
+        b) It has non-virtual template parts above it
+        c) It has non-virtual sibling variants
+
+        """
+
+        return self.get_conversion_options().count() > 0
+
+    def get_conversion_options(self):
+        """
+        Return options for converting this part to a "variant" within the same tree
+
+        a) Variants underneath this one
+        b) Immediate parent
+        c) Siblings
+        """
+
+        parts = []
+
+        # Child parts
+        children = self.get_descendants(include_self=False)
+
+        for child in children:
+            parts.append(child)
+
+        # Immediate parent
+        if self.variant_of:
+            parts.append(self.variant_of)
+
+        siblings = self.get_siblings(include_self=False)
+
+        for sib in siblings:
+            parts.append(sib)
+
+        filtered_parts = Part.objects.filter(pk__in=[part.pk for part in parts])
+
+        # Ensure this part is not in the queryset, somehow
+        filtered_parts = filtered_parts.exclude(pk=self.pk)
+
+        filtered_parts = filtered_parts.filter(
+            active=True,
+            virtual=False,
+        )
+
+        return filtered_parts
+
     def get_related_parts(self):
         """ Return list of tuples for all related parts:
             - first value is PartRelated object
@@ -1868,7 +1959,7 @@ class PartAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a Part object
     """
-    
+
     def getSubdir(self):
         return os.path.join("part_files", str(self.part.id))
 
@@ -2149,6 +2240,7 @@ class BomItem(models.Model):
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         inherited: This BomItem can be inherited by the BOMs of variant parts
+        allow_variants: Stock for part variants can be substituted for this BomItem
     """
 
     def save(self, *args, **kwargs):
@@ -2197,6 +2289,12 @@ class BomItem(models.Model):
         help_text=_('This BOM item is inherited by BOMs for variant parts'),
     )
 
+    allow_variants = models.BooleanField(
+        default=False,
+        verbose_name=_('Allow Variants'),
+        help_text=_('Stock items for variant parts can be used for this BOM item')
+    )
+
     def get_item_hash(self):
         """ Calculate the checksum hash of this BOM line item:
 
@@ -2227,7 +2325,7 @@ class BomItem(models.Model):
 
     def validate_hash(self, valid=True):
         """ Mark this item as 'valid' (store the checksum hash).
-        
+
         Args:
             valid: If true, validate the hash, otherwise invalidate it (default = True)
         """
@@ -2265,7 +2363,7 @@ class BomItem(models.Model):
             # Check for circular BOM references
             if self.sub_part:
                 self.sub_part.checkAddToBOM(self.part)
-                
+
                 # If the sub_part is 'trackable' then the 'quantity' field must be an integer
                 if self.sub_part.trackable:
                     if not self.quantity == int(self.quantity):
@@ -2301,7 +2399,7 @@ class BomItem(models.Model):
         """
 
         query = self.sub_part.stock_items.all()
-        
+
         query = query.prefetch_related([
             'sub_part__stock_items',
         ])
@@ -2358,7 +2456,7 @@ class BomItem(models.Model):
     def get_required_quantity(self, build_quantity):
         """ Calculate the required part quantity, based on the supplier build_quantity.
         Includes overage estimate in the returned value.
-        
+
         Args:
             build_quantity: Number of parts to build
 

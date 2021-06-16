@@ -40,7 +40,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
           - 3306:3306
-      
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -56,3 +56,12 @@ jobs:
           invoke install
       - name: Run Tests
         run: invoke test
+      - name: Data Import Export
+        run: |
+          invoke migrate
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-fixtures
+          invoke export-records -f data.json
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-records -f data.json
+          invoke import-records -f data.json

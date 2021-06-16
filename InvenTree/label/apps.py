@@ -6,6 +6,8 @@ import hashlib
 from django.apps import AppConfig
 from django.conf import settings
 
+from InvenTree.ready import canAppAccessDatabase
+
 
 logger = logging.getLogger("inventree")
 
@@ -32,8 +34,9 @@ class LabelConfig(AppConfig):
         This function is called whenever the label app is loaded
         """
 
-        self.create_stock_item_labels()
-        self.create_stock_location_labels()
+        if canAppAccessDatabase():
+            self.create_stock_item_labels()
+            self.create_stock_location_labels()
 
     def create_stock_item_labels(self):
         """
@@ -136,7 +139,7 @@ class LabelConfig(AppConfig):
         except:
             # Database might not yet be ready
             return
-        
+
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             'templates',

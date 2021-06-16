@@ -41,12 +41,12 @@ class PartAPITest(InvenTreeAPITestCase):
         Test that we can retrieve list of part categories,
         with various filtering options.
         """
-        
+
         url = reverse('api-part-category-list')
-        
+
         # Request *all* part categories
         response = self.client.get(url, format='json')
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 8)
 
@@ -95,7 +95,7 @@ class PartAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-category-list')
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
+
         parent = response.data['pk']
 
         # Add some sub-categories to the top-level 'Animals' category
@@ -289,7 +289,7 @@ class PartAPITest(InvenTreeAPITestCase):
 
             self.assertIn('count', data)
             self.assertIn('results', data)
-            
+
             self.assertEqual(len(data['results']), n)
 
 
@@ -354,7 +354,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         self.assertEqual(data['in_stock'], 600)
         self.assertEqual(data['stock_item_count'], 4)
-    
+
         # Add some more stock items!!
         for i in range(100):
             StockItem.objects.create(part=self.part, quantity=5)
@@ -463,7 +463,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         response = self.client.patch(url, {'data': '15'}, format='json')
 
         self.assertEqual(response.status_code, 200)
-        
+
         # Check that the data changed!
         response = self.client.get(url, format='json')
 

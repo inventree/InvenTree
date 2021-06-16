@@ -35,10 +35,12 @@ InvenTree is supported by a [companion mobile app](https://inventree.readthedocs
 # Translation
 
 ![de translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de&style=flat&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
+![es-ES translation](https://img.shields.io/badge/dynamic/json?color=blue&label=es-ES&style=flat&query=%24.progress.1.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 ![fr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fr&style=flat&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 ![it translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it&style=flat&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 ![pl translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pl&style=flat&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 ![ru translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru&style=flat&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
+![tr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=tr&style=flat&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 ![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=flat&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 
 Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
@@ -49,11 +51,15 @@ To contribute to the translation effort, navigate to the [InvenTree crowdin proj
 
 For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
 
-## Getting Started
+# Getting Started
 
 Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start/install/) for installation and setup instructions.
 
-## Integration
+# Credits
+
+The credits for all used packages are part of the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/credits/).
+
+# Integration
 
 InvenTree is designed to be extensible, and provides multiple options for integration with external applications or addition of custom plugins:
 

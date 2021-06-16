@@ -40,7 +40,7 @@ class TestReportTests(InvenTreeAPITestCase):
         return response.data
 
     def test_list(self):
-        
+
         response = self.do_list()
 
         # TODO - Add some report templates to the fixtures

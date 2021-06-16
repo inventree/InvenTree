@@ -161,6 +161,45 @@ def check_for_updates():
     )
 
 
+def update_exchange_rates():
+    """
+    Update currency exchange rates
+    """
+
+    try:
+        from InvenTree.exchange import InvenTreeExchange
+        from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+        from django.conf import settings
+    except AppRegistryNotReady:
+        # Apps not yet loaded!
+        return
+    except:
+        # Other error?
+        return
+
+    # Test to see if the database is ready yet
+    try:
+        backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+    except ExchangeBackend.DoesNotExist:
+        pass
+    except:
+        # Some other error
+        print("Database not ready")
+        return
+
+    backend = InvenTreeExchange()
+    print(f"Updating exchange rates from {backend.url}")
+
+    base = settings.BASE_CURRENCY
+
+    print(f"Using base currency '{base}'")
+
+    backend.update_rates(base_currency=base)
+
+    # Remove any exchange rates which are not in the provided currencies
+    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=settings.CURRENCIES).delete()
+
+
 def send_email(subject, body, recipients, from_email=None):
     """
     Send an email with the specified subject and body,

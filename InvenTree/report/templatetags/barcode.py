@@ -22,7 +22,7 @@ def image_data(img, fmt='PNG'):
 
     buffered = BytesIO()
     img.save(buffered, format=fmt)
-    
+
     img_str = base64.b64encode(buffered.getvalue())
 
     return f"data:image/{fmt.lower()};charset=utf-8;base64," + img_str.decode()

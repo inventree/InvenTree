@@ -9,13 +9,15 @@
 {% inventree_title %} | {% trans "Sales Order" %}
 {% endblock %}
 
-{% block pre_content %}
-{% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
-<div class='alert alert-block alert-danger'>
-    {% trans "This SalesOrder has not been fully allocated" %}
+{% block below_thumbnail %}
+<div class='info-messages'>
+    {% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "This Sales Order has not been fully allocated" %}
+    </div>
+    {% endif %}
 </div>
-{% endif %}
-{% endblock %}
+    {% endblock %}
 
 {% block thumbnail %}
 <img class='part-thumb'
@@ -42,7 +44,7 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
 </h3>
 <hr>
-<p>{{ order.description }}</p>
+<p>{{ order.description }}{% include "clip.html"%}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons'>
         <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
@@ -75,7 +77,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{{ order.reference }}</td>
+        <td>{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info'></span></td>
@@ -90,20 +92,20 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a></td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
     </tr>
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Customer Reference" %}</td>
-        <td>{{ order.customer_reference }}</td>
+        <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a></td>
+        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
     </tr>
     {% endif %}
     <tr>

@@ -5,6 +5,14 @@
  * Requires api.js to be loaded first
  */
 
+function yesNoLabel(value) {
+    if (value) {
+        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+    } else {
+        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+    }
+}
+
 function toggleStar(options) {
     /* Toggle the 'starred' status of a part.
      * Performs AJAX queries and updates the display on the button.
@@ -59,7 +67,7 @@ function makePartIcons(part, options={}) {
     if (part.is_template) {
         html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
     }
-    
+
     if (part.assembly) {
         html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
     }
@@ -71,13 +79,13 @@ function makePartIcons(part, options={}) {
     if (part.salable) {
         html += makeIconBadge('fa-dollar-sign', title='{% trans "Salable part" %}');
     }
-    
+
     if (!part.active) {
         html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
     }
 
     return html;
-    
+
 }
 
 
@@ -118,14 +126,14 @@ function loadPartVariantTable(table, partId, options={}) {
                     name += row.IPN;
                     name += ' | ';
                 }
-    
+
                 name += value;
-    
+
                 if (row.revision) {
                     name += ' | ';
                     name += row.revision;
                 }
-    
+
                 if (row.is_template) {
                     name = '<i>' + name + '</i>';
                 }
@@ -144,7 +152,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 if (row.is_template) {
                     html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                 }
-                
+
                 if (row.assembly) {
                     html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                 }
@@ -242,7 +250,7 @@ function loadParametricPartTable(table, options={}) {
                     } else {
                         name += row.name;
                     }
-                    
+
                     return renderLink(name, '/part/' + row.pk + '/'); 
                 }
             });
@@ -278,6 +286,64 @@ function loadParametricPartTable(table, options={}) {
 }
 
 
+function partGridTile(part) {
+    // Generate a "grid tile" view for a particular part
+
+    // Rows for table view
+    var rows = '';
+
+    if (part.IPN) {
+        rows += `<tr><td><b>{% trans "IPN" %}</b></td><td>${part.IPN}</td></tr>`;
+    }
+
+    var stock = `${part.in_stock}`;
+
+    if (!part.in_stock) {
+        stock = `<span class='label label-red'>{% trans "No Stock" %}</label>`;
+    }
+
+    rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
+
+    if (part.on_order) {
+        rows += `<tr><td><b>{$ trans "On Order" %}</b></td><td>${part.on_order}</td></tr>`;
+    }
+
+    if (part.building) {
+        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building}</td></tr>`;
+    }
+
+    var html = `
+    
+    <div class='col-sm-3 card'>
+        <div class='panel panel-default panel-inventree'>
+            <div class='panel-heading'>
+                <a href='/part/${part.pk}/'>
+                    <b>${part.full_name}</b>
+                </a>
+                ${makePartIcons(part)}
+                <br>
+                <i>${part.description}</i>
+            </div>
+            <div class='panel-content'>
+                <div class='row'>
+                    <div class='col-sm-6'>
+                        <img src='${part.thumbnail}' class='card-thumb' onclick='showModalImage("${part.image}")'>
+                    </div>
+                    <div class='col-sm-6'>
+                        <table class='table table-striped table-condensed'>
+                            ${rows}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    `;
+
+    return html;
+}
+
+
 function loadPartTable(table, url, options={}) {
     /* Load part listing data into specified table.
      * 
@@ -297,7 +363,7 @@ function loadPartTable(table, url, options={}) {
     var params = options.params || {};
 
     var filters = {};
-    
+
     if (!options.disableFilters) {
         filters = loadTableFilters("parts");
     }
@@ -359,7 +425,7 @@ function loadPartTable(table, url, options={}) {
             }
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
-            
+
             display += makePartIcons(row);
 
             return display; 
@@ -378,7 +444,7 @@ function loadPartTable(table, url, options={}) {
             return value;
         }
     });
-    
+
     columns.push({
         sortable: true,
         field: 'category_detail',
@@ -400,7 +466,7 @@ function loadPartTable(table, url, options={}) {
         sortable: true,
         formatter: function(value, row, index, field) {            
             var link = "stock";
-            
+
             if (value) {
                 // There IS stock available for this part
 
@@ -421,7 +487,7 @@ function loadPartTable(table, url, options={}) {
                 // There is no stock available
                 value = "0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>";
             }
-            
+
             return renderLink(value, '/part/' + row.pk + "/" + link + "/");
         }
     });
@@ -452,8 +518,30 @@ function loadPartTable(table, url, options={}) {
         formatNoMatches: function() { return '{% trans "No parts found" %}'; },
         columns: columns,
         showColumns: true,
-    });
+        showCustomView: false,
+        showCustomViewButton: false,
+        customView: function(data) {
 
+            var html = '';
+
+            html = `<div class='row'>`;
+
+            data.forEach(function(row, index) {
+                
+                // Force a new row every 4 columns, to prevent visual issues
+                if ((index > 0) && (index % 4 == 0) && (index < data.length)) {
+                    html += `</div><div class='row'>`;
+                }
+
+                html += partGridTile(row);
+            });
+
+            html += `</div>`;
+
+            return html;
+        }
+    });
+    
     if (options.buttons) {
         linkButtonsToSelection($(table), options.buttons);
     }
@@ -582,21 +670,11 @@ function loadPartCategoryTable(table, options) {
     });
 }
 
-
-function yesNoLabel(value) {
-    if (value) {
-        return `<span class='label label-green'>{% trans "YES" %}</span>`;
-    } else {
-        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
-    }
-}
-
-
 function loadPartTestTemplateTable(table, options) {
     /*
      * Load PartTestTemplate table.
      */
-    
+
     var params = options.params || {};
 
     var part = options.part || null;
@@ -671,7 +749,7 @@ function loadPartTestTemplateTable(table, options) {
 
                     if (row.part == part) {
                         var html = `<div class='btn-group float-right' role='group'>`;
-                        
+
                         html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
 
@@ -686,5 +764,62 @@ function loadPartTestTemplateTable(table, options) {
                 }
             }
         ]
+    });
+}
+
+
+function loadStockPricingChart(context, data) {
+    return new Chart(context, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {legend: {position: 'bottom'}},
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    grid: {display: false},
+                    title: {
+                        display: true,
+                        text: '{% trans "Single Price" %}'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    grid: {display: false},
+                    titel: {
+                        display: true,
+                        text: '{% trans "Quantity" %}',
+                        position: 'right'
+                    }
+                },
+                y2: {
+                    type: 'linear',
+                    position: 'left',
+                    grid: {display: false},
+                    title: {
+                        display: true,
+                        text: '{% trans "Single Price Difference" %}'
+                    }
+                }
+            },
+        }
+    });
+}
+
+
+function loadBomChart(context, data) {
+    return new Chart(context, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {legend: {position: 'bottom'},
+            scales: {xAxes: [{beginAtZero: true, ticks: {autoSkip: false}}]}}
+        }
     });
 }

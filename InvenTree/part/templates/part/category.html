@@ -128,6 +128,13 @@
                 <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
             </ul>
         </div>
+        <!-- Buttons to toggle between grid and table view -->
+        <button id='view-list' class='btn btn-default' type='button' title='{% trans "View list display" %}'>
+            <span class='fas fa-th-list'></span>
+        </button>
+        <button id='view-grid' class='btn btn-default' type='button' title='{% trans "View grid display" %}'>
+            <span class='fas fa-th'></span>
+        </button>
         <div class='filter-list' id='filter-list-parts'>
             <!-- Empty div -->
         </div>
@@ -138,7 +145,7 @@
     <div class='panel-heading'>
         <h4>
             {% block heading %}
-            {% trans "Part Categories" %}
+            {% trans "Parts" %}
             {% endblock %}
         </h4>
     </div>
@@ -167,6 +174,22 @@
     enableNavbar({
         label: 'category',
         toggleId: '#category-menu-toggle',
+    });
+
+    $('#view-list').click(function() {
+        $('#view-list').hide();
+        $('#view-grid').show();
+
+        $('#part-table').bootstrapTable('toggleCustomView');
+        inventreeSave('part-grid-view', '');
+    });
+
+    $('#view-grid').click(function() {
+        $('#view-grid').hide();
+        $('#view-list').show();
+
+        $('#part-table').bootstrapTable('toggleCustomView');
+        inventreeSave('part-grid-view', 1);
     });
 
     $("#cat-create").click(function() {
@@ -198,7 +221,7 @@
     })
 
     $("#part-export").click(function() {
-        
+
         var url = "{% url 'part-export' %}?category={{ category.id }}";
 
         location.href = url;
@@ -273,7 +296,15 @@
             },
             buttons: ['#part-options'],
             checkbox: true,
+            gridView: true,
         },
     );
+
+    if (inventreeLoad("part-grid-view")) {
+        $('#view-grid').hide();
+        $('#part-table').bootstrapTable('toggleCustomView');
+    } else {
+        $('#view-list').hide();
+    }
 
 {% endblock %}

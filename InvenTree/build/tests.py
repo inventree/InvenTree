@@ -251,7 +251,7 @@ class TestBuildViews(TestCase):
         content = str(response.content)
 
         self.assertIn(build.title, content)
-    
+
     def test_build_create(self):
         """ Test the build creation view (ajax form) """
 
@@ -260,7 +260,7 @@ class TestBuildViews(TestCase):
         # Create build without specifying part
         response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-    
+
         # Create build with valid part
         response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
@@ -281,7 +281,7 @@ class TestBuildViews(TestCase):
         # Get the page in editing mode
         response = self.client.get(url, {'edit': 1})
         self.assertEqual(response.status_code, 200)
-    
+
     def test_build_item_create(self):
         """ Test the BuildItem creation view (ajax form) """
 
@@ -305,7 +305,7 @@ class TestBuildViews(TestCase):
 
     def test_build_item_edit(self):
         """ Test the BuildItem edit view (ajax form) """
-        
+
         # TODO
         # url = reverse('build-item-edit')
         pass
@@ -323,7 +323,7 @@ class TestBuildViews(TestCase):
         # Test without confirmation
         response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
 
@@ -353,7 +353,7 @@ class TestBuildViews(TestCase):
         # Test with confirmation, invalid location
         response = self.client.post(url, {'confirm': 1, 'location': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
 
@@ -365,7 +365,7 @@ class TestBuildViews(TestCase):
         # Test without confirmation
         response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
 
@@ -393,7 +393,7 @@ class TestBuildViews(TestCase):
 
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
-        
+
         # Test with confirmation
         response = self.client.post(url, {'confirm': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)

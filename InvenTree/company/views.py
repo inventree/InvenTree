@@ -96,7 +96,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
             if self.request.path == item:
                 context = lookup[item]
                 break
-        
+
         if context is None:
             context = default
 
@@ -202,7 +202,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
 
         # Check for valid response code
         if not response.status_code == 200:
-            form.add_error('url', f"{_('Invalid response')}: {response.status_code}")
+            form.add_error('url', _('Invalid response: {code}').format(code=response.status_code))
             return
 
         response.raw.decode_content = True
@@ -279,7 +279,7 @@ class CompanyCreate(AjaxCreateView):
 
         if url == reverse('supplier-create'):
             return _("Create new Supplier")
-        
+
         if url == reverse('manufacturer-create'):
             return _('Create new Manufacturer')
 
@@ -298,7 +298,7 @@ class CompanyCreate(AjaxCreateView):
             initials['is_supplier'] = True
             initials['is_customer'] = False
             initials['is_manufacturer'] = False
-        
+
         elif url == reverse('manufacturer-create'):
             initials['is_manufacturer'] = True
             initials['is_supplier'] = True
@@ -319,7 +319,7 @@ class CompanyCreate(AjaxCreateView):
 
 class CompanyDelete(AjaxDeleteView):
     """ View for deleting a Company object """
-    
+
     model = Company
     success_url = '/company/'
     ajax_template_name = 'company/delete.html'
@@ -415,7 +415,7 @@ class ManufacturerPartCreate(AjaxCreateView):
                 initials['manufacturer'] = Company.objects.get(pk=manufacturer_id)
             except (ValueError, Company.DoesNotExist):
                 pass
-        
+
         if part_id:
             try:
                 initials['part'] = Part.objects.get(pk=part_id)
@@ -427,7 +427,7 @@ class ManufacturerPartCreate(AjaxCreateView):
 
 class ManufacturerPartDelete(AjaxDeleteView):
     """ Delete view for removing a ManufacturerPart.
-    
+
     ManufacturerParts can be deleted using a variety of 'selectors'.
 
     - ?part=<pk> -> Delete a single ManufacturerPart object
@@ -561,7 +561,7 @@ class SupplierPartEdit(AjaxUpdateView):
         initials = super(SupplierPartEdit, self).get_initial().copy()
 
         supplier_part = self.get_object()
-        
+
         if supplier_part.manufacturer_part:
             initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
             initials['MPN'] = supplier_part.manufacturer_part.MPN
@@ -686,7 +686,7 @@ class SupplierPartCreate(AjaxCreateView):
                 initials['MPN'] = manufacturer_part_obj.MPN
             except (ValueError, ManufacturerPart.DoesNotExist, Part.DoesNotExist, Company.DoesNotExist):
                 pass
-        
+
         if part_id:
             try:
                 initials['part'] = Part.objects.get(pk=part_id)
@@ -703,13 +703,13 @@ class SupplierPartCreate(AjaxCreateView):
 
         if currency_code:
             initials['single_pricing'] = ('', currency)
-        
+
         return initials
 
 
 class SupplierPartDelete(AjaxDeleteView):
     """ Delete view for removing a SupplierPart.
-    
+
     SupplierParts can be deleted using a variety of 'selectors'.
 
     - ?part=<pk> -> Delete a single SupplierPart object
@@ -840,7 +840,7 @@ class PriceBreakCreate(AjaxCreateView):
 
         # Extract the currency object associated with the code
         currency = CURRENCIES.get(currency_code, None)
-        
+
         if currency:
             initials['price'] = [1.0, currency]
 

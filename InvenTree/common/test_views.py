@@ -98,26 +98,21 @@ class SettingsViewTest(TestCase):
         Tests for a setting which has choices
         """
 
-        setting = InvenTreeSetting.get_setting_object('INVENTREE_DEFAULT_CURRENCY')
+        setting = InvenTreeSetting.get_setting_object('PURCHASEORDER_REFERENCE_PREFIX')
 
         # Default value!
-        self.assertEqual(setting.value, 'USD')
+        self.assertEqual(setting.value, 'PO')
 
         url = self.get_url(setting.pk)
 
         # Try posting an invalid currency option
-        data, errors = self.post(url, {'value': 'XPQaaa'}, valid=False)
-
-        self.assertIsNotNone(errors.get('value'), None)
-
-        # Try posting a valid currency option
-        data, errors = self.post(url, {'value': 'AUD'}, valid=True)
+        data, errors = self.post(url, {'value': 'Purchase Order'}, valid=True)
 
     def test_binary_values(self):
         """
         Test for binary value
         """
-        
+
         setting = InvenTreeSetting.get_setting_object('PART_COMPONENT')
 
         self.assertTrue(setting.as_bool())

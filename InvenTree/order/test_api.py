@@ -60,18 +60,18 @@ class PurchaseOrderTest(OrderTest):
     def test_po_list(self):
 
         # List *ALL* PO items
-        self.filter({}, 6)
+        self.filter({}, 7)
 
         # Filter by supplier
         self.filter({'supplier': 1}, 1)
         self.filter({'supplier': 3}, 5)
 
         # Filter by "outstanding"
-        self.filter({'outstanding': True}, 4)
+        self.filter({'outstanding': True}, 5)
         self.filter({'outstanding': False}, 2)
 
         # Filter by "status"
-        self.filter({'status': 10}, 2)
+        self.filter({'status': 10}, 3)
         self.filter({'status': 40}, 1)
 
     def test_overdue(self):
@@ -80,21 +80,21 @@ class PurchaseOrderTest(OrderTest):
         """
 
         self.filter({'overdue': True}, 0)
-        self.filter({'overdue': False}, 6)
+        self.filter({'overdue': False}, 7)
 
         order = PurchaseOrder.objects.get(pk=1)
         order.target_date = datetime.now().date() - timedelta(days=10)
         order.save()
 
         self.filter({'overdue': True}, 1)
-        self.filter({'overdue': False}, 5)
+        self.filter({'overdue': False}, 6)
 
     def test_po_detail(self):
 
         url = '/api/order/po/1/'
 
         response = self.get(url)
-        
+
         self.assertEqual(response.status_code, 200)
 
         data = response.data
@@ -109,7 +109,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
 
 class SalesOrderTest(OrderTest):
     """

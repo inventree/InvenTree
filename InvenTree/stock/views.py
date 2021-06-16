@@ -121,7 +121,7 @@ class StockLocationEdit(AjaxUpdateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
-    
+
     def get_form(self):
         """ Customize form data for StockLocation editing.
 
@@ -182,7 +182,7 @@ class StockLocationEdit(AjaxUpdateView):
         """
 
         self.object = form.save()
-        
+
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
 
@@ -267,7 +267,7 @@ class StockItemAttachmentCreate(AjaxCreateView):
 
     def save(self, form, **kwargs):
         """ Record the user that uploaded the attachment """
-        
+
         attachment = form.save(commit=False)
         attachment.user = self.request.user
         attachment.save()
@@ -297,7 +297,7 @@ class StockItemAttachmentCreate(AjaxCreateView):
 
         form = super().get_form()
         form.fields['stock_item'].widget = HiddenInput()
-        
+
         return form
 
 
@@ -309,7 +309,7 @@ class StockItemAttachmentEdit(AjaxUpdateView):
     model = StockItemAttachment
     form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Edit Stock Item Attachment")
-    
+
     def get_form(self):
 
         form = super().get_form()
@@ -327,7 +327,7 @@ class StockItemAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Stock Item Attachment")
     ajax_template_name = "attachment_delete.html"
     context_object_name = "attachment"
-    
+
     def get_data(self):
         return {
             'danger': _("Deleted attachment"),
@@ -376,7 +376,7 @@ class StockItemReturnToStock(AjaxUpdateView):
     ajax_form_title = _("Return to Stock")
     context_object_name = "item"
     form_class = StockForms.ReturnStockItemForm
-    
+
     def validate(self, item, form, **kwargs):
 
         location = form.cleaned_data.get('location', None)
@@ -405,7 +405,7 @@ class StockItemDeleteTestData(AjaxUpdateView):
     model = StockItem
     form_class = ConfirmForm
     ajax_form_title = _("Delete All Test Data")
-        
+
     role_required = ['stock.change', 'stock.delete']
 
     def get_form(self):
@@ -417,7 +417,7 @@ class StockItemDeleteTestData(AjaxUpdateView):
 
         stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
         form = self.get_form()
-        
+
         confirm = str2bool(request.POST.get('confirm', False))
 
         if confirm is not True:
@@ -488,7 +488,7 @@ class StockItemTestResultEdit(AjaxUpdateView):
         form = super().get_form()
 
         form.fields['stock_item'].widget = HiddenInput()
-        
+
         return form
 
 
@@ -545,11 +545,11 @@ class StockExport(AjaxView):
     def get(self, request, *args, **kwargs):
 
         export_format = request.GET.get('format', 'csv').lower()
-        
+
         # Check if a particular location was specified
         loc_id = request.GET.get('location', None)
         location = None
-        
+
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
@@ -646,9 +646,9 @@ class StockItemInstall(AjaxUpdateView):
 
     In contrast to the StockItemUninstall view,
     only a single stock item can be installed at once.
-    
+
     The "part" to be installed must be provided in the GET query parameters.
-    
+
     """
 
     model = StockItem
@@ -664,7 +664,7 @@ class StockItemInstall(AjaxUpdateView):
 
         Requirements:
         - Items must be in stock
-        
+
         Filters:
         - Items can be filtered by Part reference
         """
@@ -702,7 +702,7 @@ class StockItemInstall(AjaxUpdateView):
 
         if self.part:
             initials['part'] = self.part
-        
+
         return initials
 
     def get_form(self):
@@ -875,13 +875,13 @@ class StockItemUninstall(AjaxView, FormMixin):
 
 class StockAdjust(AjaxView, FormMixin):
     """ View for enacting simple stock adjustments:
-    
+
     - Take items from stock
     - Add items to stock
     - Count items
     - Move stock
     - Delete stock items
-    
+
     """
 
     ajax_template_name = 'stock/stock_adjust.html'
@@ -942,7 +942,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         for item in self.request.POST:
             if item.startswith('stock-id-'):
-                
+
                 pk = item.replace('stock-id-', '')
                 q = self.request.POST[item]
 
@@ -1022,9 +1022,9 @@ class StockAdjust(AjaxView, FormMixin):
         form = self.get_form()
 
         valid = form.is_valid()
-        
+
         for item in self.stock_items:
-            
+
             try:
                 item.new_quantity = Decimal(item.new_quantity)
             except ValueError:
@@ -1067,7 +1067,7 @@ class StockAdjust(AjaxView, FormMixin):
 
                 # Was the entire stock taken?
                 item = self.stock_items[0]
-                
+
                 if item.quantity == 0:
                     # Instruct the form to redirect
                     data['url'] = reverse('stock-index')
@@ -1107,7 +1107,7 @@ class StockAdjust(AjaxView, FormMixin):
             return _('No action performed')
 
     def do_add(self):
-        
+
         count = 0
         note = self.request.POST['note']
 
@@ -1137,12 +1137,12 @@ class StockAdjust(AjaxView, FormMixin):
         return _('Removed stock from {n} items').format(n=count)
 
     def do_count(self):
-        
+
         count = 0
         note = self.request.POST['note']
 
         for item in self.stock_items:
-            
+
             item.stocktake(item.new_quantity, self.request.user, notes=note)
 
             count += 1
@@ -1165,7 +1165,7 @@ class StockAdjust(AjaxView, FormMixin):
             if set_loc:
                 item.part.default_location = destination
                 item.part.save()
-            
+
             # Do not move to the same location (unless the quantity is different)
             if destination == item.location and item.new_quantity == item.quantity:
                 continue
@@ -1188,7 +1188,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         if count == 0:
             return _('No items were moved')
-        
+
         else:
             return _('Moved {n} items to {dest}').format(
                 n=count,
@@ -1201,7 +1201,7 @@ class StockAdjust(AjaxView, FormMixin):
         # note = self.request.POST['note']
 
         for item in self.stock_items:
-            
+
             # TODO - In the future, StockItems should not be 'deleted'
             # TODO - Instead, they should be marked as "inactive"
 
@@ -1210,6 +1210,27 @@ class StockAdjust(AjaxView, FormMixin):
             count += 1
 
         return _("Deleted {n} stock items").format(n=count)
+
+
+class StockItemEditStatus(AjaxUpdateView):
+    """
+    View for editing stock item status field
+    """
+
+    model = StockItem
+    form_class = StockForms.EditStockItemStatusForm
+    ajax_form_title = _('Edit Stock Item Status')
+
+    def save(self, object, form, **kwargs):
+        """
+        Override the save method, to track the user who updated the model
+        """
+
+        item = form.save(commit=False)
+
+        item.save(user=self.request.user)
+
+        return item
 
 
 class StockItemEdit(AjaxUpdateView):
@@ -1321,6 +1342,17 @@ class StockItemEdit(AjaxUpdateView):
             if not owner and not self.request.user.is_superuser:
                 form.add_error('owner', _('Owner is required (ownership control is enabled)'))
 
+    def save(self, object, form, **kwargs):
+        """
+        Override the save method, to track the user who updated the model
+        """
+
+        item = form.save(commit=False)
+
+        item.save(user=self.request.user)
+
+        return item
+        
 
 class StockItemConvert(AjaxUpdateView):
     """
@@ -1341,7 +1373,7 @@ class StockItemConvert(AjaxUpdateView):
         form = super().get_form()
         item = self.get_object()
 
-        form.fields['part'].queryset = item.part.get_all_variants()
+        form.fields['part'].queryset = item.part.get_conversion_options()
 
         return form
 
@@ -1475,7 +1507,7 @@ class StockItemSerialize(AjaxUpdateView):
         return initials
 
     def get(self, request, *args, **kwargs):
-        
+
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -1503,13 +1535,13 @@ class StockItemSerialize(AjaxUpdateView):
             form.add_error('serial_numbers', e.messages)
             valid = False
             numbers = []
-        
+
         if valid:
             try:
                 item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
             except ValidationError as e:
                 messages = e.message_dict
-                
+
                 for k in messages.keys():
                     if k in ['quantity', 'destination', 'serial_numbers']:
                         form.add_error(k, messages[k])
@@ -1595,7 +1627,7 @@ class StockItemCreate(AjaxCreateView):
 
             if not part.purchaseable:
                 form.fields.pop('purchase_price')
-            
+
             # Hide the 'part' field (as a valid part is selected)
             # form.fields['part'].widget = HiddenInput()
 
@@ -1658,7 +1690,7 @@ class StockItemCreate(AjaxCreateView):
                 if type(location_owner.owner) is Group:
                     user_as_owner = Owner.get_owner(self.request.user)
                     queryset = location_owner.get_related_owners()
-                    
+
                     if user_as_owner in queryset:
                         form.fields['owner'].initial = user_as_owner
 
@@ -1668,7 +1700,7 @@ class StockItemCreate(AjaxCreateView):
                     # If location's owner is a user: automatically set owner field and disable it
                     form.fields['owner'].disabled = True
                     form.fields['owner'].initial = location_owner
-                
+
         return form
 
     def get_initial(self):
@@ -1746,7 +1778,7 @@ class StockItemCreate(AjaxCreateView):
         data = form.cleaned_data
 
         part = data.get('part', None)
-        
+
         quantity = data.get('quantity', None)
 
         owner = data.get('owner', None)
@@ -1831,7 +1863,7 @@ class StockItemCreate(AjaxCreateView):
                     )
 
                     item.save(user=self.request.user)
-                
+
             # Create a single StockItem of the specified quantity
             else:
                 form._post_clean()
@@ -1841,12 +1873,12 @@ class StockItemCreate(AjaxCreateView):
                 item.save(user=self.request.user)
 
                 return item
-            
+
         # Non-trackable part
         else:
 
             form._post_clean()
-            
+
             item = form.save(commit=False)
             item.user = self.request.user
             item.save(user=self.request.user)

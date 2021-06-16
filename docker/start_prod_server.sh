@@ -3,17 +3,12 @@
 # Create required directory structure (if it does not already exist)
 if [[ ! -d "$INVENTREE_STATIC_ROOT" ]]; then
     echo "Creating directory $INVENTREE_STATIC_ROOT"
-    mkdir $INVENTREE_STATIC_ROOT
+    mkdir -p $INVENTREE_STATIC_ROOT
 fi
 
 if [[ ! -d "$INVENTREE_MEDIA_ROOT" ]]; then
     echo "Creating directory $INVENTREE_MEDIA_ROOT"
-    mkdir $INVENTREE_MEDIA_ROOT
-fi
-
-if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
-    echo "Creating directory $INVENTREE_BACKUP_DIR"
-    mkdir $INVENTREE_BACKUP_DIR
+    mkdir -p $INVENTREE_MEDIA_ROOT
 fi
 
 # Check if "config.yaml" has been copied into the correct location
@@ -21,7 +16,7 @@ if test -f "$INVENTREE_CONFIG_FILE"; then
     echo "$INVENTREE_CONFIG_FILE exists - skipping"
 else
     echo "Copying config file to $INVENTREE_CONFIG_FILE"
-    cp $INVENTREE_SRC_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
+    cp $INVENTREE_HOME/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
 echo "Starting InvenTree server..."

@@ -24,7 +24,7 @@ class TestForwardMigrations(MigratorTestCase):
             email='fred@fred.com',
             password='password'
         )
-        
+
         User.objects.create(
             username='brad',
             email='brad@fred.com',

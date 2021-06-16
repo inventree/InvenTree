@@ -7,6 +7,8 @@ class StatusCode:
     This is used to map a set of integer values to text.
     """
 
+    colors = {}
+
     @classmethod
     def render(cls, key, large=False):
         """
@@ -16,7 +18,7 @@ class StatusCode:
         # If the key cannot be found, pass it back
         if key not in cls.options.keys():
             return key
-        
+
         value = cls.options.get(key, key)
         color = cls.colors.get(key, 'grey')
 
@@ -222,6 +224,82 @@ class StockStatus(StatusCode):
         DESTROYED,
         REJECTED
     ]
+
+
+class StockHistoryCode(StatusCode):
+
+    LEGACY = 0
+
+    CREATED = 1
+
+    # Manual editing operations
+    EDITED = 5
+    ASSIGNED_SERIAL = 6
+
+    # Manual stock operations
+    STOCK_COUNT = 10
+    STOCK_ADD = 11
+    STOCK_REMOVE = 12
+
+    # Location operations
+    STOCK_MOVE = 20
+
+    # Installation operations
+    INSTALLED_INTO_ASSEMBLY = 30
+    REMOVED_FROM_ASSEMBLY = 31
+
+    INSTALLED_CHILD_ITEM = 35
+    REMOVED_CHILD_ITEM = 36
+
+    # Stock splitting operations
+    SPLIT_FROM_PARENT = 40
+    SPLIT_CHILD_ITEM = 42
+
+    # Build order codes
+    BUILD_OUTPUT_CREATED = 50
+    BUILD_OUTPUT_COMPLETED = 55
+
+    # Sales order codes
+
+    # Purchase order codes
+    RECEIVED_AGAINST_PURCHASE_ORDER = 70
+
+    # Customer actions
+    SENT_TO_CUSTOMER = 100
+    RETURNED_FROM_CUSTOMER = 105
+
+    options = {
+        LEGACY: _('Legacy stock tracking entry'),
+
+        CREATED: _('Stock item created'),
+
+        EDITED: _('Edited stock item'),
+        ASSIGNED_SERIAL: _('Assigned serial number'),
+
+        STOCK_COUNT: _('Stock counted'),
+        STOCK_ADD: _('Stock manually added'),
+        STOCK_REMOVE: _('Stock manually removed'),
+
+        STOCK_MOVE: _('Location changed'),
+
+        INSTALLED_INTO_ASSEMBLY: _('Installed into assembly'),
+        REMOVED_FROM_ASSEMBLY: _('Removed from assembly'),
+
+        INSTALLED_CHILD_ITEM: _('Installed component item'),
+        REMOVED_CHILD_ITEM: _('Removed component item'),
+
+        SPLIT_FROM_PARENT: _('Split from parent item'),
+        SPLIT_CHILD_ITEM: _('Split child item'),
+
+        SENT_TO_CUSTOMER: _('Sent to customer'),
+        RETURNED_FROM_CUSTOMER: _('Returned from customer'),
+
+        BUILD_OUTPUT_CREATED: _('Build order output created'),
+        BUILD_OUTPUT_COMPLETED: _('Build order output completed'),
+
+        RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against purchase order')
+
+    }
 
 
 class BuildStatus(StatusCode):

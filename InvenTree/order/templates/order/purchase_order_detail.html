@@ -35,31 +35,6 @@
 
 {{ block.super }}
 
-
-$("#receive-order").click(function() {
-    launchModalForm("{% url 'po-receive' order.id %}", {
-        reload: true,
-        secondary: [
-            {
-                field: 'location',
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-                url: "{% url 'stock-location-create' %}",
-            },
-        ]
-    });
-});
-
-$("#complete-order").click(function() {
-    launchModalForm("{% url 'po-complete' order.id %}", {
-        reload: true,
-    });
-});
-
-$("#export-order").click(function() {
-    location.href = "{% url 'po-export' order.id %}";
-});
-
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
     launchModalForm("{% url 'po-line-item-create' %}",
@@ -142,6 +117,7 @@ $("#po-table").inventreeTable({
         part_detail: true,
     },
     url: "{% url 'api-po-line-list' %}",
+    showFooter: true,
     columns: [
         {
             field: 'pk',
@@ -162,6 +138,9 @@ $("#po-table").inventreeTable({
                     return '-';
                 }
             },
+            footerFormatter:  function() {
+                return 'Total'
+            }
         },
         {
             field: 'part_detail.description',
@@ -197,7 +176,14 @@ $("#po-table").inventreeTable({
         {
             sortable: true,
             field: 'quantity',
-            title: '{% trans "Quantity" %}'
+            title: '{% trans "Quantity" %}',
+            footerFormatter: function(data) {
+                return data.map(function (row) {
+                  return +row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+              }
         },
         {
             sortable: true,
@@ -206,6 +192,25 @@ $("#po-table").inventreeTable({
             formatter: function(value, row) {
                 return row.purchase_price_string || row.purchase_price;
             }
+        },
+        {
+            sortable: true,
+            title: '{% trans "Total price" %}',
+            formatter: function(value, row) {
+                var total = row.purchase_price * row.quantity;
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
+                return formatter.format(total)
+            },
+            footerFormatter: function(data) {
+                var total = data.map(function (row) {
+                  return +row['purchase_price']*row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency)  || 'USD';
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
+                return formatter.format(total)
+              }
         },
         {
             sortable: true,
@@ -218,11 +223,11 @@ $("#po-table").inventreeTable({
                 });
             },
             sorter: function(valA, valB, rowA, rowB) {
-                
+
                 if (rowA.received == 0 && rowB.received == 0) {
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
                 }
-                
+
                 var progressA = parseFloat(rowA.received) / rowA.quantity;
                 var progressB = parseFloat(rowB.received) / rowB.quantity;
 
@@ -260,6 +265,5 @@ $("#po-table").inventreeTable({
         }
     ]
 });
-
 
 {% endblock %}

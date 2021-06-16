@@ -21,8 +21,11 @@ from .models import StockItemTestResult
 from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
 
-from company.models import SupplierPart
-from company.serializers import SupplierPartSerializer
+from company.models import Company, SupplierPart
+from company.serializers import CompanySerializer, SupplierPartSerializer
+
+from order.models import PurchaseOrder
+from order.serializers import POSerializer
 
 import common.settings
 import common.models
@@ -97,6 +100,16 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
+    def update(self, request, *args, **kwargs):
+        """
+        Record the user who updated the item
+        """
+
+        # TODO: Record the user!
+        # user = request.user
+
+        return super().update(request, *args, **kwargs)
+
 
 class StockFilter(FilterSet):
     """ FilterSet for advanced stock filtering.
@@ -117,7 +130,7 @@ class StockAdjust(APIView):
     A generic class for handling stocktake actions.
 
     Subclasses exist for:
-    
+
     - StockCount: count stock items
     - StockAdd: add stock items
     - StockRemove: remove stock items
@@ -184,7 +197,7 @@ class StockCount(StockAdjust):
     """
     Endpoint for counting stock (performing a stocktake).
     """
-    
+
     def post(self, request, *args, **kwargs):
 
         self.get_items(request)
@@ -225,7 +238,7 @@ class StockRemove(StockAdjust):
     def post(self, request, *args, **kwargs):
 
         self.get_items(request)
-        
+
         n = 0
 
         for item in self.items:
@@ -292,7 +305,7 @@ class StockLocationList(generics.ListCreateAPIView):
         params = self.request.query_params
 
         loc_id = params.get('parent', None)
-        
+
         cascade = str2bool(params.get('cascade', False))
 
         # Do not filter by location
@@ -304,7 +317,7 @@ class StockLocationList(generics.ListCreateAPIView):
             # If we allow "cascade" at the top-level, this essentially means *all* locations
             if not cascade:
                 queryset = queryset.filter(parent=None)
-        
+
         else:
 
             try:
@@ -321,7 +334,7 @@ class StockLocationList(generics.ListCreateAPIView):
 
             except (ValueError, StockLocation.DoesNotExist):
                 pass
-            
+
         return queryset
 
     filter_backends = [
@@ -371,25 +384,26 @@ class StockList(generics.ListCreateAPIView):
         we can pre-fill the location automatically.
         """
 
+        user = request.user
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # TODO - Save the user who created this item
         item = serializer.save()
 
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
-            location = item.part.get_default_location()
-            
-            if location is not None:
-                item.location = location
-                item.save()
+            item.location = item.part.get_default_location()
 
         # An expiry date was *not* specified - try to infer it!
         if 'expiry_date' not in request.data:
-            
+
             if item.part.default_expiry > 0:
                 item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
-                item.save()
+
+        # Finally, save the item
+        item.save(user=user)
 
         # Return a response
         headers = self.get_success_headers(serializer.data)
@@ -399,7 +413,7 @@ class StockList(generics.ListCreateAPIView):
         """
         Override the 'list' method, as the StockLocation objects
         are very expensive to serialize.
-        
+
         So, we fetch and serialize the required StockLocation objects only as required.
         """
 
@@ -601,7 +615,7 @@ class StockList(generics.ListCreateAPIView):
 
                 if stale_days > 0:
                     stale_date = datetime.now().date() + timedelta(days=stale_days)
-                    
+
                     stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
 
                     if stale:
@@ -652,7 +666,7 @@ class StockList(generics.ListCreateAPIView):
 
         if serial_number_gte is not None:
             queryset = queryset.filter(serial__gte=serial_number_gte)
-        
+
         if serial_number_lte is not None:
             queryset = queryset.filter(serial__lte=serial_number_lte)
 
@@ -681,7 +695,7 @@ class StockList(generics.ListCreateAPIView):
             else:
                 # Filter StockItem without build allocations or sales order allocations
                 queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
-                
+
         # Do we wish to filter by "active parts"
         active = params.get('active', None)
 
@@ -766,7 +780,7 @@ class StockList(generics.ListCreateAPIView):
                         queryset = queryset.filter(location__in=location.getUniqueChildren())
                     else:
                         queryset = queryset.filter(location=loc_id)
-                    
+
                 except (ValueError, StockLocation.DoesNotExist):
                     pass
 
@@ -965,7 +979,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         test_result.save()
 
 
-class StockTrackingList(generics.ListCreateAPIView):
+class StockTrackingList(generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -992,16 +1006,72 @@ class StockTrackingList(generics.ListCreateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        # Attempt to add extra context information to the historical data
+        for item in data:
+            deltas = item['deltas']
+
+            if not deltas:
+                deltas = {}
+
+            # Add location detail
+            if 'location' in deltas:
+                try:
+                    location = StockLocation.objects.get(pk=deltas['location'])
+                    serializer = LocationSerializer(location)
+                    deltas['location_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add stockitem detail
+            if 'stockitem' in deltas:
+                try:
+                    stockitem = StockItem.objects.get(pk=deltas['stockitem'])
+                    serializer = StockItemSerializer(stockitem)
+                    deltas['stockitem_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add customer detail
+            if 'customer' in deltas:
+                try:
+                    customer = Company.objects.get(pk=deltas['customer'])
+                    serializer = CompanySerializer(customer)
+                    deltas['customer_detail'] = serializer.data
+                except:
+                    pass
+
+            # Add purchaseorder detail
+            if 'purchaseorder' in deltas:
+                try:
+                    order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
+                    serializer = POSerializer(order)
+                    deltas['purchaseorder_detail'] = serializer.data
+                except:
+                    pass
+
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
+
     def create(self, request, *args, **kwargs):
         """ Create a new StockItemTracking object
-        
+
         Here we override the default 'create' implementation,
         to save the user information associated with the request object.
         """
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         # Record the user who created this Part object
         item = serializer.save()
         item.user = request.user

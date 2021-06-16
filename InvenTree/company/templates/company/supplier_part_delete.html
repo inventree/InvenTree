@@ -12,7 +12,7 @@
 {% for part in parts %}
 <tr>
     <input type='hidden' name='supplier-part-{{ part.id}}' value='supplier-part-{{ part.id }}'/>
-    
+
     <td>
         {% include "hover_image.html" with image=part.part.image %}
         {{ part.part.full_name }}
