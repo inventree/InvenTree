@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-14 21:21+0000\n"
-"PO-Revision-Date: 2021-06-14 21:34\n"
+"POT-Creation-Date: 2021-06-16 13:55+0000\n"
+"PO-Revision-Date: 2021-06-16 14:02\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -372,27 +372,27 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:592
+#: InvenTree/views.py:605
 msgid "Delete Item"
 msgstr ""
 
-#: InvenTree/views.py:641
+#: InvenTree/views.py:654
 msgid "Check box to confirm item deletion"
 msgstr ""
 
-#: InvenTree/views.py:656 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:669 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:667 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:680 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr ""
 
-#: InvenTree/views.py:686
+#: InvenTree/views.py:699
 msgid "Password fields must match"
 msgstr ""
 
-#: InvenTree/views.py:937 templates/navbar.html:95
+#: InvenTree/views.py:950 templates/navbar.html:95
 msgid "System Information"
 msgstr ""
 
