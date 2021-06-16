@@ -184,6 +184,20 @@ $("#po-table").inventreeTable({
         },
         {
             sortable: true,
+            title: '{% trans "Total price" %}',
+            formatter: function(value, row) {
+                var total = row.purchase_price * row.quantity;
+
+                // Create our number formatter.
+                var formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: row.purchase_price_currency,
+                });
+                return formatter.format(total)
+            },
+        },
+        {
+            sortable: true,
             field: 'received',
             switchable: false,
             title: '{% trans "Received" %}',
