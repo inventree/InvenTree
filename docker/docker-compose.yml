@@ -44,7 +44,7 @@ services:
         depends_on:
             - inventree-db
         volumes:
-            # Map 'data' volume
+            # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
         environment:
             # Default environment variables are configured to match the 'db' container
@@ -67,6 +67,7 @@ services:
             - inventree-db
             - inventree-server
         volumes:
+            # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
         environment:
             # Default environment variables are configured to match the 'db' container
