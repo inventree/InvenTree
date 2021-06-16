@@ -117,6 +117,7 @@ $("#po-table").inventreeTable({
         part_detail: true,
     },
     url: "{% url 'api-po-line-list' %}",
+    showFooter: true,
     columns: [
         {
             field: 'pk',
@@ -137,6 +138,9 @@ $("#po-table").inventreeTable({
                     return '-';
                 }
             },
+            footerFormatter:  function() {
+                return 'Total'
+            }
         },
         {
             field: 'part_detail.description',
