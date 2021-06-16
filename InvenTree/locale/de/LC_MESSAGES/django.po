@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 23:12+0000\n"
-"PO-Revision-Date: 2021-06-16 22:41\n"
+"POT-Creation-Date: 2021-06-16 22:40+0000\n"
+"PO-Revision-Date: 2021-06-16 23:50\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -134,7 +134,7 @@ msgstr "Hochladedatum"
 
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
-#: report/models.py:180 templates/InvenTree/search.html:137
+#: report/models.py:179 templates/InvenTree/search.html:137
 #: templates/InvenTree/search.html:289 templates/js/part.js:118
 #: templates/js/part.js:641 templates/js/stock.js:947
 msgid "Name"
@@ -148,8 +148,8 @@ msgstr "Name"
 #: company/templates/company/supplier_part_detail.html:31 label/models.py:109
 #: order/models.py:103 order/templates/order/purchase_order_detail.html:147
 #: part/models.py:710 part/templates/part/detail.html:54
-#: part/templates/part/set_category.html:14 report/models.py:193
-#: report/models.py:530 report/models.py:569
+#: part/templates/part/set_category.html:14 report/models.py:192
+#: report/models.py:505 report/models.py:544
 #: report/templates/report/inventree_build_order_base.html:118
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
@@ -472,7 +472,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: order/templates/order/sales_order_detail.html:70
 #: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/sales_order_detail.html:162
-#: order/templates/order/sales_order_detail.html:234 part/forms.py:342
+#: order/templates/order/sales_order_detail.html:230 part/forms.py:342
 #: part/forms.py:372 part/forms.py:388 part/models.py:2270
 #: part/templates/part/allocation.html:19
 #: part/templates/part/allocation.html:53
@@ -604,7 +604,7 @@ msgstr "Bauauftragsreferenz"
 
 #: build/models.py:128 order/models.py:101 order/models.py:618
 #: order/templates/order/purchase_order_detail.html:174
-#: order/templates/order/sales_order_detail.html:229 part/models.py:2279
+#: order/templates/order/sales_order_detail.html:225 part/models.py:2279
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:575 templates/js/build.js:1018
@@ -631,7 +631,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:132
 #: order/templates/order/receive_parts.html:19
-#: order/templates/order/sales_order_detail.html:214 part/models.py:321
+#: order/templates/order/sales_order_detail.html:213 part/models.py:321
 #: part/models.py:1967 part/models.py:1979 part/models.py:1997
 #: part/models.py:2072 part/models.py:2168 part/models.py:2254
 #: part/templates/part/part_app_base.html:8
@@ -765,10 +765,10 @@ msgstr "Link zu einer externen URL"
 #: company/models.py:132 company/models.py:498
 #: company/templates/company/navbar.html:70
 #: company/templates/company/navbar.html:73 order/models.py:125
-#: order/models.py:620 order/templates/order/po_navbar.html:38
-#: order/templates/order/po_navbar.html:41
+#: order/models.py:620 order/templates/order/po_navbar.html:29
+#: order/templates/order/po_navbar.html:32
 #: order/templates/order/purchase_order_detail.html:239
-#: order/templates/order/sales_order_detail.html:309
+#: order/templates/order/sales_order_detail.html:278
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:871
 #: part/templates/part/navbar.html:134
@@ -923,7 +923,7 @@ msgstr "Seriennummer"
 
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
-#: order/templates/order/po_navbar.html:35
+#: order/templates/order/po_navbar.html:26
 #: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:125
 #: part/templates/part/navbar.html:128 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
@@ -1248,7 +1248,7 @@ msgstr "Bauauftrag-details"
 
 #: build/templates/build/navbar.html:15
 #: company/templates/company/navbar.html:15
-#: order/templates/order/po_navbar.html:15
+#: order/templates/order/po_navbar.html:14
 #: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:15
 #: templates/js/stock.js:1019
 msgid "Details"
@@ -1599,7 +1599,7 @@ msgid "Number of recent parts to display on index page"
 msgstr "Anzahl der neusten Teile auf der Startseite"
 
 #: common/models.py:153 part/models.py:2170 part/templates/part/detail.html:160
-#: report/models.py:186 stock/forms.py:259 templates/js/table_filters.js:25
+#: report/models.py:185 stock/forms.py:259 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:315
 msgid "Template"
 msgstr "Vorlage"
@@ -1843,9 +1843,7 @@ msgid "Supplied value must be a boolean"
 msgstr "Angegebener Wert muss ein Wahrheitswert sein"
 
 #: common/views.py:184 order/templates/order/order_wizard/po_upload.html:42
-#: order/templates/order/po_navbar.html:19
-#: order/templates/order/po_navbar.html:22 order/views.py:582
-#: part/templates/part/bom_upload/upload_file.html:27
+#: order/views.py:582 part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload File"
 msgstr "Datei hochgeladen"
 
@@ -2151,11 +2149,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -2643,7 +2639,7 @@ msgstr "Label"
 msgid "Label template file"
 msgstr "Label-Vorlage-Datei"
 
-#: label/models.py:124 report/models.py:297
+#: label/models.py:124 report/models.py:274
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -2667,7 +2663,7 @@ msgstr "Höhe [mm]"
 msgid "Label height, specified in mm"
 msgstr "Label-Höhe in mm"
 
-#: label/models.py:144 report/models.py:290
+#: label/models.py:144
 msgid "Filename Pattern"
 msgstr "Dateinamen-Muster"
 
@@ -2679,8 +2675,8 @@ msgstr "Muster für die Erstellung von Label-Dateinamen"
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
-#: label/models.py:245 label/models.py:298 report/models.py:317
-#: report/models.py:440 report/models.py:474
+#: label/models.py:245 label/models.py:298 report/models.py:294
+#: report/models.py:415 report/models.py:449
 msgid "Filters"
 msgstr "Filter"
 
@@ -2960,7 +2956,7 @@ msgid "Export order to file"
 msgstr "Exportiere Bestellung in Datei"
 
 #: order/templates/order/order_base.html:72
-#: order/templates/order/po_navbar.html:12
+#: order/templates/order/po_navbar.html:11
 msgid "Purchase Order Details"
 msgstr "Bestellungs-Details"
 
@@ -3140,20 +3136,15 @@ msgid "Select a purchase order for %(name)s"
 msgstr "Bestellung für %(name)s auswählen"
 
 #: order/templates/order/po_attachments.html:12
-#: order/templates/order/po_navbar.html:32
+#: order/templates/order/po_navbar.html:23
 msgid "Purchase Order Attachments"
 msgstr "Bestellungs-Anhänge"
 
-#: order/templates/order/po_lineitem_delete.html:5
-#: order/templates/order/so_lineitem_delete.html:5
-msgid "Are you sure you wish to delete this line item?"
-msgstr "Sind Sie sicher, dass Sie diese Position löschen möchten?"
-
-#: order/templates/order/po_navbar.html:26
+#: order/templates/order/po_navbar.html:17
 msgid "Received Stock Items"
 msgstr "BestandsObjekte empfangen"
 
-#: order/templates/order/po_navbar.html:29
+#: order/templates/order/po_navbar.html:20
 #: order/templates/order/po_received_items.html:12
 msgid "Received Items"
 msgstr "Empfangene Teile"
@@ -3172,25 +3163,17 @@ msgstr "Position hinzufügen"
 msgid "No line items found"
 msgstr "Keine Positionen gefunden"
 
-#: order/templates/order/purchase_order_detail.html:142
-#: order/templates/order/sales_order_detail.html:223
-#, fuzzy
-#| msgid "Total Cost"
-msgid "Total"
-msgstr "Gesamtkosten"
-
 #: order/templates/order/purchase_order_detail.html:191
-#: order/templates/order/sales_order_detail.html:246
+#: order/templates/order/sales_order_detail.html:235
 msgid "Unit Price"
 msgstr "Stück-Preis"
 
 #: order/templates/order/purchase_order_detail.html:198
-#: order/templates/order/sales_order_detail.html:253
 msgid "Total price"
-msgstr ""
+msgstr "Gesamtpreis"
 
 #: order/templates/order/purchase_order_detail.html:251
-#: order/templates/order/sales_order_detail.html:359
+#: order/templates/order/sales_order_detail.html:328
 msgid "Edit line item"
 msgstr "Position bearbeiten"
 
@@ -3301,50 +3284,50 @@ msgstr "Bestands-Zuordnung löschen"
 msgid "No matching line items"
 msgstr "Keine passenden Positionen gefunden"
 
-#: order/templates/order/sales_order_detail.html:206
+#: order/templates/order/sales_order_detail.html:205
 msgid "ID"
 msgstr "ID"
 
-#: order/templates/order/sales_order_detail.html:274 templates/js/build.js:589
+#: order/templates/order/sales_order_detail.html:243 templates/js/build.js:589
 #: templates/js/build.js:855
 msgid "Allocated"
 msgstr "Zugeordnet"
 
-#: order/templates/order/sales_order_detail.html:276
+#: order/templates/order/sales_order_detail.html:245
 msgid "Fulfilled"
 msgstr "Erledigt"
 
-#: order/templates/order/sales_order_detail.html:313
+#: order/templates/order/sales_order_detail.html:282
 msgid "PO"
 msgstr "PO"
 
-#: order/templates/order/sales_order_detail.html:343
+#: order/templates/order/sales_order_detail.html:312
 msgid "Allocate serial numbers"
 msgstr "Seriennummern zuweisen"
 
-#: order/templates/order/sales_order_detail.html:346 templates/js/build.js:651
+#: order/templates/order/sales_order_detail.html:315 templates/js/build.js:651
 msgid "Allocate stock"
 msgstr "Lagerbestand zuweisen"
 
-#: order/templates/order/sales_order_detail.html:349
+#: order/templates/order/sales_order_detail.html:318
 msgid "Purchase stock"
 msgstr "Lagerbestand kaufen"
 
-#: order/templates/order/sales_order_detail.html:353 templates/js/build.js:644
+#: order/templates/order/sales_order_detail.html:322 templates/js/build.js:644
 #: templates/js/build.js:1062
 msgid "Build stock"
 msgstr "Lagerbestand bauen"
 
-#: order/templates/order/sales_order_detail.html:356
-#: order/templates/order/sales_order_detail.html:465
+#: order/templates/order/sales_order_detail.html:325
+#: order/templates/order/sales_order_detail.html:434
 msgid "Calculate price"
 msgstr "Preis berechnen"
 
-#: order/templates/order/sales_order_detail.html:360
+#: order/templates/order/sales_order_detail.html:329
 msgid "Delete line item "
 msgstr "Position löschen "
 
-#: order/templates/order/sales_order_detail.html:471
+#: order/templates/order/sales_order_detail.html:440
 msgid "Update Unit Price"
 msgstr "Stückpreis aktualisieren"
 
@@ -3384,6 +3367,10 @@ msgstr "Diese Aktion wird die folgenden BestandsObjekt vom Auftrag entfernen"
 #: order/templates/order/so_navbar.html:26
 msgid "Sales Order Attachments"
 msgstr "Auftrags-Anhänge"
+
+#: order/templates/order/so_lineitem_delete.html:5
+msgid "Are you sure you wish to delete this line item?"
+msgstr "Sind Sie sicher, dass Sie diese Position löschen möchten?"
 
 #: order/views.py:104
 msgid "Add Purchase Order Attachment"
@@ -3834,7 +3821,7 @@ msgstr "Interne Teilenummer"
 msgid "Part revision or version number"
 msgstr "Revisions- oder Versionsnummer"
 
-#: part/models.py:738 part/templates/part/detail.html:35 report/models.py:199
+#: part/models.py:738 part/templates/part/detail.html:35 report/models.py:198
 #: templates/js/part.js:173
 msgid "Revision"
 msgstr "Revision"
@@ -5080,89 +5067,83 @@ msgstr "Stücklisten-Position bearbeiten"
 msgid "Confim BOM item deletion"
 msgstr "löschen von Stücklisten-Position bestätigen"
 
-#: report/models.py:181
+#: report/models.py:180
 msgid "Template name"
 msgstr "Vorlagen Name"
 
-#: report/models.py:187
+#: report/models.py:186
 msgid "Report template file"
 msgstr "Bericht-Vorlage Datei"
 
-#: report/models.py:194
+#: report/models.py:193
 msgid "Report template description"
 msgstr "Bericht-Vorlage Beschreibung"
 
-#: report/models.py:200
+#: report/models.py:199
 msgid "Report revision number (auto-increments)"
 msgstr "Bericht Revisionsnummer (autom. erhöht)"
 
-#: report/models.py:291
-#, fuzzy
-#| msgid "Pattern for generating label filenames"
-msgid "Pattern for generating report filenames"
-msgstr "Muster für die Erstellung von Label-Dateinamen"
-
-#: report/models.py:298
+#: report/models.py:275
 msgid "Report template is enabled"
 msgstr "Bericht-Vorlage ist ein"
 
-#: report/models.py:318
+#: report/models.py:295
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr "BestandsObjekte-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
-#: report/models.py:326
+#: report/models.py:303
 msgid "Include Installed Tests"
 msgstr "einfügen Installiert in Tests"
 
-#: report/models.py:327
+#: report/models.py:304
 msgid "Include test results for stock items installed inside assembled item"
 msgstr "Test-Ergebnisse für BestandsObjekte in Baugruppen einschließen"
 
-#: report/models.py:371
+#: report/models.py:347
 msgid "Build Filters"
 msgstr "Bauauftrag Filter"
 
-#: report/models.py:372
+#: report/models.py:348
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr "Bau-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
-#: report/models.py:410
+#: report/models.py:385
 msgid "Part Filters"
 msgstr "Teil Filter"
 
-#: report/models.py:411
+#: report/models.py:386
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr "Teile-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
-#: report/models.py:441
+#: report/models.py:416
 msgid "Purchase order query filters"
 msgstr "Bestellungs-Abfragefilter"
 
-#: report/models.py:475
+#: report/models.py:450
 msgid "Sales order query filters"
 msgstr "Auftrags-Abfragefilter"
 
-#: report/models.py:525
+#: report/models.py:500
 msgid "Snippet"
 msgstr "Snippet"
 
-#: report/models.py:526
+#: report/models.py:501
 msgid "Report snippet file"
 msgstr "Berichts-Snippet"
 
-#: report/models.py:530
+#: report/models.py:505
 msgid "Snippet file description"
 msgstr "Snippet-Beschreibung"
 
-#: report/models.py:565
+#: report/models.py:540
 msgid "Asset"
 msgstr "Ressource"
 
-#: report/models.py:566
+#: report/models.py:541
 msgid "Report asset file"
 msgstr "Berichts-Ressource"
 
-#: report/models.py:569
+#: report/models.py:544
 msgid "Asset file description"
 msgstr "Ressource-Beschreibung"
 
@@ -6157,13 +6138,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7616,3 +7595,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
