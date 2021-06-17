@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 22:01\n"
+"PO-Revision-Date: 2021-06-17 22:58\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -120,7 +120,7 @@ msgstr "Yorum"
 
 #: InvenTree/models.py:62
 msgid "File comment"
-msgstr "Yorum"
+msgstr "Dosya yorumu"
 
 #: InvenTree/models.py:68 InvenTree/models.py:69 part/models.py:1999
 #: report/templates/report/inventree_test_report_base.html:91
@@ -298,19 +298,19 @@ msgstr "Montajdan çıkarıldı"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr "Bileşen öğesinde kullanıldı"
+msgstr "Bileşen ögesinde kullanıldı"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr "Bileşen öğesinden çıkarıldı"
+msgstr "Bileşen ögesinden çıkarıldı"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr "Üst öğeden ayır"
+msgstr "Üst ögeden ayır"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr "Alt öğeyi ayır"
+msgstr "Alt ögeyi ayır"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:181
 msgid "Sent to customer"
@@ -374,11 +374,11 @@ msgstr "Fazlalık bir tamsayı veya yüzde olmalıdır"
 
 #: InvenTree/views.py:605
 msgid "Delete Item"
-msgstr "Öğeyi Sil"
+msgstr "Ögeyi Sil"
 
 #: InvenTree/views.py:654
 msgid "Check box to confirm item deletion"
-msgstr "Öğe silme işlemini onaylamak için kutuyu işaretleyin"
+msgstr "Öge silme işlemini onaylamak için kutuyu işaretleyin"
 
 #: InvenTree/views.py:669 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
@@ -494,7 +494,7 @@ msgstr "Miktar"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr "Yapılacak öğe sayısı"
+msgstr "Yapılacak öge sayısı"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
@@ -675,7 +675,7 @@ msgstr "Hedef Konum"
 
 #: build/models.py:188
 msgid "Select location where the completed items will be stored"
-msgstr "Tamamlanmış öğelerin saklanacağı konumu seçiniz"
+msgstr "Tamamlanmış ögelerin saklanacağı konumu seçiniz"
 
 #: build/models.py:192
 msgid "Build Quantity"
@@ -687,7 +687,7 @@ msgstr "Yapım işi stok kalemlerinin sayısı"
 
 #: build/models.py:199
 msgid "Completed items"
-msgstr "Tamamlanmış öğeler"
+msgstr "Tamamlanmış ögeler"
 
 #: build/models.py:201
 msgid "Number of stock items which have been completed"
@@ -797,11 +797,11 @@ msgstr "Yapım işi çıktısı, yapım işi emri ile eşleşmiyor"
 
 #: build/models.py:1152
 msgid "BuildItem must be unique for build, stock_item and install_into"
-msgstr "Yapım işi öğesi; yapım işi, stok kalemi ve kurulacak yer için benzersiz olmalıdır"
+msgstr "Yapım işi ögesi; yapım işi, stok kalemi ve kurulacak yer için benzersiz olmalıdır"
 
 #: build/models.py:1177
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "Ana parça izlenebilir olarak işaretlendiğinden, yapım işi çıktısı için bir yapım işi öğesi belirtmelidir"
+msgstr "Ana parça izlenebilir olarak işaretlendiğinden, yapım işi çıktısı için bir yapım işi ögesi belirtmelidir"
 
 #: build/models.py:1181
 #, python-brace-format
@@ -1108,11 +1108,11 @@ msgstr ""
 
 #: build/templates/build/build_output_create.html:15
 msgid "Trackable parts can have serial numbers specified"
-msgstr ""
+msgstr "Takip edilebilir parçaların seri numaraları belirtilmiş olmalı"
 
 #: build/templates/build/build_output_create.html:16
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr ""
+msgstr "Birden çok tek yapım işi çıktısı oluşturmak için seri numaraları girin"
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
@@ -1152,7 +1152,7 @@ msgstr "takip edilebilir parçalar tamamen tahsis edilemedi"
 
 #: build/templates/build/complete_output.html:41
 msgid "The following items will be created"
-msgstr "Aşağıdaki öğeler oluşturulacak"
+msgstr "Aşağıdaki ögeler oluşturulacak"
 
 #: build/templates/build/create_build_item.html:7
 msgid "Select a stock item to allocate to the selected build output"
@@ -1407,7 +1407,7 @@ msgstr "Yapım işi çıktısına stok tahsis edildi"
 
 #: build/views.py:865
 msgid "Item must be currently in stock"
-msgstr "Öğe stokta bulunmalı"
+msgstr "Öge stokta bulunmalı"
 
 #: build/views.py:871
 msgid "Stock item is over-allocated"
@@ -1420,7 +1420,7 @@ msgstr "Mevcut"
 
 #: build/views.py:874
 msgid "Stock item must be selected"
-msgstr ""
+msgstr "Stok kalemi seçilmeli"
 
 #: build/views.py:1037
 msgid "Edit Stock Allocation"
@@ -1428,7 +1428,7 @@ msgstr "Stok Tahsisini Düzenle"
 
 #: build/views.py:1041
 msgid "Updated Build Item"
-msgstr ""
+msgstr "Yapım İşi Ögesini Güncelle"
 
 #: build/views.py:1070
 msgid "Add Build Order Attachment"
@@ -1437,56 +1437,56 @@ msgstr ""
 #: build/views.py:1083 order/views.py:115 order/views.py:167 part/views.py:173
 #: stock/views.py:277
 msgid "Added attachment"
-msgstr ""
+msgstr "Ek eklendi"
 
 #: build/views.py:1119 order/views.py:194 order/views.py:215
 msgid "Edit Attachment"
-msgstr ""
+msgstr "Ek Düzenle"
 
 #: build/views.py:1129 order/views.py:198 order/views.py:219
 msgid "Attachment updated"
-msgstr ""
+msgstr "Ek güncellendi"
 
 #: build/views.py:1139 order/views.py:234 order/views.py:248
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Eki Sil"
 
 #: build/views.py:1144 order/views.py:240 order/views.py:254 stock/views.py:333
 msgid "Deleted attachment"
-msgstr ""
+msgstr "Eki sil"
 
 #: common/files.py:64
 msgid "Unsupported file format: {ext.upper()}"
-msgstr ""
+msgstr "Desteklenmeyen dosya formatı: {ext.upper()}"
 
 #: common/files.py:69
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Dosya okurken hata (geçersiz biçim)"
 
 #: common/files.py:71
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Dosya okurken hata (hatalı ölçüler)"
 
 #: common/files.py:73
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Dosya okurken hata (veri bozulmuş olabilir)"
 
 #: common/forms.py:39 templates/attachment_table.html:15
 msgid "File"
-msgstr ""
+msgstr "Dosya"
 
 #: common/forms.py:40
 msgid "Select file to upload"
-msgstr ""
+msgstr "Yüklenecek dosyayı seç"
 
 #: common/forms.py:55
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Dosya"
 
 #: common/forms.py:56
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "{name} dosyasını yüklemek için seçin"
 
 #: common/models.py:59
 msgid "InvenTree Instance Name"
@@ -1526,7 +1526,7 @@ msgstr ""
 
 #: common/models.py:86
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Harici URL'den resim ve dosyaların indirilmesine izin ver"
 
 #: common/models.py:92
 msgid "Barcode Support"
@@ -1586,11 +1586,11 @@ msgstr ""
 
 #: common/models.py:139
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Kategori Paremetre Sablonu Kopyala"
 
 #: common/models.py:140
 msgid "Copy category parameter templates when creating a part"
-msgstr ""
+msgstr "Parça oluştururken kategori parametre şablonlarını kopyala"
 
 #: common/models.py:146
 msgid "Recent Part Count"
@@ -1604,64 +1604,64 @@ msgstr ""
 #: report/models.py:186 stock/forms.py:259 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:315
 msgid "Template"
-msgstr ""
+msgstr "Şablon"
 
 #: common/models.py:154
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Parçaları varsayılan olan şablondur"
 
 #: common/models.py:160 part/models.py:834 part/templates/part/detail.html:170
 #: templates/js/table_filters.js:128 templates/js/table_filters.js:327
 msgid "Assembly"
-msgstr ""
+msgstr "Montaj"
 
 #: common/models.py:161
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "Parçalar varsayılan olarak başka bileşenlerden monte edilebilir"
 
 #: common/models.py:167 part/models.py:840 part/templates/part/detail.html:180
 #: templates/js/table_filters.js:331
 msgid "Component"
-msgstr ""
+msgstr "Bileşen"
 
 #: common/models.py:168
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "Parçalar varsayılan olarak alt bileşen olarak kullanılabilir"
 
 #: common/models.py:174 part/models.py:851 part/templates/part/detail.html:200
 msgid "Purchaseable"
-msgstr ""
+msgstr "Satın Alınabilir"
 
 #: common/models.py:175
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "Parçalar varsayılan olarak satın alınabilir"
 
 #: common/models.py:181 part/models.py:856 part/templates/part/detail.html:210
 #: templates/js/table_filters.js:339
 msgid "Salable"
-msgstr ""
+msgstr "Satılabilir"
 
 #: common/models.py:182
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "Parçalar varsayılan olarak satılabilir"
 
 #: common/models.py:188 part/models.py:846 part/templates/part/detail.html:190
 #: templates/js/table_filters.js:33 templates/js/table_filters.js:343
 msgid "Trackable"
-msgstr ""
+msgstr "Takip Edilebilir"
 
 #: common/models.py:189
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Parçalar varsayılan olarak takip edilebilir"
 
 #: common/models.py:195 part/models.py:866 part/templates/part/detail.html:150
 #: templates/js/table_filters.js:29
 msgid "Virtual"
-msgstr ""
+msgstr "Sanal"
 
 #: common/models.py:196
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Parçalar varsayılan olarak sanaldır"
 
 #: common/models.py:202
 msgid "Show Quantity in Forms"
@@ -1737,7 +1737,7 @@ msgstr ""
 
 #: common/models.py:264
 msgid "Enable ownership control over stock locations and items"
-msgstr "Stok konumu ve öğeler üzerinde sahiplik kontrolünü etkinleştirin"
+msgstr "Stok konumu ve ögeler üzerinde sahiplik kontrolünü etkinleştirin"
 
 #: common/models.py:270
 msgid "Group by Part"
@@ -1849,7 +1849,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:22 order/views.py:582
 #: part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload File"
-msgstr ""
+msgstr "Dosya Yükle"
 
 #: common/views.py:185 order/templates/order/order_wizard/match_fields.html:52
 #: order/views.py:583 part/templates/part/bom_upload/select_fields.html:58
@@ -2552,7 +2552,7 @@ msgstr ""
 
 #: company/views.py:214 part/views.py:985
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Sağlanan URL geçerli bir resim dosyası değil"
 
 #: company/views.py:243
 msgid "Update Company Image"
@@ -2624,7 +2624,7 @@ msgstr ""
 
 #: label/api.py:56 report/api.py:201
 msgid "No valid objects provided to template"
-msgstr ""
+msgstr "Şablon için geçerli bir nesne sağlanmadı"
 
 #: label/models.py:103
 msgid "Label name"
@@ -2668,11 +2668,11 @@ msgstr "Etiket yüksekliği mm olarak belirtilmeli"
 
 #: label/models.py:144 report/models.py:290
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Dosya Adı Deseni"
 
 #: label/models.py:145
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Etiket dosya adları oluşturma için desen"
 
 #: label/models.py:244 label/models.py:297
 msgid "Query filters (comma-separated list of key=value pairs"
@@ -2722,7 +2722,7 @@ msgstr ""
 
 #: order/forms.py:242
 msgid "Enter stock item serial numbers"
-msgstr ""
+msgstr "Stok kalemi seri numaları girin"
 
 #: order/forms.py:248
 msgid "Enter quantity of stock items"
@@ -2920,7 +2920,7 @@ msgstr "Tahsis miktarı stok miktarını aşamaz"
 
 #: order/models.py:821
 msgid "Quantity must be 1 for serialized stock item"
-msgstr ""
+msgstr "Seri numaralı stok kalemi için miktar bir olmalı"
 
 #: order/models.py:826
 msgid "Line"
@@ -2960,7 +2960,7 @@ msgstr ""
 
 #: order/templates/order/order_base.html:64
 msgid "Export order to file"
-msgstr ""
+msgstr "Emiri dosya çıkar"
 
 #: order/templates/order/order_base.html:72
 #: order/templates/order/po_navbar.html:12
@@ -3023,7 +3023,7 @@ msgstr ""
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/bom_upload/select_fields.html:21
 msgid "Missing selections for the following required columns"
-msgstr ""
+msgstr "Aşağıdaki gerekli sütunlar için eksik seçimler"
 
 #: order/templates/order/order_wizard/match_fields.html:20
 msgid "Duplicate selections found, see below. Fix them then retry submitting."
@@ -3044,7 +3044,7 @@ msgstr ""
 #: order/templates/order/order_wizard/match_fields.html:35
 #: part/templates/part/bom_upload/select_fields.html:41
 msgid "File Fields"
-msgstr ""
+msgstr "Dosya Alanları"
 
 #: order/templates/order/order_wizard/match_fields.html:42
 #: part/templates/part/bom_upload/select_fields.html:47
@@ -3321,7 +3321,7 @@ msgstr ""
 
 #: order/templates/order/sales_order_detail.html:343
 msgid "Allocate serial numbers"
-msgstr ""
+msgstr "Seri numaralarını tahsis et"
 
 #: order/templates/order/sales_order_detail.html:346 templates/js/build.js:651
 msgid "Allocate stock"
@@ -3513,7 +3513,7 @@ msgstr ""
 
 #: order/views.py:1521
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "Seri Numaralarını Tahsis Et"
 
 #: order/views.py:1566
 #, python-brace-format
@@ -3527,17 +3527,17 @@ msgstr ""
 #: order/views.py:1613
 #, python-brace-format
 msgid "No matching item for serial {serial}"
-msgstr ""
+msgstr "{serial} seri numarası için eşleşen öge bulunamadı"
 
 #: order/views.py:1623
 #, python-brace-format
 msgid "{serial} is not in stock"
-msgstr ""
+msgstr "{serial} stokta yok"
 
 #: order/views.py:1631
 #, python-brace-format
 msgid "{serial} already allocated to an order"
-msgstr ""
+msgstr "{serial} zaten bir emirde tahsis edilmiş"
 
 #: order/views.py:1685
 msgid "Allocate Stock to Order"
@@ -3709,7 +3709,7 @@ msgstr ""
 
 #: part/forms.py:237
 msgid "Include category parameter templates"
-msgstr ""
+msgstr "Kategori parametre şablonlarını dahil et"
 
 #: part/forms.py:242
 msgid "Include parent categories parameter templates"
@@ -3761,15 +3761,15 @@ msgstr ""
 
 #: part/models.py:555
 msgid "Next available serial numbers are"
-msgstr ""
+msgstr "Sonraki kullanılabilir seri numaraları"
 
 #: part/models.py:559
 msgid "Next available serial number is"
-msgstr ""
+msgstr "Sonraki müsait seri numarası"
 
 #: part/models.py:564
 msgid "Most recent serial number is"
-msgstr ""
+msgstr "En son seri numarası"
 
 #: part/models.py:643
 msgid "Duplicate IPN not allowed in part settings"
@@ -3785,11 +3785,11 @@ msgstr ""
 
 #: part/models.py:692
 msgid "Is Template"
-msgstr ""
+msgstr "Şablon Mu"
 
 #: part/models.py:693
 msgid "Is this part a template part?"
-msgstr ""
+msgstr "Bu parça bir şablon parçası mı?"
 
 #: part/models.py:704
 msgid "Is this part a variant of another part?"
@@ -3941,7 +3941,7 @@ msgstr ""
 
 #: part/models.py:2040
 msgid "Test templates can only be created for trackable parts"
-msgstr ""
+msgstr "Test şablonları sadece takip edilebilir paçalar için oluşturulabilir"
 
 #: part/models.py:2057
 msgid "Test with this name already exists for this part"
@@ -3966,11 +3966,11 @@ msgstr ""
 #: part/models.py:2089 templates/js/part.js:725
 #: templates/js/table_filters.js:227
 msgid "Required"
-msgstr ""
+msgstr "Gerekli"
 
 #: part/models.py:2090
 msgid "Is this test required to pass?"
-msgstr ""
+msgstr "Testi geçmesi için bu gerekli mi?"
 
 #: part/models.py:2095 templates/js/part.js:733
 msgid "Requires Value"
@@ -3990,7 +3990,7 @@ msgstr ""
 
 #: part/models.py:2135
 msgid "Parameter template name must be unique"
-msgstr ""
+msgstr "Parametre şablon adı benzersiz olmalıdır"
 
 #: part/models.py:2140
 msgid "Parameter Name"
@@ -4003,7 +4003,7 @@ msgstr ""
 #: part/models.py:2170 part/models.py:2219 part/models.py:2220
 #: templates/InvenTree/settings/category.html:62
 msgid "Parameter Template"
-msgstr ""
+msgstr "Parametre Şablonu"
 
 #: part/models.py:2172
 msgid "Data"
@@ -4242,11 +4242,11 @@ msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:21
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "Malzeme Listesi dosyası gerekli sütün adlarını sağlandığı şekilde içermelidir "
 
 #: part/templates/part/bom_upload/upload_file.html:21
 msgid "BOM Upload Template"
-msgstr ""
+msgstr "Malzeme Listesi Şablonu Yükle"
 
 #: part/templates/part/bom_upload/upload_file.html:22
 msgid "Each part must already exist in the database"
@@ -4429,11 +4429,11 @@ msgstr ""
 
 #: part/templates/part/detail.html:42 part/templates/part/part_base.html:188
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Son Seri Numarası"
 
 #: part/templates/part/detail.html:47
 msgid "No serial numbers recorded"
-msgstr ""
+msgstr "Seri numaraları kaydedildi"
 
 #: part/templates/part/detail.html:120
 msgid "Stock Expiry Time"
@@ -4457,7 +4457,7 @@ msgstr "Bu parça bir şablon parçadır (Bu parçanın çeşitleri yapılabilir
 
 #: part/templates/part/detail.html:165
 msgid "Part is not a template part"
-msgstr ""
+msgstr "Parça şablon parçası değil"
 
 #: part/templates/part/detail.html:173
 msgid "Part can be assembled from other parts"
@@ -4477,11 +4477,11 @@ msgstr ""
 
 #: part/templates/part/detail.html:193
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Parça stoku seri numarası ile takip edilebilir"
 
 #: part/templates/part/detail.html:195
 msgid "Part stock is not tracked by serial number"
-msgstr ""
+msgstr "Parça stoku seri numarası ile takip edilemez"
 
 #: part/templates/part/detail.html:203 part/templates/part/detail.html:205
 msgid "Part can be purchased from external suppliers"
@@ -4550,7 +4550,7 @@ msgstr ""
 
 #: part/templates/part/navbar.html:112 part/templates/part/part_tests.html:10
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Parça Test Şablonları"
 
 #: part/templates/part/navbar.html:115 stock/templates/stock/item_base.html:409
 msgid "Tests"
@@ -4669,11 +4669,11 @@ msgstr ""
 
 #: part/templates/part/params.html:68
 msgid "New Template"
-msgstr ""
+msgstr "Yeni Şablon"
 
 #: part/templates/part/params.html:69
 msgid "Create New Parameter Template"
-msgstr ""
+msgstr "Yeni Parametre Şablonu Oluştur"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
@@ -4704,7 +4704,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:93
 #: stock/templates/stock/location.html:54
 msgid "Print Label"
-msgstr ""
+msgstr "Etiket Yazdır"
 
 #: part/templates/part/part_base.html:48
 msgid "Show pricing information"
@@ -4745,11 +4745,11 @@ msgstr ""
 
 #: part/templates/part/part_base.html:143 templates/InvenTree/index.html:131
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Yapım İşi Emirleri için Gerekli"
 
 #: part/templates/part/part_base.html:150
 msgid "Required for Sales Orders"
-msgstr ""
+msgstr "Satış Emirleri için Gerekli"
 
 #: part/templates/part/part_base.html:157
 msgid "Allocated to Orders"
@@ -4766,7 +4766,7 @@ msgstr ""
 
 #: part/templates/part/part_tests.html:17
 msgid "Add Test Template"
-msgstr ""
+msgstr "Test Şablonu Ekle"
 
 #: part/templates/part/part_thumb.html:20
 msgid "Select from existing images"
@@ -4859,7 +4859,7 @@ msgstr "Yeni parça çeşidi oluştur"
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <i>'%(full_name)s'</i>."
-msgstr "<i>%(full_name)s</i> şablonu için yeni bir çeşit."
+msgstr "<i>%(full_name)s</i> şablonu için yeni bir çeşit oluştur."
 
 #: part/templates/part/variants.html:19
 msgid "Create new variant"
@@ -4903,15 +4903,15 @@ msgstr ""
 
 #: part/views.py:248
 msgid "Create Test Template"
-msgstr ""
+msgstr "Test Şablonu Oluştur"
 
 #: part/views.py:275
 msgid "Edit Test Template"
-msgstr ""
+msgstr "Test Şablonu Düzenle"
 
 #: part/views.py:289
 msgid "Delete Test Template"
-msgstr ""
+msgstr "Test Şablonu Sil"
 
 #: part/views.py:296
 msgid "Set Part Category"
@@ -5024,15 +5024,15 @@ msgstr ""
 
 #: part/views.py:2178
 msgid "Create Part Parameter Template"
-msgstr ""
+msgstr "Parça Parametre Şablonu Oluştur"
 
 #: part/views.py:2188
 msgid "Edit Part Parameter Template"
-msgstr ""
+msgstr "Parça Parametre Şablonu Düzenle"
 
 #: part/views.py:2195
 msgid "Delete Part Parameter Template"
-msgstr ""
+msgstr "Parça Parametre Şablonu Sil"
 
 #: part/views.py:2203
 msgid "Create Part Parameter"
@@ -5060,15 +5060,15 @@ msgstr ""
 
 #: part/views.py:2423
 msgid "Create Category Parameter Template"
-msgstr ""
+msgstr "Kategori Parametre Şablonu Oluştur"
 
 #: part/views.py:2524
 msgid "Edit Category Parameter Template"
-msgstr ""
+msgstr "Kategori Parametre Şablonu Düzenle"
 
 #: part/views.py:2580
 msgid "Delete Category Parameter Template"
-msgstr ""
+msgstr "Kategori Parametre Şablonu Sil"
 
 #: part/views.py:2599
 msgid "Create BOM Item"
@@ -5084,15 +5084,15 @@ msgstr ""
 
 #: report/models.py:181
 msgid "Template name"
-msgstr ""
+msgstr "Şablon adı"
 
 #: report/models.py:187
 msgid "Report template file"
-msgstr ""
+msgstr "Rapor şablon dosyası"
 
 #: report/models.py:194
 msgid "Report template description"
-msgstr ""
+msgstr "Rapor şablon tanımı"
 
 #: report/models.py:200
 msgid "Report revision number (auto-increments)"
@@ -5104,7 +5104,7 @@ msgstr ""
 
 #: report/models.py:298
 msgid "Report template is enabled"
-msgstr ""
+msgstr "Rapor şablonu etkin"
 
 #: report/models.py:318
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
@@ -5168,7 +5168,7 @@ msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:147
 msgid "Required For"
-msgstr ""
+msgstr "İçin Gerekli Olan"
 
 #: report/templates/report/inventree_po_report.html:85
 #: report/templates/report/inventree_so_report.html:85
@@ -5209,7 +5209,7 @@ msgstr ""
 #: stock/api.py:212
 #, python-brace-format
 msgid "Updated stock for {n} items"
-msgstr "{n} öğe için stok güncellendi"
+msgstr "{n} öge için stok güncellendi"
 
 #: stock/api.py:281
 #, python-brace-format
@@ -5227,7 +5227,7 @@ msgstr "Bu stok kalemi için son kullanma tarihi"
 
 #: stock/forms.py:118
 msgid "Enter unique serial numbers (or leave blank)"
-msgstr ""
+msgstr "Benzersiz seri numaraları giriniz (veya boş bırakınız)"
 
 #: stock/forms.py:169
 msgid "Destination for serialized stock (by default, will remain in current location)"
@@ -5235,11 +5235,11 @@ msgstr "Seri numaralandırılmış stok için hedef konum(varsayılan olarak, ge
 
 #: stock/forms.py:171
 msgid "Serial numbers"
-msgstr ""
+msgstr "Seri numaraları"
 
 #: stock/forms.py:171
 msgid "Unique serial numbers (must match quantity)"
-msgstr ""
+msgstr "Benzersiz seri numaraları (miktar ile eşleşmeli)"
 
 #: stock/forms.py:173 stock/forms.py:349
 msgid "Add transaction note (optional)"
@@ -5247,7 +5247,7 @@ msgstr "İşlem notu ekle (isteğe bağlı)"
 
 #: stock/forms.py:203 stock/forms.py:259
 msgid "Select test report template"
-msgstr ""
+msgstr "Test raporu şablonu seç"
 
 #: stock/forms.py:267 templates/js/table_filters.js:75
 #: templates/js/table_filters.js:138
@@ -5272,7 +5272,7 @@ msgstr ""
 
 #: stock/forms.py:347
 msgid "Destination location for uninstalled items"
-msgstr "Sökülen öğeler için hedef konum"
+msgstr "Sökülen ögeler için hedef konum"
 
 #: stock/forms.py:351
 msgid "Confirm uninstall"
@@ -5288,7 +5288,7 @@ msgstr "Hedef stok konumu"
 
 #: stock/forms.py:377
 msgid "Add note (required)"
-msgstr ""
+msgstr "Not ekle (gerekli)"
 
 #: stock/forms.py:381 stock/views.py:852 stock/views.py:1051
 msgid "Confirm stock adjustment"
@@ -5325,11 +5325,11 @@ msgstr ""
 
 #: stock/models.py:321 stock/models.py:330
 msgid "Quantity must be 1 for item with a serial number"
-msgstr ""
+msgstr "Seri numarası olan ögenin miktarı bir olmalı"
 
 #: stock/models.py:322
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr ""
+msgstr "Miktar birden büyük ise seri numarası ayarlanamaz"
 
 #: stock/models.py:344
 msgid "Item cannot belong to itself"
@@ -5377,7 +5377,7 @@ msgstr ""
 
 #: stock/models.py:456
 msgid "Serial number for this item"
-msgstr ""
+msgstr "Bu öge için seri numarası"
 
 #: stock/models.py:468
 msgid "Batch code for this stock item"
@@ -5443,16 +5443,16 @@ msgstr ""
 
 #: stock/models.py:1026
 msgid "Serial numbers must be a list of integers"
-msgstr ""
+msgstr "Seri numaraları tam sayı listesi olmalı"
 
 #: stock/models.py:1029
 msgid "Quantity does not match serial numbers"
-msgstr ""
+msgstr "Miktar seri numaları ile eşleşmiyor"
 
 #: stock/models.py:1036
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
-msgstr ""
+msgstr "Seri numaraları zaten mevcut: {exists}"
 
 #: stock/models.py:1194
 msgid "StockItem cannot be moved as it is not in stock"
@@ -5553,7 +5553,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:117
 msgid "Serialize stock"
-msgstr ""
+msgstr "Stoku seri numarala"
 
 #: stock/templates/stock/item_base.html:121
 msgid "Transfer stock"
@@ -5610,7 +5610,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:192
 msgid "This stock item has not passed all required tests"
-msgstr ""
+msgstr "Stok kalemi tüm gerekli testleri geçmedi"
 
 #: stock/templates/stock/item_base.html:200
 #, python-format
@@ -5624,7 +5624,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:214
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
-msgstr ""
+msgstr "Bu stok kalemi seri numaları - Benzersiz bir seri numarasına sahip ve miktarı ayarlanamaz."
 
 #: stock/templates/stock/item_base.html:218
 msgid "This stock item cannot be deleted as it has child items"
@@ -5691,7 +5691,7 @@ msgstr ""
 
 #: stock/templates/stock/item_install.html:7
 msgid "Install another StockItem into this item."
-msgstr "Bu öğeye başka bir stok kalemi ekle."
+msgstr "Bu ögeye başka bir stok kalemi ekle."
 
 #: stock/templates/stock/item_install.html:10
 msgid "Stock items can only be installed if they meet the following criteria"
@@ -5712,11 +5712,11 @@ msgstr ""
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr ""
+msgstr "Bu stok kalemi için seri numaralandırılmış ögeler oluştur."
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
-msgstr ""
+msgstr "Seri numaralandırılacak miktarı ve benzersiz seri numaralarını seçin."
 
 #: stock/templates/stock/item_tests.html:11
 #: stock/templates/stock/navbar.html:19 stock/templates/stock/navbar.html:22
@@ -5842,7 +5842,7 @@ msgstr "Yazdırma İşlemleri"
 
 #: stock/templates/stock/sublocation.html:27 templates/stock_table.html:41
 msgid "Print labels"
-msgstr ""
+msgstr "Etiketleri yazdır"
 
 #: stock/templates/stock/tracking_delete.html:6
 msgid "Are you sure you want to delete this stock tracking entry?"
@@ -5855,7 +5855,7 @@ msgstr "Stok konumunu düzenle"
 #: stock/views.py:230 stock/views.py:1343 stock/views.py:1465
 #: stock/views.py:1830
 msgid "Owner is required (ownership control is enabled)"
-msgstr ""
+msgstr "Sahip gerekli (sahip kontrolü etkinleştirildi)"
 
 #: stock/views.py:245
 msgid "Stock Location QR code"
@@ -6029,7 +6029,7 @@ msgstr ""
 
 #: stock/views.py:1482
 msgid "Serialize Stock"
-msgstr ""
+msgstr "Stoku Seri Numarala"
 
 #: stock/views.py:1575 templates/js/build.js:244
 msgid "Create new Stock Item"
@@ -6181,21 +6181,21 @@ msgstr "Kategori Ayarları"
 
 #: templates/InvenTree/settings/category.html:25
 msgid "Category Parameter Templates"
-msgstr ""
+msgstr "Kategori Parametre Şablonu"
 
 #: templates/InvenTree/settings/category.html:52
 msgid "No category parameter templates found"
-msgstr ""
+msgstr "Kategori parametre şablonu bulunamadı"
 
 #: templates/InvenTree/settings/category.html:70
 #: templates/InvenTree/settings/part.html:81
 msgid "Edit Template"
-msgstr ""
+msgstr "Şablonu Düzenle"
 
 #: templates/InvenTree/settings/category.html:71
 #: templates/InvenTree/settings/part.html:82
 msgid "Delete Template"
-msgstr ""
+msgstr "Şablonu Sil"
 
 #: templates/InvenTree/settings/currencies.html:10
 msgid "Currency Settings"
@@ -6243,11 +6243,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/part.html:40
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "Parça Parametre Şablonu"
 
 #: templates/InvenTree/settings/part.html:61
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "Parça parametre şablonu bulunamadı"
 
 #: templates/InvenTree/settings/po.html:9
 msgid "Purchase Order Settings"
@@ -6588,7 +6588,7 @@ msgstr ""
 
 #: templates/js/build.js:559
 msgid "Required Part"
-msgstr ""
+msgstr "Gerekli Parça"
 
 #: templates/js/build.js:580
 msgid "Quantity Per"
@@ -6635,7 +6635,7 @@ msgstr ""
 #: templates/js/company.js:148 templates/js/company.js:246
 #: templates/js/part.js:68 templates/js/part.js:153
 msgid "Template part"
-msgstr ""
+msgstr "Şablon Parça"
 
 #: templates/js/company.js:152 templates/js/company.js:250
 #: templates/js/part.js:72 templates/js/part.js:157
@@ -6648,11 +6648,11 @@ msgstr ""
 
 #: templates/js/filters.js:167 templates/js/filters.js:397
 msgid "true"
-msgstr ""
+msgstr "doğru"
 
 #: templates/js/filters.js:171 templates/js/filters.js:398
 msgid "false"
-msgstr ""
+msgstr "yanlış"
 
 #: templates/js/filters.js:193
 msgid "Select filter"
@@ -6676,15 +6676,15 @@ msgstr ""
 
 #: templates/js/label.js:11
 msgid "Stock item(s) must be selected before printing labels"
-msgstr ""
+msgstr "Etiket yazdırılmadan önce stok kalemleri seçilmeli"
 
 #: templates/js/label.js:29 templates/js/label.js:79
 msgid "No Labels Found"
-msgstr ""
+msgstr "Etiket Bulunamadı"
 
 #: templates/js/label.js:30
 msgid "No labels found which match selected stock item(s)"
-msgstr ""
+msgstr "Seçili stok kalemleri için etiket bulunamadı"
 
 #: templates/js/label.js:61
 msgid "Select Stock Locations"
@@ -6704,11 +6704,11 @@ msgstr ""
 
 #: templates/js/label.js:162
 msgid "Select Label"
-msgstr ""
+msgstr "Etiket Seç"
 
 #: templates/js/label.js:177
 msgid "Select Label Template"
-msgstr ""
+msgstr "Etiket Şablonu Seç"
 
 #: templates/js/modals.js:265
 msgid "Waiting for server..."
@@ -6781,7 +6781,7 @@ msgstr ""
 
 #: templates/js/modals.js:927
 msgid "You do not have the required permissions to access this function"
-msgstr ""
+msgstr "Bu fonksiyona erişmek için gerekli izinlere sahip değilsiniz"
 
 #: templates/js/modals.js:931
 msgid "Error 404: Resource Not Found"
@@ -6861,7 +6861,7 @@ msgstr ""
 
 #: templates/js/part.js:702
 msgid "No test templates matching query"
-msgstr ""
+msgstr "Sorgu ile eşleşen test şablonu bulunamadı"
 
 #: templates/js/part.js:753 templates/js/stock.js:75
 msgid "Edit test result"
@@ -6885,11 +6885,11 @@ msgstr ""
 
 #: templates/js/report.js:55
 msgid "Select Report Template"
-msgstr ""
+msgstr "Rapor Şablonu Seç"
 
 #: templates/js/report.js:70
 msgid "Select Test Report Template"
-msgstr ""
+msgstr "Test Raporu Şablonu Seç"
 
 #: templates/js/report.js:99
 msgid "Stock item(s) must be selected before printing reports"
@@ -6903,7 +6903,7 @@ msgstr ""
 
 #: templates/js/report.js:117
 msgid "No report templates found which match selected stock item(s)"
-msgstr ""
+msgstr "Seçili stok kalemleri için rapor şablonu bulunamadı"
 
 #: templates/js/report.js:152
 msgid "Select Builds"
@@ -6915,7 +6915,7 @@ msgstr ""
 
 #: templates/js/report.js:170
 msgid "No report templates found which match selected build(s)"
-msgstr ""
+msgstr "Seçili yapım işleri için rapor şablonu bulunamadı"
 
 #: templates/js/report.js:205
 msgid "Select Parts"
@@ -6927,7 +6927,7 @@ msgstr ""
 
 #: templates/js/report.js:224
 msgid "No report templates found which match selected part(s)"
-msgstr ""
+msgstr "Seçili parçalar için rapor şablonu bulunamadı"
 
 #: templates/js/report.js:259
 msgid "Select Purchase Orders"
@@ -6939,7 +6939,7 @@ msgstr ""
 
 #: templates/js/report.js:278 templates/js/report.js:332
 msgid "No report templates found which match selected orders"
-msgstr ""
+msgstr "Seçili emirler için rapor şablonu bulunamadı"
 
 #: templates/js/report.js:313
 msgid "Select Sales Orders"
@@ -7119,7 +7119,7 @@ msgstr ""
 
 #: templates/js/stock.js:1364
 msgid "Serial"
-msgstr ""
+msgstr "Seri No"
 
 #: templates/js/stock.js:1392
 msgid "Uninstall Stock Item"
@@ -7148,28 +7148,28 @@ msgstr ""
 
 #: templates/js/table_filters.js:97 templates/js/table_filters.js:186
 msgid "Is Serialized"
-msgstr ""
+msgstr "Seri Numaralı"
 
 #: templates/js/table_filters.js:100 templates/js/table_filters.js:193
 msgid "Serial number GTE"
-msgstr ""
+msgstr "Seri numarası BvE"
 
 #: templates/js/table_filters.js:101 templates/js/table_filters.js:194
 msgid "Serial number greater than or equal to"
-msgstr ""
+msgstr "Seri numarası büyük veya eşit"
 
 #: templates/js/table_filters.js:104 templates/js/table_filters.js:197
 msgid "Serial number LTE"
-msgstr ""
+msgstr "Seri numarası KvE"
 
 #: templates/js/table_filters.js:105 templates/js/table_filters.js:198
 msgid "Serial number less than or equal to"
-msgstr ""
+msgstr "Seri numarası küçük veya eşit"
 
 #: templates/js/table_filters.js:108 templates/js/table_filters.js:109
 #: templates/js/table_filters.js:189 templates/js/table_filters.js:190
 msgid "Serial number"
-msgstr ""
+msgstr "Seri numarası"
 
 #: templates/js/table_filters.js:113 templates/js/table_filters.js:207
 msgid "Batch code"
