@@ -198,18 +198,18 @@ The part single price is the current purchase price for that supplier part."></i
             var bomdata = {
                 labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
                 datasets:  [
-                {% if bom_pie_min %}
+                {
+                  label: 'Price',
+                  data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
+                  backgroundColor: bom_colors,
+                },
+                {% if bom_pie_max %}
                 {
                     label: 'Max Price',
                     data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
                     backgroundColor: bom_colors,
                   },
                 {% endif %}
-                {
-                  label: 'Price',
-                  data: [{% for line in bom_parts %}{% if bom_pie_min %}{{ line.min_price }}{% else %}{{ line.price }}{% endif%},{% endfor %}],
-                  backgroundColor: bom_colors,
-                }
               ]
             };
             var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)

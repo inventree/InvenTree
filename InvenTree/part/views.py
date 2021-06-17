@@ -846,17 +846,26 @@ class PartPricingView(PartDetail):
             ctx['price_history'] = ret
 
         # BOM Information for Pie-Chart
-        bom_items = [{'name': str(a.sub_part), 'price': a.sub_part.get_price_range(quantity), 'q': a.quantity} for a in part.bom_items.all()]
-        if [True for a in bom_items if len(set(a['price'])) == 2]:
-            ctx['bom_parts'] = [{
-                'name': a['name'],
-                'min_price': str((a['price'][0] * a['q']) / quantity),
-                'max_price': str((a['price'][1] * a['q']) / quantity)} for a in bom_items]
-            ctx['bom_pie_min'] = True
-        else:
-            ctx['bom_parts'] = [{
-                'name': a['name'],
-                'price': str((a['price'][0] * a['q']) / quantity)} for a in bom_items]
+        if part.has_bom:
+            # iterate over all bom-items
+            ctx_bom_parts = []
+            for item in  part.bom_items.all():
+                ctx_item = {'name': str(item.sub_part)}
+                price, qty = item.sub_part.get_price_range(quantity), item.quantity
+
+                price_min, price_max = 0, 0
+                if price:  # check if price available
+                    price_min = str((price[0] * qty) / quantity)
+                    if len(set(price)) == 2:  # min and max-price present
+                        price_max = str((price[1] * qty) / quantity)
+                        ctx['bom_pie_max'] = True  # enable showing min prices in bom
+
+                ctx_item['max_price'] = price_min
+                ctx_item['min_price'] = price_max if price_max else price_min
+                ctx_bom_parts.append(ctx_item)
+
+            # add to global context
+            ctx['bom_parts'] = ctx_bom_parts
 
         return ctx
 
