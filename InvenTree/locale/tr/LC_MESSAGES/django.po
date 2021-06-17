@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 12:38\n"
+"PO-Revision-Date: 2021-06-17 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr "API uçnoktası bulunmadı"
+msgstr "API uç noktası bulunamadı"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr "Hiçbir eylem belirtilmedi"
+msgstr "Eylem belirtilmedi"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
@@ -374,27 +374,27 @@ msgstr ""
 
 #: InvenTree/views.py:605
 msgid "Delete Item"
-msgstr ""
+msgstr "Öğeyi Sil"
 
 #: InvenTree/views.py:654
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Öğe silme işlemini onaylamak için kutuyu işaretleyin"
 
 #: InvenTree/views.py:669 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
-msgstr ""
+msgstr "Kullanıcı Bilgisini Düzenle"
 
 #: InvenTree/views.py:680 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
-msgstr ""
+msgstr "Şifre Belirle"
 
 #: InvenTree/views.py:699
 msgid "Password fields must match"
-msgstr ""
+msgstr "Parola alanları eşleşmelidir"
 
 #: InvenTree/views.py:950 templates/navbar.html:95
 msgid "System Information"
-msgstr ""
+msgstr "Sistem Bilgisi"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
