@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from common.settings import currency_code_default
 
 from markdownx.models import MarkdownxField
+from mptt.models import TreeForeignKey
 
 from djmoney.models.fields import MoneyField
 
@@ -671,6 +672,29 @@ class PurchaseOrderLineItem(OrderLineItem):
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
     )
+
+    destination = TreeForeignKey(
+        'stock.StockLocation', on_delete=models.DO_NOTHING,
+        verbose_name=_('Destination'),
+        related_name='po_lines',
+        blank=True, null=True,
+        help_text=_('Where does the Purchaser want this item to be stored?')
+    )
+
+    def get_destination(self):
+        """Show where the line item is or should be placed"""
+        # NOTE: If a line item gets split when recieved, only an arbitrary
+        # stock items location will be reported as the location for the
+        # entire line.
+        for stock in stock_models.StockItem.objects.filter(
+            supplier_part=self.part, purchase_order=self.order
+        ):
+            if stock.location:
+                return stock.location
+        if self.destination:
+            return self.destination
+        if self.part and self.part.part and self.part.part.default_location:
+            return self.part.part.default_location
 
     def remaining(self):
         """ Calculate the number of items remaining to be received """
