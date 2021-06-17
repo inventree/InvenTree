@@ -117,6 +117,7 @@ $("#po-table").inventreeTable({
         part_detail: true,
     },
     url: "{% url 'api-po-line-list' %}",
+    showFooter: true,
     columns: [
         {
             field: 'pk',
@@ -137,6 +138,9 @@ $("#po-table").inventreeTable({
                     return '-';
                 }
             },
+            footerFormatter:  function() {
+                return '{% trans "Total" %}'
+            }
         },
         {
             field: 'part_detail.description',
@@ -172,7 +176,14 @@ $("#po-table").inventreeTable({
         {
             sortable: true,
             field: 'quantity',
-            title: '{% trans "Quantity" %}'
+            title: '{% trans "Quantity" %}',
+            footerFormatter: function(data) {
+                return data.map(function (row) {
+                  return +row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+              }
         },
         {
             sortable: true,
@@ -181,6 +192,25 @@ $("#po-table").inventreeTable({
             formatter: function(value, row) {
                 return row.purchase_price_string || row.purchase_price;
             }
+        },
+        {
+            sortable: true,
+            title: '{% trans "Total price" %}',
+            formatter: function(value, row) {
+                var total = row.purchase_price * row.quantity;
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
+                return formatter.format(total)
+            },
+            footerFormatter: function(data) {
+                var total = data.map(function (row) {
+                  return +row['purchase_price']*row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency)  || 'USD';
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
+                return formatter.format(total)
+              }
         },
         {
             sortable: true,
@@ -203,6 +233,10 @@ $("#po-table").inventreeTable({
 
                 return (progressA < progressB) ? 1 : -1;
             }
+        },
+        {
+            field: 'destination.pathstring',
+            title: '{% trans "Destination" %}',
         },
         {
             field: 'notes',

@@ -13,8 +13,8 @@ version: "3.8"
 services:
     # InvenTree web server services
     # Uses gunicorn as the web server
-    inventree-server:
-        container_name: inventree-server
+    inventree-dev-server:
+        container_name: inventree-dev-server
         build:
             context: .
             target: dev
@@ -22,7 +22,7 @@ services:
             - 8000:8000
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
-            - src:/home/inventree/src
+            - src:/home/inventree
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
@@ -30,24 +30,24 @@ services:
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
-    inventree-worker:
-        container_name: inventree-worker
+    inventree-dev-worker:
+        container_name: inventree-dev-worker
         build:
             context: .
             target: dev
-        entrypoint: /home/inventree/start_dev_worker.sh
+        entrypoint: /home/inventree/docker/start_dev_worker.sh
         depends_on:
-            - inventree-server
+            - inventree-dev-server
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
-            - src:/home/inventree/src
+            - src:/home/inventree
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
         restart: unless-stopped
 
 volumes:
-    # NOTE: Change /path/to/src to a directory on your local machine, where the InvenTree source code is located
+    # NOTE: Change "../" to a directory on your local machine, where the InvenTree source code is located
     # Persistent data, stored external to the container(s)
     src:
         driver: local
@@ -55,5 +55,5 @@ volumes:
             type: none
             o: bind
             # This directory specified where InvenTree source code is stored "outside" the docker containers
-            # Note: This directory must conatin the file *manage.py*
-            device: /path/to/inventree/src
+            # By default, this directory is one level above the "docker" directory
+            device: ../
