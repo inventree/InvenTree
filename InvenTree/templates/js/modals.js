@@ -797,6 +797,14 @@ function handleModalForm(url, options) {
                             if (response.title) {
                                 modalSetTitle(modal, response.title);
                             }
+
+                            // Clean custom action buttons
+                            $(modal).find('#modal-footer-buttons').html('');
+
+                            // Add custom action buttons with response
+                            if (response.buttons) {
+                                attachButtons(modal, response.buttons);
+                            }
                         }
                         else {
                             $(modal).modal('hide');
@@ -900,6 +908,11 @@ function launchModalForm(url, options = {}) {
 
                 if (options.buttons) {
                     attachButtons(modal, options.buttons);
+                }
+
+                // Add custom buttons from response
+                if (response.buttons) {
+                    attachButtons(modal, response.buttons);
                 }
 
             } else {
