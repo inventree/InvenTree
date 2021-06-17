@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 07:02+0000\n"
-"PO-Revision-Date: 2021-06-17 08:06\n"
+"POT-Creation-Date: 2021-06-17 12:37+0000\n"
+"PO-Revision-Date: 2021-06-17 12:38\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -476,7 +476,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: part/forms.py:372 part/forms.py:388 part/models.py:2270
 #: part/templates/part/allocation.html:19
 #: part/templates/part/allocation.html:53
-#: part/templates/part/order_prices.html:175
+#: part/templates/part/order_prices.html:186
 #: part/templates/part/part_pricing.html:13
 #: part/templates/part/sale_prices.html:85
 #: report/templates/report/inventree_build_order_base.html:114
@@ -2894,7 +2894,7 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
 #: order/models.py:724 part/templates/part/navbar.html:101
-#: part/templates/part/order_prices.html:82
+#: part/templates/part/order_prices.html:91
 #: part/templates/part/part_pricing.html:78
 msgid "Sale Price"
 msgstr "Verkaufspreis"
@@ -4566,78 +4566,83 @@ msgstr "Verknüpfte Teile"
 msgid "Part Notes"
 msgstr "Teil-Bemerkungen"
 
-#: part/templates/part/order_prices.html:21
+#: part/templates/part/order_prices.html:23
+#: part/templates/part/part_base.html:265
+msgid "Calculate"
+msgstr "Berechnen"
+
+#: part/templates/part/order_prices.html:30
 msgid "Pricing ranges"
 msgstr "Preisspannen"
 
-#: part/templates/part/order_prices.html:26
+#: part/templates/part/order_prices.html:35
 #: part/templates/part/part_pricing.html:19
 msgid "Supplier Pricing"
 msgstr "Zulieferer-Preise"
 
-#: part/templates/part/order_prices.html:27
-#: part/templates/part/order_prices.html:52
-#: part/templates/part/order_prices.html:83
+#: part/templates/part/order_prices.html:36
+#: part/templates/part/order_prices.html:61
+#: part/templates/part/order_prices.html:92
 #: part/templates/part/part_pricing.html:23
 #: part/templates/part/part_pricing.html:49
 #: part/templates/part/part_pricing.html:81
 msgid "Unit Cost"
 msgstr "Stückpreis"
 
-#: part/templates/part/order_prices.html:34
-#: part/templates/part/order_prices.html:59
-#: part/templates/part/order_prices.html:88
+#: part/templates/part/order_prices.html:43
+#: part/templates/part/order_prices.html:68
+#: part/templates/part/order_prices.html:97
 #: part/templates/part/part_pricing.html:29
 #: part/templates/part/part_pricing.html:55
 #: part/templates/part/part_pricing.html:85
 msgid "Total Cost"
 msgstr "Gesamtkosten"
 
-#: part/templates/part/order_prices.html:42
+#: part/templates/part/order_prices.html:51
 #: part/templates/part/part_pricing.html:37
 msgid "No supplier pricing available"
 msgstr "Keine Zulieferer-Preise verfügbar"
 
-#: part/templates/part/order_prices.html:51
-#: part/templates/part/order_prices.html:103
+#: part/templates/part/order_prices.html:60
+#: part/templates/part/order_prices.html:112
 #: part/templates/part/part_pricing.html:45
 msgid "BOM Pricing"
 msgstr "Stücklistenpreise"
 
-#: part/templates/part/order_prices.html:67
+#: part/templates/part/order_prices.html:76
 #: part/templates/part/part_pricing.html:63
 msgid "Note: BOM pricing is incomplete for this part"
 msgstr "Anmerkung: Stücklistenbepreisung für dieses Teil ist unvollständig"
 
-#: part/templates/part/order_prices.html:74
+#: part/templates/part/order_prices.html:83
 #: part/templates/part/part_pricing.html:70
 msgid "No BOM pricing available"
 msgstr "Keine Stücklisten-Preise verfügbar"
 
-#: part/templates/part/order_prices.html:97
+#: part/templates/part/order_prices.html:106
 #: part/templates/part/part_pricing.html:94
 msgid "No pricing information is available for this part."
 msgstr "Keine Preise für dieses Teil verfügbar"
 
-#: part/templates/part/order_prices.html:113
+#: part/templates/part/order_prices.html:122
 msgid "Stock Pricing"
 msgstr "Bestandspreise"
 
-#: part/templates/part/order_prices.html:121
+#: part/templates/part/order_prices.html:130
 msgid "No stock pricing history is available for this part."
 msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 
-#: part/templates/part/order_prices.html:140
+#: part/templates/part/order_prices.html:149
 #, python-format
 msgid "Single Price - %(currency)s"
 msgstr "Einzelpreis - %(currency)s"
 
-#: part/templates/part/order_prices.html:152
+#: part/templates/part/order_prices.html:161
 #, python-format
 msgid "Single Price Difference - %(currency)s"
 msgstr "Einzelpreisdifferenz - %(currency)s"
 
-#: part/templates/part/order_prices.html:163
+#: part/templates/part/order_prices.html:173
 #, python-format
 msgid "Part Single Price - %(currency)s"
 msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
@@ -4759,10 +4764,6 @@ msgstr "Herstellbar"
 #: templates/js/part.js:484
 msgid "Building"
 msgstr "Im Bau"
-
-#: part/templates/part/part_base.html:265
-msgid "Calculate"
-msgstr "Berechnen"
 
 #: part/templates/part/part_tests.html:17
 msgid "Add Test Template"
