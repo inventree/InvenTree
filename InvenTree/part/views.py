@@ -847,9 +847,9 @@ class PartPricingView(PartDetail):
 
         # BOM Information for Pie-Chart
         if part.has_bom:
-            # iterate over all bom-items
             ctx_bom_parts = []
-            for item in  part.bom_items.all():
+            # iterate over all bom-items
+            for item in part.bom_items.all():
                 ctx_item = {'name': str(item.sub_part)}
                 price, qty = item.sub_part.get_price_range(quantity), item.quantity
 
@@ -858,7 +858,7 @@ class PartPricingView(PartDetail):
                     price_min = str((price[0] * qty) / quantity)
                     if len(set(price)) == 2:  # min and max-price present
                         price_max = str((price[1] * qty) / quantity)
-                        ctx['bom_pie_max'] = True  # enable showing min prices in bom
+                        ctx['bom_pie_max'] = True  # enable showing max prices in bom
 
                 ctx_item['max_price'] = price_min
                 ctx_item['min_price'] = price_max if price_max else price_min
