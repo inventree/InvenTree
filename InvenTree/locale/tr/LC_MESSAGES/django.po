@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 16:09\n"
+"PO-Revision-Date: 2021-06-17 17:06\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -578,7 +578,7 @@ msgstr "Yapım işi iptalini onayla"
 
 #: build/forms.py:266
 msgid "Select quantity of stock to allocate"
-msgstr ""
+msgstr "Tahsis edilecek stok miktarını seçiniz"
 
 #: build/models.py:66 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
@@ -806,11 +806,11 @@ msgstr "Ana parça izlenebilir olarak işaretlendiğinden, yapım işi çıktıs
 #: build/models.py:1181
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
-msgstr ""
+msgstr "Tahsis edilecek miktar ({n}) mevcut miktarı ({q}) geçmemeli"
 
 #: build/models.py:1188 order/models.py:815
 msgid "StockItem is over-allocated"
-msgstr "Stok kalemi fazla tahsis edilmiş"
+msgstr "Stok kalemi fazladan tahsis edilmiş"
 
 #: build/models.py:1192 order/models.py:818
 msgid "Allocation quantity must be greater than zero"
@@ -833,7 +833,7 @@ msgstr "Yapım İşi"
 
 #: build/models.py:1317
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Yapım işi için tahsis edilen parçalar"
 
 #: build/models.py:1333 part/templates/part/allocation.html:18
 #: part/templates/part/allocation.html:24
@@ -845,7 +845,7 @@ msgstr ""
 #: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:841
 #: templates/js/stock.js:1090
 msgid "Stock Item"
-msgstr ""
+msgstr "Stok Kalemi"
 
 #: build/models.py:1334
 msgid "Source stock item"
@@ -853,7 +853,7 @@ msgstr ""
 
 #: build/models.py:1347
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Yapım işi için tahsis edilen stok miktarı"
 
 #: build/models.py:1355
 msgid "Install into"
@@ -869,23 +869,23 @@ msgstr ""
 
 #: build/templates/build/allocate.html:15
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "Yapım İşi için Stok Tahsis Et"
 
 #: build/templates/build/allocate.html:22
 msgid "Allocate stock to build"
-msgstr ""
+msgstr "Yapım işi için stok tahsis et"
 
 #: build/templates/build/allocate.html:23
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Otomatik Tahsis Et"
 
 #: build/templates/build/allocate.html:25 templates/js/build.js:656
 msgid "Unallocate stock"
-msgstr ""
+msgstr "Stok tahsisini kaldır"
 
 #: build/templates/build/allocate.html:26 build/views.py:319 build/views.py:805
 msgid "Unallocate Stock"
-msgstr ""
+msgstr "Stok Tahsisini Kaldır"
 
 #: build/templates/build/allocate.html:29
 msgid "Order required parts"
@@ -900,15 +900,15 @@ msgstr ""
 
 #: build/templates/build/allocate.html:36
 msgid "Untracked stock has been fully allocated for this Build Order"
-msgstr ""
+msgstr "Takip edilmeyen stok yapım işi emri için tamamen tahsis edildi"
 
 #: build/templates/build/allocate.html:40
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr ""
+msgstr "Takip edilmeyen stok yapım işi emri için tamamen tahsis edilemedi"
 
 #: build/templates/build/allocate.html:47
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr ""
+msgstr "Bu yapım işi emri, herhangi bir takip edilmeyen malzeme listesi öğesine sahip değil"
 
 #: build/templates/build/allocation_card.html:21
 #: build/templates/build/complete_output.html:46
@@ -931,24 +931,24 @@ msgstr ""
 
 #: build/templates/build/auto_allocate.html:9
 msgid "Automatically Allocate Stock"
-msgstr ""
+msgstr "Stoku Otomatik Olarak Tahsis Et"
 
 #: build/templates/build/auto_allocate.html:10
 msgid "The following stock items will be allocated to the specified build output"
-msgstr ""
+msgstr "Aşağıdaki stok kalemleri, belirtilen yapım işi çıktısı için tahsis edilecek"
 
 #: build/templates/build/auto_allocate.html:37
 msgid "No stock items found that can be automatically allocated to this build"
-msgstr ""
+msgstr "Bu yapım işi için otomatik tahsis edilecek stok kalemleri bulunamadı"
 
 #: build/templates/build/auto_allocate.html:39
 msgid "Stock items will have to be manually allocated"
-msgstr ""
+msgstr "Stok kalemleri manuel olarak tahsis edilecek"
 
 #: build/templates/build/build_base.html:18
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "Bu yapım işi emri, %(link)s sipariş emrine tahsis edilmiştir"
 
 #: build/templates/build/build_base.html:25
 #, python-format
@@ -969,7 +969,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:47
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
 
 #: build/templates/build/build_base.html:75
 #: company/templates/company/company_base.html:40
@@ -1136,7 +1136,7 @@ msgstr ""
 
 #: build/templates/build/complete.html:21
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Gerekli stok tamamen tahsis edilemedi"
 
 #: build/templates/build/complete_output.html:10
 msgid "Stock allocation is complete for this output"
@@ -1148,7 +1148,7 @@ msgstr ""
 
 #: build/templates/build/complete_output.html:20
 msgid "tracked parts have not been fully allocated"
-msgstr ""
+msgstr "takip edilebilir parçalar tamamen tahsis edilemedi"
 
 #: build/templates/build/complete_output.html:41
 msgid "The following items will be created"
@@ -1156,12 +1156,12 @@ msgstr ""
 
 #: build/templates/build/create_build_item.html:7
 msgid "Select a stock item to allocate to the selected build output"
-msgstr ""
+msgstr "Seçili yapım işi emri için tahsis edilecek bir stok kalemi seçiniz"
 
 #: build/templates/build/create_build_item.html:11
 #, python-format
 msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
-msgstr ""
+msgstr "Tahsis edilen stok bu yapım işi çıktısının kurulmasında kullanılacak: <br><i>%(output)s</i>"
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -1295,7 +1295,7 @@ msgstr ""
 
 #: build/templates/build/unallocate.html:10
 msgid "Are you sure you wish to unallocate all stock for this build?"
-msgstr ""
+msgstr "Bu yapım işi için tahsis edilen tüm stokları kaldırmak istediğinizden emin misiniz?"
 
 #: build/templates/build/unallocate.html:12
 msgid "All incomplete stock allocations will be removed from the build"
@@ -2106,7 +2106,7 @@ msgstr ""
 #: company/templates/company/navbar.html:62
 #: company/templates/company/navbar.html:65 templates/js/build.js:477
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Atanan Stok"
 
 #: company/templates/company/company_base.html:9
 #: company/templates/company/company_base.html:35
@@ -2175,7 +2175,7 @@ msgstr ""
 #: templates/js/company.js:40 templates/js/order.js:267
 #: templates/js/stock.js:1072
 msgid "Customer"
-msgstr ""
+msgstr "Müşteri"
 
 #: company/templates/company/detail_manufacturer_part.html:11
 #: templates/InvenTree/search.html:149
@@ -2241,7 +2241,7 @@ msgstr ""
 
 #: company/templates/company/detail_stock.html:10
 msgid "Supplier Stock"
-msgstr ""
+msgstr "Tedarikçi Stoku"
 
 #: company/templates/company/detail_stock.html:37
 #: company/templates/company/supplier_part_stock.html:34
@@ -2255,20 +2255,20 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:10
 #: templates/InvenTree/search.html:164
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Tedarikçi Parçaları"
 
 #: company/templates/company/detail_supplier_part.html:21
 #: order/templates/order/order_wizard/select_parts.html:42
 #: order/templates/order/purchase_order_detail.html:50
 msgid "Create new supplier part"
-msgstr ""
+msgstr "Yeni tedarikçi parçası oluştur"
 
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
 #: order/templates/order/purchase_order_detail.html:49
 #: part/templates/part/supplier.html:17 templates/js/stock.js:1293
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Yeni Tedarikçi Parçası"
 
 #: company/templates/company/detail_supplier_part.html:72
 #: company/templates/company/manufacturer_part_suppliers.html:47
@@ -2320,7 +2320,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_delete.html:36
 #, python-format
 msgid "There are %(count)s suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:"
-msgstr ""
+msgstr "Bu üretici parçası için tanımlanmış %(count)s tedarikçi bulunmaktadır. Bunu silerseniz, aşağıdaki tedarikçi parçaları da silinecektir:"
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/views.py:63 part/templates/part/navbar.html:84
@@ -2345,7 +2345,7 @@ msgstr ""
 #: templates/js/part.js:305 templates/js/part.js:464 templates/js/stock.js:561
 #: templates/navbar.html:26
 msgid "Stock"
-msgstr ""
+msgstr "Stok"
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Orders"
@@ -2359,7 +2359,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:22
 #: part/templates/part/supplier.html:22
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Tedarikçi parçalarını sil"
 
 #: company/templates/company/manufacturer_part_suppliers.html:22
 #: part/templates/part/manufacturer.html:24 part/templates/part/params.html:44
@@ -2392,7 +2392,7 @@ msgstr ""
 #: templates/InvenTree/search.html:198 templates/js/stock.js:971
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:42
 msgid "Stock Items"
-msgstr ""
+msgstr "Stok Kalemleri"
 
 #: company/templates/company/navbar.html:47
 #: company/templates/company/navbar.html:56
@@ -2448,38 +2448,38 @@ msgstr ""
 #: company/templates/company/supplier_part_base.html:20 stock/models.py:416
 #: stock/templates/stock/item_base.html:369 templates/js/company.js:279
 msgid "Supplier Part"
-msgstr ""
+msgstr "Tedarikçi Parçası"
 
 #: company/templates/company/supplier_part_base.html:40
 msgid "Edit supplier part"
-msgstr ""
+msgstr "Tedarikçi parçasını düzenle"
 
 #: company/templates/company/supplier_part_base.html:44
 msgid "Delete supplier part"
-msgstr ""
+msgstr "Tedarikçi parçasını sil"
 
 #: company/templates/company/supplier_part_base.html:56
 #: company/templates/company/supplier_part_detail.html:10
 msgid "Supplier Part Details"
-msgstr ""
+msgstr "Tedarikçi Parçası Detayları"
 
 #: company/templates/company/supplier_part_delete.html:5
 msgid "Are you sure you want to delete the following Supplier Parts?"
-msgstr ""
+msgstr "Aşağıdaki Tedarikçi Parçalarını silmek istediğinizden emin misin?"
 
 #: company/templates/company/supplier_part_navbar.html:12
 #: company/templates/company/supplier_part_stock.html:10
 msgid "Supplier Part Stock"
-msgstr ""
+msgstr "Tedarikçi Parça Stoku"
 
 #: company/templates/company/supplier_part_navbar.html:19
 #: company/templates/company/supplier_part_orders.html:10
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Tedarikçi Parça Emirleri"
 
 #: company/templates/company/supplier_part_navbar.html:26
 msgid "Supplier Part Pricing"
-msgstr ""
+msgstr "Tedarikçi Parça Fiyatlandırması"
 
 #: company/templates/company/supplier_part_navbar.html:29
 msgid "Pricing"
@@ -2994,7 +2994,7 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:101
 #: stock/templates/stock/location.html:42
 msgid "Create new stock location"
-msgstr ""
+msgstr "Yeni stok konumu oluştur"
 
 #: order/templates/order/order_cancel.html:8
 msgid "Cancelling this order means that the order and line items will no longer be editable."
@@ -3074,7 +3074,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/match_parts.html:28
 msgid "Select Supplier Part"
-msgstr ""
+msgstr "Tedarikçi Parçası Seçin"
 
 #: order/templates/order/order_wizard/po_upload.html:11
 msgid "Upload File for Purchase Order"
@@ -3091,7 +3091,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:9
 msgid "Step 1 of 2 - Select Part Suppliers"
-msgstr ""
+msgstr "Adım 1/2 - Parça Tedarikçileri Seçin"
 
 #: order/templates/order/order_wizard/select_parts.html:14
 msgid "Select suppliers"
@@ -3375,7 +3375,7 @@ msgstr ""
 
 #: order/templates/order/so_allocate_by_serial.html:9
 msgid "Allocate stock items by serial number"
-msgstr ""
+msgstr "Seri numarası ile stok kalemlerini tahsis et"
 
 #: order/templates/order/so_allocation_delete.html:7
 msgid "This action will unallocate the following stock from the Sales Order"
@@ -3645,7 +3645,7 @@ msgstr ""
 
 #: part/forms.py:101
 msgid "Include part supplier data in exported BOM"
-msgstr ""
+msgstr "Dışa aktarılan malzeme listesine parça tedarikçisi verilerini dahil edin"
 
 #: part/forms.py:122 part/models.py:2168
 msgid "Parent Part"
@@ -3793,11 +3793,11 @@ msgstr ""
 
 #: part/models.py:704
 msgid "Is this part a variant of another part?"
-msgstr ""
+msgstr "Bu parça başka bir parçanın çeşidi mi?"
 
 #: part/models.py:705 part/templates/part/detail.html:60
 msgid "Variant Of"
-msgstr ""
+msgstr "Çeşidi"
 
 #: part/models.py:711
 msgid "Part description"
@@ -3850,7 +3850,7 @@ msgstr ""
 
 #: part/models.py:808
 msgid "Default supplier part"
-msgstr ""
+msgstr "Varsayılan tedarikçi parçası"
 
 #: part/models.py:815
 msgid "Default Expiry"
@@ -3879,11 +3879,11 @@ msgstr ""
 
 #: part/models.py:835
 msgid "Can this part be built from other parts?"
-msgstr ""
+msgstr "Bu parça diğer parçalardan yapılabilir mi?"
 
 #: part/models.py:841
 msgid "Can this part be used to build other parts?"
-msgstr ""
+msgstr "Bu parça diğer parçaların yapımında kullanılabilir mi?"
 
 #: part/models.py:847
 msgid "Does this part have tracking for unique items?"
@@ -3891,11 +3891,11 @@ msgstr ""
 
 #: part/models.py:852
 msgid "Can this part be purchased from external suppliers?"
-msgstr ""
+msgstr "Bu parça dış tedarikçilerden satın alınabilir mi?"
 
 #: part/models.py:857
 msgid "Can this part be sold to customers?"
-msgstr ""
+msgstr "Bu parça müşterilere satılabilir mi?"
 
 #: part/models.py:861 part/templates/part/detail.html:227
 #: templates/js/table_filters.js:21 templates/js/table_filters.js:65
@@ -4080,7 +4080,7 @@ msgstr ""
 
 #: part/models.py:2295
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr ""
+msgstr "Değişik şekildeki parçaların stok kalemleri bu malzeme listesi öğesinde kullanılabilir"
 
 #: part/models.py:2371 part/views.py:1681 part/views.py:1733
 #: stock/models.py:294
@@ -4351,7 +4351,7 @@ msgstr ""
 
 #: part/templates/part/category.html:251 stock/views.py:1391
 msgid "Create new Stock Location"
-msgstr ""
+msgstr "Yeni Stok konumu oluştur"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4453,7 +4453,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:163
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Bu parça bir şablon parçadır (Bu parçanın değişik biçimleri yapılabilir)"
 
 #: part/templates/part/detail.html:165
 msgid "Part is not a template part"
@@ -4518,7 +4518,7 @@ msgstr ""
 
 #: part/templates/part/navbar.html:26 part/templates/part/variants.html:11
 msgid "Part Variants"
-msgstr ""
+msgstr "Parça Çeşitleri"
 
 #: part/templates/part/navbar.html:29
 msgid "Variants"
@@ -4824,25 +4824,25 @@ msgstr ""
 
 #: part/templates/part/stock.html:10
 msgid "Part Stock"
-msgstr ""
+msgstr "Parça Stoku"
 
 #: part/templates/part/stock.html:16
 #, python-format
 msgid "Showing stock for all variants of <i>%(full_name)s</i>"
-msgstr ""
+msgstr "<i>%(full_name)s</i> için tüm stok biçimleri gösteriliyor"
 
 #: part/templates/part/stock_count.html:7 templates/js/bom.js:239
 #: templates/js/part.js:302 templates/js/part.js:488
 msgid "No Stock"
-msgstr ""
+msgstr "Stok Yok"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:130
 msgid "Low Stock"
-msgstr ""
+msgstr "Düşük Stok"
 
 #: part/templates/part/supplier.html:10
 msgid "Part Suppliers"
-msgstr ""
+msgstr "Parça Tedarikçileri"
 
 #: part/templates/part/track.html:10
 msgid "Part Tracking"
@@ -4854,20 +4854,20 @@ msgstr ""
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "Yeni parça çeşidi oluştur"
 
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <i>'%(full_name)s'</i>."
-msgstr ""
+msgstr "<i>%(full_name)s</i> şablonu için yeni bir çeşit."
 
 #: part/templates/part/variants.html:19
 msgid "Create new variant"
-msgstr ""
+msgstr "Yeni çeşit oluştur"
 
 #: part/templates/part/variants.html:20
 msgid "New Variant"
-msgstr ""
+msgstr "Yeni Çeşit"
 
 #: part/templatetags/inventree_extras.py:98
 msgid "Unknown database"
@@ -5209,7 +5209,7 @@ msgstr ""
 #: stock/api.py:212
 #, python-brace-format
 msgid "Updated stock for {n} items"
-msgstr ""
+msgstr "{n} öğe için stok güncellendi"
 
 #: stock/api.py:281
 #, python-brace-format
@@ -5223,7 +5223,7 @@ msgstr ""
 
 #: stock/forms.py:115 stock/forms.py:419
 msgid "Expiration date for this stock item"
-msgstr ""
+msgstr "Bu stok kalemi için son kullanma tarihi"
 
 #: stock/forms.py:118
 msgid "Enter unique serial numbers (or leave blank)"
@@ -5231,7 +5231,7 @@ msgstr ""
 
 #: stock/forms.py:169
 msgid "Destination for serialized stock (by default, will remain in current location)"
-msgstr ""
+msgstr "Seri numaralandırılmış stok için hedef konum(varsayılan olarak, geçerli konumda kalacaktır)"
 
 #: stock/forms.py:171
 msgid "Serial numbers"
@@ -5256,15 +5256,15 @@ msgstr ""
 
 #: stock/forms.py:267
 msgid "Include stock items in sub locations"
-msgstr ""
+msgstr "Stok kalemlerine alt konumları dahil et"
 
 #: stock/forms.py:302
 msgid "Stock item to install"
-msgstr ""
+msgstr "Kurulacak stok kalemi"
 
 #: stock/forms.py:309
 msgid "Stock quantity to assign"
-msgstr ""
+msgstr "Atanacak stok miktarı"
 
 #: stock/forms.py:337
 msgid "Must not exceed available quantity"
@@ -5280,11 +5280,11 @@ msgstr ""
 
 #: stock/forms.py:351
 msgid "Confirm removal of installed stock items"
-msgstr ""
+msgstr "Kurulu stok kalemlerinin kaldırılmasını onayla"
 
 #: stock/forms.py:375
 msgid "Destination stock location"
-msgstr ""
+msgstr "Hedef stok konumu"
 
 #: stock/forms.py:377
 msgid "Add note (required)"
@@ -5292,11 +5292,11 @@ msgstr ""
 
 #: stock/forms.py:381 stock/views.py:852 stock/views.py:1051
 msgid "Confirm stock adjustment"
-msgstr ""
+msgstr "Stok ayarlamasını onayla"
 
 #: stock/forms.py:381
 msgid "Confirm movement of stock items"
-msgstr ""
+msgstr "Stok kalemlerinin hareketini onaylayın"
 
 #: stock/forms.py:383
 msgid "Set Default Location"
@@ -5345,7 +5345,7 @@ msgstr ""
 
 #: stock/models.py:399
 msgid "Parent Stock Item"
-msgstr ""
+msgstr "Üst Stok Kalemi"
 
 #: stock/models.py:408
 msgid "Base part"
@@ -5353,7 +5353,7 @@ msgstr ""
 
 #: stock/models.py:417
 msgid "Select a matching supplier part for this stock item"
-msgstr ""
+msgstr "Bu stok kalemi için tedarikçi parçası seçin"
 
 #: stock/models.py:422 stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
