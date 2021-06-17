@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 07:02+0000\n"
-"PO-Revision-Date: 2021-06-17 00:51\n"
+"PO-Revision-Date: 2021-06-17 08:06\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2153,11 +2153,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -2892,10 +2890,8 @@ msgid "Unit purchase price"
 msgstr "Preis pro Einheit"
 
 #: order/models.py:681
-#, fuzzy
-#| msgid "Where is this item normally stored?"
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr "Wo wird dieses Teil normalerweise gelagert?"
+msgstr ""
 
 #: order/models.py:724 part/templates/part/navbar.html:101
 #: part/templates/part/order_prices.html:82
@@ -6161,13 +6157,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7620,3 +7614,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
