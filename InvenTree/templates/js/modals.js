@@ -776,7 +776,8 @@ function handleModalForm(url, options) {
                     // Form was returned, invalid!
                     else {
 
-                        if (!options.hideErrorMessage) {
+                        // Disable error message with option or response
+                        if (!options.hideErrorMessage && !response.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }
