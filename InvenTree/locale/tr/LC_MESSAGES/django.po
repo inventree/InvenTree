@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 17:06\n"
+"PO-Revision-Date: 2021-06-17 18:03\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -262,11 +262,11 @@ msgstr "Eski stok izleme girişi"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr "Stok öğesi oluşturuldu"
+msgstr "Stok kalemi oluşturuldu"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr "Düzenlenen stok öğesi"
+msgstr "Düzenlenen stok kalemi"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
@@ -414,7 +414,7 @@ msgstr "Stok kalemi parametresi sağlamalıdır"
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr "Eşleşen stok öğesi bulunamadı"
+msgstr "Eşleşen stok kalemi bulunamadı"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
@@ -502,7 +502,7 @@ msgstr "Yapım işinin çıktı miktarını girin"
 
 #: build/forms.py:95 order/forms.py:240 stock/forms.py:118
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Seri Numaraları"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
@@ -518,11 +518,11 @@ msgstr "Yapım işi çıktısının silinmesini onaylayın"
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
-msgstr ""
+msgstr "Stok tahsisinin iptalini onayla"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Stok tahsisini onayla"
 
 #: build/forms.py:186
 msgid "Mark build as complete"
@@ -535,11 +535,11 @@ msgstr "Yapım işini tamamlandı olarak işaretle"
 #: templates/js/barcode.js:531 templates/js/build.js:500
 #: templates/js/stock.js:639 templates/js/stock.js:1031
 msgid "Location"
-msgstr ""
+msgstr "Konum"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr ""
+msgstr "Tamamlanmış parçaların konumu"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:59 order/models.py:469
@@ -550,7 +550,7 @@ msgstr ""
 #: templates/js/stock.js:626 templates/js/stock.js:1108
 #: templates/js/stock.js:1374
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 #: build/forms.py:216
 msgid "Build output stock status"
@@ -558,11 +558,11 @@ msgstr "Yapım işi çıktısı stok durumu"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
-msgstr ""
+msgstr "Eksik olarak onayla"
 
 #: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
-msgstr ""
+msgstr "Eksik parça tahsisi ile tamamlamayı onayla"
 
 #: build/forms.py:227
 msgid "Confirm build completion"
@@ -570,7 +570,7 @@ msgstr "Yapım işinin tamamlandığını onaylayın"
 
 #: build/forms.py:252
 msgid "Confirm cancel"
-msgstr ""
+msgstr "İptali Onayla"
 
 #: build/forms.py:252 build/views.py:66
 msgid "Confirm build cancellation"
@@ -608,7 +608,7 @@ msgstr "Yapım işi emri referansı"
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:575 templates/js/build.js:1018
 msgid "Reference"
-msgstr ""
+msgstr "Referans"
 
 #: build/models.py:138
 msgid "Brief description of the build"
@@ -647,7 +647,7 @@ msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 #: templates/js/part.js:404 templates/js/stock.js:521
 #: templates/js/stock.js:1346
 msgid "Part"
-msgstr ""
+msgstr "Parça"
 
 #: build/models.py:161
 msgid "Select part to build"
@@ -655,7 +655,7 @@ msgstr "Yapım işi için parça seçin"
 
 #: build/models.py:166
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Satış Emri Referansı"
 
 #: build/models.py:170
 msgid "SalesOrder to which this build is allocated"
@@ -663,7 +663,7 @@ msgstr "Bu yapım işinin tahsis edildiği satış emri"
 
 #: build/models.py:175
 msgid "Source Location"
-msgstr ""
+msgstr "Kaynak Konum"
 
 #: build/models.py:179
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
@@ -671,11 +671,11 @@ msgstr "Bu yapım işi için stok alınacak konumu seçin (her hangi bir stok ko
 
 #: build/models.py:184
 msgid "Destination Location"
-msgstr ""
+msgstr "Hedef Konum"
 
 #: build/models.py:188
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Tamamlanmış öğelerin saklanacağı konumu seçiniz"
 
 #: build/models.py:192
 msgid "Build Quantity"
@@ -683,15 +683,15 @@ msgstr "Yapım İşi Miktarı"
 
 #: build/models.py:195
 msgid "Number of stock items to build"
-msgstr "Yapım işi stok öğelerinin sayısı"
+msgstr "Yapım işi stok kalemlerinin sayısı"
 
 #: build/models.py:199
 msgid "Completed items"
-msgstr ""
+msgstr "Tamamlanmış öğeler"
 
 #: build/models.py:201
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Tamamlanan stok kalemlerinin sayısı"
 
 #: build/models.py:205 part/templates/part/part_base.html:167
 msgid "Build Status"
@@ -703,7 +703,7 @@ msgstr "Yapım işi durum kodu"
 
 #: build/models.py:213 stock/models.py:466
 msgid "Batch Code"
-msgstr ""
+msgstr "Sıra numarası"
 
 #: build/models.py:217
 msgid "Batch code for this build output"
@@ -712,23 +712,23 @@ msgstr "Yapım işi çıktısı için sıra numarası"
 #: build/models.py:220 order/models.py:108 part/models.py:882
 #: part/templates/part/detail.html:126 templates/js/order.js:293
 msgid "Creation Date"
-msgstr ""
+msgstr "Oluşturulma tarihi"
 
 #: build/models.py:224 order/models.py:475
 msgid "Target completion date"
-msgstr ""
+msgstr "Hedef tamamlama tarihi"
 
 #: build/models.py:228 order/models.py:221 templates/js/build.js:798
 msgid "Completion Date"
-msgstr ""
+msgstr "Tamamlama tarihi"
 
 #: build/models.py:234
 msgid "completed by"
-msgstr ""
+msgstr "tamamlayan"
 
 #: build/models.py:242
 msgid "Issued by"
-msgstr ""
+msgstr "Veren"
 
 #: build/models.py:243
 msgid "User who issued this build order"
@@ -740,7 +740,7 @@ msgstr "Bu yapım işi emrini veren kullanıcı"
 #: order/templates/order/sales_order_base.html:140 part/models.py:886
 #: report/templates/report/inventree_build_order_base.html:159
 msgid "Responsible"
-msgstr ""
+msgstr "Sorumlu"
 
 #: build/models.py:252
 msgid "User responsible for this build order"
@@ -754,11 +754,11 @@ msgstr "Bu yapım işi emrinden sorumlu kullanıcı"
 #: part/templates/part/detail.html:83 part/templates/part/part_base.html:94
 #: stock/models.py:460 stock/templates/stock/item_base.html:345
 msgid "External Link"
-msgstr ""
+msgstr "Harici Bağlantı"
 
 #: build/models.py:258 part/models.py:744 stock/models.py:462
 msgid "Link to external URL"
-msgstr ""
+msgstr "Harici URL'ye bağlantı"
 
 #: build/models.py:262 build/templates/build/navbar.html:53
 #: company/models.py:132 company/models.py:498
@@ -777,7 +777,7 @@ msgstr ""
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:356 templates/js/stock.js:141 templates/js/stock.js:674
 msgid "Notes"
-msgstr ""
+msgstr "Notlar"
 
 #: build/models.py:263
 msgid "Extra build notes"
@@ -814,16 +814,16 @@ msgstr "Stok kalemi fazladan tahsis edilmiş"
 
 #: build/models.py:1192 order/models.py:818
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
 
 #: build/models.py:1196
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Seri numaralı stok için miktar bir olmalı"
 
 #: build/models.py:1256
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
-msgstr ""
+msgstr "{p} parçasının malzeme listesindeki seçili stok kalemi bulunamadı"
 
 #: build/models.py:1316 stock/templates/stock/item_base.html:317
 #: templates/InvenTree/search.html:183 templates/js/build.js:724
@@ -849,7 +849,7 @@ msgstr "Stok Kalemi"
 
 #: build/models.py:1334
 msgid "Source stock item"
-msgstr ""
+msgstr "Kaynak stok kalemi"
 
 #: build/models.py:1347
 msgid "Stock quantity to allocate to build"
@@ -857,15 +857,15 @@ msgstr "Yapım işi için tahsis edilen stok miktarı"
 
 #: build/models.py:1355
 msgid "Install into"
-msgstr ""
+msgstr "Kurulduğu yer"
 
 #: build/models.py:1356
 msgid "Destination stock item"
-msgstr ""
+msgstr "Hedef stok kalemi"
 
 #: build/templates/build/allocate.html:7
 msgid "Allocate Parts"
-msgstr ""
+msgstr "Parçaları Tahsis Et"
 
 #: build/templates/build/allocate.html:15
 msgid "Allocate Stock to Build"
@@ -889,14 +889,14 @@ msgstr "Stok Tahsisini Kaldır"
 
 #: build/templates/build/allocate.html:29
 msgid "Order required parts"
-msgstr ""
+msgstr "Gerekli parçaları sipariş edin"
 
 #: build/templates/build/allocate.html:30
 #: company/templates/company/detail_manufacturer_part.html:33
 #: company/templates/company/detail_supplier_part.html:32 order/views.py:986
 #: part/templates/part/category.html:127
 msgid "Order Parts"
-msgstr ""
+msgstr "Sipariş Parçaları"
 
 #: build/templates/build/allocate.html:36
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -918,7 +918,7 @@ msgstr "Bu yapım işi emri, herhangi bir takip edilmeyen malzeme listesi öğes
 #: stock/models.py:454 stock/templates/stock/item_base.html:249
 #: templates/js/build.js:484
 msgid "Serial Number"
-msgstr ""
+msgstr "Seri Numara"
 
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
@@ -927,7 +927,7 @@ msgstr ""
 #: part/templates/part/navbar.html:128 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
-msgstr ""
+msgstr "Ekler"
 
 #: build/templates/build/auto_allocate.html:9
 msgid "Automatically Allocate Stock"
@@ -953,7 +953,7 @@ msgstr "Bu yapım işi emri, %(link)s sipariş emrine tahsis edilmiştir"
 #: build/templates/build/build_base.html:25
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Bu yapım işi emri, %(link)s yapım iş emrinin altıdır"
 
 #: build/templates/build/build_base.html:32
 msgid "Build Order is ready to mark as completed"
@@ -4072,15 +4072,15 @@ msgstr ""
 
 #: part/models.py:2289
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr ""
+msgstr "Bu malzeme listesi, çeşit parçalar listesini kalıtsalıdır"
 
 #: part/models.py:2294 templates/js/bom.js:294
 msgid "Allow Variants"
-msgstr ""
+msgstr "Çeşide İzin Ver"
 
 #: part/models.py:2295
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr "Değişik şekildeki parçaların stok kalemleri bu malzeme listesi öğesinde kullanılabilir"
+msgstr "Çeşit parçaların stok kalemleri bu malzeme listesinde kullanılabilir"
 
 #: part/models.py:2371 part/views.py:1681 part/views.py:1733
 #: stock/models.py:294
@@ -4453,7 +4453,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:163
 msgid "Part is a template part (variants can be made from this part)"
-msgstr "Bu parça bir şablon parçadır (Bu parçanın değişik biçimleri yapılabilir)"
+msgstr "Bu parça bir şablon parçadır (Bu parçanın çeşitleri yapılabilir)"
 
 #: part/templates/part/detail.html:165
 msgid "Part is not a template part"
@@ -4522,7 +4522,7 @@ msgstr "Parça Çeşitleri"
 
 #: part/templates/part/navbar.html:29
 msgid "Variants"
-msgstr ""
+msgstr "Çeşitler"
 
 #: part/templates/part/navbar.html:40
 msgid "Allocated Stock"
@@ -4737,7 +4737,7 @@ msgstr ""
 #: part/templates/part/part_base.html:113
 #, python-format
 msgid "This part is a variant of %(link)s"
-msgstr ""
+msgstr "Bu parça %(link)s parçasının bir çeşididir"
 
 #: part/templates/part/part_base.html:130 templates/js/table_filters.js:161
 msgid "In Stock"
@@ -4829,7 +4829,7 @@ msgstr "Parça Stoku"
 #: part/templates/part/stock.html:16
 #, python-format
 msgid "Showing stock for all variants of <i>%(full_name)s</i>"
-msgstr "<i>%(full_name)s</i> için tüm stok biçimleri gösteriliyor"
+msgstr "<i>%(full_name)s</i> için tüm çeşitlerin stokları gösteriliyor"
 
 #: part/templates/part/stock_count.html:7 templates/js/bom.js:239
 #: templates/js/part.js:302 templates/js/part.js:488
@@ -4924,7 +4924,7 @@ msgstr ""
 
 #: part/views.py:381
 msgid "Create Variant"
-msgstr ""
+msgstr "Çeşit Oluştur"
 
 #: part/views.py:466
 msgid "Copied part"
@@ -5108,7 +5108,7 @@ msgstr ""
 
 #: report/models.py:318
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
-msgstr "Stok kalemi sorgu filtreleri (anahter=nesne [key=value] olarak virgülle ayrılmış liste)"
+msgstr "Stok kalemi sorgu filtreleri (anahter=değer [key=value] olarak virgülle ayrılmış liste)"
 
 #: report/models.py:326
 msgid "Include Installed Tests"
@@ -5582,7 +5582,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:143
 msgid "Convert to variant"
-msgstr ""
+msgstr "Çeşide çevir"
 
 #: stock/templates/stock/item_base.html:146
 msgid "Duplicate stock item"
@@ -5830,7 +5830,7 @@ msgstr "Bu stok kalemi şu anda <i>%(part)s</i> parçasının örneğidir"
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
-msgstr "Aşağıda listelenen parça biçimlerinden birine dönüştürülebilir."
+msgstr "Aşağıda listelenen parça çeşitlerinden birine dönüştürülebilir."
 
 #: stock/templates/stock/stockitem_convert.html:14
 msgid "This action cannot be easily undone"
@@ -6841,7 +6841,7 @@ msgstr ""
 
 #: templates/js/part.js:194
 msgid "No variants found"
-msgstr ""
+msgstr "Çeşit bulunamadı"
 
 #: templates/js/part.js:280 templates/js/part.js:518
 msgid "No parts found"
@@ -7135,7 +7135,7 @@ msgstr ""
 
 #: templates/js/table_filters.js:55
 msgid "Allow Variant Stock"
-msgstr ""
+msgstr "Çeşit Stokuna İzin Ver"
 
 #: templates/js/table_filters.js:76
 msgid "Include locations"
@@ -7225,11 +7225,11 @@ msgstr ""
 
 #: templates/js/table_filters.js:171
 msgid "Include Variants"
-msgstr ""
+msgstr "Çeşitleri Dahil Et"
 
 #: templates/js/table_filters.js:172
 msgid "Include stock items for variant parts"
-msgstr ""
+msgstr "Çeşit parçaların stok kalemlerini dahil et"
 
 #: templates/js/table_filters.js:176
 msgid "Installed"
