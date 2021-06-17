@@ -792,6 +792,11 @@ function handleModalForm(url, options) {
                             if (options.secondary) {
                                 attachSecondaries(modal, options.secondary);
                             }
+
+                            // Set modal title with response
+                            if (response.title) {
+                                modalSetTitle(modal, response.title);
+                            }
                         }
                         else {
                             $(modal).modal('hide');
