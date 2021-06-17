@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 20:02\n"
+"PO-Revision-Date: 2021-06-17 21:02\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1416,7 +1416,7 @@ msgstr "Stok kalemi fazladan tahsis edilmiş"
 #: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:585
 #: templates/js/build.js:848 templates/js/build.js:1031
 msgid "Available"
-msgstr ""
+msgstr "Mevcut"
 
 #: build/views.py:874
 msgid "Stock item must be selected"
@@ -2126,7 +2126,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:46 order/views.py:311
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Satın Alma Emri Oluştur"
 
 #: company/templates/company/company_base.html:51
 msgid "Edit company information"
@@ -2291,7 +2291,7 @@ msgstr ""
 #: company/templates/company/supplier_part_orders.html:17
 #: part/templates/part/orders.html:17 part/templates/part/part_base.html:58
 msgid "Order part"
-msgstr ""
+msgstr "Parça siparişi"
 
 #: company/templates/company/manufacturer_part_base.html:41
 msgid "Edit manufacturer part"
@@ -2406,7 +2406,7 @@ msgstr "Stok Kalemleri"
 #: templates/InvenTree/settings/tabs.html:40 templates/navbar.html:46
 #: users/models.py:45
 msgid "Sales Orders"
-msgstr ""
+msgstr "Satış Emirleri"
 
 #: company/templates/company/navbar.html:50
 #: company/templates/company/purchase_orders.html:10
@@ -2418,7 +2418,7 @@ msgstr ""
 #: templates/InvenTree/settings/tabs.html:37 templates/navbar.html:37
 #: users/models.py:44
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Satın Alma Emirleri"
 
 #: company/templates/company/notes.html:11
 msgid "Company Notes"
@@ -2427,22 +2427,22 @@ msgstr ""
 #: company/templates/company/purchase_orders.html:18
 #: order/templates/order/purchase_orders.html:20
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Yeni satın alma emri oluştur"
 
 #: company/templates/company/purchase_orders.html:19
 #: order/templates/order/purchase_orders.html:21
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Yeni Satın Alma Emri"
 
 #: company/templates/company/sales_orders.html:19
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Yeni satış emri oluştur"
 
 #: company/templates/company/sales_orders.html:20
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Yeni Satış Emri"
 
 #: company/templates/company/supplier_part_base.html:7
 #: company/templates/company/supplier_part_base.html:20 stock/models.py:416
@@ -2475,7 +2475,7 @@ msgstr "Tedarikçi Parça Stoku"
 #: company/templates/company/supplier_part_navbar.html:19
 #: company/templates/company/supplier_part_orders.html:10
 msgid "Supplier Part Orders"
-msgstr "Tedarikçi Parça Emirleri"
+msgstr "Tedarikçi Parçası Emirleri"
 
 #: company/templates/company/supplier_part_navbar.html:26
 msgid "Supplier Part Pricing"
