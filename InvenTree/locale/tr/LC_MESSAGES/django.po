@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 14:58\n"
+"PO-Revision-Date: 2021-06-17 16:09\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -130,7 +130,7 @@ msgstr "Kullanıcı"
 
 #: InvenTree/models.py:72
 msgid "upload date"
-msgstr "Yükleme tarihi"
+msgstr "yükleme tarihi"
 
 #: InvenTree/models.py:107 InvenTree/models.py:108 label/models.py:102
 #: part/models.py:686 part/models.py:2140 part/templates/part/params.html:27
@@ -165,11 +165,11 @@ msgstr "Açıklama"
 
 #: InvenTree/models.py:115
 msgid "Description (optional)"
-msgstr "Açıklama(opsiyonel)"
+msgstr "Açıklama (isteğe bağlı)"
 
 #: InvenTree/models.py:123
 msgid "parent"
-msgstr "ebeveyn"
+msgstr "üst"
 
 #: InvenTree/settings.py:503
 msgid "English"
@@ -258,79 +258,79 @@ msgstr "Reddedildi"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Eski stok izleme girişi"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Stok öğesi oluşturuldu"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Düzenlenen stok öğesi"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Atanan seri numarası"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Stok sayıldı"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stok manuel olarak eklendi"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stok manuel olarak çıkarıldı"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Konum değişti"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Montajda kullanıldı"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Montajdan çıkarıldı"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Bileşen öğesinde kullanıldı"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Bileşen öğesinden çıkarıldı"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Üst öğeden ayır"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Alt öğeyi ayır"
 
 #: InvenTree/status_codes.py:294 templates/js/table_filters.js:181
 msgid "Sent to customer"
-msgstr ""
+msgstr "Müşteriye gönderildi"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Müşteriden geri döndü"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "Yapım emri çıktısı oluşturuldu"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Yapım emri çıktısı tamamlandı"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Satın alma emri karşılığında alındı"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
@@ -338,11 +338,11 @@ msgstr "Üretim"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr "Geçerli para birimi yok"
+msgstr "Geçerli bir para birimi kodu değil"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr "Parça adında geçersiniz karakter bulunuyor"
+msgstr "Parça adında geçersiz karakter"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
@@ -353,24 +353,24 @@ msgstr "IPN regex kalıbıyla eşleşmelidir {pat}"
 #: InvenTree/validators.py:105
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Referans {pattern} deseniyle mutlaka eşleşmeli"
 
 #: InvenTree/validators.py:113
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "({x}) adında geçersiz karakter"
 
 #: InvenTree/validators.py:132 InvenTree/validators.py:148
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Fazlalık değeri negatif olmamalıdır"
 
 #: InvenTree/validators.py:150
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Fazlalık %100'ü geçmemelidir"
 
 #: InvenTree/validators.py:157
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "Fazlalık bir tamsayı veya yüzde olmalıdır"
 
 #: InvenTree/views.py:605
 msgid "Delete Item"
@@ -398,51 +398,51 @@ msgstr "Sistem Bilgisi"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "Barcode_data parametresini sağlamalıdır"
 
 #: barcodes/api.py:126
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Barkod verisi için eşleşme bulunamadı"
 
 #: barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Barkod verisi için eşleşme bulundu"
 
 #: barcodes/api.py:153
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "Stok kalemi parametresi sağlamalıdır"
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr ""
+msgstr "Eşleşen stok öğesi bulunamadı"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
-msgstr ""
+msgstr "Barkod başka bir stok kalemi nesnesi ile eşleşmektedir"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
-msgstr ""
+msgstr "Barkod başka bir stok konumu nesnesi ile eşleşmektedir"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr ""
+msgstr "Barkod başka bir parça nesnesi ile eşleşmektedir"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
-msgstr ""
+msgstr "Barkod karması (hash) zaten stok kalemi nesnesiyle eşleşiyor"
 
 #: barcodes/api.py:222
 msgid "Barcode associated with StockItem"
-msgstr ""
+msgstr "Barkod başka bir stok kalemiyle ilişkili"
 
 #: build/forms.py:37
 msgid "Build Order reference"
-msgstr ""
+msgstr "Yapım işi emri referansı"
 
 #: build/forms.py:38
 msgid "Order target date"
-msgstr ""
+msgstr "Emir hedef tarihi"
 
 #: build/forms.py:42 build/templates/build/build_base.html:146
 #: build/templates/build/detail.html:121 order/forms.py:114 order/forms.py:149
@@ -452,11 +452,11 @@ msgstr ""
 #: templates/js/build.js:793 templates/js/order.js:200
 #: templates/js/order.js:298
 msgid "Target Date"
-msgstr ""
+msgstr "Hedeflenen tarih"
 
 #: build/forms.py:43 build/models.py:225
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Yapım işinin tamamlanması için hedef tarih. Bu tarihten sonra yapım işi gecikmiş olacak."
 
 #: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1346
 #: build/templates/build/allocation_card.html:23
@@ -490,15 +490,15 @@ msgstr ""
 #: templates/js/part.js:795 templates/js/stock.js:1139
 #: templates/js/stock.js:1358
 msgid "Quantity"
-msgstr ""
+msgstr "Miktar"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr ""
+msgstr "Yapım işi öğelerinin sayısı"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Yapım işinin çıktı miktarını girin"
 
 #: build/forms.py:95 order/forms.py:240 stock/forms.py:118
 msgid "Serial Numbers"
@@ -506,15 +506,15 @@ msgstr ""
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Yapım işinin çıktısı için seri numarası girin"
 
 #: build/forms.py:103
 msgid "Confirm creation of build output"
-msgstr ""
+msgstr "Yapım işi çıktısının oluşturulmasını onaylayın"
 
 #: build/forms.py:124
 msgid "Confirm deletion of build output"
-msgstr ""
+msgstr "Yapım işi çıktısının silinmesini onaylayın"
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
@@ -526,7 +526,7 @@ msgstr ""
 
 #: build/forms.py:186
 msgid "Mark build as complete"
-msgstr ""
+msgstr "Yapım işini tamamlandı olarak işaretle"
 
 #: build/forms.py:210 build/templates/build/auto_allocate.html:18
 #: stock/forms.py:347 stock/templates/stock/item_base.html:285
@@ -554,7 +554,7 @@ msgstr ""
 
 #: build/forms.py:216
 msgid "Build output stock status"
-msgstr ""
+msgstr "Yapım işi çıktısı stok durumu"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
@@ -566,7 +566,7 @@ msgstr ""
 
 #: build/forms.py:227
 msgid "Confirm build completion"
-msgstr ""
+msgstr "Yapım işinin tamamlandığını onaylayın"
 
 #: build/forms.py:252
 msgid "Confirm cancel"
@@ -574,7 +574,7 @@ msgstr ""
 
 #: build/forms.py:252 build/views.py:66
 msgid "Confirm build cancellation"
-msgstr ""
+msgstr "Yapım işi iptalini onayla"
 
 #: build/forms.py:266
 msgid "Select quantity of stock to allocate"
@@ -585,7 +585,7 @@ msgstr ""
 #: part/templates/part/allocation.html:23
 #: report/templates/report/inventree_build_order_base.html:106
 msgid "Build Order"
-msgstr ""
+msgstr "Yapım İşi Emri"
 
 #: build/models.py:67 build/templates/build/index.html:8
 #: build/templates/build/index.html:15 order/templates/order/so_builds.html:12
@@ -595,11 +595,11 @@ msgstr ""
 #: templates/InvenTree/search.html:185
 #: templates/InvenTree/settings/tabs.html:34 users/models.py:43
 msgid "Build Orders"
-msgstr ""
+msgstr "Yapım İşi Emirleri"
 
 #: build/models.py:127
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Yapım işi emri referansı"
 
 #: build/models.py:128 order/models.py:102 order/models.py:619
 #: order/templates/order/purchase_order_detail.html:174
@@ -612,16 +612,16 @@ msgstr ""
 
 #: build/models.py:138
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Yapım işinin kısa açıklaması"
 
 #: build/models.py:147 build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:77
 msgid "Parent Build"
-msgstr ""
+msgstr "Üst Yapım İşi"
 
 #: build/models.py:148
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 
 #: build/models.py:153 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:128
@@ -651,7 +651,7 @@ msgstr ""
 
 #: build/models.py:161
 msgid "Select part to build"
-msgstr ""
+msgstr "Yapım işi için parça seçin"
 
 #: build/models.py:166
 msgid "Sales Order Reference"
@@ -659,7 +659,7 @@ msgstr ""
 
 #: build/models.py:170
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Bu yapım işinin tahsis edildiği satış emri"
 
 #: build/models.py:175
 msgid "Source Location"
@@ -667,7 +667,7 @@ msgstr ""
 
 #: build/models.py:179
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Bu yapım işi için stok alınacak konumu seçin (her hangi bir stok konumundan alınması için boş bırakın)"
 
 #: build/models.py:184
 msgid "Destination Location"
@@ -679,11 +679,11 @@ msgstr ""
 
 #: build/models.py:192
 msgid "Build Quantity"
-msgstr ""
+msgstr "Yapım İşi Miktarı"
 
 #: build/models.py:195
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Yapım işi stok öğelerinin sayısı"
 
 #: build/models.py:199
 msgid "Completed items"
@@ -695,11 +695,11 @@ msgstr ""
 
 #: build/models.py:205 part/templates/part/part_base.html:167
 msgid "Build Status"
-msgstr ""
+msgstr "Yapım İşi Durumu"
 
 #: build/models.py:209
 msgid "Build status code"
-msgstr ""
+msgstr "Yapım işi durum kodu"
 
 #: build/models.py:213 stock/models.py:466
 msgid "Batch Code"
@@ -707,7 +707,7 @@ msgstr ""
 
 #: build/models.py:217
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Yapım işi çıktısı için sıra numarası"
 
 #: build/models.py:220 order/models.py:108 part/models.py:882
 #: part/templates/part/detail.html:126 templates/js/order.js:293
@@ -732,7 +732,7 @@ msgstr ""
 
 #: build/models.py:243
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Bu yapım işi emrini veren kullanıcı"
 
 #: build/models.py:251 build/templates/build/build_base.html:184
 #: build/templates/build/detail.html:105 order/models.py:122
@@ -744,7 +744,7 @@ msgstr ""
 
 #: build/models.py:252
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Bu yapım işi emrinden sorumlu kullanıcı"
 
 #: build/models.py:257 build/templates/build/detail.html:91
 #: company/templates/company/manufacturer_part_base.html:79
@@ -781,27 +781,27 @@ msgstr ""
 
 #: build/models.py:263
 msgid "Extra build notes"
-msgstr ""
+msgstr "Yapım işi için ekstra notlar"
 
 #: build/models.py:740
 msgid "No build output specified"
-msgstr ""
+msgstr "Yapım işi çıktısı belirtilmedi"
 
 #: build/models.py:743
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Yapım işi çıktısı zaten tamamlanmış"
 
 #: build/models.py:746
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Yapım işi çıktısı, yapım işi emri ile eşleşmiyor"
 
 #: build/models.py:1152
 msgid "BuildItem must be unique for build, stock_item and install_into"
-msgstr ""
+msgstr "Yapım işi öğesi; yapım işi, stok kalemi ve kurulacak yer için benzersiz olmalıdır"
 
 #: build/models.py:1177
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Ana parça izlenebilir olarak işaretlendiğinden, yapım işi çıktısı için bir yapım işi öğesi belirtmelidir"
 
 #: build/models.py:1181
 #, python-brace-format
@@ -810,7 +810,7 @@ msgstr ""
 
 #: build/models.py:1188 order/models.py:815
 msgid "StockItem is over-allocated"
-msgstr ""
+msgstr "Stok kalemi fazla tahsis edilmiş"
 
 #: build/models.py:1192 order/models.py:818
 msgid "Allocation quantity must be greater than zero"
@@ -829,7 +829,7 @@ msgstr ""
 #: templates/InvenTree/search.html:183 templates/js/build.js:724
 #: templates/navbar.html:29
 msgid "Build"
-msgstr ""
+msgstr "Yapım İşi"
 
 #: build/models.py:1317
 msgid "Build to allocate parts"
@@ -3273,7 +3273,7 @@ msgstr ""
 #: part/templates/part/bom_duplicate.html:12
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
-msgstr ""
+msgstr "Uyarı"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -5108,7 +5108,7 @@ msgstr ""
 
 #: report/models.py:318
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "Stok kalemi sorgu filtreleri (anahter=nesne [key=value] olarak virgülle ayrılmış liste)"
 
 #: report/models.py:326
 msgid "Include Installed Tests"
@@ -5316,7 +5316,7 @@ msgstr ""
 
 #: stock/models.py:275
 msgid "StockItem with this serial number already exists"
-msgstr ""
+msgstr "Bu seri numarasına sahip stok kalemi zaten var"
 
 #: stock/models.py:311
 #, python-brace-format
@@ -5456,7 +5456,7 @@ msgstr ""
 
 #: stock/models.py:1194
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr ""
+msgstr "Stok kalemi stokta olmadığı için taşınamaz"
 
 #: stock/models.py:1668
 msgid "Entry notes"
@@ -5653,12 +5653,12 @@ msgstr ""
 #: stock/templates/stock/item_base.html:380
 #, python-format
 msgid "This StockItem expired on %(item.expiry_date)s"
-msgstr ""
+msgstr "Bu stok kaleminin süresi %(item.expiry_date)s tarihinde sona erdi"
 
 #: stock/templates/stock/item_base.html:382
 #, python-format
 msgid "This StockItem expires on %(item.expiry_date)s"
-msgstr ""
+msgstr "Bu stok kaleminin süresi %(item.expiry_date)s tarihinde sona erecek"
 
 #: stock/templates/stock/item_base.html:389 templates/js/stock.js:660
 msgid "Last Updated"
@@ -5691,7 +5691,7 @@ msgstr ""
 
 #: stock/templates/stock/item_install.html:7
 msgid "Install another StockItem into this item."
-msgstr ""
+msgstr "Bu öğeye başka bir stok kalemi ekle."
 
 #: stock/templates/stock/item_install.html:10
 msgid "Stock items can only be installed if they meet the following criteria"
@@ -5699,11 +5699,11 @@ msgstr ""
 
 #: stock/templates/stock/item_install.html:13
 msgid "The StockItem links to a Part which is in the BOM for this StockItem"
-msgstr ""
+msgstr "Bu stok kalemi, kendi malzeme listesinin bir parçasına bağlıdır"
 
 #: stock/templates/stock/item_install.html:14
 msgid "The StockItem is currently in stock"
-msgstr ""
+msgstr "Bu stok kalemi şu anda stokta"
 
 #: stock/templates/stock/item_installed.html:11
 #: stock/templates/stock/navbar.html:27
@@ -5821,20 +5821,20 @@ msgstr ""
 
 #: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1364
 msgid "Convert Stock Item"
-msgstr ""
+msgstr "Stok Kalemine Dönüştür"
 
 #: stock/templates/stock/stockitem_convert.html:8
 #, python-format
 msgid "This stock item is current an instance of <i>%(part)s</i>"
-msgstr ""
+msgstr "Bu stok kalemi şu anda <i>%(part)s</i> parçasının örneğidir"
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
-msgstr ""
+msgstr "Aşağıda listelenen parça biçimlerinden birine dönüştürülebilir."
 
 #: stock/templates/stock/stockitem_convert.html:14
 msgid "This action cannot be easily undone"
-msgstr ""
+msgstr "Bu işlem kolayca geri alınamaz"
 
 #: stock/templates/stock/sublocation.html:23 templates/stock_table.html:37
 msgid "Printing Actions"
