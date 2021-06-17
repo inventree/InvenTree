@@ -65,7 +65,7 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(acme.supplied_part_count, 4)
 
         self.assertTrue(appel.has_parts)
-        self.assertEqual(appel.supplied_part_count, 3)
+        self.assertEqual(appel.supplied_part_count, 4)
 
         self.assertTrue(zerg.has_parts)
         self.assertEqual(zerg.supplied_part_count, 2)

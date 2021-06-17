@@ -159,7 +159,7 @@ function loadStockTestResultsTable(table, options) {
 
             // Set "parent" for each existing row
             tableData.forEach(function(item, idx) {
-                tableData[idx].parent = options.stock_item;
+                tableData[idx].parent = parent_node;
             });
 
             // Once the test template data are loaded, query for test results
@@ -658,6 +658,11 @@ function loadStockTable(table, options) {
             {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
+                field: 'purchase_price',
+                title: '{% trans "Purchase Price" %}',
                 sortable: true,
             },
             {

@@ -181,6 +181,14 @@
             {% endif %}
             {% endif %}
         {% endif %}
+        {% if part.trackable and part.getLatestSerialNumber %}
+            <tr><td colspan="3"></td></tr>
+            <tr>
+                <td><span class='fas fa-hashtag'></span></td>
+                <td>{% trans "Latest Serial Number" %}</td>
+                <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
+            </tr>
+        {% endif %}
         </table>
     </div>
     </div>

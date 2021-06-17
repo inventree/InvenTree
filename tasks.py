@@ -282,7 +282,7 @@ def export_records(c, filename='data.json'):
 
     tmpfile = f"{filename}.tmp"
 
-    cmd = f"dumpdata --indent 2 --output {tmpfile} {content_excludes()}"
+    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {content_excludes()}"
 
     # Dump data to temporary file
     manage(c, cmd, pty=True)
@@ -348,7 +348,7 @@ def import_records(c, filename='data.json'):
     with open(tmpfile, "w") as f_out:
         f_out.write(json.dumps(data, indent=2))
 
-    cmd = f"loaddata {tmpfile} -i {content_excludes()}"
+    cmd = f"loaddata '{tmpfile}' -i {content_excludes()}"
 
     manage(c, cmd, pty=True)
 

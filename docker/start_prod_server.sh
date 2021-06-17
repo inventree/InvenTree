@@ -16,7 +16,7 @@ if test -f "$INVENTREE_CONFIG_FILE"; then
     echo "$INVENTREE_CONFIG_FILE exists - skipping"
 else
     echo "Copying config file to $INVENTREE_CONFIG_FILE"
-    cp $INVENTREE_SRC_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
+    cp $INVENTREE_HOME/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
 echo "Starting InvenTree server..."
