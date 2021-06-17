@@ -851,6 +851,7 @@ function launchModalForm(url, options = {}) {
      * secondary - List of secondary modals to attach
      * callback - List of callback functions to attach to inputs
      * focus - Select which field to focus on by default
+     * buttons - additional buttons that should be added as array with [name, title]
      */
 
     var modal = options.modal || '#modal-form';
