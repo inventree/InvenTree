@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-16 23:12+0000\n"
-"PO-Revision-Date: 2021-06-16 22:41\n"
+"PO-Revision-Date: 2021-06-17 00:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2151,11 +2151,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -3174,10 +3172,8 @@ msgstr "Keine Positionen gefunden"
 
 #: order/templates/order/purchase_order_detail.html:142
 #: order/templates/order/sales_order_detail.html:223
-#, fuzzy
-#| msgid "Total Cost"
 msgid "Total"
-msgstr "Gesamtkosten"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:191
 #: order/templates/order/sales_order_detail.html:246
@@ -3187,7 +3183,7 @@ msgstr "Stück-Preis"
 #: order/templates/order/purchase_order_detail.html:198
 #: order/templates/order/sales_order_detail.html:253
 msgid "Total price"
-msgstr ""
+msgstr "Gesamtpreis"
 
 #: order/templates/order/purchase_order_detail.html:251
 #: order/templates/order/sales_order_detail.html:359
@@ -5097,10 +5093,8 @@ msgid "Report revision number (auto-increments)"
 msgstr "Bericht Revisionsnummer (autom. erhöht)"
 
 #: report/models.py:291
-#, fuzzy
-#| msgid "Pattern for generating label filenames"
 msgid "Pattern for generating report filenames"
-msgstr "Muster für die Erstellung von Label-Dateinamen"
+msgstr ""
 
 #: report/models.py:298
 msgid "Report template is enabled"
@@ -6157,13 +6151,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7616,3 +7608,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:187
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
