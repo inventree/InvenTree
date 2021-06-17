@@ -4,6 +4,7 @@
 {% load i18n %}
 
 {% block form %}
+{% settings_value 'PART_SHOW_PRICE_IN_FORMS' as show_price %}
 
 <h4>
     {% trans "Step 1 of 2 - Select Part Suppliers" %}
