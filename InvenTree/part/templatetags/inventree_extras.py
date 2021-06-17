@@ -220,6 +220,18 @@ def keyvalue(dict, key):
 
 
 @register.simple_tag()
+def call_method(obj, method_name, *args):
+    """
+    enables calling model methods / functions from templates with arguments
+    
+    usage:
+    {% call_method model_object 'fnc_name' argument1 %}
+    """
+    method = getattr(obj, method_name)
+    return method(*args)
+
+
+@register.simple_tag()
 def authorized_owners(group):
     """ Return authorized owners """
 
