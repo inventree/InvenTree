@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 19:06\n"
+"PO-Revision-Date: 2021-06-17 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -438,7 +438,7 @@ msgstr "Barkod başka bir stok kalemiyle ilişkili"
 
 #: build/forms.py:37
 msgid "Build Order reference"
-msgstr "Yapım işi emri referansı"
+msgstr "Yapım İşi Emri referansı"
 
 #: build/forms.py:38
 msgid "Order target date"
@@ -494,11 +494,11 @@ msgstr "Miktar"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr "Yapım işi öğelerinin sayısı"
+msgstr "Yapılacak öğe sayısı"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
-msgstr "Yapım işinin çıktı miktarını girin"
+msgstr "Yapım işi çıktısı için miktarını girin"
 
 #: build/forms.py:95 order/forms.py:240 stock/forms.py:118
 msgid "Serial Numbers"
@@ -506,7 +506,7 @@ msgstr "Seri Numaraları"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
-msgstr "Yapım işinin çıktısı için seri numarası girin"
+msgstr "Yapım işi çıktısı için seri numaraları girin"
 
 #: build/forms.py:103
 msgid "Confirm creation of build output"
@@ -599,7 +599,7 @@ msgstr "Yapım İşi Emirleri"
 
 #: build/models.py:127
 msgid "Build Order Reference"
-msgstr "Yapım işi emri referansı"
+msgstr "Yapım İşi Emri Referansı"
 
 #: build/models.py:128 order/models.py:102 order/models.py:619
 #: order/templates/order/purchase_order_detail.html:174
@@ -1120,19 +1120,19 @@ msgstr ""
 
 #: build/templates/build/complete.html:8
 msgid "Build Order is complete"
-msgstr ""
+msgstr "Yapım işi emri tamamlandı"
 
 #: build/templates/build/complete.html:12
 msgid "Build Order is incomplete"
-msgstr ""
+msgstr "Yapım işi emri eksik"
 
 #: build/templates/build/complete.html:15
 msgid "Incompleted build outputs remain"
-msgstr ""
+msgstr "Eksik yapım işi çıktıları kaldı"
 
 #: build/templates/build/complete.html:18
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "Gerekli yapım işi miktarı tamamlanmadı"
 
 #: build/templates/build/complete.html:21
 msgid "Required stock has not been fully allocated"
@@ -1140,11 +1140,11 @@ msgstr "Gerekli stok tamamen tahsis edilemedi"
 
 #: build/templates/build/complete_output.html:10
 msgid "Stock allocation is complete for this output"
-msgstr ""
+msgstr "Bu çıktı için stok tahsisi tamamlandı"
 
 #: build/templates/build/complete_output.html:14
 msgid "Stock allocation is incomplete"
-msgstr ""
+msgstr "Stok tahsisi tamamlanmamış"
 
 #: build/templates/build/complete_output.html:20
 msgid "tracked parts have not been fully allocated"
@@ -1152,7 +1152,7 @@ msgstr "takip edilebilir parçalar tamamen tahsis edilemedi"
 
 #: build/templates/build/complete_output.html:41
 msgid "The following items will be created"
-msgstr ""
+msgstr "Aşağıdaki öğeler oluşturulacak"
 
 #: build/templates/build/create_build_item.html:7
 msgid "Select a stock item to allocate to the selected build output"
@@ -1166,15 +1166,15 @@ msgstr "Tahsis edilen stok bu yapım işi çıktısının kurulmasında kullanı
 #: build/templates/build/create_build_item.html:17
 #, python-format
 msgid "No stock available for %(part)s"
-msgstr ""
+msgstr "%(part)s için mevcut stok yok"
 
 #: build/templates/build/delete_build_item.html:8
 msgid "Are you sure you want to unallocate this stock?"
-msgstr ""
+msgstr "Bu stokun tahsisinin iptal etmek istediğinizden emin misiniz?"
 
 #: build/templates/build/delete_build_item.html:11
 msgid "The selected stock will be unallocated from the build output"
-msgstr ""
+msgstr "Bu yapım işi için seçili stok tahsisi iptal edilecek"
 
 #: build/templates/build/detail.html:35
 msgid "Stock Source"
@@ -1351,67 +1351,67 @@ msgstr "Yapım işi çıktısı silindi"
 
 #: build/views.py:405
 msgid "Complete Build Order"
-msgstr ""
+msgstr "Tamamlanmış Yapım İşi Emri"
 
 #: build/views.py:411
 msgid "Build order cannot be completed - incomplete outputs remain"
-msgstr ""
+msgstr "Yapım işi emri tamamlanamadı - eksik çıktılar kaldı"
 
 #: build/views.py:422
 msgid "Completed build order"
-msgstr ""
+msgstr "Tamamlanmış yapım işi emri"
 
 #: build/views.py:438
 msgid "Complete Build Output"
-msgstr ""
+msgstr "Tamamlanmış Yapım İşi Çıktısı"
 
 #: build/views.py:480
 msgid "Invalid stock status value selected"
-msgstr ""
+msgstr "Geçersiz stok durum değeri seçildi"
 
 #: build/views.py:487
 msgid "Quantity to complete cannot exceed build output quantity"
-msgstr ""
+msgstr "Tamamlanacak miktar yapım işi çıktı miktarını aşamaz"
 
 #: build/views.py:493
 msgid "Confirm completion of incomplete build"
-msgstr ""
+msgstr "Eksik yapım işinin tamamlandığını onaylayın"
 
 #: build/views.py:592
 msgid "Build output completed"
-msgstr ""
+msgstr "Yapım işi çıktısı tamamlandı"
 
 #: build/views.py:732
 msgid "Created new build"
-msgstr ""
+msgstr "Yeni yapım işi oluşturuldu"
 
 #: build/views.py:753
 msgid "Edit Build Order Details"
-msgstr ""
+msgstr "Yapım İşi Emri Detaylarını Düzenle"
 
 #: build/views.py:786
 msgid "Edited build"
-msgstr ""
+msgstr "Yapım işi düzenlendi"
 
 #: build/views.py:795
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Yapım İşi Emrini Sil"
 
 #: build/views.py:810
 msgid "Removed parts from build allocation"
-msgstr ""
+msgstr "Yapım işinden tahsis edilen parçalar çıkarıldı"
 
 #: build/views.py:822
 msgid "Allocate stock to build output"
-msgstr ""
+msgstr "Yapım işi çıktısına stok tahsis edildi"
 
 #: build/views.py:865
 msgid "Item must be currently in stock"
-msgstr ""
+msgstr "Öğe stokta bulunmalı"
 
 #: build/views.py:871
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Stok kalemi fazladan tahsis edilmiş"
 
 #: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:585
 #: templates/js/build.js:848 templates/js/build.js:1031
