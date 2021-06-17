@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 12:38\n"
+"PO-Revision-Date: 2021-06-17 16:09\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2891,7 +2891,7 @@ msgstr "Preis pro Einheit"
 
 #: order/models.py:681
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr ""
+msgstr "Wo möchte der Käufer diesen Artikel gelagert haben?"
 
 #: order/models.py:724 part/templates/part/navbar.html:101
 #: part/templates/part/order_prices.html:91
@@ -3179,7 +3179,7 @@ msgstr "Keine Positionen gefunden"
 #: order/templates/order/purchase_order_detail.html:142
 #: order/templates/order/sales_order_detail.html:223
 msgid "Total"
-msgstr ""
+msgstr "Summe"
 
 #: order/templates/order/purchase_order_detail.html:191
 #: order/templates/order/sales_order_detail.html:246
@@ -5101,7 +5101,7 @@ msgstr "Bericht Revisionsnummer (autom. erhöht)"
 
 #: report/models.py:291
 msgid "Pattern for generating report filenames"
-msgstr ""
+msgstr "Muster für die Erstellung von Berichtsdateinamen"
 
 #: report/models.py:298
 msgid "Report template is enabled"
