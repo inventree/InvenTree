@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-17 12:37+0000\n"
-"PO-Revision-Date: 2021-06-17 22:58\n"
+"PO-Revision-Date: 2021-06-18 00:28\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -3078,7 +3078,7 @@ msgstr "Tedarikçi Parçası Seçin"
 
 #: order/templates/order/order_wizard/po_upload.html:11
 msgid "Upload File for Purchase Order"
-msgstr ""
+msgstr "Sipariş Emri için Dosya Yükle"
 
 #: order/templates/order/order_wizard/po_upload.html:18
 #, python-format
@@ -3581,23 +3581,23 @@ msgstr ""
 #: part/bom.py:379
 #, python-brace-format
 msgid "Unsupported file format: {f}"
-msgstr ""
+msgstr "Geçersiz dosya biçimi: {f}"
 
 #: part/bom.py:384
 msgid "Error reading BOM file (invalid data)"
-msgstr ""
+msgstr "Malzeme listesi okurken hata (geçersiz data)"
 
 #: part/bom.py:386
 msgid "Error reading BOM file (incorrect row size)"
-msgstr ""
+msgstr "Malzeme listesi okurken hata (geçersiz satır boyutu)"
 
 #: part/forms.py:89 stock/forms.py:265
 msgid "File Format"
-msgstr ""
+msgstr "Dosya Biçimi"
 
 #: part/forms.py:89 stock/forms.py:265
 msgid "Select output file format"
-msgstr ""
+msgstr "Çıktı dosyası biçimi seçin"
 
 #: part/forms.py:91
 msgid "Cascading"
@@ -3673,11 +3673,11 @@ msgstr ""
 
 #: part/forms.py:165
 msgid "BOM file"
-msgstr ""
+msgstr "Malzeme Listesi Dosyası"
 
 #: part/forms.py:165
 msgid "Select BOM file to upload"
-msgstr ""
+msgstr "Yüklemek için Malzeme Listesi dosyası seçin"
 
 #: part/forms.py:184
 msgid "Related Part"
