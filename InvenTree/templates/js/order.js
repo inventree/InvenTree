@@ -310,3 +310,88 @@ function loadSalesOrderTable(table, options) {
         ],
     });
 }
+
+
+function loadSalesOrderAllocationTable(table, options={}) {
+    /**
+     * Load a table with SalesOrderAllocation items
+     */
+
+    options.params = options.params || {};
+
+    options.params['location_detail'] = true;
+    options.params['part_detail'] = true;
+    options.params['item_detail'] = true;
+    options.params['order_detail'] = true;
+
+    var filters = loadTableFilters("salesorderallocation");
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList("salesorderallocation", $(table));
+
+    $(table).inventreeTable({
+        url: '{% url "api-so-allocation-list" %}',
+        queryParams: filters,
+        name: 'salesorderallocation',
+        groupBy: false,
+        search: false,
+        paginationVAlign: 'bottom',
+        original: options.params,
+        formatNoMatches: function() { return '{% trans "No sales order allocations found" %}'; },
+        columns: [
+            {
+                field: 'pk',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'order',
+                switchable: false,
+                title: '{% trans "Order" %}',
+                switchable: false,
+                formatter: function(value, row) {
+
+                    var prefix = "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}";
+
+                    var ref = `${prefix}${row.order_detail.reference}`;
+
+                    return renderLink(ref, `/order/sales-order/${row.order}/`);
+                }
+            },
+            {
+                field: 'item',
+                title: '{% trans "Stock Item" %}',
+                formatter: function(value, row) {
+                    // Render a link to the particular stock item
+
+                    var link = `/stock/item/${row.item}/`;
+                    var text = `{% trans "Stock Item" %} ${row.item}`;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+
+                    if (!value) {
+                        return '{% trans "Location not specified" %}';
+                    }
+                    
+                    var link = `/stock/location/${value}`;
+                    var text = row.location_detail.description;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            }
+        ]
+    });
+}
