@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 22:19+0000\n"
+"POT-Creation-Date: 2021-06-18 00:31+0000\n"
 "PO-Revision-Date: 2021-06-17 00:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -6403,7 +6403,7 @@ msgid "copy version information"
 msgstr ""
 
 #: templates/about.html:95 templates/js/modals.js:568
-#: templates/js/modals.js:846 templates/modals.html:29 templates/modals.html:54
+#: templates/js/modals.js:861 templates/modals.html:29 templates/modals.html:54
 #: templates/modals.html:97
 msgid "Close"
 msgstr ""
@@ -6464,7 +6464,7 @@ msgstr ""
 msgid "Unknown response from server"
 msgstr ""
 
-#: templates/js/barcode.js:119 templates/js/modals.js:901
+#: templates/js/barcode.js:119 templates/js/modals.js:921
 msgid "Invalid server response"
 msgstr ""
 
@@ -6732,76 +6732,76 @@ msgstr ""
 msgid "Loading Data"
 msgstr ""
 
-#: templates/js/modals.js:567 templates/js/modals.js:845
+#: templates/js/modals.js:567 templates/js/modals.js:860
 #: templates/modals.html:30 templates/modals.html:55
 msgid "Submit"
 msgstr ""
 
-#: templates/js/modals.js:797
+#: templates/js/modals.js:811
 msgid "Invalid response from server"
 msgstr ""
 
-#: templates/js/modals.js:797
+#: templates/js/modals.js:811
 msgid "Form data missing from server response"
 msgstr ""
 
-#: templates/js/modals.js:810
+#: templates/js/modals.js:824
 msgid "Error posting form data"
 msgstr ""
 
-#: templates/js/modals.js:901
+#: templates/js/modals.js:921
 msgid "JSON response missing form data"
 msgstr ""
 
-#: templates/js/modals.js:911
+#: templates/js/modals.js:931
 msgid "No Response"
 msgstr ""
 
-#: templates/js/modals.js:912
+#: templates/js/modals.js:932
 msgid "No response from the InvenTree server"
 msgstr ""
 
-#: templates/js/modals.js:916
+#: templates/js/modals.js:936
 msgid "Error 400: Bad Request"
 msgstr ""
 
-#: templates/js/modals.js:917
+#: templates/js/modals.js:937
 msgid "Server returned error code 400"
 msgstr ""
 
-#: templates/js/modals.js:921
+#: templates/js/modals.js:941
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/modals.js:922
+#: templates/js/modals.js:942
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/modals.js:926
+#: templates/js/modals.js:946
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/modals.js:927
+#: templates/js/modals.js:947
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/modals.js:931
+#: templates/js/modals.js:951
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/modals.js:932
+#: templates/js/modals.js:952
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/modals.js:936
+#: templates/js/modals.js:956
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/modals.js:937
+#: templates/js/modals.js:957
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
-#: templates/js/modals.js:940
+#: templates/js/modals.js:960
 msgid "Error requesting form data"
 msgstr ""
 
