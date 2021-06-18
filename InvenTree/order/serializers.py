@@ -18,7 +18,7 @@ from InvenTree.serializers import InvenTreeAttachmentSerializerField
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from stock.serializers import LocationBriefSerializer
-from stock.serializers import StockItemSerializer, StockItemSerializer
+from stock.serializers import StockItemSerializer, LocationSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
@@ -43,7 +43,7 @@ class POSerializer(InvenTreeModelSerializer):
         """
         Add extra information to the queryset
 
-        - Number of liens in the PurchaseOrder
+        - Number of lines in the PurchaseOrder
         - Overdue status of the PurchaseOrder
         """
 
