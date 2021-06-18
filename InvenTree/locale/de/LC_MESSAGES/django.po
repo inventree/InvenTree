@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-18 00:37+0000\n"
-"PO-Revision-Date: 2021-06-18 01:38\n"
+"POT-Creation-Date: 2021-06-18 10:11+0000\n"
+"PO-Revision-Date: 2021-06-18 10:58\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -154,7 +154,7 @@ msgstr "Name"
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
 #: templates/InvenTree/settings/header.html:9 templates/js/bom.js:190
-#: templates/js/build.js:746 templates/js/build.js:1014
+#: templates/js/build.js:830 templates/js/build.js:1098
 #: templates/js/company.js:56 templates/js/order.js:183
 #: templates/js/order.js:280 templates/js/part.js:177 templates/js/part.js:260
 #: templates/js/part.js:437 templates/js/part.js:653 templates/js/part.js:721
@@ -449,7 +449,7 @@ msgstr "geplantes Bestelldatum"
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:119
 #: report/templates/report/inventree_build_order_base.html:126
-#: templates/js/build.js:793 templates/js/order.js:200
+#: templates/js/build.js:877 templates/js/order.js:200
 #: templates/js/order.js:298
 msgid "Target Date"
 msgstr "Zieldatum"
@@ -474,8 +474,6 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: order/templates/order/sales_order_detail.html:162
 #: order/templates/order/sales_order_detail.html:234 part/forms.py:342
 #: part/forms.py:372 part/forms.py:388 part/forms.py:404 part/models.py:2306
-#: part/templates/part/allocation.html:19
-#: part/templates/part/allocation.html:53
 #: part/templates/part/internal_prices.html:98
 #: part/templates/part/order_prices.html:202
 #: part/templates/part/part_pricing.html:16
@@ -487,7 +485,8 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: stock/forms.py:175 stock/forms.py:308
 #: stock/templates/stock/item_base.html:255
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
-#: templates/js/bom.js:205 templates/js/build.js:486 templates/js/build.js:1024
+#: templates/js/bom.js:205 templates/js/build.js:233 templates/js/build.js:570
+#: templates/js/build.js:1108 templates/js/order.js:393
 #: templates/js/part.js:795 templates/js/stock.js:1139
 #: templates/js/stock.js:1358
 msgid "Quantity"
@@ -533,7 +532,8 @@ msgstr "Bauauftrag als vollständig markieren"
 #: stock/forms.py:347 stock/templates/stock/item_base.html:285
 #: stock/templates/stock/stock_adjust.html:17
 #: templates/InvenTree/search.html:260 templates/js/barcode.js:363
-#: templates/js/barcode.js:531 templates/js/build.js:500
+#: templates/js/barcode.js:531 templates/js/build.js:218
+#: templates/js/build.js:584 templates/js/order.js:378
 #: templates/js/stock.js:639 templates/js/stock.js:1031
 msgid "Location"
 msgstr "Lagerort"
@@ -546,7 +546,7 @@ msgstr "Lagerort der Endprodukte"
 #: build/templates/build/detail.html:59 order/models.py:469
 #: order/templates/order/receive_parts.html:24
 #: stock/templates/stock/item_base.html:403 templates/InvenTree/search.html:252
-#: templates/js/barcode.js:119 templates/js/build.js:780
+#: templates/js/barcode.js:119 templates/js/build.js:864
 #: templates/js/order.js:187 templates/js/order.js:285
 #: templates/js/stock.js:626 templates/js/stock.js:1108
 #: templates/js/stock.js:1374
@@ -583,8 +583,8 @@ msgstr "Menge der BestandsObjekte für Zuordnung auswählen"
 
 #: build/models.py:66 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
-#: part/templates/part/allocation.html:23
 #: report/templates/report/inventree_build_order_base.html:106
+#: templates/js/build.js:195
 msgid "Build Order"
 msgstr "Bauauftrag"
 
@@ -607,7 +607,7 @@ msgstr "Bauauftragsreferenz"
 #: order/templates/order/sales_order_detail.html:229 part/models.py:2315
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
-#: templates/js/build.js:575 templates/js/build.js:1018
+#: templates/js/build.js:659 templates/js/build.js:1102
 msgid "Reference"
 msgstr "Referenz"
 
@@ -642,8 +642,8 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:112 templates/InvenTree/search.html:210
 #: templates/js/barcode.js:362 templates/js/bom.js:163
-#: templates/js/build.js:466 templates/js/build.js:751
-#: templates/js/build.js:991 templates/js/company.js:140
+#: templates/js/build.js:550 templates/js/build.js:835
+#: templates/js/build.js:1075 templates/js/company.js:140
 #: templates/js/company.js:238 templates/js/part.js:241
 #: templates/js/part.js:404 templates/js/stock.js:521
 #: templates/js/stock.js:1346
@@ -719,7 +719,7 @@ msgstr "Erstelldatum"
 msgid "Target completion date"
 msgstr "geplantes Fertigstellungsdatum"
 
-#: build/models.py:228 order/models.py:221 templates/js/build.js:798
+#: build/models.py:228 order/models.py:221 templates/js/build.js:882
 msgid "Completion Date"
 msgstr "Fertigstellungsdatum"
 
@@ -827,7 +827,7 @@ msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr "Ausgewähltes BestandsObjekt nicht Stückliste für Teil '{p}' gefunden"
 
 #: build/models.py:1316 stock/templates/stock/item_base.html:317
-#: templates/InvenTree/search.html:183 templates/js/build.js:724
+#: templates/InvenTree/search.html:183 templates/js/build.js:808
 #: templates/navbar.html:29
 msgid "Build"
 msgstr "Bauauftrag"
@@ -836,14 +836,12 @@ msgstr "Bauauftrag"
 msgid "Build to allocate parts"
 msgstr "Bauauftrag starten um Teile zuzuweisen"
 
-#: build/models.py:1333 part/templates/part/allocation.html:18
-#: part/templates/part/allocation.html:24
-#: part/templates/part/allocation.html:31
-#: part/templates/part/allocation.html:49
-#: stock/templates/stock/item_base.html:8
+#: build/models.py:1333 stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:31
 #: stock/templates/stock/item_base.html:339
-#: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:841
+#: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:206
+#: templates/js/build.js:211 templates/js/build.js:925
+#: templates/js/order.js:366 templates/js/order.js:371
 #: templates/js/stock.js:1090
 msgid "Stock Item"
 msgstr "BestandsObjekt"
@@ -880,7 +878,7 @@ msgstr "Lagerbestand Bauauftrag zuweisen"
 msgid "Auto Allocate"
 msgstr "Automatisch zuweisen"
 
-#: build/templates/build/allocate.html:25 templates/js/build.js:656
+#: build/templates/build/allocate.html:25 templates/js/build.js:740
 msgid "Unallocate stock"
 msgstr "Bestandszuordnung aufheben"
 
@@ -917,7 +915,7 @@ msgstr "Dieser Bauauftrag hat keine zugeordneten Stücklisten-Einträge"
 #: order/templates/order/sales_order_detail.html:160
 #: report/templates/report/inventree_test_report_base.html:75
 #: stock/models.py:454 stock/templates/stock/item_base.html:249
-#: templates/js/build.js:484
+#: templates/js/build.js:568
 msgid "Serial Number"
 msgstr "Seriennummer"
 
@@ -1041,7 +1039,6 @@ msgstr "Fortschritt"
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:35
 #: order/templates/order/sales_order_ship.html:25
-#: part/templates/part/allocation.html:30
 #: report/templates/report/inventree_build_order_base.html:136
 #: report/templates/report/inventree_so_report.html:77
 #: stock/templates/stock/item_base.html:279 templates/js/order.js:245
@@ -1205,7 +1202,7 @@ msgstr "Losnummer"
 
 #: build/templates/build/detail.html:116
 #: order/templates/order/order_base.html:111
-#: order/templates/order/sales_order_base.html:113 templates/js/build.js:788
+#: order/templates/order/sales_order_base.html:113 templates/js/build.js:872
 msgid "Created"
 msgstr "Erstellt"
 
@@ -1213,7 +1210,7 @@ msgstr "Erstellt"
 msgid "No target date set"
 msgstr "Kein Ziel-Datum gesetzt"
 
-#: build/templates/build/detail.html:132 templates/js/build.js:766
+#: build/templates/build/detail.html:132 templates/js/build.js:850
 msgid "Completed"
 msgstr "Fertig"
 
@@ -1414,8 +1411,8 @@ msgstr "Teil muss aktuell im Bestand sein"
 msgid "Stock item is over-allocated"
 msgstr "BestandObjekt ist zu oft zugewiesen"
 
-#: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:585
-#: templates/js/build.js:848 templates/js/build.js:1031
+#: build/views.py:872 templates/js/bom.js:230 templates/js/build.js:669
+#: templates/js/build.js:932 templates/js/build.js:1115
 msgid "Available"
 msgstr "Verfügbar"
 
@@ -2122,7 +2119,7 @@ msgstr "Mehrere bestellen"
 
 #: company/templates/company/assigned_stock.html:10
 #: company/templates/company/navbar.html:62
-#: company/templates/company/navbar.html:65 templates/js/build.js:477
+#: company/templates/company/navbar.html:65 templates/js/build.js:561
 msgid "Assigned Stock"
 msgstr "Zugeordneter Bestand"
 
@@ -2869,9 +2866,7 @@ msgstr "Position - Referenz"
 msgid "Line item notes"
 msgstr "Position - Notizen"
 
-#: order/models.py:647 order/models.py:715
-#: part/templates/part/allocation.html:17
-#: part/templates/part/allocation.html:45
+#: order/models.py:647 order/models.py:715 templates/js/order.js:353
 msgid "Order"
 msgstr "Bestellung"
 
@@ -3303,17 +3298,17 @@ msgid "Sales Order Items"
 msgstr "Auftrags-Positionen"
 
 #: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:365
-#: templates/js/build.js:637 templates/js/build.js:1054
+#: templates/js/build.js:721 templates/js/build.js:1138
 msgid "Actions"
 msgstr "Aktionen"
 
-#: order/templates/order/sales_order_detail.html:102 templates/js/build.js:525
-#: templates/js/build.js:859
+#: order/templates/order/sales_order_detail.html:102 templates/js/build.js:609
+#: templates/js/build.js:943
 msgid "Edit stock allocation"
 msgstr "Bestands-Zuordnung bearbeiten"
 
-#: order/templates/order/sales_order_detail.html:103 templates/js/build.js:527
-#: templates/js/build.js:860
+#: order/templates/order/sales_order_detail.html:103 templates/js/build.js:611
+#: templates/js/build.js:944
 msgid "Delete stock allocation"
 msgstr "Bestands-Zuordnung löschen"
 
@@ -3325,8 +3320,8 @@ msgstr "Keine passenden Positionen gefunden"
 msgid "ID"
 msgstr "ID"
 
-#: order/templates/order/sales_order_detail.html:274 templates/js/build.js:589
-#: templates/js/build.js:855
+#: order/templates/order/sales_order_detail.html:274 templates/js/build.js:673
+#: templates/js/build.js:939
 msgid "Allocated"
 msgstr "Zugeordnet"
 
@@ -3342,7 +3337,7 @@ msgstr "PO"
 msgid "Allocate serial numbers"
 msgstr "Seriennummern zuweisen"
 
-#: order/templates/order/sales_order_detail.html:346 templates/js/build.js:651
+#: order/templates/order/sales_order_detail.html:346 templates/js/build.js:735
 msgid "Allocate stock"
 msgstr "Lagerbestand zuweisen"
 
@@ -3350,8 +3345,8 @@ msgstr "Lagerbestand zuweisen"
 msgid "Purchase stock"
 msgstr "Lagerbestand kaufen"
 
-#: order/templates/order/sales_order_detail.html:353 templates/js/build.js:644
-#: templates/js/build.js:1062
+#: order/templates/order/sales_order_detail.html:353 templates/js/build.js:728
+#: templates/js/build.js:1146
 msgid "Build stock"
 msgstr "Lagerbestand bauen"
 
@@ -4131,8 +4126,12 @@ msgid "Error creating relationship: check that the part is not related to itself
 msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist das die Verwandtschaft nicht eindeutig?"
 
 #: part/templates/part/allocation.html:11
-msgid "Part Stock Allocations"
-msgstr "Teil-Bestandszuordnungen"
+msgid "Build Order Allocations"
+msgstr ""
+
+#: part/templates/part/allocation.html:24
+msgid "Sales  Order Allocations"
+msgstr ""
 
 #: part/templates/part/attachments.html:10
 msgid "Part Attachments"
@@ -4620,7 +4619,7 @@ msgid "Part Notes"
 msgstr "Teil-Bemerkungen"
 
 #: part/templates/part/order_prices.html:24
-#: part/templates/part/part_base.html:265
+#: part/templates/part/part_base.html:274
 msgid "Calculate"
 msgstr "Berechnen"
 
@@ -5704,7 +5703,7 @@ msgstr "Dieses BestandsObjekt wird automatisch gelöscht wenn der Lagerbestand a
 msgid "Stock Item Details"
 msgstr "BestandsObjekt-Details"
 
-#: stock/templates/stock/item_base.html:289 templates/js/build.js:508
+#: stock/templates/stock/item_base.html:289 templates/js/build.js:592
 msgid "No location set"
 msgstr "Kein Lagerort gesetzt"
 
@@ -6097,7 +6096,7 @@ msgstr "BestandsObjekt bearbeiten"
 msgid "Serialize Stock"
 msgstr "Lagerbestand erfassen"
 
-#: stock/views.py:1575 templates/js/build.js:244
+#: stock/views.py:1575 templates/js/build.js:326
 msgid "Create new Stock Item"
 msgstr "Neues BestandsObjekt hinzufügen"
 
@@ -6587,7 +6586,7 @@ msgstr "In Lagerorten buchen"
 msgid "Barcode does not match a valid location"
 msgstr "Barcode entspricht keinem Lagerort"
 
-#: templates/js/bom.js:175 templates/js/build.js:1004
+#: templates/js/bom.js:175 templates/js/build.js:1088
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
@@ -6623,7 +6622,7 @@ msgstr "Stücklisten-Position bearbeiten"
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: templates/js/bom.js:470 templates/js/build.js:340 templates/js/build.js:1102
+#: templates/js/bom.js:470 templates/js/build.js:422 templates/js/build.js:1186
 msgid "No BOM items found"
 msgstr "Keine Stücklisten-Position(en) gefunden"
 
@@ -6643,37 +6642,45 @@ msgstr "Endprodukt fertigstellen"
 msgid "Delete build output"
 msgstr "Endprodukt entfernen"
 
-#: templates/js/build.js:243 templates/stock_table.html:20
+#: templates/js/build.js:184
+msgid "No build order allocations found"
+msgstr ""
+
+#: templates/js/build.js:222 templates/js/order.js:382
+msgid "Location not specified"
+msgstr ""
+
+#: templates/js/build.js:325 templates/stock_table.html:20
 msgid "New Stock Item"
 msgstr "Neues BestandsObjekt"
 
-#: templates/js/build.js:559
+#: templates/js/build.js:643
 msgid "Required Part"
 msgstr "benötigtes Teil"
 
-#: templates/js/build.js:580
+#: templates/js/build.js:664
 msgid "Quantity Per"
 msgstr "Anzahl pro"
 
-#: templates/js/build.js:648 templates/js/build.js:1066
+#: templates/js/build.js:732 templates/js/build.js:1150
 #: templates/stock_table.html:59
 msgid "Order stock"
 msgstr "Bestand bestellen"
 
-#: templates/js/build.js:701
+#: templates/js/build.js:785
 msgid "No builds matching query"
 msgstr "Keine Bauaufträge passen zur Anfrage"
 
-#: templates/js/build.js:718 templates/js/part.js:390 templates/js/part.js:634
+#: templates/js/build.js:802 templates/js/part.js:390 templates/js/part.js:634
 #: templates/js/stock.js:509 templates/js/stock.js:941
 msgid "Select"
 msgstr "Auswählen"
 
-#: templates/js/build.js:738
+#: templates/js/build.js:822
 msgid "Build order is overdue"
 msgstr "Bauauftrag ist überfällig"
 
-#: templates/js/build.js:837
+#: templates/js/build.js:921
 msgid "No parts allocated for"
 msgstr "Keine Teile zugeordnet zu"
 
@@ -6875,6 +6882,10 @@ msgstr "Bestellung überfällig"
 #: templates/js/order.js:234
 msgid "No sales orders found"
 msgstr "Keine Aufträge gefunden"
+
+#: templates/js/order.js:343
+msgid "No sales order allocations found"
+msgstr ""
 
 #: templates/js/part.js:10
 msgid "YES"
