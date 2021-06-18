@@ -1,5 +1,6 @@
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
+from decimal import Decimal
 
 from .models import Part, BomItem
 
@@ -11,11 +12,16 @@ class BomItemTest(TestCase):
         'part',
         'location',
         'bom',
+        'company',
+        'supplier_part',
+        'part_pricebreaks',
+        'price_breaks',
     ]
 
     def setUp(self):
         self.bob = Part.objects.get(id=100)
         self.orphan = Part.objects.get(name='Orphan')
+        self.r1 = Part.objects.get(name='R_2K2_0805')
 
     def test_str(self):
         b = BomItem.objects.get(id=1)
@@ -111,3 +117,10 @@ class BomItemTest(TestCase):
         item.validate_hash()
 
         self.assertNotEqual(h1, h2)
+
+    def test_pricing(self):
+        self.bob.get_price(1)
+        self.assertEqual(self.bob.get_bom_price_range(1, internal=True), (Decimal(84.5), Decimal(89.5)))
+        # remove internal price for R_2K2_0805
+        self.r1.internal_price_breaks.delete()
+        self.assertEqual(self.bob.get_bom_price_range(1, internal=True), (Decimal(82.5), Decimal(87.5)))

@@ -161,6 +161,13 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
+    purchase_price = serializers.SerializerMethodField()
+
+    def get_purchase_price(self, obj):
+        """ Return purchase_price (Money field) as string (includes currency) """
+
+        return str(obj.purchase_price) if obj.purchase_price else '-'
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -215,6 +222,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'tracking_items',
             'uid',
             'updated',
+            'purchase_price',
         ]
 
         """ These fields are read-only in this context.

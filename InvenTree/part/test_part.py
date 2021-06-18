@@ -51,6 +51,7 @@ class PartTest(TestCase):
         'category',
         'part',
         'location',
+        'part_pricebreaks'
     ]
 
     def setUp(self):
@@ -112,6 +113,22 @@ class PartTest(TestCase):
         matches = match_part_names('M2x5 LPHS')
 
         self.assertTrue(len(matches) > 0)
+
+    def test_sell_pricing(self):
+        # check that the sell pricebreaks were loaded
+        self.assertTrue(self.r1.has_price_breaks)
+        self.assertEqual(self.r1.price_breaks.count(), 2)
+        # check that the sell pricebreaks work
+        self.assertEqual(float(self.r1.get_price(1)), 0.15)
+        self.assertEqual(float(self.r1.get_price(10)), 1.0)
+
+    def test_internal_pricing(self):
+        # check that the sell pricebreaks were loaded
+        self.assertTrue(self.r1.has_internal_price_breaks)
+        self.assertEqual(self.r1.internal_price_breaks.count(), 2)
+        # check that the sell pricebreaks work
+        self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
+        self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
 
 
 class TestTemplateTest(TestCase):
