@@ -165,6 +165,19 @@ class BuildItemList(generics.ListCreateAPIView):
 
     serializer_class = BuildItemSerializer
 
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            params = self.request.query_params
+
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+        except AttributeError:
+            pass
+        
+        return self.serializer_class(*args, **kwargs)
+
     def get_queryset(self):
         """ Override the queryset method,
         to allow filtering by stock_item.part
