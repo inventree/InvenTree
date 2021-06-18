@@ -224,7 +224,6 @@ class InvenTreeSetting(models.Model):
             'description': _('Use the internal price (if set) in BOM-price calculations'),
             'default': False,
             'validator': bool
-
         },
 
         'REPORT_DEBUG_MODE': {
