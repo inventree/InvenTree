@@ -27,6 +27,7 @@ from .models import SalesOrderAttachment
 from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
 from .serializers import SalesOrderAllocationSerializer
 
+
 class POList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PurchaseOrder objects
 
