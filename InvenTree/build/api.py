@@ -167,11 +167,14 @@ class BuildItemList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        params = self.request.query_params
+        try:
+            params = self.request.query_params
 
-        kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-        kwargs['build_detail'] = str2bool(params.get('build_detail', False))
-        kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['build_detail'] = str2bool(params.get('build_detail', False))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+        except AttributeError:
+            pass
         
         return self.serializer_class(*args, **kwargs)
 

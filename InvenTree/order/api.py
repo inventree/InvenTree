@@ -423,17 +423,11 @@ class SOLineItemList(generics.ListCreateAPIView):
     def get_serializer(self, *args, **kwargs):
 
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['order_detail'] = str2bool(self.request.query_params.get('order_detail', False))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['allocations'] = str2bool(self.request.query_params.get('allocations', False))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', False))
         except AttributeError:
             pass
 
@@ -497,12 +491,15 @@ class SOAllocationList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        params = self.request.query_params
+        try:
+            params = self.request.query_params
 
-        kwargs['part_detail'] = str2bool(params.get('part_detail', False))
-        kwargs['item_detail'] = str2bool(params.get('item_detail', False))
-        kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-        kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['item_detail'] = str2bool(params.get('item_detail', False))
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+        except ArithmeticError:
+            pass
 
         return self.serializer_class(*args, **kwargs)
 
