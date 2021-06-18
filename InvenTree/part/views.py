@@ -36,7 +36,7 @@ from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
@@ -2114,7 +2114,8 @@ class PartPricing(AjaxView):
         # BOM pricing information
         if part.bom_count > 0:
 
-            bom_price = part.get_bom_price_range(quantity)
+            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+            bom_price = part.get_bom_price_range(quantity, internal=use_internal)
 
             if bom_price is not None:
                 min_bom_price, max_bom_price = bom_price
@@ -2135,6 +2136,12 @@ class PartPricing(AjaxView):
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_unit_bom_price
+
+        # internal part pricing information
+        internal_part_price = part.get_internal_price(quantity)
+        if internal_part_price is not None:
+            ctx['total_internal_part_price'] = round(internal_part_price, 3)
+            ctx['unit_internal_part_price'] = round(internal_part_price / quantity, 3)
 
         # part pricing information
         part_price = part.get_price(quantity)
@@ -2803,3 +2810,29 @@ class PartSalePriceBreakDelete(AjaxDeleteView):
     model = PartSellPriceBreak
     ajax_form_title = _("Delete Price Break")
     ajax_template_name = "modal_delete_form.html"
+
+
+class PartInternalPriceBreakCreate(PartSalePriceBreakCreate):
+    """ View for creating a internal price break for a part """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Add Internal Price Break')
+    permission_required = 'roles.sales_order.add'
+
+
+class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
+    """ View for editing a internal price break """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Edit Internal Price Break')
+    permission_required = 'roles.sales_order.change'
+
+
+class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
+    """ View for deleting a internal price break """
+
+    model = PartInternalPriceBreak
+    ajax_form_title = _("Delete Internal Price Break")
+    permission_required = 'roles.sales_order.delete'
