@@ -14,6 +14,7 @@
 
 {% block details %}
 {% default_currency as currency %}
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 
 <form method="post" class="form-horizontal">
     {% csrf_token %}
@@ -84,6 +85,21 @@
             </td>
         </tr>
     {% endif %}
+{% endif %}
+
+{% if show_internal_price and roles.sales_order.view %}
+{% if total_internal_part_price %}
+    <tr>
+        <td><b>{% trans 'Internal Price' %}</b></td>
+        <td>{% trans 'Unit Cost' %}</td>
+        <td colspan='2'>{% include "price.html" with price=unit_internal_part_price %}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{% trans 'Total Cost' %}</td>
+        <td colspan='2'>{% include "price.html" with price=total_internal_part_price %}</td>
+    </tr>
+{% endif %}
 {% endif %}
 
 {% if total_part_price %}
@@ -198,18 +214,18 @@ The part single price is the current purchase price for that supplier part."></i
             var bomdata = {
                 labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
                 datasets:  [
-                {% if bom_pie_min %}
+                {
+                  label: 'Price',
+                  data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
+                  backgroundColor: bom_colors,
+                },
+                {% if bom_pie_max %}
                 {
                     label: 'Max Price',
                     data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
                     backgroundColor: bom_colors,
                   },
                 {% endif %}
-                {
-                  label: 'Price',
-                  data: [{% for line in bom_parts %}{% if bom_pie_min %}{{ line.min_price }}{% else %}{{ line.price }}{% endif%},{% endfor %}],
-                  backgroundColor: bom_colors,
-                }
               ]
             };
             var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)

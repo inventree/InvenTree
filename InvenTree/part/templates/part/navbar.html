@@ -2,6 +2,8 @@
 {% load static %}
 {% load inventree_extras %}
 
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+
 <ul class='list-group'>
     <li class='list-group-item'>
         <a href='#' id='part-menu-toggle'>
@@ -94,7 +96,13 @@
         </a>
     </li>
     {% endif %}
-    {% if part.salable and roles.sales_order.view %}
+    {% if show_internal_price and roles.sales_order.view %}
+    <li class='list-group-item {% if tab == "internal-prices" %}active{% endif %}' title='{% trans "Internal Price Information" %}'>
+        <a href='{% url "part-internal-prices" part.id %}'>
+            <span class='menu-tab-icon fas fa-dollar-sign' style='width: 20px;'></span>
+            {% trans "Internal Price" %}
+        </a>
+    </li>
     <li class='list-group-item {% if tab == "sales-prices" %}active{% endif %}' title='{% trans "Sales Price Information" %}'>
         <a href='{% url "part-sale-prices" part.id %}'>
             <span class='menu-tab-icon fas fa-dollar-sign sidebar-icon'></span>
