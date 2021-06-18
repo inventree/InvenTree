@@ -130,6 +130,14 @@ def wait(c):
     manage(c, "wait_for_db")
 
 @task
+def rebuild(c):
+    """
+    Rebuild database models with MPTT structures
+    """
+
+    manage(c, "rebuild_models")
+
+@task
 def migrate(c):
     """
     Performs database migrations.
@@ -311,7 +319,7 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'})
+@task(help={'filename': 'Input filename'}, post=[rebuild])
 def import_records(c, filename='data.json'):
     """
     Import database records from a file
@@ -354,7 +362,7 @@ def import_records(c, filename='data.json'):
 
     print("Data import completed")
 
-@task
+@task(post=[rebuild])
 def import_fixtures(c):
     """
     Import fixture data into the database.
