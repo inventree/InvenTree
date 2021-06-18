@@ -776,7 +776,8 @@ function handleModalForm(url, options) {
                     // Form was returned, invalid!
                     else {
 
-                        if (!options.hideErrorMessage) {
+                        // Disable error message with option or response
+                        if (!options.hideErrorMessage && !response.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }
@@ -790,6 +791,19 @@ function handleModalForm(url, options) {
 
                             if (options.secondary) {
                                 attachSecondaries(modal, options.secondary);
+                            }
+
+                            // Set modal title with response
+                            if (response.title) {
+                                modalSetTitle(modal, response.title);
+                            }
+
+                            // Clean custom action buttons
+                            $(modal).find('#modal-footer-buttons').html('');
+
+                            // Add custom action buttons with response
+                            if (response.buttons) {
+                                attachButtons(modal, response.buttons);
                             }
                         }
                         else {
@@ -837,6 +851,7 @@ function launchModalForm(url, options = {}) {
      * secondary - List of secondary modals to attach
      * callback - List of callback functions to attach to inputs
      * focus - Select which field to focus on by default
+     * buttons - additional buttons that should be added as array with [name, title]
      */
 
     var modal = options.modal || '#modal-form';
@@ -894,6 +909,11 @@ function launchModalForm(url, options = {}) {
 
                 if (options.buttons) {
                     attachButtons(modal, options.buttons);
+                }
+
+                // Add custom buttons from response
+                if (response.buttons) {
+                    attachButtons(modal, response.buttons);
                 }
 
             } else {
