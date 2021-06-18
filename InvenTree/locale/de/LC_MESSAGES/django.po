@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-18 00:31+0000\n"
+"POT-Creation-Date: 2021-06-18 00:36+0000\n"
 "PO-Revision-Date: 2021-06-17 00:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -2498,7 +2498,7 @@ msgid "Pricing Information"
 msgstr "Preisinformationen ansehen"
 
 #: company/templates/company/supplier_part_pricing.html:19 company/views.py:794
-#: part/templates/part/sale_prices.html:17 part/views.py:2733
+#: part/templates/part/sale_prices.html:17 part/views.py:2742
 msgid "Add Price Break"
 msgstr "Preisstaffel hinzufügen"
 
@@ -2540,20 +2540,20 @@ msgstr "Firmen"
 msgid "New Company"
 msgstr "Neue Firma"
 
-#: company/views.py:169 part/views.py:937
+#: company/views.py:169 part/views.py:946
 msgid "Download Image"
 msgstr "Bild herunterladen"
 
-#: company/views.py:198 part/views.py:969
+#: company/views.py:198 part/views.py:978
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "Bildgröße überschreitet maximal-erlaubte Größe für Downloads"
 
-#: company/views.py:205 part/views.py:976
+#: company/views.py:205 part/views.py:985
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Ungültige Antwort {code}"
 
-#: company/views.py:214 part/views.py:985
+#: company/views.py:214 part/views.py:994
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
@@ -2613,15 +2613,15 @@ msgstr "Neues Zuliefererteil anlegen"
 msgid "Delete Supplier Part"
 msgstr "Zuliefererteil entfernen"
 
-#: company/views.py:799 part/views.py:2737
+#: company/views.py:799 part/views.py:2746
 msgid "Added new price break"
 msgstr "neue Preisstaffel hinzufügt"
 
-#: company/views.py:855 part/views.py:2781
+#: company/views.py:855 part/views.py:2790
 msgid "Edit Price Break"
 msgstr "Preisstaffel bearbeiten"
 
-#: company/views.py:870 part/views.py:2795
+#: company/views.py:870 part/views.py:2804
 msgid "Delete Price Break"
 msgstr "Preisstaffel löschen"
 
@@ -2796,7 +2796,7 @@ msgstr "Geplantes Lieferdatum für Auftrag."
 msgid "Date order was completed"
 msgstr "Datum an dem der Auftrag fertigstellt wurde"
 
-#: order/models.py:246 part/views.py:1675 stock/models.py:304
+#: order/models.py:246 part/views.py:1684 stock/models.py:304
 #: stock/models.py:1020
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
@@ -4087,7 +4087,7 @@ msgstr "Varianten zulassen"
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Lagerbestand von Varianten kann für diese Stücklisten-Position verwendet werden"
 
-#: part/models.py:2371 part/views.py:1681 part/views.py:1733
+#: part/models.py:2371 part/views.py:1690 part/views.py:1742
 #: stock/models.py:294
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Menge muss eine Ganzzahl sein"
@@ -4180,7 +4180,7 @@ msgstr "Stückliste bearbeiten"
 msgid "Validate Bill of Materials"
 msgstr "Stückliste kontrollieren"
 
-#: part/templates/part/bom.html:61 part/views.py:1976
+#: part/templates/part/bom.html:61 part/views.py:1985
 msgid "Export Bill of Materials"
 msgstr "Stückliste exportieren"
 
@@ -4278,7 +4278,7 @@ msgstr "Neuen Bauauftrag beginnen"
 msgid "All parts"
 msgstr "Alle Teile"
 
-#: part/templates/part/category.html:29 part/views.py:2379
+#: part/templates/part/category.html:29 part/views.py:2388
 msgid "Create new part category"
 msgstr "Teil-Kategorie anlegen"
 
@@ -4943,147 +4943,147 @@ msgstr "Übereinstimmung gefunden - Teil trotzdem anlegen"
 msgid "Created new part"
 msgstr "Neues Teil angelegt"
 
-#: part/views.py:914
+#: part/views.py:923
 msgid "Part QR Code"
 msgstr "Teil-QR-Code"
 
-#: part/views.py:1016
+#: part/views.py:1025
 msgid "Upload Part Image"
 msgstr "Teilbild hochladen"
 
-#: part/views.py:1022 part/views.py:1057
+#: part/views.py:1031 part/views.py:1066
 msgid "Updated part image"
 msgstr "Teilbild aktualisiert"
 
-#: part/views.py:1031
+#: part/views.py:1040
 msgid "Select Part Image"
 msgstr "Teilbild auswählen"
 
-#: part/views.py:1060
+#: part/views.py:1069
 msgid "Part image not found"
 msgstr "Teilbild nicht gefunden"
 
-#: part/views.py:1071
+#: part/views.py:1080
 msgid "Edit Part Properties"
 msgstr "Teileigenschaften bearbeiten"
 
-#: part/views.py:1106
+#: part/views.py:1115
 msgid "Duplicate BOM"
 msgstr "Stückliste duplizieren"
 
-#: part/views.py:1136
+#: part/views.py:1145
 msgid "Confirm duplication of BOM from parent"
 msgstr "bestätige Duplizierung Stückliste von übergeordneter Stückliste"
 
-#: part/views.py:1157
+#: part/views.py:1166
 msgid "Validate BOM"
 msgstr "Stückliste überprüfen"
 
-#: part/views.py:1178
+#: part/views.py:1187
 msgid "Confirm that the BOM is valid"
 msgstr "Bestätigen, dass Stückliste korrekt ist"
 
-#: part/views.py:1189
+#: part/views.py:1198
 msgid "Validated Bill of Materials"
 msgstr "überprüfte Stückliste"
 
-#: part/views.py:1323
+#: part/views.py:1332
 msgid "No BOM file provided"
 msgstr "Keine Stückliste angegeben"
 
-#: part/views.py:1684
+#: part/views.py:1693
 msgid "Enter a valid quantity"
 msgstr "Bitte eine gültige Anzahl eingeben"
 
-#: part/views.py:1709 part/views.py:1712
+#: part/views.py:1718 part/views.py:1721
 msgid "Select valid part"
 msgstr "Bitte ein gültiges Teil auswählen"
 
-#: part/views.py:1718
+#: part/views.py:1727
 msgid "Duplicate part selected"
 msgstr "Teil doppelt ausgewählt"
 
-#: part/views.py:1756
+#: part/views.py:1765
 msgid "Select a part"
 msgstr "Teil auswählen"
 
-#: part/views.py:1762
+#: part/views.py:1771
 msgid "Selected part creates a circular BOM"
 msgstr "gewähltes Teil erzeugt rekursive Stückliste"
 
-#: part/views.py:1766
+#: part/views.py:1775
 msgid "Specify quantity"
 msgstr "Anzahl angeben"
 
-#: part/views.py:2028
+#: part/views.py:2037
 msgid "Confirm Part Deletion"
 msgstr "Löschen des Teils bestätigen"
 
-#: part/views.py:2035
+#: part/views.py:2044
 msgid "Part was deleted"
 msgstr "Teil wurde gelöscht"
 
-#: part/views.py:2044
+#: part/views.py:2053
 msgid "Part Pricing"
 msgstr "Teilbepreisung"
 
-#: part/views.py:2178
+#: part/views.py:2187
 msgid "Create Part Parameter Template"
 msgstr "Teilparametervorlage anlegen"
 
-#: part/views.py:2188
+#: part/views.py:2197
 msgid "Edit Part Parameter Template"
 msgstr "Teilparametervorlage bearbeiten"
 
-#: part/views.py:2195
+#: part/views.py:2204
 msgid "Delete Part Parameter Template"
 msgstr "Teilparametervorlage löschen"
 
-#: part/views.py:2203
+#: part/views.py:2212
 msgid "Create Part Parameter"
 msgstr "Teilparameter anlegen"
 
-#: part/views.py:2253
+#: part/views.py:2262
 msgid "Edit Part Parameter"
 msgstr "Teilparameter bearbeiten"
 
-#: part/views.py:2267
+#: part/views.py:2276
 msgid "Delete Part Parameter"
 msgstr "Teilparameter löschen"
 
-#: part/views.py:2327
+#: part/views.py:2336
 msgid "Edit Part Category"
 msgstr "Teil-Kategorie bearbeiten"
 
-#: part/views.py:2365
+#: part/views.py:2374
 msgid "Delete Part Category"
 msgstr "Teil-Kategorie löschen"
 
-#: part/views.py:2371
+#: part/views.py:2380
 msgid "Part category was deleted"
 msgstr "Teil-Kategorie wurde gelöscht"
 
-#: part/views.py:2423
+#: part/views.py:2432
 msgid "Create Category Parameter Template"
 msgstr "Kategorieparametervorlage anlegen"
 
-#: part/views.py:2524
+#: part/views.py:2533
 msgid "Edit Category Parameter Template"
 msgstr "Kategorieparametervorlage bearbeiten"
 
-#: part/views.py:2580
+#: part/views.py:2589
 msgid "Delete Category Parameter Template"
 msgstr "Kategorieparametervorlage löschen"
 
-#: part/views.py:2599
+#: part/views.py:2608
 msgid "Create BOM Item"
 msgstr "Stücklisten-Position anlegen"
 
-#: part/views.py:2669
+#: part/views.py:2678
 msgid "Edit BOM item"
 msgstr "Stücklisten-Position bearbeiten"
 
-#: part/views.py:2725
+#: part/views.py:2734
 msgid "Confim BOM item deletion"
 msgstr "löschen von Stücklisten-Position bestätigen"
 
