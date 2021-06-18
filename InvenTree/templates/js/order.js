@@ -337,6 +337,8 @@ function loadSalesOrderAllocationTable(table, options={}) {
         queryParams: filters,
         name: 'salesorderallocation',
         groupBy: false,
+        search: false,
+        paginationVAlign: 'bottom',
         original: options.params,
         formatNoMatches: function() { return '{% trans "No sales order allocations found" %}'; },
         columns: [
@@ -347,6 +349,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
             },
             {
                 field: 'order',
+                switchable: false,
                 title: '{% trans "Order" %}',
                 switchable: false,
                 formatter: function(value, row) {

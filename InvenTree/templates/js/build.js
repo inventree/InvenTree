@@ -177,6 +177,8 @@ function loadBuildOrderAllocationTable(table, options={}) {
         queryParams: filters,
         name: 'buildorderallocation',
         groupBy: false,
+        search: false,
+        paginationVAlign: 'bottom',
         original: options.params,
         formatNoMatches: function() {
             return '{% trans "No build order allocations found" %}'
@@ -189,6 +191,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
             },
             {
                 field: 'build',
+                switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
                     var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
