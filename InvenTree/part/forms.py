@@ -20,7 +20,7 @@ from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 
 class PartModelChoiceField(forms.ModelChoiceField):
@@ -389,6 +389,22 @@ class EditPartSalePriceBreakForm(HelperForm):
 
     class Meta:
         model = PartSellPriceBreak
+        fields = [
+            'part',
+            'quantity',
+            'price',
+        ]
+
+
+class EditPartInternalPriceBreakForm(HelperForm):
+    """
+    Form for creating / editing a internal price for a part
+    """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
+
+    class Meta:
+        model = PartInternalPriceBreak
         fields = [
             'part',
             'quantity',

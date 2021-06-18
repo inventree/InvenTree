@@ -208,6 +208,29 @@ def get_color_theme_css(username):
     return inventree_css_static_url
 
 
+@register.filter
+def keyvalue(dict, key):
+    """
+    access to key of supplied dict
+
+    usage:
+    {% mydict|keyvalue:mykey %}
+    """
+    return dict[key]
+
+
+@register.simple_tag()
+def call_method(obj, method_name, *args):
+    """
+    enables calling model methods / functions from templates with arguments
+    
+    usage:
+    {% call_method model_object 'fnc_name' argument1 %}
+    """
+    method = getattr(obj, method_name)
+    return method(*args)
+
+
 @register.simple_tag()
 def authorized_owners(group):
     """ Return authorized owners """

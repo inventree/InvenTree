@@ -77,6 +77,7 @@ class RuleSet(models.Model):
             'part_bomitem',
             'part_partattachment',
             'part_partsellpricebreak',
+            'part_partinternalpricebreak',
             'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',

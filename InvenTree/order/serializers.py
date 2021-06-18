@@ -17,6 +17,7 @@ from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
+from stock.serializers import LocationBriefSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
@@ -116,6 +117,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
+    destination = LocationBriefSerializer(source='get_destination', read_only=True)
+
     class Meta:
         model = PurchaseOrderLineItem
 
@@ -132,6 +135,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price',
             'purchase_price_currency',
             'purchase_price_string',
+            'destination',
         ]
 
 
