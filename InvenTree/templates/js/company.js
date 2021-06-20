@@ -126,7 +126,7 @@ function loadManufacturerPartTable(table, url, options) {
         queryParams: filters,
         name: 'manufacturerparts',
         groupBy: false,
-        formatNoMatches: function() { return "{% trans "No manufacturer parts found" %}"; },
+        formatNoMatches: function() { return '{% trans "No manufacturer parts found" %}'; },
         columns: [
             {
                 checkbox: true,
@@ -199,6 +199,59 @@ function loadManufacturerPartTable(table, url, options) {
 }
 
 
+function loadManufacturerPartParameterTable(table, url, options) {
+    /*
+     * Load table of ManufacturerPartParameter objects
+     */
+
+    var params = options.params || {};
+
+    // Load filters
+    var filters = loadTableFilters("manufacturer-part-parameters");
+
+    // Overwrite explicit parameters
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    // setupFilterList("manufacturer-part-parameters", $(table));
+
+    $(table).inventreeTable({
+        url: url,
+        method: 'get',
+        original: params,
+        queryParams: filters,
+        name: 'manufacturerpartparameters',
+        groupBy: false,
+        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'value',
+                title: '{% trans "Value" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                switchable: true,
+                sortable: true,
+            }
+        ],
+    });
+}
+
+
 function loadSupplierPartTable(table, url, options) {
     /*
      * Load supplier part table
@@ -224,7 +277,7 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
-        formatNoMatches: function() { return "{% trans "No supplier parts found" %}"; },
+        formatNoMatches: function() { return '{% trans "No supplier parts found" %}'; },
         columns: [
             {
                 checkbox: true,
