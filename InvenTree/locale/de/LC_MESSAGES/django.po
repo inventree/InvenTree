@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-18 10:11+0000\n"
-"PO-Revision-Date: 2021-06-18 10:58\n"
+"PO-Revision-Date: 2021-06-20 21:05\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4595,7 +4595,7 @@ msgstr "Bestellpreis"
 #: part/templates/part/navbar.html:103 part/templates/part/order_prices.html:93
 #: part/templates/part/part_pricing.html:82
 msgid "Internal Price"
-msgstr ""
+msgstr "Interner Preis"
 
 #: part/templates/part/navbar.html:106
 msgid "Sales Price Information"
@@ -6648,7 +6648,7 @@ msgstr ""
 
 #: templates/js/build.js:222 templates/js/order.js:382
 msgid "Location not specified"
-msgstr ""
+msgstr "Standort nicht angegeben"
 
 #: templates/js/build.js:325 templates/stock_table.html:20
 msgid "New Stock Item"
