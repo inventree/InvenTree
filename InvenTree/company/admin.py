@@ -108,6 +108,33 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     ]
 
 
+class ManufacturerPartParameterResource(ModelResource):
+    """
+    Class for managing ManufacturerPartParameter data import/export
+    """
+
+    class Meta:
+        model = ManufacturerPartParameter
+        skip_unchanged = True
+        report_skipped = True
+        clean_model_instance = True
+
+
+class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
+    """
+    Admin class for ManufacturerPartParameter model
+    """
+
+    resource_class = ManufacturerPartParameterResource
+
+    list_display = ('manufacturer_part', 'name', 'value')
+
+    search_fields = [
+        'manufacturer_part__manufacturer__name',
+        'name',
+        'value'
+    ]
+
 
 class SupplierPriceBreakResource(ModelResource):
     """ Class for managing SupplierPriceBreak data import/export """
@@ -143,3 +170,4 @@ admin.site.register(SupplierPart, SupplierPartAdmin)
 admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
 
 admin.site.register(ManufacturerPart, ManufacturerPartAdmin)
+admin.site.register(ManufacturerPartParameter, ManufacturerPartParameterAdmin)
