@@ -325,7 +325,7 @@
         <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
     </tr>
     {% endif %}
-    {% if item.purchase_price %}
+    {% if item.purchase_price != None %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Purchase Price" %}</td>

@@ -814,7 +814,7 @@ class PartPricingView(PartDetail):
         part = self.get_part()
         # Stock history
         if part.total_stock > 1:
-            ret = []
+            price_history = []
             stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
             stock = stock.prefetch_related('purchase_order', 'supplier_part')
 
@@ -841,9 +841,9 @@ class PartPricingView(PartDetail):
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
                 else:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
-                ret.append(line)
+                price_history.append(line)
 
-            ctx['price_history'] = ret
+            ctx['price_history'] = price_history
 
         # BOM Information for Pie-Chart
         if part.has_bom:
