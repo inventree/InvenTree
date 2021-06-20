@@ -251,12 +251,15 @@ def content_excludes():
         "contenttypes",
         "sessions.session",
         "auth.permission",
+        "authtoken.token",
         "error_report.error",
         "admin.logentry",
         "django_q.schedule",
         "django_q.task",
         "django_q.ormq",
         "users.owner",
+        "exchange.rate",
+        "exchange.exchangebackend",
     ]
 
     output = ""
