@@ -92,6 +92,15 @@ class ManufacturerPartResource(ModelResource):
         clean_model_instances = True
 
 
+class ManufacturerPartParameterInline(admin.TabularInline):
+    """
+    Inline for editing ManufacturerPartParameter objects,
+    directly from the ManufacturerPart admin view.
+    """
+
+    model = ManufacturerPartParameter
+
+
 class ManufacturerPartAdmin(ImportExportModelAdmin):
     """
     Admin class for ManufacturerPart model
@@ -105,6 +114,10 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
         'manufacturer__name',
         'part__name',
         'MPN',
+    ]
+
+    inlines = [
+        ManufacturerPartParameterInline
     ]
 
 
