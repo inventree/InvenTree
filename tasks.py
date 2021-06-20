@@ -251,6 +251,7 @@ def content_excludes():
         "contenttypes",
         "sessions.session",
         "auth.permission",
+        "authtoken.token",
         "error_report.error",
         "admin.logentry",
         "django_q.schedule",
