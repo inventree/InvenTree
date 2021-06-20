@@ -103,17 +103,11 @@ class ManufacturerPartList(generics.ListCreateAPIView):
 
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
+            kwargs['manufacturer_detail'] = str2bool(params.get('manufacturer_detail', None))
+            kwargs['pretty'] = str2bool(params.get('pretty', None))
         except AttributeError:
             pass
 
@@ -252,22 +246,11 @@ class SupplierPartList(generics.ListCreateAPIView):
 
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+            params = self.request.query_params
+            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
+            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', None))
+            kwargs['manufacturer_detail'] = str2bool(self.params.get('manufacturer_detail', None))
+            kwargs['pretty'] = str2bool(params.get('pretty', None))
         except AttributeError:
             pass
 

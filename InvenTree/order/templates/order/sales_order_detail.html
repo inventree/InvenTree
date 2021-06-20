@@ -81,10 +81,10 @@ function showAllocationSubTable(index, row, element) {
             },
         },
         {
-            field: 'location_id',
+            field: 'location',
             title: 'Location',
             formatter: function(value, row, index, field) {
-                return renderLink(row.location_path, `/stock/location/${row.location_id}/`);
+                return renderLink(row.location_path, `/stock/location/${row.location}/`);
             },
         },
         {

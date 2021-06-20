@@ -195,7 +195,12 @@
 
 </div>
 
+{% block pre_content_panel %}
+
+{% endblock %}
+
 <div class='panel panel-default panel-inventree'>
+
 
     <div class='panel-heading'>
         <h4>
@@ -210,7 +215,11 @@
         <!-- Specific part details go here... -->
         {% endblock %}
     </div>
+
 </div>
+{% block post_content_panel %}
+
+{% endblock %}
 
 {% endblock %}
 

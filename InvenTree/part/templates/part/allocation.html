@@ -8,52 +8,43 @@
 {% endblock %}
 
 {% block heading %}
-{% trans "Part Stock Allocations" %}
+{% trans "Build Order Allocations" %}
 {% endblock %}
 
 {% block details %}
-<table class='table table-striped table-condensed' id='build-table'>
-<tr>
-    <th>{% trans "Order" %}</th>
-    <th>{% trans "Stock Item" %}</th>
-    <th>{% trans "Quantity" %}</th>
-</tr>
-{% for allocation in part.build_order_allocations %}
-<tr>
-    <td><a href="{% url 'build-detail' allocation.build.id %}">{% trans "Build Order" %}: {{ allocation.build }}</a></td>
-    <td><a href="{% url 'stock-item-detail' allocation.stock_item.id %}">{% trans "Stock Item" %}: {{ allocation.stock_item }}</a></td>
-    <td>{% decimal allocation.quantity %}</td>
-</tr>
-{% endfor %}
-{% for allocation in part.sales_order_allocations %}
-<tr>
-    <td><a href="{% url 'so-detail' allocation.line.order.id %}">{% trans "Sales Order" %}: {{ allocation.line.order }}</a></td>
-    <td><a href="{% url 'stock-item-detail' allocation.item.id %}">{% trans "Stock Item" %}: {{ allocation.item }}</a></td>
-    <td>{% decimal allocation.quantity %}</td>
-</tr>
-{% endfor %}
-</table>
+
+<table class='table table-striped table-condensed' id='build-order-table'></table>
 
 {% endblock %}
+
+{% block pre_content_panel %}
+
+<div class='panel panel-default panel-inventree'>
+    <div class='panel-heading'>
+        <h4>{% trans "Sales  Order Allocations" %}</h4>
+    </div>
+    
+    <div class='panel-content'>
+        <table class='table table-striped table-condensed' id='sales-order-table'></table>
+    </div>
+</div>
+
+{% endblock %}
+
 
 {% block js_ready %}
 {{ block.super }}
 
-    $("#build-table").inventreeTable({
-        columns: [
-            {
-                title: '{% trans "Order" %}',
-                sortable: true,
-            },
-            {
-                title: '{% trans "Stock Item" %}',
-                sortable: true,
-            },
-            {
-                title: '{% trans "Quantity" %}',
-                sortable: true,
-            }
-        ]
+    loadSalesOrderAllocationTable("#sales-order-table", {
+        params: {
+            part: {{ part.id }},
+        }
+    });
+
+    loadBuildOrderAllocationTable("#build-order-table", {
+        params: {
+            part: {{ part.id }},
+        }
     });
 
 {% endblock %}
