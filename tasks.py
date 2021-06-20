@@ -257,6 +257,8 @@ def content_excludes():
         "django_q.task",
         "django_q.ormq",
         "users.owner",
+        "exchange.rate",
+        "exchange.exchangebackend",
     ]
 
     output = ""
