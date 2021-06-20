@@ -101,6 +101,14 @@ class ManufacturerPartParameterInline(admin.TabularInline):
     model = ManufacturerPartParameter
 
 
+class SupplierPartInline(admin.TabularInline):
+    """
+    Inline for the SupplierPart model
+    """
+
+    model = SupplierPart
+
+
 class ManufacturerPartAdmin(ImportExportModelAdmin):
     """
     Admin class for ManufacturerPart model
@@ -117,7 +125,8 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     ]
 
     inlines = [
-        ManufacturerPartParameterInline
+        SupplierPartInline,
+        ManufacturerPartParameterInline,
     ]
 
 
