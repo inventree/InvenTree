@@ -260,7 +260,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'supplier',
-                title: "{% trans "Supplier" %}",
+                title: '{% trans "Supplier" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         var name = row.supplier_detail.name;
@@ -276,7 +276,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'SKU',
-                title: "{% trans "Supplier Part" %}",
+                title: '{% trans "Supplier Part" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(value, `/supplier-part/${row.pk}/`);
                 }
