@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-20 07:28+0000\n"
+"POT-Creation-Date: 2021-06-20 21:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -192,15 +192,15 @@ msgstr ""
 msgid "Turkish"
 msgstr ""
 
-#: InvenTree/status.py:93
+#: InvenTree/status.py:94
 msgid "Background worker check failed"
 msgstr ""
 
-#: InvenTree/status.py:97
+#: InvenTree/status.py:98
 msgid "Email backend not configured"
 msgstr ""
 
-#: InvenTree/status.py:100
+#: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
 msgstr ""
 
