@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 
 import os
 
-from .models import Part, PartTestTemplate
+from .models import Part, PartCategory, PartTestTemplate
 from .models import rename_part_image, match_part_names
 from .templatetags import inventree_extras
 
@@ -77,6 +77,53 @@ class PartTest(TestCase):
     def test_str(self):
         p = Part.objects.get(pk=100)
         self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
+
+    def test_duplicate(self):
+        """
+        Test that we cannot create a "duplicate" Part
+        """
+
+        n = Part.objects.count()
+
+        cat = PartCategory.objects.get(pk=1)
+
+        Part.objects.create(
+            category=cat,
+            name='part',
+            description='description',
+            IPN='IPN',
+            revision='A',
+        )
+
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        part = Part(category=cat,
+                name='part',
+                description='description',
+                IPN='IPN',
+                revision='A',
+        )
+
+        with self.assertRaises(ValidationError):
+            part.validate_unique()
+
+        try:
+            part.save()
+            assert(False)
+        except:
+            pass
+
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        Part.objects.create(
+            category=cat,
+            name='part',
+            description='description',
+            IPN='IPN',
+            revision='B',
+        )
+
+        self.assertEqual(Part.objects.count(), n + 2)
 
     def test_metadata(self):
         self.assertEqual(self.r1.name, 'R_2K2_0805')
