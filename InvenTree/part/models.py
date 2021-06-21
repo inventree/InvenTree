@@ -321,6 +321,9 @@ class Part(MPTTModel):
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
         ordering = ['name', ]
+        constraints = [
+            UniqueConstraint(fields=['name', 'IPN', 'revision'], name='unique_part')
+        ]
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
@@ -642,23 +645,6 @@ class Part(MPTTModel):
                     'IPN': _('Duplicate IPN not allowed in part settings'),
                 })
 
-        # Part name uniqueness should be case insensitive
-        try:
-            parts = Part.objects.exclude(id=self.id).filter(
-                name__iexact=self.name,
-                IPN__iexact=self.IPN,
-                revision__iexact=self.revision)
-
-            if parts.exists():
-                msg = _("Part must be unique for name, IPN and revision")
-                raise ValidationError({
-                    "name": msg,
-                    "IPN": msg,
-                    "revision": msg,
-                })
-        except Part.DoesNotExist:
-            pass
-
     def clean(self):
         """
         Perform cleaning operations for the Part model
@@ -671,7 +657,8 @@ class Part(MPTTModel):
 
         super().clean()
 
-        self.validate_unique()
+        if self.pk is not None:
+            self.validate_unique()
 
         if self.trackable:
             for part in self.get_used_in().all():
