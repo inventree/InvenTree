@@ -77,6 +77,7 @@ class RuleSet(models.Model):
             'part_bomitem',
             'part_partattachment',
             'part_partsellpricebreak',
+            'part_partinternalpricebreak',
             'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',
@@ -85,6 +86,7 @@ class RuleSet(models.Model):
             'part_partquantityhistory',
             'company_supplierpart',
             'company_manufacturerpart',
+            'company_manufacturerpartparameter',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -116,6 +118,8 @@ class RuleSet(models.Model):
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
             'company_supplierpart',
+            'company_manufacturerpart',
+            'company_manufacturerpartparameter',
         ],
         'sales_order': [
             'company_company',

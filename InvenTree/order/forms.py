@@ -79,12 +79,17 @@ class ShipSalesOrderForm(HelperForm):
 
 class ReceivePurchaseOrderForm(HelperForm):
 
-    location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), required=True, label=_('Location'), help_text=_('Receive parts to this location'))
+    location = TreeNodeChoiceField(
+        queryset=StockLocation.objects.all(),
+        required=True,
+        label=_("Destination"),
+        help_text=_("Receive parts to this location"),
+    )
 
     class Meta:
         model = PurchaseOrder
         fields = [
-            'location',
+            "location",
         ]
 
 
@@ -195,6 +200,7 @@ class EditPurchaseOrderLineItemForm(HelperForm):
             'quantity',
             'reference',
             'purchase_price',
+            'destination',
             'notes',
         ]
 

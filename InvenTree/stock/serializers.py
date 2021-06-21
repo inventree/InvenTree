@@ -81,6 +81,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'belongs_to',
             'build',
             'customer',
+            'purchase_order',
             'sales_order',
             'supplier_part',
             'supplier_part__supplier',
@@ -161,6 +162,17 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
+    purchase_price = serializers.SerializerMethodField()
+
+    purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
+
+    sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
+
+    def get_purchase_price(self, obj):
+        """ Return purchase_price (Money field) as string (includes currency) """
+
+        return str(obj.purchase_price) if obj.purchase_price else '-'
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -201,10 +213,13 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'packaging',
             'part',
             'part_detail',
+            'purchase_order',
+            'purchase_order_reference',
             'pk',
             'quantity',
             'required_tests',
             'sales_order',
+            'sales_order_reference',
             'serial',
             'stale',
             'status',
@@ -215,6 +230,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'tracking_items',
             'uid',
             'updated',
+            'purchase_price',
         ]
 
         """ These fields are read-only in this context.

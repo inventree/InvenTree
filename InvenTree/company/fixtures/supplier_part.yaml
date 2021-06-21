@@ -52,3 +52,10 @@
     part: 2
     supplier: 2
     SKU: 'ZERGM312'
+
+- model: company.supplierpart
+  pk: 5
+  fields:
+    part: 4
+    supplier: 2
+    SKU: 'R_4K7_0603'

@@ -37,6 +37,7 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
+from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
 from .views import CurrencySettingsView, CurrencyRefreshView
@@ -155,24 +156,28 @@ urlpatterns = [
     url(r'^search/', SearchView.as_view(), name='search'),
     url(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
+    url(r'^auth/?', auth_request),
+
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^markdownx/', include('markdownx.urls')),
 ]
 
-# Static file access
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Server running in "DEBUG" mode?
+if settings.DEBUG:
+    # Static file access
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# Media file access
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Media file access
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Debug toolbar access (if in DEBUG mode)
-if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
-    import debug_toolbar
-    urlpatterns = [
-        path('__debug/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+    # Debug toolbar access (only allowed in DEBUG mode)
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        import debug_toolbar
+        urlpatterns = [
+            path('__debug/', include(debug_toolbar.urls)),
+        ] + urlpatterns
 
 # Send any unknown URLs to the parts page
 urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

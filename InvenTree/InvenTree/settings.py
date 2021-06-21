@@ -97,7 +97,7 @@ DOCKER = _is_true(get_setting(
 # Configure logging settings
 log_level = get_setting(
     'INVENTREE_LOG_LEVEL',
-    CONFIG.get('log_level', 'DEBUG')
+    CONFIG.get('log_level', 'WARNING')
 )
 
 logging.basicConfig(
@@ -191,7 +191,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', '/home/inventree/static')
+        CONFIG.get('static_root', '/home/inventree/data/static')
     )
 )
 

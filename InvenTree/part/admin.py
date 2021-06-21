@@ -14,8 +14,8 @@ from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
-from .models import PartSellPriceBreak
-from .models import PartQuantityHistory
+from .models import PartSellPriceBreak, PartInternalPriceBreak, PartQuantityHistory
+
 
 from stock.models import StockLocation
 from stock.admin import StockTrackingAdmin
@@ -113,6 +113,13 @@ class PartCategoryResource(ModelResource):
         PartCategory.objects.rebuild()
 
 
+class PartCategoryInline(admin.TabularInline):
+    """
+    Inline for PartCategory model
+    """
+    model = PartCategory
+
+
 class PartCategoryAdmin(ImportExportModelAdmin):
 
     resource_class = PartCategoryResource
@@ -120,6 +127,10 @@ class PartCategoryAdmin(ImportExportModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
     search_fields = ('name', 'description')
+
+    inlines = [
+        PartCategoryInline,
+    ]
 
 
 class PartRelatedAdmin(admin.ModelAdmin):
@@ -288,6 +299,14 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
     list_display = ('part', 'quantity', 'price',)
 
 
+class PartInternalPriceBreakAdmin(admin.ModelAdmin):
+
+    class Meta:
+        model = PartInternalPriceBreak
+
+    list_display = ('part', 'quantity', 'price',)
+
+
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartRelated, PartRelatedAdmin)
@@ -300,3 +319,4 @@ admin.site.register(PartParameter, ParameterAdmin)
 admin.site.register(PartCategoryParameterTemplate, PartCategoryParameterAdmin)
 admin.site.register(PartTestTemplate, PartTestTemplateAdmin)
 admin.site.register(PartSellPriceBreak, PartSellPriceBreakAdmin)
+admin.site.register(PartInternalPriceBreak, PartInternalPriceBreakAdmin)

@@ -8,7 +8,7 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.2.3 pre"
+INVENTREE_SW_VERSION = "0.2.4 pre"
 
 """
 Increment thi API version number whenever there is a significant change to the API that any clients need to know about
@@ -20,9 +20,12 @@ v4 -> 2021-06-01
     - BOM items can now accept "variant stock" to be assigned against them
     - Many slight API tweaks were needed to get this to work properly!
 
+v5 -> 2021-06-21
+    - Adds API interface for manufacturer part parameters
+
 """
 
-INVENTREE_API_VERSION = 4
+INVENTREE_API_VERSION = 5
 
 
 def inventreeInstanceName():

@@ -159,7 +159,7 @@ function loadStockTestResultsTable(table, options) {
 
             // Set "parent" for each existing row
             tableData.forEach(function(item, idx) {
-                tableData[idx].parent = options.stock_item;
+                tableData[idx].parent = parent_node;
             });
 
             // Once the test template data are loaded, query for test results
@@ -658,6 +658,32 @@ function loadStockTable(table, options) {
             {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
+                field: 'purchase_order',
+                title: '{% trans "Purchase Order" %}',
+                formatter: function(value, row) {
+                    if (!value) {
+                        return '-';
+                    }
+
+                    var link = `/order/purchase-order/${row.purchase_order}/`;
+                    var text = `${row.purchase_order}`;
+
+                    if (row.purchase_order_reference) {
+
+                        var prefix = '{% settings_value "PURCHASEORDER_REFERENCE_PREFIX" %}';
+
+                        text = prefix + row.purchase_order_reference;
+                    }
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'purchase_price',
+                title: '{% trans "Purchase Price" %}',
                 sortable: true,
             },
             {

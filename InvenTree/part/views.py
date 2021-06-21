@@ -36,7 +36,7 @@ from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
@@ -814,7 +814,7 @@ class PartPricingView(PartDetail):
         part = self.get_part()
         # Stock history
         if part.total_stock > 1:
-            ret = []
+            price_history = []
             stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
             stock = stock.prefetch_related('purchase_order', 'supplier_part')
 
@@ -841,22 +841,31 @@ class PartPricingView(PartDetail):
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
                 else:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
-                ret.append(line)
+                price_history.append(line)
 
-            ctx['price_history'] = ret
+            ctx['price_history'] = price_history
 
         # BOM Information for Pie-Chart
-        bom_items = [{'name': str(a.sub_part), 'price': a.sub_part.get_price_range(quantity), 'q': a.quantity} for a in part.bom_items.all()]
-        if [True for a in bom_items if len(set(a['price'])) == 2]:
-            ctx['bom_parts'] = [{
-                'name': a['name'],
-                'min_price': str((a['price'][0] * a['q']) / quantity),
-                'max_price': str((a['price'][1] * a['q']) / quantity)} for a in bom_items]
-            ctx['bom_pie_min'] = True
-        else:
-            ctx['bom_parts'] = [{
-                'name': a['name'],
-                'price': str((a['price'][0] * a['q']) / quantity)} for a in bom_items]
+        if part.has_bom:
+            ctx_bom_parts = []
+            # iterate over all bom-items
+            for item in part.bom_items.all():
+                ctx_item = {'name': str(item.sub_part)}
+                price, qty = item.sub_part.get_price_range(quantity), item.quantity
+
+                price_min, price_max = 0, 0
+                if price:  # check if price available
+                    price_min = str((price[0] * qty) / quantity)
+                    if len(set(price)) == 2:  # min and max-price present
+                        price_max = str((price[1] * qty) / quantity)
+                        ctx['bom_pie_max'] = True  # enable showing max prices in bom
+
+                ctx_item['max_price'] = price_min
+                ctx_item['min_price'] = price_max if price_max else price_min
+                ctx_bom_parts.append(ctx_item)
+
+            # add to global context
+            ctx['bom_parts'] = ctx_bom_parts
 
         return ctx
 
@@ -2105,7 +2114,8 @@ class PartPricing(AjaxView):
         # BOM pricing information
         if part.bom_count > 0:
 
-            bom_price = part.get_bom_price_range(quantity)
+            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+            bom_price = part.get_bom_price_range(quantity, internal=use_internal)
 
             if bom_price is not None:
                 min_bom_price, max_bom_price = bom_price
@@ -2126,6 +2136,12 @@ class PartPricing(AjaxView):
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_unit_bom_price
+
+        # internal part pricing information
+        internal_part_price = part.get_internal_price(quantity)
+        if internal_part_price is not None:
+            ctx['total_internal_part_price'] = round(internal_part_price, 3)
+            ctx['unit_internal_part_price'] = round(internal_part_price / quantity, 3)
 
         # part pricing information
         part_price = part.get_price(quantity)
@@ -2794,3 +2810,29 @@ class PartSalePriceBreakDelete(AjaxDeleteView):
     model = PartSellPriceBreak
     ajax_form_title = _("Delete Price Break")
     ajax_template_name = "modal_delete_form.html"
+
+
+class PartInternalPriceBreakCreate(PartSalePriceBreakCreate):
+    """ View for creating a internal price break for a part """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Add Internal Price Break')
+    permission_required = 'roles.sales_order.add'
+
+
+class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
+    """ View for editing a internal price break """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Edit Internal Price Break')
+    permission_required = 'roles.sales_order.change'
+
+
+class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
+    """ View for deleting a internal price break """
+
+    model = PartInternalPriceBreak
+    ajax_form_title = _("Delete Internal Price Break")
+    permission_required = 'roles.sales_order.delete'

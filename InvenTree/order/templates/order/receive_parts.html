@@ -22,6 +22,7 @@
             <th>{% trans "Received" %}</th>
             <th>{% trans "Receive" %}</th>
             <th>{% trans "Status" %}</th>
+            <th>{% trans "Destination" %}</th>
             <th></th>
         </tr>
         {% for line in lines %}
@@ -52,6 +53,9 @@
                         {% endfor %}
                     </select>
                 </div>
+            </td>
+            <td>
+                {{ line.get_destination }}
             </td>
             <td>
                 <button class='btn btn-default btn-remove' onClick="removeOrderRowFromOrderWizard()" id='del_item_{{ line.id }}' title='{% trans "Remove line" %}' type='button'>
