@@ -228,6 +228,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
             {
                 checkbox: true,
                 switchable: false,
+                visible: false,
             },
             {
                 field: 'name',
@@ -246,8 +247,55 @@ function loadManufacturerPartParameterTable(table, url, options) {
                 title: '{% trans "Units" %}',
                 switchable: true,
                 sortable: true,
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+
+                    html += `</div>`;
+
+                    return html;
+                }
             }
         ],
+        onPostBody: function() {
+            // Setup callback functions
+            $(table).find('.button-parameter-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                launchModalForm(
+                    `/manufacturer-part/parameter/${pk}/edit/`,
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+
+            });
+            $(table).find('.button-parameter-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                launchModalForm(
+                    `/manufacturer-part/parameter/${pk}/delete/`,
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+        }
     });
 }
 

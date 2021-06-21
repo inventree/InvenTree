@@ -53,20 +53,25 @@ price_break_urls = [
     url(r'^(?P<pk>\d+)/delete/', views.PriceBreakDelete.as_view(), name='price-break-delete'),
 ]
 
-manufacturer_part_detail_urls = [
-    url(r'^edit/?', views.ManufacturerPartEdit.as_view(), name='manufacturer-part-edit'),
-
-    url(r'^suppliers/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-suppliers'),
-
-    url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-detail'),
-]
-
 manufacturer_part_urls = [
     url(r'^new/?', views.ManufacturerPartCreate.as_view(), name='manufacturer-part-create'),
 
-    url(r'delete/', views.ManufacturerPartDelete.as_view(), name='manufacturer-part-delete'),
+    url(r'^delete/', views.ManufacturerPartDelete.as_view(), name='manufacturer-part-delete'),
 
-    url(r'^(?P<pk>\d+)/', include(manufacturer_part_detail_urls)),
+    # URLs for ManufacturerPartParameter views (create / edit / delete)
+    url(r'^parameter/', include([
+        url(r'^new/', views.ManufacturerPartParameterCreate.as_view(), name='manufacturer-part-parameter-create'),
+        url(r'^(?P<pk>\d)/', include([
+            url(r'^edit/', views.ManufacturerPartParameterEdit.as_view(), name='manufacturer-part-parameter-edit'),
+            url(r'^delete/', views.ManufacturerPartParameterDelete.as_view(), name='manufacturer-part-parameter-delete'),
+        ])),
+    ])),
+
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^edit/?', views.ManufacturerPartEdit.as_view(), name='manufacturer-part-edit'),
+        url(r'^suppliers/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-suppliers'),
+        url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-detail'),
+    ])),
 ]
 
 supplier_part_detail_urls = [

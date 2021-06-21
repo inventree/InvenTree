@@ -57,6 +57,17 @@
 {% block js_ready %}
 {{ block.super }}
 
+$('#parameter-create').click(function() {
+    launchModalForm(
+        "{% url 'manufacturer-part-parameter-create' %}",
+        {
+            data: {
+                manufacturer_part: {{ part.id }},
+            }
+        }
+    );
+});
+
 $('#supplier-create').click(function () {
     launchModalForm(
         "{% url 'supplier-part-create' %}",
