@@ -73,7 +73,7 @@ part_detail_urls = [
     url(r'^sale-prices/', views.PartDetail.as_view(template_name='part/sale_prices.html'), name='part-sale-prices'),
     url(r'^internal-prices/', views.PartDetail.as_view(template_name='part/internal_prices.html'), name='part-internal-prices'),
     url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
-    url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
+    url(r'^history/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-history'),
     url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
     url(r'^notes/?', views.PartNotes.as_view(), name='part-notes'),

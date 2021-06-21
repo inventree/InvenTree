@@ -4,28 +4,28 @@
 {% load i18n %}
 
 {% block menubar %}
-{% include 'part/navbar.html' with tab='track' %}
+{% include 'part/navbar.html' with tab='history' %}
 {% endblock %}
 
 {% block heading %}
-{% trans "Part Tracking" %}
+{% trans "Part History" %}
 {% endblock %}
 
 {% block details %}
-<table class='table table-condensed table-striped' id='part-track-table' data-toolbar='#table-toolbar'>
+<table class='table table-condensed table-striped' id='part-history-table' data-toolbar='#table-toolbar'>
 </table>
 
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
-    loadTrackingTable($("#part-track-table"), {
+    loadTrackingTable($("#part-history-table"), {
         params: {
             ordering: '-date',
             item: {{ part.pk }},
             user_detail: true,
         },
-        url: "{% url 'api-part-track' %}",
+        url: "{% url 'api-part-history' %}",
         total_stock: true,
     });
 {% endblock %}

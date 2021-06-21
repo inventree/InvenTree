@@ -1654,7 +1654,7 @@ def add_part_history(sender, instance, created, raw, using, **kwargs):
     """ adds a new part history entry for each StockItemTracking entry that gets created """
     if created:
         part = instance.item.part
-        entry = PartModels.PartQuantityHistory.objects.create(
+        entry = PartModels.PartHistory.objects.create(
             total_stock=part.total_stock,
             item=part,
             tracking_type=instance.tracking_type,

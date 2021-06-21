@@ -27,7 +27,7 @@ from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 from .models import PartCategoryParameterTemplate
-from .models import PartQuantityHistory
+from .models import PartHistory
 
 from common.models import InvenTreeSetting
 from build.models import Build
@@ -1012,17 +1012,17 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
-class PartQuantityHistoryList(TrackingMixin, generics.ListAPIView):
-    """ API endpoint for list view of PartQuantityHistory objects.
+class PartHistoryList(TrackingMixin, generics.ListAPIView):
+    """ API endpoint for list view of PartHistory objects.
 
-    PartQuantityHistory objects are read-only
+    PartHistory objects are read-only
     (they are created by internal model functionality)
 
-    - GET: Return list of PartQuantityHistory objects
+    - GET: Return list of PartHistory objects
     """
 
-    queryset = PartQuantityHistory.objects.all()
-    serializer_class = part_serializers.PartQuantityHistorySerializer
+    queryset = PartHistory.objects.all()
+    serializer_class = part_serializers.PartHistorySerializer
 
     def create(self, request, *args, **kwargs):
         ret = super().create(request, *args, **kwargs)
@@ -1081,7 +1081,7 @@ part_api_urls = [
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'track/?', PartQuantityHistoryList.as_view(), name='api-part-track'),
+    url(r'history/?', PartHistoryList.as_view(), name='api-part-history'),
 
     url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 

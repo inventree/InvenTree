@@ -2579,7 +2579,7 @@ class PartRelated(models.Model):
             raise ValidationError(error_message)
 
 
-class PartQuantityHistory(ItemTracking):
+class PartHistory(ItemTracking):
     """
     Part Quantity History entry - used for keeping a qunatity history for a part, also keeps tracking information
 

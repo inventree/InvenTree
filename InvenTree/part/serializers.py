@@ -19,7 +19,7 @@ from stock.models import StockItem
 from .models import (BomItem, Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
-                     PartInternalPriceBreak, PartQuantityHistory)
+                     PartInternalPriceBreak, PartHistory)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -536,13 +536,13 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartQuantityHistorySerializer(TrackingSerializer):
-    """ Serializer for PartQuantityHistory model """
+class PartHistorySerializer(TrackingSerializer):
+    """ Serializer for PartHistory model """
 
     item_detail = PartBriefSerializer(source='item', many=False, read_only=True)
 
     class Meta:
-        model = PartQuantityHistory
+        model = PartHistory
         fields = [
             'pk',
             'total_stock',

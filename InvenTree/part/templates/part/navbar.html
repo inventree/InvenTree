@@ -38,8 +38,8 @@
             {% trans "Stock" %}
         </a>
     </li>
-    <li class='list-group-item {% if tab == "track" %}active{% endif %}' title='{% trans "Stock History" %}'>
-        <a href='{% url "part-track" part.id %}'>
+    <li class='list-group-item {% if tab == "history" %}active{% endif %}' title='{% trans "Stock History" %}'>
+        <a href='{% url "part-history" part.id %}'>
             <span class='menu-tab-icon fas fa-history sidebar-icon'></span>
             {% trans "Stock History" %}
         </a>
