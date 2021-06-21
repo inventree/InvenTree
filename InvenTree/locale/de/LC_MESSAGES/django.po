@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-21 10:58+0000\n"
+"POT-Creation-Date: 2021-06-21 22:27+0000\n"
 "PO-Revision-Date: 2021-06-17 00:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -546,7 +546,7 @@ msgstr "Lagerort der Endprodukte"
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:59 order/models.py:469
 #: order/templates/order/receive_parts.html:24
-#: stock/templates/stock/item_base.html:403 templates/InvenTree/search.html:252
+#: stock/templates/stock/item_base.html:408 templates/InvenTree/search.html:252
 #: templates/js/barcode.js:119 templates/js/build.js:864
 #: templates/js/order.js:187 templates/js/order.js:285
 #: templates/js/stock.js:626 templates/js/stock.js:1129
@@ -1286,8 +1286,8 @@ msgstr "Bermerkungen bearbeiten"
 #: build/templates/build/notes.html:26 company/templates/company/notes.html:24
 #: order/templates/order/order_notes.html:27
 #: order/templates/order/sales_order_notes.html:29
-#: part/templates/part/notes.html:27 stock/templates/stock/item_base.html:482
-#: stock/templates/stock/item_base.html:492
+#: part/templates/part/notes.html:27 stock/templates/stock/item_base.html:487
+#: stock/templates/stock/item_base.html:497
 #: stock/templates/stock/item_notes.html:26
 msgid "Save"
 msgstr "Speichern"
@@ -2049,7 +2049,7 @@ msgstr "Teilbeschreibung des Herstellers"
 #: company/models.py:390 company/models.py:520
 #: company/templates/company/manufacturer_part_base.html:6
 #: company/templates/company/manufacturer_part_base.html:19
-#: stock/templates/stock/item_base.html:357
+#: stock/templates/stock/item_base.html:362
 msgid "Manufacturer Part"
 msgstr "Herstellerteil"
 
@@ -2089,7 +2089,7 @@ msgstr "Einheit des Parameters"
 #: company/templates/company/supplier_part_detail.html:25 order/models.py:193
 #: order/templates/order/order_base.html:92
 #: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
-#: part/bom.py:286 stock/templates/stock/item_base.html:364
+#: part/bom.py:286 stock/templates/stock/item_base.html:369
 #: templates/js/company.js:48 templates/js/company.js:364
 #: templates/js/order.js:170
 msgid "Supplier"
@@ -2516,7 +2516,7 @@ msgstr "Neuer Auftrag"
 
 #: company/templates/company/supplier_part_base.html:7
 #: company/templates/company/supplier_part_base.html:20 stock/models.py:416
-#: stock/templates/stock/item_base.html:369 templates/js/company.js:380
+#: stock/templates/stock/item_base.html:374 templates/js/company.js:380
 msgid "Supplier Part"
 msgstr "Zuliefererteil"
 
@@ -2564,7 +2564,7 @@ msgstr "Teil bestellen"
 msgid "Pricing Information"
 msgstr "Preisinformationen ansehen"
 
-#: company/templates/company/supplier_part_pricing.html:19 company/views.py:854
+#: company/templates/company/supplier_part_pricing.html:19 company/views.py:855
 #: part/templates/part/sale_prices.html:17 part/views.py:2749
 msgid "Add Price Break"
 msgstr "Preisstaffel hinzufügen"
@@ -2684,23 +2684,23 @@ msgstr "Herstellerteil ändern"
 msgid "Edit Supplier Part"
 msgstr "Zuliefererteil bearbeiten"
 
-#: company/views.py:638 templates/js/stock.js:1315
+#: company/views.py:639 templates/js/stock.js:1315
 msgid "Create new Supplier Part"
 msgstr "Neues Zuliefererteil anlegen"
 
-#: company/views.py:782
+#: company/views.py:783
 msgid "Delete Supplier Part"
 msgstr "Zuliefererteil entfernen"
 
-#: company/views.py:859 part/views.py:2753
+#: company/views.py:860 part/views.py:2753
 msgid "Added new price break"
 msgstr "neue Preisstaffel hinzufügt"
 
-#: company/views.py:915 part/views.py:2797
+#: company/views.py:916 part/views.py:2797
 msgid "Edit Price Break"
 msgstr "Preisstaffel bearbeiten"
 
-#: company/views.py:930 part/views.py:2811
+#: company/views.py:931 part/views.py:2811
 msgid "Delete Price Break"
 msgstr "Preisstaffel löschen"
 
@@ -4678,7 +4678,7 @@ msgstr "Preisinformationen ansehen"
 msgid "Part Test Templates"
 msgstr "Teil Test-Vorlagen"
 
-#: part/templates/part/navbar.html:123 stock/templates/stock/item_base.html:409
+#: part/templates/part/navbar.html:123 stock/templates/stock/item_base.html:414
 msgid "Tests"
 msgstr "Tests"
 
@@ -5346,7 +5346,7 @@ msgid "Moved {n} parts to {loc}"
 msgstr "{n} Teile nach {loc} bewegt"
 
 #: stock/forms.py:114 stock/forms.py:418 stock/models.py:509
-#: stock/templates/stock/item_base.html:376 templates/js/stock.js:654
+#: stock/templates/stock/item_base.html:381 templates/js/stock.js:654
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
 
@@ -5632,12 +5632,12 @@ msgid "Stock Item Attachments"
 msgstr "BestandsObjekt-Anhang"
 
 #: stock/templates/stock/item_base.html:33
-#: stock/templates/stock/item_base.html:380 templates/js/table_filters.js:150
+#: stock/templates/stock/item_base.html:385 templates/js/table_filters.js:150
 msgid "Expired"
 msgstr "abgelaufen"
 
 #: stock/templates/stock/item_base.html:43
-#: stock/templates/stock/item_base.html:382 templates/js/table_filters.js:155
+#: stock/templates/stock/item_base.html:387 templates/js/table_filters.js:155
 msgid "Stale"
 msgstr "überfällig"
 
@@ -5779,25 +5779,31 @@ msgstr "Barcode-Bezeichner"
 msgid "Parent Item"
 msgstr "Elternposition"
 
-#: stock/templates/stock/item_base.html:380
+#: stock/templates/stock/item_base.html:356
+#, fuzzy
+#| msgid "is manufacturer"
+msgid "No manufacturer set"
+msgstr "ist Hersteller"
+
+#: stock/templates/stock/item_base.html:385
 #, python-format
 msgid "This StockItem expired on %(item.expiry_date)s"
 msgstr "Dieses BestandsObjekt lief am %(item.expiry_date)s ab"
 
-#: stock/templates/stock/item_base.html:382
+#: stock/templates/stock/item_base.html:387
 #, python-format
 msgid "This StockItem expires on %(item.expiry_date)s"
 msgstr "Dieses BestandsObjekt läuft am %(item.expiry_date)s ab"
 
-#: stock/templates/stock/item_base.html:389 templates/js/stock.js:660
+#: stock/templates/stock/item_base.html:394 templates/js/stock.js:660
 msgid "Last Updated"
 msgstr "Zuletzt aktualisiert"
 
-#: stock/templates/stock/item_base.html:394
+#: stock/templates/stock/item_base.html:399
 msgid "Last Stocktake"
 msgstr "Letzte Inventur"
 
-#: stock/templates/stock/item_base.html:398
+#: stock/templates/stock/item_base.html:403
 msgid "No stocktake performed"
 msgstr "Keine Inventur ausgeführt"
 
