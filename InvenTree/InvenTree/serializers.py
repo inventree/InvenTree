@@ -50,7 +50,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         # Now ensure the underlying model is correct
         instance = self.Meta.model(**data)
-        instance.validate_unique()
         instance.clean()
 
         return data
