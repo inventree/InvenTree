@@ -20,8 +20,43 @@ def extract_purchase_price(apps, schema_editor):
     # Required database models
     StockItem = apps.get_model('stock', 'stockitem')
     PurchaseOrder = apps.get_model('order', 'purchaseorder')
+    PurchaseOrderLineItem = apps.get_model('order', 'purchaseorderlineitem')
     Part = apps.get_model('part', 'part')
 
+    # Find all the StockItem objects without a purchase_price which point to a PurchaseOrder
+    items = StockItem.objects.filter(purchase_price=None).exclude(purchase_order=None)
+
+    print(f"Found {items.count()} stock items with missing purchase price information")
+
+    update_count = 0
+
+    for item in items:
+
+        part_id = item.part
+
+        po = item.purchase_order
+
+        # Look for a matching PurchaseOrderLineItem (with a price)
+        lines = PurchaseOrderLineItem.objects.filter(part__part=part_id, order=po)
+
+        if lines.exists():
+
+            for line in lines:
+                if line.purchase_price is not None:
+
+                    # Copy pricing information across
+                    item.purchase_price = line.purchase_price
+                    item.purchases_price_currency = line.purchase_price_currency
+
+                    print(f"- Updating supplier price for {item.part.name} - {item.purchase_price} {item.purchase_price_currency}")
+
+                    update_count += 1
+
+                    item.save()
+
+                    break
+
+    print(f"Updated pricing for {update_count} stock items")
 
 def reverse_operation(apps, schema_editor):
     """
