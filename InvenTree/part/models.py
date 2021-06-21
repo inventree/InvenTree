@@ -380,7 +380,6 @@ class Part(MPTTModel):
                     previous.image.delete(save=False)
 
         self.clean()
-        self.validate_unique()
 
         super().save(*args, **kwargs)
 
@@ -671,6 +670,8 @@ class Part(MPTTModel):
         """
 
         super().clean()
+
+        self.validate_unique()
 
         if self.trackable:
             for part in self.get_used_in().all():

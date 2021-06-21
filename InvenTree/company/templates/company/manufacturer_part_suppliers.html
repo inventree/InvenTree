@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block heading %}
-{% trans "Supplier Parts" %}
+{% trans "Suppliers" %}
 {% endblock %}
 
 {% block details %}
@@ -30,8 +30,43 @@
 
 {% endblock %}
 
+{% block post_content_panels %}
+
+<div class='panel panel-default panel-inventree'>
+    <div class='panel-heading'>
+        <h4>{% trans "Parameters" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='parameter-toolbar'>
+            <div class='btn-group'>
+                <button class='btn btn-success' id='parameter-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+                </button>
+                <div id='param-dropdown' class='btn-group'>
+                    <!-- TODO -->
+                </div>
+            </div>
+        </div>
+
+        <table class='table table-striped table-condensed' id='parameter-table' data-toolbar='#parameter-toolbar'></table>
+    </div>
+</div>
+
+{% endblock %}
+
 {% block js_ready %}
 {{ block.super }}
+
+$('#parameter-create').click(function() {
+    launchModalForm(
+        "{% url 'manufacturer-part-parameter-create' %}",
+        {
+            data: {
+                manufacturer_part: {{ part.id }},
+            }
+        }
+    );
+});
 
 $('#supplier-create').click(function () {
     launchModalForm(
@@ -81,6 +116,16 @@ loadSupplierPartTable(
             supplier_detail: true,
             manufacturer_detail: false,
         },
+    }
+);
+
+loadManufacturerPartParameterTable(
+    "#parameter-table",
+    "{% url 'api-manufacturer-part-parameter-list' %}",
+    {
+        params: {
+            manufacturer_part: {{ part.id }},
+        }
     }
 );
 

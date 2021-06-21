@@ -111,6 +111,13 @@ class PartCategoryResource(ModelResource):
         PartCategory.objects.rebuild()
 
 
+class PartCategoryInline(admin.TabularInline):
+    """
+    Inline for PartCategory model
+    """
+    model = PartCategory
+
+
 class PartCategoryAdmin(ImportExportModelAdmin):
 
     resource_class = PartCategoryResource
@@ -118,6 +125,10 @@ class PartCategoryAdmin(ImportExportModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
     search_fields = ('name', 'description')
+
+    inlines = [
+        PartCategoryInline,
+    ]
 
 
 class PartRelatedAdmin(admin.ModelAdmin):

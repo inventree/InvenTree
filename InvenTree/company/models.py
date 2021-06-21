@@ -371,6 +371,47 @@ class ManufacturerPart(models.Model):
         return s
 
 
+class ManufacturerPartParameter(models.Model):
+    """
+    A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
+
+    This is used to represent parmeters / properties for a particular manufacturer part.
+
+    Each parameter is a simple string (text) value.
+    """
+
+    class Meta:
+        unique_together = ('manufacturer_part', 'name')
+
+    manufacturer_part = models.ForeignKey(
+        ManufacturerPart,
+        on_delete=models.CASCADE,
+        related_name='parameters',
+        verbose_name=_('Manufacturer Part'),
+    )
+
+    name = models.CharField(
+        max_length=500,
+        blank=False,
+        verbose_name=_('Name'),
+        help_text=_('Parameter name')
+    )
+
+    value = models.CharField(
+        max_length=500,
+        blank=False,
+        verbose_name=_('Value'),
+        help_text=_('Parameter value')
+    )
+
+    units = models.CharField(
+        max_length=64,
+        blank=True, null=True,
+        verbose_name=_('Units'),
+        help_text=_('Parameter units')
+    )
+
+
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a SKU (Supplier Part Number)

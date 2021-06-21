@@ -5,6 +5,7 @@ over and above the built-in Django tags.
 """
 
 import os
+import sys
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as djangosettings
@@ -112,6 +113,14 @@ def inventree_instance_name(*args, **kwargs):
 def inventree_title(*args, **kwargs):
     """ Return the title for the current instance - respecting the settings """
     return version.inventreeInstanceTitle()
+
+
+@register.simple_tag()
+def python_version(*args, **kwargs):
+    """
+    Return the current python version
+    """
+    return sys.version.split(' ')[0]
 
 
 @register.simple_tag()
