@@ -231,6 +231,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                sortable: true,
             }
         ]
     });
