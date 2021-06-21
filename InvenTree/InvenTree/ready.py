@@ -33,6 +33,7 @@ def canAppAccessDatabase():
         'createsuperuser',
         'wait_for_db',
         'prerender',
+        'rebuild',
         'collectstatic',
         'makemessages',
         'compilemessages',

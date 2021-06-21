@@ -661,6 +661,27 @@ function loadStockTable(table, options) {
                 sortable: true,
             },
             {
+                field: 'purchase_order',
+                title: '{% trans "Purchase Order" %}',
+                formatter: function(value, row) {
+                    if (!value) {
+                        return '-';
+                    }
+
+                    var link = `/order/purchase-order/${row.purchase_order}/`;
+                    var text = `${row.purchase_order}`;
+
+                    if (row.purchase_order_reference) {
+
+                        var prefix = '{% settings_value "PURCHASEORDER_REFERENCE_PREFIX" %}';
+
+                        text = prefix + row.purchase_order_reference;
+                    }
+
+                    return renderLink(text, link);
+                }
+            },
+            {
                 field: 'purchase_price',
                 title: '{% trans "Purchase Price" %}',
                 sortable: true,
