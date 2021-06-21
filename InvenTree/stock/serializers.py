@@ -81,6 +81,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'belongs_to',
             'build',
             'customer',
+            'purchase_order',
             'sales_order',
             'supplier_part',
             'supplier_part__supplier',
@@ -163,6 +164,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     purchase_price = serializers.SerializerMethodField()
 
+    purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
+
+    sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
+
     def get_purchase_price(self, obj):
         """ Return purchase_price (Money field) as string (includes currency) """
 
@@ -208,10 +213,13 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'packaging',
             'part',
             'part_detail',
+            'purchase_order',
+            'purchase_order_reference',
             'pk',
             'quantity',
             'required_tests',
             'sales_order',
+            'sales_order_reference',
             'serial',
             'stale',
             'status',
