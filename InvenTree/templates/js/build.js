@@ -693,9 +693,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var qA = rowA.quantity;
                     var qB = rowB.quantity;
 
-                    qA *= output.quantity;
-                    qB *= output.quantity;
-
                     // Handle the case where both numerators are zero
                     if ((aA == 0) && (aB == 0)) {
                         return (qA > qB) ? 1 : -1;
