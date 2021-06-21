@@ -375,7 +375,7 @@ def delete_data(c, force=False):
     """
 
     if force:
-        manage(c, 'flush', '--noinput')
+        manage(c, 'flush --noinput')
     else:
         manage(c, 'flush')
 
