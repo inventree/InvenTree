@@ -292,6 +292,29 @@ class PartAPITest(InvenTreeAPITestCase):
 
             self.assertEqual(len(data['results']), n)
 
+    def test_default_values(self):
+        """
+        Tests for 'default' values:
+
+        Ensure that unspecified fields revert to "default" values
+        (as specified in the model field definition)
+        """
+
+        url = reverse('api-part-list')
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part',
+            'category': 1,
+        })
+
+        data = response.data
+
+        # Check that the un-specified fields have used correct default values
+        self.assertTrue(data['active'])
+        self.assertFalse(data['virtual'])
+        self.assertTrue(data['purchaseable'])
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """
