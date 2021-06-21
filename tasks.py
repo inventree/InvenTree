@@ -365,6 +365,21 @@ def import_records(c, filename='data.json'):
 
     print("Data import completed")
 
+
+@task
+def delete_data(c, force=False):
+    """
+    Delete all database records!
+
+    Warning: This will REALLY delete all records in the database!!
+    """
+
+    if force:
+        manage(c, 'flush', '--noinput')
+    else:
+        manage(c, 'flush')
+
+
 @task(post=[rebuild])
 def import_fixtures(c):
     """
