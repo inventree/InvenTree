@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-22 11:16+0000\n"
+"POT-Creation-Date: 2021-06-22 11:29+0000\n"
 "PO-Revision-Date: 2021-06-17 00:51\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -373,27 +373,27 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:605
+#: InvenTree/views.py:608
 msgid "Delete Item"
 msgstr ""
 
-#: InvenTree/views.py:654
+#: InvenTree/views.py:657
 msgid "Check box to confirm item deletion"
 msgstr ""
 
-#: InvenTree/views.py:669 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:672 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:680 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:683 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr ""
 
-#: InvenTree/views.py:699
+#: InvenTree/views.py:702
 msgid "Password fields must match"
 msgstr ""
 
-#: InvenTree/views.py:950 templates/navbar.html:95
+#: InvenTree/views.py:953 templates/navbar.html:95
 msgid "System Information"
 msgstr ""
 
@@ -463,12 +463,12 @@ msgstr ""
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:31 common/models.py:713
+#: build/templates/build/detail.html:31 common/models.py:720
 #: company/forms.py:191 company/templates/company/supplier_part_pricing.html:77
 #: order/forms.py:193 order/forms.py:211 order/forms.py:246 order/forms.py:268
 #: order/forms.py:285 order/models.py:617 order/models.py:841
 #: order/templates/order/order_wizard/match_parts.html:29
-#: order/templates/order/order_wizard/select_parts.html:32
+#: order/templates/order/order_wizard/select_parts.html:34
 #: order/templates/order/purchase_order_detail.html:179
 #: order/templates/order/sales_order_detail.html:70
 #: order/templates/order/sales_order_detail.html:77
@@ -629,7 +629,7 @@ msgstr ""
 #: build/templates/build/build_base.html:128
 #: build/templates/build/detail.html:26 company/models.py:663
 #: order/models.py:661 order/models.py:717
-#: order/templates/order/order_wizard/select_parts.html:30
+#: order/templates/order/order_wizard/select_parts.html:32
 #: order/templates/order/purchase_order_detail.html:132
 #: order/templates/order/receive_parts.html:19
 #: order/templates/order/sales_order_detail.html:214 part/models.py:321
@@ -1671,176 +1671,184 @@ msgid "Display available part quantity in some forms"
 msgstr ""
 
 #: common/models.py:209
-msgid "Internal Prices"
+msgid "Show Price in Forms"
 msgstr ""
 
 #: common/models.py:210
-msgid "Enable internal prices for parts"
+msgid "Display part price in some forms"
 msgstr ""
 
 #: common/models.py:216
-msgid "Internal Price as BOM-Price"
+msgid "Internal Prices"
 msgstr ""
 
 #: common/models.py:217
-msgid "Use the internal price (if set) in BOM-price calculations"
+msgid "Enable internal prices for parts"
 msgstr ""
 
-#: common/models.py:223 templates/stats.html:25
-msgid "Debug Mode"
+#: common/models.py:223
+msgid "Internal Price as BOM-Price"
 msgstr ""
 
 #: common/models.py:224
-msgid "Generate reports in debug mode (HTML output)"
+msgid "Use the internal price (if set) in BOM-price calculations"
 msgstr ""
 
-#: common/models.py:230
-msgid "Page Size"
+#: common/models.py:230 templates/stats.html:25
+msgid "Debug Mode"
 msgstr ""
 
 #: common/models.py:231
+msgid "Generate reports in debug mode (HTML output)"
+msgstr ""
+
+#: common/models.py:237
+msgid "Page Size"
+msgstr ""
+
+#: common/models.py:238
 msgid "Default page size for PDF reports"
 msgstr ""
 
-#: common/models.py:241
+#: common/models.py:248
 msgid "Test Reports"
 msgstr ""
 
-#: common/models.py:242
+#: common/models.py:249
 msgid "Enable generation of test reports"
 msgstr ""
 
-#: common/models.py:248
+#: common/models.py:255
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/models.py:249
+#: common/models.py:256
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/models.py:255
+#: common/models.py:262
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/models.py:256
+#: common/models.py:263
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/models.py:262
+#: common/models.py:269
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/models.py:263
+#: common/models.py:270
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/models.py:265 part/templates/part/detail.html:121
+#: common/models.py:272 part/templates/part/detail.html:121
 msgid "days"
 msgstr ""
 
-#: common/models.py:270
+#: common/models.py:277
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/models.py:271
+#: common/models.py:278
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/models.py:277
+#: common/models.py:284
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/models.py:278
+#: common/models.py:285
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/models.py:284
+#: common/models.py:291
 msgid "Group by Part"
 msgstr ""
 
-#: common/models.py:285
+#: common/models.py:292
 msgid "Group stock items by part reference in table views"
 msgstr ""
 
-#: common/models.py:291
+#: common/models.py:298
 msgid "Recent Stock Count"
 msgstr ""
 
-#: common/models.py:292
+#: common/models.py:299
 msgid "Number of recent stock items to display on index page"
 msgstr ""
 
-#: common/models.py:298
+#: common/models.py:305
 msgid "Build Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:299
+#: common/models.py:306
 msgid "Prefix value for build order reference"
 msgstr ""
 
-#: common/models.py:304
+#: common/models.py:311
 msgid "Build Order Reference Regex"
 msgstr ""
 
-#: common/models.py:305
+#: common/models.py:312
 msgid "Regular expression pattern for matching build order reference"
 msgstr ""
 
-#: common/models.py:309
+#: common/models.py:316
 msgid "Sales Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:310
+#: common/models.py:317
 msgid "Prefix value for sales order reference"
 msgstr ""
 
-#: common/models.py:315
+#: common/models.py:322
 msgid "Purchase Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:316
+#: common/models.py:323
 msgid "Prefix value for purchase order reference"
 msgstr ""
 
-#: common/models.py:539
+#: common/models.py:546
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:541
+#: common/models.py:548
 msgid "Settings value"
 msgstr ""
 
-#: common/models.py:576
+#: common/models.py:583
 msgid "Must be an integer value"
 msgstr ""
 
-#: common/models.py:599
+#: common/models.py:606
 msgid "Value must be a boolean value"
 msgstr ""
 
-#: common/models.py:610
+#: common/models.py:617
 msgid "Value must be an integer value"
 msgstr ""
 
-#: common/models.py:633
+#: common/models.py:640
 msgid "Key string must be unique"
 msgstr ""
 
-#: common/models.py:714 company/forms.py:192
+#: common/models.py:721 company/forms.py:192
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:722 company/templates/company/supplier_part_pricing.html:82
+#: common/models.py:729 company/templates/company/supplier_part_pricing.html:82
 #: part/templates/part/internal_prices.html:103
 #: part/templates/part/sale_prices.html:90 templates/js/bom.js:271
 msgid "Price"
 msgstr ""
 
-#: common/models.py:723
+#: common/models.py:730
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:815
+#: common/models.py:822
 msgid "Default"
 msgstr ""
 
@@ -2017,7 +2025,7 @@ msgstr ""
 msgid "Base Part"
 msgstr ""
 
-#: company/models.py:309 company/models.py:501 order/views.py:1587
+#: company/models.py:309 company/models.py:501 order/views.py:1597
 msgid "Select part"
 msgstr ""
 
@@ -2299,7 +2307,7 @@ msgid "Supplier Parts"
 msgstr ""
 
 #: company/templates/company/detail_supplier_part.html:21
-#: order/templates/order/order_wizard/select_parts.html:42
+#: order/templates/order/order_wizard/select_parts.html:44
 #: order/templates/order/purchase_order_detail.html:50
 msgid "Create new supplier part"
 msgstr ""
@@ -2420,7 +2428,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:43
 #: part/templates/part/params.html:18
 #: templates/InvenTree/settings/category.html:29
-#: templates/InvenTree/settings/part.html:47
+#: templates/InvenTree/settings/part.html:48
 msgid "New Parameter"
 msgstr ""
 
@@ -3151,28 +3159,32 @@ msgstr ""
 msgid "Order is already processed. Files cannot be uploaded."
 msgstr ""
 
-#: order/templates/order/order_wizard/select_parts.html:9
+#: order/templates/order/order_wizard/select_parts.html:11
 msgid "Step 1 of 2 - Select Part Suppliers"
 msgstr ""
 
-#: order/templates/order/order_wizard/select_parts.html:14
+#: order/templates/order/order_wizard/select_parts.html:16
 msgid "Select suppliers"
 msgstr ""
 
-#: order/templates/order/order_wizard/select_parts.html:18
+#: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
 msgstr ""
 
-#: order/templates/order/order_wizard/select_parts.html:31
+#: order/templates/order/order_wizard/select_parts.html:33
 msgid "Select Supplier"
 msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:57
+msgid "No price"
+msgstr ""
+
+#: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
 msgid "Select a supplier for <i>%(name)s</i>"
 msgstr ""
 
-#: order/templates/order/order_wizard/select_parts.html:69
+#: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
 msgid "Remove part"
 msgstr ""
@@ -3228,8 +3240,8 @@ msgid "Purchase Order Items"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:24
-#: order/templates/order/sales_order_detail.html:22 order/views.py:1311
-#: order/views.py:1394
+#: order/templates/order/sales_order_detail.html:22 order/views.py:1321
+#: order/views.py:1404
 msgid "Add Line Item"
 msgstr ""
 
@@ -3548,85 +3560,89 @@ msgstr ""
 msgid "No lines specified"
 msgstr ""
 
-#: order/views.py:1260
+#: order/views.py:1012
+msgid "Update prices"
+msgstr ""
+
+#: order/views.py:1270
 #, python-brace-format
 msgid "Ordered {n} parts"
 msgstr ""
 
-#: order/views.py:1320
+#: order/views.py:1330
 msgid "Supplier part must be specified"
 msgstr ""
 
-#: order/views.py:1326
+#: order/views.py:1336
 msgid "Supplier must match for Part and Order"
 msgstr ""
 
-#: order/views.py:1457 order/views.py:1475
+#: order/views.py:1467 order/views.py:1485
 msgid "Edit Line Item"
 msgstr ""
 
-#: order/views.py:1491 order/views.py:1503
+#: order/views.py:1501 order/views.py:1513
 msgid "Delete Line Item"
 msgstr ""
 
-#: order/views.py:1496 order/views.py:1508
+#: order/views.py:1506 order/views.py:1518
 msgid "Deleted line item"
 msgstr ""
 
-#: order/views.py:1521
+#: order/views.py:1531
 msgid "Allocate Serial Numbers"
 msgstr ""
 
-#: order/views.py:1566
+#: order/views.py:1576
 #, python-brace-format
 msgid "Allocated {n} items"
 msgstr ""
 
-#: order/views.py:1582
+#: order/views.py:1592
 msgid "Select line item"
-msgstr ""
-
-#: order/views.py:1613
-#, python-brace-format
-msgid "No matching item for serial {serial}"
 msgstr ""
 
 #: order/views.py:1623
 #, python-brace-format
+msgid "No matching item for serial {serial}"
+msgstr ""
+
+#: order/views.py:1633
+#, python-brace-format
 msgid "{serial} is not in stock"
 msgstr ""
 
-#: order/views.py:1631
+#: order/views.py:1641
 #, python-brace-format
 msgid "{serial} already allocated to an order"
 msgstr ""
 
-#: order/views.py:1685
+#: order/views.py:1695
 msgid "Allocate Stock to Order"
 msgstr ""
 
-#: order/views.py:1759
+#: order/views.py:1769
 msgid "Edit Allocation Quantity"
 msgstr ""
 
-#: order/views.py:1774
+#: order/views.py:1784
 msgid "Remove allocation"
 msgstr ""
 
-#: order/views.py:1846
+#: order/views.py:1856
 msgid "Sales order not found"
 msgstr ""
 
-#: order/views.py:1852
+#: order/views.py:1862
 msgid "Price not found"
 msgstr ""
 
-#: order/views.py:1855
+#: order/views.py:1865
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
 msgstr ""
 
-#: order/views.py:1860
+#: order/views.py:1870
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
@@ -6270,12 +6286,12 @@ msgid "No category parameter templates found"
 msgstr ""
 
 #: templates/InvenTree/settings/category.html:70
-#: templates/InvenTree/settings/part.html:84
+#: templates/InvenTree/settings/part.html:85
 msgid "Edit Template"
 msgstr ""
 
 #: templates/InvenTree/settings/category.html:71
-#: templates/InvenTree/settings/part.html:85
+#: templates/InvenTree/settings/part.html:86
 msgid "Delete Template"
 msgstr ""
 
@@ -6323,11 +6339,11 @@ msgstr ""
 msgid "Part Options"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:43
+#: templates/InvenTree/settings/part.html:44
 msgid "Part Parameter Templates"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:64
+#: templates/InvenTree/settings/part.html:65
 msgid "No part parameter templates found"
 msgstr ""
 
