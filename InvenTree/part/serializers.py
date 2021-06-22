@@ -13,7 +13,7 @@ from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeImageSerializierField,
+                                   InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem

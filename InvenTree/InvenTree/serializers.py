@@ -103,7 +103,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
-class InvenTreeImageSerializierField(serializers.FileField):
+class InvenTreeImageSerializerField(serializers.FileField):
     """
     Custom image serializer.
     On upload, validate that the file is a valid image file
