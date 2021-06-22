@@ -93,8 +93,10 @@ class POSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'reference',
             'status'
+            'issue_date',
+            'complete_date',
+            'creation_date',
         ]
 
 
@@ -110,8 +112,9 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             self.fields.pop('part_detail')
             self.fields.pop('supplier_part_detail')
 
-    quantity = serializers.FloatField()
-    received = serializers.FloatField()
+    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
+    quantity = serializers.FloatField(default=1)
+    received = serializers.FloatField(default=0)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
@@ -226,8 +229,9 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'reference',
-            'status'
+            'status',
+            'creation_date',
+            'shipment_date',
         ]
 
 
@@ -313,7 +317,9 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
 
-    quantity = serializers.FloatField()
+    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
+    quantity = serializers.FloatField(default=1)
+
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
