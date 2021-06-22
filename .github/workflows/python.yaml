@@ -5,7 +5,11 @@ name: Python Bindings
 on:
   push:
     branches:
-      - 'master'
+      - master
+
+  pull_request:
+    branches-ignore:
+      - l10*
 
 jobs:
 
@@ -32,7 +36,7 @@ jobs:
           invoke migrate
       - name: Download Python Code
         run: |
-          git clone --depth 1 https://github.com/inventee/inventree-python ./inventree-python
+          git clone --depth 1 https://github.com/inventree/inventree-python ./inventree-python
       - name: Start Server
         run: |
           invoke import-records -f ./inventree-python/test/test_data.json
