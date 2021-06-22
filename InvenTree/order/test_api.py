@@ -258,7 +258,6 @@ class SalesOrderTest(OrderTest):
 
         self.get(url)
 
-
     def test_so_operations(self):
         """
         Test that we can create / edit and delete a SalesOrder via the API
