@@ -688,7 +688,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
-                    console.log("sorting!");
+                    // Custom sorting function for progress bars
+                    
                     var aA = sumAllocations(rowA);
                     var aB = sumAllocations(rowB);
 

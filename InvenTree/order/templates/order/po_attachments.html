@@ -57,8 +57,6 @@ $("#attachment-table").on('click', '.attachment-delete-button', function() {
 
     var url = `/order/purchase-order/attachment/${button.attr('pk')}/delete/`;
 
-    console.log("url: " + url);
-
     launchModalForm(url, {
         reload: true,
     });
