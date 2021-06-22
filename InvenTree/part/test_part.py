@@ -97,11 +97,12 @@ class PartTest(TestCase):
 
         self.assertEqual(Part.objects.count(), n + 1)
 
-        part = Part(category=cat,
-                name='part',
-                description='description',
-                IPN='IPN',
-                revision='A',
+        part = Part(
+            category=cat,
+            name='part',
+            description='description',
+            IPN='IPN',
+            revision='A',
         )
 
         with self.assertRaises(ValidationError):

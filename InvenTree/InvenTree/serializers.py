@@ -48,7 +48,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         this class ensures that the underlying model is also validated.
         """
 
-        # Run any native validation checks first (may throw an ValidationError)
+        # Run any native validation checks first (may raise a ValidationError)
         data = super().run_validation(data)
 
         # Now ensure the underlying model is correct

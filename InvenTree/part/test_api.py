@@ -1,4 +1,5 @@
-from django.db import models
+# -*- coding: utf-8 -*-
+
 from rest_framework import status
 
 from django.urls import reverse
@@ -438,7 +439,8 @@ class PartDetailTests(InvenTreeAPITestCase):
         url = reverse('api-part-detail', kwargs={'pk': pk})
 
         # Attempt to alter the revision code
-        response = self.client.patch(url,
+        response = self.client.patch(
+            url,
             {
                 'revision': 'A',
             },
@@ -448,7 +450,8 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 400)
 
         # But we *can* change it to a unique revision code
-        response = self.client.patch(url,
+        response = self.client.patch(
+            url,
             {
                 'revision': 'C',
             }
