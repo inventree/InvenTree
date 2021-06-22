@@ -110,9 +110,9 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_po_create(self):
+    def test_po_operations(self):
         """
-        Test that we can create and delete a PurchaseOrder via the API
+        Test that we can create / edit and delete a PurchaseOrder via the API
         """
 
         n = PurchaseOrder.objects.count()
@@ -149,7 +149,7 @@ class PurchaseOrderTest(OrderTest):
             expected_code=201
         )
 
-        self.assertEqual(PurchaseOrder.objects.count(), n+1)
+        self.assertEqual(PurchaseOrder.objects.count(), n + 1)
 
         pk = response.data['pk']
 
@@ -164,7 +164,7 @@ class PurchaseOrderTest(OrderTest):
             expected_code=400
         )
 
-        self.assertEqual(PurchaseOrder.objects.count(), n+1)
+        self.assertEqual(PurchaseOrder.objects.count(), n + 1)
 
         url = reverse('api-po-detail', kwargs={'pk': pk})
 
@@ -172,6 +172,18 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url)
         self.assertEqual(response.data['pk'], pk)
         self.assertEqual(response.data['reference'], '123456789-xyz')
+
+        # Try to alter (edit) the PurchaseOrder
+        response = self.patch(
+            url,
+            {
+                'reference': '12345-abc',
+            },
+            expected_code=200
+        )
+
+        # Reference should have changed
+        self.assertEqual(response.data['reference'], '12345-abc')
 
         # Now, let's try to delete it!
         # Initially, we do *not* have the required permission!
@@ -236,8 +248,6 @@ class SalesOrderTest(OrderTest):
 
         response = self.get(url)
 
-        self.assertEqual(response.status_code, 200)
-
         data = response.data
 
         self.assertEqual(data['pk'], 1)
@@ -246,6 +256,88 @@ class SalesOrderTest(OrderTest):
 
         url = reverse('api-so-attachment-list')
 
-        response = self.get(url)
+        self.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_so_operations(self):
+        """
+        Test that we can create / edit and delete a SalesOrder via the API
+        """
+
+        n = SalesOrder.objects.count()
+
+        url = reverse('api-so-list')
+
+        # Initially we do not have "add" permission for the SalesOrder model,
+        # so this POST request should return 403 (denied)
+        response = self.post(
+            url,
+            {
+                'customer': 4,
+                'reference': '12345',
+                'description': 'Sales order',
+            },
+            expected_code=403,
+        )
+
+        self.assignRole('sales_order.add')
+
+        # Now we should be able to create a SalesOrder via the API
+        response = self.post(
+            url,
+            {
+                'customer': 4,
+                'reference': '12345',
+                'description': 'Sales order',
+            },
+            expected_code=201
+        )
+
+        # Check that the new order has been created
+        self.assertEqual(SalesOrder.objects.count(), n + 1)
+
+        # Grab the PK for the newly created SalesOrder
+        pk = response.data['pk']
+
+        # Try to create a SO with identical reference (should fail)
+        response = self.post(
+            url,
+            {
+                'customer': 4,
+                'reference': '12345',
+                'description': 'Another sales order',
+            },
+            expected_code=400
+        )
+
+        url = reverse('api-so-detail', kwargs={'pk': pk})
+
+        # Extract detail info for the SalesOrder
+        response = self.get(url)
+        self.assertEqual(response.data['reference'], '12345')
+
+        # Try to alter (edit) the SalesOrder
+        response = self.patch(
+            url,
+            {
+                'reference': '12345-a',
+            },
+            expected_code=200
+        )
+
+        # Reference should have changed
+        self.assertEqual(response.data['reference'], '12345-a')
+
+        # Now, let's try to delete this SalesOrder
+        # Initially, we do not have the required permission
+        response = self.delete(url, expected_code=403)
+
+        self.assignRole('sales_order.delete')
+
+        response = self.delete(url, expected_code=204)
+
+        # Check that the number of sales orders has decreased
+        self.assertEqual(SalesOrder.objects.count(), n)
+
+        # And the resource should no longer be available
+        response = self.get(url, expected_code=404)

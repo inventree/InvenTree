@@ -228,8 +228,9 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'reference',
-            'status'
+            'status',
+            'creation_date',
+            'shipment_date',
         ]
 
 

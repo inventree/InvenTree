@@ -382,7 +382,7 @@ class SOList(generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class SODetail(generics.RetrieveUpdateAPIView):
+class SODetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a SalesOrder object.
     """
