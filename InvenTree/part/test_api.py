@@ -4,7 +4,7 @@ from rest_framework import status
 
 from django.urls import reverse
 
-from part.models import Part
+from part.models import Part, PartCategory
 from stock.models import StockItem
 from company.models import Company
 
@@ -232,6 +232,18 @@ class PartAPITest(InvenTreeAPITestCase):
         response = self.client.get(url, data={'part': 10004})
         self.assertEqual(len(response.data), 7)
 
+        # Try to post a new object (missing description)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'My very first test',
+                'required': False,
+            }
+        )
+
+        self.assertEqual(response.status_code, 400)
+
         # Try to post a new object (should succeed)
         response = self.client.post(
             url,
@@ -239,6 +251,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 'part': 10000,
                 'test_name': 'New Test',
                 'required': True,
+                'description': 'a test description'
             },
             format='json',
         )
@@ -250,7 +263,8 @@ class PartAPITest(InvenTreeAPITestCase):
             url,
             data={
                 'part': 10004,
-                'test_name': "   newtest"
+                'test_name': "   newtest",
+                'description': 'dafsdf',
             },
             format='json',
         )
@@ -486,6 +500,8 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         # Add a new part
         self.part = Part.objects.create(
             name='Banana',
+            description='This is a banana',
+            category=PartCategory.objects.get(pk=1),
         )
 
         # Create some stock items associated with the part
