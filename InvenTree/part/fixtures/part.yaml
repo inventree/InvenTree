@@ -6,7 +6,7 @@
     name: 'M2x4 LPHS'
     description: 'M2x4 low profile head screw'
     category: 8
-    link: www.acme.com/parts/m2x4lphs
+    link: http://www.acme.com/parts/m2x4lphs
     tree_id: 0
     purchaseable: True
     level: 0
@@ -56,6 +56,7 @@
   fields:
     name: 'C_22N_0805'
     description: '22nF capacitor in 0805 package'
+    purchaseable: true
     category: 3
     tree_id: 0
     level: 0
