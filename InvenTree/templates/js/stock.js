@@ -603,7 +603,6 @@ function loadStockTable(table, options) {
 
                     // REJECTED
                     if (row.status == {{ StockStatus.REJECTED }}) {
-                        console.log("REJECTED - {{ StockStatus.REJECTED }}");
                         html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
                     }
                     // LOST

@@ -418,6 +418,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             sub_part_detail: true,
             sub_part_trackable: trackable,
         },
+        disablePagination: true,
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
         },
@@ -667,6 +668,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 field: 'sub_part_detail.stock',
                 title: '{% trans "Available" %}',
+                sortable: true,
             },
             {
                 field: 'allocated',
@@ -686,14 +688,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
+                    // Custom sorting function for progress bars
+                    
                     var aA = sumAllocations(rowA);
                     var aB = sumAllocations(rowB);
 
-                    var qA = rowA.quantity;
-                    var qB = rowB.quantity;
-
-                    qA *= output.quantity;
-                    qB *= output.quantity;
+                    var qA = requiredQuantity(rowA);
+                    var qB = requiredQuantity(rowB);
 
                     // Handle the case where both numerators are zero
                     if ((aA == 0) && (aB == 0)) {
@@ -712,6 +713,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     if (progressA == progressB) {
                         return (qA < qB) ? 1 : -1;
                     }
+
+                    if (progressA == progressB) return 0;
 
                     return (progressA < progressB) ? 1 : -1;
                 }
