@@ -109,13 +109,14 @@ class PartTest(TestCase):
 
         try:
             part.save()
-            assert(False)
+            self.assertTrue(False)
         except:
             pass
 
         self.assertEqual(Part.objects.count(), n + 1)
 
-        Part.objects.create(
+        # But we should be able to create a part with a different revision
+        part_2 = Part.objects.create(
             category=cat,
             name='part',
             description='description',
@@ -124,6 +125,12 @@ class PartTest(TestCase):
         )
 
         self.assertEqual(Part.objects.count(), n + 2)
+
+        # Now, check that we cannot *change* part_2 to conflict
+        part_2.revision = 'A'
+
+        with self.assertRaises(ValidationError):
+            part_2.validate_unique()
 
     def test_metadata(self):
         self.assertEqual(self.r1.name, 'R_2K2_0805')
