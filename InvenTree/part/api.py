@@ -706,6 +706,7 @@ class PartList(generics.ListCreateAPIView):
         'creation_date',
         'IPN',
         'in_stock',
+        'category',
     ]
 
     # Default ordering

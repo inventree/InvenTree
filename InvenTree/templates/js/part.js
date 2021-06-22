@@ -447,6 +447,7 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         sortable: true,
+        sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
         formatter: function(value, row, index, field) {

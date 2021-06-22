@@ -85,6 +85,7 @@ class RuleSet(models.Model):
             'part_partstar',
             'company_supplierpart',
             'company_manufacturerpart',
+            'company_manufacturerpartparameter',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -116,6 +117,8 @@ class RuleSet(models.Model):
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
             'company_supplierpart',
+            'company_manufacturerpart',
+            'company_manufacturerpartparameter',
         ],
         'sales_order': [
             'company_company',

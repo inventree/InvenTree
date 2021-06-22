@@ -603,7 +603,6 @@ function loadStockTable(table, options) {
 
                     // REJECTED
                     if (row.status == {{ StockStatus.REJECTED }}) {
-                        console.log("REJECTED - {{ StockStatus.REJECTED }}");
                         html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
                     }
                     // LOST
@@ -659,6 +658,27 @@ function loadStockTable(table, options) {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
                 sortable: true,
+            },
+            {
+                field: 'purchase_order',
+                title: '{% trans "Purchase Order" %}',
+                formatter: function(value, row) {
+                    if (!value) {
+                        return '-';
+                    }
+
+                    var link = `/order/purchase-order/${row.purchase_order}/`;
+                    var text = `${row.purchase_order}`;
+
+                    if (row.purchase_order_reference) {
+
+                        var prefix = '{% settings_value "PURCHASEORDER_REFERENCE_PREFIX" %}';
+
+                        text = prefix + row.purchase_order_reference;
+                    }
+
+                    return renderLink(text, link);
+                }
             },
             {
                 field: 'purchase_price',
