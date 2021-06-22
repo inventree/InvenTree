@@ -93,8 +93,10 @@ class POSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'reference',
             'status'
+            'issue_date',
+            'complete_date',
+            'creation_date',
         ]
 
 

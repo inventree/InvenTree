@@ -110,6 +110,84 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_po_create(self):
+        """
+        Test that we can create and delete a PurchaseOrder via the API
+        """
+
+        n = PurchaseOrder.objects.count()
+
+        url = reverse('api-po-list')
+
+        # Initially we do not have "add" permission for the PurchaseOrder model,
+        # so this POST request should return 403
+        response = self.post(
+            url,
+            {
+                'supplier': 1,
+                'reference': '123456789-xyz',
+                'description': 'PO created via the API',
+            },
+            expected_code=403
+        )
+
+        # And no new PurchaseOrder objects should have been created
+        self.assertEqual(PurchaseOrder.objects.count(), n)
+
+        # Ok, now let's give this user the correct permission
+        self.assignRole('purchase_order.add')
+
+        # Initially we do not have "add" permission for the PurchaseOrder model,
+        # so this POST request should return 403
+        response = self.post(
+            url,
+            {
+                'supplier': 1,
+                'reference': '123456789-xyz',
+                'description': 'PO created via the API',
+            },
+            expected_code=201
+        )
+
+        self.assertEqual(PurchaseOrder.objects.count(), n+1)
+
+        pk = response.data['pk']
+
+        # Try to create a PO with identical reference (should fail!)
+        response = self.post(
+            url,
+            {
+                'supplier': 1,
+                'reference': '123456789-xyz',
+                'description': 'A different description',
+            },
+            expected_code=400
+        )
+
+        self.assertEqual(PurchaseOrder.objects.count(), n+1)
+
+        url = reverse('api-po-detail', kwargs={'pk': pk})
+
+        # Get detail info!
+        response = self.get(url)
+        self.assertEqual(response.data['pk'], pk)
+        self.assertEqual(response.data['reference'], '123456789-xyz')
+
+        # Now, let's try to delete it!
+        # Initially, we do *not* have the required permission!
+        response = self.delete(url, expected_code=403)
+
+        # Now, add the "delete" permission!
+        self.assignRole("purchase_order.delete")
+
+        response = self.delete(url, expected_code=204)
+
+        # Number of PurchaseOrder objects should have decreased
+        self.assertEqual(PurchaseOrder.objects.count(), n)
+
+        # And if we try to access the detail view again, it has gone
+        response = self.get(url, expected_code=404)
+
 
 class SalesOrderTest(OrderTest):
     """
