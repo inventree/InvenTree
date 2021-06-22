@@ -382,7 +382,7 @@ class Part(MPTTModel):
                     logger.info(f"Deleting unused image file '{previous.image}'")
                     previous.image.delete(save=False)
 
-        self.clean()
+        self.full_clean()
 
         super().save(*args, **kwargs)
 

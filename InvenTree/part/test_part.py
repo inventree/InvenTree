@@ -332,21 +332,24 @@ class PartSettingsTest(TestCase):
         """
 
         # Create a part
-        Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+        Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='A')
 
         # Attempt to create a duplicate item (should fail)
         with self.assertRaises(ValidationError):
-            Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+            part = Part(name='Hello', description='A thing', IPN='IPN123', revision='A')
+            part.validate_unique()
 
         # Attempt to create item with duplicate IPN (should be allowed by default)
         Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
 
         # And attempt again with the same values (should fail)
         with self.assertRaises(ValidationError):
-            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+            part = Part(name='Hello', description='A thing', IPN='IPN123', revision='B')
+            part.validate_unique()
 
         # Now update the settings so duplicate IPN values are *not* allowed
         InvenTreeSetting.set_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
 
         with self.assertRaises(ValidationError):
-            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='C')
+            part = Part(name='Hello', description='A thing', IPN='IPN123', revision='C')
+            part.full_clean()
