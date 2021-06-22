@@ -304,7 +304,6 @@ class PartSerializer(InvenTreeModelSerializer):
     suppliers = serializers.IntegerField(read_only=True)
 
     image = InvenTreeImageSerializerField(required=False)
-    # image = serializers.CharField(source='get_image_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     starred = serializers.SerializerMethodField()
 
