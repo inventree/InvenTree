@@ -119,7 +119,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
         data = {
             'MPN': 'MPN-TEST-123',
         }
+        
         response = self.client.patch(url, data, format='json')
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['MPN'], 'MPN-TEST-123')
 

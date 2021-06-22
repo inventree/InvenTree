@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from rest_framework import status
 
 from django.urls import reverse
 
-from part.models import Part
+from part.models import Part, PartCategory
 from stock.models import StockItem
 from company.models import Company
 
@@ -230,6 +232,18 @@ class PartAPITest(InvenTreeAPITestCase):
         response = self.client.get(url, data={'part': 10004})
         self.assertEqual(len(response.data), 7)
 
+        # Try to post a new object (missing description)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'My very first test',
+                'required': False,
+            }
+        )
+
+        self.assertEqual(response.status_code, 400)
+
         # Try to post a new object (should succeed)
         response = self.client.post(
             url,
@@ -237,6 +251,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 'part': 10000,
                 'test_name': 'New Test',
                 'required': True,
+                'description': 'a test description'
             },
             format='json',
         )
@@ -248,7 +263,8 @@ class PartAPITest(InvenTreeAPITestCase):
             url,
             data={
                 'part': 10004,
-                'test_name': "   newtest"
+                'test_name': "   newtest",
+                'description': 'dafsdf',
             },
             format='json',
         )
@@ -293,6 +309,171 @@ class PartAPITest(InvenTreeAPITestCase):
             self.assertEqual(len(data['results']), n)
 
 
+class PartDetailTests(InvenTreeAPITestCase):
+    """
+    Test that we can create / edit / delete Part objects via the API
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'bom',
+        'test_templates',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
+    def setUp(self):
+        super().setUp()
+
+    def test_part_operations(self):
+        n = Part.objects.count()
+
+        # Create a part
+        response = self.client.post(
+            reverse('api-part-list'),
+            {
+                'name': 'my test api part',
+                'description': 'a part created with the API',
+                'category': 1,
+            }
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        pk = response.data['pk']
+
+        # Check that a new part has been added
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        part = Part.objects.get(pk=pk)
+
+        self.assertEqual(part.name, 'my test api part')
+
+        # Edit the part
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        # Let's change the name of the part
+
+        response = self.client.patch(url, {
+            'name': 'a new better name',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['pk'], pk)
+        self.assertEqual(response.data['name'], 'a new better name')
+
+        part = Part.objects.get(pk=pk)
+
+        # Name has been altered
+        self.assertEqual(part.name, 'a new better name')
+
+        # Part count should not have changed
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        # Now, try to set the name to the *same* value
+        # 2021-06-22 this test is to check that the "duplicate part" checks don't do strange things
+        response = self.client.patch(url, {
+            'name': 'a new better name',
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        # Try to remove the part
+        response = self.client.delete(url)
+    
+        self.assertEqual(response.status_code, 204)
+
+        # Part count should have reduced
+        self.assertEqual(Part.objects.count(), n)
+
+    def test_duplicates(self):
+        """
+        Check that trying to create 'duplicate' parts results in errors
+        """
+
+        # Create a part
+        response = self.client.post(reverse('api-part-list'), {
+            'name': 'part',
+            'description': 'description',
+            'IPN': 'IPN-123',
+            'category': 1,
+            'revision': 'A',
+        })
+
+        self.assertEqual(response.status_code, 201)
+
+        n = Part.objects.count()
+
+        # Check that we cannot create a duplicate in a different category
+        response = self.client.post(reverse('api-part-list'), {
+            'name': 'part',
+            'description': 'description',
+            'IPN': 'IPN-123',
+            'category': 2,
+            'revision': 'A',
+        })
+
+        self.assertEqual(response.status_code, 400)
+
+        # Check that only 1 matching part exists
+        parts = Part.objects.filter(
+            name='part',
+            description='description',
+            IPN='IPN-123'
+        )
+
+        self.assertEqual(parts.count(), 1)
+
+        # A new part should *not* have been created
+        self.assertEqual(Part.objects.count(), n)
+
+        # But a different 'revision' *can* be created
+        response = self.client.post(reverse('api-part-list'), {
+            'name': 'part',
+            'description': 'description',
+            'IPN': 'IPN-123',
+            'category': 2,
+            'revision': 'B',
+        })
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        # Now, check that we cannot *change* an existing part to conflict
+        pk = response.data['pk']
+
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        # Attempt to alter the revision code
+        response = self.client.patch(
+            url,
+            {
+                'revision': 'A',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        # But we *can* change it to a unique revision code
+        response = self.client.patch(
+            url,
+            {
+                'revision': 'C',
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """
     Tests to ensure that the various aggregation annotations are working correctly...
@@ -319,6 +500,8 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         # Add a new part
         self.part = Part.objects.create(
             name='Banana',
+            description='This is a banana',
+            category=PartCategory.objects.get(pk=1),
         )
 
         # Create some stock items associated with the part

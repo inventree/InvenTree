@@ -26,7 +26,8 @@ def extract_purchase_price(apps, schema_editor):
     # Find all the StockItem objects without a purchase_price which point to a PurchaseOrder
     items = StockItem.objects.filter(purchase_price=None).exclude(purchase_order=None)
 
-    print(f"Found {items.count()} stock items with missing purchase price information")
+    if items.count() > 0:
+        print(f"Found {items.count()} stock items with missing purchase price information")
 
     update_count = 0
 
@@ -56,7 +57,8 @@ def extract_purchase_price(apps, schema_editor):
 
                     break
 
-    print(f"Updated pricing for {update_count} stock items")
+    if update_count > 0:
+        print(f"Updated pricing for {update_count} stock items")
 
 def reverse_operation(apps, schema_editor):
     """
