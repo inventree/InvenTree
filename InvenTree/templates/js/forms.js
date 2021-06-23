@@ -303,7 +303,7 @@ function constructInput(name, parameters, options={}) {
             func = constructTextInput;
             break;
         case 'url':
-            // TODO - url input
+            func = constructTextInput;
             break;
         case 'email':
             // TODO - email input
@@ -401,10 +401,24 @@ function constructCheckboxInput(name, parameters, options={}) {
 // Construct a "text" input
 function constructTextInput(name, parameters, options={}) {
 
+    var classes = '';
+    var type = '';
+
+    switch (parameters.type) {
+        default:
+            classes = 'textinput textInput form-control';
+            type = 'text';
+            break;
+        case 'url':
+            classes = 'urlinput form-control';
+            type = 'url';
+            break;
+    }
+
     return constructInputOptions(
         name,
-        'textinput textInput form-control',
-        'text',
+        classes,
+        type,
         parameters
     );
 }
