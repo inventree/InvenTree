@@ -38,7 +38,7 @@ class APITests(InvenTreeAPITestCase):
         auth = b64encode(authstring).decode("ascii")
         self.client.credentials(HTTP_AUTHORIZATION="Basic {auth}".format(auth=auth))
 
-    def test_tokenAuth(self):
+    def tokenAuth(self):
 
         self.basicAuth()
         token_url = reverse('api-token')
