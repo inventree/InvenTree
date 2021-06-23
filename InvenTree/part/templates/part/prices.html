@@ -359,84 +359,15 @@
     // Internal pricebreaks
     {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
     {% if show_internal_price and roles.sales_order.view %}
-    function reloadPriceBreaks() {
-        $("#internal-price-break-table").bootstrapTable("refresh");
-    }
-
-    $('#new-internal-price-break').click(function() {
-        launchModalForm("{% url 'internal-price-break-create' %}",
-            {
-                success: reloadPriceBreaks,
-                data: {
-                    part: {{ part.id }},
-                }
-            }
+        initPriceBreakSet(
+            $('#internal-price-break-table'),
+            {{part.id}},
+            'internal price break',
+            'internal-price',
+            "{% url 'api-part-internal-price-list' %}",
+            $('#new-internal-price-break'),
+            '{% url 'internal-price-break-create' %}'
         );
-    });
-
-    $('#internal-price-break-table').inventreeTable({
-        name: 'internalprice',
-        formatNoMatches: function() { return "{% trans 'No internal price break information found' %}"; },
-        queryParams: {
-            part: {{ part.id }},
-        },
-        url: "{% url 'api-part-internal-price-list' %}",
-        onPostBody: function() {
-            var table = $('#internal-price-break-table');
-
-            table.find('.button-internal-price-break-delete').click(function() {
-                var pk = $(this).attr('pk');
-
-                launchModalForm(
-                    `/part/internal-price/${pk}/delete/`,
-                    {
-                        success: reloadPriceBreaks
-                    }
-                );
-            });
-
-            table.find('.button-internal-price-break-edit').click(function() {
-                var pk = $(this).attr('pk');
-
-                launchModalForm(
-                    `/part/internal-price/${pk}/edit/`,
-                    {
-                        success: reloadPriceBreaks
-                    }
-                );
-            });
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'quantity',
-                title: '{% trans "Quantity" %}',
-                sortable: true,
-            },
-            {
-                field: 'price',
-                title: '{% trans "Price" %}',
-                sortable: true,
-                formatter: function(value, row, index) {
-                    var html = value;
-
-                    html += `<div class='btn-group float-right' role='group'>`
-
-                    html += makeIconButton('fa-edit icon-blue', 'button-internal-price-break-edit', row.pk, '{% trans "Edit internal price break" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-internal-price-break-delete', row.pk, '{% trans "Delete internal price break" %}');
-
-                    html += `</div>`;
-
-                    return html;
-                }
-            },
-        ]
-    })
     {% endif %}
 
 
@@ -452,85 +383,15 @@
 
     // Sales pricebreaks
     {% if part.salable and roles.sales_order.view %}
-    function reloadPriceBreaks() {
-        $("#price-break-table").bootstrapTable("refresh");
-    }
-
-    $('#new-price-break').click(function() {
-        launchModalForm("{% url 'sale-price-break-create' %}",
-            {
-                success: reloadPriceBreaks,
-                data: {
-                    part: {{ part.id }},
-                }
-            }
+        initPriceBreakSet(
+            $('#price-break-table'),
+            {{part.id}},
+            'sale price break',
+            'sale-price',
+            "{% url 'api-part-sale-price-list' %}",
+            $('#new-price-break'),
+            '{% url 'sale-price-break-create' %}'
         );
-    });
-
-    $('#price-break-table').inventreeTable({
-        name: 'saleprice',
-        formatNoMatches: function() { return "{% trans 'No price break information found' %}"; },
-        queryParams: {
-            part: {{ part.id }},
-        },
-        url: "{% url 'api-part-sale-price-list' %}",
-        onPostBody: function() {
-            var table = $('#price-break-table');
-
-            table.find('.button-price-break-delete').click(function() {
-                var pk = $(this).attr('pk');
-
-                launchModalForm(
-                    `/part/sale-price/${pk}/delete/`,
-                    {
-                        success: reloadPriceBreaks
-                    }
-                );
-            });
-
-            table.find('.button-price-break-edit').click(function() {
-                var pk = $(this).attr('pk');
-
-                launchModalForm(
-                    `/part/sale-price/${pk}/edit/`,
-                    {
-                        success: reloadPriceBreaks
-                    }
-                );
-            });
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'quantity',
-                title: '{% trans "Quantity" %}',
-                sortable: true,
-            },
-            {
-                field: 'price',
-                title: '{% trans "Price" %}',
-                sortable: true,
-                formatter: function(value, row, index) {
-                    var html = value;
-
-                    html += `<div class='btn-group float-right' role='group'>`
-
-                    html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
-
-                    html += `</div>`;
-
-                    return html;
-                }
-            },
-        ]
-    })
-
     {% endif %}
 
 {% endblock %}

@@ -769,6 +769,105 @@ function loadPartTestTemplateTable(table, options) {
 }
 
 
+function loadPriceBreakTable(table, options) {
+    /*
+     * Load PriceBreak table.
+     */
+
+    var name = options.name || 'pricebreak';
+    var human_name = options.human_name || 'price break';
+
+    table.inventreeTable({
+        name: name,
+        method: 'get',
+        formatNoMatches: function() {
+            return `{% trans "No ${human_name} information found" %}`;
+        },
+        url: options.url,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                sortable: true,
+            },
+            {
+                field: 'price',
+                title: '{% trans "Price" %}',
+                sortable: true,
+                formatter: function(value, row, index) {
+                    var html = value;
+    
+                    html += `<div class='btn-group float-right' role='group'>`
+
+                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
+                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
+    
+                    html += `</div>`;
+    
+                    return html;
+                }
+            },
+        ]
+    });
+}
+
+
+function initPriceBreakSet(table, part_id, pb_human_name, pb_url_slug, pb_url, pb_new_btn, pb_new_url) {
+    
+    loadPriceBreakTable(
+        table,
+        {
+            name: pb_url_slug,
+            human_name: pb_human_name,
+            url: pb_url,
+        }
+    );
+
+    function reloadPriceBreakTable(){
+        table.bootstrapTable("refresh");
+    }
+
+    pb_new_btn.click(function() {
+        launchModalForm(pb_new_url,
+            {
+                success: reloadPriceBreakTable,
+                data: {
+                    part: part_id,
+                }
+            }
+        );
+    });
+
+    table.on('click', `.button-${pb_url_slug}-delete`, function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(
+            `/part/${pb_url_slug}/${pk}/delete/`,
+            {
+                success: reloadPriceBreakTable
+            }
+        );
+    });
+
+    table.on('click', `.button-${pb_url_slug}-edit`, function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(
+            `/part/${pb_url_slug}/${pk}/edit/`,
+            {
+                success: reloadPriceBreakTable
+            }
+        );
+    });
+}
+
+
 function loadStockPricingChart(context, data) {
     return new Chart(context, {
         type: 'bar',
