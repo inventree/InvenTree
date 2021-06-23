@@ -193,6 +193,7 @@ function constructCreateForm(url, fields, options={}) {
     $(modal).modal('show');
 
     attachToggle(modal);
+    attachSelect(modal);
 }
 
 
@@ -318,7 +319,7 @@ function constructInput(name, parameters, options={}) {
             func = constructNumberInput;
             break;
         case 'choice':
-            // TODO: choice field
+            func = constructChoiceInput;
             break;
         case 'field':
             // TODO: foreign key field!
@@ -437,6 +438,30 @@ function constructNumberInput(name, parameters, options={}) {
         'number',
         parameters
     );
+}
+
+
+// Construct a "choice" input
+function constructChoiceInput(name, parameters, options={}) {
+
+    var html = `<select id='id_${name}' class='select form-control' name='${name}'>`;
+
+    var choices = parameters.choices || [];
+
+    // TODO: Select the selected value!
+
+    for (var idx = 0; idx < choices.length; idx++) {
+
+        var choice = choices[idx];
+
+        html += `<option value='${choice.value}'>`;
+        html += `${choice.display_name}`;
+        html += `</option>`;
+    }
+
+    html += `</select>`;
+
+    return html;
 }
 
 
