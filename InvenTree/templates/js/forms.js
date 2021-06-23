@@ -193,23 +193,39 @@ function constructCreateForm(url, fields, options={}) {
         ignored_fields.push('id');
     }
 
-    for (const key in fields) {
-        
-        // Skip over fields
-        if (allowed_fields && !allowed_fields.includes(key)) {
-            continue;
-        }
+    // Construct an ordered list of field names
+    var field_names = [];
 
-        if (ignored_fields &&  ignored_fields.includes(key)) {
-            continue;
-        }
+    if (allowed_fields) {
+        allowed_fields.forEach(function(name) {
 
-        var field = fields[key];
+            // Only push names which are actually in the set of fields
+            if (name in fields) {
+
+                if (!ignored_fields.includes(name) && !field_names.includes(name)) {
+                    field_names.push(name);
+                }
+            } else {
+                console.log(`WARNING: '${name}' does not match a valid field name.`);
+            }
+        });
+    } else {
+        for (const name in fields) {
+
+            if (!ignored_fields.includes(name) && !field_names.includes(name)) {
+                field_names.push(name);
+            }
+        }
+    }
+
+    field_names.forEach(function(name) {
+
+        var field = fields[name];
         
-        var f = constructField(key, field, options);
+        var f = constructField(name, field, options);
         
         html += f;
-    }
+    });
 
     var modal = '#modal-form';
 
