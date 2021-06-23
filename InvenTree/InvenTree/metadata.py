@@ -40,24 +40,32 @@ class InvenTreeMetadata(SimpleMetadata):
 
             table = f"{app_label}_{tbl_label}"
 
-            actions = metadata['actions']
+            actions = metadata.get('actions', None)
 
-            check = users.models.RuleSet.check_table_permission
+            if actions is not None:
 
-            # Map the request method to a permission type
-            rolemap = {
-                'GET': 'view',
-                'OPTIONS': 'view',
-                'POST': 'add',
-                'PUT': 'change',
-                'PATCH': 'change',
-                'DELETE': 'delete',
-            }
+                check = users.models.RuleSet.check_table_permission
 
-            # Remove any HTTP methods that the user does not have permission for
-            for method, permission in rolemap.items():
-                if method in actions and not check(user, table, permission):
-                    del actions[method]
+                # Map the request method to a permission type
+                rolemap = {
+                    'POST': 'add',
+                    'PUT': 'change',
+                    'PATCH': 'change',
+                    'DELETE': 'delete',
+                }
+
+                # Remove any HTTP methods that the user does not have permission for
+                for method, permission in rolemap.items():
+                    if method in actions and not check(user, table, permission):
+                        del actions[method]
+
+                # Add a 'DELETE' action if we are allowed to delete
+                if check(user, table, 'delete'):
+                    actions['DELETE'] = True
+
+                # Add a 'VIEW' action if we are allowed to view
+                if check(user, table, 'view'):
+                    actions['GET'] = True
 
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta

@@ -208,7 +208,7 @@ class RuleSet(models.Model):
                     return True
 
         # Print message instead of throwing an error
-        print("Failed permission check for", table, permission)
+        logger.info(f"User '{user.name}' failed permission check for {table}.{permission}")
         return False
 
     @staticmethod
