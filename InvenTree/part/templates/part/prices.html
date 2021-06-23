@@ -115,6 +115,7 @@
     </div>
 
     <div class="col col-md-6">
+        <h4>{% trans "Calculation parameters" %}</h4>
         <form method="post">
             {% csrf_token %}
             {{ form|crispy }}
