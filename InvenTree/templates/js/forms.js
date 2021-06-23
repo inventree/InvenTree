@@ -306,7 +306,7 @@ function constructInput(name, parameters, options={}) {
             func = constructTextInput;
             break;
         case 'email':
-            // TODO - email input
+            func = constructTextInput;
             break;
         case 'integer':
             func = constructNumberInput;
@@ -412,6 +412,10 @@ function constructTextInput(name, parameters, options={}) {
         case 'url':
             classes = 'urlinput form-control';
             type = 'url';
+            break;
+        case 'email':
+            classes = 'emailinput form-control';
+            type = 'email';
             break;
     }
 
