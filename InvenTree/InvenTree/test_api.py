@@ -186,8 +186,9 @@ class APITests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
+        self.assertEqual(len(actions), 2)
         self.assertIn('POST', actions)
-        self.assertEqual(len(actions), 1)
+        self.assertIn('GET', actions)
 
     def test_detail_endpoint_actions(self):
         """
