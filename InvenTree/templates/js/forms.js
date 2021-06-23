@@ -178,8 +178,6 @@ function constructCreateForm(url, fields, options={}) {
     for (const key in fields) {
         
         var field = fields[key];
-
-        console.log(key, field.label, field.help_text);
         
         var f = constructField(key, field, options);
         
@@ -193,6 +191,8 @@ function constructCreateForm(url, fields, options={}) {
     $(modal).find('.modal-form-content').html(html);
 
     $(modal).modal('show');
+
+    attachToggle(modal);
 }
 
 
@@ -293,17 +293,78 @@ function constructInput(name, parameters, options={}) {
 
     var html = '';
 
-    // TODO: Construct input differently depending on the input type!
+    var func = null;
 
-    html = `<input id='id_${name}' class='form-control'`;
-
-    if (parameters.required) {
-        html += " required=''";
+    switch (parameters.type) {
+        case 'boolean':
+            func = constructCheckboxInput;
+            break;
+        case 'string':
+            func = constructTextInput;
+            break;
+        case 'url':
+            // TODO - url input
+            break;
+        case 'email':
+            // TODO - email input
+            break;
+        case 'integer':
+            // TODO: integer field
+            break;
+        case 'float':
+            // TODO: floating point field
+            break;
+        case 'decimal':
+            // TODO: decimal field
+            break;
+        case 'choice':
+            // TODO: choice field
+            break;
+        case 'field':
+            // TODO: foreign key field!
+            break;
+        default:
+            // Unsupported field type!
+            break;
+        }
+        
+    if (func != null) {
+        html = func(name, parameters, options);
+    } else {
+        console.log(`WARNING: Unhandled form field type: '${parameters.type}'`);
     }
 
-    html += ` placeholder="${parameters.placeholder || ''}"`;
+    return html;
+}
 
-    html += '>';
+
+// Construct a "checkbox" input
+function constructCheckboxInput(name, parameters, options={}) {
+
+    var html = `<input id='id_${name}' class='checkboxinput' type='checkbox' name='${name}'>`;
+
+    return html;
+}
+
+
+// Construct a "text" input
+function constructTextInput(name, parameters, options={}) {
+
+    var html = `<input id='id_${name}' class='textinput textInput form-control' type='text' name='${name}'`;
+
+    // TODO: placeholder?
+
+    // TODO: value?
+
+    if (parameters.max_length) {
+        html += ` maxlength='${parameters.max_length}'`;
+    }
+
+    if (parameters.required) {
+        html += ` required=''`;
+    }
+
+    html += `>`;
 
     return html;
 }
