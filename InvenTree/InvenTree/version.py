@@ -31,8 +31,6 @@ v3 -> 2021-05-22:
 """
 
 
-
-
 def inventreeInstanceName():
     """ Returns the InstanceName settings for the current database """
     return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")

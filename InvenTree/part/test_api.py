@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework import status
+import PIL
 
 from django.urls import reverse
+
+from rest_framework import status
+from rest_framework.test import APIClient
+
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import StockStatus
 
 from part.models import Part, PartCategory
 from stock.models import StockItem
 from company.models import Company
-
-from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import StockStatus
 
 
 class PartAPITest(InvenTreeAPITestCase):
@@ -472,6 +475,74 @@ class PartDetailTests(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_image_upload(self):
+        """
+        Test that we can upload an image to the part API
+        """
+
+        self.assignRole('part.add')
+
+        # Create a new part
+        response = self.client.post(
+            reverse('api-part-list'),
+            {
+                'name': 'imagine',
+                'description': 'All the people',
+                'category': 1,
+            },
+            expected_code=201
+        )
+
+        pk = response.data['pk']
+
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        p = Part.objects.get(pk=pk)
+
+        # Part should not have an image!
+        with self.assertRaises(ValueError):
+            print(p.image.file)
+
+        # Create a custom APIClient for file uploads
+        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
+        upload_client = APIClient()
+        upload_client.force_authenticate(user=self.user)
+
+        # Try to upload a non-image file
+        with open('dummy_image.txt', 'w') as dummy_image:
+            dummy_image.write('hello world')
+
+        with open('dummy_image.txt', 'rb') as dummy_image:
+            response = upload_client.patch(
+                url,
+                {
+                    'image': dummy_image,
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 400)
+
+        # Now try to upload a valid image file
+        img = PIL.Image.new('RGB', (128, 128), color='red')
+        img.save('dummy_image.jpg')
+
+        with open('dummy_image.jpg', 'rb') as dummy_image:
+            response = upload_client.patch(
+                url,
+                {
+                    'image': dummy_image,
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+        # And now check that the image has been set
+        p = Part.objects.get(pk=pk)
+
+        print("Image:", p.image.file)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
