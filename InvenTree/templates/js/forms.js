@@ -119,7 +119,7 @@ function constructForm(url, method, options={}) {
         switch (method) {
             case 'POST':
                 if (canCreate(OPTIONS)) {
-                    console.log('create');
+                    constructCreateForm(url, OPTIONS.actions.POST);
                 } else {
                     // User does not have permission to POST to the endpoint
                     console.log('cannot POST');
@@ -159,4 +159,138 @@ function constructForm(url, method, options={}) {
                 break;
         }
     });
+}
+
+
+/*
+ * Construct a 'creation' (POST) form, to create a new model in the database.
+ * 
+ * arguments:
+ * - fields: The 'actions' object provided by the OPTIONS endpoint
+ * 
+ * options:
+ * - 
+ */
+function constructCreateForm(url, fields, options={}) {
+
+    var html = '';
+
+    for (const key in fields) {
+        //console.log('field:', key);
+        
+        html += constructField(key, fields[key], options);
+    }
+
+    var modal = '#modal-form';
+
+    modalEnable(modal, true);
+
+    $(modal).find('.modal-form-content').html(html);
+
+    $(modal).modal('show');
+}
+
+
+/*
+ * Construct a single form 'field' for rendering in a form.
+ * 
+ * arguments:
+ * - name: The 'name' of the field
+ * - parameters: The field parameters supplied by the DRF OPTIONS method
+ * 
+ * options:
+ * - 
+ * 
+ * The function constructs a fieldset which mostly replicates django "crispy" forms:
+ * 
+ * - Field name
+ * - Field <input> (depends on specified field type)
+ * - Field description (help text)
+ * - Field errors
+ */
+function constructField(name, parameters, options={}) {
+
+    var field_name = `id_${name}`;
+
+    var html = `<div id='div_${field_name}' class='form-group'>`;
+
+    // Add a label
+    html += constructLabel(name, parameters);
+
+    html += `<div class='controls'>`;
+
+    html += constructInput(name, parameters, options);
+    html += constructHelpText(name, parameters, options);
+
+    // TODO: Add the "error message"
+
+    html += `</div>`;   // controls
+
+    html += `</div>`;   // form-group
+
+    return html;
+}
+
+
+/*
+ * Construct a 'label' div
+ *
+ * arguments:
+ * - name: The name of the field
+ * - required: Is this a required field?
+ */
+function constructLabel(name, parameters) {
+
+    var label_classes = 'control-label';
+
+    if (parameters.required) {
+        label_classes += ' requiredField';
+    }
+
+    var html ='';
+    
+    html += `<label class='${label_classes}' for='id_${name}'>`;
+    html += name;
+    
+    if (parameters.required) {
+        html =+ `<span class='asteriskField'>*</span>`;
+    }
+
+    html += `</label>`;
+
+    return html;
+}
+
+
+/*
+ * Construct a form input based on the field parameters
+ * 
+ * arguments:
+ * - name: The name of the field
+ * - parameters: Field parameters returned by the OPTIONS method
+ * 
+ */
+function constructInput(name, parameters, options={}) {
+
+    var html = '';
+
+    // TODO: Construct an input field based on the field type!
+
+    return html;
+}
+
+
+/*
+ * Construct a 'help text' div based on the field parameters
+ * 
+ * arguments:
+ * - name: The name of the field
+ * - parameters: Field parameters returned by the OPTIONS method
+ *  
+ */
+function constructHelpText(name, parameters, options={}) {
+    
+    var html = `<div id='hint_id_${name}' class='help-block'>${parameters.help_text}</div>`;
+
+    return html;
 }
