@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-22 11:29+0000\n"
+"POT-Creation-Date: 2021-06-23 01:55+0000\n"
 "PO-Revision-Date: 2021-06-17 00:51\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -4702,7 +4702,7 @@ msgid "Part Notes"
 msgstr ""
 
 #: part/templates/part/order_prices.html:24
-#: part/templates/part/part_base.html:274
+#: part/templates/part/part_base.html:275
 msgid "Calculate"
 msgstr ""
 
