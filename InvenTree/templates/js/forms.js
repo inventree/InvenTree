@@ -309,13 +309,13 @@ function constructInput(name, parameters, options={}) {
             // TODO - email input
             break;
         case 'integer':
-            // TODO: integer field
+            func = constructNumberInput;
             break;
         case 'float':
-            // TODO: floating point field
+            func = constructNumberInput;
             break;
         case 'decimal':
-            // TODO: decimal field
+            func = constructNumberInput;
             break;
         case 'choice':
             // TODO: choice field
@@ -338,35 +338,87 @@ function constructInput(name, parameters, options={}) {
 }
 
 
+// Construct a set of default input options which apply to all input types
+function constructInputOptions(name, classes, type, parameters) {
+
+    var opts = [];
+
+    opts.push(`id='id_${name}'`);
+
+    opts.push(`class='${classes}'`);
+
+    opts.push(`name='${name}'`);
+
+    opts.push(`type='${type}'`);
+
+    // Maximum input length
+    if (parameters.max_length) {
+        opts.push(`maxlength='${parameters.max_length}'`);
+    }
+
+    // Minimum input length
+    if (parameters.min_length) {
+        opts.push(`minlength='${parameters.min_length}'`);
+    }
+
+    // Maximum value
+    if (parameters.max_value != null) {
+        opts.push(`max='${parameters.max_value}'`);
+    }
+
+    // Minimum value
+    if (parameters.min_value != null) {
+        opts.push(`min='${parameters.min_value}'`);
+    }
+
+    // Field is required?
+    if (parameters.required) {
+        opts.push(`required=''`);
+    }
+
+    // Placeholder?
+    if (parameters.placeholder) {
+        opts.push(`placeholder='${parameters.placeholder}'`);
+    }
+
+    return `<input ${opts.join(' ')}>`;
+}
+
+
 // Construct a "checkbox" input
 function constructCheckboxInput(name, parameters, options={}) {
 
-    var html = `<input id='id_${name}' class='checkboxinput' type='checkbox' name='${name}'>`;
+    return constructInputOptions(
+        name,
+        'checkboxinput',
+        'checkbox',
+        parameters
+    );
 
-    return html;
 }
 
 
 // Construct a "text" input
 function constructTextInput(name, parameters, options={}) {
 
-    var html = `<input id='id_${name}' class='textinput textInput form-control' type='text' name='${name}'`;
+    return constructInputOptions(
+        name,
+        'textinput textInput form-control',
+        'text',
+        parameters
+    );
+}
 
-    // TODO: placeholder?
 
-    // TODO: value?
+// Construct a "number" field
+function constructNumberInput(name, parameters, options={}) {
 
-    if (parameters.max_length) {
-        html += ` maxlength='${parameters.max_length}'`;
-    }
-
-    if (parameters.required) {
-        html += ` required=''`;
-    }
-
-    html += `>`;
-
-    return html;
+    return constructInputOptions(
+        name,
+        'numberinput form-control',
+        'number',
+        parameters
+    );
 }
 
 
