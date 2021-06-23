@@ -191,8 +191,7 @@
     
     <div class='panel-content'><div class="row">
         <div class="col col-md-6">
-            PLACEHOLDER FOR BOM ITEM COST TABLE
-                <table class='table table-striped table-condensed' id='sales-order-table'></table>
+            <table class='table table-bom table-condensed' data-toolbar="#button-toolbar" id='bom-table'></table>
         </div>
 
         {% if part.bom_count > 0 %}
@@ -405,6 +404,16 @@
         ]
     })
     {% endif %}
+
+    
+    // Load the BOM table data
+    loadBomTable($("#bom-table"), {
+        editable: {{ editing_enabled }},
+        bom_url: "{% url 'api-bom-list' %}",
+        part_url: "{% url 'api-part-list' %}",
+        parent_id: {{ part.id }} ,
+        sub_part_detail: true,
+    });
 
 
     // Sales pricebreaks
