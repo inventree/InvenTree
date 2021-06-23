@@ -136,9 +136,16 @@
             <h4>{% trans "Supplier Cost" %}</h4>
         </div>
         
-        <div class='panel-content'>
-            PLACEHOLDER FOR SUPPLIER COST TABLE
-        </div>
+        <div class='panel-content'><div class="row">
+            <div class="col col-md-6">
+                <h4>{% trans "Suppliers" %}</h4>
+                <table class="table table-striped table-condensed" id='supplier-table' data-toolbar='#button-toolbar'></table>
+            </div>
+            <div class="col col-md-6">
+                <h4>{% trans "Manufacturers" %}</h4>
+                <table class="table table-striped table-condensed" id='manufacturer-table' data-toolbar='#button-toolbar'></table>
+            </div>
+        </div></div>
     </div>
 
     <div class='panel panel-default panel-inventree'>
@@ -242,6 +249,33 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+
+    loadSupplierPartTable(
+        "#supplier-table",
+        "{% url 'api-supplier-part-list' %}",
+        {
+            params: {
+                part: {{ part.id }},
+                part_detail: false,
+                supplier_detail: true,
+                manufacturer_detail: true,
+            },
+        }
+    );
+
+    loadManufacturerPartTable(
+        "#manufacturer-table",
+        "{% url 'api-manufacturer-part-list' %}",
+        {
+            params: {
+                part: {{ part.id }},
+                part_detail: false,
+                manufacturer_detail: true,
+            },
+        }
+    );
+
 
     // history graphs
     {% default_currency as currency %}
@@ -405,7 +439,7 @@
     })
     {% endif %}
 
-    
+
     // Load the BOM table data
     loadBomTable($("#bom-table"), {
         editable: {{ editing_enabled }},
