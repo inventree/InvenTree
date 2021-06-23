@@ -219,6 +219,7 @@ class APITests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
-        self.assertEqual(len(actions), 2)
+        self.assertEqual(len(actions), 3)
+        self.assertIn('GET', actions.keys())
         self.assertIn('PUT', actions.keys())
         self.assertIn('DELETE', actions.keys())
