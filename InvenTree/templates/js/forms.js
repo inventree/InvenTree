@@ -169,16 +169,8 @@ function constructForm(url, method, options={}) {
 }
 
 
-/*
- * Construct a 'creation' (POST) form, to create a new model in the database.
- * 
- * arguments:
- * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
- * options:
- * - 
- */
-function constructCreateForm(url, fields, options={}) {
+
+function constructFormBody(url, fields, options={}) {
 
     var html = '';
 
@@ -251,6 +243,22 @@ function constructCreateForm(url, fields, options={}) {
 
 
 /*
+ * Construct a 'creation' (POST) form, to create a new model in the database.
+ * 
+ * arguments:
+ * - fields: The 'actions' object provided by the OPTIONS endpoint
+ * 
+ * options:
+ * - 
+ */
+function constructCreateForm(url, fields, options={}) {
+    
+    // We should have enough information to create the form!
+    constructFormBody(url, fields, options);
+}
+
+
+/*
  * Construct a 'change' (PATCH) form, to create a new model in the database.
  * 
  * arguments:
@@ -280,7 +288,7 @@ function constructChangeForm(url, fields, options={}) {
                 }
             }
 
-            constructCreateForm(url, fields, options);
+            constructFormBody(url, fields, options);
         },
         error: function(request, status, error) {
             // TODO: Handle error here
@@ -445,6 +453,11 @@ function constructInputOptions(name, classes, type, parameters) {
     opts.push(`name='${name}'`);
 
     opts.push(`type='${type}'`);
+
+    // Read only?
+    if (parameters.read_only) {
+        opts.push(`readonly=''`);
+    }
 
     if (parameters.value) {
         // Existing value?
