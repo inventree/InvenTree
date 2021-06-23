@@ -176,9 +176,14 @@ function constructCreateForm(url, fields, options={}) {
     var html = '';
 
     for (const key in fields) {
-        //console.log('field:', key);
         
-        html += constructField(key, fields[key], options);
+        var field = fields[key];
+
+        console.log(key, field.label, field.help_text);
+        
+        var f = constructField(key, field, options);
+        
+        html += f;
     }
 
     var modal = '#modal-form';
@@ -218,16 +223,19 @@ function constructField(name, parameters, options={}) {
     html += constructLabel(name, parameters);
 
     html += `<div class='controls'>`;
-
+    
     html += constructInput(name, parameters, options);
-    html += constructHelpText(name, parameters, options);
-
+    
+    if (parameters.help_text) {
+        html += constructHelpText(name, parameters, options);
+    }
+    
     // TODO: Add the "error message"
-
+    
     html += `</div>`;   // controls
-
+    
     html += `</div>`;   // form-group
-
+    
     return html;
 }
 
@@ -247,15 +255,18 @@ function constructLabel(name, parameters) {
         label_classes += ' requiredField';
     }
 
-    var html ='';
+    var html = `<label class='${label_classes}' for='id_${name}'>`;
     
-    html += `<label class='${label_classes}' for='id_${name}'>`;
-    html += name;
+    if (parameters.label) {
+        html += `${parameters.label}`;
+    } else {
+        html += `${name}`;
+    }
     
     if (parameters.required) {
-        html =+ `<span class='asteriskField'>*</span>`;
+        html += `<span class='asteriskField'>*</span>`;
     }
-
+    
     html += `</label>`;
 
     return html;
@@ -274,7 +285,15 @@ function constructInput(name, parameters, options={}) {
 
     var html = '';
 
-    // TODO: Construct an input field based on the field type!
+    // TODO: Construct input differently depending on the input type!
+
+    html = `<input id='id_${name}' class='form-control'`;
+
+    if (parameters.required) {
+        html += " required=''";
+    }
+
+    html += '>';
 
     return html;
 }
