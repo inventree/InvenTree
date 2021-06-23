@@ -38,7 +38,7 @@ class APITests(InvenTreeAPITestCase):
         auth = b64encode(authstring).decode("ascii")
         self.client.credentials(HTTP_AUTHORIZATION="Basic {auth}".format(auth=auth))
 
-    def tokenAuth(self):
+    def test_tokenAuth(self):
 
         self.basicAuth()
         token_url = reverse('api-token')
@@ -50,7 +50,7 @@ class APITests(InvenTreeAPITestCase):
         token = response.data['token']
         self.token = token
 
-    def token_failure(self):
+    def test_token_failure(self):
         # Test token endpoint without basic auth
         url = reverse('api-token')
         response = self.client.get(url, format='json')
@@ -58,7 +58,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIsNone(self.token)
 
-    def token_success(self):
+    def test_token_success(self):
 
         self.tokenAuth()
         self.assertIsNotNone(self.token)
