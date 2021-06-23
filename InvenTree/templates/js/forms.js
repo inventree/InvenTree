@@ -218,14 +218,24 @@ function constructCreateForm(url, fields, options={}) {
         }
     }
 
-    field_names.forEach(function(name) {
+    for (var idx = 0; idx < field_names.length; idx++) {
+
+        var name = field_names[idx];
 
         var field = fields[name];
-        
+
+        // Skip field types which are simply not supported
+        switch (field.type) {
+            case 'nested object':
+                continue;
+            default:
+                break;
+        }
+
         var f = constructField(name, field, options);
         
         html += f;
-    });
+    }
 
     var modal = '#modal-form';
 
