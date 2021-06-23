@@ -53,7 +53,7 @@ class CompanySerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    image = InvenTreeImageSerializerField(required=False)
+    image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
