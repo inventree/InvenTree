@@ -182,10 +182,25 @@ function constructCreateForm(url, fields, options={}) {
 
     var html = '';
 
+    var allowed_fields = options.fields || null;
+    var ignored_fields = options.ignore || [];
+
+    if (!ignored_fields.includes('pk')) {
+        ignored_fields.push('pk');
+    }
+
+    if (!ignored_fields.includes('id')) {
+        ignored_fields.push('id');
+    }
+
     for (const key in fields) {
         
-        // Ignore any PK fields
-        if (key.toLowerCase() in ['pk', 'id']) {
+        // Skip over fields
+        if (allowed_fields && !allowed_fields.includes(key)) {
+            continue;
+        }
+
+        if (ignored_fields &&  ignored_fields.includes(key)) {
             continue;
         }
 
@@ -405,9 +420,12 @@ function constructInputOptions(name, classes, type, parameters) {
 
     opts.push(`type='${type}'`);
 
-    // Existing value?
     if (parameters.value) {
+        // Existing value?
         opts.push(`value='${parameters.value}'`);
+    } else if (parameters.default) {
+        // Otherwise, a defualt value?
+        opts.push(`value='${parameters.default}'`);
     }
 
     // Maximum input length
