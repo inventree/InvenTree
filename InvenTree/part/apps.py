@@ -39,7 +39,8 @@ class PartConfig(AppConfig):
         logger.debug("InvenTree: Checking Part image thumbnails")
 
         try:
-            for part in Part.objects.all():
+            # Only check parts which have images
+            for part in Part.objects.exclude(image=None):
                 if part.image:
                     url = part.image.thumbnail.name
                     loc = os.path.join(settings.MEDIA_ROOT, url)
@@ -50,8 +51,7 @@ class PartConfig(AppConfig):
                             part.image.render_variations(replace=False)
                         except FileNotFoundError:
                             logger.warning(f"Image file '{part.image}' missing")
-                            part.image = None
-                            part.save()
+                            pass
                         except UnidentifiedImageError:
                             logger.warning(f"Image file '{part.image}' is invalid")
         except (OperationalError, ProgrammingError):

@@ -276,7 +276,7 @@ def update_group_roles(group, debug=False):
 
     """
 
-    if not canAppAccessDatabase():
+    if not canAppAccessDatabase(allow_test=True):
         return
 
     # List of permissions already associated with this group
