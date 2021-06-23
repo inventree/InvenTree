@@ -88,6 +88,10 @@ function getApiEndpointOptions(url, callback, options={}) {
             json: 'application/json',
         },
         success: callback,
+        error: function(request, status, error) {
+            // TODO: Handle error
+            console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+        }
     });
 }
 
@@ -106,6 +110,9 @@ function constructForm(url, method, options={}) {
 
     method = method.toUpperCase();
 
+    // Store the method in the options struct
+    options.method = method;
+
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
@@ -119,7 +126,7 @@ function constructForm(url, method, options={}) {
         switch (method) {
             case 'POST':
                 if (canCreate(OPTIONS)) {
-                    constructCreateForm(url, OPTIONS.actions.POST);
+                    constructCreateForm(url, OPTIONS.actions.POST, options);
                 } else {
                     // User does not have permission to POST to the endpoint
                     console.log('cannot POST');
@@ -129,7 +136,7 @@ function constructForm(url, method, options={}) {
             case 'PUT':
             case 'PATCH':
                 if (canChange(OPTIONS)) {
-                    console.log("change");
+                    constructChangeForm(url, OPTIONS.actions.PUT, options);
                 } else {
                     // User does not have permission to PUT/PATCH to the endpoint
                     // TODO
@@ -177,6 +184,11 @@ function constructCreateForm(url, fields, options={}) {
 
     for (const key in fields) {
         
+        // Ignore any PK fields
+        if (key.toLowerCase() in ['pk', 'id']) {
+            continue;
+        }
+
         var field = fields[key];
         
         var f = constructField(key, field, options);
@@ -194,6 +206,47 @@ function constructCreateForm(url, fields, options={}) {
 
     attachToggle(modal);
     attachSelect(modal);
+}
+
+
+/*
+ * Construct a 'change' (PATCH) form, to create a new model in the database.
+ * 
+ * arguments:
+ * - fields: The 'actions' object provided by the OPTIONS endpoint
+ * 
+ * options:
+ * - 
+ */
+function constructChangeForm(url, fields, options={}) {
+
+    // Request existing data from the API endpoint
+    $.ajax({
+        url: url,
+        type: 'GET',
+        contentType: 'application/json',
+        dataType: 'json',
+        accepts: {
+            json: 'application/json',
+        },
+        success: function(data) {
+
+            // Push existing 'value' to each field
+            for (const field in data) {
+
+                if (field in fields) {
+                    fields[field].value = data[field];
+                }
+            }
+
+            constructCreateForm(url, fields, options);
+        },
+        error: function(request, status, error) {
+            // TODO: Handle error here
+            console.log(`ERROR in constructChangeForm at '${url}'`);
+        }
+    })
+
 }
 
 
@@ -352,6 +405,11 @@ function constructInputOptions(name, classes, type, parameters) {
 
     opts.push(`type='${type}'`);
 
+    // Existing value?
+    if (parameters.value) {
+        opts.push(`value='${parameters.value}'`);
+    }
+
     // Maximum input length
     if (parameters.max_length) {
         opts.push(`maxlength='${parameters.max_length}'`);
@@ -454,7 +512,13 @@ function constructChoiceInput(name, parameters, options={}) {
 
         var choice = choices[idx];
 
-        html += `<option value='${choice.value}'>`;
+        var selected = '';
+
+        if (parameters.value && parameters.value == choice.value) {
+            selected = ` selected=''`;
+        }
+
+        html += `<option value='${choice.value}'${selected}>`;
         html += `${choice.display_name}`;
         html += `</option>`;
     }
