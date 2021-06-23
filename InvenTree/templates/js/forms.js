@@ -217,7 +217,13 @@ function constructField(name, parameters, options={}) {
 
     var field_name = `id_${name}`;
 
-    var html = `<div id='div_${field_name}' class='form-group'>`;
+    var form_classes = 'form-group';
+
+    if (parameters.errors) {
+        form_classes += ' has-error';
+    }
+
+    var html = `<div id='div_${field_name}' class='${form_classes}'>`;
 
     // Add a label
     html += constructLabel(name, parameters);
@@ -225,13 +231,15 @@ function constructField(name, parameters, options={}) {
     html += `<div class='controls'>`;
     
     html += constructInput(name, parameters, options);
-    
+
+    if (parameters.errors) {
+        html += constructErrorMessage(name, parameters, options);
+    }
+
     if (parameters.help_text) {
         html += constructHelpText(name, parameters, options);
     }
-    
-    // TODO: Add the "error message"
-    
+
     html += `</div>`;   // controls
     
     html += `</div>`;   // form-group
@@ -293,6 +301,8 @@ function constructInput(name, parameters, options={}) {
         html += " required=''";
     }
 
+    html += ` placeholder="${parameters.placeholder || ''}"`;
+
     html += '>';
 
     return html;
@@ -312,4 +322,33 @@ function constructHelpText(name, parameters, options={}) {
     var html = `<div id='hint_id_${name}' class='help-block'>${parameters.help_text}</div>`;
 
     return html;
+}
+
+
+/*
+ * Construct an 'error message' div for the field
+ *
+ * arguments:
+ * - name: The name of the field
+ * - parameters: Field parameters returned by the OPTIONS method
+ */
+function constructErrorMessage(name, parameters, options={}) {
+
+    var errors_html = '';
+
+    for (var idx = 0; idx < parameters.errors.length; idx++) {
+        
+        var err = parameters.errors[idx];
+
+        var html = '';
+        
+        html += `<span id='error_${idx+1}_id_${name}' class='help-block'>`;
+        html += `<strong>${err}</strong>`;
+        html += `</span>`;
+
+        errors_html += html;
+
+    }
+
+    return errors_html;
 }
