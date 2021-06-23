@@ -23,7 +23,8 @@
  */
 function getApiEndpointOptions(url, options={}) {
 
-    $.ajax({
+    // Return the ajax request object
+    return $.ajax({
         url: url,
         type: 'OPTIONS',
         contentType: 'application/json',
@@ -31,8 +32,7 @@ function getApiEndpointOptions(url, options={}) {
         accepts: {
             json: 'application/json',
         },
-        success: function(response) {
-            console.log(response);
-        }
     });
 }
+
+
