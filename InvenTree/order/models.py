@@ -136,6 +136,10 @@ class PurchaseOrder(Order):
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-list')
+
     OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     @staticmethod
@@ -407,6 +411,10 @@ class SalesOrder(Order):
         target_date: Target date for SalesOrder completion (optional)
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-list')
+
     OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     @staticmethod
@@ -585,6 +593,10 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
     Model for storing file attachments against a PurchaseOrder object
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-attachment-list')
+
     def getSubdir(self):
         return os.path.join("po_files", str(self.order.id))
 
@@ -595,6 +607,10 @@ class SalesOrderAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a SalesOrder object
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-attachment-list')
 
     def getSubdir(self):
         return os.path.join("so_files", str(self.order.id))
@@ -628,6 +644,11 @@ class PurchaseOrderLineItem(OrderLineItem):
         order: Reference to a PurchaseOrder object
 
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-line-list')
+
 
     class Meta:
         unique_together = (
@@ -712,6 +733,10 @@ class SalesOrderLineItem(OrderLineItem):
         sale_price: The unit sale price for this OrderLineItem
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-line-list')
+
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
@@ -773,6 +798,10 @@ class SalesOrderAllocation(models.Model):
         quantity: Quantity to take from the StockItem
 
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-allocation-list')
 
     class Meta:
         unique_together = [

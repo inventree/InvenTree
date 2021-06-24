@@ -39,7 +39,7 @@ $('#price-break-table').inventreeTable({
     queryParams: {
         part: {{ part.id }},
     },
-    url: "{% url 'api-part-supplier-price' %}",
+    url: "{% url 'api-part-supplier-price-list' %}",
     onPostBody: function() {
         var table = $('#price-break-table');
 

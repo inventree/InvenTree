@@ -84,6 +84,10 @@ class Company(models.Model):
         currency_code: Specifies the default currency for the company
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-company-list')
+
     class Meta:
         ordering = ['name', ]
         constraints = [
@@ -297,6 +301,10 @@ class ManufacturerPart(models.Model):
         description: Descriptive notes field
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-manufacturer-part-list')
+
     class Meta:
         unique_together = ('part', 'manufacturer', 'MPN')
 
@@ -380,6 +388,10 @@ class ManufacturerPartParameter(models.Model):
     Each parameter is a simple string (text) value.
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-manufacturer-part-parameter-list')
+
     class Meta:
         unique_together = ('manufacturer_part', 'name')
 
@@ -431,6 +443,10 @@ class SupplierPart(models.Model):
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-supplier-part-list')
 
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
@@ -659,6 +675,10 @@ class SupplierPriceBreak(common.models.PriceBreak):
         cost: Cost at specified quantity
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-part-supplier-price-list')
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
 

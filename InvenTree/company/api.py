@@ -424,7 +424,7 @@ company_api_urls = [
 
     url(r'^part/', include(supplier_part_api_urls)),
 
-    url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
+    url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

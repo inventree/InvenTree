@@ -4,6 +4,7 @@ JSON serializers for Part app
 import imghdr
 from decimal import Decimal
 
+from django.urls import reverse_lazy
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
@@ -187,6 +188,9 @@ class PartSerializer(InvenTreeModelSerializer):
     Used when displaying all details of a single component.
     """
 
+    def get_api_url(self):
+        return reverse_lazy('api-part-list')
+
     def __init__(self, *args, **kwargs):
         """
         Custom initialization method for PartSerializer,
@@ -305,7 +309,7 @@ class PartSerializer(InvenTreeModelSerializer):
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    starred = serializers.SerializerMethodField()
+    starred = serializers.BooleanField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
     category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())

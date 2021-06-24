@@ -1148,7 +1148,7 @@ stock_api_urls = [
         url(r'^$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
-    url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
+    url(r'track/?', StockTrackingList.as_view(), name='api-stock-tracking-list'),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
 
