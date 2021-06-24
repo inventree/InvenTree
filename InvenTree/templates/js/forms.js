@@ -100,6 +100,63 @@ function getApiEndpointOptions(url, callback, options={}) {
 
 
 /*
+ * Construct a 'creation' (POST) form, to create a new model in the database.
+ * 
+ * arguments:
+ * - fields: The 'actions' object provided by the OPTIONS endpoint
+ * 
+ * options:
+ * - 
+ */
+function constructCreateForm(url, fields, options={}) {
+    
+    // We should have enough information to create the form!
+    constructFormBody(url, fields, options);
+}
+
+
+/*
+ * Construct a 'change' (PATCH) form, to create a new model in the database.
+ * 
+ * arguments:
+ * - fields: The 'actions' object provided by the OPTIONS endpoint
+ * 
+ * options:
+ * - 
+ */
+function constructChangeForm(url, fields, options={}) {
+
+    // Request existing data from the API endpoint
+    $.ajax({
+        url: url,
+        type: 'GET',
+        contentType: 'application/json',
+        dataType: 'json',
+        accepts: {
+            json: 'application/json',
+        },
+        success: function(data) {
+
+            // Push existing 'value' to each field
+            for (const field in data) {
+
+                if (field in fields) {
+                    fields[field].value = data[field];
+                }
+            }
+
+            constructFormBody(url, fields, options);
+        },
+        error: function(request, status, error) {
+            // TODO: Handle error here
+            console.log(`ERROR in constructChangeForm at '${url}'`);
+        }
+    })
+
+}
+
+
+/*
  * Request API OPTIONS data from the server,
  * and construct a modal form based on the response.
  * 
@@ -213,6 +270,10 @@ function constructFormBody(url, fields, options={}) {
         }
     }
 
+    // Push the ordered field names into the options,
+    // allowing successive functions to access them.
+    options.field_names = field_names;
+
     // Render selected fields
 
     for (var idx = 0; idx < field_names.length; idx++) {
@@ -221,8 +282,8 @@ function constructFormBody(url, fields, options={}) {
 
         var field = fields[name];
 
-        // Skip field types which are simply not supported
         switch (field.type) {
+            // Skip field types which are simply not supported
             case 'nested object':
                 continue;
             default:
@@ -246,70 +307,113 @@ function constructFormBody(url, fields, options={}) {
 
     // Insert generated form content
     $(modal).find('.modal-form-content').html(html);
-
+    
     $(modal).modal('show');
 
+    // Setup related fields
+    initializeRelatedFields(modal, url, fields, options)
+
     attachToggle(modal);
-    attachSelect(modal);
+    // attachSelect(modal);
 
     modalShowSubmitButton(modal, true);
 }
 
 
-/*
- * Construct a 'creation' (POST) form, to create a new model in the database.
- * 
- * arguments:
- * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
- * options:
- * - 
- */
-function constructCreateForm(url, fields, options={}) {
-    
-    // We should have enough information to create the form!
-    constructFormBody(url, fields, options);
-}
+function initializeRelatedFields(modal, url, fields, options) {
 
+    var field_names = options.field_names;
 
-/*
- * Construct a 'change' (PATCH) form, to create a new model in the database.
- * 
- * arguments:
- * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
- * options:
- * - 
- */
-function constructChangeForm(url, fields, options={}) {
+    for (var idx = 0; idx < field_names.length; idx++) {
 
-    // Request existing data from the API endpoint
-    $.ajax({
-        url: url,
-        type: 'GET',
-        contentType: 'application/json',
-        dataType: 'json',
-        accepts: {
-            json: 'application/json',
-        },
-        success: function(data) {
+        var name = field_names[idx];
 
-            // Push existing 'value' to each field
-            for (const field in data) {
+        var field = fields[name] || null;
 
-                if (field in fields) {
-                    fields[field].value = data[field];
+        if (!field || field.type != 'related field') continue;
+
+        if (!field.api_url) {
+            // TODO: Provide manual api_url option?
+            console.log(`Related field '${name}' missing 'api_url' parameter.`);
+            continue;
+        }
+
+        // Find the select element and attach a select2 to it
+        var select = $(modal).find(`#id_${name}`);
+
+        select.select2({
+            ajax: {
+                url: field.api_url,
+                dataType: 'json',
+                dropdownParent: $(modal),
+                dropdownAutoWidth: false,
+                matcher: partialMatcher,
+                data: function(params) {
+                    // Re-format search term into InvenTree API style
+                    console.log('params;', params);
+                    return {
+                        search: params.term,
+                    };
+                },
+                processResults: function(data) {
+
+                    var rows = [];
+
+                    // Only ever show the first x items
+                    for (var idx = 0; idx < data.length && idx < 50; idx++) {
+                        var row = data[idx];
+
+                        // Reformat to match select2 requirements
+                        row.id = row.id || row.pk;
+
+                        // TODO: Fix me?
+                        row.text = `This is ${url}/${row.id}/`;
+
+                        rows.push(row);
+                    }
+
+                    console.log(rows);
+
+                    // Ref: https://select2.org/data-sources/formats
+                    var results = {
+                        results: rows,
+                    };
+
+                    return results;
                 }
             }
+        });
 
-            constructFormBody(url, fields, options);
-        },
-        error: function(request, status, error) {
-            // TODO: Handle error here
-            console.log(`ERROR in constructChangeForm at '${url}'`);
-        }
-    })
 
+
+        //console.log('select:', select);
+
+        /*
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(response) {
+
+                // Create a new '
+                response.forEach(function(item) {
+
+                })
+
+            },
+            error: function(request, status, error) {
+                // TODO: Handle error
+                console.log(`ERROR in initializeRelatedFields at URL '${url}'`);
+            }
+        })
+        */
+    }
+
+    // Fix some styling issues
+    // TODO: Push this off to CSS!
+    $(modal + ' .select2-container').addClass('select-full-width');
+    $(modal + ' .select2-container').css('width', '100%');
 }
 
 

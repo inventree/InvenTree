@@ -309,7 +309,7 @@ class PartSerializer(InvenTreeModelSerializer):
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    starred = serializers.BooleanField()
+    starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
     category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
