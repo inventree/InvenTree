@@ -108,5 +108,6 @@ class InvenTreeMetadata(SimpleMetadata):
                 # Mark this field as "related", and point to the URL where we can get the data!
                 field_info['type'] = 'related field'
                 field_info['api_url'] = model.get_api_url()
+                field_info['model'] = model._meta.model_name
 
         return field_info
