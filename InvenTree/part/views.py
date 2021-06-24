@@ -847,11 +847,13 @@ class PartPricingView(PartDetail):
 
         # BOM Information for Pie-Chart
         if part.has_bom:
+            # get internal price setting
+            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
             ctx_bom_parts = []
             # iterate over all bom-items
             for item in part.bom_items.all():
                 ctx_item = {'name': str(item.sub_part)}
-                price, qty = item.sub_part.get_price_range(quantity), item.quantity
+                price, qty = item.sub_part.get_price_range(quantity, internal=use_internal), item.quantity
 
                 price_min, price_max = 0, 0
                 if price:  # check if price available
