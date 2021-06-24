@@ -1,3 +1,6 @@
+{% load i18n %}
+{% load inventree_extras %}
+
 /**
  * This file contains code for rendering (and managing) HTML forms
  * which are served via the django-drf API.
@@ -229,9 +232,15 @@ function constructFormBody(url, fields, options={}) {
         html += f;
     }
 
+    // TODO: Dynamically create the modals,
+    //       so that we can have an infinite number of stacks!
     var modal = '#modal-form';
 
     modalEnable(modal, true);
+
+    var title = options.title || '{% trans "Form Title" %}';
+
+    modalSetTitle(modal, title);
 
     $(modal).find('.modal-form-content').html(html);
 
@@ -239,6 +248,8 @@ function constructFormBody(url, fields, options={}) {
 
     attachToggle(modal);
     attachSelect(modal);
+
+    modalShowSubmitButton(modal, true);
 }
 
 
