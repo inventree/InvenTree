@@ -176,16 +176,20 @@
             <h4>{% trans "Internal Cost" %}</h4>
         </div>
         
-        <div class='panel-content'>
-            <div id='internal-price-break-toolbar' class='btn-group'>
-                <button class='btn btn-primary' id='new-internal-price-break' type='button'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
-                </button>
+        <div class='panel-content'><div class="row">
+            <div class="col col-md-8">
             </div>
-            
-            <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'>
-            </table>
-        </div>
+            <div class="col col-md-4">
+                <div id='internal-price-break-toolbar' class='btn-group'>
+                    <button class='btn btn-primary' id='new-internal-price-break' type='button'>
+                        <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
+                    </button>
+                </div>
+                
+                <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'>
+                </table>
+            </div>
+        </div></div>
     </div>
 {% endif %}
 
@@ -220,16 +224,20 @@
             <h4>{% trans "Sale Cost" %}</h4>
         </div>
         
-        <div class='panel-content'>
-            <div id='price-break-toolbar' class='btn-group'>
-                <button class='btn btn-primary' id='new-price-break' type='button'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
-                </button>
+        <div class='panel-content'><div class="row">
+            <div class="col col-md-8">
             </div>
-            
-            <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'>
-            </table>
-        </div>
+            <div class="col col-md-4">
+                <div id='price-break-toolbar' class='btn-group'>
+                    <button class='btn btn-primary' id='new-price-break' type='button'>
+                        <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
+                    </button>
+                </div>
+                
+                <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'>
+                </table>
+            </div>
+        </div></div>
     </div>
 
     <div class='panel panel-default panel-inventree'>
