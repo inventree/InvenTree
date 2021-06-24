@@ -649,7 +649,6 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_api_url():
         return reverse('api-po-line-list')
 
-
     class Meta:
         unique_together = (
             ('order', 'part')
