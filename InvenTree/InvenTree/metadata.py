@@ -1,22 +1,16 @@
-
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
-from django.db import models
+import logging
 
-from collections import OrderedDict
-
-from django.core.exceptions import PermissionDenied
-from django.http import Http404
-from django.utils.encoding import force_str
-
-from rest_framework import exceptions, serializers, fields
-from rest_framework.request import clone_request
-from rest_framework.utils.field_mapping import ClassLookupDict
-
+from rest_framework import serializers
 from rest_framework.metadata import SimpleMetadata
 
 import users.models
+
+
+logger = logging.getLogger('inventree')
 
 
 class InvenTreeMetadata(SimpleMetadata):
@@ -88,3 +82,31 @@ class InvenTreeMetadata(SimpleMetadata):
             pass
 
         return metadata
+
+    def get_field_info(self, field):
+        """
+        Given an instance of a serializer field, return a dictionary
+        of metadata about it.
+
+        We take the regular DRF metadata and add our own unique flavor
+        """
+
+        # Run super method first
+        field_info = super().get_field_info(field)
+
+        # Introspect writable related fields
+        if field_info['type'] == 'field' and not field_info['read_only']:
+            
+            # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
+            if isinstance(field, serializers.PrimaryKeyRelatedField):
+                model = field.queryset.model
+            else:
+                logger.debug("Could not extract model for:", field_info['label'], '->', field)
+                model = None
+
+            if model:
+                # Mark this field as "related", and point to the URL where we can get the data!
+                field_info['type'] = 'related field'
+                field_info['api_url'] = model.get_api_url()
+
+        return field_info

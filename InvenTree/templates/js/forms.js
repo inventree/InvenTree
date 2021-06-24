@@ -213,6 +213,8 @@ function constructFormBody(url, fields, options={}) {
         }
     }
 
+    // Render selected fields
+
     for (var idx = 0; idx < field_names.length; idx++) {
 
         var name = field_names[idx];
@@ -242,6 +244,7 @@ function constructFormBody(url, fields, options={}) {
 
     modalSetTitle(modal, title);
 
+    // Insert generated form content
     $(modal).find('.modal-form-content').html(html);
 
     $(modal).modal('show');
@@ -434,8 +437,8 @@ function constructInput(name, parameters, options={}) {
         case 'choice':
             func = constructChoiceInput;
             break;
-        case 'field':
-            // TODO: foreign key field!
+        case 'related field':
+            func = constructRelatedFieldInput;
             break;
         default:
             // Unsupported field type!
@@ -592,6 +595,22 @@ function constructChoiceInput(name, parameters, options={}) {
     }
 
     html += `</select>`;
+
+    return html;
+}
+
+
+/*
+ * Construct a "related field" input.
+ * This will create a "select" input which will then, (after form is loaded),
+ * be converted into a select2 input.
+ * This will then be served custom data from the API (as required)...
+ */
+function constructRelatedFieldInput(name, parameters, options={}) {
+
+    var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
+
+    // Don't load any options - they will be filled via an AJAX request
 
     return html;
 }
