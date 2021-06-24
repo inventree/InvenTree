@@ -1577,9 +1577,10 @@ class Part(MPTTModel):
 
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
+        - Internal price (if set for the part)
 
         Returns:
-            Minimum of the supplier price or BOM price. If no pricing available, returns None
+            Minimum of the supplier, BOM or internal price. If no pricing available, returns None
         """
 
         # only get internal price if set and should be used
