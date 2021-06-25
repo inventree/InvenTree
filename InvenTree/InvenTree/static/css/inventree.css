@@ -961,3 +961,13 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .sidebar-icon {
     min-width: 19px;
 }
+
+.row.full-height {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+.row.full-height > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+  }

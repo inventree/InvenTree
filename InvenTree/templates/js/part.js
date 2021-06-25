@@ -776,6 +776,8 @@ function loadPriceBreakTable(table, options) {
 
     var name = options.name || 'pricebreak';
     var human_name = options.human_name || 'price break';
+    var linkedGraph = options.linkedGraph || null;
+    var chart = null;
 
     table.inventreeTable({
         name: name,
@@ -784,6 +786,31 @@ function loadPriceBreakTable(table, options) {
             return `{% trans "No ${human_name} information found" %}`;
         },
         url: options.url,
+        onLoadSuccess: function(tableData) {
+            if (linkedGraph) {
+                var labels = Array.from(tableData, x => x.quantity);
+                var data = Array.from(tableData, x => parseFloat(x.price));
+
+                // destroy chart if exists
+                if (chart){
+                    chart.destroy();
+                }
+                chart = loadLineChart(linkedGraph,
+                    {
+                        labels: labels,
+                        datasets:  [
+                        {
+                        label: '{% trans "Unit Price" %}',
+                        data: data,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgb(255, 206, 86)',
+                        stepped: true,
+                        fill: true,
+                        },]
+                    }
+                );
+            }
+        },
         columns: [
             {
                 field: 'pk',
@@ -817,6 +844,20 @@ function loadPriceBreakTable(table, options) {
     });
 }
 
+function loadLineChart(context, data) {
+    return new Chart(context, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {position: 'bottom'},
+            }
+        }
+    });
+}
+
 function initPriceBreakSet(table, options) {
 
     var part_id = options.part_id;
@@ -826,14 +867,15 @@ function initPriceBreakSet(table, options) {
     var pb_new_btn = options.pb_new_btn;
     var pb_new_url = options.pb_new_url;
 
-function initPriceBreakSet(table, part_id, pb_human_name, pb_url_slug, pb_url, pb_new_btn, pb_new_url) {
-    
+    var linkedGraph = options.linkedGraph || null;
+
     loadPriceBreakTable(
         table,
         {
             name: pb_url_slug,
             human_name: pb_human_name,
             url: pb_url,
+            linkedGraph: linkedGraph,
         }
     );
 

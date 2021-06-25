@@ -176,8 +176,11 @@
             <h4>{% trans "Internal Cost" %}</h4>
         </div>
         
-        <div class='panel-content'><div class="row">
+        <div class='panel-content'><div class="row full-height">
             <div class="col col-md-8">
+                <div style="max-width: 99%; height: 100%;">
+                    <canvas id="InternalPriceBreakChart"></canvas>
+                </div>
             </div>
             <div class="col col-md-4">
                 <div id='internal-price-break-toolbar' class='btn-group'>
@@ -224,8 +227,11 @@
             <h4>{% trans "Sale Cost" %}</h4>
         </div>
         
-        <div class='panel-content'><div class="row">
+        <div class='panel-content'><div class="row full-height">
             <div class="col col-md-8">
+                <div style="max-width: 99%; height: 100%;">
+                    <canvas id="SalePriceBreakChart"></canvas>
+                </div>
             </div>
             <div class="col col-md-4">
                 <div id='price-break-toolbar' class='btn-group'>
@@ -376,6 +382,7 @@
                 pb_url: '{% url 'api-part-internal-price-list' %}',
                 pb_new_btn: $('#new-internal-price-break'),
                 pb_new_url: '{% url 'internal-price-break-create' %}',
+                linkedGraph: $('#InternalPriceBreakChart'),
             },
         );
     {% endif %}
@@ -402,6 +409,7 @@
                 pb_url: "{% url 'api-part-sale-price-list' %}",
                 pb_new_btn: $('#new-price-break'),
                 pb_new_url: '{% url 'sale-price-break-create' %}',
+                linkedGraph: $('#SalePriceBreakChart'),
             },
         );
     {% endif %}
