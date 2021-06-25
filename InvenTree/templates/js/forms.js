@@ -343,71 +343,91 @@ function initializeRelatedFields(modal, url, fields, options) {
             continue;
         }
 
-        // Find the select element and attach a select2 to it
-        var select = $(modal).find(`#id_${name}`);
-
-        // TODO: Add 'placeholder' support for entry select2 fields
-
-        // TODO: Add 'pagination' support for the query
-
-        select.select2({
-            ajax: {
-                url: field.api_url,
-                dataType: 'json',
-                allowClear: !field.required,        // Allow non required fields to be cleared
-                dropdownParent: $(modal),
-                dropdownAutoWidth: false,
-                delay: 250,
-                cache: true,
-                // matcher: partialMatcher,
-                data: function(params) {
-                    // Re-format search term into InvenTree API style
-                    return {
-                        search: params.term,
-                    };
-                },
-                processResults: function(data) {
-                    // Convert the returned InvenTree data into select2-friendly format
-                    var rows = [];
-
-                    // Only ever show the first x items
-                    for (var idx = 0; idx < data.length && idx < 50; idx++) {
-                        var row = data[idx];
-
-                        // Reformat to match select2 requirements
-                        row.id = row.id || row.pk;
-
-                        // TODO: Fix me?
-                        row.text = `This is ${field.api_url}${row.id}/`;
-
-                        rows.push(row);
-                    }
-
-                    // Ref: https://select2.org/data-sources/formats
-                    var results = {
-                        results: rows,
-                    };
-
-                    return results;
-                },
-            },
-            templateResult: function(item, container) {
-                console.log('templateResult:', item);
-                return item.text;
-            },
-            templateSelection: function(item, container) {
-                // Custom formatting for the item
-                console.log("templateSelection:", item);
-                if (field.model) {
-                    // If the 'model' is specified, hand it off to the custom model render
-                    return renderModelData(field.model, item, field, options);
-                } else {
-                    // Simply render the 'text' parameter
-                    return item.text;
-                }
-            }
-        });
+        initializeRelatedField(modal, name, field, options);
     }
+}
+
+
+/*
+ * Initializea single related-field
+ * 
+ * argument:
+ * - modal: DOM identifier for the modal window
+ * - name: name of the field e.g. 'location'
+ * - field: Field definition from the OPTIONS request
+ * - options: Original options object provided by the client
+ */
+function initializeRelatedField(modal, name, field, options) {
+
+    // Find the select element and attach a select2 to it
+    var select = $(modal).find(`#id_${name}`);
+
+    // TODO: Add 'placeholder' support for entry select2 fields
+
+    // TODO: Add 'pagination' support for the query
+
+    select.select2({
+        ajax: {
+            url: field.api_url,
+            dataType: 'json',
+            allowClear: !field.required,        // Allow non required fields to be cleared
+            dropdownParent: $(modal),
+            dropdownAutoWidth: false,
+            delay: 250,
+            cache: true,
+            // matcher: partialMatcher,
+            data: function(params) {
+                // Re-format search term into InvenTree API style
+                return {
+                    search: params.term,
+                };
+            },
+            processResults: function(data) {
+                // Convert the returned InvenTree data into select2-friendly format
+                var rows = [];
+
+                // Only ever show the first x items
+                for (var idx = 0; idx < data.length && idx < 50; idx++) {
+                    var row = data[idx];
+
+                    // Reformat to match select2 requirements
+                    row.id = row.id || row.pk;
+
+                    // TODO: Fix me?
+                    row.text = `This is ${field.api_url}${row.id}/`;
+
+                    rows.push(row);
+                }
+
+                // Ref: https://select2.org/data-sources/formats
+                var results = {
+                    results: rows,
+                };
+
+                return results;
+            },
+        },
+        templateResult: function(item, container) {
+            // Custom formatting for the search results
+            if (field.model) {
+                // If the 'model' is specified, hand it off to the custom model render
+                return renderModelData(name, field.model, item, field, options);
+            } else {
+                // Simply render the 'text' parameter
+                return item.text;
+            }
+        },
+        templateSelection: function(item, container) {
+            // Custom formatting for selected item
+            if (field.model) {
+                // If the 'model' is specified, hand it off to the custom model render
+                return renderModelData(name, field.model, item, field, options);
+            } else {
+                // Simply render the 'text' parameter
+                return item.text;
+            }
+        }
+    });
 }
 
 
@@ -416,17 +436,33 @@ function initializeRelatedFields(modal, url, fields, options) {
  * Allows custom rendering with access to the entire serialized object.
  * 
  * arguments:
+ * - name: The name of the field e.g. 'location'
  * - model: The name of the InvenTree model e.g. 'stockitem'
  * - data: The JSON data representation of the modal instance (GET request)
  * - parameters: The field definition (OPTIONS) request
  * - options: Other options provided at time of modal creation by the client
  */
-function renderModelData(model, data, paramaters, options) {
+function renderModelData(name, model, data, paramaters, options) {
 
-    console.log(model, '->', data);
+    // TODO: Implement this function for various models
 
-    // TODO: Implement?
-    return data.text;
+    var html = null;
+
+    switch (model) {
+        case 'company':
+            html = `<span>${data.name}</span> - <i>${data.description}</i>`;
+        default:
+            break;
+    }
+
+    if (html != null) {
+        // Render HTML to an object
+        var $state = $(html);
+        return $state;
+    } else {
+        // Simple text rendering
+        return data.text;
+    }
 }
 
 
