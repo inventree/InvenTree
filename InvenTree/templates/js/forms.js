@@ -444,6 +444,10 @@ function initializeRelatedField(modal, name, field, options) {
  */
 function renderModelData(name, model, data, paramaters, options) {
 
+    if (!data) {
+        return '{% trans "Searching" %}...';
+    }
+
     // TODO: Implement this function for various models
 
     var html = null;

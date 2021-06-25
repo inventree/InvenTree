@@ -991,8 +991,6 @@ function hideModalImage() {
 function showModalImage(image_url) {
     // Display full-screen modal image
 
-    console.log('showing modal image: ' + image_url);
-
     var modal = $('#modal-image-dialog');
 
     // Set image content
