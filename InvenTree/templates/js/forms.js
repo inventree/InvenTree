@@ -346,14 +346,19 @@ function initializeRelatedFields(modal, url, fields, options) {
         // Find the select element and attach a select2 to it
         var select = $(modal).find(`#id_${name}`);
 
-        console.log('modal:', modal);
+        // TODO: Add 'placeholder' support for entry select2 fields
+
+        // TODO: Add 'pagination' support for the query
 
         select.select2({
             ajax: {
                 url: field.api_url,
                 dataType: 'json',
+                allowClear: !field.required,        // Allow non required fields to be cleared
                 dropdownParent: $(modal),
                 dropdownAutoWidth: false,
+                delay: 250,
+                cache: true,
                 // matcher: partialMatcher,
                 data: function(params) {
                     // Re-format search term into InvenTree API style
@@ -385,16 +390,20 @@ function initializeRelatedFields(modal, url, fields, options) {
 
                     return results;
                 },
-                templateResult: function(item, container) {
-                    // Custom formatting for the item
-                    console.log("templateResult:", item);
-                    if (field.model) {
-                        // If the 'model' is specified, hand it off to the custom model render
-                        return renderModelData(field.model, item, field, options);
-                    } else {
-                        // Simply render the 'text' parameter
-                        return item.text;
-                    }
+            },
+            templateResult: function(item, container) {
+                console.log('templateResult:', item);
+                return item.text;
+            },
+            templateSelection: function(item, container) {
+                // Custom formatting for the item
+                console.log("templateSelection:", item);
+                if (field.model) {
+                    // If the 'model' is specified, hand it off to the custom model render
+                    return renderModelData(field.model, item, field, options);
+                } else {
+                    // Simply render the 'text' parameter
+                    return item.text;
                 }
             }
         });
