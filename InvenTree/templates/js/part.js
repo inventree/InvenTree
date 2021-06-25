@@ -817,6 +817,14 @@ function loadPriceBreakTable(table, options) {
     });
 }
 
+function initPriceBreakSet(table, options) {
+
+    var part_id = options.part_id;
+    var pb_human_name = options.pb_human_name;
+    var pb_url_slug = options.pb_url_slug;
+    var pb_url = options.pb_url;
+    var pb_new_btn = options.pb_new_btn;
+    var pb_new_url = options.pb_new_url;
 
 function initPriceBreakSet(table, part_id, pb_human_name, pb_url_slug, pb_url, pb_new_btn, pb_new_url) {
     
