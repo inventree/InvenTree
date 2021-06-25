@@ -961,3 +961,15 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .sidebar-icon {
     min-width: 19px;
 }
+
+.select2-close-mask {
+    z-index: 99999;
+}
+
+.select2-dropdown {
+    z-index: 99998;
+}
+
+.select2-container {
+    width: 100%;
+}

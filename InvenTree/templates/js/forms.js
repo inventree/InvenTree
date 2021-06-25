@@ -316,6 +316,11 @@ function constructFormBody(url, fields, options={}) {
     attachToggle(modal);
     // attachSelect(modal);
 
+    //$(modal + ' .select').select2();
+
+    $(modal + ' .select2-container').addClass('select-full-width');
+    $(modal + ' .select2-container').css('width', '100%');
+
     modalShowSubmitButton(modal, true);
 }
 
@@ -341,22 +346,23 @@ function initializeRelatedFields(modal, url, fields, options) {
         // Find the select element and attach a select2 to it
         var select = $(modal).find(`#id_${name}`);
 
+        console.log('modal:', modal);
+
         select.select2({
             ajax: {
                 url: field.api_url,
                 dataType: 'json',
                 dropdownParent: $(modal),
                 dropdownAutoWidth: false,
-                matcher: partialMatcher,
+                // matcher: partialMatcher,
                 data: function(params) {
                     // Re-format search term into InvenTree API style
-                    console.log('params;', params);
                     return {
                         search: params.term,
                     };
                 },
                 processResults: function(data) {
-
+                    // Convert the returned InvenTree data into select2-friendly format
                     var rows = [];
 
                     // Only ever show the first x items
@@ -367,12 +373,10 @@ function initializeRelatedFields(modal, url, fields, options) {
                         row.id = row.id || row.pk;
 
                         // TODO: Fix me?
-                        row.text = `This is ${url}/${row.id}/`;
+                        row.text = `This is ${field.api_url}${row.id}/`;
 
                         rows.push(row);
                     }
-
-                    console.log(rows);
 
                     // Ref: https://select2.org/data-sources/formats
                     var results = {
@@ -380,40 +384,40 @@ function initializeRelatedFields(modal, url, fields, options) {
                     };
 
                     return results;
+                },
+                templateResult: function(item, container) {
+                    // Custom formatting for the item
+                    console.log("templateResult:", item);
+                    if (field.model) {
+                        // If the 'model' is specified, hand it off to the custom model render
+                        return renderModelData(field.model, item, field, options);
+                    } else {
+                        // Simply render the 'text' parameter
+                        return item.text;
+                    }
                 }
             }
         });
-
-
-
-        //console.log('select:', select);
-
-        /*
-        $.ajax({
-            url: url,
-            type: 'GET',
-            contentType: 'application/json',
-            dataType: 'json',
-            success: function(response) {
-
-                // Create a new '
-                response.forEach(function(item) {
-
-                })
-
-            },
-            error: function(request, status, error) {
-                // TODO: Handle error
-                console.log(`ERROR in initializeRelatedFields at URL '${url}'`);
-            }
-        })
-        */
     }
+}
 
-    // Fix some styling issues
-    // TODO: Push this off to CSS!
-    $(modal + ' .select2-container').addClass('select-full-width');
-    $(modal + ' .select2-container').css('width', '100%');
+
+/*
+ * Render a "foreign key" model reference in a select2 instance.
+ * Allows custom rendering with access to the entire serialized object.
+ * 
+ * arguments:
+ * - model: The name of the InvenTree model e.g. 'stockitem'
+ * - data: The JSON data representation of the modal instance (GET request)
+ * - parameters: The field definition (OPTIONS) request
+ * - options: Other options provided at time of modal creation by the client
+ */
+function renderModelData(model, data, paramaters, options) {
+
+    console.log(model, '->', data);
+
+    // TODO: Implement?
+    return data.text;
 }
 
 
