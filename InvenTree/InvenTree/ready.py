@@ -12,7 +12,7 @@ def isInTestMode():
     return False
 
 
-def canAppAccessDatabase():
+def canAppAccessDatabase(allow_test=False):
     """
     Returns True if the apps.py file can access database records.
 
@@ -33,10 +33,15 @@ def canAppAccessDatabase():
         'createsuperuser',
         'wait_for_db',
         'prerender',
+        'rebuild',
         'collectstatic',
         'makemessages',
         'compilemessages',
     ]
+
+    if not allow_test:
+        # Override for testing mode?
+        excluded_commands.append('test')
 
     for cmd in excluded_commands:
         if cmd in sys.argv:

@@ -4,6 +4,8 @@
 {% load i18n %}
 
 {% block form %}
+{% default_currency as currency %}
+{% settings_value 'PART_SHOW_PRICE_IN_FORMS' as show_price %}
 
 <h4>
     {% trans "Step 1 of 2 - Select Part Suppliers" %}
@@ -49,7 +51,13 @@
                         <select class='select' id='id_supplier_part_{{ part.id }}' name="part-supplier-{{ part.id }}">
                             <option value=''>---------</option>
                             {% for supplier in part.supplier_parts.all %}
-                            <option value="{{ supplier.id }}"{% if part.order_supplier == supplier.id %} selected="selected"{% endif %}>{{ supplier }}</option>
+                            <option value="{{ supplier.id }}"{% if part.order_supplier == supplier.id %} selected="selected"{% endif %}>
+                                {% if show_price %}
+                                    {% call_method supplier 'get_price' part.order_quantity as price %}
+                                    {% if price != None %}{% include "price.html" with price=price %}{% else %}{% trans 'No price' %}{% endif %} - 
+                                {% endif %}
+                                {{ supplier }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>

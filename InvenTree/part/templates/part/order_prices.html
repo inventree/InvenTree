@@ -138,7 +138,7 @@
     <hr>
     <h4>{% trans 'Stock Pricing' %}<i class="fas fa-info-circle" title="Shows the purchase prices of stock for this part.
 The part single price is the current purchase price for that supplier part."></i></h4>
-    {% if price_history|length > 1 %}
+    {% if price_history|length > 0 %}
         <div style="max-width: 99%; min-height: 300px">
             <canvas id="StockPriceChart"></canvas>
         </div>

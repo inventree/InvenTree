@@ -251,12 +251,15 @@ def content_excludes():
         "contenttypes",
         "sessions.session",
         "auth.permission",
+        "authtoken.token",
         "error_report.error",
         "admin.logentry",
         "django_q.schedule",
         "django_q.task",
         "django_q.ormq",
         "users.owner",
+        "exchange.rate",
+        "exchange.exchangebackend",
     ]
 
     output = ""
@@ -361,6 +364,21 @@ def import_records(c, filename='data.json'):
     manage(c, cmd, pty=True)
 
     print("Data import completed")
+
+
+@task
+def delete_data(c, force=False):
+    """
+    Delete all database records!
+
+    Warning: This will REALLY delete all records in the database!!
+    """
+
+    if force:
+        manage(c, 'flush --noinput')
+    else:
+        manage(c, 'flush')
+
 
 @task(post=[rebuild])
 def import_fixtures(c):

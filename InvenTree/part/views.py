@@ -981,7 +981,7 @@ class PartPricingView(PartDetail):
         part = self.get_part()
         # Stock history
         if part.total_stock > 1:
-            ret = []
+            price_history = []
             stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
             stock = stock.prefetch_related('purchase_order', 'supplier_part')
 
@@ -1008,17 +1008,19 @@ class PartPricingView(PartDetail):
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
                 else:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
-                ret.append(line)
+                price_history.append(line)
 
-            ctx['price_history'] = ret
+            ctx['price_history'] = price_history
 
         # BOM Information for Pie-Chart
         if part.has_bom:
+            # get internal price setting
+            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
             ctx_bom_parts = []
             # iterate over all bom-items
             for item in part.bom_items.all():
                 ctx_item = {'name': str(item.sub_part)}
-                price, qty = item.sub_part.get_price_range(quantity), item.quantity
+                price, qty = item.sub_part.get_price_range(quantity, internal=use_internal), item.quantity
 
                 price_min, price_max = 0, 0
                 if price:  # check if price available

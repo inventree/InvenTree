@@ -126,7 +126,7 @@ function loadManufacturerPartTable(table, url, options) {
         queryParams: filters,
         name: 'manufacturerparts',
         groupBy: false,
-        formatNoMatches: function() { return "{% trans "No manufacturer parts found" %}"; },
+        formatNoMatches: function() { return '{% trans "No manufacturer parts found" %}'; },
         columns: [
             {
                 checkbox: true,
@@ -199,6 +199,107 @@ function loadManufacturerPartTable(table, url, options) {
 }
 
 
+function loadManufacturerPartParameterTable(table, url, options) {
+    /*
+     * Load table of ManufacturerPartParameter objects
+     */
+
+    var params = options.params || {};
+
+    // Load filters
+    var filters = loadTableFilters("manufacturer-part-parameters");
+
+    // Overwrite explicit parameters
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    // setupFilterList("manufacturer-part-parameters", $(table));
+
+    $(table).inventreeTable({
+        url: url,
+        method: 'get',
+        original: params,
+        queryParams: filters,
+        name: 'manufacturerpartparameters',
+        groupBy: false,
+        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+                visible: false,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'value',
+                title: '{% trans "Value" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                switchable: true,
+                sortable: true,
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Setup callback functions
+            $(table).find('.button-parameter-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                launchModalForm(
+                    `/manufacturer-part/parameter/${pk}/edit/`,
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+
+            });
+            $(table).find('.button-parameter-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                launchModalForm(
+                    `/manufacturer-part/parameter/${pk}/delete/`,
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+        }
+    });
+}
+
+
 function loadSupplierPartTable(table, url, options) {
     /*
      * Load supplier part table
@@ -224,7 +325,7 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
-        formatNoMatches: function() { return "{% trans "No supplier parts found" %}"; },
+        formatNoMatches: function() { return '{% trans "No supplier parts found" %}'; },
         columns: [
             {
                 checkbox: true,
@@ -260,7 +361,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'supplier',
-                title: "{% trans "Supplier" %}",
+                title: '{% trans "Supplier" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         var name = row.supplier_detail.name;
@@ -276,7 +377,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'SKU',
-                title: "{% trans "Supplier Part" %}",
+                title: '{% trans "Supplier Part" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(value, `/supplier-part/${row.pk}/`);
                 }

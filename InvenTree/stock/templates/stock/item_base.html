@@ -325,7 +325,7 @@
         <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
     </tr>
     {% endif %}
-    {% if item.purchase_price %}
+    {% if item.purchase_price != None %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Purchase Price" %}</td>
@@ -350,7 +350,12 @@
     <tr>
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
-        <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
+        {% if item.supplier_part.manufacturer_part.manufacturer %}
+            <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
+        {% else %}
+            <td><i>{% trans "No manufacturer set" %}</i></td>
+        {% endif %}
+
     </tr>
     <tr>
         <td><span class='fas fa-hashtag'></span></td>

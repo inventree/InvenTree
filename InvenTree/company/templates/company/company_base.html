@@ -139,11 +139,17 @@
 
     enableDragAndDrop(
         "#company-thumb",
-        "{% url 'company-image' company.id %}",
+        "{% url 'api-company-detail' company.id %}",
         {
             label: 'image',
+            method: 'PATCH',
             success: function(data, status, xhr) {
-                location.reload();
+
+                if (data.image) {
+                    $('#company-image').attr('src', data.image);
+                } else {
+                    location.reload();
+                }
             }
         }
     );
