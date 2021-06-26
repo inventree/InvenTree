@@ -84,8 +84,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         initials = super().get_initial()
 
-        print("initials:", initials)
-
         # Are we creating a new instance?
         if self.instance is None:
             ModelClass = self.Meta.model
