@@ -365,7 +365,7 @@ function submitFormData(fields, options) {
         {
             method: options.method,
             success: function(response, status) {
-                console.log('success', '->', status);
+                handleFormSuccess(response, options);
             },
             error: function(xhr, status, thrownError) {
                 
@@ -381,6 +381,31 @@ function submitFormData(fields, options) {
         }
     );
 }
+
+
+/*
+ * Handle successful form posting
+ * 
+ * arguments:
+ * - response: The JSON response object from the server
+ * - options: The original options object provided by the client
+ */
+function handleFormSuccess(response, options) {
+
+    // Close the modal
+    if (!options.preventClose) {
+        // TODO: Actually just *delete* the modal,
+        // rather than hiding it!!
+        $(options.modal).modal('hide');
+    }
+
+    if (response.url) {
+        // GOTO
+        window.location.href = response.url;
+    }
+
+}
+
 
 
 /*
@@ -664,10 +689,6 @@ function constructField(name, parameters, options) {
     
     html += constructInput(name, parameters, options);
 
-    if (parameters.errors) {
-        html += constructErrorMessage(name, parameters, options);
-    }
-
     if (parameters.help_text) {
         html += constructHelpText(name, parameters, options);
     }
@@ -941,36 +962,7 @@ function constructRelatedFieldInput(name, parameters, options) {
  */
 function constructHelpText(name, parameters, options) {
     
-    var html = `<div id='hint_id_${name}' class='help-block'>${parameters.help_text}</div>`;
+    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
-}
-
-
-/*
- * Construct an 'error message' div for the field
- *
- * arguments:
- * - name: The name of the field
- * - parameters: Field parameters returned by the OPTIONS method
- */
-function constructErrorMessage(name, parameters, options) {
-
-    var errors_html = '';
-
-    for (var idx = 0; idx < parameters.errors.length; idx++) {
-        
-        var err = parameters.errors[idx];
-
-        var html = '';
-        
-        html += `<span id='error_${idx+1}_id_${name}' class='help-block'>`;
-        html += `<strong>${err}</strong>`;
-        html += `</span>`;
-
-        errors_html += html;
-
-    }
-
-    return errors_html;
 }
