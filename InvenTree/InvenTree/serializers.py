@@ -58,7 +58,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
             for field_name, field in fields.fields.items():
 
-                if field.has_default():
+                if field.has_default() and field_name not in initials:
 
                     value = field.default
 
@@ -87,7 +87,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             for field_name, field in fields.fields.items():
 
                 if field.has_default():
-                    if field not in self._validated_data:
+                    if field_name not in self._validated_data.keys():
 
                         value = field.default
 
@@ -96,7 +96,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                             value = value()
 
                         self._validated_data[field_name] = value
-
 
         return valid
 
