@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 import os
 
+from collections import OrderedDict
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -42,6 +44,38 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     but also ensures that the underlying model class data are checked on validation.
     """
 
+    def __init__(self, instance=None, data=empty, **kwargs):
+
+        self.instance = instance
+
+        # If instance is None, we are creating a new instance
+        if instance is None:
+            
+            if data is empty:
+                data = OrderedDict()
+            else:
+                # Required to side-step immutability of a QueryDict
+                data = data.copy()
+
+            # Add missing fields which have default values
+            ModelClass = self.Meta.model
+
+            fields = model_meta.get_field_info(ModelClass)
+
+            for field_name, field in fields.fields.items():
+
+                if field.has_default() and field_name not in data:
+
+                    value = field.default
+
+                    # Account for callable functions
+                    if callable(value):
+                        value = value()
+
+                    data[field_name] = value
+
+        super().__init__(instance, data, **kwargs)
+
     def get_initial(self):
         """
         Construct initial data for the serializer.
@@ -49,6 +83,8 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         """
 
         initials = super().get_initial()
+
+        print("initials:", initials)
 
         # Are we creating a new instance?
         if self.instance is None:
@@ -69,35 +105,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                     initials[field_name] = value
 
         return initials
-
-    def is_valid(self, raise_exception=False):
-        """
-        Also override the is_valid() method, as in some cases get_initial() is not actually called.
-        """
-
-        # Calling super().is_valid creates self._validated_data
-        valid = super().is_valid(raise_exception)
-
-        # Are we creating a new instance?
-        if self.instance is None:
-            ModelClass = self.Meta.model
-
-            fields = model_meta.get_field_info(ModelClass)
-
-            for field_name, field in fields.fields.items():
-
-                if field.has_default():
-                    if field_name not in self._validated_data.keys():
-
-                        value = field.default
-
-                        # Account for callable functions
-                        if callable(value):
-                            value = value()
-
-                        self._validated_data[field_name] = value
-
-        return valid
 
     def run_validation(self, data=empty):
         """ Perform serializer validation.

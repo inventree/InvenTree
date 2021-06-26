@@ -366,7 +366,6 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertFalse(response.data['purchaseable'])
 
 
-
 class PartDetailTests(InvenTreeAPITestCase):
     """
     Test that we can create / edit / delete Part objects via the API
