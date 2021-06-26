@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-24 21:38+0000\n"
-"PO-Revision-Date: 2021-06-17 00:51\n"
+"PO-Revision-Date: 2021-06-24 21:40\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1671,34 +1671,24 @@ msgid "Display available part quantity in some forms"
 msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
 
 #: common/models.py:209
-#, fuzzy
-#| msgid "Show Quantity in Forms"
 msgid "Show Price in Forms"
-msgstr "zeige Bestand in Eingabemasken"
+msgstr ""
 
 #: common/models.py:210
-#, fuzzy
-#| msgid "Display available part quantity in some forms"
 msgid "Display part price in some forms"
-msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
+msgstr ""
 
 #: common/models.py:216
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Prices"
-msgstr "Internes Teil"
+msgstr ""
 
 #: common/models.py:217
-#, fuzzy
-#| msgid "Enable generation of test reports"
 msgid "Enable internal prices for parts"
-msgstr "Erstellung von Test-Berichten aktivieren"
+msgstr ""
 
 #: common/models.py:223
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Price as BOM-Price"
-msgstr "Internes Teil"
+msgstr ""
 
 #: common/models.py:224
 msgid "Use the internal price (if set) in BOM-price calculations"
@@ -2066,10 +2056,8 @@ msgid "Manufacturer Part"
 msgstr "Herstellerteil"
 
 #: company/models.py:397
-#, fuzzy
-#| msgid "Parameter Name"
 msgid "Parameter name"
-msgstr "Name des Parameters"
+msgstr ""
 
 #: company/models.py:403 part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
@@ -2079,10 +2067,8 @@ msgid "Value"
 msgstr "Wert"
 
 #: company/models.py:404
-#, fuzzy
-#| msgid "Parameter Value"
 msgid "Parameter value"
-msgstr "Parameter Wert"
+msgstr ""
 
 #: company/models.py:410 part/models.py:813 part/models.py:2165
 #: part/templates/part/detail.html:106 part/templates/part/params.html:29
@@ -2091,10 +2077,8 @@ msgid "Units"
 msgstr "Einheiten"
 
 #: company/models.py:411
-#, fuzzy
-#| msgid "Parameter Units"
 msgid "Parameter units"
-msgstr "Einheit des Parameters"
+msgstr ""
 
 #: company/models.py:507 company/templates/company/detail.html:62
 #: company/templates/company/supplier_part_base.html:84
@@ -2218,11 +2202,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -2681,16 +2663,12 @@ msgid "Delete Manufacturer Part"
 msgstr "Herstellerteil löschen"
 
 #: company/views.py:514
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Add Manufacturer Part Parameter"
-msgstr "Hersteller-Teilenummer"
+msgstr ""
 
 #: company/views.py:548
-#, fuzzy
-#| msgid "Edit Manufacturer Part"
 msgid "Edit Manufacturer Part Parameter"
-msgstr "Herstellerteil ändern"
+msgstr ""
 
 #: company/views.py:588
 msgid "Edit Supplier Part"
@@ -2981,10 +2959,8 @@ msgid "Unit purchase price"
 msgstr "Preis pro Einheit"
 
 #: order/models.py:681
-#, fuzzy
-#| msgid "Where is this item normally stored?"
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr "Wo wird dieses Teil normalerweise gelagert?"
+msgstr "Wo möchte der Käufer diesen Artikel gelagert haben?"
 
 #: order/models.py:724 part/templates/part/navbar.html:109
 #: part/templates/part/order_prices.html:107
@@ -3200,10 +3176,8 @@ msgid "Select Supplier"
 msgstr "Zulieferer auswählen"
 
 #: order/templates/order/order_wizard/select_parts.html:57
-#, fuzzy
-#| msgid "Total price"
 msgid "No price"
-msgstr "Gesamtpreis"
+msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
@@ -3278,7 +3252,7 @@ msgstr "Keine Positionen gefunden"
 #: order/templates/order/purchase_order_detail.html:142
 #: order/templates/order/sales_order_detail.html:223
 msgid "Total"
-msgstr ""
+msgstr "Summe"
 
 #: order/templates/order/purchase_order_detail.html:191
 #: order/templates/order/sales_order_detail.html:246
@@ -3587,10 +3561,8 @@ msgid "No lines specified"
 msgstr "Keine Zeilen angegeben"
 
 #: order/views.py:1012
-#, fuzzy
-#| msgid "Update Unit Price"
 msgid "Update prices"
-msgstr "Stückpreis aktualisieren"
+msgstr ""
 
 #: order/views.py:1270
 #, python-brace-format
@@ -4209,16 +4181,12 @@ msgid "Error creating relationship: check that the part is not related to itself
 msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist das die Verwandtschaft nicht eindeutig?"
 
 #: part/templates/part/allocation.html:11
-#, fuzzy
-#| msgid "Build Order Notes"
 msgid "Build Order Allocations"
-msgstr "Bauauftrag-Notizen"
+msgstr ""
 
 #: part/templates/part/allocation.html:24
-#, fuzzy
-#| msgid "Sales Order Notes"
 msgid "Sales  Order Allocations"
-msgstr "Auftrags-Positionen"
+msgstr ""
 
 #: part/templates/part/attachments.html:10
 msgid "Part Attachments"
@@ -4604,16 +4572,12 @@ msgstr "Teil ist nicht aktiv"
 
 #: part/templates/part/internal_prices.html:11
 #: part/templates/part/navbar.html:100
-#, fuzzy
-#| msgid "Sell Price Information"
 msgid "Internal Price Information"
-msgstr "Verkaufspreis Informationen"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:19 part/views.py:2822
-#, fuzzy
-#| msgid "Add Price Break"
 msgid "Add Internal Price Break"
-msgstr "Preisstaffel hinzufügen"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:28 templates/403.html:5
 #: templates/403.html:11
@@ -4625,22 +4589,16 @@ msgid "You do not have permission to view this page."
 msgstr "Keine Berechtigung zum Anzeigen dieser Seite."
 
 #: part/templates/part/internal_prices.html:59
-#, fuzzy
-#| msgid "No price break information found"
 msgid "No internal price break information found"
-msgstr "Keine Informationen zur Preisstaffel gefunden"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:110
-#, fuzzy
-#| msgid "Edit price break"
 msgid "Edit internal price break"
-msgstr "Preisstaffel bearbeiten"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:111
-#, fuzzy
-#| msgid "Delete price break"
 msgid "Delete internal price break"
-msgstr "Preisstaffel löschen"
+msgstr ""
 
 #: part/templates/part/manufacturer.html:11
 msgid "Part Manufacturers"
@@ -4685,10 +4643,8 @@ msgstr "Bestellpreis"
 
 #: part/templates/part/navbar.html:103 part/templates/part/order_prices.html:93
 #: part/templates/part/part_pricing.html:82
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Price"
-msgstr "Internes Teil"
+msgstr "Interner Preis"
 
 #: part/templates/part/navbar.html:106
 msgid "Sales Price Information"
@@ -5220,16 +5176,12 @@ msgid "Confim BOM item deletion"
 msgstr "löschen von Stücklisten-Position bestätigen"
 
 #: part/views.py:2831
-#, fuzzy
-#| msgid "Edit Price Break"
 msgid "Edit Internal Price Break"
-msgstr "Preisstaffel bearbeiten"
+msgstr ""
 
 #: part/views.py:2839
-#, fuzzy
-#| msgid "Delete Price Break"
 msgid "Delete Internal Price Break"
-msgstr "Preisstaffel löschen"
+msgstr ""
 
 #: report/models.py:181
 msgid "Template name"
@@ -5249,7 +5201,7 @@ msgstr "Bericht Revisionsnummer (autom. erhöht)"
 
 #: report/models.py:291
 msgid "Pattern for generating report filenames"
-msgstr ""
+msgstr "Muster für die Erstellung von Berichtsdateinamen"
 
 #: report/models.py:298
 msgid "Report template is enabled"
@@ -5800,10 +5752,8 @@ msgid "Parent Item"
 msgstr "Elternposition"
 
 #: stock/templates/stock/item_base.html:356
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "No manufacturer set"
-msgstr "ist Hersteller"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:385
 #, python-format
@@ -6304,13 +6254,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6513,10 +6461,8 @@ msgid "API Version"
 msgstr "API-Version"
 
 #: templates/about.html:39
-#, fuzzy
-#| msgid "API Version"
 msgid "Python Version"
-msgstr "API-Version"
+msgstr ""
 
 #: templates/about.html:44
 msgid "Django Version"
@@ -6741,16 +6687,12 @@ msgid "Delete build output"
 msgstr "Endprodukt entfernen"
 
 #: templates/js/build.js:184
-#, fuzzy
-#| msgid "No sales orders found"
 msgid "No build order allocations found"
-msgstr "Keine Aufträge gefunden"
+msgstr ""
 
 #: templates/js/build.js:222 templates/js/order.js:382
-#, fuzzy
-#| msgid "No action specified"
 msgid "Location not specified"
-msgstr "Keine Aktion angegeben"
+msgstr "Standort nicht angegeben"
 
 #: templates/js/build.js:325 templates/stock_table.html:20
 msgid "New Stock Item"
@@ -6813,22 +6755,16 @@ msgid "Assembled part"
 msgstr "Baugruppe"
 
 #: templates/js/company.js:226
-#, fuzzy
-#| msgid "No parts found"
 msgid "No parameters found"
-msgstr "Keine Teile gefunden"
+msgstr ""
 
 #: templates/js/company.js:262
-#, fuzzy
-#| msgid "Edit Part Parameter"
 msgid "Edit parameter"
-msgstr "Teilparameter bearbeiten"
+msgstr ""
 
 #: templates/js/company.js:263
-#, fuzzy
-#| msgid "Delete part"
 msgid "Delete parameter"
-msgstr "Teil löschen"
+msgstr ""
 
 #: templates/js/company.js:328
 msgid "No supplier parts found"
@@ -7004,10 +6940,8 @@ msgid "No sales orders found"
 msgstr "Keine Aufträge gefunden"
 
 #: templates/js/order.js:343
-#, fuzzy
-#| msgid "No sales orders found"
 msgid "No sales order allocations found"
-msgstr "Keine Aufträge gefunden"
+msgstr ""
 
 #: templates/js/part.js:10
 msgid "YES"
@@ -7806,8 +7740,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Part must be unique for name, IPN and revision"
-#~ msgstr "Namen, Teile- und Revisionsnummern müssen eindeutig sein"
-
-#~ msgid "Part Stock Allocations"
-#~ msgstr "Teil-Bestandszuordnungen"

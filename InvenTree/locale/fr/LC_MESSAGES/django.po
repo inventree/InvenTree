@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-24 21:38+0000\n"
-"PO-Revision-Date: 2021-06-17 00:51\n"
+"PO-Revision-Date: 2021-06-24 21:40\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2202,8 +2202,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -4181,10 +4180,8 @@ msgid "Error creating relationship: check that the part is not related to itself
 msgstr ""
 
 #: part/templates/part/allocation.html:11
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build Order Allocations"
-msgstr "La sortie de l'ordre de construction a été créée"
+msgstr ""
 
 #: part/templates/part/allocation.html:24
 msgid "Sales  Order Allocations"
@@ -4574,10 +4571,8 @@ msgstr ""
 
 #: part/templates/part/internal_prices.html:11
 #: part/templates/part/navbar.html:100
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "Internal Price Information"
-msgstr "Modifier les informations utilisateur"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:19 part/views.py:2822
 msgid "Add Internal Price Break"
@@ -6258,8 +6253,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6689,16 +6683,12 @@ msgid "Delete build output"
 msgstr ""
 
 #: templates/js/build.js:184
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No build order allocations found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/build.js:222 templates/js/order.js:382
-#, fuzzy
-#| msgid "No action specified"
 msgid "Location not specified"
-msgstr "Aucune action spécifiée"
+msgstr ""
 
 #: templates/js/build.js:325 templates/stock_table.html:20
 msgid "New Stock Item"
@@ -6761,20 +6751,16 @@ msgid "Assembled part"
 msgstr ""
 
 #: templates/js/company.js:226
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No parameters found"
-msgstr "Aucun numéro de série trouvé"
+msgstr ""
 
 #: templates/js/company.js:262
 msgid "Edit parameter"
 msgstr ""
 
 #: templates/js/company.js:263
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete parameter"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: templates/js/company.js:328
 msgid "No supplier parts found"
@@ -6950,10 +6936,8 @@ msgid "No sales orders found"
 msgstr ""
 
 #: templates/js/order.js:343
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No sales order allocations found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/part.js:10
 msgid "YES"
@@ -7752,5 +7736,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Part must be unique for name, IPN and revision"
-#~ msgstr "La pièce doit être unique par son nom, son IPN et sa révision"

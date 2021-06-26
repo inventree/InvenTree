@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-24 21:38+0000\n"
-"PO-Revision-Date: 2021-06-17 00:51\n"
+"PO-Revision-Date: 2021-06-24 21:40\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1679,22 +1679,16 @@ msgid "Display part price in some forms"
 msgstr ""
 
 #: common/models.py:216
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Prices"
-msgstr "Część wewnętrzna"
+msgstr ""
 
 #: common/models.py:217
-#, fuzzy
-#| msgid "Enable generation of test reports"
 msgid "Enable internal prices for parts"
-msgstr "Włącz generowanie raportów testów"
+msgstr ""
 
 #: common/models.py:223
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Price as BOM-Price"
-msgstr "Część wewnętrzna"
+msgstr ""
 
 #: common/models.py:224
 msgid "Use the internal price (if set) in BOM-price calculations"
@@ -1879,7 +1873,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:22 order/views.py:582
 #: part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload File"
-msgstr "Wyślik plik"
+msgstr "Wyślij plik"
 
 #: common/views.py:185 order/templates/order/order_wizard/match_fields.html:52
 #: order/views.py:583 part/templates/part/bom_upload/select_fields.html:58
@@ -2062,10 +2056,8 @@ msgid "Manufacturer Part"
 msgstr "Część producenta"
 
 #: company/models.py:397
-#, fuzzy
-#| msgid "Parameters"
 msgid "Parameter name"
-msgstr "Parametry"
+msgstr ""
 
 #: company/models.py:403 part/templates/part/params.html:28
 #: report/templates/report/inventree_test_report_base.html:90
@@ -2075,10 +2067,8 @@ msgid "Value"
 msgstr ""
 
 #: company/models.py:404
-#, fuzzy
-#| msgid "Parameters"
 msgid "Parameter value"
-msgstr "Parametry"
+msgstr ""
 
 #: company/models.py:410 part/models.py:813 part/models.py:2165
 #: part/templates/part/detail.html:106 part/templates/part/params.html:29
@@ -2087,10 +2077,8 @@ msgid "Units"
 msgstr "Jednostki"
 
 #: company/models.py:411
-#, fuzzy
-#| msgid "Parameters"
 msgid "Parameter units"
-msgstr "Parametry"
+msgstr ""
 
 #: company/models.py:507 company/templates/company/detail.html:62
 #: company/templates/company/supplier_part_base.html:84
@@ -2214,8 +2202,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -2675,16 +2662,12 @@ msgid "Delete Manufacturer Part"
 msgstr ""
 
 #: company/views.py:514
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Add Manufacturer Part Parameter"
-msgstr "Numer producenta"
+msgstr ""
 
 #: company/views.py:548
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Edit Manufacturer Part Parameter"
-msgstr "Numer producenta"
+msgstr ""
 
 #: company/views.py:588
 msgid "Edit Supplier Part"
@@ -3192,10 +3175,8 @@ msgid "Select Supplier"
 msgstr "Wybierz dostawcę"
 
 #: order/templates/order/order_wizard/select_parts.html:57
-#, fuzzy
-#| msgid "Price"
 msgid "No price"
-msgstr "Cena"
+msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
@@ -3579,10 +3560,8 @@ msgid "No lines specified"
 msgstr ""
 
 #: order/views.py:1012
-#, fuzzy
-#| msgid "Calculate price"
 msgid "Update prices"
-msgstr "Oblicz cenę"
+msgstr ""
 
 #: order/views.py:1270
 #, python-brace-format
@@ -4201,16 +4180,12 @@ msgid "Error creating relationship: check that the part is not related to itself
 msgstr ""
 
 #: part/templates/part/allocation.html:11
-#, fuzzy
-#| msgid "Build Order Notes"
 msgid "Build Order Allocations"
-msgstr "Notatki zlecenia budowy"
+msgstr ""
 
 #: part/templates/part/allocation.html:24
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales  Order Allocations"
-msgstr "Zamówienie zakupu"
+msgstr ""
 
 #: part/templates/part/attachments.html:10
 msgid "Part Attachments"
@@ -4596,16 +4571,12 @@ msgstr ""
 
 #: part/templates/part/internal_prices.html:11
 #: part/templates/part/navbar.html:100
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Internal Price Information"
-msgstr "Informacja cenowa"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:19 part/views.py:2822
-#, fuzzy
-#| msgid "Edit Price Break"
 msgid "Add Internal Price Break"
-msgstr "Edytuj przedział cenowy"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:28 templates/403.html:5
 #: templates/403.html:11
@@ -4621,16 +4592,12 @@ msgid "No internal price break information found"
 msgstr ""
 
 #: part/templates/part/internal_prices.html:110
-#, fuzzy
-#| msgid "Edit price break"
 msgid "Edit internal price break"
-msgstr "Edytuj przedział cenowy"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:111
-#, fuzzy
-#| msgid "Edit price break"
 msgid "Delete internal price break"
-msgstr "Edytuj przedział cenowy"
+msgstr ""
 
 #: part/templates/part/manufacturer.html:11
 msgid "Part Manufacturers"
@@ -4675,10 +4642,8 @@ msgstr ""
 
 #: part/templates/part/navbar.html:103 part/templates/part/order_prices.html:93
 #: part/templates/part/part_pricing.html:82
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Price"
-msgstr "Część wewnętrzna"
+msgstr ""
 
 #: part/templates/part/navbar.html:106
 msgid "Sales Price Information"
@@ -5210,16 +5175,12 @@ msgid "Confim BOM item deletion"
 msgstr ""
 
 #: part/views.py:2831
-#, fuzzy
-#| msgid "Edit Price Break"
 msgid "Edit Internal Price Break"
-msgstr "Edytuj przedział cenowy"
+msgstr ""
 
 #: part/views.py:2839
-#, fuzzy
-#| msgid "Edit Price Break"
 msgid "Delete Internal Price Break"
-msgstr "Edytuj przedział cenowy"
+msgstr ""
 
 #: report/models.py:181
 msgid "Template name"
@@ -5790,10 +5751,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:356
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "No manufacturer set"
-msgstr "jest producentem"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:385
 #, python-format
@@ -6294,8 +6253,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6725,16 +6683,12 @@ msgid "Delete build output"
 msgstr ""
 
 #: templates/js/build.js:184
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No build order allocations found"
-msgstr "Nie znaleziono pasującej akcji"
+msgstr ""
 
 #: templates/js/build.js:222 templates/js/order.js:382
-#, fuzzy
-#| msgid "No action specified"
 msgid "Location not specified"
-msgstr "Nie określono działania"
+msgstr ""
 
 #: templates/js/build.js:325 templates/stock_table.html:20
 msgid "New Stock Item"
@@ -6797,22 +6751,16 @@ msgid "Assembled part"
 msgstr ""
 
 #: templates/js/company.js:226
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No parameters found"
-msgstr "Nie znaleziono numerów seryjnych"
+msgstr ""
 
 #: templates/js/company.js:262
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Edit parameter"
-msgstr "Parametry części"
+msgstr ""
 
 #: templates/js/company.js:263
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete parameter"
-msgstr "Usuń części"
+msgstr ""
 
 #: templates/js/company.js:328
 msgid "No supplier parts found"
@@ -6988,10 +6936,8 @@ msgid "No sales orders found"
 msgstr ""
 
 #: templates/js/order.js:343
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No sales order allocations found"
-msgstr "Nie znaleziono pasującej akcji"
+msgstr ""
 
 #: templates/js/part.js:10
 msgid "YES"
@@ -7789,3 +7735,4 @@ msgstr ""
 #: users/models.py:191
 msgid "Permission to delete items"
 msgstr ""
+

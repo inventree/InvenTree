@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-24 21:38+0000\n"
-"PO-Revision-Date: 2021-06-17 00:51\n"
+"PO-Revision-Date: 2021-06-25 14:06\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -19,19 +19,19 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "endpoint API no encontrado"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "No se especificó ninguna acción"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "No se encontró ninguna acción coincidente"
 
 #: InvenTree/fields.py:44
 msgid "Enter date"
-msgstr ""
+msgstr "Ingrese la fecha"
 
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
@@ -42,19 +42,19 @@ msgstr "Confirmar"
 
 #: InvenTree/forms.py:128
 msgid "Confirm delete"
-msgstr ""
+msgstr "Confirmar eliminación"
 
 #: InvenTree/forms.py:129
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Confirmar borrado de artículo"
 
 #: InvenTree/forms.py:161 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "Introduzca contraseña"
 
 #: InvenTree/forms.py:162
 msgid "Enter new password"
-msgstr ""
+msgstr "Ingrese su nueva contraseña"
 
 #: InvenTree/forms.py:169
 msgid "Confirm password"
@@ -66,11 +66,11 @@ msgstr "Confirmar contraseña nueva"
 
 #: InvenTree/forms.py:205
 msgid "Apply Theme"
-msgstr ""
+msgstr "Aplicar tema"
 
 #: InvenTree/forms.py:235
 msgid "Select Category"
-msgstr ""
+msgstr "Seleccionar Categoría"
 
 #: InvenTree/helpers.py:377
 #, python-brace-format
@@ -80,7 +80,7 @@ msgstr ""
 #: InvenTree/helpers.py:384 order/models.py:248 order/models.py:358
 #: stock/views.py:1795
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Cantidad proporcionada no válida"
 
 #: InvenTree/helpers.py:387
 msgid "Empty serial number string"
@@ -90,7 +90,7 @@ msgstr ""
 #: InvenTree/helpers.py:440
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Grupo no válido: un {g}"
 
 #: InvenTree/helpers.py:445
 #, python-brace-format
@@ -99,7 +99,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:453
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Numeros de serie no encontrados"
 
 #: InvenTree/helpers.py:457
 #, python-brace-format
@@ -207,11 +207,11 @@ msgstr ""
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "Pendiente"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "Colocado"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
@@ -235,7 +235,7 @@ msgstr ""
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "Enviado"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
@@ -255,7 +255,7 @@ msgstr "Destruido"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Rechazado"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -263,31 +263,31 @@ msgstr ""
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Artículo de stock creado"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Elemento de stock editado"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Número de serie asignado"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Stock contado"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stock añadido manualmente"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stock eliminado manualmente"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Ubicación cambiada"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
@@ -327,11 +327,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Construir orden de salida completado"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Recibido contra la orden de compra"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
@@ -2202,8 +2202,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -4572,10 +4571,8 @@ msgstr ""
 
 #: part/templates/part/internal_prices.html:11
 #: part/templates/part/navbar.html:100
-#, fuzzy
-#| msgid "System Information"
 msgid "Internal Price Information"
-msgstr "Información del sistema"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:19 part/views.py:2822
 msgid "Add Internal Price Break"
@@ -5754,10 +5751,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:356
-#, fuzzy
-#| msgid "Manufacturers"
 msgid "No manufacturer set"
-msgstr "Fabricantes"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:385
 #, python-format
@@ -6258,8 +6253,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6765,10 +6759,8 @@ msgid "Edit parameter"
 msgstr ""
 
 #: templates/js/company.js:263
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete parameter"
-msgstr "Eliminar elemento"
+msgstr ""
 
 #: templates/js/company.js:328
 msgid "No supplier parts found"
@@ -7743,3 +7735,4 @@ msgstr ""
 #: users/models.py:191
 msgid "Permission to delete items"
 msgstr ""
+
