@@ -603,8 +603,6 @@ class PartDetailTests(InvenTreeAPITestCase):
         # And now check that the image has been set
         p = Part.objects.get(pk=pk)
 
-        print("Image:", p.image.file)
-
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """

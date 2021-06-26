@@ -70,7 +70,10 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
                     # Account for callable functions
                     if callable(value):
-                        value = value()
+                        try:
+                            value = value()
+                        except:
+                            continue
 
                     data[field_name] = value
 
@@ -98,7 +101,10 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
                     # Account for callable functions
                     if callable(value):
-                        value = value()
+                        try:
+                            value = value()
+                        except:
+                            continue
 
                     initials[field_name] = value
 
