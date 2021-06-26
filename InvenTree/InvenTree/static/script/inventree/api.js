@@ -58,7 +58,7 @@ function inventreeFormDataUpload(url, data, options={}) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
         url: url,
-        method: 'POST',
+        method: options.method || 'POST',
         data: data,
         processData: false,
         contentType: false,

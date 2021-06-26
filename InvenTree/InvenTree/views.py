@@ -337,7 +337,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         # Do nothing by default
         pass
 
-    def renderJsonResponse(self, request, form=None, data={}, context=None):
+    def renderJsonResponse(self, request, form=None, data=None, context=None):
         """ Render a JSON response based on specific class context.
 
         Args:
@@ -349,6 +349,9 @@ class AjaxMixin(InvenTreeRoleMixin):
         Returns:
             JSON response object
         """
+        # a empty dict as default can be dangerous - set it here if empty
+        if not data:
+            data = {}
 
         if not request.is_ajax():
             return HttpResponseRedirect('/')

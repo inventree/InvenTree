@@ -623,7 +623,8 @@ class SupplierPartEdit(AjaxUpdateView):
         supplier_part = self.get_object()
 
         if supplier_part.manufacturer_part:
-            initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
+            if supplier_part.manufacturer_part.manufacturer:
+                initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
             initials['MPN'] = supplier_part.manufacturer_part.MPN
 
         return initials

@@ -73,22 +73,50 @@ class InvenTreeAPITestCase(APITestCase):
                 ruleset.save()
                 break
 
-    def get(self, url, data={}, code=200):
+    def get(self, url, data={}, expected_code=200):
         """
         Issue a GET request
         """
 
         response = self.client.get(url, data, format='json')
 
-        self.assertEqual(response.status_code, code)
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
 
         return response
 
-    def post(self, url, data):
+    def post(self, url, data, expected_code=None):
         """
         Issue a POST request
         """
 
         response = self.client.post(url, data=data, format='json')
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
+
+        return response
+
+    def delete(self, url, expected_code=None):
+        """
+        Issue a DELETE request
+        """
+
+        response = self.client.delete(url)
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
+
+        return response
+
+    def patch(self, url, data, files=None, expected_code=None):
+        """
+        Issue a PATCH request
+        """
+
+        response = self.client.patch(url, data=data, files=files, format='json')
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
 
         return response

@@ -219,6 +219,7 @@ function enableDragAndDrop(element, url, options) {
             data - Other form data to upload
             success - Callback function in case of success
             error - Callback function in case of error
+            method - HTTP method
     */
 
     data = options.data || {};
@@ -254,7 +255,8 @@ function enableDragAndDrop(element, url, options) {
                         if (options.error) {
                             options.error(xhr, status, error);
                         }
-                    }
+                    },
+                    method: options.method || 'POST',
                 }
             );
         } else {

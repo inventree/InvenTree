@@ -77,7 +77,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('version', data)
         self.assertIn('instance', data)
 
-        self.assertEquals('InvenTree', data['server'])
+        self.assertEqual('InvenTree', data['server'])
 
     def test_role_view(self):
         """
