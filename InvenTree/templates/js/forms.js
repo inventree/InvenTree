@@ -161,17 +161,18 @@ function constructChangeForm(url, fields, options={}) {
  * and construct a modal form based on the response.
  * 
  * arguments:
- * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE',
+ * - url: API URL
  * 
  * options:
- * - method:
+ * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE',
+ * - title: The form title
+ * - fields: list of fields to display
+ * - exclude: List of fields to exclude
  */
-function constructForm(url, method, options={}) {
+function constructForm(url, options={}) {
 
-    method = method.toUpperCase();
-
-    // Store the method in the options struct
-    options.method = method;
+    // Default HTTP method
+    options.method = options.method || 'PATCH';
 
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
@@ -183,7 +184,7 @@ function constructForm(url, method, options={}) {
          * First we must determine if the user has the correct permissions!
          */
 
-        switch (method) {
+        switch (options.method) {
             case 'POST':
                 if (canCreate(OPTIONS)) {
                     constructCreateForm(url, OPTIONS.actions.POST, options);
@@ -322,6 +323,10 @@ function constructFormBody(url, fields, options={}) {
     $(modal + ' .select2-container').css('width', '100%');
 
     modalShowSubmitButton(modal, true);
+
+    var title = options.title || '{% trans "Form Title" %}';
+
+    modalSetTitle(modal, title);
 }
 
 

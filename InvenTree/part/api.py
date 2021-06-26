@@ -337,8 +337,9 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
+        # By default, include 'category_detail' information in the detail view
         try:
-            kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', False))
+            kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', True))
         except AttributeError:
             pass
 
