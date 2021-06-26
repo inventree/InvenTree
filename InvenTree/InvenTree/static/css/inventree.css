@@ -973,3 +973,10 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .select2-container {
     width: 100%;
 }
+
+.select2-thumbnail {
+    max-width: 24px;
+    max-height: 24px;
+    border-radius: 4px;
+    margin-right: 10px;
+}

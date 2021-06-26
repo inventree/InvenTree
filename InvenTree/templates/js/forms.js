@@ -364,7 +364,8 @@ function initializeRelatedField(modal, name, field, options) {
 
     // TODO: Add 'placeholder' support for entry select2 fields
 
-    // TODO: Add 'pagination' support for the query
+    // limit size for AJAX requests
+    var pageSize = options.pageSize || 25;
 
     select.select2({
         ajax: {
@@ -377,31 +378,52 @@ function initializeRelatedField(modal, name, field, options) {
             cache: true,
             // matcher: partialMatcher,
             data: function(params) {
+
+                if (!params.page) {
+                    offset = 0;
+                } else {
+                    offset = (params.page - 1) * pageSize;
+                }
+
                 // Re-format search term into InvenTree API style
                 return {
                     search: params.term,
+                    offset: offset,
+                    limit: pageSize,
                 };
             },
-            processResults: function(data) {
+            processResults: function(response) {
                 // Convert the returned InvenTree data into select2-friendly format
-                var rows = [];
 
-                // Only ever show the first x items
-                for (var idx = 0; idx < data.length && idx < 50; idx++) {
-                    var row = data[idx];
+                var data = [];
 
-                    // Reformat to match select2 requirements
-                    row.id = row.id || row.pk;
+                var more = false;
 
-                    // TODO: Fix me?
-                    row.text = `This is ${field.api_url}${row.id}/`;
+                if ('count' in response && 'results' in response) {
+                    // Response is paginated
+                    data = response.results;
 
-                    rows.push(row);
+                    // Any more data available?
+                    if (response.next) {
+                        more = true;
+                    }
+
+                } else {
+                    // Non-paginated response
+                    data = response;
+                }
+
+                // Each 'row' must have the 'id' attribute
+                for (var idx = 0; idx < data.length; idx++) {
+                    data[idx].id = data[idx].pk;
                 }
 
                 // Ref: https://select2.org/data-sources/formats
                 var results = {
-                    results: rows,
+                    results: data,
+                    pagination: {
+                        more: more,
+                    }
                 };
 
                 return results;
@@ -442,7 +464,7 @@ function initializeRelatedField(modal, name, field, options) {
  * - parameters: The field definition (OPTIONS) request
  * - options: Other options provided at time of modal creation by the client
  */
-function renderModelData(name, model, data, paramaters, options) {
+function renderModelData(name, model, data, parameters, options) {
 
     if (!data) {
         return '{% trans "Searching" %}...';
@@ -452,11 +474,31 @@ function renderModelData(name, model, data, paramaters, options) {
 
     var html = null;
 
+    var renderer = null;
+
+    // Find a custom renderer 
     switch (model) {
         case 'company':
-            html = `<span>${data.name}</span> - <i>${data.description}</i>`;
+            renderer = renderCompany;
+            break;
+        case 'stockitem':
+            renderer = renderStockItem;
+            break;
+        case 'stocklocation':
+            renderer = renderStockLocation;
+            break;
+        case 'part':
+            renderer = renderPart;
+            break;
+        case 'partcategory':
+            renderer = renderPartCategory;
+            break;
         default:
             break;
+    }
+    
+    if (renderer != null) {
+        html = renderer(name, data, parameters, options);
     }
 
     if (html != null) {
@@ -464,8 +506,9 @@ function renderModelData(name, model, data, paramaters, options) {
         var $state = $(html);
         return $state;
     } else {
+        console.log(`ERROR: Rendering not implemented for model '${model}'`);
         // Simple text rendering
-        return data.text;
+        return data.id;
     }
 }
 

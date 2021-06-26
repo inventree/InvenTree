@@ -105,6 +105,7 @@ settings_urls = [
 dynamic_javascript_urls = [
     url(r'^api.js', DynamicJsView.as_view(template_name='js/api.js'), name='api.js'),
     url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
+    url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
     url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),
     url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.js'), name='barcode.js'),
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.js'), name='bom.js'),
