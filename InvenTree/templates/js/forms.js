@@ -223,7 +223,7 @@ function constructForm(url, options={}) {
                 }
                 break;
             default:
-                console.log(`constructForm() called with invalid method '${method}'`);
+                console.log(`constructForm() called with invalid method '${options.method}'`);
                 break;
         }
     });
@@ -302,9 +302,10 @@ function constructFormBody(url, fields, options={}) {
 
     modalEnable(modal, true);
 
-    var title = options.title || '{% trans "Form Title" %}';
-
-    modalSetTitle(modal, title);
+    // Set the form title and button labels
+    modalSetTitle(modal, options.title || '{% trans "Form Title" %}');
+    modalSetSubmitText(options.submitText || '{% trans "Submit" %}');
+    modalSetCloseText(options.cancelText || '{% trans "Cancel" %}');
 
     // Insert generated form content
     $(modal).find('.modal-form-content').html(html);
@@ -324,9 +325,28 @@ function constructFormBody(url, fields, options={}) {
 
     modalShowSubmitButton(modal, true);
 
-    var title = options.title || '{% trans "Form Title" %}';
+    $(modal).off('click', '#modal-form-submit');
+    $(modal).on('click', '#modal-form-submit', function() {
 
-    modalSetTitle(modal, title);
+        var patch_data = {};
+
+        // Construct submit data
+        field_names.forEach(function(name) {
+            var field = fields[name] || null;
+
+            if (field) {
+                var field_value = getFieldValue(name);
+
+                patch_data[name] = field_value;
+            } else {
+                console.log(`Could not find field matching '${name}'`);
+            }
+        })
+        
+        
+        console.log(patch_data);
+
+    });
 }
 
 
