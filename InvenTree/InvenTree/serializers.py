@@ -7,6 +7,7 @@ Serializers used in various InvenTree apps
 from __future__ import unicode_literals
 
 from rest_framework import serializers
+from rest_framework.utils import model_meta
 
 import os
 
@@ -38,6 +39,35 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     Inherits the standard Django ModelSerializer class,
     but also ensures that the underlying model class data are checked on validation.
     """
+
+    def is_valid(self, raise_exception=False):
+        """
+        Override the 'is_valid' method of the underlying ModelSerializer class.
+
+        - This is so we can intercept the data before save() is called.
+        - If we are creating a *new* model, replace any "missing" fields with the default values
+        - Default values are those specified by the database model
+        """
+
+        # This serializer is *not* associated with a model instance
+        # This means that we are trying to *create* a new model
+        if self.instance is None:
+            ModelClass = self.Meta.model
+
+            fields = model_meta.get_field_info(ModelClass)
+
+            for field_name, field in fields.fields.items():
+
+                # Check if the field has a default value
+                if field.has_default():
+
+                    # Value not specified?
+                    if field_name not in self.initial_data:
+                        
+                        self.initial_data[field_name] = field.default
+
+
+        return super().is_valid(raise_exception=raise_exception)
 
     def validate(self, data):
         """ Perform serializer validation.
