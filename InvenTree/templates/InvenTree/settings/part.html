@@ -41,6 +41,22 @@
     </tbody>
 </table>
 
+<h4>{% trans "Part Import" %}</h4>
+
+    <button class='btn btn-success' id='import-part'>
+        <span class='fas fa-plus-circle'></span> {% trans "Import Part" %}
+    </button>
+
+
+<table class='table table-striped table-condensed'>
+    {% include "InvenTree/settings/header.html" %}
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PART_SHOW_IMPORT" icon="fa-file-upload" %}
+    </tbody>
+</table>
+
+
+
 <h4>{% trans "Part Parameter Templates" %}</h4>
 
 <div id='param-buttons'>
@@ -123,6 +139,10 @@
                 $("#param-table").bootstrapTable('refresh');
             }
         });
+    });
+
+    $("#import-part").click(function() {
+        launchModalForm("{% url 'api-part-import' %}?reset", {});
     });
 
 {% endblock %}
