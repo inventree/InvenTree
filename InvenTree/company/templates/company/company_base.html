@@ -144,7 +144,12 @@
             label: 'image',
             method: 'PATCH',
             success: function(data, status, xhr) {
-                location.reload();
+
+                if (data.image) {
+                    $('#company-image').attr('src', data.image);
+                } else {
+                    location.reload();
+                }
             }
         }
     );

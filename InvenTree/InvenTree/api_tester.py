@@ -18,6 +18,7 @@ class InvenTreeAPITestCase(APITestCase):
     email = 'test@testing.com'
 
     superuser = False
+    is_staff = True
     auto_login = True
 
     # Set list of roles automatically associated with the user
@@ -40,8 +41,12 @@ class InvenTreeAPITestCase(APITestCase):
 
         if self.superuser:
             self.user.is_superuser = True
-            self.user.save()
 
+        if self.is_staff:
+            self.user.is_staff = True
+
+        self.user.save()
+        
         for role in self.roles:
             self.assignRole(role)
 

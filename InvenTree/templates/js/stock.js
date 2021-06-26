@@ -179,27 +179,32 @@ function loadStockTestResultsTable(table, options) {
                             var match = false;
                             var override = false;
 
+                            // Extract the simplified test key
                             var key = item.key;
 
                             // Attempt to associate this result with an existing test
-                            tableData.forEach(function(row, index) {
+                            for (var idx = 0; idx < tableData.length; idx++) {
+
+                                var row = tableData[idx];
 
                                 if (key == row.key) {
 
                                     item.test_name = row.test_name;
                                     item.required = row.required;
 
-                                    match = true;
-                                    
                                     if (row.result == null) {
                                         item.parent = parent_node;
-                                        tableData[index] = item;
+                                        tableData[idx] = item;
                                         override = true;
                                     } else {
                                         item.parent = row.pk;
                                     }
+
+                                    match = true;
+
+                                    break;
                                 }
-                            });
+                            }
 
                             // No match could be found
                             if (!match) {
