@@ -354,16 +354,18 @@ class StockItemTest(StockAPITestCase):
         self.assertContains(response, 'does not exist', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST without quantity
-        response = self.client.post(
+        response = self.post(
             self.list_url,
-            data={
+            {
                 'part': 1,
                 'location': 1,
-            }
+            },
+            expected_code=201,
         )
 
-        self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
-
+        # Item should have been created with default quantity
+        self.assertEqual(response.data['quantity'], 1)
+        
         # POST with quantity and part and location
         response = self.client.post(
             self.list_url,

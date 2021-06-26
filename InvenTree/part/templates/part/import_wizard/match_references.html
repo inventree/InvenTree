@@ -1,4 +1,4 @@
-{% extends "order/order_wizard/po_upload.html" %}
+{% extends "part/import_wizard/part_upload.html" %}
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
@@ -26,10 +26,8 @@
             <tr>
                 <th></th>
                 <th>{% trans "Row" %}</th>
-                <th>{% trans "Select Supplier Part" %}</th>
-                <th>{% trans "Quantity" %}</th>
                 {% for col in columns %}
-                {% if col.guess != 'Quantity' %}
+
                 <th>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     <input type='hidden' name='col_guess_{{ forloop.counter0 }}' value='{{ col.guess }}'/>
@@ -39,7 +37,6 @@
                     {{ col.name }}
                     {% endif %}
                 </th>
-                {% endif %}
                 {% endfor %}
             </tr>
         </thead>
@@ -55,53 +52,21 @@
                 <td>
                 {% add row.index 1 %}
                 </td>
-                <td>
-                    {% for field in form.visible_fields %}
-                        {% if field.name == row.item_select %}
-                            {{ field }}
-                        {% endif %}
-                    {% endfor %}
-                    {% if row.errors.part %}
-                    <p class='help-inline'>{{ row.errors.part }}</p>
-                    {% endif %}
-                </td>
-                <td>
-                    {% for field in form.visible_fields %}
-                        {% if field.name == row.quantity %}
-                            {{ field|as_crispy_field }}
-                        {% endif %}
-                    {% endfor %}
-                    {% if row.errors.quantity %}
-                        <p class='help-inline'>{{ row.errors.quantity }}</p>
-                    {% endif %}
-                </td>
                 {% for item in row.data %}
-                {% if item.column.guess != 'Quantity' %}
                 <td>
-                    {% if item.column.guess == 'Purchase_Price' %}
+                    {% if item.column.guess %}
+                        {% with row_name=item.column.guess|lower %}
                         {% for field in form.visible_fields %}
-                            {% if field.name == row.purchase_price %}
+                            {% if field.name == row|keyvalue:row_name %}
                                 {{ field|as_crispy_field }}
                             {% endif %}
                         {% endfor %}
-                    {% elif item.column.guess == 'Reference' %}
-                        {% for field in form.visible_fields %}
-                            {% if field.name == row.reference %}
-                                {{ field|as_crispy_field }}
-                            {% endif %}
-                        {% endfor %}
-                    {% elif item.column.guess == 'Notes' %}
-                        {% for field in form.visible_fields %}
-                            {% if field.name == row.notes %}
-                                {{ field|as_crispy_field }}
-                            {% endif %}
-                        {% endfor %}
+                        {% endwith %}
                     {% else %}
                         {{ item.cell }}
                     {% endif %}
                     <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
                 </td>
-                {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}

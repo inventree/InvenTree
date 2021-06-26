@@ -13,6 +13,7 @@ from InvenTree.status_codes import StockStatus
 from part.models import Part, PartCategory
 from stock.models import StockItem
 from company.models import Company
+from common.models import InvenTreeSetting
 
 
 class PartAPITest(InvenTreeAPITestCase):
@@ -311,6 +312,59 @@ class PartAPITest(InvenTreeAPITestCase):
 
             self.assertEqual(len(data['results']), n)
 
+    def test_default_values(self):
+        """
+        Tests for 'default' values:
+
+        Ensure that unspecified fields revert to "default" values
+        (as specified in the model field definition)
+        """
+
+        url = reverse('api-part-list')
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part',
+            'category': 1,
+        })
+
+        data = response.data
+
+        # Check that the un-specified fields have used correct default values
+        self.assertTrue(data['active'])
+        self.assertFalse(data['virtual'])
+
+        # By default, parts are not purchaseable
+        self.assertFalse(data['purchaseable'])
+
+        # Set the default 'purchaseable' status to True
+        InvenTreeSetting.set_setting(
+            'PART_PURCHASEABLE',
+            True,
+            self.user
+        )
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+        })
+
+        # Part should now be purchaseable by default
+        self.assertTrue(response.data['purchaseable'])
+
+        # "default" values should not be used if the value is specified
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+            'active': False,
+            'purchaseable': False,
+        })
+
+        self.assertFalse(response.data['active'])
+        self.assertFalse(response.data['purchaseable'])
+
 
 class PartDetailTests(InvenTreeAPITestCase):
     """
@@ -391,7 +445,14 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # Try to remove the part
         response = self.client.delete(url)
-    
+
+        # As the part is 'active' we cannot delete it
+        self.assertEqual(response.status_code, 405)
+
+        # So, let's make it not active
+        response = self.patch(url, {'active': False}, expected_code=200)
+
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
         # Part count should have reduced
@@ -541,8 +602,6 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # And now check that the image has been set
         p = Part.objects.get(pk=pk)
-
-        print("Image:", p.image.file)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):

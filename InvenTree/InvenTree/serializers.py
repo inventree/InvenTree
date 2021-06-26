@@ -2,17 +2,19 @@
 Serializers used in various InvenTree apps
 """
 
-
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import os
+
+from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework import serializers
+from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
 
@@ -41,6 +43,72 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     Inherits the standard Django ModelSerializer class,
     but also ensures that the underlying model class data are checked on validation.
     """
+
+    def __init__(self, instance=None, data=empty, **kwargs):
+
+        self.instance = instance
+
+        # If instance is None, we are creating a new instance
+        if instance is None:
+            
+            if data is empty:
+                data = OrderedDict()
+            else:
+                # Required to side-step immutability of a QueryDict
+                data = data.copy()
+
+            # Add missing fields which have default values
+            ModelClass = self.Meta.model
+
+            fields = model_meta.get_field_info(ModelClass)
+
+            for field_name, field in fields.fields.items():
+
+                if field.has_default() and field_name not in data:
+
+                    value = field.default
+
+                    # Account for callable functions
+                    if callable(value):
+                        try:
+                            value = value()
+                        except:
+                            continue
+
+                    data[field_name] = value
+
+        super().__init__(instance, data, **kwargs)
+
+    def get_initial(self):
+        """
+        Construct initial data for the serializer.
+        Use the 'default' values specified by the django model definition
+        """
+
+        initials = super().get_initial()
+
+        # Are we creating a new instance?
+        if self.instance is None:
+            ModelClass = self.Meta.model
+
+            fields = model_meta.get_field_info(ModelClass)
+
+            for field_name, field in fields.fields.items():
+
+                if field.has_default() and field_name not in initials:
+
+                    value = field.default
+
+                    # Account for callable functions
+                    if callable(value):
+                        try:
+                            value = value()
+                        except:
+                            continue
+
+                    initials[field_name] = value
+
+        return initials
 
     def run_validation(self, data=empty):
         """ Perform serializer validation.
