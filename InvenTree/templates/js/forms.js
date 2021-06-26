@@ -246,6 +246,11 @@ function constructFormBody(fields, options) {
         ignored_fields.push('id');
     }
 
+    // Provide each field object with its own name
+    for(field in fields) {
+        fields[field].name = field;
+    }
+
     // Construct an ordered list of field names
     var field_names = [];
 
@@ -348,9 +353,8 @@ function submitFormData(fields, options) {
         var field = fields[name] || null;
 
         if (field) {
-            var value = getFieldValue(name);
 
-            // TODO - Custom parsing depending on type?
+            var value = getFormFieldValue(name, field, options);
 
             data[name] = value;
         } else {
@@ -381,6 +385,29 @@ function submitFormData(fields, options) {
         }
     );
 }
+
+
+/*
+ * Extract and field value before sending back to the server
+ *
+ * arguments:
+ * - name: The name of the field
+ * - field: The field specification provided from the OPTIONS request
+ * - options: The original options object provided by the client
+ */
+function getFormFieldValue(name, field, options) {
+
+    // Find the HTML element
+    var el = $(options.modal).find(`#id_${name}`);
+
+    switch (field.type) {
+        case 'boolean':
+            return el.is(":checked");
+        default:
+            return el.val();
+    }
+}
+
 
 
 /*
