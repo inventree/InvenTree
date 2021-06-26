@@ -13,6 +13,7 @@ from InvenTree.status_codes import StockStatus
 from part.models import Part, PartCategory
 from stock.models import StockItem
 from company.models import Company
+from common.models import InvenTreeSetting
 
 
 class PartAPITest(InvenTreeAPITestCase):
@@ -332,7 +333,38 @@ class PartAPITest(InvenTreeAPITestCase):
         # Check that the un-specified fields have used correct default values
         self.assertTrue(data['active'])
         self.assertFalse(data['virtual'])
-        self.assertTrue(data['purchaseable'])
+
+        # By default, parts are not purchaseable
+        self.assertFalse(data['purchaseable'])
+
+        # Set the default 'purchaseable' status to True
+        InvenTreeSetting.set_setting(
+            'PART_PURCHASEABLE',
+            True,
+            self.user
+        )
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+        })
+
+        # Part should now be purchaseable by default
+        self.assertTrue(response.data['purchaseable'])
+
+        # "default" values should not be used if the value is specified
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+            'active': False,
+            'purchaseable': False,
+        })
+
+        self.assertFalse(response.data['active'])
+        self.assertFalse(response.data['purchaseable'])
+
 
 
 class PartDetailTests(InvenTreeAPITestCase):

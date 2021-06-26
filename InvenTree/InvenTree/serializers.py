@@ -59,9 +59,46 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             for field_name, field in fields.fields.items():
 
                 if field.has_default():
-                    initials[field_name] = field.default
+
+                    value = field.default
+
+                    # Account for callable functions
+                    if callable(value):
+                        value = value()
+
+                    initials[field_name] = value
 
         return initials
+
+    def is_valid(self, raise_exception=False):
+        """
+        Also override the is_valid() method, as in some cases get_initial() is not actually called.
+        """
+
+        # Calling super().is_valid creates self._validated_data
+        valid = super().is_valid(raise_exception)
+
+        # Are we creating a new instance?
+        if self.instance is None:
+            ModelClass = self.Meta.model
+
+            fields = model_meta.get_field_info(ModelClass)
+
+            for field_name, field in fields.fields.items():
+
+                if field.has_default():
+                    if field not in self._validated_data:
+
+                        value = field.default
+
+                        # Account for callable functions
+                        if callable(value):
+                            value = value()
+
+                        self._validated_data[field_name] = value
+
+
+        return valid
 
     def run_validation(self, data=empty):
         """ Perform serializer validation.
