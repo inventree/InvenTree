@@ -2,12 +2,8 @@
 Serializers used in various InvenTree apps
 """
 
-
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from rest_framework import serializers
-from rest_framework.utils import model_meta
 
 import os
 
@@ -16,6 +12,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework import serializers
+from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
 
