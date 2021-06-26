@@ -445,7 +445,14 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # Try to remove the part
         response = self.client.delete(url)
-    
+
+        # As the part is 'active' we cannot delete it
+        self.assertEqual(response.status_code, 405)
+
+        # So, let's make it not active
+        response = self.patch(url, {'active': False}, expected_code=200)
+
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
         # Part count should have reduced
