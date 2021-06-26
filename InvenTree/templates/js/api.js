@@ -103,10 +103,11 @@ function inventreePut(url, data={}, options={}) {
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            console.error('Error on UPDATE to ' + url);
-            console.error(thrownError);
             if (options.error) {
                 options.error(xhr, ajaxOptions, thrownError);
+            } else {
+                console.error(`Error on ${method} to '${url}' - STATUS ${xhr.status}`);
+                console.error(thrownError);
             }
         },
         complete: function(xhr, status) {

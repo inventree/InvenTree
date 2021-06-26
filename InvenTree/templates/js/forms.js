@@ -79,7 +79,7 @@ function canDelete(OPTIONS) {
  * Get the API endpoint options at the provided URL,
  * using a HTTP options request.
  */
-function getApiEndpointOptions(url, callback, options={}) {
+function getApiEndpointOptions(url, callback, options) {
 
     // Return the ajax request object
     $.ajax({
@@ -108,10 +108,10 @@ function getApiEndpointOptions(url, callback, options={}) {
  * options:
  * - 
  */
-function constructCreateForm(url, fields, options={}) {
+function constructCreateForm(fields, options) {
     
     // We should have enough information to create the form!
-    constructFormBody(url, fields, options);
+    constructFormBody(fields, options);
 }
 
 
@@ -124,11 +124,11 @@ function constructCreateForm(url, fields, options={}) {
  * options:
  * - 
  */
-function constructChangeForm(url, fields, options={}) {
+function constructChangeForm(fields, options) {
 
     // Request existing data from the API endpoint
     $.ajax({
-        url: url,
+        url: options.url,
         type: 'GET',
         contentType: 'application/json',
         dataType: 'json',
@@ -145,7 +145,7 @@ function constructChangeForm(url, fields, options={}) {
                 }
             }
 
-            constructFormBody(url, fields, options);
+            constructFormBody(fields, options);
         },
         error: function(request, status, error) {
             // TODO: Handle error here
@@ -160,16 +160,16 @@ function constructChangeForm(url, fields, options={}) {
  * Request API OPTIONS data from the server,
  * and construct a modal form based on the response.
  * 
- * arguments:
- * - url: API URL
- * 
  * options:
  * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE',
  * - title: The form title
  * - fields: list of fields to display
  * - exclude: List of fields to exclude
  */
-function constructForm(url, options={}) {
+function constructForm(url, options) {
+
+    // Save the URL 
+    options.url = url;
 
     // Default HTTP method
     options.method = options.method || 'PATCH';
@@ -187,7 +187,7 @@ function constructForm(url, options={}) {
         switch (options.method) {
             case 'POST':
                 if (canCreate(OPTIONS)) {
-                    constructCreateForm(url, OPTIONS.actions.POST, options);
+                    constructCreateForm(OPTIONS.actions.POST, options);
                 } else {
                     // User does not have permission to POST to the endpoint
                     console.log('cannot POST');
@@ -197,7 +197,7 @@ function constructForm(url, options={}) {
             case 'PUT':
             case 'PATCH':
                 if (canChange(OPTIONS)) {
-                    constructChangeForm(url, OPTIONS.actions.PUT, options);
+                    constructChangeForm(OPTIONS.actions.PUT, options);
                 } else {
                     // User does not have permission to PUT/PATCH to the endpoint
                     // TODO
@@ -231,7 +231,7 @@ function constructForm(url, options={}) {
 
 
 
-function constructFormBody(url, fields, options={}) {
+function constructFormBody(fields, options) {
 
     var html = '';
 
@@ -298,7 +298,10 @@ function constructFormBody(url, fields, options={}) {
 
     // TODO: Dynamically create the modals,
     //       so that we can have an infinite number of stacks!
-    var modal = '#modal-form';
+
+    options.modal = options.modal || '#modal-form';
+    
+    var modal = options.modal;
 
     modalEnable(modal, true);
 
@@ -313,12 +316,9 @@ function constructFormBody(url, fields, options={}) {
     $(modal).modal('show');
 
     // Setup related fields
-    initializeRelatedFields(modal, url, fields, options)
+    initializeRelatedFields(fields, options)
 
     attachToggle(modal);
-    // attachSelect(modal);
-
-    //$(modal + ' .select').select2();
 
     $(modal + ' .select2-container').addClass('select-full-width');
     $(modal + ' .select2-container').css('width', '100%');
@@ -328,29 +328,119 @@ function constructFormBody(url, fields, options={}) {
     $(modal).off('click', '#modal-form-submit');
     $(modal).on('click', '#modal-form-submit', function() {
 
-        var patch_data = {};
-
-        // Construct submit data
-        field_names.forEach(function(name) {
-            var field = fields[name] || null;
-
-            if (field) {
-                var field_value = getFieldValue(name);
-
-                patch_data[name] = field_value;
-            } else {
-                console.log(`Could not find field matching '${name}'`);
-            }
-        })
-        
-        
-        console.log(patch_data);
-
+        submitFormData(fields, options);
     });
 }
 
 
-function initializeRelatedFields(modal, url, fields, options) {
+/*
+ * Submit form data to the server.
+ * 
+ */
+function submitFormData(fields, options) {
+
+    // Data to be sent to the server
+    var data = {};
+
+    // Extract values for each field
+    options.field_names.forEach(function(name) {
+
+        var field = fields[name] || null;
+
+        if (field) {
+            var value = getFieldValue(name);
+
+            // TODO - Custom parsing depending on type?
+
+            data[name] = value;
+        } else {
+            console.log(`WARNING: Could not find field matching '${name}'`);
+        }
+    });
+
+    // Submit data
+    inventreePut(
+        options.url,
+        data,
+        {
+            method: options.method,
+            success: function(response, status) {
+                console.log('success', '->', status);
+            },
+            error: function(xhr, status, thrownError) {
+                
+                switch (xhr.status) {
+                    case 400:  // Bad request
+                        handleFormErrors(xhr.responseJSON, fields, options);
+                        break;
+                    default:
+                        console.log(`WARNING: Unhandled response code - ${xhr.status}`);
+                        break;
+                }
+            }
+        }
+    );
+}
+
+
+/*
+ * Remove all error text items from the form
+ */
+function clearFormErrors(options) {
+
+    // Remove the individual error messages
+    $(options.modal).find('.form-error-message').remove();
+
+    // Remove the "has error" class
+    $(options.modal).find('.has-error').removeClass('has-error');
+}
+
+
+/*
+ * Display form error messages as returned from the server.
+ * 
+ * arguments:
+ * - errors: The JSON error response from the server
+ * - fields: The form data object
+ * - options: Form options provided by the client
+ */
+function handleFormErrors(errors, fields, options) {
+
+    // Remove any existing error messages from the form
+    clearFormErrors(options);
+
+    for (field_name in errors) {
+        if (field_name in fields) {
+
+            // Add the 'has-error' class
+            $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+
+            var field_dom = $(options.modal).find(`#id_${field_name}`);
+
+            var field_errors = errors[field_name];
+
+            // Add an entry for each returned error message
+            for (var idx = field_errors.length-1; idx >= 0; idx--) {
+
+                var error_text = field_errors[idx];
+
+                var html = `
+                <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
+                    <strong>${error_text}</strong>
+                </span>`;
+
+                $(html).insertAfter(field_dom);
+            }
+
+        } else {
+            console.log(`WARNING: handleFormErrors found no match for field '${field_name}'`);
+        }
+    }
+
+}
+
+
+function initializeRelatedFields(fields, options) {
 
     var field_names = options.field_names;
 
@@ -368,7 +458,7 @@ function initializeRelatedFields(modal, url, fields, options) {
             continue;
         }
 
-        initializeRelatedField(modal, name, field, options);
+        initializeRelatedField(name, field, options);
     }
 }
 
@@ -385,7 +475,7 @@ function initializeRelatedFields(modal, url, fields, options) {
 function initializeRelatedField(modal, name, field, options) {
 
     // Find the select element and attach a select2 to it
-    var select = $(modal).find(`#id_${name}`);
+    var select = $(options.modal).find(`#id_${name}`);
 
     // TODO: Add 'placeholder' support for entry select2 fields
 
@@ -397,7 +487,7 @@ function initializeRelatedField(modal, name, field, options) {
             url: field.api_url,
             dataType: 'json',
             allowClear: !field.required,        // Allow non required fields to be cleared
-            dropdownParent: $(modal),
+            dropdownParent: $(options.modal),
             dropdownAutoWidth: false,
             delay: 250,
             cache: true,
@@ -555,7 +645,7 @@ function renderModelData(name, model, data, parameters, options) {
  * - Field description (help text)
  * - Field errors
  */
-function constructField(name, parameters, options={}) {
+function constructField(name, parameters, options) {
 
     var field_name = `id_${name}`;
 
@@ -631,7 +721,7 @@ function constructLabel(name, parameters) {
  * - parameters: Field parameters returned by the OPTIONS method
  * 
  */
-function constructInput(name, parameters, options={}) {
+function constructInput(name, parameters, options) {
 
     var html = '';
 
@@ -741,7 +831,7 @@ function constructInputOptions(name, classes, type, parameters) {
 
 
 // Construct a "checkbox" input
-function constructCheckboxInput(name, parameters, options={}) {
+function constructCheckboxInput(name, parameters, options) {
 
     return constructInputOptions(
         name,
@@ -754,7 +844,7 @@ function constructCheckboxInput(name, parameters, options={}) {
 
 
 // Construct a "text" input
-function constructTextInput(name, parameters, options={}) {
+function constructTextInput(name, parameters, options) {
 
     var classes = '';
     var type = '';
@@ -784,7 +874,7 @@ function constructTextInput(name, parameters, options={}) {
 
 
 // Construct a "number" field
-function constructNumberInput(name, parameters, options={}) {
+function constructNumberInput(name, parameters, options) {
 
     return constructInputOptions(
         name,
@@ -796,7 +886,7 @@ function constructNumberInput(name, parameters, options={}) {
 
 
 // Construct a "choice" input
-function constructChoiceInput(name, parameters, options={}) {
+function constructChoiceInput(name, parameters, options) {
 
     var html = `<select id='id_${name}' class='select form-control' name='${name}'>`;
 
@@ -831,7 +921,7 @@ function constructChoiceInput(name, parameters, options={}) {
  * be converted into a select2 input.
  * This will then be served custom data from the API (as required)...
  */
-function constructRelatedFieldInput(name, parameters, options={}) {
+function constructRelatedFieldInput(name, parameters, options) {
 
     var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
 
@@ -849,7 +939,7 @@ function constructRelatedFieldInput(name, parameters, options={}) {
  * - parameters: Field parameters returned by the OPTIONS method
  *  
  */
-function constructHelpText(name, parameters, options={}) {
+function constructHelpText(name, parameters, options) {
     
     var html = `<div id='hint_id_${name}' class='help-block'>${parameters.help_text}</div>`;
 
@@ -864,7 +954,7 @@ function constructHelpText(name, parameters, options={}) {
  * - name: The name of the field
  * - parameters: Field parameters returned by the OPTIONS method
  */
-function constructErrorMessage(name, parameters, options={}) {
+function constructErrorMessage(name, parameters, options) {
 
     var errors_html = '';
 
