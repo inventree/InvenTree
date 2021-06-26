@@ -1479,16 +1479,17 @@ class Part(MPTTModel):
 
         return True
 
-    def get_price_info(self, quantity=1, buy=True, bom=True):
+    def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """ Return a simplified pricing string for this part
 
         Args:
             quantity: Number of units to calculate price for
             buy: Include supplier pricing (default = True)
             bom: Include BOM pricing (default = True)
+            internal: Include internal pricing (default = False)
         """
 
-        price_range = self.get_price_range(quantity, buy, bom)
+        price_range = self.get_price_range(quantity, buy, bom, internal)
 
         if price_range is None:
             return None
@@ -1576,9 +1577,10 @@ class Part(MPTTModel):
 
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
+        - Internal price (if set for the part)
 
         Returns:
-            Minimum of the supplier price or BOM price. If no pricing available, returns None
+            Minimum of the supplier, BOM or internal price. If no pricing available, returns None
         """
 
         # only get internal price if set and should be used
@@ -2499,7 +2501,9 @@ class BomItem(models.Model):
     def price_range(self):
         """ Return the price-range for this BOM item. """
 
-        prange = self.sub_part.get_price_range(self.quantity)
+        # get internal price setting
+        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+        prange = self.sub_part.get_price_range(self.quantity, intenal=use_internal)
 
         if prange is None:
             return prange

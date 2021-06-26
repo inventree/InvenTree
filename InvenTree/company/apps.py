@@ -44,8 +44,6 @@ class CompanyConfig(AppConfig):
                             company.image.render_variations(replace=False)
                         except FileNotFoundError:
                             logger.warning(f"Image file '{company.image}' missing")
-                            company.image = None
-                            company.save()
                         except UnidentifiedImageError:
                             logger.warning(f"Image file '{company.image}' is invalid")
         except (OperationalError, ProgrammingError):

@@ -109,12 +109,12 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
-    def patch(self, url, data, expected_code=None):
+    def patch(self, url, data, files=None, expected_code=None):
         """
         Issue a PATCH request
         """
 
-        response = self.client.patch(url, data=data, format='json')
+        response = self.client.patch(url, data=data, files=files, format='json')
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)

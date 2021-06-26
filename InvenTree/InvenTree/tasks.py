@@ -28,7 +28,7 @@ def schedule_task(taskname, **kwargs):
     try:
         from django_q.models import Schedule
     except (AppRegistryNotReady):
-        logger.warning("Could not start background tasks - App registry not ready")
+        logger.info("Could not start background tasks - App registry not ready")
         return
 
     try:
