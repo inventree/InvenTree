@@ -718,7 +718,7 @@
   position:relative;
   height: auto !important;
   max-height: calc(100vh - 200px) !important;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px;
 }
 

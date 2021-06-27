@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework import status
+import PIL
 
 from django.urls import reverse
+
+from rest_framework import status
+from rest_framework.test import APIClient
+
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import StockStatus
 
 from part.models import Part, PartCategory
 from stock.models import StockItem
 from company.models import Company
-
-from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import StockStatus
+from common.models import InvenTreeSetting
 
 
 class PartAPITest(InvenTreeAPITestCase):
@@ -308,6 +312,59 @@ class PartAPITest(InvenTreeAPITestCase):
 
             self.assertEqual(len(data['results']), n)
 
+    def test_default_values(self):
+        """
+        Tests for 'default' values:
+
+        Ensure that unspecified fields revert to "default" values
+        (as specified in the model field definition)
+        """
+
+        url = reverse('api-part-list')
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part',
+            'category': 1,
+        })
+
+        data = response.data
+
+        # Check that the un-specified fields have used correct default values
+        self.assertTrue(data['active'])
+        self.assertFalse(data['virtual'])
+
+        # By default, parts are not purchaseable
+        self.assertFalse(data['purchaseable'])
+
+        # Set the default 'purchaseable' status to True
+        InvenTreeSetting.set_setting(
+            'PART_PURCHASEABLE',
+            True,
+            self.user
+        )
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+        })
+
+        # Part should now be purchaseable by default
+        self.assertTrue(response.data['purchaseable'])
+
+        # "default" values should not be used if the value is specified
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+            'active': False,
+            'purchaseable': False,
+        })
+
+        self.assertFalse(response.data['active'])
+        self.assertFalse(response.data['purchaseable'])
+
 
 class PartDetailTests(InvenTreeAPITestCase):
     """
@@ -388,7 +445,14 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # Try to remove the part
         response = self.client.delete(url)
-    
+
+        # As the part is 'active' we cannot delete it
+        self.assertEqual(response.status_code, 405)
+
+        # So, let's make it not active
+        response = self.patch(url, {'active': False}, expected_code=200)
+
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
         # Part count should have reduced
@@ -472,6 +536,72 @@ class PartDetailTests(InvenTreeAPITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_image_upload(self):
+        """
+        Test that we can upload an image to the part API
+        """
+
+        self.assignRole('part.add')
+
+        # Create a new part
+        response = self.client.post(
+            reverse('api-part-list'),
+            {
+                'name': 'imagine',
+                'description': 'All the people',
+                'category': 1,
+            },
+            expected_code=201
+        )
+
+        pk = response.data['pk']
+
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        p = Part.objects.get(pk=pk)
+
+        # Part should not have an image!
+        with self.assertRaises(ValueError):
+            print(p.image.file)
+
+        # Create a custom APIClient for file uploads
+        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
+        upload_client = APIClient()
+        upload_client.force_authenticate(user=self.user)
+
+        # Try to upload a non-image file
+        with open('dummy_image.txt', 'w') as dummy_image:
+            dummy_image.write('hello world')
+
+        with open('dummy_image.txt', 'rb') as dummy_image:
+            response = upload_client.patch(
+                url,
+                {
+                    'image': dummy_image,
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 400)
+
+        # Now try to upload a valid image file
+        img = PIL.Image.new('RGB', (128, 128), color='red')
+        img.save('dummy_image.jpg')
+
+        with open('dummy_image.jpg', 'rb') as dummy_image:
+            response = upload_client.patch(
+                url,
+                {
+                    'image': dummy_image,
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+        # And now check that the image has been set
+        p = Part.objects.get(pk=pk)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):

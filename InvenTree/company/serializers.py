@@ -6,13 +6,14 @@ from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
 
+from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeImageSerializerField
+
+from part.serializers import PartBriefSerializer
+
 from .models import Company
 from .models import ManufacturerPart, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
-
-from InvenTree.serializers import InvenTreeModelSerializer
-
-from part.serializers import PartBriefSerializer
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -52,7 +53,7 @@ class CompanySerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)

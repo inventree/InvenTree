@@ -18,6 +18,7 @@ class InvenTreeAPITestCase(APITestCase):
     email = 'test@testing.com'
 
     superuser = False
+    is_staff = True
     auto_login = True
 
     # Set list of roles automatically associated with the user
@@ -40,8 +41,12 @@ class InvenTreeAPITestCase(APITestCase):
 
         if self.superuser:
             self.user.is_superuser = True
-            self.user.save()
 
+        if self.is_staff:
+            self.user.is_staff = True
+
+        self.user.save()
+        
         for role in self.roles:
             self.assignRole(role)
 
@@ -109,12 +114,12 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
-    def patch(self, url, data, expected_code=None):
+    def patch(self, url, data, files=None, expected_code=None):
         """
         Issue a PATCH request
         """
 
-        response = self.client.patch(url, data=data, format='json')
+        response = self.client.patch(url, data=data, files=files, format='json')
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)

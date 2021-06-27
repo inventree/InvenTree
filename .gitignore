@@ -35,6 +35,9 @@ local_settings.py
 *.backup
 *.old
 
+# Files used for testing
+dummy_image.*
+
 # Sphinx files
 docs/_build
 
