@@ -2503,7 +2503,7 @@ class BomItem(models.Model):
 
         # get internal price setting
         use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        prange = self.sub_part.get_price_range(self.quantity, intenal=use_internal)
+        prange = self.sub_part.get_price_range(self.quantity, internal=use_internal)
 
         if prange is None:
             return prange
