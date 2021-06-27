@@ -293,6 +293,8 @@
 {% block js_ready %}
     {{ block.super }}
 
+    {% default_currency as currency %}
+
 
     loadSupplierPartTable(
         "#supplier-table",
@@ -321,9 +323,8 @@
 
 
     // history graphs
-    {% default_currency as currency %}
     {% if price_history %}
-            var pricedata = {
+            var purchasepricedata = {
                     labels: [
                         {% for line in price_history %}'{{ line.date }}',{% endfor %}
                     ],
@@ -375,7 +376,7 @@
                         borderWidth: 1
                     }]
                 }
-            var StockPriceChart = loadStockPricingChart($('#StockPriceChart'), pricedata)
+            var StockPriceChart = loadStockPricingChart($('#StockPriceChart'), purchasepricedata)
             var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
             var bomdata = {
                 labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
