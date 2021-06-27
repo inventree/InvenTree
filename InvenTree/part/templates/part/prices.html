@@ -17,13 +17,17 @@
 {% default_currency as currency %}
 
 <div class="row">
+    <a class="anchor" id="overview"></a>
     <div class="col col-md-6">
         <h4>{% trans "Pricing ranges" %}</h4>
         <table class='table table-striped table-condensed'>
         {% if part.supplier_count > 0 %}
             {% if min_total_buy_price %}
                 <tr>
-                    <td><b>{% trans 'Supplier Pricing' %}</b></td>
+                    <td><b>{% trans 'Supplier Pricing' %}</b>
+                        <a href="#supplier-cost" title='{% trans "Show supplier cost" %}'><span class="fas fa-search-dollar"></span></a>
+                        <a href="#purchase-price" title='{% trans "Show purchase price" %}'><span class="fas fa-chart-bar"></span></a>
+                    </td>
                     <td>{% trans 'Unit Cost' %}</td>
                     <td>Min: {% include "price.html" with price=min_unit_buy_price %}</td>
                     <td>Max: {% include "price.html" with price=max_unit_buy_price %}</td>
@@ -48,7 +52,9 @@
         {% if part.bom_count > 0 %}
             {% if min_total_bom_price %}
                 <tr>
-                    <td><b>{% trans 'BOM Pricing' %}</b></td>
+                    <td><b>{% trans 'BOM Pricing' %}</b>
+                        <a href="#bom-cost" title='{% trans "Show BOM cost" %}'><span class="fas fa-search-dollar"></span></a>
+                    </td>
                     <td>{% trans 'Unit Cost' %}</td>
                     <td>Min: {% include "price.html" with price=min_unit_bom_price %}</td>
                     <td>Max: {% include "price.html" with price=max_unit_bom_price %}</td>
@@ -94,7 +100,10 @@
     
         {% if total_part_price %}
             <tr>
-                <td><b>{% trans 'Sale Price' %}</b></td>
+                <td><b>{% trans 'Sale Price' %}</b>
+                    <a href="#sale-cost" title='{% trans "Show sale cost" %}'><span class="fas fa-search-dollar"></span></a>
+                    <a href="#sale-price" title='{% trans "Show sale price" %}'><span class="fas fa-chart-bar"></span></a>
+                </td>
                 <td>{% trans 'Unit Cost' %}</td>
                 <td colspan='2'>{% include "price.html" with price=unit_part_price %}</td>
             </tr>
@@ -132,8 +141,11 @@
 
 {% if part.purchaseable and roles.purchase_order.view %}
     <div class='panel panel-default panel-inventree'>
+        <a class="anchor" id="supplier-cost"></a>
         <div class='panel-heading'>
-            <h4>{% trans "Supplier Cost" %}</h4>
+            <h4>{% trans "Supplier Cost" %}  
+                <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+            </h4>
         </div>
         
         <div class='panel-content'><div class="row">
@@ -149,8 +161,11 @@
     </div>
 
     <div class='panel panel-default panel-inventree'>
+        <a class="anchor" id="purchase-price"></a>
         <div class='panel-heading'>
-            <h4>{% trans "Purchase Price" %}</h4>
+            <h4>{% trans "Purchase Price" %}  
+                <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+            </h4>
         </div>
         
         {% if price_history %}
@@ -172,8 +187,11 @@
 
 {% if show_internal_price and roles.sales_order.view %}
     <div class='panel panel-default panel-inventree'>
+        <a class="anchor" id="internal-cost"></a>
         <div class='panel-heading'>
-            <h4>{% trans "Internal Cost" %}</h4>
+            <h4>{% trans "Internal Cost" %}  
+                <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+            </h4>
         </div>
         
         <div class='panel-content'><div class="row full-height">
@@ -200,8 +218,11 @@
 
 {% if part.has_bom and roles.sales_order.view %}
 <div class='panel panel-default panel-inventree'>
+    <a class="anchor" id="bom-cost"></a>
     <div class='panel-heading'>
-        <h4>{% trans "BOM Cost" %}</h4>
+        <h4>{% trans "BOM Cost" %}  
+            <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        </h4>
     </div>
     
     <div class='panel-content'><div class="row">
@@ -224,8 +245,11 @@
 
 {% if part.salable and roles.sales_order.view %}
     <div class='panel panel-default panel-inventree'>
+        <a class="anchor" id="sale-cost"></a>
         <div class='panel-heading'>
-            <h4>{% trans "Sale Cost" %}</h4>
+            <h4>{% trans "Sale Cost" %}  
+                <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+            </h4>
         </div>
         
         <div class='panel-content'><div class="row full-height">
@@ -249,8 +273,11 @@
     </div>
 
     <div class='panel panel-default panel-inventree'>
+        <a class="anchor" id="sale-price"></a>
         <div class='panel-heading'>
-            <h4>{% trans "Sale Price" %}</h4>
+            <h4>{% trans "Sale Price" %}  
+                <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+            </h4>
         </div>
         
         <div class='panel-content'>
