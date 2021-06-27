@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-26 23:25+0000\n"
-"PO-Revision-Date: 2021-06-27 00:11\n"
+"POT-Creation-Date: 2021-06-27 23:17+0000\n"
+"PO-Revision-Date: 2021-06-27 23:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -72,36 +72,36 @@ msgstr "Thema anwenden"
 msgid "Select Category"
 msgstr "Kategorie auswählen"
 
-#: InvenTree/helpers.py:377
+#: InvenTree/helpers.py:396
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr "Doppelte Seriennummer: {n}"
 
-#: InvenTree/helpers.py:384 order/models.py:248 order/models.py:358
+#: InvenTree/helpers.py:403 order/models.py:248 order/models.py:358
 #: stock/views.py:1795
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
-#: InvenTree/helpers.py:387
+#: InvenTree/helpers.py:406
 msgid "Empty serial number string"
 msgstr "Keine Seriennummer angegeben"
 
-#: InvenTree/helpers.py:409 InvenTree/helpers.py:412 InvenTree/helpers.py:415
-#: InvenTree/helpers.py:440
+#: InvenTree/helpers.py:428 InvenTree/helpers.py:431 InvenTree/helpers.py:434
+#: InvenTree/helpers.py:459
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ungültige Gruppe: {g}"
 
-#: InvenTree/helpers.py:445
+#: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Duplicate serial: {g}"
 msgstr "Doppelte Seriennummer: {g}"
 
-#: InvenTree/helpers.py:453
+#: InvenTree/helpers.py:472
 msgid "No serial numbers found"
 msgstr "Keine Seriennummern gefunden"
 
-#: InvenTree/helpers.py:457
+#: InvenTree/helpers.py:476
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
@@ -777,7 +777,7 @@ msgstr "Link zu einer externen URL"
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
 #: stock/models.py:532 stock/models.py:1667 stock/models.py:1769
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
-#: templates/js/bom.js:356 templates/js/stock.js:141 templates/js/stock.js:699
+#: templates/js/bom.js:349 templates/js/stock.js:141 templates/js/stock.js:699
 msgid "Notes"
 msgstr "Notizen"
 
@@ -1848,7 +1848,7 @@ msgstr "Preisstaffelungs Anzahl"
 
 #: common/models.py:736 company/templates/company/supplier_part_pricing.html:82
 #: part/templates/part/internal_prices.html:103
-#: part/templates/part/sale_prices.html:90 templates/js/bom.js:271
+#: part/templates/part/sale_prices.html:90
 msgid "Price"
 msgstr "Preis"
 
@@ -3397,7 +3397,7 @@ msgstr "Abbruch dieser Bestellung bedeutet, dass sie nicht länger bearbeitbar i
 msgid "Sales Order Items"
 msgstr "Auftrags-Positionen"
 
-#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:365
+#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:358
 #: templates/js/build.js:724 templates/js/build.js:1141
 msgid "Actions"
 msgstr "Aktionen"
@@ -4142,7 +4142,7 @@ msgstr "Teil für die Nutzung in der Stückliste auswählen"
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:2295 templates/js/bom.js:216 templates/js/bom.js:285
+#: part/models.py:2295 templates/js/bom.js:216 templates/js/bom.js:278
 msgid "Optional"
 msgstr "Optional"
 
@@ -4174,7 +4174,7 @@ msgstr "Prüfsumme"
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:2311 templates/js/bom.js:302 templates/js/bom.js:309
+#: part/models.py:2311 templates/js/bom.js:295 templates/js/bom.js:302
 #: templates/js/table_filters.js:51
 msgid "Inherited"
 msgstr "Geerbt"
@@ -4183,7 +4183,7 @@ msgstr "Geerbt"
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
-#: part/models.py:2317 templates/js/bom.js:294
+#: part/models.py:2317 templates/js/bom.js:287
 msgid "Allow Variants"
 msgstr "Varianten zulassen"
 
@@ -4902,7 +4902,7 @@ msgstr "Benötigt für Aufträge"
 msgid "Allocated to Orders"
 msgstr "Zu Bauaufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:172 templates/js/bom.js:323
+#: part/templates/part/part_base.html:172 templates/js/bom.js:316
 msgid "Can Build"
 msgstr "Herstellbar"
 
@@ -6708,31 +6708,35 @@ msgstr "Kaufpreisspanne"
 msgid "Purchase Price Average"
 msgstr "Durchschnittlicher Kaufpreis"
 
-#: templates/js/bom.js:277
+#: templates/js/bom.js:265
+msgid "Buy Price"
+msgstr ""
+
+#: templates/js/bom.js:271
 msgid "No pricing available"
 msgstr "Keine Preisinformation verfügbar"
 
-#: templates/js/bom.js:313 templates/js/bom.js:399
+#: templates/js/bom.js:306 templates/js/bom.js:392
 msgid "View BOM"
 msgstr "Stückliste anzeigen"
 
-#: templates/js/bom.js:373
+#: templates/js/bom.js:366
 msgid "Validate BOM Item"
 msgstr "Stücklisten-Position kontrollieren"
 
-#: templates/js/bom.js:375
+#: templates/js/bom.js:368
 msgid "This line has been validated"
 msgstr "Diese Position wurde kontrolliert"
 
-#: templates/js/bom.js:377
+#: templates/js/bom.js:370
 msgid "Edit BOM Item"
 msgstr "Stücklisten-Position bearbeiten"
 
-#: templates/js/bom.js:379
+#: templates/js/bom.js:372
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: templates/js/bom.js:470 templates/js/build.js:423 templates/js/build.js:1189
+#: templates/js/bom.js:463 templates/js/build.js:423 templates/js/build.js:1189
 msgid "No BOM items found"
 msgstr "Keine Stücklisten-Position(en) gefunden"
 
