@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-26 23:25+0000\n"
-"PO-Revision-Date: 2021-06-24 21:40\n"
+"PO-Revision-Date: 2021-06-27 00:11\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1900,10 +1900,8 @@ msgid "Fields matching failed"
 msgstr "Felder zuteilen fehlgeschlagen"
 
 #: common/views.py:586
-#, fuzzy
-#| msgid "Part Notes"
 msgid "Parts imported"
-msgstr "Teil-Bemerkungen"
+msgstr ""
 
 #: common/views.py:608 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -2228,11 +2226,9 @@ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
-msgstr ""
-"Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
+msgstr "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
 "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
 
 #: company/templates/company/detail.html:21
@@ -4507,10 +4503,8 @@ msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die oberste Kat. v
 
 #: part/templates/part/category_navbar.html:37
 #: part/templates/part/category_navbar.html:40
-#, fuzzy
-#| msgid "Important dates"
 msgid "Import Parts"
-msgstr "wichtige Daten"
+msgstr ""
 
 #: part/templates/part/category_parametric.html:10
 #: part/templates/part/navbar.html:21 part/templates/part/params.html:10
@@ -4627,10 +4621,8 @@ msgid "Unsuffitient privileges."
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:14
-#, fuzzy
-#| msgid "Report asset file"
 msgid "Import Parts from File"
-msgstr "Berichts-Ressource"
+msgstr ""
 
 #: part/templates/part/internal_prices.html:11
 #: part/templates/part/navbar.html:100
@@ -5094,10 +5086,8 @@ msgid "Created new part"
 msgstr "Neues Teil angelegt"
 
 #: part/views.py:763
-#, fuzzy
-#| msgid "Reference"
 msgid "Match References"
-msgstr "Referenz"
+msgstr ""
 
 #: part/views.py:1092
 msgid "Part QR Code"
@@ -6322,13 +6312,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6412,16 +6400,12 @@ msgid "Part Options"
 msgstr "Teil-Optionen"
 
 #: templates/InvenTree/settings/part.html:44
-#, fuzzy
-#| msgid "Part Notes"
 msgid "Part Import"
-msgstr "Teil-Bemerkungen"
+msgstr ""
 
 #: templates/InvenTree/settings/part.html:47
-#, fuzzy
-#| msgid "Import BOM data"
 msgid "Import Part"
-msgstr "Stückliste importieren"
+msgstr ""
 
 #: templates/InvenTree/settings/part.html:60
 msgid "Part Parameter Templates"
@@ -7821,3 +7805,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:191
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
