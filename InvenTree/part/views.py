@@ -984,8 +984,8 @@ class PartPricingView(PartDetail):
         # Stock history
         if part.total_stock > 1:
             price_history = []
-            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
-            stock = stock.prefetch_related('purchase_order', 'supplier_part')
+            stock = part.stock_entries(include_variants=False, in_stock=True).\
+                order_by('purchase_order__issue_date').prefetch_related('purchase_order', 'supplier_part')
 
             for stock_item in stock:
                 if None in [stock_item.purchase_price, stock_item.quantity]:
