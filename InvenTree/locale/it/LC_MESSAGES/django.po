@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-26 23:25+0000\n"
-"PO-Revision-Date: 2021-06-27 00:11\n"
+"POT-Creation-Date: 2021-06-27 23:17+0000\n"
+"PO-Revision-Date: 2021-06-27 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -72,36 +72,36 @@ msgstr ""
 msgid "Select Category"
 msgstr ""
 
-#: InvenTree/helpers.py:377
+#: InvenTree/helpers.py:396
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr ""
 
-#: InvenTree/helpers.py:384 order/models.py:248 order/models.py:358
+#: InvenTree/helpers.py:403 order/models.py:248 order/models.py:358
 #: stock/views.py:1795
 msgid "Invalid quantity provided"
 msgstr ""
 
-#: InvenTree/helpers.py:387
+#: InvenTree/helpers.py:406
 msgid "Empty serial number string"
 msgstr ""
 
-#: InvenTree/helpers.py:409 InvenTree/helpers.py:412 InvenTree/helpers.py:415
-#: InvenTree/helpers.py:440
+#: InvenTree/helpers.py:428 InvenTree/helpers.py:431 InvenTree/helpers.py:434
+#: InvenTree/helpers.py:459
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:445
+#: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Duplicate serial: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:453
+#: InvenTree/helpers.py:472
 msgid "No serial numbers found"
 msgstr ""
 
-#: InvenTree/helpers.py:457
+#: InvenTree/helpers.py:476
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
@@ -777,7 +777,7 @@ msgstr ""
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
 #: stock/models.py:532 stock/models.py:1667 stock/models.py:1769
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
-#: templates/js/bom.js:356 templates/js/stock.js:141 templates/js/stock.js:699
+#: templates/js/bom.js:349 templates/js/stock.js:141 templates/js/stock.js:699
 msgid "Notes"
 msgstr ""
 
@@ -1848,7 +1848,7 @@ msgstr ""
 
 #: common/models.py:736 company/templates/company/supplier_part_pricing.html:82
 #: part/templates/part/internal_prices.html:103
-#: part/templates/part/sale_prices.html:90 templates/js/bom.js:271
+#: part/templates/part/sale_prices.html:90
 msgid "Price"
 msgstr ""
 
@@ -3396,7 +3396,7 @@ msgstr ""
 msgid "Sales Order Items"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:365
+#: order/templates/order/sales_order_detail.html:95 templates/js/bom.js:358
 #: templates/js/build.js:724 templates/js/build.js:1141
 msgid "Actions"
 msgstr ""
@@ -4141,7 +4141,7 @@ msgstr ""
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:2295 templates/js/bom.js:216 templates/js/bom.js:285
+#: part/models.py:2295 templates/js/bom.js:216 templates/js/bom.js:278
 msgid "Optional"
 msgstr ""
 
@@ -4173,7 +4173,7 @@ msgstr ""
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:2311 templates/js/bom.js:302 templates/js/bom.js:309
+#: part/models.py:2311 templates/js/bom.js:295 templates/js/bom.js:302
 #: templates/js/table_filters.js:51
 msgid "Inherited"
 msgstr ""
@@ -4182,7 +4182,7 @@ msgstr ""
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:2317 templates/js/bom.js:294
+#: part/models.py:2317 templates/js/bom.js:287
 msgid "Allow Variants"
 msgstr ""
 
@@ -4901,7 +4901,7 @@ msgstr ""
 msgid "Allocated to Orders"
 msgstr ""
 
-#: part/templates/part/part_base.html:172 templates/js/bom.js:323
+#: part/templates/part/part_base.html:172 templates/js/bom.js:316
 msgid "Can Build"
 msgstr ""
 
@@ -6704,31 +6704,35 @@ msgstr ""
 msgid "Purchase Price Average"
 msgstr ""
 
-#: templates/js/bom.js:277
+#: templates/js/bom.js:265
+msgid "Buy Price"
+msgstr ""
+
+#: templates/js/bom.js:271
 msgid "No pricing available"
 msgstr ""
 
-#: templates/js/bom.js:313 templates/js/bom.js:399
+#: templates/js/bom.js:306 templates/js/bom.js:392
 msgid "View BOM"
 msgstr ""
 
-#: templates/js/bom.js:373
+#: templates/js/bom.js:366
 msgid "Validate BOM Item"
 msgstr ""
 
-#: templates/js/bom.js:375
+#: templates/js/bom.js:368
 msgid "This line has been validated"
 msgstr ""
 
-#: templates/js/bom.js:377
+#: templates/js/bom.js:370
 msgid "Edit BOM Item"
 msgstr ""
 
-#: templates/js/bom.js:379
+#: templates/js/bom.js:372
 msgid "Delete BOM Item"
 msgstr ""
 
-#: templates/js/bom.js:470 templates/js/build.js:423 templates/js/build.js:1189
+#: templates/js/bom.js:463 templates/js/build.js:423 templates/js/build.js:1189
 msgid "No BOM items found"
 msgstr ""
 
