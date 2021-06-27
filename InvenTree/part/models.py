@@ -2498,7 +2498,7 @@ class BomItem(models.Model):
         return required
 
     @property
-    def price_range(self, internal = False):
+    def price_range(self, internal=False):
         """ Return the price-range for this BOM item. """
 
         # get internal price setting

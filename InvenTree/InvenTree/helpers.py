@@ -250,7 +250,7 @@ def decimal2string(d):
     return s.rstrip("0").rstrip(".")
 
 
-def decimal2money(d, currency = None):
+def decimal2money(d, currency=None):
     """
     Format a Decimal number as Money
 
