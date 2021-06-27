@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-26 23:25+0000\n"
-"PO-Revision-Date: 2021-06-24 21:40\n"
+"PO-Revision-Date: 2021-06-27 00:11\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1900,10 +1900,8 @@ msgid "Fields matching failed"
 msgstr ""
 
 #: common/views.py:586
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Parts imported"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: common/views.py:608 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -2228,8 +2226,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -4505,10 +4502,8 @@ msgstr ""
 
 #: part/templates/part/category_navbar.html:37
 #: part/templates/part/category_navbar.html:40
-#, fuzzy
-#| msgid "Allocate Parts"
 msgid "Import Parts"
-msgstr "Parçaları Tahsis Et"
+msgstr ""
 
 #: part/templates/part/category_parametric.html:10
 #: part/templates/part/navbar.html:21 part/templates/part/params.html:10
@@ -5090,10 +5085,8 @@ msgid "Created new part"
 msgstr ""
 
 #: part/views.py:763
-#, fuzzy
-#| msgid "Reference"
 msgid "Match References"
-msgstr "Referans"
+msgstr ""
 
 #: part/views.py:1092
 msgid "Part QR Code"
@@ -6318,8 +6311,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7809,3 +7801,4 @@ msgstr ""
 #: users/models.py:191
 msgid "Permission to delete items"
 msgstr ""
+
