@@ -8,6 +8,15 @@
 
 {% block content %}
 
+{% if messages %}
+  {% for message in messages %}
+    <div class='{{ message.tags }}'>
+        {{ message|safe }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+
 <div class='panel panel-default panel-inventree'>
     <div class='row'>
         <div class='col-sm-6'>

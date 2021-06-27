@@ -30,7 +30,9 @@ from stock.models import StockItem, StockLocation
 from part.models import Part
 
 from common.models import InvenTreeSetting
+from common.forms import UploadFileForm, MatchFieldForm
 from common.views import FileManagementFormView
+from common.files import FileManager
 
 from . import forms as order_forms
 from part.views import PartPricing
@@ -572,7 +574,28 @@ class SalesOrderShip(AjaxUpdateView):
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
+    class OrderFileManager(FileManager):
+        REQUIRED_HEADERS = [
+            'Quantity',
+        ]
+
+        ITEM_MATCH_HEADERS = [
+            'Manufacturer_MPN',
+            'Supplier_SKU',
+        ]
+
+        OPTIONAL_HEADERS = [
+            'Purchase_Price',
+            'Reference',
+            'Notes',
+        ]
+
     name = 'order'
+    form_list = [
+        ('upload', UploadFileForm),
+        ('fields', MatchFieldForm),
+        ('items', order_forms.OrderMatchItemForm),
+    ]
     form_steps_template = [
         'order/order_wizard/po_upload.html',
         'order/order_wizard/match_fields.html',
@@ -583,7 +606,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         _("Match Fields"),
         _("Match Supplier Parts"),
     ]
-    # Form field name: PurchaseOrderLineItem field
     form_field_map = {
         'item_select': 'part',
         'quantity': 'quantity',
@@ -591,6 +613,7 @@ class PurchaseOrderUpload(FileManagementFormView):
         'reference': 'reference',
         'notes': 'notes',
     }
+    file_manager_class = OrderFileManager
 
     def get_order(self):
         """ Get order or return 404 """
@@ -598,6 +621,8 @@ class PurchaseOrderUpload(FileManagementFormView):
         return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
     def get_context_data(self, form, **kwargs):
+        """ Handle context data for order """
+
         context = super().get_context_data(form=form, **kwargs)
 
         order = self.get_order()
@@ -708,26 +733,7 @@ class PurchaseOrderUpload(FileManagementFormView):
         """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
         
         order = self.get_order()
-
-        items = {}
-
-        for form_key, form_value in self.get_all_cleaned_data().items():
-            # Split key from row value
-            try:
-                (field, idx) = form_key.split('-')
-            except ValueError:
-                continue
-
-            if idx not in items:
-                # Insert into items
-                items.update({
-                    idx: {
-                        self.form_field_map[field]: form_value,
-                    }
-                })
-            else:
-                # Update items
-                items[idx][self.form_field_map[field]] = form_value
+        items = self.get_clean_items()
 
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
