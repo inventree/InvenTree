@@ -792,8 +792,8 @@ function loadPriceBreakTable(table, options) {
                 tableData = tableData.sort((a,b)=>a.quantity-b.quantity);
 
                 // split up for graph definition
-                var labels = Array.from(tableData, x => x.quantity);
-                var data = Array.from(tableData, x => parseFloat(x.price));
+                var graphLabels = Array.from(tableData, x => x.quantity);
+                var graphData = Array.from(tableData, x => parseFloat(x.price));
 
                 // destroy chart if exists
                 if (chart){
@@ -801,11 +801,11 @@ function loadPriceBreakTable(table, options) {
                 }
                 chart = loadLineChart(linkedGraph,
                     {
-                        labels: labels,
+                        labels: graphLabels,
                         datasets:  [
                         {
                         label: '{% trans "Unit Price" %}',
-                        data: data,
+                        data: graphData,
                         backgroundColor: 'rgba(255, 206, 86, 0.2)',
                         borderColor: 'rgb(255, 206, 86)',
                         stepped: true,
