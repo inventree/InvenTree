@@ -788,6 +788,10 @@ function loadPriceBreakTable(table, options) {
         url: options.url,
         onLoadSuccess: function(tableData) {
             if (linkedGraph) {
+                // sort array
+                tableData = tableData.sort((a,b)=>a.quantity-b.quantity);
+
+                // split up for graph definition
                 var labels = Array.from(tableData, x => x.quantity);
                 var data = Array.from(tableData, x => parseFloat(x.price));
 
