@@ -1,3 +1,5 @@
+{% load i18n %}
+
 /*
  * This file contains functions for rendering various InvenTree database models,
  * in particular for displaying them in modal forms in a 'select2' context.
@@ -69,11 +71,13 @@ function renderPart(name, data, parameters, options) {
 // Renderer for "PartCategory" model
 function renderPartCategory(name, data, parameters, options) {
 
-    var html = `<span>${data.name}</span>`;
+    var html = `<span><b>${data.name}</b></span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
     }
+
+    html += `<span class='float-right'>{% trans "Location ID" %}: ${data.pk}</span>`;
 
     if (data.pathstring) {
         html += `<p><small>${data.pathstring}</small></p>`;

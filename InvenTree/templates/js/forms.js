@@ -155,6 +155,9 @@ function constructChangeForm(fields, options) {
                 }
             }
 
+            // Store the entire data object
+            options.instance = data;
+
             constructFormBody(fields, options);
         },
         error: function(request, status, error) {
@@ -570,7 +573,7 @@ function initializeRelatedFields(fields, options) {
  * - field: Field definition from the OPTIONS request
  * - options: Original options object provided by the client
  */
-function initializeRelatedField(modal, name, field, options) {
+function initializeRelatedField(name, field, options) {
 
     // Find the select element and attach a select2 to it
     var select = $(options.modal).find(`#id_${name}`);
