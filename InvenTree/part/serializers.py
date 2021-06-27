@@ -7,13 +7,16 @@ from decimal import Decimal
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeModelSerializer)
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
-from InvenTree.serializers import TrackingSerializer
+
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
+
+from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeImageSerializerField,
+                                   InvenTreeModelSerializer)
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from InvenTree.serializers import TrackingSerializer
 from stock.models import StockItem
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
@@ -301,7 +304,7 @@ class PartSerializer(InvenTreeModelSerializer):
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
 
-    image = serializers.CharField(source='get_image_url', read_only=True)
+    image = InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     starred = serializers.SerializerMethodField()
 

@@ -23,6 +23,7 @@ import moneyed
 
 import yaml
 from django.utils.translation import gettext_lazy as _
+from django.contrib.messages import constants as messages
 
 
 def _is_true(x):
@@ -611,3 +612,9 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'alert alert-block alert-success',
+    messages.ERROR: 'alert alert-block alert-danger',
+    messages.INFO: 'alert alert-block alert-info',
+}

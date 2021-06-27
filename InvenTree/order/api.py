@@ -157,7 +157,7 @@ class POList(generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class PODetail(generics.RetrieveUpdateAPIView):
+class PODetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a PurchaseOrder object """
 
     queryset = PurchaseOrder.objects.all()
@@ -382,7 +382,7 @@ class SOList(generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class SODetail(generics.RetrieveUpdateAPIView):
+class SODetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a SalesOrder object.
     """

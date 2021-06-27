@@ -239,11 +239,19 @@
 
     enableDragAndDrop(
         '#part-thumb',
-        "{% url 'part-image-upload' part.id %}",
+        "{% url 'api-part-detail' part.id %}",
         {
             label: 'image',
+            method: 'PATCH',
             success: function(data, status, xhr) {
-                location.reload();
+
+                // If image / thumbnail data present, live update
+                if (data.image) {
+                    $('#part-image').attr('src', data.image);
+                } else {
+                    // Otherwise, reload the page
+                    location.reload();
+                }
             }
         }
     );

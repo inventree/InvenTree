@@ -1,13 +1,19 @@
-from rest_framework import status
+# -*- coding: utf-8 -*-
+
+import PIL
 
 from django.urls import reverse
 
-from part.models import Part
-from stock.models import StockItem
-from company.models import Company
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
+
+from part.models import Part, PartCategory
+from stock.models import StockItem
+from company.models import Company
+from common.models import InvenTreeSetting
 
 
 class PartAPITest(InvenTreeAPITestCase):
@@ -230,6 +236,18 @@ class PartAPITest(InvenTreeAPITestCase):
         response = self.client.get(url, data={'part': 10004})
         self.assertEqual(len(response.data), 7)
 
+        # Try to post a new object (missing description)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'My very first test',
+                'required': False,
+            }
+        )
+
+        self.assertEqual(response.status_code, 400)
+
         # Try to post a new object (should succeed)
         response = self.client.post(
             url,
@@ -237,6 +255,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 'part': 10000,
                 'test_name': 'New Test',
                 'required': True,
+                'description': 'a test description'
             },
             format='json',
         )
@@ -248,7 +267,8 @@ class PartAPITest(InvenTreeAPITestCase):
             url,
             data={
                 'part': 10004,
-                'test_name': "   newtest"
+                'test_name': "   newtest",
+                'description': 'dafsdf',
             },
             format='json',
         )
@@ -292,6 +312,297 @@ class PartAPITest(InvenTreeAPITestCase):
 
             self.assertEqual(len(data['results']), n)
 
+    def test_default_values(self):
+        """
+        Tests for 'default' values:
+
+        Ensure that unspecified fields revert to "default" values
+        (as specified in the model field definition)
+        """
+
+        url = reverse('api-part-list')
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part',
+            'category': 1,
+        })
+
+        data = response.data
+
+        # Check that the un-specified fields have used correct default values
+        self.assertTrue(data['active'])
+        self.assertFalse(data['virtual'])
+
+        # By default, parts are not purchaseable
+        self.assertFalse(data['purchaseable'])
+
+        # Set the default 'purchaseable' status to True
+        InvenTreeSetting.set_setting(
+            'PART_PURCHASEABLE',
+            True,
+            self.user
+        )
+
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+        })
+
+        # Part should now be purchaseable by default
+        self.assertTrue(response.data['purchaseable'])
+
+        # "default" values should not be used if the value is specified
+        response = self.client.post(url, {
+            'name': 'all defaults',
+            'description': 'my test part 2',
+            'category': 1,
+            'active': False,
+            'purchaseable': False,
+        })
+
+        self.assertFalse(response.data['active'])
+        self.assertFalse(response.data['purchaseable'])
+
+
+class PartDetailTests(InvenTreeAPITestCase):
+    """
+    Test that we can create / edit / delete Part objects via the API
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'bom',
+        'test_templates',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
+    def setUp(self):
+        super().setUp()
+
+    def test_part_operations(self):
+        n = Part.objects.count()
+
+        # Create a part
+        response = self.client.post(
+            reverse('api-part-list'),
+            {
+                'name': 'my test api part',
+                'description': 'a part created with the API',
+                'category': 1,
+            }
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        pk = response.data['pk']
+
+        # Check that a new part has been added
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        part = Part.objects.get(pk=pk)
+
+        self.assertEqual(part.name, 'my test api part')
+
+        # Edit the part
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        # Let's change the name of the part
+
+        response = self.client.patch(url, {
+            'name': 'a new better name',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['pk'], pk)
+        self.assertEqual(response.data['name'], 'a new better name')
+
+        part = Part.objects.get(pk=pk)
+
+        # Name has been altered
+        self.assertEqual(part.name, 'a new better name')
+
+        # Part count should not have changed
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        # Now, try to set the name to the *same* value
+        # 2021-06-22 this test is to check that the "duplicate part" checks don't do strange things
+        response = self.client.patch(url, {
+            'name': 'a new better name',
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        # Try to remove the part
+        response = self.client.delete(url)
+
+        # As the part is 'active' we cannot delete it
+        self.assertEqual(response.status_code, 405)
+
+        # So, let's make it not active
+        response = self.patch(url, {'active': False}, expected_code=200)
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+
+        # Part count should have reduced
+        self.assertEqual(Part.objects.count(), n)
+
+    def test_duplicates(self):
+        """
+        Check that trying to create 'duplicate' parts results in errors
+        """
+
+        # Create a part
+        response = self.client.post(reverse('api-part-list'), {
+            'name': 'part',
+            'description': 'description',
+            'IPN': 'IPN-123',
+            'category': 1,
+            'revision': 'A',
+        })
+
+        self.assertEqual(response.status_code, 201)
+
+        n = Part.objects.count()
+
+        # Check that we cannot create a duplicate in a different category
+        response = self.client.post(reverse('api-part-list'), {
+            'name': 'part',
+            'description': 'description',
+            'IPN': 'IPN-123',
+            'category': 2,
+            'revision': 'A',
+        })
+
+        self.assertEqual(response.status_code, 400)
+
+        # Check that only 1 matching part exists
+        parts = Part.objects.filter(
+            name='part',
+            description='description',
+            IPN='IPN-123'
+        )
+
+        self.assertEqual(parts.count(), 1)
+
+        # A new part should *not* have been created
+        self.assertEqual(Part.objects.count(), n)
+
+        # But a different 'revision' *can* be created
+        response = self.client.post(reverse('api-part-list'), {
+            'name': 'part',
+            'description': 'description',
+            'IPN': 'IPN-123',
+            'category': 2,
+            'revision': 'B',
+        })
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        # Now, check that we cannot *change* an existing part to conflict
+        pk = response.data['pk']
+
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        # Attempt to alter the revision code
+        response = self.client.patch(
+            url,
+            {
+                'revision': 'A',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        # But we *can* change it to a unique revision code
+        response = self.client.patch(
+            url,
+            {
+                'revision': 'C',
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_image_upload(self):
+        """
+        Test that we can upload an image to the part API
+        """
+
+        self.assignRole('part.add')
+
+        # Create a new part
+        response = self.client.post(
+            reverse('api-part-list'),
+            {
+                'name': 'imagine',
+                'description': 'All the people',
+                'category': 1,
+            },
+            expected_code=201
+        )
+
+        pk = response.data['pk']
+
+        url = reverse('api-part-detail', kwargs={'pk': pk})
+
+        p = Part.objects.get(pk=pk)
+
+        # Part should not have an image!
+        with self.assertRaises(ValueError):
+            print(p.image.file)
+
+        # Create a custom APIClient for file uploads
+        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
+        upload_client = APIClient()
+        upload_client.force_authenticate(user=self.user)
+
+        # Try to upload a non-image file
+        with open('dummy_image.txt', 'w') as dummy_image:
+            dummy_image.write('hello world')
+
+        with open('dummy_image.txt', 'rb') as dummy_image:
+            response = upload_client.patch(
+                url,
+                {
+                    'image': dummy_image,
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 400)
+
+        # Now try to upload a valid image file
+        img = PIL.Image.new('RGB', (128, 128), color='red')
+        img.save('dummy_image.jpg')
+
+        with open('dummy_image.jpg', 'rb') as dummy_image:
+            response = upload_client.patch(
+                url,
+                {
+                    'image': dummy_image,
+                },
+                format='multipart',
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+        # And now check that the image has been set
+        p = Part.objects.get(pk=pk)
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """
@@ -319,6 +630,8 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         # Add a new part
         self.part = Part.objects.create(
             name='Banana',
+            description='This is a banana',
+            category=PartCategory.objects.get(pk=1),
         )
 
         # Create some stock items associated with the part

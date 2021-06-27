@@ -71,7 +71,8 @@ def migrate_currencies(apps, schema_editor):
 
         count += 1
 
-    print(f"Updated {count} SupplierPriceBreak rows")
+    if count > 0:
+        print(f"Updated {count} SupplierPriceBreak rows")
 
 def reverse_currencies(apps, schema_editor):
     """

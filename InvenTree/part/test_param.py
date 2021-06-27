@@ -23,7 +23,7 @@ class TestParams(TestCase):
     def test_str(self):
 
         t1 = PartParameterTemplate.objects.get(pk=1)
-        self.assertEquals(str(t1), 'Length (mm)')
+        self.assertEqual(str(t1), 'Length (mm)')
 
         p1 = PartParameter.objects.get(pk=1)
         self.assertEqual(str(p1), 'M2x4 LPHS : Length = 4mm')
