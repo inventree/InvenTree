@@ -979,6 +979,8 @@ class PartPricingView(PartDetail):
         """ returns context with pricing information """
         ctx = PartPricing.get_pricing(self, quantity, currency)
         part = self.get_part()
+        default_currency = inventree_settings.currency_code_default()
+
         # Stock history
         if part.total_stock > 1:
             price_history = []
@@ -990,7 +992,7 @@ class PartPricingView(PartDetail):
                     continue
 
                 # convert purchase price to current currency - only one currency in the graph
-                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
+                price = convert_money(stock_item.purchase_price, default_currency)
                 line = {
                     'price': price.amount,
                     'qty': stock_item.quantity
