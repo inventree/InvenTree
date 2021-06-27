@@ -110,6 +110,16 @@ function getApiEndpointOptions(url, callback, options) {
  */
 function constructCreateForm(fields, options) {
     
+    // Check if default values were provided for any fields
+    for (const name in fields) {
+    
+        var field = fields[name];
+
+        if (field.default != null) {
+            field.value = field.default;
+        }
+    }
+
     // We should have enough information to create the form!
     constructFormBody(fields, options);
 }
@@ -320,6 +330,8 @@ function constructFormBody(fields, options) {
     
     $(modal).modal('show');
 
+    updateFieldValues(fields, options);
+
     // Setup related fields
     initializeRelatedFields(fields, options)
 
@@ -388,6 +400,41 @@ function submitFormData(fields, options) {
 
 
 /*
+ * Update (set) the field values based on the specified data.
+ *
+ * Iterate through each of the displayed fields,
+ * and set the 'val' attribute of each one.
+ *
+ */
+function updateFieldValues(fields, options) {
+  
+    for (var idx = 0; idx < options.field_names.length; idx++) {
+
+        var name = options.field_names[idx];
+
+        var field = fields[name] || null;
+
+        if (field == null) { continue; }
+
+        var value = field.value || field.default || null;
+
+        if (value == null) { continue; }
+
+        var el = $(options.modal).find(`#id_${name}`);
+
+        switch (field.type) {
+            case 'boolean':
+                el.prop('checked', value);
+                break;
+            default:
+                el.val(value);
+                break;
+        }
+    }
+}
+
+
+/*
  * Extract and field value before sending back to the server
  *
  * arguments:
@@ -407,7 +454,6 @@ function getFormFieldValue(name, field, options) {
             return el.val();
     }
 }
-
 
 
 /*
