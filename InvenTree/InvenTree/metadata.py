@@ -6,6 +6,7 @@ import logging
 
 from rest_framework import serializers
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.utils import model_meta
 
 import users.models
 
@@ -41,11 +42,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
         try:
             # Extract the model name associated with the view
-            model = view.serializer_class.Meta.model
+            self.model = view.serializer_class.Meta.model
 
             # Construct the 'table name' from the model
-            app_label = model._meta.app_label
-            tbl_label = model._meta.model_name
+            app_label = self.model._meta.app_label
+            tbl_label = self.model._meta.model_name
 
             table = f"{app_label}_{tbl_label}"
 
@@ -82,6 +83,37 @@ class InvenTreeMetadata(SimpleMetadata):
             pass
 
         return metadata
+
+    def get_serializer_info(self, serializer):
+        """
+        Override get_serializer_info so that we can add 'default' values
+        to any fields whose Meta.model specifies a default value
+        """
+
+        field_info = super().get_serializer_info(serializer)
+
+        try:
+            ModelClass = serializer.Meta.model
+
+            model_fields = model_meta.get_field_info(ModelClass)
+
+            for name, field in model_fields.fields.items():
+
+                if field.has_default() and name in field_info.keys():
+
+                    default = field.default
+
+                    if callable(default):
+                        try:
+                            default = default()
+                        except:
+                            continue
+
+                    field_info[name]['default'] = default
+        except AttributeError:
+            pass
+
+        return field_info
 
     def get_field_info(self, field):
         """
