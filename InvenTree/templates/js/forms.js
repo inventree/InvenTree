@@ -275,6 +275,9 @@ function constructFormBody(fields, options) {
 
             // Edit callback
             fields[field].onEdit = field_options.onEdit;
+
+            // Field prefix
+            fields[field].prefix = field_options.prefix;
         }
     }
 
@@ -835,14 +838,21 @@ function constructField(name, parameters, options) {
 
     html += `<div class='controls'>`;
     
+    if (parameters.prefix) {
+        html += `<div class='input-group'><span class='input-group-addon'>${parameters.prefix}</span>`;
+    }
+
     html += constructInput(name, parameters, options);
+
+    if (parameters.prefix) {
+        html += `</div>`;   // input-group
+    }
 
     if (parameters.help_text) {
         html += constructHelpText(name, parameters, options);
     }
 
     html += `</div>`;   // controls
-    
     html += `</div>`;   // form-group
     
     return html;
