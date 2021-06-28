@@ -269,6 +269,9 @@ function constructFormBody(fields, options) {
 
             // Query filters
             fields[field].filters = field_options.filters;
+
+            // Secondary modal options
+            fields[field].secondary = field_options.secondary;
         }
     }
 
@@ -569,6 +572,29 @@ function initializeRelatedFields(fields, options) {
 
 
 /*
+ * Add a button to launch a secondary modal, to create a new modal instance.
+ *
+ * arguments:
+ * - name: The name of the field
+ * - field: The field data object
+ * - options: The options object provided by the client
+ */
+function addSecondaryModal(name, field, options) {
+
+    var html = `
+    <span style='float: right;'>
+        <div type='button' class='btn btn-primary btn-secondary' title='${field.secondary.title || field.secondary.label}' id='btn-new-${name}'>
+            ${field.secondary.label}
+        </div>
+    </span>`;
+
+    $(options.modal).find(`label[for="id_${name}"]`).append(html);
+
+    // TODO: Launch a callback
+}
+
+
+/*
  * Initializea single related-field
  * 
  * argument:
@@ -582,6 +608,11 @@ function initializeRelatedField(name, field, options) {
     // Find the select element and attach a select2 to it
     var select = $(options.modal).find(`#id_${name}`);
 
+    // Add a button to launch a 'secondary' modal
+    if (field.secondary != null) {
+        addSecondaryModal(name, field, options);
+    }
+
     // TODO: Add 'placeholder' support for entry select2 fields
 
     // limit size for AJAX requests
@@ -591,12 +622,11 @@ function initializeRelatedField(name, field, options) {
         ajax: {
             url: field.api_url,
             dataType: 'json',
-            allowClear: !field.required,        // Allow non required fields to be cleared
+            allowClear: !field.required,
             dropdownParent: $(options.modal),
             dropdownAutoWidth: false,
             delay: 250,
             cache: true,
-            // matcher: partialMatcher,
             data: function(params) {
 
                 if (!params.page) {
