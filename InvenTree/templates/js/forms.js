@@ -267,8 +267,8 @@ function constructFormBody(fields, options) {
         // Copy custom options across to the fields object
         if (field_options) {
 
-            // Query filters
-            fields[field].filters = field_options.filters;
+            // Override existing query filters (if provided!)
+            fields[field].filters = Object.assign(fields[field].filters || {}, field_options.filters);
 
             // Secondary modal options
             fields[field].secondary = field_options.secondary;

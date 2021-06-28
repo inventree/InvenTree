@@ -45,6 +45,12 @@
                 method: 'POST',
                 title: '{% trans "Edit Part Details" %}',
                 fields: {
+                    part: {
+                        filters: {
+                        }
+                    },
+                    quantity: {},
+                    /*
                     name: {
                         onEdit: function() {
                             console.log('Edited name field');
@@ -67,7 +73,6 @@
                     purchaseable: {},
                     salable: {},
                     component: {},
-                    /*
                     'website',
                     'address',
                     'phone',

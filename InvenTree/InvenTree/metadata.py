@@ -90,7 +90,7 @@ class InvenTreeMetadata(SimpleMetadata):
         to any fields whose Meta.model specifies a default value
         """
 
-        field_info = super().get_serializer_info(serializer)
+        serializer_info = super().get_serializer_info(serializer)
 
         try:
             ModelClass = serializer.Meta.model
@@ -100,7 +100,7 @@ class InvenTreeMetadata(SimpleMetadata):
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
 
-                if field.has_default() and name in field_info.keys():
+                if field.has_default() and name in serializer_info.keys():
 
                     default = field.default
 
@@ -110,27 +110,27 @@ class InvenTreeMetadata(SimpleMetadata):
                         except:
                             continue
 
-                    field_info[name]['default'] = default
+                    serializer_info[name]['default'] = default
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
 
-                if relation.reverse:
-                    print("skipping reverse relation -", name)
+                if name not in serializer_info.keys():
+                    # Skip relation not defined in serializer
                     continue
 
-                print('filters:', name, relation.model_field.get_limit_choices_to())
+                if relation.reverse:
+                    # Ignore reverse relations
+                    continue
 
-                continue
                 # Extract and provide the "limit_choices_to" filters
-                field_info[name]['filters'] = relation.model_field.get_limit_choices_to()
+                # This is used to automatically filter AJAX requests
+                serializer_info[name]['filters'] = relation.model_field.get_limit_choices_to()
 
         except AttributeError:
             pass
 
-        print(field_info.keys())
-
-        return field_info
+        return serializer_info
 
     def get_field_info(self, field):
         """
