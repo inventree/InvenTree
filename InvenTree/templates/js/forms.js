@@ -261,6 +261,15 @@ function constructFormBody(fields, options) {
     // Provide each field object with its own name
     for(field in fields) {
         fields[field].name = field;
+
+        var field_options = displayed_fields[field];
+
+        // Copy custom options across to the fields object
+        if (field_options) {
+
+            // Query filters
+            fields[field].filters = field_options.filters;
+        }
     }
 
     // Construct an ordered list of field names
@@ -596,12 +605,15 @@ function initializeRelatedField(name, field, options) {
                     offset = (params.page - 1) * pageSize;
                 }
 
-                // Re-format search term into InvenTree API style
-                return {
-                    search: params.term,
-                    offset: offset,
-                    limit: pageSize,
-                };
+                // Custom query filters can be specified against each field
+                var query = field.filters || {};
+
+                // Add search and pagination options
+                query.search = params.term;
+                query.offset = offset;
+                query.limit = pageSize;
+
+                return query;
             },
             processResults: function(response) {
                 // Convert the returned InvenTree data into select2-friendly format
