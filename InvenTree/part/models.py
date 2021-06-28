@@ -39,7 +39,7 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string, normalize
+from InvenTree.helpers import decimal2string, normalize, decimal2money
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -2414,7 +2414,7 @@ class BomItem(models.Model):
         return "{n} x {child} to make {parent}".format(
             parent=self.part.full_name,
             child=self.sub_part.full_name,
-            n=helpers.decimal2string(self.quantity))
+            n=decimal2string(self.quantity))
 
     def available_stock(self):
         """
@@ -2498,12 +2498,12 @@ class BomItem(models.Model):
         return required
 
     @property
-    def price_range(self):
+    def price_range(self, internal=False):
         """ Return the price-range for this BOM item. """
 
         # get internal price setting
         use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        prange = self.sub_part.get_price_range(self.quantity, intenal=use_internal)
+        prange = self.sub_part.get_price_range(self.quantity, internal=use_internal and internal)
 
         if prange is None:
             return prange
@@ -2511,11 +2511,11 @@ class BomItem(models.Model):
         pmin, pmax = prange
 
         if pmin == pmax:
-            return decimal2string(pmin)
+            return decimal2money(pmin)
 
         # Convert to better string representation
-        pmin = decimal2string(pmin)
-        pmax = decimal2string(pmax)
+        pmin = decimal2money(pmin)
+        pmax = decimal2money(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
 
