@@ -406,7 +406,11 @@ function updateFieldValues(fields, options) {
 
         if (field == null) { continue; }
 
-        var value = field.value || field.default || null;
+        var value = field.value;
+
+        if (value == null) {
+            value = field.default;
+        }
 
         if (value == null) { continue; }
 
