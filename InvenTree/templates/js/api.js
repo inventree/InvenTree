@@ -18,7 +18,15 @@ function getCookie(name) {
 }
 
 function inventreeGet(url, filters={}, options={}) {
+
+    // Middleware token required for data update
+    //var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    var csrftoken = getCookie('csrftoken');
+
     return $.ajax({
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        },
         url: url,
         type: 'GET',
         data: filters,

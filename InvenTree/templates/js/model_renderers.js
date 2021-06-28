@@ -18,6 +18,8 @@ function renderCompany(name, data, parameters, options) {
 
     var html = `<span>${data.name}</span> - <i>${data.description}</i>`;
 
+    html += `<span class='float-right'>{% trans "Company ID" %}: ${data.pk}</span>`;
+
     return html;
 }
 
@@ -38,6 +40,8 @@ function renderStockLocation(name, data, parameters, options) {
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
     }
+
+    html += `<span class='float-right'>{% trans "Location ID" %}: ${data.pk}</span>`;
 
     if (data.pathstring) {
         html += `<p><small>${data.pathstring}</small></p>`;
@@ -64,6 +68,8 @@ function renderPart(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
+    html += `<span class='float-right'>{% trans "Part ID" %}: ${data.pk}</span>`;
+
     return html;
 }
 
@@ -77,7 +83,7 @@ function renderPartCategory(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'>{% trans "Location ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'>{% trans "Category ID" %}: ${data.pk}</span>`;
 
     if (data.pathstring) {
         html += `<p><small>${data.pathstring}</small></p>`;
