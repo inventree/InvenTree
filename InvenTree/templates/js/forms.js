@@ -726,8 +726,9 @@ function initializeRelatedField(name, field, options) {
                 // If the 'model' is specified, hand it off to the custom model render
                 return renderModelData(name, field.model, item, field, options);
             } else {
-                // Simply render the 'text' parameter
-                return item.text;
+                // Return a simple renderering
+                console.log(`WARNING: templateResult() missing 'field.model' for '${name}'`);
+                return `${name} - ${item.id}`;
             }
         },
         templateSelection: function(item, container) {
@@ -736,8 +737,9 @@ function initializeRelatedField(name, field, options) {
                 // If the 'model' is specified, hand it off to the custom model render
                 return renderModelData(name, field.model, item, field, options);
             } else {
-                // Simply render the 'text' parameter
-                return item.text;
+                // Return a simple renderering
+                console.log(`WARNING: templateSelection() missing 'field.model' for '${name}'`);
+                return `${name} - ${item.id}`;
             }
         }
     });
