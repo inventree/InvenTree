@@ -59,6 +59,11 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
             for field_name, field in fields.fields.items():
 
+                """
+                Update the field IF (and ONLY IF):
+                - The field has a specified default value
+                - The field does not already have a value set
+                """
                 if field.has_default() and field_name not in data:
 
                     value = field.default
