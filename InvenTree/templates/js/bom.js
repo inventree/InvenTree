@@ -259,26 +259,19 @@ function loadBomTable(table, options) {
         sortable: true,
     });
 
-    /*
-
-    // TODO - Re-introduce the pricing column at a later stage,
-    //        once the pricing has been "fixed"
-    //        O.W. 2020-11-24
-
     cols.push(
     {
         field: 'price_range',
-        title: '{% trans "Price" %}',
+        title: '{% trans "Buy Price" %}',
         sortable: true,
         formatter: function(value, row, index, field) {
             if (value) {
                 return value;
             } else {
-                return "<span class='warning-msg'>{% trans "No pricing available" %}</span>";
+                return "<span class='warning-msg'>{% trans 'No pricing available' %}</span>";
             }
         }
     });
-    */
 
     cols.push({
         field: 'optional',
