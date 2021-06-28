@@ -913,20 +913,12 @@ function constructInput(name, parameters, options) {
             func = constructCheckboxInput;
             break;
         case 'string':
-            func = constructTextInput;
-            break;
         case 'url':
-            func = constructTextInput;
-            break;
         case 'email':
             func = constructTextInput;
             break;
         case 'integer':
-            func = constructNumberInput;
-            break;
         case 'float':
-            func = constructNumberInput;
-            break;
         case 'decimal':
             func = constructNumberInput;
             break;
