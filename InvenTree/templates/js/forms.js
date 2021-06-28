@@ -272,6 +272,9 @@ function constructFormBody(fields, options) {
 
             // Secondary modal options
             fields[field].secondary = field_options.secondary;
+
+            // Edit callback
+            fields[field].onEdit = field_options.onEdit;
         }
     }
 
@@ -335,7 +338,10 @@ function constructFormBody(fields, options) {
     updateFieldValues(fields, options);
 
     // Setup related fields
-    initializeRelatedFields(fields, options)
+    initializeRelatedFields(fields, options);
+
+    // Attach edit callbacks (if required)
+    addFieldCallbacks(fields, options);
 
     attachToggle(modal);
 
@@ -545,6 +551,35 @@ function handleFormErrors(errors, fields, options) {
         }
     }
 
+}
+
+
+/*
+ * Attach callbacks to specified fields,
+ * triggered after the field value is edited.
+ * 
+ * Callback function is called with arguments (name, field, options)
+ */
+function addFieldCallbacks(fields, options) {
+
+    for (var idx = 0; idx < options.field_names.length; idx++) {
+        
+        var name = options.field_names[idx];
+
+        var field = fields[name];
+
+        if (!field || !field.onEdit) continue;
+
+        addFieldCallback(name, field, options);
+    }
+}
+
+
+function addFieldCallback(name, field, options) {
+
+    $(options.modal).find(`#id_${name}`).change(function() {
+        field.onEdit(name, field, options);
+    });
 }
 
 
