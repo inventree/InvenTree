@@ -39,7 +39,7 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string, normalize
+from InvenTree.helpers import decimal2string, normalize, decimal2money
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -321,6 +321,9 @@ class Part(MPTTModel):
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
         ordering = ['name', ]
+        constraints = [
+            UniqueConstraint(fields=['name', 'IPN', 'revision'], name='unique_part')
+        ]
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
@@ -379,7 +382,7 @@ class Part(MPTTModel):
                     logger.info(f"Deleting unused image file '{previous.image}'")
                     previous.image.delete(save=False)
 
-        self.clean()
+        self.full_clean()
 
         super().save(*args, **kwargs)
 
@@ -642,23 +645,6 @@ class Part(MPTTModel):
                     'IPN': _('Duplicate IPN not allowed in part settings'),
                 })
 
-        # Part name uniqueness should be case insensitive
-        try:
-            parts = Part.objects.exclude(id=self.id).filter(
-                name__iexact=self.name,
-                IPN__iexact=self.IPN,
-                revision__iexact=self.revision)
-
-            if parts.exists():
-                msg = _("Part must be unique for name, IPN and revision")
-                raise ValidationError({
-                    "name": msg,
-                    "IPN": msg,
-                    "revision": msg,
-                })
-        except Part.DoesNotExist:
-            pass
-
     def clean(self):
         """
         Perform cleaning operations for the Part model
@@ -670,8 +656,6 @@ class Part(MPTTModel):
         """
 
         super().clean()
-
-        self.validate_unique()
 
         if self.trackable:
             for part in self.get_used_in().all():
@@ -1495,16 +1479,17 @@ class Part(MPTTModel):
 
         return True
 
-    def get_price_info(self, quantity=1, buy=True, bom=True):
+    def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
         """ Return a simplified pricing string for this part
 
         Args:
             quantity: Number of units to calculate price for
             buy: Include supplier pricing (default = True)
             bom: Include BOM pricing (default = True)
+            internal: Include internal pricing (default = False)
         """
 
-        price_range = self.get_price_range(quantity, buy, bom)
+        price_range = self.get_price_range(quantity, buy, bom, internal)
 
         if price_range is None:
             return None
@@ -1592,9 +1577,10 @@ class Part(MPTTModel):
 
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
+        - Internal price (if set for the part)
 
         Returns:
-            Minimum of the supplier price or BOM price. If no pricing available, returns None
+            Minimum of the supplier, BOM or internal price. If no pricing available, returns None
         """
 
         # only get internal price if set and should be used
@@ -2428,7 +2414,7 @@ class BomItem(models.Model):
         return "{n} x {child} to make {parent}".format(
             parent=self.part.full_name,
             child=self.sub_part.full_name,
-            n=helpers.decimal2string(self.quantity))
+            n=decimal2string(self.quantity))
 
     def available_stock(self):
         """
@@ -2512,10 +2498,12 @@ class BomItem(models.Model):
         return required
 
     @property
-    def price_range(self):
+    def price_range(self, internal=False):
         """ Return the price-range for this BOM item. """
 
-        prange = self.sub_part.get_price_range(self.quantity)
+        # get internal price setting
+        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+        prange = self.sub_part.get_price_range(self.quantity, internal=use_internal and internal)
 
         if prange is None:
             return prange
@@ -2523,11 +2511,11 @@ class BomItem(models.Model):
         pmin, pmax = prange
 
         if pmin == pmax:
-            return decimal2string(pmin)
+            return decimal2money(pmin)
 
         # Convert to better string representation
-        pmin = decimal2string(pmin)
-        pmax = decimal2string(pmax)
+        pmin = decimal2money(pmin)
+        pmax = decimal2money(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
 

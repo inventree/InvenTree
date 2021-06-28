@@ -199,7 +199,8 @@ def update_history(apps, schema_editor):
                 update_count += 1
 
 
-    print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")
+    if update_count > 0:
+        print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")
 
 
 def reverse_update(apps, schema_editor):

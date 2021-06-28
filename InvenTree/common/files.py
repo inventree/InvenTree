@@ -22,9 +22,11 @@ class FileManager:
 
     # Fields which are used for item matching (only one of them is needed)
     ITEM_MATCH_HEADERS = []
-    
+
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = []
+
+    OPTIONAL_MATCH_HEADERS = []
 
     EDITABLE_HEADERS = []
 
@@ -32,7 +34,7 @@ class FileManager:
 
     def __init__(self, file, name=None):
         """ Initialize the FileManager class with a user-uploaded file object """
-        
+
         # Set name
         if name:
             self.name = name
@@ -71,47 +73,34 @@ class FileManager:
             raise ValidationError(_('Error reading file (incorrect dimension)'))
         except KeyError:
             raise ValidationError(_('Error reading file (data could be corrupted)'))
-        
+
         return cleaned_data
 
     def process(self, file):
         """ Process file """
 
         self.data = self.__class__.validate(file)
-            
+
     def update_headers(self):
         """ Update headers """
 
-        self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_HEADERS
-            
+        self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_MATCH_HEADERS + self.OPTIONAL_HEADERS
+
     def setup(self):
-        """ Setup headers depending on the file name """
+        """
+        Setup headers
+        should be overriden in usage to set the Different Headers
+        """
 
         if not self.name:
             return
 
-        if self.name == 'order':
-            self.REQUIRED_HEADERS = [
-                'Quantity',
-            ]
-
-            self.ITEM_MATCH_HEADERS = [
-                'Manufacturer_MPN',
-                'Supplier_SKU',
-            ]
-
-            self.OPTIONAL_HEADERS = [
-                'Purchase_Price',
-                'Reference',
-                'Notes',
-            ]
-
-            # Update headers
-            self.update_headers()
+        # Update headers
+        self.update_headers()
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers
-        
+
         Args:
             header - Header name to look for
             threshold - Match threshold for fuzzy search
@@ -145,7 +134,7 @@ class FileManager:
             return matches[0]['header']
 
         return None
-    
+
     def columns(self):
         """ Return a list of headers for the thingy """
         headers = []

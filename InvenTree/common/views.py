@@ -13,8 +13,9 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
 from formtools.wizard.views import SessionWizardView
+from crispy_forms.helper import FormHelper
 
-from InvenTree.views import AjaxUpdateView
+from InvenTree.views import AjaxUpdateView, AjaxView
 from InvenTree.helpers import str2bool
 
 from . import models
@@ -117,7 +118,6 @@ class MultiStepFormView(SessionWizardView):
         form_steps_description: description for each form
     """
 
-    form_list = []
     form_steps_template = []
     form_steps_description = []
     file_manager = None
@@ -126,10 +126,10 @@ class MultiStepFormView(SessionWizardView):
 
     def __init__(self, *args, **kwargs):
         """ Override init method to set media folder """
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.process_media_folder()
-        
+
     def process_media_folder(self):
         """ Process media folder """
 
@@ -141,7 +141,7 @@ class MultiStepFormView(SessionWizardView):
 
     def get_template_names(self):
         """ Select template """
-        
+
         try:
             # Get template
             template = self.form_steps_template[self.steps.index]
@@ -152,7 +152,7 @@ class MultiStepFormView(SessionWizardView):
 
     def get_context_data(self, **kwargs):
         """ Update context data """
-        
+
         # Retrieve current context
         context = super().get_context_data(**kwargs)
 
@@ -176,9 +176,9 @@ class FileManagementFormView(MultiStepFormView):
 
     name = None
     form_list = [
-        ('upload', forms.UploadFile),
-        ('fields', forms.MatchField),
-        ('items', forms.MatchItem),
+        ('upload', forms.UploadFileForm),
+        ('fields', forms.MatchFieldForm),
+        ('items', forms.MatchItemForm),
     ]
     form_steps_description = [
         _("Upload File"),
@@ -188,11 +188,26 @@ class FileManagementFormView(MultiStepFormView):
     media_folder = 'file_upload/'
     extra_context_data = {}
 
-    def get_context_data(self, form, **kwargs):
+    def __init__(self, *args, **kwargs):
+        """ Initialize the FormView """
+
+        # Perform all checks and inits for MultiStepFormView
+        super().__init__(self, *args, **kwargs)
+
+        # Check for file manager class
+        if not hasattr(self, 'file_manager_class') and not issubclass(self.file_manager_class, FileManager):
+            raise NotImplementedError('A subclass of a file manager class needs to be set!')
+
+    def get_context_data(self, form=None, **kwargs):
+        """ Handle context data """
+
+        if form is None:
+            form = self.get_form()
+
         context = super().get_context_data(form=form, **kwargs)
 
         if self.steps.current in ('fields', 'items'):
-            
+
             # Get columns and row data
             self.columns = self.file_manager.columns()
             self.rows = self.file_manager.rows()
@@ -203,7 +218,7 @@ class FileManagementFormView(MultiStepFormView):
             elif self.steps.current == 'items':
                 # Set form table data
                 self.set_form_table_data(form=form)
-            
+
             # Update context
             context.update({'rows': self.rows})
             context.update({'columns': self.columns})
@@ -227,7 +242,7 @@ class FileManagementFormView(MultiStepFormView):
                 # Get file
                 file = upload_files.get('upload-file', None)
                 if file:
-                    self.file_manager = FileManager(file=file, name=self.name)
+                    self.file_manager = self.file_manager_class(file=file, name=self.name)
 
     def get_form_kwargs(self, step=None):
         """ Update kwargs to dynamically build forms """
@@ -262,12 +277,21 @@ class FileManagementFormView(MultiStepFormView):
             self.get_form_table_data(data)
             self.set_form_table_data()
             self.get_field_selection()
-            
+
             kwargs['row_data'] = self.rows
 
             return kwargs
-        
+
         return super().get_form_kwargs()
+
+    def get_form(self, step=None, data=None, files=None):
+        """ add crispy-form helper to form """
+        form = super().get_form(step=step, data=data, files=files)
+
+        form.helper = FormHelper()
+        form.helper.form_show_labels = False
+
+        return form
 
     def get_form_table_data(self, form_data):
         """ Extract table cell data from form data and fields.
@@ -327,7 +351,7 @@ class FileManagementFormView(MultiStepFormView):
                     col_id = int(s[3])
                 except ValueError:
                     continue
-                
+
                 if row_id not in self.row_data:
                     self.row_data[row_id] = {}
 
@@ -362,19 +386,20 @@ class FileManagementFormView(MultiStepFormView):
                         'name': self.column_names[idx],
                         'guess': self.column_selections[idx],
                     }
-                    
+
                     cell_data = {
                         'cell': item,
                         'idx': idx,
                         'column': column_data,
                     }
                     data.append(cell_data)
-                
+
                 row = {
                     'index': row_idx,
                     'data': data,
                     'errors': {},
                 }
+
                 self.rows.append(row)
 
         # In the item selection step: update row data with mapping to form fields
@@ -414,6 +439,33 @@ class FileManagementFormView(MultiStepFormView):
         """
         pass
 
+    def get_clean_items(self):
+        """ returns dict with all cleaned values """
+        items = {}
+
+        for form_key, form_value in self.get_all_cleaned_data().items():
+            # Split key from row value
+            try:
+                (field, idx) = form_key.split('-')
+            except ValueError:
+                continue
+
+            try:
+                if idx not in items:
+                    # Insert into items
+                    items.update({
+                        idx: {
+                            self.form_field_map[field]: form_value,
+                        }
+                    })
+                else:
+                    # Update items
+                    items[idx][self.form_field_map[field]] = form_value
+            except KeyError:
+                pass
+
+        return items
+
     def check_field_selection(self, form):
         """ Check field matching """
 
@@ -431,7 +483,7 @@ class FileManagementFormView(MultiStepFormView):
             if col in self.column_selections.values():
                 part_match_found = True
                 break
-        
+
         # If not, notify user
         if not part_match_found:
             for col in self.file_manager.ITEM_MATCH_HEADERS:
@@ -451,7 +503,7 @@ class FileManagementFormView(MultiStepFormView):
                 n = list(self.column_selections.values()).count(self.column_selections[col])
                 if n > 1 and self.column_selections[col] not in duplicates:
                     duplicates.append(self.column_selections[col])
-        
+
         # Store extra context data
         self.extra_context_data = {
             'missing_columns': missing_columns,
@@ -497,3 +549,70 @@ class FileManagementFormView(MultiStepFormView):
             return self.render(form)
 
         return super().post(*args, **kwargs)
+
+
+class FileManagementAjaxView(AjaxView):
+    """ Use a FileManagementFormView as base for a AjaxView
+    Inherit this class before inheriting the base FileManagementFormView
+
+    ajax_form_steps_template: templates for rendering ajax
+    validate: function to validate the current form -> normally point to the same function in the base FileManagementFormView
+    """
+
+    def post(self, request):
+        # check if back-step button was selected
+        wizard_back = self.request.POST.get('act-btn_back', None)
+        if wizard_back:
+            back_step_index = self.get_step_index() - 1
+            self.storage.current_step = list(self.get_form_list().keys())[back_step_index]
+            return self.renderJsonResponse(request, data={'form_valid': None})
+
+        # validate form
+        form = self.get_form(data=self.request.POST, files=self.request.FILES)
+        form_valid = self.validate(self.steps.current, form)
+
+        # check if valid
+        if not form_valid:
+            return self.renderJsonResponse(request, data={'form_valid': None})
+
+        # store the cleaned data and files.
+        self.storage.set_step_data(self.steps.current, self.process_step(form))
+        self.storage.set_step_files(self.steps.current, self.process_step_files(form))
+
+        # check if the current step is the last step
+        if self.steps.current == self.steps.last:
+            # call done - to process data, returned response is not used
+            self.render_done(form)
+            data = {'form_valid': True, 'success': _('Parts imported')}
+            return self.renderJsonResponse(request, data=data)
+        else:
+            self.storage.current_step = self.steps.next
+
+        return self.renderJsonResponse(request, data={'form_valid': None})
+
+    def get(self, request):
+        if 'reset' in request.GET:
+            # reset form
+            self.storage.reset()
+            self.storage.current_step = self.steps.first
+        return self.renderJsonResponse(request)
+
+    def renderJsonResponse(self, request, form=None, data={}, context=None):
+        """ always set the right templates before rendering """
+        self.setTemplate()
+        return super().renderJsonResponse(request, form=form, data=data, context=context)
+
+    def get_data(self):
+        data = super().get_data()
+        data['hideErrorMessage'] = '1'  # hide the error
+        buttons = [{'name': 'back', 'title': _('Previous Step')}] if self.get_step_index() > 0 else []
+        data['buttons'] = buttons  # set buttons
+        return data
+
+    def setTemplate(self):
+        """ set template name and title """
+        self.ajax_template_name = self.ajax_form_steps_template[self.get_step_index()]
+        self.ajax_form_title = self.form_steps_description[self.get_step_index()]
+
+    def validate(self, obj, form, **kwargs):
+        raise NotImplementedError('This function needs to be overridden!')

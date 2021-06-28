@@ -13,7 +13,7 @@ class UsersConfig(AppConfig):
 
     def ready(self):
 
-        if canAppAccessDatabase():
+        if canAppAccessDatabase(allow_test=True):
 
             try:
                 self.assign_permissions()

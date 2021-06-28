@@ -205,6 +205,20 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_SHOW_IMPORT': {
+            'name': _('Show Import in Views'),
+            'description': _('Display the import wizard in some part views'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_SHOW_PRICE_IN_FORMS': {
+            'name': _('Show Price in Forms'),
+            'description': _('Display part price in some forms'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_INTERNAL_PRICE': {
             'name': _('Internal Prices'),
             'description': _('Enable internal prices for parts'),

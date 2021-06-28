@@ -8,24 +8,27 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.2.4 pre"
+INVENTREE_SW_VERSION = "0.2.5 pre"
+
+INVENTREE_API_VERSION = 6
 
 """
 Increment thi API version number whenever there is a significant change to the API that any clients need to know about
 
-v3 -> 2021-05-22:
-    - The updated StockItem "history tracking" now uses a different interface
+v6 -> 2021-06-23
+    - Part and Company images can now be directly uploaded via the REST API
+
+v5 -> 2021-06-21
+    - Adds API interface for manufacturer part parameters
 
 v4 -> 2021-06-01
     - BOM items can now accept "variant stock" to be assigned against them
     - Many slight API tweaks were needed to get this to work properly!
 
-v5 -> 2021-06-21
-    - Adds API interface for manufacturer part parameters
+v3 -> 2021-05-22:
+    - The updated StockItem "history tracking" now uses a different interface
 
 """
-
-INVENTREE_API_VERSION = 5
 
 
 def inventreeInstanceName():
