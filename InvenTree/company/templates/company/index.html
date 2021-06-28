@@ -40,12 +40,34 @@
 
     $('#new-company-2').click(function() {
         constructForm(
-            '{% url "api-company-list" %}',
+            '{% url "api-build-list" %}',
             {
                 method: 'POST',
-                fields: [
-                    'name',
-                    'description',
+                title: '{% trans "Edit Part Details" %}',
+                fields: {
+                    name: {
+                        onEdit: function() {
+                            console.log('Edited name field');
+                        }
+                    },
+                    description: {},
+                    category: {
+                        filters: {
+                            parent: 1,
+                        },
+                        secondary: {
+                            label: '{% trans "New Category" %}',
+                        },
+                    },
+                    active: {
+                        onEdit: function() {
+                            console.log('edited active field');
+                        }
+                    },
+                    purchaseable: {},
+                    salable: {},
+                    component: {},
+                    /*
                     'website',
                     'address',
                     'phone',
@@ -54,7 +76,8 @@
                     'is_supplier',
                     'is_manufacturer',
                     'is_customer',
-                ]
+                    */
+                }
             }
         );
     });

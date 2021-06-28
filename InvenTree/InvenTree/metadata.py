@@ -97,6 +97,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             model_fields = model_meta.get_field_info(ModelClass)
 
+            # Iterate through simple fields
             for name, field in model_fields.fields.items():
 
                 if field.has_default() and name in field_info.keys():
@@ -110,8 +111,24 @@ class InvenTreeMetadata(SimpleMetadata):
                             continue
 
                     field_info[name]['default'] = default
+
+            # Iterate through relations
+            for name, relation in model_fields.relations.items():
+
+                if relation.reverse:
+                    print("skipping reverse relation -", name)
+                    continue
+
+                print('filters:', name, relation.model_field.get_limit_choices_to())
+
+                continue
+                # Extract and provide the "limit_choices_to" filters
+                field_info[name]['filters'] = relation.model_field.get_limit_choices_to()
+
         except AttributeError:
             pass
+
+        print(field_info.keys())
 
         return field_info
 
