@@ -243,21 +243,20 @@ function constructForm(url, options) {
 }
 
 
-
+/*
+ * Construct a modal form based on the provided options
+ * 
+ * arguments:
+ * - fields: The endpoint description returned from the OPTIONS request
+ * - options: form options object provided by the client.
+ */
 function constructFormBody(fields, options) {
 
     var html = '';
 
-    var allowed_fields = options.fields || null;
-    var ignored_fields = options.ignore || [];
-
-    if (!ignored_fields.includes('pk')) {
-        ignored_fields.push('pk');
-    }
-
-    if (!ignored_fields.includes('id')) {
-        ignored_fields.push('id');
-    }
+    // Client must provide set of fields to be displayed,
+    // otherwise *all* fields will be displayed
+    var displayed_fields = options.fields || fields;
 
     // Provide each field object with its own name
     for(field in fields) {
@@ -267,25 +266,13 @@ function constructFormBody(fields, options) {
     // Construct an ordered list of field names
     var field_names = [];
 
-    if (allowed_fields) {
-        allowed_fields.forEach(function(name) {
+    for (var name in displayed_fields) {
 
-            // Only push names which are actually in the set of fields
-            if (name in fields) {
-
-                if (!ignored_fields.includes(name) && !field_names.includes(name)) {
-                    field_names.push(name);
-                }
-            } else {
-                console.log(`WARNING: '${name}' does not match a valid field name.`);
-            }
-        });
-    } else {
-        for (const name in fields) {
-
-            if (!ignored_fields.includes(name) && !field_names.includes(name)) {
-                field_names.push(name);
-            }
+        // Only push names which are actually in the set of fields
+        if (name in fields) {
+            field_names.push(name);
+        } else {
+            console.log(`WARNING: '${name}' does not match a valid field name.`);
         }
     }
 
@@ -428,6 +415,10 @@ function updateFieldValues(fields, options) {
         switch (field.type) {
             case 'boolean':
                 el.prop('checked', value);
+                break;
+            case 'related field':
+                // TODO
+                console.log(`related field '${name}'`);
                 break;
             default:
                 el.val(value);
