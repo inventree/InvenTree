@@ -801,7 +801,7 @@ function renderModelData(name, model, data, parameters, options) {
     } else {
         console.log(`ERROR: Rendering not implemented for model '${model}'`);
         // Simple text rendering
-        return data.id;
+        return `${model} - ID ${data.id}`;
     }
 }
 
