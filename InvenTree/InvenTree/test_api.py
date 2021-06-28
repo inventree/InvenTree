@@ -1,6 +1,5 @@
 """ Low level tests for the InvenTree API """
 
-from django.http import response
 from rest_framework import status
 
 from django.test import TestCase

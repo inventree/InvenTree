@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 
-from collections import OrderedDict
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -46,16 +44,13 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
     def __init__(self, instance=None, data=empty, **kwargs):
 
-        self.instance = instance
+        # self.instance = instance
 
         # If instance is None, we are creating a new instance
-        if instance is None:
+        if instance is None and data is not empty:
             
-            if data is empty:
-                data = OrderedDict()
-            else:
-                # Required to side-step immutability of a QueryDict
-                data = data.copy()
+            # Required to side-step immutability of a QueryDict
+            data = data.copy()
 
             # Add missing fields which have default values
             ModelClass = self.Meta.model
@@ -85,7 +80,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         Use the 'default' values specified by the django model definition
         """
 
-        initials = super().get_initial()
+        initials = super().get_initial().copy()
 
         # Are we creating a new instance?
         if self.instance is None:
@@ -111,7 +106,8 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return initials
 
     def run_validation(self, data=empty):
-        """ Perform serializer validation.
+        """
+        Perform serializer validation.
         In addition to running validators on the serializer fields,
         this class ensures that the underlying model is also validated.
         """
