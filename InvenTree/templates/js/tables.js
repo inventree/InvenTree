@@ -134,12 +134,14 @@ $.fn.inventreeTable = function(options) {
     var varName = tableName + '-pagesize';
 
     // Pagingation options (can be server-side or client-side as specified by the caller)
-    options.pagination = true;
-    options.paginationVAlign = 'both';
-    options.pageSize = inventreeLoad(varName, 25);
-    options.pageList = [25, 50, 100, 250, 'all'];
-    options.totalField = 'count';
-    options.dataField = 'results';
+    if (!options.disablePagination) {
+        options.pagination = true;
+        options.paginationVAlign = options.paginationVAlign || 'both';
+        options.pageSize = inventreeLoad(varName, 25);
+        options.pageList = [25, 50, 100, 250, 'all'];
+        options.totalField = 'count';
+        options.dataField = 'results';
+    }
 
     // Extract query params
     var filters = options.queryParams || options.filters || {};

@@ -50,10 +50,15 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['name'], 'ACME')
 
         # Change the name of the company
+        # Note we should not have the correct permissions (yet)
         data = response.data
         data['name'] = 'ACMOO'
-        response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.patch(url, data, format='json', expected_code=400)
+
+        self.assignRole('company.change')
+
+        response = self.client.patch(url, data, format='json', expected_code=200)
+
         self.assertEqual(response.data['name'], 'ACMOO')
 
     def test_company_search(self):
@@ -119,7 +124,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
         data = {
             'MPN': 'MPN-TEST-123',
         }
+        
         response = self.client.patch(url, data, format='json')
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['MPN'], 'MPN-TEST-123')
 

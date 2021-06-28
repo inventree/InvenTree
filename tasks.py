@@ -130,6 +130,14 @@ def wait(c):
     manage(c, "wait_for_db")
 
 @task
+def rebuild(c):
+    """
+    Rebuild database models with MPTT structures
+    """
+
+    manage(c, "rebuild_models")
+
+@task
 def migrate(c):
     """
     Performs database migrations.
@@ -243,12 +251,15 @@ def content_excludes():
         "contenttypes",
         "sessions.session",
         "auth.permission",
+        "authtoken.token",
         "error_report.error",
         "admin.logentry",
         "django_q.schedule",
         "django_q.task",
         "django_q.ormq",
         "users.owner",
+        "exchange.rate",
+        "exchange.exchangebackend",
     ]
 
     output = ""
@@ -282,7 +293,7 @@ def export_records(c, filename='data.json'):
 
     tmpfile = f"{filename}.tmp"
 
-    cmd = f"dumpdata --indent 2 --output {tmpfile} {content_excludes()}"
+    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {content_excludes()}"
 
     # Dump data to temporary file
     manage(c, cmd, pty=True)
@@ -311,7 +322,7 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'})
+@task(help={'filename': 'Input filename'}, post=[rebuild])
 def import_records(c, filename='data.json'):
     """
     Import database records from a file
@@ -348,13 +359,28 @@ def import_records(c, filename='data.json'):
     with open(tmpfile, "w") as f_out:
         f_out.write(json.dumps(data, indent=2))
 
-    cmd = f"loaddata {tmpfile} -i {content_excludes()}"
+    cmd = f"loaddata '{tmpfile}' -i {content_excludes()}"
 
     manage(c, cmd, pty=True)
 
     print("Data import completed")
 
+
 @task
+def delete_data(c, force=False):
+    """
+    Delete all database records!
+
+    Warning: This will REALLY delete all records in the database!!
+    """
+
+    if force:
+        manage(c, 'flush --noinput')
+    else:
+        manage(c, 'flush')
+
+
+@task(post=[rebuild])
 def import_fixtures(c):
     """
     Import fixture data into the database.

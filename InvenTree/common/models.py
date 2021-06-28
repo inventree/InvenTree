@@ -205,6 +205,34 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_SHOW_IMPORT': {
+            'name': _('Show Import in Views'),
+            'description': _('Display the import wizard in some part views'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_SHOW_PRICE_IN_FORMS': {
+            'name': _('Show Price in Forms'),
+            'description': _('Display part price in some forms'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_INTERNAL_PRICE': {
+            'name': _('Internal Prices'),
+            'description': _('Enable internal prices for parts'),
+            'default': False,
+            'validator': bool
+        },
+
+        'PART_BOM_USE_INTERNAL_PRICE': {
+            'name': _('Internal Price as BOM-Price'),
+            'description': _('Use the internal price (if set) in BOM-price calculations'),
+            'default': False,
+            'validator': bool
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
@@ -726,7 +754,7 @@ class PriceBreak(models.Model):
         return converted.amount
 
 
-def get_price(instance, quantity, moq=True, multiples=True, currency=None):
+def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name: str = 'price_breaks'):
     """ Calculate the price based on quantity price breaks.
 
     - Don't forget to add in flat-fee cost (base_cost field)
@@ -734,7 +762,10 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None):
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
 
-    price_breaks = instance.price_breaks.all()
+    if hasattr(instance, break_name):
+        price_breaks = getattr(instance, break_name).all()
+    else:
+        price_breaks = []
 
     # No price break information available?
     if len(price_breaks) == 0:
@@ -756,7 +787,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None):
         currency = currency_code_default()
 
     pb_min = None
-    for pb in instance.price_breaks.all():
+    for pb in price_breaks:
         # Store smallest price break
         if not pb_min:
             pb_min = pb

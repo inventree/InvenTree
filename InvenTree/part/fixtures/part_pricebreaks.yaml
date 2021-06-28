@@ -1,0 +1,51 @@
+# Sell price breaks for parts
+
+# Price breaks for R_2K2_0805
+
+- model: part.partsellpricebreak
+  pk: 1
+  fields:
+    part: 3
+    quantity: 1
+    price: 0.15
+
+- model: part.partsellpricebreak
+  pk: 2
+  fields:
+    part: 3
+    quantity: 10
+    price: 0.10
+
+
+# Internal price breaks for parts
+
+# Internal Price breaks for R_2K2_0805
+
+- model: part.partinternalpricebreak
+  pk: 1
+  fields:
+    part: 3
+    quantity: 1
+    price: 0.08
+
+- model: part.partinternalpricebreak
+  pk: 2
+  fields:
+    part: 3
+    quantity: 10
+    price: 0.05
+
+# Internal Price breaks for C_22N_0805
+- model: part.partinternalpricebreak
+  pk: 3
+  fields:
+    part: 5
+    quantity: 1
+    price: 1
+
+- model: part.partinternalpricebreak
+  pk: 4
+  fields:
+    part: 5
+    quantity: 24
+    price: 0.5

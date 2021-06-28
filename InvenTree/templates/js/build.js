@@ -155,6 +155,88 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 }
 
 
+function loadBuildOrderAllocationTable(table, options={}) {
+    /**
+     * Load a table showing all the BuildOrder allocations for a given part
+     */
+
+    options.params['part_detail'] = true;
+    options.params['build_detail'] = true;
+    options.params['location_detail'] = true;
+
+    var filters = loadTableFilters("buildorderallocation");
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList("buildorderallocation", $(table));
+
+    $(table).inventreeTable({
+        url: '{% url "api-build-item-list" %}',
+        queryParams: filters,
+        name: 'buildorderallocation',
+        groupBy: false,
+        search: false,
+        paginationVAlign: 'bottom',
+        original: options.params,
+        formatNoMatches: function() {
+            return '{% trans "No build order allocations found" %}'
+        },
+        columns: [
+            {
+                field: 'pk',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'build',
+                switchable: false,
+                title: '{% trans "Build Order" %}',
+                formatter: function(value, row) {
+                    var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
+
+                    var ref = `${prefix}${row.build_detail.reference}`;
+
+                    return renderLink(ref, `/build/${row.build}/`);
+                }
+            },
+            {
+                field: 'item',
+                title: '{% trans "Stock Item" %}',
+                formatter: function(value, row) {
+                    // Render a link to the particular stock item
+
+                    var link = `/stock/item/${row.stock_item}/`;
+                    var text = `{% trans "Stock Item" %} ${row.stock_item}`;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+
+                    if (!value) {
+                        return '{% trans "Location not specified" %}';
+                    }
+                    
+                    var link = `/stock/location/${value}`;
+                    var text = row.location_detail.description;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            }
+        ]
+    });
+}
+
+
 function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     /*
      * Load the "allocation table" for a particular build output.
@@ -336,6 +418,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             sub_part_detail: true,
             sub_part_trackable: trackable,
         },
+        disablePagination: true,
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
         },
@@ -347,6 +430,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
             var params = {
                 build: buildId,
+                part_detail: true,
+                location_detail: true,
             }
 
             if (output) {
@@ -466,8 +551,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         title: '{% trans "Part" %}',
                         formatter: function(value, row) {
 
-                            var html = imageHoverIcon(row.part_thumb);
-                            html += renderLink(row.part_name, `/part/${value}/`);
+                            var html = imageHoverIcon(row.part_detail.thumbnail);
+                            html += renderLink(row.part_detail.full_name, `/part/${value}/`);
                             return html;
                         }
                     },
@@ -583,6 +668,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 field: 'sub_part_detail.stock',
                 title: '{% trans "Available" %}',
+                sortable: true,
             },
             {
                 field: 'allocated',
@@ -602,14 +688,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
+                    // Custom sorting function for progress bars
+                    
                     var aA = sumAllocations(rowA);
                     var aB = sumAllocations(rowB);
 
-                    var qA = rowA.quantity;
-                    var qB = rowB.quantity;
-
-                    qA *= output.quantity;
-                    qB *= output.quantity;
+                    var qA = requiredQuantity(rowA);
+                    var qB = requiredQuantity(rowB);
 
                     // Handle the case where both numerators are zero
                     if ((aA == 0) && (aB == 0)) {
@@ -628,6 +713,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     if (progressA == progressB) {
                         return (qA < qB) ? 1 : -1;
                     }
+
+                    if (progressA == progressB) return 0;
 
                     return (progressA < progressB) ? 1 : -1;
                 }

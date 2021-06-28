@@ -81,10 +81,10 @@ function showAllocationSubTable(index, row, element) {
             },
         },
         {
-            field: 'location_id',
+            field: 'location',
             title: 'Location',
             formatter: function(value, row, index, field) {
-                return renderLink(row.location_path, `/stock/location/${row.location_id}/`);
+                return renderLink(row.location_path, `/stock/location/${row.location}/`);
             },
         },
         {
@@ -199,6 +199,7 @@ $("#so-lines-table").inventreeTable({
     detailFormatter: showFulfilledSubTable,
     {% endif %}
     {% endif %}
+    showFooter: true,
     columns: [
         {
             field: 'pk',
@@ -217,7 +218,10 @@ $("#so-lines-table").inventreeTable({
                 } else {
                     return '-';
                 }
-            }
+            },
+            footerFormatter:  function() {
+                return '{% trans "Total" %}'
+            },
         },
         {
             sortable: true,
@@ -228,6 +232,13 @@ $("#so-lines-table").inventreeTable({
             sortable: true,
             field: 'quantity',
             title: '{% trans "Quantity" %}',
+            footerFormatter: function(data) {
+                return data.map(function (row) {
+                  return +row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+            },
         },
         {
             sortable: true,
@@ -237,6 +248,26 @@ $("#so-lines-table").inventreeTable({
                 return row.sale_price_string || row.sale_price;
             }
         },
+        {
+            sortable: true,
+            title: '{% trans "Total price" %}',
+            formatter: function(value, row) {
+                var total = row.sale_price * row.quantity;
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.sale_price_currency});
+                return formatter.format(total)
+            },
+            footerFormatter: function(data) {
+                var total = data.map(function (row) {
+                  return +row['sale_price']*row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency)  || 'USD';
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
+                return formatter.format(total)
+              }
+        },
+
         {
             field: 'allocated',
             {% if order.status == SalesOrderStatus.PENDING %}
