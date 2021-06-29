@@ -8,7 +8,6 @@ from . import views
 
 
 company_detail_urls = [
-    url(r'edit/?', views.CompanyEdit.as_view(), name='company-edit'),
     url(r'delete/?', views.CompanyDelete.as_view(), name='company-delete'),
 
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
@@ -30,11 +29,6 @@ company_detail_urls = [
 
 
 company_urls = [
-
-    url(r'new/supplier/', views.CompanyCreate.as_view(), name='supplier-create'),
-    url(r'new/manufacturer/', views.CompanyCreate.as_view(), name='manufacturer-create'),
-    url(r'new/customer/', views.CompanyCreate.as_view(), name='customer-create'),
-    url(r'new/?', views.CompanyCreate.as_view(), name='company-create'),
 
     url(r'^(?P<pk>\d+)/', include(company_detail_urls)),
 

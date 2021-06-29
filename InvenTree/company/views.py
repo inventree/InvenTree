@@ -246,61 +246,6 @@ class CompanyImage(AjaxUpdateView):
         }
 
 
-class CompanyCreate(AjaxCreateView):
-    """
-    View for creating a new Company object
-    """
-    
-    model = Company
-    context_object_name = 'company'
-    form_class = EditCompanyForm
-    ajax_template_name = 'modal_form.html'
-    permission_required = 'company.add_company'
-
-    def get_form_title(self):
-
-        url = self.request.path
-
-        if url == reverse('supplier-create'):
-            return _("Create new Supplier")
-
-        if url == reverse('manufacturer-create'):
-            return _('Create new Manufacturer')
-
-        if url == reverse('customer-create'):
-            return _('Create new Customer')
-
-        return _('Create new Company')
-
-    def get_initial(self):
-        """ Initial values for the form data """
-        initials = super().get_initial().copy()
-
-        url = self.request.path
-
-        if url == reverse('supplier-create'):
-            initials['is_supplier'] = True
-            initials['is_customer'] = False
-            initials['is_manufacturer'] = False
-
-        elif url == reverse('manufacturer-create'):
-            initials['is_manufacturer'] = True
-            initials['is_supplier'] = True
-            initials['is_customer'] = False
-
-        elif url == reverse('customer-create'):
-            initials['is_customer'] = True
-            initials['is_manufacturer'] = False
-            initials['is_supplier'] = False
-
-        return initials
-
-    def get_data(self):
-        return {
-            'success': _("Created new company"),
-        }
-
-
 class CompanyDelete(AjaxDeleteView):
     """ View for deleting a Company object """
 
