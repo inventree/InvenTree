@@ -17,6 +17,8 @@ from .models import Company
 from .models import ManufacturerPart, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
 
+from common.settings import currency_code_default
+
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Company object (limited detail) """
@@ -59,6 +61,11 @@ class CompanySerializer(InvenTreeModelSerializer):
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
+
+    currency = serializers.ChoiceField(
+        choices=djmoney.settings.CURRENCY_CHOICES,
+        default=currency_code_default,
+    )
 
     class Meta:
         model = Company

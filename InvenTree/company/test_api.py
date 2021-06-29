@@ -62,11 +62,78 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['name'], 'ACMOO')
 
     def test_company_search(self):
-        # Test search functionality in company list
+        """
+        Test search functionality in company list
+        """
+
         url = reverse('api-company-list')
         data = {'search': 'cup'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
+
+    def test_company_create(self):
+        """
+        Test that we can create a company via the API!
+        """
+
+        url = reverse('api-company-list')
+
+        # Name is required
+        response = self.post(
+            url,
+            {
+                'description': 'A description!',
+            },
+            expected_code=400
+        )
+
+        # Minimal example, checking default values
+        response = self.post(
+            url,
+            {
+                'name': 'My API Company',
+                'description': 'A company created via the API',
+            },
+            expected_code=201
+        )
+
+        self.assertTrue(response.data['is_supplier'])
+        self.assertFalse(response.data['is_customer'])
+        self.assertFalse(response.data['is_manufacturer'])
+
+        self.assertEqual(response.data['currency'], 'USD')
+
+        # Maximal example, specify values
+        response = self.post(
+            url,
+            {
+                'name': "Another Company",
+                'description': "Also created via the API!",
+                'currency': 'AUD',
+                'is_supplier': False,
+                'is_manufacturer': True,
+                'is_customer': True,
+            },
+            expected_code=201
+        )
+
+        self.assertEqual(response.data['currency'], 'AUD')
+        self.assertFalse(response.data['is_supplier'])
+        self.assertTrue(response.data['is_customer'])
+        self.assertTrue(response.data['is_manufacturer'])
+
+        # Attempt to create with invalid currency
+        response = self.post(
+            url,
+            {
+                'name': "A name",
+                'description': 'A description',
+                'currency': 'POQD',
+            },
+            expected_code=400
+        )
+
+        self.assertTrue('currency' in response.data)
 
 
 class ManufacturerTest(InvenTreeAPITestCase):

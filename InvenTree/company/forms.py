@@ -11,7 +11,6 @@ from InvenTree.fields import RoundingDecimalFormField
 from django.utils.translation import ugettext_lazy as _
 import django.forms
 
-import djmoney.settings
 from djmoney.forms.fields import MoneyField
 
 from common.settings import currency_code_default

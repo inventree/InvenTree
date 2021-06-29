@@ -105,7 +105,11 @@ class Company(models.Model):
         blank=True,
     )
 
-    website = models.URLField(blank=True, verbose_name=_('Website'), help_text=_('Company website URL'))
+    website = models.URLField(
+        blank=True,
+        verbose_name=_('Website'),
+        help_text=_('Company website URL')
+    )
 
     address = models.CharField(max_length=200,
                                verbose_name=_('Address'),

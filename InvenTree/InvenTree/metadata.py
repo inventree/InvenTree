@@ -7,6 +7,7 @@ import logging
 from rest_framework import serializers
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
+from rest_framework.fields import empty
 
 import users.models
 
@@ -145,6 +146,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Run super method first
         field_info = super().get_field_info(field)
+
+        # If a default value is specified for the serializer field, add it!
+        if 'default' not in field_info and not field.default == empty:
+            field_info['default'] = field.get_default()
 
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
