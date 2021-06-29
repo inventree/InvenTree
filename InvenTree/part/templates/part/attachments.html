@@ -56,12 +56,18 @@
     $("#attachment-table").on('click', '.attachment-edit-button', function() {
         var button = $(this);
 
-        var url = `/part/attachment/${button.attr('pk')}/edit/`;
+        var pk = button.attr('pk');
 
-        launchModalForm(url, 
-            {
-                reload: true,
-            });
+        var url = `/api/part/attachment/${pk}/`;
+
+        constructForm(url, {
+            fields: {
+                attachment: {},
+                comment: {},
+            },
+            title: '{% trans "Edit Attachment" %}',
+            reload: true,
+        });
     });
 
     $("#attachment-table").on('click', '.attachment-delete-button', function() {

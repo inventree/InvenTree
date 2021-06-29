@@ -25,7 +25,6 @@ enableDragAndDrop(
         {
             data: {
                 stock_item: {{ item.id }},
-                user: {{ user.pk }},
             },
             label: 'attachment',
             success: function(data, status, xhr) {
@@ -47,10 +46,6 @@ $("#new-attachment").click(function() {
                     value: {{ item.pk }},
                     hidden: true,
                 },
-                user: {
-                    value: {{ user.pk }},
-                    hidden: true,
-                }
             },
             reload: true,
             title: '{% trans "Add Attachment" %}',

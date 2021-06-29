@@ -154,27 +154,6 @@ class PartRelatedDelete(AjaxDeleteView):
     role_required = 'part.change'
 
 
-class PartAttachmentEdit(AjaxUpdateView):
-    """ View for editing a PartAttachment object """
-
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit attachment')
-
-    def get_data(self):
-        return {
-            'success': _('Part attachment updated')
-        }
-
-    def get_form(self):
-        form = super(AjaxUpdateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
 class PartAttachmentDelete(AjaxDeleteView):
     """ View for deleting a PartAttachment """
 
