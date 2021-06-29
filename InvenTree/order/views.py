@@ -583,8 +583,14 @@ class SalesOrderValidate(AjaxUpdateView):
     form_class = order_forms.SalesOrderValidateForm
 
     def get_context(self):
+        order = self.get_object()
+        price = order.sell_price
+        total = order.get_total_price()
         return {
-            'order': self.get_object(),
+            'order': order,
+            'price': price,
+            'price_calc': total,
+            'price_diff': price - total,
         }
 
     def get(self, request, *args, **kwargs):

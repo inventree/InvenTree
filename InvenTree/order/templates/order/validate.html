@@ -1,8 +1,9 @@
 {% extends "modal_form.html" %}
 
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block pre_form_content %}
-{% blocktrans with part.full_name as part %}Confirm that the order is valid for:<br><i>{{ order }}</i>{% endblocktrans %}
+{% blocktrans %}Confirm that the order is valid for:<br><i>{{ order }}</i> with a price of {{price}} (calculated price is {{price_calc}}, difference {{ price_diff }}){% endblocktrans %}
 
 {% endblock %}
