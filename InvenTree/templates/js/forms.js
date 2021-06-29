@@ -286,6 +286,11 @@ function constructFormBody(fields, options) {
             // Edit callback
             fields[field].onEdit = field_options.onEdit;
 
+            // Custom help_text
+            if (field_options.help_text) {
+                fields[field].help_text = field_options.help_text;
+            }
+
             // Field prefix
             if (field_options.prefix) {
                 fields[field].prefix = field_options.prefix;
