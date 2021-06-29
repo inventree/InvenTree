@@ -18,7 +18,6 @@ part_related_urls = [
 ]
 
 part_attachment_urls = [
-    url(r'^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
     url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
     url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]

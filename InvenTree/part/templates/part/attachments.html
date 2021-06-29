@@ -21,7 +21,7 @@
 
     enableDragAndDrop(
         '#attachment-dropzone',
-        "{% url 'part-attachment-create' %}",
+        '{% url "api-part-attachment-list" %}',
         {
             data: {
                 part: {{ part.id }},
@@ -34,10 +34,23 @@
     );
 
     $("#new-attachment").click(function() {
-        launchModalForm("{% url 'part-attachment-create' %}?part={{ part.id }}",
+
+        constructForm(
+            '{% url "api-part-attachment-list" %}',
             {
-                reload: true, 
-            });
+                method: 'POST',
+                fields: {
+                    attachment: {},
+                    comment: {},
+                    part: {
+                        value: {{ part.pk }},
+                        hidden: true,
+                    }
+                },
+                reload: true,
+                title: '{% trans "Add Attachment" %}',
+            }
+        )
     });
 
     $("#attachment-table").on('click', '.attachment-edit-button', function() {

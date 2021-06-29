@@ -154,60 +154,6 @@ class PartRelatedDelete(AjaxDeleteView):
     role_required = 'part.change'
 
 
-class PartAttachmentCreate(AjaxCreateView):
-    """ View for creating a new PartAttachment object
-
-    - The view only makes sense if a Part object is passed to it
-    """
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_form_title = _("Add part attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-        """
-        Record the user that uploaded this attachment
-        """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
-
-    def get_initial(self):
-        """ Get initial data for new PartAttachment object.
-
-        - Client should have requested this form with a parent part in mind
-        - e.g. ?part=<pk>
-        """
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        # TODO - If the proper part was not sent, return an error message
-        try:
-            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """ Create a form to upload a new PartAttachment
-
-        - Hide the 'part' field
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
 class PartAttachmentEdit(AjaxUpdateView):
     """ View for editing a PartAttachment object """
 
