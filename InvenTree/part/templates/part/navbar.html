@@ -3,6 +3,7 @@
 {% load inventree_extras %}
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% settings_value 'PART_SHOW_RELATED' as show_related %}
 
 <ul class='list-group'>
     <li class='list-group-item'>
@@ -124,12 +125,14 @@
         </a>
     </li>
     {% endif %}
+    {% if show_related %}
     <li class='list-group-item {% if tab == "related" %}active{% endif %}' title='{% trans "Related Parts" %}'>
         <a href='{% url "part-related" part.id %}'>
             <span class='menu-tab-icon fas fa-random sidebar-icon'></span>
             {% trans "Related Parts" %}
         </a>
     </li>
+    {% endif %}
     <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
         <a href='{% url "part-attachments" part.id %}'>
             <span class='menu-tab-icon fas fa-paperclip sidebar-icon'></span>
