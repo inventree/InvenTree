@@ -133,6 +133,14 @@
             });
     });
 
+    function reloadImage(data) {
+        if (data.image) {
+            $('#company-image').attr('src', data.image);
+        } else {
+            location.reload();
+        }
+    }
+
     enableDragAndDrop(
         "#company-thumb",
         "{% url 'api-company-detail' company.id %}",
@@ -140,12 +148,7 @@
             label: 'image',
             method: 'PATCH',
             success: function(data, status, xhr) {
-
-                if (data.image) {
-                    $('#company-image').attr('src', data.image);
-                } else {
-                    location.reload();
-                }
+                reloadImage(data);
             }
         }
     );
@@ -167,11 +170,7 @@
                 },
                 title: '{% trans "Upload Image" %}',
                 onSuccess: function(data) {
-                    if (data.image) {
-                        $('#company-image').attr('src', data.image);
-                    } else {
-                        location.reload();
-                    }
+                    reloadImage(data);
                 }
             }
         );

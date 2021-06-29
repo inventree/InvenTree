@@ -81,7 +81,6 @@ part_detail_urls = [
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
     # Normal thumbnail with form
-    url(r'^thumbnail/?', views.PartImageUpload.as_view(), name='part-image-upload'),
     url(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
     url(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 

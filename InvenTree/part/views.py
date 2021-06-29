@@ -1186,21 +1186,6 @@ class PartImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class PartImageUpload(AjaxUpdateView):
-    """ View for uploading a new Part image """
-
-    model = Part
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Upload Part Image')
-
-    form_class = part_forms.PartImageForm
-
-    def get_data(self):
-        return {
-            'success': _('Updated part image'),
-        }
-
-
 class PartImageSelect(AjaxUpdateView):
     """ View for selecting Part image from existing images. """
 

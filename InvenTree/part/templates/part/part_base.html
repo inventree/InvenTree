@@ -237,6 +237,16 @@
     });
     {% endif %}
 
+    function reloadImage(data) {
+        // If image / thumbnail data present, live update
+        if (data.image) {
+            $('#part-image').attr('src', data.image);
+        } else {
+            // Otherwise, reload the page
+            location.reload();
+        }
+    }
+
     enableDragAndDrop(
         '#part-thumb',
         "{% url 'api-part-detail' part.id %}",
@@ -244,14 +254,7 @@
             label: 'image',
             method: 'PATCH',
             success: function(data, status, xhr) {
-
-                // If image / thumbnail data present, live update
-                if (data.image) {
-                    $('#part-image').attr('src', data.image);
-                } else {
-                    // Otherwise, reload the page
-                    location.reload();
-                }
+                reloadImage(data);
             }
         }
     );
@@ -293,11 +296,20 @@
     });
 
     $("#part-image-upload").click(function() {
-        launchModalForm("{% url 'part-image-upload' part.id %}",
+
+        constructForm(
+            '{% url "api-part-detail" part.pk %}',
             {
-                reload: true
+                method: 'PATCH',
+                fields: {
+                    image: {},
+                },
+                title: '{% trans "Upload Image" %}',
+                onSuccess: function(data) {
+                    reloadImage(data);
+                }
             }
-        );
+        )
     });
 
 
