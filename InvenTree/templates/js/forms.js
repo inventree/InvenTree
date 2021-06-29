@@ -442,8 +442,7 @@ function updateFieldValues(fields, options) {
                 el.prop('checked', value);
                 break;
             case 'related field':
-                // TODO
-                console.log(`related field '${name}'`);
+                // TODO?
                 break;
             default:
                 el.val(value);
@@ -721,10 +720,20 @@ function initializeRelatedField(name, field, options) {
             },
         },
         templateResult: function(item, container) {
+
+            // Extract 'instance' data passed through from an initial value
+            // Or, use the raw 'item' data as a backup
+            var data = item;
+            
+            if (item.element && item.element.instance) {
+                data = item.element.instance;
+            }
+
             // Custom formatting for the search results
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                return renderModelData(name, field.model, item, field, options);
+                var html = renderModelData(name, field.model, data, field, options);
+                return $(html);
             } else {
                 // Return a simple renderering
                 console.log(`WARNING: templateResult() missing 'field.model' for '${name}'`);
@@ -732,10 +741,20 @@ function initializeRelatedField(name, field, options) {
             }
         },
         templateSelection: function(item, container) {
+
+            // Extract 'instance' data passed through from an initial value
+            // Or, use the raw 'item' data as a backup
+            var data = item;
+            
+            if (item.element && item.element.instance) {
+                data = item.element.instance;
+            }
+
             // Custom formatting for selected item
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                return renderModelData(name, field.model, item, field, options);
+                var html = renderModelData(name, field.model, data, field, options);
+                return $(html);
             } else {
                 // Return a simple renderering
                 console.log(`WARNING: templateSelection() missing 'field.model' for '${name}'`);
@@ -743,6 +762,35 @@ function initializeRelatedField(name, field, options) {
             }
         }
     });
+
+    // If a 'value' is already defined, grab the model info from the server
+    if (field.value) {
+        var pk = field.value;
+        var url = `${field.api_url}/${pk}/`.replace('//', '/');
+
+        inventreeGet(url, {}, {
+            success: function(data) {
+
+                // Create a new option, simply use the model name as the text (for now)
+                // Note: The correct rendering will be computed later by templateSelection function
+                var option = new Option(name, data.pk, true, true);
+
+                // Store the returned data as 'instance' parameter of the created option,
+                // so that it can be retrieved later!
+                option.instance = data;
+
+                select.append(option).trigger('change');
+
+                // manually trigger the `select2:select` event
+                select.trigger({
+                    type: 'select2:select',
+                    params: {
+                        data: data
+                    }
+                });
+            }
+        });
+    }
 }
 
 
@@ -795,9 +843,7 @@ function renderModelData(name, model, data, parameters, options) {
     }
 
     if (html != null) {
-        // Render HTML to an object
-        var $state = $(html);
-        return $state;
+        return html;
     } else {
         console.log(`ERROR: Rendering not implemented for model '${model}'`);
         // Simple text rendering
