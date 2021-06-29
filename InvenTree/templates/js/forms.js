@@ -350,8 +350,8 @@ function constructFormBody(fields, options) {
 
     // Set the form title and button labels
     modalSetTitle(modal, options.title || '{% trans "Form Title" %}');
-    modalSetSubmitText(options.submitText || '{% trans "Submit" %}');
-    modalSetCloseText(options.cancelText || '{% trans "Cancel" %}');
+    modalSetSubmitText(modal, options.submitText || '{% trans "Submit" %}');
+    modalSetCloseText(modal, options.cancelText || '{% trans "Cancel" %}');
 
     // Insert generated form content
     $(modal).find('.modal-form-content').html(html);
@@ -387,8 +387,8 @@ function constructFormBody(fields, options) {
  */
 function submitFormData(fields, options) {
 
-    // Data to be sent to the server
-    var data = {};
+    // Form data to be uploaded to the server
+    var form_data = new FormData();
 
     // Extract values for each field
     options.field_names.forEach(function(name) {
@@ -399,16 +399,32 @@ function submitFormData(fields, options) {
 
             var value = getFormFieldValue(name, field, options);
 
-            data[name] = value;
+            // Handle file inputs
+            if (field.type == 'image upload' || field.type == 'file upload') {
+
+                var field_el = $(options.modal).find(`#id_${name}`)[0];
+
+                var field_files = field_el.files;
+
+                if (field_files.length > 0) {
+                    // One file per field, please!
+                    var file = field_files[0];
+
+                    form_data.append(name, file);
+                }
+            } else {
+                // Normal field (not a file or image)
+                form_data.append(name, value);
+            }
         } else {
             console.log(`WARNING: Could not find field matching '${name}'`);
         }
     });
 
     // Submit data
-    inventreePut(
+    inventreeFormDataUpload(
         options.url,
-        data,
+        form_data,
         {
             method: options.method,
             success: function(response, status) {
@@ -463,6 +479,9 @@ function updateFieldValues(fields, options) {
                 break;
             case 'related field':
                 // TODO?
+                break;
+            case 'file upload':
+            case 'image upload':
                 break;
             default:
                 el.val(value);
@@ -1017,6 +1036,10 @@ function constructInput(name, parameters, options) {
         case 'related field':
             func = constructRelatedFieldInput;
             break;
+        case 'image upload':
+        case 'file upload':
+            func = constructFileUploadInput;
+            break;
         default:
             // Unsupported field type!
             break;
@@ -1101,7 +1124,6 @@ function constructCheckboxInput(name, parameters, options) {
         'checkbox',
         parameters
     );
-
 }
 
 
@@ -1190,6 +1212,26 @@ function constructRelatedFieldInput(name, parameters, options) {
     // Don't load any options - they will be filled via an AJAX request
 
     return html;
+}
+
+
+/*
+ * Construct a field for file upload
+ */
+function constructFileUploadInput(name, parameters, options) {
+
+    var cls = 'clearablefileinput';
+
+    if (parameters.required) {
+        cls = 'fileinput';
+    }
+
+    return constructInputOptions(
+        name,
+        cls,
+        'file',
+        parameters
+    );
 }
 
 

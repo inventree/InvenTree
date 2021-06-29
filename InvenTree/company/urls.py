@@ -20,7 +20,6 @@ company_detail_urls = [
     url(r'^sales-orders/', views.CompanyDetail.as_view(template_name='company/sales_orders.html'), name='company-detail-sales-orders'),
     url(r'^notes/', views.CompanyNotes.as_view(), name='company-notes'),
 
-    url(r'^thumbnail/', views.CompanyImage.as_view(), name='company-image'),
     url(r'^thumb-download/', views.CompanyImageDownloadFromURL.as_view(), name='company-image-download'),
 
     # Any other URL

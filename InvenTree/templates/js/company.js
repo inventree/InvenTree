@@ -69,39 +69,6 @@ function createCompany(options={}) {
 }
 
 
-// Launch form to create a new manufacturer part
-function createManufacturerPart(options={}) {
-
-    var fields = {
-        'part': {
-            secondary: {
-                label: '{% trans "New Part" %}',
-            }
-        },
-        'manufacturer': {
-            secondary: {
-                label: '{% trans "New Manufacturer" %}',
-            }
-        },
-        'MPN': {},
-        'description': {},
-        'link': {},
-    };
-
-    fields = Object.assign(fields, options.fields || {});
-
-    constructForm(
-        '{% url "api-manufacturer-part-list" %}',
-        {
-            fields: fields,
-            method: 'POST',
-            follow: true,
-            title: '{% trans "Add new Manufacturer Part" %}',
-        }
-    );
-}
-
-
 function loadCompanyTable(table, url, options={}) {
     /*
      * Load company listing data into specified table.

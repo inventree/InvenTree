@@ -232,20 +232,6 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class CompanyImage(AjaxUpdateView):
-    """ View for uploading an image for the Company """
-    model = Company
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Update Company Image')
-    form_class = CompanyImageForm
-    permission_required = 'company.change_company'
-
-    def get_data(self):
-        return {
-            'success': _('Updated company image'),
-        }
-
-
 class CompanyDelete(AjaxDeleteView):
     """ View for deleting a Company object """
 
