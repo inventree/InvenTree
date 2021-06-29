@@ -2,7 +2,6 @@
 JSON API for the Stock app
 """
 
-from django.db.models.query import QuerySet
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
