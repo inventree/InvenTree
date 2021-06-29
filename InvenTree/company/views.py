@@ -246,23 +246,11 @@ class CompanyImage(AjaxUpdateView):
         }
 
 
-class CompanyEdit(AjaxUpdateView):
-    """ View for editing a Company object """
-    model = Company
-    form_class = EditCompanyForm
-    context_object_name = 'company'
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Company')
-    permission_required = 'company.change_company'
-
-    def get_data(self):
-        return {
-            'info': _('Edited company information'),
-        }
-
-
 class CompanyCreate(AjaxCreateView):
-    """ View for creating a new Company object """
+    """
+    View for creating a new Company object
+    """
+    
     model = Company
     context_object_name = 'company'
     form_class = EditCompanyForm

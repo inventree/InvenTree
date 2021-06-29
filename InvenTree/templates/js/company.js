@@ -1,5 +1,52 @@
 {% load i18n %}
 
+
+// Returns a default form-set for creating / editing a Company object
+function companyFormFields(options={}) {
+
+    return {
+        name: {},
+        description: {},
+        website: {
+            icon: 'fa-globe',
+        },
+        address: {
+            icon: 'fa-envelope',
+        },
+        currency: {
+            icon: 'fa-dollar-sign',
+        },
+        phone: {
+            icon: 'fa-phone',
+        },
+        email: {
+            icon: 'fa-at',
+        },
+        contact: {
+            icon: 'fa-address-card',
+        },
+        is_supplier: {},
+        is_manufacturer: {},
+        is_customer: {}
+    };
+}
+
+
+function editCompany(pk, options={}) {
+
+    var fields = options.fields || companyFormFields();
+
+    constructForm(
+        `/api/company/${pk}/`,
+        {
+            method: 'PATCH',
+            fields: fields,
+            reload: true,
+            title: '{% trans "Edit Company" %}',
+        }
+    );
+};
+
 /*
  * Launches a form to create a new company.
  * As this can be called from many different contexts,
@@ -8,22 +55,7 @@
 function createCompany(options={}) {
 
     // Default field set
-    var fields = {
-            name: {},
-            description: {},
-            website: {},
-            address: {},
-            currency: {},
-            phone: {},
-            email: {},
-            contact: {},
-            is_supplier: {},
-            is_manufacturer: {},
-            is_customer: {}
-    };
-
-    // Override / update default fields as required
-    fields = Object.assign(fields, options.fields || {});
+    var fields = options.fields || companyFormFields();
 
     constructForm(
         '{% url "api-company-list" %}',

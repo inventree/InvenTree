@@ -287,7 +287,12 @@ function constructFormBody(fields, options) {
             fields[field].onEdit = field_options.onEdit;
 
             // Field prefix
-            fields[field].prefix = field_options.prefix;
+            if (field_options.prefix) {
+                fields[field].prefix = field_options.prefix;
+            } else if (field_options.icon) {
+                // Specify icon like 'fa-user'
+                fields[field].prefix = `<span class='fas ${field_options.icon}'></span>`;
+            }
 
             // // Field value?
             // if (fields[field].value == null) {

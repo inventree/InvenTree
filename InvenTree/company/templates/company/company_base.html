@@ -111,11 +111,7 @@
     });
 
     $('#company-edit').click(function() {
-        launchModalForm(
-            "{% url 'company-edit' company.id %}",
-            {
-                reload: true
-            });
+        editCompany({{ company.id }});
     });
 
     $("#company-order-2").click(function() {
