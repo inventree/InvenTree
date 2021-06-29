@@ -490,11 +490,21 @@ function handleFormSuccess(response, options) {
         $(options.modal).modal('hide');
     }
 
-    if (response.url) {
-        // GOTO
-        window.location.href = response.url;
+    if (options.onSuccess) {
+        // Callback function
+        options.onSuccess(response, options);
     }
 
+    if (options.follow && response.url) {
+        // Follow the returned URL
+        window.location.href = response.url;
+    } else if (options.reload) {
+        // Reload the current page
+        location.reload();
+    } else if (options.redirect) {
+        // Redirect to a specified URL
+        window.location.href = options.redirect;
+    }
 }
 
 
