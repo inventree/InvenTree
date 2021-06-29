@@ -104,7 +104,6 @@ category_urls = [
 
     # Category detail views
     url(r'(?P<pk>\d+)/', include([
-        url(r'^edit/', views.CategoryEdit.as_view(), name='category-edit'),
         url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         url(r'^parameters/', include(category_parameter_urls)),
 

@@ -388,7 +388,12 @@ function constructFormBody(fields, options) {
 function submitFormData(fields, options) {
 
     // Form data to be uploaded to the server
+    // Only used if file / image upload is required
     var form_data = new FormData();
+
+    var data = {};
+
+    var has_files = false;
 
     // Extract values for each field
     options.field_names.forEach(function(name) {
@@ -411,20 +416,31 @@ function submitFormData(fields, options) {
                     var file = field_files[0];
 
                     form_data.append(name, file);
+                    
+                    has_files = true;
                 }
             } else {
                 // Normal field (not a file or image)
                 form_data.append(name, value);
+
+                data[name] = value;
             }
         } else {
             console.log(`WARNING: Could not find field matching '${name}'`);
         }
     });
 
+    var upload_func = inventreePut;
+
+    if (has_files) {
+        upload_func = inventreeFormDataUpload;
+        data = form_data;
+    }
+
     // Submit data
-    inventreeFormDataUpload(
+    upload_func(
         options.url,
-        form_data,
+        data,
         {
             method: options.method,
             success: function(response, status) {
@@ -708,6 +724,7 @@ function initializeRelatedField(name, field, options) {
         ajax: {
             url: field.api_url,
             dataType: 'json',
+            placeholder: '',
             allowClear: !field.required,
             dropdownParent: $(options.modal),
             dropdownAutoWidth: false,

@@ -127,7 +127,10 @@ class CategoryList(generics.ListCreateAPIView):
 
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a single PartCategory object """
+    """
+    API endpoint for detail view of a single PartCategory object
+    """
+    
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 

@@ -294,11 +294,6 @@ class CategoryTest(PartViewTestCase):
         # Form should still return OK
         self.assertEqual(response.status_code, 200)
 
-    def test_edit(self):
-        """ Retrieve the part category editing form """
-        response = self.client.get(reverse('category-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
     def test_set_category(self):
         """ Test that the "SetCategory" view works """
 

@@ -39,6 +39,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'default_location',
+            'default_keywords',
             'pathstring',
             'url',
             'parent',

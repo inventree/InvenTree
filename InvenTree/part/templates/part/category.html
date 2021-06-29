@@ -268,13 +268,23 @@
 
     {% if category %}
     $("#cat-edit").click(function () {
-        launchModalForm(
-            "{% url 'category-edit' category.id %}",
+
+        constructForm(
+            '{% url "api-part-category-detail" category.pk %}',
             {
+                fields: {
+                    name: {},
+                    description: {},
+                    parent: {},
+                    default_location: {},
+                    default_keywords: {
+                        icon: 'fa-key',
+                    }
+                },
+                title: '{% trans "Edit Part Category" %}',
                 reload: true
-            },
+            }
         );
-        return false;
     });
 
     {% if category.parent %}

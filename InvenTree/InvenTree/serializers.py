@@ -110,6 +110,19 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         return initials
 
+    def save(self, **kwargs):
+        """
+        Catch any django ValidationError thrown at the moment save() is called,
+        and re-throw as a DRF ValidationError
+        """
+
+        try:
+            super().save(**kwargs)
+        except (ValidationError, DjangoValidationError) as exc:
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+        return self.instance
+
     def run_validation(self, data=empty):
         """
         Perform serializer validation.
