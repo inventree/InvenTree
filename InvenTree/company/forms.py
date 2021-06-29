@@ -21,16 +21,6 @@ from .models import SupplierPart
 from .models import SupplierPriceBreak
 
 
-class CompanyImageForm(HelperForm):
-    """ Form for uploading a Company image """
-
-    class Meta:
-        model = Company
-        fields = [
-            'image'
-        ]
-
-
 class CompanyImageDownloadForm(HelperForm):
     """
     Form for downloading an image from a URL
