@@ -30,7 +30,7 @@ from .models import SupplierPriceBreak
 
 from part.models import Part
 
-from .forms import EditCompanyForm, EditManufacturerPartParameterForm
+from .forms import EditManufacturerPartParameterForm
 from .forms import CompanyImageForm
 from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm

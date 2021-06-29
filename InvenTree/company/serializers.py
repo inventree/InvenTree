@@ -6,6 +6,8 @@ from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
 
+import djmoney.settings
+
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeImageSerializerField
 
