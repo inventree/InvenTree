@@ -64,7 +64,6 @@ stock_urls = [
 
     # URLs for StockItem attachments
     url(r'^item/attachment/', include([
-        url(r'^new/', views.StockItemAttachmentCreate.as_view(), name='stock-item-attachment-create'),
         url(r'^(?P<pk>\d+)/edit/', views.StockItemAttachmentEdit.as_view(), name='stock-item-attachment-edit'),
         url(r'^(?P<pk>\d+)/delete/', views.StockItemAttachmentDelete.as_view(), name='stock-item-attachment-delete'),
     ])),

@@ -21,10 +21,11 @@
 
 enableDragAndDrop(
         '#attachment-dropzone',
-        "{% url 'stock-item-attachment-create' %}",
+        "{% url 'api-stock-attachment-list' %}",
         {
             data: {
                 stock_item: {{ item.id }},
+                user: {{ user.pk }},
             },
             label: 'attachment',
             success: function(data, status, xhr) {
@@ -34,10 +35,27 @@ enableDragAndDrop(
     );
 
 $("#new-attachment").click(function() {
-    launchModalForm("{% url 'stock-item-attachment-create' %}?item={{ item.id }}",
+
+    constructForm(
+        '{% url "api-stock-attachment-list" %}',
         {
-            reload: true, 
-        });
+            method: 'POST',
+            fields: {
+                attachment: {},
+                comment: {},
+                stock_item: {
+                    value: {{ item.pk }},
+                    hidden: true,
+                },
+                user: {
+                    value: {{ user.pk }},
+                    hidden: true,
+                }
+            },
+            reload: true,
+            title: '{% trans "Add Attachment" %}',
+        }
+    );
 });
 
 $("#attachment-table").on('click', '.attachment-edit-button', function() {

@@ -27,8 +27,27 @@ function renderCompany(name, data, parameters, options) {
 // Renderer for "StockItem" model
 function renderStockItem(name, data, parameters, options) {
 
-    // TODO - Include part detail, location, quantity
-    // TODO - Include part image
+    var image = data.part_detail.thumbnail || data.part_detail.image;
+
+    if (!image) {
+        image = `/static/img/blank_image.png`;
+    }
+
+    var html = `<img src='${image}' class='select2-thumbnail'>`;
+
+    html += ` <span>${data.part_detail.full_name || data.part_detail.name}</span>`;
+
+    if (data.serial && data.quantity == 1) {
+        html += ` - <i>{% trans "Serial Number" %}: ${data.serial}`;
+    } else {
+        html += ` - <i>{% trans "Quantity" %}: ${data.quantity}`;
+    }
+
+    if (data.part_detail.description) {
+        html += `<p><small>${data.part_detail.description}</small></p>`;
+    }
+
+    return html;
 }
 
 
@@ -62,7 +81,7 @@ function renderPart(name, data, parameters, options) {
 
     var html = `<img src='${image}' class='select2-thumbnail'>`;
     
-    html += ` <span>${data.full_name ?? data.name}</span>`;
+    html += ` <span>${data.full_name || data.name}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;

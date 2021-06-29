@@ -304,10 +304,7 @@ function constructFormBody(fields, options) {
                 fields[field].prefix = `<span class='fas ${field_options.icon}'></span>`;
             }
 
-            // // Field value?
-            // if (fields[field].value == null) {
-            //     fields[field].value = field_options.value;
-            // }
+            fields[field].hidden = field_options.hidden;
         }
     }
 
@@ -672,6 +669,8 @@ function initializeRelatedFields(fields, options) {
 
         if (!field || field.type != 'related field') continue;
 
+        if (field.hidden) continue;
+
         if (!field.api_url) {
             // TODO: Provide manual api_url option?
             console.log(`Related field '${name}' missing 'api_url' parameter.`);
@@ -962,6 +961,11 @@ function constructField(name, parameters, options) {
 
     var field_name = `id_${name}`;
 
+    // Hidden inputs are rendered without label / help text / etc
+    if (parameters.hidden) {
+        return constructHiddenInput(name, parameters, options);
+    }
+
     var form_classes = 'form-group';
 
     if (parameters.errors) {
@@ -1139,6 +1143,18 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     return `<input ${opts.join(' ')}>`;
+}
+
+
+// Construct a "hidden" input
+function constructHiddenInput(name, parameters, options) {
+
+    return constructInputOptions(
+        name,
+        'hiddeninput',
+        'hidden',
+        parameters
+    );
 }
 
 
