@@ -729,6 +729,10 @@ function initializeRelatedField(name, field, options) {
                 data = item.element.instance;
             }
 
+            if (!data.pk) {
+                return $(searching());
+            }
+
             // Custom formatting for the search results
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
@@ -748,6 +752,10 @@ function initializeRelatedField(name, field, options) {
             
             if (item.element && item.element.instance) {
                 data = item.element.instance;
+            }
+
+            if (!data.pk) {
+                return $(searching());
             }
 
             // Custom formatting for selected item
@@ -793,6 +801,11 @@ function initializeRelatedField(name, field, options) {
     }
 }
 
+
+// Render a 'no results' element
+function searching() {
+    return `<span>{% trans "Searching" %}...</span>`;
+}
 
 /*
  * Render a "foreign key" model reference in a select2 instance.
