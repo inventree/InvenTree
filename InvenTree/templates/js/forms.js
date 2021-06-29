@@ -291,6 +291,11 @@ function constructFormBody(fields, options) {
                 fields[field].help_text = field_options.help_text;
             }
 
+            // Custom label
+            if (field_options.label) {
+                fields[field].label = field_options.label;
+            }
+
             // Field prefix
             if (field_options.prefix) {
                 fields[field].prefix = field_options.prefix;
