@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-28 23:32+0000\n"
+"POT-Creation-Date: 2021-06-29 11:25+0000\n"
 "PO-Revision-Date: 2021-06-24 21:40\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -463,7 +463,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:31 common/models.py:727
+#: build/templates/build/detail.html:31 common/models.py:734
 #: company/forms.py:191 company/templates/company/supplier_part_pricing.html:77
 #: order/forms.py:200 order/forms.py:218 order/forms.py:253 order/forms.py:275
 #: order/forms.py:292 order/models.py:617 order/models.py:841
@@ -592,8 +592,8 @@ msgstr "Bauauftrag"
 #: build/models.py:67 build/templates/build/index.html:8
 #: build/templates/build/index.html:15 order/templates/order/so_builds.html:12
 #: order/templates/order/so_navbar.html:19
-#: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:57
-#: part/templates/part/navbar.html:60 templates/InvenTree/index.html:183
+#: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:58
+#: part/templates/part/navbar.html:61 templates/InvenTree/index.html:183
 #: templates/InvenTree/search.html:185
 #: templates/InvenTree/settings/tabs.html:34 users/models.py:43
 msgid "Build Orders"
@@ -772,7 +772,7 @@ msgstr "Link zu einer externen URL"
 #: order/templates/order/sales_order_detail.html:309
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:856
-#: part/templates/part/navbar.html:142
+#: part/templates/part/navbar.html:145
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:173 stock/forms.py:317 stock/forms.py:349 stock/forms.py:377
 #: stock/models.py:532 stock/models.py:1667 stock/models.py:1769
@@ -923,8 +923,8 @@ msgstr "Seriennummer"
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
 #: order/templates/order/po_navbar.html:35
-#: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:133
-#: part/templates/part/navbar.html:136 stock/templates/stock/navbar.html:47
+#: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:136
+#: part/templates/part/navbar.html:139 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
 msgstr "Anhänge"
@@ -1250,7 +1250,7 @@ msgstr "Bauauftrag-details"
 #: build/templates/build/navbar.html:15
 #: company/templates/company/navbar.html:15
 #: order/templates/order/po_navbar.html:15
-#: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:17
+#: order/templates/order/so_navbar.html:15 part/templates/part/navbar.html:18
 #: templates/js/stock.js:1044
 msgid "Details"
 msgstr "Details"
@@ -1687,176 +1687,186 @@ msgid "Display part price in some forms"
 msgstr ""
 
 #: common/models.py:223
-msgid "Internal Prices"
-msgstr ""
+#, fuzzy
+#| msgid "Show active parts"
+msgid "Show related parts"
+msgstr "Aktive Teile anzeigen"
 
 #: common/models.py:224
-msgid "Enable internal prices for parts"
+msgid "Display related parts for a part"
 msgstr ""
 
 #: common/models.py:230
-msgid "Internal Price as BOM-Price"
+msgid "Internal Prices"
 msgstr ""
 
 #: common/models.py:231
+msgid "Enable internal prices for parts"
+msgstr ""
+
+#: common/models.py:237
+msgid "Internal Price as BOM-Price"
+msgstr ""
+
+#: common/models.py:238
 msgid "Use the internal price (if set) in BOM-price calculations"
 msgstr ""
 
-#: common/models.py:237 templates/stats.html:25
+#: common/models.py:244 templates/stats.html:25
 msgid "Debug Mode"
 msgstr "Entwickler-Modus"
 
-#: common/models.py:238
+#: common/models.py:245
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Berichte im Entwickler-Modus generieren (als HTML)"
 
-#: common/models.py:244
+#: common/models.py:251
 msgid "Page Size"
 msgstr "Seitengröße"
 
-#: common/models.py:245
+#: common/models.py:252
 msgid "Default page size for PDF reports"
 msgstr "Standardseitenformat für PDF-Bericht"
 
-#: common/models.py:255
+#: common/models.py:262
 msgid "Test Reports"
 msgstr "Test-Berichte"
 
-#: common/models.py:256
+#: common/models.py:263
 msgid "Enable generation of test reports"
 msgstr "Erstellung von Test-Berichten aktivieren"
 
-#: common/models.py:262
+#: common/models.py:269
 msgid "Stock Expiry"
 msgstr "Bestands-Ablauf"
 
-#: common/models.py:263
+#: common/models.py:270
 msgid "Enable stock expiry functionality"
 msgstr "Ablaufen von Bestand ermöglichen"
 
-#: common/models.py:269
+#: common/models.py:276
 msgid "Sell Expired Stock"
 msgstr "Abgelaufenen Bestand verkaufen"
 
-#: common/models.py:270
+#: common/models.py:277
 msgid "Allow sale of expired stock"
 msgstr "Verkauf von abgelaufenem Bestand erlaubt"
 
-#: common/models.py:276
+#: common/models.py:283
 msgid "Stock Stale Time"
 msgstr "Bestands-Stehzeit"
 
-#: common/models.py:277
+#: common/models.py:284
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Anzahl an Tagen, an denen Bestand als abgestanden markiert wird, bevor sie ablaufen"
 
-#: common/models.py:279 part/templates/part/detail.html:121
+#: common/models.py:286 part/templates/part/detail.html:121
 msgid "days"
 msgstr "Tage"
 
-#: common/models.py:284
+#: common/models.py:291
 msgid "Build Expired Stock"
 msgstr "Abgelaufenen Bestand verbauen"
 
-#: common/models.py:285
+#: common/models.py:292
 msgid "Allow building with expired stock"
 msgstr "Verbauen von abgelaufenen Bestand erlaubt"
 
-#: common/models.py:291
+#: common/models.py:298
 msgid "Stock Ownership Control"
 msgstr "Bestands-Eigentümerkontrolle"
 
-#: common/models.py:292
+#: common/models.py:299
 msgid "Enable ownership control over stock locations and items"
 msgstr "Eigentümerkontrolle für Lagerorte und Teile aktivieren"
 
-#: common/models.py:298
+#: common/models.py:305
 msgid "Group by Part"
 msgstr "Gruppieren nach Teil"
 
-#: common/models.py:299
+#: common/models.py:306
 msgid "Group stock items by part reference in table views"
 msgstr "Bestand in Tabellen anhand von Teil-Referenz gruppieren"
 
-#: common/models.py:305
+#: common/models.py:312
 msgid "Recent Stock Count"
 msgstr "aktueller Bestand"
 
-#: common/models.py:306
+#: common/models.py:313
 msgid "Number of recent stock items to display on index page"
 msgstr "Anzahl des geänderten Bestands auf der Startseite"
 
-#: common/models.py:312
+#: common/models.py:319
 msgid "Build Order Reference Prefix"
 msgstr "Bauauftrag-Referenz Präfix"
 
-#: common/models.py:313
+#: common/models.py:320
 msgid "Prefix value for build order reference"
 msgstr "Präfix für Bauauftrag-Referenz"
 
-#: common/models.py:318
+#: common/models.py:325
 msgid "Build Order Reference Regex"
 msgstr "Bauauftrag-Referenz RegEx"
 
-#: common/models.py:319
+#: common/models.py:326
 msgid "Regular expression pattern for matching build order reference"
 msgstr "RegEx Muster für die Zuordnung von Bauauftrag-Referenzen"
 
-#: common/models.py:323
+#: common/models.py:330
 msgid "Sales Order Reference Prefix"
 msgstr "Auftrags-Referenz Präfix"
 
-#: common/models.py:324
+#: common/models.py:331
 msgid "Prefix value for sales order reference"
 msgstr "Präfix für Auftrags-Referenz"
 
-#: common/models.py:329
+#: common/models.py:336
 msgid "Purchase Order Reference Prefix"
 msgstr "Bestellungs-Referenz Präfix"
 
-#: common/models.py:330
+#: common/models.py:337
 msgid "Prefix value for purchase order reference"
 msgstr "Präfix für Bestellungs-Referenz"
 
-#: common/models.py:553
+#: common/models.py:560
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
-#: common/models.py:555
+#: common/models.py:562
 msgid "Settings value"
 msgstr "Einstellungs-Wert"
 
-#: common/models.py:590
+#: common/models.py:597
 msgid "Must be an integer value"
 msgstr "Nur Ganzzahl eingeben"
 
-#: common/models.py:613
+#: common/models.py:620
 msgid "Value must be a boolean value"
 msgstr "Wahrheitswert erforderlich"
 
-#: common/models.py:624
+#: common/models.py:631
 msgid "Value must be an integer value"
 msgstr "Nur Ganzzahl eingeben"
 
-#: common/models.py:647
+#: common/models.py:654
 msgid "Key string must be unique"
 msgstr "Schlüsseltext muss eindeutig sein"
 
-#: common/models.py:728 company/forms.py:192
+#: common/models.py:735 company/forms.py:192
 msgid "Price break quantity"
 msgstr "Preisstaffelungs Anzahl"
 
-#: common/models.py:736 company/templates/company/supplier_part_pricing.html:82
+#: common/models.py:743 company/templates/company/supplier_part_pricing.html:82
 #: part/templates/part/internal_prices.html:103
 #: part/templates/part/sale_prices.html:90
 msgid "Price"
 msgstr "Preis"
 
-#: common/models.py:737
+#: common/models.py:744
 msgid "Unit price at specified quantity"
 msgstr "Stückpreis für die angegebene Anzahl"
 
-#: common/models.py:829
+#: common/models.py:836
 msgid "Default"
 msgstr "Standard"
 
@@ -2401,8 +2411,8 @@ msgstr "Für dieses Herstellerteil sind %(count)s Lieferanten definiert. Wenn Si
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/templates/company/manufacturer_part_suppliers.html:10
-#: company/views.py:63 part/templates/part/navbar.html:86
-#: part/templates/part/navbar.html:89 templates/InvenTree/search.html:316
+#: company/views.py:63 part/templates/part/navbar.html:87
+#: part/templates/part/navbar.html:90 templates/InvenTree/search.html:316
 #: templates/navbar.html:35
 msgid "Suppliers"
 msgstr "Zulieferer"
@@ -2414,7 +2424,7 @@ msgstr "Herstellerteil-Bestand"
 #: company/templates/company/manufacturer_part_navbar.html:22
 #: company/templates/company/navbar.html:41
 #: company/templates/company/supplier_part_navbar.html:15
-#: part/templates/part/navbar.html:38 stock/api.py:54
+#: part/templates/part/navbar.html:39 stock/api.py:54
 #: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:36
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:128 templates/InvenTree/search.html:196
@@ -2449,14 +2459,14 @@ msgstr "Löschen"
 #: company/templates/company/manufacturer_part_suppliers.html:37
 #: part/templates/part/category_navbar.html:46
 #: part/templates/part/category_navbar.html:49
-#: part/templates/part/navbar.html:24
+#: part/templates/part/navbar.html:25
 msgid "Parameters"
 msgstr "Parameter"
 
 #: company/templates/company/manufacturer_part_suppliers.html:43
 #: part/templates/part/params.html:18
 #: templates/InvenTree/settings/category.html:29
-#: templates/InvenTree/settings/part.html:64
+#: templates/InvenTree/settings/part.html:65
 msgid "New Parameter"
 msgstr "Neuer Parameter"
 
@@ -2475,7 +2485,7 @@ msgstr "Hergestellte Teile"
 msgid "Supplied Parts"
 msgstr "Zuliefererteile"
 
-#: company/templates/company/navbar.html:38 part/templates/part/navbar.html:35
+#: company/templates/company/navbar.html:38 part/templates/part/navbar.html:36
 #: stock/templates/stock/location.html:107
 #: stock/templates/stock/location.html:122
 #: stock/templates/stock/location.html:136
@@ -2492,7 +2502,7 @@ msgstr "Teilbestand"
 #: company/templates/company/sales_orders.html:11
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:13
-#: part/templates/part/navbar.html:112 part/templates/part/navbar.html:115
+#: part/templates/part/navbar.html:113 part/templates/part/navbar.html:116
 #: part/templates/part/sales_orders.html:10 templates/InvenTree/index.html:228
 #: templates/InvenTree/search.html:345
 #: templates/InvenTree/settings/tabs.html:40 templates/navbar.html:46
@@ -2504,7 +2514,7 @@ msgstr "Aufträge"
 #: company/templates/company/purchase_orders.html:10
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:13
-#: part/templates/part/navbar.html:92 part/templates/part/navbar.html:95
+#: part/templates/part/navbar.html:93 part/templates/part/navbar.html:96
 #: part/templates/part/orders.html:10 templates/InvenTree/index.html:205
 #: templates/InvenTree/search.html:325
 #: templates/InvenTree/settings/tabs.html:37 templates/navbar.html:37
@@ -2606,8 +2616,8 @@ msgstr "Preisstaffel bearbeiten"
 msgid "Delete price break"
 msgstr "Preisstaffel löschen"
 
-#: company/views.py:70 part/templates/part/navbar.html:80
-#: part/templates/part/navbar.html:83 templates/InvenTree/search.html:306
+#: company/views.py:70 part/templates/part/navbar.html:81
+#: part/templates/part/navbar.html:84 templates/InvenTree/search.html:306
 #: templates/navbar.html:36
 msgid "Manufacturers"
 msgstr "Hersteller"
@@ -2990,7 +3000,7 @@ msgstr "Preis pro Einheit"
 msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Wo möchte der Käufer diesen Artikel gelagert haben?"
 
-#: order/models.py:724 part/templates/part/navbar.html:109
+#: order/models.py:724 part/templates/part/navbar.html:110
 #: part/templates/part/order_prices.html:108
 #: part/templates/part/part_pricing.html:97
 msgid "Sale Price"
@@ -4244,8 +4254,8 @@ msgstr "Sind Sie sicher, dass Sie diese Stücklisten-Position löschen wollen?"
 msgid "Deleting this entry will remove the BOM row from the following part"
 msgstr "Die Löschung dieses Eintrags wird das Stücklisten-Position vom folgenden Teil entfernen"
 
-#: part/templates/part/bom.html:10 part/templates/part/navbar.html:50
-#: part/templates/part/navbar.html:53
+#: part/templates/part/bom.html:10 part/templates/part/navbar.html:51
+#: part/templates/part/navbar.html:54
 msgid "Bill of Materials"
 msgstr "Stückliste"
 
@@ -4513,7 +4523,7 @@ msgid "Import Parts"
 msgstr "wichtige Daten"
 
 #: part/templates/part/category_parametric.html:10
-#: part/templates/part/navbar.html:21 part/templates/part/params.html:10
+#: part/templates/part/navbar.html:22 part/templates/part/params.html:10
 msgid "Part Parameters"
 msgstr "Teilparameter"
 
@@ -4541,7 +4551,7 @@ msgstr "Teil evtl. Duplikat dieser Teile"
 msgid "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% match)"
 msgstr "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% übereinstimmend)"
 
-#: part/templates/part/detail.html:11 part/templates/part/navbar.html:13
+#: part/templates/part/detail.html:11 part/templates/part/navbar.html:14
 msgid "Part Details"
 msgstr "Teil Details"
 
@@ -4633,7 +4643,7 @@ msgid "Import Parts from File"
 msgstr "Berichts-Ressource"
 
 #: part/templates/part/internal_prices.html:11
-#: part/templates/part/navbar.html:100
+#: part/templates/part/navbar.html:101
 msgid "Internal Price Information"
 msgstr ""
 
@@ -4675,57 +4685,57 @@ msgstr "Herstellerteile löschen"
 msgid "Create new manufacturer"
 msgstr "Neuen Hersteller anlegen"
 
-#: part/templates/part/navbar.html:28 part/templates/part/variants.html:11
+#: part/templates/part/navbar.html:29 part/templates/part/variants.html:11
 msgid "Part Variants"
 msgstr "Teil Varianten"
 
-#: part/templates/part/navbar.html:31
+#: part/templates/part/navbar.html:32
 msgid "Variants"
 msgstr "Varianten"
 
-#: part/templates/part/navbar.html:42
+#: part/templates/part/navbar.html:43
 msgid "Allocated Stock"
 msgstr "Lagerbestand zuweisen"
 
-#: part/templates/part/navbar.html:45
+#: part/templates/part/navbar.html:46
 msgid "Allocations"
 msgstr "Zuweisungen"
 
-#: part/templates/part/navbar.html:66 part/templates/part/navbar.html:69
+#: part/templates/part/navbar.html:67 part/templates/part/navbar.html:70
 msgid "Used In"
 msgstr "Benutzt in"
 
-#: part/templates/part/navbar.html:74 part/templates/part/order_prices.html:12
+#: part/templates/part/navbar.html:75 part/templates/part/order_prices.html:12
 msgid "Order Price Information"
 msgstr "Bestellpreisinformationen"
 
-#: part/templates/part/navbar.html:77
+#: part/templates/part/navbar.html:78
 msgid "Order Price"
 msgstr "Bestellpreis"
 
-#: part/templates/part/navbar.html:103 part/templates/part/order_prices.html:94
+#: part/templates/part/navbar.html:104 part/templates/part/order_prices.html:94
 #: part/templates/part/part_pricing.html:82
 msgid "Internal Price"
 msgstr "Interner Preis"
 
-#: part/templates/part/navbar.html:106
+#: part/templates/part/navbar.html:107
 msgid "Sales Price Information"
 msgstr "Preisinformationen ansehen"
 
-#: part/templates/part/navbar.html:120 part/templates/part/part_tests.html:10
+#: part/templates/part/navbar.html:121 part/templates/part/part_tests.html:10
 msgid "Part Test Templates"
 msgstr "Teil Test-Vorlagen"
 
-#: part/templates/part/navbar.html:123 stock/templates/stock/item_base.html:414
+#: part/templates/part/navbar.html:124 stock/templates/stock/item_base.html:414
 msgid "Tests"
 msgstr "Tests"
 
-#: part/templates/part/navbar.html:127 part/templates/part/navbar.html:130
+#: part/templates/part/navbar.html:129 part/templates/part/navbar.html:132
 #: part/templates/part/related.html:10
 msgid "Related Parts"
 msgstr "Verknüpfte Teile"
 
-#: part/templates/part/navbar.html:139 part/templates/part/notes.html:12
+#: part/templates/part/navbar.html:142 part/templates/part/notes.html:12
 msgid "Part Notes"
 msgstr "Teil-Bemerkungen"
 
@@ -6358,12 +6368,12 @@ msgid "No category parameter templates found"
 msgstr "Keine Kategorie-Parametervorlagen gefunden"
 
 #: templates/InvenTree/settings/category.html:70
-#: templates/InvenTree/settings/part.html:101
+#: templates/InvenTree/settings/part.html:102
 msgid "Edit Template"
 msgstr "Vorlage bearbeiten"
 
 #: templates/InvenTree/settings/category.html:71
-#: templates/InvenTree/settings/part.html:102
+#: templates/InvenTree/settings/part.html:103
 msgid "Delete Template"
 msgstr "Vorlage löschen"
 
@@ -6411,23 +6421,23 @@ msgstr "Teil-Einstellungen"
 msgid "Part Options"
 msgstr "Teil-Optionen"
 
-#: templates/InvenTree/settings/part.html:44
+#: templates/InvenTree/settings/part.html:45
 #, fuzzy
 #| msgid "Part Notes"
 msgid "Part Import"
 msgstr "Teil-Bemerkungen"
 
-#: templates/InvenTree/settings/part.html:47
+#: templates/InvenTree/settings/part.html:48
 #, fuzzy
 #| msgid "Import BOM data"
 msgid "Import Part"
 msgstr "Stückliste importieren"
 
-#: templates/InvenTree/settings/part.html:60
+#: templates/InvenTree/settings/part.html:61
 msgid "Part Parameter Templates"
 msgstr "Teil-Parametervorlage"
 
-#: templates/InvenTree/settings/part.html:81
+#: templates/InvenTree/settings/part.html:82
 msgid "No part parameter templates found"
 msgstr "Keine Teilparametervorlagen gefunden"
 
