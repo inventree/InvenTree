@@ -1,5 +1,75 @@
 {% load i18n %}
 
+/*
+ * Launches a form to create a new company.
+ * As this can be called from many different contexts,
+ * we abstract it here!
+ */
+function createCompany(options={}) {
+
+    // Default field set
+    var fields = {
+            name: {},
+            description: {},
+            website: {},
+            address: {},
+            currency: {},
+            phone: {},
+            email: {},
+            contact: {},
+            is_supplier: {},
+            is_manufacturer: {},
+            is_customer: {}
+    };
+
+    // Override / update default fields as required
+    fields = Object.assign(fields, options.fields || {});
+
+    constructForm(
+        '{% url "api-company-list" %}',
+        {
+            method: 'POST',
+            fields: fields,
+            follow: true,
+            title: '{% trans "Add new Company" %}',
+        }
+    );
+}
+
+
+// Launch form to create a new manufacturer part
+function createManufacturerPart(options={}) {
+
+    var fields = {
+        'part': {
+            secondary: {
+                label: '{% trans "New Part" %}',
+            }
+        },
+        'manufacturer': {
+            secondary: {
+                label: '{% trans "New Manufacturer" %}',
+            }
+        },
+        'MPN': {},
+        'description': {},
+        'link': {},
+    };
+
+    fields = Object.assign(fields, options.fields || {});
+
+    constructForm(
+        '{% url "api-manufacturer-part-list" %}',
+        {
+            fields: fields,
+            method: 'POST',
+            follow: true,
+            title: '{% trans "Add new Manufacturer Part" %}',
+        }
+    );
+}
+
+
 function loadCompanyTable(table, url, options={}) {
     /*
      * Load company listing data into specified table.

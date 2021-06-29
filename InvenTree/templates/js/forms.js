@@ -109,14 +109,24 @@ function getApiEndpointOptions(url, callback, options) {
  * - 
  */
 function constructCreateForm(fields, options) {
-    
+
     // Check if default values were provided for any fields
     for (const name in fields) {
     
         var field = fields[name];
 
-        if (field.default != null) {
-            field.value = field.default;
+        var field_options = options.fields[name] || {};
+
+        // If a 'value' is not provided for the field,
+        if (field.value == null) {
+            
+            if ('value' in field_options) {
+                // Client has specified the default value for the field
+                field.value = field_options.value;
+            } else if (field.default != null) {
+                // OPTIONS endpoint provided default value for this field
+                field.value = field.default;
+            }
         }
     }
 
@@ -278,6 +288,11 @@ function constructFormBody(fields, options) {
 
             // Field prefix
             fields[field].prefix = field_options.prefix;
+
+            // // Field value?
+            // if (fields[field].value == null) {
+            //     fields[field].value = field_options.value;
+            // }
         }
     }
 

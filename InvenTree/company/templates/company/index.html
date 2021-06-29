@@ -16,10 +16,7 @@
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
 <div id='button-toolbar'>
     <button type='button' class="btn btn-success" id='new-company'>
-        <span class='fas fa-plus-circle'></span> {{ button_text }} (Server Side)
-    </button>
-    <button type='button' class="btn btn-success" id='new-company-2'>
-        <span class='fas fa-plus-circle'></span> {{ button_text }} (Client Side)
+        <span class='fas fa-plus-circle'></span> {{ button_text }}
     </button>
     <div class='btn-group'>
     </div>
@@ -32,60 +29,49 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
-    $('#new-company').click(function () {
-        launchModalForm("{{ create_url }}", {
-            follow: true
-        });
-    });
 
-    $('#new-company-2').click(function() {
+    $('#new-company').click(function() {
+
+        createCompany({
+            fields: {
+                is_supplier: {
+                    value: {% if pagetype == 'suppliers' %}true{% else %}false{% endif %},
+                },
+                is_manufacturer: {
+                    value: {% if pagetype == 'manufacturers' %}true{% else %}false{% endif %},
+                },
+                is_customer: {
+                    value: {% if pagetype == 'customers' %}true{% else %}false{% endif %},
+                },
+            }
+        });
+
+        return;
+
         constructForm(
-            '{% url "api-build-list" %}',
+            '{% url "api-company-list" %}',
             {
                 method: 'POST',
-                title: '{% trans "Edit Part Details" %}',
+                title: '{% trans "Create new Company" %}',
+                follow: true,
                 fields: {
-                    title: {
-                        prefix: `<span class='fas fa-user'></span>`
-                    },
-                    reference: {},
-                    part: {
-                        filters: {
-                        }
-                    },
-                    quantity: {},
-                    /*
-                    name: {
-                        onEdit: function() {
-                            console.log('Edited name field');
-                        }
-                    },
+                    name: {},
                     description: {},
-                    category: {
-                        filters: {
-                            parent: 1,
-                        },
-                        secondary: {
-                            label: '{% trans "New Category" %}',
-                        },
+                    website: {},
+                    address: {},
+                    currency: {},
+                    phone: {},
+                    email: {},
+                    contact: {},
+                    is_supplier: {
+                        value: {% if pagetype == 'suppliers' %}true{% else %}false{% endif %},
                     },
-                    active: {
-                        onEdit: function() {
-                            console.log('edited active field');
-                        }
+                    is_manufacturer: {
+                        value: {% if pagetype == 'manufacturers' %}true{% else %}false{% endif %},
                     },
-                    purchaseable: {},
-                    salable: {},
-                    component: {},
-                    'website',
-                    'address',
-                    'phone',
-                    'email',
-                    'contact',
-                    'is_supplier',
-                    'is_manufacturer',
-                    'is_customer',
-                    */
+                    is_customer: {
+                        value: {% if pagetype == 'customers' %}true{% else %}false{% endif %},
+                    },
                 }
             }
         );

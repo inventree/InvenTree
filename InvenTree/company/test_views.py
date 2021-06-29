@@ -188,21 +188,6 @@ class CompanyViewTest(CompanyViewTestBase):
         response = self.client.get(reverse('company-index'))
         self.assertEqual(response.status_code, 200)
 
-    def test_company_create(self):
-        """
-        Test the view for creating a company
-        """
-
-        # Check that different company types return different form titles
-        response = self.client.get(reverse('supplier-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, 'Create new Supplier')
-
-        response = self.client.get(reverse('manufacturer-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, 'Create new Manufacturer')
-
-        response = self.client.get(reverse('customer-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, 'Create new Customer')
-
 
 class ManufacturerPartViewTests(CompanyViewTestBase):
     """

@@ -70,6 +70,7 @@ class CompanySerializer(InvenTreeModelSerializer):
             'phone',
             'address',
             'email',
+            'currency',
             'contact',
             'link',
             'image',
