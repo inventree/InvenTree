@@ -535,6 +535,20 @@ class SalesOrder(Order):
         self.checksum = self.get_hash()
         self.save()
 
+    def get_total_price(self):
+        """
+        Calculates the total price of all order lines
+        """
+        lines = self.lines.all()
+        return sum([a.quantity*a.sale_price for a  in lines])
+
+    @property
+    def is_price_total(self):
+        """
+        Returns true if the set sale price and the calculated total price are equal
+        """
+        return self.get_total_price() == self.sell_price
+
     @property
     def is_overdue(self):
         """
