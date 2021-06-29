@@ -127,6 +127,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 # This is used to automatically filter AJAX requests
                 serializer_info[name]['filters'] = relation.model_field.get_limit_choices_to()
 
+                if 'help_text' not in serializer_info[name] and hasattr(relation.model_field, 'help_text'):
+                    serializer_info[name]['help_text'] = relation.model_field.help_text
+
         except AttributeError:
             pass
 

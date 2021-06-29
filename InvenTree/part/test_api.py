@@ -16,6 +16,65 @@ from company.models import Company
 from common.models import InvenTreeSetting
 
 
+class PartOptionsAPITest(InvenTreeAPITestCase):
+    """
+    Tests for the various OPTIONS endpoints in the /part/ API
+
+    Ensure that the required field details are provided!
+    """
+
+    roles = [
+        'part.add',
+    ]
+
+    def setUp(self):
+
+        super().setUp()
+
+    def test_part(self):
+        """
+        Test the Part API OPTIONS
+        """
+
+        actions = self.getActions(reverse('api-part-list'))['POST']
+
+        # Check that a bunch o' fields are contained
+        for f in ['assembly', 'component', 'description', 'image', 'IPN']:
+            self.assertTrue(f in actions.keys())
+
+        # Active is a 'boolean' field
+        active = actions['active']
+
+        self.assertTrue(active['default'])
+        self.assertEqual(active['help_text'], 'Is this part active?')
+        self.assertEqual(active['type'], 'boolean')
+        self.assertEqual(active['read_only'], False)
+
+        # String field
+        ipn = actions['IPN']
+        self.assertEqual(ipn['type'], 'string')
+        self.assertFalse(ipn['required'])
+        self.assertEqual(ipn['max_length'], 100)
+        self.assertEqual(ipn['help_text'], 'Internal Part Number')
+
+        # Related field
+        category = actions['category']
+
+        self.assertEqual(category['type'], 'related field')
+        self.assertTrue(category['required'])
+        self.assertFalse(category['read_only'])
+        self.assertEqual(category['label'], 'Category')
+        self.assertEqual(category['model'], 'partcategory')
+        self.assertEqual(category['api_url'], reverse('api-part-category-list'))
+        self.assertEqual(category['help_text'], 'Part category')
+
+    def test_category(self):
+        pass
+
+    def test_bom_item(self):
+        pass
+
+
 class PartAPITest(InvenTreeAPITestCase):
     """
     Series of tests for the Part DRF API
