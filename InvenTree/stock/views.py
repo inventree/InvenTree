@@ -255,23 +255,6 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemAttachmentEdit(AjaxUpdateView):
-    """
-    View for editing a StockItemAttachment object.
-    """
-
-    model = StockItemAttachment
-    form_class = StockForms.EditStockItemAttachmentForm
-    ajax_form_title = _("Edit Stock Item Attachment")
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
 class StockItemAttachmentDelete(AjaxDeleteView):
     """
     View for deleting a StockItemAttachment object.

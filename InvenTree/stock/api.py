@@ -2,6 +2,7 @@
 JSON API for the Stock app
 """
 
+from django.db.models.query import QuerySet
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
@@ -931,6 +932,15 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
+class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for StockItemAttachment
+    """
+
+    queryset = StockItemAttachment.objects.all()
+    serializer_class = StockItemAttachmentSerializer
+
+
 class StockItemTestResultList(generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) a StockItemTestResult object.
@@ -1133,6 +1143,7 @@ stock_api_urls = [
     url(r'location/', include(location_endpoints)),
 
     # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
+    # TODO: Remove server-side forms for stock adjustment!!!
     url(r'count/?', StockCount.as_view(), name='api-stock-count'),
     url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
     url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
@@ -1140,6 +1151,7 @@ stock_api_urls = [
 
     # Base URL for StockItemAttachment API endpoints
     url(r'^attachment/', include([
+        url(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
