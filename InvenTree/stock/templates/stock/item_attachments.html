@@ -28,10 +28,40 @@ enableDragAndDrop(
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                reloadAttachmentTable();
             }
         }
     );
+
+loadAttachmentTable(
+    '{% url "api-stock-attachment-list" %}',
+    {
+        filters: {
+            item: {{ item.pk }},
+        },
+        onEdit: function(pk) {
+            var url = `/api/stock/attachment/${pk}/`;
+
+            constructForm(url, {
+                fields: {
+                    comment: {},
+                },
+                title: '{% trans "Edit Attachment" %}',
+                onSuccess: reloadAttachmentTable 
+            });
+        },
+        onDelete: function(pk) {
+            var url = `/api/stock/attachment/${pk}/`;
+
+            constructForm(url, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
+        }
+    }
+);
 
 $("#new-attachment").click(function() {
 
@@ -51,41 +81,6 @@ $("#new-attachment").click(function() {
             title: '{% trans "Add Attachment" %}',
         }
     );
-});
-
-$("#attachment-table").on('click', '.attachment-edit-button', function() {
-    var button = $(this);
-
-    var pk = button.attr('pk');
-
-    var url = `/api/stock/attachment/${pk}/`;
-
-    constructForm(url, {
-        fields: {
-            attachment: {},
-            comment: {},
-        },
-        title: '{% trans "Edit Attachment" %}',
-        reload: true 
-    });
-});
-
-$("#attachment-table").on('click', '.attachment-delete-button', function() {
-    var button = $(this);
-
-    var pk = button.attr('pk');
-
-    var url = `/api/stock/attachment/${pk}/`;
-
-    constructForm(url, {
-        method: 'DELETE',
-        confirmMessage: '{% trans "Confirm Delete Operation" %}',
-        title: '{% trans "Delete Attachment" %}',
-        reload: true,
-    });
-});
-
-$("#attachment-table").inventreeTable({
 });
 
 {% endblock %}

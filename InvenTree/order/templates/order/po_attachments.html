@@ -34,6 +34,35 @@ enableDragAndDrop(
     }
 );
 
+loadAttachmentTable(
+    '{% url "api-po-attachment-list" %}',
+    {
+        filters: {
+            order: {{ order.pk }},
+        },
+        onEdit: function(pk) {
+            var url = `/api/order/po/attachment/${pk}/`;
+
+            constructForm(url, {
+                fields: {
+                    comment: {},
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Edit Attachment" %}',
+            });
+        },
+        onDelete: function(pk) {
+
+            constructForm(`/api/order/po/attachment/${pk}/`, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
+        }
+    }
+);
+
 $("#new-attachment").click(function() {
 
     constructForm('{% url "api-po-attachment-list" %}', {
@@ -49,39 +78,6 @@ $("#new-attachment").click(function() {
         reload: true,
         title: '{% trans "Add Attachment" %}',
     });
-});
-
-$("#attachment-table").on('click', '.attachment-edit-button', function() {
-    var button = $(this);
-
-    var pk = button.attr('pk');
-
-    var url = `/api/order/po/attachment/${pk}/`;
-
-    constructForm(url, {
-        fields: {
-            attachment: {},
-            comment: {},
-        },
-        reload: true,
-        title: '{% trans "Edit Attachment" %}',
-    });
-});
-
-$("#attachment-table").on('click', '.attachment-delete-button', function() {
-    var button = $(this);
-
-    var pk = button.attr('pk');
-
-    constructForm(`/api/order/po/attachment/${pk}/`, {
-        method: 'DELETE',
-        confirmMessage: '{% trans "Confirm Delete Operation" %}',
-        title: '{% trans "Delete Attachment" %}',
-        reload: true,
-    });
-});
-
-$("#attachment-table").inventreeTable({
 });
 
 {% endblock %}

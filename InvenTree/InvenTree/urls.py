@@ -103,6 +103,7 @@ settings_urls = [
 # Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
 dynamic_javascript_urls = [
     url(r'^api.js', DynamicJsView.as_view(template_name='js/api.js'), name='api.js'),
+    url(r'^attachment.js', DynamicJsView.as_view(template_name='js/attachment.js'), name='attachment.js'),
     url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
     url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
     url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),

@@ -47,37 +47,38 @@ $('#new-attachment').click(function() {
             }
         },
         method: 'POST',
-        reload: true,
+        onSuccess: reloadAttachmentTable,
         title: '{% trans "Add Attachment" %}',
     });
 });
 
-// Callback for editing an attachment
-$("#attachment-table").on('click', '.attachment-edit-button', function() {
-    var pk = $(this).attr('pk');
-
-    constructForm(`/api/build/attachment/${pk}/`, {
-        fields: {
-            attachment: {},
-            comment: {},
+loadAttachmentTable(
+    '{% url "api-build-attachment-list" %}',
+    {
+        filters: {
+            build: {{ build.pk }},
         },
-        reload: true,
-        title: '{% trans "Edit Attachment" %}',
-    });
-});
+        onEdit: function(pk) {
+            var url = `/api/build/attachment/${pk}/`;
 
-// Callback for deleting an attachment
-$("#attachment-table").on('click', '.attachment-delete-button', function() {
-    var pk = $(this).attr('pk');
+            constructForm(url, {
+                fields: {
+                    comment: {},
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Edit Attachment" %}',
+            });
+        },
+        onDelete: function(pk) {
 
-    constructForm(`/api/build/attachment/${pk}/`, {
-        method: 'DELETE',
-        confirmMessage: '{% trans "Confirm Delete Operation" %}',
-        title: '{% trans "Delete Attachment" %}',
-        reload: true,
-    });
-});
-
-$("#attachment-table").inventreeTable({});
+            constructForm(`/api/build/attachment/${pk}/`, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
+        }
+    }
+);
 
 {% endblock %}
