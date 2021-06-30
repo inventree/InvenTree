@@ -761,67 +761,6 @@ class SupplierPartDelete(AjaxDeleteView):
         return self.renderJsonResponse(self.request, data=data, form=self.get_form())
 
 
-class PriceBreakCreate(AjaxCreateView):
-    """ View for creating a supplier price break """
-
-    model = SupplierPriceBreak
-    form_class = EditPriceBreakForm
-    ajax_form_title = _('Add Price Break')
-    ajax_template_name = 'modal_form.html'
-
-    def get_data(self):
-        return {
-            'success': _('Added new price break')
-        }
-
-    def get_part(self):
-        """
-        Attempt to extract SupplierPart object from the supplied data.
-        """
-
-        try:
-            supplier_part = SupplierPart.objects.get(pk=self.request.GET.get('part'))
-            return supplier_part
-        except (ValueError, SupplierPart.DoesNotExist):
-            pass
-
-        try:
-            supplier_part = SupplierPart.objects.get(pk=self.request.POST.get('part'))
-            return supplier_part
-        except (ValueError, SupplierPart.DoesNotExist):
-            pass
-
-        return None
-
-    def get_form(self):
-
-        form = super(AjaxCreateView, self).get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        supplier_part = self.get_part()
-
-        initials['part'] = self.get_part()
-
-        if supplier_part is not None:
-            currency_code = supplier_part.supplier.currency_code
-        else:
-            currency_code = common.settings.currency_code_default()
-
-        # Extract the currency object associated with the code
-        currency = CURRENCIES.get(currency_code, None)
-
-        if currency:
-            initials['price'] = [1.0, currency]
-
-        return initials
-
-
 class PriceBreakEdit(AjaxUpdateView):
     """ View for editing a supplier price break """
 

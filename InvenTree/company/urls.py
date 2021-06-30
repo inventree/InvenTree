@@ -40,7 +40,6 @@ company_urls = [
 ]
 
 price_break_urls = [
-    url('^new/', views.PriceBreakCreate.as_view(), name='price-break-create'),
 
     url(r'^(?P<pk>\d+)/edit/', views.PriceBreakEdit.as_view(), name='price-break-edit'),
     url(r'^(?P<pk>\d+)/delete/', views.PriceBreakDelete.as_view(), name='price-break-delete'),

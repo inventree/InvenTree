@@ -2,6 +2,8 @@
 JSON serializers for Company app
 """
 
+from django.utils.translation import ugettext_lazy as _
+
 from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
@@ -249,6 +251,12 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
 
     price = serializers.CharField()
 
+    price_currency = serializers.ChoiceField(
+        choices=djmoney.settings.CURRENCY_CHOICES,
+        default=currency_code_default,
+        label=_('Currency'),
+    )
+
     class Meta:
         model = SupplierPriceBreak
         fields = [
@@ -256,4 +264,5 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_currency',
         ]

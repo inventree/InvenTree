@@ -98,12 +98,23 @@ $('#price-break-table').inventreeTable({
 });
 
 $('#new-price-break').click(function() {
-    launchModalForm("{% url 'price-break-create' %}",
+
+    constructForm(
+        '{% url "api-part-supplier-price-list" %}',
         {
-            reload: true,
-            data: {
-                part: {{ part.id }},
-            }
+            method: 'POST',
+            fields: {
+                quantity: {},
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true,
+                },
+                price: {},
+                price_currency: {
+                },
+            },
+            title: '{% trans "Add Price Break" %}',
+            reload: true
         }
     );
 });

@@ -302,6 +302,8 @@ function constructFormBody(fields, options) {
 
     var html = '';
 
+    html += `<div id='non-field-errors'><!-- Empty div for displaying errors --></div>`;
+
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
@@ -653,6 +655,9 @@ function clearFormErrors(options) {
 
     // Remove the "has error" class
     $(options.modal).find('.has-error').removeClass('has-error');
+
+    // Clear the 'non field errors'
+    $(options.modal).find('#non-field-errors').html('');
 }
 
 
@@ -668,6 +673,31 @@ function handleFormErrors(errors, fields, options) {
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
+
+    var non_field_errors = $(options.modal).find('#non-field-errors');
+
+    non_field_errors.append(
+        `<div class='alert alert-block alert-danger'>
+            <b>{% trans "Form errors exist" %}</b>
+        </div>`
+    );
+
+    // Non-field errors?
+    if ('non_field_errors' in errors) {
+
+        var nfe = errors.non_field_errors;
+
+        for (var idx = 0; idx < nfe.length; idx++) {
+            var err = nfe[idx];
+
+            var html = `
+            <div class='alert alert-block alert-danger'>
+                ${err}
+            </div>`;
+
+            non_field_errors.append(html);
+        }
+    }
 
     for (field_name in errors) {
         if (field_name in fields) {
