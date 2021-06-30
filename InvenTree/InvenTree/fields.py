@@ -17,6 +17,7 @@ from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.forms.fields import MoneyField
 
 import InvenTree.helpers
+from common.settings import currency_code_default
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -37,6 +38,10 @@ class InvenTreeURLField(models.URLField):
 
 
 class InvenTreeModelMoneyField(ModelMoneyField):
+    def __init__(self, **kwargs):
+        default_currency=currency_code_default
+
+        super().__init__(default_currency=default_currency, **kwargs)
     pass
 
 
