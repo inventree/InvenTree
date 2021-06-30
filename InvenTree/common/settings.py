@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 from moneyed import CURRENCIES
 
 import common.models
-from django.conf import settings
 
 
 def currency_code_default():
@@ -16,7 +15,7 @@ def currency_code_default():
     Returns the default currency code (or USD if not specified)
     """
 
-    code = settings.BASE_CURRENCY
+    code = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
 
     if code not in CURRENCIES:
         code = 'USD'
