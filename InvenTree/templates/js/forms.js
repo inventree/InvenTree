@@ -2,21 +2,23 @@
 {% load inventree_extras %}
 
 /**
+ *
  * This file contains code for rendering (and managing) HTML forms
  * which are served via the django-drf API.
- * 
+ *
  * The django DRF library provides an OPTIONS method for each API endpoint,
  * which allows us to introspect the available fields at any given endpoint.
- * 
+ *
  * The OPTIONS method provides the following information for each available field:
- * 
+ *
  * - Field name
  * - Field label (translated)
  * - Field help text (translated)
  * - Field type
  * - Read / write status
  * - Field required status
- * - min_value / max_value 
+ * - min_value / max_value
+ *
  */
 
 /*
@@ -785,17 +787,16 @@ function initializeRelatedFields(fields, options) {
 
         var field = fields[name] || null;
 
-        if (!field || field.type != 'related field') continue;
+        if (!field || field.hidden) continue;
 
-        if (field.hidden) continue;
-
-        if (!field.api_url) {
-            // TODO: Provide manual api_url option?
-            console.log(`Related field '${name}' missing 'api_url' parameter.`);
-            continue;
+        switch (field.type) {
+            case 'related field':
+                initializeRelatedField(name, field, options);
+                break;
+            case 'choice':
+                initializeChoiceField(name, field, options);
+                break;
         }
-
-        initializeRelatedField(name, field, options);
     }
 }
 
@@ -833,6 +834,12 @@ function addSecondaryModal(name, field, options) {
  * - options: Original options object provided by the client
  */
 function initializeRelatedField(name, field, options) {
+
+    if (!field.api_url) {
+        // TODO: Provide manual api_url option?
+        console.log(`Related field '${name}' missing 'api_url' parameter.`);
+        return;
+    }
 
     // Find the select element and attach a select2 to it
     var select = $(options.modal).find(`#id_${name}`);
@@ -992,6 +999,17 @@ function initializeRelatedField(name, field, options) {
             }
         });
     }
+}
+
+
+function initializeChoiceField(name, field, options) {
+
+    var select = $(options.modal).find(`#id_${name}`);
+
+    select.select2({
+        dropdownAutoWidth: false,
+        dropdownParent: $(options.modal),
+    });
 }
 
 
@@ -1342,8 +1360,6 @@ function constructChoiceInput(name, parameters, options) {
     var html = `<select id='id_${name}' class='select form-control' name='${name}'>`;
 
     var choices = parameters.choices || [];
-
-    // TODO: Select the selected value!
 
     for (var idx = 0; idx < choices.length; idx++) {
 
