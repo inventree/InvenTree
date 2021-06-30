@@ -15,7 +15,6 @@ from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
 from djmoney.settings import CURRENCY_CHOICES
-from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
@@ -743,7 +742,7 @@ class PriceBreak(models.Model):
         help_text=_('Price break quantity'),
     )
 
-    price = MoneyField(
+    price = InvenTree.fields.InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
         default_currency=lambda: common.settings.currency_code_default(),

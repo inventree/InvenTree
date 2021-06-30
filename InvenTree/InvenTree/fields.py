@@ -13,6 +13,8 @@ from django.core import validators
 from django import forms
 
 from decimal import Decimal
+from djmoney.models.fields import MoneyField as ModelMoneyField
+from djmoney.forms.fields import MoneyField
 
 import InvenTree.helpers
 
@@ -32,6 +34,14 @@ class InvenTreeURLField(models.URLField):
         return super().formfield(**{
             'form_class': InvenTreeURLFormField
         })
+
+
+class InvenTreeModelMoneyField(ModelMoneyField):
+    pass
+
+
+class InvenTreeMoneyField(MoneyField):
+    pass
 
 
 class DatePickerFormField(forms.DateField):

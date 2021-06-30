@@ -6,13 +6,12 @@ Django Forms for interacting with Company app
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
-from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
 
 from django.utils.translation import ugettext_lazy as _
 import django.forms
 
 import djmoney.settings
-from djmoney.forms.fields import MoneyField
 
 from common.settings import currency_code_default
 
@@ -129,7 +128,7 @@ class EditSupplierPartForm(HelperForm):
         'note': 'fa-pencil-alt',
     }
 
-    single_pricing = MoneyField(
+    single_pricing = InvenTreeMoneyField(
         label=_('Single Price'),
         default_currency=currency_code_default(),
         help_text=_('Single quantity price'),

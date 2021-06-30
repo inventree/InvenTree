@@ -26,8 +26,6 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from djmoney.models.fields import MoneyField
-
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 from InvenTree import helpers
@@ -38,7 +36,7 @@ import label.models
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 
 from users.models import Owner
 
@@ -533,7 +531,7 @@ class StockItem(MPTTModel):
         help_text=_('Stock Item Notes')
     )
 
-    purchase_price = MoneyField(
+    purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
         default_currency=currency_code_default(),
