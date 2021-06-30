@@ -82,6 +82,13 @@ class InvenTreeSetting(models.Model):
             'default': '',
         },
 
+        'INVENTREE_DEFAULT_CURRENCY': {
+            'name': _('Default Currency'),
+            'description': _('Default currency'),
+            'default': 'USD',
+            'choices': CURRENCY_CHOICES,
+        },
+
         'INVENTREE_DOWNLOAD_FROM_URL': {
             'name': _('Download from URL'),
             'description': _('Allow download of remote images and files from external URL'),
