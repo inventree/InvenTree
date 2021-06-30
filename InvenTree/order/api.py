@@ -554,12 +554,22 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = POAttachmentSerializer
 
 
+class POAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for a PurchaseOrderAttachment
+    """
+
+    queryset = PurchaseOrderAttachment.objects.all()
+    serializer_class = POAttachmentSerializer
+
+
 order_api_urls = [
     # API endpoints for purchase orders
-    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
     url(r'po/attachment/', include([
+        url(r'^(?P<pk>\d+)/$', POAttachmentDetail.as_view(), name='api-po-attachment-detail'),
         url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
     ])),
+    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
     url(r'^po/.*$', POList.as_view(), name='api-po-list'),
 
     # API endpoints for purchase order line items
@@ -568,12 +578,11 @@ order_api_urls = [
 
     # API endpoints for sales ordesr
     url(r'^so/', include([
-        url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
         url(r'attachment/', include([
             url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
         ])),
 
-        # List all sales orders
+        url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
         url(r'^.*$', SOList.as_view(), name='api-so-list'),
     ])),
 

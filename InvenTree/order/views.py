@@ -96,58 +96,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'order/sales_order_detail.html'
 
 
-class PurchaseOrderAttachmentCreate(AjaxCreateView):
-    """
-    View for creating a new PurchaseOrderAttachment
-    """
-
-    model = PurchaseOrderAttachment
-    form_class = order_forms.EditPurchaseOrderAttachmentForm
-    ajax_form_title = _("Add Purchase Order Attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            "success": _("Added attachment")
-        }
-
-    def get_initial(self):
-        """
-        Get initial data for creating a new PurchaseOrderAttachment object.
-
-        - Client must request this form with a parent PurchaseOrder in midn.
-        - e.g. ?order=<pk>
-        """
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        try:
-            initials["order"] = PurchaseOrder.objects.get(id=self.request.GET.get('order', -1))
-        except (ValueError, PurchaseOrder.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """
-        Create a form to upload a new PurchaseOrderAttachment
-
-        - Hide the 'order' field
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['order'].widget = HiddenInput()
-
-        return form
-
-
 class SalesOrderAttachmentCreate(AjaxCreateView):
     """ View for creating a new SalesOrderAttachment """
 
@@ -183,27 +131,6 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
         """ Hide the 'order' field """
 
         form = super().get_form()
-        form.fields['order'].widget = HiddenInput()
-
-        return form
-
-
-class PurchaseOrderAttachmentEdit(AjaxUpdateView):
-    """ View for editing a PurchaseOrderAttachment object """
-
-    model = PurchaseOrderAttachment
-    form_class = order_forms.EditPurchaseOrderAttachmentForm
-    ajax_form_title = _("Edit Attachment")
-
-    def get_data(self):
-        return {
-            'success': _('Attachment updated')
-        }
-
-    def get_form(self):
-        form = super(AjaxUpdateView, self).get_form()
-
-        # Hide the 'order' field
         form.fields['order'].widget = HiddenInput()
 
         return form
