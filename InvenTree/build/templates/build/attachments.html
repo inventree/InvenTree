@@ -22,7 +22,7 @@
 
 enableDragAndDrop(
     '#attachment-dropzone',
-    '{% url "build-attachment-create" %}',
+    '{% url "api-build-attachment-list" %}',
     {
         data: {
             build: {{ build.id }},
@@ -36,29 +36,34 @@ enableDragAndDrop(
 
 // Callback for creating a new attachment
 $('#new-attachment').click(function() {
-    launchModalForm(
-        '{% url "build-attachment-create" %}',
-        {
-            reload: true,
-            data: {
-                build: {{ build.pk }},
+
+    constructForm('{% url "api-build-attachment-list" %}', {
+        fields: {
+            attachment: {},
+            comment: {},
+            build: {
+                value: {{ build.pk }},
+                hidden: true,
             }
-        }
-    );
+        },
+        method: 'POST',
+        reload: true,
+        title: '{% trans "Add Attachment" %}',
+    });
 });
 
 // Callback for editing an attachment
 $("#attachment-table").on('click', '.attachment-edit-button', function() {
     var pk = $(this).attr('pk');
 
-    var url = `/build/attachment/${pk}/edit/`;
-
-    launchModalForm(
-        url,
-        {
-            reload: true,
-        }
-    );
+    constructForm(`/api/build/attachment/${pk}/`, {
+        fields: {
+            attachment: {},
+            comment: {},
+        },
+        reload: true,
+        title: '{% trans "Edit Attachment" %}',
+    });
 });
 
 // Callback for deleting an attachment

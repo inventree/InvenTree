@@ -37,8 +37,6 @@ build_urls = [
     ])),
 
     url('^attachment/', include([
-        url('^new/', views.BuildAttachmentCreate.as_view(), name='build-attachment-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.BuildAttachmentEdit.as_view(), name='build-attachment-edit'),
         url(r'^(?P<pk>\d+)/delete/', views.BuildAttachmentDelete.as_view(), name='build-attachment-delete'),
     ])),
 
