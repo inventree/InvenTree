@@ -21,7 +21,8 @@
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
     {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
     <button type='button' class='btn btn-primary' id='new-po-line'>
-        <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}</button>
+        <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+    </button>
     {% endif %}
 </div>
 

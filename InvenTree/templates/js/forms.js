@@ -501,6 +501,7 @@ function submitFormData(fields, options) {
                     has_files = true;
                 }
             } else {
+
                 // Normal field (not a file or image)
                 form_data.append(name, value);
 
@@ -601,12 +602,27 @@ function getFormFieldValue(name, field, options) {
     // Find the HTML element
     var el = $(options.modal).find(`#id_${name}`);
 
+    var value = null;
+
     switch (field.type) {
         case 'boolean':
-            return el.is(":checked");
+            value = el.is(":checked");
+            break;
+        case 'date':
+        case 'datetime':
+            value = el.val();
+
+            // Ensure empty values are sent as nulls
+            if (!value || value.length == 0) {
+                value = null;
+            }
+            break;
         default:
-            return el.val();
+            value = el.val();
+            break;
     }
+
+    return value;
 }
 
 
@@ -705,7 +721,7 @@ function handleFormErrors(errors, fields, options) {
             // Add the 'has-error' class
             $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
 
-            var field_dom = $(options.modal).find(`#id_${field_name}`);
+            var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
 
             var field_errors = errors[field_name];
 
@@ -719,7 +735,7 @@ function handleFormErrors(errors, fields, options) {
                     <strong>${error_text}</strong>
                 </span>`;
 
-                $(html).insertAfter(field_dom);
+                field_dom.append(html);
             }
 
         } else {
@@ -1091,6 +1107,9 @@ function constructField(name, parameters, options) {
         html += `</div>`;   // input-group
     }
 
+    // Div for error messages
+    html += `<div id='errors-${name}'></div>`;
+
     if (parameters.help_text) {
         html += constructHelpText(name, parameters, options);
     }
@@ -1172,6 +1191,9 @@ function constructInput(name, parameters, options) {
         case 'image upload':
         case 'file upload':
             func = constructFileUploadInput;
+            break;
+        case 'date':
+            func = constructDateInput;
             break;
         default:
             // Unsupported field type!
@@ -1375,6 +1397,20 @@ function constructFileUploadInput(name, parameters, options) {
         name,
         cls,
         'file',
+        parameters
+    );
+}
+
+
+/*
+ * Construct a field for a date input
+ */
+function constructDateInput(name, parameters, options) {
+
+    return constructInputOptions(
+        name,
+        'dateinput form-control',
+        'date',
         parameters
     );
 }
