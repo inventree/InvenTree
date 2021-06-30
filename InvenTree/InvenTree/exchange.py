@@ -1,4 +1,5 @@
 from django.conf import settings as inventree_settings
+from common.settings import currency_code_default
 
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 
@@ -22,7 +23,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         return {
         }
 
-    def update_rates(self, base_currency=inventree_settings.BASE_CURRENCY):
+    def update_rates(self, base_currency=currency_code_default()):
 
         symbols = ','.join(inventree_settings.CURRENCIES)
 

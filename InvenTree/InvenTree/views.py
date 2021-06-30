@@ -21,6 +21,7 @@ from django.views.generic import ListView, DetailView, CreateView, FormView, Del
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from common.settings import currency_code_default
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
@@ -820,7 +821,7 @@ class CurrencySettingsView(TemplateView):
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-        ctx["base_currency"] = settings.BASE_CURRENCY
+        ctx["base_currency"] = currency_code_default()
         ctx["currencies"] = settings.CURRENCIES
 
         ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
