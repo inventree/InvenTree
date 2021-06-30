@@ -4,7 +4,6 @@ import logging
 
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
-from django.conf import settings
 
 from InvenTree.ready import isInTestMode, canAppAccessDatabase
 import InvenTree.tasks
