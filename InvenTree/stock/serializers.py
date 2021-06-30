@@ -270,11 +270,6 @@ class LocationSerializer(InvenTreeModelSerializer):
             'parent',
             'pathstring',
             'items',
-            'upload_date',
-        ]
-
-        read_only_fields = [
-            'upload_date',
         ]
 
 
