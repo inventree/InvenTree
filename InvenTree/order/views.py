@@ -20,8 +20,8 @@ from django.forms import HiddenInput, IntegerField
 import logging
 from decimal import Decimal, InvalidOperation
 
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
@@ -94,34 +94,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
     template_name = 'order/sales_order_detail.html'
-
-
-class PurchaseOrderAttachmentDelete(AjaxDeleteView):
-    """ View for deleting a PurchaseOrderAttachment """
-
-    model = PurchaseOrderAttachment
-    ajax_form_title = _("Delete Attachment")
-    ajax_template_name = "order/delete_attachment.html"
-    context_object_name = "attachment"
-
-    def get_data(self):
-        return {
-            "danger": _("Deleted attachment")
-        }
-
-
-class SalesOrderAttachmentDelete(AjaxDeleteView):
-    """ View for deleting a SalesOrderAttachment """
-
-    model = SalesOrderAttachment
-    ajax_form_title = _("Delete Attachment")
-    ajax_template_name = "order/delete_attachment.html"
-    context_object_name = "attachment"
-
-    def get_data(self):
-        return {
-            "danger": _("Deleted attachment")
-        }
 
 
 class PurchaseOrderNotes(InvenTreeRoleMixin, UpdateView):

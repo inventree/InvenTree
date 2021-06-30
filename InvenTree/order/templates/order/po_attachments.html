@@ -71,9 +71,12 @@ $("#attachment-table").on('click', '.attachment-edit-button', function() {
 $("#attachment-table").on('click', '.attachment-delete-button', function() {
     var button = $(this);
 
-    var url = `/order/purchase-order/attachment/${button.attr('pk')}/delete/`;
+    var pk = button.attr('pk');
 
-    launchModalForm(url, {
+    constructForm(`/api/order/po/attachment/${pk}/`, {
+        method: 'DELETE',
+        confirmMessage: '{% trans "Confirm Delete Operation" %}',
+        title: '{% trans "Delete Attachment" %}',
         reload: true,
     });
 });

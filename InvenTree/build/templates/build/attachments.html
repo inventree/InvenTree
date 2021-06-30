@@ -76,17 +76,6 @@ $("#attachment-table").on('click', '.attachment-delete-button', function() {
         title: '{% trans "Delete Attachment" %}',
         reload: true,
     });
-
-    return;
-
-    var url = `/build/attachment/${pk}/delete/`;
-
-    launchModalForm(
-        url,
-        {
-            reload: true,
-        }
-    );
 });
 
 $("#attachment-table").inventreeTable({});

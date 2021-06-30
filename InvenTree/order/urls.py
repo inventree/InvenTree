@@ -45,10 +45,6 @@ purchase_order_urls = [
         ])),
     ])),
 
-    url(r'^attachment/', include([
-        url(r'^(?P<pk>\d+)/delete/', views.PurchaseOrderAttachmentDelete.as_view(), name='po-attachment-delete'),
-    ])),
-
     # Display complete list of purchase orders
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
@@ -86,10 +82,6 @@ sales_order_urls = [
             url(r'^edit/', views.SalesOrderAllocationEdit.as_view(), name='so-allocation-edit'),
             url(r'^delete/', views.SalesOrderAllocationDelete.as_view(), name='so-allocation-delete'),
         ])),
-    ])),
-
-    url(r'^attachment/', include([
-        url(r'^(?P<pk>\d+)/delete/', views.SalesOrderAttachmentDelete.as_view(), name='so-attachment-delete'),
     ])),
 
     # Display detail view for a single SalesOrder

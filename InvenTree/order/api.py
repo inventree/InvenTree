@@ -259,7 +259,7 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class SOAttachmentDetail(generics.RetrieveUpdateAPIView, AttachmentMixin):
+class SOAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
     """
     Detail endpoint for SalesOrderAttachment
     """

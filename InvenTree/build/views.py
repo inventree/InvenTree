@@ -12,7 +12,7 @@ from django.forms import HiddenInput
 from django.urls import reverse
 
 from part.models import Part
-from .models import Build, BuildItem, BuildOrderAttachment
+from .models import Build, BuildItem
 from . import forms
 from stock.models import StockLocation, StockItem
 
