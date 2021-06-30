@@ -20,7 +20,7 @@ class CompanyTest(InvenTreeAPITestCase):
 
         super().setUp()
 
-        Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
+        self.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
         Company.objects.create(name='Drippy Cup Co.', description='Customer', is_customer=True, is_supplier=False)
         Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
 
@@ -48,7 +48,7 @@ class CompanyTest(InvenTreeAPITestCase):
         Tests for the Company detail endpoint
         """
 
-        url = reverse('api-company-detail', kwargs={'pk': 1})
+        url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
         response = self.get(url)
 
         self.assertEqual(response.data['name'], 'ACME')
