@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
+from .models import StockItem, StockLocation, StockItemTracking, StockItemTestResult
 
 import common.settings
 from common.models import InvenTreeSetting
@@ -253,22 +253,6 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
-
-
-class StockItemAttachmentDelete(AjaxDeleteView):
-    """
-    View for deleting a StockItemAttachment object.
-    """
-
-    model = StockItemAttachment
-    ajax_form_title = _("Delete Stock Item Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    def get_data(self):
-        return {
-            'danger': _("Deleted attachment"),
-        }
 
 
 class StockItemAssignToCustomer(AjaxUpdateView):

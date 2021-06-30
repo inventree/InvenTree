@@ -62,11 +62,6 @@ stock_urls = [
 
     url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
 
-    # URLs for StockItem attachments
-    url(r'^item/attachment/', include([
-        url(r'^(?P<pk>\d+)/delete/', views.StockItemAttachmentDelete.as_view(), name='stock-item-attachment-delete'),
-    ])),
-
     # URLs for StockItem tests
     url(r'^item/test/', include([
         url(r'^new/', views.StockItemTestResultCreate.as_view(), name='stock-item-test-create'),

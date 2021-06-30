@@ -17,10 +17,6 @@ part_related_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartRelatedDelete.as_view(), name='part-related-delete'),
 ]
 
-part_attachment_urls = [
-    url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
-]
-
 sale_price_break_urls = [
     url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
     url(r'^(?P<pk>\d+)/edit/', views.PartSalePriceBreakEdit.as_view(), name='sale-price-break-edit'),
@@ -145,9 +141,6 @@ part_urls = [
 
     # Part related
     url(r'^related-parts/', include(part_related_urls)),
-
-    # Part attachments
-    url(r'^attachment/', include(part_attachment_urls)),
 
     # Part price breaks
     url(r'^sale-price/', include(sale_price_break_urls)),

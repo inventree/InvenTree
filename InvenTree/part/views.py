@@ -31,7 +31,7 @@ import io
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartAttachment, PartRelated
+from .models import PartCategory, Part, PartRelated
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
@@ -152,22 +152,6 @@ class PartRelatedDelete(AjaxDeleteView):
 
     # Explicit role requirement
     role_required = 'part.change'
-
-
-class PartAttachmentDelete(AjaxDeleteView):
-    """ View for deleting a PartAttachment """
-
-    model = PartAttachment
-    ajax_form_title = _("Delete Part Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    role_required = 'part.change'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted part attachment')
-        }
 
 
 class PartTestTemplateCreate(AjaxCreateView):
