@@ -540,7 +540,7 @@ class SalesOrder(Order):
         Calculates the total price of all order lines
         """
         lines = self.lines.all()
-        return sum([a.quantity*a.sale_price for a  in lines])
+        return sum([a.quantity * a.sale_price for a in lines])
 
     @property
     def is_price_total(self):
