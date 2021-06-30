@@ -17,8 +17,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from common.settings import currency_code_default
-
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 

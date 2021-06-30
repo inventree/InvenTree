@@ -16,7 +16,6 @@ from InvenTree.fields import DatePickerFormField
 
 from InvenTree.helpers import clean_decimal
 
-from common.models import InvenTreeSetting
 from common.forms import MatchItemForm
 
 import part.models

@@ -39,7 +39,7 @@ class InvenTreeURLField(models.URLField):
 
 class InvenTreeModelMoneyField(ModelMoneyField):
     def __init__(self, **kwargs):
-        default_currency=currency_code_default
+        default_currency = currency_code_default
 
         # remove from kwargs if set
         if 'default_currency' in kwargs:

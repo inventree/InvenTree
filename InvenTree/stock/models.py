@@ -20,8 +20,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from common.settings import currency_code_default
-
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
