@@ -19,7 +19,7 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from common.settings import currency_code_default
+import common.settings
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
@@ -739,7 +739,7 @@ class PriceBreak(models.Model):
     price = MoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
+        default_currency=lambda: common.settings.currency_code_default(),
         null=True,
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),
@@ -792,7 +792,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
     if currency is None:
         # Default currency selection
-        currency = currency_code_default()
+        currency = common.settings.currency_code_default()
 
     pb_min = None
     for pb in price_breaks:
