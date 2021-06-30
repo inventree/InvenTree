@@ -44,6 +44,10 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_company_detail(self):
+        """
+        Tests for the Company detail endpoint
+        """
+
         url = reverse('api-company-detail', kwargs={'pk': 1})
         response = self.get(url)
 
@@ -52,14 +56,18 @@ class CompanyTest(InvenTreeAPITestCase):
         # Change the name of the company
         # Note we should not have the correct permissions (yet)
         data = response.data
-        data['name'] = 'ACMOO'
         response = self.client.patch(url, data, format='json', expected_code=400)
 
         self.assignRole('company.change')
 
+        # Update the name and set the currency to a valid value
+        data['name'] = 'ACMOO'
+        data['currency'] = 'NZD'
+
         response = self.client.patch(url, data, format='json', expected_code=200)
 
         self.assertEqual(response.data['name'], 'ACMOO')
+        self.assertEqual(response.data['currency'], 'NZD')
 
     def test_company_search(self):
         """
@@ -182,6 +190,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_manufacturer_part_detail(self):
+        """
+        Tests for the ManufacturerPart detail endpoint
+        """
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
 
         response = self.get(url)

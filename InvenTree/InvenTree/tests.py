@@ -15,8 +15,6 @@ from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
 
-from mptt.exceptions import InvalidMove
-
 from decimal import Decimal
 
 import InvenTree.tasks
@@ -203,7 +201,7 @@ class TestMPTT(TestCase):
         loc = StockLocation.objects.get(pk=4)
         loc.parent = loc
 
-        with self.assertRaises(InvalidMove):
+        with self.assertRaises(ValidationError):
             loc.save()
 
     def test_child_as_parent(self):
@@ -214,7 +212,7 @@ class TestMPTT(TestCase):
 
         parent.parent = child
 
-        with self.assertRaises(InvalidMove):
+        with self.assertRaises(ValidationError):
             parent.save()
 
     def test_move(self):
