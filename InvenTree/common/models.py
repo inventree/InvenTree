@@ -14,6 +14,7 @@ from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
+from djmoney.settings import CURRENCY_CHOICES
 from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
