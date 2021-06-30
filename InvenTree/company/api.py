@@ -438,7 +438,7 @@ company_api_urls = [
 
         url(r'^(?P<pk>\d+)/?', SupplierPriceBreakDetail.as_view(), name='api-part-supplier-price-detail'),
         url(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
-    ])), 
+    ])),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

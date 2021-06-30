@@ -26,14 +26,12 @@ from InvenTree.views import InvenTreeRoleMixin
 from .models import Company, ManufacturerPartParameter
 from .models import ManufacturerPart
 from .models import SupplierPart
-from .models import SupplierPriceBreak
 
 from part.models import Part
 
 from .forms import EditManufacturerPartParameterForm
 from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm
-from .forms import EditPriceBreakForm
 from .forms import CompanyImageDownloadForm
 
 import common.models
