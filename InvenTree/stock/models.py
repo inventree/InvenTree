@@ -534,7 +534,6 @@ class StockItem(MPTTModel):
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         blank=True,
         null=True,
         verbose_name=_('Purchase Price'),

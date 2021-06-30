@@ -321,7 +321,6 @@ class OrderMatchItemForm(MatchItemForm):
         elif 'price' in col_guess.lower():
             return InvenTreeMoneyField(
                 label=_(col_guess),
-                default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
                 decimal_places=5,
                 max_digits=19,
                 required=False,

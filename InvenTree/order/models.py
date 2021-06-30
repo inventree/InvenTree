@@ -665,7 +665,6 @@ class PurchaseOrderLineItem(OrderLineItem):
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
@@ -717,7 +716,6 @@ class SalesOrderLineItem(OrderLineItem):
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),
