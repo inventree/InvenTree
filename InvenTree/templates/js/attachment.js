@@ -52,6 +52,10 @@ function loadAttachmentTable(url, options) {
                 title: '{% trans "Comment" %}',
             },
             {
+                field: 'upload_date',
+                title: '{% trans "Upload Date" %}',
+            },
+            {
                 field: 'actions',
                 formatter: function(value, row) {
                     var html = '';
