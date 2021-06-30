@@ -172,10 +172,48 @@ function constructChangeForm(fields, options) {
         },
         error: function(request, status, error) {
             // TODO: Handle error here
-            console.log(`ERROR in constructChangeForm at '${url}'`);
+            console.log(`ERROR in constructChangeForm at '${options.url}'`);
         }
-    })
+    });
+}
 
+
+/*
+ * Construct a 'delete' form, to remove a model instance from the database.
+ * 
+ * arguments:
+ * - fields: The 'actions' object provided by the OPTIONS request
+ * - options: The 'options' object provided by the client
+ */
+function constructDeleteForm(fields, options) {
+
+    // Force the "confirm" property if not set
+    if (!('confirm' in options)) {
+        options.confirm = true;
+    }
+
+    // Request existing data from the API endpoint
+    // This data can be used to render some information on the form
+    $.ajax({
+        url: options.url,
+        type: 'GET',
+        contentType: 'application/json',
+        dataType: 'json',
+        accepts: {
+            json: 'application/json',
+        },
+        success: function(data) {
+
+            // Store the instance data
+            options.instance = data;
+
+            constructFormBody(fields, options);
+        },
+        error: function(request, status, error) {
+            // TODO: Handle error here
+            console.log(`ERROR in constructDeleteForm at '${options.url}`);
+        }
+    });
 }
 
 
@@ -229,7 +267,7 @@ function constructForm(url, options) {
                 break;
             case 'DELETE':
                 if (canDelete(OPTIONS)) {
-                    console.log('delete');
+                    constructDeleteForm(OPTIONS.actions.DELETE, options);
                 } else {
                     // User does not have permission to DELETE to the endpoint
                     // TODO
@@ -363,6 +401,14 @@ function constructFormBody(fields, options) {
     // Insert generated form content
     $(modal).find('.modal-form-content').html(html);
     
+    // Clear any existing buttons from the modal
+    $(modal).find('#modal-footer-buttons').html('');
+
+    // Insert "confirm" button (if required)
+    if (options.confirm) {
+        insertConfirmButton(options);
+    }
+
     $(modal).modal('show');
 
     updateFieldValues(fields, options);
@@ -385,6 +431,20 @@ function constructFormBody(fields, options) {
 
         submitFormData(fields, options);
     });
+}
+
+
+// Add a "confirm" checkbox to the modal
+// The "submit" button will be disabled unless "confirm" is checked
+function insertConfirmButton(options) {
+
+    var confirm = `
+    <span style='float: left;'>
+        Confirm
+        <input name='confirm' type='checkbox'>
+    </span>`;
+
+    $(options.modal).find('#modal-footer-buttons').append(confirm);
 }
 
 

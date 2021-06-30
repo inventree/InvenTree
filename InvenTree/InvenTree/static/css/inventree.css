@@ -640,6 +640,14 @@
   z-index: 9999;
 }
 
+.modal-header {
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+    border-top: 1px solid #ddd;
+}
+
 .modal-primary {
     z-index: 10000;
 }
