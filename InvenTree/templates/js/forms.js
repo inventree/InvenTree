@@ -438,13 +438,25 @@ function constructFormBody(fields, options) {
 // The "submit" button will be disabled unless "confirm" is checked
 function insertConfirmButton(options) {
 
+    var message = options.confirmMessage || '{% trans "Confirm" %}';
+
     var confirm = `
     <span style='float: left;'>
-        Confirm
-        <input name='confirm' type='checkbox'>
+        ${message}
+        <input id='modal-confirm' name='confirm' type='checkbox'>
     </span>`;
 
     $(options.modal).find('#modal-footer-buttons').append(confirm);
+
+    // Disable the 'submit' button
+    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+
+    // Trigger event
+    $(options.modal).find('#modal-confirm').change(function() {
+        var enabled = this.checked;
+
+        $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
+    });
 }
 
 

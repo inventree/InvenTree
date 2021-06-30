@@ -1058,18 +1058,3 @@ class BuildItemEdit(AjaxUpdateView):
         form.fields['install_into'].widget = HiddenInput()
 
         return form
-
-
-class BuildAttachmentDelete(AjaxDeleteView):
-    """
-    View for deleting a BuildAttachment
-    """
-
-    model = BuildOrderAttachment
-    ajax_form_title = _('Delete Attachment')
-    context_object_name = 'attachment'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted attachment')
-        }
