@@ -39,12 +39,6 @@ company_urls = [
     url(r'^.*$', views.CompanyIndex.as_view(), name='company-index'),
 ]
 
-price_break_urls = [
-
-    url(r'^(?P<pk>\d+)/edit/', views.PriceBreakEdit.as_view(), name='price-break-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PriceBreakDelete.as_view(), name='price-break-delete'),
-]
-
 manufacturer_part_urls = [
     url(r'^new/?', views.ManufacturerPartCreate.as_view(), name='manufacturer-part-create'),
 

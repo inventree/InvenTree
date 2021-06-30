@@ -759,27 +759,3 @@ class SupplierPartDelete(AjaxDeleteView):
                 part.delete()
 
         return self.renderJsonResponse(self.request, data=data, form=self.get_form())
-
-
-class PriceBreakEdit(AjaxUpdateView):
-    """ View for editing a supplier price break """
-
-    model = SupplierPriceBreak
-    form_class = EditPriceBreakForm
-    ajax_form_title = _('Edit Price Break')
-    ajax_template_name = 'modal_form.html'
-
-    def get_form(self):
-
-        form = super(AjaxUpdateView, self).get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PriceBreakDelete(AjaxDeleteView):
-    """ View for deleting a supplier price break """
-
-    model = SupplierPriceBreak
-    ajax_form_title = _("Delete Price Break")
-    ajax_template_name = 'modal_delete_form.html'
