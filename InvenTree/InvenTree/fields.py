@@ -41,6 +41,11 @@ class InvenTreeModelMoneyField(ModelMoneyField):
     def __init__(self, **kwargs):
         default_currency=currency_code_default
 
+        # remove from kwargs if set
+        if 'default_currency' in kwargs:
+            default_currency = kwargs['default_currency']
+            kwargs.pop('default_currency')
+
         super().__init__(default_currency=default_currency, **kwargs)
     pass
 
