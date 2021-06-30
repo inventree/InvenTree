@@ -745,7 +745,7 @@ class PriceBreak(models.Model):
     price = InvenTree.fields.InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=lambda: common.settings.currency_code_default(),
+        default_currency=common.settings.currency_code_default,
         null=True,
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),
