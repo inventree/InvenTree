@@ -96,66 +96,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'order/sales_order_detail.html'
 
 
-class SalesOrderAttachmentCreate(AjaxCreateView):
-    """ View for creating a new SalesOrderAttachment """
-
-    model = SalesOrderAttachment
-    form_class = order_forms.EditSalesOrderAttachmentForm
-    ajax_form_title = _('Add Sales Order Attachment')
-
-    def save(self, form, **kwargs):
-        """
-        Save the user that uploaded the attachment
-        """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
-
-    def get_initial(self):
-        initials = super().get_initial().copy()
-
-        try:
-            initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
-        except (ValueError, SalesOrder.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """ Hide the 'order' field """
-
-        form = super().get_form()
-        form.fields['order'].widget = HiddenInput()
-
-        return form
-
-
-class SalesOrderAttachmentEdit(AjaxUpdateView):
-    """ View for editing a SalesOrderAttachment object """
-
-    model = SalesOrderAttachment
-    form_class = order_forms.EditSalesOrderAttachmentForm
-    ajax_form_title = _("Edit Attachment")
-
-    def get_data(self):
-        return {
-            'success': _('Attachment updated')
-        }
-
-    def get_form(self):
-        form = super().get_form()
-
-        form.fields['order'].widget = HiddenInput()
-
-        return form
-
-
 class PurchaseOrderAttachmentDelete(AjaxDeleteView):
     """ View for deleting a PurchaseOrderAttachment """
 

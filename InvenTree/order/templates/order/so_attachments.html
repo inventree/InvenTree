@@ -23,7 +23,7 @@
 
 enableDragAndDrop(
     '#attachment-dropzone',
-    "{% url 'so-attachment-create' %}",
+    '{% url "api-so-attachment-list" %}',
     {
         data: {
             order: {{ order.id }},
@@ -36,20 +36,36 @@ enableDragAndDrop(
 );
 
 $("#new-attachment").click(function() {
-    launchModalForm("{% url 'so-attachment-create' %}?order={{ order.id }}",
-        {
-            reload: true,
-        }
-    );
+
+    constructForm('{% url "api-so-attachment-list" %}', {
+        method: 'POST',
+        fields: {
+            attachment: {},
+            comment: {},
+            order: {
+                value: {{ order.pk }},
+                hidden: true
+            }
+        },
+        reload: true,
+        title: '{% trans "Add Attachment" %}'
+    });
 });
 
 $("#attachment-table").on('click', '.attachment-edit-button', function() {
     var button = $(this);
 
-    var url = `/order/sales-order/attachment/${button.attr('pk')}/edit/`;
+    var pk = button.attr('pk');
 
-    launchModalForm(url, {
+    var url = `/api/order/so/attachment/${pk}/`;
+
+    constructForm(url, {
+        fields: {
+            attachment: {},
+            comment: {},
+        },
         reload: true,
+        title: '{% trans "Edit Attachment" %}',
     });
 });
 

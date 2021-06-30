@@ -89,8 +89,6 @@ sales_order_urls = [
     ])),
 
     url(r'^attachment/', include([
-        url(r'^new/', views.SalesOrderAttachmentCreate.as_view(), name='so-attachment-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.SalesOrderAttachmentEdit.as_view(), name='so-attachment-edit'),
         url(r'^(?P<pk>\d+)/delete/', views.SalesOrderAttachmentDelete.as_view(), name='so-attachment-delete'),
     ])),
 

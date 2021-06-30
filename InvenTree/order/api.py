@@ -259,6 +259,15 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
+class SOAttachmentDetail(generics.RetrieveUpdateAPIView, AttachmentMixin):
+    """
+    Detail endpoint for SalesOrderAttachment
+    """
+
+    queryset = SalesOrderAttachment.objects.all()
+    serializer_class = SOAttachmentSerializer
+
+
 class SOList(generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of SalesOrder objects.
@@ -579,6 +588,7 @@ order_api_urls = [
     # API endpoints for sales ordesr
     url(r'^so/', include([
         url(r'attachment/', include([
+            url(r'^(?P<pk>\d+)/$', SOAttachmentDetail.as_view(), name='api-so-attachment-detail'),
             url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
         ])),
 
