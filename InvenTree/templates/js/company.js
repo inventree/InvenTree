@@ -342,27 +342,28 @@ function loadManufacturerPartParameterTable(table, url, options) {
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                launchModalForm(
-                    `/manufacturer-part/parameter/${pk}/edit/`,
-                    {
-                        success: function() {
-                            $(table).bootstrapTable('refresh');
-                        }
+                constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
+                    fields: {
+                        name: {},
+                        value: {},
+                        units: {},
+                    },
+                    title: '{% trans "Edit Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
                     }
-                );
-
+                });
             });
             $(table).find('.button-parameter-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                launchModalForm(
-                    `/manufacturer-part/parameter/${pk}/delete/`,
-                    {
-                        success: function() {
-                            $(table).bootstrapTable('refresh');
-                        }
+                constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
                     }
-                );
+                });
             });
         }
     });

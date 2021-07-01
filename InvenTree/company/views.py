@@ -23,13 +23,12 @@ from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
 from InvenTree.views import InvenTreeRoleMixin
 
-from .models import Company, ManufacturerPartParameter
+from .models import Company
 from .models import ManufacturerPart
 from .models import SupplierPart
 
 from part.models import Part
 
-from .forms import EditManufacturerPartParameterForm
 from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm
 from .forms import CompanyImageDownloadForm
@@ -414,66 +413,6 @@ class ManufacturerPartDelete(AjaxDeleteView):
                 part.delete()
 
         return self.renderJsonResponse(self.request, data=data, form=self.get_form())
-
-
-class ManufacturerPartParameterCreate(AjaxCreateView):
-    """
-    View for creating a new ManufacturerPartParameter object
-    """
-
-    model = ManufacturerPartParameter
-    form_class = EditManufacturerPartParameterForm
-    ajax_form_title = _('Add Manufacturer Part Parameter')
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        # Hide the manufacturer_part field if specified
-        if form.initial.get('manufacturer_part', None):
-            form.fields['manufacturer_part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-
-        initials = super().get_initial().copy()
-
-        manufacturer_part = self.get_param('manufacturer_part')
-
-        if manufacturer_part:
-            try:
-                initials['manufacturer_part'] = ManufacturerPartParameter.objects.get(pk=manufacturer_part)
-            except (ValueError, ManufacturerPartParameter.DoesNotExist):
-                pass
-
-        return initials
-
-
-class ManufacturerPartParameterEdit(AjaxUpdateView):
-    """
-    View for editing a ManufacturerPartParameter object
-    """
-
-    model = ManufacturerPartParameter
-    form_class = EditManufacturerPartParameterForm
-    ajax_form_title = _('Edit Manufacturer Part Parameter')
-
-    def get_form(self):
-        
-        form = super().get_form()
-
-        form.fields['manufacturer_part'].widget = HiddenInput()
-
-        return form
-
-
-class ManufacturerPartParameterDelete(AjaxDeleteView):
-    """
-    View for deleting a ManufacturerPartParameter object
-    """
-
-    model = ManufacturerPartParameter
     
 
 class SupplierPartDetail(DetailView):

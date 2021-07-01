@@ -15,7 +15,7 @@ from djmoney.forms.fields import MoneyField
 
 from common.settings import currency_code_default
 
-from .models import Company, ManufacturerPartParameter
+from .models import Company
 from .models import ManufacturerPart
 from .models import SupplierPart
 from .models import SupplierPriceBreak
@@ -55,21 +55,6 @@ class EditManufacturerPartForm(HelperForm):
             'MPN',
             'description',
             'link',
-        ]
-
-
-class EditManufacturerPartParameterForm(HelperForm):
-    """
-    Form for creating / editing a ManufacturerPartParameter object
-    """
-
-    class Meta:
-        model = ManufacturerPartParameter
-        fields = [
-            'manufacturer_part',
-            'name',
-            'value',
-            'units',
         ]
 
 

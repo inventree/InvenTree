@@ -57,15 +57,26 @@
 {% block js_ready %}
 {{ block.super }}
 
+function reloadParameters() {
+    $("#parameter-table").bootstrapTable("refresh");
+}
+
 $('#parameter-create').click(function() {
-    launchModalForm(
-        "{% url 'manufacturer-part-parameter-create' %}",
-        {
-            data: {
-                manufacturer_part: {{ part.id }},
+
+    constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
+        method: 'POST',
+        fields: {
+            name: {},
+            value: {},
+            units: {},
+            manufacturer_part: {
+                value: {{ part.pk }},
+                hidden: true,
             }
-        }
-    );
+        },
+        title: '{% trans "Add Parameter" %}',
+        onSuccess: reloadParameters
+    });
 });
 
 $('#supplier-create').click(function () {
