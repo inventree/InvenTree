@@ -6,6 +6,7 @@ User-configurable settings for the common app
 from __future__ import unicode_literals
 
 from moneyed import CURRENCIES
+from django.conf import settings
 
 import common.models
 
@@ -21,6 +22,14 @@ def currency_code_default():
         code = 'USD'
 
     return code
+
+
+def currency_codes():
+    """
+    Returns the current currency choices
+    """
+    return [(a, a) for a in settings.CURRENCIES]
+
 
 
 def stock_expiry_enabled():

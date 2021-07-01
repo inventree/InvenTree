@@ -2,6 +2,7 @@
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import sys
 
 from .validators import allowable_url_schemes
 
@@ -11,7 +12,6 @@ from django.forms.fields import URLField as FormURLField
 from django.db import models as models
 from django.core import validators
 from django import forms
-from django.conf import settings
 
 from decimal import Decimal
 from djmoney.models.fields import MoneyField as ModelMoneyField
@@ -38,12 +38,25 @@ class InvenTreeURLField(models.URLField):
         })
 
 
+def money_kwargs():
+    """ returns the database settings for MoneyFields """
+    kwargs = {}
+    kwargs['currency_choices'] = common.settings.currency_codes()
+    kwargs['default_currency'] = common.settings.currency_code_default
+    return kwargs
+
+
 class InvenTreeModelMoneyField(ModelMoneyField):
     """ custom MoneyField for clean migrations while using dynamic currency settings """
     def __init__(self, **kwargs):
-        # remove currency information for a clean migration
-        kwargs['default_currency'] = ''
-        kwargs['currency_choices'] = []
+        # detect if creating migration
+        if 'makemigrations' in sys.argv:
+            # remove currency information for a clean migration
+            kwargs['default_currency'] = ''
+            kwargs['currency_choices'] = []
+        else:
+            # set defaults
+            kwargs.update(money_kwargs())
 
         super().__init__(**kwargs)
 
@@ -57,8 +70,7 @@ class InvenTreeMoneyField(MoneyField):
     """ custom MoneyField for clean migrations while using dynamic currency settings """
     def __init__(self, *args, **kwargs):
         # override initial values with the real info from database
-        kwargs['currency_choices'] = [(a, a) for a in settings.CURRENCIES]
-        kwargs['default_currency'] = common.settings.currency_code_default
+        kwargs.update(money_kwargs())
         super().__init__(*args, **kwargs)
 
 
