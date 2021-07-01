@@ -123,7 +123,7 @@
                     });
 
                     // Wait for *all* the requests to complete
-                    $.when(requests).then(function() {
+                    $.when.apply($, requests).then(function() {
                         location.reload();
                     });
                 }

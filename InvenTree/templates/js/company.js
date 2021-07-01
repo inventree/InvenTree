@@ -213,7 +213,7 @@ function deleteManufacturerParts(selections, options={}) {
                 });
 
                 // Wait for all the requests to complete
-                $.when(requests).then(function() {
+                $.when.apply($, requests).then(function() {
 
                     if (options.onSuccess) {
                         options.onSuccess();
@@ -352,7 +352,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
             {
                 checkbox: true,
                 switchable: false,
-                visible: false,
+                visible: true,
             },
             {
                 field: 'name',
