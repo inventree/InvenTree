@@ -170,7 +170,6 @@ def update_exchange_rates():
     try:
         from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-        from django.conf import settings
         from common.settings import currency_code_default, currency_codes
     except AppRegistryNotReady:
         # Apps not yet loaded!

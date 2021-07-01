@@ -38,7 +38,6 @@ def currency_codes():
     return [a for a in settings.CURRENCIES]
 
 
-
 def stock_expiry_enabled():
     """
     Returns True if the stock expiry feature is enabled

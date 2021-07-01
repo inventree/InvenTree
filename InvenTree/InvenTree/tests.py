@@ -5,8 +5,6 @@ from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 
-from django.conf import settings
-
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate

@@ -1,4 +1,3 @@
-from django.conf import settings as inventree_settings
 from common.settings import currency_code_default, currency_codes
 
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
