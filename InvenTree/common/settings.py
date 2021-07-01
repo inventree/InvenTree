@@ -31,6 +31,13 @@ def currency_code_mappings():
     return [(a, a) for a in settings.CURRENCIES]
 
 
+def currency_codes():
+    """
+    Returns the current currency codes
+    """
+    return [a for a in settings.CURRENCIES]
+
+
 
 def stock_expiry_enabled():
     """

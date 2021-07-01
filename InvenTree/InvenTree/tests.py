@@ -22,6 +22,7 @@ from decimal import Decimal
 import InvenTree.tasks
 
 from stock.models import StockLocation
+from common.settings import currency_codes
 
 
 class ValidatorTest(TestCase):
@@ -337,13 +338,11 @@ class CurrencyTests(TestCase):
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'AUD'), 'USD')
 
-        currencies = settings.CURRENCIES
-
         InvenTree.tasks.update_exchange_rates()
 
         rates = Rate.objects.all()
 
-        self.assertEqual(rates.count(), len(currencies))
+        self.assertEqual(rates.count(), len(currency_codes()))
 
         # Now that we have some exchange rate information, we can perform conversions
 
