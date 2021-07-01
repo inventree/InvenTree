@@ -11,13 +11,14 @@ from django.forms.fields import URLField as FormURLField
 from django.db import models as models
 from django.core import validators
 from django import forms
+from django.conf import settings
 
 from decimal import Decimal
 from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.forms.fields import MoneyField
 
 import InvenTree.helpers
-from common.settings import currency_code_default
+import common.settings
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -38,20 +39,27 @@ class InvenTreeURLField(models.URLField):
 
 
 class InvenTreeModelMoneyField(ModelMoneyField):
+    """ custom MoneyField for clean migrations while havoing dynamic currency settings """
     def __init__(self, **kwargs):
-        default_currency = currency_code_default
+        # remove currency information for a clean migration
+        kwargs['default_currency'] = ''
+        kwargs['currency_choices'] = []
 
-        # remove from kwargs if set
-        if 'default_currency' in kwargs:
-            default_currency = kwargs['default_currency']
-            kwargs.pop('default_currency')
+        super().__init__(**kwargs)
 
-        super().__init__(default_currency=default_currency, **kwargs)
-    pass
+    def formfield(self, **kwargs):
+        """ override form class to use own function """
+        kwargs['form_class'] = InvenTreeMoneyField
+        return super().formfield(**kwargs)
 
 
 class InvenTreeMoneyField(MoneyField):
-    pass
+    """ custom MoneyField for clean migrations while havoing dynamic currency settings """
+    def __init__(self, *args, **kwargs):
+        # override initial values with the real info from database
+        kwargs['currency_choices'] = [(a, a) for a in settings.CURRENCIES]
+        kwargs['default_currency'] = common.settings.currency_code_default
+        super().__init__(*args, **kwargs)
 
 
 class DatePickerFormField(forms.DateField):
