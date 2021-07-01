@@ -41,7 +41,7 @@ class InvenTreeURLField(models.URLField):
 def money_kwargs():
     """ returns the database settings for MoneyFields """
     kwargs = {}
-    kwargs['currency_choices'] = common.settings.currency_codes()
+    kwargs['currency_choices'] = common.settings.currency_code_mappings()
     kwargs['default_currency'] = common.settings.currency_code_default
     return kwargs
 

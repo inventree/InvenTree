@@ -24,7 +24,7 @@ def currency_code_default():
     return code
 
 
-def currency_codes():
+def currency_code_mappings():
     """
     Returns the current currency choices
     """
