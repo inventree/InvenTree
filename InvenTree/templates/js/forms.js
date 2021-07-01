@@ -423,6 +423,9 @@ function constructFormBody(fields, options) {
     // Attach edit callbacks (if required)
     addFieldCallbacks(fields, options);
 
+    // Attach clear callbacks (if required)
+    addClearCallbacks(fields, options);
+
     attachToggle(modal);
 
     $(modal + ' .select2-container').addClass('select-full-width');
@@ -571,22 +574,31 @@ function updateFieldValues(fields, options) {
 
         if (value == null) { continue; }
 
-        var el = $(options.modal).find(`#id_${name}`);
+        updateFieldValue(name, value, field, options);
+    }
+}
 
-        switch (field.type) {
-            case 'boolean':
-                el.prop('checked', value);
-                break;
-            case 'related field':
-                // TODO?
-                break;
-            case 'file upload':
-            case 'image upload':
-                break;
-            default:
-                el.val(value);
-                break;
-        }
+
+function updateFieldValue(name, value, field, options) {
+    var el = $(options.modal).find(`#id_${name}`);
+
+    switch (field.type) {
+        case 'boolean':
+            el.prop('checked', value);
+            break;
+        case 'related field':
+            // Clear?
+            if (value == null && !field.required) {
+                el.val(null).trigger('change');
+            }
+            // TODO - Specify an actual value!
+            break;
+        case 'file upload':
+        case 'image upload':
+            break;
+        default:
+            el.val(value);
+            break;
     }
 }
 
@@ -773,6 +785,29 @@ function addFieldCallback(name, field, options) {
 
     $(options.modal).find(`#id_${name}`).change(function() {
         field.onEdit(name, field, options);
+    });
+}
+
+
+function addClearCallbacks(fields, options) {
+
+    for (var idx = 0; idx < options.field_names.length; idx++) {
+
+        var name = options.field_names[idx];
+
+        var field = fields[name];
+
+        if (!field || field.required) continue;
+
+        addClearCallback(name, field, options);
+    }
+}
+
+
+function addClearCallback(name, field, options) {
+
+    $(options.modal).find(`#clear_${name}`).click(function() {
+        updateFieldValue(name, null, field, options);
     });
 }
 
@@ -1114,14 +1149,46 @@ function constructField(name, parameters, options) {
     html += constructLabel(name, parameters);
 
     html += `<div class='controls'>`;
+
+    // Does this input deserve "extra" decorators?
+    var extra = parameters.prefix != null;
     
-    if (parameters.prefix) {
-        html += `<div class='input-group'><span class='input-group-addon'>${parameters.prefix}</span>`;
+    // Some fields can have 'clear' inputs associated with them
+    if (!parameters.required) {
+        switch (parameters.type) {
+            case 'string':
+            case 'url':
+            case 'email':
+            case 'integer':
+            case 'float':
+            case 'decimal':
+            case 'related field':
+                extra = true;
+                break;
+            default:
+                break;
+        }
+    }
+    
+    if (extra) {
+        html += `<div class='input-group'>`;
+    
+        if (parameters.prefix) {
+            html += `<span class='input-group-addon'>${parameters.prefix}</span>`;
+        }
     }
 
     html += constructInput(name, parameters, options);
 
-    if (parameters.prefix) {
+    if (extra) {
+
+        if (!parameters.required) {
+            html += `
+            <span class='input-group-addon form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
+                <span class='icon-red fas fa-times'></span>
+            </span>`;
+        }
+
         html += `</div>`;   // input-group
     }
 
