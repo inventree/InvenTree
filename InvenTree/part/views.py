@@ -2949,7 +2949,7 @@ class PartSalePriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
-        default_currency = settings.BASE_CURRENCY
+        default_currency = inventree_settings.currency_code_default()
         currency = CURRENCIES.get(default_currency, None)
 
         if currency is not None:
