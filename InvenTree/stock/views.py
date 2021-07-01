@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from .models import StockItem, StockLocation, StockItemTracking, StockItemTestResult
+from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
 from common.models import InvenTreeSetting
