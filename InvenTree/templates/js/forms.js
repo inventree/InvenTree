@@ -1185,7 +1185,7 @@ function constructField(name, parameters, options) {
         if (!parameters.required) {
             html += `
             <span class='input-group-addon form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
-                <span class='icon-red fas fa-times'></span>
+                <span class='icon-red fas fa-backspace'></span>
             </span>`;
         }
 
