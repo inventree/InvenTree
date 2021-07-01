@@ -44,15 +44,6 @@ manufacturer_part_urls = [
 
     url(r'^delete/', views.ManufacturerPartDelete.as_view(), name='manufacturer-part-delete'),
 
-    # URLs for ManufacturerPartParameter views (create / edit / delete)
-    url(r'^parameter/', include([
-        url(r'^new/', views.ManufacturerPartParameterCreate.as_view(), name='manufacturer-part-parameter-create'),
-        url(r'^(?P<pk>\d)/', include([
-            url(r'^edit/', views.ManufacturerPartParameterEdit.as_view(), name='manufacturer-part-parameter-edit'),
-            url(r'^delete/', views.ManufacturerPartParameterDelete.as_view(), name='manufacturer-part-parameter-delete'),
-        ])),
-    ])),
-
     url(r'^(?P<pk>\d+)/', include([
         url(r'^edit/?', views.ManufacturerPartEdit.as_view(), name='manufacturer-part-edit'),
         url(r'^suppliers/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-suppliers'),
