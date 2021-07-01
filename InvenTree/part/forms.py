@@ -5,13 +5,14 @@ Django Forms for interacting with Part objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from mptt.fields import TreeNodeChoiceField
+
 from InvenTree.forms import HelperForm
 from InvenTree.helpers import GetExportFormats
 from InvenTree.fields import RoundingDecimalFormField
-
-from mptt.fields import TreeNodeChoiceField
-from django import forms
-from django.utils.translation import ugettext_lazy as _
 
 import common.models
 
@@ -19,7 +20,6 @@ from .models import Part, PartCategory, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
-from .models import PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 
@@ -62,22 +62,6 @@ class PartImageForm(HelperForm):
         model = Part
         fields = [
             'image',
-        ]
-
-
-class EditPartTestTemplateForm(HelperForm):
-    """ Class for creating / editing a PartTestTemplate object """
-
-    class Meta:
-        model = PartTestTemplate
-
-        fields = [
-            'part',
-            'test_name',
-            'description',
-            'required',
-            'requires_value',
-            'requires_attachment',
         ]
 
 

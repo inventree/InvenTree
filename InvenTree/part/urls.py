@@ -148,13 +148,6 @@ part_urls = [
     # Part internal price breaks
     url(r'^internal-price/', include(internal_price_break_urls)),
 
-    # Part test templates
-    url(r'^test-template/', include([
-        url(r'^new/', views.PartTestTemplateCreate.as_view(), name='part-test-template-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.PartTestTemplateEdit.as_view(), name='part-test-template-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.PartTestTemplateDelete.as_view(), name='part-test-template-delete'),
-    ])),
-
     # Part parameters
     url(r'^parameter/', include(part_parameter_urls)),
 

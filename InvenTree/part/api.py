@@ -241,6 +241,15 @@ class PartAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixi
     serializer_class = part_serializers.PartAttachmentSerializer
 
 
+class PartTestTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for PartTestTemplate model
+    """
+
+    queryset = PartTestTemplate.objects.all()
+    serializer_class = part_serializers.PartTestTemplateSerializer
+
+
 class PartTestTemplateList(generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) a PartTestTemplate.
@@ -1036,6 +1045,7 @@ part_api_urls = [
 
     # Base URL for PartTestTemplate API endpoints
     url(r'^test-template/', include([
+        url(r'^(?P<pk>\d+)/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
         url(r'^$', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
     ])),
 
