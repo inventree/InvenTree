@@ -258,16 +258,6 @@ class ManufacturerPartDetail(DetailView):
         return ctx
 
 
-class ManufacturerPartEdit(AjaxUpdateView):
-    """ Update view for editing ManufacturerPart """
-
-    model = ManufacturerPart
-    context_object_name = 'part'
-    form_class = EditManufacturerPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Manufacturer Part')
-
-
 class ManufacturerPartCreate(AjaxCreateView):
     """ Create view for making new ManufacturerPart """
 
@@ -335,85 +325,6 @@ class ManufacturerPartCreate(AjaxCreateView):
 
         return initials
 
-
-class ManufacturerPartDelete(AjaxDeleteView):
-    """ Delete view for removing a ManufacturerPart.
-
-    ManufacturerParts can be deleted using a variety of 'selectors'.
-
-    - ?part=<pk> -> Delete a single ManufacturerPart object
-    - ?parts=[] -> Delete a list of ManufacturerPart objects
-
-    """
-
-    success_url = '/manufacturer/'
-    ajax_template_name = 'company/manufacturer_part_delete.html'
-    ajax_form_title = _('Delete Manufacturer Part')
-
-    role_required = 'purchase_order.delete'
-
-    parts = []
-
-    def get_context_data(self):
-        ctx = {}
-
-        ctx['parts'] = self.parts
-
-        return ctx
-
-    def get_parts(self):
-        """ Determine which ManufacturerPart object(s) the user wishes to delete.
-        """
-
-        self.parts = []
-
-        # User passes a single ManufacturerPart ID
-        if 'part' in self.request.GET:
-            try:
-                self.parts.append(ManufacturerPart.objects.get(pk=self.request.GET.get('part')))
-            except (ValueError, ManufacturerPart.DoesNotExist):
-                pass
-
-        elif 'parts[]' in self.request.GET:
-
-            part_id_list = self.request.GET.getlist('parts[]')
-
-            self.parts = ManufacturerPart.objects.filter(id__in=part_id_list)
-
-    def get(self, request, *args, **kwargs):
-        self.request = request
-        self.get_parts()
-
-        return self.renderJsonResponse(request, form=self.get_form())
-
-    def post(self, request, *args, **kwargs):
-        """ Handle the POST action for deleting ManufacturerPart object.
-        """
-
-        self.request = request
-        self.parts = []
-
-        for item in self.request.POST:
-            if item.startswith('manufacturer-part-'):
-                pk = item.replace('manufacturer-part-', '')
-
-                try:
-                    self.parts.append(ManufacturerPart.objects.get(pk=pk))
-                except (ValueError, ManufacturerPart.DoesNotExist):
-                    pass
-
-        confirm = str2bool(self.request.POST.get('confirm_delete', False))
-
-        data = {
-            'form_valid': confirm,
-        }
-
-        if confirm:
-            for part in self.parts:
-                part.delete()
-
-        return self.renderJsonResponse(self.request, data=data, form=self.get_form())
-    
 
 class SupplierPartDetail(DetailView):
     """ Detail view for SupplierPart """
