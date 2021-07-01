@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import common.models
 
-from .models import Part, PartCategory, PartAttachment, PartRelated
+from .models import Part, PartCategory, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
@@ -183,18 +183,6 @@ class CreatePartRelatedForm(HelperForm):
         labels = {
             'part_2': _('Related Part'),
         }
-
-
-class EditPartAttachmentForm(HelperForm):
-    """ Form for editing a PartAttachment object """
-
-    class Meta:
-        model = PartAttachment
-        fields = [
-            'part',
-            'attachment',
-            'comment'
-        ]
 
 
 class SetPartCategoryForm(forms.Form):

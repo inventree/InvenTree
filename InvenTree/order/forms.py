@@ -24,8 +24,8 @@ from common.forms import MatchItemForm
 import part.models
 
 from stock.models import StockLocation
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
 
@@ -167,30 +167,6 @@ class EditSalesOrderForm(HelperForm):
             'target_date',
             'link',
             'responsible',
-        ]
-
-
-class EditPurchaseOrderAttachmentForm(HelperForm):
-    """ Form for editing a PurchaseOrderAttachment object """
-
-    class Meta:
-        model = PurchaseOrderAttachment
-        fields = [
-            'order',
-            'attachment',
-            'comment'
-        ]
-
-
-class EditSalesOrderAttachmentForm(HelperForm):
-    """ Form for editing a SalesOrderAttachment object """
-
-    class Meta:
-        model = SalesOrderAttachment
-        fields = [
-            'order',
-            'attachment',
-            'comment'
         ]
 
 
