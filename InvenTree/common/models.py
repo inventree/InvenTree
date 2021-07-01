@@ -219,6 +219,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_SHOW_RELATED': {
+            'name': _('Show related parts'),
+            'description': _('Display related parts for a part'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_INTERNAL_PRICE': {
             'name': _('Internal Prices'),
             'description': _('Enable internal prices for parts'),
