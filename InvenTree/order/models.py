@@ -493,7 +493,7 @@ class SalesOrder(Order):
         max_digits=19,
         decimal_places=4,
         default_currency=currency_code_default(),
-        null=True,
+        blank=True, null=True,
         verbose_name=_('Sell Price'),
         help_text=_('Price for this sale order'),
     )
