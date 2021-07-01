@@ -39,7 +39,7 @@ class InvenTreeURLField(models.URLField):
 
 
 class InvenTreeModelMoneyField(ModelMoneyField):
-    """ custom MoneyField for clean migrations while havoing dynamic currency settings """
+    """ custom MoneyField for clean migrations while using dynamic currency settings """
     def __init__(self, **kwargs):
         # remove currency information for a clean migration
         kwargs['default_currency'] = ''
@@ -54,7 +54,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
 
 
 class InvenTreeMoneyField(MoneyField):
-    """ custom MoneyField for clean migrations while havoing dynamic currency settings """
+    """ custom MoneyField for clean migrations while using dynamic currency settings """
     def __init__(self, *args, **kwargs):
         # override initial values with the real info from database
         kwargs['currency_choices'] = [(a, a) for a in settings.CURRENCIES]
