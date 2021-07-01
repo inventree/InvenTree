@@ -123,8 +123,8 @@
                     });
 
                     // Wait for *all* the requests to complete
-                    $.when.apply($, requests).then(function() {
-                        $('#bom-table').bootstrapTable('refresh');
+                    $.when(requests).then(function() {
+                        location.reload();
                     });
                 }
             }

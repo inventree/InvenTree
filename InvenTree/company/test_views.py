@@ -259,33 +259,3 @@ class ManufacturerPartViewTests(CompanyViewTestBase):
 
         # Check that the ManufacturerPart was created!
         self.assertEqual(n + 1, ManufacturerPart.objects.all().count())
-
-    def test_manufacturer_part_delete(self):
-        """
-        Test the ManufacturerPartDelete view
-        """
-
-        url = reverse('manufacturer-part-delete')
-
-        # Get form using 'part' argument
-        response = self.client.get(url, {'part': '2'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # POST to delete manufacturer part
-        n = ManufacturerPart.objects.count()
-        m = SupplierPart.objects.count()
-
-        response = self.client.post(
-            url,
-            {
-                'manufacturer-part-2': 'manufacturer-part-2',
-                'confirm_delete': True
-            },
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        self.assertEqual(response.status_code, 200)
-
-        # Check that the ManufacturerPart was deleted
-        self.assertEqual(n - 1, ManufacturerPart.objects.count())
-        # Check that the SupplierParts were deleted
-        self.assertEqual(m - 2, SupplierPart.objects.count())

@@ -60,17 +60,10 @@
 
         var selections = $("#manufacturer-table").bootstrapTable("getSelections");
 
-        var parts = [];
-
-        selections.forEach(function(item) {
-            parts.push(item.pk);
-        });
-
-        launchModalForm("{% url 'manufacturer-part-delete' %}", {
-            data: {
-                parts: parts,
-            },
-            reload: true,
+        deleteManufacturerParts(selections, {
+            onSuccess: function() { 
+                $("#manufacturer-table").bootstrapTable("refresh");
+            }
         });
     });
 
@@ -80,7 +73,7 @@
         {
             params: {
                 part: {{ part.id }},
-                part_detail: false,
+                part_detail: true,
                 manufacturer_detail: true,
             },
         }

@@ -170,6 +170,61 @@ function loadCompanyTable(table, url, options={}) {
 }
 
 
+function deleteManufacturerParts(selections, options={}) {
+
+    if (selections.length == 0) {
+        return;
+    }
+
+    var parts = [];
+
+    var text = `
+        <div class='alert alert-block alert-danger'>
+            <p>{% trans "The following manufacturer parts will be deleted" %}:</p>
+            <ul>`;
+
+        selections.forEach(function(item) {
+            parts.push(item.pk);
+
+            text += `
+            <li>
+                <p>${item.MPN} - ${item.part_detail.full_name}</p>
+            </li>`;
+        });
+                
+        text += `
+            </ul>
+        </div>`;
+
+    showQuestionDialog(
+        '{% trans "Delete Manufacturer Parts" %}',
+        text,
+        {
+            accept_text: '{% trans "Delete" %}',
+            accept: function() {
+
+                // Delete each manufacturer part
+                var requests = [];
+
+                parts.forEach(function(pk) {
+                    var url = `/api/company/part/manufacturer/${pk}`;
+
+                    requests.push(inventreeDelete(url));
+                });
+
+                // Wait for all the requests to complete
+                $.when(requests).then(function() {
+
+                    if (options.onSuccess) {
+                        options.onSuccess();
+                    }
+                })
+            }
+        }
+    );
+}
+
+
 function loadManufacturerPartTable(table, url, options) {
     /*
      * Load manufacturer part table

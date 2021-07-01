@@ -906,7 +906,7 @@ function loadStockTable(table, options) {
                 );
             });
 
-            $.when.apply($, requests).then(function() {
+            $.when(requests).then(function() {
                 $("#stock-table").bootstrapTable('refresh');
             });
         })
