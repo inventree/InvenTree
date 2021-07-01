@@ -940,6 +940,15 @@ class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMix
     serializer_class = StockItemAttachmentSerializer
 
 
+class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for StockItemTestResult
+    """
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockItemTestResultSerializer
+
+
 class StockItemTestResultList(generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) a StockItemTestResult object.
@@ -1156,6 +1165,7 @@ stock_api_urls = [
 
     # Base URL for StockItemTestResult API endpoints
     url(r'^test/', include([
+        url(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
         url(r'^$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 

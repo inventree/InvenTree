@@ -62,13 +62,6 @@ stock_urls = [
 
     url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
 
-    # URLs for StockItem tests
-    url(r'^item/test/', include([
-        url(r'^new/', views.StockItemTestResultCreate.as_view(), name='stock-item-test-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.StockItemTestResultEdit.as_view(), name='stock-item-test-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.StockItemTestResultDelete.as_view(), name='stock-item-test-delete'),
-    ])),
-
     url(r'^track/', include(stock_tracking_urls)),
 
     url(r'^adjust/?', views.StockAdjust.as_view(), name='stock-adjust'),
