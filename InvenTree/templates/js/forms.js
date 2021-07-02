@@ -881,16 +881,51 @@ function initializeRelatedFields(fields, options) {
  */
 function addSecondaryModal(name, field, options) {
 
+    var secondary = field.secondary;
+
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary' title='${field.secondary.title || field.secondary.label}' id='btn-new-${name}'>
-            ${field.secondary.label}
+        <div type='button' class='btn btn-primary btn-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
+            ${secondary.label || secondary.title}
         </div>
     </span>`;
 
     $(options.modal).find(`label[for="id_${name}"]`).append(html);
 
     // TODO: Launch a callback
+    $(options.modal).find(`#btn-new-${name}`).click(function() {
+
+        if (secondary.callback) {
+            // A "custom" callback can be specified for the button
+            secondary.callback(field, options);
+        } else if (secondary.api_url) {
+            // By default, a new modal form is created, with the parameters specified
+            // The parameters match the "normal" form creation parameters
+
+            secondary.onSuccess = function(data, opts) {
+                    
+                // Add a new "option" to the existing field
+                // TODO: Refactor this
+
+                var select = $(options.modal).find(`#id_${name}`);
+
+                var option = new Option(name, data.pk, true, true);
+
+                option.instance = data;
+
+                select.append(option).trigger('change');
+
+                select.trigger({
+                    type: 'select2:select',
+                    params: {
+                        data: data,
+                    }
+                });
+            };
+
+            constructForm(secondary.api_url, secondary);
+        }
+    });
 }
 
 
