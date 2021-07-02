@@ -982,6 +982,10 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
     width: 100%;
 }
 
+.select2-container .select2-selection--single {
+    height: 30px;
+}
+
 .select2-thumbnail {
     max-width: 24px;
     max-height: 24px;
@@ -992,3 +996,12 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .select2-selection {
     overflow-y: clip;
 }
+
+.form-clear {
+    padding: 6px 6px;
+}
+
+.form-control {
+    height: 30px;
+}
+
