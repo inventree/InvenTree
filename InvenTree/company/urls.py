@@ -8,8 +8,6 @@ from . import views
 
 
 company_detail_urls = [
-    url(r'delete/?', views.CompanyDelete.as_view(), name='company-delete'),
-
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
 
     url(r'^supplier-parts/', views.CompanyDetail.as_view(template_name='company/detail_supplier_part.html'), name='company-detail-supplier-parts'),

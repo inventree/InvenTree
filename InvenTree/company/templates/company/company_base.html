@@ -126,11 +126,11 @@
 
 
     $('#company-delete').click(function() {
-        launchModalForm(
-            "{% url 'company-delete' company.id %}",
-            {
-                redirect: "{% url 'company-index' %}"
-            });
+        constructForm('{% url "api-company-detail" company.pk %}', {
+            method: 'DELETE',
+            title: '{% trans "Delete Company" %}',
+            redirect: '{% url "company-index" %}',
+        });
     });
 
     function reloadImage(data) {

@@ -228,22 +228,6 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class CompanyDelete(AjaxDeleteView):
-    """ View for deleting a Company object """
-
-    model = Company
-    success_url = '/company/'
-    ajax_template_name = 'company/delete.html'
-    ajax_form_title = _('Delete Company')
-    context_object_name = 'company'
-    permission_required = 'company.delete_company'
-
-    def get_data(self):
-        return {
-            'danger': _('Company was deleted'),
-        }
-
-
 class ManufacturerPartDetail(DetailView):
     """ Detail view for ManufacturerPart """
     model = ManufacturerPart
