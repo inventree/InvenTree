@@ -941,24 +941,7 @@ function addSecondaryModal(name, field, options) {
             // The parameters match the "normal" form creation parameters
 
             secondary.onSuccess = function(data, opts) {
-                    
-                // Add a new "option" to the existing field
-                // TODO: Refactor this
-
-                var select = $(options.modal).find(`#id_${name}`);
-
-                var option = new Option(name, data.pk, true, true);
-
-                option.instance = data;
-
-                select.append(option).trigger('change');
-
-                select.trigger({
-                    type: 'select2:select',
-                    params: {
-                        data: data,
-                    }
-                });
+                setRelatedFieldData(name, data, options);
             };
 
             constructForm(secondary.api_url, secondary);
@@ -1121,27 +1104,40 @@ function initializeRelatedField(name, field, options) {
 
         inventreeGet(url, {}, {
             success: function(data) {
-
-                // Create a new option, simply use the model name as the text (for now)
-                // Note: The correct rendering will be computed later by templateSelection function
-                var option = new Option(name, data.pk, true, true);
-
-                // Store the returned data as 'instance' parameter of the created option,
-                // so that it can be retrieved later!
-                option.instance = data;
-
-                select.append(option).trigger('change');
-
-                // manually trigger the `select2:select` event
-                select.trigger({
-                    type: 'select2:select',
-                    params: {
-                        data: data
-                    }
-                });
+                setRelatedFieldData(name, data, options);
             }
         });
     }
+}
+
+
+/*
+ * Set the value of a select2 instace for a "related field",
+ * e.g. with data returned from a secondary modal
+ * 
+ * arguments:
+ * - name: The name of the field
+ * - data: JSON data representing the model instance
+ * - options: The modal form specifications
+ */
+function setRelatedFieldData(name, data, options) {
+
+    var select = $(options.modal).find(`#id_${name}`);
+
+    var option = new Option(name, data.pk, true, true);
+
+    // Assign the JSON data to the 'instance' attribute,
+    // so we can access and render it later
+    option.instance = data;
+
+    select.append(option).trigger('change');
+
+    select.trigger({
+        type: 'select2:select',
+        params: {
+            data: data
+        }
+    });
 }
 
 
