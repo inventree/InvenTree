@@ -29,6 +29,12 @@ sale_price_break_urls = [
     url(r'^(?P<pk>\d+)/delete/', views.PartSalePriceBreakDelete.as_view(), name='sale-price-break-delete'),
 ]
 
+internal_price_break_urls = [
+    url(r'^new/', views.PartInternalPriceBreakCreate.as_view(), name='internal-price-break-create'),
+    url(r'^(?P<pk>\d+)/edit/', views.PartInternalPriceBreakEdit.as_view(), name='internal-price-break-edit'),
+    url(r'^(?P<pk>\d+)/delete/', views.PartInternalPriceBreakDelete.as_view(), name='internal-price-break-delete'),
+]
+
 part_parameter_urls = [
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     url(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
@@ -65,6 +71,7 @@ part_detail_urls = [
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
     url(r'^sale-prices/', views.PartDetail.as_view(template_name='part/sale_prices.html'), name='part-sale-prices'),
+    url(r'^internal-prices/', views.PartDetail.as_view(template_name='part/internal_prices.html'), name='part-internal-prices'),
     url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
@@ -121,6 +128,10 @@ part_urls = [
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
 
+    # Upload a part
+    url(r'^import/', views.PartImport.as_view(), name='part-import'),
+    url(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
+
     # Create a new BOM item
     url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
 
@@ -144,6 +155,9 @@ part_urls = [
 
     # Part price breaks
     url(r'^sale-price/', include(sale_price_break_urls)),
+
+    # Part internal price breaks
+    url(r'^internal-price/', include(internal_price_break_urls)),
 
     # Part test templates
     url(r'^test-template/', include([

@@ -40,7 +40,8 @@ def assign_bom_items(apps, schema_editor):
         except BomItem.DoesNotExist:
             pass
 
-    print(f"Assigned BomItem for {count_valid}/{count_total} entries")
+    if count_total > 0:
+        print(f"Assigned BomItem for {count_valid}/{count_total} entries")
 
 
 def unassign_bom_items(apps, schema_editor):

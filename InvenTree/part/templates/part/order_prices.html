@@ -14,8 +14,19 @@
 
 {% block details %}
 {% default_currency as currency %}
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 
-{% crispy form %}
+
+<form method="post" class="form-horizontal">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-9">{{ form|crispy }}</div>
+        <div class="col-sm-3">
+            <input type="submit" value="{% trans 'Calculate' %}" class="btn btn-primary btn-block">
+        </div>
+    </div>
+</form>
+<hr>
 
 <div class="row"><div class="col col-md-6">
 <h4>{% trans "Pricing ranges" %}</h4>
@@ -77,6 +88,21 @@
     {% endif %}
 {% endif %}
 
+{% if show_internal_price and roles.sales_order.view %}
+{% if total_internal_part_price %}
+    <tr>
+        <td><b>{% trans 'Internal Price' %}</b></td>
+        <td>{% trans 'Unit Cost' %}</td>
+        <td colspan='2'>{% include "price.html" with price=unit_internal_part_price %}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{% trans 'Total Cost' %}</td>
+        <td colspan='2'>{% include "price.html" with price=total_internal_part_price %}</td>
+    </tr>
+{% endif %}
+{% endif %}
+
 {% if total_part_price %}
     <tr>
         <td><b>{% trans 'Sale Price' %}</b></td>
@@ -110,9 +136,9 @@
 
 {% if price_history %}
     <hr>
-    <h4>{% trans 'Stock Pricing' %}<i class="fas fa-info-circle" title="Shows the prices of stock for this part
-the part single price shown is the current price for that supplier part"></i></h4>
-    {% if price_history|length > 1 %}
+    <h4>{% trans 'Stock Pricing' %}<i class="fas fa-info-circle" title="Shows the purchase prices of stock for this part.
+The part single price is the current purchase price for that supplier part."></i></h4>
+    {% if price_history|length > 0 %}
         <div style="max-width: 99%; min-height: 300px">
             <canvas id="StockPriceChart"></canvas>
         </div>
@@ -157,7 +183,8 @@ the part single price shown is the current price for that supplier part"></i></h
                             {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
                         ],
                         borderWidth: 1,
-                        type: 'line'
+                        type: 'line',
+                        hidden: true,
                     },
                     {
                         label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
@@ -168,7 +195,8 @@ the part single price shown is the current price for that supplier part"></i></h
                             {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
                         ],
                         borderWidth: 1,
-                        type: 'line'
+                        type: 'line',
+                        hidden: true,
                     },
                     {% endif %}
                     {
@@ -187,18 +215,18 @@ the part single price shown is the current price for that supplier part"></i></h
             var bomdata = {
                 labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
                 datasets:  [
-                {% if bom_pie_min %}
+                {
+                  label: 'Price',
+                  data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
+                  backgroundColor: bom_colors,
+                },
+                {% if bom_pie_max %}
                 {
                     label: 'Max Price',
                     data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
                     backgroundColor: bom_colors,
                   },
                 {% endif %}
-                {
-                  label: 'Price',
-                  data: [{% for line in bom_parts %}{% if bom_pie_min %}{{ line.min_price }}{% else %}{{ line.price }}{% endif%},{% endfor %}],
-                  backgroundColor: bom_colors,
-                }
               ]
             };
             var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)

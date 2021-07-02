@@ -17,6 +17,7 @@ from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
+from stock.serializers import LocationBriefSerializer, StockItemSerializer, LocationSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
@@ -41,7 +42,7 @@ class POSerializer(InvenTreeModelSerializer):
         """
         Add extra information to the queryset
 
-        - Number of liens in the PurchaseOrder
+        - Number of lines in the PurchaseOrder
         - Overdue status of the PurchaseOrder
         """
 
@@ -91,8 +92,10 @@ class POSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'reference',
             'status'
+            'issue_date',
+            'complete_date',
+            'creation_date',
         ]
 
 
@@ -108,13 +111,16 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             self.fields.pop('part_detail')
             self.fields.pop('supplier_part_detail')
 
-    quantity = serializers.FloatField()
-    received = serializers.FloatField()
+    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
+    quantity = serializers.FloatField(default=1)
+    received = serializers.FloatField(default=0)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
+
+    destination = LocationBriefSerializer(source='get_destination', read_only=True)
 
     class Meta:
         model = PurchaseOrderLineItem
@@ -132,6 +138,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price',
             'purchase_price_currency',
             'purchase_price_string',
+            'destination',
         ]
 
 
@@ -221,8 +228,9 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'reference',
-            'status'
+            'status',
+            'creation_date',
+            'shipment_date',
         ]
 
 
@@ -232,11 +240,38 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     This includes some fields from the related model objects.
     """
 
-    location_path = serializers.CharField(source='get_location_path')
-    location_id = serializers.IntegerField(source='get_location')
-    serial = serializers.CharField(source='get_serial')
-    po = serializers.CharField(source='get_po')
-    quantity = serializers.FloatField()
+    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
+    order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
+    serial = serializers.CharField(source='get_serial', read_only=True)
+    quantity = serializers.FloatField(read_only=True)
+    location = serializers.PrimaryKeyRelatedField(source='item.location', many=False, read_only=True)
+
+    # Extra detail fields
+    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    item_detail = StockItemSerializer(source='item', many=False, read_only=True)
+    location_detail = LocationSerializer(source='item.location', many=False, read_only=True)
+
+    def __init__(self, *args, **kwargs):
+
+        order_detail = kwargs.pop('order_detail', False)
+        part_detail = kwargs.pop('part_detail', False)
+        item_detail = kwargs.pop('item_detail', False)
+        location_detail = kwargs.pop('location_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail')
+
+        if not part_detail:
+            self.fields.pop('part_detail')
+
+        if not item_detail:
+            self.fields.pop('item_detail')
+
+        if not location_detail:
+            self.fields.pop('location_detail')
 
     class Meta:
         model = SalesOrderAllocation
@@ -246,10 +281,14 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'line',
             'serial',
             'quantity',
-            'location_id',
-            'location_path',
-            'po',
+            'location',
+            'location_detail',
             'item',
+            'item_detail',
+            'order',
+            'order_detail',
+            'part',
+            'part_detail',
         ]
 
 
@@ -277,7 +316,9 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
 
-    quantity = serializers.FloatField()
+    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
+    quantity = serializers.FloatField(default=1)
+
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)

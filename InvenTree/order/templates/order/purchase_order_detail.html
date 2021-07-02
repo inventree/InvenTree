@@ -139,7 +139,7 @@ $("#po-table").inventreeTable({
                 }
             },
             footerFormatter:  function() {
-                return 'Total'
+                return '{% trans "Total" %}'
             }
         },
         {
@@ -233,6 +233,10 @@ $("#po-table").inventreeTable({
 
                 return (progressA < progressB) ? 1 : -1;
             }
+        },
+        {
+            field: 'destination.pathstring',
+            title: '{% trans "Destination" %}',
         },
         {
             field: 'notes',

@@ -6,13 +6,14 @@ from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
 
-from .models import Company
-from .models import ManufacturerPart
-from .models import SupplierPart, SupplierPriceBreak
-
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeImageSerializerField
 
 from part.serializers import PartBriefSerializer
+
+from .models import Company
+from .models import ManufacturerPart, ManufacturerPartParameter
+from .models import SupplierPart, SupplierPriceBreak
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -52,7 +53,7 @@ class CompanySerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
@@ -121,6 +122,35 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
+        ]
+
+
+class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the ManufacturerPartParameter model
+    """
+
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
+
+    def __init__(self, *args, **kwargs):
+
+        man_detail = kwargs.pop('manufacturer_part_detail', False)
+
+        super(ManufacturerPartParameterSerializer, self).__init__(*args, **kwargs)
+
+        if not man_detail:
+            self.fields.pop('manufacturer_part_detail')
+
+    class Meta:
+        model = ManufacturerPartParameter
+
+        fields = [
+            'pk',
+            'manufacturer_part',
+            'manufacturer_part_detail',
+            'name',
+            'value',
+            'units',
         ]
 
 

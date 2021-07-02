@@ -195,7 +195,12 @@
 
 </div>
 
+{% block pre_content_panel %}
+
+{% endblock %}
+
 <div class='panel panel-default panel-inventree'>
+
 
     <div class='panel-heading'>
         <h4>
@@ -210,7 +215,11 @@
         <!-- Specific part details go here... -->
         {% endblock %}
     </div>
+
 </div>
+{% block post_content_panel %}
+
+{% endblock %}
 
 {% endblock %}
 
@@ -230,11 +239,19 @@
 
     enableDragAndDrop(
         '#part-thumb',
-        "{% url 'part-image-upload' part.id %}",
+        "{% url 'api-part-detail' part.id %}",
         {
             label: 'image',
+            method: 'PATCH',
             success: function(data, status, xhr) {
-                location.reload();
+
+                // If image / thumbnail data present, live update
+                if (data.image) {
+                    $('#part-image').attr('src', data.image);
+                } else {
+                    // Otherwise, reload the page
+                    location.reload();
+                }
             }
         }
     );

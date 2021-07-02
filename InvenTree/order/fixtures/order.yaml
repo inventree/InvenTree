@@ -68,6 +68,7 @@
     order: 1
     part: 1
     quantity: 100
+    destination: 5 # Desk/Drawer_1
 
 # 250 x ACME0002 (M2x4 LPHS)
 # Partially received (50)
@@ -95,3 +96,10 @@
     part: 3
     quantity: 100
 
+# 1 x R_4K7_0603
+- model: order.purchaseorderlineitem
+  pk: 23
+  fields:
+    order: 1
+    part: 5
+    quantity: 1

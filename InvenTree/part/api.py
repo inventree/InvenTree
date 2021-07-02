@@ -25,7 +25,7 @@ from django.urls import reverse
 from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 from .models import PartCategoryParameterTemplate
 
 from common.models import InvenTreeSetting
@@ -184,6 +184,24 @@ class PartSalePriceList(generics.ListCreateAPIView):
 
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
+
+    filter_backends = [
+        DjangoFilterBackend
+    ]
+
+    filter_fields = [
+        'part',
+    ]
+
+
+class PartInternalPriceList(generics.ListCreateAPIView):
+    """
+    API endpoint for list view of PartInternalPriceBreak model
+    """
+
+    queryset = PartInternalPriceBreak.objects.all()
+    serializer_class = part_serializers.PartInternalPriceSerializer
+    permission_required = 'roles.sales_order.show'
 
     filter_backends = [
         DjangoFilterBackend
@@ -688,6 +706,7 @@ class PartList(generics.ListCreateAPIView):
         'creation_date',
         'IPN',
         'in_stock',
+        'category',
     ]
 
     # Default ordering
@@ -1015,6 +1034,11 @@ part_api_urls = [
     # Base URL for part sale pricing
     url(r'^sale-price/', include([
         url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
+    ])),
+
+    # Base URL for part internal pricing
+    url(r'^internal-price/', include([
+        url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 
     # Base URL for PartParameter API endpoints

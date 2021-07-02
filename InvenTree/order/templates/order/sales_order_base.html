@@ -77,7 +77,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info'></span></td>

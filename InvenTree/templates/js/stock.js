@@ -179,27 +179,32 @@ function loadStockTestResultsTable(table, options) {
                             var match = false;
                             var override = false;
 
+                            // Extract the simplified test key
                             var key = item.key;
 
                             // Attempt to associate this result with an existing test
-                            tableData.forEach(function(row, index) {
+                            for (var idx = 0; idx < tableData.length; idx++) {
+
+                                var row = tableData[idx];
 
                                 if (key == row.key) {
 
                                     item.test_name = row.test_name;
                                     item.required = row.required;
 
-                                    match = true;
-                                    
                                     if (row.result == null) {
                                         item.parent = parent_node;
-                                        tableData[index] = item;
+                                        tableData[idx] = item;
                                         override = true;
                                     } else {
                                         item.parent = row.pk;
                                     }
+
+                                    match = true;
+
+                                    break;
                                 }
-                            });
+                            }
 
                             // No match could be found
                             if (!match) {
@@ -603,7 +608,6 @@ function loadStockTable(table, options) {
 
                     // REJECTED
                     if (row.status == {{ StockStatus.REJECTED }}) {
-                        console.log("REJECTED - {{ StockStatus.REJECTED }}");
                         html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
                     }
                     // LOST
@@ -659,6 +663,27 @@ function loadStockTable(table, options) {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
                 sortable: true,
+            },
+            {
+                field: 'purchase_order',
+                title: '{% trans "Purchase Order" %}',
+                formatter: function(value, row) {
+                    if (!value) {
+                        return '-';
+                    }
+
+                    var link = `/order/purchase-order/${row.purchase_order}/`;
+                    var text = `${row.purchase_order}`;
+
+                    if (row.purchase_order_reference) {
+
+                        var prefix = '{% settings_value "PURCHASEORDER_REFERENCE_PREFIX" %}';
+
+                        text = prefix + row.purchase_order_reference;
+                    }
+
+                    return renderLink(text, link);
+                }
             },
             {
                 field: 'purchase_price',

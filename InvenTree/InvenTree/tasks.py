@@ -28,7 +28,7 @@ def schedule_task(taskname, **kwargs):
     try:
         from django_q.models import Schedule
     except (AppRegistryNotReady):
-        logger.warning("Could not start background tasks - App registry not ready")
+        logger.info("Could not start background tasks - App registry not ready")
         return
 
     try:
@@ -80,7 +80,7 @@ def heartbeat():
 
     try:
         from django_q.models import Success
-        logger.warning("Could not perform heartbeat task - App registry not ready")
+        logger.info("Could not perform heartbeat task - App registry not ready")
     except AppRegistryNotReady:
         return
 
@@ -105,7 +105,7 @@ def delete_successful_tasks():
     try:
         from django_q.models import Success
     except AppRegistryNotReady:
-        logger.warning("Could not perform 'delete_successful_tasks' - App registry not ready")
+        logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
     threshold = datetime.now() - timedelta(days=30)
@@ -126,6 +126,7 @@ def check_for_updates():
         import common.models
     except AppRegistryNotReady:
         # Apps not yet loaded!
+        logger.info("Could not perform 'check_for_updates' - App registry not ready")
         return
 
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
@@ -169,9 +170,10 @@ def update_exchange_rates():
     try:
         from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-        from django.conf import settings
+        from common.settings import currency_code_default, currency_codes
     except AppRegistryNotReady:
         # Apps not yet loaded!
+        logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
     except:
         # Other error?
@@ -190,14 +192,14 @@ def update_exchange_rates():
     backend = InvenTreeExchange()
     print(f"Updating exchange rates from {backend.url}")
 
-    base = settings.BASE_CURRENCY
+    base = currency_code_default()
 
     print(f"Using base currency '{base}'")
 
     backend.update_rates(base_currency=base)
 
     # Remove any exchange rates which are not in the provided currencies
-    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=settings.CURRENCIES).delete()
+    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
 
 
 def send_email(subject, body, recipients, from_email=None):

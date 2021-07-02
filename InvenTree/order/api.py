@@ -22,9 +22,10 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment
 from .serializers import POSerializer, POLineItemSerializer, POAttachmentSerializer
 
-from .models import SalesOrder, SalesOrderLineItem
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
 from .models import SalesOrderAttachment
 from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
+from .serializers import SalesOrderAllocationSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -156,7 +157,7 @@ class POList(generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class PODetail(generics.RetrieveUpdateAPIView):
+class PODetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a PurchaseOrder object """
 
     queryset = PurchaseOrder.objects.all()
@@ -381,7 +382,7 @@ class SOList(generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class SODetail(generics.RetrieveUpdateAPIView):
+class SODetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a SalesOrder object.
     """
@@ -422,17 +423,11 @@ class SOLineItemList(generics.ListCreateAPIView):
     def get_serializer(self, *args, **kwargs):
 
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['order_detail'] = str2bool(self.request.query_params.get('order_detail', False))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['allocations'] = str2bool(self.request.query_params.get('allocations', False))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+            kwargs['allocations'] = str2bool(params.get('allocations', False))
         except AttributeError:
             pass
 
@@ -486,6 +481,70 @@ class SOLineItemDetail(generics.RetrieveUpdateAPIView):
     serializer_class = SOLineItemSerializer
 
 
+class SOAllocationList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing SalesOrderAllocation objects
+    """
+
+    queryset = SalesOrderAllocation.objects.all()
+    serializer_class = SalesOrderAllocationSerializer
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            params = self.request.query_params
+
+            kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+            kwargs['item_detail'] = str2bool(params.get('item_detail', False))
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+        except AttributeError:
+            pass
+
+        return self.serializer_class(*args, **kwargs)
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by order
+        params = self.request.query_params
+
+        # Filter by "part" reference
+        part = params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(item__part=part)
+
+        # Filter by "order" reference
+        order = params.get('order', None)
+
+        if order is not None:
+            queryset = queryset.filter(line__order=order)
+
+        # Filter by "outstanding" order status
+        outstanding = params.get('outstanding', None)
+
+        if outstanding is not None:
+            outstanding = str2bool(outstanding)
+
+            if outstanding:
+                queryset = queryset.filter(line__order__status__in=SalesOrderStatus.OPEN)
+            else:
+                queryset = queryset.exclude(line__order__status__in=SalesOrderStatus.OPEN)
+
+        return queryset
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    # Default filterable fields
+    filter_fields = [
+        'item',
+    ]
+
+
 class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
@@ -493,10 +552,6 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
     queryset = PurchaseOrderAttachment.objects.all()
     serializer_class = POAttachmentSerializer
-
-    filter_fields = [
-        'order',
-    ]
 
 
 order_api_urls = [
@@ -512,14 +567,26 @@ order_api_urls = [
     url(r'^po-line/$', POLineItemList.as_view(), name='api-po-line-list'),
 
     # API endpoints for sales ordesr
-    url(r'^so/(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
-    url(r'so/attachment/', include([
-        url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
+    url(r'^so/', include([
+        url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
+        url(r'attachment/', include([
+            url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
+        ])),
+
+        # List all sales orders
+        url(r'^.*$', SOList.as_view(), name='api-so-list'),
     ])),
 
-    url(r'^so/.*$', SOList.as_view(), name='api-so-list'),
-
     # API endpoints for sales order line items
-    url(r'^so-line/(?P<pk>\d+)/$', SOLineItemDetail.as_view(), name='api-so-line-detail'),
-    url(r'^so-line/$', SOLineItemList.as_view(), name='api-so-line-list'),
+    url(r'^so-line/', include([
+        url(r'^(?P<pk>\d+)/$', SOLineItemDetail.as_view(), name='api-so-line-detail'),
+        url(r'^$', SOLineItemList.as_view(), name='api-so-line-list'),
+    ])),
+
+    # API endpoints for sales order allocations
+    url(r'^so-allocation', include([
+
+        # List all sales order allocations
+        url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
+    ])),
 ]
