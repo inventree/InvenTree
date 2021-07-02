@@ -36,10 +36,6 @@ purchase_order_urls = [
 
     url(r'^line/', include([
         url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^edit/', views.POLineItemEdit.as_view(), name='po-line-item-edit'),
-            url(r'^delete/', views.POLineItemDelete.as_view(), name='po-line-item-delete'),
-        ])),
     ])),
 
     # Display complete list of purchase orders

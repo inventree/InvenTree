@@ -5,12 +5,15 @@ JSON serializers for the Order API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rest_framework import serializers
-
-from sql_util.utils import SubqueryCount
+from django.utils.translation import ugettext_lazy as _
 
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField
+
+from rest_framework import serializers
+from sql_util.utils import SubqueryCount
+
+import djmoney.settings
 
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
@@ -124,6 +127,11 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
     destination = LocationBriefSerializer(source='get_destination', read_only=True)
+
+    purchase_price_currency = serializers.ChoiceField(
+        choices=djmoney.settings.CURRENCY_CHOICES,
+        help_text=_('Purchase price currency'),
+    )
 
     class Meta:
         model = PurchaseOrderLineItem

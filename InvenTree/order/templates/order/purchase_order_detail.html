@@ -73,16 +73,28 @@ function setupCallbacks() {
     table.find(".button-line-edit").click(function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/purchase-order/line/${pk}/edit/`, {
-            success: reloadTable,
+        constructForm(`/api/order/po-line/${pk}/`, {
+            fields: {
+                part: {},
+                quantity: {},
+                reference: {},
+                purchase_price: {},
+                purchase_price_currency: {},
+                destination: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Line Item" %}',
+            onSuccess: reloadTable,
         });
     });
 
     table.find(".button-line-delete").click(function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/purchase-order/line/${pk}/delete/`, {
-            success: reloadTable,
+        constructForm(`/api/order/po-line/${pk}/`, {
+            method: 'DELETE',
+            title: '{% trans "Delete Line Item" %}',
+            onSuccess: reloadTable,
         });
     });
     {% endif %}

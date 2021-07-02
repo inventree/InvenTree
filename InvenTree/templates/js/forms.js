@@ -1267,7 +1267,7 @@ function constructField(name, parameters, options) {
     var extra = parameters.prefix != null;
     
     // Some fields can have 'clear' inputs associated with them
-    if (!parameters.required) {
+    if (!parameters.required && !parameters.read_only) {
         switch (parameters.type) {
             case 'string':
             case 'url':

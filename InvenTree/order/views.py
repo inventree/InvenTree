@@ -1213,38 +1213,6 @@ class SOLineItemEdit(AjaxUpdateView):
         return form
 
 
-class POLineItemEdit(AjaxUpdateView):
-    """ View for editing a PurchaseOrderLineItem object in a modal form.
-    """
-
-    model = PurchaseOrderLineItem
-    form_class = order_forms.EditPurchaseOrderLineItemForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Line Item')
-
-    def get_form(self):
-        form = super().get_form()
-
-        # Prevent user from editing order once line item is assigned
-        form.fields['order'].widget = HiddenInput()
-
-        return form
-
-
-class POLineItemDelete(AjaxDeleteView):
-    """ View for deleting a PurchaseOrderLineItem object in a modal form
-    """
-
-    model = PurchaseOrderLineItem
-    ajax_form_title = _('Delete Line Item')
-    ajax_template_name = 'order/po_lineitem_delete.html'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted line item'),
-        }
-
-
 class SOLineItemDelete(AjaxDeleteView):
 
     model = SalesOrderLineItem

@@ -254,10 +254,12 @@ class POLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class POLineItemDetail(generics.RetrieveUpdateAPIView):
-    """ API endpoint for detail view of a PurchaseOrderLineItem object """
+class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail API endpoint for PurchaseOrderLineItem object
+    """
 
-    queryset = PurchaseOrderLineItem
+    queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
 
