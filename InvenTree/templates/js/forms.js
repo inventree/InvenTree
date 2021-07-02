@@ -383,6 +383,10 @@ function constructFormBody(fields, options) {
             }
 
             fields[field].hidden = field_options.hidden;
+
+            if (field_options.read_only != null) {
+                fields[field].read_only = field_options.read_only;
+            }
         }
     }
 
@@ -982,7 +986,6 @@ function initializeRelatedField(name, field, options) {
 
     select.select2({
         placeholder: '',
-        allowClear: !field.required,
         dropdownParent: $(options.modal),
         dropdownAutoWidth: false,
         ajax: {
@@ -1201,6 +1204,8 @@ function renderModelData(name, model, data, parameters, options) {
         case 'supplierpart':
             renderer = renderSupplierPart;
             break;
+        case 'owner':
+            renderer = renderOwner;
         default:
             break;
     }

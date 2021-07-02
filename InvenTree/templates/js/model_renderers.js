@@ -93,6 +93,27 @@ function renderPart(name, data, parameters, options) {
 }
 
 
+// Renderer for "Owner" model
+function renderOwner(name, data, parameters, options) {
+
+    var html = `<span>${data.name}</span>`;
+
+
+    switch (data.label) {
+        case 'user':
+            html += `<span class='float-right fas fa-user'></span>`;
+            break;
+        case 'group':
+            html += `<span class='float-right fas fa-users'></span>`;
+            break;
+        default:
+            break;
+    }
+
+    return html;
+}
+
+
 // Renderer for "PartCategory" model
 function renderPartCategory(name, data, parameters, options) {
 

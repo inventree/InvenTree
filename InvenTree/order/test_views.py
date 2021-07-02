@@ -168,12 +168,6 @@ class POTests(OrderViewTestCase):
         response = self.client.get(url, {'supplier': 'goat'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-    def test_po_edit(self):
-        """ Launch form to edit a PurchaseOrder """
-
-        response = self.client.get(reverse('po-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
     def test_po_export(self):
         """ Export PurchaseOrder """
 

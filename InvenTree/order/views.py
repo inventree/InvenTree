@@ -215,26 +215,6 @@ class SalesOrderCreate(AjaxCreateView):
         return super().save(form)
 
 
-class PurchaseOrderEdit(AjaxUpdateView):
-    """ View for editing a PurchaseOrder using a modal form """
-
-    model = PurchaseOrder
-    ajax_form_title = _('Edit Purchase Order')
-    form_class = order_forms.EditPurchaseOrderForm
-
-    def get_form(self):
-
-        form = super(AjaxUpdateView, self).get_form()
-
-        order = self.get_object()
-
-        # Prevent user from editing supplier if there are already lines in the order
-        if order.lines.count() > 0 or not order.status == PurchaseOrderStatus.PENDING:
-            form.fields['supplier'].widget = HiddenInput()
-
-        return form
-
-
 class SalesOrderEdit(AjaxUpdateView):
     """ View for editing a SalesOrder """
 
