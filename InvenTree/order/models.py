@@ -698,7 +698,13 @@ class OrderLineItem(models.Model):
     class Meta:
         abstract = True
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Item quantity'))
+    quantity = RoundingDecimalField(
+        verbose_name=_('Quantity'),
+        help_text=_('Item quantity'),
+        default=1,
+        max_digits=15, decimal_places=5,
+        validators=[MinValueValidator(0)],
+    )
 
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 

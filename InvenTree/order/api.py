@@ -514,7 +514,7 @@ class SOLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class SOLineItemDetail(generics.RetrieveUpdateAPIView):
+class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a SalesOrderLineItem object """
 
     queryset = SalesOrderLineItem.objects.all()

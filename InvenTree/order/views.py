@@ -1197,34 +1197,6 @@ class SOLineItemCreate(AjaxCreateView):
         return ret
 
 
-class SOLineItemEdit(AjaxUpdateView):
-    """ View for editing a SalesOrderLineItem """
-
-    model = SalesOrderLineItem
-    form_class = order_forms.EditSalesOrderLineItemForm
-    ajax_form_title = _('Edit Line Item')
-
-    def get_form(self):
-        form = super().get_form()
-
-        form.fields.pop('order')
-        form.fields.pop('part')
-
-        return form
-
-
-class SOLineItemDelete(AjaxDeleteView):
-
-    model = SalesOrderLineItem
-    ajax_form_title = _("Delete Line Item")
-    ajax_template_name = "order/so_lineitem_delete.html"
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted line item'),
-        }
-
-
 class SalesOrderAssignSerials(AjaxView, FormMixin):
     """
     View for assigning stock items to a sales order,

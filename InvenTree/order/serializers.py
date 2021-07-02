@@ -16,6 +16,7 @@ from sql_util.utils import SubqueryCount
 import djmoney.settings
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
@@ -123,6 +124,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
+
+    purchase_price = InvenTreeMoneySerializer(max_digits=19, decimal_places=4)
 
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
@@ -335,12 +338,19 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
 
-    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
-    quantity = serializers.FloatField(default=1)
+    quantity = serializers.FloatField()
 
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
+    
+    sale_price = InvenTreeMoneySerializer(max_digits=19, decimal_places=4)
+
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+
+    sale_price_currency = serializers.ChoiceField(
+        choices=djmoney.settings.CURRENCY_CHOICES,
+        help_text=_('Sale price currency'),
+    )
 
     class Meta:
         model = SalesOrderLineItem
