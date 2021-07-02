@@ -332,79 +332,81 @@
 
     // history graphs
     {% if price_history %}
-            var purchasepricedata = {
-                    labels: [
-                        {% for line in price_history %}'{{ line.date }}',{% endfor %}
+        var purchasepricedata = {
+                labels: [
+                    {% for line in price_history %}'{{ line.date }}',{% endfor %}
+                ],
+                datasets: [{
+                    label: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    yAxisID: 'y',
+                    data: [
+                        {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
                     ],
-                    datasets: [{
-                        label: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        yAxisID: 'y',
-                        data: [
-                            {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
-                        ],
-                        borderWidth: 1,
-                        type: 'line'
-                    },
-                    {% if 'price_diff' in price_history.0 %}
-                    {
-                        label: '{% blocktrans %}Single Price Difference - {{currency}}{% endblocktrans %}',
-                        backgroundColor: 'rgba(68, 157, 68, 0.2)',
-                        borderColor: 'rgb(68, 157, 68)',
-                        yAxisID: 'y2',
-                        data: [
-                            {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
-                        ],
-                        borderWidth: 1,
-                        type: 'line',
-                        hidden: true,
-                    },
-                    {
-                        label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
-                        backgroundColor: 'rgba(70, 127, 155, 0.2)',
-                        borderColor: 'rgb(70, 127, 155)',
-                        yAxisID: 'y',
-                        data: [
-                            {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
-                        ],
-                        borderWidth: 1,
-                        type: 'line',
-                        hidden: true,
-                    },
-                    {% endif %}
-                    {
-                        label: '{% trans "Quantity" %}',
-                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                        borderColor: 'rgb(255, 206, 86)',
-                        yAxisID: 'y1',
-                        data: [
-                            {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
-                        ],
-                        borderWidth: 1
-                    }]
-                }
-            var StockPriceChart = loadStockPricingChart($('#StockPriceChart'), purchasepricedata)
-            var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
-            var bomdata = {
-                labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
-                datasets:  [
-                {
-                  label: 'Price',
-                  data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
-                  backgroundColor: bom_colors,
+                    borderWidth: 1,
+                    type: 'line'
                 },
-                {% if bom_pie_max %}
+                {% if 'price_diff' in price_history.0 %}
                 {
-                    label: 'Max Price',
-                    data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
-                    backgroundColor: bom_colors,
-                  },
+                    label: '{% blocktrans %}Single Price Difference - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(68, 157, 68, 0.2)',
+                    borderColor: 'rgb(68, 157, 68)',
+                    yAxisID: 'y2',
+                    data: [
+                        {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'line',
+                    hidden: true,
+                },
+                {
+                    label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(70, 127, 155, 0.2)',
+                    borderColor: 'rgb(70, 127, 155)',
+                    yAxisID: 'y',
+                    data: [
+                        {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'line',
+                    hidden: true,
+                },
                 {% endif %}
-              ]
-            };
-            var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
-
+                {
+                    label: '{% trans "Quantity" %}',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgb(255, 206, 86)',
+                    yAxisID: 'y1',
+                    data: [
+                        {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        var StockPriceChart = loadStockPricingChart($('#StockPriceChart'), purchasepricedata)
+    {% endif %}
+    
+    {% if bom_parts %}
+        var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
+        var bomdata = {
+            labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
+            datasets:  [
+            {
+              label: 'Price',
+              data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
+                backgroundColor: bom_colors,
+            },
+            {% if bom_pie_max %}
+            {
+                label: 'Max Price',
+                data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
+                backgroundColor: bom_colors,
+              },
+            {% endif %}
+            ]
+        };
+        var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
     {% endif %}
 
 
