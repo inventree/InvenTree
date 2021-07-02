@@ -235,6 +235,7 @@ function constructDeleteForm(fields, options) {
  *      - secondary: Define a secondary modal form for this field
  *      - label: Specify custom label
  *      - help_text: Specify custom help_text
+ *      - placeholder: Specify custom placeholder text
  *      - value: Specify initial value
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
@@ -366,6 +367,11 @@ function constructFormBody(fields, options) {
             // Custom label
             if (field_options.label) {
                 fields[field].label = field_options.label;
+            }
+
+            // Custom placeholder
+            if (field_options.placeholder) {
+                fields[field].placeholder = field_options.placeholder;
             }
 
             // Field prefix
