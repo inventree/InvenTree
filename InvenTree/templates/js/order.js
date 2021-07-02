@@ -391,6 +391,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
+                sortable: true,
             }
         ]
     });

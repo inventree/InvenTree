@@ -20,13 +20,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from common.settings import currency_code_default
-
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
-
-from djmoney.models.fields import MoneyField
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
@@ -38,7 +34,7 @@ import label.models
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 
 from users.models import Owner
 
@@ -533,10 +529,9 @@ class StockItem(MPTTModel):
         help_text=_('Stock Item Notes')
     )
 
-    purchase_price = MoneyField(
+    purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         blank=True,
         null=True,
         verbose_name=_('Purchase Price'),
