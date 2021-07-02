@@ -6,13 +6,22 @@
  */
 function createNewModal(options={}) {
 
-    var id = options.id || 0;
 
-    // Always increment the ID of the modal
-    id += 1;
+    var id = 1;
+
+    // Check out what modal forms are already being displayed
+    $('.inventree-modal').each(function() {
+        var split = this.id.split('-');
+        console.log('existing form:', split);
+        var modal_id = parseInt(split[2]);
+
+        if (modal_id >= id) {
+            id = modal_id + 1;
+        }
+    });
 
     var html = `
-    <div class='modal fade modal-fixed-footer modal-primary' role='dialog' id='modal-form-${id}'>
+    <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}'>
         <div class='modal-dialog'>
             <div class='modal-content'>
                 <div class="modal-header">
