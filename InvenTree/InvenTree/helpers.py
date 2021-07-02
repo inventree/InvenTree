@@ -21,6 +21,9 @@ import InvenTree.version
 
 from common.models import InvenTreeSetting
 from .settings import MEDIA_URL, STATIC_URL
+from common.settings import currency_code_default
+
+from djmoney.money import Money
 
 
 def getSetting(key, backup_value=None):
@@ -245,6 +248,22 @@ def decimal2string(d):
         return s
 
     return s.rstrip("0").rstrip(".")
+
+
+def decimal2money(d, currency=None):
+    """
+    Format a Decimal number as Money
+
+    Args:
+        d: A python Decimal object
+        currency: Currency of the input amount, defaults to default currency in settings
+
+    Returns:
+        A Money object from the input(s)
+    """
+    if not currency:
+        currency = currency_code_default()
+    return Money(d, currency)
 
 
 def WrapWithQuotes(text, quote='"'):
