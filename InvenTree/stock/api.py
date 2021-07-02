@@ -858,6 +858,17 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
+        # Filter stock items which have a purchase price set
+        has_purchase_price = params.get('has_purchase_price', None)
+
+        if has_purchase_price is not None:
+            has_purchase_price = str2bool(has_purchase_price)
+
+            if has_purchase_price:
+                queryset = queryset.exclude(purchase_price=None)
+            else:
+                queryset = queryset.filter(purchase_price=None)
+
         # Optionally, limit the maximum number of returned results
         max_results = params.get('max_results', None)
 
