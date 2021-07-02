@@ -48,7 +48,7 @@ from common.views import SettingEdit
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
 
-from users.urls import user_urls
+from users.api import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 

@@ -266,6 +266,11 @@ function loadSalesOrderTable(table, options) {
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
                 formatter: function(value, row, index, field) {
+
+                    if (!row.customer_detail) {
+                        return '{% trans "Invalid Customer" %}';
+                    }
+
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
                 }
             },

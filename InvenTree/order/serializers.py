@@ -82,6 +82,7 @@ class POSerializer(InvenTreeModelSerializer):
             'link',
             'overdue',
             'reference',
+            'responsible',
             'supplier',
             'supplier_detail',
             'supplier_reference',
