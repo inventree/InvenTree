@@ -97,41 +97,6 @@ class ReceivePurchaseOrderForm(HelperForm):
         ]
 
 
-class EditPurchaseOrderForm(HelperForm):
-    """ Form for editing a PurchaseOrder object """
-
-    def __init__(self, *args, **kwargs):
-
-        self.field_prefix = {
-            'reference': 'PO',
-            'link': 'fa-link',
-            'target_date': 'fa-calendar-alt',
-        }
-
-        self.field_placeholder = {
-            'reference': _('Purchase Order reference'),
-        }
-
-        super().__init__(*args, **kwargs)
-
-    target_date = DatePickerFormField(
-        label=_('Target Date'),
-        help_text=_('Target date for order delivery. Order will be overdue after this date.'),
-    )
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'reference',
-            'supplier',
-            'supplier_reference',
-            'description',
-            'target_date',
-            'link',
-            'responsible',
-        ]
-
-
 class EditSalesOrderForm(HelperForm):
     """ Form for editing a SalesOrder object """
 

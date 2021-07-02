@@ -2,16 +2,20 @@
 JSON API for the Stock app
 """
 
-from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
-
-from rest_framework import status
-
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+
+from rest_framework import status
+from rest_framework.serializers import ValidationError
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import generics, filters, permissions
+
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters import NumberFilter
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -43,11 +47,6 @@ from InvenTree.api import AttachmentMixin
 from decimal import Decimal, InvalidOperation
 
 from datetime import datetime, timedelta
-
-from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import generics, filters, permissions
 
 
 class StockCategoryTree(TreeSerializer):

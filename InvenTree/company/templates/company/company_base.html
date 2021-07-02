@@ -115,15 +115,10 @@
     });
 
     $("#company-order-2").click(function() {
-        launchModalForm("{% url 'po-create' %}",
-        {
-            data: {
-                supplier: {{ company.id }},
-            },
-            follow: true,
+        createPurchaseOrder({
+            supplier: {{ company.pk }},
         });
     });
-
 
     $('#company-delete').click(function() {
         constructForm('{% url "api-company-detail" company.pk %}', {

@@ -143,43 +143,6 @@ class SalesOrderNotes(InvenTreeRoleMixin, UpdateView):
         return ctx
 
 
-class PurchaseOrderCreate(AjaxCreateView):
-    """
-    View for creating a new PurchaseOrder object using a modal form
-    """
-
-    model = PurchaseOrder
-    ajax_form_title = _("Create Purchase Order")
-    form_class = order_forms.EditPurchaseOrderForm
-
-    def get_initial(self):
-        initials = super().get_initial().copy()
-
-        initials['reference'] = PurchaseOrder.getNextOrderNumber()
-        initials['status'] = PurchaseOrderStatus.PENDING
-
-        supplier_id = self.request.GET.get('supplier', None)
-
-        if supplier_id:
-            try:
-                supplier = Company.objects.get(id=supplier_id)
-                initials['supplier'] = supplier
-            except (Company.DoesNotExist, ValueError):
-                pass
-
-        return initials
-
-    def save(self, form, **kwargs):
-        """
-        Record the user who created this PurchaseOrder
-        """
-
-        order = form.save(commit=False)
-        order.created_by = self.request.user
-
-        return super().save(form)
-
-
 class SalesOrderCreate(AjaxCreateView):
     """ View for creating a new SalesOrder object """
 

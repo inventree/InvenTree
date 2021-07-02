@@ -5,11 +5,12 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf.urls import url, include
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
-from rest_framework import filters
-
-from django.conf.urls import url, include
+from rest_framework import filters, status
+from rest_framework.response import Response
 
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
@@ -37,6 +38,20 @@ class POList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Save user information on create
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
 
@@ -278,6 +293,20 @@ class SOList(generics.ListCreateAPIView):
 
     queryset = SalesOrder.objects.all()
     serializer_class = SalesOrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Save user information on create
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
 

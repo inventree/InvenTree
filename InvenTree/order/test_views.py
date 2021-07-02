@@ -152,22 +152,6 @@ class POTests(OrderViewTestCase):
         keys = response.context.keys()
         self.assertIn('PurchaseOrderStatus', keys)
 
-    def test_po_create(self):
-        """ Launch forms to create new PurchaseOrder"""
-        url = reverse('po-create')
-
-        # Without a supplier ID
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # With a valid supplier ID
-        response = self.client.get(url, {'supplier': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # With an invalid supplier ID
-        response = self.client.get(url, {'supplier': 'goat'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
     def test_po_export(self):
         """ Export PurchaseOrder """
 

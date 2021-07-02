@@ -1,6 +1,38 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+
+// Create a new purchase order
+function createPurchaseOrder(options={}) {
+
+    constructForm('{% url "api-po-list" %}', {
+        method: 'POST',
+        fields: {
+            reference: {
+                prefix: "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}",   
+            },
+            supplier: {
+                value: options.supplier,
+            },
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/purchase-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Purchase Order" %}',
+    });
+}
+
+
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
 
