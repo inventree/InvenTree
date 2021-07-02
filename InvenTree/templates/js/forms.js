@@ -227,6 +227,8 @@ function constructDeleteForm(fields, options) {
  * options:
  * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE' (default='PATCH')
  * - title: The form title
+ * - submitText: Text for the "submit" button
+ * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters
  *      - onEdit: callback when field is edited
@@ -237,6 +239,7 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
+ * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
  * - onSuccess: callback function when form action is successful
  * - follow: If a 'url' is provided by the API on success, redirect to it

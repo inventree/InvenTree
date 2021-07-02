@@ -3,6 +3,12 @@
 
 /*
  * Create and display a new modal dialog
+ * 
+ * options:
+ * - title: Form title to render
+ * - submitText: Text to render on 'submit' button (default = "Submit")
+ * - closeText: Text to render on 'close' button (default = "Cancel")
+ * - focus: Name of field to focus on after launching
  */
 function createNewModal(options={}) {
 
@@ -11,8 +17,8 @@ function createNewModal(options={}) {
 
     // Check out what modal forms are already being displayed
     $('.inventree-modal').each(function() {
+
         var split = this.id.split('-');
-        console.log('existing form:', split);
         var modal_id = parseInt(split[2]);
 
         if (modal_id >= id) {
@@ -64,6 +70,10 @@ function createNewModal(options={}) {
 
     $(modal_name).on('shown.bs.modal', function() {
         $(modal_name + ' .modal-form-content').scrollTop(0);
+
+        if (options.focus) {
+            getFieldByName(modal_name, options.focus).focus();
+        }
     });
 
     // Automatically remove the modal when it is deleted!
