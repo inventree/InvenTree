@@ -49,6 +49,8 @@ class InvenTreeMetadata(SimpleMetadata):
             app_label = self.model._meta.app_label
             tbl_label = self.model._meta.model_name
 
+            metadata['model'] = tbl_label
+
             table = f"{app_label}_{tbl_label}"
 
             actions = metadata.get('actions', None)
