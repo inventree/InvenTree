@@ -57,7 +57,7 @@ RUN apk add --no-cache cairo cairo-dev pango pango-dev
 RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
 
 # Python
-RUN apk add --no-cache python3 python3-dev
+RUN apk add --no-cache python3 python3-dev py3-pip
 
 # SQLite support
 RUN apk add --no-cache sqlite
