@@ -42,7 +42,8 @@ from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
+from InvenTree.status_codes import PurchaseOrderStatus, StockStatus
+
 
 logger = logging.getLogger("inventree")
 
@@ -141,57 +142,6 @@ class SalesOrderNotes(InvenTreeRoleMixin, UpdateView):
         ctx['editing'] = str2bool(self.request.GET.get('edit', False))
 
         return ctx
-
-
-class SalesOrderCreate(AjaxCreateView):
-    """ View for creating a new SalesOrder object """
-
-    model = SalesOrder
-    ajax_form_title = _("Create Sales Order")
-    form_class = order_forms.EditSalesOrderForm
-
-    def get_initial(self):
-        initials = super().get_initial().copy()
-
-        initials['reference'] = SalesOrder.getNextOrderNumber()
-        initials['status'] = SalesOrderStatus.PENDING
-
-        customer_id = self.request.GET.get('customer', None)
-
-        if customer_id is not None:
-            try:
-                customer = Company.objects.get(id=customer_id)
-                initials['customer'] = customer
-            except (Company.DoesNotExist, ValueError):
-                pass
-
-        return initials
-
-    def save(self, form, **kwargs):
-        """
-        Record the user who created this SalesOrder
-        """
-
-        order = form.save(commit=False)
-        order.created_by = self.request.user
-
-        return super().save(form)
-
-
-class SalesOrderEdit(AjaxUpdateView):
-    """ View for editing a SalesOrder """
-
-    model = SalesOrder
-    ajax_form_title = _('Edit Sales Order')
-    form_class = order_forms.EditSalesOrderForm
-
-    def get_form(self):
-        form = super().get_form()
-
-        # Prevent user from editing customer
-        form.fields['customer'].widget = HiddenInput()
-
-        return form
 
 
 class PurchaseOrderCancel(AjaxUpdateView):

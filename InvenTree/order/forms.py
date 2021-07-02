@@ -12,7 +12,6 @@ from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
-from InvenTree.fields import DatePickerFormField
 
 from InvenTree.helpers import clean_decimal
 
@@ -94,41 +93,6 @@ class ReceivePurchaseOrderForm(HelperForm):
         model = PurchaseOrder
         fields = [
             "location",
-        ]
-
-
-class EditSalesOrderForm(HelperForm):
-    """ Form for editing a SalesOrder object """
-
-    def __init__(self, *args, **kwargs):
-
-        self.field_prefix = {
-            'reference': 'SO',
-            'link': 'fa-link',
-            'target_date': 'fa-calendar-alt',
-        }
-
-        self.field_placeholder = {
-            'reference': _('Enter sales order number'),
-        }
-
-        super().__init__(*args, **kwargs)
-
-    target_date = DatePickerFormField(
-        label=_('Target Date'),
-        help_text=_('Target date for order completion. Order will be overdue after this date.'),
-    )
-
-    class Meta:
-        model = SalesOrder
-        fields = [
-            'reference',
-            'customer',
-            'customer_reference',
-            'description',
-            'target_date',
-            'link',
-            'responsible',
         ]
 
 

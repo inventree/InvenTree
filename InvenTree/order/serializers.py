@@ -231,6 +231,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'notes',
             'overdue',
             'reference',
+            'responsible',
             'status',
             'status_text',
             'shipment_date',

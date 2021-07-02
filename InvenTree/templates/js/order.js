@@ -2,7 +2,37 @@
 {% load inventree_extras %}
 
 
-// Create a new purchase order
+// Create a new SalesOrder
+function createSalesOrder(options={}) {
+
+    constructForm('{% url "api-so-list" %}', {
+        method: 'POST',
+        fields: {
+            reference: {
+                prefix: '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}',
+            },
+            customer: {
+                value: options.customer,
+            },
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/sales-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Sales Order" %}',
+    });
+}
+
+// Create a new PurchaseOrder
 function createPurchaseOrder(options={}) {
 
     constructForm('{% url "api-po-list" %}', {
