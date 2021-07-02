@@ -10,7 +10,7 @@ from django.db.models import BooleanField
 
 from rest_framework import serializers
 
-from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, UserSerializerBrief
 
 from stock.serializers import StockItemSerializerBrief
 from stock.serializers import LocationSerializer
@@ -30,6 +30,8 @@ class BuildSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     overdue = serializers.BooleanField(required=False, read_only=True)
+
+    issued_by_detail = UserSerializerBrief(source='issued_by', read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -84,6 +86,9 @@ class BuildSerializer(InvenTreeModelSerializer):
             'target_date',
             'notes',
             'link',
+            'issued_by',
+            'issued_by_detail',
+            'responsible',
         ]
 
         read_only_fields = [
