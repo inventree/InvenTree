@@ -53,9 +53,31 @@ function createNewModal(options={}) {
 
     var modal_name = `#modal-form-${id}`;
 
+    $(modal_name).on('shown.bs.modal', function() {
+        $(modal_name + ' .modal-form-content').scrollTop(0);
+    });
+
     // Automatically remove the modal when it is deleted!
     $(modal_name).on('hidden.bs.modal', function(e) {
         $(modal_name).remove();
+    });
+
+    // Capture "enter" key input
+    $(modal_name).on('keydown', 'input', function(event) {
+
+        
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            // Simulate a click on the 'Submit' button
+            $(modal_name).find("#modal-form-submit").click();
+            
+            return false;
+        }
+    });
+
+    $(modal_name).modal({
+        backdrop: 'static',
+        keyboard: false,
     });
 
     // Set labels based on supplied options
