@@ -237,7 +237,11 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
- * - onSuccess: callback function
+ * - preventClose: Set to true to prevent form from closing on success
+ * - onSuccess: callback function when form action is successful
+ * - follow: If a 'url' is provided by the API on success, redirect to it
+ * - redirect: A URL to redirect to after form success
+ * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
  * 
@@ -266,8 +270,11 @@ function constructForm(url, options) {
                     constructCreateForm(OPTIONS.actions.POST, options);
                 } else {
                     // User does not have permission to POST to the endpoint
-                    console.log('cannot POST');
-                    // TODO
+                    showAlertDialog(
+                        '{% trans "Action Prohibited" %}',
+                        '{% trans "Create operation not allowed" %}'
+                    );
+                    console.log(`'POST action unavailable at ${url}`);
                 }
                 break;
             case 'PUT':
@@ -276,8 +283,11 @@ function constructForm(url, options) {
                     constructChangeForm(OPTIONS.actions.PUT, options);
                 } else {
                     // User does not have permission to PUT/PATCH to the endpoint
-                    // TODO
-                    console.log('cannot edit');
+                    showAlertDialog(
+                        '{% trans "Action Prohibited" %}',
+                        '{% trans "Update operation not allowed" %}'
+                    );
+                    console.log(`${options.method} action unavailable at ${url}`);
                 }
                 break;
             case 'DELETE':
@@ -285,17 +295,23 @@ function constructForm(url, options) {
                     constructDeleteForm(OPTIONS.actions.DELETE, options);
                 } else {
                     // User does not have permission to DELETE to the endpoint
-                    // TODO
-                    console.log('cannot delete');
+                    showAlertDialog(
+                        '{% trans "Action Prohibited" %}',
+                        '{% trans "Delete operation not allowed" %}'
+                    );
+                    console.log(`DELETE action unavailable at ${url}`);
                 }
                 break;
             case 'GET':
                 if (canView(OPTIONS)) {
-                    console.log('view');
+                    // TODO?
                 } else {
                     // User does not have permission to GET to the endpoint
-                    // TODO
-                    console.log('cannot view');
+                    showAlertDialog(
+                        '{% trans "Action Prohibited" %}',
+                        '{% trans "View operation not allowed" %}'
+                    );
+                    console.log(`GET action unavailable at ${url}`);
                 }
                 break;
             default:
