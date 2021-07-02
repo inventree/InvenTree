@@ -223,11 +223,24 @@ function constructDeleteForm(fields, options) {
  * Request API OPTIONS data from the server,
  * and construct a modal form based on the response.
  * 
+ * url: API URL which defines form data
  * options:
- * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE',
+ * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE' (default='PATCH')
  * - title: The form title
- * - fields: list of fields to display
- * - exclude: List of fields to exclude
+ * - fields: list of fields to display, with the following options
+ *      - filters: API query filters
+ *      - onEdit: callback when field is edited
+ *      - secondary: Define a secondary modal form for this field
+ *      - label: Specify custom label
+ *      - help_text: Specify custom help_text
+ *      - value: Specify initial value
+ *      - hidden: Set to true to hide the field
+ *      - icon: font-awesome icon to display before the field
+ *      - prefix: Custom HTML prefix to display before the field
+ * - onSuccess: callback function
+ * - confirm: Set to true to require a "confirm" button
+ * - confirmText: Text for confirm button (default = "Confirm")
+ * 
  */
 function constructForm(url, options) {
 
