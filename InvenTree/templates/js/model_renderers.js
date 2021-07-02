@@ -110,3 +110,23 @@ function renderPartCategory(name, data, parameters, options) {
 
     return html;
 }
+
+
+// Rendered for "SupplierPart" model
+function renderSupplierPart(name, data, parameters, options) {
+
+    var image = data.supplier_detail.image;
+
+    if (!image) {
+        image = `/static/img/blank_image.png`;
+    }
+
+    var html = `<img src='${image}' class='select2-thumbnail'>`;
+    
+    html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
+
+    html += `<span class='float-right'>{% trans "Supplier Part ID" %}: ${data.pk}</span>`;
+
+    return html;
+
+}

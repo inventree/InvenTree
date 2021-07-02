@@ -179,9 +179,10 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
 
-        part_detail = kwargs.pop('part_detail', False)
-        supplier_detail = kwargs.pop('supplier_detail', False)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
+        supplier_detail = kwargs.pop('supplier_detail', True)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
+        
         prettify = kwargs.pop('pretty', False)
 
         super(SupplierPartSerializer, self).__init__(*args, **kwargs)
