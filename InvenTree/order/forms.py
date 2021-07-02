@@ -10,15 +10,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from mptt.fields import TreeNodeChoiceField
 
-from djmoney.forms.fields import MoneyField
-
 from InvenTree.forms import HelperForm
-from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
 
 from InvenTree.helpers import clean_decimal
 
-from common.models import InvenTreeSetting
 from common.forms import MatchItemForm
 
 import part.models
@@ -297,9 +294,8 @@ class OrderMatchItemForm(MatchItemForm):
             )
         # set price field
         elif 'price' in col_guess.lower():
-            return MoneyField(
+            return InvenTreeMoneyField(
                 label=_(col_guess),
-                default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
                 decimal_places=5,
                 max_digits=19,
                 required=False,

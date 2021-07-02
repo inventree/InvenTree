@@ -2,6 +2,7 @@
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import sys
 
 from .validators import allowable_url_schemes
 
@@ -13,8 +14,11 @@ from django.core import validators
 from django import forms
 
 from decimal import Decimal
+from djmoney.models.fields import MoneyField as ModelMoneyField
+from djmoney.forms.fields import MoneyField
 
 import InvenTree.helpers
+import common.settings
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -32,6 +36,42 @@ class InvenTreeURLField(models.URLField):
         return super().formfield(**{
             'form_class': InvenTreeURLFormField
         })
+
+
+def money_kwargs():
+    """ returns the database settings for MoneyFields """
+    kwargs = {}
+    kwargs['currency_choices'] = common.settings.currency_code_mappings()
+    kwargs['default_currency'] = common.settings.currency_code_default
+    return kwargs
+
+
+class InvenTreeModelMoneyField(ModelMoneyField):
+    """ custom MoneyField for clean migrations while using dynamic currency settings """
+    def __init__(self, **kwargs):
+        # detect if creating migration
+        if 'makemigrations' in sys.argv:
+            # remove currency information for a clean migration
+            kwargs['default_currency'] = ''
+            kwargs['currency_choices'] = []
+        else:
+            # set defaults
+            kwargs.update(money_kwargs())
+
+        super().__init__(**kwargs)
+
+    def formfield(self, **kwargs):
+        """ override form class to use own function """
+        kwargs['form_class'] = InvenTreeMoneyField
+        return super().formfield(**kwargs)
+
+
+class InvenTreeMoneyField(MoneyField):
+    """ custom MoneyField for clean migrations while using dynamic currency settings """
+    def __init__(self, *args, **kwargs):
+        # override initial values with the real info from database
+        kwargs.update(money_kwargs())
+        super().__init__(*args, **kwargs)
 
 
 class DatePickerFormField(forms.DateField):

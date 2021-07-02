@@ -17,19 +17,15 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from common.settings import currency_code_default
-
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
-
-from djmoney.models.fields import MoneyField
 
 from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
 
-from InvenTree.fields import RoundingDecimalField
+from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeAttachment
@@ -684,10 +680,9 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received'), help_text=_('Number of items received'))
 
-    purchase_price = MoneyField(
+    purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
@@ -740,10 +735,9 @@ class SalesOrderLineItem(OrderLineItem):
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
 
-    sale_price = MoneyField(
+    sale_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),

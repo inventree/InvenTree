@@ -523,10 +523,6 @@ for currency in CURRENCIES:
         print(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
-BASE_CURRENCY = get_setting(
-    'INVENTREE_BASE_CURRENCY',
-    CONFIG.get('base_currency', 'USD')
-)
 
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
