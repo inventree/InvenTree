@@ -1,5 +1,58 @@
 {% load i18n %}
 
+
+/*
+ * Create and display a new modal dialog
+ */
+function createNewModal(options={}) {
+
+    var id = options.id || 0;
+
+    // Always increment the ID of the modal
+    id += 1;
+
+    var html = `
+    <div class='modal fade modal-fixed-footer modal-primary' role='dialog' id='modal-form-${id}'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label='{% trans "Close" %}'>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 id='modal-title'><i>Form Title Here</i></h3>
+                    </div>
+                    <div class='modal-form-content-wrapper'>
+                    <div class='alert alert-block alert-danger' id='form-validation-warning' style='display: none;'>
+                        {% trans "Form errors exist" %}
+                    </div>
+                    <div class='modal-form-content'>
+                        <!-- Form content will be injected here-->
+                    </div>
+                </div>
+                <div class='modal-footer'>
+                    <div id='modal-footer-buttons'></div>
+                    <button type='button' class='btn btn-default' id='modal-form-cancel' data-dismiss='modal'>{% trans "Cancel" %}</button>
+                    <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    $('body').append(html);
+
+    var modal_name = `#modal-form-${id}`;
+
+    // Automatically remove the modal when it is deleted!
+    $(modal_name).on('hidden.bs.modal', function(e) {
+        $(modal_name).remove();
+    });
+
+    // Return the "name" of the modal
+    return modal_name;
+}
+
+
 function makeOption(text, value, title) {
     /* Format an option for a select element
      */

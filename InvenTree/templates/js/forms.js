@@ -237,6 +237,11 @@ function constructForm(url, options) {
     // Default HTTP method
     options.method = options.method || 'PATCH';
 
+    // Create a new modal if one does not exists
+    if (!options.modal) {
+        options.modal = createNewModal();
+    }
+
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
@@ -413,6 +418,7 @@ function constructFormBody(fields, options) {
         insertConfirmButton(options);
     }
 
+    // Display the modal
     $(modal).modal('show');
 
     updateFieldValues(fields, options);
@@ -433,7 +439,6 @@ function constructFormBody(fields, options) {
 
     modalShowSubmitButton(modal, true);
 
-    $(modal).off('click', '#modal-form-submit');
     $(modal).on('click', '#modal-form-submit', function() {
 
         submitFormData(fields, options);
@@ -1163,6 +1168,7 @@ function constructField(name, parameters, options) {
             case 'float':
             case 'decimal':
             case 'related field':
+            case 'date':
                 extra = true;
                 break;
             default:
