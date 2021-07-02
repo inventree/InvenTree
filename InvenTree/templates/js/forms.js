@@ -981,13 +981,13 @@ function initializeRelatedField(name, field, options) {
     var pageSize = options.pageSize || 25;
 
     select.select2({
+        placeholder: '',
+        allowClear: !field.required,
+        dropdownParent: $(options.modal),
+        dropdownAutoWidth: false,
         ajax: {
             url: field.api_url,
             dataType: 'json',
-            placeholder: '',
-            allowClear: !field.required,
-            dropdownParent: $(options.modal),
-            dropdownAutoWidth: false,
             delay: 250,
             cache: true,
             data: function(params) {
@@ -1081,6 +1081,7 @@ function initializeRelatedField(name, field, options) {
             }
 
             if (!data.pk) {
+                return field.placeholder || '';
                 return $(searching());
             }
 
@@ -1171,7 +1172,7 @@ function searching() {
 function renderModelData(name, model, data, parameters, options) {
 
     if (!data) {
-        return '{% trans "Searching" %}...';
+        return parameters.placeholder || '';
     }
 
     // TODO: Implement this function for various models
