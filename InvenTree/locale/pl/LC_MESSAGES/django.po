@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-02 04:52+0000\n"
-"PO-Revision-Date: 2021-06-24 21:40\n"
+"POT-Creation-Date: 2021-07-01 22:35+0000\n"
+"PO-Revision-Date: 2021-07-01 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1520,16 +1520,12 @@ msgid "Base URL for server instance"
 msgstr "Bazowy adres URL dla instancji serwera"
 
 #: common/models.py:85
-#, fuzzy
-#| msgid "Default Value"
 msgid "Default Currency"
-msgstr "Wartość domyślna"
+msgstr ""
 
 #: common/models.py:86
-#, fuzzy
-#| msgid "Default Value"
 msgid "Default currency"
-msgstr "Wartość domyślna"
+msgstr ""
 
 #: common/models.py:92
 msgid "Download from URL"
@@ -1699,10 +1695,8 @@ msgid "Display part price in some forms"
 msgstr ""
 
 #: common/models.py:230
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Show related parts"
-msgstr "Usuń części"
+msgstr ""
 
 #: common/models.py:231
 msgid "Display related parts for a part"
@@ -2248,8 +2242,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -4525,10 +4518,8 @@ msgstr ""
 
 #: part/templates/part/category_navbar.html:37
 #: part/templates/part/category_navbar.html:40
-#, fuzzy
-#| msgid "Import BOM data"
 msgid "Import Parts"
-msgstr "Importuj dane BOM"
+msgstr ""
 
 #: part/templates/part/category_parametric.html:10
 #: part/templates/part/navbar.html:22 part/templates/part/params.html:10
@@ -5110,10 +5101,8 @@ msgid "Created new part"
 msgstr ""
 
 #: part/views.py:763
-#, fuzzy
-#| msgid "Reference"
 msgid "Match References"
-msgstr "Referencja"
+msgstr ""
 
 #: part/views.py:1092
 msgid "Part QR Code"
@@ -6338,8 +6327,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6424,16 +6412,12 @@ msgid "Part Options"
 msgstr ""
 
 #: templates/InvenTree/settings/part.html:45
-#, fuzzy
-#| msgid "Parent Part"
 msgid "Part Import"
-msgstr "Część nadrzędna"
+msgstr ""
 
 #: templates/InvenTree/settings/part.html:48
-#, fuzzy
-#| msgid "Import BOM data"
 msgid "Import Part"
-msgstr "Importuj dane BOM"
+msgstr ""
 
 #: templates/InvenTree/settings/part.html:61
 msgid "Part Parameter Templates"
@@ -6737,10 +6721,8 @@ msgid "Purchase Price Average"
 msgstr ""
 
 #: templates/js/bom.js:265
-#, fuzzy
-#| msgid "Price"
 msgid "Buy Price"
-msgstr "Cena"
+msgstr ""
 
 #: templates/js/bom.js:271
 msgid "No pricing available"
@@ -7839,3 +7821,4 @@ msgstr ""
 #: users/models.py:191
 msgid "Permission to delete items"
 msgstr ""
+
