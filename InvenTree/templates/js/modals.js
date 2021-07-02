@@ -19,18 +19,28 @@ function createNewModal(options={}) {
                     <button type="button" class="close" data-dismiss="modal" aria-label='{% trans "Close" %}'>
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h3 id='modal-title'><i>Form Title Here</i></h3>
+                    <h3 id='modal-title'>
+                        <!-- Form title to be injected here -->
+                    </h3>
+                </div>
+                <div class='modal-form-content-wrapper'>
+                    <div id='pre-form-content'>
+                        <!-- Content can be inserted here *before* the form fields -->
                     </div>
-                    <div class='modal-form-content-wrapper'>
-                    <div class='alert alert-block alert-danger' id='form-validation-warning' style='display: none;'>
-                        {% trans "Form errors exist" %}
+                    <div id='non-field-errors'>
+                        <!-- Form error messages go here -->
                     </div>
-                    <div class='modal-form-content'>
+                    <div id='form-content' class='modal-form-content'>
                         <!-- Form content will be injected here-->
+                    </div>
+                    <div id='post-form-content'>
+                        <!-- Content can be inserted here *after* the form fields -->
                     </div>
                 </div>
                 <div class='modal-footer'>
-                    <div id='modal-footer-buttons'></div>
+                    <div id='modal-footer-buttons'>
+                        <!-- Extra buttons can be inserted here -->
+                    </div>
                     <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Cancel" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>

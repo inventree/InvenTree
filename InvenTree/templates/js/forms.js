@@ -304,8 +304,6 @@ function constructFormBody(fields, options) {
 
     var html = '';
 
-    html += `<div id='non-field-errors'><!-- Empty div for displaying errors --></div>`;
-
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
@@ -684,7 +682,7 @@ function clearFormErrors(options) {
     // Remove the "has error" class
     $(options.modal).find('.has-error').removeClass('has-error');
 
-    // Clear the 'non field errors'
+    // Hide the 'non field errors'
     $(options.modal).find('#non-field-errors').html('');
 }
 
