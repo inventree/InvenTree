@@ -66,7 +66,10 @@ class CompanySerializer(InvenTreeModelSerializer):
 
     currency = serializers.ChoiceField(
         choices=djmoney.settings.CURRENCY_CHOICES,
-        default=currency_code_default,
+        initial=currency_code_default,
+        help_text=_('Default currency used for this supplier'),
+        label=_('Currency Code'),
+        required=True,
     )
 
     class Meta:

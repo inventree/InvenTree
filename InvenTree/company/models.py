@@ -31,6 +31,7 @@ import InvenTree.validators
 
 import common.models
 import common.settings
+from common.settings import currency_code_default
 
 
 def rename_company_image(instance, filename):
@@ -149,6 +150,7 @@ class Company(models.Model):
         max_length=3,
         verbose_name=_('Currency'),
         blank=True,
+        default=currency_code_default,
         help_text=_('Default currency used for this company'),
         validators=[InvenTree.validators.validate_currency_code],
     )
