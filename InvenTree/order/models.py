@@ -485,10 +485,9 @@ class SalesOrder(Order):
 
     checksum = models.CharField(max_length=128, blank=True, verbose_name=_('order checksum'), help_text=_('Stored order checksum'))
 
-    sell_price = MoneyField(
+    sell_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         blank=True, null=True,
         verbose_name=_('Sell Price'),
         help_text=_('Price for this sale order'),
