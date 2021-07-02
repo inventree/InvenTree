@@ -2,6 +2,11 @@
 
 from rest_framework import status
 
+from django.test import TestCase
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -9,6 +14,87 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from users.models import RuleSet
 
 from base64 import b64encode
+
+
+class HTMLAPITests(TestCase):
+    """
+    Test that we can access the REST API endpoints via the HTML interface.
+    
+    History: Discovered on 2021-06-28 a bug in InvenTreeModelSerializer,
+    which raised an AssertionError when using the HTML API interface,
+    while the regular JSON interface continued to work as expected.
+    """
+
+    def setUp(self):
+        super().setUp()
+
+        # Create a user
+        user = get_user_model()
+
+        self.user = user.objects.create_user(
+            username='username',
+            email='user@email.com',
+            password='password'
+        )
+
+        # Put the user into a group with the correct permissions
+        group = Group.objects.create(name='mygroup')
+        self.user.groups.add(group)
+
+        # Give the group *all* the permissions!
+        for rule in group.rule_sets.all():
+            rule.can_view = True
+            rule.can_change = True
+            rule.can_add = True
+            rule.can_delete = True
+
+            rule.save()
+
+        self.client.login(username='username', password='password')
+
+    def test_part_api(self):
+        url = reverse('api-part-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_build_api(self):
+        url = reverse('api-build-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_stock_api(self):
+        url = reverse('api-stock-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_company_list(self):
+        url = reverse('api-company-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
 
 
 class APITests(InvenTreeAPITestCase):
