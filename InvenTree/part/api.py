@@ -651,7 +651,7 @@ class PartList(generics.ListCreateAPIView):
                 # Filter items which have an 'in_stock' level higher than 'minimum_stock'
                 queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
 
-        # If we are filtering by 'depleted_stock' status
+        # Filer by 'depleted_stock' status -> has no stock and stock items
         depleted_stock = params.get('depleted_stock', None)
 
         if depleted_stock is not None:
