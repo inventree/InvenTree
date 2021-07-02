@@ -31,7 +31,7 @@ function createNewModal(options={}) {
                 </div>
                 <div class='modal-footer'>
                     <div id='modal-footer-buttons'></div>
-                    <button type='button' class='btn btn-default' id='modal-form-cancel' data-dismiss='modal'>{% trans "Cancel" %}</button>
+                    <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Cancel" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>
             </div>
@@ -47,6 +47,11 @@ function createNewModal(options={}) {
     $(modal_name).on('hidden.bs.modal', function(e) {
         $(modal_name).remove();
     });
+
+    // Set labels based on supplied options
+    modalSetTitle(modal_name, options.title || '{% trans "Form Title" %}');
+    modalSetSubmitText(modal_name, options.submitText || '{% trans "Submit" %}');
+    modalSetCloseText(modal_name, options.cancelText || '{% trans "Cancel" %}');
 
     // Return the "name" of the modal
     return modal_name;

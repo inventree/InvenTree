@@ -237,11 +237,6 @@ function constructForm(url, options) {
     // Default HTTP method
     options.method = options.method || 'PATCH';
 
-    // Create a new modal if one does not exists
-    if (!options.modal) {
-        options.modal = createNewModal();
-    }
-
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
@@ -396,17 +391,15 @@ function constructFormBody(fields, options) {
     // TODO: Dynamically create the modals,
     //       so that we can have an infinite number of stacks!
 
-    options.modal = options.modal || '#modal-form';
-    
+    // Create a new modal if one does not exists
+    if (!options.modal) {
+        options.modal = createNewModal(options);
+    }
+
     var modal = options.modal;
 
     modalEnable(modal, true);
-
-    // Set the form title and button labels
-    modalSetTitle(modal, options.title || '{% trans "Form Title" %}');
-    modalSetSubmitText(modal, options.submitText || '{% trans "Submit" %}');
-    modalSetCloseText(modal, options.cancelText || '{% trans "Cancel" %}');
-
+    
     // Insert generated form content
     $(modal).find('.modal-form-content').html(html);
     
