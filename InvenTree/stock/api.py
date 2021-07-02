@@ -869,7 +869,6 @@ class StockList(generics.ListCreateAPIView):
             else:
                 queryset = queryset.filter(purchase_price=None)
 
-
         # Optionally, limit the maximum number of returned results
         max_results = params.get('max_results', None)
 
