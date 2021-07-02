@@ -1,4 +1,4 @@
-FROM python:alpine as base
+FROM alpine:3.13 as base
 
 # GitHub source
 ARG repository="https://github.com/inventree/InvenTree.git"
