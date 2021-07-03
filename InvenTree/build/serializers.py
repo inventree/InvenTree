@@ -10,13 +10,13 @@ from django.db.models import BooleanField
 
 from rest_framework import serializers
 
-from InvenTree.serializers import InvenTreeModelSerializer, UserSerializerBrief
+from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializerField, UserSerializerBrief
 
 from stock.serializers import StockItemSerializerBrief
 from stock.serializers import LocationSerializer
 from part.serializers import PartSerializer, PartBriefSerializer
 
-from .models import Build, BuildItem
+from .models import Build, BuildItem, BuildOrderAttachment
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -147,4 +147,27 @@ class BuildItemSerializer(InvenTreeModelSerializer):
             'stock_item',
             'stock_item_detail',
             'quantity'
+        ]
+
+
+class BuildAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a BuildAttachment
+    """
+
+    attachment = InvenTreeAttachmentSerializerField(required=True)
+
+    class Meta:
+        model = BuildOrderAttachment
+
+        fields = [
+            'pk',
+            'build',
+            'attachment',
+            'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]

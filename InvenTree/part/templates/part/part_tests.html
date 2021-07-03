@@ -44,34 +44,52 @@ function reloadTable() {
 }
 
 $("#add-test-template").click(function() {
-    launchModalForm(
-        "{% url 'part-test-template-create' %}",
-        {
-            data: {
-                part: {{ part.id }},
-            },
-            success: reloadTable,
-        }
-    );
+
+    constructForm('{% url "api-part-test-template-list" %}', {
+        method: 'POST',
+        fields: {
+            test_name: {},
+            description: {},
+            required: {},
+            requires_value: {},
+            requires_attachment: {},
+            part: {
+                value: {{ part.pk }},
+                hidden: true,
+            }
+        },
+        title: '{% trans "Add Test Result Template" %}',
+        onSuccess: reloadTable
+    });
 });
 
 $("#test-template-table").on('click', '.button-test-edit', function() {
-    var button = $(this);
+    var pk = $(this).attr('pk');
 
-    var url = `/part/test-template/${button.attr('pk')}/edit/`;
+    var url = `/api/part/test-template/${pk}/`;
 
-    launchModalForm(url, {
-        success: reloadTable,
+    constructForm(url, {
+        fields: {
+            test_name: {},
+            description: {},
+            required: {},
+            requires_value: {},
+            requires_attachment: {},
+        },
+        title: '{% trans "Edit Test Result Template" %}',
+        onSuccess: reloadTable,
     });
 });
 
 $("#test-template-table").on('click', '.button-test-delete', function() {
-    var button = $(this);
+    var pk = $(this).attr('pk');
 
-    var url = `/part/test-template/${button.attr('pk')}/delete/`;
+    var url = `/api/part/test-template/${pk}/`;
 
-    launchModalForm(url, {
-        success: reloadTable,
+    constructForm(url, {
+        method: 'DELETE',
+        title: '{% trans "Delete Test Result Template" %}',
+        onSuccess: reloadTable,
     });
 });
 

@@ -22,7 +22,7 @@
 
 enableDragAndDrop(
     '#attachment-dropzone',
-    "{% url 'po-attachment-create' %}",
+    '{% url "api-po-attachment-list" %}',
     {
         data: {
             order: {{ order.id }},
@@ -34,35 +34,50 @@ enableDragAndDrop(
     }
 );
 
-$("#new-attachment").click(function() {
-    launchModalForm("{% url 'po-attachment-create' %}?order={{ order.id }}",
-        {
-            reload: true,
+loadAttachmentTable(
+    '{% url "api-po-attachment-list" %}',
+    {
+        filters: {
+            order: {{ order.pk }},
+        },
+        onEdit: function(pk) {
+            var url = `/api/order/po/attachment/${pk}/`;
+
+            constructForm(url, {
+                fields: {
+                    comment: {},
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Edit Attachment" %}',
+            });
+        },
+        onDelete: function(pk) {
+
+            constructForm(`/api/order/po/attachment/${pk}/`, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
         }
-    );
-});
+    }
+);
 
-$("#attachment-table").on('click', '.attachment-edit-button', function() {
-    var button = $(this);
+$("#new-attachment").click(function() {
 
-    var url = `/order/purchase-order/attachment/${button.attr('pk')}/edit/`;
-
-    launchModalForm(url, {
+    constructForm('{% url "api-po-attachment-list" %}', {
+        method: 'POST',
+        fields: {
+            attachment: {},
+            comment: {},
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
+            },
+        },
         reload: true,
+        title: '{% trans "Add Attachment" %}',
     });
-});
-
-$("#attachment-table").on('click', '.attachment-delete-button', function() {
-    var button = $(this);
-
-    var url = `/order/purchase-order/attachment/${button.attr('pk')}/delete/`;
-
-    launchModalForm(url, {
-        reload: true,
-    });
-});
-
-$("#attachment-table").inventreeTable({
 });
 
 {% endblock %}

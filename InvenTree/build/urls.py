@@ -36,12 +36,6 @@ build_urls = [
         url('^new/', views.BuildItemCreate.as_view(), name='build-item-create'),
     ])),
 
-    url('^attachment/', include([
-        url('^new/', views.BuildAttachmentCreate.as_view(), name='build-attachment-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.BuildAttachmentEdit.as_view(), name='build-attachment-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.BuildAttachmentDelete.as_view(), name='build-attachment-delete'),
-    ])),
-
     url(r'new/', views.BuildCreate.as_view(), name='build-create'),
 
     url(r'^(?P<pk>\d+)/', include(build_detail_urls)),

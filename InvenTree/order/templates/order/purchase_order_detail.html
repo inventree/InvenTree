@@ -21,7 +21,8 @@
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
     {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
     <button type='button' class='btn btn-primary' id='new-po-line'>
-        <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}</button>
+        <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+    </button>
     {% endif %}
 </div>
 
@@ -37,26 +38,34 @@
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
-    launchModalForm("{% url 'po-line-item-create' %}",
-        {
-            reload: true,
-            data: {
-                order: {{ order.id }},
+
+
+    constructForm('{% url "api-po-line-list" %}', {
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
             },
-            secondary: [
-                {
-                    field: 'part',
-                    label: '{% trans "New Supplier Part" %}',
-                    title: '{% trans "Create new supplier part" %}',
-                    url: "{% url 'supplier-part-create' %}",
-                    data: {
-                        supplier: {{ order.supplier.id }},
-                    },
+            part: {
+                filters: {
+                    part_detail: true,
+                    supplier_detail: true,
+                    supplier: {{ order.supplier.pk }},
                 },
-            ],
-        }
-    );
+            },
+            quantity: {},
+            reference: {},
+            purchase_price: {},
+            purchase_price_currency: {},
+            destination: {},
+            notes: {},
+        },
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: reloadTable,
+    });
 });
+
 {% endif %}
 
 function reloadTable() {
@@ -72,16 +81,34 @@ function setupCallbacks() {
     table.find(".button-line-edit").click(function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/purchase-order/line/${pk}/edit/`, {
-            success: reloadTable,
+        constructForm(`/api/order/po-line/${pk}/`, {
+            fields: {
+                part: {
+                    filters: {
+                        part_detail: true,
+                        supplier_detail: true,
+                        supplier: {{ order.supplier.pk }},
+                    }
+                },
+                quantity: {},
+                reference: {},
+                purchase_price: {},
+                purchase_price_currency: {},
+                destination: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Line Item" %}',
+            onSuccess: reloadTable,
         });
     });
 
     table.find(".button-line-delete").click(function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/purchase-order/line/${pk}/delete/`, {
-            success: reloadTable,
+        constructForm(`/api/order/po-line/${pk}/`, {
+            method: 'DELETE',
+            title: '{% trans "Delete Line Item" %}',
+            onSuccess: reloadTable,
         });
     });
     {% endif %}

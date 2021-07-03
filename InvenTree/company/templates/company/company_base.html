@@ -111,31 +111,30 @@
     });
 
     $('#company-edit').click(function() {
-        launchModalForm(
-            "{% url 'company-edit' company.id %}",
-            {
-                reload: true
-            });
+        editCompany({{ company.id }});
     });
 
     $("#company-order-2").click(function() {
-        launchModalForm("{% url 'po-create' %}",
-        {
-            data: {
-                supplier: {{ company.id }},
-            },
-            follow: true,
+        createPurchaseOrder({
+            supplier: {{ company.pk }},
         });
     });
 
-
     $('#company-delete').click(function() {
-        launchModalForm(
-            "{% url 'company-delete' company.id %}",
-            {
-                redirect: "{% url 'company-index' %}"
-            });
+        constructForm('{% url "api-company-detail" company.pk %}', {
+            method: 'DELETE',
+            title: '{% trans "Delete Company" %}',
+            redirect: '{% url "company-index" %}',
+        });
     });
+
+    function reloadImage(data) {
+        if (data.image) {
+            $('#company-image').attr('src', data.image);
+        } else {
+            location.reload();
+        }
+    }
 
     enableDragAndDrop(
         "#company-thumb",
@@ -144,12 +143,7 @@
             label: 'image',
             method: 'PATCH',
             success: function(data, status, xhr) {
-
-                if (data.image) {
-                    $('#company-image').attr('src', data.image);
-                } else {
-                    location.reload();
-                }
+                reloadImage(data);
             }
         }
     );
@@ -161,10 +155,18 @@
     {% endif %}
 
     $("#company-image-upload").click(function() {
-        launchModalForm(
-            "{% url 'company-image' company.id %}",
+
+        constructForm(
+            '{% url "api-company-detail" company.pk %}',
             {
-                reload: true
+                method: 'PATCH',
+                fields: {
+                    image: {},
+                },
+                title: '{% trans "Upload Image" %}',
+                onSuccess: function(data) {
+                    reloadImage(data);
+                }
             }
         );
     });
