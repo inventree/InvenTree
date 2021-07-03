@@ -1016,7 +1016,6 @@ class StockTrackingDetail(generics.RetrieveAPIView):
     serializer_class = StockTrackingSerializer
 
 
-
 class StockTrackingList(generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
