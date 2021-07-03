@@ -155,14 +155,6 @@ class POTests(OrderViewTestCase):
         line = PurchaseOrderLineItem.objects.get(order=1, part=100)
         self.assertEqual(line.quantity, 45)
 
-    def test_line_item_edit(self):
-        """ Test editing form for PO line item """
-
-        url = reverse('po-line-item-edit', args=(22,))
-
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
 
 class TestPOReceive(OrderViewTestCase):
     """ Tests for receiving a purchase order """
