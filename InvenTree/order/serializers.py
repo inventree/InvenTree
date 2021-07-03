@@ -125,7 +125,10 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
-    purchase_price = InvenTreeMoneySerializer(max_digits=19, decimal_places=4)
+    purchase_price = InvenTreeMoneySerializer(
+        max_digits=19, decimal_places=4,
+        allow_null=True
+    )
 
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
@@ -343,7 +346,11 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
     
-    sale_price = InvenTreeMoneySerializer(max_digits=19, decimal_places=4)
+    sale_price = InvenTreeMoneySerializer(
+        max_digits=19,
+        decimal_places=4,
+        allow_null=True
+    )    
 
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
 
