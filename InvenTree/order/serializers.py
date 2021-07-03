@@ -13,8 +13,6 @@ from django.db.models import BooleanField
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
-import djmoney.settings
-
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
@@ -27,6 +25,8 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
+
+from common.settings import currency_code_mappings
 
 
 class POSerializer(InvenTreeModelSerializer):
@@ -132,7 +132,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     destination = LocationBriefSerializer(source='get_destination', read_only=True)
 
     purchase_price_currency = serializers.ChoiceField(
-        choices=djmoney.settings.CURRENCY_CHOICES,
+        choices=currency_code_mappings(),
         help_text=_('Purchase price currency'),
     )
 
@@ -348,7 +348,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
 
     sale_price_currency = serializers.ChoiceField(
-        choices=djmoney.settings.CURRENCY_CHOICES,
+        choices=currency_code_mappings(),
         help_text=_('Sale price currency'),
     )
 

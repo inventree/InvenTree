@@ -8,8 +8,6 @@ from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
 
-import djmoney.settings
-
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeImageSerializerField
 
@@ -19,7 +17,7 @@ from .models import Company
 from .models import ManufacturerPart, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
 
-from common.settings import currency_code_default
+from common.settings import currency_code_default, currency_code_mappings
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -65,7 +63,7 @@ class CompanySerializer(InvenTreeModelSerializer):
     parts_manufactured = serializers.IntegerField(read_only=True)
 
     currency = serializers.ChoiceField(
-        choices=djmoney.settings.CURRENCY_CHOICES,
+        choices=currency_code_mappings(),
         initial=currency_code_default,
         help_text=_('Default currency used for this supplier'),
         label=_('Currency Code'),
@@ -256,7 +254,7 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     price = serializers.CharField()
 
     price_currency = serializers.ChoiceField(
-        choices=djmoney.settings.CURRENCY_CHOICES,
+        choices=currency_code_mappings(),
         default=currency_code_default,
         label=_('Currency'),
     )
