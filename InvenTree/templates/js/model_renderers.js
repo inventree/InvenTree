@@ -145,8 +145,10 @@ function renderSupplierPart(name, data, parameters, options) {
     var html = `<img src='${image}' class='select2-thumbnail'>`;
     
     html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
+    html += ` - <i>${data.part_detail.full_name}</i>`;
 
     html += `<span class='float-right'>{% trans "Supplier Part ID" %}: ${data.pk}</span>`;
+
 
     return html;
 

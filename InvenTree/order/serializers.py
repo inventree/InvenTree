@@ -350,7 +350,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         max_digits=19,
         decimal_places=4,
         allow_null=True
-    )    
+    )
 
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
 

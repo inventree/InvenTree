@@ -20,7 +20,7 @@ from common.forms import MatchItemForm
 import part.models
 
 from stock.models import StockLocation
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrder
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
@@ -93,24 +93,6 @@ class ReceivePurchaseOrderForm(HelperForm):
         model = PurchaseOrder
         fields = [
             "location",
-        ]
-
-
-class EditPurchaseOrderLineItemForm(HelperForm):
-    """ Form for editing a PurchaseOrderLineItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = PurchaseOrderLineItem
-        fields = [
-            'order',
-            'part',
-            'quantity',
-            'reference',
-            'purchase_price',
-            'destination',
-            'notes',
         ]
 
 

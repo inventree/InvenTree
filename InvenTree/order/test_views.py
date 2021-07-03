@@ -104,57 +104,6 @@ class POTests(OrderViewTestCase):
         order = PurchaseOrder.objects.get(pk=1)
         self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
 
-    def test_line_item_create(self):
-        """ Test the form for adding a new LineItem to a PurchaseOrder """
-
-        # Record the number of line items in the PurchaseOrder
-        po = PurchaseOrder.objects.get(pk=1)
-        n = po.lines.count()
-        self.assertEqual(po.status, PurchaseOrderStatus.PENDING)
-
-        url = reverse('po-line-item-create')
-
-        # GET the form (pass the correct info)
-        response = self.client.get(url, {'order': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        post_data = {
-            'part': 100,
-            'quantity': 45,
-            'reference': 'Test reference field',
-            'notes': 'Test notes field'
-        }
-
-        # POST with an invalid purchase order
-        post_data['order'] = 99
-        response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # POST with a part that does not match the purchase order
-        post_data['order'] = 1
-        post_data['part'] = 7
-        response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # POST with an invalid part
-        post_data['part'] = 12345
-        response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # POST the form with valid data
-        post_data['part'] = 100
-        response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertTrue(data['form_valid'])
-
-        self.assertEqual(n + 1, PurchaseOrder.objects.get(pk=1).lines.count())
-
-        line = PurchaseOrderLineItem.objects.get(order=1, part=100)
-        self.assertEqual(line.quantity, 45)
-
 
 class TestPOReceive(OrderViewTestCase):
     """ Tests for receiving a purchase order """

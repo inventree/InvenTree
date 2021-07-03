@@ -38,26 +38,34 @@
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
-    launchModalForm("{% url 'po-line-item-create' %}",
-        {
-            reload: true,
-            data: {
-                order: {{ order.id }},
+
+
+    constructForm('{% url "api-po-line-list" %}', {
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
             },
-            secondary: [
-                {
-                    field: 'part',
-                    label: '{% trans "New Supplier Part" %}',
-                    title: '{% trans "Create new supplier part" %}',
-                    url: "{% url 'supplier-part-create' %}",
-                    data: {
-                        supplier: {{ order.supplier.id }},
-                    },
+            part: {
+                filters: {
+                    part_detail: true,
+                    supplier_detail: true,
+                    supplier: {{ order.supplier.pk }},
                 },
-            ],
-        }
-    );
+            },
+            quantity: {},
+            reference: {},
+            purchase_price: {},
+            purchase_price_currency: {},
+            destination: {},
+            notes: {},
+        },
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: reloadTable,
+    });
 });
+
 {% endif %}
 
 function reloadTable() {
@@ -77,6 +85,7 @@ function setupCallbacks() {
             fields: {
                 part: {
                     filters: {
+                        part_detail: true,
                         supplier_detail: true,
                         supplier: {{ order.supplier.pk }},
                     }
