@@ -136,7 +136,7 @@ class APITests(InvenTreeAPITestCase):
         token = response.data['token']
         self.token = token
 
-    def token_failure(self):
+    def test_token_failure(self):
         # Test token endpoint without basic auth
         url = reverse('api-token')
         response = self.client.get(url, format='json')
@@ -144,7 +144,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIsNone(self.token)
 
-    def token_success(self):
+    def test_token_success(self):
 
         self.tokenAuth()
         self.assertIsNotNone(self.token)
@@ -243,3 +243,70 @@ class APITests(InvenTreeAPITestCase):
         # New role permissions should have been added now
         self.assertIn('delete', roles['part'])
         self.assertIn('change', roles['build'])
+
+    def test_list_endpoint_actions(self):
+        """
+        Tests for the OPTIONS method for API endpoints.
+        """
+
+        self.basicAuth()
+
+        # Without any 'part' permissions, we should not see any available actions
+        url = reverse('api-part-list')
+
+        actions = self.getActions(url)
+
+        # No actions, as there are no permissions!
+        self.assertEqual(len(actions), 0)
+
+        # Assign a new role
+        self.assignRole('part.view')
+        actions = self.getActions(url)
+
+        # As we don't have "add" permission, there should be no available API actions
+        self.assertEqual(len(actions), 0)
+
+        # But let's make things interesting...
+        # Why don't we treat ourselves to some "add" permissions
+        self.assignRole('part.add')
+
+        actions = self.getActions(url)
+
+        self.assertEqual(len(actions), 2)
+        self.assertIn('POST', actions)
+        self.assertIn('GET', actions)
+
+    def test_detail_endpoint_actions(self):
+        """
+        Tests for detail API endpoint actions
+        """
+        
+        self.basicAuth()
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        actions = self.getActions(url)
+
+        # No actions, as we do not have any permissions!
+        self.assertEqual(len(actions), 0)
+
+        # Add a 'add' permission
+        # Note: 'add' permission automatically implies 'change' also
+        self.assignRole('part.add')
+
+        actions = self.getActions(url)
+
+        # 'add' permission does not apply here!
+        self.assertEqual(len(actions), 1)
+        self.assertIn('PUT', actions.keys())
+
+        # Add some other permissions
+        self.assignRole('part.change')
+        self.assignRole('part.delete')
+
+        actions = self.getActions(url)
+
+        self.assertEqual(len(actions), 3)
+        self.assertIn('GET', actions.keys())
+        self.assertIn('PUT', actions.keys())
+        self.assertIn('DELETE', actions.keys())

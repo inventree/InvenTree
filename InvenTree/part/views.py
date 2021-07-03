@@ -31,12 +31,11 @@ import io
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartAttachment, PartRelated
+from .models import PartCategory, Part, PartRelated
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
-from .models import PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
@@ -153,146 +152,6 @@ class PartRelatedDelete(AjaxDeleteView):
 
     # Explicit role requirement
     role_required = 'part.change'
-
-
-class PartAttachmentCreate(AjaxCreateView):
-    """ View for creating a new PartAttachment object
-
-    - The view only makes sense if a Part object is passed to it
-    """
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_form_title = _("Add part attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-        """
-        Record the user that uploaded this attachment
-        """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
-
-    def get_initial(self):
-        """ Get initial data for new PartAttachment object.
-
-        - Client should have requested this form with a parent part in mind
-        - e.g. ?part=<pk>
-        """
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        # TODO - If the proper part was not sent, return an error message
-        try:
-            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """ Create a form to upload a new PartAttachment
-
-        - Hide the 'part' field
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartAttachmentEdit(AjaxUpdateView):
-    """ View for editing a PartAttachment object """
-
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit attachment')
-
-    def get_data(self):
-        return {
-            'success': _('Part attachment updated')
-        }
-
-    def get_form(self):
-        form = super(AjaxUpdateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartAttachmentDelete(AjaxDeleteView):
-    """ View for deleting a PartAttachment """
-
-    model = PartAttachment
-    ajax_form_title = _("Delete Part Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    role_required = 'part.change'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted part attachment')
-        }
-
-
-class PartTestTemplateCreate(AjaxCreateView):
-    """ View for creating a PartTestTemplate """
-
-    model = PartTestTemplate
-    form_class = part_forms.EditPartTestTemplateForm
-    ajax_form_title = _("Create Test Template")
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        try:
-            part_id = self.request.GET.get('part', None)
-            initials['part'] = Part.objects.get(pk=part_id)
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartTestTemplateEdit(AjaxUpdateView):
-    """ View for editing a PartTestTemplate """
-
-    model = PartTestTemplate
-    form_class = part_forms.EditPartTestTemplateForm
-    ajax_form_title = _("Edit Test Template")
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartTestTemplateDelete(AjaxDeleteView):
-    """ View for deleting a PartTestTemplate """
-
-    model = PartTestTemplate
-    ajax_form_title = _("Delete Test Template")
 
 
 class PartSetCategory(AjaxUpdateView):
@@ -1217,21 +1076,6 @@ class PartImageDownloadFromURL(AjaxUpdateView):
             filename,
             ContentFile(buffer.getvalue()),
         )
-
-
-class PartImageUpload(AjaxUpdateView):
-    """ View for uploading a new Part image """
-
-    model = Part
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Upload Part Image')
-
-    form_class = part_forms.PartImageForm
-
-    def get_data(self):
-        return {
-            'success': _('Updated part image'),
-        }
 
 
 class PartImageSelect(AjaxUpdateView):
@@ -2934,17 +2778,10 @@ class BomItemEdit(AjaxUpdateView):
         return form
 
 
-class BomItemDelete(AjaxDeleteView):
-    """ Delete view for removing BomItem """
-
-    model = BomItem
-    ajax_template_name = 'part/bom-delete.html'
-    context_object_name = 'item'
-    ajax_form_title = _('Confim BOM item deletion')
-
-
 class PartSalePriceBreakCreate(AjaxCreateView):
-    """ View for creating a sale price break for a part """
+    """
+    View for creating a sale price break for a part
+    """
 
     model = PartSellPriceBreak
     form_class = part_forms.EditPartSalePriceBreakForm

@@ -12,7 +12,6 @@ from . import views
 purchase_order_detail_urls = [
 
     url(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
-    url(r'^edit/', views.PurchaseOrderEdit.as_view(), name='po-edit'),
     url(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
     url(r'^receive/', views.PurchaseOrderReceive.as_view(), name='po-receive'),
     url(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
@@ -29,35 +28,17 @@ purchase_order_detail_urls = [
 
 purchase_order_urls = [
 
-    url(r'^new/', views.PurchaseOrderCreate.as_view(), name='po-create'),
-
     url(r'^order-parts/', views.OrderParts.as_view(), name='order-parts'),
     url(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
 
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 
-    url(r'^line/', include([
-        url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^edit/', views.POLineItemEdit.as_view(), name='po-line-item-edit'),
-            url(r'^delete/', views.POLineItemDelete.as_view(), name='po-line-item-delete'),
-        ])),
-    ])),
-
-    url(r'^attachment/', include([
-        url(r'^new/', views.PurchaseOrderAttachmentCreate.as_view(), name='po-attachment-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.PurchaseOrderAttachmentEdit.as_view(), name='po-attachment-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.PurchaseOrderAttachmentDelete.as_view(), name='po-attachment-delete'),
-    ])),
-
     # Display complete list of purchase orders
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
 
 sales_order_detail_urls = [
-
-    url(r'^edit/', views.SalesOrderEdit.as_view(), name='so-edit'),
     url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
     url(r'^ship/', views.SalesOrderShip.as_view(), name='so-ship'),
 
@@ -69,17 +50,6 @@ sales_order_detail_urls = [
 ]
 
 sales_order_urls = [
-
-    url(r'^new/', views.SalesOrderCreate.as_view(), name='so-create'),
-
-    url(r'^line/', include([
-        url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^edit/', views.SOLineItemEdit.as_view(), name='so-line-item-edit'),
-            url(r'^delete/', views.SOLineItemDelete.as_view(), name='so-line-item-delete'),
-        ])),
-    ])),
-
     # URLs for sales order allocations
     url(r'^allocation/', include([
         url(r'^new/', views.SalesOrderAllocationCreate.as_view(), name='so-allocation-create'),
@@ -88,12 +58,6 @@ sales_order_urls = [
             url(r'^edit/', views.SalesOrderAllocationEdit.as_view(), name='so-allocation-edit'),
             url(r'^delete/', views.SalesOrderAllocationDelete.as_view(), name='so-allocation-delete'),
         ])),
-    ])),
-
-    url(r'^attachment/', include([
-        url(r'^new/', views.SalesOrderAttachmentCreate.as_view(), name='so-attachment-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.SalesOrderAttachmentEdit.as_view(), name='so-attachment-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.SalesOrderAttachmentDelete.as_view(), name='so-attachment-delete'),
     ])),
 
     # Display detail view for a single SalesOrder

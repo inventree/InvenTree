@@ -640,6 +640,14 @@
   z-index: 9999;
 }
 
+.modal-header {
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+    border-top: 1px solid #ddd;
+}
+
 .modal-primary {
     z-index: 10000;
 }
@@ -978,3 +986,39 @@ a.anchor {
     top: -60px;
     visibility: hidden;
 }
+
+.select2-close-mask {
+    z-index: 99999;
+}
+
+.select2-dropdown {
+    z-index: 99998;
+}
+
+.select2-container {
+    width: 100%;
+}
+
+.select2-container .select2-selection--single {
+    height: 30px;
+}
+
+.select2-thumbnail {
+    max-width: 24px;
+    max-height: 24px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.select2-selection {
+    overflow-y: clip;
+}
+
+.form-clear {
+    padding: 6px 6px;
+}
+
+.form-control {
+    height: 30px;
+}
+

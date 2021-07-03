@@ -13,7 +13,6 @@ from django.contrib.auth import views as auth_views
 from company.urls import company_urls
 from company.urls import manufacturer_part_urls
 from company.urls import supplier_part_urls
-from company.urls import price_break_urls
 
 from common.urls import common_urls
 from part.urls import part_urls
@@ -49,7 +48,7 @@ from common.views import SettingEdit
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
 
-from users.urls import user_urls
+from users.api import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -103,6 +102,10 @@ settings_urls = [
 
 # Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
 dynamic_javascript_urls = [
+    url(r'^api.js', DynamicJsView.as_view(template_name='js/api.js'), name='api.js'),
+    url(r'^attachment.js', DynamicJsView.as_view(template_name='js/attachment.js'), name='attachment.js'),
+    url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
+    url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
     url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),
     url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.js'), name='barcode.js'),
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.js'), name='bom.js'),
@@ -123,7 +126,6 @@ urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^manufacturer-part/', include(manufacturer_part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
-    url(r'^price-break/', include(price_break_urls)),
 
     # "Dynamic" javascript files which are rendered using InvenTree templating.
     url(r'^dynamic/', include(dynamic_javascript_urls)),

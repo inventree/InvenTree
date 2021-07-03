@@ -10,35 +10,6 @@
 
 <div class='dropzone' id='attachment-dropzone'>
 <table class='table table-striped table-condensed' data-toolbar='#attachment-buttons' id='attachment-table'>
-    <thead>
-        <tr>
-            <th data-field='file' data-sortable='true' data-searchable='true'>{% trans "File" %}</th>
-            <th data-field='comment' data-sortable='true' data-searchable='true'>{% trans "Comment" %}</th>
-            <th data-field='user' data-sortable='true' data-searchable='true'>{% trans "Uploaded" %}</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for attachment in attachments %}
-        <tr>
-            <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
-            <td>{{ attachment.comment }}</td>
-            <td>
-                {% if attachment.upload_date %}{{ attachment.upload_date }}{% endif %}
-                {% if attachment.user %}<span class='badge'>{{ attachment.user.username }}</div>{% endif %}
-            </td>
-            <td>
-                <div class='btn-group' style='float: right;'>    
-                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' pk="{{ attachment.id }}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
-                        <span class='fas fa-edit icon-blue'/>
-                    </button>
-                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' pk="{{ attachment.id }}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
-                        <span class='fas fa-trash-alt icon-red'/>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+
 </table>
 </div>

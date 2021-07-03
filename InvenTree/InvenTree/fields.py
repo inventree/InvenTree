@@ -14,8 +14,10 @@ from django.core import validators
 from django import forms
 
 from decimal import Decimal
+
 from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.forms.fields import MoneyField
+from djmoney.models.validators import MinMoneyValidator
 
 import InvenTree.helpers
 import common.settings
@@ -47,7 +49,10 @@ def money_kwargs():
 
 
 class InvenTreeModelMoneyField(ModelMoneyField):
-    """ custom MoneyField for clean migrations while using dynamic currency settings """
+    """
+    Custom MoneyField for clean migrations while using dynamic currency settings
+    """
+    
     def __init__(self, **kwargs):
         # detect if creating migration
         if 'makemigrations' in sys.argv:
@@ -57,6 +62,16 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         else:
             # set defaults
             kwargs.update(money_kwargs())
+
+        # Set a minimum value validator
+        validators = kwargs.get('validators', [])
+
+        if len(validators) == 0:
+            validators.append(
+                MinMoneyValidator(0),
+            )
+
+        kwargs['validators'] = validators
 
         super().__init__(**kwargs)
 

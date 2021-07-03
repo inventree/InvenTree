@@ -127,7 +127,10 @@ class CategoryList(generics.ListCreateAPIView):
 
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a single PartCategory object """
+    """
+    API endpoint for detail view of a single PartCategory object
+    """
+    
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
@@ -227,6 +230,24 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     filter_fields = [
         'part',
     ]
+
+
+class PartAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for PartAttachment model
+    """
+
+    queryset = PartAttachment.objects.all()
+    serializer_class = part_serializers.PartAttachmentSerializer
+
+
+class PartTestTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for PartTestTemplate model
+    """
+
+    queryset = PartTestTemplate.objects.all()
+    serializer_class = part_serializers.PartTestTemplateSerializer
 
 
 class PartTestTemplateList(generics.ListCreateAPIView):
@@ -337,8 +358,9 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
+        # By default, include 'category_detail' information in the detail view
         try:
-            kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', False))
+            kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', True))
         except AttributeError:
             pass
 
@@ -1032,11 +1054,13 @@ part_api_urls = [
 
     # Base URL for PartTestTemplate API endpoints
     url(r'^test-template/', include([
+        url(r'^(?P<pk>\d+)/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
         url(r'^$', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
     ])),
 
     # Base URL for PartAttachment API endpoints
     url(r'^attachment/', include([
+        url(r'^(?P<pk>\d+)/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
         url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
     ])),
 

@@ -39,14 +39,9 @@
         }
     });
 
-
     function newOrder() {
-        launchModalForm("{% url 'po-create' %}",
-        {
-            data: {
-                supplier: {{ company.id }},
-            },
-            follow: true,
+        createPurchaseOrder({
+            supplier: {{ company.pk }},
         });
     }
 

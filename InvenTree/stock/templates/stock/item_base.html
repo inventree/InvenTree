@@ -490,13 +490,14 @@ $("#stock-edit").click(function () {
 });
 
 $('#stock-edit-status').click(function () {
-    launchModalForm(
-        "{% url 'stock-item-edit-status' item.id %}",
-        {
-            reload: true,
-            submit_text: '{% trans "Save" %}',
-        }
-    );
+
+    constructForm('{% url "api-stock-detail" item.pk %}', {
+        fields: {
+            status: {},
+        },
+        reload: true,
+        title: '{% trans "Edit Stock Status" %}',
+    });
 });
 
 {% endif %}
