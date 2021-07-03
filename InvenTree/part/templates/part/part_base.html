@@ -237,6 +237,16 @@
     });
     {% endif %}
 
+    function reloadImage(data) {
+        // If image / thumbnail data present, live update
+        if (data.image) {
+            $('#part-image').attr('src', data.image);
+        } else {
+            // Otherwise, reload the page
+            location.reload();
+        }
+    }
+
     enableDragAndDrop(
         '#part-thumb',
         "{% url 'api-part-detail' part.id %}",
@@ -244,14 +254,7 @@
             label: 'image',
             method: 'PATCH',
             success: function(data, status, xhr) {
-
-                // If image / thumbnail data present, live update
-                if (data.image) {
-                    $('#part-image').attr('src', data.image);
-                } else {
-                    // Otherwise, reload the page
-                    location.reload();
-                }
+                reloadImage(data);
             }
         }
     );
@@ -293,11 +296,20 @@
     });
 
     $("#part-image-upload").click(function() {
-        launchModalForm("{% url 'part-image-upload' part.id %}",
+
+        constructForm(
+            '{% url "api-part-detail" part.pk %}',
             {
-                reload: true
+                method: 'PATCH',
+                fields: {
+                    image: {},
+                },
+                title: '{% trans "Upload Image" %}',
+                onSuccess: function(data) {
+                    reloadImage(data);
+                }
             }
-        );
+        )
     });
 
 
@@ -357,6 +369,75 @@
     });
 
     $("#part-edit").click(function() {
+
+        constructForm('{% url "api-part-detail" part.id %}', {
+            focus: 'name',
+            fields: {
+                category: {
+                    secondary: {
+                        label: '{% trans "New Category" %}',
+                        title: '{% trans "Create New Part Category" %}',
+                        api_url: '{% url "api-part-category-list" %}',
+                        method: 'POST',
+                        fields: {
+                            name: {},
+                            description: {},
+                            parent: {
+                                secondary: {
+                                    title: '{% trans "New Parent" %}',
+                                    api_url: '{% url "api-part-category-list" %}',
+                                    method: 'POST',
+                                    fields: {
+                                        name: {},
+                                        description: {},
+                                        parent: {},
+                                    }
+                                }
+                            },
+                        }
+                    },
+                },
+                name: {
+                    placeholder: 'part name',
+                },
+                IPN: {},
+                description: {},
+                revision: {},
+                keywords: {
+                    icon: 'fa-key',
+                },
+                variant_of: {},
+                link: {
+                    icon: 'fa-link',
+                },
+                default_location: {
+                    secondary: {
+                        label: '{% trans "New Location" %}',
+                        title: '{% trans "Create new stock location" %}',
+                        
+                    },
+                },
+                default_supplier: {
+                    filters: {
+                        part: {{ part.pk }},
+                        part_detail: true,
+                        manufacturer_detail: true,
+                        supplier_detail: true,
+                    },
+                    secondary: {
+                        label: '{% trans "New Supplier Part" %}',
+                        title: '{% trans "Create new supplier part" %}',
+                    }
+                },
+                units: {},
+                minimum_stock: {},
+            },
+            title: '{% trans "Edit Part" %}',
+            reload: true,
+        });
+
+        return;
+
         launchModalForm(
             "{% url 'part-edit' part.id %}",
             {

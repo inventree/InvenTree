@@ -12,7 +12,6 @@ from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
-from InvenTree.fields import DatePickerFormField
 
 from InvenTree.helpers import clean_decimal
 
@@ -21,8 +20,8 @@ from common.forms import MatchItemForm
 import part.models
 
 from stock.models import StockLocation
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import PurchaseOrder
+from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
 
@@ -126,7 +125,7 @@ class EditPurchaseOrderForm(HelperForm):
 
         super().__init__(*args, **kwargs)
 
-    target_date = DatePickerFormField(
+    target_date = forms.DatePickerFormField(
         label=_('Target Date'),
         help_text=_('Target date for order delivery. Order will be overdue after this date.'),
     )

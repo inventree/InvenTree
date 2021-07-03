@@ -15,10 +15,10 @@
 
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
 <div id='button-toolbar'>
+    <button type='button' class="btn btn-success" id='new-company'>
+        <span class='fas fa-plus-circle'></span> {{ button_text }}
+    </button>
     <div class='btn-group'>
-        <button type='button' class="btn btn-success" id='new-company'>
-            <span class='fas fa-plus-circle'></span> {{ button_text }}
-        </button>
     </div>
 </div>
 {% endif %}
@@ -29,9 +29,18 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
-    $('#new-company').click(function () {
-        launchModalForm("{{ create_url }}", {
-            follow: true
+
+    $('#new-company').click(function() {
+
+        var fields = companyFormFields();
+
+        // Field overrides
+        fields.is_supplier.value = {% if pagetype == 'suppliers' %}true{% else %}false{% endif %};
+        fields.is_manufacturer.value = {% if pagetype == 'manufacturers' %}true{% else %}false{% endif %};
+        fields.is_customer.value = {% if pagetype == 'customers' %}true{% else %}false{% endif %};
+
+        createCompany({
+            fields: fields,
         });
     });
 

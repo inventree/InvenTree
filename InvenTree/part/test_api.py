@@ -16,6 +16,106 @@ from company.models import Company
 from common.models import InvenTreeSetting
 
 
+class PartOptionsAPITest(InvenTreeAPITestCase):
+    """
+    Tests for the various OPTIONS endpoints in the /part/ API
+
+    Ensure that the required field details are provided!
+    """
+
+    roles = [
+        'part.add',
+    ]
+
+    def setUp(self):
+
+        super().setUp()
+
+    def test_part(self):
+        """
+        Test the Part API OPTIONS
+        """
+
+        actions = self.getActions(reverse('api-part-list'))['POST']
+
+        # Check that a bunch o' fields are contained
+        for f in ['assembly', 'component', 'description', 'image', 'IPN']:
+            self.assertTrue(f in actions.keys())
+
+        # Active is a 'boolean' field
+        active = actions['active']
+
+        self.assertTrue(active['default'])
+        self.assertEqual(active['help_text'], 'Is this part active?')
+        self.assertEqual(active['type'], 'boolean')
+        self.assertEqual(active['read_only'], False)
+
+        # String field
+        ipn = actions['IPN']
+        self.assertEqual(ipn['type'], 'string')
+        self.assertFalse(ipn['required'])
+        self.assertEqual(ipn['max_length'], 100)
+        self.assertEqual(ipn['help_text'], 'Internal Part Number')
+
+        # Related field
+        category = actions['category']
+
+        self.assertEqual(category['type'], 'related field')
+        self.assertTrue(category['required'])
+        self.assertFalse(category['read_only'])
+        self.assertEqual(category['label'], 'Category')
+        self.assertEqual(category['model'], 'partcategory')
+        self.assertEqual(category['api_url'], reverse('api-part-category-list'))
+        self.assertEqual(category['help_text'], 'Part category')
+
+    def test_category(self):
+        """
+        Test the PartCategory API OPTIONS endpoint
+        """
+
+        actions = self.getActions(reverse('api-part-category-list'))
+
+        # actions should *not* contain 'POST' as we do not have the correct role
+        self.assertFalse('POST' in actions)
+
+        self.assignRole('part_category.add')
+
+        actions = self.getActions(reverse('api-part-category-list'))['POST']
+
+        name = actions['name']
+
+        self.assertTrue(name['required'])
+        self.assertEqual(name['label'], 'Name')
+
+        loc = actions['default_location']
+        self.assertEqual(loc['api_url'], reverse('api-location-list'))
+
+    def test_bom_item(self):
+        """
+        Test the BomItem API OPTIONS endpoint
+        """
+
+        actions = self.getActions(reverse('api-bom-list'))['POST']
+
+        inherited = actions['inherited']
+
+        self.assertEqual(inherited['type'], 'boolean')
+
+        # 'part' reference
+        part = actions['part']
+
+        self.assertTrue(part['required'])
+        self.assertFalse(part['read_only'])
+        self.assertTrue(part['filters']['assembly'])
+
+        # 'sub_part' reference
+        sub_part = actions['sub_part']
+
+        self.assertTrue(sub_part['required'])
+        self.assertEqual(sub_part['type'], 'related field')
+        self.assertTrue(sub_part['filters']['component'])
+
+
 class PartAPITest(InvenTreeAPITestCase):
     """
     Series of tests for the Part DRF API

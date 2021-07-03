@@ -19,51 +19,68 @@
 {% block js_ready %}
 {{ block.super }}
 
+    loadAttachmentTable(
+        '{% url "api-part-attachment-list" %}',
+        {
+            filters: {
+                part: {{ part.pk }},
+            },
+            onEdit: function(pk) {
+                var url = `/api/part/attachment/${pk}/`;
+
+                constructForm(url, {
+                    fields: {
+                        comment: {},
+                    },
+                    title: '{% trans "Edit Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
+            },
+            onDelete: function(pk) {
+                var url = `/api/part/attachment/${pk}/`;
+
+                constructForm(url, {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
+            }
+        }
+    );
+
     enableDragAndDrop(
         '#attachment-dropzone',
-        "{% url 'part-attachment-create' %}",
+        '{% url "api-part-attachment-list" %}',
         {
             data: {
                 part: {{ part.id }},
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                reloadAttachmentTable();
             }
         }
     );
 
     $("#new-attachment").click(function() {
-        launchModalForm("{% url 'part-attachment-create' %}?part={{ part.id }}",
+
+        constructForm(
+            '{% url "api-part-attachment-list" %}',
             {
-                reload: true, 
-            });
-    });
-
-    $("#attachment-table").on('click', '.attachment-edit-button', function() {
-        var button = $(this);
-
-        var url = `/part/attachment/${button.attr('pk')}/edit/`;
-
-        launchModalForm(url, 
-            {
-                reload: true,
-            });
-    });
-
-    $("#attachment-table").on('click', '.attachment-delete-button', function() {
-        var button = $(this);
-
-        var url = `/part/attachment/${button.attr('pk')}/delete/`;
-
-        launchModalForm(url, {
-            success: function() {
-                location.reload();
+                method: 'POST',
+                fields: {
+                    attachment: {},
+                    comment: {},
+                    part: {
+                        value: {{ part.pk }},
+                        hidden: true,
+                    }
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Add Attachment" %}',
             }
-        });
-    });
-
-    $("#attachment-table").inventreeTable({
+        )
     });
 
 {% endblock %}

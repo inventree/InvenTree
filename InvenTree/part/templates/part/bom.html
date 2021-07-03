@@ -124,7 +124,7 @@
 
                     // Wait for *all* the requests to complete
                     $.when.apply($, requests).then(function() {
-                        $('#bom-table').bootstrapTable('refresh');
+                        location.reload();
                     });
                 }
             }
