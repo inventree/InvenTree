@@ -693,7 +693,7 @@ function loadStockTable(table, options) {
                         return '-';
                     }
 
-                    var link = `/supplier-part/${row.supplier_part}/`;
+                    var link = `/supplier-part/${row.supplier_part}/stock/`;
                     var text = `${row.supplier_part_detail.SKU}`;
 
                     return renderLink(text, link);
