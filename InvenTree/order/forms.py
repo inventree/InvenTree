@@ -96,23 +96,6 @@ class ReceivePurchaseOrderForm(HelperForm):
         ]
 
 
-class EditSalesOrderLineItemForm(HelperForm):
-    """ Form for editing a SalesOrderLineItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderLineItem
-        fields = [
-            'order',
-            'part',
-            'quantity',
-            'reference',
-            'sale_price',
-            'notes'
-        ]
-
-
 class AllocateSerialsToSalesOrderForm(forms.Form):
     """
     Form for assigning stock to a sales order,

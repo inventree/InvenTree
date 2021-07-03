@@ -50,11 +50,6 @@ sales_order_detail_urls = [
 ]
 
 sales_order_urls = [
-
-    url(r'^line/', include([
-        url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
-    ])),
-
     # URLs for sales order allocations
     url(r'^allocation/', include([
         url(r'^new/', views.SalesOrderAllocationCreate.as_view(), name='so-allocation-create'),

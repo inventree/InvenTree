@@ -38,13 +38,23 @@ function reloadTable() {
 }
 
 $("#new-so-line").click(function() {
-    launchModalForm("{% url 'so-line-item-create' %}", {
-        success: reloadTable,
-        data: {
-            order: {{ order.id }},
+
+    constructForm('{% url "api-so-line-list" %}', {
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
+            },
+            part: {},
+            quantity: {},
+            reference: {},
+            sale_price: {},
+            sale_price_currency: {},
+            notes: {},
         },
-        secondary: [
-        ]
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: reloadTable,
     });
 });
 
