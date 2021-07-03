@@ -34,10 +34,6 @@ purchase_order_urls = [
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 
-    url(r'^line/', include([
-        url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
-    ])),
-
     # Display complete list of purchase orders
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
