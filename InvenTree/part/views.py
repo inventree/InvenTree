@@ -2778,17 +2778,10 @@ class BomItemEdit(AjaxUpdateView):
         return form
 
 
-class BomItemDelete(AjaxDeleteView):
-    """ Delete view for removing BomItem """
-
-    model = BomItem
-    ajax_template_name = 'part/bom-delete.html'
-    context_object_name = 'item'
-    ajax_form_title = _('Confim BOM item deletion')
-
-
 class PartSalePriceBreakCreate(AjaxCreateView):
-    """ View for creating a sale price break for a part """
+    """
+    View for creating a sale price break for a part
+    """
 
     model = PartSellPriceBreak
     form_class = part_forms.EditPartSalePriceBreakForm
