@@ -970,6 +970,23 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
     min-width: 19px;
 }
 
+.row.full-height {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.full-height > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -60px;
+    visibility: hidden;
+}
+
 .select2-close-mask {
     z-index: 99999;
 }
