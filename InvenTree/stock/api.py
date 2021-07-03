@@ -1192,7 +1192,7 @@ stock_api_urls = [
     url(r'^track/', include([
         url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
         url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
-    ]),
+    ])),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
 
