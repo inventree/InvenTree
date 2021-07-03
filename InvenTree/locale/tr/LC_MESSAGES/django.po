@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 02:56+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 03:16\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2239,8 +2239,7 @@ msgstr ""
 
 #: company/templates/company/delete.html:12
 #, python-format
-msgid ""
-"There are %(count)s parts sourced from this company.<br>\n"
+msgid "There are %(count)s parts sourced from this company.<br>\n"
 "If this supplier is deleted, these supplier part entries will also be deleted."
 msgstr ""
 
@@ -4886,26 +4885,20 @@ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting th
 msgstr ""
 
 #: part/templates/part/prices.html:12
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "General Price Information"
-msgstr "Kullanıcı Bilgisini Düzenle"
+msgstr ""
 
 #: part/templates/part/prices.html:22
 msgid "Pricing ranges"
 msgstr ""
 
 #: part/templates/part/prices.html:28
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Show supplier cost"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: part/templates/part/prices.html:29
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Show purchase price"
-msgstr "Yeni Satın Alma Emri"
+msgstr ""
 
 #: part/templates/part/prices.html:56
 msgid "Show BOM cost"
@@ -4924,10 +4917,8 @@ msgid "Calculation parameters"
 msgstr ""
 
 #: part/templates/part/prices.html:146
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Cost"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: part/templates/part/prices.html:147 part/templates/part/prices.html:167
 #: part/templates/part/prices.html:193 part/templates/part/prices.html:224
@@ -4960,10 +4951,8 @@ msgid "Sale Cost"
 msgstr ""
 
 #: part/templates/part/prices.html:290
-#, fuzzy
-#| msgid "No stock available for %(part)s"
 msgid "No sale pice history available for this part."
-msgstr "%(part)s için mevcut stok yok"
+msgstr ""
 
 #: part/templates/part/prices.html:340
 #, python-format
@@ -6356,8 +6345,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7116,10 +7104,9 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No matching action found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7875,3 +7862,4 @@ msgstr ""
 #: users/models.py:191
 msgid "Permission to delete items"
 msgstr ""
+
