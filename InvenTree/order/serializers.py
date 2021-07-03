@@ -230,6 +230,19 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
 
     reference = serializers.CharField(required=True)
 
+    sell_price = InvenTreeMoneySerializer(
+        max_digits=19,
+        decimal_places=4,
+        allow_null=True
+    )
+
+    sell_price_string = serializers.CharField(source='sell_price', read_only=True)
+
+    sell_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Sell price currency'),
+    )
+
     class Meta:
         model = SalesOrder
 
@@ -250,7 +263,9 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'status_text',
             'shipment_date',
             'target_date',
-            'sell_price'
+            'sell_price',
+            'sell_price_string',
+            'sell_price_currency',
         ]
 
         read_only_fields = [
