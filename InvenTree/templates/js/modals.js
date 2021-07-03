@@ -1,5 +1,114 @@
 {% load i18n %}
 
+
+/*
+ * Create and display a new modal dialog
+ * 
+ * options:
+ * - title: Form title to render
+ * - submitText: Text to render on 'submit' button (default = "Submit")
+ * - closeText: Text to render on 'close' button (default = "Cancel")
+ * - focus: Name of field to focus on after launching
+ */
+function createNewModal(options={}) {
+
+
+    var id = 1;
+
+    // Check out what modal forms are already being displayed
+    $('.inventree-modal').each(function() {
+
+        var split = this.id.split('-');
+        var modal_id = parseInt(split[2]);
+
+        if (modal_id >= id) {
+            id = modal_id + 1;
+        }
+    });
+
+    var html = `
+    <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label='{% trans "Close" %}'>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h3 id='modal-title'>
+                        <!-- Form title to be injected here -->
+                    </h3>
+                </div>
+                <div class='modal-form-content-wrapper'>
+                    <div id='pre-form-content'>
+                        <!-- Content can be inserted here *before* the form fields -->
+                    </div>
+                    <div id='non-field-errors'>
+                        <!-- Form error messages go here -->
+                    </div>
+                    <div id='form-content' class='modal-form-content'>
+                        <!-- Form content will be injected here-->
+                    </div>
+                    <div id='post-form-content'>
+                        <!-- Content can be inserted here *after* the form fields -->
+                    </div>
+                </div>
+                <div class='modal-footer'>
+                    <div id='modal-footer-buttons'>
+                        <!-- Extra buttons can be inserted here -->
+                    </div>
+                    <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Cancel" %}</button>
+                    <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    $('body').append(html);
+
+    var modal_name = `#modal-form-${id}`;
+
+    $(modal_name).on('shown.bs.modal', function() {
+        $(modal_name + ' .modal-form-content').scrollTop(0);
+
+        if (options.focus) {
+            getFieldByName(modal_name, options.focus).focus();
+        }
+    });
+
+    // Automatically remove the modal when it is deleted!
+    $(modal_name).on('hidden.bs.modal', function(e) {
+        $(modal_name).remove();
+    });
+
+    // Capture "enter" key input
+    $(modal_name).on('keydown', 'input', function(event) {
+
+        
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            // Simulate a click on the 'Submit' button
+            $(modal_name).find("#modal-form-submit").click();
+            
+            return false;
+        }
+    });
+
+    $(modal_name).modal({
+        backdrop: 'static',
+        keyboard: false,
+    });
+
+    // Set labels based on supplied options
+    modalSetTitle(modal_name, options.title || '{% trans "Form Title" %}');
+    modalSetSubmitText(modal_name, options.submitText || '{% trans "Submit" %}');
+    modalSetCloseText(modal_name, options.cancelText || '{% trans "Cancel" %}');
+
+    // Return the "name" of the modal
+    return modal_name;
+}
+
+
 function makeOption(text, value, title) {
     /* Format an option for a select element
      */
@@ -990,8 +1099,6 @@ function hideModalImage() {
 
 function showModalImage(image_url) {
     // Display full-screen modal image
-
-    console.log('showing modal image: ' + image_url);
 
     var modal = $('#modal-image-dialog');
 

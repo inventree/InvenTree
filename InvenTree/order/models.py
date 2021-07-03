@@ -31,6 +31,60 @@ from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockS
 from InvenTree.models import InvenTreeAttachment
 
 
+def get_next_po_number():
+    """
+    Returns the next available PurchaseOrder reference number
+    """
+
+    if PurchaseOrder.objects.count() == 0:
+        return
+
+    order = PurchaseOrder.objects.exclude(reference=None).last()
+
+    attempts = set([order.reference])
+
+    while 1:
+        reference = increment(order.reference)
+
+        if reference in attempts:
+            # Escape infinite recursion
+            return reference
+
+        if PurchaseOrder.objects.filter(reference=reference).exists():
+            attempts.add(reference)
+        else:
+            break
+
+    return reference
+
+
+def get_next_so_number():
+    """
+    Returns the next available SalesOrder reference number
+    """
+
+    if SalesOrder.objects.count() == 0:
+        return
+
+    order = SalesOrder.objects.exclude(reference=None).last()
+
+    attempts = set([order.reference])
+
+    while 1:
+        reference = increment(order.reference)
+
+        if reference in attempts:
+            # Escape infinite recursion
+            return reference
+
+        if SalesOrder.objects.filter(reference=reference).exists():
+            attempts.add(reference)
+        else:
+            break
+
+    return reference
+
+
 class Order(models.Model):
     """ Abstract model for an order.
 
@@ -72,6 +126,8 @@ class Order(models.Model):
         while 1:
             new_ref = increment(ref)
 
+            print("Reference:", new_ref)
+
             if new_ref in tries:
                 # We are in a looping situation - simply return the original one
                 return ref
@@ -94,8 +150,6 @@ class Order(models.Model):
 
     class Meta:
         abstract = True
-
-    reference = models.CharField(unique=True, max_length=64, blank=False, verbose_name=_('Reference'), help_text=_('Order reference'))
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
@@ -131,6 +185,10 @@ class PurchaseOrder(Order):
         received_by: User that received the goods
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-list')
 
     OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
@@ -176,6 +234,15 @@ class PurchaseOrder(Order):
         prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
 
         return f"{prefix}{self.reference} - {self.supplier.name}"
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        verbose_name=_('Reference'),
+        help_text=_('Order reference'),
+        default=get_next_po_number,
+    )
 
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
                                          help_text=_('Purchase order status'))
@@ -403,6 +470,10 @@ class SalesOrder(Order):
         target_date: Target date for SalesOrder completion (optional)
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-list')
+
     OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     @staticmethod
@@ -450,6 +521,15 @@ class SalesOrder(Order):
 
     def get_absolute_url(self):
         return reverse('so-detail', kwargs={'pk': self.id})
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        verbose_name=_('Reference'),
+        help_text=_('Order reference'),
+        default=get_next_so_number,
+    )
 
     customer = models.ForeignKey(
         Company,
@@ -581,6 +661,10 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
     Model for storing file attachments against a PurchaseOrder object
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-attachment-list')
+
     def getSubdir(self):
         return os.path.join("po_files", str(self.order.id))
 
@@ -591,6 +675,10 @@ class SalesOrderAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a SalesOrder object
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-attachment-list')
 
     def getSubdir(self):
         return os.path.join("so_files", str(self.order.id))
@@ -610,7 +698,13 @@ class OrderLineItem(models.Model):
     class Meta:
         abstract = True
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Item quantity'))
+    quantity = RoundingDecimalField(
+        verbose_name=_('Quantity'),
+        help_text=_('Item quantity'),
+        default=1,
+        max_digits=15, decimal_places=5,
+        validators=[MinValueValidator(0)],
+    )
 
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 
@@ -624,6 +718,10 @@ class PurchaseOrderLineItem(OrderLineItem):
         order: Reference to a PurchaseOrder object
 
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-line-list')
 
     class Meta:
         unique_together = (
@@ -707,6 +805,10 @@ class SalesOrderLineItem(OrderLineItem):
         sale_price: The unit sale price for this OrderLineItem
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-line-list')
+
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
@@ -767,6 +869,10 @@ class SalesOrderAllocation(models.Model):
         quantity: Quantity to take from the StockItem
 
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-allocation-list')
 
     class Meta:
         unique_together = [

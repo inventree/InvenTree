@@ -39,30 +39,32 @@ $('#price-break-table').inventreeTable({
     queryParams: {
         part: {{ part.id }},
     },
-    url: "{% url 'api-part-supplier-price' %}",
+    url: "{% url 'api-part-supplier-price-list' %}",
     onPostBody: function() {
         var table = $('#price-break-table');
 
         table.find('.button-price-break-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm(
-                `/price-break/${pk}/delete/`,
-                {
-                    success: reloadPriceBreaks
-                }
-            );
+            constructForm(`/api/company/price-break/${pk}/`, {
+                method: 'DELETE',
+                onSuccess: reloadPriceBreaks,
+                title: '{% trans "Delete Price Break" %}',
+            });
         });
 
         table.find('.button-price-break-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm(
-                `/price-break/${pk}/edit/`,
-                {
-                    success: reloadPriceBreaks
-                }
-            );
+            constructForm(`/api/company/price-break/${pk}/`, {
+                fields: {
+                    quantity: {},
+                    price: {},
+                    price_currency: {},
+                },
+                onSuccess: reloadPriceBreaks,
+                title: '{% trans "Edit Price Break" %}',
+            });
         });
     },
     columns: [
@@ -98,12 +100,23 @@ $('#price-break-table').inventreeTable({
 });
 
 $('#new-price-break').click(function() {
-    launchModalForm("{% url 'price-break-create' %}",
+
+    constructForm(
+        '{% url "api-part-supplier-price-list" %}',
         {
-            reload: true,
-            data: {
-                part: {{ part.id }},
-            }
+            method: 'POST',
+            fields: {
+                quantity: {},
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true,
+                },
+                price: {},
+                price_currency: {
+                },
+            },
+            title: '{% trans "Add Price Break" %}',
+            onSuccess: reloadPriceBreaks,
         }
     );
 });

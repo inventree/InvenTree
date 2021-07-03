@@ -1,6 +1,68 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+
+// Create a new SalesOrder
+function createSalesOrder(options={}) {
+
+    constructForm('{% url "api-so-list" %}', {
+        method: 'POST',
+        fields: {
+            reference: {
+                prefix: '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}',
+            },
+            customer: {
+                value: options.customer,
+            },
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/sales-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Sales Order" %}',
+    });
+}
+
+// Create a new PurchaseOrder
+function createPurchaseOrder(options={}) {
+
+    constructForm('{% url "api-po-list" %}', {
+        method: 'POST',
+        fields: {
+            reference: {
+                prefix: "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}",   
+            },
+            supplier: {
+                value: options.supplier,
+            },
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/purchase-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Purchase Order" %}',
+    });
+}
+
+
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
 
@@ -266,6 +328,11 @@ function loadSalesOrderTable(table, options) {
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
                 formatter: function(value, row, index, field) {
+
+                    if (!row.customer_detail) {
+                        return '{% trans "Invalid Customer" %}';
+                    }
+
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
                 }
             },

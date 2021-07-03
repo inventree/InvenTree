@@ -5,14 +5,16 @@ JSON serializers for the Order API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rest_framework import serializers
-
-from sql_util.utils import SubqueryCount
+from django.utils.translation import ugettext_lazy as _
 
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField
 
+from rest_framework import serializers
+from sql_util.utils import SubqueryCount
+
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
@@ -23,6 +25,8 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
+
+from common.settings import currency_code_mappings
 
 
 class POSerializer(InvenTreeModelSerializer):
@@ -69,6 +73,8 @@ class POSerializer(InvenTreeModelSerializer):
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
+    reference = serializers.CharField(required=True)
+
     class Meta:
         model = PurchaseOrder
 
@@ -82,6 +88,7 @@ class POSerializer(InvenTreeModelSerializer):
             'link',
             'overdue',
             'reference',
+            'responsible',
             'supplier',
             'supplier_detail',
             'supplier_reference',
@@ -118,9 +125,19 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
+    purchase_price = InvenTreeMoneySerializer(
+        max_digits=19, decimal_places=4,
+        allow_null=True
+    )
+
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
     destination = LocationBriefSerializer(source='get_destination', read_only=True)
+
+    purchase_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Purchase price currency'),
+    )
 
     class Meta:
         model = PurchaseOrderLineItem
@@ -157,6 +174,11 @@ class POAttachmentSerializer(InvenTreeModelSerializer):
             'order',
             'attachment',
             'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]
 
 
@@ -206,6 +228,8 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
+    reference = serializers.CharField(required=True)
+
     class Meta:
         model = SalesOrder
 
@@ -221,6 +245,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'notes',
             'overdue',
             'reference',
+            'responsible',
             'status',
             'status_text',
             'shipment_date',
@@ -316,12 +341,23 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
 
-    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
-    quantity = serializers.FloatField(default=1)
+    quantity = serializers.FloatField()
 
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
+    
+    sale_price = InvenTreeMoneySerializer(
+        max_digits=19,
+        decimal_places=4,
+        allow_null=True
+    )
+
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+
+    sale_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Sale price currency'),
+    )
 
     class Meta:
         model = SalesOrderLineItem
@@ -359,4 +395,9 @@ class SOAttachmentSerializer(InvenTreeModelSerializer):
             'order',
             'attachment',
             'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]

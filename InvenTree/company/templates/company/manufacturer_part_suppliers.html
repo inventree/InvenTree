@@ -42,8 +42,11 @@
                 <button class='btn btn-success' id='parameter-create'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
                 </button>
-                <div id='param-dropdown' class='btn-group'>
-                    <!-- TODO -->
+                <div id='opt-dropdown' class="btn-group">
+                    <button id='parameter-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href='#' id='multi-parameter-delete' title='{% trans "Delete parameters" %}'>{% trans "Delete" %}</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -57,15 +60,26 @@
 {% block js_ready %}
 {{ block.super }}
 
+function reloadParameters() {
+    $("#parameter-table").bootstrapTable("refresh");
+}
+
 $('#parameter-create').click(function() {
-    launchModalForm(
-        "{% url 'manufacturer-part-parameter-create' %}",
-        {
-            data: {
-                manufacturer_part: {{ part.id }},
+
+    constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
+        method: 'POST',
+        fields: {
+            name: {},
+            value: {},
+            units: {},
+            manufacturer_part: {
+                value: {{ part.pk }},
+                hidden: true,
             }
-        }
-    );
+        },
+        title: '{% trans "Add Parameter" %}',
+        onSuccess: reloadParameters
+    });
 });
 
 $('#supplier-create').click(function () {
@@ -81,7 +95,6 @@ $('#supplier-create').click(function () {
                     field: 'supplier',
                     label: '{% trans "New Supplier" %}',
                     title: '{% trans "Create new supplier" %}',
-                    url: "{% url 'supplier-create' %}"
                 },
             ]
         });
@@ -103,6 +116,46 @@ $("#supplier-part-delete").click(function() {
         },
         reload: true,
     });
+});
+
+$("#multi-parameter-delete").click(function() {
+
+    var selections = $("#parameter-table").bootstrapTable("getSelections");
+
+    var text = `
+    <div class ='alert alert-block alert-danger'>
+        <p>{% trans "Selected parameters will be deleted" %}:</p>
+        <ul>`;
+
+    selections.forEach(function(item) {
+        text += `<li>${item.name} - <i>${item.value}</i></li>`;
+    });
+
+    text += `
+        </ul>
+    </div>`;
+    
+    showQuestionDialog(
+        '{% trans "Delete Parameters" %}',
+        text,
+        {
+            accept_text: '{% trans "Delete" %}',
+            accept: function() {
+                // Delete each parameter via the API
+                var requests = [];
+
+                selections.forEach(function(item) {
+                    var url = `/api/company/part/manufacturer/parameter/${item.pk}/`;
+
+                    requests.push(inventreeDelete(url));
+                });
+
+                $.when.apply($, requests).then(function() {
+                    $('#parameter-table').bootstrapTable('refresh');
+                });
+            }
+        }
+    );
 });
 
 loadSupplierPartTable(
@@ -130,5 +183,5 @@ loadManufacturerPartParameterTable(
 );
 
 linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
-
+linkButtonsToSelection($("#parameter-table"), ['#parameter-options'])
 {% endblock %}

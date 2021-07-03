@@ -22,7 +22,7 @@
 
 enableDragAndDrop(
     '#attachment-dropzone',
-    '{% url "build-attachment-create" %}',
+    '{% url "api-build-attachment-list" %}',
     {
         data: {
             build: {{ build.id }},
@@ -36,45 +36,49 @@ enableDragAndDrop(
 
 // Callback for creating a new attachment
 $('#new-attachment').click(function() {
-    launchModalForm(
-        '{% url "build-attachment-create" %}',
-        {
-            reload: true,
-            data: {
-                build: {{ build.pk }},
+
+    constructForm('{% url "api-build-attachment-list" %}', {
+        fields: {
+            attachment: {},
+            comment: {},
+            build: {
+                value: {{ build.pk }},
+                hidden: true,
             }
-        }
-    );
+        },
+        method: 'POST',
+        onSuccess: reloadAttachmentTable,
+        title: '{% trans "Add Attachment" %}',
+    });
 });
 
-// Callback for editing an attachment
-$("#attachment-table").on('click', '.attachment-edit-button', function() {
-    var pk = $(this).attr('pk');
+loadAttachmentTable(
+    '{% url "api-build-attachment-list" %}',
+    {
+        filters: {
+            build: {{ build.pk }},
+        },
+        onEdit: function(pk) {
+            var url = `/api/build/attachment/${pk}/`;
 
-    var url = `/build/attachment/${pk}/edit/`;
+            constructForm(url, {
+                fields: {
+                    comment: {},
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Edit Attachment" %}',
+            });
+        },
+        onDelete: function(pk) {
 
-    launchModalForm(
-        url,
-        {
-            reload: true,
+            constructForm(`/api/build/attachment/${pk}/`, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
         }
-    );
-});
-
-// Callback for deleting an attachment
-$("#attachment-table").on('click', '.attachment-delete-button', function() {
-    var pk = $(this).attr('pk');
-
-    var url = `/build/attachment/${pk}/delete/`;
-
-    launchModalForm(
-        url,
-        {
-            reload: true,
-        }
-    );
-});
-
-$("#attachment-table").inventreeTable({});
+    }
+);
 
 {% endblock %}
