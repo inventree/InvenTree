@@ -50,6 +50,7 @@ import common.settings as inventree_settings
 
 from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
+from order.models import PurchaseOrderLineItem
 
 from .admin import PartResource
 
@@ -979,18 +980,20 @@ class PartPricingView(PartDetail):
         """ returns context with pricing information """
         ctx = PartPricing.get_pricing(self, quantity, currency)
         part = self.get_part()
+        default_currency = inventree_settings.currency_code_default()
+
         # Stock history
         if part.total_stock > 1:
             price_history = []
-            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
-            stock = stock.prefetch_related('purchase_order', 'supplier_part')
+            stock = part.stock_entries(include_variants=False, in_stock=True).\
+                order_by('purchase_order__issue_date').prefetch_related('purchase_order', 'supplier_part')
 
             for stock_item in stock:
                 if None in [stock_item.purchase_price, stock_item.quantity]:
                     continue
 
                 # convert purchase price to current currency - only one currency in the graph
-                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
+                price = convert_money(stock_item.purchase_price, default_currency)
                 line = {
                     'price': price.amount,
                     'qty': stock_item.quantity
@@ -1035,6 +1038,36 @@ class PartPricingView(PartDetail):
 
             # add to global context
             ctx['bom_parts'] = ctx_bom_parts
+
+        # Sale price history
+        sale_items = PurchaseOrderLineItem.objects.filter(part__part=part).order_by('order__issue_date').\
+            prefetch_related('order', ).all()
+
+        if sale_items:
+            sale_history = []
+
+            for sale_item in sale_items:
+                # check for not fully defined elements
+                if None in [sale_item.purchase_price, sale_item.quantity]:
+                    continue
+
+                price = convert_money(sale_item.purchase_price, default_currency)
+                line = {
+                    'price': price.amount if price else 0,
+                    'qty': sale_item.quantity,
+                }
+
+                # set date for graph labels
+                if sale_item.order.issue_date:
+                    line['date'] = sale_item.order.issue_date.strftime('%d.%m.%Y')
+                elif sale_item.order.creation_date:
+                    line['date'] = sale_item.order.creation_date.strftime('%d.%m.%Y')
+                else:
+                    line['date'] = _('None')
+
+                sale_history.append(line)
+
+            ctx['sale_history'] = sale_history
 
         return ctx
 
