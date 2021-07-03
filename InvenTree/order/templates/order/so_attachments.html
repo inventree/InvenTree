@@ -53,8 +53,6 @@ loadAttachmentTable(
             });
         },
         onDelete: function(pk) {
-            var pk = button.attr('pk');
-
             constructForm(`/api/order/so/attachment/${pk}/`, {
                 method: 'DELETE',
                 confirmMessage: '{% trans "Confirm Delete Operation" %}',
