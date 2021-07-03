@@ -1007,6 +1007,16 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         test_result.save()
 
 
+class StockTrackingDetail(generics.RetrieveAPIView):
+    """
+    Detail API endpoint for StockItemTracking model
+    """
+
+    queryset = StockItemTracking.objects.all()
+    serializer_class = StockTrackingSerializer
+
+
+
 class StockTrackingList(generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
@@ -1176,10 +1186,13 @@ stock_api_urls = [
     # Base URL for StockItemTestResult API endpoints
     url(r'^test/', include([
         url(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
-        url(r'^$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
+        url(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
-    url(r'track/?', StockTrackingList.as_view(), name='api-stock-tracking-list'),
+    url(r'^track/', include([
+        url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+        url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
+    ]),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
 
