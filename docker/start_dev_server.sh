@@ -32,7 +32,7 @@ echo "Starting InvenTree server..."
 
 # Wait for the database to be ready
 cd ${INVENTREE_HOME}/InvenTree
-python manage.py wait_for_db
+python3 manage.py wait_for_db
 
 sleep 10
 
@@ -40,10 +40,10 @@ echo "Running InvenTree database migrations..."
 
 # We assume at this stage that the database is up and running
 # Ensure that the database schema are up to date
-python manage.py check || exit 1
-python manage.py migrate --noinput || exit 1
-python manage.py migrate --run-syncdb || exit 1
-python manage.py clearsessions || exit 1
+python3 manage.py check || exit 1
+python3 manage.py migrate --noinput || exit 1
+python3 manage.py migrate --run-syncdb || exit 1
+python3 manage.py clearsessions || exit 1
 
 # Launch a development server
-python manage.py runserver ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}
+python3 manage.py runserver ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}
