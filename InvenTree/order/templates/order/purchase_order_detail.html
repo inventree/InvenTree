@@ -75,7 +75,12 @@ function setupCallbacks() {
 
         constructForm(`/api/order/po-line/${pk}/`, {
             fields: {
-                part: {},
+                part: {
+                    filters: {
+                        supplier_detail: true,
+                        supplier: {{ order.supplier.pk }},
+                    }
+                },
                 quantity: {},
                 reference: {},
                 purchase_price: {},
