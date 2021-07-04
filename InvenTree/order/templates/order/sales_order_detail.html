@@ -515,6 +515,10 @@ function setupCallbacks() {
     });
 }
 
+function additionalreloadTable() {
+    $("#so-additional-lines-table").bootstrapTable("refresh");
+}
+
 
 $("#so-additional-lines-table").inventreeTable({
     formatNoMatches: function() { return "{% trans 'No matching lines' %}"; },
@@ -602,7 +606,7 @@ function additionalSetupCallbacks() {
         var pk = $(this).attr('pk');
 
         launchModalForm(`/order/sales-order/line/${pk}/edit/`, {
-            success: reloadTable,
+            success: additionalreloadTable,
         });
     });
 
@@ -610,7 +614,7 @@ function additionalSetupCallbacks() {
         var pk = $(this).attr('pk');
 
         launchModalForm(`/order/sales-order/line/${pk}/delete/`, {
-            success: reloadTable,
+            success: additionalreloadTable,
         });
     });
 
