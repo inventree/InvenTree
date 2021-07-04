@@ -593,6 +593,23 @@ $("#so-additional-lines-table").inventreeTable({
             field: 'notes',
             title: '{% trans "Notes" %}',
         },
+        {% if order.status == SalesOrderStatus.PENDING %}
+        {
+            field: 'buttons',
+            formatter: function(value, row, index, field) {
+
+                var html = `<div class='btn-group float-right' role='group'>`;
+                var pk = row.pk;
+
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line item " %}');
+
+                html += `</div>`;
+
+                return html;
+            }
+        },
+        {% endif %}
     ],
 });
 
@@ -605,16 +622,27 @@ function additionalSetupCallbacks() {
 
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/sales-order/line/${pk}/edit/`, {
-            success: additionalreloadTable,
+        constructForm(`/api/order/so-add-line/${pk}/`, {
+            fields: {
+                title: {},
+                quantity: {},
+                reference: {},
+                sale_price: {},
+                sale_price_currency: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Line Item" %}',
+            onSuccess: additionalreloadTable,
         });
     });
 
     table.find(".button-delete").click(function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/sales-order/line/${pk}/delete/`, {
-            success: additionalreloadTable,
+        constructForm(`/api/order/so-add-line/${pk}/`, {
+            method: 'DELETE',
+            title: '{% trans "Delete Line Item" %}',
+            onSuccess: additionalreloadTable,
         });
     });
 

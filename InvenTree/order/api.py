@@ -640,6 +640,13 @@ class SOAllocationList(generics.ListCreateAPIView):
     ]
 
 
+class SOAdditionalLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a SalesOrderAdditionalLineItem object """
+
+    queryset = SalesOrderAdditionalLineItem.objects.all()
+    serializer_class = SOAdditionalLineItemSerializer
+
+
 class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
@@ -690,6 +697,7 @@ order_api_urls = [
 
     # API endpoints for sales order line items
     url(r'^so-add-line/', include([
+        url(r'^(?P<pk>\d+)/$', SOAdditionalLineItemDetail.as_view(), name='api-so-additional-line-detail'),
         url(r'^$', SOAdditionalLineItemList.as_view(), name='api-so-additional-line-list'),
     ])),
 
