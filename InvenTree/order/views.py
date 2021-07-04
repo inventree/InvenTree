@@ -318,11 +318,13 @@ class SalesOrderValidate(AjaxUpdateView):
         order = self.get_object()
         price = order.sell_price
         total = order.get_total_price()
+        difference = price - total
         return {
             'order': order,
             'price': price,
             'price_calc': total,
-            'price_diff': price - total,
+            'price_diff': difference,
+            'diff_symbol': 'danger' if difference.amount < 0 else 'success',
         }
 
     def get(self, request, *args, **kwargs):

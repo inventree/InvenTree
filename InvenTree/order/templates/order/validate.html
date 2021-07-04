@@ -4,6 +4,6 @@
 {% load inventree_extras %}
 
 {% block pre_form_content %}
-{% blocktrans %}Confirm that the order is valid for:<br><i>{{ order }}</i> with a price of {{price}} (calculated price is {{price_calc}}, difference {{ price_diff }}){% endblocktrans %}
+{% blocktrans %}Confirm that the order is valid for:<br><i>{{ order }}</i> with a price of {{price}} (calculated price is {{price_calc}}, difference <span class="text-{{ diff_symbol }}">{{ price_diff }}</span>){% endblocktrans %}
 
 {% endblock %}
