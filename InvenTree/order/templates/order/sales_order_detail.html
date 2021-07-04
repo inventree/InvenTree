@@ -39,7 +39,7 @@
     <div class='panel-content'>
         {% if roles.sales_order.change %}
         <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
-            <button type='button' class='btn btn-success' id='new-so-line'>
+            <button type='button' class='btn btn-success' id='new-add-so-line'>
                 <span class='fas fa-plus-circle'></span> {% trans "Add Line" %}
             </button>
         </div>
@@ -619,4 +619,26 @@ function additionalSetupCallbacks() {
     });
 
 }
+
+$("#new-add-so-line").click(function() {
+
+    constructForm('{% url "api-so-additional-line-list" %}', {
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
+            },
+            title: {},
+            quantity: {},
+            reference: {},
+            sale_price: {},
+            sale_price_currency: {},
+            notes: {},
+        },
+        method: 'POST',
+        title: '{% trans "Add Line" %}',
+        onSuccess: additionalreloadTable,
+    });
+});
+
 {% endblock %}
