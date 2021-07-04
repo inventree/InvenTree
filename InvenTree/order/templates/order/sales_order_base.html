@@ -151,7 +151,8 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-users'></span></td>
         <td>{% trans "Sell Price" %}</td>
-        <td>{{ order.sell_price }}
+        <td>
+            {% blocktrans with sell=order.sell_price total=order.get_total_price %}{{ sell }} (calculated {{ total }}){% endblocktrans %}
             <span class='label label-{% if order.is_valid %}success'>
                 {% trans "Validated" %}
             {% else %}danger'>
