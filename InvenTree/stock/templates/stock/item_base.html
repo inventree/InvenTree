@@ -247,7 +247,16 @@
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Serial Number" %}</td>
-        <td>{{ item.serial }}</td>
+        <td>
+        {% resolve request.path as url_path %}
+        {% if previous %}
+            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url url_path.url_name previous.id %}">{{ previous.serial }} ‹</a>
+        {% endif %}
+        <span class="btn" href="">{{ item.serial }}</span>
+        {% if next %}
+            <a class="btn btn-default" aria-label="{% trans 'next page' %}" href="{% url url_path.url_name next.id %}">› {{ next.serial }}</a>
+        {% endif %}
+        </td>
     </tr>
     {% else %}
     <tr>

@@ -86,6 +86,29 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     queryset = StockItem.objects.all()
     model = StockItem
 
+    def get_context_data(self, **kwargs):
+        """ add previous and next item """
+        data = super().get_context_data(**kwargs)
+
+        if self.object.serialized:
+            serial_elem = {a.serial: a for a in self.object.part.stock_items.all() if a.serialized}
+            serials = [int(a) for a in serial_elem.keys()]
+            current = int(self.object.serial)
+
+            # previous
+            for nbr in range(current - 1, 0, -1):
+                if nbr in serials:
+                    data['previous'] = serial_elem.get(str(nbr), None)
+                    break
+
+            # next
+            for nbr in range(current + 1, max(serials)):
+                if nbr in serials:
+                    data['next'] = serial_elem.get(str(nbr), None)
+                    break
+
+        return data
+
 
 class StockItemNotes(InvenTreeRoleMixin, UpdateView):
     """ View for editing the 'notes' field of a StockItem object """
