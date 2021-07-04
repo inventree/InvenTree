@@ -409,10 +409,20 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
-    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
-    quantity = serializers.FloatField(default=1)
+    quantity = serializers.FloatField()
+
+    sale_price = InvenTreeMoneySerializer(
+        max_digits=19,
+        decimal_places=4,
+        allow_null=True
+    )
 
     sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+
+    sale_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Sale price currency'),
+    )
 
     class Meta:
         model = SalesOrderAdditionalLineItem
@@ -420,10 +430,11 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'quantity',
-            'notes',
             'reference',
+            'notes',
             'order',
             'order_detail',
+            'title',
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
