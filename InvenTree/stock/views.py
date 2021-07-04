@@ -96,13 +96,13 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
             current = int(self.object.serial)
 
             # previous
-            for nbr in range(current - 1, 0, -1):
+            for nbr in range(current - 1, -1, -1):
                 if nbr in serials:
                     data['previous'] = serial_elem.get(str(nbr), None)
                     break
 
             # next
-            for nbr in range(current + 1, max(serials)):
+            for nbr in range(current + 1, max(serials) + 1):
                 if nbr in serials:
                     data['next'] = serial_elem.get(str(nbr), None)
                     break
