@@ -21,7 +21,7 @@ from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from stock.serializers import LocationBriefSerializer, StockItemSerializer, LocationSerializer
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrder, PurchaseOrderLineItem, SalesOrderAdditionalLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
@@ -390,6 +390,40 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'order_detail',
             'part',
             'part_detail',
+            'sale_price',
+            'sale_price_currency',
+            'sale_price_string',
+        ]
+
+
+class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
+    """ Serializer for a SalesOrderAdditionalLineItem object """
+    def __init__(self, *args, **kwargs):
+
+        order_detail = kwargs.pop('order_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
+
+    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
+
+    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
+    quantity = serializers.FloatField(default=1)
+
+    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+
+    class Meta:
+        model = SalesOrderAdditionalLineItem
+
+        fields = [
+            'pk',
+            'quantity',
+            'notes',
+            'reference',
+            'order',
+            'order_detail',
             'sale_price',
             'sale_price_currency',
             'sale_price_string',

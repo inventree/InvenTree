@@ -933,6 +933,33 @@ class SalesOrderLineItem(OrderLineItem):
         return self.allocated_quantity() > self.quantity
 
 
+class SalesOrderAdditionalLineItem(OrderLineItem):
+    """
+    Model for a single AdditionalLineItem in a SalesOrder
+
+    Attributes:
+        order: Link to the SalesOrder that this line item belongs to
+        title: titile of line item
+        sale_price: The unit sale price for this OrderLineItem
+    """
+
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+
+    title = models.CharField(verbose_name=_('title'), help_text=_('titel of the additional line'), max_length=250)
+
+    sale_price = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        null=True, blank=True,
+        verbose_name=_('Sale Price'),
+        help_text=_('Unit sale price'),
+    )
+
+    class Meta:
+        unique_together = [
+        ]
+
+
 class SalesOrderAllocation(models.Model):
     """
     This model is used to 'allocate' stock items to a SalesOrder.

@@ -23,9 +23,9 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment
 from .serializers import POSerializer, POLineItemSerializer, POAttachmentSerializer
 
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation, SalesOrderAdditionalLineItem
 from .models import SalesOrderAttachment
-from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
+from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer, SOAdditionalLineItemSerializer
 from .serializers import SalesOrderAllocationSerializer
 
 
@@ -514,6 +514,61 @@ class SOLineItemList(generics.ListCreateAPIView):
     ]
 
 
+class SOAdditionalLineItemList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of SalesOrderAdditionalLineItem objects.
+    """
+
+    queryset = SalesOrderAdditionalLineItem.objects.all()
+    serializer_class = SOAdditionalLineItemSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        try:
+            params = self.request.query_params
+
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'order',
+        )
+
+        return queryset
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    ordering_fields = [
+        'title',
+        'quantity',
+        'note',
+        'reference',
+    ]
+
+    search_fields = [
+        'title',
+        'quantity',
+        'note',
+        'reference'
+    ]
+
+    filter_fields = [
+        'order',
+    ]
+
+
 class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a SalesOrderLineItem object """
 
@@ -631,6 +686,11 @@ order_api_urls = [
     url(r'^so-line/', include([
         url(r'^(?P<pk>\d+)/$', SOLineItemDetail.as_view(), name='api-so-line-detail'),
         url(r'^$', SOLineItemList.as_view(), name='api-so-line-list'),
+    ])),
+
+    # API endpoints for sales order line items
+    url(r'^so-add-line/', include([
+        url(r'^$', SOAdditionalLineItemList.as_view(), name='api-so-additional-line-list'),
     ])),
 
     # API endpoints for sales order allocations

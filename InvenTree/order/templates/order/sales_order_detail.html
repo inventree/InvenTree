@@ -30,6 +30,26 @@
 
 {% endblock %}
 
+{% block post_content_panels %}
+<div class='panel panel-default panel-inventree'>
+    <div class='panel-heading'>
+        <h4>{% trans "Additional Order Lines" %}</h4>
+    </div>
+    
+    <div class='panel-content'>
+        {% if roles.sales_order.change %}
+        <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
+            <button type='button' class='btn btn-success' id='new-so-line'>
+                <span class='fas fa-plus-circle'></span> {% trans "Add Line" %}
+            </button>
+        </div>
+        {% endif %}
+
+        <table class='table table-striped table-condensed' id='so-additional-lines-table' data-toolbar='#order-additional-toolbar-buttons'></table>
+    </div>
+</div>
+{% endblock %}
+
 {% block js_ready %}
 {{ block.super }}
 
@@ -495,4 +515,104 @@ function setupCallbacks() {
     });
 }
 
+
+$("#so-additional-lines-table").inventreeTable({
+    formatNoMatches: function() { return "{% trans 'No matching lines' %}"; },
+    queryParams: {
+        order: {{ order.id }},
+    },
+    sidePagination: 'server',
+    uniqueId: 'pk',
+    url: "{% url 'api-so-additional-line-list' %}",
+    onPostBody: additionalSetupCallbacks,
+    showFooter: true,
+    columns: [
+        {
+            field: 'pk',
+            title: '{% trans "ID" %}',
+            visible: false,
+            switchable: false,
+        },
+        {
+            sortable: true,
+            field: 'title',
+            title: '{% trans "Title" %}',
+            footerFormatter:  function() {
+                return '{% trans "Total" %}'
+            },
+        },
+        {
+            sortable: true,
+            field: 'reference',
+            title: '{% trans "Reference" %}'
+        },
+        {
+            sortable: true,
+            field: 'quantity',
+            title: '{% trans "Quantity" %}',
+            footerFormatter: function(data) {
+                return data.map(function (row) {
+                  return +row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+            },
+        },
+        {
+            sortable: true,
+            field: 'sale_price',
+            title: '{% trans "Unit Price" %}',
+            formatter: function(value, row) {
+                return row.sale_price_string || row.sale_price;
+            }
+        },
+        {
+            sortable: true,
+            title: '{% trans "Total price" %}',
+            formatter: function(value, row) {
+                var total = row.sale_price * row.quantity;
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.sale_price_currency});
+                return formatter.format(total)
+            },
+            footerFormatter: function(data) {
+                var total = data.map(function (row) {
+                  return +row['sale_price']*row['quantity']
+                }).reduce(function (sum, i) {
+                  return sum + i
+                }, 0)
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency)  || 'USD';
+                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
+                return formatter.format(total)
+              }
+        },
+        {
+            field: 'notes',
+            title: '{% trans "Notes" %}',
+        },
+    ],
+});
+
+function additionalSetupCallbacks() {
+
+    var table = $("#so-additional-lines-table");
+
+    // Set up callbacks for the row buttons
+    table.find(".button-edit").click(function() {
+
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/line/${pk}/edit/`, {
+            success: reloadTable,
+        });
+    });
+
+    table.find(".button-delete").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/line/${pk}/delete/`, {
+            success: reloadTable,
+        });
+    });
+
+}
 {% endblock %}
