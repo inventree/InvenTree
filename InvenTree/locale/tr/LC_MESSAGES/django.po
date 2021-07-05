@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 12:15+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -177,10 +177,8 @@ msgid "parent"
 msgstr "üst"
 
 #: InvenTree/serializers.py:52
-#, fuzzy
-#| msgid "Most recent serial number is"
 msgid "Must be a valid number"
-msgstr "En son seri numarası"
+msgstr ""
 
 #: InvenTree/settings.py:505
 msgid "English"
@@ -956,10 +954,8 @@ msgstr "Ek Düzenle"
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Delete Operation"
-msgstr "Silmeyi onayla"
+msgstr ""
 
 #: build/templates/build/attachments.html:77
 #: order/templates/order/so_attachments.html:59
@@ -2258,10 +2254,8 @@ msgstr ""
 
 #: company/templates/company/company_base.html:166
 #: part/templates/part/part_base.html:307
-#, fuzzy
-#| msgid "Upload File"
 msgid "Upload Image"
-msgstr "Dosya Yükle"
+msgstr ""
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
@@ -2488,10 +2482,8 @@ msgid "New Parameter"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:48
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete parameters"
-msgstr "Parçaları sil"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:80
 msgid "Add Parameter"
@@ -2507,10 +2499,8 @@ msgid "Selected parameters will be deleted"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:139
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Parameters"
-msgstr "Parçaları Sil"
+msgstr ""
 
 #: company/templates/company/navbar.html:20
 #: company/templates/company/navbar.html:23
@@ -3019,16 +3009,12 @@ msgid "Enter stock allocation quantity"
 msgstr "Stok tahsis miktarını girin"
 
 #: order/serializers.py:139
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Purchase price currency"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: order/serializers.py:359
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sale price currency"
-msgstr "Satış Emri Referansı"
+msgstr ""
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
@@ -4439,10 +4425,8 @@ msgid "Create new Stock Location"
 msgstr "Yeni Stok konumu oluştur"
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select parent category"
-msgstr "Kategori Seçin"
+msgstr ""
 
 #: part/templates/part/category.html:286 part/views.py:2389
 msgid "Edit Part Category"
@@ -4770,22 +4754,16 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:379
-#, fuzzy
-#| msgid "Create New Parameter Template"
 msgid "Create New Part Category"
-msgstr "Yeni Parametre Şablonu Oluştur"
+msgstr ""
 
 #: part/templates/part/part_base.html:387
-#, fuzzy
-#| msgid "New Variant"
 msgid "New Parent"
-msgstr "Yeni Çeşit"
+msgstr ""
 
 #: part/templates/part/part_base.html:435
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Part"
-msgstr "Konumu düzenle"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:27
 msgid "Supplier Pricing"
@@ -4840,22 +4818,16 @@ msgid "Add Test Template"
 msgstr "Test Şablonu Ekle"
 
 #: part/templates/part/part_tests.html:61
-#, fuzzy
-#| msgid "Add Test Template"
 msgid "Add Test Result Template"
-msgstr "Test Şablonu Ekle"
+msgstr ""
 
 #: part/templates/part/part_tests.html:79
-#, fuzzy
-#| msgid "Edit Test Template"
 msgid "Edit Test Result Template"
-msgstr "Test Şablonu Düzenle"
+msgstr ""
 
 #: part/templates/part/part_tests.html:91
-#, fuzzy
-#| msgid "Delete Test Template"
 msgid "Delete Test Result Template"
-msgstr "Test Şablonu Sil"
+msgstr ""
 
 #: part/templates/part/part_thumb.html:20
 msgid "Select from existing images"
@@ -4892,26 +4864,20 @@ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting th
 msgstr ""
 
 #: part/templates/part/prices.html:12
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "General Price Information"
-msgstr "Kullanıcı Bilgisini Düzenle"
+msgstr ""
 
 #: part/templates/part/prices.html:22
 msgid "Pricing ranges"
 msgstr ""
 
 #: part/templates/part/prices.html:28
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Show supplier cost"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: part/templates/part/prices.html:29
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Show purchase price"
-msgstr "Yeni Satın Alma Emri"
+msgstr ""
 
 #: part/templates/part/prices.html:56
 msgid "Show BOM cost"
@@ -4930,10 +4896,8 @@ msgid "Calculation parameters"
 msgstr ""
 
 #: part/templates/part/prices.html:146
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Cost"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: part/templates/part/prices.html:147 part/templates/part/prices.html:167
 #: part/templates/part/prices.html:193 part/templates/part/prices.html:224
@@ -4966,10 +4930,8 @@ msgid "Sale Cost"
 msgstr ""
 
 #: part/templates/part/prices.html:290
-#, fuzzy
-#| msgid "No stock available for %(part)s"
 msgid "No sale pice history available for this part."
-msgstr "%(part)s için mevcut stok yok"
+msgstr ""
 
 #: part/templates/part/prices.html:340
 #, python-format
@@ -5838,10 +5800,8 @@ msgid "No stocktake performed"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:499
-#, fuzzy
-#| msgid "Edit Stock Location"
 msgid "Edit Stock Status"
-msgstr "Stok konumunu düzenle"
+msgstr ""
 
 #: stock/templates/stock/item_childs.html:12
 msgid "Child Stock Items"
@@ -6256,10 +6216,8 @@ msgid "Recently Updated"
 msgstr ""
 
 #: templates/InvenTree/index.html:131
-#, fuzzy
-#| msgid "Delete Stock Location"
 msgid "Depleted Stock"
-msgstr "Stok Konumunu Sil"
+msgstr ""
 
 #: templates/InvenTree/index.html:146
 msgid "Expired Stock"
@@ -6319,8 +6277,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6598,16 +6555,12 @@ msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
 #: templates/js/attachment.js:16
-#, fuzzy
-#| msgid "No variants found"
 msgid "No attachments found"
-msgstr "Çeşit bulunamadı"
+msgstr ""
 
 #: templates/js/attachment.js:56
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Date"
-msgstr "yükleme tarihi"
+msgstr ""
 
 #: templates/js/attachment.js:69
 msgid "Edit attachment"
@@ -6832,16 +6785,12 @@ msgid "No company information found"
 msgstr ""
 
 #: templates/js/company.js:183
-#, fuzzy
-#| msgid "The following items will be created"
 msgid "The following manufacturer parts will be deleted"
-msgstr "Aşağıdaki ögeler oluşturulacak"
+msgstr ""
 
 #: templates/js/company.js:200
-#, fuzzy
-#| msgid "Delete supplier parts"
 msgid "Delete Manufacturer Parts"
-msgstr "Tedarikçi parçalarını sil"
+msgstr ""
 
 #: templates/js/company.js:253
 msgid "No manufacturer parts found"
@@ -6870,16 +6819,12 @@ msgid "Delete parameter"
 msgstr ""
 
 #: templates/js/company.js:406
-#, fuzzy
-#| msgid "Edit Part Parameter Template"
 msgid "Edit Parameter"
-msgstr "Parça Parametre Şablonu Düzenle"
+msgstr ""
 
 #: templates/js/company.js:417
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Parameter"
-msgstr "Parçaları Sil"
+msgstr ""
 
 #: templates/js/company.js:453
 msgid "No supplier parts found"
@@ -6923,10 +6868,8 @@ msgid "Update operation not allowed"
 msgstr ""
 
 #: templates/js/forms.js:304
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete operation not allowed"
-msgstr "Konumu sil"
+msgstr ""
 
 #: templates/js/forms.js:316
 msgid "View operation not allowed"
@@ -7088,28 +7031,20 @@ msgid "Company ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:63
-#, fuzzy
-#| msgid "Location"
 msgid "Location ID"
-msgstr "Konum"
+msgstr ""
 
 #: templates/js/model_renderers.js:90
-#, fuzzy
-#| msgid "Part"
 msgid "Part ID"
-msgstr "Parça"
+msgstr ""
 
 #: templates/js/model_renderers.js:126
-#, fuzzy
-#| msgid "Category Details"
 msgid "Category ID"
-msgstr "Kategori Detayları"
+msgstr ""
 
 #: templates/js/model_renderers.js:150
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Part ID"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: templates/js/order.js:31
 msgid "Create Sales Order"
@@ -7128,10 +7063,8 @@ msgid "No sales orders found"
 msgstr ""
 
 #: templates/js/order.js:333
-#, fuzzy
-#| msgid "Customer"
 msgid "Invalid Customer"
-msgstr "Müşteri"
+msgstr ""
 
 #: templates/js/order.js:410
 msgid "No sales order allocations found"
@@ -7198,10 +7131,9 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No matching action found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7954,17 +7886,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Added attachment"
-#~ msgstr "Ek eklendi"
-
-#~ msgid "Attachment updated"
-#~ msgstr "Ek güncellendi"
-
-#~ msgid "Deleted attachment"
-#~ msgstr "Eki sil"
-
-#~ msgid "There are %(count)s suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:"
-#~ msgstr "Bu üretici parçası için tanımlanmış %(count)s tedarikçi bulunmaktadır. Bunu silerseniz, aşağıdaki tedarikçi parçaları da silinecektir:"
-
-#~ msgid "Create Test Template"
-#~ msgstr "Test Şablonu Oluştur"

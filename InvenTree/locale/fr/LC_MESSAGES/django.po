@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 12:15+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -954,10 +954,8 @@ msgstr ""
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Delete Operation"
-msgstr "Confirmer la suppression de cet élément"
+msgstr ""
 
 #: build/templates/build/attachments.html:77
 #: order/templates/order/so_attachments.html:59
@@ -2256,10 +2254,8 @@ msgstr ""
 
 #: company/templates/company/company_base.html:166
 #: part/templates/part/part_base.html:307
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Image"
-msgstr "date de chargement"
+msgstr ""
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
@@ -2486,10 +2482,8 @@ msgid "New Parameter"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:48
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete parameters"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:80
 msgid "Add Parameter"
@@ -2505,10 +2499,8 @@ msgid "Selected parameters will be deleted"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:139
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Parameters"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: company/templates/company/navbar.html:20
 #: company/templates/company/navbar.html:23
@@ -4433,10 +4425,8 @@ msgid "Create new Stock Location"
 msgstr ""
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select parent category"
-msgstr "Sélectionnez une catégorie"
+msgstr ""
 
 #: part/templates/part/category.html:286 part/views.py:2389
 msgid "Edit Part Category"
@@ -4764,22 +4754,16 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:379
-#, fuzzy
-#| msgid "Select Category"
 msgid "Create New Part Category"
-msgstr "Sélectionnez une catégorie"
+msgstr ""
 
 #: part/templates/part/part_base.html:387
-#, fuzzy
-#| msgid "parent"
 msgid "New Parent"
-msgstr "parent"
+msgstr ""
 
 #: part/templates/part/part_base.html:435
-#, fuzzy
-#| msgid "Part"
 msgid "Edit Part"
-msgstr "Pièce"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:27
 msgid "Supplier Pricing"
@@ -4880,10 +4864,8 @@ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting th
 msgstr ""
 
 #: part/templates/part/prices.html:12
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "General Price Information"
-msgstr "Modifier les informations utilisateur"
+msgstr ""
 
 #: part/templates/part/prices.html:22
 msgid "Pricing ranges"
@@ -5818,10 +5800,8 @@ msgid "No stocktake performed"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:499
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit Stock Status"
-msgstr "Article de stock modifié"
+msgstr ""
 
 #: stock/templates/stock/item_childs.html:12
 msgid "Child Stock Items"
@@ -6236,10 +6216,8 @@ msgid "Recently Updated"
 msgstr ""
 
 #: templates/InvenTree/index.html:131
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Depleted Stock"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: templates/InvenTree/index.html:146
 msgid "Expired Stock"
@@ -6299,8 +6277,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6578,16 +6555,12 @@ msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
 #: templates/js/attachment.js:16
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No attachments found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/attachment.js:56
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Date"
-msgstr "date de chargement"
+msgstr ""
 
 #: templates/js/attachment.js:69
 msgid "Edit attachment"
@@ -6850,10 +6823,8 @@ msgid "Edit Parameter"
 msgstr ""
 
 #: templates/js/company.js:417
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Parameter"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: templates/js/company.js:453
 msgid "No supplier parts found"
@@ -7060,22 +7031,16 @@ msgid "Company ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:63
-#, fuzzy
-#| msgid "Location changed"
 msgid "Location ID"
-msgstr "Emplacement modifié"
+msgstr ""
 
 #: templates/js/model_renderers.js:90
-#, fuzzy
-#| msgid "Part"
 msgid "Part ID"
-msgstr "Pièce"
+msgstr ""
 
 #: templates/js/model_renderers.js:126
-#, fuzzy
-#| msgid "Select Category"
 msgid "Category ID"
-msgstr "Sélectionnez une catégorie"
+msgstr ""
 
 #: templates/js/model_renderers.js:150
 msgid "Supplier Part ID"
@@ -7166,10 +7131,9 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No matching action found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7922,5 +7886,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Added attachment"
-#~ msgstr "Pièce jointe ajoutée"

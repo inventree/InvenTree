@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 12:15+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -954,10 +954,8 @@ msgstr ""
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Delete Operation"
-msgstr "确认删除"
+msgstr ""
 
 #: build/templates/build/attachments.html:77
 #: order/templates/order/so_attachments.html:59
@@ -2256,10 +2254,8 @@ msgstr ""
 
 #: company/templates/company/company_base.html:166
 #: part/templates/part/part_base.html:307
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Image"
-msgstr "上传日期"
+msgstr ""
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
@@ -4429,10 +4425,8 @@ msgid "Create new Stock Location"
 msgstr ""
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select parent category"
-msgstr "选择分类"
+msgstr ""
 
 #: part/templates/part/category.html:286 part/views.py:2389
 msgid "Edit Part Category"
@@ -4760,10 +4754,8 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:379
-#, fuzzy
-#| msgid "Select Category"
 msgid "Create New Part Category"
-msgstr "选择分类"
+msgstr ""
 
 #: part/templates/part/part_base.html:387
 msgid "New Parent"
@@ -6285,8 +6277,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6564,16 +6555,12 @@ msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
 #: templates/js/attachment.js:16
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No attachments found"
-msgstr "未找到指定操作"
+msgstr ""
 
 #: templates/js/attachment.js:56
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Date"
-msgstr "上传日期"
+msgstr ""
 
 #: templates/js/attachment.js:69
 msgid "Edit attachment"
@@ -7052,10 +7039,8 @@ msgid "Part ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:126
-#, fuzzy
-#| msgid "Select Category"
 msgid "Category ID"
-msgstr "选择分类"
+msgstr ""
 
 #: templates/js/model_renderers.js:150
 msgid "Supplier Part ID"
@@ -7146,10 +7131,9 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No matching action found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "未找到指定操作"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7901,3 +7885,4 @@ msgstr ""
 #: users/models.py:192
 msgid "Permission to delete items"
 msgstr ""
+

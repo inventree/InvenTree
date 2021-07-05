@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 12:15+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -954,10 +954,8 @@ msgstr ""
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Delete Operation"
-msgstr "Confirmar borrado de artículo"
+msgstr ""
 
 #: build/templates/build/attachments.html:77
 #: order/templates/order/so_attachments.html:59
@@ -2484,10 +2482,8 @@ msgid "New Parameter"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:48
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete parameters"
-msgstr "Eliminar elemento"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:80
 msgid "Add Parameter"
@@ -2503,10 +2499,8 @@ msgid "Selected parameters will be deleted"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:139
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Parameters"
-msgstr "Eliminar elemento"
+msgstr ""
 
 #: company/templates/company/navbar.html:20
 #: company/templates/company/navbar.html:23
@@ -4431,10 +4425,8 @@ msgid "Create new Stock Location"
 msgstr ""
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select parent category"
-msgstr "Seleccionar Categoría"
+msgstr ""
 
 #: part/templates/part/category.html:286 part/views.py:2389
 msgid "Edit Part Category"
@@ -4762,20 +4754,16 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:379
-#, fuzzy
-#| msgid "Select Category"
 msgid "Create New Part Category"
-msgstr "Seleccionar Categoría"
+msgstr ""
 
 #: part/templates/part/part_base.html:387
 msgid "New Parent"
 msgstr ""
 
 #: part/templates/part/part_base.html:435
-#, fuzzy
-#| msgid "Part"
 msgid "Edit Part"
-msgstr "Parte"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:27
 msgid "Supplier Pricing"
@@ -4876,20 +4864,16 @@ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting th
 msgstr ""
 
 #: part/templates/part/prices.html:12
-#, fuzzy
-#| msgid "System Information"
 msgid "General Price Information"
-msgstr "Información del sistema"
+msgstr ""
 
 #: part/templates/part/prices.html:22
 msgid "Pricing ranges"
 msgstr ""
 
 #: part/templates/part/prices.html:28
-#, fuzzy
-#| msgid "Supplier"
 msgid "Show supplier cost"
-msgstr "Proveedor"
+msgstr ""
 
 #: part/templates/part/prices.html:29
 msgid "Show purchase price"
@@ -4912,10 +4896,8 @@ msgid "Calculation parameters"
 msgstr ""
 
 #: part/templates/part/prices.html:146
-#, fuzzy
-#| msgid "Supplier"
 msgid "Supplier Cost"
-msgstr "Proveedor"
+msgstr ""
 
 #: part/templates/part/prices.html:147 part/templates/part/prices.html:167
 #: part/templates/part/prices.html:193 part/templates/part/prices.html:224
@@ -5818,10 +5800,8 @@ msgid "No stocktake performed"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:499
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit Stock Status"
-msgstr "Elemento de stock editado"
+msgstr ""
 
 #: stock/templates/stock/item_childs.html:12
 msgid "Child Stock Items"
@@ -6236,10 +6216,8 @@ msgid "Recently Updated"
 msgstr ""
 
 #: templates/InvenTree/index.html:131
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Depleted Stock"
-msgstr "Eliminar elemento"
+msgstr ""
 
 #: templates/InvenTree/index.html:146
 msgid "Expired Stock"
@@ -6299,8 +6277,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6578,10 +6555,8 @@ msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
 #: templates/js/attachment.js:16
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No attachments found"
-msgstr "No se encontró ninguna acción coincidente"
+msgstr ""
 
 #: templates/js/attachment.js:56
 msgid "Upload Date"
@@ -6814,10 +6789,8 @@ msgid "The following manufacturer parts will be deleted"
 msgstr ""
 
 #: templates/js/company.js:200
-#, fuzzy
-#| msgid "Manufacturers"
 msgid "Delete Manufacturer Parts"
-msgstr "Fabricantes"
+msgstr ""
 
 #: templates/js/company.js:253
 msgid "No manufacturer parts found"
@@ -6850,10 +6823,8 @@ msgid "Edit Parameter"
 msgstr ""
 
 #: templates/js/company.js:417
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Parameter"
-msgstr "Eliminar elemento"
+msgstr ""
 
 #: templates/js/company.js:453
 msgid "No supplier parts found"
@@ -7060,28 +7031,20 @@ msgid "Company ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:63
-#, fuzzy
-#| msgid "Location"
 msgid "Location ID"
-msgstr "Unicación"
+msgstr ""
 
 #: templates/js/model_renderers.js:90
-#, fuzzy
-#| msgid "Part"
 msgid "Part ID"
-msgstr "Parte"
+msgstr ""
 
 #: templates/js/model_renderers.js:126
-#, fuzzy
-#| msgid "Select Category"
 msgid "Category ID"
-msgstr "Seleccionar Categoría"
+msgstr ""
 
 #: templates/js/model_renderers.js:150
-#, fuzzy
-#| msgid "Supplier"
 msgid "Supplier Part ID"
-msgstr "Proveedor"
+msgstr ""
 
 #: templates/js/order.js:31
 msgid "Create Sales Order"
@@ -7100,10 +7063,8 @@ msgid "No sales orders found"
 msgstr ""
 
 #: templates/js/order.js:333
-#, fuzzy
-#| msgid "Customer"
 msgid "Invalid Customer"
-msgstr "Cliente"
+msgstr ""
 
 #: templates/js/order.js:410
 msgid "No sales order allocations found"
@@ -7170,10 +7131,9 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No matching action found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "No se encontró ninguna acción coincidente"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7925,3 +7885,4 @@ msgstr ""
 #: users/models.py:192
 msgid "Permission to delete items"
 msgstr ""
+

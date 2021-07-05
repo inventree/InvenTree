@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 12:15+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -954,10 +954,8 @@ msgstr "Edytuj załącznik"
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Delete Operation"
-msgstr "Potwierdź usuwanie elementu"
+msgstr ""
 
 #: build/templates/build/attachments.html:77
 #: order/templates/order/so_attachments.html:59
@@ -2206,10 +2204,8 @@ msgid "Default currency used for this supplier"
 msgstr ""
 
 #: company/serializers.py:69
-#, fuzzy
-#| msgid "Currency"
 msgid "Currency Code"
-msgstr "Waluta"
+msgstr ""
 
 #: company/templates/company/assigned_stock.html:10
 #: company/templates/company/navbar.html:62
@@ -2258,10 +2254,8 @@ msgstr "Telefon"
 
 #: company/templates/company/company_base.html:166
 #: part/templates/part/part_base.html:307
-#, fuzzy
-#| msgid "Upload new image"
 msgid "Upload Image"
-msgstr "Prześlij nowy obraz"
+msgstr ""
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
@@ -2488,16 +2482,12 @@ msgid "New Parameter"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:48
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete parameters"
-msgstr "Usuń części"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:80
-#, fuzzy
-#| msgid "Parameters"
 msgid "Add Parameter"
-msgstr "Parametry"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:97
 #: part/templates/part/supplier.html:51
@@ -2509,10 +2499,8 @@ msgid "Selected parameters will be deleted"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:139
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Parameters"
-msgstr "Usuń części"
+msgstr ""
 
 #: company/templates/company/navbar.html:20
 #: company/templates/company/navbar.html:23
@@ -3021,16 +3009,12 @@ msgid "Enter stock allocation quantity"
 msgstr ""
 
 #: order/serializers.py:139
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Purchase price currency"
-msgstr "Cena zakupu"
+msgstr ""
 
 #: order/serializers.py:359
-#, fuzzy
-#| msgid "Sale Price"
 msgid "Sale price currency"
-msgstr "Cena sprzedaży"
+msgstr ""
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
@@ -4441,10 +4425,8 @@ msgid "Create new Stock Location"
 msgstr "Utwórz nową lokalizację magazynową"
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select parent category"
-msgstr "Wybierz kategorię"
+msgstr ""
 
 #: part/templates/part/category.html:286 part/views.py:2389
 msgid "Edit Part Category"
@@ -4642,10 +4624,8 @@ msgid "Used In"
 msgstr ""
 
 #: part/templates/part/navbar.html:77
-#, fuzzy
-#| msgid "Price"
 msgid "Prices"
-msgstr "Cena"
+msgstr ""
 
 #: part/templates/part/navbar.html:109 part/templates/part/part_tests.html:10
 msgid "Part Test Templates"
@@ -4774,22 +4754,16 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:379
-#, fuzzy
-#| msgid "Create new part category"
 msgid "Create New Part Category"
-msgstr "Stwórz nową kategorię komponentów"
+msgstr ""
 
 #: part/templates/part/part_base.html:387
-#, fuzzy
-#| msgid "New Part"
 msgid "New Parent"
-msgstr "Nowy komponent"
+msgstr ""
 
 #: part/templates/part/part_base.html:435
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Edit Part"
-msgstr "Edytuj uwagi"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:27
 msgid "Supplier Pricing"
@@ -4890,54 +4864,40 @@ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting th
 msgstr ""
 
 #: part/templates/part/prices.html:12
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "General Price Information"
-msgstr "Informacja cenowa"
+msgstr ""
 
 #: part/templates/part/prices.html:22
 msgid "Pricing ranges"
 msgstr ""
 
 #: part/templates/part/prices.html:28
-#, fuzzy
-#| msgid "Supplier List"
 msgid "Show supplier cost"
-msgstr "Lista dostawców"
+msgstr ""
 
 #: part/templates/part/prices.html:29
-#, fuzzy
-#| msgid "Unit purchase price"
 msgid "Show purchase price"
-msgstr "Cena zakupu jednostkowego"
+msgstr ""
 
 #: part/templates/part/prices.html:56
 msgid "Show BOM cost"
 msgstr ""
 
 #: part/templates/part/prices.html:104
-#, fuzzy
-#| msgid "base cost"
 msgid "Show sale cost"
-msgstr "koszt podstawowy"
+msgstr ""
 
 #: part/templates/part/prices.html:105
-#, fuzzy
-#| msgid "Unit sale price"
 msgid "Show sale price"
-msgstr "Jednostkowa cena sprzedaży"
+msgstr ""
 
 #: part/templates/part/prices.html:127
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Calculation parameters"
-msgstr "Parametry części"
+msgstr ""
 
 #: part/templates/part/prices.html:146
-#, fuzzy
-#| msgid "Supplier List"
 msgid "Supplier Cost"
-msgstr "Lista dostawców"
+msgstr ""
 
 #: part/templates/part/prices.html:147 part/templates/part/prices.html:167
 #: part/templates/part/prices.html:193 part/templates/part/prices.html:224
@@ -4954,10 +4914,8 @@ msgid "No stock pricing history is available for this part."
 msgstr ""
 
 #: part/templates/part/prices.html:192
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Cost"
-msgstr "Część wewnętrzna"
+msgstr ""
 
 #: part/templates/part/prices.html:206 part/views.py:2859
 msgid "Add Internal Price Break"
@@ -4972,10 +4930,8 @@ msgid "Sale Cost"
 msgstr ""
 
 #: part/templates/part/prices.html:290
-#, fuzzy
-#| msgid "No stock available for %(part)s"
 msgid "No sale pice history available for this part."
-msgstr "Brak zapasów dla %(part)s"
+msgstr ""
 
 #: part/templates/part/prices.html:340
 #, python-format
@@ -6260,10 +6216,8 @@ msgid "Recently Updated"
 msgstr ""
 
 #: templates/InvenTree/index.html:131
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Depleted Stock"
-msgstr "Przydziel zapasy"
+msgstr ""
 
 #: templates/InvenTree/index.html:146
 msgid "Expired Stock"
@@ -6323,8 +6277,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6602,16 +6555,12 @@ msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
 #: templates/js/attachment.js:16
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No attachments found"
-msgstr "Nie znaleziono pasującej akcji"
+msgstr ""
 
 #: templates/js/attachment.js:56
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Date"
-msgstr "data przesłania"
+msgstr ""
 
 #: templates/js/attachment.js:69
 msgid "Edit attachment"
@@ -6820,10 +6769,8 @@ msgid "Edit Company"
 msgstr "Edytuj firmę"
 
 #: templates/js/company.js:66
-#, fuzzy
-#| msgid "New Company"
 msgid "Add new Company"
-msgstr "Nowa firma"
+msgstr ""
 
 #: templates/js/company.js:143
 msgid "Parts Supplied"
@@ -6842,10 +6789,8 @@ msgid "The following manufacturer parts will be deleted"
 msgstr ""
 
 #: templates/js/company.js:200
-#, fuzzy
-#| msgid "Delete manufacturer part"
 msgid "Delete Manufacturer Parts"
-msgstr "Usuń cześć producenta"
+msgstr ""
 
 #: templates/js/company.js:253
 msgid "No manufacturer parts found"
@@ -6874,16 +6819,12 @@ msgid "Delete parameter"
 msgstr ""
 
 #: templates/js/company.js:406
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Edit Parameter"
-msgstr "Parametry części"
+msgstr ""
 
 #: templates/js/company.js:417
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Parameter"
-msgstr "Usuń części"
+msgstr ""
 
 #: templates/js/company.js:453
 msgid "No supplier parts found"
@@ -7086,34 +7027,24 @@ msgid "Server returned error code 400"
 msgstr ""
 
 #: templates/js/model_renderers.js:21
-#, fuzzy
-#| msgid "Company"
 msgid "Company ID"
-msgstr "Firma"
+msgstr ""
 
 #: templates/js/model_renderers.js:63
-#, fuzzy
-#| msgid "Location"
 msgid "Location ID"
-msgstr "Lokalizacja"
+msgstr ""
 
 #: templates/js/model_renderers.js:90
-#, fuzzy
-#| msgid "Part 1"
 msgid "Part ID"
-msgstr "Część 1"
+msgstr ""
 
 #: templates/js/model_renderers.js:126
-#, fuzzy
-#| msgid "Category"
 msgid "Category ID"
-msgstr "Kategoria"
+msgstr ""
 
 #: templates/js/model_renderers.js:150
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier Part ID"
-msgstr "Komponenty dostawcy"
+msgstr ""
 
 #: templates/js/order.js:31
 msgid "Create Sales Order"
@@ -7132,10 +7063,8 @@ msgid "No sales orders found"
 msgstr ""
 
 #: templates/js/order.js:333
-#, fuzzy
-#| msgid "Customer"
 msgid "Invalid Customer"
-msgstr "Klient"
+msgstr ""
 
 #: templates/js/order.js:410
 msgid "No sales order allocations found"
@@ -7202,10 +7131,9 @@ msgid "This test is defined for a parent part"
 msgstr ""
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No matching action found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "Nie znaleziono pasującej akcji"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7958,23 +7886,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Added attachment"
-#~ msgstr "Dodano załącznik"
-
-#~ msgid "Attachment updated"
-#~ msgstr "Załącznik zaktualizowany"
-
-#~ msgid "Deleted attachment"
-#~ msgstr "Załącznik usunięto"
-
-#~ msgid "Create new Customer"
-#~ msgstr "Utwórz nowego klienta"
-
-#~ msgid "Create new Company"
-#~ msgstr "Utwórz nową firmę"
-
-#~ msgid "Created new company"
-#~ msgstr "Utwórz nową firmę"
-
-#~ msgid "Company was deleted"
-#~ msgstr "Usunięto firmę"

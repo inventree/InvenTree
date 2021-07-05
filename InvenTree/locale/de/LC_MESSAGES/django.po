@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-03 12:15+0000\n"
-"PO-Revision-Date: 2021-07-03 02:11\n"
+"PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -133,10 +133,8 @@ msgid "upload date"
 msgstr "Hochladedatum"
 
 #: InvenTree/models.py:102
-#, fuzzy
-#| msgid "Invalid date"
 msgid "Invalid choice"
-msgstr "Ungültiges Datum"
+msgstr ""
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:414
 #: label/models.py:103 part/models.py:680 part/models.py:2192
@@ -179,10 +177,8 @@ msgid "parent"
 msgstr "Eltern"
 
 #: InvenTree/serializers.py:52
-#, fuzzy
-#| msgid "Must be a valid image URL"
 msgid "Must be a valid number"
-msgstr "Muss eine gültige URL für ein Bild sein"
+msgstr ""
 
 #: InvenTree/settings.py:505
 msgid "English"
@@ -958,10 +954,8 @@ msgstr "Anhang bearbeiten"
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
-#, fuzzy
-#| msgid "Confirm Part Deletion"
 msgid "Confirm Delete Operation"
-msgstr "Löschen des Teils bestätigen"
+msgstr ""
 
 #: build/templates/build/attachments.html:77
 #: order/templates/order/so_attachments.html:59
@@ -2206,16 +2200,12 @@ msgid "Order multiple"
 msgstr "Mehrere bestellen"
 
 #: company/serializers.py:68
-#, fuzzy
-#| msgid "Default currency used for this company"
 msgid "Default currency used for this supplier"
-msgstr "Standard-Währung für diese Firma"
+msgstr ""
 
 #: company/serializers.py:69
-#, fuzzy
-#| msgid "Currency"
 msgid "Currency Code"
-msgstr "Währung"
+msgstr ""
 
 #: company/templates/company/assigned_stock.html:10
 #: company/templates/company/navbar.html:62
@@ -2264,10 +2254,8 @@ msgstr "Telefon"
 
 #: company/templates/company/company_base.html:166
 #: part/templates/part/part_base.html:307
-#, fuzzy
-#| msgid "Upload Part Image"
 msgid "Upload Image"
-msgstr "Teilbild hochladen"
+msgstr ""
 
 #: company/templates/company/detail.html:21
 msgid "Company Name"
@@ -2494,16 +2482,12 @@ msgid "New Parameter"
 msgstr "Neuer Parameter"
 
 #: company/templates/company/manufacturer_part_suppliers.html:48
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete parameters"
-msgstr "Teile löschen"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:80
-#, fuzzy
-#| msgid "Add new parameter"
 msgid "Add Parameter"
-msgstr "Parameter hinzufügen"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:97
 #: part/templates/part/supplier.html:51
@@ -2511,16 +2495,12 @@ msgid "Create new supplier"
 msgstr "Neuen Zulieferer anlegen"
 
 #: company/templates/company/manufacturer_part_suppliers.html:127
-#, fuzzy
-#| msgid "All selected BOM items will be deleted"
 msgid "Selected parameters will be deleted"
-msgstr "Alle ausgewählte Stücklistenpositionen werden gelöscht"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:139
-#, fuzzy
-#| msgid "Delete Part Parameter"
 msgid "Delete Parameters"
-msgstr "Teilparameter löschen"
+msgstr ""
 
 #: company/templates/company/navbar.html:20
 #: company/templates/company/navbar.html:23
@@ -3029,16 +3009,12 @@ msgid "Enter stock allocation quantity"
 msgstr "Anzahl für Bestandszuordnung eingeben"
 
 #: order/serializers.py:139
-#, fuzzy
-#| msgid "Purchase Order reference"
 msgid "Purchase price currency"
-msgstr "Bestellungs-Referenz"
+msgstr ""
 
 #: order/serializers.py:359
-#, fuzzy
-#| msgid "Single Price - %(currency)s"
 msgid "Sale price currency"
-msgstr "Einzelpreis - %(currency)s"
+msgstr ""
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
@@ -4449,10 +4425,8 @@ msgid "Create new Stock Location"
 msgstr "Neuen Lagerort erstellen"
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select part category"
 msgid "Select parent category"
-msgstr "Teil-Kategorie wählen"
+msgstr ""
 
 #: part/templates/part/category.html:286 part/views.py:2389
 msgid "Edit Part Category"
@@ -4650,10 +4624,8 @@ msgid "Used In"
 msgstr "Benutzt in"
 
 #: part/templates/part/navbar.html:77
-#, fuzzy
-#| msgid "Price"
 msgid "Prices"
-msgstr "Preis"
+msgstr ""
 
 #: part/templates/part/navbar.html:109 part/templates/part/part_tests.html:10
 msgid "Part Test Templates"
@@ -4782,22 +4754,16 @@ msgid "Calculate"
 msgstr "Berechnen"
 
 #: part/templates/part/part_base.html:379
-#, fuzzy
-#| msgid "Create new Part Category"
 msgid "Create New Part Category"
-msgstr "Neue Teil-Kategorie anlegen"
+msgstr ""
 
 #: part/templates/part/part_base.html:387
-#, fuzzy
-#| msgid "New Part"
 msgid "New Parent"
-msgstr "Neues Teil"
+msgstr ""
 
 #: part/templates/part/part_base.html:435
-#, fuzzy
-#| msgid "Edit part"
 msgid "Edit Part"
-msgstr "Teil bearbeiten"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:27
 msgid "Supplier Pricing"
@@ -4852,22 +4818,16 @@ msgid "Add Test Template"
 msgstr "Test Vorlage hinzufügen"
 
 #: part/templates/part/part_tests.html:61
-#, fuzzy
-#| msgid "Add Test Template"
 msgid "Add Test Result Template"
-msgstr "Test Vorlage hinzufügen"
+msgstr ""
 
 #: part/templates/part/part_tests.html:79
-#, fuzzy
-#| msgid "Edit Test Template"
 msgid "Edit Test Result Template"
-msgstr "Testvorlage bearbeiten"
+msgstr ""
 
 #: part/templates/part/part_tests.html:91
-#, fuzzy
-#| msgid "Delete Test Template"
 msgid "Delete Test Result Template"
-msgstr "Testvorlage löschen"
+msgstr ""
 
 #: part/templates/part/part_thumb.html:20
 msgid "Select from existing images"
@@ -4904,54 +4864,40 @@ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting th
 msgstr "Es gibt %(count)s einzigartige Teile, die für '%(full_name)s' verfolgt werden. Das Löschen dieses Teils wird diese Tracking-Informationen dauerhaft entfernen."
 
 #: part/templates/part/prices.html:12
-#, fuzzy
-#| msgid "Sell Price Information"
 msgid "General Price Information"
-msgstr "Verkaufspreis Informationen"
+msgstr ""
 
 #: part/templates/part/prices.html:22
 msgid "Pricing ranges"
 msgstr "Preisspannen"
 
 #: part/templates/part/prices.html:28
-#, fuzzy
-#| msgid "Supplier List"
 msgid "Show supplier cost"
-msgstr "Zulieferer-Liste"
+msgstr ""
 
 #: part/templates/part/prices.html:29
-#, fuzzy
-#| msgid "Unit purchase price"
 msgid "Show purchase price"
-msgstr "Preis pro Einheit"
+msgstr ""
 
 #: part/templates/part/prices.html:56
 msgid "Show BOM cost"
 msgstr ""
 
 #: part/templates/part/prices.html:104
-#, fuzzy
-#| msgid "base cost"
 msgid "Show sale cost"
-msgstr "Basiskosten"
+msgstr ""
 
 #: part/templates/part/prices.html:105
-#, fuzzy
-#| msgid "Unit sale price"
 msgid "Show sale price"
-msgstr "Stückverkaufspreis"
+msgstr ""
 
 #: part/templates/part/prices.html:127
-#, fuzzy
-#| msgid "Copy Parameters"
 msgid "Calculation parameters"
-msgstr "Parameter kopieren"
+msgstr ""
 
 #: part/templates/part/prices.html:146
-#, fuzzy
-#| msgid "Supplier List"
 msgid "Supplier Cost"
-msgstr "Zulieferer-Liste"
+msgstr ""
 
 #: part/templates/part/prices.html:147 part/templates/part/prices.html:167
 #: part/templates/part/prices.html:193 part/templates/part/prices.html:224
@@ -4968,32 +4914,24 @@ msgid "No stock pricing history is available for this part."
 msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 
 #: part/templates/part/prices.html:192
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Cost"
-msgstr "Internes Teil"
+msgstr ""
 
 #: part/templates/part/prices.html:206 part/views.py:2859
 msgid "Add Internal Price Break"
 msgstr ""
 
 #: part/templates/part/prices.html:223
-#, fuzzy
-#| msgid "BOM Item"
 msgid "BOM Cost"
-msgstr "Stücklisten-Position"
+msgstr ""
 
 #: part/templates/part/prices.html:250
-#, fuzzy
-#| msgid "Total Cost"
 msgid "Sale Cost"
-msgstr "Gesamtkosten"
+msgstr ""
 
 #: part/templates/part/prices.html:290
-#, fuzzy
-#| msgid "No stock pricing history is available for this part."
 msgid "No sale pice history available for this part."
-msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
+msgstr ""
 
 #: part/templates/part/prices.html:340
 #, python-format
@@ -5011,10 +4949,9 @@ msgid "Part Single Price - %(currency)s"
 msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
 
 #: part/templates/part/prices.html:464
-#, fuzzy, python-format
-#| msgid "Single Price - %(currency)s"
+#, python-format
 msgid "Unit Price - %(currency)s"
-msgstr "Einzelpreis - %(currency)s"
+msgstr ""
 
 #: part/templates/part/related.html:18
 msgid "Add Related"
@@ -5863,10 +5800,8 @@ msgid "No stocktake performed"
 msgstr "Keine Inventur ausgeführt"
 
 #: stock/templates/stock/item_base.html:499
-#, fuzzy
-#| msgid "Edit Stock Item Status"
 msgid "Edit Stock Status"
-msgstr "Status bearbeiten"
+msgstr ""
 
 #: stock/templates/stock/item_childs.html:12
 msgid "Child Stock Items"
@@ -6281,10 +6216,8 @@ msgid "Recently Updated"
 msgstr "kürzlich aktualisiert"
 
 #: templates/InvenTree/index.html:131
-#, fuzzy
-#| msgid "Delete Stock"
 msgid "Depleted Stock"
-msgstr "Bestand löschen"
+msgstr ""
 
 #: templates/InvenTree/index.html:146
 msgid "Expired Stock"
@@ -6344,13 +6277,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6627,16 +6558,12 @@ msgid "Remote image must not exceed maximum allowable file size"
 msgstr "Das Bild darf nicht größer als die maximal-erlaubte Größe sein"
 
 #: templates/js/attachment.js:16
-#, fuzzy
-#| msgid "No variants found"
 msgid "No attachments found"
-msgstr "Keine Varianten gefunden"
+msgstr ""
 
 #: templates/js/attachment.js:56
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload Date"
-msgstr "Hochladedatum"
+msgstr ""
 
 #: templates/js/attachment.js:69
 msgid "Edit attachment"
@@ -6845,10 +6772,8 @@ msgid "Edit Company"
 msgstr "Firma bearbeiten"
 
 #: templates/js/company.js:66
-#, fuzzy
-#| msgid "New Company"
 msgid "Add new Company"
-msgstr "Neue Firma"
+msgstr ""
 
 #: templates/js/company.js:143
 msgid "Parts Supplied"
@@ -6863,16 +6788,12 @@ msgid "No company information found"
 msgstr "Keine Firmeninformation gefunden"
 
 #: templates/js/company.js:183
-#, fuzzy
-#| msgid "The following items will be created"
 msgid "The following manufacturer parts will be deleted"
-msgstr "Die folgenden Objekte werden erstellt"
+msgstr ""
 
 #: templates/js/company.js:200
-#, fuzzy
-#| msgid "Delete Manufacturer Part"
 msgid "Delete Manufacturer Parts"
-msgstr "Herstellerteil löschen"
+msgstr ""
 
 #: templates/js/company.js:253
 msgid "No manufacturer parts found"
@@ -6901,16 +6822,12 @@ msgid "Delete parameter"
 msgstr ""
 
 #: templates/js/company.js:406
-#, fuzzy
-#| msgid "Edit Part Parameter"
 msgid "Edit Parameter"
-msgstr "Teilparameter bearbeiten"
+msgstr ""
 
 #: templates/js/company.js:417
-#, fuzzy
-#| msgid "Delete Part Parameter"
 msgid "Delete Parameter"
-msgstr "Teilparameter löschen"
+msgstr ""
 
 #: templates/js/company.js:453
 msgid "No supplier parts found"
@@ -6950,22 +6867,16 @@ msgid "Create operation not allowed"
 msgstr ""
 
 #: templates/js/forms.js:292
-#, fuzzy
-#| msgid "Supplied value is not allowed"
 msgid "Update operation not allowed"
-msgstr "Angegebener Wert nicht erlaubt"
+msgstr ""
 
 #: templates/js/forms.js:304
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete operation not allowed"
-msgstr "Lagerort löschen"
+msgstr ""
 
 #: templates/js/forms.js:316
-#, fuzzy
-#| msgid "Supplied value is not allowed"
 msgid "View operation not allowed"
-msgstr "Angegebener Wert nicht erlaubt"
+msgstr ""
 
 #: templates/js/forms.js:583 templates/js/modals.js:1040
 msgid "No Response"
@@ -7016,10 +6927,8 @@ msgid "Form errors exist"
 msgstr "Fehler in Formular"
 
 #: templates/js/forms.js:1161
-#, fuzzy
-#| msgid "Search"
 msgid "Searching"
-msgstr "Suche"
+msgstr ""
 
 #: templates/js/forms.js:1301
 msgid "Clear input"
@@ -7121,34 +7030,24 @@ msgid "Server returned error code 400"
 msgstr "Fehler 400 von Server erhalten"
 
 #: templates/js/model_renderers.js:21
-#, fuzzy
-#| msgid "Company"
 msgid "Company ID"
-msgstr "Firma"
+msgstr ""
 
 #: templates/js/model_renderers.js:63
-#, fuzzy
-#| msgid "Location"
 msgid "Location ID"
-msgstr "Lagerort"
+msgstr ""
 
 #: templates/js/model_renderers.js:90
-#, fuzzy
-#| msgid "Part 1"
 msgid "Part ID"
-msgstr "Teil 1"
+msgstr ""
 
 #: templates/js/model_renderers.js:126
-#, fuzzy
-#| msgid "Category"
 msgid "Category ID"
-msgstr "Kategorie"
+msgstr ""
 
 #: templates/js/model_renderers.js:150
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Part ID"
-msgstr "Zuliefererteil"
+msgstr ""
 
 #: templates/js/order.js:31
 msgid "Create Sales Order"
@@ -7167,10 +7066,8 @@ msgid "No sales orders found"
 msgstr "Keine Aufträge gefunden"
 
 #: templates/js/order.js:333
-#, fuzzy
-#| msgid "Invalid date"
 msgid "Invalid Customer"
-msgstr "Ungültiges Datum"
+msgstr ""
 
 #: templates/js/order.js:410
 msgid "No sales order allocations found"
@@ -7237,10 +7134,9 @@ msgid "This test is defined for a parent part"
 msgstr "Dieses Testergebnis ist für ein Hauptteil"
 
 #: templates/js/part.js:786
-#, fuzzy, python-brace-format
-#| msgid "No company information found"
+#, python-brace-format
 msgid "No ${human_name} information found"
-msgstr "Keine Firmeninformation gefunden"
+msgstr ""
 
 #: templates/js/part.js:839
 #, python-brace-format
@@ -7993,117 +7889,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Add Build Order Attachment"
-#~ msgstr "Bauauftrags-Anhang hinzufügen"
-
-#~ msgid "Added attachment"
-#~ msgstr "Anhang hinzugefügt"
-
-#~ msgid "Attachment updated"
-#~ msgstr "Anhang aktualisiert"
-
-#~ msgid "Deleted attachment"
-#~ msgstr "Anhang gelöscht"
-
-#~ msgid "Are you sure you want to delete company '%(name)s'?"
-#~ msgstr "Sind Sie sicher, dass Sie die Firma '%(name)s' löschen wollen?"
-
-#~ msgid ""
-#~ "There are %(count)s parts sourced from this company.<br>\n"
-#~ "If this supplier is deleted, these supplier part entries will also be deleted."
-#~ msgstr ""
-#~ "Es gibt %(count)s Teile, die von diesem Unternehmen bezogen werden.<br>\n"
-#~ "Wenn dieser Lieferant gelöscht wird, werden auch diese Zulieferer-Teile gelöscht."
-
-#~ msgid "Are you sure you want to delete the following Manufacturer Parts?"
-#~ msgstr "Sind Sie sicher, dass sie die folgenden Herstellerteile löschen möchten?"
-
-#~ msgid "There are %(count)s suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:"
-#~ msgstr "Für dieses Herstellerteil sind %(count)s Lieferanten definiert. Wenn Sie es löschen, werden die folgenden Lieferantenteile ebenfalls gelöscht:"
-
-#~ msgid "Update Company Image"
-#~ msgstr "Firmenbild aktualisieren"
-
-#~ msgid "Updated company image"
-#~ msgstr "Aktualisiertes Firmenbild"
-
-#~ msgid "Edited company information"
-#~ msgstr "Firmeninformation bearbeitet"
-
-#~ msgid "Create new Customer"
-#~ msgstr "Neuen Kunden anlegen"
-
-#~ msgid "Create new Company"
-#~ msgstr "Neue Firma anlegen"
-
-#~ msgid "Created new company"
-#~ msgstr "Neue Firma angelegt"
-
-#~ msgid "Company was deleted"
-#~ msgstr "Firma gelöscht"
-
-#~ msgid "Target date for order delivery. Order will be overdue after this date."
-#~ msgstr "Zieldatum für Auftrags-Lieferung."
-
-#~ msgid "Enter sales order number"
-#~ msgstr "Auftrag-Nummer eingeben"
-
-#~ msgid "Add Purchase Order Attachment"
-#~ msgstr "Bestellungs-Anhang hinzufügen"
-
-#~ msgid "Add Sales Order Attachment"
-#~ msgstr "Auftrags-Anhang hinzufügen"
-
-#~ msgid "Supplier part must be specified"
-#~ msgstr "Zuliefererteil muss ausgewählt werden"
-
-#~ msgid "Supplier must match for Part and Order"
-#~ msgstr "Zulieferer muss zu Teil und Bestellung passen"
-
-#~ msgid "Deleted line item"
-#~ msgstr "Position gelöscht"
-
-#~ msgid "Are you sure you want to delete this BOM item?"
-#~ msgstr "Sind Sie sicher, dass Sie diese Stücklisten-Position löschen wollen?"
-
-#~ msgid "Deleting this entry will remove the BOM row from the following part"
-#~ msgstr "Die Löschung dieses Eintrags wird das Stücklisten-Position vom folgenden Teil entfernen"
-
-#~ msgid "Add part attachment"
-#~ msgstr "Teilanhang hinzufügen"
-
-#~ msgid "Part attachment updated"
-#~ msgstr "Teilanhang aktualisiert"
-
-#~ msgid "Delete Part Attachment"
-#~ msgstr "Teilanhang löschen"
-
-#~ msgid "Deleted part attachment"
-#~ msgstr "Teilanhang gelöscht"
-
-#~ msgid "Create Test Template"
-#~ msgstr "Testvorlage anlegen"
-
-#~ msgid "Confim BOM item deletion"
-#~ msgstr "löschen von Stücklisten-Position bestätigen"
-
-#~ msgid "Add Stock Item Attachment"
-#~ msgstr "BestandsObjekt-Anhang hinzufügen"
-
-#~ msgid "Edit Stock Item Attachment"
-#~ msgstr "BestandsObjekt-Anhang bearbeiten"
-
-#~ msgid "Delete Stock Item Attachment"
-#~ msgstr "BestandsObjekt-Anhang löschen"
-
-#~ msgid "Uploaded"
-#~ msgstr "Hochgeladen"
-
-#~ msgid "Order Price Information"
-#~ msgstr "Bestellpreisinformationen"
-
-#~ msgid "Order Price"
-#~ msgstr "Bestellpreis"
-
-#~ msgid "Sales Price Information"
-#~ msgstr "Preisinformationen ansehen"
