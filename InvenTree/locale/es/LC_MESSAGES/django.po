@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-05 06:55+0000\n"
-"PO-Revision-Date: 2021-07-03 12:44\n"
+"PO-Revision-Date: 2021-07-05 07:04\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -6277,8 +6277,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7886,3 +7885,4 @@ msgstr ""
 #: users/models.py:192
 msgid "Permission to delete items"
 msgstr ""
+
