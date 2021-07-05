@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-05 07:55+0000\n"
+"POT-Creation-Date: 2021-07-05 23:00+0000\n"
 "PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -78,7 +78,7 @@ msgid "Duplicate serial: {n}"
 msgstr "Doppelte Seriennummer: {n}"
 
 #: InvenTree/helpers.py:403 order/models.py:311 order/models.py:421
-#: stock/views.py:1627
+#: stock/views.py:1625
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
@@ -1354,7 +1354,7 @@ msgstr "Endprodukt anlegen"
 msgid "Maximum output quantity is "
 msgstr "Maximale Endproduktmenge ist "
 
-#: build/views.py:184 stock/views.py:1653
+#: build/views.py:184 stock/views.py:1651
 msgid "Serial numbers already exist"
 msgstr "Seriennummern existieren bereits"
 
@@ -2467,7 +2467,7 @@ msgstr "Zuliefererteil entfernen"
 #: company/templates/company/manufacturer_part_suppliers.html:142
 #: part/templates/part/manufacturer.html:24 part/templates/part/params.html:44
 #: part/templates/part/related.html:44 part/templates/part/supplier.html:22
-#: stock/views.py:855 templates/js/company.js:203 users/models.py:192
+#: stock/views.py:821 templates/js/company.js:203 users/models.py:192
 msgid "Delete"
 msgstr "Löschen"
 
@@ -4420,7 +4420,7 @@ msgstr "Teil-Kategorie anlegen"
 msgid "Create new Part Category"
 msgstr "Neue Teil-Kategorie anlegen"
 
-#: part/templates/part/category.html:260 stock/views.py:1223
+#: part/templates/part/category.html:260 stock/views.py:1221
 msgid "Create new Stock Location"
 msgstr "Neuen Lagerort erstellen"
 
@@ -5413,7 +5413,7 @@ msgstr "Ziel-Lagerbestand"
 msgid "Add note (required)"
 msgstr "Notiz hinzufügen (erforderlich)"
 
-#: stock/forms.py:348 stock/views.py:705 stock/views.py:904
+#: stock/forms.py:348 stock/views.py:705 stock/views.py:907
 msgid "Confirm stock adjustment"
 msgstr "Bestands-Anpassung bestätigen"
 
@@ -5963,7 +5963,7 @@ msgstr "Lade..."
 msgid "The following stock items will be uninstalled"
 msgstr "Die folgenden BestandsObjekte werden nicht mehr verbaut"
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1196
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1194
 msgid "Convert Stock Item"
 msgstr "BestandsObjekt umwandeln"
 
@@ -5996,8 +5996,8 @@ msgstr "Sind Sie sicher, dass Sie diesen BestandsObjekt-Verfolgungs-Eintrag lös
 msgid "Edit Stock Location"
 msgstr "BestandsObjekt-Lagerort bearbeiten"
 
-#: stock/views.py:230 stock/views.py:1175 stock/views.py:1297
-#: stock/views.py:1662
+#: stock/views.py:230 stock/views.py:1173 stock/views.py:1295
+#: stock/views.py:1660
 msgid "Owner is required (ownership control is enabled)"
 msgstr "Eigentümer notwendig (Eigentümerkontrolle aktiv)"
 
@@ -6057,65 +6057,65 @@ msgstr "BestandsObjekte deinstalliert"
 msgid "Adjust Stock"
 msgstr "Lagerbestand anpassen"
 
-#: stock/views.py:851
+#: stock/views.py:817
 msgid "Move Stock Items"
 msgstr "BestandsObjekte bewegen"
 
-#: stock/views.py:851
+#: stock/views.py:817
 msgid "Move"
 msgstr "Verschieben"
 
-#: stock/views.py:852
+#: stock/views.py:818
 msgid "Count Stock Items"
 msgstr "BestandsObjekte zählen"
 
-#: stock/views.py:852
+#: stock/views.py:818
 msgid "Count"
 msgstr "Anzahl"
 
-#: stock/views.py:853
+#: stock/views.py:819
 msgid "Remove From Stock"
 msgstr "Aus Lagerbestand entfernen"
 
-#: stock/views.py:853
+#: stock/views.py:819
 msgid "Take"
 msgstr "Entfernen"
 
-#: stock/views.py:854
+#: stock/views.py:820
 msgid "Add Stock Items"
 msgstr "BestandsObjekte hinzufügen"
 
-#: stock/views.py:854 users/models.py:188
+#: stock/views.py:820 users/models.py:188
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: stock/views.py:855
+#: stock/views.py:821
 msgid "Delete Stock Items"
 msgstr "BestandsObjekte löschen"
 
-#: stock/views.py:884
+#: stock/views.py:887
 msgid "Must enter integer value"
 msgstr "Nur Ganzzahl eingeben"
 
-#: stock/views.py:889
+#: stock/views.py:892
 msgid "Quantity must be positive"
 msgstr "Anzahl muss positiv sein"
 
-#: stock/views.py:896
+#: stock/views.py:899
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr "Anzahl darf {x} nicht überschreiten"
 
-#: stock/views.py:960
+#: stock/views.py:963
 msgid "No action performed"
 msgstr "Keine Aktion durchgeführt"
 
-#: stock/views.py:975
+#: stock/views.py:977
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr "Vorrat zu {n} BestandsObjekten hinzugefügt"
 
-#: stock/views.py:990
+#: stock/views.py:991
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr "Vorrat von {n} BestandsObjekten entfernt"
@@ -6125,57 +6125,57 @@ msgstr "Vorrat von {n} BestandsObjekten entfernt"
 msgid "Counted stock for {n} items"
 msgstr "Bestand für {n} Objekte erfasst"
 
-#: stock/views.py:1043
+#: stock/views.py:1041
 msgid "No items were moved"
 msgstr "Keine BestandsObjekt wurden bewegt"
 
-#: stock/views.py:1046
+#: stock/views.py:1044
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr "{n} Teile nach {dest} bewegt"
 
-#: stock/views.py:1065
+#: stock/views.py:1063
 #, python-brace-format
 msgid "Deleted {n} stock items"
 msgstr "{n} BestandsObjekte gelöscht"
 
-#: stock/views.py:1077
+#: stock/views.py:1075
 msgid "Edit Stock Item"
 msgstr "BestandsObjekt bearbeiten"
 
-#: stock/views.py:1314
+#: stock/views.py:1312
 msgid "Serialize Stock"
 msgstr "Lagerbestand erfassen"
 
-#: stock/views.py:1407 templates/js/build.js:327
+#: stock/views.py:1405 templates/js/build.js:327
 msgid "Create new Stock Item"
 msgstr "Neues BestandsObjekt hinzufügen"
 
-#: stock/views.py:1549
+#: stock/views.py:1547
 msgid "Duplicate Stock Item"
 msgstr "Bestand duplizieren"
 
-#: stock/views.py:1631
+#: stock/views.py:1629
 msgid "Quantity cannot be negative"
 msgstr "Anzahl kann nicht negativ sein"
 
-#: stock/views.py:1731
+#: stock/views.py:1729
 msgid "Delete Stock Location"
 msgstr "Bestand-Lagerort löschen"
 
-#: stock/views.py:1744
+#: stock/views.py:1742
 msgid "Delete Stock Item"
 msgstr "BestandsObjekt löschen"
 
-#: stock/views.py:1755
+#: stock/views.py:1753
 msgid "Delete Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag löschen"
 
-#: stock/views.py:1762
+#: stock/views.py:1760
 msgid "Edit Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag bearbeiten"
 
-#: stock/views.py:1771
+#: stock/views.py:1769
 msgid "Add Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag hinzufügen"
 

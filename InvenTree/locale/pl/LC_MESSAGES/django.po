@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-05 07:55+0000\n"
+"POT-Creation-Date: 2021-07-05 23:00+0000\n"
 "PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -78,7 +78,7 @@ msgid "Duplicate serial: {n}"
 msgstr "Powtórzony numer seryjny: {n}"
 
 #: InvenTree/helpers.py:403 order/models.py:311 order/models.py:421
-#: stock/views.py:1627
+#: stock/views.py:1625
 msgid "Invalid quantity provided"
 msgstr "Podano nieprawidłową ilość"
 
@@ -1354,7 +1354,7 @@ msgstr "Utwórz zlecenie budowy"
 msgid "Maximum output quantity is "
 msgstr ""
 
-#: build/views.py:184 stock/views.py:1653
+#: build/views.py:184 stock/views.py:1651
 msgid "Serial numbers already exist"
 msgstr "Numer seryjny już istnieje"
 
@@ -2467,7 +2467,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:142
 #: part/templates/part/manufacturer.html:24 part/templates/part/params.html:44
 #: part/templates/part/related.html:44 part/templates/part/supplier.html:22
-#: stock/views.py:855 templates/js/company.js:203 users/models.py:192
+#: stock/views.py:821 templates/js/company.js:203 users/models.py:192
 msgid "Delete"
 msgstr "Usuń"
 
@@ -4420,7 +4420,7 @@ msgstr ""
 msgid "Create new Part Category"
 msgstr ""
 
-#: part/templates/part/category.html:260 stock/views.py:1223
+#: part/templates/part/category.html:260 stock/views.py:1221
 msgid "Create new Stock Location"
 msgstr "Utwórz nową lokalizację magazynową"
 
@@ -5413,7 +5413,7 @@ msgstr ""
 msgid "Add note (required)"
 msgstr ""
 
-#: stock/forms.py:348 stock/views.py:705 stock/views.py:904
+#: stock/forms.py:348 stock/views.py:705 stock/views.py:907
 msgid "Confirm stock adjustment"
 msgstr ""
 
@@ -5963,7 +5963,7 @@ msgstr ""
 msgid "The following stock items will be uninstalled"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1196
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1194
 msgid "Convert Stock Item"
 msgstr ""
 
@@ -5996,8 +5996,8 @@ msgstr ""
 msgid "Edit Stock Location"
 msgstr ""
 
-#: stock/views.py:230 stock/views.py:1175 stock/views.py:1297
-#: stock/views.py:1662
+#: stock/views.py:230 stock/views.py:1173 stock/views.py:1295
+#: stock/views.py:1660
 msgid "Owner is required (ownership control is enabled)"
 msgstr ""
 
@@ -6057,65 +6057,65 @@ msgstr ""
 msgid "Adjust Stock"
 msgstr ""
 
-#: stock/views.py:851
+#: stock/views.py:817
 msgid "Move Stock Items"
 msgstr ""
 
-#: stock/views.py:851
+#: stock/views.py:817
 msgid "Move"
 msgstr ""
 
-#: stock/views.py:852
+#: stock/views.py:818
 msgid "Count Stock Items"
 msgstr ""
 
-#: stock/views.py:852
+#: stock/views.py:818
 msgid "Count"
 msgstr ""
 
-#: stock/views.py:853
+#: stock/views.py:819
 msgid "Remove From Stock"
 msgstr ""
 
-#: stock/views.py:853
+#: stock/views.py:819
 msgid "Take"
 msgstr ""
 
-#: stock/views.py:854
+#: stock/views.py:820
 msgid "Add Stock Items"
 msgstr ""
 
-#: stock/views.py:854 users/models.py:188
+#: stock/views.py:820 users/models.py:188
 msgid "Add"
 msgstr ""
 
-#: stock/views.py:855
+#: stock/views.py:821
 msgid "Delete Stock Items"
 msgstr ""
 
-#: stock/views.py:884
+#: stock/views.py:887
 msgid "Must enter integer value"
 msgstr ""
 
-#: stock/views.py:889
+#: stock/views.py:892
 msgid "Quantity must be positive"
 msgstr ""
 
-#: stock/views.py:896
+#: stock/views.py:899
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr ""
 
-#: stock/views.py:960
+#: stock/views.py:963
 msgid "No action performed"
 msgstr ""
 
-#: stock/views.py:975
+#: stock/views.py:977
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr ""
 
-#: stock/views.py:990
+#: stock/views.py:991
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr ""
@@ -6125,57 +6125,57 @@ msgstr ""
 msgid "Counted stock for {n} items"
 msgstr ""
 
-#: stock/views.py:1043
+#: stock/views.py:1041
 msgid "No items were moved"
 msgstr ""
 
-#: stock/views.py:1046
+#: stock/views.py:1044
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr ""
 
-#: stock/views.py:1065
+#: stock/views.py:1063
 #, python-brace-format
 msgid "Deleted {n} stock items"
 msgstr ""
 
-#: stock/views.py:1077
+#: stock/views.py:1075
 msgid "Edit Stock Item"
 msgstr ""
 
-#: stock/views.py:1314
+#: stock/views.py:1312
 msgid "Serialize Stock"
 msgstr ""
 
-#: stock/views.py:1407 templates/js/build.js:327
+#: stock/views.py:1405 templates/js/build.js:327
 msgid "Create new Stock Item"
 msgstr ""
 
-#: stock/views.py:1549
+#: stock/views.py:1547
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/views.py:1631
+#: stock/views.py:1629
 msgid "Quantity cannot be negative"
 msgstr ""
 
-#: stock/views.py:1731
+#: stock/views.py:1729
 msgid "Delete Stock Location"
 msgstr ""
 
-#: stock/views.py:1744
+#: stock/views.py:1742
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:1755
+#: stock/views.py:1753
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1762
+#: stock/views.py:1760
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1771
+#: stock/views.py:1769
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
