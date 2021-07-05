@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-03 12:15+0000\n"
+"POT-Creation-Date: 2021-07-05 06:55+0000\n"
 "PO-Revision-Date: 2021-07-03 12:44\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -138,7 +138,7 @@ msgstr ""
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:414
 #: label/models.py:103 part/models.py:680 part/models.py:2192
-#: part/templates/part/params.html:27 report/models.py:180
+#: part/templates/part/params.html:27 report/models.py:181
 #: templates/InvenTree/search.html:137 templates/InvenTree/search.html:289
 #: templates/js/company.js:359 templates/js/part.js:118
 #: templates/js/part.js:642 templates/js/stock.js:986
@@ -153,8 +153,8 @@ msgstr "Название"
 #: company/templates/company/supplier_part_detail.html:31 label/models.py:110
 #: order/models.py:154 order/templates/order/purchase_order_detail.html:174
 #: part/models.py:704 part/templates/part/detail.html:54
-#: part/templates/part/set_category.html:14 report/models.py:193
-#: report/models.py:530 report/models.py:569
+#: part/templates/part/set_category.html:14 report/models.py:194
+#: report/models.py:551 report/models.py:590
 #: report/templates/report/inventree_build_order_base.html:118
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
@@ -936,6 +936,7 @@ msgid "Attachments"
 msgstr ""
 
 #: build/templates/build/attachments.html:51
+#: order/templates/order/po_attachments.html:79
 #: order/templates/order/so_attachments.html:79
 #: part/templates/part/attachments.html:81
 #: stock/templates/stock/item_attachments.html:81
@@ -944,6 +945,7 @@ msgid "Add Attachment"
 msgstr ""
 
 #: build/templates/build/attachments.html:69
+#: order/templates/order/po_attachments.html:51
 #: order/templates/order/so_attachments.html:52
 #: part/templates/part/attachments.html:35
 #: stock/templates/stock/item_attachments.html:49
@@ -951,6 +953,7 @@ msgid "Edit Attachment"
 msgstr ""
 
 #: build/templates/build/attachments.html:76
+#: order/templates/order/po_attachments.html:58
 #: order/templates/order/so_attachments.html:58
 #: part/templates/part/attachments.html:44
 #: stock/templates/stock/item_attachments.html:58
@@ -958,6 +961,7 @@ msgid "Confirm Delete Operation"
 msgstr ""
 
 #: build/templates/build/attachments.html:77
+#: order/templates/order/po_attachments.html:59
 #: order/templates/order/so_attachments.html:59
 #: part/templates/part/attachments.html:45
 #: stock/templates/stock/item_attachments.html:59
@@ -1617,7 +1621,7 @@ msgid "Number of recent parts to display on index page"
 msgstr ""
 
 #: common/models.py:160 part/models.py:2226 part/templates/part/detail.html:160
-#: report/models.py:186 stock/forms.py:226 templates/js/table_filters.js:25
+#: report/models.py:187 stock/forms.py:226 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:320
 msgid "Template"
 msgstr ""
@@ -2727,7 +2731,7 @@ msgstr ""
 msgid "Label template file"
 msgstr ""
 
-#: label/models.py:125 report/models.py:297
+#: label/models.py:125 report/models.py:298
 msgid "Enabled"
 msgstr ""
 
@@ -2751,7 +2755,7 @@ msgstr ""
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: label/models.py:145 report/models.py:290
+#: label/models.py:145 report/models.py:291
 msgid "Filename Pattern"
 msgstr ""
 
@@ -2763,8 +2767,8 @@ msgstr ""
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: label/models.py:250 label/models.py:307 report/models.py:317
-#: report/models.py:440 report/models.py:474
+#: label/models.py:250 label/models.py:307 report/models.py:322
+#: report/models.py:457 report/models.py:495
 msgid "Filters"
 msgstr ""
 
@@ -3249,10 +3253,6 @@ msgstr ""
 #: order/templates/order/po_attachments.html:12
 #: order/templates/order/po_navbar.html:32
 msgid "Purchase Order Attachments"
-msgstr ""
-
-#: order/templates/order/po_lineitem_delete.html:5
-msgid "Are you sure you wish to delete this line item?"
 msgstr ""
 
 #: order/templates/order/po_navbar.html:26
@@ -3914,7 +3914,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:732 part/templates/part/detail.html:35 report/models.py:199
+#: part/models.py:732 part/templates/part/detail.html:35 report/models.py:200
 #: templates/js/part.js:173
 msgid "Revision"
 msgstr ""
@@ -5205,87 +5205,87 @@ msgstr ""
 msgid "Delete Internal Price Break"
 msgstr ""
 
-#: report/models.py:181
+#: report/models.py:182
 msgid "Template name"
 msgstr ""
 
-#: report/models.py:187
+#: report/models.py:188
 msgid "Report template file"
 msgstr ""
 
-#: report/models.py:194
+#: report/models.py:195
 msgid "Report template description"
 msgstr ""
 
-#: report/models.py:200
+#: report/models.py:201
 msgid "Report revision number (auto-increments)"
 msgstr ""
 
-#: report/models.py:291
+#: report/models.py:292
 msgid "Pattern for generating report filenames"
 msgstr ""
 
-#: report/models.py:298
+#: report/models.py:299
 msgid "Report template is enabled"
 msgstr ""
 
-#: report/models.py:318
+#: report/models.py:323
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:326
+#: report/models.py:331
 msgid "Include Installed Tests"
 msgstr ""
 
-#: report/models.py:327
+#: report/models.py:332
 msgid "Include test results for stock items installed inside assembled item"
 msgstr ""
 
-#: report/models.py:371
+#: report/models.py:380
 msgid "Build Filters"
 msgstr ""
 
-#: report/models.py:372
+#: report/models.py:381
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:410
+#: report/models.py:423
 msgid "Part Filters"
 msgstr ""
 
-#: report/models.py:411
+#: report/models.py:424
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:441
+#: report/models.py:458
 msgid "Purchase order query filters"
 msgstr ""
 
-#: report/models.py:475
+#: report/models.py:496
 msgid "Sales order query filters"
 msgstr ""
 
-#: report/models.py:525
+#: report/models.py:546
 msgid "Snippet"
 msgstr ""
 
-#: report/models.py:526
+#: report/models.py:547
 msgid "Report snippet file"
 msgstr ""
 
-#: report/models.py:530
+#: report/models.py:551
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:565
+#: report/models.py:586
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:566
+#: report/models.py:587
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:569
+#: report/models.py:590
 msgid "Asset file description"
 msgstr ""
 
@@ -6277,7 +6277,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7885,4 +7886,3 @@ msgstr ""
 #: users/models.py:192
 msgid "Permission to delete items"
 msgstr ""
-
