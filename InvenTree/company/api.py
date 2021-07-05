@@ -394,6 +394,15 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     ]
 
 
+class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for SupplierPriceBreak object
+    """
+
+    queryset = SupplierPriceBreak.objects.all()
+    serializer_class = SupplierPriceBreakSerializer
+
+
 manufacturer_part_api_urls = [
 
     url(r'^parameter/', include([
@@ -424,7 +433,12 @@ company_api_urls = [
 
     url(r'^part/', include(supplier_part_api_urls)),
 
-    url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
+    # Supplier price breaks
+    url(r'^price-break/', include([
+
+        url(r'^(?P<pk>\d+)/?', SupplierPriceBreakDetail.as_view(), name='api-part-supplier-price-detail'),
+        url(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
+    ])),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

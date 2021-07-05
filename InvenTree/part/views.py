@@ -31,12 +31,11 @@ import io
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartAttachment, PartRelated
+from .models import PartCategory, Part, PartRelated
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
-from .models import PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
@@ -50,6 +49,7 @@ import common.settings as inventree_settings
 
 from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
+from order.models import PurchaseOrderLineItem
 
 from .admin import PartResource
 
@@ -152,146 +152,6 @@ class PartRelatedDelete(AjaxDeleteView):
 
     # Explicit role requirement
     role_required = 'part.change'
-
-
-class PartAttachmentCreate(AjaxCreateView):
-    """ View for creating a new PartAttachment object
-
-    - The view only makes sense if a Part object is passed to it
-    """
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_form_title = _("Add part attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-        """
-        Record the user that uploaded this attachment
-        """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
-
-    def get_initial(self):
-        """ Get initial data for new PartAttachment object.
-
-        - Client should have requested this form with a parent part in mind
-        - e.g. ?part=<pk>
-        """
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        # TODO - If the proper part was not sent, return an error message
-        try:
-            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """ Create a form to upload a new PartAttachment
-
-        - Hide the 'part' field
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartAttachmentEdit(AjaxUpdateView):
-    """ View for editing a PartAttachment object """
-
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit attachment')
-
-    def get_data(self):
-        return {
-            'success': _('Part attachment updated')
-        }
-
-    def get_form(self):
-        form = super(AjaxUpdateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartAttachmentDelete(AjaxDeleteView):
-    """ View for deleting a PartAttachment """
-
-    model = PartAttachment
-    ajax_form_title = _("Delete Part Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    role_required = 'part.change'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted part attachment')
-        }
-
-
-class PartTestTemplateCreate(AjaxCreateView):
-    """ View for creating a PartTestTemplate """
-
-    model = PartTestTemplate
-    form_class = part_forms.EditPartTestTemplateForm
-    ajax_form_title = _("Create Test Template")
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        try:
-            part_id = self.request.GET.get('part', None)
-            initials['part'] = Part.objects.get(pk=part_id)
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartTestTemplateEdit(AjaxUpdateView):
-    """ View for editing a PartTestTemplate """
-
-    model = PartTestTemplate
-    form_class = part_forms.EditPartTestTemplateForm
-    ajax_form_title = _("Edit Test Template")
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartTestTemplateDelete(AjaxDeleteView):
-    """ View for deleting a PartTestTemplate """
-
-    model = PartTestTemplate
-    ajax_form_title = _("Delete Test Template")
 
 
 class PartSetCategory(AjaxUpdateView):
@@ -979,18 +839,20 @@ class PartPricingView(PartDetail):
         """ returns context with pricing information """
         ctx = PartPricing.get_pricing(self, quantity, currency)
         part = self.get_part()
+        default_currency = inventree_settings.currency_code_default()
+
         # Stock history
         if part.total_stock > 1:
             price_history = []
-            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
-            stock = stock.prefetch_related('purchase_order', 'supplier_part')
+            stock = part.stock_entries(include_variants=False, in_stock=True).\
+                order_by('purchase_order__issue_date').prefetch_related('purchase_order', 'supplier_part')
 
             for stock_item in stock:
                 if None in [stock_item.purchase_price, stock_item.quantity]:
                     continue
 
                 # convert purchase price to current currency - only one currency in the graph
-                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
+                price = convert_money(stock_item.purchase_price, default_currency)
                 line = {
                     'price': price.amount,
                     'qty': stock_item.quantity
@@ -1035,6 +897,36 @@ class PartPricingView(PartDetail):
 
             # add to global context
             ctx['bom_parts'] = ctx_bom_parts
+
+        # Sale price history
+        sale_items = PurchaseOrderLineItem.objects.filter(part__part=part).order_by('order__issue_date').\
+            prefetch_related('order', ).all()
+
+        if sale_items:
+            sale_history = []
+
+            for sale_item in sale_items:
+                # check for not fully defined elements
+                if None in [sale_item.purchase_price, sale_item.quantity]:
+                    continue
+
+                price = convert_money(sale_item.purchase_price, default_currency)
+                line = {
+                    'price': price.amount if price else 0,
+                    'qty': sale_item.quantity,
+                }
+
+                # set date for graph labels
+                if sale_item.order.issue_date:
+                    line['date'] = sale_item.order.issue_date.strftime('%d.%m.%Y')
+                elif sale_item.order.creation_date:
+                    line['date'] = sale_item.order.creation_date.strftime('%d.%m.%Y')
+                else:
+                    line['date'] = _('None')
+
+                sale_history.append(line)
+
+            ctx['sale_history'] = sale_history
 
         return ctx
 
@@ -1184,21 +1076,6 @@ class PartImageDownloadFromURL(AjaxUpdateView):
             filename,
             ContentFile(buffer.getvalue()),
         )
-
-
-class PartImageUpload(AjaxUpdateView):
-    """ View for uploading a new Part image """
-
-    model = Part
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Upload Part Image')
-
-    form_class = part_forms.PartImageForm
-
-    def get_data(self):
-        return {
-            'success': _('Updated part image'),
-        }
 
 
 class PartImageSelect(AjaxUpdateView):
@@ -2901,17 +2778,10 @@ class BomItemEdit(AjaxUpdateView):
         return form
 
 
-class BomItemDelete(AjaxDeleteView):
-    """ Delete view for removing BomItem """
-
-    model = BomItem
-    ajax_template_name = 'part/bom-delete.html'
-    context_object_name = 'item'
-    ajax_form_title = _('Confim BOM item deletion')
-
-
 class PartSalePriceBreakCreate(AjaxCreateView):
-    """ View for creating a sale price break for a part """
+    """
+    View for creating a sale price break for a part
+    """
 
     model = PartSellPriceBreak
     form_class = part_forms.EditPartSalePriceBreakForm

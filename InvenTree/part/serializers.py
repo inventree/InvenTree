@@ -4,6 +4,7 @@ JSON serializers for Part app
 import imghdr
 from decimal import Decimal
 
+from django.urls import reverse_lazy
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
@@ -38,6 +39,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'default_location',
+            'default_keywords',
             'pathstring',
             'url',
             'parent',
@@ -59,7 +61,12 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'attachment',
-            'comment'
+            'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]
 
 
@@ -186,6 +193,9 @@ class PartSerializer(InvenTreeModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
     """
+
+    def get_api_url(self):
+        return reverse_lazy('api-part-list')
 
     def __init__(self, *args, **kwargs):
         """
@@ -326,9 +336,10 @@ class PartSerializer(InvenTreeModelSerializer):
             'category',
             'category_detail',
             'component',
-            'description',
-            'default_location',
             'default_expiry',
+            'default_location',
+            'default_supplier',
+            'description',
             'full_name',
             'image',
             'in_stock',

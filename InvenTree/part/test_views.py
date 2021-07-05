@@ -232,29 +232,6 @@ class PartRelatedTests(PartViewTestCase):
         self.assertEqual(n, 1)
 
 
-class PartAttachmentTests(PartViewTestCase):
-
-    def test_valid_create(self):
-        """ test creation of an attachment for a valid part """
-
-        response = self.client.get(reverse('part-attachment-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # TODO - Create a new attachment using this view
-
-    def test_invalid_create(self):
-        """ test creation of an attachment for an invalid part """
-
-        # TODO
-        pass
-
-    def test_edit(self):
-        """ test editing an attachment """
-
-        # TODO
-        pass
-
-
 class PartQRTest(PartViewTestCase):
     """ Tests for the Part QR Code AJAX view """
 
@@ -292,11 +269,6 @@ class CategoryTest(PartViewTestCase):
         response = self.client.get(reverse('category-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Form should still return OK
-        self.assertEqual(response.status_code, 200)
-
-    def test_edit(self):
-        """ Retrieve the part category editing form """
-        response = self.client.get(reverse('category-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
     def test_set_category(self):

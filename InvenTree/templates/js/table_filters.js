@@ -205,7 +205,12 @@ function getAvailableTableFilters(tableKey) {
             batch: {
                 title: '{% trans "Batch" %}',
                 description: '{% trans "Batch code" %}',
-            }
+            },
+            has_purchase_price: {
+                type: 'bool',
+                title: '{% trans "Has purchase price" %}',
+                description: '{% trans "Show stock items which have a purchase price set" %}',
+            },
         };
     }
 

@@ -78,6 +78,22 @@ class InvenTreeAPITestCase(APITestCase):
                 ruleset.save()
                 break
 
+    def getActions(self, url):
+        """
+        Return a dict of the 'actions' available at a given endpoint.
+        Makes use of the HTTP 'OPTIONS' method to request this.
+        """
+
+        response = self.client.options(url)
+        self.assertEqual(response.status_code, 200)
+
+        actions = response.data.get('actions', None)
+
+        if not actions:
+            actions = {}
+
+        return actions
+
     def get(self, url, data={}, expected_code=200):
         """
         Issue a GET request

@@ -24,7 +24,6 @@ location_urls = [
 ]
 
 stock_item_detail_urls = [
-    url(r'^edit_status/', views.StockItemEditStatus.as_view(), name='stock-item-edit-status'),
     url(r'^edit/', views.StockItemEdit.as_view(), name='stock-item-edit'),
     url(r'^convert/', views.StockItemConvert.as_view(), name='stock-item-convert'),
     url(r'^serialize/', views.StockItemSerialize.as_view(), name='stock-item-serialize'),
@@ -62,20 +61,6 @@ stock_urls = [
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
     url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
-
-    # URLs for StockItem attachments
-    url(r'^item/attachment/', include([
-        url(r'^new/', views.StockItemAttachmentCreate.as_view(), name='stock-item-attachment-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.StockItemAttachmentEdit.as_view(), name='stock-item-attachment-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.StockItemAttachmentDelete.as_view(), name='stock-item-attachment-delete'),
-    ])),
-
-    # URLs for StockItem tests
-    url(r'^item/test/', include([
-        url(r'^new/', views.StockItemTestResultCreate.as_view(), name='stock-item-test-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.StockItemTestResultEdit.as_view(), name='stock-item-test-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.StockItemTestResultDelete.as_view(), name='stock-item-test-delete'),
-    ])),
 
     url(r'^track/', include(stock_tracking_urls)),
 

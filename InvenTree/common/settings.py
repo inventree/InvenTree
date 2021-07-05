@@ -28,7 +28,7 @@ def currency_code_mappings():
     """
     Returns the current currency choices
     """
-    return [(a, a) for a in settings.CURRENCIES]
+    return [(a, CURRENCIES[a].name) for a in settings.CURRENCIES]
 
 
 def currency_codes():

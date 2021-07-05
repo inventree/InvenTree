@@ -178,19 +178,7 @@ $("#order-print").click(function() {
 })
 
 $("#so-create").click(function() {
-    launchModalForm("{% url 'so-create' %}",
-        {
-            follow: true,
-            secondary: [
-                {
-                    field: 'customer',
-                    label: '{% trans "New Customer" %}',
-                    title: '{% trans "Create new Customer" %}',
-                    url: '{% url "customer-create" %}',
-                }
-            ]
-        }
-    );
+    createSalesOrder();
 });
 
 {% endblock %}
