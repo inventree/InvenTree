@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as djangosettings
 
 from django import template
-from django.urls import reverse, resolve as resolve_fnc
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.templatetags.static import StaticNode
 from InvenTree import version, settings
@@ -265,12 +265,6 @@ def object_link(url_name, pk, ref):
 
     ref_url = reverse(url_name, kwargs={'pk': pk})
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
-
-
-@register.simple_tag()
-def resolve(url):
-    """provides access to resolve function in templates"""
-    return resolve_fnc(url)
 
 
 class I18nStaticNode(StaticNode):
