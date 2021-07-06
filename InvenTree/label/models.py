@@ -12,6 +12,7 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.core.exceptions import ValidationError, FieldError
 
@@ -237,6 +238,10 @@ class StockItemLabel(LabelTemplate):
     Template for printing StockItem labels
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stockitem-label-list')
+
     SUBDIR = "stockitem"
 
     filters = models.CharField(
@@ -289,6 +294,10 @@ class StockLocationLabel(LabelTemplate):
     """
     Template for printing StockLocation labels
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stocklocation-label-list')
 
     SUBDIR = "stocklocation"
 

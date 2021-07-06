@@ -42,15 +42,10 @@
     });
 
     $("#new-sales-order").click(function() {
-        launchModalForm(
-            "{% url 'so-create' %}",
-            {
-                data: {
-                    customer: {{ company.id }},
-                },
-                follow: true,
-            },
-        );
+
+        createSalesOrder({
+            customer: {{ company.pk }},
+        });
     });
 
 {% endblock %}

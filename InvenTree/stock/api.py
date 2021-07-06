@@ -2,16 +2,20 @@
 JSON API for the Stock app
 """
 
-from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
-
-from rest_framework import status
-
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+
+from rest_framework import status
+from rest_framework.serializers import ValidationError
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import generics, filters, permissions
+
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters import NumberFilter
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -40,11 +44,6 @@ from InvenTree.api import AttachmentMixin, TrackingMixin
 from decimal import Decimal, InvalidOperation
 
 from datetime import datetime, timedelta
-
-from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import generics, filters, permissions
 
 
 class StockCategoryTree(TreeSerializer):
@@ -855,6 +854,17 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
+        # Filter stock items which have a purchase price set
+        has_purchase_price = params.get('has_purchase_price', None)
+
+        if has_purchase_price is not None:
+            has_purchase_price = str2bool(has_purchase_price)
+
+            if has_purchase_price:
+                queryset = queryset.exclude(purchase_price=None)
+            else:
+                queryset = queryset.filter(purchase_price=None)
+
         # Optionally, limit the maximum number of returned results
         max_results = params.get('max_results', None)
 
@@ -928,6 +938,24 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
+class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for StockItemAttachment
+    """
+
+    queryset = StockItemAttachment.objects.all()
+    serializer_class = StockItemAttachmentSerializer
+
+
+class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for StockItemTestResult
+    """
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockItemTestResultSerializer
+
+
 class StockItemTestResultList(generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) a StockItemTestResult object.
@@ -976,6 +1004,15 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         test_result.save()
 
 
+class StockTrackingDetail(generics.RetrieveAPIView):
+    """
+    Detail API endpoint for StockItemTracking model
+    """
+
+    queryset = StockItemTracking.objects.all()
+    serializer_class = StockTrackingSerializer
+
+
 class StockTrackingList(TrackingMixin, generics.ListAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
@@ -1015,6 +1052,7 @@ stock_api_urls = [
     url(r'location/', include(location_endpoints)),
 
     # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
+    # TODO: Remove server-side forms for stock adjustment!!!
     url(r'count/?', StockCount.as_view(), name='api-stock-count'),
     url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
     url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
@@ -1022,15 +1060,20 @@ stock_api_urls = [
 
     # Base URL for StockItemAttachment API endpoints
     url(r'^attachment/', include([
+        url(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
     # Base URL for StockItemTestResult API endpoints
     url(r'^test/', include([
-        url(r'^$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
+        url(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        url(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
-    url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
+    url(r'^track/', include([
+        url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+        url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
+    ])),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
 

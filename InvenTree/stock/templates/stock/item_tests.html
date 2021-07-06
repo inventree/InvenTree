@@ -48,8 +48,7 @@ loadStockTestResultsTable(
 );
 
 function reloadTable() {
-    location.reload();
-    //$("#test-result-table").bootstrapTable("refresh");
+    $("#test-result-table").bootstrapTable("refresh");
 }
 
 {% if item.has_test_reports %}
@@ -70,15 +69,23 @@ $("#delete-test-results").click(function() {
 {% endif %}
 
 $("#add-test-result").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-test-create' %}", {
-            data: {
-                stock_item: {{ item.id }},
-            },
-            success: reloadTable,
-            focus: 'test',
-        }
-    );
+
+    constructForm('{% url "api-stock-test-result-list" %}', {
+        method: 'POST',
+        fields: {
+            test: {},
+            result: {},
+            value: {},
+            attachment: {},
+            notes: {},
+            stock_item: {
+                value: {{ item.pk }},
+                hidden: true,
+            }
+        },
+        title: '{% trans "Add Test Result" %}',
+        onSuccess: reloadTable,
+    });
 });
 
 $("#test-result-table").on('click', '.button-test-add', function() {
@@ -86,35 +93,57 @@ $("#test-result-table").on('click', '.button-test-add', function() {
 
     var test_name = button.attr('pk');
 
-    launchModalForm(
-        "{% url 'stock-item-test-create' %}", {
-            data: {
-                stock_item: {{ item.id }},
-                test: test_name
+    constructForm('{% url "api-stock-test-result-list" %}', {
+        method: 'POST',
+        fields: {
+            test: {
+                value: test_name,
             },
-            success: reloadTable,
-            focus: 'value',
-        }
-    );
+            result: {},
+            value: {},
+            attachment: {},
+            notes: {},
+            stock_item: {
+                value: {{ item.pk }},
+                hidden: true,
+            }
+        },
+        title: '{% trans "Add Test Result" %}',
+        onSuccess: reloadTable,
+    });
 });
 
 $("#test-result-table").on('click', '.button-test-edit', function() {
     var button = $(this);
 
-    var url = `/stock/item/test/${button.attr('pk')}/edit/`;
+    var pk = button.attr('pk');
 
-    launchModalForm(url, {
-        success: reloadTable,
+    var url = `/api/stock/test/${pk}/`;
+
+    constructForm(url, {
+        fields: {
+            test: {},
+            result: {},
+            value: {},
+            attachment: {},
+            notes: {},
+        },
+        title: '{% trans "Edit Test Result" %}',
+        onSuccess: reloadTable,
     });
 });
 
 $("#test-result-table").on('click', '.button-test-delete', function() {
     var button = $(this);
 
-    var url = `/stock/item/test/${button.attr('pk')}/delete/`;
+    var pk = button.attr('pk');
 
-    launchModalForm(url, {
-        success: reloadTable,
+    var url = `/api/stock/test/${pk}/`;
+
+    constructForm(url, {
+        method: 'DELETE',
+        title: '{% trans "Delete Test Result" %}',
+        onSuccess: reloadTable,
     });
 });
 

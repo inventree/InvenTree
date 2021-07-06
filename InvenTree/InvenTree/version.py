@@ -10,10 +10,15 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.2.5 pre"
 
-INVENTREE_API_VERSION = 6
+INVENTREE_API_VERSION = 7
 
 """
 Increment thi API version number whenever there is a significant change to the API that any clients need to know about
+
+v7 -> 2021-07-03
+    - Introduced the concept of "API forms" in https://github.com/inventree/InvenTree/pull/1716
+    - API OPTIONS endpoints provide comprehensive field metedata
+    - Multiple new API endpoints added for database models
 
 v6 -> 2021-06-23
     - Part and Company images can now be directly uploaded via the REST API

@@ -12,7 +12,6 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -21,6 +20,7 @@ from django.views.generic import ListView, DetailView, CreateView, FormView, Del
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from common.settings import currency_code_default, currency_codes
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
@@ -820,8 +820,8 @@ class CurrencySettingsView(TemplateView):
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-        ctx["base_currency"] = settings.BASE_CURRENCY
-        ctx["currencies"] = settings.CURRENCIES
+        ctx["base_currency"] = currency_code_default()
+        ctx["currencies"] = currency_codes
 
         ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
 

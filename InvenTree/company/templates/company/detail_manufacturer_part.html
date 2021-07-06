@@ -25,7 +25,7 @@
             {% endif %}
             <div class='btn-group'>
                 <div class="dropdown" style="float: right;">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}
+                    <button class="btn btn-primary dropdown-toggle" id='table-options', type="button" data-toggle="dropdown">{% trans "Options" %}
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
@@ -59,7 +59,9 @@
                 data: {
                     manufacturer: {{ company.id }},
                 },
-                reload: true,
+                success: function() {
+                    $("#part-table").bootstrapTable("refresh");
+                },
                 secondary: [
                     {
                         field: 'part',
@@ -71,7 +73,6 @@
                         field: 'manufacturer',
                         label: '{% trans "New Manufacturer" %}',
                         title: '{% trans "Create new Manufacturer" %}',
-                        url: "{% url 'manufacturer-create' %}",
                     },
                 ]
             });
@@ -84,27 +85,20 @@
             params: {
                 part_detail: true,
                 manufacturer_detail: true,
-                company: {{ company.id }},
+                manufacturer: {{ company.id }},
             },
         }
     );
 
+    linkButtonsToSelection($("#manufacturer-table"), ['#table-options']);
+
     $("#multi-part-delete").click(function() {
         var selections = $("#part-table").bootstrapTable("getSelections");
 
-        var parts = [];
-
-        selections.forEach(function(item) {
-            parts.push(item.pk);
-        });
-
-        var url = "{% url 'manufacturer-part-delete' %}"
-
-        launchModalForm(url, {
-            data: {
-                parts: parts,
-            },
-            reload: true,
+        deleteManufacturerParts(selections, {
+            onSuccess: function() { 
+                $("#part-table").bootstrapTable("refresh");
+            }
         });
     });
 

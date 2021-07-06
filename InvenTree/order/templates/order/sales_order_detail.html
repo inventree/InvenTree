@@ -38,13 +38,23 @@ function reloadTable() {
 }
 
 $("#new-so-line").click(function() {
-    launchModalForm("{% url 'so-line-item-create' %}", {
-        success: reloadTable,
-        data: {
-            order: {{ order.id }},
+
+    constructForm('{% url "api-so-line-list" %}', {
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
+            },
+            part: {},
+            quantity: {},
+            reference: {},
+            sale_price: {},
+            sale_price_currency: {},
+            notes: {},
         },
-        secondary: [
-        ]
+        method: 'POST',
+        title: '{% trans "Add Line Item" %}',
+        onSuccess: reloadTable,
     });
 });
 
@@ -377,16 +387,26 @@ function setupCallbacks() {
 
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/sales-order/line/${pk}/edit/`, {
-            success: reloadTable,
+        constructForm(`/api/order/so-line/${pk}/`, {
+            fields: {
+                quantity: {},
+                reference: {},
+                sale_price: {},
+                sale_price_currency: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Line Item" %}',
+            onSuccess: reloadTable,
         });
     });
 
     table.find(".button-delete").click(function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(`/order/sales-order/line/${pk}/delete/`, {
-            success: reloadTable,
+        constructForm(`/api/order/so-line/${pk}/`, {
+            method: 'DELETE',
+            title: '{% trans "Delete Line Item" %}',
+            onSuccess: reloadTable,
         });
     });
 

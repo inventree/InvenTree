@@ -2,6 +2,8 @@
 JSON serializers for Company app
 """
 
+from django.utils.translation import ugettext_lazy as _
+
 from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
@@ -14,6 +16,8 @@ from part.serializers import PartBriefSerializer
 from .models import Company
 from .models import ManufacturerPart, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
+
+from common.settings import currency_code_default, currency_code_mappings
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -58,6 +62,14 @@ class CompanySerializer(InvenTreeModelSerializer):
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
 
+    currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        initial=currency_code_default,
+        help_text=_('Default currency used for this supplier'),
+        label=_('Currency Code'),
+        required=True,
+    )
+
     class Meta:
         model = Company
         fields = [
@@ -70,6 +82,7 @@ class CompanySerializer(InvenTreeModelSerializer):
             'phone',
             'address',
             'email',
+            'currency',
             'contact',
             'link',
             'image',
@@ -167,9 +180,10 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
 
-        part_detail = kwargs.pop('part_detail', False)
-        supplier_detail = kwargs.pop('supplier_detail', False)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
+        supplier_detail = kwargs.pop('supplier_detail', True)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
+        
         prettify = kwargs.pop('pretty', False)
 
         super(SupplierPartSerializer, self).__init__(*args, **kwargs)
@@ -239,6 +253,12 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
 
     price = serializers.CharField()
 
+    price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        default=currency_code_default,
+        label=_('Currency'),
+    )
+
     class Meta:
         model = SupplierPriceBreak
         fields = [
@@ -246,4 +266,5 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_currency',
         ]

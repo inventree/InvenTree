@@ -11,11 +11,12 @@ from rest_framework import generics
 
 from django.conf.urls import url, include
 
+from InvenTree.api import AttachmentMixin
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.status_codes import BuildStatus
 
-from .models import Build, BuildItem
-from .serializers import BuildSerializer, BuildItemSerializer
+from .models import Build, BuildItem, BuildOrderAttachment
+from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
 
 
 class BuildList(generics.ListCreateAPIView):
@@ -46,6 +47,8 @@ class BuildList(generics.ListCreateAPIView):
         'target_date',
         'completion_date',
         'quantity',
+        'issued_by',
+        'responsible',
     ]
 
     search_fields = [
@@ -226,14 +229,40 @@ class BuildItemList(generics.ListCreateAPIView):
     ]
 
 
-build_item_api_urls = [
-    url('^.*$', BuildItemList.as_view(), name='api-build-item-list'),
-]
+class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+    """
+    API endpoint for listing (and creating) BuildOrderAttachment objects
+    """
+
+    queryset = BuildOrderAttachment.objects.all()
+    serializer_class = BuildAttachmentSerializer
+
+
+class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for a BuildOrderAttachment object
+    """
+
+    queryset = BuildOrderAttachment.objects.all()
+    serializer_class = BuildAttachmentSerializer
+
 
 build_api_urls = [
-    url(r'^item/', include(build_item_api_urls)),
 
+    # Attachments
+    url(r'^attachment/', include([
+        url(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        url('^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+    ])),
+
+    # Build Items
+    url(r'^item/', include([
+        url('^.*$', BuildItemList.as_view(), name='api-build-item-list')
+    ])),
+
+    # Build Detail
     url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
 
+    # Build List
     url(r'^.*$', BuildList.as_view(), name='api-build-list'),
 ]

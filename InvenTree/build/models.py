@@ -60,6 +60,10 @@ class Build(MPTTModel):
         responsible: User (or group) responsible for completing the build
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-build-list')
+
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     class Meta:
@@ -1116,6 +1120,10 @@ class BuildItem(models.Model):
         stock_item: Link to a StockItem object
         quantity: Number of units allocated
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-build-item-list')
 
     def get_absolute_url(self):
         # TODO - Fix!

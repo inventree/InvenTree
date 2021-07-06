@@ -686,6 +686,20 @@ function loadStockTable(table, options) {
                 }
             },
             {
+                field: 'supplier_part',
+                title: '{% trans "Supplier Part" %}',
+                formatter: function(value, row) {
+                    if (!value) {
+                        return '-';
+                    }
+
+                    var link = `/supplier-part/${row.supplier_part}/stock/`;
+                    var text = `${row.supplier_part_detail.SKU}`;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
                 field: 'purchase_price',
                 title: '{% trans "Purchase Price" %}',
                 sortable: true,
