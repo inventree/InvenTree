@@ -250,11 +250,15 @@
         <td>
         {% resolve request.path as url_path %}
         {% if previous %}
-            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url url_path.url_name previous.id %}">{{ previous.serial }} ‹</a>
+            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url url_path.url_name previous.id %}">
+                <small>{{ previous.serial }}</small>  ‹
+            </a>
         {% endif %}
-        <span class="btn" href="">{{ item.serial }}</span>
+        <span class="btn" href=""><strong>{{ item.serial }}</strong></span>
         {% if next %}
-            <a class="btn btn-default" aria-label="{% trans 'next page' %}" href="{% url url_path.url_name next.id %}">› {{ next.serial }}</a>
+            <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url url_path.url_name next.id %}">
+                ›  <small>{{ next.serial }}</small>
+            </a>
         {% endif %}
         </td>
     </tr>
