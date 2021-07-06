@@ -688,6 +688,8 @@ function loadStockTable(table, options) {
             {
                 field: 'supplier_part',
                 title: '{% trans "Supplier Part" %}',
+                visible: params['supplier_part_detail'] || false,
+                switchable: params['supplier_part_detail'] || false,
                 formatter: function(value, row) {
                     if (!value) {
                         return '-';
