@@ -134,7 +134,6 @@ addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
         part_detail: true,
-        supplier_part_detail: true,
         ordering: "-updated",
         max_results: {% settings_value "STOCK_RECENT_COUNT" %},
     },
@@ -152,7 +151,6 @@ loadStockTable($("#table-expired-stock"), {
         expired: true,
         location_detail: true,
         part_detail: true,
-        supplier_part_detail: true,
     },
 });
 
@@ -162,7 +160,6 @@ loadStockTable($("#table-stale-stock"), {
         expired: false,
         location_detail: true,
         part_detail: true,
-        supplier_part_detail: true,
     },
 });
 {% endif %}
