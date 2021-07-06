@@ -47,6 +47,8 @@ class BuildList(generics.ListCreateAPIView):
         'target_date',
         'completion_date',
         'quantity',
+        'issued_by',
+        'responsible',
     ]
 
     search_fields = [

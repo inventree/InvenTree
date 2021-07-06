@@ -877,6 +877,36 @@ function loadBuildTable(table, options) {
                 sortable: true,
             },
             {
+                field: 'issued_by',
+                title: '{% trans "Issued by" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value)
+                    {
+                        return row.issued_by_detail.username;
+                    }
+                    else
+                    {
+                        return '{% trans "No user information" %}';
+                    }
+                }
+            },
+            {
+                field: 'responsible',
+                title: '{% trans "Resposible" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value)
+                    {
+                        return row.responsible_detail.name;
+                    }
+                    else
+                    {
+                        return '{% trans "No information" %}';
+                    }
+                }
+            },
+            {
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
                 sortable: true,
