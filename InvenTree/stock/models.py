@@ -1670,9 +1670,6 @@ class StockItemTracking(ItemTracking):
         related_name='tracking_info'
     )
 
-    def get_absolute_url(self):
-        return '/stock/track/{pk}'.format(pk=self.id)
-
 
 @receiver(post_save, sender=StockItemTracking)
 def add_part_history(sender, instance, created, raw, using, **kwargs):
