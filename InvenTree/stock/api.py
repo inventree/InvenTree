@@ -14,8 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, filters, permissions
 
-from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -108,20 +108,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         # user = request.user
 
         return super().update(request, *args, **kwargs)
-
-
-class StockFilter(FilterSet):
-    """ FilterSet for advanced stock filtering.
-
-    Allows greater-than / less-than filtering for stock quantity
-    """
-
-    min_stock = NumberFilter(name='quantity', lookup_expr='gte')
-    max_stock = NumberFilter(name='quantity', lookup_expr='lte')
-
-    class Meta:
-        model = StockItem
-        fields = ['quantity', 'part', 'location']
 
 
 class StockAdjust(APIView):
@@ -356,6 +342,22 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
 
+class StockFilter(rest_filters.FilterSet):
+    """ FilterSet for advanced stock filtering.
+
+    Allows greater-than / less-than filtering for stock quantity
+    """
+
+    min_stock = rest_filters.NumberFilter(label='Minimum stock', field_name='quantity', lookup_expr='gte')
+    max_stock = rest_filters.NumberFilter(label='Maximum stock', field_name='quantity', lookup_expr='lte')
+
+    batch = rest_filters.CharFilter(label="Batch code filter (case insensitive)", lookup_expr='iexact')
+
+    batch_regex = rest_filters.CharFilter(label="Batch code filter (regex)", field_name='batch', lookup_expr='iregex')
+
+    is_building = rest_filters.BooleanFilter(label="In production")
+
+
 class StockList(generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects
 
@@ -372,6 +374,7 @@ class StockList(generics.ListCreateAPIView):
 
     serializer_class = StockItemSerializer
     queryset = StockItem.objects.all()
+    filterset_class = StockFilter
 
     def create(self, request, *args, **kwargs):
         """
@@ -542,23 +545,10 @@ class StockList(generics.ListCreateAPIView):
         if belongs_to:
             queryset = queryset.filter(belongs_to=belongs_to)
 
-        # Filter by batch code
-        batch = params.get('batch', None)
-
-        if batch is not None:
-            queryset = queryset.filter(batch=batch)
-
         build = params.get('build', None)
 
         if build:
             queryset = queryset.filter(build=build)
-
-        # Filter by 'is building' status
-        is_building = params.get('is_building', None)
-
-        if is_building:
-            is_building = str2bool(is_building)
-            queryset = queryset.filter(is_building=is_building)
 
         sales_order = params.get('sales_order', None)
 
