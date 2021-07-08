@@ -426,14 +426,14 @@ class PartFilter(rest_filters.FilterSet):
             queryset = queryset.filter(IPN='')
 
     # Exact match for IPN
-    ipn = rest_filters.CharFilter(
+    IPN = rest_filters.CharFilter(
         label='Filter by exact IPN (internal part number)',
         field_name='IPN',
         lookup_expr="iexact"
     )
 
     # Regex match for IPN
-    ipn_regex = rest_filters.CharFilter(
+    IPN_regex = rest_filters.CharFilter(
         label='Filter by regex on IPN (internal part number) field',
         field_name='IPN', lookup_expr='iregex'
     )
