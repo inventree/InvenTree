@@ -12,7 +12,6 @@ import datetime
 
 from django.conf import settings
 from django.db import models
-from django.db.models.fields import Field
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.core.exceptions import ValidationError, FieldError
