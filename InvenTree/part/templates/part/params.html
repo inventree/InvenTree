@@ -43,14 +43,21 @@
 
     {% if roles.part.add %}
     $('#param-create').click(function() {
-        launchModalForm("{% url 'part-param-create' %}?part={{ part.id }}", {
-            reload: true,
-            secondary: [{
-                field: 'template',
-                label: '{% trans "New Template" %}',
-                title: '{% trans "Create New Parameter Template" %}',
-                url: "{% url 'part-param-template-create' %}"
-            }],
+
+        constructForm('{% url "api-part-parameter-list" %}', {
+            method: 'POST',
+            fields: {
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true,
+                },
+                template: {},
+                data: {},
+            },
+            title: '{% trans "Add Parameter" %}',
+            onSuccess: function() {
+                $('#parameter-table').bootstrapTable('refresh');
+            }
         });
     });
     {% endif %}

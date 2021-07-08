@@ -166,6 +166,14 @@ function renderPartCategory(name, data, parameters, options) {
 }
 
 
+function renderPartParameterTemplate(name, data, parameters, options) {
+
+    var html = `<span>${data.name} - [${data.units}]</span>`;
+
+    return html;
+}
+
+
 // Rendered for "SupplierPart" model
 function renderSupplierPart(name, data, parameters, options) {
 

@@ -32,7 +32,7 @@ from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
 from .models import PartCategory, Part, PartRelated
-from .models import PartParameterTemplate, PartParameter
+from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
@@ -2255,56 +2255,6 @@ class PartParameterTemplateDelete(AjaxDeleteView):
 
     model = PartParameterTemplate
     ajax_form_title = _("Delete Part Parameter Template")
-
-
-class PartParameterCreate(AjaxCreateView):
-    """ View for creating a new PartParameter """
-
-    model = PartParameter
-    form_class = part_forms.EditPartParameterForm
-    ajax_form_title = _('Create Part Parameter')
-
-    def get_initial(self):
-
-        initials = {}
-
-        part_id = self.request.GET.get('part', None)
-
-        if part_id:
-            try:
-                initials['part'] = Part.objects.get(pk=part_id)
-            except (Part.DoesNotExist, ValueError):
-                pass
-
-        return initials
-
-    def get_form(self):
-        """ Return the form object.
-
-        - Hide the 'Part' field (specified in URL)
-        - Limit the 'Template' options (to avoid duplicates)
-        """
-
-        form = super().get_form()
-
-        part_id = self.request.GET.get('part', None)
-
-        if part_id:
-            try:
-                part = Part.objects.get(pk=part_id)
-
-                form.fields['part'].widget = HiddenInput()
-
-                query = form.fields['template'].queryset
-
-                query = query.exclude(id__in=[param.template.id for param in part.parameters.all()])
-
-                form.fields['template'].queryset = query
-
-            except (Part.DoesNotExist, ValueError):
-                pass
-
-        return form
 
 
 class CategoryDetail(InvenTreeRoleMixin, DetailView):
