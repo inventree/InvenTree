@@ -105,6 +105,61 @@ function printStockLocationLabels(locations, options={}) {
 }
 
 
+function printPartLabels(parts, options={}) {
+    /**
+     * Print labels for the provided parts
+     */
+
+    if (parts.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "Part(s) must be selected before printing labels" %}',
+        );
+
+        return;
+    }
+
+    // Request available labels from the server
+    inventreeGet(
+        '{% url "api-part-label-list" %}',
+        {
+            enabled: true,
+            parts: parts,
+        },
+        {
+            success: function(response) {
+
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Labels Found" %}',
+                        '{% trans "No labels found which match the selected part(s)" %}',
+                    );
+
+                    return;
+                }
+
+                // Select label to print
+                selectLabel(
+                    response,
+                    parts,
+                    {
+                        success: function(pk) {
+                            var url = `/api/label/part/${pk}/print/?`;
+
+                            parts.forEach(function(part) {
+                                url += `parts[]=${part}&`;
+                            });
+
+                            window.location.href = url;
+                        }
+                    }
+                );
+            }
+        }
+    );
+}
+
+
 function selectLabel(labels, items, options={}) {
     /**
      * Present the user with the available labels,
