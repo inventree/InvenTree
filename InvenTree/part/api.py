@@ -425,18 +425,18 @@ class PartFilter(rest_filters.FilterSet):
         else:
             queryset = queryset.filter(IPN='')
 
+    # Regex filter for name
+    name_regex = rest_filters.CharFilter(label='Filter by name (regex)', field_name='name', lookup_expr='iregex')
+
     # Exact match for IPN
-    ipn = rest_filters.CharFilter(
+    IPN = rest_filters.CharFilter(
         label='Filter by exact IPN (internal part number)',
         field_name='IPN',
         lookup_expr="iexact"
     )
 
     # Regex match for IPN
-    ipn_regex = rest_filters.CharFilter(
-        label='Filter by regex on IPN (internal part number) field',
-        field_name='IPN', lookup_expr='iregex'
-    )
+    IPN_regex = rest_filters.CharFilter(label='Filter by regex on IPN (internal part number)', field_name='IPN', lookup_expr='iregex')
 
     # low_stock filter
     low_stock = rest_filters.BooleanFilter(label='Low stock', method='filter_low_stock')
