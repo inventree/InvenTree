@@ -394,7 +394,7 @@ class PartLabelMixin:
 
         for key in ['part', 'part[]', 'parts', 'parts[]']:
             if key in params:
-                parts = parts.getlist(key, [])
+                parts = params.getlist(key, [])
                 break
                 
         valid_ids = []
