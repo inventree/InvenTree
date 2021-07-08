@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-08 23:03+0000\n"
-"PO-Revision-Date: 2021-07-08 13:47\n"
+"PO-Revision-Date: 2021-07-08 23:07\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -589,10 +589,8 @@ msgid "Select quantity of stock to allocate"
 msgstr ""
 
 #: build/models.py:105
-#, fuzzy
-#| msgid "Invalid character in part name"
 msgid "Invalid choice for parent build"
-msgstr "Caractère invalide dans le nom de la pièce"
+msgstr ""
 
 #: build/models.py:109 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
@@ -6265,8 +6263,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7906,3 +7903,4 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
+
