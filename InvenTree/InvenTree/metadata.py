@@ -153,6 +153,11 @@ class InvenTreeMetadata(SimpleMetadata):
         if 'default' not in field_info and not field.default == empty:
             field_info['default'] = field.get_default()
 
+        # Force non-nullable fields to read as "required"
+        # (even if there is a default value!)
+        if not field.allow_null and not (hasattr(field, 'allow_blank') and field.allow_blank):
+            field_info['required'] = True
+
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
             
