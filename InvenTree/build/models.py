@@ -37,6 +37,35 @@ from part import models as PartModels
 from users import models as UserModels
 
 
+def get_next_build_number():
+    """
+    Returns the next available BuildOrder reference number
+    """
+
+    if Build.objects.count() == 0:
+        return
+
+    build = Build.objects.exclude(reference=None).last()
+
+    attempts = set([build.reference])
+
+    reference = build.reference
+
+    while 1:
+        reference = increment(build.reference)
+
+        if reference in attempts:
+            # Escape infinite recursion
+            return reference
+
+        if Build.objects.filter(reference=reference).exists():
+            attempts.add(reference)
+        else:
+            break
+    
+    return reference
+
+
 class Build(MPTTModel):
     """ A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
@@ -130,6 +159,7 @@ class Build(MPTTModel):
         blank=False,
         help_text=_('Build Order Reference'),
         verbose_name=_('Reference'),
+        default=get_next_build_number,
         validators=[
             validate_build_order_reference
         ]
