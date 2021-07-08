@@ -741,19 +741,19 @@ function handleFormSuccess(response, options) {
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
     // Display any messages
-    if (response.success) {
+    if (response && response.success) {
         showAlertOrCache("alert-success", response.success, cache);
     }
     
-    if (response.info) {
+    if (response && response.info) {
         showAlertOrCache("alert-info", response.info, cache);
     }
 
-    if (response.warning) {
+    if (response && response.warning) {
         showAlertOrCache("alert-warning", response.warning, cache);
     }
 
-    if (response.danger) {
+    if (response && response.danger) {
         showAlertOrCache("alert-danger", response.danger, cache);
     }
 

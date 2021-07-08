@@ -2307,28 +2307,6 @@ class PartParameterCreate(AjaxCreateView):
         return form
 
 
-class PartParameterEdit(AjaxUpdateView):
-    """ View for editing a PartParameter """
-
-    model = PartParameter
-    form_class = part_forms.EditPartParameterForm
-    ajax_form_title = _('Edit Part Parameter')
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        return form
-
-
-class PartParameterDelete(AjaxDeleteView):
-    """ View for deleting a PartParameter """
-
-    model = PartParameter
-    ajax_template_name = 'part/param_delete.html'
-    ajax_form_title = _('Delete Part Parameter')
-
-
 class CategoryDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for PartCategory """
 
