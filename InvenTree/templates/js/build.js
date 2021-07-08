@@ -10,6 +10,11 @@ function buildFormFields() {
         title: {},
         part: {},
         quantity: {},
+        parent: {
+            filters: {
+                part_detail: true,
+            }
+        },
         batch: {},
         target_date: {},
         take_from: {},
@@ -46,6 +51,14 @@ function newBuildOrder(options={}) {
 
     if (options.part) {
         fields.part.value = options.part;
+    }
+
+    if (options.quantity) {
+        fields.quantity.value = options.quantity;
+    }
+
+    if (options.parent) {
+        fields.parent.value = options.parent;
     }
 
     constructForm(`/api/build/`, {
@@ -409,14 +422,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var idx = $(this).closest('tr').attr('data-index');
             var row = $(table).bootstrapTable('getData')[idx];
 
-            // Launch form to create a new build order
-            launchModalForm('{% url "build-create" %}', {
-                follow: true,
-                data: {
-                    part: pk,
-                    parent: buildId,
-                    quantity: requiredQuantity(row) - sumAllocations(row),
-                }
+            newBuildOrder({
+                part: pk,
+                parent: buildId,
+                quantity: requiredQuantity(row) - sumAllocations(row),
             });
         });
 
@@ -1117,13 +1126,9 @@ function loadBuildPartsTable(table, options={}) {
             var idx = $(this).closest('tr').attr('data-index');
             var row = $(table).bootstrapTable('getData')[idx];
 
-            // Launch form to create a new build order
-            launchModalForm('{% url "build-create" %}', {
-                follow: true,
-                data: {
-                    part: pk,
-                    parent: options.build,
-                }
+            newBuildOrder({
+                part: pk,
+                parent: options.build,
             });
         });
     }

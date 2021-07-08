@@ -80,6 +80,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'completed',
             'completion_date',
             'destination',
+            'parent',
             'part',
             'part_detail',
             'overdue',

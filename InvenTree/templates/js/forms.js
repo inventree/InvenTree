@@ -1204,6 +1204,9 @@ function renderModelData(name, model, data, parameters, options) {
         case 'supplierpart':
             renderer = renderSupplierPart;
             break;
+        case 'build':
+            renderer = renderBuild;
+            break;
         case 'owner':
             renderer = renderOwner;
             break;
