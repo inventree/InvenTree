@@ -237,6 +237,14 @@ class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = BuildOrderAttachment.objects.all()
     serializer_class = BuildAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'build',
+    ]
+
 
 class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
     """

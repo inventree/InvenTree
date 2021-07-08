@@ -37,7 +37,7 @@ loadAttachmentTable(
     '{% url "api-stock-attachment-list" %}',
     {
         filters: {
-            item: {{ item.pk }},
+            stock_item: {{ item.pk }},
         },
         onEdit: function(pk) {
             var url = `/api/stock/attachment/${pk}/`;
