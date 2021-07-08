@@ -1206,6 +1206,10 @@ function renderModelData(name, model, data, parameters, options) {
             break;
         case 'owner':
             renderer = renderOwner;
+            break;
+        case 'user':
+            renderer = renderUser;
+            break;
         default:
             break;
     }

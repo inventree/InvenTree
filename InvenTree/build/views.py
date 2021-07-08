@@ -744,49 +744,6 @@ class BuildCreate(AjaxCreateView):
         pass
 
 
-class BuildUpdate(AjaxUpdateView):
-    """ View for editing a Build object """
-
-    model = Build
-    form_class = forms.EditBuildForm
-    context_object_name = 'build'
-    ajax_form_title = _('Edit Build Order Details')
-    ajax_template_name = 'modal_form.html'
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        build = self.get_object()
-
-        # Fields which are included in the form, but hidden
-        hidden = [
-            'parent',
-            'sales_order',
-        ]
-
-        if build.is_complete:
-            # Fields which cannot be edited once the build has been completed
-
-            hidden += [
-                'part',
-                'quantity',
-                'batch',
-                'take_from',
-                'destination',
-            ]
-
-        for field in hidden:
-            form.fields[field].widget = HiddenInput()
-
-        return form
-
-    def get_data(self):
-        return {
-            'info': _('Edited build'),
-        }
-
-
 class BuildDelete(AjaxDeleteView):
     """ View to delete a build """
 

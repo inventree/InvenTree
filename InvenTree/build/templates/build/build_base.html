@@ -196,10 +196,26 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-edit").click(function () {
-        launchModalForm("{% url 'build-edit' build.id %}",
-                        {
-                            reload: true
-                        });
+
+        constructForm('{% url "api-build-detail" build.pk %}', {
+            fields: {
+                reference: {
+                    prefix: "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}",
+                },
+                title: {},
+                part: {},
+                quantity: {},
+                batch: {},
+                target_date: {},
+                take_from: {},
+                destination: {},
+                link: {},
+                issued_by: {},
+                responsible: {},
+            },
+            title: '{% trans "Edit Build Order" %}',
+            reload: true,
+        });
     });
 
     $("#build-cancel").click(function() {

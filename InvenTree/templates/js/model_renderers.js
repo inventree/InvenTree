@@ -92,6 +92,18 @@ function renderPart(name, data, parameters, options) {
     return html;
 }
 
+// Renderer for "User" model
+function renderUser(name, data, parameters, options) {
+
+    var html = `<span>${data.username}</span>`;
+
+    if (data.first_name && data.last_name) {
+        html += ` - <i>${data.first_name} ${data.last_name}</i>`;
+    }
+
+    return html;
+}
+
 
 // Renderer for "Owner" model
 function renderOwner(name, data, parameters, options) {
