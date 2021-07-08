@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-08 23:03+0000\n"
-"PO-Revision-Date: 2021-07-08 13:47\n"
+"PO-Revision-Date: 2021-07-08 23:07\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -589,10 +589,8 @@ msgid "Select quantity of stock to allocate"
 msgstr "Tahsis edilecek stok miktarını seçiniz"
 
 #: build/models.py:105
-#, fuzzy
-#| msgid "Invalid character in part name"
 msgid "Invalid choice for parent build"
-msgstr "Parça adında geçersiz karakter"
+msgstr ""
 
 #: build/models.py:109 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
@@ -6265,8 +6263,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6700,16 +6697,12 @@ msgid "No BOM items found"
 msgstr ""
 
 #: templates/js/build.js:42
-#, fuzzy
-#| msgid "Print Build Order"
 msgid "Edit Build Order"
-msgstr "Yapım İşi Emrini Yazdır"
+msgstr ""
 
 #: templates/js/build.js:68
-#, fuzzy
-#| msgid "Complete Build Order"
 msgid "Create Build Order"
-msgstr "Tamamlanmış Yapım İşi Emri"
+msgstr ""
 
 #: templates/js/build.js:100
 msgid "Auto-allocate stock items to this output"
@@ -7064,10 +7057,8 @@ msgid "Location ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:86
-#, fuzzy
-#| msgid "Build"
 msgid "Build ID"
-msgstr "Yapım İşi"
+msgstr ""
 
 #: templates/js/model_renderers.js:111
 msgid "Part ID"
@@ -7913,17 +7904,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Created new build"
-#~ msgstr "Yeni yapım işi oluşturuldu"
-
-#~ msgid "Edit Build Order Details"
-#~ msgstr "Yapım İşi Emri Detaylarını Düzenle"
-
-#~ msgid "Edited build"
-#~ msgstr "Yapım işi düzenlendi"
-
-#~ msgid "New Template"
-#~ msgstr "Yeni Şablon"
-
-#~ msgid "Create New Parameter Template"
-#~ msgstr "Yeni Parametre Şablonu Oluştur"
