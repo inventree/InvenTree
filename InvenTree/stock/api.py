@@ -14,8 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, filters, permissions
 
-from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -108,20 +108,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         # user = request.user
 
         return super().update(request, *args, **kwargs)
-
-
-class StockFilter(FilterSet):
-    """ FilterSet for advanced stock filtering.
-
-    Allows greater-than / less-than filtering for stock quantity
-    """
-
-    min_stock = NumberFilter(name='quantity', lookup_expr='gte')
-    max_stock = NumberFilter(name='quantity', lookup_expr='lte')
-
-    class Meta:
-        model = StockItem
-        fields = ['quantity', 'part', 'location']
 
 
 class StockAdjust(APIView):
@@ -356,6 +342,113 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
 
+class StockFilter(rest_filters.FilterSet):
+    """
+    FilterSet for StockItem LIST API
+    """
+
+    # Part name filters
+    name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
+    name_contains = rest_filters.CharFilter(label='Part name contains (case insensitive)', field_name='part__name', lookup_expr='icontains')
+    name_regex = rest_filters.CharFilter(label='Part name (regex)', field_name='part__name', lookup_expr='iregex')
+
+    # Part IPN filters
+    IPN = rest_filters.CharFilter(label='Part IPN (case insensitive)', field_name='part__IPN', lookup_expr='iexact')
+    IPN_contains = rest_filters.CharFilter(label='Part IPN contains (case insensitive)', field_name='part__IPN', lookup_expr='icontains')
+    IPN_regex = rest_filters.CharFilter(label='Part IPN (regex)', field_name='part__IPN', lookup_expr='iregex')
+
+    # Part attribute filters
+    assembly = rest_filters.BooleanFilter(label="Assembly", field_name='part__assembly')
+    active = rest_filters.BooleanFilter(label="Active", field_name='part__active')
+
+    min_stock = rest_filters.NumberFilter(label='Minimum stock', field_name='quantity', lookup_expr='gte')
+    max_stock = rest_filters.NumberFilter(label='Maximum stock', field_name='quantity', lookup_expr='lte')
+
+    in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
+
+    def filter_in_stock(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
+        else:
+            queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
+
+        return queryset
+
+    batch = rest_filters.CharFilter(label="Batch code filter (case insensitive)", lookup_expr='iexact')
+
+    batch_regex = rest_filters.CharFilter(label="Batch code filter (regex)", field_name='batch', lookup_expr='iregex')
+
+    is_building = rest_filters.BooleanFilter(label="In production")
+
+    # Serial number filtering
+    serial_gte = rest_filters.NumberFilter(label='Serial number GTE', field_name='serial', lookup_expr='gte')
+    serial_lte = rest_filters.NumberFilter(label='Serial number LTE', field_name='serial', lookup_expr='lte')
+    serial = rest_filters.NumberFilter(label='Serial number', field_name='serial', lookup_expr='exact')
+
+    serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
+
+    def filter_serialized(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.exclude(serial=None)
+        else:
+            queryset = queryset.filter(serial=None)
+
+        return queryset
+
+    installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
+
+    def filter_installed(self, queryset, name, value):
+        """
+        Filter stock items by "belongs_to" field being empty
+        """
+
+        if str2bool(value):
+            queryset = queryset.exclude(belongs_to=None)
+        else:
+            queryset = queryset.filter(belongs_to=None)
+
+        return queryset
+
+    sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
+
+    def filter_sent_to_customer(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.exclude(customer=None)
+        else:
+            queryset = queryset.filter(customer=None)
+            
+        return queryset
+
+    depleted = rest_filters.BooleanFilter(label='Depleted', method='filter_depleted')
+
+    def filter_depleted(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.filter(quantity__lte=0)
+        else:
+            queryset = queryset.exclude(quantity__lte=0)
+
+        return queryset
+
+    has_purchase_price = rest_filters.BooleanFilter(label='Has purchase price', method='filter_has_purchase_price')
+
+    def filter_has_purchase_price(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.exclude(purcahse_price=None)
+        else:
+            queryset = queryset.filter(purchase_price=None)
+
+        return queryset
+
+    # Update date filters
+    updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
+    updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
+
+
 class StockList(generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects
 
@@ -372,6 +465,7 @@ class StockList(generics.ListCreateAPIView):
 
     serializer_class = StockItemSerializer
     queryset = StockItem.objects.all()
+    filterset_class = StockFilter
 
     def create(self, request, *args, **kwargs):
         """
@@ -542,23 +636,10 @@ class StockList(generics.ListCreateAPIView):
         if belongs_to:
             queryset = queryset.filter(belongs_to=belongs_to)
 
-        # Filter by batch code
-        batch = params.get('batch', None)
-
-        if batch is not None:
-            queryset = queryset.filter(batch=batch)
-
         build = params.get('build', None)
 
         if build:
             queryset = queryset.filter(build=build)
-
-        # Filter by 'is building' status
-        is_building = params.get('is_building', None)
-
-        if is_building:
-            is_building = str2bool(is_building)
-            queryset = queryset.filter(is_building=is_building)
 
         sales_order = params.get('sales_order', None)
 
@@ -576,19 +657,6 @@ class StockList(generics.ListCreateAPIView):
         if installed_in:
             # Note: The "installed_in" field is called "belongs_to"
             queryset = queryset.filter(belongs_to=installed_in)
-
-        # Filter stock items which are installed in another stock item
-        installed = params.get('installed', None)
-
-        if installed is not None:
-            installed = str2bool(installed)
-
-            if installed:
-                # Exclude items which are *not* installed in another item
-                queryset = queryset.exclude(belongs_to=None)
-            else:
-                # Exclude items which are instaled in another item
-                queryset = queryset.filter(belongs_to=None)
 
         if common.settings.stock_expiry_enabled():
 
@@ -628,61 +696,7 @@ class StockList(generics.ListCreateAPIView):
         if customer:
             queryset = queryset.filter(customer=customer)
 
-        # Filter if items have been sent to a customer (any customer)
-        sent_to_customer = params.get('sent_to_customer', None)
-
-        if sent_to_customer is not None:
-            sent_to_customer = str2bool(sent_to_customer)
-
-            if sent_to_customer:
-                queryset = queryset.exclude(customer=None)
-            else:
-                queryset = queryset.filter(customer=None)
-
-        # Filter by "serialized" status?
-        serialized = params.get('serialized', None)
-
-        if serialized is not None:
-            serialized = str2bool(serialized)
-
-            if serialized:
-                queryset = queryset.exclude(serial=None)
-            else:
-                queryset = queryset.filter(serial=None)
-
-        # Filter by serial number?
-        serial_number = params.get('serial', None)
-
-        if serial_number is not None:
-            queryset = queryset.filter(serial=serial_number)
-
-        # Filter by range of serial numbers?
-        serial_number_gte = params.get('serial_gte', None)
-        serial_number_lte = params.get('serial_lte', None)
-
-        if serial_number_gte is not None or serial_number_lte is not None:
-            queryset = queryset.exclude(serial=None)
-
-        if serial_number_gte is not None:
-            queryset = queryset.filter(serial__gte=serial_number_gte)
-
-        if serial_number_lte is not None:
-            queryset = queryset.filter(serial__lte=serial_number_lte)
-
-        # Filter by "in_stock" status
-        in_stock = params.get('in_stock', None)
-
-        if in_stock is not None:
-            in_stock = str2bool(in_stock)
-
-            if in_stock:
-                # Filter out parts which are not actually "in stock"
-                queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
-            else:
-                # Only show parts which are not in stock
-                queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
-
-        # Filter by 'allocated' patrs?
+        # Filter by 'allocated' parts?
         allocated = params.get('allocated', None)
 
         if allocated is not None:
@@ -694,37 +708,6 @@ class StockList(generics.ListCreateAPIView):
             else:
                 # Filter StockItem without build allocations or sales order allocations
                 queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
-
-        # Do we wish to filter by "active parts"
-        active = params.get('active', None)
-
-        if active is not None:
-            active = str2bool(active)
-            queryset = queryset.filter(part__active=active)
-
-        # Do we wish to filter by "assembly parts"
-        assembly = params.get('assembly', None)
-
-        if assembly is not None:
-            assembly = str2bool(assembly)
-            queryset = queryset.filter(part__assembly=assembly)
-
-        # Filter by 'depleted' status
-        depleted = params.get('depleted', None)
-
-        if depleted is not None:
-            depleted = str2bool(depleted)
-
-            if depleted:
-                queryset = queryset.filter(quantity__lte=0)
-            else:
-                queryset = queryset.exclude(quantity__lte=0)
-
-        # Filter by internal part number
-        ipn = params.get('IPN', None)
-
-        if ipn is not None:
-            queryset = queryset.filter(part__IPN=ipn)
 
         # Does the client wish to filter by the Part ID?
         part_id = params.get('part', None)
@@ -824,50 +807,6 @@ class StockList(generics.ListCreateAPIView):
         if manufacturer is not None:
             queryset = queryset.filter(supplier_part__manufacturer_part__manufacturer=manufacturer)
 
-        """
-        Filter by the 'last updated' date of the stock item(s):
-
-        - updated_before=? : Filter stock items which were last updated *before* the provided date
-        - updated_after=? : Filter stock items which were last updated *after* the provided date
-        """
-
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        updated_before = params.get('updated_before', None)
-        updated_after = params.get('updated_after', None)
-
-        if updated_before:
-            try:
-                updated_before = datetime.strptime(str(updated_before), date_fmt).date()
-                queryset = queryset.filter(updated__lte=updated_before)
-
-                print("Before:", updated_before.isoformat())
-            except (ValueError, TypeError):
-                # Account for improperly formatted date string
-                print("After before:", str(updated_before))
-                pass
-
-        if updated_after:
-            try:
-                updated_after = datetime.strptime(str(updated_after), date_fmt).date()
-                queryset = queryset.filter(updated__gte=updated_after)
-                print("After:", updated_after.isoformat())
-            except (ValueError, TypeError):
-                # Account for improperly formatted date string
-                print("After error:", str(updated_after))
-                pass
-
-        # Filter stock items which have a purchase price set
-        has_purchase_price = params.get('has_purchase_price', None)
-
-        if has_purchase_price is not None:
-            has_purchase_price = str2bool(has_purchase_price)
-
-            if has_purchase_price:
-                queryset = queryset.exclude(purchase_price=None)
-            else:
-                queryset = queryset.filter(purchase_price=None)
-
         # Optionally, limit the maximum number of returned results
         max_results = params.get('max_results', None)
 
@@ -893,9 +832,6 @@ class StockList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
     ]
 
     ordering_fields = [

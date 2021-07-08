@@ -692,7 +692,6 @@ class Part(MPTTModel):
         null=True, blank=True,
         limit_choices_to={
             'is_template': True,
-            'active': True,
         },
         on_delete=models.SET_NULL,
         help_text=_('Is this part a variant of another part?'),

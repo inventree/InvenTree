@@ -5,7 +5,8 @@ Provides a JSON API for the Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django.conf.urls import url, include
+from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.utils.translation import ugettext_lazy as _
@@ -15,12 +16,13 @@ from rest_framework.response import Response
 from rest_framework import filters, serializers
 from rest_framework import generics
 
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
+
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from django.conf.urls import url, include
-from django.urls import reverse
 
 from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
@@ -405,6 +407,87 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         return response
 
 
+class PartFilter(rest_filters.FilterSet):
+    """
+    Custom filters for the PartList endpoint.
+    Uses the django_filters extension framework
+    """
+
+    # Filter by parts which have (or not) an IPN value
+    has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
+
+    def filter_has_ipn(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(IPN='')
+        else:
+            queryset = queryset.filter(IPN='')
+
+    # Exact match for IPN
+    ipn = rest_filters.CharFilter(
+        label='Filter by exact IPN (internal part number)',
+        field_name='IPN',
+        lookup_expr="iexact"
+    )
+
+    # Regex match for IPN
+    ipn_regex = rest_filters.CharFilter(
+        label='Filter by regex on IPN (internal part number) field',
+        field_name='IPN', lookup_expr='iregex'
+    )
+
+    # low_stock filter
+    low_stock = rest_filters.BooleanFilter(label='Low stock', method='filter_low_stock')
+
+    def filter_low_stock(self, queryset, name, value):
+        """
+        Filter by "low stock" status
+        """
+
+        value = str2bool(value)
+
+        if value:
+            # Ignore any parts which do not have a specified 'minimum_stock' level
+            queryset = queryset.exclude(minimum_stock=0)
+            # Filter items which have an 'in_stock' level lower than 'minimum_stock'
+            queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
+        else:
+            # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+            queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+
+        return queryset
+
+    # has_stock filter
+    has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
+
+    def filter_has_stock(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(Q(in_stock__gt=0))
+        else:
+            queryset = queryset.filter(Q(in_stock__lte=0))
+
+        return queryset
+
+    is_template = rest_filters.BooleanFilter()
+
+    assembly = rest_filters.BooleanFilter()
+
+    component = rest_filters.BooleanFilter()
+
+    trackable = rest_filters.BooleanFilter()
+
+    purchaseable = rest_filters.BooleanFilter()
+
+    salable = rest_filters.BooleanFilter()
+
+    active = rest_filters.BooleanFilter()
+
+
 class PartList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Part objects
 
@@ -427,8 +510,8 @@ class PartList(generics.ListCreateAPIView):
     """
 
     serializer_class = part_serializers.PartSerializer
-
     queryset = Part.objects.all()
+    filterset_class = PartFilter
 
     starred_parts = None
 
@@ -469,7 +552,7 @@ class PartList(generics.ListCreateAPIView):
         # Do we wish to include PartCategory detail?
         if str2bool(request.query_params.get('category_detail', False)):
 
-            # Work out which part categorie we need to query
+            # Work out which part categories we need to query
             category_ids = set()
 
             for part in data:
@@ -541,6 +624,10 @@ class PartList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        # Annotate calculated data to the queryset
+        # (This will be used for further filtering)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
         queryset = super().filter_queryset(queryset)
 
         # Filter by "uses" query - Limit to parts which use the provided part
@@ -566,17 +653,6 @@ class PartList(generics.ListCreateAPIView):
                 queryset = queryset.filter(pk__in=[d.pk for d in descendants])
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by whether the part has an IPN (internal part number) defined
-        has_ipn = params.get('has_ipn', None)
-
-        if has_ipn is not None:
-            has_ipn = str2bool(has_ipn)
-
-            if has_ipn:
-                queryset = queryset.exclude(IPN='')
-            else:
-                queryset = queryset.filter(IPN='')
 
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
@@ -643,36 +719,6 @@ class PartList(generics.ListCreateAPIView):
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
 
-        # Annotate calculated data to the queryset
-        # (This will be used for further filtering)
-        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        # Filter by whether the part has stock
-        has_stock = params.get("has_stock", None)
-
-        if has_stock is not None:
-            has_stock = str2bool(has_stock)
-
-            if has_stock:
-                queryset = queryset.filter(Q(in_stock__gt=0))
-            else:
-                queryset = queryset.filter(Q(in_stock__lte=0))
-
-        # If we are filtering by 'low_stock' status
-        low_stock = params.get('low_stock', None)
-
-        if low_stock is not None:
-            low_stock = str2bool(low_stock)
-
-            if low_stock:
-                # Ignore any parts which do not have a specified 'minimum_stock' level
-                queryset = queryset.exclude(minimum_stock=0)
-                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
-                queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
-            else:
-                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
-                queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
-
         # Filer by 'depleted_stock' status -> has no stock and stock items
         depleted_stock = params.get('depleted_stock', None)
 
@@ -722,14 +768,7 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'is_template',
         'variant_of',
-        'assembly',
-        'component',
-        'trackable',
-        'purchaseable',
-        'salable',
-        'active',
     ]
 
     ordering_fields = [
