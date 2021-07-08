@@ -100,7 +100,7 @@ class StockTest(TestCase):
         # And there should be *no* items being build
         self.assertEqual(part.quantity_being_built, 0)
 
-        build = Build.objects.create(part=part, title='A test build', quantity=1)
+        build = Build.objects.create(reference='12345', part=part, title='A test build', quantity=1)
 
         # Add some stock items which are "building"
         for i in range(10):
