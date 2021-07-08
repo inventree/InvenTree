@@ -368,9 +368,7 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_in_stock(self, queryset, name, value):
 
-        value = str2bool(value)
-
-        if value:
+        if str2bool(value):
             queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
         else:
             queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
@@ -392,14 +390,63 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_serialized(self, queryset, name, value):
 
-        value = str2bool(value)
-
-        if value:
+        if str2bool(value):
             queryset = queryset.exclude(serial=None)
         else:
             queryset = queryset.filter(serial=None)
 
         return queryset
+
+    installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
+
+    def filter_installed(self, queryset, name, value):
+        """
+        Filter stock items by "belongs_to" field being empty
+        """
+
+        if str2bool(value):
+            queryset = queryset.exclude(belongs_to=None)
+        else:
+            queryset = queryset.filter(belongs_to=None)
+
+        return queryset
+
+    sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
+
+    def filter_sent_to_customer(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.exclude(customer=None)
+        else:
+            queryset = queryset.filter(customer=None)
+            
+        return queryset
+
+    depleted = rest_filters.BooleanFilter(label='Depleted', method='filter_depleted')
+
+    def filter_depleted(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.filter(quantity__lte=0)
+        else:
+            queryset = queryset.exclude(quantity__lte=0)
+
+        return queryset
+
+    has_purchase_price = rest_filters.BooleanFilter(label='Has purchase price', method='filter_has_purchase_price')
+
+    def filter_has_purchase_price(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.exclude(purcahse_price=None)
+        else:
+            queryset = queryset.filter(purchase_price=None)
+
+        return queryset
+
+    # Update date filters
+    updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
+    updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
 
 class StockList(generics.ListCreateAPIView):
@@ -611,19 +658,6 @@ class StockList(generics.ListCreateAPIView):
             # Note: The "installed_in" field is called "belongs_to"
             queryset = queryset.filter(belongs_to=installed_in)
 
-        # Filter stock items which are installed in another stock item
-        installed = params.get('installed', None)
-
-        if installed is not None:
-            installed = str2bool(installed)
-
-            if installed:
-                # Exclude items which are *not* installed in another item
-                queryset = queryset.exclude(belongs_to=None)
-            else:
-                # Exclude items which are instaled in another item
-                queryset = queryset.filter(belongs_to=None)
-
         if common.settings.stock_expiry_enabled():
 
             # Filter by 'expired' status
@@ -662,17 +696,6 @@ class StockList(generics.ListCreateAPIView):
         if customer:
             queryset = queryset.filter(customer=customer)
 
-        # Filter if items have been sent to a customer (any customer)
-        sent_to_customer = params.get('sent_to_customer', None)
-
-        if sent_to_customer is not None:
-            sent_to_customer = str2bool(sent_to_customer)
-
-            if sent_to_customer:
-                queryset = queryset.exclude(customer=None)
-            else:
-                queryset = queryset.filter(customer=None)
-
         # Filter by 'allocated' parts?
         allocated = params.get('allocated', None)
 
@@ -685,17 +708,6 @@ class StockList(generics.ListCreateAPIView):
             else:
                 # Filter StockItem without build allocations or sales order allocations
                 queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
-
-        # Filter by 'depleted' status
-        depleted = params.get('depleted', None)
-
-        if depleted is not None:
-            depleted = str2bool(depleted)
-
-            if depleted:
-                queryset = queryset.filter(quantity__lte=0)
-            else:
-                queryset = queryset.exclude(quantity__lte=0)
 
         # Does the client wish to filter by the Part ID?
         part_id = params.get('part', None)
@@ -794,50 +806,6 @@ class StockList(generics.ListCreateAPIView):
 
         if manufacturer is not None:
             queryset = queryset.filter(supplier_part__manufacturer_part__manufacturer=manufacturer)
-
-        """
-        Filter by the 'last updated' date of the stock item(s):
-
-        - updated_before=? : Filter stock items which were last updated *before* the provided date
-        - updated_after=? : Filter stock items which were last updated *after* the provided date
-        """
-
-        date_fmt = '%Y-%m-%d'  # ISO format date string
-
-        updated_before = params.get('updated_before', None)
-        updated_after = params.get('updated_after', None)
-
-        if updated_before:
-            try:
-                updated_before = datetime.strptime(str(updated_before), date_fmt).date()
-                queryset = queryset.filter(updated__lte=updated_before)
-
-                print("Before:", updated_before.isoformat())
-            except (ValueError, TypeError):
-                # Account for improperly formatted date string
-                print("After before:", str(updated_before))
-                pass
-
-        if updated_after:
-            try:
-                updated_after = datetime.strptime(str(updated_after), date_fmt).date()
-                queryset = queryset.filter(updated__gte=updated_after)
-                print("After:", updated_after.isoformat())
-            except (ValueError, TypeError):
-                # Account for improperly formatted date string
-                print("After error:", str(updated_after))
-                pass
-
-        # Filter stock items which have a purchase price set
-        has_purchase_price = params.get('has_purchase_price', None)
-
-        if has_purchase_price is not None:
-            has_purchase_price = str2bool(has_purchase_price)
-
-            if has_purchase_price:
-                queryset = queryset.exclude(purchase_price=None)
-            else:
-                queryset = queryset.filter(purchase_price=None)
 
         # Optionally, limit the maximum number of returned results
         max_results = params.get('max_results', None)
