@@ -35,8 +35,6 @@ build_urls = [
         url('^new/', views.BuildItemCreate.as_view(), name='build-item-create'),
     ])),
 
-    url(r'new/', views.BuildCreate.as_view(), name='build-create'),
-
     url(r'^(?P<pk>\d+)/', include(build_detail_urls)),
 
     url(r'.*$', views.BuildIndex.as_view(), name='build-index'),

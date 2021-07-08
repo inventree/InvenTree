@@ -1,34 +1,59 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+
+function buildFormFields() {
+    return {
+        reference: {
+            prefix: "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}",
+        },
+        title: {},
+        part: {},
+        quantity: {},
+        batch: {},
+        target_date: {},
+        take_from: {},
+        destination: {},
+        link: {
+            icon: 'fa-link',
+        },
+        issued_by: {
+            icon: 'fa-user',
+        },
+        responsible: {
+            icon: 'fa-users',
+        },
+    };
+}
+
+
+function editBuildOrder(pk, options={}) {
+
+    var fields = buildFormFields();
+
+    constructForm(`/api/build/${pk}/`, {
+        fields: fields,
+        reload: true,
+        title: '{% trans "Edit Build Order" %}',
+    });
+}
+
 function newBuildOrder(options={}) {
     /* Launch modal form to create a new BuildOrder.
      */
 
-    launchModalForm(
-        "{% url 'build-create' %}",
-        {
-            follow: true,
-            data: options.data || {},
-            callback: [
-                {
-                    field: 'part',
-                    action: function(value) {
-                        inventreeGet(
-                            `/api/part/${value}/`, {},
-                            {
-                                success: function(response) {
+    var fields = buildFormFields();
 
-                                    //enableField('serial_numbers', response.trackable);
-                                    //clearField('serial_numbers');
-                                }
-                            }
-                        );
-                    },
-                }
-            ],
-        }
-    )
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    constructForm(`/api/build/`, {
+        fields: fields,
+        follow: true,
+        method: 'POST',
+        title: '{% trans "Create Build Order" %}'
+    });
 }
 
 
