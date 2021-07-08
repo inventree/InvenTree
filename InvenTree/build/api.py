@@ -6,7 +6,6 @@ JSON API for the Build app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.db.models import query
 
 from rest_framework import filters
 from rest_framework import generics
