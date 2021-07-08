@@ -349,10 +349,12 @@ class StockFilter(rest_filters.FilterSet):
 
     # Part name filters
     name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
+    name_contains = rest_filters.CharFilter(label='Part name contains (case insensitive)', field_name='part__name', lookup_expr='icontains')
     name_regex = rest_filters.CharFilter(label='Part name (regex)', field_name='part__name', lookup_expr='iregex')
 
     # Part IPN filters
     ipn = rest_filters.CharFilter(label='Part IPN (case insensitive)', field_name='part__IPN', lookup_expr='iexact')
+    ipn_contains = rest_filters.CharFilter(label='Part IPN contains (case insensitive)', field_name='part__IPN', lookup_expr='icontains')
     ipn_regex = rest_filters.CharFilter(label='Part IPN (regex)', field_name='part__IPN', lookup_expr='iregex')
 
     # Part attribute filters
@@ -862,9 +864,6 @@ class StockList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
     ]
 
     ordering_fields = [
