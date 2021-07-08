@@ -53,7 +53,7 @@ def get_next_build_number():
     reference = build.reference
 
     while 1:
-        reference = increment(build.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion
