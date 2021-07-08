@@ -511,6 +511,10 @@ function insertConfirmButton(options) {
  */
 function submitFormData(fields, options) {
 
+    // Immediately disable the "submit" button,
+    // to prevent the form being submitted multiple times!
+    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+
     // Form data to be uploaded to the server
     // Only used if file / image upload is required
     var form_data = new FormData();
@@ -777,6 +781,9 @@ function clearFormErrors(options) {
  * - options: Form options provided by the client
  */
 function handleFormErrors(errors, fields, options) {
+
+    // Reset the status of the "submit" button
+    $(options.modal).find('#modal-form-submit').prop('disabled', false);
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
