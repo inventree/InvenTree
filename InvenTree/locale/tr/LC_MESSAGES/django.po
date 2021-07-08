@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 10:48+0000\n"
+"POT-Creation-Date: 2021-07-08 13:36+0000\n"
 "PO-Revision-Date: 2021-07-08 11:18\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -137,7 +137,7 @@ msgid "Invalid choice"
 msgstr ""
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:414
-#: label/models.py:103 part/models.py:680 part/models.py:2191
+#: label/models.py:112 part/models.py:680 part/models.py:2191
 #: part/templates/part/params.html:27 report/models.py:181
 #: templates/InvenTree/search.html:137 templates/InvenTree/search.html:289
 #: templates/js/company.js:359 templates/js/part.js:118
@@ -150,7 +150,7 @@ msgstr "Adı"
 #: company/models.py:554 company/templates/company/detail.html:27
 #: company/templates/company/manufacturer_part_base.html:72
 #: company/templates/company/supplier_part_base.html:71
-#: company/templates/company/supplier_part_detail.html:31 label/models.py:110
+#: company/templates/company/supplier_part_detail.html:31 label/models.py:119
 #: order/models.py:154 order/templates/order/purchase_order_detail.html:174
 #: part/models.py:703 part/templates/part/detail.html:54
 #: part/templates/part/set_category.html:14 report/models.py:194
@@ -2257,7 +2257,7 @@ msgid "Phone"
 msgstr ""
 
 #: company/templates/company/company_base.html:166
-#: part/templates/part/part_base.html:307
+#: part/templates/part/part_base.html:311
 msgid "Upload Image"
 msgstr ""
 
@@ -2362,13 +2362,13 @@ msgstr "Tedarikçi Parçaları"
 
 #: company/templates/company/detail_supplier_part.html:21
 #: order/templates/order/order_wizard/select_parts.html:44
-#: part/templates/part/part_base.html:429
+#: part/templates/part/part_base.html:433
 msgid "Create new supplier part"
 msgstr "Yeni tedarikçi parçası oluştur"
 
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
-#: part/templates/part/part_base.html:428 part/templates/part/supplier.html:17
+#: part/templates/part/part_base.html:432 part/templates/part/supplier.html:17
 #: templates/js/stock.js:1334
 msgid "New Supplier Part"
 msgstr "Yeni Tedarikçi Parçası"
@@ -2467,7 +2467,7 @@ msgstr "Tedarikçi parçalarını sil"
 #: company/templates/company/manufacturer_part_suppliers.html:142
 #: part/templates/part/manufacturer.html:24 part/templates/part/params.html:44
 #: part/templates/part/related.html:44 part/templates/part/supplier.html:22
-#: stock/views.py:844 templates/js/company.js:203 users/models.py:192
+#: stock/views.py:844 templates/js/company.js:203 users/models.py:193
 msgid "Delete"
 msgstr ""
 
@@ -2711,66 +2711,78 @@ msgstr ""
 msgid "Delete Supplier Part"
 msgstr ""
 
-#: label/api.py:56 report/api.py:201
+#: label/api.py:57 report/api.py:201
 msgid "No valid objects provided to template"
 msgstr "Şablon için geçerli bir nesne sağlanmadı"
 
-#: label/models.py:104
+#: label/models.py:113
 msgid "Label name"
 msgstr "Etiket adı"
 
-#: label/models.py:111
+#: label/models.py:120
 msgid "Label description"
 msgstr "Etiket tanımı"
 
-#: label/models.py:118 stock/forms.py:169
+#: label/models.py:127 stock/forms.py:169
 msgid "Label"
 msgstr "Etiket"
 
-#: label/models.py:119
+#: label/models.py:128
 msgid "Label template file"
 msgstr "Etiket şablon listesi"
 
-#: label/models.py:125 report/models.py:298
+#: label/models.py:134 report/models.py:298
 msgid "Enabled"
 msgstr ""
 
-#: label/models.py:126
+#: label/models.py:135
 msgid "Label template is enabled"
 msgstr "Etiket sablonu etkinleştirildi"
 
-#: label/models.py:131
+#: label/models.py:140
 msgid "Width [mm]"
 msgstr ""
 
-#: label/models.py:132
+#: label/models.py:141
 msgid "Label width, specified in mm"
 msgstr "Etiket genişliği mm olarak belirtilmeli"
 
-#: label/models.py:138
+#: label/models.py:147
 msgid "Height [mm]"
 msgstr ""
 
-#: label/models.py:139
+#: label/models.py:148
 msgid "Label height, specified in mm"
 msgstr "Etiket yüksekliği mm olarak belirtilmeli"
 
-#: label/models.py:145 report/models.py:291
+#: label/models.py:154 report/models.py:291
 msgid "Filename Pattern"
 msgstr "Dosya Adı Deseni"
 
-#: label/models.py:146
+#: label/models.py:155
 msgid "Pattern for generating label filenames"
 msgstr "Etiket dosya adları oluşturma için desen"
 
-#: label/models.py:249 label/models.py:306
+#: label/models.py:258
+#, fuzzy
+#| msgid "StockItem query filters (comma-separated list of key=value pairs)"
+msgid "Query filters (comma-separated list of key=value pairs),"
+msgstr "Stok kalemi sorgu filtreleri (anahter=değer [key=value] olarak virgülle ayrılmış liste)"
+
+#: label/models.py:259 label/models.py:317 label/models.py:364
+#: report/models.py:322 report/models.py:457 report/models.py:495
+msgid "Filters"
+msgstr ""
+
+#: label/models.py:316
 msgid "Query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: label/models.py:250 label/models.py:307 report/models.py:322
-#: report/models.py:457 report/models.py:495
-msgid "Filters"
-msgstr ""
+#: label/models.py:363
+#, fuzzy
+#| msgid "StockItem query filters (comma-separated list of key=value pairs)"
+msgid "Part query filters (comma-separated value of key=value pairs)"
+msgstr "Stok kalemi sorgu filtreleri (anahter=değer [key=value] olarak virgülle ayrılmış liste)"
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -3071,7 +3083,7 @@ msgstr ""
 #: order/templates/order/order_base.html:199
 #: order/templates/order/purchase_order_detail.html:127
 #: part/templates/part/category.html:217 part/templates/part/category.html:259
-#: part/templates/part/part_base.html:415
+#: part/templates/part/part_base.html:419
 #: stock/templates/stock/location.html:191 templates/js/stock.js:752
 #: templates/js/stock.js:1340
 msgid "New Location"
@@ -3079,7 +3091,7 @@ msgstr "Yeni Konum"
 
 #: order/templates/order/order_base.html:200
 #: order/templates/order/purchase_order_detail.html:128
-#: part/templates/part/part_base.html:416
+#: part/templates/part/part_base.html:420
 #: stock/templates/stock/location.html:42
 msgid "Create new stock location"
 msgstr "Yeni stok konumu oluştur"
@@ -4408,7 +4420,7 @@ msgid "Create new location"
 msgstr "Yeni konum oluştur"
 
 #: part/templates/part/category.html:223 part/templates/part/category.html:253
-#: part/templates/part/part_base.html:378
+#: part/templates/part/part_base.html:382
 msgid "New Category"
 msgstr ""
 
@@ -4749,19 +4761,19 @@ msgstr ""
 msgid "Building"
 msgstr ""
 
-#: part/templates/part/part_base.html:285 part/templates/part/prices.html:131
+#: part/templates/part/part_base.html:289 part/templates/part/prices.html:131
 msgid "Calculate"
 msgstr ""
 
-#: part/templates/part/part_base.html:379
+#: part/templates/part/part_base.html:383
 msgid "Create New Part Category"
 msgstr ""
 
-#: part/templates/part/part_base.html:387
+#: part/templates/part/part_base.html:391
 msgid "New Parent"
 msgstr ""
 
-#: part/templates/part/part_base.html:435
+#: part/templates/part/part_base.html:439
 msgid "Edit Part"
 msgstr ""
 
@@ -6093,7 +6105,7 @@ msgstr ""
 msgid "Add Stock Items"
 msgstr ""
 
-#: stock/views.py:843 users/models.py:188
+#: stock/views.py:843 users/models.py:189
 msgid "Add"
 msgstr ""
 
@@ -6285,7 +6297,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6959,7 +6972,7 @@ msgstr ""
 msgid "Stock item(s) must be selected before printing labels"
 msgstr "Etiket yazdırılmadan önce stok kalemleri seçilmeli"
 
-#: templates/js/label.js:29 templates/js/label.js:79
+#: templates/js/label.js:29 templates/js/label.js:79 templates/js/label.js:134
 msgid "No Labels Found"
 msgstr "Etiket Bulunamadı"
 
@@ -6979,15 +6992,31 @@ msgstr "Etiket yazdırılmadan önce stok konumları seçilmeli"
 msgid "No labels found which match selected stock location(s)"
 msgstr "Seçili konumlarla eşleşen etiket bulunamadı"
 
-#: templates/js/label.js:154
+#: templates/js/label.js:115 templates/js/report.js:205
+msgid "Select Parts"
+msgstr ""
+
+#: templates/js/label.js:116
+#, fuzzy
+#| msgid "Stock item(s) must be selected before printing labels"
+msgid "Part(s) must be selected before printing labels"
+msgstr "Etiket yazdırılmadan önce stok kalemleri seçilmeli"
+
+#: templates/js/label.js:135
+#, fuzzy
+#| msgid "No labels found which match selected stock item(s)"
+msgid "No labels found which match the selected part(s)"
+msgstr "Seçili stok kalemleri için etiket bulunamadı"
+
+#: templates/js/label.js:209
 msgid "stock items selected"
 msgstr ""
 
-#: templates/js/label.js:162
+#: templates/js/label.js:217
 msgid "Select Label"
 msgstr "Etiket Seç"
 
-#: templates/js/label.js:177
+#: templates/js/label.js:232
 msgid "Select Label Template"
 msgstr "Etiket Şablonu Seç"
 
@@ -7206,10 +7235,6 @@ msgstr ""
 #: templates/js/report.js:170
 msgid "No report templates found which match selected build(s)"
 msgstr "Seçili yapım işleri için rapor şablonu bulunamadı"
-
-#: templates/js/report.js:205
-msgid "Select Parts"
-msgstr ""
 
 #: templates/js/report.js:206
 msgid "Part(s) must be selected before printing reports"
@@ -7870,35 +7895,34 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:175
+#: users/models.py:176
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:183
+#: users/models.py:184
 msgid "Group"
 msgstr ""
 
-#: users/models.py:186
+#: users/models.py:187
 msgid "View"
 msgstr ""
 
-#: users/models.py:186
+#: users/models.py:187
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:188
+#: users/models.py:189
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:190
+#: users/models.py:191
 msgid "Change"
 msgstr ""
 
-#: users/models.py:190
+#: users/models.py:191
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:192
+#: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
-
