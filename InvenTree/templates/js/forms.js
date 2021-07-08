@@ -732,9 +732,29 @@ function handleFormSuccess(response, options) {
 
     // Close the modal
     if (!options.preventClose) {
-        // TODO: Actually just *delete* the modal,
-        // rather than hiding it!!
+        // Note: The modal will be deleted automatically after closing
         $(options.modal).modal('hide');
+    }
+
+    // Display any required messages
+    // Should we show alerts immediately or cache them?
+    var cache = (options.follow && response.url) || options.redirect || options.reload;
+
+    // Display any messages
+    if (response.success) {
+        showAlertOrCache("alert-success", response.success, cache);
+    }
+    
+    if (response.info) {
+        showAlertOrCache("alert-info", response.info, cache);
+    }
+
+    if (response.warning) {
+        showAlertOrCache("alert-warning", response.warning, cache);
+    }
+
+    if (response.danger) {
+        showAlertOrCache("alert-danger", response.danger, cache);
     }
 
     if (options.onSuccess) {

@@ -83,8 +83,6 @@ function createNewModal(options={}) {
 
     // Capture "enter" key input
     $(modal_name).on('keydown', 'input', function(event) {
-
-        
         if (event.keyCode == 13) {
             event.preventDefault();
             // Simulate a click on the 'Submit' button
