@@ -2,6 +2,11 @@
 
 from rest_framework import status
 
+from django.test import TestCase
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -9,6 +14,87 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from users.models import RuleSet
 
 from base64 import b64encode
+
+
+class HTMLAPITests(TestCase):
+    """
+    Test that we can access the REST API endpoints via the HTML interface.
+    
+    History: Discovered on 2021-06-28 a bug in InvenTreeModelSerializer,
+    which raised an AssertionError when using the HTML API interface,
+    while the regular JSON interface continued to work as expected.
+    """
+
+    def setUp(self):
+        super().setUp()
+
+        # Create a user
+        user = get_user_model()
+
+        self.user = user.objects.create_user(
+            username='username',
+            email='user@email.com',
+            password='password'
+        )
+
+        # Put the user into a group with the correct permissions
+        group = Group.objects.create(name='mygroup')
+        self.user.groups.add(group)
+
+        # Give the group *all* the permissions!
+        for rule in group.rule_sets.all():
+            rule.can_view = True
+            rule.can_change = True
+            rule.can_add = True
+            rule.can_delete = True
+
+            rule.save()
+
+        self.client.login(username='username', password='password')
+
+    def test_part_api(self):
+        url = reverse('api-part-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_build_api(self):
+        url = reverse('api-build-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_stock_api(self):
+        url = reverse('api-stock-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_company_list(self):
+        url = reverse('api-company-list')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Check HTTP response
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 200)
 
 
 class APITests(InvenTreeAPITestCase):
@@ -50,7 +136,7 @@ class APITests(InvenTreeAPITestCase):
         token = response.data['token']
         self.token = token
 
-    def token_failure(self):
+    def test_token_failure(self):
         # Test token endpoint without basic auth
         url = reverse('api-token')
         response = self.client.get(url, format='json')
@@ -58,7 +144,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIsNone(self.token)
 
-    def token_success(self):
+    def test_token_success(self):
 
         self.tokenAuth()
         self.assertIsNotNone(self.token)
@@ -77,7 +163,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('version', data)
         self.assertIn('instance', data)
 
-        self.assertEquals('InvenTree', data['server'])
+        self.assertEqual('InvenTree', data['server'])
 
     def test_role_view(self):
         """
@@ -157,3 +243,70 @@ class APITests(InvenTreeAPITestCase):
         # New role permissions should have been added now
         self.assertIn('delete', roles['part'])
         self.assertIn('change', roles['build'])
+
+    def test_list_endpoint_actions(self):
+        """
+        Tests for the OPTIONS method for API endpoints.
+        """
+
+        self.basicAuth()
+
+        # Without any 'part' permissions, we should not see any available actions
+        url = reverse('api-part-list')
+
+        actions = self.getActions(url)
+
+        # No actions, as there are no permissions!
+        self.assertEqual(len(actions), 0)
+
+        # Assign a new role
+        self.assignRole('part.view')
+        actions = self.getActions(url)
+
+        # As we don't have "add" permission, there should be no available API actions
+        self.assertEqual(len(actions), 0)
+
+        # But let's make things interesting...
+        # Why don't we treat ourselves to some "add" permissions
+        self.assignRole('part.add')
+
+        actions = self.getActions(url)
+
+        self.assertEqual(len(actions), 2)
+        self.assertIn('POST', actions)
+        self.assertIn('GET', actions)
+
+    def test_detail_endpoint_actions(self):
+        """
+        Tests for detail API endpoint actions
+        """
+        
+        self.basicAuth()
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        actions = self.getActions(url)
+
+        # No actions, as we do not have any permissions!
+        self.assertEqual(len(actions), 0)
+
+        # Add a 'add' permission
+        # Note: 'add' permission automatically implies 'change' also
+        self.assignRole('part.add')
+
+        actions = self.getActions(url)
+
+        # 'add' permission does not apply here!
+        self.assertEqual(len(actions), 1)
+        self.assertIn('PUT', actions.keys())
+
+        # Add some other permissions
+        self.assignRole('part.change')
+        self.assignRole('part.delete')
+
+        actions = self.getActions(url)
+
+        self.assertEqual(len(actions), 3)
+        self.assertIn('GET', actions.keys())
+        self.assertIn('PUT', actions.keys())
+        self.assertIn('DELETE', actions.keys())

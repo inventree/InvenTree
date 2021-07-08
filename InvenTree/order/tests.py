@@ -60,12 +60,6 @@ class OrderTest(TestCase):
         order.save()
         self.assertFalse(order.is_overdue)
 
-    def test_increment(self):
-
-        next_ref = PurchaseOrder.getNextOrderNumber()
-
-        self.assertEqual(next_ref, '0008')
-
     def test_on_order(self):
         """ There should be 3 separate items on order for the M2x4 LPHS part """
 
@@ -87,7 +81,7 @@ class OrderTest(TestCase):
         order = PurchaseOrder.objects.get(pk=1)
 
         self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
-        self.assertEqual(order.lines.count(), 3)
+        self.assertEqual(order.lines.count(), 4)
 
         sku = SupplierPart.objects.get(SKU='ACME-WIDGET')
         part = sku.part
@@ -105,11 +99,11 @@ class OrderTest(TestCase):
         order.add_line_item(sku, 100)
 
         self.assertEqual(part.on_order, 100)
-        self.assertEqual(order.lines.count(), 4)
+        self.assertEqual(order.lines.count(), 5)
 
         # Order the same part again (it should be merged)
         order.add_line_item(sku, 50)
-        self.assertEqual(order.lines.count(), 4)
+        self.assertEqual(order.lines.count(), 5)
         self.assertEqual(part.on_order, 150)
 
         # Try to order a supplier part from the wrong supplier
@@ -163,7 +157,7 @@ class OrderTest(TestCase):
         loc = StockLocation.objects.get(id=1)
 
         # There should be two lines against this order
-        self.assertEqual(len(order.pending_line_items()), 3)
+        self.assertEqual(len(order.pending_line_items()), 4)
 
         # Should fail, as order is 'PENDING' not 'PLACED"
         self.assertEqual(order.status, PurchaseOrderStatus.PENDING)

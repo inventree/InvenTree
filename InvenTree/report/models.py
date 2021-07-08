@@ -11,6 +11,7 @@ import logging
 
 import datetime
 
+from django.urls import reverse
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError, FieldError
@@ -307,6 +308,10 @@ class TestReport(ReportTemplateBase):
     Render a TestReport against a StockItem object.
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stockitem-testreport-list')
+
     @classmethod
     def getSubdir(cls):
         return 'test'
@@ -361,6 +366,10 @@ class BuildReport(ReportTemplateBase):
     Build order / work order report
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-build-report-list')
+
     @classmethod
     def getSubdir(cls):
         return 'build'
@@ -400,6 +409,10 @@ class BillOfMaterialsReport(ReportTemplateBase):
     Render a Bill of Materials against a Part object
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-bom-report-list')
+
     @classmethod
     def getSubdir(cls):
         return 'bom'
@@ -429,6 +442,10 @@ class PurchaseOrderReport(ReportTemplateBase):
     """
     Render a report against a PurchaseOrder object
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-report-list')
 
     @classmethod
     def getSubdir(cls):
@@ -463,6 +480,10 @@ class SalesOrderReport(ReportTemplateBase):
     """
     Render a report against a SalesOrder object
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-report-list')
 
     @classmethod
     def getSubdir(cls):

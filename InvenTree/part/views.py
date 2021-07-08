@@ -17,6 +17,7 @@ from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
+from django.contrib import messages
 
 from moneyed import CURRENCIES
 from djmoney.contrib.exchange.models import convert_money
@@ -30,21 +31,25 @@ import io
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartAttachment, PartRelated
+from .models import PartCategory, Part, PartRelated
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
-from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
+from common.files import FileManager
+from common.views import FileManagementFormView, FileManagementAjaxView
+
+from stock.models import StockLocation
 
 import common.settings as inventree_settings
 
 from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
+from order.models import PurchaseOrderLineItem
 
 from .admin import PartResource
 
@@ -147,146 +152,6 @@ class PartRelatedDelete(AjaxDeleteView):
 
     # Explicit role requirement
     role_required = 'part.change'
-
-
-class PartAttachmentCreate(AjaxCreateView):
-    """ View for creating a new PartAttachment object
-
-    - The view only makes sense if a Part object is passed to it
-    """
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_form_title = _("Add part attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-        """
-        Record the user that uploaded this attachment
-        """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
-
-    def get_initial(self):
-        """ Get initial data for new PartAttachment object.
-
-        - Client should have requested this form with a parent part in mind
-        - e.g. ?part=<pk>
-        """
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        # TODO - If the proper part was not sent, return an error message
-        try:
-            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """ Create a form to upload a new PartAttachment
-
-        - Hide the 'part' field
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartAttachmentEdit(AjaxUpdateView):
-    """ View for editing a PartAttachment object """
-
-    model = PartAttachment
-    form_class = part_forms.EditPartAttachmentForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit attachment')
-
-    def get_data(self):
-        return {
-            'success': _('Part attachment updated')
-        }
-
-    def get_form(self):
-        form = super(AjaxUpdateView, self).get_form()
-
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartAttachmentDelete(AjaxDeleteView):
-    """ View for deleting a PartAttachment """
-
-    model = PartAttachment
-    ajax_form_title = _("Delete Part Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    role_required = 'part.change'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted part attachment')
-        }
-
-
-class PartTestTemplateCreate(AjaxCreateView):
-    """ View for creating a PartTestTemplate """
-
-    model = PartTestTemplate
-    form_class = part_forms.EditPartTestTemplateForm
-    ajax_form_title = _("Create Test Template")
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        try:
-            part_id = self.request.GET.get('part', None)
-            initials['part'] = Part.objects.get(pk=part_id)
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartTestTemplateEdit(AjaxUpdateView):
-    """ View for editing a PartTestTemplate """
-
-    model = PartTestTemplate
-    form_class = part_forms.EditPartTestTemplateForm
-    ajax_form_title = _("Edit Test Template")
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartTestTemplateDelete(AjaxDeleteView):
-    """ View for deleting a PartTestTemplate """
-
-    model = PartTestTemplate
-    ajax_form_title = _("Delete Test Template")
 
 
 class PartSetCategory(AjaxUpdateView):
@@ -719,6 +584,168 @@ class PartCreate(AjaxCreateView):
         return initials
 
 
+class PartImport(FileManagementFormView):
+    ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
+    permission_required = 'part.add'
+
+    class PartFileManager(FileManager):
+        REQUIRED_HEADERS = [
+            'Name',
+            'Description',
+        ]
+
+        OPTIONAL_MATCH_HEADERS = [
+            'Category',
+            'default_location',
+            'default_supplier',
+        ]
+
+        OPTIONAL_HEADERS = [
+            'Keywords',
+            'IPN',
+            'Revision',
+            'Link',
+            'default_expiry',
+            'minimum_stock',
+            'Units',
+            'Notes',
+        ]
+
+    name = 'part'
+    form_steps_template = [
+        'part/import_wizard/part_upload.html',
+        'part/import_wizard/match_fields.html',
+        'part/import_wizard/match_references.html',
+    ]
+    form_steps_description = [
+        _("Upload File"),
+        _("Match Fields"),
+        _("Match References"),
+    ]
+
+    form_field_map = {
+        'name': 'name',
+        'description': 'description',
+        'keywords': 'keywords',
+        'ipn': 'ipn',
+        'revision': 'revision',
+        'link': 'link',
+        'default_expiry': 'default_expiry',
+        'minimum_stock': 'minimum_stock',
+        'units': 'units',
+        'notes': 'notes',
+        'category': 'category',
+        'default_location': 'default_location',
+        'default_supplier': 'default_supplier',
+    }
+    file_manager_class = PartFileManager
+
+    def get_field_selection(self):
+        """ Fill the form fields for step 3 """
+        # fetch available elements
+        self.allowed_items = {}
+        self.matches = {}
+
+        self.allowed_items['Category'] = PartCategory.objects.all()
+        self.matches['Category'] = ['name__contains']
+        self.allowed_items['default_location'] = StockLocation.objects.all()
+        self.matches['default_location'] = ['name__contains']
+        self.allowed_items['default_supplier'] = SupplierPart.objects.all()
+        self.matches['default_supplier'] = ['SKU__contains']
+
+        # setup
+        self.file_manager.setup()
+        # collect submitted column indexes
+        col_ids = {}
+        for col in self.file_manager.HEADERS:
+            index = self.get_column_index(col)
+            if index >= 0:
+                col_ids[col] = index
+
+        # parse all rows
+        for row in self.rows:
+            # check each submitted column
+            for idx in col_ids:
+                data = row['data'][col_ids[idx]]['cell']
+
+                if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
+                    try:
+                        exact_match = self.allowed_items[idx].get(**{a: data for a in self.matches[idx]})
+                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        exact_match = None
+
+                    row['match_options_' + idx] = self.allowed_items[idx]
+                    row['match_' + idx] = exact_match
+                    continue
+
+                # general fields
+                row[idx.lower()] = data
+
+    def done(self, form_list, **kwargs):
+        """ Create items """
+        items = self.get_clean_items()
+
+        import_done = 0
+        import_error = []
+
+        # Create Part instances
+        for part_data in items.values():
+
+            # set related parts
+            optional_matches = {}
+            for idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
+                if idx.lower() in part_data:
+                    try:
+                        optional_matches[idx] = self.allowed_items[idx].get(pk=int(part_data[idx.lower()]))
+                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        optional_matches[idx] = None
+                else:
+                    optional_matches[idx] = None
+
+            # add part
+            new_part = Part(
+                name=part_data.get('name', ''),
+                description=part_data.get('description', ''),
+                keywords=part_data.get('keywords', None),
+                IPN=part_data.get('ipn', None),
+                revision=part_data.get('revision', None),
+                link=part_data.get('link', None),
+                default_expiry=part_data.get('default_expiry', 0),
+                minimum_stock=part_data.get('minimum_stock', 0),
+                units=part_data.get('units', None),
+                notes=part_data.get('notes', None),
+                category=optional_matches['Category'],
+                default_location=optional_matches['default_location'],
+                default_supplier=optional_matches['default_supplier'],
+            )
+            try:
+                new_part.save()
+                import_done += 1
+            except ValidationError as _e:
+                import_error.append(', '.join(set(_e.messages)))
+
+        # Set alerts
+        if import_done:
+            alert = f"<strong>{_('Part-Import')}</strong><br>{_('Imported {n} parts').format(n=import_done)}"
+            messages.success(self.request, alert)
+        if import_error:
+            error_text = '\n'.join([f'<li><strong>x{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
+            messages.error(self.request, f"<strong>{_('Some errors occured:')}</strong><br><ul>{error_text}</ul>")
+
+        return HttpResponseRedirect(reverse('part-index'))
+
+
+class PartImportAjax(FileManagementAjaxView, PartImport):
+    ajax_form_steps_template = [
+        'part/import_wizard/ajax_part_upload.html',
+        'part/import_wizard/ajax_match_fields.html',
+        'part/import_wizard/ajax_match_references.html',
+    ]
+
+    def validate(self, obj, form, **kwargs):
+        return PartImport.validate(self, self.steps.current, form, **kwargs)
+
+
 class PartNotes(UpdateView):
     """ View for editing the 'notes' field of a Part object.
     Presents a live markdown editor.
@@ -812,18 +839,20 @@ class PartPricingView(PartDetail):
         """ returns context with pricing information """
         ctx = PartPricing.get_pricing(self, quantity, currency)
         part = self.get_part()
+        default_currency = inventree_settings.currency_code_default()
+
         # Stock history
         if part.total_stock > 1:
-            ret = []
-            stock = part.stock_entries(include_variants=False, in_stock=True)  # .order_by('purchase_order__date')
-            stock = stock.prefetch_related('purchase_order', 'supplier_part')
+            price_history = []
+            stock = part.stock_entries(include_variants=False, in_stock=True).\
+                order_by('purchase_order__issue_date').prefetch_related('purchase_order', 'supplier_part')
 
             for stock_item in stock:
                 if None in [stock_item.purchase_price, stock_item.quantity]:
                     continue
 
                 # convert purchase price to current currency - only one currency in the graph
-                price = convert_money(stock_item.purchase_price, inventree_settings.currency_code_default())
+                price = convert_money(stock_item.purchase_price, default_currency)
                 line = {
                     'price': price.amount,
                     'qty': stock_item.quantity
@@ -841,22 +870,63 @@ class PartPricingView(PartDetail):
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
                 else:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
-                ret.append(line)
+                price_history.append(line)
 
-            ctx['price_history'] = ret
+            ctx['price_history'] = price_history
 
         # BOM Information for Pie-Chart
-        bom_items = [{'name': str(a.sub_part), 'price': a.sub_part.get_price_range(quantity), 'q': a.quantity} for a in part.bom_items.all()]
-        if [True for a in bom_items if len(set(a['price'])) == 2]:
-            ctx['bom_parts'] = [{
-                'name': a['name'],
-                'min_price': str((a['price'][0] * a['q']) / quantity),
-                'max_price': str((a['price'][1] * a['q']) / quantity)} for a in bom_items]
-            ctx['bom_pie_min'] = True
-        else:
-            ctx['bom_parts'] = [{
-                'name': a['name'],
-                'price': str((a['price'][0] * a['q']) / quantity)} for a in bom_items]
+        if part.has_bom:
+            # get internal price setting
+            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+            ctx_bom_parts = []
+            # iterate over all bom-items
+            for item in part.bom_items.all():
+                ctx_item = {'name': str(item.sub_part)}
+                price, qty = item.sub_part.get_price_range(quantity, internal=use_internal), item.quantity
+
+                price_min, price_max = 0, 0
+                if price:  # check if price available
+                    price_min = str((price[0] * qty) / quantity)
+                    if len(set(price)) == 2:  # min and max-price present
+                        price_max = str((price[1] * qty) / quantity)
+                        ctx['bom_pie_max'] = True  # enable showing max prices in bom
+
+                ctx_item['max_price'] = price_min
+                ctx_item['min_price'] = price_max if price_max else price_min
+                ctx_bom_parts.append(ctx_item)
+
+            # add to global context
+            ctx['bom_parts'] = ctx_bom_parts
+
+        # Sale price history
+        sale_items = PurchaseOrderLineItem.objects.filter(part__part=part).order_by('order__issue_date').\
+            prefetch_related('order', ).all()
+
+        if sale_items:
+            sale_history = []
+
+            for sale_item in sale_items:
+                # check for not fully defined elements
+                if None in [sale_item.purchase_price, sale_item.quantity]:
+                    continue
+
+                price = convert_money(sale_item.purchase_price, default_currency)
+                line = {
+                    'price': price.amount if price else 0,
+                    'qty': sale_item.quantity,
+                }
+
+                # set date for graph labels
+                if sale_item.order.issue_date:
+                    line['date'] = sale_item.order.issue_date.strftime('%d.%m.%Y')
+                elif sale_item.order.creation_date:
+                    line['date'] = sale_item.order.creation_date.strftime('%d.%m.%Y')
+                else:
+                    line['date'] = _('None')
+
+                sale_history.append(line)
+
+            ctx['sale_history'] = sale_history
 
         return ctx
 
@@ -1006,21 +1076,6 @@ class PartImageDownloadFromURL(AjaxUpdateView):
             filename,
             ContentFile(buffer.getvalue()),
         )
-
-
-class PartImageUpload(AjaxUpdateView):
-    """ View for uploading a new Part image """
-
-    model = Part
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Upload Part Image')
-
-    form_class = part_forms.PartImageForm
-
-    def get_data(self):
-        return {
-            'success': _('Updated part image'),
-        }
 
 
 class PartImageSelect(AjaxUpdateView):
@@ -2105,7 +2160,8 @@ class PartPricing(AjaxView):
         # BOM pricing information
         if part.bom_count > 0:
 
-            bom_price = part.get_bom_price_range(quantity)
+            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+            bom_price = part.get_bom_price_range(quantity, internal=use_internal)
 
             if bom_price is not None:
                 min_bom_price, max_bom_price = bom_price
@@ -2126,6 +2182,12 @@ class PartPricing(AjaxView):
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_unit_bom_price
+
+        # internal part pricing information
+        internal_part_price = part.get_internal_price(quantity)
+        if internal_part_price is not None:
+            ctx['total_internal_part_price'] = round(internal_part_price, 3)
+            ctx['unit_internal_part_price'] = round(internal_part_price / quantity, 3)
 
         # part pricing information
         part_price = part.get_price(quantity)
@@ -2716,17 +2778,10 @@ class BomItemEdit(AjaxUpdateView):
         return form
 
 
-class BomItemDelete(AjaxDeleteView):
-    """ Delete view for removing BomItem """
-
-    model = BomItem
-    ajax_template_name = 'part/bom-delete.html'
-    context_object_name = 'item'
-    ajax_form_title = _('Confim BOM item deletion')
-
-
 class PartSalePriceBreakCreate(AjaxCreateView):
-    """ View for creating a sale price break for a part """
+    """
+    View for creating a sale price break for a part
+    """
 
     model = PartSellPriceBreak
     form_class = part_forms.EditPartSalePriceBreakForm
@@ -2764,7 +2819,7 @@ class PartSalePriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
-        default_currency = settings.BASE_CURRENCY
+        default_currency = inventree_settings.currency_code_default()
         currency = CURRENCIES.get(default_currency, None)
 
         if currency is not None:
@@ -2794,3 +2849,29 @@ class PartSalePriceBreakDelete(AjaxDeleteView):
     model = PartSellPriceBreak
     ajax_form_title = _("Delete Price Break")
     ajax_template_name = "modal_delete_form.html"
+
+
+class PartInternalPriceBreakCreate(PartSalePriceBreakCreate):
+    """ View for creating a internal price break for a part """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Add Internal Price Break')
+    permission_required = 'roles.sales_order.add'
+
+
+class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
+    """ View for editing a internal price break """
+
+    model = PartInternalPriceBreak
+    form_class = part_forms.EditPartInternalPriceBreakForm
+    ajax_form_title = _('Edit Internal Price Break')
+    permission_required = 'roles.sales_order.change'
+
+
+class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
+    """ View for deleting a internal price break """
+
+    model = PartInternalPriceBreak
+    ajax_form_title = _("Delete Internal Price Break")
+    permission_required = 'roles.sales_order.delete'

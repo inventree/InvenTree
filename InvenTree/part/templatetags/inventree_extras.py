@@ -5,6 +5,7 @@ over and above the built-in Django tags.
 """
 
 import os
+import sys
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as djangosettings
@@ -115,6 +116,14 @@ def inventree_title(*args, **kwargs):
 
 
 @register.simple_tag()
+def python_version(*args, **kwargs):
+    """
+    Return the current python version
+    """
+    return sys.version.split(' ')[0]
+
+
+@register.simple_tag()
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()
@@ -206,6 +215,29 @@ def get_color_theme_css(username):
     inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
 
     return inventree_css_static_url
+
+
+@register.filter
+def keyvalue(dict, key):
+    """
+    access to key of supplied dict
+
+    usage:
+    {% mydict|keyvalue:mykey %}
+    """
+    return dict[key]
+
+
+@register.simple_tag()
+def call_method(obj, method_name, *args):
+    """
+    enables calling model methods / functions from templates with arguments
+    
+    usage:
+    {% call_method model_object 'fnc_name' argument1 %}
+    """
+    method = getattr(obj, method_name)
+    return method(*args)
 
 
 @register.simple_tag()

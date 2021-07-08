@@ -4,20 +4,25 @@ JSON serializers for Part app
 import imghdr
 from decimal import Decimal
 
+from django.urls import reverse_lazy
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeModelSerializer)
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
+
+from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeImageSerializerField,
+                                   InvenTreeModelSerializer)
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
-                     PartStar, PartTestTemplate, PartCategoryParameterTemplate)
+                     PartStar, PartTestTemplate, PartCategoryParameterTemplate,
+                     PartInternalPriceBreak)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -34,6 +39,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'default_location',
+            'default_keywords',
             'pathstring',
             'url',
             'parent',
@@ -55,7 +61,12 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'attachment',
-            'comment'
+            'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]
 
 
@@ -92,6 +103,25 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
 
     class Meta:
         model = PartSellPriceBreak
+        fields = [
+            'pk',
+            'part',
+            'quantity',
+            'price',
+        ]
+
+
+class PartInternalPriceSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for internal prices for Part model.
+    """
+
+    quantity = serializers.FloatField()
+
+    price = serializers.CharField()
+
+    class Meta:
+        model = PartInternalPriceBreak
         fields = [
             'pk',
             'part',
@@ -163,6 +193,9 @@ class PartSerializer(InvenTreeModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
     """
+
+    def get_api_url(self):
+        return reverse_lazy('api-part-list')
 
     def __init__(self, *args, **kwargs):
         """
@@ -280,7 +313,7 @@ class PartSerializer(InvenTreeModelSerializer):
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
 
-    image = serializers.CharField(source='get_image_url', read_only=True)
+    image = InvenTreeImageSerializerField(required=False, allow_null=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     starred = serializers.SerializerMethodField()
 
@@ -303,9 +336,10 @@ class PartSerializer(InvenTreeModelSerializer):
             'category',
             'category_detail',
             'component',
-            'description',
-            'default_location',
             'default_expiry',
+            'default_location',
+            'default_supplier',
+            'description',
             'full_name',
             'image',
             'in_stock',
@@ -354,7 +388,7 @@ class PartStarSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
-    # price_range = serializers.CharField(read_only=True)
+    price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
 
@@ -469,7 +503,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'reference',
             'sub_part',
             'sub_part_detail',
-            # 'price_range',
+            'price_range',
             'validated',
         ]
 

@@ -15,11 +15,11 @@ from django.db.models import Q
 from InvenTree.helpers import str2bool
 
 from .models import Company
-from .models import ManufacturerPart
+from .models import ManufacturerPart, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import CompanySerializer
-from .serializers import ManufacturerPartSerializer
+from .serializers import ManufacturerPartSerializer, ManufacturerPartParameterSerializer
 from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 
 
@@ -103,17 +103,11 @@ class ManufacturerPartList(generics.ListCreateAPIView):
 
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
-        except AttributeError:
-            pass
+            params = self.request.query_params
 
-        try:
-            kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
+            kwargs['manufacturer_detail'] = str2bool(params.get('manufacturer_detail', None))
+            kwargs['pretty'] = str2bool(params.get('pretty', None))
         except AttributeError:
             pass
 
@@ -164,6 +158,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         'manufacturer__name',
         'description',
         'MPN',
+        'part__IPN',
         'part__name',
         'part__description',
     ]
@@ -179,6 +174,86 @@ class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
+
+
+class ManufacturerPartParameterList(generics.ListCreateAPIView):
+    """
+    API endpoint for list view of ManufacturerPartParamater model.
+    """
+
+    queryset = ManufacturerPartParameter.objects.all()
+    serializer_class = ManufacturerPartParameterSerializer
+    
+    def get_serializer(self, *args, **kwargs):
+
+        # Do we wish to include any extra detail?
+        try:
+            params = self.request.query_params
+
+            optional_fields = [
+                'manufacturer_part_detail',
+            ]
+
+            for key in optional_fields:
+                kwargs[key] = str2bool(params.get(key, None))
+
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def filter_queryset(self, queryset):
+        """
+        Custom filtering for the queryset
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filter by manufacturer?
+        manufacturer = params.get('manufacturer', None)
+
+        if manufacturer is not None:
+            queryset = queryset.filter(manufacturer_part__manufacturer=manufacturer)
+
+        # Filter by part?
+        part = params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(manufacturer_part__part=part)
+
+        return queryset
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'name',
+        'value',
+        'units',
+        'manufacturer_part',
+    ]
+
+    search_fields = [
+        'name',
+        'value',
+        'units',
+    ]
+
+
+class ManufacturerPartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of ManufacturerPartParameter model
+    """
+
+    queryset = ManufacturerPartParameter.objects.all()
+    serializer_class = ManufacturerPartParameterSerializer
 
 
 class SupplierPartList(generics.ListCreateAPIView):
@@ -252,22 +327,11 @@ class SupplierPartList(generics.ListCreateAPIView):
 
         # Do we wish to include extra detail?
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+            params = self.request.query_params
+            kwargs['part_detail'] = str2bool(params.get('part_detail', None))
+            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', None))
+            kwargs['manufacturer_detail'] = str2bool(params.get('manufacturer_detail', None))
+            kwargs['pretty'] = str2bool(params.get('pretty', None))
         except AttributeError:
             pass
 
@@ -292,6 +356,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         'manufacturer_part__manufacturer__name',
         'description',
         'manufacturer_part__MPN',
+        'part__IPN',
         'part__name',
         'part__description',
     ]
@@ -331,7 +396,23 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     ]
 
 
+class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for SupplierPriceBreak object
+    """
+
+    queryset = SupplierPriceBreak.objects.all()
+    serializer_class = SupplierPriceBreakSerializer
+
+
 manufacturer_part_api_urls = [
+
+    url(r'^parameter/', include([
+        url(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
+
+        # Catch anything else
+        url(r'^.*$', ManufacturerPartParameterList.as_view(), name='api-manufacturer-part-parameter-list'),
+    ])),
 
     url(r'^(?P<pk>\d+)/?', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
 
@@ -354,7 +435,12 @@ company_api_urls = [
 
     url(r'^part/', include(supplier_part_api_urls)),
 
-    url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
+    # Supplier price breaks
+    url(r'^price-break/', include([
+
+        url(r'^(?P<pk>\d+)/?', SupplierPriceBreakDetail.as_view(), name='api-part-supplier-price-detail'),
+        url(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
+    ])),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

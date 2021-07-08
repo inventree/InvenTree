@@ -5,22 +5,22 @@ Django Forms for interacting with Part objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from mptt.fields import TreeNodeChoiceField
+
 from InvenTree.forms import HelperForm
 from InvenTree.helpers import GetExportFormats
 from InvenTree.fields import RoundingDecimalFormField
 
-from mptt.fields import TreeNodeChoiceField
-from django import forms
-from django.utils.translation import ugettext_lazy as _
-
 import common.models
 
-from .models import Part, PartCategory, PartAttachment, PartRelated
+from .models import Part, PartCategory, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
-from .models import PartTestTemplate
-from .models import PartSellPriceBreak
+from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 
 class PartModelChoiceField(forms.ModelChoiceField):
@@ -62,22 +62,6 @@ class PartImageForm(HelperForm):
         model = Part
         fields = [
             'image',
-        ]
-
-
-class EditPartTestTemplateForm(HelperForm):
-    """ Class for creating / editing a PartTestTemplate object """
-
-    class Meta:
-        model = PartTestTemplate
-
-        fields = [
-            'part',
-            'test_name',
-            'description',
-            'required',
-            'requires_value',
-            'requires_attachment',
         ]
 
 
@@ -183,18 +167,6 @@ class CreatePartRelatedForm(HelperForm):
         labels = {
             'part_2': _('Related Part'),
         }
-
-
-class EditPartAttachmentForm(HelperForm):
-    """ Form for editing a PartAttachment object """
-
-    class Meta:
-        model = PartAttachment
-        fields = [
-            'part',
-            'attachment',
-            'comment'
-        ]
 
 
 class SetPartCategoryForm(forms.Form):
@@ -389,6 +361,22 @@ class EditPartSalePriceBreakForm(HelperForm):
 
     class Meta:
         model = PartSellPriceBreak
+        fields = [
+            'part',
+            'quantity',
+            'price',
+        ]
+
+
+class EditPartInternalPriceBreakForm(HelperForm):
+    """
+    Form for creating / editing a internal price for a part
+    """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
+
+    class Meta:
+        model = PartInternalPriceBreak
         fields = [
             'part',
             'quantity',

@@ -26,15 +26,11 @@ from InvenTree.views import InvenTreeRoleMixin
 from .models import Company
 from .models import ManufacturerPart
 from .models import SupplierPart
-from .models import SupplierPriceBreak
 
 from part.models import Part
 
-from .forms import EditCompanyForm
-from .forms import CompanyImageForm
 from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm
-from .forms import EditPriceBreakForm
 from .forms import CompanyImageDownloadForm
 
 import common.models
@@ -63,21 +59,18 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
                 'title': _('Suppliers'),
                 'button_text': _('New Supplier'),
                 'filters': {'is_supplier': 'true'},
-                'create_url': reverse('supplier-create'),
                 'pagetype': 'suppliers',
             },
             reverse('manufacturer-index'): {
                 'title': _('Manufacturers'),
                 'button_text': _('New Manufacturer'),
                 'filters': {'is_manufacturer': 'true'},
-                'create_url': reverse('manufacturer-create'),
                 'pagetype': 'manufacturers',
             },
             reverse('customer-index'): {
                 'title': _('Customers'),
                 'button_text': _('New Customer'),
                 'filters': {'is_customer': 'true'},
-                'create_url': reverse('customer-create'),
                 'pagetype': 'customers',
             }
         }
@@ -86,7 +79,6 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
             'title': _('Companies'),
             'button_text': _('New Company'),
             'filters': {},
-            'create_url': reverse('company-create'),
             'pagetype': 'companies'
         }
 
@@ -236,103 +228,6 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class CompanyImage(AjaxUpdateView):
-    """ View for uploading an image for the Company """
-    model = Company
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Update Company Image')
-    form_class = CompanyImageForm
-    permission_required = 'company.change_company'
-
-    def get_data(self):
-        return {
-            'success': _('Updated company image'),
-        }
-
-
-class CompanyEdit(AjaxUpdateView):
-    """ View for editing a Company object """
-    model = Company
-    form_class = EditCompanyForm
-    context_object_name = 'company'
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Company')
-    permission_required = 'company.change_company'
-
-    def get_data(self):
-        return {
-            'info': _('Edited company information'),
-        }
-
-
-class CompanyCreate(AjaxCreateView):
-    """ View for creating a new Company object """
-    model = Company
-    context_object_name = 'company'
-    form_class = EditCompanyForm
-    ajax_template_name = 'modal_form.html'
-    permission_required = 'company.add_company'
-
-    def get_form_title(self):
-
-        url = self.request.path
-
-        if url == reverse('supplier-create'):
-            return _("Create new Supplier")
-
-        if url == reverse('manufacturer-create'):
-            return _('Create new Manufacturer')
-
-        if url == reverse('customer-create'):
-            return _('Create new Customer')
-
-        return _('Create new Company')
-
-    def get_initial(self):
-        """ Initial values for the form data """
-        initials = super().get_initial().copy()
-
-        url = self.request.path
-
-        if url == reverse('supplier-create'):
-            initials['is_supplier'] = True
-            initials['is_customer'] = False
-            initials['is_manufacturer'] = False
-
-        elif url == reverse('manufacturer-create'):
-            initials['is_manufacturer'] = True
-            initials['is_supplier'] = True
-            initials['is_customer'] = False
-
-        elif url == reverse('customer-create'):
-            initials['is_customer'] = True
-            initials['is_manufacturer'] = False
-            initials['is_supplier'] = False
-
-        return initials
-
-    def get_data(self):
-        return {
-            'success': _("Created new company"),
-        }
-
-
-class CompanyDelete(AjaxDeleteView):
-    """ View for deleting a Company object """
-
-    model = Company
-    success_url = '/company/'
-    ajax_template_name = 'company/delete.html'
-    ajax_form_title = _('Delete Company')
-    context_object_name = 'company'
-    permission_required = 'company.delete_company'
-
-    def get_data(self):
-        return {
-            'danger': _('Company was deleted'),
-        }
-
-
 class ManufacturerPartDetail(DetailView):
     """ Detail view for ManufacturerPart """
     model = ManufacturerPart
@@ -345,16 +240,6 @@ class ManufacturerPartDetail(DetailView):
         ctx = super().get_context_data(**kwargs)
 
         return ctx
-
-
-class ManufacturerPartEdit(AjaxUpdateView):
-    """ Update view for editing ManufacturerPart """
-
-    model = ManufacturerPart
-    context_object_name = 'part'
-    form_class = EditManufacturerPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Manufacturer Part')
 
 
 class ManufacturerPartCreate(AjaxCreateView):
@@ -425,85 +310,6 @@ class ManufacturerPartCreate(AjaxCreateView):
         return initials
 
 
-class ManufacturerPartDelete(AjaxDeleteView):
-    """ Delete view for removing a ManufacturerPart.
-
-    ManufacturerParts can be deleted using a variety of 'selectors'.
-
-    - ?part=<pk> -> Delete a single ManufacturerPart object
-    - ?parts=[] -> Delete a list of ManufacturerPart objects
-
-    """
-
-    success_url = '/manufacturer/'
-    ajax_template_name = 'company/manufacturer_part_delete.html'
-    ajax_form_title = _('Delete Manufacturer Part')
-
-    role_required = 'purchase_order.delete'
-
-    parts = []
-
-    def get_context_data(self):
-        ctx = {}
-
-        ctx['parts'] = self.parts
-
-        return ctx
-
-    def get_parts(self):
-        """ Determine which ManufacturerPart object(s) the user wishes to delete.
-        """
-
-        self.parts = []
-
-        # User passes a single ManufacturerPart ID
-        if 'part' in self.request.GET:
-            try:
-                self.parts.append(ManufacturerPart.objects.get(pk=self.request.GET.get('part')))
-            except (ValueError, ManufacturerPart.DoesNotExist):
-                pass
-
-        elif 'parts[]' in self.request.GET:
-
-            part_id_list = self.request.GET.getlist('parts[]')
-
-            self.parts = ManufacturerPart.objects.filter(id__in=part_id_list)
-
-    def get(self, request, *args, **kwargs):
-        self.request = request
-        self.get_parts()
-
-        return self.renderJsonResponse(request, form=self.get_form())
-
-    def post(self, request, *args, **kwargs):
-        """ Handle the POST action for deleting ManufacturerPart object.
-        """
-
-        self.request = request
-        self.parts = []
-
-        for item in self.request.POST:
-            if item.startswith('manufacturer-part-'):
-                pk = item.replace('manufacturer-part-', '')
-
-                try:
-                    self.parts.append(ManufacturerPart.objects.get(pk=pk))
-                except (ValueError, ManufacturerPart.DoesNotExist):
-                    pass
-
-        confirm = str2bool(self.request.POST.get('confirm_delete', False))
-
-        data = {
-            'form_valid': confirm,
-        }
-
-        if confirm:
-            for part in self.parts:
-                part.delete()
-
-        return self.renderJsonResponse(self.request, data=data, form=self.get_form())
-
-
 class SupplierPartDetail(DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
@@ -563,7 +369,8 @@ class SupplierPartEdit(AjaxUpdateView):
         supplier_part = self.get_object()
 
         if supplier_part.manufacturer_part:
-            initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
+            if supplier_part.manufacturer_part.manufacturer:
+                initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
             initials['MPN'] = supplier_part.manufacturer_part.MPN
 
         return initials
@@ -784,88 +591,3 @@ class SupplierPartDelete(AjaxDeleteView):
                 part.delete()
 
         return self.renderJsonResponse(self.request, data=data, form=self.get_form())
-
-
-class PriceBreakCreate(AjaxCreateView):
-    """ View for creating a supplier price break """
-
-    model = SupplierPriceBreak
-    form_class = EditPriceBreakForm
-    ajax_form_title = _('Add Price Break')
-    ajax_template_name = 'modal_form.html'
-
-    def get_data(self):
-        return {
-            'success': _('Added new price break')
-        }
-
-    def get_part(self):
-        """
-        Attempt to extract SupplierPart object from the supplied data.
-        """
-
-        try:
-            supplier_part = SupplierPart.objects.get(pk=self.request.GET.get('part'))
-            return supplier_part
-        except (ValueError, SupplierPart.DoesNotExist):
-            pass
-
-        try:
-            supplier_part = SupplierPart.objects.get(pk=self.request.POST.get('part'))
-            return supplier_part
-        except (ValueError, SupplierPart.DoesNotExist):
-            pass
-
-        return None
-
-    def get_form(self):
-
-        form = super(AjaxCreateView, self).get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        supplier_part = self.get_part()
-
-        initials['part'] = self.get_part()
-
-        if supplier_part is not None:
-            currency_code = supplier_part.supplier.currency_code
-        else:
-            currency_code = common.settings.currency_code_default()
-
-        # Extract the currency object associated with the code
-        currency = CURRENCIES.get(currency_code, None)
-
-        if currency:
-            initials['price'] = [1.0, currency]
-
-        return initials
-
-
-class PriceBreakEdit(AjaxUpdateView):
-    """ View for editing a supplier price break """
-
-    model = SupplierPriceBreak
-    form_class = EditPriceBreakForm
-    ajax_form_title = _('Edit Price Break')
-    ajax_template_name = 'modal_form.html'
-
-    def get_form(self):
-
-        form = super(AjaxUpdateView, self).get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PriceBreakDelete(AjaxDeleteView):
-    """ View for deleting a supplier price break """
-
-    model = SupplierPriceBreak
-    ajax_form_title = _("Delete Price Break")
-    ajax_template_name = 'modal_delete_form.html'

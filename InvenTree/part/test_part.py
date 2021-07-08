@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 
 import os
 
-from .models import Part, PartTestTemplate
+from .models import Part, PartCategory, PartTestTemplate
 from .models import rename_part_image, match_part_names
 from .templatetags import inventree_extras
 
@@ -51,6 +51,7 @@ class PartTest(TestCase):
         'category',
         'part',
         'location',
+        'part_pricebreaks'
     ]
 
     def setUp(self):
@@ -76,6 +77,61 @@ class PartTest(TestCase):
     def test_str(self):
         p = Part.objects.get(pk=100)
         self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
+
+    def test_duplicate(self):
+        """
+        Test that we cannot create a "duplicate" Part
+        """
+
+        n = Part.objects.count()
+
+        cat = PartCategory.objects.get(pk=1)
+
+        Part.objects.create(
+            category=cat,
+            name='part',
+            description='description',
+            IPN='IPN',
+            revision='A',
+        )
+
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        part = Part(
+            category=cat,
+            name='part',
+            description='description',
+            IPN='IPN',
+            revision='A',
+        )
+
+        with self.assertRaises(ValidationError):
+            part.validate_unique()
+
+        try:
+            part.save()
+            self.assertTrue(False)
+        except:
+            pass
+
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        # But we should be able to create a part with a different revision
+        part_2 = Part.objects.create(
+            category=cat,
+            name='part',
+            description='description',
+            IPN='IPN',
+            revision='B',
+        )
+
+        self.assertEqual(Part.objects.count(), n + 2)
+
+        # Now, check that we cannot *change* part_2 to conflict
+        part_2.revision = 'A'
+
+        with self.assertRaises(ValidationError):
+            part_2.validate_unique()
 
     def test_metadata(self):
         self.assertEqual(self.r1.name, 'R_2K2_0805')
@@ -112,6 +168,22 @@ class PartTest(TestCase):
         matches = match_part_names('M2x5 LPHS')
 
         self.assertTrue(len(matches) > 0)
+
+    def test_sell_pricing(self):
+        # check that the sell pricebreaks were loaded
+        self.assertTrue(self.r1.has_price_breaks)
+        self.assertEqual(self.r1.price_breaks.count(), 2)
+        # check that the sell pricebreaks work
+        self.assertEqual(float(self.r1.get_price(1)), 0.15)
+        self.assertEqual(float(self.r1.get_price(10)), 1.0)
+
+    def test_internal_pricing(self):
+        # check that the sell pricebreaks were loaded
+        self.assertTrue(self.r1.has_internal_price_breaks)
+        self.assertEqual(self.r1.internal_price_breaks.count(), 2)
+        # check that the sell pricebreaks work
+        self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
+        self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
 
 
 class TestTemplateTest(TestCase):
@@ -260,21 +332,24 @@ class PartSettingsTest(TestCase):
         """
 
         # Create a part
-        Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+        Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='A')
 
         # Attempt to create a duplicate item (should fail)
         with self.assertRaises(ValidationError):
-            Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+            part = Part(name='Hello', description='A thing', IPN='IPN123', revision='A')
+            part.validate_unique()
 
         # Attempt to create item with duplicate IPN (should be allowed by default)
         Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
 
         # And attempt again with the same values (should fail)
         with self.assertRaises(ValidationError):
-            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+            part = Part(name='Hello', description='A thing', IPN='IPN123', revision='B')
+            part.validate_unique()
 
         # Now update the settings so duplicate IPN values are *not* allowed
         InvenTreeSetting.set_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
 
         with self.assertRaises(ValidationError):
-            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='C')
+            part = Part(name='Hello', description='A thing', IPN='IPN123', revision='C')
+            part.full_clean()

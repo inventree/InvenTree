@@ -44,8 +44,8 @@
 <link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
-<link rel="stylesheet" href="{% static 'css/select2.css' %}">
-<link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}">
+<link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
+<link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
 <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
 <link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
@@ -140,7 +140,7 @@
 <!-- 3rd party general js -->
 <script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
-<script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
+<script type="text/javascript" src="{% static 'select2/js/select2.full.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/chart.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
@@ -148,11 +148,14 @@
 
 <!-- general InvenTree -->
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
 <!-- translated -->
+<script type='text/javascript' src="{% i18n_static 'api.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'attachment.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'company.js' %}"></script>

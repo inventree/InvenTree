@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block heading %}
-{% trans "Supplier Parts" %}
+{% trans "Suppliers" %}
 {% endblock %}
 
 {% block details %}
@@ -30,8 +30,57 @@
 
 {% endblock %}
 
+{% block post_content_panels %}
+
+<div class='panel panel-default panel-inventree'>
+    <div class='panel-heading'>
+        <h4>{% trans "Parameters" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='parameter-toolbar'>
+            <div class='btn-group'>
+                <button class='btn btn-success' id='parameter-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+                </button>
+                <div id='opt-dropdown' class="btn-group">
+                    <button id='parameter-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href='#' id='multi-parameter-delete' title='{% trans "Delete parameters" %}'>{% trans "Delete" %}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <table class='table table-striped table-condensed' id='parameter-table' data-toolbar='#parameter-toolbar'></table>
+    </div>
+</div>
+
+{% endblock %}
+
 {% block js_ready %}
 {{ block.super }}
+
+function reloadParameters() {
+    $("#parameter-table").bootstrapTable("refresh");
+}
+
+$('#parameter-create').click(function() {
+
+    constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
+        method: 'POST',
+        fields: {
+            name: {},
+            value: {},
+            units: {},
+            manufacturer_part: {
+                value: {{ part.pk }},
+                hidden: true,
+            }
+        },
+        title: '{% trans "Add Parameter" %}',
+        onSuccess: reloadParameters
+    });
+});
 
 $('#supplier-create').click(function () {
     launchModalForm(
@@ -46,7 +95,6 @@ $('#supplier-create').click(function () {
                     field: 'supplier',
                     label: '{% trans "New Supplier" %}',
                     title: '{% trans "Create new supplier" %}',
-                    url: "{% url 'supplier-create' %}"
                 },
             ]
         });
@@ -70,6 +118,46 @@ $("#supplier-part-delete").click(function() {
     });
 });
 
+$("#multi-parameter-delete").click(function() {
+
+    var selections = $("#parameter-table").bootstrapTable("getSelections");
+
+    var text = `
+    <div class ='alert alert-block alert-danger'>
+        <p>{% trans "Selected parameters will be deleted" %}:</p>
+        <ul>`;
+
+    selections.forEach(function(item) {
+        text += `<li>${item.name} - <i>${item.value}</i></li>`;
+    });
+
+    text += `
+        </ul>
+    </div>`;
+    
+    showQuestionDialog(
+        '{% trans "Delete Parameters" %}',
+        text,
+        {
+            accept_text: '{% trans "Delete" %}',
+            accept: function() {
+                // Delete each parameter via the API
+                var requests = [];
+
+                selections.forEach(function(item) {
+                    var url = `/api/company/part/manufacturer/parameter/${item.pk}/`;
+
+                    requests.push(inventreeDelete(url));
+                });
+
+                $.when.apply($, requests).then(function() {
+                    $('#parameter-table').bootstrapTable('refresh');
+                });
+            }
+        }
+    );
+});
+
 loadSupplierPartTable(
     "#supplier-table",
     "{% url 'api-supplier-part-list' %}",
@@ -84,6 +172,16 @@ loadSupplierPartTable(
     }
 );
 
-linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
+loadManufacturerPartParameterTable(
+    "#parameter-table",
+    "{% url 'api-manufacturer-part-parameter-list' %}",
+    {
+        params: {
+            manufacturer_part: {{ part.id }},
+        }
+    }
+);
 
+linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
+linkButtonsToSelection($("#parameter-table"), ['#parameter-options'])
 {% endblock %}

@@ -1,0 +1,33 @@
+{% extends "modal_form.html" %}
+
+{% load inventree_extras %}
+{% load i18n %}
+
+{% block form %}
+
+{% if roles.part.change %}
+
+    <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
+    {% if description %}- {{ description }}{% endif %}</p>
+
+    {% block form_alert %}
+    {% endblock form_alert %}
+
+    <form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    <table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
+    {{ wizard.management_form }}
+    {% block form_content %}
+    {% crispy wizard.form %}
+    {% endblock form_content %}
+    </table>
+
+{% else %}
+    <div class='alert alert-danger alert-block' role='alert'>
+        {% trans "Unsuffitient privileges." %}
+    </div>
+{% endif %}
+</div>
+{% endblock %}

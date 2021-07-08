@@ -12,6 +12,7 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.core.exceptions import ValidationError, FieldError
 
@@ -24,6 +25,8 @@ from InvenTree.helpers import validateFilterString, normalize
 
 import common.models
 import stock.models
+import part.models
+
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -54,6 +57,13 @@ def validate_stock_item_filters(filters):
 def validate_stock_location_filters(filters):
 
     filters = validateFilterString(filters, model=stock.models.StockLocation)
+
+    return filters
+
+
+def validate_part_filters(filters):
+
+    filters = validateFilterString(filters, model=part.models.Part)
 
     return filters
 
@@ -237,14 +247,19 @@ class StockItemLabel(LabelTemplate):
     Template for printing StockItem labels
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stockitem-label-list')
+
     SUBDIR = "stockitem"
 
     filters = models.CharField(
         blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        help_text=_('Query filters (comma-separated list of key=value pairs),'),
         verbose_name=_('Filters'),
         validators=[
-            validate_stock_item_filters]
+            validate_stock_item_filters
+        ]
     )
 
     def matches_stock_item(self, item):
@@ -290,6 +305,10 @@ class StockLocationLabel(LabelTemplate):
     Template for printing StockLocation labels
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stocklocation-label-list')
+
     SUBDIR = "stocklocation"
 
     filters = models.CharField(
@@ -325,4 +344,58 @@ class StockLocationLabel(LabelTemplate):
         return {
             'location': location,
             'qr_data': location.format_barcode(brief=True),
+        }
+
+
+class PartLabel(LabelTemplate):
+    """
+    Template for printing Part labels
+    """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-part-label-list')
+
+    SUBDIR = 'part'
+
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Part query filters (comma-separated value of key=value pairs)'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_part_filters
+        ]
+    )
+
+    def matches_part(self, part):
+        """
+        Test if this label template matches a given Part object
+        """
+
+        try:
+            filters = validateFilterString(self.filters)
+            parts = part.models.Part.objects.filter(**filters)
+        except (ValidationError, FieldError):
+            return False
+
+        parts = parts.filter(pk=part.pk)
+
+        return parts.exists()
+
+    def get_context_data(self, request):
+        """
+        Generate context data for each provided Part object
+        """
+
+        part = self.object_to_print
+
+        return {
+            'part': part,
+            'category': part.category,
+            'name': part.name,
+            'description': part.description,
+            'IPN': part.IPN,
+            'revision': part.revision,
+            'qr_data': part.format_barcode(brief=True),
+            'qr_url': part.format_barcode(url=True, request=request),
         }

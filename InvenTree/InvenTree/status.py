@@ -4,9 +4,10 @@ Provides system status functionality checks.
 # -*- coding: utf-8 -*-
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django_q.models import Success
 from django_q.monitor import Stat
@@ -34,7 +35,7 @@ def is_worker_running(**kwargs):
     Check to see if we have a result within the last 20 minutes
     """
 
-    now = datetime.now()
+    now = timezone.now()
     past = now - timedelta(minutes=20)
 
     results = Success.objects.filter(
@@ -60,21 +61,21 @@ def is_email_configured():
 
         # Display warning unless in test mode
         if not settings.TESTING:
-            logger.warning("EMAIL_HOST is not configured")
+            logger.debug("EMAIL_HOST is not configured")
 
     if not settings.EMAIL_HOST_USER:
         configured = False
 
         # Display warning unless in test mode
         if not settings.TESTING:
-            logger.warning("EMAIL_HOST_USER is not configured")
+            logger.debug("EMAIL_HOST_USER is not configured")
 
     if not settings.EMAIL_HOST_PASSWORD:
         configured = False
 
         # Display warning unless in test mode
         if not settings.TESTING:
-            logger.warning("EMAIL_HOST_PASSWORD is not configured")
+            logger.debug("EMAIL_HOST_PASSWORD is not configured")
 
     return configured
 

@@ -128,6 +128,7 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 addHeaderTitle('{% trans "Stock" %}');
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
+addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
 addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
 
 loadStockTable($('#table-recently-updated-stock'), {
@@ -168,6 +169,13 @@ loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
         low_stock: true,
     },
     name: "low_stock_parts",
+});
+
+loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
+    params: {
+        depleted_stock: true,
+    },
+    name: "depleted_stock_parts",
 });
 
 loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {

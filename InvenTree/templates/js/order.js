@@ -1,6 +1,68 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+
+// Create a new SalesOrder
+function createSalesOrder(options={}) {
+
+    constructForm('{% url "api-so-list" %}', {
+        method: 'POST',
+        fields: {
+            reference: {
+                prefix: '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}',
+            },
+            customer: {
+                value: options.customer,
+            },
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/sales-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Sales Order" %}',
+    });
+}
+
+// Create a new PurchaseOrder
+function createPurchaseOrder(options={}) {
+
+    constructForm('{% url "api-po-list" %}', {
+        method: 'POST',
+        fields: {
+            reference: {
+                prefix: "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}",   
+            },
+            supplier: {
+                value: options.supplier,
+            },
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/purchase-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Purchase Order" %}',
+    });
+}
+
+
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
 
@@ -266,6 +328,11 @@ function loadSalesOrderTable(table, options) {
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
                 formatter: function(value, row, index, field) {
+
+                    if (!row.customer_detail) {
+                        return '{% trans "Invalid Customer" %}';
+                    }
+
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
                 }
             },
@@ -308,5 +375,91 @@ function loadSalesOrderTable(table, options) {
                 title: '{% trans "Items" %}'
             },
         ],
+    });
+}
+
+
+function loadSalesOrderAllocationTable(table, options={}) {
+    /**
+     * Load a table with SalesOrderAllocation items
+     */
+
+    options.params = options.params || {};
+
+    options.params['location_detail'] = true;
+    options.params['part_detail'] = true;
+    options.params['item_detail'] = true;
+    options.params['order_detail'] = true;
+
+    var filters = loadTableFilters("salesorderallocation");
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList("salesorderallocation", $(table));
+
+    $(table).inventreeTable({
+        url: '{% url "api-so-allocation-list" %}',
+        queryParams: filters,
+        name: 'salesorderallocation',
+        groupBy: false,
+        search: false,
+        paginationVAlign: 'bottom',
+        original: options.params,
+        formatNoMatches: function() { return '{% trans "No sales order allocations found" %}'; },
+        columns: [
+            {
+                field: 'pk',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'order',
+                switchable: false,
+                title: '{% trans "Order" %}',
+                switchable: false,
+                formatter: function(value, row) {
+
+                    var prefix = "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}";
+
+                    var ref = `${prefix}${row.order_detail.reference}`;
+
+                    return renderLink(ref, `/order/sales-order/${row.order}/`);
+                }
+            },
+            {
+                field: 'item',
+                title: '{% trans "Stock Item" %}',
+                formatter: function(value, row) {
+                    // Render a link to the particular stock item
+
+                    var link = `/stock/item/${row.item}/`;
+                    var text = `{% trans "Stock Item" %} ${row.item}`;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+
+                    if (!value) {
+                        return '{% trans "Location not specified" %}';
+                    }
+                    
+                    var link = `/stock/location/${value}`;
+                    var text = row.location_detail.description;
+
+                    return renderLink(text, link);
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                sortable: true,
+            }
+        ]
     });
 }

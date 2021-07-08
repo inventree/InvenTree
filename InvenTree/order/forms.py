@@ -11,14 +11,17 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
-from InvenTree.fields import RoundingDecimalFormField
-from InvenTree.fields import DatePickerFormField
+from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
+
+from InvenTree.helpers import clean_decimal
+
+from common.forms import MatchItemForm
 
 import part.models
 
 from stock.models import StockLocation
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import PurchaseOrder
+from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
 
@@ -79,140 +82,17 @@ class ShipSalesOrderForm(HelperForm):
 
 class ReceivePurchaseOrderForm(HelperForm):
 
-    location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), required=True, label=_('Location'), help_text=_('Receive parts to this location'))
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'location',
-        ]
-
-
-class EditPurchaseOrderForm(HelperForm):
-    """ Form for editing a PurchaseOrder object """
-
-    def __init__(self, *args, **kwargs):
-
-        self.field_prefix = {
-            'reference': 'PO',
-            'link': 'fa-link',
-            'target_date': 'fa-calendar-alt',
-        }
-
-        self.field_placeholder = {
-            'reference': _('Purchase Order reference'),
-        }
-
-        super().__init__(*args, **kwargs)
-
-    target_date = DatePickerFormField(
-        label=_('Target Date'),
-        help_text=_('Target date for order delivery. Order will be overdue after this date.'),
+    location = TreeNodeChoiceField(
+        queryset=StockLocation.objects.all(),
+        required=True,
+        label=_("Destination"),
+        help_text=_("Receive parts to this location"),
     )
 
     class Meta:
         model = PurchaseOrder
         fields = [
-            'reference',
-            'supplier',
-            'supplier_reference',
-            'description',
-            'target_date',
-            'link',
-            'responsible',
-        ]
-
-
-class EditSalesOrderForm(HelperForm):
-    """ Form for editing a SalesOrder object """
-
-    def __init__(self, *args, **kwargs):
-
-        self.field_prefix = {
-            'reference': 'SO',
-            'link': 'fa-link',
-            'target_date': 'fa-calendar-alt',
-        }
-
-        self.field_placeholder = {
-            'reference': _('Enter sales order number'),
-        }
-
-        super().__init__(*args, **kwargs)
-
-    target_date = DatePickerFormField(
-        label=_('Target Date'),
-        help_text=_('Target date for order completion. Order will be overdue after this date.'),
-    )
-
-    class Meta:
-        model = SalesOrder
-        fields = [
-            'reference',
-            'customer',
-            'customer_reference',
-            'description',
-            'target_date',
-            'link',
-            'responsible',
-        ]
-
-
-class EditPurchaseOrderAttachmentForm(HelperForm):
-    """ Form for editing a PurchaseOrderAttachment object """
-
-    class Meta:
-        model = PurchaseOrderAttachment
-        fields = [
-            'order',
-            'attachment',
-            'comment'
-        ]
-
-
-class EditSalesOrderAttachmentForm(HelperForm):
-    """ Form for editing a SalesOrderAttachment object """
-
-    class Meta:
-        model = SalesOrderAttachment
-        fields = [
-            'order',
-            'attachment',
-            'comment'
-        ]
-
-
-class EditPurchaseOrderLineItemForm(HelperForm):
-    """ Form for editing a PurchaseOrderLineItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = PurchaseOrderLineItem
-        fields = [
-            'order',
-            'part',
-            'quantity',
-            'reference',
-            'purchase_price',
-            'notes',
-        ]
-
-
-class EditSalesOrderLineItemForm(HelperForm):
-    """ Form for editing a SalesOrderLineItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderLineItem
-        fields = [
-            'order',
-            'part',
-            'quantity',
-            'reference',
-            'sale_price',
-            'notes'
+            "location",
         ]
 
 
@@ -285,3 +165,36 @@ class EditSalesOrderAllocationForm(HelperForm):
             'line',
             'item',
             'quantity']
+
+
+class OrderMatchItemForm(MatchItemForm):
+    """ Override MatchItemForm fields """
+
+    def get_special_field(self, col_guess, row, file_manager):
+        """ Set special fields """
+
+        # set quantity field
+        if 'quantity' in col_guess.lower():
+            return forms.CharField(
+                required=False,
+                widget=forms.NumberInput(attrs={
+                    'name': 'quantity' + str(row['index']),
+                    'class': 'numberinput',
+                    'type': 'number',
+                    'min': '0',
+                    'step': 'any',
+                    'value': clean_decimal(row.get('quantity', '')),
+                })
+            )
+        # set price field
+        elif 'price' in col_guess.lower():
+            return InvenTreeMoneyField(
+                label=_(col_guess),
+                decimal_places=5,
+                max_digits=19,
+                required=False,
+                default_amount=clean_decimal(row.get('purchase_price', '')),
+            )
+
+        # return default
+        return super().get_special_field(col_guess, row, file_manager)

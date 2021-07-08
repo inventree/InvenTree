@@ -44,6 +44,13 @@ class LocationResource(ModelResource):
         StockLocation.objects.rebuild()
 
 
+class LocationInline(admin.TabularInline):
+    """
+    Inline for sub-locations
+    """
+    model = StockLocation
+
+
 class LocationAdmin(ImportExportModelAdmin):
 
     resource_class = LocationResource
@@ -51,6 +58,10 @@ class LocationAdmin(ImportExportModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
     search_fields = ('name', 'description')
+
+    inlines = [
+        LocationInline,
+    ]
 
 
 class StockItemResource(ModelResource):

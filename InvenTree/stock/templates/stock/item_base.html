@@ -247,7 +247,19 @@
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Serial Number" %}</td>
-        <td>{{ item.serial }}</td>
+        <td>
+        {% if previous %}
+            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
+                <small>{{ previous.serial }}</small>  ‹
+            </a>
+        {% endif %}
+        <span class="btn" href=""><strong>{{ item.serial }}</strong></span>
+        {% if next %}
+            <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
+                ›  <small>{{ next.serial }}</small>
+            </a>
+        {% endif %}
+        </td>
     </tr>
     {% else %}
     <tr>
@@ -325,7 +337,7 @@
         <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
     </tr>
     {% endif %}
-    {% if item.purchase_price %}
+    {% if item.purchase_price != None %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Purchase Price" %}</td>
@@ -350,7 +362,12 @@
     <tr>
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
-        <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
+        {% if item.supplier_part.manufacturer_part.manufacturer %}
+            <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
+        {% else %}
+            <td><i>{% trans "No manufacturer set" %}</i></td>
+        {% endif %}
+
     </tr>
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
@@ -485,13 +502,14 @@ $("#stock-edit").click(function () {
 });
 
 $('#stock-edit-status').click(function () {
-    launchModalForm(
-        "{% url 'stock-item-edit-status' item.id %}",
-        {
-            reload: true,
-            submit_text: '{% trans "Save" %}',
-        }
-    );
+
+    constructForm('{% url "api-stock-detail" item.pk %}', {
+        fields: {
+            status: {},
+        },
+        reload: true,
+        title: '{% trans "Edit Stock Status" %}',
+    });
 });
 
 {% endif %}
