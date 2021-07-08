@@ -113,21 +113,27 @@ $('#order-part, #order-part2').click(function() {
 });
 
 $('#edit-part').click(function () {
-    launchModalForm(
-                    "{% url 'manufacturer-part-edit' part.id %}",
-                    {
-                        reload: true
-                    }
-    );
+
+    constructForm('{% url "api-manufacturer-part-detail" part.pk %}', {
+        fields: {
+            part: {},
+            manufacturer: {},
+            MPN: {},
+            description: {},
+            link: {},
+        },
+        title: '{% trans "Edit Manufacturer Part" %}',
+        reload: true,
+    });
 });
 
 $('#delete-part').click(function() {
-    launchModalForm(
-        "{% url 'manufacturer-part-delete' %}?part={{ part.id }}",
-        {
-            redirect: "{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}"
-        }
-    );
+
+    constructForm('{% url "api-manufacturer-part-detail" part.pk %}', {
+        method: 'DELETE',
+        title: '{% trans "Delete Manufacturer Part" %}',
+        redirect: "{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}",
+    });
 });
 
 {% endblock %}

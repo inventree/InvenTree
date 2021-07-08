@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
+from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
 from common.models import InvenTreeSetting
@@ -85,6 +85,29 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/item.html'
     queryset = StockItem.objects.all()
     model = StockItem
+
+    def get_context_data(self, **kwargs):
+        """ add previous and next item """
+        data = super().get_context_data(**kwargs)
+
+        if self.object.serialized:
+            serial_elem = {a.serial: a for a in self.object.part.stock_items.all() if a.serialized}
+            serials = [int(a) for a in serial_elem.keys()]
+            current = int(self.object.serial)
+
+            # previous
+            for nbr in range(current - 1, -1, -1):
+                if nbr in serials:
+                    data['previous'] = serial_elem.get(str(nbr), None)
+                    break
+
+            # next
+            for nbr in range(current + 1, max(serials) + 1):
+                if nbr in serials:
+                    data['next'] = serial_elem.get(str(nbr), None)
+                    break
+
+        return data
 
 
 class StockItemNotes(InvenTreeRoleMixin, UpdateView):
@@ -255,85 +278,6 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemAttachmentCreate(AjaxCreateView):
-    """
-    View for adding a new attachment for a StockItem
-    """
-
-    model = StockItemAttachment
-    form_class = StockForms.EditStockItemAttachmentForm
-    ajax_form_title = _("Add Stock Item Attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-        """ Record the user that uploaded the attachment """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _("Added attachment")
-        }
-
-    def get_initial(self):
-        """
-        Get initial data for the new StockItem attachment object.
-
-        - Client must provide a valid StockItem ID
-        """
-
-        initials = super().get_initial()
-
-        try:
-            initials['stock_item'] = StockItem.objects.get(id=self.request.GET.get('item', None))
-        except (ValueError, StockItem.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemAttachmentEdit(AjaxUpdateView):
-    """
-    View for editing a StockItemAttachment object.
-    """
-
-    model = StockItemAttachment
-    form_class = StockForms.EditStockItemAttachmentForm
-    ajax_form_title = _("Edit Stock Item Attachment")
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemAttachmentDelete(AjaxDeleteView):
-    """
-    View for deleting a StockItemAttachment object.
-    """
-
-    model = StockItemAttachment
-    ajax_form_title = _("Delete Stock Item Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    def get_data(self):
-        return {
-            'danger': _("Deleted attachment"),
-        }
-
-
 class StockItemAssignToCustomer(AjaxUpdateView):
     """
     View for manually assigning a StockItem to a Customer
@@ -432,74 +376,6 @@ class StockItemDeleteTestData(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, form, data)
-
-
-class StockItemTestResultCreate(AjaxCreateView):
-    """
-    View for adding a new StockItemTestResult
-    """
-
-    model = StockItemTestResult
-    form_class = StockForms.EditStockItemTestResultForm
-    ajax_form_title = _("Add Test Result")
-
-    def save(self, form, **kwargs):
-        """
-        Record the user that uploaded the test result
-        """
-
-        result = form.save(commit=False)
-        result.user = self.request.user
-        result.save()
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        try:
-            stock_id = self.request.GET.get('stock_item', None)
-            initials['stock_item'] = StockItem.objects.get(pk=stock_id)
-        except (ValueError, StockItem.DoesNotExist):
-            pass
-
-        initials['test'] = self.request.GET.get('test', '')
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemTestResultEdit(AjaxUpdateView):
-    """
-    View for editing a StockItemTestResult
-    """
-
-    model = StockItemTestResult
-    form_class = StockForms.EditStockItemTestResultForm
-    ajax_form_title = _("Edit Test Result")
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemTestResultDelete(AjaxDeleteView):
-    """
-    View for deleting a StockItemTestResult
-    """
-
-    model = StockItemTestResult
-    ajax_form_title = _("Delete Test Result")
-    context_object_name = "result"
 
 
 class StockExportOptions(AjaxView):
@@ -957,6 +833,20 @@ class StockAdjust(AjaxView, FormMixin):
 
         return items
 
+    def get_stock_action_titles(self):
+
+        # Choose form title and action column based on the action
+        titles = {
+            'move': [_('Move Stock Items'), _('Move')],
+            'count': [_('Count Stock Items'), _('Count')],
+            'take': [_('Remove From Stock'), _('Take')],
+            'add': [_('Add Stock Items'), _('Add')],
+            'delete': [_('Delete Stock Items'), _('Delete')],
+        }
+
+        self.ajax_form_title = titles[self.stock_action][0]
+        self.stock_action_title = titles[self.stock_action][1]
+
     def get_context_data(self):
 
         context = super().get_context_data()
@@ -965,6 +855,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         context['stock_action'] = self.stock_action.strip().lower()
 
+        self.get_stock_action_titles()
         context['stock_action_title'] = self.stock_action_title
 
         # Quantity column will be read-only in some circumstances
@@ -992,18 +883,6 @@ class StockAdjust(AjaxView, FormMixin):
         # Pick a default action...
         if self.stock_action not in ['move', 'count', 'take', 'add', 'delete']:
             self.stock_action = 'count'
-
-        # Choose form title and action column based on the action
-        titles = {
-            'move': [_('Move Stock Items'), _('Move')],
-            'count': [_('Count Stock Items'), _('Count')],
-            'take': [_('Remove From Stock'), _('Take')],
-            'add': [_('Add Stock Items'), _('Add')],
-            'delete': [_('Delete Stock Items'), _('Delete')],
-        }
-
-        self.ajax_form_title = titles[self.stock_action][0]
-        self.stock_action_title = titles[self.stock_action][1]
 
         # Save list of items!
         self.stock_items = self.get_GET_items()
@@ -1055,7 +934,7 @@ class StockAdjust(AjaxView, FormMixin):
         }
 
         if valid:
-            result = self.do_action()
+            result = self.do_action(note=form.cleaned_data['note'])
 
             data['success'] = result
 
@@ -1072,9 +951,9 @@ class StockAdjust(AjaxView, FormMixin):
                     # Instruct the form to redirect
                     data['url'] = reverse('stock-index')
 
-        return self.renderJsonResponse(request, form, data=data)
+        return self.renderJsonResponse(request, form, data=data, context=self.get_context_data())
 
-    def do_action(self):
+    def do_action(self, note=None):
         """ Perform stock adjustment action """
 
         if self.stock_action == 'move':
@@ -1089,27 +968,26 @@ class StockAdjust(AjaxView, FormMixin):
             except ValueError:
                 pass
 
-            return self.do_move(destination, set_default_loc)
+            return self.do_move(destination, set_default_loc, note=note)
 
         elif self.stock_action == 'add':
-            return self.do_add()
+            return self.do_add(note=note)
 
         elif self.stock_action == 'take':
-            return self.do_take()
+            return self.do_take(note=note)
 
         elif self.stock_action == 'count':
-            return self.do_count()
+            return self.do_count(note=note)
 
         elif self.stock_action == 'delete':
-            return self.do_delete()
+            return self.do_delete(note=note)
 
         else:
             return _('No action performed')
 
-    def do_add(self):
+    def do_add(self, note=None):
 
         count = 0
-        note = self.request.POST['note']
 
         for item in self.stock_items:
             if item.new_quantity <= 0:
@@ -1121,10 +999,9 @@ class StockAdjust(AjaxView, FormMixin):
 
         return _('Added stock to {n} items').format(n=count)
 
-    def do_take(self):
+    def do_take(self, note=None):
 
         count = 0
-        note = self.request.POST['note']
 
         for item in self.stock_items:
             if item.new_quantity <= 0:
@@ -1136,10 +1013,9 @@ class StockAdjust(AjaxView, FormMixin):
 
         return _('Removed stock from {n} items').format(n=count)
 
-    def do_count(self):
+    def do_count(self, note=None):
 
         count = 0
-        note = self.request.POST['note']
 
         for item in self.stock_items:
 
@@ -1149,12 +1025,10 @@ class StockAdjust(AjaxView, FormMixin):
 
         return _("Counted stock for {n} items".format(n=count))
 
-    def do_move(self, destination, set_loc=None):
+    def do_move(self, destination, set_loc=None, note=None):
         """ Perform actual stock movement """
 
         count = 0
-
-        note = self.request.POST['note']
 
         for item in self.stock_items:
             # Avoid moving zero quantity
@@ -1169,7 +1043,7 @@ class StockAdjust(AjaxView, FormMixin):
             # Do not move to the same location (unless the quantity is different)
             if destination == item.location and item.new_quantity == item.quantity:
                 continue
-
+            
             item.move(destination, note, self.request.user, quantity=item.new_quantity)
 
             count += 1
@@ -1210,27 +1084,6 @@ class StockAdjust(AjaxView, FormMixin):
             count += 1
 
         return _("Deleted {n} stock items").format(n=count)
-
-
-class StockItemEditStatus(AjaxUpdateView):
-    """
-    View for editing stock item status field
-    """
-
-    model = StockItem
-    form_class = StockForms.EditStockItemStatusForm
-    ajax_form_title = _('Edit Stock Item Status')
-
-    def save(self, object, form, **kwargs):
-        """
-        Override the save method, to track the user who updated the model
-        """
-
-        item = form.save(commit=False)
-
-        item.save(user=self.request.user)
-
-        return item
 
 
 class StockItemEdit(AjaxUpdateView):

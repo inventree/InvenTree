@@ -17,12 +17,6 @@ part_related_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartRelatedDelete.as_view(), name='part-related-delete'),
 ]
 
-part_attachment_urls = [
-    url(r'^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
-    url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
-    url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
-]
-
 sale_price_break_urls = [
     url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
     url(r'^(?P<pk>\d+)/edit/', views.PartSalePriceBreakEdit.as_view(), name='sale-price-break-edit'),
@@ -65,13 +59,11 @@ part_detail_urls = [
     url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
-    url(r'^order-prices/', views.PartPricingView.as_view(template_name='part/order_prices.html'), name='part-order-prices'),
+    url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
     url(r'^manufacturers/?', views.PartDetail.as_view(template_name='part/manufacturer.html'), name='part-manufacturers'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
-    url(r'^sale-prices/', views.PartDetail.as_view(template_name='part/sale_prices.html'), name='part-sale-prices'),
-    url(r'^internal-prices/', views.PartDetail.as_view(template_name='part/internal_prices.html'), name='part-internal-prices'),
     url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
@@ -81,7 +73,6 @@ part_detail_urls = [
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
     # Normal thumbnail with form
-    url(r'^thumbnail/?', views.PartImageUpload.as_view(), name='part-image-upload'),
     url(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
     url(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 
@@ -105,7 +96,6 @@ category_urls = [
 
     # Category detail views
     url(r'(?P<pk>\d+)/', include([
-        url(r'^edit/', views.CategoryEdit.as_view(), name='category-edit'),
         url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         url(r'^parameters/', include(category_parameter_urls)),
 
@@ -119,7 +109,6 @@ category_urls = [
 
 part_bom_urls = [
     url(r'^edit/?', views.BomItemEdit.as_view(), name='bom-item-edit'),
-    url('^delete/?', views.BomItemDelete.as_view(), name='bom-item-delete'),
 ]
 
 # URL list for part web interface
@@ -150,21 +139,11 @@ part_urls = [
     # Part related
     url(r'^related-parts/', include(part_related_urls)),
 
-    # Part attachments
-    url(r'^attachment/', include(part_attachment_urls)),
-
     # Part price breaks
     url(r'^sale-price/', include(sale_price_break_urls)),
 
     # Part internal price breaks
     url(r'^internal-price/', include(internal_price_break_urls)),
-
-    # Part test templates
-    url(r'^test-template/', include([
-        url(r'^new/', views.PartTestTemplateCreate.as_view(), name='part-test-template-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.PartTestTemplateEdit.as_view(), name='part-test-template-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.PartTestTemplateDelete.as_view(), name='part-test-template-delete'),
-    ])),
 
     # Part parameters
     url(r'^parameter/', include(part_parameter_urls)),

@@ -23,22 +23,6 @@ from report.models import TestReport
 from part.models import Part
 
 from .models import StockLocation, StockItem, StockItemTracking
-from .models import StockItemAttachment
-from .models import StockItemTestResult
-
-
-class EditStockItemAttachmentForm(HelperForm):
-    """
-    Form for creating / editing a StockItemAttachment object
-    """
-
-    class Meta:
-        model = StockItemAttachment
-        fields = [
-            'stock_item',
-            'attachment',
-            'comment'
-        ]
 
 
 class AssignStockItemToCustomerForm(HelperForm):
@@ -62,23 +46,6 @@ class ReturnStockItemForm(HelperForm):
         model = StockItem
         fields = [
             'location',
-        ]
-
-
-class EditStockItemTestResultForm(HelperForm):
-    """
-    Form for creating / editing a StockItemTestResult object.
-    """
-
-    class Meta:
-        model = StockItemTestResult
-        fields = [
-            'stock_item',
-            'test',
-            'result',
-            'value',
-            'attachment',
-            'notes',
         ]
 
 

@@ -288,6 +288,8 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
 
     attachment = InvenTreeAttachmentSerializerField(required=True)
 
+    # TODO: Record the uploading user when creating or updating an attachment!
+
     class Meta:
         model = StockItemAttachment
 

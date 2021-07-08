@@ -10,11 +10,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.exceptions import InvalidMove
 
 from .validators import validate_tree_name
 
@@ -90,6 +92,15 @@ class InvenTreeTree(MPTTModel):
         description: longer form description
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
+
+    def save(self, *args, **kwargs):
+
+        try:
+            super().save(*args, **kwargs)
+        except InvalidMove:
+            raise ValidationError({
+                'parent': _("Invalid choice"),
+            })
 
     class Meta:
         abstract = True

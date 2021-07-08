@@ -21,49 +21,66 @@
 
 enableDragAndDrop(
         '#attachment-dropzone',
-        "{% url 'stock-item-attachment-create' %}",
+        "{% url 'api-stock-attachment-list' %}",
         {
             data: {
                 stock_item: {{ item.id }},
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                reloadAttachmentTable();
             }
         }
     );
 
-$("#new-attachment").click(function() {
-    launchModalForm("{% url 'stock-item-attachment-create' %}?item={{ item.id }}",
-        {
-            reload: true, 
-        });
-});
+loadAttachmentTable(
+    '{% url "api-stock-attachment-list" %}',
+    {
+        filters: {
+            stock_item: {{ item.pk }},
+        },
+        onEdit: function(pk) {
+            var url = `/api/stock/attachment/${pk}/`;
 
-$("#attachment-table").on('click', '.attachment-edit-button', function() {
-    var button = $(this);
+            constructForm(url, {
+                fields: {
+                    comment: {},
+                },
+                title: '{% trans "Edit Attachment" %}',
+                onSuccess: reloadAttachmentTable 
+            });
+        },
+        onDelete: function(pk) {
+            var url = `/api/stock/attachment/${pk}/`;
 
-    var url = `/stock/item/attachment/${button.attr('pk')}/edit/`;
-
-    launchModalForm(url, 
-        {
-            reload: true,
-        });
-});
-
-$("#attachment-table").on('click', '.attachment-delete-button', function() {
-    var button = $(this);
-
-    var url = `/stock/item/attachment/${button.attr('pk')}/delete/`;
-
-    launchModalForm(url, {
-        success: function() {
-            location.reload();
+            constructForm(url, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
         }
-    });
-});
+    }
+);
 
-$("#attachment-table").inventreeTable({
+$("#new-attachment").click(function() {
+
+    constructForm(
+        '{% url "api-stock-attachment-list" %}',
+        {
+            method: 'POST',
+            fields: {
+                attachment: {},
+                comment: {},
+                stock_item: {
+                    value: {{ item.pk }},
+                    hidden: true,
+                },
+            },
+            reload: true,
+            title: '{% trans "Add Attachment" %}',
+        }
+    );
 });
 
 {% endblock %}

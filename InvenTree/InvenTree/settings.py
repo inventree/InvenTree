@@ -342,6 +342,7 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata'
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
