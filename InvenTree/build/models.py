@@ -21,6 +21,7 @@ from django.core.validators import MinValueValidator
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.exceptions import InvalidMove
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
@@ -89,11 +90,20 @@ class Build(MPTTModel):
         responsible: User (or group) responsible for completing the build
     """
 
+    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    
     @staticmethod
     def get_api_url():
         return reverse('api-build-list')
 
-    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    def save(self, *args, **kwargs):
+
+        try:
+            super().save(*args, **kwargs)
+        except InvalidMove:
+            raise ValidationError({
+                'parent': _('Invalid choice for parent build'),
+            })
 
     class Meta:
         verbose_name = _("Build Order")

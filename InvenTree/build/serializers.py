@@ -62,7 +62,7 @@ class BuildSerializer(InvenTreeModelSerializer):
         return queryset
 
     def __init__(self, *args, **kwargs):
-        part_detail = kwargs.pop('part_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
 
         super().__init__(*args, **kwargs)
 
