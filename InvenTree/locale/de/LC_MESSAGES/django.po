@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-08 13:36+0000\n"
-"PO-Revision-Date: 2021-07-08 11:18\n"
+"PO-Revision-Date: 2021-07-08 13:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2764,10 +2764,8 @@ msgid "Pattern for generating label filenames"
 msgstr "Muster für die Erstellung von Label-Dateinamen"
 
 #: label/models.py:258
-#, fuzzy
-#| msgid "Query filters (comma-separated list of key=value pairs"
 msgid "Query filters (comma-separated list of key=value pairs),"
-msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
+msgstr ""
 
 #: label/models.py:259 label/models.py:317 label/models.py:364
 #: report/models.py:322 report/models.py:457 report/models.py:495
@@ -2779,10 +2777,8 @@ msgid "Query filters (comma-separated list of key=value pairs"
 msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
 #: label/models.py:363
-#, fuzzy
-#| msgid "Part query filters (comma-separated list of key=value pairs"
 msgid "Part query filters (comma-separated value of key=value pairs)"
-msgstr "Teile-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
+msgstr ""
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -6297,13 +6293,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7001,16 +6995,12 @@ msgid "Select Parts"
 msgstr "Teile auswählen"
 
 #: templates/js/label.js:116
-#, fuzzy
-#| msgid "Part(s) must be selected before printing reports"
 msgid "Part(s) must be selected before printing labels"
-msgstr "Teil muss vor dem Berichtsdruck ausgewählt werden"
+msgstr ""
 
 #: templates/js/label.js:135
-#, fuzzy
-#| msgid "No labels found which match selected stock item(s)"
 msgid "No labels found which match the selected part(s)"
-msgstr "Keine Labels die zu BestandsObjekt(e) passen gefunden"
+msgstr ""
 
 #: templates/js/label.js:209
 msgid "stock items selected"
@@ -7930,3 +7920,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
