@@ -1,34 +1,72 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+
+function buildFormFields() {
+    return {
+        reference: {
+            prefix: "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}",
+        },
+        title: {},
+        part: {},
+        quantity: {},
+        parent: {
+            filters: {
+                part_detail: true,
+            }
+        },
+        batch: {},
+        target_date: {},
+        take_from: {},
+        destination: {},
+        link: {
+            icon: 'fa-link',
+        },
+        issued_by: {
+            icon: 'fa-user',
+        },
+        responsible: {
+            icon: 'fa-users',
+        },
+    };
+}
+
+
+function editBuildOrder(pk, options={}) {
+
+    var fields = buildFormFields();
+
+    constructForm(`/api/build/${pk}/`, {
+        fields: fields,
+        reload: true,
+        title: '{% trans "Edit Build Order" %}',
+    });
+}
+
 function newBuildOrder(options={}) {
     /* Launch modal form to create a new BuildOrder.
      */
 
-    launchModalForm(
-        "{% url 'build-create' %}",
-        {
-            follow: true,
-            data: options.data || {},
-            callback: [
-                {
-                    field: 'part',
-                    action: function(value) {
-                        inventreeGet(
-                            `/api/part/${value}/`, {},
-                            {
-                                success: function(response) {
+    var fields = buildFormFields();
 
-                                    //enableField('serial_numbers', response.trackable);
-                                    //clearField('serial_numbers');
-                                }
-                            }
-                        );
-                    },
-                }
-            ],
-        }
-    )
+    if (options.part) {
+        fields.part.value = options.part;
+    }
+
+    if (options.quantity) {
+        fields.quantity.value = options.quantity;
+    }
+
+    if (options.parent) {
+        fields.parent.value = options.parent;
+    }
+
+    constructForm(`/api/build/`, {
+        fields: fields,
+        follow: true,
+        method: 'POST',
+        title: '{% trans "Create Build Order" %}'
+    });
 }
 
 
@@ -384,14 +422,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var idx = $(this).closest('tr').attr('data-index');
             var row = $(table).bootstrapTable('getData')[idx];
 
-            // Launch form to create a new build order
-            launchModalForm('{% url "build-create" %}', {
-                follow: true,
-                data: {
-                    part: pk,
-                    parent: buildId,
-                    quantity: requiredQuantity(row) - sumAllocations(row),
-                }
+            newBuildOrder({
+                part: pk,
+                parent: buildId,
+                quantity: requiredQuantity(row) - sumAllocations(row),
             });
         });
 
@@ -1092,13 +1126,9 @@ function loadBuildPartsTable(table, options={}) {
             var idx = $(this).closest('tr').attr('data-index');
             var row = $(table).bootstrapTable('getData')[idx];
 
-            // Launch form to create a new build order
-            launchModalForm('{% url "build-create" %}', {
-                follow: true,
-                data: {
-                    part: pk,
-                    parent: options.build,
-                }
+            newBuildOrder({
+                part: pk,
+                parent: options.build,
             });
         });
     }

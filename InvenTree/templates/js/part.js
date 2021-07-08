@@ -220,6 +220,107 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
+function loadPartParameterTable(table, url, options) {
+
+    var params = options.params || {};
+
+    // Load filters
+    var filters = loadTableFilters("part-parameters");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    // setupFilterLsit("#part-parameters", $(table));
+
+    $(table).inventreeTable({
+        url: url,
+        original: params,
+        queryParams: filters,
+        name: 'partparameters',
+        groupBy: false,
+        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+                visible: true,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.template_detail.name;
+                }
+            },
+            {
+                field: 'data',
+                title: '{% trans "Value" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.template_detail.units;
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Setup button callbacks
+            $(table).find('.button-parameter-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/parameter/${pk}/`, {
+                    fields: {
+                        data: {},
+                    },
+                    title: '{% trans "Edit Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-parameter-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/parameter/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+    });
+}
+
+
 function loadParametricPartTable(table, options={}) {
     /* Load parametric table for part parameters
      * 

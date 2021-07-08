@@ -153,6 +153,11 @@ class InvenTreeMetadata(SimpleMetadata):
         if 'default' not in field_info and not field.default == empty:
             field_info['default'] = field.get_default()
 
+        # Force non-nullable fields to read as "required"
+        # (even if there is a default value!)
+        if not field.allow_null and not (hasattr(field, 'allow_blank') and field.allow_blank):
+            field_info['required'] = True
+
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
             
@@ -166,7 +171,12 @@ class InvenTreeMetadata(SimpleMetadata):
             if model:
                 # Mark this field as "related", and point to the URL where we can get the data!
                 field_info['type'] = 'related field'
-                field_info['api_url'] = model.get_api_url()
                 field_info['model'] = model._meta.model_name
+
+                # Special case for 'user' model
+                if field_info['model'] == 'user':
+                    field_info['api_url'] = '/api/user/'
+                else:
+                    field_info['api_url'] = model.get_api_url()
 
         return field_info

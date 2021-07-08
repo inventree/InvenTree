@@ -1115,10 +1115,10 @@ part_api_urls = [
 
     # Base URL for PartParameter API endpoints
     url(r'^parameter/', include([
-        url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+        url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
 
-        url(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-param-detail'),
-        url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
+        url(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        url(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
     url(r'^thumbs/', include([

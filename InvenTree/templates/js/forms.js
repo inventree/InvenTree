@@ -511,6 +511,10 @@ function insertConfirmButton(options) {
  */
 function submitFormData(fields, options) {
 
+    // Immediately disable the "submit" button,
+    // to prevent the form being submitted multiple times!
+    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+
     // Form data to be uploaded to the server
     // Only used if file / image upload is required
     var form_data = new FormData();
@@ -728,9 +732,29 @@ function handleFormSuccess(response, options) {
 
     // Close the modal
     if (!options.preventClose) {
-        // TODO: Actually just *delete* the modal,
-        // rather than hiding it!!
+        // Note: The modal will be deleted automatically after closing
         $(options.modal).modal('hide');
+    }
+
+    // Display any required messages
+    // Should we show alerts immediately or cache them?
+    var cache = (options.follow && response.url) || options.redirect || options.reload;
+
+    // Display any messages
+    if (response && response.success) {
+        showAlertOrCache("alert-success", response.success, cache);
+    }
+    
+    if (response && response.info) {
+        showAlertOrCache("alert-info", response.info, cache);
+    }
+
+    if (response && response.warning) {
+        showAlertOrCache("alert-warning", response.warning, cache);
+    }
+
+    if (response && response.danger) {
+        showAlertOrCache("alert-danger", response.danger, cache);
     }
 
     if (options.onSuccess) {
@@ -777,6 +801,9 @@ function clearFormErrors(options) {
  * - options: Form options provided by the client
  */
 function handleFormErrors(errors, fields, options) {
+
+    // Reset the status of the "submit" button
+    $(options.modal).find('#modal-form-submit').prop('disabled', false);
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
@@ -1201,11 +1228,21 @@ function renderModelData(name, model, data, parameters, options) {
         case 'partcategory':
             renderer = renderPartCategory;
             break;
+        case 'partparametertemplate':
+            renderer = renderPartParameterTemplate;
+            break;
         case 'supplierpart':
             renderer = renderSupplierPart;
             break;
+        case 'build':
+            renderer = renderBuild;
+            break;
         case 'owner':
             renderer = renderOwner;
+            break;
+        case 'user':
+            renderer = renderUser;
+            break;
         default:
             break;
     }

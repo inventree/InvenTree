@@ -21,6 +21,7 @@ from django.core.validators import MinValueValidator
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.exceptions import InvalidMove
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
@@ -35,6 +36,35 @@ import InvenTree.helpers
 from stock import models as StockModels
 from part import models as PartModels
 from users import models as UserModels
+
+
+def get_next_build_number():
+    """
+    Returns the next available BuildOrder reference number
+    """
+
+    if Build.objects.count() == 0:
+        return
+
+    build = Build.objects.exclude(reference=None).last()
+
+    attempts = set([build.reference])
+
+    reference = build.reference
+
+    while 1:
+        reference = increment(reference)
+
+        if reference in attempts:
+            # Escape infinite recursion
+            return reference
+
+        if Build.objects.filter(reference=reference).exists():
+            attempts.add(reference)
+        else:
+            break
+    
+    return reference
 
 
 class Build(MPTTModel):
@@ -60,11 +90,20 @@ class Build(MPTTModel):
         responsible: User (or group) responsible for completing the build
     """
 
+    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    
     @staticmethod
     def get_api_url():
         return reverse('api-build-list')
 
-    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    def save(self, *args, **kwargs):
+
+        try:
+            super().save(*args, **kwargs)
+        except InvalidMove:
+            raise ValidationError({
+                'parent': _('Invalid choice for parent build'),
+            })
 
     class Meta:
         verbose_name = _("Build Order")
@@ -130,6 +169,7 @@ class Build(MPTTModel):
         blank=False,
         help_text=_('Build Order Reference'),
         verbose_name=_('Reference'),
+        default=get_next_build_number,
         validators=[
             validate_build_order_reference
         ]

@@ -62,7 +62,7 @@ class BuildSerializer(InvenTreeModelSerializer):
         return queryset
 
     def __init__(self, *args, **kwargs):
-        part_detail = kwargs.pop('part_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
 
         super().__init__(*args, **kwargs)
 
@@ -75,9 +75,12 @@ class BuildSerializer(InvenTreeModelSerializer):
             'pk',
             'url',
             'title',
+            'batch',
             'creation_date',
             'completed',
             'completion_date',
+            'destination',
+            'parent',
             'part',
             'part_detail',
             'overdue',
@@ -87,6 +90,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
             'target_date',
+            'take_from',
             'notes',
             'link',
             'issued_by',
