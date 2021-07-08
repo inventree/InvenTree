@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
-from django.db.models import Q, F, Count, Min, Max, Avg
+from django.db.models import Q, F, Count, Min, Max, Avg, query
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
@@ -413,6 +413,18 @@ class PartFilter(rest_filters.FilterSet):
     Uses the django_filters extension framework
     """
 
+    # Filter by parts which have (or not) an IPN value
+    has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
+
+    def filter_has_ipn(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(IPN='')
+        else:
+            queryset = queryset.filter(IPN='')
+
     # Exact match for IPN
     ipn = rest_filters.CharFilter(
         label='Filter by exact IPN (internal part number)',
@@ -422,11 +434,12 @@ class PartFilter(rest_filters.FilterSet):
 
     # Regex match for IPN
     ipn_regex = rest_filters.CharFilter(
+        label='Filter by regex on IPN (internal part number) field',
         field_name='IPN', lookup_expr='iregex'
     )
 
     # low_stock filter
-    low_stock = rest_filters.BooleanFilter(method='filter_low_stock')
+    low_stock = rest_filters.BooleanFilter(label='Low stock', method='filter_low_stock')
 
     def filter_low_stock(self, queryset, name, value):
         """
@@ -447,7 +460,7 @@ class PartFilter(rest_filters.FilterSet):
         return queryset
 
     # has_stock filter
-    has_stock = rest_filters.BooleanFilter(method='filter_has_stock')
+    has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
 
     def filter_has_stock(self, queryset, name, value):
 
@@ -460,7 +473,7 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
-    is_template = rest_filters.CharFilter()
+    is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
 
@@ -539,7 +552,7 @@ class PartList(generics.ListCreateAPIView):
         # Do we wish to include PartCategory detail?
         if str2bool(request.query_params.get('category_detail', False)):
 
-            # Work out which part categorie we need to query
+            # Work out which part categories we need to query
             category_ids = set()
 
             for part in data:
@@ -640,28 +653,6 @@ class PartList(generics.ListCreateAPIView):
                 queryset = queryset.filter(pk__in=[d.pk for d in descendants])
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by whether the part has an IPN (internal part number) defined
-        has_ipn = params.get('has_ipn', None)
-
-        if has_ipn is not None:
-            has_ipn = str2bool(has_ipn)
-
-            if has_ipn:
-                queryset = queryset.exclude(IPN='')
-            else:
-                queryset = queryset.filter(IPN='')
-
-        # Filter by IPN
-        """
-        ipn = params.get('ipn', None)
-
-        if ipn is not None:
-
-            queryset = queryset.filter(IPN=ipn)
-
-        """
-        # Filter by IPN (regex support)
 
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
