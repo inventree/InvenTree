@@ -318,6 +318,12 @@ function loadManufacturerPartTable(table, url, options) {
                     }
                 }
             },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
+            }
         ],
     });
 }
@@ -550,6 +556,21 @@ function loadSupplierPartTable(table, url, options) {
                     }
                 }
             },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+            },
+            {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+                sortable: false,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
+                sortable: false,
+            }
         ],
     });
 }
