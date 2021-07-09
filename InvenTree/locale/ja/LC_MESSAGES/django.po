@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-09 06:58+0000\n"
-"PO-Revision-Date: 2021-07-09 09:19\n"
+"PO-Revision-Date: 2021-07-09 10:16\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -660,7 +660,7 @@ msgstr ""
 #: templates/js/part.js:505 templates/js/stock.js:526
 #: templates/js/stock.js:1394
 msgid "Part"
-msgstr ""
+msgstr "パーツ"
 
 #: build/models.py:205
 msgid "Select part to build"
@@ -2099,7 +2099,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_base.html:19
 #: stock/templates/stock/item_base.html:374
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "メーカー・パーツ"
 
 #: company/models.py:415
 msgid "Parameter name"
@@ -2279,16 +2279,16 @@ msgstr ""
 #: company/templates/company/detail_manufacturer_part.html:11
 #: templates/InvenTree/search.html:149
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "メーカー・パーツ"
 
 #: company/templates/company/detail_manufacturer_part.html:22
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "新しいメーカー・パーツを作成"
 
 #: company/templates/company/detail_manufacturer_part.html:23
 #: part/templates/part/supplier.html:47
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "新しいメーカ―・パーツ"
 
 #: company/templates/company/detail_manufacturer_part.html:28
 #: company/templates/company/detail_supplier_part.html:27
@@ -2303,29 +2303,29 @@ msgstr ""
 #: company/templates/company/detail_supplier_part.html:32
 #: part/templates/part/category.html:136
 msgid "Order parts"
-msgstr ""
+msgstr "パーツの注文"
 
 #: company/templates/company/detail_manufacturer_part.html:36
 #: company/templates/company/detail_supplier_part.html:35
 msgid "Delete parts"
-msgstr ""
+msgstr "パーツを削除"
 
 #: company/templates/company/detail_manufacturer_part.html:36
 #: company/templates/company/detail_supplier_part.html:35
 msgid "Delete Parts"
-msgstr ""
+msgstr "パーツを削除"
 
 #: company/templates/company/detail_manufacturer_part.html:68
 #: company/templates/company/detail_supplier_part.html:66
 #: part/templates/part/bom.html:159 part/templates/part/category.html:127
 #: templates/js/stock.js:1335
 msgid "New Part"
-msgstr ""
+msgstr "新規パーツ"
 
 #: company/templates/company/detail_manufacturer_part.html:69
 #: company/templates/company/detail_supplier_part.html:67
 msgid "Create new Part"
-msgstr ""
+msgstr "新規パーツを作成"
 
 #: company/templates/company/detail_manufacturer_part.html:74
 #: company/views.py:66 part/templates/part/supplier.html:85
@@ -2352,20 +2352,20 @@ msgstr ""
 #: company/templates/company/manufacturer_part_navbar.html:11
 #: templates/InvenTree/search.html:164
 msgid "Supplier Parts"
-msgstr ""
+msgstr "サプライヤー・パーツ"
 
 #: company/templates/company/detail_supplier_part.html:21
 #: order/templates/order/order_wizard/select_parts.html:44
 #: part/templates/part/part_base.html:433
 msgid "Create new supplier part"
-msgstr ""
+msgstr "新しいサプライヤー・パーツを作成"
 
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
 #: part/templates/part/part_base.html:432 part/templates/part/supplier.html:18
 #: templates/js/stock.js:1341
 msgid "New Supplier Part"
-msgstr ""
+msgstr "新しいサプライヤー・パーツ"
 
 #: company/templates/company/detail_supplier_part.html:72
 #: company/templates/company/manufacturer_part_suppliers.html:96
@@ -2386,35 +2386,35 @@ msgstr ""
 #: company/templates/company/supplier_part_orders.html:17
 #: part/templates/part/orders.html:17 part/templates/part/part_base.html:58
 msgid "Order part"
-msgstr ""
+msgstr "パーツの注文"
 
 #: company/templates/company/manufacturer_part_base.html:41
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "メーカー・パーツの編集"
 
 #: company/templates/company/manufacturer_part_base.html:45
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "メーカー・パーツを削除"
 
 #: company/templates/company/manufacturer_part_base.html:57
 #: company/templates/company/manufacturer_part_detail.html:10
 msgid "Manufacturer Part Details"
-msgstr ""
+msgstr "メーカー・パーツの詳細"
 
 #: company/templates/company/manufacturer_part_base.html:62
 #: company/templates/company/manufacturer_part_detail.html:18
 #: company/templates/company/supplier_part_base.html:61
 #: company/templates/company/supplier_part_detail.html:18
 msgid "Internal Part"
-msgstr ""
+msgstr "内部パーツ"
 
 #: company/templates/company/manufacturer_part_base.html:125
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "メーカー・パーツの編集"
 
 #: company/templates/company/manufacturer_part_base.html:134
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "メーカー・パーツを削除"
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/templates/company/manufacturer_part_suppliers.html:10
@@ -2426,7 +2426,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:19
 msgid "Manufacturer Part Stock"
-msgstr ""
+msgstr "メーカー・パーツの在庫"
 
 #: company/templates/company/manufacturer_part_navbar.html:22
 #: company/templates/company/navbar.html:41
@@ -2444,7 +2444,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Orders"
-msgstr ""
+msgstr "メーカー・パーツの注文"
 
 #: company/templates/company/manufacturer_part_navbar.html:29
 #: company/templates/company/supplier_part_navbar.html:22
