@@ -696,7 +696,14 @@ function loadStockTable(table, options) {
                     }
 
                     var link = `/supplier-part/${row.supplier_part}/stock/`;
-                    var text = `${row.supplier_part_detail.SKU}`;
+
+                    var text = '';
+
+                    if (row.supplier_part_detail) {
+                        text = `${row.supplier_part_detail.SKU}`;
+                    } else {
+                        text = `<i>{% trans "Supplier part not specified" %}</i>`;
+                    }
 
                     return renderLink(text, link);
                 }

@@ -181,7 +181,21 @@ function renderPartParameterTemplate(name, data, parameters, options) {
 // Rendered for "SupplierPart" model
 function renderSupplierPart(name, data, parameters, options) {
 
-    var html = select2Thumbnail(data.supplier_detail.image);
+    var supplier_image = null;
+    var part_image = null;
+    
+    if (data.supplier_detail) {
+        supplier_image = data.supplier_detail.image;
+    }
+
+    if (data.part_detail) {
+        part_image = data.part_detail.thumbnail || data.part_detail.image;
+    }
+
+    var html = '';
+    
+    html += select2Thumbnail(supplier_image);
+    html += select2Thumbnail(part_image);
     
     html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
     html += ` - <i>${data.part_detail.full_name}</i>`;
