@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 05:10+0000\n"
+"POT-Creation-Date: 2021-07-09 06:58+0000\n"
 "PO-Revision-Date: 2021-07-09 05:51\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -603,8 +603,8 @@ msgstr ""
 #: build/models.py:110 build/templates/build/index.html:8
 #: build/templates/build/index.html:15 order/templates/order/so_builds.html:12
 #: order/templates/order/so_navbar.html:19
-#: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:58
-#: part/templates/part/navbar.html:61 templates/InvenTree/index.html:191
+#: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:52
+#: part/templates/part/navbar.html:55 templates/InvenTree/index.html:191
 #: templates/InvenTree/search.html:185
 #: templates/InvenTree/settings/tabs.html:34 users/models.py:44
 msgid "Build Orders"
@@ -783,7 +783,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:319
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:864
-#: part/templates/part/navbar.html:133
+#: part/templates/part/navbar.html:121
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:140 stock/forms.py:284 stock/forms.py:316 stock/forms.py:344
 #: stock/models.py:536 stock/models.py:1678 stock/models.py:1784
@@ -935,8 +935,8 @@ msgstr ""
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:43 build/templates/build/navbar.html:46
 #: order/templates/order/po_navbar.html:35
-#: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:124
-#: part/templates/part/navbar.html:127 stock/templates/stock/navbar.html:47
+#: order/templates/order/so_navbar.html:29 part/templates/part/navbar.html:112
+#: part/templates/part/navbar.html:115 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
 msgstr ""
@@ -2286,7 +2286,7 @@ msgid "Create new manufacturer part"
 msgstr ""
 
 #: company/templates/company/detail_manufacturer_part.html:23
-#: part/templates/part/manufacturer.html:19
+#: part/templates/part/supplier.html:47
 msgid "New Manufacturer Part"
 msgstr ""
 
@@ -2294,9 +2294,8 @@ msgstr ""
 #: company/templates/company/detail_supplier_part.html:27
 #: company/templates/company/manufacturer_part_suppliers.html:20
 #: company/templates/company/manufacturer_part_suppliers.html:46
-#: part/templates/part/category.html:131
-#: part/templates/part/manufacturer.html:22
-#: part/templates/part/supplier.html:20
+#: part/templates/part/category.html:131 part/templates/part/supplier.html:21
+#: part/templates/part/supplier.html:50
 msgid "Options"
 msgstr ""
 
@@ -2329,8 +2328,8 @@ msgid "Create new Part"
 msgstr ""
 
 #: company/templates/company/detail_manufacturer_part.html:74
-#: company/views.py:66 part/templates/part/manufacturer.html:52
-#: part/templates/part/supplier.html:55
+#: company/views.py:66 part/templates/part/supplier.html:85
+#: part/templates/part/supplier.html:161
 msgid "New Manufacturer"
 msgstr ""
 
@@ -2363,14 +2362,14 @@ msgstr ""
 
 #: company/templates/company/detail_supplier_part.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:17
-#: part/templates/part/part_base.html:432 part/templates/part/supplier.html:17
+#: part/templates/part/part_base.html:432 part/templates/part/supplier.html:18
 #: templates/js/stock.js:1341
 msgid "New Supplier Part"
 msgstr ""
 
 #: company/templates/company/detail_supplier_part.html:72
 #: company/templates/company/manufacturer_part_suppliers.html:96
-#: company/views.py:60 part/templates/part/supplier.html:50
+#: company/views.py:60 part/templates/part/supplier.html:80
 msgid "New Supplier"
 msgstr ""
 
@@ -2419,8 +2418,8 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/templates/company/manufacturer_part_suppliers.html:10
-#: company/views.py:59 part/templates/part/navbar.html:87
-#: part/templates/part/navbar.html:90 part/templates/part/prices.html:153
+#: company/views.py:59 part/templates/part/navbar.html:75
+#: part/templates/part/navbar.html:78 part/templates/part/prices.html:153
 #: templates/InvenTree/search.html:316 templates/navbar.html:35
 msgid "Suppliers"
 msgstr ""
@@ -2432,7 +2431,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_navbar.html:22
 #: company/templates/company/navbar.html:41
 #: company/templates/company/supplier_part_navbar.html:15
-#: part/templates/part/navbar.html:39 stock/api.py:53
+#: part/templates/part/navbar.html:33 stock/api.py:53
 #: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:36
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:128 templates/InvenTree/search.html:196
@@ -2453,15 +2452,15 @@ msgid "Orders"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:22
-#: part/templates/part/supplier.html:22
+#: part/templates/part/supplier.html:23
 msgid "Delete supplier parts"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:22
 #: company/templates/company/manufacturer_part_suppliers.html:48
 #: company/templates/company/manufacturer_part_suppliers.html:142
-#: part/templates/part/manufacturer.html:24 part/templates/part/related.html:44
-#: part/templates/part/supplier.html:22 stock/views.py:844
+#: part/templates/part/related.html:44 part/templates/part/supplier.html:23
+#: part/templates/part/supplier.html:52 stock/views.py:844
 #: templates/js/company.js:203 users/models.py:193
 msgid "Delete"
 msgstr ""
@@ -2469,12 +2468,11 @@ msgstr ""
 #: company/templates/company/manufacturer_part_suppliers.html:37
 #: part/templates/part/category_navbar.html:46
 #: part/templates/part/category_navbar.html:49
-#: part/templates/part/navbar.html:25
 msgid "Parameters"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:43
-#: part/templates/part/params.html:18
+#: part/templates/part/detail.html:254
 #: templates/InvenTree/settings/category.html:29
 #: templates/InvenTree/settings/part.html:65
 msgid "New Parameter"
@@ -2485,12 +2483,12 @@ msgid "Delete parameters"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:80
-#: part/templates/part/params.html:57
+#: part/templates/part/detail.html:316
 msgid "Add Parameter"
 msgstr ""
 
 #: company/templates/company/manufacturer_part_suppliers.html:97
-#: part/templates/part/supplier.html:51
+#: part/templates/part/supplier.html:81
 msgid "Create new supplier"
 msgstr ""
 
@@ -2512,7 +2510,7 @@ msgstr ""
 msgid "Supplied Parts"
 msgstr ""
 
-#: company/templates/company/navbar.html:38 part/templates/part/navbar.html:36
+#: company/templates/company/navbar.html:38 part/templates/part/navbar.html:30
 #: stock/templates/stock/location.html:107
 #: stock/templates/stock/location.html:122
 #: stock/templates/stock/location.html:136
@@ -2529,7 +2527,7 @@ msgstr ""
 #: company/templates/company/sales_orders.html:11
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:13
-#: part/templates/part/navbar.html:101 part/templates/part/navbar.html:104
+#: part/templates/part/navbar.html:89 part/templates/part/navbar.html:92
 #: part/templates/part/sales_orders.html:10 templates/InvenTree/index.html:236
 #: templates/InvenTree/search.html:345
 #: templates/InvenTree/settings/tabs.html:40 templates/navbar.html:46
@@ -2541,7 +2539,7 @@ msgstr ""
 #: company/templates/company/purchase_orders.html:10
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:13
-#: part/templates/part/navbar.html:93 part/templates/part/navbar.html:96
+#: part/templates/part/navbar.html:81 part/templates/part/navbar.html:84
 #: part/templates/part/orders.html:10 templates/InvenTree/index.html:213
 #: templates/InvenTree/search.html:325
 #: templates/InvenTree/settings/tabs.html:37 templates/navbar.html:37
@@ -2621,7 +2619,7 @@ msgid "Order Part"
 msgstr ""
 
 #: company/templates/company/supplier_part_pricing.html:11
-#: part/templates/part/navbar.html:74
+#: part/templates/part/navbar.html:68
 msgid "Pricing Information"
 msgstr ""
 
@@ -2651,8 +2649,7 @@ msgstr ""
 msgid "Delete price break"
 msgstr ""
 
-#: company/views.py:65 part/templates/part/navbar.html:81
-#: part/templates/part/navbar.html:84 part/templates/part/prices.html:157
+#: company/views.py:65 part/templates/part/prices.html:157
 #: templates/InvenTree/search.html:306 templates/navbar.html:36
 msgid "Manufacturers"
 msgstr ""
@@ -4201,8 +4198,8 @@ msgstr ""
 msgid "Part Attachments"
 msgstr ""
 
-#: part/templates/part/bom.html:10 part/templates/part/navbar.html:51
-#: part/templates/part/navbar.html:54
+#: part/templates/part/bom.html:10 part/templates/part/navbar.html:45
+#: part/templates/part/navbar.html:48
 msgid "Bill of Materials"
 msgstr ""
 
@@ -4477,7 +4474,7 @@ msgid "Import Parts"
 msgstr ""
 
 #: part/templates/part/category_parametric.html:10
-#: part/templates/part/navbar.html:22 part/templates/part/params.html:10
+#: part/templates/part/detail.html:246
 msgid "Part Parameters"
 msgstr ""
 
@@ -4585,6 +4582,10 @@ msgstr ""
 msgid "Part is not active"
 msgstr ""
 
+#: part/templates/part/detail.html:253
+msgid "Add new parameter"
+msgstr ""
+
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:51
 msgid "Unsuffitient privileges."
@@ -4594,62 +4595,45 @@ msgstr ""
 msgid "Import Parts from File"
 msgstr ""
 
-#: part/templates/part/manufacturer.html:11
-msgid "Part Manufacturers"
-msgstr ""
-
-#: part/templates/part/manufacturer.html:24
-msgid "Delete manufacturer parts"
-msgstr ""
-
-#: part/templates/part/manufacturer.html:53
-#: part/templates/part/supplier.html:56
-msgid "Create new manufacturer"
-msgstr ""
-
-#: part/templates/part/navbar.html:29 part/templates/part/variants.html:11
+#: part/templates/part/navbar.html:23 part/templates/part/variants.html:11
 msgid "Part Variants"
 msgstr ""
 
-#: part/templates/part/navbar.html:32
+#: part/templates/part/navbar.html:26
 msgid "Variants"
 msgstr ""
 
-#: part/templates/part/navbar.html:43
+#: part/templates/part/navbar.html:37
 msgid "Allocated Stock"
 msgstr ""
 
-#: part/templates/part/navbar.html:46
+#: part/templates/part/navbar.html:40
 msgid "Allocations"
 msgstr ""
 
-#: part/templates/part/navbar.html:67 part/templates/part/navbar.html:70
+#: part/templates/part/navbar.html:61 part/templates/part/navbar.html:64
 msgid "Used In"
 msgstr ""
 
-#: part/templates/part/navbar.html:77
+#: part/templates/part/navbar.html:71
 msgid "Prices"
 msgstr ""
 
-#: part/templates/part/navbar.html:109 part/templates/part/part_tests.html:10
+#: part/templates/part/navbar.html:97 part/templates/part/part_tests.html:10
 msgid "Part Test Templates"
 msgstr ""
 
-#: part/templates/part/navbar.html:112 stock/templates/stock/item_base.html:426
-msgid "Tests"
+#: part/templates/part/navbar.html:100
+msgid "Test Templates"
 msgstr ""
 
-#: part/templates/part/navbar.html:117 part/templates/part/navbar.html:120
+#: part/templates/part/navbar.html:105 part/templates/part/navbar.html:108
 #: part/templates/part/related.html:10
 msgid "Related Parts"
 msgstr ""
 
-#: part/templates/part/navbar.html:130 part/templates/part/notes.html:12
+#: part/templates/part/navbar.html:118 part/templates/part/notes.html:12
 msgid "Part Notes"
-msgstr ""
-
-#: part/templates/part/params.html:17
-msgid "Add new parameter"
 msgstr ""
 
 #: part/templates/part/part_app_base.html:12
@@ -4979,8 +4963,20 @@ msgstr ""
 msgid "Low Stock"
 msgstr ""
 
-#: part/templates/part/supplier.html:10
+#: part/templates/part/supplier.html:11
 msgid "Part Suppliers"
+msgstr ""
+
+#: part/templates/part/supplier.html:39
+msgid "Part Manufacturers"
+msgstr ""
+
+#: part/templates/part/supplier.html:52
+msgid "Delete manufacturer parts"
+msgstr ""
+
+#: part/templates/part/supplier.html:86 part/templates/part/supplier.html:162
+msgid "Create new manufacturer"
 msgstr ""
 
 #: part/templates/part/track.html:10
@@ -5787,6 +5783,10 @@ msgstr ""
 msgid "No stocktake performed"
 msgstr ""
 
+#: stock/templates/stock/item_base.html:426
+msgid "Tests"
+msgstr ""
+
 #: stock/templates/stock/item_base.html:511
 msgid "Edit Stock Status"
 msgstr ""
@@ -6265,7 +6265,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7913,4 +7914,3 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
-
