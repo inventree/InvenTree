@@ -1,5 +1,20 @@
 {% load i18n %}
 
+
+function blankImage() {
+    return `/static/img/blank_image.png`;
+}
+
+// Render a select2 thumbnail image
+function select2Thumbnail(image) {
+    if (!image) {
+        image = blankImage();
+    }
+
+    return `<img src='${image}' class='select2-thumbnail'>`;
+}
+
+
 /*
  * This file contains functions for rendering various InvenTree database models,
  * in particular for displaying them in modal forms in a 'select2' context.
@@ -15,8 +30,10 @@
 
 // Renderer for "Company" model
 function renderCompany(name, data, parameters, options) {
+    
+    var html = select2Thumbnail(data.image);
 
-    var html = `<span>${data.name}</span> - <i>${data.description}</i>`;
+    html += `<span><b>${data.name}</b></span> - <i>${data.description}</i>`;
 
     html += `<span class='float-right'>{% trans "Company ID" %}: ${data.pk}</span>`;
 
@@ -27,11 +44,7 @@ function renderCompany(name, data, parameters, options) {
 // Renderer for "StockItem" model
 function renderStockItem(name, data, parameters, options) {
 
-    var image = data.part_detail.thumbnail || data.part_detail.image;
-
-    if (!image) {
-        image = `/static/img/blank_image.png`;
-    }
+    var image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
 
     var html = `<img src='${image}' class='select2-thumbnail'>`;
 
@@ -72,15 +85,13 @@ function renderStockLocation(name, data, parameters, options) {
 
 function renderBuild(name, data, parameters, options) {
     
-    var image = '';
+    var image = null;
 
     if (data.part_detail && data.part_detail.thumbnail) {
         image = data.part_detail.thumbnail;
-    } else {
-        image = `/static/img/blank_image.png`;
-    }
+    } 
 
-    var html = `<img src='${image}' class='select2-thumbnail'>`;
+    var html = select2Thumbnail(image);
 
     html += `<span><b>${data.reference}</b></span> - ${data.quantity} x ${data.part_detail.full_name}`;
     html += `<span class='float-right'>{% trans "Build ID" %}: ${data.pk}</span>`;
@@ -94,13 +105,7 @@ function renderBuild(name, data, parameters, options) {
 // Renderer for "Part" model
 function renderPart(name, data, parameters, options) {
 
-    var image = data.image;
-
-    if (!image) {
-        image = `/static/img/blank_image.png`;
-    }
-
-    var html = `<img src='${image}' class='select2-thumbnail'>`;
+    var html = select2Thumbnail(data.image);
     
     html += ` <span>${data.full_name || data.name}</span>`;
 
@@ -130,7 +135,6 @@ function renderUser(name, data, parameters, options) {
 function renderOwner(name, data, parameters, options) {
 
     var html = `<span>${data.name}</span>`;
-
 
     switch (data.label) {
         case 'user':
@@ -177,13 +181,7 @@ function renderPartParameterTemplate(name, data, parameters, options) {
 // Rendered for "SupplierPart" model
 function renderSupplierPart(name, data, parameters, options) {
 
-    var image = data.supplier_detail.image;
-
-    if (!image) {
-        image = `/static/img/blank_image.png`;
-    }
-
-    var html = `<img src='${image}' class='select2-thumbnail'>`;
+    var html = select2Thumbnail(data.supplier_detail.image);
     
     html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
     html += ` - <i>${data.part_detail.full_name}</i>`;
