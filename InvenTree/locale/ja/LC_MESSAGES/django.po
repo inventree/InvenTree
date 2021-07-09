@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-09 06:58+0000\n"
-"PO-Revision-Date: 2021-07-09 05:51\n"
+"PO-Revision-Date: 2021-07-09 08:02\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "APIエンドポイントが見つかりません"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
@@ -38,39 +38,39 @@ msgstr ""
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:118 templates/js/forms.js:486
 msgid "Confirm"
-msgstr ""
+msgstr "確認"
 
 #: InvenTree/forms.py:128
 msgid "Confirm delete"
-msgstr ""
+msgstr "削除の確認"
 
 #: InvenTree/forms.py:129
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "削除の確認"
 
 #: InvenTree/forms.py:161 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "パスワードを入力してください"
 
 #: InvenTree/forms.py:162
 msgid "Enter new password"
-msgstr ""
+msgstr "新しいパスワードを入力してください。"
 
 #: InvenTree/forms.py:169
 msgid "Confirm password"
-msgstr ""
+msgstr "パスワードの確認"
 
 #: InvenTree/forms.py:170
 msgid "Confirm new password"
-msgstr ""
+msgstr "新しいパスワードの確認"
 
 #: InvenTree/forms.py:205
 msgid "Apply Theme"
-msgstr ""
+msgstr "テーマを適用"
 
 #: InvenTree/forms.py:235
 msgid "Select Category"
-msgstr ""
+msgstr "カテゴリの選択"
 
 #: InvenTree/helpers.py:396
 #, python-brace-format
@@ -126,15 +126,15 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1202
 msgid "User"
-msgstr ""
+msgstr "ユーザー"
 
 #: InvenTree/models.py:74
 msgid "upload date"
-msgstr ""
+msgstr "アップロード日時"
 
 #: InvenTree/models.py:102
 msgid "Invalid choice"
-msgstr ""
+msgstr "無効な選択です"
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:414
 #: label/models.py:112 part/models.py:680 part/models.py:2191
@@ -143,7 +143,7 @@ msgstr ""
 #: templates/js/part.js:118 templates/js/part.js:251 templates/js/part.js:743
 #: templates/js/stock.js:995
 msgid "Name"
-msgstr ""
+msgstr "お名前"
 
 #: InvenTree/models.py:125 build/models.py:179
 #: build/templates/build/detail.html:21 company/models.py:353
@@ -167,47 +167,47 @@ msgstr ""
 #: templates/js/stock.js:557 templates/js/stock.js:1007
 #: templates/js/stock.js:1052
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
 #: InvenTree/models.py:126
 msgid "Description (optional)"
-msgstr ""
+msgstr "説明 (オプション)"
 
 #: InvenTree/models.py:134
 msgid "parent"
-msgstr ""
+msgstr "親"
 
 #: InvenTree/serializers.py:52
 msgid "Must be a valid number"
-msgstr ""
+msgstr "有効な数字でなければなりません"
 
 #: InvenTree/settings.py:505
 msgid "English"
-msgstr ""
+msgstr "英語"
 
 #: InvenTree/settings.py:506
 msgid "French"
-msgstr ""
+msgstr "フランス語"
 
 #: InvenTree/settings.py:507
 msgid "German"
-msgstr ""
+msgstr "ドイツ語"
 
 #: InvenTree/settings.py:508
 msgid "Polish"
-msgstr ""
+msgstr "ポーランド語"
 
 #: InvenTree/settings.py:509
 msgid "Turkish"
-msgstr ""
+msgstr "トルコ語"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "バックグラウンドワーカーのチェックに失敗しました"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "メールアドレスが未設定です"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
@@ -244,15 +244,15 @@ msgstr ""
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "発送済み"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "注意が必要です"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
@@ -908,7 +908,7 @@ msgstr ""
 #: company/templates/company/detail_supplier_part.html:32 order/views.py:724
 #: part/templates/part/category.html:136
 msgid "Order Parts"
-msgstr ""
+msgstr "パーツの注文"
 
 #: build/templates/build/allocate.html:36
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1618,37 +1618,37 @@ msgstr ""
 #: report/models.py:187 stock/forms.py:226 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:324
 msgid "Template"
-msgstr ""
+msgstr "テンプレート"
 
 #: common/models.py:161
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "パーツはデフォルトのテンプレートです"
 
 #: common/models.py:167 part/models.py:827 part/templates/part/detail.html:170
 #: templates/js/table_filters.js:132 templates/js/table_filters.js:336
 msgid "Assembly"
-msgstr ""
+msgstr "アセンブリ"
 
 #: common/models.py:168
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "パーツはデフォルトで他のコンポーネントから組み立てることができます"
 
 #: common/models.py:174 part/models.py:833 part/templates/part/detail.html:180
 #: templates/js/table_filters.js:340
 msgid "Component"
-msgstr ""
+msgstr "コンポーネント"
 
 #: common/models.py:175
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "パーツはデフォルトでサブコンポーネントとして使用できます"
 
 #: common/models.py:181 part/models.py:844 part/templates/part/detail.html:200
 msgid "Purchaseable"
-msgstr ""
+msgstr "購入可能"
 
 #: common/models.py:182
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "パーツはデフォルトで購入可能です"
 
 #: common/models.py:188 part/models.py:849 part/templates/part/detail.html:210
 #: templates/js/table_filters.js:348
@@ -1657,16 +1657,16 @@ msgstr ""
 
 #: common/models.py:189
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "パーツはデフォルトで販売可能です"
 
 #: common/models.py:195 part/models.py:839 part/templates/part/detail.html:190
 #: templates/js/table_filters.js:33 templates/js/table_filters.js:352
 msgid "Trackable"
-msgstr ""
+msgstr "追跡可能"
 
 #: common/models.py:196
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "パーツはデフォルトで追跡可能です"
 
 #: common/models.py:202 part/models.py:859 part/templates/part/detail.html:150
 #: templates/js/table_filters.js:29
@@ -3340,7 +3340,7 @@ msgstr ""
 #: templates/navbar.html:23 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "パーツ"
 
 #: order/templates/order/receive_parts.html:15
 msgid "Select parts to receive against this order"
@@ -4287,7 +4287,7 @@ msgstr ""
 
 #: part/templates/part/bom_upload/select_parts.html:16
 msgid "Step 3 - Select Parts"
-msgstr ""
+msgstr "ステップ3 - パーツの選択"
 
 #: part/templates/part/bom_upload/select_parts.html:27
 msgid "Submit BOM"
@@ -4342,7 +4342,7 @@ msgstr ""
 
 #: part/templates/part/category.html:33
 msgid "All parts"
-msgstr ""
+msgstr "全てのパーツ"
 
 #: part/templates/part/category.html:38 part/views.py:2369
 msgid "Create new part category"
@@ -6265,8 +6265,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7914,3 +7913,4 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
+
