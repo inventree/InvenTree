@@ -18,7 +18,7 @@
         <td>{% trans "Internal Part" %}</td>
         <td>
             {% if part.part %}
-            <a href="{% url 'part-manufacturers' part.part.id %}">{{ part.part.full_name }}</a>
+            <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
             {% endif %}
         </td>
     </tr>

@@ -48,7 +48,6 @@ part_detail_urls = [
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
-    url(r'^params/', views.PartDetail.as_view(template_name='part/params.html'), name='part-params'),
     url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
     url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
     url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
@@ -56,7 +55,6 @@ part_detail_urls = [
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
     url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
-    url(r'^manufacturers/?', views.PartDetail.as_view(template_name='part/manufacturer.html'), name='part-manufacturers'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
