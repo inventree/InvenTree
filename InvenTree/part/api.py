@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
-from django.db.models import Q, F, Count, Min, Max, Avg
+from django.db.models import Q, F, Count, Min, Max, Avg, query
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
@@ -489,7 +489,8 @@ class PartFilter(rest_filters.FilterSet):
 
 
 class PartList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of Part objects
+    """
+    API endpoint for accessing a list of Part objects
 
     - GET: Return list of objects
     - POST: Create a new Part object
@@ -840,14 +841,54 @@ class PartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = part_serializers.PartParameterSerializer
 
 
+class BomFilter(rest_filters.FilterSet):
+    """
+    Custom filters for the BOM list
+    """
+
+    # Boolean filters for BOM item
+    optional = rest_filters.BooleanFilter(label='BOM line is optional')
+    inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
+    allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
+
+    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
+
+    def filter_validated(self, queryset, name, value):
+
+        # Work out which lines have actually been validated
+        pks = []
+
+        for bom_item in queryset.all():
+            if bom_item.is_line_valid():
+                pks.append(bom_item.pk)
+
+        if str2bool(value):
+            queryset = queryset.filter(pk__in=pks)
+        else:
+            queryset = queryset.exclude(pk__in=pks)
+    
+        return queryset
+
+    # Filters for linked 'part'
+    part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
+    part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
+
+    # Filters for linked 'sub_part'
+    sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
+    sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
+
+
 class BomList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of BomItem objects.
+    """
+    API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
 
     serializer_class = part_serializers.BomItemSerializer
+    queryset = BomItem.objects.all()
+    filterset_class = BomFilter
 
     def list(self, request, *args, **kwargs):
 
@@ -894,30 +935,6 @@ class BomList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
-        # Filter by "optional" status?
-        optional = params.get('optional', None)
-
-        if optional is not None:
-            optional = str2bool(optional)
-
-            queryset = queryset.filter(optional=optional)
-
-        # Filter by "inherited" status
-        inherited = params.get('inherited', None)
-
-        if inherited is not None:
-            inherited = str2bool(inherited)
-
-            queryset = queryset.filter(inherited=inherited)
-
-        # Filter by "allow_variants"
-        variants = params.get("allow_variants", None)
-
-        if variants is not None:
-            variants = str2bool(variants)
-
-            queryset = queryset.filter(allow_variants=variants)
-
         # Filter by part?
         part = params.get('part', None)
 
@@ -939,45 +956,6 @@ class BomList(generics.ListCreateAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by "active" status of the part
-        part_active = params.get('part_active', None)
-
-        if part_active is not None:
-            part_active = str2bool(part_active)
-            queryset = queryset.filter(part__active=part_active)
-
-        # Filter by "trackable" status of the part
-        part_trackable = params.get('part_trackable', None)
-
-        if part_trackable is not None:
-            part_trackable = str2bool(part_trackable)
-            queryset = queryset.filter(part__trackable=part_trackable)
-
-        # Filter by "trackable" status of the sub-part
-        sub_part_trackable = params.get('sub_part_trackable', None)
-
-        if sub_part_trackable is not None:
-            sub_part_trackable = str2bool(sub_part_trackable)
-            queryset = queryset.filter(sub_part__trackable=sub_part_trackable)
-
-        # Filter by whether the BOM line has been validated
-        validated = params.get('validated', None)
-
-        if validated is not None:
-            validated = str2bool(validated)
-
-            # Work out which lines have actually been validated
-            pks = []
-
-            for bom_item in queryset.all():
-                if bom_item.is_line_valid:
-                    pks.append(bom_item.pk)
-
-            if validated:
-                queryset = queryset.filter(pk__in=pks)
-            else:
-                queryset = queryset.exclude(pk__in=pks)
 
         # Annotate with purchase prices
         queryset = queryset.annotate(

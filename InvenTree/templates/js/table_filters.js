@@ -42,6 +42,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Trackable Part" %}'
             },
+            sub_part_assembly: {
+                type: 'bool',
+                title: '{% trans "Assembled Part" %}',
+            },
             validated: {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
