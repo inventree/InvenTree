@@ -48,7 +48,6 @@ part_detail_urls = [
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
-    url(r'^params/', views.PartDetail.as_view(template_name='part/params.html'), name='part-params'),
     url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
     url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
     url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),

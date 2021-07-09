@@ -19,12 +19,6 @@
             </span>
         </a>
     </li>
-    <li class='list-group-item {% if tab == "params" %}active{% endif %}' title='{% trans "Part Parameters" %}'>
-        <a href='{% url "part-params" part.id %}'>    
-            <span class='menu-tab-icon fas fa-tasks sidebar-icon'></span>
-            {% trans "Parameters" %}
-        </a>
-    </li>
     {% if part.is_template %}
     <li class='list-group-item {% if tab == "variants" %}active{% endif %}' title='{% trans "Part Variants" %}'>
         <a href='{% url "part-variants" part.id %}'>
