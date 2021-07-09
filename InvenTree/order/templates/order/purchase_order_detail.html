@@ -179,7 +179,11 @@ $("#po-table").inventreeTable({
             field: 'supplier_part_detail.SKU',
             title: '{% trans "SKU" %}',
             formatter: function(value, row, index, field) {
-                return renderLink(value, `/supplier-part/${row.part}/`);
+                if (value) {
+                    return renderLink(value, `/supplier-part/${row.part}/`);
+                } else {
+                    return '-';
+                }
             },
         },
         {
@@ -188,7 +192,7 @@ $("#po-table").inventreeTable({
             field: 'supplier_part_detail.MPN',
             title: '{% trans "MPN" %}',
             formatter: function(value, row, index, field) {
-                if (row.supplier_part_detail.manufacturer_part) {
+                if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
                     return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part.pk}/`);
                 } else {
                     return "";
