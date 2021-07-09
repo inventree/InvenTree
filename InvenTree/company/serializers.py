@@ -206,24 +206,27 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     MPN = serializers.StringRelatedField(source='manufacturer_part.MPN')
 
-    manufacturer_part = ManufacturerPartSerializer(read_only=True)
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
     class Meta:
         model = SupplierPart
         fields = [
+            'description',
+            'link',
+            'manufacturer',
+            'manufacturer_detail',
+            'manufacturer_part',
+            'manufacturer_part_detail',
+            'MPN',
+            'note',
             'pk',
+            'packaging',
             'part',
             'part_detail',
             'pretty_name',
+            'SKU',
             'supplier',
             'supplier_detail',
-            'SKU',
-            'manufacturer',
-            'MPN',
-            'manufacturer_detail',
-            'manufacturer_part',
-            'description',
-            'link',
         ]
 
     def create(self, validated_data):
