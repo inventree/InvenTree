@@ -314,7 +314,7 @@ function setupFilterList(tableKey, table, target) {
                 // Only add the new filter if it is not empty!
                 if (tag && tag.length > 0) {
                     var filters = addTableFilter(tableKey, tag, val);
-                    reloadTable(table, filters);
+                    reloadTableFilters(table, filters);
 
                     // Run this function again
                     setupFilterList(tableKey, table, target);
@@ -333,7 +333,7 @@ function setupFilterList(tableKey, table, target) {
     element.find(`#${clear}`).click(function() {
         var filters = clearTableFilters(tableKey);
 
-        reloadTable(table, filters);
+        reloadTableFilters(table, filters);
 
         setupFilterList(tableKey, table, target);
     });
@@ -346,7 +346,7 @@ function setupFilterList(tableKey, table, target) {
 
         var filters = removeTableFilter(tableKey, filter);
 
-        reloadTable(table, filters);
+        reloadTableFilters(table, filters);
 
         // Run this function again!
         setupFilterList(tableKey, table, target);
