@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-09 02:32+0000\n"
-"PO-Revision-Date: 2021-07-08 23:07\n"
+"PO-Revision-Date: 2021-07-09 02:36\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -6263,8 +6263,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7347,10 +7346,8 @@ msgid "Stocktake"
 msgstr ""
 
 #: templates/js/stock.js:705
-#, fuzzy
-#| msgid "No action specified"
 msgid "Supplier part not specified"
-msgstr "Действие не указано"
+msgstr ""
 
 #: templates/js/stock.js:876
 msgid "Stock Status"
@@ -7910,3 +7907,4 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
+
