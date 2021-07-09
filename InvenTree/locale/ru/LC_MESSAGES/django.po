@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 02:32+0000\n"
+"POT-Creation-Date: 2021-07-09 02:58+0000\n"
 "PO-Revision-Date: 2021-07-09 02:36\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -6263,7 +6263,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7587,56 +7588,56 @@ msgstr ""
 msgid "Purchasable"
 msgstr ""
 
-#: templates/js/tables.js:323
+#: templates/js/tables.js:336
 msgid "Loading data"
 msgstr ""
 
-#: templates/js/tables.js:326
+#: templates/js/tables.js:339
 msgid "rows per page"
 msgstr ""
 
-#: templates/js/tables.js:329
+#: templates/js/tables.js:342
 msgid "Showing"
 msgstr ""
 
-#: templates/js/tables.js:329
+#: templates/js/tables.js:342
 msgid "to"
 msgstr ""
 
-#: templates/js/tables.js:329
+#: templates/js/tables.js:342
 msgid "of"
 msgstr ""
 
-#: templates/js/tables.js:329
+#: templates/js/tables.js:342
 msgid "rows"
 msgstr ""
 
-#: templates/js/tables.js:332 templates/search_form.html:6
+#: templates/js/tables.js:345 templates/search_form.html:6
 #: templates/search_form.html:8
 msgid "Search"
 msgstr ""
 
-#: templates/js/tables.js:335
+#: templates/js/tables.js:348
 msgid "No matching results"
 msgstr ""
 
-#: templates/js/tables.js:338
+#: templates/js/tables.js:351
 msgid "Hide/Show pagination"
 msgstr ""
 
-#: templates/js/tables.js:341
+#: templates/js/tables.js:354
 msgid "Refresh"
 msgstr ""
 
-#: templates/js/tables.js:344
+#: templates/js/tables.js:357
 msgid "Toggle"
 msgstr ""
 
-#: templates/js/tables.js:347
+#: templates/js/tables.js:360
 msgid "Columns"
 msgstr ""
 
-#: templates/js/tables.js:350
+#: templates/js/tables.js:363
 msgid "All"
 msgstr ""
 
@@ -7907,4 +7908,3 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
-
