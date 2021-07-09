@@ -33,10 +33,6 @@ part_parameter_urls = [
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     url(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
     url(r'^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
-
-    url(r'^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
 ]
 
 part_detail_urls = [

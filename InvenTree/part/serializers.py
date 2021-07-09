@@ -508,19 +508,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartParameterSerializer(InvenTreeModelSerializer):
-    """ JSON serializers for the PartParameter model """
-
-    class Meta:
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'data'
-        ]
-
-
 class PartParameterTemplateSerializer(InvenTreeModelSerializer):
     """ JSON serializer for the PartParameterTemplate model """
 
@@ -530,6 +517,22 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'units',
+        ]
+
+
+class PartParameterSerializer(InvenTreeModelSerializer):
+    """ JSON serializers for the PartParameter model """
+
+    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
+
+    class Meta:
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'template',
+            'template_detail',
+            'data'
         ]
 
 

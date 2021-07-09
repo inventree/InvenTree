@@ -70,6 +70,27 @@ function renderStockLocation(name, data, parameters, options) {
 }
 
 
+function renderBuild(name, data, parameters, options) {
+    
+    var image = '';
+
+    if (data.part_detail && data.part_detail.thumbnail) {
+        image = data.part_detail.thumbnail;
+    } else {
+        image = `/static/img/blank_image.png`;
+    }
+
+    var html = `<img src='${image}' class='select2-thumbnail'>`;
+
+    html += `<span><b>${data.reference}</b></span> - ${data.quantity} x ${data.part_detail.full_name}`;
+    html += `<span class='float-right'>{% trans "Build ID" %}: ${data.pk}</span>`;
+
+    html += `<p><i>${data.title}</i></p>`;
+
+    return html;
+}
+
+
 // Renderer for "Part" model
 function renderPart(name, data, parameters, options) {
 
@@ -88,6 +109,18 @@ function renderPart(name, data, parameters, options) {
     }
 
     html += `<span class='float-right'>{% trans "Part ID" %}: ${data.pk}</span>`;
+
+    return html;
+}
+
+// Renderer for "User" model
+function renderUser(name, data, parameters, options) {
+
+    var html = `<span>${data.username}</span>`;
+
+    if (data.first_name && data.last_name) {
+        html += ` - <i>${data.first_name} ${data.last_name}</i>`;
+    }
 
     return html;
 }
@@ -128,6 +161,14 @@ function renderPartCategory(name, data, parameters, options) {
     if (data.pathstring) {
         html += `<p><small>${data.pathstring}</small></p>`;
     }
+
+    return html;
+}
+
+
+function renderPartParameterTemplate(name, data, parameters, options) {
+
+    var html = `<span>${data.name} - [${data.units}]</span>`;
 
     return html;
 }

@@ -196,10 +196,7 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-edit").click(function () {
-        launchModalForm("{% url 'build-edit' build.id %}",
-                        {
-                            reload: true
-                        });
+        editBuildOrder({{ build.pk }});
     });
 
     $("#build-cancel").click(function() {

@@ -43,8 +43,10 @@ def get_next_po_number():
 
     attempts = set([order.reference])
 
+    reference = order.reference
+
     while 1:
-        reference = increment(order.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion
@@ -70,8 +72,10 @@ def get_next_so_number():
 
     attempts = set([order.reference])
 
+    reference = order.reference
+
     while 1:
-        reference = increment(order.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion

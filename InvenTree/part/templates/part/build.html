@@ -34,9 +34,7 @@
 {{ block.super }}
     $("#start-build").click(function() {
         newBuildOrder({
-            data: {
-                part: {{ part.id }},
-            }
+            part: {{ part.pk }},
         });
     });
 

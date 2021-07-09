@@ -2164,7 +2164,7 @@ class PartParameterTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-param-template-list')
+        return reverse('api-part-parameter-template-list')
 
     def __str__(self):
         s = str(self.name)
@@ -2205,7 +2205,7 @@ class PartParameter(models.Model):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-param-list')
+        return reverse('api-part-parameter-list')
 
     def __str__(self):
         # String representation of a PartParameter (used in the admin interface)
