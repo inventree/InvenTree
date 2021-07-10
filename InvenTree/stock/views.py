@@ -91,20 +91,20 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
-            serial_elem = {a.serial: a for a in self.object.part.stock_items.all() if a.serialized}
-            serials = [int(a) for a in serial_elem.keys()]
+            serial_elem = {int(a.serial): a for a in self.object.part.stock_items.all() if a.serialized}
+            serials = serial_elem.keys()
             current = int(self.object.serial)
 
             # previous
             for nbr in range(current - 1, -1, -1):
                 if nbr in serials:
-                    data['previous'] = serial_elem.get(str(nbr), None)
+                    data['previous'] = serial_elem.get(nbr, None)
                     break
 
             # next
             for nbr in range(current + 1, max(serials) + 1):
                 if nbr in serials:
-                    data['next'] = serial_elem.get(str(nbr), None)
+                    data['next'] = serial_elem.get(nbr, None)
                     break
 
         return data
