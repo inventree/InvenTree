@@ -832,6 +832,13 @@ function loadStockTable(table, options) {
 
         $(modal).find('.modal-form-content').html(html);
 
+        // Attach callbacks for the action buttons
+        $(modal).find('.button-stock-item-remove').click(function() {
+            var pk = $(this).attr('pk');
+
+            $(modal).find(`#stock_item_${pk}`).remove();
+        });
+
         // Add a "confirm" button
         insertConfirmButton({
             modal: modal,
