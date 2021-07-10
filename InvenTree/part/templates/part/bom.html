@@ -11,6 +11,12 @@
 {% endblock %}
 
 {% block details %}
+
+{% if roles.part.change != True and editing_enabled %}
+    <div class='alert alert-danger alert-block'>
+        {% trans "You do not have permission to edit the BOM." %}
+    </div>
+{% else %}
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
 <div class='alert alert-block alert-info'>
@@ -72,6 +78,7 @@
 
 <table class='table table-bom table-condensed' data-toolbar="#button-toolbar" id='bom-table'>
 </table>
+{% endif %}
 
 {% endblock %}
 

@@ -8,13 +8,12 @@
 {% endblock %}
 
 {% block heading %}
-{% trans "Upload Bill of Materials" %}
+{% trans "Upload BOM File" %}
 {% endblock %}
 
 {% block details %}
 
-<p>{% trans "Step 1 - Select BOM File" %}</p>
-
+{% block form_alert %}
 <div class='alert alert-info alert-block'>
     <b>{% trans "Requirements for BOM upload" %}:</b>
     <ul>
@@ -22,16 +21,31 @@
         <li>{% trans "Each part must already exist in the database" %}</li>
     </ul>
 </div>
+{% endblock %}
 
-<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
-    <button type="submit" class="save btn btn-default">{% trans 'Upload File' %}</button>
-    {% csrf_token %}
-    {% load crispy_forms_tags %}
+<p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
+{% if description %}- {{ description }}{% endif %}</p>
 
-    <input type='hidden' name='form_step' value='select_file'/>
+<form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
+{% csrf_token %}
+{% load crispy_forms_tags %}
 
-    {% crispy form %}
+{% block form_buttons_top %}
+{% endblock form_buttons_top %}
 
+<table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
+{{ wizard.management_form }}
+{% block form_content %}
+{% crispy wizard.form %}
+{% endblock form_content %}
+</table>
+
+{% block form_buttons_bottom %}
+{% if wizard.steps.prev %}
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+{% endif %}
+<button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
 </form>
+{% endblock form_buttons_bottom %}
 
 {% endblock %}

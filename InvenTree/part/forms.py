@@ -11,10 +11,11 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
-from InvenTree.helpers import GetExportFormats
+from InvenTree.helpers import GetExportFormats, clean_decimal
 from InvenTree.fields import RoundingDecimalFormField
 
 import common.models
+from common.forms import MatchItemForm
 
 from .models import Part, PartCategory, PartRelated
 from .models import BomItem
@@ -143,16 +144,28 @@ class BomValidateForm(HelperForm):
         ]
 
 
-class BomUploadSelectFile(HelperForm):
-    """ Form for importing a BOM. Provides a file input box for upload """
+class BomMatchItemForm(MatchItemForm):
+    """ Override MatchItemForm fields """
 
-    bom_file = forms.FileField(label=_('BOM file'), required=True, help_text=_("Select BOM file to upload"))
+    def get_special_field(self, col_guess, row, file_manager):
+        """ Set special fields """
 
-    class Meta:
-        model = Part
-        fields = [
-            'bom_file',
-        ]
+        # set quantity field
+        if 'quantity' in col_guess.lower():
+            return forms.CharField(
+                required=False,
+                widget=forms.NumberInput(attrs={
+                    'name': 'quantity' + str(row['index']),
+                    'class': 'numberinput',
+                    'type': 'number',
+                    'min': '0',
+                    'step': 'any',
+                    'value': clean_decimal(row.get('quantity', '')),
+                })
+            )
+
+        # return default
+        return super().get_special_field(col_guess, row, file_manager)
 
 
 class CreatePartRelatedForm(HelperForm):
