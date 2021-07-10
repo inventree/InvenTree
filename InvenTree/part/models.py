@@ -30,7 +30,7 @@ from mptt.models import TreeForeignKey, MPTTModel
 
 from stdimage.models import StdImageField
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from rapidfuzz import fuzz
 import hashlib
@@ -2417,6 +2417,15 @@ class BomItem(models.Model):
 
         - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
+
+        super().clean()
+
+        try:
+            self.quantity = Decimal(self.quantity)
+        except InvalidOperation:
+            raise ValidationError({
+                'quantity': _('Must be a valid number')
+            })
 
         try:
             # Check for circular BOM references
