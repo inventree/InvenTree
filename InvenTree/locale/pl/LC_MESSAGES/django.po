@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-10 03:48+0000\n"
-"PO-Revision-Date: 2021-07-09 08:02\n"
+"PO-Revision-Date: 2021-07-10 03:50\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -4268,10 +4268,8 @@ msgid "Select Part"
 msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:11
-#, fuzzy
-#| msgid "Upload File"
 msgid "Upload BOM File"
-msgstr "Wyślij plik"
+msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:18
 msgid "Requirements for BOM upload"
@@ -5060,10 +5058,8 @@ msgid "Validated Bill of Materials"
 msgstr ""
 
 #: part/views.py:1318
-#, fuzzy
-#| msgid "Allocate Parts"
 msgid "Match Parts"
-msgstr "Przydziel części"
+msgstr ""
 
 #: part/views.py:1706
 msgid "Confirm Part Deletion"
@@ -6213,8 +6209,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7862,3 +7857,4 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
+
