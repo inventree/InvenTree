@@ -750,6 +750,100 @@ function loadStockTable(table, options) {
             stock.push(item.pk);
         });
 
+        var title = 'Form title';
+
+        switch (action) {
+            case 'move':
+                title = '{% trans "Transfer Stock" %}';
+                break;
+            case 'count':
+                title = '{% trans "Count Stock" %}';
+                break;
+            case 'take':
+                title = '{% trans "Remove Stock" %}';
+                break;
+            case 'add':
+                title = '{% trans "Add Stock" %}';
+                break;
+            case 'delete':
+                title = '{% trans "Delete Stock" %}';
+                break;
+            default:
+                break;
+        }
+
+        var modal = createNewModal({
+            title: title,
+        });
+
+        // Generate content for the modal
+
+        var html = `
+        <table class='table table-striped table-condensed' id='stock-adjust-table'>
+        <thead>
+        <tr>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Stock" %}</th>
+            <th>{% trans "Location" %}</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        `;
+
+        items.forEach(function(item) {
+
+            var pk = item.pk;
+
+            var image = item.part_detail.thumbnail || item.part_detail.image || blankImage();
+
+            var status = stockStatusDisplay(item.status, {
+                classes: 'float-right'
+            });
+
+            var quantity = item.quantity;
+
+            if (item.serial != null) {
+                quantity = `#${item.serial}`;
+            }
+
+            var buttons = `<div class='btn-group float-right' role='group'>`;
+
+            buttons += makeIconButton(
+                'fa-trash-alt icon-red',
+                'button-stock-item-remove',
+                pk,
+                '{% trans "Remove stock item" %}',
+            );
+
+            buttons += `</div>`;
+
+            html += `
+            <tr id='stock_item_${pk}'>
+                <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}${status}</td>
+                <td id='stock_${pk}'>${quantity}</td>
+                <td id='location_${pk}'>${item.location_detail.pathstring}</td>
+                <td id='action_${pk}'>${buttons}</td>
+            </tr>`;
+
+        });
+
+        html += `</tbody></table>`;
+
+        $(modal).find('.modal-form-content').html(html);
+
+        // Add a "confirm" button
+        insertConfirmButton({
+            modal: modal,
+        });
+
+        attachToggle(modal);
+
+        $(modal + ' .select2-container').addClass('select-full-width');
+        $(modal + ' .select2-container').css('width', '100%');
+
+        return;
+
         // Buttons for launching secondary modals
         var secondary = [];
 
