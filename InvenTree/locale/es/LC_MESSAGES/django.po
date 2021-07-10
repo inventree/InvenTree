@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 06:58+0000\n"
+"POT-Creation-Date: 2021-07-10 03:48+0000\n"
 "PO-Revision-Date: 2021-07-09 08:02\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -36,7 +36,7 @@ msgstr "Ingrese la fecha"
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
-#: order/forms.py:74 part/forms.py:118 templates/js/forms.js:486
+#: order/forms.py:74 part/forms.py:119 templates/js/forms.js:486
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -481,8 +481,9 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:80
 #: order/templates/order/sales_order_detail.html:87
 #: order/templates/order/sales_order_detail.html:172
-#: order/templates/order/sales_order_detail.html:244 part/forms.py:314
-#: part/forms.py:344 part/forms.py:360 part/forms.py:376 part/models.py:2329
+#: order/templates/order/sales_order_detail.html:244 part/forms.py:327
+#: part/forms.py:357 part/forms.py:373 part/forms.py:389 part/models.py:2329
+#: part/templates/part/bom_upload/match_parts.html:31
 #: part/templates/part/part_pricing.html:16 part/templates/part/prices.html:377
 #: part/templates/part/prices.html:474
 #: report/templates/report/inventree_build_order_base.html:114
@@ -617,6 +618,7 @@ msgstr ""
 #: build/models.py:171 order/models.py:246 order/models.py:533
 #: order/models.py:713 order/templates/order/purchase_order_detail.html:205
 #: order/templates/order/sales_order_detail.html:239 part/models.py:2338
+#: part/templates/part/bom_upload/match_parts.html:30
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92 templates/js/bom.js:197
 #: templates/js/build.js:695 templates/js/build.js:1166
@@ -1901,15 +1903,17 @@ msgstr ""
 #: common/views.py:184 order/templates/order/order_wizard/po_upload.html:42
 #: order/templates/order/po_navbar.html:19
 #: order/templates/order/po_navbar.html:22 order/views.py:337
-#: part/templates/part/bom_upload/upload_file.html:27
-#: part/templates/part/import_wizard/part_upload.html:45 part/views.py:621
+#: part/templates/part/bom_upload/upload_file.html:47
+#: part/templates/part/import_wizard/part_upload.html:45 part/views.py:622
+#: part/views.py:1316
 msgid "Upload File"
 msgstr ""
 
 #: common/views.py:185 order/templates/order/order_wizard/match_fields.html:52
-#: order/views.py:338 part/templates/part/bom_upload/select_fields.html:58
+#: order/views.py:338 part/templates/part/bom_upload/match_fields.html:52
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
-#: part/templates/part/import_wizard/match_fields.html:52 part/views.py:622
+#: part/templates/part/import_wizard/match_fields.html:52 part/views.py:623
+#: part/views.py:1317
 msgid "Match Fields"
 msgstr ""
 
@@ -1928,17 +1932,20 @@ msgstr ""
 #: common/views.py:608 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:40
+#: part/templates/part/bom_upload/match_fields.html:27
+#: part/templates/part/bom_upload/match_parts.html:19
+#: part/templates/part/bom_upload/upload_file.html:45
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:43
 msgid "Previous Step"
 msgstr ""
 
-#: company/forms.py:26 part/forms.py:46
+#: company/forms.py:26 part/forms.py:47
 msgid "URL"
 msgstr ""
 
-#: company/forms.py:27 part/forms.py:47
+#: company/forms.py:27 part/forms.py:48
 msgid "Image URL"
 msgstr ""
 
@@ -1963,8 +1970,8 @@ msgstr ""
 #: company/templates/company/manufacturer_part_detail.html:26
 #: company/templates/company/supplier_part_base.html:102
 #: company/templates/company/supplier_part_detail.html:35
-#: order/templates/order/purchase_order_detail.html:193 part/bom.py:171
-#: part/bom.py:242 templates/js/company.js:305 templates/js/company.js:539
+#: order/templates/order/purchase_order_detail.html:193 part/bom.py:166
+#: part/bom.py:237 templates/js/company.js:305 templates/js/company.js:539
 msgid "MPN"
 msgstr ""
 
@@ -2079,8 +2086,8 @@ msgstr ""
 #: company/templates/company/manufacturer_part_base.html:85
 #: company/templates/company/manufacturer_part_detail.html:25
 #: company/templates/company/supplier_part_base.html:94
-#: company/templates/company/supplier_part_detail.html:34 part/bom.py:170
-#: part/bom.py:241 stock/templates/stock/item_base.html:364
+#: company/templates/company/supplier_part_detail.html:34 part/bom.py:165
+#: part/bom.py:236 stock/templates/stock/item_base.html:364
 #: templates/js/company.js:113 templates/js/company.js:289
 #: templates/js/company.js:521
 msgid "Manufacturer"
@@ -2131,8 +2138,8 @@ msgstr ""
 #: company/templates/company/supplier_part_base.html:84
 #: company/templates/company/supplier_part_detail.html:25 order/models.py:260
 #: order/templates/order/order_base.html:92
-#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
-#: part/bom.py:286 stock/templates/stock/item_base.html:381
+#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:170
+#: part/bom.py:281 stock/templates/stock/item_base.html:381
 #: templates/js/company.js:117 templates/js/company.js:495
 #: templates/js/order.js:232
 msgid "Supplier"
@@ -2144,8 +2151,8 @@ msgstr ""
 
 #: company/models.py:535 company/templates/company/supplier_part_base.html:88
 #: company/templates/company/supplier_part_detail.html:26
-#: order/templates/order/purchase_order_detail.html:180 part/bom.py:176
-#: part/bom.py:287
+#: order/templates/order/purchase_order_detail.html:180 part/bom.py:171
+#: part/bom.py:282
 msgid "SKU"
 msgstr ""
 
@@ -2317,7 +2324,7 @@ msgstr ""
 
 #: company/templates/company/detail_manufacturer_part.html:68
 #: company/templates/company/detail_supplier_part.html:66
-#: part/templates/part/bom.html:159 part/templates/part/category.html:127
+#: part/templates/part/bom.html:166 part/templates/part/category.html:127
 #: templates/js/stock.js:1335
 msgid "New Part"
 msgstr ""
@@ -2625,7 +2632,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part_pricing.html:19
 #: company/templates/company/supplier_part_pricing.html:118
-#: part/templates/part/prices.html:264 part/views.py:2716
+#: part/templates/part/prices.html:264 part/views.py:2339
 msgid "Add Price Break"
 msgstr ""
 
@@ -2633,11 +2640,11 @@ msgstr ""
 msgid "No price break information found"
 msgstr ""
 
-#: company/templates/company/supplier_part_pricing.html:52 part/views.py:2778
+#: company/templates/company/supplier_part_pricing.html:52 part/views.py:2401
 msgid "Delete Price Break"
 msgstr ""
 
-#: company/templates/company/supplier_part_pricing.html:66 part/views.py:2764
+#: company/templates/company/supplier_part_pricing.html:66 part/views.py:2387
 msgid "Edit Price Break"
 msgstr ""
 
@@ -2671,20 +2678,20 @@ msgstr ""
 msgid "New Company"
 msgstr ""
 
-#: company/views.py:161 part/views.py:1007
+#: company/views.py:161 part/views.py:1008
 msgid "Download Image"
 msgstr ""
 
-#: company/views.py:190 part/views.py:1039
+#: company/views.py:190 part/views.py:1040
 msgid "Image size exceeds maximum allowable size for download"
 msgstr ""
 
-#: company/views.py:197 part/views.py:1046
+#: company/views.py:197 part/views.py:1047
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr ""
 
-#: company/views.py:206 part/views.py:1055
+#: company/views.py:206 part/views.py:1056
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
@@ -2867,8 +2874,7 @@ msgstr ""
 msgid "Date order was completed"
 msgstr ""
 
-#: order/models.py:313 part/views.py:1730 stock/models.py:308
-#: stock/models.py:1023
+#: order/models.py:313 stock/models.py:308 stock/models.py:1023
 msgid "Quantity must be greater than zero"
 msgstr ""
 
@@ -3110,13 +3116,14 @@ msgid "Order Notes"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:9
-#: part/templates/part/bom_upload/select_fields.html:21
+#: part/templates/part/bom_upload/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
 #: part/templates/part/import_wizard/match_fields.html:9
 msgid "Missing selections for the following required columns"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:20
+#: part/templates/part/bom_upload/match_fields.html:20
 #: part/templates/part/import_wizard/ajax_match_fields.html:20
 #: part/templates/part/import_wizard/match_fields.html:20
 msgid "Duplicate selections found, see below. Fix them then retry submitting."
@@ -3124,27 +3131,29 @@ msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:29
 #: order/templates/order/order_wizard/match_parts.html:21
-#: part/templates/part/bom_upload/select_fields.html:32
+#: part/templates/part/bom_upload/match_fields.html:29
+#: part/templates/part/bom_upload/match_parts.html:21
 #: part/templates/part/import_wizard/match_fields.html:29
 #: part/templates/part/import_wizard/match_references.html:21
 msgid "Submit Selections"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:35
-#: part/templates/part/bom_upload/select_fields.html:41
+#: part/templates/part/bom_upload/match_fields.html:35
 #: part/templates/part/import_wizard/ajax_match_fields.html:28
 #: part/templates/part/import_wizard/match_fields.html:35
 msgid "File Fields"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:42
-#: part/templates/part/bom_upload/select_fields.html:47
+#: part/templates/part/bom_upload/match_fields.html:42
 #: part/templates/part/import_wizard/ajax_match_fields.html:35
 #: part/templates/part/import_wizard/match_fields.html:42
 msgid "Remove column"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:60
+#: part/templates/part/bom_upload/match_fields.html:60
 #: part/templates/part/import_wizard/ajax_match_fields.html:53
 #: part/templates/part/import_wizard/match_fields.html:60
 msgid "Duplicate selection"
@@ -3152,8 +3161,8 @@ msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:71
 #: order/templates/order/order_wizard/match_parts.html:52
-#: part/templates/part/bom_upload/select_fields.html:76
-#: part/templates/part/bom_upload/select_parts.html:58
+#: part/templates/part/bom_upload/match_fields.html:71
+#: part/templates/part/bom_upload/match_parts.html:53
 #: part/templates/part/import_wizard/ajax_match_fields.html:64
 #: part/templates/part/import_wizard/ajax_match_references.html:42
 #: part/templates/part/import_wizard/match_fields.html:71
@@ -3162,14 +3171,14 @@ msgid "Remove row"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_parts.html:12
-#: part/templates/part/bom_upload/select_parts.html:21
+#: part/templates/part/bom_upload/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
 msgstr ""
 
 #: order/templates/order/order_wizard/match_parts.html:28
-#: part/templates/part/bom_upload/select_parts.html:39
+#: part/templates/part/bom_upload/match_parts.html:28
 #: part/templates/part/import_wizard/ajax_match_references.html:21
 #: part/templates/part/import_wizard/match_references.html:28
 msgid "Row"
@@ -3184,6 +3193,7 @@ msgid "Upload File for Purchase Order"
 msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:18
+#: part/templates/part/bom_upload/upload_file.html:26
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:21
 #, python-format
@@ -3653,165 +3663,144 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/bom.py:138 part/models.py:72 part/models.py:755
+#: part/bom.py:133 part/models.py:72 part/models.py:755
 #: part/templates/part/category.html:75 part/templates/part/detail.html:90
 msgid "Default Location"
 msgstr ""
 
-#: part/bom.py:139 part/templates/part/part_base.html:124
+#: part/bom.py:134 part/templates/part/part_base.html:124
 msgid "Available Stock"
 msgstr ""
 
-#: part/bom.py:379
-#, python-brace-format
-msgid "Unsupported file format: {f}"
-msgstr ""
-
-#: part/bom.py:384
-msgid "Error reading BOM file (invalid data)"
-msgstr ""
-
-#: part/bom.py:386
-msgid "Error reading BOM file (incorrect row size)"
-msgstr ""
-
-#: part/forms.py:73 stock/forms.py:232
+#: part/forms.py:74 stock/forms.py:232
 msgid "File Format"
 msgstr ""
 
-#: part/forms.py:73 stock/forms.py:232
+#: part/forms.py:74 stock/forms.py:232
 msgid "Select output file format"
 msgstr ""
 
-#: part/forms.py:75
+#: part/forms.py:76
 msgid "Cascading"
 msgstr ""
 
-#: part/forms.py:75
+#: part/forms.py:76
 msgid "Download cascading / multi-level BOM"
 msgstr ""
 
-#: part/forms.py:77
+#: part/forms.py:78
 msgid "Levels"
 msgstr ""
 
-#: part/forms.py:77
+#: part/forms.py:78
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
 msgstr ""
 
-#: part/forms.py:79
+#: part/forms.py:80
 msgid "Include Parameter Data"
 msgstr ""
 
-#: part/forms.py:79
+#: part/forms.py:80
 msgid "Include part parameters data in exported BOM"
 msgstr ""
 
-#: part/forms.py:81
+#: part/forms.py:82
 msgid "Include Stock Data"
 msgstr ""
 
-#: part/forms.py:81
+#: part/forms.py:82
 msgid "Include part stock data in exported BOM"
 msgstr ""
 
-#: part/forms.py:83
+#: part/forms.py:84
 msgid "Include Manufacturer Data"
 msgstr ""
 
-#: part/forms.py:83
+#: part/forms.py:84
 msgid "Include part manufacturer data in exported BOM"
 msgstr ""
 
-#: part/forms.py:85
+#: part/forms.py:86
 msgid "Include Supplier Data"
 msgstr ""
 
-#: part/forms.py:85
+#: part/forms.py:86
 msgid "Include part supplier data in exported BOM"
 msgstr ""
 
-#: part/forms.py:106 part/models.py:2223
+#: part/forms.py:107 part/models.py:2223
 msgid "Parent Part"
 msgstr ""
 
-#: part/forms.py:107 part/templates/part/bom_duplicate.html:7
+#: part/forms.py:108 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
 msgstr ""
 
-#: part/forms.py:113
+#: part/forms.py:114
 msgid "Clear existing BOM items"
 msgstr ""
 
-#: part/forms.py:119
+#: part/forms.py:120
 msgid "Confirm BOM duplication"
 msgstr ""
 
-#: part/forms.py:137
+#: part/forms.py:138
 msgid "validate"
 msgstr ""
 
-#: part/forms.py:137
+#: part/forms.py:138
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:149
-msgid "BOM file"
-msgstr ""
-
-#: part/forms.py:149
-msgid "Select BOM file to upload"
-msgstr ""
-
-#: part/forms.py:168
+#: part/forms.py:181
 msgid "Related Part"
 msgstr ""
 
-#: part/forms.py:175
+#: part/forms.py:188
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:192
+#: part/forms.py:205
 msgid "Duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:193
+#: part/forms.py:206
 msgid "Copy BOM"
 msgstr ""
 
-#: part/forms.py:198
+#: part/forms.py:211
 msgid "Duplicate all parameter data for this part"
 msgstr ""
 
-#: part/forms.py:199
+#: part/forms.py:212
 msgid "Copy Parameters"
 msgstr ""
 
-#: part/forms.py:204
+#: part/forms.py:217
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:209
+#: part/forms.py:222
 msgid "Include category parameter templates"
 msgstr ""
 
-#: part/forms.py:214
+#: part/forms.py:227
 msgid "Include parent categories parameter templates"
 msgstr ""
 
-#: part/forms.py:294
+#: part/forms.py:307
 msgid "Add parameter template to same level categories"
 msgstr ""
 
-#: part/forms.py:298
+#: part/forms.py:311
 msgid "Add parameter template to all categories"
 msgstr ""
 
-#: part/forms.py:316 part/models.py:2322
+#: part/forms.py:329 part/models.py:2322
 msgid "Sub part"
 msgstr ""
 
-#: part/forms.py:345
+#: part/forms.py:358
 msgid "Input quantity for price calculation"
 msgstr ""
 
@@ -4157,8 +4146,7 @@ msgstr ""
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2430 part/views.py:1736 part/views.py:1788
-#: stock/models.py:298
+#: part/models.py:2430 stock/models.py:298
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
@@ -4203,66 +4191,70 @@ msgstr ""
 msgid "Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:19
-#, python-format
-msgid "The BOM for <i>%(part)s</i> has changed, and must be validated.<br>"
-msgstr ""
-
-#: part/templates/part/bom.html:21
-#, python-format
-msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
+#: part/templates/part/bom.html:17
+msgid "You do not have permission to edit the BOM."
 msgstr ""
 
 #: part/templates/part/bom.html:25
 #, python-format
+msgid "The BOM for <i>%(part)s</i> has changed, and must be validated.<br>"
+msgstr ""
+
+#: part/templates/part/bom.html:27
+#, python-format
+msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
+msgstr ""
+
+#: part/templates/part/bom.html:31
+#, python-format
 msgid "The BOM for <i>%(part)s</i> has not been validated."
 msgstr ""
 
-#: part/templates/part/bom.html:32
+#: part/templates/part/bom.html:38
 msgid "Remove selected BOM items"
 msgstr ""
 
-#: part/templates/part/bom.html:35
+#: part/templates/part/bom.html:41
 msgid "Import BOM data"
 msgstr ""
 
-#: part/templates/part/bom.html:39
+#: part/templates/part/bom.html:45
 msgid "Copy BOM from parent part"
 msgstr ""
 
-#: part/templates/part/bom.html:43
+#: part/templates/part/bom.html:49
 msgid "New BOM Item"
 msgstr ""
 
-#: part/templates/part/bom.html:46
+#: part/templates/part/bom.html:52
 msgid "Finish Editing"
 msgstr ""
 
-#: part/templates/part/bom.html:51
+#: part/templates/part/bom.html:57
 msgid "Edit BOM"
 msgstr ""
 
-#: part/templates/part/bom.html:55
+#: part/templates/part/bom.html:61
 msgid "Validate Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:61 part/views.py:2031
+#: part/templates/part/bom.html:67 part/views.py:1654
 msgid "Export Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:64
+#: part/templates/part/bom.html:70
 msgid "Print BOM Report"
 msgstr ""
 
-#: part/templates/part/bom.html:109
+#: part/templates/part/bom.html:116
 msgid "Delete selected BOM items?"
 msgstr ""
 
-#: part/templates/part/bom.html:110
+#: part/templates/part/bom.html:117
 msgid "All selected BOM items will be deleted"
 msgstr ""
 
-#: part/templates/part/bom.html:160 part/views.py:450
+#: part/templates/part/bom.html:167 part/views.py:451
 #: templates/js/stock.js:1336
 msgid "Create New Part"
 msgstr ""
@@ -4271,55 +4263,27 @@ msgstr ""
 msgid "This part already has a Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom_upload/select_fields.html:11
-#: part/templates/part/bom_upload/select_parts.html:11
-#: part/templates/part/bom_upload/upload_file.html:11
-msgid "Upload Bill of Materials"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:16
-msgid "Step 2 - Select Fields"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_fields.html:68
-msgid "Duplicate column selection"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_parts.html:16
-msgid "Step 3 - Select Parts"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_parts.html:27
-msgid "Submit BOM"
-msgstr ""
-
-#: part/templates/part/bom_upload/select_parts.html:40
-#: part/templates/part/bom_upload/select_parts.html:69
+#: part/templates/part/bom_upload/match_parts.html:29
 msgid "Select Part"
 msgstr ""
 
-#: part/templates/part/bom_upload/select_parts.html:65
-#: part/templates/part/category.html:126
-msgid "Create new part"
+#: part/templates/part/bom_upload/upload_file.html:11
+msgid "Upload BOM File"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:16
-msgid "Step 1 - Select BOM File"
-msgstr ""
-
-#: part/templates/part/bom_upload/upload_file.html:19
+#: part/templates/part/bom_upload/upload_file.html:18
 msgid "Requirements for BOM upload"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:21
+#: part/templates/part/bom_upload/upload_file.html:20
 msgid "The BOM file must contain the required named columns as provided in the "
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:21
+#: part/templates/part/bom_upload/upload_file.html:20
 msgid "BOM Upload Template"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:22
+#: part/templates/part/bom_upload/upload_file.html:21
 msgid "Each part must already exist in the database"
 msgstr ""
 
@@ -4344,7 +4308,7 @@ msgstr ""
 msgid "All parts"
 msgstr ""
 
-#: part/templates/part/category.html:38 part/views.py:2369
+#: part/templates/part/category.html:38 part/views.py:1992
 msgid "Create new part category"
 msgstr ""
 
@@ -4381,6 +4345,10 @@ msgstr ""
 
 #: part/templates/part/category.html:122
 msgid "Export Part Data"
+msgstr ""
+
+#: part/templates/part/category.html:126
+msgid "Create new part"
 msgstr ""
 
 #: part/templates/part/category.html:134
@@ -4429,7 +4397,7 @@ msgstr ""
 msgid "Select parent category"
 msgstr ""
 
-#: part/templates/part/category.html:286 part/views.py:2317
+#: part/templates/part/category.html:286 part/views.py:1940
 msgid "Edit Part Category"
 msgstr ""
 
@@ -4478,7 +4446,7 @@ msgstr ""
 msgid "Part Parameters"
 msgstr ""
 
-#: part/templates/part/copy_part.html:9 part/views.py:326
+#: part/templates/part/copy_part.html:9 part/views.py:327
 msgid "Duplicate Part"
 msgstr ""
 
@@ -4893,7 +4861,7 @@ msgstr ""
 msgid "Internal Cost"
 msgstr ""
 
-#: part/templates/part/prices.html:206 part/views.py:2787
+#: part/templates/part/prices.html:206 part/views.py:2410
 msgid "Add Internal Price Break"
 msgstr ""
 
@@ -5008,176 +4976,152 @@ msgstr ""
 msgid "Unknown database"
 msgstr ""
 
-#: part/views.py:95
+#: part/views.py:96
 msgid "Add Related Part"
 msgstr ""
 
-#: part/views.py:150
+#: part/views.py:151
 msgid "Delete Related Part"
 msgstr ""
 
-#: part/views.py:161
+#: part/views.py:162
 msgid "Set Part Category"
 msgstr ""
 
-#: part/views.py:211
+#: part/views.py:212
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr ""
 
-#: part/views.py:246
+#: part/views.py:247
 msgid "Create Variant"
 msgstr ""
 
-#: part/views.py:331
+#: part/views.py:332
 msgid "Copied part"
 msgstr ""
 
-#: part/views.py:385 part/views.py:523
+#: part/views.py:386 part/views.py:524
 msgid "Possible matches exist - confirm creation of new part"
 msgstr ""
 
-#: part/views.py:455
+#: part/views.py:456
 msgid "Created new part"
 msgstr ""
 
-#: part/views.py:623
+#: part/views.py:624
 msgid "Match References"
 msgstr ""
 
-#: part/views.py:925
+#: part/views.py:926
 msgid "None"
 msgstr ""
 
-#: part/views.py:984
+#: part/views.py:985
 msgid "Part QR Code"
 msgstr ""
 
-#: part/views.py:1086
+#: part/views.py:1087
 msgid "Select Part Image"
 msgstr ""
 
-#: part/views.py:1112
+#: part/views.py:1113
 msgid "Updated part image"
 msgstr ""
 
-#: part/views.py:1115
+#: part/views.py:1116
 msgid "Part image not found"
 msgstr ""
 
-#: part/views.py:1126
+#: part/views.py:1127
 msgid "Edit Part Properties"
 msgstr ""
 
-#: part/views.py:1161
+#: part/views.py:1162
 msgid "Duplicate BOM"
 msgstr ""
 
-#: part/views.py:1191
+#: part/views.py:1192
 msgid "Confirm duplication of BOM from parent"
 msgstr ""
 
-#: part/views.py:1212
+#: part/views.py:1213
 msgid "Validate BOM"
 msgstr ""
 
-#: part/views.py:1233
+#: part/views.py:1234
 msgid "Confirm that the BOM is valid"
 msgstr ""
 
-#: part/views.py:1244
+#: part/views.py:1245
 msgid "Validated Bill of Materials"
 msgstr ""
 
-#: part/views.py:1378
-msgid "No BOM file provided"
+#: part/views.py:1318
+msgid "Match Parts"
 msgstr ""
 
-#: part/views.py:1739
-msgid "Enter a valid quantity"
-msgstr ""
-
-#: part/views.py:1764 part/views.py:1767
-msgid "Select valid part"
-msgstr ""
-
-#: part/views.py:1773
-msgid "Duplicate part selected"
-msgstr ""
-
-#: part/views.py:1811
-msgid "Select a part"
-msgstr ""
-
-#: part/views.py:1817
-msgid "Selected part creates a circular BOM"
-msgstr ""
-
-#: part/views.py:1821
-msgid "Specify quantity"
-msgstr ""
-
-#: part/views.py:2083
+#: part/views.py:1706
 msgid "Confirm Part Deletion"
 msgstr ""
 
-#: part/views.py:2090
+#: part/views.py:1713
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:2099
+#: part/views.py:1722
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:2240
+#: part/views.py:1863
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:2250
+#: part/views.py:1873
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:2257
+#: part/views.py:1880
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:2355
+#: part/views.py:1978
 msgid "Delete Part Category"
 msgstr ""
 
-#: part/views.py:2361
+#: part/views.py:1984
 msgid "Part category was deleted"
 msgstr ""
 
-#: part/views.py:2413
+#: part/views.py:2036
 msgid "Create Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2514
+#: part/views.py:2137
 msgid "Edit Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2570
+#: part/views.py:2193
 msgid "Delete Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2589
+#: part/views.py:2212
 msgid "Create BOM Item"
 msgstr ""
 
-#: part/views.py:2659
+#: part/views.py:2282
 msgid "Edit BOM item"
 msgstr ""
 
-#: part/views.py:2720
+#: part/views.py:2343
 msgid "Added new price break"
 msgstr ""
 
-#: part/views.py:2796
+#: part/views.py:2419
 msgid "Edit Internal Price Break"
 msgstr ""
 
-#: part/views.py:2804
+#: part/views.py:2427
 msgid "Delete Internal Price Break"
 msgstr ""
 
@@ -6265,7 +6209,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7913,4 +7858,3 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
-
