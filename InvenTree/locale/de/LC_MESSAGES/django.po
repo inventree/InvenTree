@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-10 03:48+0000\n"
-"PO-Revision-Date: 2021-07-09 08:02\n"
+"PO-Revision-Date: 2021-07-10 03:50\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4192,10 +4192,8 @@ msgid "Bill of Materials"
 msgstr "Stückliste"
 
 #: part/templates/part/bom.html:17
-#, fuzzy
-#| msgid "You do not have permission to view this page."
 msgid "You do not have permission to edit the BOM."
-msgstr "Keine Berechtigung zum Anzeigen dieser Seite."
+msgstr ""
 
 #: part/templates/part/bom.html:25
 #, python-format
@@ -4270,10 +4268,8 @@ msgid "Select Part"
 msgstr "Teil auswählen"
 
 #: part/templates/part/bom_upload/upload_file.html:11
-#, fuzzy
-#| msgid "Upload File"
 msgid "Upload BOM File"
-msgstr "Datei hochgeladen"
+msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:18
 msgid "Requirements for BOM upload"
@@ -5062,10 +5058,8 @@ msgid "Validated Bill of Materials"
 msgstr "überprüfte Stückliste"
 
 #: part/views.py:1318
-#, fuzzy
-#| msgid "Match Items"
 msgid "Match Parts"
-msgstr "Positionen zuordnen"
+msgstr ""
 
 #: part/views.py:1706
 msgid "Confirm Part Deletion"
@@ -6215,13 +6209,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7869,56 +7861,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Unsupported file format: {f}"
-#~ msgstr "Nicht unterstütztes Dateiformat: {f}"
-
-#~ msgid "Error reading BOM file (invalid data)"
-#~ msgstr "Fehler beim Lesen der Stückliste (ungültige Daten)"
-
-#~ msgid "Error reading BOM file (incorrect row size)"
-#~ msgstr "Fehler beim Lesen der Stückliste (ungültige Zeilengröße)"
-
-#~ msgid "BOM file"
-#~ msgstr "Stücklisten-Datei"
-
-#~ msgid "Select BOM file to upload"
-#~ msgstr "Stücklisten-Datei zum Upload auswählen"
-
-#~ msgid "Upload Bill of Materials"
-#~ msgstr "Stückliste hochladen"
-
-#~ msgid "Step 2 - Select Fields"
-#~ msgstr "Schritt 2 - Felder auswählen"
-
-#~ msgid "Duplicate column selection"
-#~ msgstr "Spalte doppelt ausgewählt"
-
-#~ msgid "Step 3 - Select Parts"
-#~ msgstr "Schritt 3 - Teile auswählen"
-
-#~ msgid "Submit BOM"
-#~ msgstr "Stückliste abschicken"
-
-#~ msgid "Step 1 - Select BOM File"
-#~ msgstr "Schritt 1 - Stückliste-Datei auswählen"
-
-#~ msgid "No BOM file provided"
-#~ msgstr "Keine Stückliste angegeben"
-
-#~ msgid "Enter a valid quantity"
-#~ msgstr "Bitte eine gültige Anzahl eingeben"
-
-#~ msgid "Select valid part"
-#~ msgstr "Bitte ein gültiges Teil auswählen"
-
-#~ msgid "Duplicate part selected"
-#~ msgstr "Teil doppelt ausgewählt"
-
-#~ msgid "Select a part"
-#~ msgstr "Teil auswählen"
-
-#~ msgid "Selected part creates a circular BOM"
-#~ msgstr "gewähltes Teil erzeugt rekursive Stückliste"
-
-#~ msgid "Specify quantity"
-#~ msgstr "Anzahl angeben"
