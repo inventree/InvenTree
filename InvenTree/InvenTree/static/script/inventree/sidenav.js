@@ -209,8 +209,6 @@ function enableNavbar(options) {
 
         var state = localStorage.getItem(stateLabel);
 
-        console.log(stateLabel, '->', state);
-
         var width = localStorage.getItem(widthLabel) || '250px';
         
         if (state && state == 'open') {
