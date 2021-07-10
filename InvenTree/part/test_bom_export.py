@@ -8,8 +8,6 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from .models import Part, BomItem
-
 
 class BomExportTest(TestCase):
 
