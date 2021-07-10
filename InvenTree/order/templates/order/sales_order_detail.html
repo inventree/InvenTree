@@ -15,7 +15,7 @@
 
 {% block details %}
 
-
+{# do not show 'add' buttons when order was shipped #}
 {% if roles.sales_order.change and not order.shipment_date %}
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
     <button type='button' class='btn btn-success' id='new-so-line'>
@@ -37,6 +37,7 @@
     </div>
     
     <div class='panel-content'>
+        {# do not show 'add' buttons when order was shipped #}
         {% if roles.sales_order.change and not order.shipment_date %}
         <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
             <button type='button' class='btn btn-success' id='new-add-so-line'>
