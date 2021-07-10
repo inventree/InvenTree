@@ -5,7 +5,7 @@ Primarily BOM upload tools.
 
 from collections import OrderedDict
 
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 from InvenTree.helpers import DownloadFile, GetExportFormats
 
@@ -140,11 +140,16 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             stock_data = []
             # Get part default location
             try:
-                stock_data.append(bom_item.sub_part.get_default_location().name)
+                loc = bom_item.sub_part.get_default_location()
+
+                if loc is not None:
+                    stock_data.append(str(loc.name))
+                else:
+                    stock_data.append('')
             except AttributeError:
                 stock_data.append('')
             # Get part current stock
-            stock_data.append(bom_item.sub_part.available_stock)
+            stock_data.append(str(bom_item.sub_part.available_stock))
 
             for s_idx, header in enumerate(stock_headers):
                 try:
@@ -318,6 +323,6 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
     data = dataset.export(fmt)
 
-    filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
+    filename = f"{part.full_name}_BOM.{fmt}"
 
     return DownloadFile(data, filename)
