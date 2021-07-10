@@ -126,7 +126,7 @@ class RuleSet(models.Model):
             'order_salesorder',
             'order_salesorderattachment',
             'order_salesorderlineitem',
-            'order_salesorderadditionallineItem',
+            'order_salesorderadditionallineitem',
             'order_salesorderallocation',
         ]
     }
