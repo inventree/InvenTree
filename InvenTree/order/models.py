@@ -582,7 +582,6 @@ class SalesOrder(Order):
         hash.update(str(self.customer.id).encode())
         hash.update(str(self.customer_reference).encode())
         hash.update(str(self.target_date).encode())
-        hash.update(str(self.shipment_date).encode())
         hash.update(str(self.reference).encode())
         hash.update(str(self.link).encode())
         hash.update(str(self.notes).encode())
