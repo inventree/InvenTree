@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-10 04:15+0000\n"
+"POT-Creation-Date: 2021-07-10 13:28+0000\n"
 "PO-Revision-Date: 2021-07-10 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -1970,8 +1970,8 @@ msgstr ""
 #: company/templates/company/manufacturer_part_detail.html:26
 #: company/templates/company/supplier_part_base.html:102
 #: company/templates/company/supplier_part_detail.html:35
-#: order/templates/order/purchase_order_detail.html:193 part/bom.py:166
-#: part/bom.py:237 templates/js/company.js:305 templates/js/company.js:539
+#: order/templates/order/purchase_order_detail.html:193 part/bom.py:171
+#: part/bom.py:242 templates/js/company.js:305 templates/js/company.js:539
 msgid "MPN"
 msgstr ""
 
@@ -2086,8 +2086,8 @@ msgstr ""
 #: company/templates/company/manufacturer_part_base.html:85
 #: company/templates/company/manufacturer_part_detail.html:25
 #: company/templates/company/supplier_part_base.html:94
-#: company/templates/company/supplier_part_detail.html:34 part/bom.py:165
-#: part/bom.py:236 stock/templates/stock/item_base.html:364
+#: company/templates/company/supplier_part_detail.html:34 part/bom.py:170
+#: part/bom.py:241 stock/templates/stock/item_base.html:364
 #: templates/js/company.js:113 templates/js/company.js:289
 #: templates/js/company.js:521
 msgid "Manufacturer"
@@ -2138,8 +2138,8 @@ msgstr ""
 #: company/templates/company/supplier_part_base.html:84
 #: company/templates/company/supplier_part_detail.html:25 order/models.py:260
 #: order/templates/order/order_base.html:92
-#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:170
-#: part/bom.py:281 stock/templates/stock/item_base.html:381
+#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
+#: part/bom.py:286 stock/templates/stock/item_base.html:381
 #: templates/js/company.js:117 templates/js/company.js:495
 #: templates/js/order.js:232
 msgid "Supplier"
@@ -2151,8 +2151,8 @@ msgstr ""
 
 #: company/models.py:535 company/templates/company/supplier_part_base.html:88
 #: company/templates/company/supplier_part_detail.html:26
-#: order/templates/order/purchase_order_detail.html:180 part/bom.py:171
-#: part/bom.py:282
+#: order/templates/order/purchase_order_detail.html:180 part/bom.py:176
+#: part/bom.py:287
 msgid "SKU"
 msgstr ""
 
@@ -6209,7 +6209,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7857,4 +7858,3 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
-
