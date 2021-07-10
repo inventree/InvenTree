@@ -16,7 +16,7 @@
 {% block details %}
 
 
-{% if roles.sales_order.change %}
+{% if roles.sales_order.change and not order.shipment_date %}
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
     <button type='button' class='btn btn-success' id='new-so-line'>
         <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
@@ -37,7 +37,7 @@
     </div>
     
     <div class='panel-content'>
-        {% if roles.sales_order.change %}
+        {% if roles.sales_order.change and not order.shipment_date %}
         <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
             <button type='button' class='btn btn-success' id='new-add-so-line'>
                 <span class='fas fa-plus-circle'></span> {% trans "Add Line" %}
