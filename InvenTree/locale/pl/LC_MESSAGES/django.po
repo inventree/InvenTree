@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-10 03:48+0000\n"
+"POT-Creation-Date: 2021-07-10 04:15+0000\n"
 "PO-Revision-Date: 2021-07-10 03:50\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -177,7 +177,7 @@ msgstr "Opis (opcjonalny)"
 msgid "parent"
 msgstr "nadrzędny"
 
-#: InvenTree/serializers.py:52
+#: InvenTree/serializers.py:52 part/models.py:2427
 msgid "Must be a valid number"
 msgstr ""
 
@@ -4146,31 +4146,31 @@ msgstr ""
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2430 stock/models.py:298
+#: part/models.py:2439 stock/models.py:298
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:2439 part/models.py:2441
+#: part/models.py:2448 part/models.py:2450
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:2444
+#: part/models.py:2453
 msgid "BOM Item"
 msgstr ""
 
-#: part/models.py:2563
+#: part/models.py:2572
 msgid "Part 1"
 msgstr "Część 1"
 
-#: part/models.py:2567
+#: part/models.py:2576
 msgid "Part 2"
 msgstr "Część 2"
 
-#: part/models.py:2567
+#: part/models.py:2576
 msgid "Select Related Part"
 msgstr "Wybierz powiązaną część"
 
-#: part/models.py:2599
+#: part/models.py:2608
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
@@ -6209,7 +6209,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7857,4 +7858,3 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
-

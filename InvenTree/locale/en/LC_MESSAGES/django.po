@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-10 03:48+0000\n"
+"POT-Creation-Date: 2021-07-10 04:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -178,7 +178,7 @@ msgstr ""
 msgid "parent"
 msgstr ""
 
-#: InvenTree/serializers.py:52
+#: InvenTree/serializers.py:52 part/models.py:2427
 msgid "Must be a valid number"
 msgstr ""
 
@@ -4147,31 +4147,31 @@ msgstr ""
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2430 stock/models.py:298
+#: part/models.py:2439 stock/models.py:298
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:2439 part/models.py:2441
+#: part/models.py:2448 part/models.py:2450
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:2444
+#: part/models.py:2453
 msgid "BOM Item"
 msgstr ""
 
-#: part/models.py:2563
+#: part/models.py:2572
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:2567
+#: part/models.py:2576
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:2567
+#: part/models.py:2576
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:2599
+#: part/models.py:2608
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
