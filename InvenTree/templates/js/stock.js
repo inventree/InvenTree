@@ -136,6 +136,9 @@ function adjustStock(items, options={}) {
         preFormContent: html,
         confirm: true,
         modal: modal,
+        onSubmit: function(fields, options) {
+            console.log("submit!");
+        }
     });
 
     // Attach callbacks for the action buttons

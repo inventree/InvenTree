@@ -444,12 +444,10 @@ function constructFormBody(fields, options) {
     $(modal).find('#form-content').html(html);
 
     if (options.preFormContent) {
-        console.log('pre form content', options.preFormContent);
         $(modal).find('#pre-form-content').html(options.preFormContent);
     }
 
     if (options.postFormContent) {
-        console.log('post form content', options.postFormContent);
         $(modal).find('#post-form-content').html(options.postFormContent);
     }
     
@@ -484,7 +482,21 @@ function constructFormBody(fields, options) {
 
     $(modal).on('click', '#modal-form-submit', function() {
 
-        submitFormData(fields, options);
+        // Immediately disable the "submit" button,
+        // to prevent the form being submitted multiple times!
+        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+
+        // Run custom code before normal form submission
+        if (options.beforeSubmit) {
+            options.beforeSubmit(fields, options);
+        }
+
+        // Run custom code instead of normal form submission
+        if (options.onSubmit) {
+            options.onSubmit(fields, options);
+        } else {
+            submitFormData(fields, options);
+        }
     });
 }
 
@@ -520,10 +532,6 @@ function insertConfirmButton(options) {
  * 
  */
 function submitFormData(fields, options) {
-
-    // Immediately disable the "submit" button,
-    // to prevent the form being submitted multiple times!
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
 
     // Form data to be uploaded to the server
     // Only used if file / image upload is required
