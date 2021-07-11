@@ -61,6 +61,7 @@ function adjustStock(items, options={}) {
         <th>{% trans "Stock" %}</th>
         <th>{% trans "Location" %}</th>
         <th>${actionTitle || ''}</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -145,12 +146,8 @@ function adjustStock(items, options={}) {
             <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}</td>
             <td id='stock_${pk}'>${quantity}${status}</td>
             <td id='location_${pk}'>${location}</td>
-            <td id='action_${pk}'>
-                <div>
-                    ${actionInput}
-                    ${buttons}
-                </div>
-            </td>
+            <td id='action_${pk}'>${actionInput}</td>
+            <td id='buttons_${pk}'>${buttons}</td>
         </tr>`;
 
     });
