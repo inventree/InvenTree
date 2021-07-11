@@ -21,6 +21,8 @@ from django.utils.translation import ugettext_lazy as _
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
+from djmoney.contrib.exchange.models import convert_money
+
 from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
@@ -614,12 +616,13 @@ class SalesOrder(Order):
         Calculates the total price of all order lines
         """
         total = 0
+        target_currency = self.sell_price_currency
 
         # order items
-        total = sum([a.quantity * a.sale_price for a in self.lines.all()])
+        total = sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.lines.all()])
 
         # additional lines
-        total += sum([a.quantity * a.sale_price for a in self.additional_lines.all()])
+        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all()])
 
         return total
 
