@@ -400,7 +400,6 @@ function constructFormBody(fields, options) {
         // Field not specified in the API, but the client wishes to add it!
         if (!(name in fields)) {
             fields[name] = displayed_fields[name];
-            console.log(`WARNING: '${name}' does not match a valid field name.`);
         }
     }
 

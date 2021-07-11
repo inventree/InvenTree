@@ -132,7 +132,7 @@ function adjustStock(items, options={}) {
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
         buttons += makeIconButton(
-            'fa-trash-alt icon-red',
+            'fa-times icon-red',
             'button-stock-item-remove',
             pk,
             '{% trans "Remove stock item" %}',
@@ -163,6 +163,14 @@ function adjustStock(items, options={}) {
 
     constructFormBody({}, {
         fields: {
+            location: {
+                label: '{% trans "Location" %}',
+                help_text: '{% trans "Select stock location" %}',
+                type: 'related field',
+                required: true,
+                api_url: `/api/stock/location/`,
+                model: 'stocklocation',
+            },
             note: {
                 label: '{% trans "Notes" %}',
                 help_text: '{% trans "Stock transaction notes" %}',
