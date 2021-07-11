@@ -143,7 +143,7 @@ class StockAdjust(APIView):
         elif 'items' in request.data:
             _items = request.data['items']
         else:
-            raise ValidationError({'items': 'Request must contain list of stock items'})
+            raise ValidationError({'items': _('Request must contain list of stock items')})
 
         # List of validated items
         self.items = []
@@ -151,13 +151,14 @@ class StockAdjust(APIView):
         for entry in _items:
 
             if not type(entry) == dict:
-                raise ValidationError({'error': 'Improperly formatted data'})
+                raise ValidationError({'error': _('Improperly formatted data')})
 
             try:
-                pk = entry.get('pk', None)
+                # Look for 'pk' value first, with 'id' as a backup
+                pk = entry.get('pk', entry.get('id', None))
                 item = StockItem.objects.get(pk=pk)
             except (ValueError, StockItem.DoesNotExist):
-                raise ValidationError({'pk': 'Each entry must contain a valid pk field'})
+                raise ValidationError({'pk': _('Each entry must contain a valid pk field')})
 
             if self.allow_missing_quantity and 'quantity' not in entry:
                 entry['quantity'] = item.quantity
@@ -165,10 +166,10 @@ class StockAdjust(APIView):
             try:
                 quantity = Decimal(str(entry.get('quantity', None)))
             except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({'quantity': "Each entry must contain a valid quantity value"})
+                raise ValidationError({'quantity': _("Each entry must contain a valid quantity value")})
 
             if quantity < 0:
-                raise ValidationError({'quantity': 'Quantity field must not be less than zero'})
+                raise ValidationError({'quantity': _('Quantity field must not be less than zero')})
 
             self.items.append({
                 'item': item,

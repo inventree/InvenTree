@@ -441,7 +441,17 @@ function constructFormBody(fields, options) {
     modalEnable(modal, true);
     
     // Insert generated form content
-    $(modal).find('.modal-form-content').html(html);
+    $(modal).find('#form-content').html(html);
+
+    if (options.preFormContent) {
+        console.log('pre form content', options.preFormContent);
+        $(modal).find('#pre-form-content').html(options.preFormContent);
+    }
+
+    if (options.postFormContent) {
+        console.log('post form content', options.postFormContent);
+        $(modal).find('#post-form-content').html(options.postFormContent);
+    }
     
     // Clear any existing buttons from the modal
     $(modal).find('#modal-footer-buttons').html('');

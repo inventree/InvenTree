@@ -20,6 +20,138 @@ function stockStatusCodes() {
 }
 
 
+/**
+ * Perform stock adjustments
+ */
+function adjustStock(items, options={}) {
+
+    var formTitle = 'Form Title Here';
+    var actionTitle = null;
+
+    switch (options.action) {
+        case 'move':
+            formTitle = '{% trans "Transfer Stock" %}';
+            actionTitle = '{% trans "Move" %}';
+            break;
+        case 'count':
+            formTitle = '{% trans "Count Stock" %}';
+            actionTitle = '{% trans "Count" %}';
+            break;
+        case 'take':
+            formTitle = '{% trans "Remove Stock" %}';
+            actionTitle = '{% trans "Take" %}';
+            break;
+        case 'add':
+            formTitle = '{% trans "Add Stock" %}';
+            actionTitle = '{% trans "Add" %}';
+            break;
+        case 'delete':
+            formTitle = '{% trans "Delete Stock" %}';
+            break;
+        default:
+            break;
+    }
+
+    // Generate modal HTML content
+    var html = `
+    <table class='table table-striped table-condensed' id='stock-adjust-table'>
+    <thead>
+    <tr>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "Stock" %}</th>
+        <th>{% trans "Location" %}</th>
+        <th>${actionTitle || ''}</th>
+    </tr>
+    </thead>
+    <tbody>
+    `;
+
+    items.forEach(function(item) {
+
+        var pk = item.pk;
+
+        var image = item.part_detail.thumbnail || item.part_detail.image || blankImage();
+
+        var status = stockStatusDisplay(item.status, {
+            classes: 'float-right'
+        });
+
+        var quantity = item.quantity;
+
+        var location = locationDetail(item, false);
+
+        if (item.location_detail) {
+            location = item.location_detail.pathstring;
+        }
+
+        if (item.serial != null) {
+            quantity = `#${item.serial}`;
+        }
+
+        var actionInput = '';
+
+        if (actionTitle != null) {
+            actionInput = constructNumberInput(
+                item.pk,
+                {
+                    value: item.quantity,
+                    min_value: 0,
+                }
+            )
+        };
+
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        buttons += makeIconButton(
+            'fa-trash-alt icon-red',
+            'button-stock-item-remove',
+            pk,
+            '{% trans "Remove stock item" %}',
+        );
+
+        buttons += `</div>`;
+
+        html += `
+        <tr id='stock_item_${pk}'>
+            <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}</td>
+            <td id='stock_${pk}'>${quantity}${status}</td>
+            <td id='location_${pk}'>${location}</td>
+            <td id='action_${pk}'>
+                <div>
+                    ${actionInput}
+                    ${buttons}
+                </div>
+            </td>
+        </tr>`;
+
+    });
+
+    html += `</tbody></table>`;
+
+    var modal = createNewModal({
+        title: formTitle,
+    });
+
+    constructFormBody({}, {
+        preFormContent: html,
+        confirm: true,
+        modal: modal,
+    });
+
+    // Attach callbacks for the action buttons
+    $(modal).find('.button-stock-item-remove').click(function() {
+        var pk = $(this).attr('pk');
+
+        $(modal).find(`#stock_item_${pk}`).remove();
+    });
+
+    attachToggle(modal);
+
+    $(modal + ' .select2-container').addClass('select-full-width');
+    $(modal + ' .select2-container').css('width', '100%');
+}
+
+
 function removeStockRow(e) {
     // Remove a selected row from a stock modal form
 
@@ -228,6 +360,58 @@ function loadStockTestResultsTable(table, options) {
 
 }
 
+
+function locationDetail(row, showLink=true) {
+    /* 
+     * Function to display a "location" of a StockItem.
+     * 
+     * Complicating factors: A StockItem may not actually *be* in a location!
+     * - Could be at a customer
+     * - Could be installed in another stock item
+     * - Could be assigned to a sales order
+     * - Could be currently in production!
+     *
+     * So, instead of being naive, we'll check!
+     */
+
+    // Display text
+    var text = '';
+
+    // URL (optional)
+    var url = '';
+
+    if (row.is_building && row.build) {
+        // StockItem is currently being built!
+        text = '{% trans "In production" %}';
+        url = `/build/${row.build}/`;
+    } else if (row.belongs_to) {
+        // StockItem is installed inside a different StockItem
+        text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
+        url = `/stock/item/${row.belongs_to}/installed/`;
+    } else if (row.customer) {
+        // StockItem has been assigned to a customer
+        text = '{% trans "Shipped to customer" %}';
+        url = `/company/${row.customer}/assigned-stock/`;
+    } else if (row.sales_order) {
+        // StockItem has been assigned to a sales order
+        text = '{% trans "Assigned to Sales Order" %}';
+        url = `/order/sales-order/${row.sales_order}/`;
+    } else if (row.location) {
+        text = row.location_detail.pathstring;
+        url = `/stock/location/${row.location}/`;
+    } else {
+        text = '<i>{% trans "No stock location set" %}</i>';
+        url = '';
+    }
+
+    if (showLink && url) {
+        return renderLink(text, url);
+    } else {
+        return text;
+    }
+}
+
+
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
      * Fetches data (via AJAX) and loads into a bootstrap table.
@@ -269,56 +453,6 @@ function loadStockTable(table, options) {
     // Override the default values, or add new ones
     for (var key in params) {
         filters[key] = params[key];
-    }
-
-    function locationDetail(row) {
-        /* 
-         * Function to display a "location" of a StockItem.
-         * 
-         * Complicating factors: A StockItem may not actually *be* in a location!
-         * - Could be at a customer
-         * - Could be installed in another stock item
-         * - Could be assigned to a sales order
-         * - Could be currently in production!
-         *
-         * So, instead of being naive, we'll check!
-         */
-
-        // Display text
-        var text = '';
-
-        // URL (optional)
-        var url = '';
-
-        if (row.is_building && row.build) {
-            // StockItem is currently being built!
-            text = '{% trans "In production" %}';
-            url = `/build/${row.build}/`;
-        } else if (row.belongs_to) {
-            // StockItem is installed inside a different StockItem
-            text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
-            url = `/stock/item/${row.belongs_to}/installed/`;
-        } else if (row.customer) {
-            // StockItem has been assigned to a customer
-            text = '{% trans "Shipped to customer" %}';
-            url = `/company/${row.customer}/assigned-stock/`;
-        } else if (row.sales_order) {
-            // StockItem has been assigned to a sales order
-            text = '{% trans "Assigned to Sales Order" %}';
-            url = `/order/sales-order/${row.sales_order}/`;
-        } else if (row.location) {
-            text = row.location_detail.pathstring;
-            url = `/stock/location/${row.location}/`;
-        } else {
-            text = '<i>{% trans "No stock location set" %}</i>';
-            url = '';
-        }
-
-        if (url) {
-            return renderLink(text, url);
-        } else {
-            return text;
-        }
     }
 
     var grouping = true;
@@ -741,113 +875,13 @@ function loadStockTable(table, options) {
         ]
     );
 
+
     function stockAdjustment(action) {
         var items = $("#stock-table").bootstrapTable("getSelections");
 
-        var stock = [];
-
-        items.forEach(function(item) {
-            stock.push(item.pk);
+        adjustStock(items, {
+            action: action,
         });
-
-        var title = 'Form title';
-
-        switch (action) {
-            case 'move':
-                title = '{% trans "Transfer Stock" %}';
-                break;
-            case 'count':
-                title = '{% trans "Count Stock" %}';
-                break;
-            case 'take':
-                title = '{% trans "Remove Stock" %}';
-                break;
-            case 'add':
-                title = '{% trans "Add Stock" %}';
-                break;
-            case 'delete':
-                title = '{% trans "Delete Stock" %}';
-                break;
-            default:
-                break;
-        }
-
-        var modal = createNewModal({
-            title: title,
-        });
-
-        // Generate content for the modal
-
-        var html = `
-        <table class='table table-striped table-condensed' id='stock-adjust-table'>
-        <thead>
-        <tr>
-            <th>{% trans "Part" %}</th>
-            <th>{% trans "Stock" %}</th>
-            <th>{% trans "Location" %}</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        `;
-
-        items.forEach(function(item) {
-
-            var pk = item.pk;
-
-            var image = item.part_detail.thumbnail || item.part_detail.image || blankImage();
-
-            var status = stockStatusDisplay(item.status, {
-                classes: 'float-right'
-            });
-
-            var quantity = item.quantity;
-
-            if (item.serial != null) {
-                quantity = `#${item.serial}`;
-            }
-
-            var buttons = `<div class='btn-group float-right' role='group'>`;
-
-            buttons += makeIconButton(
-                'fa-trash-alt icon-red',
-                'button-stock-item-remove',
-                pk,
-                '{% trans "Remove stock item" %}',
-            );
-
-            buttons += `</div>`;
-
-            html += `
-            <tr id='stock_item_${pk}'>
-                <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}${status}</td>
-                <td id='stock_${pk}'>${quantity}</td>
-                <td id='location_${pk}'>${item.location_detail.pathstring}</td>
-                <td id='action_${pk}'>${buttons}</td>
-            </tr>`;
-
-        });
-
-        html += `</tbody></table>`;
-
-        $(modal).find('.modal-form-content').html(html);
-
-        // Attach callbacks for the action buttons
-        $(modal).find('.button-stock-item-remove').click(function() {
-            var pk = $(this).attr('pk');
-
-            $(modal).find(`#stock_item_${pk}`).remove();
-        });
-
-        // Add a "confirm" button
-        insertConfirmButton({
-            modal: modal,
-        });
-
-        attachToggle(modal);
-
-        $(modal + ' .select2-container').addClass('select-full-width');
-        $(modal + ' .select2-container').css('width', '100%');
 
         return;
 
