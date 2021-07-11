@@ -125,7 +125,7 @@ function adjustStock(items, options={}) {
                     value: value,
                     min_value: minValue,
                     max_value: maxValue,
-                    readonly: readonly,
+                    read_only: readonly,
                 }
             )
         };
