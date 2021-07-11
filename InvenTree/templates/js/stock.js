@@ -70,6 +70,33 @@ function adjustStock(items, options={}) {
 
         var pk = item.pk;
 
+        var readonly = (item.serial != null);
+        var minValue = null;
+        var maxValue = null;
+        var value = null;
+
+        switch (options.action) {
+            case 'move':
+                minValue = 0;
+                maxValue = item.quantity;
+                value = item.quantity;
+                break;
+            case 'add':
+                minValue = 0;
+                value = 0;
+                break;
+            case 'take':
+                minValue = 0;
+                value = 0;
+                break;
+            case 'count':
+                minValue = 0;
+                value = item.quantity;
+                break;
+            default:
+                break;
+        }
+
         var image = item.part_detail.thumbnail || item.part_detail.image || blankImage();
 
         var status = stockStatusDisplay(item.status, {
@@ -94,8 +121,10 @@ function adjustStock(items, options={}) {
             actionInput = constructNumberInput(
                 item.pk,
                 {
-                    value: item.quantity,
-                    min_value: 0,
+                    value: value,
+                    min_value: minValue,
+                    max_value: maxValue,
+                    readonly: readonly,
                 }
             )
         };

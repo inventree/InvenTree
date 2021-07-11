@@ -1482,21 +1482,21 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`readonly=''`);
     }
 
-    if (parameters.value) {
+    if (parameters.value != null) {
         // Existing value?
         opts.push(`value='${parameters.value}'`);
-    } else if (parameters.default) {
+    } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);
     }
 
     // Maximum input length
-    if (parameters.max_length) {
+    if (parameters.max_length != null) {
         opts.push(`maxlength='${parameters.max_length}'`);
     }
 
     // Minimum input length
-    if (parameters.min_length) {
+    if (parameters.min_length != null) {
         opts.push(`minlength='${parameters.min_length}'`);
     }
 
@@ -1516,7 +1516,7 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     // Placeholder?
-    if (parameters.placeholder) {
+    if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);
     }
 
