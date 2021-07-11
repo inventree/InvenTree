@@ -395,10 +395,11 @@ function constructFormBody(fields, options) {
 
     for (var name in displayed_fields) {
 
-        // Only push names which are actually in the set of fields
-        if (name in fields) {
-            field_names.push(name);
-        } else {
+        field_names.push(name);
+
+        // Field not specified in the API, but the client wishes to add it!
+        if (!(name in fields)) {
+            fields[name] = displayed_fields[name];
             console.log(`WARNING: '${name}' does not match a valid field name.`);
         }
     }

@@ -162,6 +162,13 @@ function adjustStock(items, options={}) {
     });
 
     constructFormBody({}, {
+        fields: {
+            note: {
+                label: '{% trans "Notes" %}',
+                help_text: '{% trans "Stock transaction notes" %}',
+                type: 'string',
+            }
+        },
         preFormContent: html,
         confirm: true,
         modal: modal,
