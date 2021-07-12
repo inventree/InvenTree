@@ -244,16 +244,16 @@ class StockTransfer(StockAdjust):
 
     def post(self, request, *args, **kwargs):
 
-        self.get_items(request)
-
         data = request.data
 
         try:
             location = StockLocation.objects.get(pk=data.get('location', None))
         except (ValueError, StockLocation.DoesNotExist):
-            raise ValidationError({'location': 'Valid location must be specified'})
+            raise ValidationError({'location': [_('Valid location must be specified')]})
 
         n = 0
+
+        self.get_items(request)
 
         for item in self.items:
 

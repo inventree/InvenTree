@@ -422,10 +422,8 @@ function constructFormBody(fields, options) {
             default:
                 break;
         }
-
-        var f = constructField(name, field, options);
         
-        html += f;
+        html += constructField(name, field, options);
     }
 
     // TODO: Dynamically create the modals,
@@ -599,47 +597,9 @@ function submitFormData(fields, options) {
                     case 400:   // Bad request
                         handleFormErrors(xhr.responseJSON, fields, options);
                         break;
-                    case 0:     // No response
-                        $(options.modal).modal('hide');
-                        showAlertDialog(
-                            '{% trans "No Response" %}',
-                            '{% trans "No response from the InvenTree server" %}',
-                        );
-                        break;
-                    case 401:   // Not authenticated
-                        $(options.modal).modal('hide');
-                        showAlertDialog(
-                            '{% trans "Error 401: Not Authenticated" %}',
-                            '{% trans "Authentication credentials not supplied" %}',
-                        );
-                        break;
-                    case 403:   // Permission denied
-                        $(options.modal).modal('hide');
-                        showAlertDialog(
-                            '{% trans "Error 403: Permission Denied" %}',
-                            '{% trans "You do not have the required permissions to access this function" %}',
-                        );
-                        break;
-                    case 404:   // Resource not found
-                        $(options.modal).modal('hide');  
-                        showAlertDialog(
-                            '{% trans "Error 404: Resource Not Found" %}',
-                            '{% trans "The requested resource could not be located on the server" %}',
-                        );
-                        break;
-                    case 408:   // Timeout
-                        $(options.modal).modal('hide');  
-                        showAlertDialog(
-                            '{% trans "Error 408: Timeout" %}',
-                            '{% trans "Connection timeout while requesting data from server" %}',
-                        );
-                        break;
                     default:
                         $(options.modal).modal('hide');
-
-                        showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
-
-                        console.log(`WARNING: Unhandled response code - ${xhr.status}`);
+                        showApiError(xhr);
                         break;
                 }
             }

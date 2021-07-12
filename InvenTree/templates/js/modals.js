@@ -39,12 +39,13 @@ function createNewModal(options={}) {
                     </h3>
                 </div>
                 <div class='modal-form-content-wrapper'>
-                    <div id='pre-form-content'>
-                        <!-- Content can be inserted here *before* the form fields -->
-                    </div>
                     <div id='non-field-errors'>
                         <!-- Form error messages go here -->
                     </div>
+                    <div id='pre-form-content'>
+                        <!-- Content can be inserted here *before* the form fields -->
+                    </div>
+
                     <div id='form-content' class='modal-form-content'>
                         <!-- Form content will be injected here-->
                     </div>

@@ -255,6 +255,28 @@ function adjustStock(items, options={}) {
                         if (options.onSuccess) {
                             options.onSuccess();
                         }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                            case 400:
+                                console.log('400 bad request');
+                                console.log(xhr.responseJSON);
+
+                                // Handle errors for standard fields
+                                handleFormErrors(
+                                    xhr.responseJSON,
+                                    extraFields,
+                                    {
+                                        modal: modal,
+                                    }
+                                )
+
+                                break;
+                            default:
+                                $(modal).modal('hide');
+                                showApiError(xhr);
+                                break;
+                        }
                     }
                 }
             );
