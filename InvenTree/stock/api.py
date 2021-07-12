@@ -151,9 +151,6 @@ class StockAdjust(APIView):
         # List of validated items
         self.items = []
 
-        # List of error messages
-        errors = []
-
         for entry in _items:
 
             if not type(entry) == dict:
@@ -164,7 +161,7 @@ class StockAdjust(APIView):
 
             try:
                 pk = int(pk)
-            except ValueError:
+            except (ValueError, TypeError):
                 raise ValidationError(_('Each entry must contain a valid integer primary-key'))
 
             try:
