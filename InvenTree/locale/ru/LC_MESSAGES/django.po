@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-12 12:24+0000\n"
+"POT-Creation-Date: 2021-07-12 12:41+0000\n"
 "PO-Revision-Date: 2021-07-10 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -36,7 +36,7 @@ msgstr "Введите дату"
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
-#: order/forms.py:74 part/forms.py:119 templates/js/forms.js:506
+#: order/forms.py:74 part/forms.py:109 templates/js/forms.js:506
 msgid "Confirm"
 msgstr "Подтвердить"
 
@@ -481,8 +481,8 @@ msgstr "Целевая дата для сборки. Сборка будет п�
 #: order/templates/order/sales_order_detail.html:80
 #: order/templates/order/sales_order_detail.html:87
 #: order/templates/order/sales_order_detail.html:172
-#: order/templates/order/sales_order_detail.html:244 part/forms.py:327
-#: part/forms.py:357 part/forms.py:373 part/forms.py:389 part/models.py:2329
+#: order/templates/order/sales_order_detail.html:244 part/forms.py:317
+#: part/forms.py:347 part/forms.py:363 part/forms.py:379 part/models.py:2329
 #: part/templates/part/bom_upload/match_parts.html:31
 #: part/templates/part/part_pricing.html:16 part/templates/part/prices.html:377
 #: part/templates/part/prices.html:474
@@ -788,8 +788,8 @@ msgstr ""
 #: order/templates/order/so_navbar.html:36 part/models.py:864
 #: part/templates/part/navbar.html:121
 #: report/templates/report/inventree_build_order_base.html:173
-#: stock/forms.py:140 stock/forms.py:284 stock/forms.py:316 stock/forms.py:344
-#: stock/models.py:536 stock/models.py:1678 stock/models.py:1784
+#: stock/forms.py:140 stock/forms.py:284 stock/forms.py:316 stock/models.py:536
+#: stock/models.py:1678 stock/models.py:1784
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
 #: templates/js/bom.js:349 templates/js/company.js:566
 #: templates/js/stock.js:209 templates/js/stock.js:450
@@ -1235,7 +1235,6 @@ msgstr ""
 #: build/templates/build/detail.html:46 order/forms.py:88 order/models.py:782
 #: order/templates/order/purchase_order_detail.html:270
 #: order/templates/order/receive_parts.html:25 stock/forms.py:136
-#: stock/forms.py:342
 msgid "Destination"
 msgstr ""
 
@@ -3666,135 +3665,135 @@ msgstr ""
 msgid "Available Stock"
 msgstr ""
 
-#: part/forms.py:74 stock/forms.py:232
+#: part/forms.py:64 stock/forms.py:232
 msgid "File Format"
 msgstr ""
 
-#: part/forms.py:74 stock/forms.py:232
+#: part/forms.py:64 stock/forms.py:232
 msgid "Select output file format"
 msgstr ""
 
-#: part/forms.py:76
+#: part/forms.py:66
 msgid "Cascading"
 msgstr ""
 
-#: part/forms.py:76
+#: part/forms.py:66
 msgid "Download cascading / multi-level BOM"
 msgstr ""
 
-#: part/forms.py:78
+#: part/forms.py:68
 msgid "Levels"
 msgstr ""
 
-#: part/forms.py:78
+#: part/forms.py:68
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
 msgstr ""
 
-#: part/forms.py:80
+#: part/forms.py:70
 msgid "Include Parameter Data"
 msgstr ""
 
-#: part/forms.py:80
+#: part/forms.py:70
 msgid "Include part parameters data in exported BOM"
 msgstr ""
 
-#: part/forms.py:82
+#: part/forms.py:72
 msgid "Include Stock Data"
 msgstr ""
 
-#: part/forms.py:82
+#: part/forms.py:72
 msgid "Include part stock data in exported BOM"
 msgstr ""
 
-#: part/forms.py:84
+#: part/forms.py:74
 msgid "Include Manufacturer Data"
 msgstr ""
 
-#: part/forms.py:84
+#: part/forms.py:74
 msgid "Include part manufacturer data in exported BOM"
 msgstr ""
 
-#: part/forms.py:86
+#: part/forms.py:76
 msgid "Include Supplier Data"
 msgstr ""
 
-#: part/forms.py:86
+#: part/forms.py:76
 msgid "Include part supplier data in exported BOM"
 msgstr ""
 
-#: part/forms.py:107 part/models.py:2223
+#: part/forms.py:97 part/models.py:2223
 msgid "Parent Part"
 msgstr ""
 
-#: part/forms.py:108 part/templates/part/bom_duplicate.html:7
+#: part/forms.py:98 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
 msgstr ""
 
-#: part/forms.py:114
+#: part/forms.py:104
 msgid "Clear existing BOM items"
 msgstr ""
 
-#: part/forms.py:120
+#: part/forms.py:110
 msgid "Confirm BOM duplication"
 msgstr ""
 
-#: part/forms.py:138
+#: part/forms.py:128
 msgid "validate"
 msgstr ""
 
-#: part/forms.py:138
+#: part/forms.py:128
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:181
+#: part/forms.py:171
 msgid "Related Part"
 msgstr ""
 
-#: part/forms.py:188
+#: part/forms.py:178
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:205
+#: part/forms.py:195
 msgid "Duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:206
+#: part/forms.py:196
 msgid "Copy BOM"
 msgstr ""
 
-#: part/forms.py:211
+#: part/forms.py:201
 msgid "Duplicate all parameter data for this part"
 msgstr ""
 
-#: part/forms.py:212
+#: part/forms.py:202
 msgid "Copy Parameters"
 msgstr ""
 
-#: part/forms.py:217
+#: part/forms.py:207
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:222
+#: part/forms.py:212
 msgid "Include category parameter templates"
 msgstr ""
 
-#: part/forms.py:227
+#: part/forms.py:217
 msgid "Include parent categories parameter templates"
 msgstr ""
 
-#: part/forms.py:307
+#: part/forms.py:297
 msgid "Add parameter template to same level categories"
 msgstr ""
 
-#: part/forms.py:311
+#: part/forms.py:301
 msgid "Add parameter template to all categories"
 msgstr ""
 
-#: part/forms.py:329 part/models.py:2322
+#: part/forms.py:319 part/models.py:2322
 msgid "Sub part"
 msgstr ""
 
-#: part/forms.py:358
+#: part/forms.py:348
 msgid "Input quantity for price calculation"
 msgstr ""
 
@@ -5299,12 +5298,12 @@ msgstr "Действие не указано"
 msgid "Moved {n} parts to {loc}"
 msgstr ""
 
-#: stock/forms.py:81 stock/forms.py:385 stock/models.py:513
+#: stock/forms.py:81 stock/forms.py:341 stock/models.py:513
 #: stock/templates/stock/item_base.html:393 templates/js/stock.js:969
 msgid "Expiry Date"
 msgstr ""
 
-#: stock/forms.py:82 stock/forms.py:386
+#: stock/forms.py:82 stock/forms.py:342
 msgid "Expiration date for this stock item"
 msgstr ""
 
@@ -5363,30 +5362,6 @@ msgstr ""
 
 #: stock/forms.py:318
 msgid "Confirm removal of installed stock items"
-msgstr ""
-
-#: stock/forms.py:342
-msgid "Destination stock location"
-msgstr ""
-
-#: stock/forms.py:344
-msgid "Add note (required)"
-msgstr ""
-
-#: stock/forms.py:348 stock/views.py:728 templates/js/stock.js:223
-msgid "Confirm stock adjustment"
-msgstr ""
-
-#: stock/forms.py:348
-msgid "Confirm movement of stock items"
-msgstr ""
-
-#: stock/forms.py:350
-msgid "Set Default Location"
-msgstr ""
-
-#: stock/forms.py:350
-msgid "Set the destination as the default location for selected parts"
 msgstr ""
 
 #: stock/models.py:56 stock/models.py:550
@@ -6014,6 +5989,10 @@ msgstr ""
 
 #: stock/views.py:631
 msgid "Uninstall Stock Items"
+msgstr ""
+
+#: stock/views.py:728 templates/js/stock.js:223
+msgid "Confirm stock adjustment"
 msgstr ""
 
 #: stock/views.py:739
