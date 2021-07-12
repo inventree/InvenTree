@@ -167,7 +167,12 @@ function adjustStock(items, options={}) {
             <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}</td>
             <td id='stock_${pk}'>${quantity}${status}</td>
             <td id='location_${pk}'>${location}</td>
-            <td id='action_${pk}'>${actionInput}</td>
+            <td id='action_${pk}'>
+                <div id='div_id_${pk}'>
+                    ${actionInput}
+                    <div id='errors-${pk}'></div>
+                </div>
+            </td>
             <td id='buttons_${pk}'>${buttons}</td>
         </tr>`;
 
@@ -259,9 +264,7 @@ function adjustStock(items, options={}) {
                     error: function(xhr) {
                         switch (xhr.status) {
                             case 400:
-                                console.log('400 bad request');
-                                console.log(xhr.responseJSON);
-
+                                
                                 // Handle errors for standard fields
                                 handleFormErrors(
                                     xhr.responseJSON,

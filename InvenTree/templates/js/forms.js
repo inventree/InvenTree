@@ -816,33 +816,27 @@ function handleFormErrors(errors, fields, options) {
     }
 
     for (field_name in errors) {
-        if (field_name in fields) {
 
-            // Add the 'has-error' class
-            $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+        // Add the 'has-error' class
+        $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
 
-            var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
+        var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
 
-            var field_errors = errors[field_name];
+        var field_errors = errors[field_name];
 
-            // Add an entry for each returned error message
-            for (var idx = field_errors.length-1; idx >= 0; idx--) {
+        // Add an entry for each returned error message
+        for (var idx = field_errors.length-1; idx >= 0; idx--) {
 
-                var error_text = field_errors[idx];
+            var error_text = field_errors[idx];
 
-                var html = `
-                <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
-                    <strong>${error_text}</strong>
-                </span>`;
+            var html = `
+            <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
+                <strong>${error_text}</strong>
+            </span>`;
 
-                field_dom.append(html);
-            }
-
-        } else {
-            console.log(`WARNING: handleFormErrors found no match for field '${field_name}'`);
+            field_dom.append(html);
         }
     }
-
 }
 
 
