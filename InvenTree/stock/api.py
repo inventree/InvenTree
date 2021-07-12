@@ -143,22 +143,36 @@ class StockAdjust(APIView):
         elif 'items' in request.data:
             _items = request.data['items']
         else:
-            raise ValidationError({'items': _('Request must contain list of stock items')})
+            _items = []
+
+        if len(_items) == 0:
+            raise ValidationError(_('Request must contain list of stock items'))
 
         # List of validated items
         self.items = []
 
+        # List of error messages
+        errors = []
+
         for entry in _items:
 
             if not type(entry) == dict:
-                raise ValidationError({'error': _('Improperly formatted data')})
+                raise ValidationError(_('Improperly formatted data'))
+
+            # Look for a 'pk' value (use 'id' as a backup)
+            pk = entry.get('pk', entry.get('id', None))
 
             try:
-                # Look for 'pk' value first, with 'id' as a backup
-                pk = entry.get('pk', entry.get('id', None))
+                pk = int(pk)
+            except ValueError:
+                raise ValidationError(_('Each entry must contain a valid integer primary-key'))
+
+            try:
                 item = StockItem.objects.get(pk=pk)
-            except (ValueError, StockItem.DoesNotExist):
-                raise ValidationError({'pk': _('Each entry must contain a valid pk field')})
+            except (StockItem.DoesNotExist):
+                raise ValidationError({
+                    pk: [_('Primary key does not match valid stock item')]
+                })
 
             if self.allow_missing_quantity and 'quantity' not in entry:
                 entry['quantity'] = item.quantity
@@ -166,16 +180,21 @@ class StockAdjust(APIView):
             try:
                 quantity = Decimal(str(entry.get('quantity', None)))
             except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({'quantity': _("Each entry must contain a valid quantity value")})
+                raise ValidationError({
+                    pk: [_('Invalid quantity value')]
+                })
 
             if quantity < 0:
-                raise ValidationError({'quantity': _('Quantity field must not be less than zero')})
+                raise ValidationError({
+                    pk: [_('Quantity must not be less than zero')]
+                })
 
             self.items.append({
                 'item': item,
                 'quantity': quantity
             })
 
+        # Extract 'notes' field
         self.notes = str(request.data.get('notes', ''))
 
 
