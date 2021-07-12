@@ -223,6 +223,32 @@ function adjustStock(items, options={}) {
         modal: modal,
         onSubmit: function(fields, opts) {
 
+            // "Delete" action gets handled differently
+            if (options.action == 'delete') {
+
+                var requests = [];
+
+                items.forEach(function(item) {
+                    requests.push(
+                        inventreeDelete(
+                            `/api/stock/${item.pk}/`,
+                        )
+                    )
+                });
+
+                // Wait for *all* the requests to complete
+                $.when.apply($, requests).then(function() {
+                    // Destroy the modal window
+                    $(modal).modal('hide');
+
+                    if (options.onSuccess) {
+                        options.onSuccess();
+                    }
+                });
+
+                return;
+            }
+
             // Data to transmit
             var data = {
                 items: [],
@@ -264,7 +290,7 @@ function adjustStock(items, options={}) {
                     error: function(xhr) {
                         switch (xhr.status) {
                             case 400:
-                                
+
                                 // Handle errors for standard fields
                                 handleFormErrors(
                                     xhr.responseJSON,
