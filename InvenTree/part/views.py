@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
