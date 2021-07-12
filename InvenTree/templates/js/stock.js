@@ -28,6 +28,9 @@ function adjustStock(items, options={}) {
     var formTitle = 'Form Title Here';
     var actionTitle = null;
 
+    // API url
+    var url = null;
+
     var specifyLocation = false;
     var allowSerializedStock = false;
 
@@ -37,18 +40,22 @@ function adjustStock(items, options={}) {
             actionTitle = '{% trans "Move" %}';
             specifyLocation = true;
             allowSerializedStock = true;
+            url = '{% url "api-stock-transfer" %}';
             break;
         case 'count':
             formTitle = '{% trans "Count Stock" %}';
             actionTitle = '{% trans "Count" %}';
+            url = '{% url "api-stock-count" %}';
             break;
         case 'take':
             formTitle = '{% trans "Remove Stock" %}';
             actionTitle = '{% trans "Take" %}';
+            url = '{% url "api-stock-remove" %}';
             break;
         case 'add':
             formTitle = '{% trans "Add Stock" %}';
             actionTitle = '{% trans "Add" %}';
+            url = '{% url "api-stock-add" %}';
             break;
         case 'delete':
             formTitle = '{% trans "Delete Stock" %}';
@@ -156,7 +163,7 @@ function adjustStock(items, options={}) {
         buttons += `</div>`;
 
         html += `
-        <tr id='stock_item_${pk}'>
+        <tr id='stock_item_${pk}' class='stock-item-row'>
             <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}</td>
             <td id='stock_${pk}'>${quantity}${status}</td>
             <td id='location_${pk}'>${location}</td>
@@ -192,7 +199,7 @@ function adjustStock(items, options={}) {
             api_url: `/api/stock/location/`,
             model: 'stocklocation',
         },
-        note: {
+        notes: {
             label: '{% trans "Notes" %}',
             help_text: '{% trans "Stock transaction notes" %}',
             type: 'string',
@@ -209,8 +216,48 @@ function adjustStock(items, options={}) {
         confirm: true,
         confirmMessage: '{% trans "Confirm stock adjustment" %}',
         modal: modal,
-        onSubmit: function(fields, options) {
-            console.log("submit!");
+        onSubmit: function(fields, opts) {
+
+            // Data to transmit
+            var data = {
+                items: [],
+            };
+
+            // Add values for each selected stock item
+            items.forEach(function(item) {
+
+                var q = getFormFieldValue(item.pk, {}, {modal: modal});
+
+                data.items.push({pk: item.pk, quantity: q})
+            });
+
+            // Add in extra field data
+            for (field_name in extraFields) {
+                data[field_name] = getFormFieldValue(
+                    field_name,
+                    fields[field_name],
+                    {
+                        modal: modal,
+                    }
+                );
+            }
+
+            inventreePut(
+                url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response, status) {
+
+                        // Destroy the modal window
+                        $(modal).modal('hide');
+
+                        if (options.onSuccess) {
+                            options.onSuccess();
+                        }
+                    }
+                }
+            );
         }
     });
 
@@ -957,6 +1004,9 @@ function loadStockTable(table, options) {
 
         adjustStock(items, {
             action: action,
+            onSuccess: function() {
+                $('#stock-table').bootstrapTable('refresh');
+            }
         });
 
         return;

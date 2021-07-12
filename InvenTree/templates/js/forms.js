@@ -715,6 +715,10 @@ function getFormFieldValue(name, field, options) {
     // Find the HTML element
     var el = $(options.modal).find(`#id_${name}`);
 
+    if (!el) {
+        return null;
+    }
+
     var value = null;
 
     switch (field.type) {
