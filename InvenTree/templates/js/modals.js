@@ -103,6 +103,14 @@ function createNewModal(options={}) {
     modalSetSubmitText(modal_name, options.submitText || '{% trans "Submit" %}');
     modalSetCloseText(modal_name, options.cancelText || '{% trans "Cancel" %}');
 
+    if (options.hideSubmitButton) {
+        $(modal_name).find('#modal-form-submit').hide();
+    }
+
+    if (options.hideCloseButton) {
+        $(modal_name).find('#modal-form-cancel').hide();
+    }
+
     // Return the "name" of the modal
     return modal_name;
 }
@@ -552,25 +560,18 @@ function showAlertDialog(title, content, options={}) {
      * 
      * title - Title text 
      * content - HTML content of the dialog window
-     * options:
-     *  modal - modal form to use (default = '#modal-alert-dialog')
      */
 
-     var modal = options.modal || '#modal-alert-dialog';
 
-     $(modal).on('shown.bs.modal', function() {
-        $(modal + ' .modal-form-content').scrollTop(0);
+    var modal = createNewModal({
+        title: title,
+        cancelText: '{% trans "Close" %}',
+        hideSubmitButton: true,
     });
 
-     modalSetTitle(modal, title);
-     modalSetContent(modal, content);
+    modalSetContent(modal, content);
 
-     $(modal).modal({
-        backdrop: 'static',
-        keyboard: false,
-    });
-
-     $(modal).modal('show');
+    $(modal).modal('show');
 }
 
 
