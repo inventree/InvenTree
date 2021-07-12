@@ -118,9 +118,13 @@ $('#edit-part').click(function () {
         fields: {
             part: {},
             manufacturer: {},
-            MPN: {},
+            MPN: {
+                icon: 'fa-hashtag',
+            },
             description: {},
-            link: {},
+            link: {
+                icon: 'fa-link',
+            },
         },
         title: '{% trans "Edit Manufacturer Part" %}',
         reload: true,

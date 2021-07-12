@@ -12,7 +12,6 @@ from django.utils.translation import ugettext_lazy as _
 import django.forms
 
 from .models import Company
-from .models import ManufacturerPart
 from .models import SupplierPart
 from .models import SupplierPriceBreak
 
@@ -32,25 +31,6 @@ class CompanyImageDownloadForm(HelperForm):
         model = Company
         fields = [
             'url',
-        ]
-
-
-class EditManufacturerPartForm(HelperForm):
-    """ Form for editing a ManufacturerPart object """
-
-    field_prefix = {
-        'link': 'fa-link',
-        'MPN': 'fa-hashtag',
-    }
-
-    class Meta:
-        model = ManufacturerPart
-        fields = [
-            'part',
-            'manufacturer',
-            'MPN',
-            'description',
-            'link',
         ]
 
 

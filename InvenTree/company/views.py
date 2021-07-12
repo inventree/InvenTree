@@ -29,7 +29,6 @@ from .models import SupplierPart
 
 from part.models import Part
 
-from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm
 from .forms import CompanyImageDownloadForm
 

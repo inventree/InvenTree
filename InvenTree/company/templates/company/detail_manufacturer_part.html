@@ -60,9 +60,13 @@
                 manufacturer: {
                     value: {{ company.pk }},
                 },
-                MPN: {},
+                MPN: {
+                    icon: 'fa-hashtag',
+                },
                 description: {},
-                link: {},
+                link: {
+                    icon: 'fa-link',
+                },
             },
             method: 'POST',
             title: '{% trans "Add Manufacturer Part" %}',
