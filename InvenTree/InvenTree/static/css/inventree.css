@@ -837,6 +837,12 @@ input[type="submit"] {
     pointer-events: none; /* Prevent this div from blocking links underneath */
 }
 
+.notes {
+    border-radius: 5px;
+    background-color: #fafafa;
+    padding: 5px;
+}
+
 .alert {
     display: none;
     border-radius: 5px;
@@ -851,6 +857,11 @@ input[type="submit"] {
 .btn {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.btn-small {
+    padding: 3px;
+    padding-left: 5px;
 }
 
 .btn-remove {

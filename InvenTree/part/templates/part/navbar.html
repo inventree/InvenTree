@@ -109,16 +109,4 @@
         </a>
     </li>
     {% endif %}
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
-        <a href='{% url "part-attachments" part.id %}'>
-            <span class='menu-tab-icon fas fa-paperclip sidebar-icon'></span>
-            {% trans "Attachments" %}
-        </a>
-    </li>
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Part Notes" %}'>
-        <a href='{% url "part-notes" part.id %}'>
-            <span class='menu-tab-icon fas fa-clipboard sidebar-icon'></span>
-            {% trans "Notes" %}
-        </a>
-    </li>
 </ul>

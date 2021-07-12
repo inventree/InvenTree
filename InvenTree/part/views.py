@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
@@ -745,40 +745,6 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
 
     def validate(self, obj, form, **kwargs):
         return PartImport.validate(self, self.steps.current, form, **kwargs)
-
-
-class PartNotes(UpdateView):
-    """ View for editing the 'notes' field of a Part object.
-    Presents a live markdown editor.
-    """
-
-    context_object_name = 'part'
-    # form_class = part_forms.EditNotesForm
-    template_name = 'part/notes.html'
-    model = Part
-
-    role_required = 'part.change'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        """ Return the success URL for this form """
-
-        return reverse('part-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        part = self.get_object()
-
-        context = super().get_context_data(**kwargs)
-
-        context['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        ctx = part.get_context_data(self.request)
-
-        context.update(ctx)
-
-        return context
 
 
 class PartDetail(InvenTreeRoleMixin, DetailView):

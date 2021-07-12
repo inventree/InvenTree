@@ -353,11 +353,15 @@ function constructFormBody(fields, options) {
             // Override existing query filters (if provided!)
             fields[field].filters = Object.assign(fields[field].filters || {}, field_options.filters);
 
+            // TODO: Refactor the following code with Object.assign (see above)
+
             // Secondary modal options
             fields[field].secondary = field_options.secondary;
 
             // Edit callback
             fields[field].onEdit = field_options.onEdit;
+
+            fields[field].multiline = field_options.multiline;
 
             // Custom help_text
             if (field_options.help_text) {
@@ -1483,7 +1487,11 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`placeholder='${parameters.placeholder}'`);
     }
 
-    return `<input ${opts.join(' ')}>`;
+    if (parameters.multiline) {
+        return `<textarea ${opts.join(' ')}></textarea>`;
+    } else {
+        return `<input ${opts.join(' ')}>`;
+    }
 }
 
 
