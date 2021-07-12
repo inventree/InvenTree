@@ -28,10 +28,15 @@ function adjustStock(items, options={}) {
     var formTitle = 'Form Title Here';
     var actionTitle = null;
 
+    var specifyLocation = false;
+    var allowSerializedStock = false;
+
     switch (options.action) {
         case 'move':
             formTitle = '{% trans "Transfer Stock" %}';
             actionTitle = '{% trans "Move" %}';
+            specifyLocation = true;
+            allowSerializedStock = true;
             break;
         case 'count':
             formTitle = '{% trans "Count Stock" %}';
@@ -47,6 +52,7 @@ function adjustStock(items, options={}) {
             break;
         case 'delete':
             formTitle = '{% trans "Delete Stock" %}';
+            allowSerializedStock = true;
             break;
         default:
             break;
@@ -67,7 +73,15 @@ function adjustStock(items, options={}) {
     <tbody>
     `;
 
-    items.forEach(function(item) {
+    var itemCount = 0;
+
+    for (var idx = 0; idx < items.length; idx++) {
+
+        var item = items[idx];
+
+        if ((item.serial != null) && !allowSerializedStock) {
+            continue;
+        }
 
         var pk = item.pk;
 
@@ -150,7 +164,17 @@ function adjustStock(items, options={}) {
             <td id='buttons_${pk}'>${buttons}</td>
         </tr>`;
 
-    });
+        itemCount += 1;
+    }
+
+    if (itemCount == 0) {
+        showAlertDialog(
+            '{% trans "Select Stock Items" %}',
+            '{% trans "You must select at least one available stock item" %}',
+        );
+
+        return;
+    }
 
     html += `</tbody></table>`;
 
@@ -158,24 +182,32 @@ function adjustStock(items, options={}) {
         title: formTitle,
     });
 
-    constructFormBody({}, {
-        fields: {
-            location: {
-                label: '{% trans "Location" %}',
-                help_text: '{% trans "Select stock location" %}',
-                type: 'related field',
-                required: true,
-                api_url: `/api/stock/location/`,
-                model: 'stocklocation',
-            },
-            note: {
-                label: '{% trans "Notes" %}',
-                help_text: '{% trans "Stock transaction notes" %}',
-                type: 'string',
-            }
+    // Extra fields
+    var extraFields = {
+        location: {
+            label: '{% trans "Location" %}',
+            help_text: '{% trans "Select destination stock location" %}',
+            type: 'related field',
+            required: true,
+            api_url: `/api/stock/location/`,
+            model: 'stocklocation',
         },
+        note: {
+            label: '{% trans "Notes" %}',
+            help_text: '{% trans "Stock transaction notes" %}',
+            type: 'string',
+        }
+    };
+
+    if (!specifyLocation) {
+        delete extraFields.location;
+    }
+
+    constructFormBody({}, {
         preFormContent: html,
+        fields: extraFields,
         confirm: true,
+        confirmMessage: '{% trans "Confirm stock adjustment" %}',
         modal: modal,
         onSubmit: function(fields, options) {
             console.log("submit!");
