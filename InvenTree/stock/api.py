@@ -248,6 +248,11 @@ class StockRemove(StockAdjust):
 
         for item in self.items:
 
+            if item['quantity'] > item['item'].quantity:
+                raise ValidationError({
+                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
+                })
+
             if item['item'].take_stock(item['quantity'], request.user, notes=self.notes):
                 n += 1
 
@@ -275,6 +280,11 @@ class StockTransfer(StockAdjust):
         self.get_items(request)
 
         for item in self.items:
+
+            if item['quantity'] > item['item'].quantity:
+                raise ValidationError({
+                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
+                })
 
             # If quantity is not specified, move the entire stock
             if item['quantity'] in [0, None]:
