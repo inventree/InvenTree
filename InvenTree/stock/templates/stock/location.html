@@ -69,6 +69,12 @@
                         {% trans "Count stock" %}
                     </a>
                 </li>
+                <li>
+                    <a href='#' id='location-move'>
+                        <span class='fas fa-exchange-alt'></span>
+                        {% trans "Transfer stock" %}
+                    </a>
+                </li>
             </ul>
             </div>
             {% endif %}
@@ -221,8 +227,8 @@
     });
 
     {% if location %}
-    $("#location-count").click(function() {
 
+    function adjustLocationStock(action) {
         inventreeGet(
             '{% url "api-stock-list" %}',
             {
@@ -233,7 +239,7 @@
             },
             {
                 success: function(items) {
-                    adjustStock('count', items, {
+                    adjustStock(action, items, {
                         onSuccess: function() {
                             location.reload();
                         }
@@ -241,6 +247,14 @@
                 }
             }
         );
+    }
+
+    $("#location-count").click(function() {
+        adjustLocationStock('count');
+    });
+
+    $("#location-move").click(function() {
+        adjustLocationStock('move');
     });
 
     $('#print-label').click(function() {
