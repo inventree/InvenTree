@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-12 12:18+0000\n"
+"POT-Creation-Date: 2021-07-12 12:24+0000\n"
 "PO-Revision-Date: 2021-07-10 04:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -473,7 +473,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
 #: build/templates/build/detail.html:31 common/models.py:741
-#: company/forms.py:124 company/templates/company/supplier_part_pricing.html:79
+#: company/forms.py:104 company/templates/company/supplier_part_pricing.html:79
 #: order/forms.py:120 order/forms.py:142 order/forms.py:159 order/models.py:706
 #: order/models.py:952 order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34
@@ -1869,7 +1869,7 @@ msgstr "Nur Ganzzahl eingeben"
 msgid "Key string must be unique"
 msgstr "Schlüsseltext muss eindeutig sein"
 
-#: common/models.py:742 company/forms.py:125
+#: common/models.py:742 company/forms.py:105
 msgid "Price break quantity"
 msgstr "Preisstaffelungs Anzahl"
 
@@ -1943,31 +1943,31 @@ msgstr ""
 msgid "Previous Step"
 msgstr "Vorheriger Schritt"
 
-#: company/forms.py:26 part/forms.py:47
+#: company/forms.py:25 part/forms.py:47
 msgid "URL"
 msgstr "URL"
 
-#: company/forms.py:27 part/forms.py:48
+#: company/forms.py:26 part/forms.py:48
 msgid "Image URL"
 msgstr "Bild-URL"
 
-#: company/forms.py:67 templates/js/part.js:1041
+#: company/forms.py:47 templates/js/part.js:1041
 msgid "Single Price"
 msgstr "Einzelpreis"
 
-#: company/forms.py:68
+#: company/forms.py:48
 msgid "Single quantity price"
 msgstr "Preis für eine Einheit"
 
-#: company/forms.py:76 company/models.py:335
+#: company/forms.py:56 company/models.py:335
 msgid "Select manufacturer"
 msgstr "Hersteller auswählen"
 
-#: company/forms.py:82 company/models.py:342
+#: company/forms.py:62 company/models.py:342
 msgid "Manufacturer Part Number"
 msgstr "Hersteller-Teilenummer"
 
-#: company/forms.py:84 company/models.py:341
+#: company/forms.py:64 company/models.py:341
 #: company/templates/company/manufacturer_part_base.html:89
 #: company/templates/company/manufacturer_part_detail.html:26
 #: company/templates/company/supplier_part_base.html:102
@@ -2324,27 +2324,12 @@ msgstr "Teile löschen"
 msgid "Delete Parts"
 msgstr "Teile löschen"
 
-#: company/templates/company/detail_manufacturer_part.html:68
-#: company/templates/company/detail_supplier_part.html:66
-#: part/templates/part/bom.html:166 part/templates/part/category.html:127
-#: templates/js/stock.js:1622
-msgid "New Part"
-msgstr "Neues Teil"
-
-#: company/templates/company/detail_manufacturer_part.html:69
-#: company/templates/company/detail_supplier_part.html:67
-msgid "Create new Part"
-msgstr "Neues Teil hinzufügen"
-
-#: company/templates/company/detail_manufacturer_part.html:74
-#: company/views.py:66 part/templates/part/supplier.html:85
-#: part/templates/part/supplier.html:161
-msgid "New Manufacturer"
-msgstr "Neuer Hersteller"
-
-#: company/templates/company/detail_manufacturer_part.html:75
-msgid "Create new Manufacturer"
-msgstr "Neuen Hersteller anlegen"
+#: company/templates/company/detail_manufacturer_part.html:72
+#: part/templates/part/supplier.html:164
+#, fuzzy
+#| msgid "Manufacturer Part"
+msgid "Add Manufacturer Part"
+msgstr "Herstellerteil"
 
 #: company/templates/company/detail_stock.html:10
 msgid "Supplier Stock"
@@ -2376,9 +2361,19 @@ msgstr "Neues Zuliefererteil anlegen"
 msgid "New Supplier Part"
 msgstr "Neues Zuliefererteil"
 
+#: company/templates/company/detail_supplier_part.html:66
+#: part/templates/part/bom.html:166 part/templates/part/category.html:127
+#: templates/js/stock.js:1622
+msgid "New Part"
+msgstr "Neues Teil"
+
+#: company/templates/company/detail_supplier_part.html:67
+msgid "Create new Part"
+msgstr "Neues Teil hinzufügen"
+
 #: company/templates/company/detail_supplier_part.html:72
 #: company/templates/company/manufacturer_part_suppliers.html:96
-#: company/views.py:60 part/templates/part/supplier.html:80
+#: company/views.py:59 part/templates/part/supplier.html:80
 msgid "New Supplier"
 msgstr "Neuer Zulieferer"
 
@@ -2417,17 +2412,17 @@ msgstr "Herstellerteil-Details"
 msgid "Internal Part"
 msgstr "Internes Teil"
 
-#: company/templates/company/manufacturer_part_base.html:125
+#: company/templates/company/manufacturer_part_base.html:129
 msgid "Edit Manufacturer Part"
 msgstr "Herstellerteil ändern"
 
-#: company/templates/company/manufacturer_part_base.html:134
+#: company/templates/company/manufacturer_part_base.html:138
 msgid "Delete Manufacturer Part"
 msgstr "Herstellerteil löschen"
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/templates/company/manufacturer_part_suppliers.html:10
-#: company/views.py:59 part/templates/part/navbar.html:75
+#: company/views.py:58 part/templates/part/navbar.html:75
 #: part/templates/part/navbar.html:78 part/templates/part/prices.html:153
 #: templates/InvenTree/search.html:316 templates/navbar.html:35
 msgid "Suppliers"
@@ -2658,58 +2653,58 @@ msgstr "Preisstaffel bearbeiten"
 msgid "Delete price break"
 msgstr "Preisstaffel löschen"
 
-#: company/views.py:65 part/templates/part/prices.html:157
+#: company/views.py:64 part/templates/part/prices.html:157
 #: templates/InvenTree/search.html:306 templates/navbar.html:36
 msgid "Manufacturers"
 msgstr "Hersteller"
 
-#: company/views.py:71 templates/InvenTree/search.html:336
+#: company/views.py:65 part/templates/part/supplier.html:85
+msgid "New Manufacturer"
+msgstr "Neuer Hersteller"
+
+#: company/views.py:70 templates/InvenTree/search.html:336
 #: templates/navbar.html:45
 msgid "Customers"
 msgstr "Kunden"
 
-#: company/views.py:72
+#: company/views.py:71
 msgid "New Customer"
 msgstr "Neuer Kunde"
 
-#: company/views.py:79
+#: company/views.py:78
 msgid "Companies"
 msgstr "Firmen"
 
-#: company/views.py:80
+#: company/views.py:79
 msgid "New Company"
 msgstr "Neue Firma"
 
-#: company/views.py:161 part/views.py:1008
+#: company/views.py:160 part/views.py:1008
 msgid "Download Image"
 msgstr "Bild herunterladen"
 
-#: company/views.py:190 part/views.py:1040
+#: company/views.py:189 part/views.py:1040
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "Bildgröße überschreitet maximal-erlaubte Größe für Downloads"
 
-#: company/views.py:197 part/views.py:1047
+#: company/views.py:196 part/views.py:1047
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Ungültige Antwort {code}"
 
-#: company/views.py:206 part/views.py:1056
+#: company/views.py:205 part/views.py:1056
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
-#: company/views.py:251
-msgid "Create New Manufacturer Part"
-msgstr "Neues Herstellerteil anlegen"
-
-#: company/views.py:334
+#: company/views.py:265
 msgid "Edit Supplier Part"
 msgstr "Zuliefererteil bearbeiten"
 
-#: company/views.py:385 templates/js/stock.js:1629
+#: company/views.py:316 templates/js/stock.js:1629
 msgid "Create new Supplier Part"
 msgstr "Neues Zuliefererteil anlegen"
 
-#: company/views.py:529
+#: company/views.py:460
 msgid "Delete Supplier Part"
 msgstr "Zuliefererteil entfernen"
 
@@ -4956,7 +4951,7 @@ msgstr "Teil-Hersteller"
 msgid "Delete manufacturer parts"
 msgstr "Herstellerteile löschen"
 
-#: part/templates/part/supplier.html:86 part/templates/part/supplier.html:162
+#: part/templates/part/supplier.html:86
 msgid "Create new manufacturer"
 msgstr "Neuen Hersteller anlegen"
 
@@ -7916,6 +7911,12 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Create new Manufacturer"
+#~ msgstr "Neuen Hersteller anlegen"
+
+#~ msgid "Create New Manufacturer Part"
+#~ msgstr "Neues Herstellerteil anlegen"
 
 #~ msgid "Adjust Stock"
 #~ msgstr "Lagerbestand anpassen"
