@@ -56,16 +56,6 @@ class PartImageDownloadForm(HelperForm):
         ]
 
 
-class PartImageForm(HelperForm):
-    """ Form for uploading a Part image """
-
-    class Meta:
-        model = Part
-        fields = [
-            'image',
-        ]
-
-
 class BomExportForm(forms.Form):
     """ Simple form to let user set BOM export options,
     before exporting a BOM (bill of materials) file.

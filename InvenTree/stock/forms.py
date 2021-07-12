@@ -328,50 +328,6 @@ class UninstallStockForm(forms.ModelForm):
         ]
 
 
-class AdjustStockForm(forms.ModelForm):
-    """ Form for performing simple stock adjustments.
-
-    - Add stock
-    - Remove stock
-    - Count stock
-    - Move stock
-
-    This form is used for managing stock adjuments for single or multiple stock items.
-    """
-
-    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination stock location'))
-
-    note = forms.CharField(label=_('Notes'), required=True, help_text=_('Add note (required)'))
-
-    # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
-
-    confirm = forms.BooleanField(required=False, initial=False, label=_('Confirm stock adjustment'), help_text=_('Confirm movement of stock items'))
-
-    set_loc = forms.BooleanField(required=False, initial=False, label=_('Set Default Location'), help_text=_('Set the destination as the default location for selected parts'))
-
-    class Meta:
-        model = StockItem
-
-        fields = [
-            'destination',
-            'note',
-            # 'transaction',
-            'confirm',
-        ]
-
-
-class EditStockItemStatusForm(HelperForm):
-    """
-    Simple form for editing StockItem status field
-    """
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'status',
-        ]
-
-
 class EditStockItemForm(HelperForm):
     """ Form for editing a StockItem object.
     Note that not all fields can be edited here (even if they can be specified during creation.
