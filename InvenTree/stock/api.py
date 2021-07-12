@@ -120,9 +120,6 @@ class StockAdjust(APIView):
     - StockAdd: add stock items
     - StockRemove: remove stock items
     - StockTransfer: transfer stock items
-
-    # TODO - This needs serious refactoring!!!
-
     """
 
     queryset = StockItem.objects.none()
@@ -502,7 +499,6 @@ class StockList(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # TODO - Save the user who created this item
         item = serializer.save()
 
         # A location was *not* specified - try to infer it

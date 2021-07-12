@@ -1473,6 +1473,11 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`required=''`);
     }
 
+    // Custom mouseover title?
+    if (parameters.title != null) {
+        opts.push(`title='${parameters.title}'`);
+    }
+
     // Placeholder?
     if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);

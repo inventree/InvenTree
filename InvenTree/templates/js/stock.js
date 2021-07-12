@@ -147,6 +147,7 @@ function adjustStock(action, items, options={}) {
                     min_value: minValue,
                     max_value: maxValue,
                     read_only: readonly,
+                    title: readonly ? '{% trans "Quantity cannot be adjusted for serialized stock" %}' : '{% trans "Specify stock quantity" %}',
                 }
             )
         };
