@@ -216,13 +216,25 @@
 
     {% if location %}
     $("#location-count").click(function() {
-        launchModalForm("/stock/adjust/", {
-            data: {
-                action: "count",
+
+        inventreeGet(
+            '{% url "api-stock-list" %}',
+            {
                 location: {{ location.id }},
-                reload: true,
+                in_stock: true,
+                part_detail: true,
+                location_detail: true,
+            },
+            {
+                success: function(items) {
+                    adjustStock('count', items, {
+                        onSuccess: function() {
+                            location.reload();
+                        }
+                    });
+                }
             }
-        });
+        );
     });
 
     $('#print-label').click(function() {

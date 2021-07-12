@@ -23,7 +23,7 @@ function stockStatusCodes() {
 /**
  * Perform stock adjustments
  */
-function adjustStock(items, options={}) {
+function adjustStock(action, items, options={}) {
 
     var formTitle = 'Form Title Here';
     var actionTitle = null;
@@ -34,7 +34,7 @@ function adjustStock(items, options={}) {
     var specifyLocation = false;
     var allowSerializedStock = false;
 
-    switch (options.action) {
+    switch (action) {
         case 'move':
             formTitle = '{% trans "Transfer Stock" %}';
             actionTitle = '{% trans "Move" %}';
@@ -97,7 +97,7 @@ function adjustStock(items, options={}) {
         var maxValue = null;
         var value = null;
 
-        switch (options.action) {
+        switch (action) {
             case 'move':
                 minValue = 0;
                 maxValue = item.quantity;
@@ -224,7 +224,7 @@ function adjustStock(items, options={}) {
         onSubmit: function(fields, opts) {
 
             // "Delete" action gets handled differently
-            if (options.action == 'delete') {
+            if (action == 'delete') {
 
                 var requests = [];
 
@@ -259,7 +259,9 @@ function adjustStock(items, options={}) {
 
                 var q = getFormFieldValue(item.pk, {}, {modal: modal});
 
-                data.items.push({pk: item.pk, quantity: q})
+                if (q != null) {
+                    data.items.push({pk: item.pk, quantity: q});
+                }
             });
 
             // Add in extra field data
@@ -1053,39 +1055,11 @@ function loadStockTable(table, options) {
     function stockAdjustment(action) {
         var items = $("#stock-table").bootstrapTable("getSelections");
 
-        adjustStock(items, {
-            action: action,
+        adjustStock(action, items, {
             onSuccess: function() {
                 $('#stock-table').bootstrapTable('refresh');
             }
         });
-
-        return;
-
-        // Buttons for launching secondary modals
-        var secondary = [];
-
-        if (action == 'move') {
-            secondary.push({
-                field: 'destination',
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new location" %}',
-                url: "/stock/location/new/",
-            });
-        }
-
-        launchModalForm("/stock/adjust/",
-            {
-                data: {
-                    action: action,
-                    stock: stock,
-                },
-                success: function() {
-                    $("#stock-table").bootstrapTable('refresh');
-                },
-                secondary: secondary,
-            }
-        );
     }
 
     // Automatically link button callbacks

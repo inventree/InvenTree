@@ -273,13 +273,25 @@
     });
 
     $("#part-count").click(function() {
-        launchModalForm("/stock/adjust/", {
-            data: {
-                action: "count",
+        inventreeGet(
+            '{% url "api-stock-list" %}',
+            {
                 part: {{ part.id }},
+                in_stock: true,
+                allow_variants: true,
+                part_detail: true,
+                location_detail: true,
             },
-            reload: true,
-        });
+            {
+                success: function(items) {
+                    adjustStock('count', items, {
+                        onSuccess: function() {
+                            location.reload();
+                        }
+                    });
+                },
+            }
+        );
     });
 
     $("#price-button").click(function() {

@@ -481,13 +481,6 @@ class StockList(generics.ListCreateAPIView):
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
-
-    Additional query parameters are available:
-        - location: Filter stock by location
-        - category: Filter by parts belonging to a certain category
-        - supplier: Filter by supplier
-        - ancestor: Filter by an 'ancestor' StockItem
-        - status: Filter by the StockItem status
     """
 
     serializer_class = StockItemSerializer
