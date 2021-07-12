@@ -194,45 +194,6 @@ class ManufacturerPartViewTests(CompanyViewTestBase):
     Tests for the ManufacturerPart views.
     """
 
-    def test_manufacturer_part_create(self):
-        """
-        Test the ManufacturerPartCreate view.
-        """
-
-        url = reverse('manufacturer-part-create')
-
-        # First check that we can GET the form
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # How many manufaturer parts are already in the database?
-        n = ManufacturerPart.objects.all().count()
-
-        data = {
-            'part': 1,
-            'manufacturer': 6,
-        }
-
-        # MPN is required! (form should fail)
-        (response, errors) = self.post(url, data, valid=False)
-
-        self.assertIsNotNone(errors.get('MPN', None))
-
-        data['MPN'] = 'TEST-ME-123'
-
-        (response, errors) = self.post(url, data, valid=True)
-
-        # Check that the ManufacturerPart was created!
-        self.assertEqual(n + 1, ManufacturerPart.objects.all().count())
-
-        # Try to create duplicate ManufacturerPart
-        (response, errors) = self.post(url, data, valid=False)
-
-        self.assertIsNotNone(errors.get('__all__', None))
-
-        # Check that the ManufacturerPart count stayed the same
-        self.assertEqual(n + 1, ManufacturerPart.objects.all().count())
-
     def test_supplier_part_create(self):
         """
         Test that the SupplierPartCreate view creates Manufacturer Part.

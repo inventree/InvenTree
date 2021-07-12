@@ -38,8 +38,7 @@ company_urls = [
 ]
 
 manufacturer_part_urls = [
-    url(r'^new/?', views.ManufacturerPartCreate.as_view(), name='manufacturer-part-create'),
-
+    
     url(r'^(?P<pk>\d+)/', include([
         url(r'^suppliers/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-suppliers'),
         url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-detail'),
