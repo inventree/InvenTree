@@ -148,21 +148,24 @@
     });
 
     $('#manufacturer-create').click(function () {
-        launchModalForm(
-            "{% url 'manufacturer-part-create' %}",
-            {
-                reload: true,
-                data: {
-                    part: {{ part.id }}
+
+        constructForm('{% url "api-manufacturer-part-list" %}', {
+            fields: {
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true,
                 },
-                secondary: [
-                    {
-                        field: 'manufacturer',
-                        label: '{% trans "New Manufacturer" %}',
-                        title: '{% trans "Create new manufacturer" %}',
-                    }
-                ]
-            });
+                manufacturer: {},
+                MPN: {},
+                description: {},
+                link: {},
+            },
+            method: 'POST',
+            title: '{% trans "Add Manufacturer Part" %}',
+            onSuccess: function() { 
+                $("#manufacturer-table").bootstrapTable("refresh");
+            }
+        });
     });
 
 {% endblock %}
