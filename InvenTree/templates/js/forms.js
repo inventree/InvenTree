@@ -395,11 +395,11 @@ function constructFormBody(fields, options) {
 
     for (var name in displayed_fields) {
 
-        // Only push names which are actually in the set of fields
-        if (name in fields) {
-            field_names.push(name);
-        } else {
-            console.log(`WARNING: '${name}' does not match a valid field name.`);
+        field_names.push(name);
+
+        // Field not specified in the API, but the client wishes to add it!
+        if (!(name in fields)) {
+            fields[name] = displayed_fields[name];
         }
     }
 
@@ -422,10 +422,8 @@ function constructFormBody(fields, options) {
             default:
                 break;
         }
-
-        var f = constructField(name, field, options);
         
-        html += f;
+        html += constructField(name, field, options);
     }
 
     // TODO: Dynamically create the modals,
@@ -441,7 +439,15 @@ function constructFormBody(fields, options) {
     modalEnable(modal, true);
     
     // Insert generated form content
-    $(modal).find('.modal-form-content').html(html);
+    $(modal).find('#form-content').html(html);
+
+    if (options.preFormContent) {
+        $(modal).find('#pre-form-content').html(options.preFormContent);
+    }
+
+    if (options.postFormContent) {
+        $(modal).find('#post-form-content').html(options.postFormContent);
+    }
     
     // Clear any existing buttons from the modal
     $(modal).find('#modal-footer-buttons').html('');
@@ -474,7 +480,21 @@ function constructFormBody(fields, options) {
 
     $(modal).on('click', '#modal-form-submit', function() {
 
-        submitFormData(fields, options);
+        // Immediately disable the "submit" button,
+        // to prevent the form being submitted multiple times!
+        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+
+        // Run custom code before normal form submission
+        if (options.beforeSubmit) {
+            options.beforeSubmit(fields, options);
+        }
+
+        // Run custom code instead of normal form submission
+        if (options.onSubmit) {
+            options.onSubmit(fields, options);
+        } else {
+            submitFormData(fields, options);
+        }
     });
 }
 
@@ -510,10 +530,6 @@ function insertConfirmButton(options) {
  * 
  */
 function submitFormData(fields, options) {
-
-    // Immediately disable the "submit" button,
-    // to prevent the form being submitted multiple times!
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
 
     // Form data to be uploaded to the server
     // Only used if file / image upload is required
@@ -581,47 +597,9 @@ function submitFormData(fields, options) {
                     case 400:   // Bad request
                         handleFormErrors(xhr.responseJSON, fields, options);
                         break;
-                    case 0:     // No response
-                        $(options.modal).modal('hide');
-                        showAlertDialog(
-                            '{% trans "No Response" %}',
-                            '{% trans "No response from the InvenTree server" %}',
-                        );
-                        break;
-                    case 401:   // Not authenticated
-                        $(options.modal).modal('hide');
-                        showAlertDialog(
-                            '{% trans "Error 401: Not Authenticated" %}',
-                            '{% trans "Authentication credentials not supplied" %}',
-                        );
-                        break;
-                    case 403:   // Permission denied
-                        $(options.modal).modal('hide');
-                        showAlertDialog(
-                            '{% trans "Error 403: Permission Denied" %}',
-                            '{% trans "You do not have the required permissions to access this function" %}',
-                        );
-                        break;
-                    case 404:   // Resource not found
-                        $(options.modal).modal('hide');  
-                        showAlertDialog(
-                            '{% trans "Error 404: Resource Not Found" %}',
-                            '{% trans "The requested resource could not be located on the server" %}',
-                        );
-                        break;
-                    case 408:   // Timeout
-                        $(options.modal).modal('hide');  
-                        showAlertDialog(
-                            '{% trans "Error 408: Timeout" %}',
-                            '{% trans "Connection timeout while requesting data from server" %}',
-                        );
-                        break;
                     default:
                         $(options.modal).modal('hide');
-
-                        showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
-
-                        console.log(`WARNING: Unhandled response code - ${xhr.status}`);
+                        showApiError(xhr);
                         break;
                 }
             }
@@ -696,6 +674,10 @@ function getFormFieldValue(name, field, options) {
 
     // Find the HTML element
     var el = $(options.modal).find(`#id_${name}`);
+
+    if (!el) {
+        return null;
+    }
 
     var value = null;
 
@@ -834,33 +816,27 @@ function handleFormErrors(errors, fields, options) {
     }
 
     for (field_name in errors) {
-        if (field_name in fields) {
 
-            // Add the 'has-error' class
-            $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+        // Add the 'has-error' class
+        $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
 
-            var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
+        var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
 
-            var field_errors = errors[field_name];
+        var field_errors = errors[field_name];
 
-            // Add an entry for each returned error message
-            for (var idx = field_errors.length-1; idx >= 0; idx--) {
+        // Add an entry for each returned error message
+        for (var idx = field_errors.length-1; idx >= 0; idx--) {
 
-                var error_text = field_errors[idx];
+            var error_text = field_errors[idx];
 
-                var html = `
-                <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
-                    <strong>${error_text}</strong>
-                </span>`;
+            var html = `
+            <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
+                <strong>${error_text}</strong>
+            </span>`;
 
-                field_dom.append(html);
-            }
-
-        } else {
-            console.log(`WARNING: handleFormErrors found no match for field '${field_name}'`);
+            field_dom.append(html);
         }
     }
-
 }
 
 
@@ -1464,21 +1440,21 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`readonly=''`);
     }
 
-    if (parameters.value) {
+    if (parameters.value != null) {
         // Existing value?
         opts.push(`value='${parameters.value}'`);
-    } else if (parameters.default) {
+    } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);
     }
 
     // Maximum input length
-    if (parameters.max_length) {
+    if (parameters.max_length != null) {
         opts.push(`maxlength='${parameters.max_length}'`);
     }
 
     // Minimum input length
-    if (parameters.min_length) {
+    if (parameters.min_length != null) {
         opts.push(`minlength='${parameters.min_length}'`);
     }
 
@@ -1497,8 +1473,13 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`required=''`);
     }
 
+    // Custom mouseover title?
+    if (parameters.title != null) {
+        opts.push(`title='${parameters.title}'`);
+    }
+
     // Placeholder?
-    if (parameters.placeholder) {
+    if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);
     }
 
