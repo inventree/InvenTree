@@ -49,9 +49,25 @@
                     <span id='part-price-icon' class='fas fa-dollar-sign'/>
                 </button>
                 {% if roles.stock.change %}
-                <button type='button' class='btn btn-default' id='part-count' title='{% trans "Count part stock" %}'>
-                    <span class='fas fa-clipboard-list'/>
-                </button>
+                <div class='btn-group'>
+                    <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                        <span class='fas fa-boxes'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu'>
+                        <li>
+                            <a href='#' id='part-count'>
+                                <span class='fas fa-clipboard-list'></span>
+                                {% trans "Count part stock" %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#' id='part-move'>
+                                <span class='fas fa-exchange-alt'></span>
+                                {% trans "Move part stock" %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 {% endif %}
                 {% if part.purchaseable %}
                 {% if roles.purchase_order.add %}
@@ -272,7 +288,7 @@
         printPartLabels([{{ part.pk }}]);
     });
 
-    $("#part-count").click(function() {
+    function adjustPartStock(action) {
         inventreeGet(
             '{% url "api-stock-list" %}',
             {
@@ -284,7 +300,7 @@
             },
             {
                 success: function(items) {
-                    adjustStock('count', items, {
+                    adjustStock(action, items, {
                         onSuccess: function() {
                             location.reload();
                         }
@@ -292,6 +308,14 @@
                 },
             }
         );
+    }
+
+    $("#part-move").click(function() {
+        adjustPartStock('move');
+    });
+
+    $("#part-count").click(function() {
+        adjustPartStock('count');
     });
 
     $("#price-button").click(function() {
