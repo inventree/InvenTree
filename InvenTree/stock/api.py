@@ -1093,47 +1093,41 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LocationSerializer
 
 
-stock_endpoints = [
-    url(r'^$', StockDetail.as_view(), name='api-stock-detail'),
-]
-
-location_endpoints = [
-    url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
-
-    url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
-]
-
 stock_api_urls = [
-    url(r'location/', include(location_endpoints)),
+    url(r'^location/', include([
+        url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+        url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
+    ])),
 
-    # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
-    # TODO: Remove server-side forms for stock adjustment!!!
-    url(r'count/?', StockCount.as_view(), name='api-stock-count'),
-    url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
-    url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
-    url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
+    # Endpoints for bulk stock adjustment actions
+    url(r'^count/', StockCount.as_view(), name='api-stock-count'),
+    url(r'^add/', StockAdd.as_view(), name='api-stock-add'),
+    url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
+    url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
 
-    # Base URL for StockItemAttachment API endpoints
+    # StockItemAttachment API endpoints
     url(r'^attachment/', include([
         url(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
-    # Base URL for StockItemTestResult API endpoints
+    # StockItemTestResult API endpoints
     url(r'^test/', include([
         url(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
         url(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
+    # StockItemTracking API endpoints
     url(r'^track/', include([
         url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
         url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
-    url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
+    url(r'^tree/', StockCategoryTree.as_view(), name='api-stock-tree'),
 
     # Detail for a single stock item
-    url(r'^(?P<pk>\d+)/', include(stock_endpoints)),
+    url(r'^(?P<pk>\d+)/', StockDetail.as_view(), name='api-stock-detail'),
 
+    # Anything else
     url(r'^.*$', StockList.as_view(), name='api-stock-list'),
 ]
