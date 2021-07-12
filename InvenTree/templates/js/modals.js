@@ -12,7 +12,6 @@
  */
 function createNewModal(options={}) {
 
-
     var id = 1;
 
     // Check out what modal forms are already being displayed
@@ -588,34 +587,19 @@ function showQuestionDialog(title, content, options={}) {
      *   cancel - Functino to run if the user presses 'Cancel'
      */ 
 
-    var modal = options.modal || '#modal-question-dialog';
-
-    $(modal).on('shown.bs.modal', function() {
-        $(modal + ' .modal-form-content').scrollTop(0);
+    var modal = createNewModal({
+        title: title,
+        submitText: options.accept_text || '{% trans "Accept" %}',
+        cancelText: options.cancel_text || '{% trans "Cancel" %}',
     });
 
-    modalSetTitle(modal, title);
     modalSetContent(modal, content);
 
-    var accept_text = options.accept_text || '{% trans "Accept" %}';
-    var cancel_text = options.cancel_text || '{% trans "Cancel" %}';
-
-    $(modal).find('#modal-form-cancel').html(cancel_text);
-    $(modal).find('#modal-form-accept').html(accept_text);
-
-    $(modal).on('click', '#modal-form-accept', function() {
+    $(modal).on('click', "#modal-form-submit", function() {
         $(modal).modal('hide');
 
         if (options.accept) {
             options.accept();
-        }
-    });
-
-    $(modal).on('click', 'modal-form-cancel', function() {
-        $(modal).modal('hide');
-
-        if (options.cancel) {
-            options.cancel();
         }
     });
 
