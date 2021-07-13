@@ -15,7 +15,7 @@
     </div>
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
-        <div id='button-toolbar'>
+        <div id='supplier-part-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     {% if roles.purchase_order.add %}
@@ -46,7 +46,7 @@
         </div>
         {% endif %}
 
-        <table class='table table-striped table-condensed' id='part-table' data-toolbar='#button-toolbar'>
+        <table class='table table-striped table-condensed' id='supplier-part-table' data-toolbar='#supplier-part-button-toolbar'>
         </table>
     </div>
 </div>
@@ -57,7 +57,7 @@
     </div>
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
-        <div id='button-toolbar'>
+        <div id='manufacturer-part-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group role='group'>
                     {% if roles.purchase_order.add %}
@@ -87,7 +87,7 @@
             </div>
         </div>
         {% endif %}
-        <table class='table table-striped table-condensed' id='part-table' data-toolbar='#button-toolbar'>
+        <table class='table table-striped table-condensed' id='part-table' data-toolbar='#manufacturer-part-button-toolbar'>
         </table>
     </div>
 </div>
@@ -107,7 +107,7 @@
     </div>
     <div class='panel-content'>
         {% if roles.purchase_order.add %}
-        <div id='button-bar'>
+        <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
                 <button class='btn btn-primary' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}</button>
@@ -118,7 +118,7 @@
         </div>
         {% endif %}
 
-        <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
+        <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#po-button-bar'>
         </table>
     </div>
 </div>
@@ -129,7 +129,7 @@
     </div>
     <div class='panel-content'>
         {% if roles.sales_order.add %}
-        <div id='button-bar'>
+        <div id='so-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
                 <button class='btn btn-primary' type='button' id='new-sales-order' title='{% trans "Create new sales order" %}'>
                     <div class='fas fa-plus-circle'></div> {% trans "New Sales Order" %}
@@ -141,7 +141,7 @@
         </div>
         {% endif %}
 
-        <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#button-bar'>
+        <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
         </table>
     </div>
 </div>
@@ -151,13 +151,13 @@
         <h4>{% trans "Assigned Stock" %}</h4>
     </div>
     <div class='panel-content'>
-        <div id='button-toolbar'>
+        <div id='assigned-stock-button-toolbar'>
             <div class='filter-list' id='filter-list-stock'>
                 <!-- An empty div in which the filter list will be constructed -->
             </div>
         </div>
         
-        <table class='table table-striped table-condensed' id='assigned-stock-table' data-toolbar='#button-toolbar'></table>
+        <table class='table table-striped table-condensed' id='assigned-stock-table' data-toolbar='#bassigned-stock-utton-toolbar'></table>
         
     </div>
 </div>
@@ -373,7 +373,7 @@
     });
 
     loadSupplierPartTable(
-        "#part-table",
+        "#supplier-part-table",
         "{% url 'api-supplier-part-list' %}",
         {
             params: {
