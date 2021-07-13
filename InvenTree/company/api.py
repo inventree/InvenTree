@@ -263,11 +263,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all().prefetch_related(
-        'part',
-        'supplier',
-        'manufacturer_part__manufacturer',
-    )
+    queryset = SupplierPart.objects.all()
 
     def get_queryset(self):
 
