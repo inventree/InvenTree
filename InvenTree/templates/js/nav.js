@@ -24,7 +24,7 @@ function attachNavCallbacks(options={}) {
     var panelClass = options.name || 'unknown';
 
     // Look for a default panel to initialize
-    var defaultPanel = localStorage.getItem(`selected-panel-${panelClass}`) || options.default;
+    var defaultPanel = localStorage.getItem(`inventree-selected-panel-${panelClass}`) || options.default;
 
     if (defaultPanel) {
         activatePanel(defaultPanel);
@@ -37,7 +37,7 @@ function activatePanel(panelName, options={}) {
     var panelClass = options.name || 'unknown';
 
     // Save the selected panel
-    localStorage.setItem(`selected-panel-${panelClass}`, panelName);
+    localStorage.setItem(`inventree-selected-panel-${panelClass}`, panelName);
 
     // First, cause any other panels to "fade out"
     $('.panel-visible').hide();
@@ -48,13 +48,13 @@ function activatePanel(panelName, options={}) {
 
     // Display the panel
     $(panel).addClass('panel-visible');
-    $(panel).fadeIn(50);
+    $(panel).fadeIn(100);
 
     // Un-select all selectors
-    $('.nav-item').removeClass('active');
+    $('.list-group-item').removeClass('active');
 
     // Find the associated selector
     var select = `#select-${panelName}`;
 
-    $(select).parent('.nav-item').addClass('active');
+    $(select).parent('.list-group-item').addClass('active');
 }
