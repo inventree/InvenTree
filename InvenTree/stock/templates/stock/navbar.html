@@ -10,8 +10,8 @@
 
     <li class='list-group-item {% if tab == "tracking" %}active{% endif %}' title='{% trans "Stock Item Tracking" %}'>
         <a href='{% url "stock-item-detail" item.id %}'>
-            <span class='fas fa-history sidebar-icon'></span>
-            {% trans "History" %}
+            <span class='fas fa-history fa-info-circle sidebar-icon'></span>
+            {% trans "Details" %}
         </a>
     </li>
 
@@ -42,20 +42,4 @@
         </a>
     </li>
     {% endif %}
-
-
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
-        <a href='{% url "stock-item-attachments" item.id %}'>
-            <span class='fas fa-paperclip sidebar-icon'></span>
-            {% trans "Attachments" %}
-        </a>
-    </li>
-
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Stock Item Notes" %}'>
-        <a href='{% url "stock-item-notes" item.id %}'>
-            <span class='fas fa-clipboard sidebar-icon'></span>
-            {% trans "Notes" %}
-        </a>
-    </li>
-
 </ul>

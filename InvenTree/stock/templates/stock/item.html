@@ -3,9 +3,52 @@
 {% load static %}
 {% load inventree_extras %}
 {% load i18n %}
+{% load markdownify %}
 
 {% block menubar %}
 {% include "stock/navbar.html" with tab="tracking" %}
+{% endblock %}
+
+{% block pre_content_panels %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <div class='panel panel-default panel-inventree'>
+            <div class='panel-heading'>
+                <div class='row'>
+                    <div class='col-sm-6'>
+                        <h4>{% trans "Stock Item Notes" %}</h4>
+                    </div>
+                    <div class='col-sm-6'>
+                        <div class='btn-group float-right'>
+                            <button type='button' id='edit-notes' title='{% trans "Edit notes" %}' class='btn btn-small btn-default'>
+                                <span class='fas fa-edit'></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='panel-content'>
+                {% if item.notes %}
+                <div class='notes'>
+                    {{ item.notes | markdownify }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='col-sm-6'>
+        <div class='panel panel-default panel-inventree'>
+            <div class='panel-heading'>
+                <h4>{% trans "Attachments" %}</h4>
+            </div>
+            <div class='panel-content'>
+                {% include "attachment_table.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block heading %}
@@ -38,6 +81,7 @@
 
 {% endblock %}
 
+
 {% block js_ready %}
 {{ block.super }}
 
@@ -58,6 +102,82 @@
             user_detail: true,
         },
         url: "{% url 'api-stock-tracking-list' %}", 
+    });
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        "{% url 'api-stock-attachment-list' %}",
+        {
+            data: {
+                stock_item: {{ item.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                reloadAttachmentTable();
+            }
+        }
+    );
+
+    loadAttachmentTable(
+        '{% url "api-stock-attachment-list" %}',
+        {
+            filters: {
+                stock_item: {{ item.pk }},
+            },
+            onEdit: function(pk) {
+                var url = `/api/stock/attachment/${pk}/`;
+
+                constructForm(url, {
+                    fields: {
+                        comment: {},
+                    },
+                    title: '{% trans "Edit Attachment" %}',
+                    onSuccess: reloadAttachmentTable 
+                });
+            },
+            onDelete: function(pk) {
+                var url = `/api/stock/attachment/${pk}/`;
+
+                constructForm(url, {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
+            }
+        }
+    );
+
+    $("#new-attachment").click(function() {
+
+        constructForm(
+            '{% url "api-stock-attachment-list" %}',
+            {
+                method: 'POST',
+                fields: {
+                    attachment: {},
+                    comment: {},
+                    stock_item: {
+                        value: {{ item.pk }},
+                        hidden: true,
+                    },
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Add Attachment" %}',
+            }
+        );
+    });
+
+    $("#edit-notes").click(function() {
+        constructForm('{% url "api-stock-detail" item.pk %}', {
+            fields: {
+                notes: {
+                    multiline: true,
+                }
+            },
+            title: '{% trans "Edit Stock Item Notes" %}',
+            reload: true,
+        });
     });
 
 {% endblock %}
