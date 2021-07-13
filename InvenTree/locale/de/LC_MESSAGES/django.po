@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-12 13:57+0000\n"
-"PO-Revision-Date: 2021-07-10 04:49\n"
+"PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2324,10 +2324,8 @@ msgstr "Teile löschen"
 
 #: company/templates/company/detail_manufacturer_part.html:72
 #: part/templates/part/supplier.html:164
-#, fuzzy
-#| msgid "Manufacturer Part"
 msgid "Add Manufacturer Part"
-msgstr "Herstellerteil"
+msgstr ""
 
 #: company/templates/company/detail_stock.html:10
 msgid "Supplier Stock"
@@ -4481,10 +4479,8 @@ msgid "Responsible User"
 msgstr "Verantwortlicher Benutzer"
 
 #: part/templates/part/detail.html:154
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Edit Notes"
-msgstr "Bermerkungen bearbeiten"
+msgstr ""
 
 #: part/templates/part/detail.html:181
 msgid "Part is virtual (not a physical part)"
@@ -4551,10 +4547,8 @@ msgid "Add new parameter"
 msgstr "Parameter hinzufügen"
 
 #: part/templates/part/detail.html:319
-#, fuzzy
-#| msgid "Part Notes"
 msgid "Edit Part Notes"
-msgstr "Teil-Bemerkungen"
+msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:51
@@ -4648,10 +4642,8 @@ msgid "Count part stock"
 msgstr "Lagerbestand zählen"
 
 #: part/templates/part/part_base.html:66
-#, fuzzy
-#| msgid "Transfer stock"
 msgid "Transfer part stock"
-msgstr "Bestand verschieben"
+msgstr ""
 
 #: part/templates/part/part_base.html:83
 msgid "Part actions"
@@ -5260,10 +5252,8 @@ msgid "Fail"
 msgstr "fehlgeschlagen"
 
 #: stock/api.py:146
-#, fuzzy
-#| msgid "Enter quantity of stock items"
 msgid "Request must contain list of stock items"
-msgstr "Menge der BestandsObjekt eingeben"
+msgstr ""
 
 #: stock/api.py:154
 msgid "Improperly formatted data"
@@ -5274,22 +5264,16 @@ msgid "Each entry must contain a valid integer primary-key"
 msgstr ""
 
 #: stock/api.py:168
-#, fuzzy
-#| msgid "Barcode does not match Stock Item"
 msgid "Primary key does not match valid stock item"
-msgstr "Barcode entspricht keinem BestandsObjekt"
+msgstr ""
 
 #: stock/api.py:178
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity value"
-msgstr "Keine gültige Menge"
+msgstr ""
 
 #: stock/api.py:183
-#, fuzzy
-#| msgid "Quantity must be greater than zero"
 msgid "Quantity must not be less than zero"
-msgstr "Anzahl muss größer Null sein"
+msgstr ""
 
 #: stock/api.py:211
 #, python-brace-format
@@ -5297,16 +5281,12 @@ msgid "Updated stock for {n} items"
 msgstr "Bestand für {n} Objekte geändert"
 
 #: stock/api.py:247 stock/api.py:280
-#, fuzzy
-#| msgid "Allocation quantity cannot exceed stock quantity"
 msgid "Specified quantity exceeds stock quantity"
-msgstr "Die zugeordnete Anzahl darf nicht die verfügbare Anzahl überschreiten"
+msgstr ""
 
 #: stock/api.py:270
-#, fuzzy
-#| msgid "Build output must be specified"
 msgid "Valid location must be specified"
-msgstr "Endprodukt muss angegeben sein"
+msgstr ""
 
 #: stock/api.py:290
 #, python-brace-format
@@ -6152,13 +6132,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6447,16 +6425,12 @@ msgid "No response from the InvenTree server"
 msgstr "keine Antwort vom InvenTree Server"
 
 #: templates/js/api.js:160
-#, fuzzy
-#| msgid "Error 400: Bad Request"
 msgid "Error 400: Bad request"
-msgstr "Fehler 400: Ungültige Anfrage"
+msgstr ""
 
 #: templates/js/api.js:161
-#, fuzzy
-#| msgid "Server returned error code 400"
 msgid "API request returned error code 400"
-msgstr "Fehler 400 von Server erhalten"
+msgstr ""
 
 #: templates/js/api.js:164 templates/js/modals.js:1034
 msgid "Error 401: Not Authenticated"
@@ -7156,40 +7130,32 @@ msgid "Sales Order(s) must be selected before printing report"
 msgstr "Auftrag muss vor dem Berichtsdruck ausgewählt werden"
 
 #: templates/js/stock.js:39
-#, fuzzy
-#| msgid "Transfer stock"
 msgid "Transfer Stock"
-msgstr "Bestand verschieben"
+msgstr ""
 
 #: templates/js/stock.js:40
 msgid "Move"
 msgstr "Verschieben"
 
 #: templates/js/stock.js:46
-#, fuzzy
-#| msgid "Count stock"
 msgid "Count Stock"
-msgstr "Bestand zählen"
+msgstr ""
 
 #: templates/js/stock.js:47
 msgid "Count"
 msgstr "Anzahl"
 
 #: templates/js/stock.js:51
-#, fuzzy
-#| msgid "Remove stock"
 msgid "Remove Stock"
-msgstr "Bestand entfernen"
+msgstr ""
 
 #: templates/js/stock.js:52
 msgid "Take"
 msgstr "Entfernen"
 
 #: templates/js/stock.js:56
-#, fuzzy
-#| msgid "Add stock"
 msgid "Add Stock"
-msgstr "Bestand hinzufügen"
+msgstr ""
 
 #: templates/js/stock.js:57 users/models.py:189
 msgid "Add"
@@ -7200,32 +7166,24 @@ msgid "Delete Stock"
 msgstr "Bestand löschen"
 
 #: templates/js/stock.js:150
-#, fuzzy
-#| msgid "Quantity must be 1 for serialized stock"
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
+msgstr ""
 
 #: templates/js/stock.js:150
-#, fuzzy
-#| msgid "Stock Quantity"
 msgid "Specify stock quantity"
-msgstr "Bestand"
+msgstr ""
 
 #: templates/js/stock.js:186
 msgid "You must select at least one available stock item"
 msgstr ""
 
 #: templates/js/stock.js:202
-#, fuzzy
-#| msgid "Destination stock location"
 msgid "Select destination stock location"
-msgstr "Ziel-Lagerbestand"
+msgstr ""
 
 #: templates/js/stock.js:210
-#, fuzzy
-#| msgid "Stock actions"
 msgid "Stock transaction notes"
-msgstr "Bestands-Aktionen"
+msgstr ""
 
 #: templates/js/stock.js:347
 msgid "PASS"
@@ -7894,74 +7852,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Part Attachments"
-#~ msgstr "Anhänge"
-
-#~ msgid "Destination stock location"
-#~ msgstr "Ziel-Lagerbestand"
-
-#~ msgid "Add note (required)"
-#~ msgstr "Notiz hinzufügen (erforderlich)"
-
-#~ msgid "Confirm movement of stock items"
-#~ msgstr "Verschieben der BestandsObjekt bestätigen"
-
-#~ msgid "Set Default Location"
-#~ msgstr "Standard-Lagerort ändern"
-
-#~ msgid "Set the destination as the default location for selected parts"
-#~ msgstr "Setze das Ziel als Standard-Lagerort für ausgewählte Teile"
-
-#~ msgid "Create new Manufacturer"
-#~ msgstr "Neuen Hersteller anlegen"
-
-#~ msgid "Create New Manufacturer Part"
-#~ msgstr "Neues Herstellerteil anlegen"
-
-#~ msgid "Adjust Stock"
-#~ msgstr "Lagerbestand anpassen"
-
-#~ msgid "Move Stock Items"
-#~ msgstr "BestandsObjekte bewegen"
-
-#~ msgid "Count Stock Items"
-#~ msgstr "BestandsObjekte zählen"
-
-#~ msgid "Remove From Stock"
-#~ msgstr "Aus Lagerbestand entfernen"
-
-#~ msgid "Add Stock Items"
-#~ msgstr "BestandsObjekte hinzufügen"
-
-#~ msgid "Delete Stock Items"
-#~ msgstr "BestandsObjekte löschen"
-
-#~ msgid "Must enter integer value"
-#~ msgstr "Nur Ganzzahl eingeben"
-
-#~ msgid "Quantity must be positive"
-#~ msgstr "Anzahl muss positiv sein"
-
-#~ msgid "Quantity must not exceed {x}"
-#~ msgstr "Anzahl darf {x} nicht überschreiten"
-
-#~ msgid "No action performed"
-#~ msgstr "Keine Aktion durchgeführt"
-
-#~ msgid "Added stock to {n} items"
-#~ msgstr "Vorrat zu {n} BestandsObjekten hinzugefügt"
-
-#~ msgid "Removed stock from {n} items"
-#~ msgstr "Vorrat von {n} BestandsObjekten entfernt"
-
-#~ msgid "Counted stock for {n} items"
-#~ msgstr "Bestand für {n} Objekte erfasst"
-
-#~ msgid "No items were moved"
-#~ msgstr "Keine BestandsObjekt wurden bewegt"
-
-#~ msgid "Moved {n} items to {dest}"
-#~ msgstr "{n} Teile nach {dest} bewegt"
-
-#~ msgid "Deleted {n} stock items"
-#~ msgstr "{n} BestandsObjekte gelöscht"

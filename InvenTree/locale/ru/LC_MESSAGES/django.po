@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-12 13:57+0000\n"
-"PO-Revision-Date: 2021-07-10 04:50\n"
+"PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -5268,10 +5268,8 @@ msgid "Primary key does not match valid stock item"
 msgstr ""
 
 #: stock/api.py:178
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity value"
-msgstr "недопустимое количество"
+msgstr ""
 
 #: stock/api.py:183
 msgid "Quantity must not be less than zero"
@@ -5287,10 +5285,8 @@ msgid "Specified quantity exceeds stock quantity"
 msgstr ""
 
 #: stock/api.py:270
-#, fuzzy
-#| msgid "No action specified"
 msgid "Valid location must be specified"
-msgstr "Действие не указано"
+msgstr ""
 
 #: stock/api.py:290
 #, python-brace-format
@@ -6136,8 +6132,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7180,16 +7175,12 @@ msgid "You must select at least one available stock item"
 msgstr ""
 
 #: templates/js/stock.js:202
-#, fuzzy
-#| msgid "Select quantity of stock to allocate"
 msgid "Select destination stock location"
-msgstr "Выберите количество запасов для распределения"
+msgstr ""
 
 #: templates/js/stock.js:210
-#, fuzzy
-#| msgid "Stock counted"
 msgid "Stock transaction notes"
-msgstr "Склад подсчитан"
+msgstr ""
 
 #: templates/js/stock.js:347
 msgid "PASS"
@@ -7857,3 +7848,4 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
+

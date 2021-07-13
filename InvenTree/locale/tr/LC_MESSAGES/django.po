@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-12 13:57+0000\n"
-"PO-Revision-Date: 2021-07-10 04:50\n"
+"PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -4479,10 +4479,8 @@ msgid "Responsible User"
 msgstr ""
 
 #: part/templates/part/detail.html:154
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Edit Notes"
-msgstr "Notları Düzenle"
+msgstr ""
 
 #: part/templates/part/detail.html:181
 msgid "Part is virtual (not a physical part)"
@@ -4549,10 +4547,8 @@ msgid "Add new parameter"
 msgstr ""
 
 #: part/templates/part/detail.html:319
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Edit Part Notes"
-msgstr "Notları Düzenle"
+msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:51
@@ -5268,22 +5264,16 @@ msgid "Each entry must contain a valid integer primary-key"
 msgstr ""
 
 #: stock/api.py:168
-#, fuzzy
-#| msgid "Barcode does not match a valid location"
 msgid "Primary key does not match valid stock item"
-msgstr "Barkod geçerli bir konumla eşleşmiyor"
+msgstr ""
 
 #: stock/api.py:178
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity value"
-msgstr "Geçersiz veri sağlandı"
+msgstr ""
 
 #: stock/api.py:183
-#, fuzzy
-#| msgid "Allocation quantity must be greater than zero"
 msgid "Quantity must not be less than zero"
-msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
+msgstr ""
 
 #: stock/api.py:211
 #, python-brace-format
@@ -5291,16 +5281,12 @@ msgid "Updated stock for {n} items"
 msgstr "{n} öge için stok güncellendi"
 
 #: stock/api.py:247 stock/api.py:280
-#, fuzzy
-#| msgid "Allocation quantity cannot exceed stock quantity"
 msgid "Specified quantity exceeds stock quantity"
-msgstr "Tahsis miktarı stok miktarını aşamaz"
+msgstr ""
 
 #: stock/api.py:270
-#, fuzzy
-#| msgid "Build output must be specified"
 msgid "Valid location must be specified"
-msgstr "Yapım işi çıktısı belirtilmeli"
+msgstr ""
 
 #: stock/api.py:290
 #, python-brace-format
@@ -6146,8 +6132,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7142,40 +7127,32 @@ msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
 #: templates/js/stock.js:39
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Transfer Stock"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: templates/js/stock.js:40
 msgid "Move"
 msgstr ""
 
 #: templates/js/stock.js:46
-#, fuzzy
-#| msgid "No Stock"
 msgid "Count Stock"
-msgstr "Stok Yok"
+msgstr ""
 
 #: templates/js/stock.js:47
 msgid "Count"
 msgstr ""
 
 #: templates/js/stock.js:51
-#, fuzzy
-#| msgid "No Stock"
 msgid "Remove Stock"
-msgstr "Stok Yok"
+msgstr ""
 
 #: templates/js/stock.js:52
 msgid "Take"
 msgstr ""
 
 #: templates/js/stock.js:56
-#, fuzzy
-#| msgid "Stock"
 msgid "Add Stock"
-msgstr "Stok"
+msgstr ""
 
 #: templates/js/stock.js:57 users/models.py:189
 msgid "Add"
@@ -7186,32 +7163,24 @@ msgid "Delete Stock"
 msgstr ""
 
 #: templates/js/stock.js:150
-#, fuzzy
-#| msgid "Quantity must be 1 for serialized stock"
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr "Seri numaralı stok için miktar bir olmalı"
+msgstr ""
 
 #: templates/js/stock.js:150
-#, fuzzy
-#| msgid "Stock quantity to assign"
 msgid "Specify stock quantity"
-msgstr "Atanacak stok miktarı"
+msgstr ""
 
 #: templates/js/stock.js:186
 msgid "You must select at least one available stock item"
 msgstr ""
 
 #: templates/js/stock.js:202
-#, fuzzy
-#| msgid "Destination stock location"
 msgid "Select destination stock location"
-msgstr "Hedef stok konumu"
+msgstr ""
 
 #: templates/js/stock.js:210
-#, fuzzy
-#| msgid "Stock actions"
 msgid "Stock transaction notes"
-msgstr "Stok işlemleri"
+msgstr ""
 
 #: templates/js/stock.js:347
 msgid "PASS"
@@ -7880,20 +7849,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Destination stock location"
-#~ msgstr "Hedef stok konumu"
-
-#~ msgid "Add note (required)"
-#~ msgstr "Not ekle (gerekli)"
-
-#~ msgid "Confirm movement of stock items"
-#~ msgstr "Stok kalemlerinin hareketini onaylayın"
-
-#~ msgid "Set Default Location"
-#~ msgstr "Varsayılan Konum Ayarla"
-
-#~ msgid "Set the destination as the default location for selected parts"
-#~ msgstr "Hedefi seçili parçalar için varsayılan konum olarak ayarla"
-
-#~ msgid "No action performed"
-#~ msgstr "Herhangi bir işlem gerçekleştirilmedi"

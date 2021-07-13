@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-12 13:57+0000\n"
-"PO-Revision-Date: 2021-07-10 04:50\n"
+"PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2324,10 +2324,8 @@ msgstr "Usuń części"
 
 #: company/templates/company/detail_manufacturer_part.html:72
 #: part/templates/part/supplier.html:164
-#, fuzzy
-#| msgid "Manufacturer Part"
 msgid "Add Manufacturer Part"
-msgstr "Część producenta"
+msgstr ""
 
 #: company/templates/company/detail_stock.html:10
 msgid "Supplier Stock"
@@ -4481,10 +4479,8 @@ msgid "Responsible User"
 msgstr "Odpowiedzialny użytkownik"
 
 #: part/templates/part/detail.html:154
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Edit Notes"
-msgstr "Edytuj uwagi"
+msgstr ""
 
 #: part/templates/part/detail.html:181
 msgid "Part is virtual (not a physical part)"
@@ -4551,10 +4547,8 @@ msgid "Add new parameter"
 msgstr ""
 
 #: part/templates/part/detail.html:319
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Edit Part Notes"
-msgstr "Edytuj uwagi"
+msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:51
@@ -4648,10 +4642,8 @@ msgid "Count part stock"
 msgstr ""
 
 #: part/templates/part/part_base.html:66
-#, fuzzy
-#| msgid "Order parts"
 msgid "Transfer part stock"
-msgstr "Zamów części"
+msgstr ""
 
 #: part/templates/part/part_base.html:83
 msgid "Part actions"
@@ -5260,10 +5252,8 @@ msgid "Fail"
 msgstr ""
 
 #: stock/api.py:146
-#, fuzzy
-#| msgid "Enter quantity of stock items"
 msgid "Request must contain list of stock items"
-msgstr "Wprowadź ilość produktów magazynowych"
+msgstr ""
 
 #: stock/api.py:154
 msgid "Improperly formatted data"
@@ -5278,10 +5268,8 @@ msgid "Primary key does not match valid stock item"
 msgstr ""
 
 #: stock/api.py:178
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity value"
-msgstr "Podano nieprawidłową ilość"
+msgstr ""
 
 #: stock/api.py:183
 msgid "Quantity must not be less than zero"
@@ -5297,10 +5285,8 @@ msgid "Specified quantity exceeds stock quantity"
 msgstr ""
 
 #: stock/api.py:270
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Valid location must be specified"
-msgstr "Nie określono lokalizacji docelowej"
+msgstr ""
 
 #: stock/api.py:290
 #, python-brace-format
@@ -6146,8 +6132,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7150,30 +7135,24 @@ msgid "Move"
 msgstr ""
 
 #: templates/js/stock.js:46
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Count Stock"
-msgstr "Przydziel zapasy"
+msgstr ""
 
 #: templates/js/stock.js:47
 msgid "Count"
 msgstr ""
 
 #: templates/js/stock.js:51
-#, fuzzy
-#| msgid "Remove part"
 msgid "Remove Stock"
-msgstr "Usuń część"
+msgstr ""
 
 #: templates/js/stock.js:52
 msgid "Take"
 msgstr ""
 
 #: templates/js/stock.js:56
-#, fuzzy
-#| msgid "Stock"
 msgid "Add Stock"
-msgstr "Stan"
+msgstr ""
 
 #: templates/js/stock.js:57 users/models.py:189
 msgid "Add"
@@ -7196,10 +7175,8 @@ msgid "You must select at least one available stock item"
 msgstr ""
 
 #: templates/js/stock.js:202
-#, fuzzy
-#| msgid "Destination Location"
 msgid "Select destination stock location"
-msgstr "Lokalizacja docelowa"
+msgstr ""
 
 #: templates/js/stock.js:210
 msgid "Stock transaction notes"
@@ -7872,5 +7849,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Create new Manufacturer"
-#~ msgstr "Utwórz nowego producenta"
