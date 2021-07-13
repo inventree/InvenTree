@@ -430,6 +430,22 @@ class ManufacturerPartParameter(models.Model):
     )
 
 
+class SupplierPartManager(models.Manager):
+    """ Define custom SupplierPart objects manager
+
+        The main purpose of this manager is to improve database hit as the
+        SupplierPart model involves A LOT of foreign keys lookups
+    """
+
+    def get_queryset(self):
+        # Always prefetch related models
+        return super().get_queryset().prefetch_related(
+            'part',
+            'supplier',
+            'manufacturer_part__manufacturer',
+        )
+
+
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a SKU (Supplier Part Number)
@@ -449,6 +465,8 @@ class SupplierPart(models.Model):
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
     """
+
+    objects = SupplierPartManager()
 
     @staticmethod
     def get_api_url():
