@@ -104,22 +104,23 @@ settings_urls = [
 dynamic_javascript_urls = [
     url(r'^api.js', DynamicJsView.as_view(template_name='js/api.js'), name='api.js'),
     url(r'^attachment.js', DynamicJsView.as_view(template_name='js/attachment.js'), name='attachment.js'),
-    url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
-    url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
-    url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),
     url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.js'), name='barcode.js'),
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.js'), name='bom.js'),
     url(r'^build.js', DynamicJsView.as_view(template_name='js/build.js'), name='build.js'),
     url(r'^calendar.js', DynamicJsView.as_view(template_name='js/calendar.js'), name='calendar.js'),
     url(r'^company.js', DynamicJsView.as_view(template_name='js/company.js'), name='company.js'),
+    url(r'^filters.js', DynamicJsView.as_view(template_name='js/filters.js'), name='filters.js'),
+    url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
+    url(r'^label.js', DynamicJsView.as_view(template_name='js/label.js'), name='label.js'),
+    url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
+    url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),
+    url(r'^nav.js', DynamicJsView.as_view(template_name='js/nav.js'), name='nav.js'),
     url(r'^order.js', DynamicJsView.as_view(template_name='js/order.js'), name='order.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/part.js'), name='part.js'),
-    url(r'^label.js', DynamicJsView.as_view(template_name='js/label.js'), name='label.js'),
     url(r'^report.js', DynamicJsView.as_view(template_name='js/report.js'), name='report.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.js'), name='stock.js'),
     url(r'^tables.js', DynamicJsView.as_view(template_name='js/tables.js'), name='tables.js'),
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.js'), name='table_filters.js'),
-    url(r'^filters.js', DynamicJsView.as_view(template_name='js/filters.js'), name='filters.js'),
 ]
 
 urlpatterns = [
