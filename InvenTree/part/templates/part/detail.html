@@ -1,6 +1,7 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load markdownify %}
 
 
 {% block menubar %}
@@ -135,11 +136,38 @@
         {% endif %}
         {% if part.responsible %}
         <tr>
-            <td><span class='fas fa-user'>d</span></td>
+            <td><span class='fas fa-user'></span></td>
             <td><strong>{% trans "Responsible User" %}</strong></td>
             <td>{{ part.responsible }}</td> 
         </tr>
         {% endif %}
+
+        <tr><td colspan="3"></td></tr>
+
+        <tr>
+            <td><span class='fas fa-sticky-note'></span></td>
+            <td>
+                <strong>{% trans "Notes" %}</strong>
+            </td>
+            <td>
+                <div class='btn-group float-right'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-default'>
+                        <span class='fas fa-edit'>      
+                        </span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='3'>
+                {% if part.notes %}
+                <div class='notes'>
+                    {{ part.notes | markdownify }}
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+
     </table>
     </div>
     <div class='col-sm-6'>
@@ -238,12 +266,60 @@
 
 {% endblock %}
 
+{% block post_content_panel %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <div class='panel panel-default panel-inventree'>
+            <div class='panel-heading'>
+                <h4>{% trans "Parameters" %}</h4>
+            </div>
+            <div class='panel-content'>
+                <div id='param-button-toolbar'>
+                    <div class='button-toolbar container-fluid' style='float: right;'>
+                        {% if roles.part.add %}
+                        <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>
+                            <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
+            </div>
+        </div>
+    </div>
+    <div class='col-sm-6'>
+        <div class='panel panel-default panel-inventree'>
+            <div class='panel-heading'>
+                <h4>{% trans "Attachments" %}</h4>
+            </div>
+            <div class='panel-content'>
+                {% include "attachment_table.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
 {% block js_load %}
 {{ block.super }}
 {% endblock %}
 
 {% block js_ready %}
     {{ block.super }}
+
+    $('#edit-notes').click(function() {
+        constructForm('{% url "api-part-detail" part.pk %}', {
+            fields: {
+                notes: {
+                    multiline: true,
+                }
+            },
+            title: '{% trans "Edit Part Notes" %}',
+            reload: true,
+        });
+    });
 
     $(".slidey").change(function() {
         var field = $(this).attr('fieldname');
@@ -261,6 +337,120 @@
                 reloadOnSuccess: true,
             },
         );
+    });
+
+    loadPartParameterTable(
+        '#parameter-table', 
+        '{% url "api-part-parameter-list" %}',
+        {
+            params: {
+                part: {{ part.pk }},
+            }
+        }
+    );
+
+    $('#param-table').inventreeTable({
+    });
+
+    {% if roles.part.add %}
+    $('#param-create').click(function() {
+
+        constructForm('{% url "api-part-parameter-list" %}', {
+            method: 'POST',
+            fields: {
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true,
+                },
+                template: {},
+                data: {},
+            },
+            title: '{% trans "Add Parameter" %}',
+            onSuccess: function() {
+                $('#parameter-table').bootstrapTable('refresh');
+            }
+        });
+    });
+    {% endif %}
+
+    $('.param-edit').click(function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            reload: true,
+        });
+    });
+
+    $('.param-delete').click(function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            reload: true,
+        });
+    });
+
+    loadAttachmentTable(
+        '{% url "api-part-attachment-list" %}',
+        {
+            filters: {
+                part: {{ part.pk }},
+            },
+            onEdit: function(pk) {
+                var url = `/api/part/attachment/${pk}/`;
+
+                constructForm(url, {
+                    fields: {
+                        comment: {},
+                    },
+                    title: '{% trans "Edit Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
+            },
+            onDelete: function(pk) {
+                var url = `/api/part/attachment/${pk}/`;
+
+                constructForm(url, {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
+            }
+        }
+    );
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-part-attachment-list" %}',
+        {
+            data: {
+                part: {{ part.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                reloadAttachmentTable();
+            }
+        }
+    );
+
+    $("#new-attachment").click(function() {
+
+        constructForm(
+            '{% url "api-part-attachment-list" %}',
+            {
+                method: 'POST',
+                fields: {
+                    attachment: {},
+                    comment: {},
+                    part: {
+                        value: {{ part.pk }},
+                        hidden: true,
+                    }
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Add Attachment" %}',
+            }
+        )
     });
 
 {% endblock %}

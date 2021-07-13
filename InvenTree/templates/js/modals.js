@@ -12,7 +12,6 @@
  */
 function createNewModal(options={}) {
 
-
     var id = 1;
 
     // Check out what modal forms are already being displayed
@@ -39,12 +38,13 @@ function createNewModal(options={}) {
                     </h3>
                 </div>
                 <div class='modal-form-content-wrapper'>
-                    <div id='pre-form-content'>
-                        <!-- Content can be inserted here *before* the form fields -->
-                    </div>
                     <div id='non-field-errors'>
                         <!-- Form error messages go here -->
                     </div>
+                    <div id='pre-form-content'>
+                        <!-- Content can be inserted here *before* the form fields -->
+                    </div>
+
                     <div id='form-content' class='modal-form-content'>
                         <!-- Form content will be injected here-->
                     </div>
@@ -101,6 +101,14 @@ function createNewModal(options={}) {
     modalSetTitle(modal_name, options.title || '{% trans "Form Title" %}');
     modalSetSubmitText(modal_name, options.submitText || '{% trans "Submit" %}');
     modalSetCloseText(modal_name, options.cancelText || '{% trans "Cancel" %}');
+
+    if (options.hideSubmitButton) {
+        $(modal_name).find('#modal-form-submit').hide();
+    }
+
+    if (options.hideCloseButton) {
+        $(modal_name).find('#modal-form-cancel').hide();
+    }
 
     // Return the "name" of the modal
     return modal_name;
@@ -551,25 +559,18 @@ function showAlertDialog(title, content, options={}) {
      * 
      * title - Title text 
      * content - HTML content of the dialog window
-     * options:
-     *  modal - modal form to use (default = '#modal-alert-dialog')
      */
 
-     var modal = options.modal || '#modal-alert-dialog';
 
-     $(modal).on('shown.bs.modal', function() {
-        $(modal + ' .modal-form-content').scrollTop(0);
+    var modal = createNewModal({
+        title: title,
+        cancelText: '{% trans "Close" %}',
+        hideSubmitButton: true,
     });
 
-     modalSetTitle(modal, title);
-     modalSetContent(modal, content);
+    modalSetContent(modal, content);
 
-     $(modal).modal({
-        backdrop: 'static',
-        keyboard: false,
-    });
-
-     $(modal).modal('show');
+    $(modal).modal('show');
 }
 
 
@@ -586,34 +587,19 @@ function showQuestionDialog(title, content, options={}) {
      *   cancel - Functino to run if the user presses 'Cancel'
      */ 
 
-    var modal = options.modal || '#modal-question-dialog';
-
-    $(modal).on('shown.bs.modal', function() {
-        $(modal + ' .modal-form-content').scrollTop(0);
+    var modal = createNewModal({
+        title: title,
+        submitText: options.accept_text || '{% trans "Accept" %}',
+        cancelText: options.cancel_text || '{% trans "Cancel" %}',
     });
 
-    modalSetTitle(modal, title);
     modalSetContent(modal, content);
 
-    var accept_text = options.accept_text || '{% trans "Accept" %}';
-    var cancel_text = options.cancel_text || '{% trans "Cancel" %}';
-
-    $(modal).find('#modal-form-cancel').html(cancel_text);
-    $(modal).find('#modal-form-accept').html(accept_text);
-
-    $(modal).on('click', '#modal-form-accept', function() {
+    $(modal).on('click', "#modal-form-submit", function() {
         $(modal).modal('hide');
 
         if (options.accept) {
             options.accept();
-        }
-    });
-
-    $(modal).on('click', 'modal-form-cancel', function() {
-        $(modal).modal('hide');
-
-        if (options.cancel) {
-            options.cancel();
         }
     });
 

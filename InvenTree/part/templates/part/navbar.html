@@ -19,12 +19,6 @@
             </span>
         </a>
     </li>
-    <li class='list-group-item {% if tab == "params" %}active{% endif %}' title='{% trans "Part Parameters" %}'>
-        <a href='{% url "part-params" part.id %}'>    
-            <span class='menu-tab-icon fas fa-tasks sidebar-icon'></span>
-            {% trans "Parameters" %}
-        </a>
-    </li>
     {% if part.is_template %}
     <li class='list-group-item {% if tab == "variants" %}active{% endif %}' title='{% trans "Part Variants" %}'>
         <a href='{% url "part-variants" part.id %}'>
@@ -78,12 +72,6 @@
         </a>
     </li>
     {% if part.purchaseable and roles.purchase_order.view %}
-    <li class='list-group-item {% if tab == "manufacturers" %}active{% endif %}' title='{% trans "Manufacturers" %}'>
-        <a href='{% url "part-manufacturers" part.id %}'>
-            <span class='menu-tab-icon fas fa-industry sidebar-icon'></span>
-            {% trans "Manufacturers" %}
-        </a>
-    </li>
     <li class='list-group-item {% if tab == "suppliers" %}active{% endif %}' title='{% trans "Suppliers" %}'>
         <a href='{% url "part-suppliers" part.id %}'>
             <span class='menu-tab-icon fas fa-building sidebar-icon'></span>
@@ -109,7 +97,7 @@
     <li class='list-group-item {% if tab == "tests" %}active{% endif %}' title='{% trans "Part Test Templates" %}'>
         <a href='{% url "part-test-templates" part.id %}'>
             <span class='menu-tab-icon fas fa-vial sidebar-icon'></span>
-            {% trans "Tests" %}
+            {% trans "Test Templates" %}
         </a>
     </li>
     {% endif %}
@@ -121,16 +109,4 @@
         </a>
     </li>
     {% endif %}
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
-        <a href='{% url "part-attachments" part.id %}'>
-            <span class='menu-tab-icon fas fa-paperclip sidebar-icon'></span>
-            {% trans "Attachments" %}
-        </a>
-    </li>
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Part Notes" %}'>
-        <a href='{% url "part-notes" part.id %}'>
-            <span class='menu-tab-icon fas fa-clipboard sidebar-icon'></span>
-            {% trans "Notes" %}
-        </a>
-    </li>
 </ul>

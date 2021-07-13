@@ -62,7 +62,7 @@ src="{% static 'img/blank_image.png' %}"
             <td>{% trans "Internal Part" %}</td>
             <td>
                 {% if part.part %}
-                <a href="{% url 'part-manufacturers' part.part.id %}">{{ part.part.full_name }}</a>{% include "clip.html"%}
+                <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>{% include "clip.html"%}
                 {% endif %}
             </td>
         </tr>
@@ -118,9 +118,13 @@ $('#edit-part').click(function () {
         fields: {
             part: {},
             manufacturer: {},
-            MPN: {},
+            MPN: {
+                icon: 'fa-hashtag',
+            },
             description: {},
-            link: {},
+            link: {
+                icon: 'fa-link',
+            },
         },
         title: '{% trans "Edit Manufacturer Part" %}',
         reload: true,

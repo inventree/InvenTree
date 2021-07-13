@@ -534,14 +534,21 @@ $("#barcode-scan-into-location").click(function() {
 });
 
 function itemAdjust(action) {
-    launchModalForm("/stock/adjust/", 
+
+    inventreeGet(
+        '{% url "api-stock-detail" item.pk %}',
         {
-            data: {
-                action: action,
-                item: {{ item.id }},
-            },
-            reload: true,
-            follow: true,
+            part_detail: true,
+            location_detail: true,
+        },
+        {
+            success: function(item) {
+                adjustStock(action, [item], {
+                    onSuccess: function() {
+                        location.reload();
+                    }
+                });
+            }
         }
     );
 }

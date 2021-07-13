@@ -120,9 +120,6 @@ class StockAdjust(APIView):
     - StockAdd: add stock items
     - StockRemove: remove stock items
     - StockTransfer: transfer stock items
-
-    # TODO - This needs serious refactoring!!!
-
     """
 
     queryset = StockItem.objects.none()
@@ -143,7 +140,10 @@ class StockAdjust(APIView):
         elif 'items' in request.data:
             _items = request.data['items']
         else:
-            raise ValidationError({'items': 'Request must contain list of stock items'})
+            _items = []
+
+        if len(_items) == 0:
+            raise ValidationError(_('Request must contain list of stock items'))
 
         # List of validated items
         self.items = []
@@ -151,13 +151,22 @@ class StockAdjust(APIView):
         for entry in _items:
 
             if not type(entry) == dict:
-                raise ValidationError({'error': 'Improperly formatted data'})
+                raise ValidationError(_('Improperly formatted data'))
+
+            # Look for a 'pk' value (use 'id' as a backup)
+            pk = entry.get('pk', entry.get('id', None))
 
             try:
-                pk = entry.get('pk', None)
+                pk = int(pk)
+            except (ValueError, TypeError):
+                raise ValidationError(_('Each entry must contain a valid integer primary-key'))
+
+            try:
                 item = StockItem.objects.get(pk=pk)
-            except (ValueError, StockItem.DoesNotExist):
-                raise ValidationError({'pk': 'Each entry must contain a valid pk field'})
+            except (StockItem.DoesNotExist):
+                raise ValidationError({
+                    pk: [_('Primary key does not match valid stock item')]
+                })
 
             if self.allow_missing_quantity and 'quantity' not in entry:
                 entry['quantity'] = item.quantity
@@ -165,16 +174,21 @@ class StockAdjust(APIView):
             try:
                 quantity = Decimal(str(entry.get('quantity', None)))
             except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({'quantity': "Each entry must contain a valid quantity value"})
+                raise ValidationError({
+                    pk: [_('Invalid quantity value')]
+                })
 
             if quantity < 0:
-                raise ValidationError({'quantity': 'Quantity field must not be less than zero'})
+                raise ValidationError({
+                    pk: [_('Quantity must not be less than zero')]
+                })
 
             self.items.append({
                 'item': item,
                 'quantity': quantity
             })
 
+        # Extract 'notes' field
         self.notes = str(request.data.get('notes', ''))
 
 
@@ -228,6 +242,11 @@ class StockRemove(StockAdjust):
 
         for item in self.items:
 
+            if item['quantity'] > item['item'].quantity:
+                raise ValidationError({
+                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
+                })
+
             if item['item'].take_stock(item['quantity'], request.user, notes=self.notes):
                 n += 1
 
@@ -243,18 +262,23 @@ class StockTransfer(StockAdjust):
 
     def post(self, request, *args, **kwargs):
 
-        self.get_items(request)
-
         data = request.data
 
         try:
             location = StockLocation.objects.get(pk=data.get('location', None))
         except (ValueError, StockLocation.DoesNotExist):
-            raise ValidationError({'location': 'Valid location must be specified'})
+            raise ValidationError({'location': [_('Valid location must be specified')]})
 
         n = 0
 
+        self.get_items(request)
+
         for item in self.items:
+
+            if item['quantity'] > item['item'].quantity:
+                raise ValidationError({
+                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
+                })
 
             # If quantity is not specified, move the entire stock
             if item['quantity'] in [0, None]:
@@ -454,13 +478,6 @@ class StockList(generics.ListCreateAPIView):
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
-
-    Additional query parameters are available:
-        - location: Filter stock by location
-        - category: Filter by parts belonging to a certain category
-        - supplier: Filter by supplier
-        - ancestor: Filter by an 'ancestor' StockItem
-        - status: Filter by the StockItem status
     """
 
     serializer_class = StockItemSerializer
@@ -482,7 +499,6 @@ class StockList(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # TODO - Save the user who created this item
         item = serializer.save()
 
         # A location was *not* specified - try to infer it
@@ -1092,47 +1108,41 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LocationSerializer
 
 
-stock_endpoints = [
-    url(r'^$', StockDetail.as_view(), name='api-stock-detail'),
-]
-
-location_endpoints = [
-    url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
-
-    url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
-]
-
 stock_api_urls = [
-    url(r'location/', include(location_endpoints)),
+    url(r'^location/', include([
+        url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+        url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
+    ])),
 
-    # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
-    # TODO: Remove server-side forms for stock adjustment!!!
-    url(r'count/?', StockCount.as_view(), name='api-stock-count'),
-    url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
-    url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
-    url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
+    # Endpoints for bulk stock adjustment actions
+    url(r'^count/', StockCount.as_view(), name='api-stock-count'),
+    url(r'^add/', StockAdd.as_view(), name='api-stock-add'),
+    url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
+    url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
 
-    # Base URL for StockItemAttachment API endpoints
+    # StockItemAttachment API endpoints
     url(r'^attachment/', include([
         url(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
-    # Base URL for StockItemTestResult API endpoints
+    # StockItemTestResult API endpoints
     url(r'^test/', include([
         url(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
         url(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
+    # StockItemTracking API endpoints
     url(r'^track/', include([
         url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
         url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
-    url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
+    url(r'^tree/', StockCategoryTree.as_view(), name='api-stock-tree'),
 
     # Detail for a single stock item
-    url(r'^(?P<pk>\d+)/', include(stock_endpoints)),
+    url(r'^(?P<pk>\d+)/', StockDetail.as_view(), name='api-stock-detail'),
 
+    # Anything else
     url(r'^.*$', StockList.as_view(), name='api-stock-list'),
 ]

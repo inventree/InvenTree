@@ -53,29 +53,27 @@
 {{ block.super }}
 
     $("#manufacturer-part-create").click(function () {
-        launchModalForm(
-            "{% url 'manufacturer-part-create' %}",
-            {
-                data: {
-                    manufacturer: {{ company.id }},
+
+        constructForm('{% url "api-manufacturer-part-list" %}', {
+            fields: {
+                part: {},
+                manufacturer: {
+                    value: {{ company.pk }},
                 },
-                success: function() {
-                    $("#part-table").bootstrapTable("refresh");
+                MPN: {
+                    icon: 'fa-hashtag',
                 },
-                secondary: [
-                    {
-                        field: 'part',
-                        label: '{% trans "New Part" %}',
-                        title: '{% trans "Create new Part" %}',
-                        url: "{% url 'part-create' %}"
-                    },
-                    {
-                        field: 'manufacturer',
-                        label: '{% trans "New Manufacturer" %}',
-                        title: '{% trans "Create new Manufacturer" %}',
-                    },
-                ]
-            });
+                description: {},
+                link: {
+                    icon: 'fa-link',
+                },
+            },
+            method: 'POST',
+            title: '{% trans "Add Manufacturer Part" %}',
+            onSuccess: function() { 
+                $("#part-table").bootstrapTable("refresh");
+            }
+        });
     });
 
     loadManufacturerPartTable(
