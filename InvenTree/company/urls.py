@@ -8,15 +8,6 @@ from . import views
 
 
 company_detail_urls = [
-    # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
-
-    url(r'^supplier-parts/', views.CompanyDetail.as_view(template_name='company/detail_supplier_part.html'), name='company-detail-supplier-parts'),
-    url(r'^manufacturer-parts/', views.CompanyDetail.as_view(template_name='company/detail_manufacturer_part.html'), name='company-detail-manufacturer-parts'),
-    url(r'^stock/', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
-    url(r'^purchase-orders/', views.CompanyDetail.as_view(template_name='company/purchase_orders.html'), name='company-detail-purchase-orders'),
-    url(r'^assigned-stock/', views.CompanyDetail.as_view(template_name='company/assigned_stock.html'), name='company-detail-assigned-stock'),
-    url(r'^sales-orders/', views.CompanyDetail.as_view(template_name='company/sales_orders.html'), name='company-detail-sales-orders'),
-    url(r'^notes/', views.CompanyNotes.as_view(), name='company-notes'),
 
     url(r'^thumb-download/', views.CompanyImageDownloadFromURL.as_view(), name='company-image-download'),
 

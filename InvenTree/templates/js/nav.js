@@ -36,15 +36,38 @@ function activatePanel(panelName, options={}) {
 
     var panelClass = options.name || 'unknown';
 
-    // Save the selected panel
-    localStorage.setItem(`inventree-selected-panel-${panelClass}`, panelName);
-
     // First, cause any other panels to "fade out"
     $('.panel-visible').hide();
     $('.panel-visible').removeClass('panel-visible');
-
+    
     // Find the target panel
     var panel = `#panel-${panelName}`;
+    var select = `#select-${panelName}`;
+
+    // Check that the selected panel (and select) exist
+    if ($(panel).length && $(select).length) {
+        // Yep, both are displayed
+    } else {
+        // Either the select or the panel are not displayed!
+        // Iterate through the available 'select' elements until one matches
+        panelName = null;
+
+        console.log("no match for panel:", panelName);
+
+        $('.nav-toggle').each(function(item) {
+            var panel_name = $(this).attr('id').replace('select-', '');
+
+            console.log("checking:", panel_name);
+
+            if ($(`#panel-${panel_name}`).length && (panelName == null)) {
+                console.log("found match -", panel_name);
+                panelName = panel_name;
+            }
+        });
+    }
+
+    // Save the selected panel
+    localStorage.setItem(`inventree-selected-panel-${panelClass}`, panelName);
 
     // Display the panel
     $(panel).addClass('panel-visible');

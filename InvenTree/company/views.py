@@ -7,7 +7,7 @@ Django views for interacting with Company app
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 
 from django.urls import reverse
 from django.forms import HiddenInput
@@ -111,28 +111,6 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
             queryset = queryset.filter(is_customer=True)
 
         return queryset
-
-
-class CompanyNotes(UpdateView):
-    """ View for editing the 'notes' field of a Company object.
-    """
-
-    context_object_name = 'company'
-    template_name = 'company/notes.html'
-    model = Company
-    fields = ['notes']
-    permission_required = 'company.view_company'
-
-    def get_success_url(self):
-        return reverse('company-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        return ctx
 
 
 class CompanyDetail(DetailView):
