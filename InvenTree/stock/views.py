@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
 from django.views.generic.edit import FormMixin
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse

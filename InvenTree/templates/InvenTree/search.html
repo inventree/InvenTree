@@ -26,17 +26,20 @@
 {% endif %}
 
 <div class='col-sm-3' id='item-panel'>
-    <ul class='list-group' id='search-item-list'>
-    </ul>
+    <div class='panel panel-default panel-inventree'>
+        <ul class='list-group' id='search-item-list'></ul>
+    </div>
 </div>
 <div class='col-sm-9' id='details-panel'>
-    <ul class='list-group' id='search-result-list'>
-        <li class='list-group-item'>
-            <div class='container'>
-                <img class='index-bg' src='{% static "img/inventree.png" %}'>
-            </div>
-        </li>
-    </ul>
+    <div class='panel panel-default panel-inventree'>
+        <ul class='list-group' id='search-result-list'>
+            <li class='list-group-item'>
+                <div class='container'>
+                    <img class='index-bg' src='{% static "img/inventree.png" %}'>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
 
 {% endblock %}

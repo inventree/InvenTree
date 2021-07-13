@@ -909,7 +909,9 @@ input[type="submit"] {
 
 .panel-inventree {
     padding: 10px;
-    box-shadow: 1px 1px #DDD;
+    box-shadow: 2px 2px #DDD;
+    border: #ccc 1px solid;
+    border-radius: 3px;
 }
 
 .float-right {
