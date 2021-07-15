@@ -3,7 +3,6 @@
 {% load i18n %}
 {% load markdownify %}
 
-
 {% block menubar %}
 {% include 'part/navbar.html' %}
 {% endblock %}
@@ -114,6 +113,10 @@
         {{ part.notes | markdownify }}
         {% endif %}
     </div>
+</div>
+
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-pricing'>
+    <!-- TODO -->
 </div>
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-variants'>
@@ -788,11 +791,6 @@
         )
     });
 
-    attachNavCallbacks({
-        name: 'part',
-        default: 'part-stock'
-    });
-
     $('#supplier-create').click(function () {
         launchModalForm(
             "{% url 'supplier-part-create' %}",
@@ -893,6 +891,11 @@
                 $("#manufacturer-table").bootstrapTable("refresh");
             }
         });
+    });
+
+    attachNavCallbacks({
+        name: 'part',
+        default: 'part-stock'
     });
 
 {% endblock %}

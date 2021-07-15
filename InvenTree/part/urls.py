@@ -78,9 +78,6 @@ category_urls = [
         url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         url(r'^parameters/', include(category_parameter_urls)),
 
-        url(r'^subcategory/', views.CategoryDetail.as_view(template_name='part/subcategory.html'), name='category-subcategory'),
-        url(r'^parametric/', views.CategoryParametric.as_view(), name='category-parametric'),
-
         # Anything else
         url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
     ]))

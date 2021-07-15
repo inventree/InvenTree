@@ -1818,7 +1818,7 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all().prefetch_related('children')
-    template_name = 'part/category_partlist.html'
+    template_name = 'part/category.html'
 
     def get_context_data(self, **kwargs):
 
@@ -1828,18 +1828,6 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
             context['part_count'] = kwargs['object'].partcount()
         except KeyError:
             context['part_count'] = 0
-
-        return context
-
-
-class CategoryParametric(CategoryDetail):
-    """ Parametric view for PartCategory """
-
-    template_name = 'part/category_parametric.html'
-
-    def get_context_data(self, **kwargs):
-
-        context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
 
         # Get current category
         category = kwargs.get('object', None)
