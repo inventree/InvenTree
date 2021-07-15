@@ -253,11 +253,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableNavbar({
-        label: 'part',
-        toggleId: '#part-menu-toggle',
-    });
-
     {% if part.image %}
     $('#part-thumb').click(function() {
         showModalImage('{{ part.image.url }}');

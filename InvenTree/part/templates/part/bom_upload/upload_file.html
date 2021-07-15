@@ -3,15 +3,13 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block menubar %}
-{% include "part/navbar.html" with tab='bom' %}
-{% endblock %}
-
 {% block heading %}
 {% trans "Upload BOM File" %}
 {% endblock %}
 
-{% block details %}
+{% block page_content %}
+
+<h4>{% trans "Upload Bill of Materials" %}</h4>
 
 {% block form_alert %}
 <div class='alert alert-info alert-block'>
