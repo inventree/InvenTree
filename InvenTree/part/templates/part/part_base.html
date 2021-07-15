@@ -167,7 +167,7 @@
             {% endif %}
             {% if part.variant_of %}
             <div class='alert alert-info alert-block'>
-                {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}
+                {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
                 {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
             </div>
             {% endif %}
