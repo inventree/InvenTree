@@ -34,12 +34,6 @@ stock_item_detail_urls = [
 
     url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 
-    url(r'^test/', views.StockItemDetail.as_view(template_name='stock/item_tests.html'), name='stock-item-test-results'),
-    url(r'^children/', views.StockItemDetail.as_view(template_name='stock/item_childs.html'), name='stock-item-children'),
-    url(r'^attachments/', views.StockItemDetail.as_view(template_name='stock/item_attachments.html'), name='stock-item-attachments'),
-    url(r'^installed/', views.StockItemDetail.as_view(template_name='stock/item_installed.html'), name='stock-item-installed'),
-    url(r'^notes/', views.StockItemNotes.as_view(), name='stock-item-notes'),
-
     url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
 ]
 

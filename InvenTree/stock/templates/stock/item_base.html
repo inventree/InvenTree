@@ -428,6 +428,7 @@
     </tr>
     {% endif %}
 </table>
+
 {% endblock %}
 
 {% block js_ready %}
@@ -609,5 +610,10 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
+
+attachNavCallbacks({
+    name: 'stockitem',
+    default: 'history'
+});
 
 {% endblock %}
