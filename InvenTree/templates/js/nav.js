@@ -20,7 +20,6 @@ function attachNavCallbacks(options={}) {
         activatePanel(panelName, options);
     });
 
-
     var panelClass = options.name || 'unknown';
 
     /* Look for a default panel to initialize
