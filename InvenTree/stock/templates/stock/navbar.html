@@ -8,24 +8,24 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "tracking" %}active{% endif %}' title='{% trans "Stock Item Tracking" %}'>
-        <a href='{% url "stock-item-detail" item.id %}'>
+    <li class='list-group-item' title='{% trans "Stock Item Tracking" %}'>
+        <a href='#' id='select-history' class='nav-toggle'>
             <span class='fas fa-history sidebar-icon'></span>
             {% trans "History" %}
         </a>
     </li>
 
     {% if item.part.trackable %}
-    <li class='list-group-item {% if tab == "tests" %}active{% endif %}' title='{% trans "Test Data" %}'>
-        <a href='{% url "stock-item-test-results" item.id %}'>
+    <li class='list-group-item' title='{% trans "Test Data" %}'>
+        <a href='#' id='select-test-data' class='nav-toggle'>
             <span class='fas fa-vial sidebar-icon'></span>
             {% trans "Test Data" %}
         </a>
     </li>
 
     {% if item.part.assembly %}
-    <li class='list-group-item {% if tab == "installed" %}active{% endif %}' title='{% trans "Installed Stock Items" %}'>
-        <a href='{% url "stock-item-installed" item.id %}'>
+    <li class='list-group-item' title='{% trans "Installed Stock Items" %}'>
+        <a href='#' id='select-installed-items' class='nav-toggle'>
             <span class='fas fa-sign-in-alt sidebar-icon'></span>
             {% trans "Installed Items" %}
         </a>
@@ -35,8 +35,8 @@
     {% endif %}
 
     {% if item.child_count > 0 %}
-    <li class='list-group-item {% if tab == "children" %}active{% endif %}' title='{% trans "Child Items" %}'>
-        <a href='{% url "stock-item-children" item.id %}'>
+    <li class='list-group-item' title='{% trans "Child Items" %}'>
+        <a href='#' id='select-children' class='nav-toggle'>
             <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Children" %}
         </a>
@@ -44,15 +44,15 @@
     {% endif %}
 
 
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
-        <a href='{% url "stock-item-attachments" item.id %}'>
+    <li class='list-group-item' title='{% trans "Attachments" %}'>
+        <a href='#' id='select-attachments' class='nav-toggle'>
             <span class='fas fa-paperclip sidebar-icon'></span>
             {% trans "Attachments" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Stock Item Notes" %}'>
-        <a href='{% url "stock-item-notes" item.id %}'>
+    <li class='list-group-item' title='{% trans "Stock Item Notes" %}'>
+        <a href='#' id='select-notes' class='nav-toggle'>
             <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>

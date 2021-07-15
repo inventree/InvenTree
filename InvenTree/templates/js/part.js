@@ -13,6 +13,94 @@ function yesNoLabel(value) {
     }
 }
 
+
+function editPart(pk, options={}) {
+
+    var url = `/api/part/${pk}/`;
+
+    var fields =  {
+        category: {
+            /*
+            secondary: {
+                label: '{% trans "New Category" %}',
+                title: '{% trans "Create New Part Category" %}',
+                api_url: '{% url "api-part-category-list" %}',
+                method: 'POST',
+                fields: {
+                    name: {},
+                    description: {},
+                    parent: {
+                        secondary: {
+                            title: '{% trans "New Parent" %}',
+                            api_url: '{% url "api-part-category-list" %}',
+                            method: 'POST',
+                            fields: {
+                                name: {},
+                                description: {},
+                                parent: {},
+                            }
+                        }
+                    },
+                }
+            },
+            */
+        },
+        name: {
+            placeholder: 'part name',
+        },
+        IPN: {},
+        description: {},
+        revision: {},
+        keywords: {
+            icon: 'fa-key',
+        },
+        variant_of: {},
+        link: {
+            icon: 'fa-link',
+        },
+        default_location: {
+            /*
+            secondary: {
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new stock location" %}',
+            },
+            */
+        },
+        default_supplier: {
+            filters: {
+                part: pk,
+                part_detail: true,
+                manufacturer_detail: true,
+                supplier_detail: true,
+            },
+            /*
+            secondary: {
+                label: '{% trans "New Supplier Part" %}',
+                title: '{% trans "Create new supplier part" %}',
+            }
+            */
+        },
+        units: {},
+        minimum_stock: {},
+        virtual: {},
+        is_template: {},
+        assembly: {},
+        component: {},
+        trackable: {},
+        purchaseable: {},
+        salable: {},
+        active: {},
+    };
+
+    constructForm(url, {
+        fields: fields,
+        title: '{% trans "Edit Part" %}',
+        reload: true,
+    });
+
+}
+
+
 function toggleStar(options) {
     /* Toggle the 'starred' status of a part.
      * Performs AJAX queries and updates the display on the button.
@@ -626,7 +714,7 @@ function loadPartTable(table, url, options={}) {
 
             var html = '';
 
-            html = `<div class='row'>`;
+            html = `<div class='row full-height'>`;
 
             data.forEach(function(row, index) {
                 

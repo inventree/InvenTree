@@ -3,10 +3,6 @@
 {% load i18n %}
 {% load static %}
 
-{% block menubar %}
-{% include 'order/po_navbar.html' with tab='upload' %}
-{% endblock %}
-
 {% block heading %}
 {% trans "Upload File for Purchase Order" %}
 {{ wizard.form.media }}

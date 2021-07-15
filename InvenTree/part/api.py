@@ -1104,7 +1104,7 @@ part_api_urls = [
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
+    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]

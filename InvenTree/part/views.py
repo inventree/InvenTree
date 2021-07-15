@@ -754,6 +754,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'part'
     queryset = Part.objects.all().select_related('category')
     template_name = 'part/detail.html'
+    form_class = part_forms.PartPriceForm
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
@@ -774,25 +775,12 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         ctx = part.get_context_data(self.request)
         context.update(**ctx)
 
-        return context
-
-
-class PartPricingView(PartDetail):
-    """ Detail view for Part object
-    """
-    context_object_name = 'part'
-    template_name = 'part/order_prices.html'
-    form_class = part_forms.PartPriceForm
-
-    # Add in some extra context information based on query params
-    def get_context_data(self, **kwargs):
-        """ Provide extra context data to template """
-        context = super().get_context_data(**kwargs)
-
+        # Pricing information
         ctx = self.get_pricing(self.get_quantity())
         ctx['form'] = self.form_class(initial=self.get_initials())
 
         context.update(ctx)
+
         return context
 
     def get_quantity(self):
@@ -1082,40 +1070,6 @@ class PartImageSelect(AjaxUpdateView):
             data['error'] = _('Part image not found')
 
         return self.renderJsonResponse(request, form, data)
-
-
-class PartEdit(AjaxUpdateView):
-    """ View for editing Part object """
-
-    model = Part
-    form_class = part_forms.EditPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Part Properties')
-    context_object_name = 'part'
-
-    def get_form(self):
-        """ Create form for Part editing.
-        Overrides default get_form() method to limit the choices
-        for the 'default_supplier' field to SupplierParts that reference this part
-        """
-
-        form = super(AjaxUpdateView, self).get_form()
-
-        # Hide the "default expiry" field if the feature is not enabled
-        if not inventree_settings.stock_expiry_enabled():
-            form.fields['default_expiry'].widget = HiddenInput()
-
-        part = self.get_object()
-
-        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
-
-        # Check if IPN can be edited
-        ipn_edit_enable = InvenTreeSetting.get_setting('PART_ALLOW_EDIT_IPN')
-        if not ipn_edit_enable and not self.request.user.is_superuser:
-            # Admin can still change IPN
-            form.fields['IPN'].disabled = True
-
-        return form
 
 
 class BomDuplicate(AjaxUpdateView):
@@ -1475,7 +1429,7 @@ class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
                 # BomItem already exists
                 pass
 
-        return HttpResponseRedirect(reverse('part-bom', kwargs={'pk': self.kwargs['pk']}))
+        return HttpResponseRedirect(reverse('part-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
 class PartExport(AjaxView):
@@ -1852,7 +1806,7 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all().prefetch_related('children')
-    template_name = 'part/category_partlist.html'
+    template_name = 'part/category.html'
 
     def get_context_data(self, **kwargs):
 
@@ -1862,18 +1816,6 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
             context['part_count'] = kwargs['object'].partcount()
         except KeyError:
             context['part_count'] = 0
-
-        return context
-
-
-class CategoryParametric(CategoryDetail):
-    """ Parametric view for PartCategory """
-
-    template_name = 'part/category_parametric.html'
-
-    def get_context_data(self, **kwargs):
-
-        context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
 
         # Get current category
         category = kwargs.get('object', None)

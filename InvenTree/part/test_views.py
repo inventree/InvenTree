@@ -158,21 +158,6 @@ class PartDetailTest(PartViewTestCase):
 class PartTests(PartViewTestCase):
     """ Tests for Part forms """
 
-    def test_part_edit(self):
-
-        response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        keys = response.context.keys()
-        data = str(response.content)
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertIn('part', keys)
-        self.assertIn('csrf_token', keys)
-
-        self.assertIn('html_form', data)
-        self.assertIn('"title":', data)
-
     def test_part_create(self):
         """ Launch form to create a new part """
         response = self.client.get(reverse('part-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')

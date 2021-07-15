@@ -7,9 +7,8 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
-from django.urls import reverse
 
 from part.models import Part
 from .models import Build, BuildItem
@@ -593,31 +592,6 @@ class BuildOutputComplete(AjaxUpdateView):
         }
 
 
-class BuildNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for editing the 'notes' field of a Build object.
-    """
-
-    context_object_name = 'build'
-    template_name = 'build/notes.html'
-    model = Build
-
-    # Override the default permission role for this View
-    role_required = 'build.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        return reverse('build-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        return ctx
-
-
 class BuildDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view of a single Build object. """
 
@@ -635,36 +609,15 @@ class BuildDetail(InvenTreeRoleMixin, DetailView):
         ctx['BuildStatus'] = BuildStatus
         ctx['sub_build_count'] = build.sub_build_count()
 
-        return ctx
-
-
-class BuildAllocate(InvenTreeRoleMixin, DetailView):
-    """ View for allocating parts to a Build """
-    model = Build
-    context_object_name = 'build'
-    template_name = 'build/allocate.html'
-
-    def get_context_data(self, **kwargs):
-        """ Provide extra context information for the Build allocation page """
-
-        context = super(DetailView, self).get_context_data(**kwargs)
-
-        build = self.get_object()
         part = build.part
         bom_items = build.bom_items
 
-        context['part'] = part
-        context['bom_items'] = bom_items
-        context['has_tracked_bom_items'] = build.has_tracked_bom_items()
-        context['has_untracked_bom_items'] = build.has_untracked_bom_items()
-        context['BuildStatus'] = BuildStatus
+        ctx['part'] = part
+        ctx['bom_items'] = bom_items
+        ctx['has_tracked_bom_items'] = build.has_tracked_bom_items()
+        ctx['has_untracked_bom_items'] = build.has_untracked_bom_items()
 
-        context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
-
-        if str2bool(self.request.GET.get('edit', None)):
-            context['editing'] = True
-
-        return context
+        return ctx
 
 
 class BuildDelete(AjaxDeleteView):
