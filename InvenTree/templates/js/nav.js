@@ -56,15 +56,10 @@ function activatePanel(panelName, options={}) {
         // Iterate through the available 'select' elements until one matches
         panelName = null;
 
-        console.log("no match for panel:", panelName);
-
         $('.nav-toggle').each(function(item) {
             var panel_name = $(this).attr('id').replace('select-', '');
 
-            console.log("checking:", panel_name);
-
             if ($(`#panel-${panel_name}`).length && (panelName == null)) {
-                console.log("found match -", panel_name);
                 panelName = panel_name;
             }
 

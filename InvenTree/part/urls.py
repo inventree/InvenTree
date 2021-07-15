@@ -36,7 +36,6 @@ part_parameter_urls = [
 ]
 
 part_detail_urls = [
-    url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
@@ -55,8 +54,6 @@ part_detail_urls = [
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
     url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
-    url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
-    url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
 

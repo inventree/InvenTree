@@ -1084,40 +1084,6 @@ class PartImageSelect(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class PartEdit(AjaxUpdateView):
-    """ View for editing Part object """
-
-    model = Part
-    form_class = part_forms.EditPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Part Properties')
-    context_object_name = 'part'
-
-    def get_form(self):
-        """ Create form for Part editing.
-        Overrides default get_form() method to limit the choices
-        for the 'default_supplier' field to SupplierParts that reference this part
-        """
-
-        form = super(AjaxUpdateView, self).get_form()
-
-        # Hide the "default expiry" field if the feature is not enabled
-        if not inventree_settings.stock_expiry_enabled():
-            form.fields['default_expiry'].widget = HiddenInput()
-
-        part = self.get_object()
-
-        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
-
-        # Check if IPN can be edited
-        ipn_edit_enable = InvenTreeSetting.get_setting('PART_ALLOW_EDIT_IPN')
-        if not ipn_edit_enable and not self.request.user.is_superuser:
-            # Admin can still change IPN
-            form.fields['IPN'].disabled = True
-
-        return form
-
-
 class BomDuplicate(AjaxUpdateView):
     """
     View for duplicating BOM from a parent item.
