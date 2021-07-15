@@ -1,6 +1,8 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
+{% load crispy_forms_tags %}
 {% load markdownify %}
 
 {% block menubar %}
@@ -90,6 +92,10 @@
     <div class='panel-content'>
         <table class='table table-striped table-condensed' id='sales-order-allocation-table'></table>
     </div>
+</div>
+
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-pricing'>
+    {% include "part/prices.html" %}
 </div>
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-part-notes'>
@@ -892,6 +898,152 @@
             }
         });
     });
+
+    {% default_currency as currency %}
+
+    // history graphs
+    {% if price_history %}
+        var purchasepricedata = {
+                labels: [
+                    {% for line in price_history %}'{{ line.date }}',{% endfor %}
+                ],
+                datasets: [{
+                    label: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    yAxisID: 'y',
+                    data: [
+                        {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'line'
+                },
+                {% if 'price_diff' in price_history.0 %}
+                {
+                    label: '{% blocktrans %}Single Price Difference - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(68, 157, 68, 0.2)',
+                    borderColor: 'rgb(68, 157, 68)',
+                    yAxisID: 'y2',
+                    data: [
+                        {% for line in price_history %}{{ line.price_diff|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'line',
+                    hidden: true,
+                },
+                {
+                    label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
+                    backgroundColor: 'rgba(70, 127, 155, 0.2)',
+                    borderColor: 'rgb(70, 127, 155)',
+                    yAxisID: 'y',
+                    data: [
+                        {% for line in price_history %}{{ line.price_part|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'line',
+                    hidden: true,
+                },
+                {% endif %}
+                {
+                    label: '{% trans "Quantity" %}',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgb(255, 206, 86)',
+                    yAxisID: 'y1',
+                    data: [
+                        {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        var StockPriceChart = loadStockPricingChart($('#StockPriceChart'), purchasepricedata)
+    {% endif %}
+    
+    {% if bom_parts %}
+        var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
+        var bomdata = {
+            labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
+            datasets:  [
+            {
+              label: 'Price',
+              data: [{% for line in bom_parts %}{{ line.min_price }},{% endfor %}],
+                backgroundColor: bom_colors,
+            },
+            {% if bom_pie_max %}
+            {
+                label: 'Max Price',
+                data: [{% for line in bom_parts %}{{ line.max_price }},{% endfor %}],
+                backgroundColor: bom_colors,
+              },
+            {% endif %}
+            ]
+        };
+        var BomChart = loadBomChart(document.getElementById('BomChart'), bomdata)
+    {% endif %}
+
+
+    // Internal pricebreaks
+    {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+    {% if show_internal_price and roles.sales_order.view %}
+        initPriceBreakSet(
+            $('#internal-price-break-table'),
+            {
+                part_id: {{part.id}},
+                pb_human_name: 'internal price break',
+                pb_url_slug: 'internal-price',
+                pb_url: '{% url 'api-part-internal-price-list' %}',
+                pb_new_btn: $('#new-internal-price-break'),
+                pb_new_url: '{% url 'internal-price-break-create' %}',
+                linkedGraph: $('#InternalPriceBreakChart'),
+            },
+        );
+    {% endif %}
+
+    // Sales pricebreaks
+    {% if part.salable and roles.sales_order.view %}
+        initPriceBreakSet(
+            $('#price-break-table'),
+            {
+                part_id: {{part.id}},
+                pb_human_name: 'sale price break',
+                pb_url_slug: 'sale-price',
+                pb_url: "{% url 'api-part-sale-price-list' %}",
+                pb_new_btn: $('#new-price-break'),
+                pb_new_url: '{% url 'sale-price-break-create' %}',
+                linkedGraph: $('#SalePriceBreakChart'),
+            },
+        );
+    {% endif %}
+
+    // Sale price history
+    {% if sale_history %}
+            var salepricedata = {
+                    labels: [
+                        {% for line in sale_history %}'{{ line.date }}',{% endfor %}
+                    ],
+                    datasets: [{
+                        label: '{% blocktrans %}Unit Price - {{currency}}{% endblocktrans %}',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        yAxisID: 'y',
+                        data: [
+                            {% for line in sale_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
+                        ],
+                        borderWidth: 1,
+                    },
+                    {
+                        label: '{% trans "Quantity" %}',
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgb(255, 206, 86)',
+                        yAxisID: 'y1',
+                        data: [
+                            {% for line in sale_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
+                        ],
+                        borderWidth: 1,
+                        type: 'bar',
+                    }]
+                }
+            var SalePriceChart = loadSellPricingChart($('#SalePriceChart'), salepricedata)
+    {% endif %}
 
     attachNavCallbacks({
         name: 'part',

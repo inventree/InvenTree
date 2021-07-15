@@ -754,6 +754,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'part'
     queryset = Part.objects.all().select_related('category')
     template_name = 'part/detail.html'
+    form_class = part_forms.PartPriceForm
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
@@ -774,25 +775,12 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         ctx = part.get_context_data(self.request)
         context.update(**ctx)
 
-        return context
-
-
-class PartPricingView(PartDetail):
-    """ Detail view for Part object
-    """
-    context_object_name = 'part'
-    template_name = 'part/order_prices.html'
-    form_class = part_forms.PartPriceForm
-
-    # Add in some extra context information based on query params
-    def get_context_data(self, **kwargs):
-        """ Provide extra context data to template """
-        context = super().get_context_data(**kwargs)
-
+        # Pricing information
         ctx = self.get_pricing(self.get_quantity())
         ctx['form'] = self.form_class(initial=self.get_initials())
 
         context.update(ctx)
+
         return context
 
     def get_quantity(self):

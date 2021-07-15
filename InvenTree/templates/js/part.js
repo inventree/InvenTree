@@ -714,7 +714,7 @@ function loadPartTable(table, url, options={}) {
 
             var html = '';
 
-            html = `<div class='row'>`;
+            html = `<div class='row full-height'>`;
 
             data.forEach(function(row, index) {
                 
