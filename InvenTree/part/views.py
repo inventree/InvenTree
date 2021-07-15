@@ -1441,7 +1441,7 @@ class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
                 # BomItem already exists
                 pass
 
-        return HttpResponseRedirect(reverse('part-bom', kwargs={'pk': self.kwargs['pk']}))
+        return HttpResponseRedirect(reverse('part-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
 class PartExport(AjaxView):
