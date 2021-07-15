@@ -48,8 +48,6 @@ part_detail_urls = [
     url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
     url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
-    url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
-    url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
     url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
 

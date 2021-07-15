@@ -238,6 +238,22 @@
     </div>
 </div>
 
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-used-in'>
+    <div class='panel-heading'>
+        <h4>{% trans "Assemblies" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='assembly-button-toolbar'>
+            <div class='filter-list' id='filter-list-usedin'>
+                <!-- Empty div (will be filled out with avilable BOM filters) -->
+            </div>
+        </div>
+        
+        <table class="table table-striped table-condensed" id='used-table' data-toolbar='#assembly-button-toolbar'>
+        </table>
+    </div>
+</div>
+
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-build-orders'>
     <div class='panel-heading'>
         <h4>{% trans "Part Builds" %}</h4>
@@ -293,6 +309,16 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    loadPartTable('#used-table',
+        '{% url "api-part-list" %}',
+        {
+            params: {
+                uses: {{ part.pk }},
+            },
+            filterTarget: '#filter-list-usedin',
+        }
+    );
 
     // Load the BOM table data
     loadBomTable($("#bom-table"), {
