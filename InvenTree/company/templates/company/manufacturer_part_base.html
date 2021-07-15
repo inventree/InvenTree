@@ -83,7 +83,7 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
-            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}</td></tr>
+            <td><a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}</td></tr>
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
@@ -136,7 +136,7 @@ $('#delete-part').click(function() {
     constructForm('{% url "api-manufacturer-part-detail" part.pk %}', {
         method: 'DELETE',
         title: '{% trans "Delete Manufacturer Part" %}',
-        redirect: "{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}",
+        redirect: "{% url 'company-detail' part.manufacturer.id %}",
     });
 });
 
