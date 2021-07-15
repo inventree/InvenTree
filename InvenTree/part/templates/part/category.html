@@ -244,11 +244,11 @@
             "{% url 'category-create' %}",
             {
                 follow: true,
-                {% if category %}
                 data: {
+                    {% if category %}
                     category: {{ category.id }}
+                    {% endif %}
                 },
-                {% endif %}
                 secondary: [
                     {
                         field: 'default_location',

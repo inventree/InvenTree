@@ -39,12 +39,7 @@ manufacturer_part_urls = [
 supplier_part_detail_urls = [
     url(r'^edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
 
-    url(r'^manufacturers/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_manufacturers.html'), name='supplier-part-manufacturers'),
-    url(r'^pricing/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_pricing.html'), name='supplier-part-pricing'),
-    url(r'^orders/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_orders.html'), name='supplier-part-orders'),
-    url(r'^stock/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_stock.html'), name='supplier-part-stock'),
-
-    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part_pricing.html'), name='supplier-part-detail'),
+    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
 ]
 
 supplier_part_urls = [
