@@ -23,8 +23,12 @@ function attachNavCallbacks(options={}) {
 
     var panelClass = options.name || 'unknown';
 
-    // Look for a default panel to initialize
-    var defaultPanel = localStorage.getItem(`inventree-selected-panel-${panelClass}`) || options.default;
+    /* Look for a default panel to initialize
+     * First preference = URL parameter e.g. ?display=part-stock
+     * Second preference = localStorage
+     * Third preference = default
+     */
+    var defaultPanel = $.urlParam('display') || localStorage.getItem(`inventree-selected-panel-${panelClass}`) || options.default;
 
     if (defaultPanel) {
         activatePanel(defaultPanel);
@@ -63,6 +67,9 @@ function activatePanel(panelName, options={}) {
                 console.log("found match -", panel_name);
                 panelName = panel_name;
             }
+
+            panel = `#panel-${panelName}`;
+            select = `#select-${panelName}`;
         });
     }
 
