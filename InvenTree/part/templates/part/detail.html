@@ -84,6 +84,13 @@
         <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
         </table>
     </div>
+
+    <div class='panel-heading'>
+        <h4>{% trans "Sales Order Allocations" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <table class='table table-striped table-condensed' id='sales-order-allocation-table'></table>
+    </div>
 </div>
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-part-notes'>
@@ -103,7 +110,9 @@
         </div>
     </div>
     <div class='panel-content'>
+        {% if part.notes %}
         {{ part.notes | markdownify }}
+        {% endif %}
     </div>
 </div>
 
@@ -275,6 +284,13 @@
         <table class='table table-striped table-condensed' data-toolbar='#build-button-toolbar' id='build-table'>
         </table>
     </div>
+
+    <div class='panel-heading'>
+        <h4>{% trans "Build Order Allocations" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <table class='table table-striped table-condensed' id='build-order-allocation-table'></table>
+    </div>
 </div>
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-part-manufacturers'>
@@ -309,6 +325,18 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    loadBuildOrderAllocationTable("#build-order-allocation-table", {
+        params: {
+            part: {{ part.id }},
+        }
+    });
+
+    loadSalesOrderAllocationTable("#sales-order-allocation-table", {
+        params: {
+            part: {{ part.id }},
+        }
+    });
 
     loadPartTable('#used-table',
         '{% url "api-part-list" %}',

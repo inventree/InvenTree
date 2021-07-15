@@ -31,7 +31,9 @@
 
 {% else %}
 
+{% if build.notes %}
 {{ build.notes | markdownify }}
+{% endif %}
 {% endif %}
 
 {% endblock %}

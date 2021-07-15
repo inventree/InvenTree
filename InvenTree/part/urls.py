@@ -47,7 +47,6 @@ part_detail_urls = [
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
-    url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
     url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
 

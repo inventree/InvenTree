@@ -64,7 +64,9 @@
         </div>
     </div>
     <div class='panel-content'>
+        {% if order.notes %}
         {{ order.notes | markdownify }}
+        {% endif %}
     </div>
 </div>
 

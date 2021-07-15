@@ -31,14 +31,6 @@
             {% trans "Stock" %}
         </a>
     </li>
-    {% if part.component or part.salable %}
-    <li class='list-group-item' title='{% trans "Allocated Stock" %}'>
-        <a href='#' id='select-part-allocations' class='nav-toggle'>
-            <span class='menu-tab-icon fas fa-sign-out-alt sidebar-icon'></span>
-            {% trans "Allocations" %}
-        </a>
-    </li>
-    {% endif %}
     {% if part.assembly %}
     <li class='list-group-item' title='{% trans "Bill of Materials" %}'>
         <a href='#' id='select-bom' class='nav-toggle'>

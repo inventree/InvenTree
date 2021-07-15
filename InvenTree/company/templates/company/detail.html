@@ -179,7 +179,9 @@
         </div>
     </div>
     <div class='panel-content'>
+        {% if company.notes %}
         {{ company.notes | markdownify }}
+        {% endif %}
     </div>
 </div>
 
