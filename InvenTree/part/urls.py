@@ -57,7 +57,6 @@ part_detail_urls = [
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
-    url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
 
