@@ -235,7 +235,7 @@
         <td>{% trans "Base Part" %}</td>
         <td>
             {% if roles.part.view %}
-            <a href="{% url 'part-stock' item.part.id %}">
+            <a href="{% url 'part-detail' item.part.id %}">
             {% endif %}
             {{ item.part.full_name }}
             {% if roles.part.view %}
@@ -561,7 +561,7 @@ $("#stock-delete").click(function () {
     launchModalForm(
         "{% url 'stock-item-delete' item.id %}",
         {
-            redirect: "{% url 'part-stock' item.part.id %}"
+            redirect: "{% url 'part-detail' item.part.id %}"
         }
     );
 });

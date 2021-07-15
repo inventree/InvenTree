@@ -11,46 +11,44 @@
             <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
         </a>
     </li>
-    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Part Details" %}'>
-        <a href='{% url "part-detail" part.id %}'>
-            <span class='menu-tab-icon fas fa-info-circle sidebar-icon'></span>
-            <span class='tab-text'>
-                {% trans "Details" %}
-            </span>
+    <li class='list-group-item' title='{% trans "Parameters" %}'>
+        <a href='#' id='select-part-parameters' class='nav-toggle'>
+            <span class='menu-tab-icon fas fa-th-list sidebar-icon'></span>
+            {% trans "Parameters" %}
         </a>
     </li>
     {% if part.is_template %}
-    <li class='list-group-item {% if tab == "variants" %}active{% endif %}' title='{% trans "Part Variants" %}'>
-        <a href='{% url "part-variants" part.id %}'>
+    <li class='list-group-item' title='{% trans "Part Variants" %}'>
+        <a href='#' id='select-part-variants' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-shapes sidebar-icon'></span>
             {% trans "Variants" %}
         </a>
     </li>
     {% endif %}
-    <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Stock Items" %}'>
-        <a href='{% url "part-stock" part.id %}'>
+    <li class='list-group-item' title='{% trans "Stock Items" %}'>
+        <a href='#' id='select-part-stock' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
     {% if part.component or part.salable %}
-    <li class='list-group-item {% if tab == "allocation" %}active{% endif %}' title='{% trans "Allocated Stock" %}'>
-        <a href='{% url "part-allocation" part.id %}'>
+    <li class='list-group-item' title='{% trans "Allocated Stock" %}'>
+        <a href='#' id='select-part-allocations' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-sign-out-alt sidebar-icon'></span>
             {% trans "Allocations" %}
         </a>
     </li>
     {% endif %}
     {% if part.assembly %}
-    <li class='list-group-item {% if tab == "bom" %}active{% endif %}' title='{% trans "Bill of Materials" %}'>
-        <a href='{% url "part-bom" part.id %}'>
+    <li class='list-group-item' title='{% trans "Bill of Materials" %}'>
+        <a href='#' id='select-part-bom' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-list sidebar-icon'></span>
             {% trans "Bill of Materials" %}
         </a>
     </li>
     {% if roles.build.view %}
-    <li class='list-group-item {% if tab == "build" %}active{% endif %}' title='{% trans "Build Orders" %}'>
-        <a href='{% url "part-build" part.id %}'>
+    <li class='list-group-item ' title='{% trans "Build Orders" %}'>
+        <a href='#' id='select-build-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-tools sidebar-icon'></span>
             {% trans "Build Orders" %}
         </a>
@@ -58,55 +56,73 @@
     {% endif %}
     {% endif %}
     {% if part.component %}
-    <li class='list-group-item {% if tab == "used" %}active{% endif %}' title='{% trans "Used In" %}'>
-        <a href='{% url "part-used-in" part.id %}'>
+    <li class='list-group-item ' title='{% trans "Used In" %}'>
+        <a href='#' id='select-used-in' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-layer-group sidebar-icon'></span>
             {% trans "Used In" %}
         </a>
     </li>
     {% endif %}
-    <li class='list-group-item {% if tab == "prices" %}active{% endif %}' title='{% trans "Pricing Information" %}'>
-        <a href='{% url "part-prices" part.id %}'>
+    <li class='list-group-item' title='{% trans "Pricing Information" %}'>
+        <a href='#' id='select-part-pricing' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-dollar-sign sidebar-icon'></span>
             {% trans "Prices" %}
         </a>
     </li>
     {% if part.purchaseable and roles.purchase_order.view %}
-    <li class='list-group-item {% if tab == "suppliers" %}active{% endif %}' title='{% trans "Suppliers" %}'>
-        <a href='{% url "part-suppliers" part.id %}'>
+    <li class='list-group-item' title='{% trans "Suppliers" %}'>
+        <a href='#' id='select-part-suppliers' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-building sidebar-icon'></span>
             {% trans "Suppliers" %}
         </a>
     </li>
-    <li class='list-group-item {% if tab == "orders" %}active{% endif %}' title='{% trans "Purchase Orders" %}'>
-        <a href='{% url "part-orders" part.id %}'>
+    <li class='list-group-item' title='{% trans "Manufacturers" %}'>
+        <a href='#' id='select-part-manufacturers' class='nav-toggle'>
+            <span class='menu-tab-icon fas fa-tools sidebar-icon'></span>
+            {% trans "Manufacturers" %}
+        </a>
+    </li>
+    <li class='list-group-item' title='{% trans "Purchase Orders" %}'>
+        <a href='#' id='select-purchase-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-shopping-cart sidebar-icon'></span>
             {% trans "Purchase Orders" %}
         </a>
     </li>
     {% endif %}
     {% if roles.sales_order.view %}
-    <li class='list-group-item {% if tab == "sales-orders" %}active{% endif %}' title='{% trans "Sales Orders" %}'>
-        <a href='{% url "part-sales-orders" part.id %}'>
+    <li class='list-group-item' title='{% trans "Sales Orders" %}'>
+        <a href='#' id='select-sales-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-truck sidebar-icon'></span>
             {% trans "Sales Orders" %}
         </a>
     </li>
     {% endif %}
     {% if part.trackable %}
-    <li class='list-group-item {% if tab == "tests" %}active{% endif %}' title='{% trans "Part Test Templates" %}'>
-        <a href='{% url "part-test-templates" part.id %}'>
+    <li class='list-group-item' title='{% trans "Part Test Templates" %}'>
+        <a href='#' id='select-test-templates' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-vial sidebar-icon'></span>
             {% trans "Test Templates" %}
         </a>
     </li>
     {% endif %}
     {% if show_related %}
-    <li class='list-group-item {% if tab == "related" %}active{% endif %}' title='{% trans "Related Parts" %}'>
-        <a href='{% url "part-related" part.id %}'>
+    <li class='list-group-item' title='{% trans "Related Parts" %}'>
+        <a href='#' id='select-related-parts' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-random sidebar-icon'></span>
             {% trans "Related Parts" %}
         </a>
     </li>
     {% endif %}
+    <li class='list-group-item' title='{% trans "Attachments" %}'>
+        <a href='#' id='select-part-attachments' class='nav-toggle'>
+            <span class='fas fa-paperclip side-icon'></span>
+            {% trans "Attachments" %}
+        </a>
+    </li>
+    <li class='list-group-item' title='{% trans "Notes" %}'>
+        <a href='#' id='select-part-notes' class='nav-toggle'>
+            <span class='fas fa-clipboard side-icon'></span>
+            {% trans "Notes" %}
+        </a>
+    </li>
 </ul>

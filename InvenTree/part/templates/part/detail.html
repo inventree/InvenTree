@@ -5,84 +5,70 @@
 
 
 {% block menubar %}
-{% include 'part/navbar.html' with tab='details' %}
+{% include 'part/navbar.html' %}
 {% endblock %}
 
-{% block heading %}
-{% trans "Part Details" %}
-{% endblock %}
+{% block page_content %}
 
-{% block details %}
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-stock'>
+    <div class='panel-heading'>
+        <h4>{% trans "Part Stock" %}</h4>
+    </div>
+    <div class='panel-content'>
+        {% if part.is_template %}
+        <div class='alert alert-info alert-block'>
+            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <i>{{full_name}}</i>{% endblocktrans %}
+        </div>
+        {% endif %}
+        {% include "stock_table.html" %}
+    </div>
+</div>
 
-<div class='row'>
-    <div class='col-sm-6'>
-    <table class='table table-striped'>
-        <col width='25'>
-
-        <tr>
-            <td><span class='fas fa-sticky-note'></span></td>
-            <td>
-                <strong>{% trans "Notes" %}</strong>
-            </td>
-            <td>
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-notes'>
+    <div class='panel-heading'>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <h4>{% trans "Notes" %}</h4>
+            </div>
+            <div class='col-sm-6'>
                 <div class='btn-group float-right'>
                     <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-default'>
                         <span class='fas fa-edit'>      
                         </span>
                     </button>
                 </div>
-            </td>
-        </tr>
-        <tr>
-            <td colspan='3'>
-                {% if part.notes %}
-                <div class='notes'>
-                    {{ part.notes | markdownify }}
-                </div>
-                {% endif %}
-            </td>
-        </tr>
-
-    </table>
+            </div>
+        </div>
     </div>
-    <div class='col-sm-6'>
-
+    <div class='panel-content'>
+        {{ part.notes | markdownify }}
     </div>
 </div>
 
-{% endblock %}
-
-{% block post_content_panel %}
-
-<div class='row'>
-    <div class='col-sm-6'>
-        <div class='panel panel-default panel-inventree'>
-            <div class='panel-heading'>
-                <h4>{% trans "Parameters" %}</h4>
-            </div>
-            <div class='panel-content'>
-                <div id='param-button-toolbar'>
-                    <div class='button-toolbar container-fluid' style='float: right;'>
-                        {% if roles.part.add %}
-                        <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>
-                            <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
-                        </button>
-                        {% endif %}
-                    </div>
-                </div>
-                <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
-            </div>
-        </div>
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-parameters'>
+    <div class='panel-heading'>
+        <h4>{% trans "Parameters" %}</h4>
     </div>
-    <div class='col-sm-6'>
-        <div class='panel panel-default panel-inventree'>
-            <div class='panel-heading'>
-                <h4>{% trans "Attachments" %}</h4>
-            </div>
-            <div class='panel-content'>
-                {% include "attachment_table.html" %}
+    <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
+                {% if roles.part.add %}
+                <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+                </button>
+                {% endif %}
             </div>
         </div>
+        <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
+    </div>
+</div>
+
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-attachments'>
+    <div class='panel-heading'>
+        <h4>{% trans "Attachments" %}</h4>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
     </div>
 </div>
 
@@ -94,6 +80,53 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    $('#add-stock-item').click(function () {
+        createNewStockItem({
+            reload: true,
+            data: {
+                part: {{ part.id }},
+            }
+        });
+    });
+
+    loadStockTable($("#stock-table"), {
+        params: {
+            part: {{ part.id }},
+            location_detail: true,
+            part_detail: true,
+            supplier_part_detail: true,
+        },
+        groupByField: 'location',
+        buttons: [
+            '#stock-options',
+        ],
+        url: "{% url 'api-stock-list' %}",
+    });
+
+    $("#stock-export").click(function() {
+        launchModalForm("{% url 'stock-export-options' %}", {
+            submit_text: "{% trans 'Export' %}",
+            success: function(response) {
+                var url = "{% url 'stock-export' %}";
+
+                url += "?format=" + response.format;
+                url += "&cascade=" + response.cascade;
+                url += "&part={{ part.id }}";
+
+                location.href = url;
+            },
+        });
+    });
+
+    $('#item-create').click(function () {
+        createNewStockItem({
+            reload: true,
+            data: {
+                part: {{ part.id }},
+            }
+        });
+    });
 
     $('#edit-notes').click(function() {
         constructForm('{% url "api-part-detail" part.pk %}', {
@@ -237,6 +270,11 @@
                 title: '{% trans "Add Attachment" %}',
             }
         )
+    });
+
+    attachNavCallbacks({
+        name: 'part',
+        default: 'part-stock'
     });
 
 {% endblock %}
