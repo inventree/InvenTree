@@ -53,7 +53,6 @@ part_detail_urls = [
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
     url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
-    url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
 
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
