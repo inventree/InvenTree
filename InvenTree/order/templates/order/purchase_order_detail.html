@@ -77,6 +77,11 @@
 
 {{ block.super }}
 
+    enableNavbar({
+        label: 'po',
+        toggleId: '#po-menu-toggle',
+    });
+
     $('#edit-notes').click(function() {
         constructForm('{% url "api-po-detail" order.pk %}', {
             fields: {
