@@ -24,7 +24,7 @@
         <tr>
             <td><span class='fas fa-shapes'></span></td>
             <td>{% trans "Part" %}</td>
-            <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a>{% include "clip.html"%}</td>
+            <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a>{% include "clip.html"%}</td>
         </tr>
         <tr>
             <td></td>

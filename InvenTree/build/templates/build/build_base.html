@@ -126,7 +126,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Part" %}</td>
-        <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
+        <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a></td>
     </tr>
     <tr>
         <td></td>
