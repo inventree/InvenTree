@@ -27,7 +27,7 @@
 
     {% if show_import and user.is_staff and roles.part.add %}
     <li class='list-group-item' title='{% trans "Import Parts" %}'>
-        <a href='#' id='select-part-import' class='nav-toggle'>
+        <a href='{% url "part-import" %}'>
             <span class='fas fa-file-upload sidebar-icon'></span>
             {% trans "Import Parts" %}
         </a>
