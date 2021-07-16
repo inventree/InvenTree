@@ -324,9 +324,9 @@ $("#po-table").inventreeTable({
             title: '{% trans "MPN" %}',
             formatter: function(value, row, index, field) {
                 if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
-                    return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part.pk}/`);
+                    return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`);
                 } else {
-                    return "";
+                    return "-";
                 }
             },
         },
