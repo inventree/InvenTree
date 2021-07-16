@@ -781,8 +781,8 @@ input[type="submit"] {
 }
 
 .sidenav .list-group-item.active {
-    background-color: #b3a997;
-    border-color: #ccc;
+    background-color: #c6d4ea;
+    border: 2px #aab solid;
 }
 
 /* The side navigation menu */
