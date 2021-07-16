@@ -187,7 +187,11 @@ $('#new-po-line').click(function() {
             quantity: {},
             reference: {},
             purchase_price: {},
-            purchase_price_currency: {},
+            purchase_price_currency: {
+                {% if order.supplier.currency %}
+                value: '{{ order.supplier.currency }}',
+                {% endif %}
+            },
             destination: {},
             notes: {},
         },
