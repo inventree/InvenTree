@@ -13,20 +13,41 @@
 
 {% block page_content %}
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-items'>
-    <div class='panel-heading'>
-        <h4>{% trans "Sales Order Items" %}</h4>
-    </div>
-    <div class='panel-content'>
-        {% if roles.sales_order.change and not order.shipment_date %}
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <button type='button' class='btn btn-success' id='new-so-line'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
-            </button>
+<div class='panel-hidden' id='panel-order-items'>
+    <div class='panel panel-default panel-inventree'>
+        <div class='panel-heading'>
+            <h4>{% trans "Sales Order Items" %}</h4>
         </div>
-        {% endif %}
-        <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
-        </table>
+        <div class='panel-content'>
+            {% if roles.sales_order.change and not order.shipment_date %}
+            <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
+                <button type='button' class='btn btn-success' id='new-so-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+                </button>
+            </div>
+            {% endif %}
+            <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
+            </table>
+        </div>
+    </div>
+
+    <div class='panel panel-default panel-inventree'>
+        <div class='panel-heading'>
+            <h4>{% trans "Additional Order Lines" %}</h4>
+        </div>
+        
+        <div class='panel-content'>
+            {# do not show 'add' buttons when order was shipped #}
+            {% if roles.sales_order.change and not order.shipment_date %}
+            <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
+                <button type='button' class='btn btn-success' id='new-add-so-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line" %}
+                </button>
+            </div>
+            {% endif %}
+
+            <table class='table table-striped table-condensed' id='so-additional-lines-table' data-toolbar='#order-additional-toolbar-buttons'></table>
+        </div>
     </div>
 </div>
 
@@ -68,28 +89,6 @@
         {% if order.notes %}
         {{ order.notes | markdownify }}
         {% endif %}
-    </div>
-</div>
-
-{% endblock %}
-
-{% block post_content_panels %}
-<div class='panel panel-default panel-inventree'>
-    <div class='panel-heading'>
-        <h4>{% trans "Additional Order Lines" %}</h4>
-    </div>
-    
-    <div class='panel-content'>
-        {# do not show 'add' buttons when order was shipped #}
-        {% if roles.sales_order.change and not order.shipment_date %}
-        <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
-            <button type='button' class='btn btn-success' id='new-add-so-line'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Line" %}
-            </button>
-        </div>
-        {% endif %}
-
-        <table class='table table-striped table-condensed' id='so-additional-lines-table' data-toolbar='#order-additional-toolbar-buttons'></table>
     </div>
 </div>
 {% endblock %}
