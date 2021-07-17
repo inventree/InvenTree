@@ -243,6 +243,8 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
         help_text=_('Sell price currency'),
     )
 
+    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
+
     class Meta:
         model = SalesOrder
 
@@ -266,6 +268,8 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'sell_price',
             'sell_price_string',
             'sell_price_currency',
+            'total_price_string',
+            'is_valid',
         ]
 
         read_only_fields = [
