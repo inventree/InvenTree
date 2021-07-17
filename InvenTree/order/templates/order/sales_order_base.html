@@ -151,13 +151,8 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-users'></span></td>
         <td>{% trans "Sell Price" %}</td>
-        <td>
-            {% blocktrans with sell=order.sell_price total=order.get_total_price %}{{ sell }} (calculated {{ total }}){% endblocktrans %}
-            <span class='label label-{% if order.is_valid %}success'>
-                {% trans "Validated" %}
-            {% else %}danger'>
-                {% trans "Not validated" %}
-            {% endif %}</span>
+        <td id='sales-order-sell-price'>
+            {% trans "Loading..." %}
         </td>
     </tr>
     {% endif %}
@@ -226,5 +221,28 @@ $("#validate-price").click(function() {
         }
     );
 });
+
+// reload price display
+function reloadTotal() {
+    {% if order.sell_price %}
+    fetch('{% url 'api-so-detail' order.id %}')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data){
+            html = `{% trans '${data.sell_price_string} (calculated ${data.total_price_string})' %}`;
+            html += `<span class='label label-`;
+            if (data.is_valid){
+                html += `success'>`;
+                html += `{% trans "Validated" %}`;
+            } else {
+                html += `danger'>`;
+                html += `{% trans "Not validated" %}`;
+            }
+            $("#sales-order-sell-price").html(html);
+        });
+    {% endif %}
+}
+reloadTotal();
 
 {% endblock %}
