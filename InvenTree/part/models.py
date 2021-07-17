@@ -30,7 +30,7 @@ from mptt.models import TreeForeignKey, MPTTModel
 
 from stdimage.models import StdImageField
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from rapidfuzz import fuzz
 import hashlib
@@ -692,7 +692,6 @@ class Part(MPTTModel):
         null=True, blank=True,
         limit_choices_to={
             'is_template': True,
-            'active': True,
         },
         on_delete=models.SET_NULL,
         help_text=_('Is this part a variant of another part?'),
@@ -2165,7 +2164,7 @@ class PartParameterTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-param-template-list')
+        return reverse('api-part-parameter-template-list')
 
     def __str__(self):
         s = str(self.name)
@@ -2206,7 +2205,7 @@ class PartParameter(models.Model):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-param-list')
+        return reverse('api-part-parameter-list')
 
     def __str__(self):
         # String representation of a PartParameter (used in the admin interface)
@@ -2418,6 +2417,15 @@ class BomItem(models.Model):
 
         - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
+
+        super().clean()
+
+        try:
+            self.quantity = Decimal(self.quantity)
+        except InvalidOperation:
+            raise ValidationError({
+                'quantity': _('Must be a valid number')
+            })
 
         try:
             # Check for circular BOM references

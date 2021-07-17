@@ -1211,7 +1211,7 @@ class StockItem(MPTTModel):
             # We need to split the stock!
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user)
+            self.splitStock(quantity, location, user, **{'notes': notes})
 
             return True
 

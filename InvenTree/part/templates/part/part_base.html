@@ -27,7 +27,34 @@
                 </div>
                 {% endif %}
             </h3>   
+            {% if part.description %}
             <p><em>{{ part.description }}</em></p>
+            {% endif %}
+            <p>
+                <div id='part-properties' class='btn-group' role='group'>
+                    {% if part.virtual %}
+                    <span class='fas fa-ghost' title='{% trans "Part is virtual (not a physical part)" %}'></span>
+                    {% endif %}
+                    {% if part.is_template %}
+                    <span class='fas fa-clone' title='{% trans "Part is a template part (variants can be made from this part)" %}'></span>
+                    {% endif %}
+                    {% if part.assembly %}
+                    <span class='fas fa-tools' title='{% trans "Part can be assembled from other parts" %}'></span>
+                    {% endif %}
+                    {% if part.component %}
+                    <span class='fas fa-th' title='{% trans "Part can be used in assemblies" %}'></span>
+                    {% endif %}
+                    {% if part.trackable %}
+                    <span class='fas fa-directions' title='{% trans "Part stock is tracked by serial number" %}'></span>
+                    {% endif %}
+                    {% if part.purchaseable %}
+                    <span class='fas fa-shopping-cart' title='{% trans "Part can be purchased from external suppliers" %}'></span>
+                    {% endif %}
+                    {% if part.salable %}
+                    <span class='fas fa-dollar-sign' title='{% trans "Part can be sold to customers" %}'></span>
+                    {% endif %}
+                </div>
+            </p>
 
             <div class='btn-group action-buttons' role='group'>
                 <button type='button' class='btn btn-default' id='toggle-starred' title='{% trans "Star this part" %}'>
@@ -49,9 +76,25 @@
                     <span id='part-price-icon' class='fas fa-dollar-sign'/>
                 </button>
                 {% if roles.stock.change %}
-                <button type='button' class='btn btn-default' id='part-count' title='{% trans "Count part stock" %}'>
-                    <span class='fas fa-clipboard-list'/>
-                </button>
+                <div class='btn-group'>
+                    <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                        <span class='fas fa-boxes'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu'>
+                        <li>
+                            <a href='#' id='part-count'>
+                                <span class='fas fa-clipboard-list'></span>
+                                {% trans "Count part stock" %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#' id='part-move'>
+                                <span class='fas fa-exchange-alt'></span>
+                                {% trans "Transfer part stock" %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 {% endif %}
                 {% if part.purchaseable %}
                 {% if roles.purchase_order.add %}
@@ -81,11 +124,11 @@
             </div>
             <table class='table table-condensed'>
                 <col width='25'>
-                {% if part.IPN %}
+                {% if part.keywords %}
                 <tr>
-                    <td></td>
-                    <td>{% trans "IPN" %}</td>
-                    <td>{{ part.IPN }}</td>
+                    <td><span class='fas fa-key'></span></td>
+                    <td>{% trans "Keywords" %}</td>
+                    <td>{{ part.keywords }}</td>
                 </tr>
                 {% endif %}
                 {% if part.link %}
@@ -96,7 +139,22 @@
                 </tr>
                 {% endif %}
                 <tr>
+                    <td><span class='fas fa-calendar-alt'></span></td>
+                    <td>{% trans "Creation Date" %}</td>
+                    <td>
+                        {{ part.creation_date }}
+                        {% if part.creation_user %}
+                        <span class='badge'>{{ part.creation_user }}</span>
+                        {% endif %}
+                    </td>
                 </tr>
+                {% if part.trackable and part.getLatestSerialNumber %}
+                <tr>
+                    <td><span class='fas fa-hashtag'></span></td>
+                    <td>{% trans "Latest Serial Number" %}</td>
+                    <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
+                </tr>
+            {% endif %}
             </table>
         </div>
         </div>
@@ -109,7 +167,7 @@
             {% endif %}
             {% if part.variant_of %}
             <div class='alert alert-info alert-block'>
-                {% object_link 'part-variants' part.variant_of.id part.variant_of.full_name as link %}
+                {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
                 {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
             </div>
             {% endif %}
@@ -181,55 +239,19 @@
             {% endif %}
             {% endif %}
         {% endif %}
-        {% if part.trackable and part.getLatestSerialNumber %}
-            <tr><td colspan="3"></td></tr>
-            <tr>
-                <td><span class='fas fa-hashtag'></span></td>
-                <td>{% trans "Latest Serial Number" %}</td>
-                <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
-            </tr>
-        {% endif %}
         </table>
     </div>
     </div>
 
 </div>
 
-{% block pre_content_panel %}
-
-{% endblock %}
-
-<div class='panel panel-default panel-inventree'>
-
-
-    <div class='panel-heading'>
-        <h4>
-            {% block heading %}
-            <!-- Heading goes here -->
-            {% endblock %}
-        </h4>
-    </div>
-
-    <div class='panel-content'>
-        {% block details %}        
-        <!-- Specific part details go here... -->
-        {% endblock %}
-    </div>
-
-</div>
-{% block post_content_panel %}
-
+{% block page_content %}
 {% endblock %}
 
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
-
-    enableNavbar({
-        label: 'part',
-        toggleId: '#part-menu-toggle',
-    });
 
     {% if part.image %}
     $('#part-thumb').click(function() {
@@ -268,14 +290,38 @@
         );
     });
 
-    $("#part-count").click(function() {
-        launchModalForm("/stock/adjust/", {
-            data: {
-                action: "count",
+    $('#print-label').click(function() {
+        printPartLabels([{{ part.pk }}]);
+    });
+
+    function adjustPartStock(action) {
+        inventreeGet(
+            '{% url "api-stock-list" %}',
+            {
                 part: {{ part.id }},
+                in_stock: true,
+                allow_variants: true,
+                part_detail: true,
+                location_detail: true,
             },
-            reload: true,
-        });
+            {
+                success: function(items) {
+                    adjustStock(action, items, {
+                        onSuccess: function() {
+                            location.reload();
+                        }
+                    });
+                },
+            }
+        );
+    }
+
+    $("#part-move").click(function() {
+        adjustPartStock('move');
+    });
+
+    $("#part-count").click(function() {
+        adjustPartStock('count');
     });
 
     $("#price-button").click(function() {
@@ -370,80 +416,7 @@
 
     $("#part-edit").click(function() {
 
-        constructForm('{% url "api-part-detail" part.id %}', {
-            focus: 'name',
-            fields: {
-                category: {
-                    secondary: {
-                        label: '{% trans "New Category" %}',
-                        title: '{% trans "Create New Part Category" %}',
-                        api_url: '{% url "api-part-category-list" %}',
-                        method: 'POST',
-                        fields: {
-                            name: {},
-                            description: {},
-                            parent: {
-                                secondary: {
-                                    title: '{% trans "New Parent" %}',
-                                    api_url: '{% url "api-part-category-list" %}',
-                                    method: 'POST',
-                                    fields: {
-                                        name: {},
-                                        description: {},
-                                        parent: {},
-                                    }
-                                }
-                            },
-                        }
-                    },
-                },
-                name: {
-                    placeholder: 'part name',
-                },
-                IPN: {},
-                description: {},
-                revision: {},
-                keywords: {
-                    icon: 'fa-key',
-                },
-                variant_of: {},
-                link: {
-                    icon: 'fa-link',
-                },
-                default_location: {
-                    secondary: {
-                        label: '{% trans "New Location" %}',
-                        title: '{% trans "Create new stock location" %}',
-                        
-                    },
-                },
-                default_supplier: {
-                    filters: {
-                        part: {{ part.pk }},
-                        part_detail: true,
-                        manufacturer_detail: true,
-                        supplier_detail: true,
-                    },
-                    secondary: {
-                        label: '{% trans "New Supplier Part" %}',
-                        title: '{% trans "Create new supplier part" %}',
-                    }
-                },
-                units: {},
-                minimum_stock: {},
-            },
-            title: '{% trans "Edit Part" %}',
-            reload: true,
-        });
-
-        return;
-
-        launchModalForm(
-            "{% url 'part-edit' part.id %}",
-            {
-                reload: true,
-            }
-        );
+        editPart({{ part.pk }});
     });
     {% endif %}
 

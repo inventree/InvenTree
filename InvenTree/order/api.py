@@ -271,6 +271,10 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = SalesOrderAttachment.objects.all()
     serializer_class = SOAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
     filter_fields = [
         'order',
     ]
@@ -654,6 +658,14 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
     queryset = PurchaseOrderAttachment.objects.all()
     serializer_class = POAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'order',
+    ]
 
 
 class POAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):

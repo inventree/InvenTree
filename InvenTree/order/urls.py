@@ -19,10 +19,6 @@ purchase_order_detail_urls = [
     url(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
     url(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
 
-    url(r'^notes/', views.PurchaseOrderNotes.as_view(), name='po-notes'),
-
-    url(r'^received/', views.PurchaseOrderDetail.as_view(template_name='order/po_received_items.html'), name='po-received'),
-    url(r'^attachments/', views.PurchaseOrderDetail.as_view(template_name='order/po_attachments.html'), name='po-attachments'),
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='po-detail'),
 ]
 
@@ -42,10 +38,6 @@ sales_order_detail_urls = [
     url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
     url(r'^ship/', views.SalesOrderShip.as_view(), name='so-ship'),
     url(r'^validate/', views.SalesOrderValidate.as_view(), name='so-validate'),
-
-    url(r'^builds/', views.SalesOrderDetail.as_view(template_name='order/so_builds.html'), name='so-builds'),
-    url(r'^attachments/', views.SalesOrderDetail.as_view(template_name='order/so_attachments.html'), name='so-attachments'),
-    url(r'^notes/', views.SalesOrderNotes.as_view(), name='so-notes'),
 
     url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
 ]

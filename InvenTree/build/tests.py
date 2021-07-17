@@ -252,36 +252,6 @@ class TestBuildViews(TestCase):
 
         self.assertIn(build.title, content)
 
-    def test_build_create(self):
-        """ Test the build creation view (ajax form) """
-
-        url = reverse('build-create')
-
-        # Create build without specifying part
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create build with valid part
-        response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create build with invalid part
-        response = self.client.get(url, {'part': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_build_allocate(self):
-        """ Test the part allocation view for a Build """
-
-        url = reverse('build-allocate', args=(1,))
-
-        # Get the page normally
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        # Get the page in editing mode
-        response = self.client.get(url, {'edit': 1})
-        self.assertEqual(response.status_code, 200)
-
     def test_build_item_create(self):
         """ Test the BuildItem creation view (ajax form) """
 

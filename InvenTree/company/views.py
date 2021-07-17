@@ -7,7 +7,7 @@ Django views for interacting with Company app
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 
 from django.urls import reverse
 from django.forms import HiddenInput
@@ -29,7 +29,6 @@ from .models import SupplierPart
 
 from part.models import Part
 
-from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm
 from .forms import CompanyImageDownloadForm
 
@@ -112,28 +111,6 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
             queryset = queryset.filter(is_customer=True)
 
         return queryset
-
-
-class CompanyNotes(UpdateView):
-    """ View for editing the 'notes' field of a Company object.
-    """
-
-    context_object_name = 'company'
-    template_name = 'company/notes.html'
-    model = Company
-    fields = ['notes']
-    permission_required = 'company.view_company'
-
-    def get_success_url(self):
-        return reverse('company-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        return ctx
 
 
 class CompanyDetail(DetailView):
@@ -240,74 +217,6 @@ class ManufacturerPartDetail(DetailView):
         ctx = super().get_context_data(**kwargs)
 
         return ctx
-
-
-class ManufacturerPartCreate(AjaxCreateView):
-    """ Create view for making new ManufacturerPart """
-
-    model = ManufacturerPart
-    form_class = EditManufacturerPartForm
-    ajax_template_name = 'company/manufacturer_part_create.html'
-    ajax_form_title = _('Create New Manufacturer Part')
-    context_object_name = 'part'
-
-    def get_context_data(self):
-        """
-        Supply context data to the form
-        """
-
-        ctx = super().get_context_data()
-
-        # Add 'part' object
-        form = self.get_form()
-
-        part = form['part'].value()
-
-        try:
-            part = Part.objects.get(pk=part)
-        except (ValueError, Part.DoesNotExist):
-            part = None
-
-        ctx['part'] = part
-
-        return ctx
-
-    def get_form(self):
-        """ Create Form instance to create a new ManufacturerPart object.
-        Hide some fields if they are not appropriate in context
-        """
-        form = super(AjaxCreateView, self).get_form()
-
-        if form.initial.get('part', None):
-            # Hide the part field
-            form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-        """ Provide initial data for new ManufacturerPart:
-
-        - If 'manufacturer_id' provided, pre-fill manufacturer field
-        - If 'part_id' provided, pre-fill part field
-        """
-        initials = super(ManufacturerPartCreate, self).get_initial().copy()
-
-        manufacturer_id = self.get_param('manufacturer')
-        part_id = self.get_param('part')
-
-        if manufacturer_id:
-            try:
-                initials['manufacturer'] = Company.objects.get(pk=manufacturer_id)
-            except (ValueError, Company.DoesNotExist):
-                pass
-
-        if part_id:
-            try:
-                initials['part'] = Part.objects.get(pk=part_id)
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        return initials
 
 
 class SupplierPartDetail(DetailView):

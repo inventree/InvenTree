@@ -242,7 +242,7 @@ function loadBomTable(table, options) {
             return renderLink(text, url);
         }
     });
-
+    
     cols.push(
     {
         field: 'purchase_price_range',

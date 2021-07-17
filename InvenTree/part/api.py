@@ -5,7 +5,8 @@ Provides a JSON API for the Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django.conf.urls import url, include
+from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.utils.translation import ugettext_lazy as _
@@ -15,12 +16,13 @@ from rest_framework.response import Response
 from rest_framework import filters, serializers
 from rest_framework import generics
 
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
+
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from django.conf.urls import url, include
-from django.urls import reverse
 
 from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
@@ -405,8 +407,90 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         return response
 
 
+class PartFilter(rest_filters.FilterSet):
+    """
+    Custom filters for the PartList endpoint.
+    Uses the django_filters extension framework
+    """
+
+    # Filter by parts which have (or not) an IPN value
+    has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
+
+    def filter_has_ipn(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(IPN='')
+        else:
+            queryset = queryset.filter(IPN='')
+
+    # Regex filter for name
+    name_regex = rest_filters.CharFilter(label='Filter by name (regex)', field_name='name', lookup_expr='iregex')
+
+    # Exact match for IPN
+    IPN = rest_filters.CharFilter(
+        label='Filter by exact IPN (internal part number)',
+        field_name='IPN',
+        lookup_expr="iexact"
+    )
+
+    # Regex match for IPN
+    IPN_regex = rest_filters.CharFilter(label='Filter by regex on IPN (internal part number)', field_name='IPN', lookup_expr='iregex')
+
+    # low_stock filter
+    low_stock = rest_filters.BooleanFilter(label='Low stock', method='filter_low_stock')
+
+    def filter_low_stock(self, queryset, name, value):
+        """
+        Filter by "low stock" status
+        """
+
+        value = str2bool(value)
+
+        if value:
+            # Ignore any parts which do not have a specified 'minimum_stock' level
+            queryset = queryset.exclude(minimum_stock=0)
+            # Filter items which have an 'in_stock' level lower than 'minimum_stock'
+            queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
+        else:
+            # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+            queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+
+        return queryset
+
+    # has_stock filter
+    has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
+
+    def filter_has_stock(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(Q(in_stock__gt=0))
+        else:
+            queryset = queryset.filter(Q(in_stock__lte=0))
+
+        return queryset
+
+    is_template = rest_filters.BooleanFilter()
+
+    assembly = rest_filters.BooleanFilter()
+
+    component = rest_filters.BooleanFilter()
+
+    trackable = rest_filters.BooleanFilter()
+
+    purchaseable = rest_filters.BooleanFilter()
+
+    salable = rest_filters.BooleanFilter()
+
+    active = rest_filters.BooleanFilter()
+
+
 class PartList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of Part objects
+    """
+    API endpoint for accessing a list of Part objects
 
     - GET: Return list of objects
     - POST: Create a new Part object
@@ -427,8 +511,8 @@ class PartList(generics.ListCreateAPIView):
     """
 
     serializer_class = part_serializers.PartSerializer
-
     queryset = Part.objects.all()
+    filterset_class = PartFilter
 
     starred_parts = None
 
@@ -469,7 +553,7 @@ class PartList(generics.ListCreateAPIView):
         # Do we wish to include PartCategory detail?
         if str2bool(request.query_params.get('category_detail', False)):
 
-            # Work out which part categorie we need to query
+            # Work out which part categories we need to query
             category_ids = set()
 
             for part in data:
@@ -541,6 +625,10 @@ class PartList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        # Annotate calculated data to the queryset
+        # (This will be used for further filtering)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
         queryset = super().filter_queryset(queryset)
 
         # Filter by "uses" query - Limit to parts which use the provided part
@@ -566,17 +654,6 @@ class PartList(generics.ListCreateAPIView):
                 queryset = queryset.filter(pk__in=[d.pk for d in descendants])
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by whether the part has an IPN (internal part number) defined
-        has_ipn = params.get('has_ipn', None)
-
-        if has_ipn is not None:
-            has_ipn = str2bool(has_ipn)
-
-            if has_ipn:
-                queryset = queryset.exclude(IPN='')
-            else:
-                queryset = queryset.filter(IPN='')
 
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
@@ -643,36 +720,6 @@ class PartList(generics.ListCreateAPIView):
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
 
-        # Annotate calculated data to the queryset
-        # (This will be used for further filtering)
-        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
-        # Filter by whether the part has stock
-        has_stock = params.get("has_stock", None)
-
-        if has_stock is not None:
-            has_stock = str2bool(has_stock)
-
-            if has_stock:
-                queryset = queryset.filter(Q(in_stock__gt=0))
-            else:
-                queryset = queryset.filter(Q(in_stock__lte=0))
-
-        # If we are filtering by 'low_stock' status
-        low_stock = params.get('low_stock', None)
-
-        if low_stock is not None:
-            low_stock = str2bool(low_stock)
-
-            if low_stock:
-                # Ignore any parts which do not have a specified 'minimum_stock' level
-                queryset = queryset.exclude(minimum_stock=0)
-                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
-                queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
-            else:
-                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
-                queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
-
         # Filer by 'depleted_stock' status -> has no stock and stock items
         depleted_stock = params.get('depleted_stock', None)
 
@@ -722,14 +769,7 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'is_template',
         'variant_of',
-        'assembly',
-        'component',
-        'trackable',
-        'purchaseable',
-        'salable',
-        'active',
     ]
 
     ordering_fields = [
@@ -801,14 +841,54 @@ class PartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = part_serializers.PartParameterSerializer
 
 
+class BomFilter(rest_filters.FilterSet):
+    """
+    Custom filters for the BOM list
+    """
+
+    # Boolean filters for BOM item
+    optional = rest_filters.BooleanFilter(label='BOM line is optional')
+    inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
+    allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
+
+    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
+
+    def filter_validated(self, queryset, name, value):
+
+        # Work out which lines have actually been validated
+        pks = []
+
+        for bom_item in queryset.all():
+            if bom_item.is_line_valid():
+                pks.append(bom_item.pk)
+
+        if str2bool(value):
+            queryset = queryset.filter(pk__in=pks)
+        else:
+            queryset = queryset.exclude(pk__in=pks)
+    
+        return queryset
+
+    # Filters for linked 'part'
+    part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
+    part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
+
+    # Filters for linked 'sub_part'
+    sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
+    sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
+
+
 class BomList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of BomItem objects.
+    """
+    API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
 
     serializer_class = part_serializers.BomItemSerializer
+    queryset = BomItem.objects.all()
+    filterset_class = BomFilter
 
     def list(self, request, *args, **kwargs):
 
@@ -855,30 +935,6 @@ class BomList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
-        # Filter by "optional" status?
-        optional = params.get('optional', None)
-
-        if optional is not None:
-            optional = str2bool(optional)
-
-            queryset = queryset.filter(optional=optional)
-
-        # Filter by "inherited" status
-        inherited = params.get('inherited', None)
-
-        if inherited is not None:
-            inherited = str2bool(inherited)
-
-            queryset = queryset.filter(inherited=inherited)
-
-        # Filter by "allow_variants"
-        variants = params.get("allow_variants", None)
-
-        if variants is not None:
-            variants = str2bool(variants)
-
-            queryset = queryset.filter(allow_variants=variants)
-
         # Filter by part?
         part = params.get('part', None)
 
@@ -900,45 +956,6 @@ class BomList(generics.ListCreateAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by "active" status of the part
-        part_active = params.get('part_active', None)
-
-        if part_active is not None:
-            part_active = str2bool(part_active)
-            queryset = queryset.filter(part__active=part_active)
-
-        # Filter by "trackable" status of the part
-        part_trackable = params.get('part_trackable', None)
-
-        if part_trackable is not None:
-            part_trackable = str2bool(part_trackable)
-            queryset = queryset.filter(part__trackable=part_trackable)
-
-        # Filter by "trackable" status of the sub-part
-        sub_part_trackable = params.get('sub_part_trackable', None)
-
-        if sub_part_trackable is not None:
-            sub_part_trackable = str2bool(sub_part_trackable)
-            queryset = queryset.filter(sub_part__trackable=sub_part_trackable)
-
-        # Filter by whether the BOM line has been validated
-        validated = params.get('validated', None)
-
-        if validated is not None:
-            validated = str2bool(validated)
-
-            # Work out which lines have actually been validated
-            pks = []
-
-            for bom_item in queryset.all():
-                if bom_item.is_line_valid:
-                    pks.append(bom_item.pk)
-
-            if validated:
-                queryset = queryset.filter(pk__in=pks)
-            else:
-                queryset = queryset.exclude(pk__in=pks)
 
         # Annotate with purchase prices
         queryset = queryset.annotate(
@@ -1076,10 +1093,10 @@ part_api_urls = [
 
     # Base URL for PartParameter API endpoints
     url(r'^parameter/', include([
-        url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+        url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
 
-        url(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-param-detail'),
-        url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
+        url(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        url(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
     url(r'^thumbs/', include([
@@ -1087,7 +1104,7 @@ part_api_urls = [
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
+    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]

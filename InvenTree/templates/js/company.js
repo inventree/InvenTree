@@ -318,6 +318,12 @@ function loadManufacturerPartTable(table, url, options) {
                     }
                 }
             },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
+            }
         ],
     });
 }
@@ -533,7 +539,7 @@ function loadSupplierPartTable(table, url, options) {
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (value && row.manufacturer_part) {
-                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part.pk}/`);
+                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`);
                     } else {
                         return "-";
                     }
@@ -550,6 +556,21 @@ function loadSupplierPartTable(table, url, options) {
                     }
                 }
             },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+            },
+            {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+                sortable: false,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
+                sortable: false,
+            }
         ],
     });
 }

@@ -230,7 +230,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Check manufacturer part
-        manufacturer_part_id = int(response.data['manufacturer_part']['pk'])
+        manufacturer_part_id = int(response.data['manufacturer_part_detail']['pk'])
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': manufacturer_part_id})
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'PART_NUMBER')

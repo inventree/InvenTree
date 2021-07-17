@@ -15,6 +15,7 @@ from .models import SalesOrderAllocation
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     model = PurchaseOrderLineItem
+    extra = 0
 
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):

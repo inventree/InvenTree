@@ -13,6 +13,94 @@ function yesNoLabel(value) {
     }
 }
 
+
+function editPart(pk, options={}) {
+
+    var url = `/api/part/${pk}/`;
+
+    var fields =  {
+        category: {
+            /*
+            secondary: {
+                label: '{% trans "New Category" %}',
+                title: '{% trans "Create New Part Category" %}',
+                api_url: '{% url "api-part-category-list" %}',
+                method: 'POST',
+                fields: {
+                    name: {},
+                    description: {},
+                    parent: {
+                        secondary: {
+                            title: '{% trans "New Parent" %}',
+                            api_url: '{% url "api-part-category-list" %}',
+                            method: 'POST',
+                            fields: {
+                                name: {},
+                                description: {},
+                                parent: {},
+                            }
+                        }
+                    },
+                }
+            },
+            */
+        },
+        name: {
+            placeholder: 'part name',
+        },
+        IPN: {},
+        description: {},
+        revision: {},
+        keywords: {
+            icon: 'fa-key',
+        },
+        variant_of: {},
+        link: {
+            icon: 'fa-link',
+        },
+        default_location: {
+            /*
+            secondary: {
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new stock location" %}',
+            },
+            */
+        },
+        default_supplier: {
+            filters: {
+                part: pk,
+                part_detail: true,
+                manufacturer_detail: true,
+                supplier_detail: true,
+            },
+            /*
+            secondary: {
+                label: '{% trans "New Supplier Part" %}',
+                title: '{% trans "Create new supplier part" %}',
+            }
+            */
+        },
+        units: {},
+        minimum_stock: {},
+        virtual: {},
+        is_template: {},
+        assembly: {},
+        component: {},
+        trackable: {},
+        purchaseable: {},
+        salable: {},
+        active: {},
+    };
+
+    constructForm(url, {
+        fields: fields,
+        title: '{% trans "Edit Part" %}',
+        reload: true,
+    });
+
+}
+
+
 function toggleStar(options) {
     /* Toggle the 'starred' status of a part.
      * Performs AJAX queries and updates the display on the button.
@@ -217,6 +305,107 @@ function loadSimplePartTable(table, url, options={}) {
     options.disableFilters = true;
 
     loadPartTable(table, url, options);
+}
+
+
+function loadPartParameterTable(table, url, options) {
+
+    var params = options.params || {};
+
+    // Load filters
+    var filters = loadTableFilters("part-parameters");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    // setupFilterLsit("#part-parameters", $(table));
+
+    $(table).inventreeTable({
+        url: url,
+        original: params,
+        queryParams: filters,
+        name: 'partparameters',
+        groupBy: false,
+        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+                visible: true,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.template_detail.name;
+                }
+            },
+            {
+                field: 'data',
+                title: '{% trans "Value" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.template_detail.units;
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Setup button callbacks
+            $(table).find('.button-parameter-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/parameter/${pk}/`, {
+                    fields: {
+                        data: {},
+                    },
+                    title: '{% trans "Edit Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-parameter-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/parameter/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+    });
 }
 
 
@@ -525,7 +714,7 @@ function loadPartTable(table, url, options={}) {
 
             var html = '';
 
-            html = `<div class='row'>`;
+            html = `<div class='row full-height'>`;
 
             data.forEach(function(row, index) {
                 
