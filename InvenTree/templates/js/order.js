@@ -14,6 +14,7 @@ function createSalesOrder(options={}) {
             customer: {
                 value: options.customer,
             },
+            customer_reference: {},
             description: {},
             target_date: {
                 icon: 'fa-calendar-alt',
