@@ -68,10 +68,6 @@ class BuildList(generics.ListCreateAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
-        'sales_order',
-    ]
-
     ordering_fields = [
         'reference',
         'part__name',
@@ -113,6 +109,12 @@ class BuildList(generics.ListCreateAPIView):
 
         if parent is not None:
             queryset = queryset.filter(parent=parent)
+
+        # Filter by sales_order
+        sales_order = params.get('sales_order', None)
+
+        if sales_order is not None:
+            queryset = queryset.filter(sales_order=sales_order)
 
         # Filter by "ancestor" builds
         ancestor = params.get('ancestor', None)

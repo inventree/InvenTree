@@ -921,7 +921,7 @@ function loadBuildTable(table, options) {
                     }
                     else
                     {
-                        return '{% trans "No user information" %}';
+                        return `<i>{% trans "No user information" %}</i>`;
                     }
                 }
             },

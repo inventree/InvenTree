@@ -781,8 +781,8 @@ input[type="submit"] {
 }
 
 .sidenav .list-group-item.active {
-    background-color: #ddd;
-    border-color: #ccc;
+    background-color: #c6d4ea;
+    border: 2px #aab solid;
 }
 
 /* The side navigation menu */
@@ -910,6 +910,10 @@ input[type="submit"] {
 .panel-inventree {
     padding: 10px;
     box-shadow: 1px 1px #DDD;
+}
+
+.panel-hidden {
+    display: none;
 }
 
 .float-right {
