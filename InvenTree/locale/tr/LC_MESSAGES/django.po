@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-16 03:55+0000\n"
+"POT-Creation-Date: 2021-07-18 01:05+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -158,8 +158,8 @@ msgstr "Adı"
 #: templates/InvenTree/settings/header.html:9 templates/js/bom.js:190
 #: templates/js/build.js:868 templates/js/build.js:1162
 #: templates/js/company.js:125 templates/js/company.js:323
-#: templates/js/company.js:561 templates/js/order.js:245
-#: templates/js/order.js:347 templates/js/part.js:265 templates/js/part.js:449
+#: templates/js/company.js:561 templates/js/order.js:247
+#: templates/js/order.js:349 templates/js/part.js:265 templates/js/part.js:449
 #: templates/js/part.js:626 templates/js/part.js:843 templates/js/part.js:911
 #: templates/js/stock.js:868 templates/js/stock.js:1294
 #: templates/js/stock.js:1339
@@ -456,8 +456,8 @@ msgstr "Emir hedef tarihi"
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:119
 #: report/templates/report/inventree_build_order_base.html:126
-#: templates/js/build.js:945 templates/js/order.js:262
-#: templates/js/order.js:365
+#: templates/js/build.js:945 templates/js/order.js:264
+#: templates/js/order.js:367
 msgid "Target Date"
 msgstr "Hedeflenen tarih"
 
@@ -492,7 +492,7 @@ msgstr "Yapım işinin tamamlanması için hedef tarih. Bu tarihten sonra yapım
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:205 templates/js/build.js:271 templates/js/build.js:606
 #: templates/js/build.js:1172 templates/js/model_renderers.js:56
-#: templates/js/order.js:460 templates/js/part.js:1016
+#: templates/js/order.js:462 templates/js/part.js:1016
 #: templates/js/part.js:1138 templates/js/part.js:1194
 #: templates/js/stock.js:1474 templates/js/stock.js:1693
 msgid "Quantity"
@@ -539,7 +539,7 @@ msgstr "Yapım işini tamamlandı olarak işaretle"
 #: stock/templates/stock/stock_adjust.html:17
 #: templates/InvenTree/search.html:260 templates/js/barcode.js:363
 #: templates/js/barcode.js:531 templates/js/build.js:256
-#: templates/js/build.js:620 templates/js/order.js:445 templates/js/stock.js:75
+#: templates/js/build.js:620 templates/js/order.js:447 templates/js/stock.js:75
 #: templates/js/stock.js:201 templates/js/stock.js:954
 #: templates/js/stock.js:1366
 msgid "Location"
@@ -554,7 +554,7 @@ msgstr "Tamamlanmış parçaların konumu"
 #: order/templates/order/receive_parts.html:24
 #: stock/templates/stock/item_base.html:420 templates/InvenTree/search.html:252
 #: templates/js/barcode.js:119 templates/js/build.js:902
-#: templates/js/order.js:249 templates/js/order.js:352
+#: templates/js/order.js:251 templates/js/order.js:354
 #: templates/js/stock.js:941 templates/js/stock.js:1443
 #: templates/js/stock.js:1709
 msgid "Status"
@@ -725,7 +725,7 @@ msgid "Batch code for this build output"
 msgstr "Yapım işi çıktısı için sıra numarası"
 
 #: build/models.py:264 order/models.py:162 part/models.py:875
-#: part/templates/part/part_base.html:143 templates/js/order.js:360
+#: part/templates/part/part_base.html:143 templates/js/order.js:362
 msgid "Creation Date"
 msgstr "Oluşturulma tarihi"
 
@@ -856,7 +856,7 @@ msgstr "Yapım işi için tahsis edilen parçalar"
 #: stock/templates/stock/item_base.html:351
 #: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:244
 #: templates/js/build.js:249 templates/js/build.js:993
-#: templates/js/order.js:433 templates/js/order.js:438
+#: templates/js/order.js:435 templates/js/order.js:440
 #: templates/js/stock.js:1425
 msgid "Stock Item"
 msgstr "Stok Kalemi"
@@ -1000,7 +1000,7 @@ msgstr "İlerleme"
 #: order/templates/order/sales_order_ship.html:25
 #: report/templates/report/inventree_build_order_base.html:136
 #: report/templates/report/inventree_so_report.html:77
-#: stock/templates/stock/item_base.html:291 templates/js/order.js:307
+#: stock/templates/stock/item_base.html:291 templates/js/order.js:309
 msgid "Sales Order"
 msgstr "Sipariş Emri"
 
@@ -2121,7 +2121,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
 #: part/bom.py:286 stock/templates/stock/item_base.html:381
 #: templates/js/company.js:117 templates/js/company.js:495
-#: templates/js/order.js:232
+#: templates/js/order.js:234
 msgid "Supplier"
 msgstr ""
 
@@ -2207,7 +2207,7 @@ msgstr ""
 msgid "Download image from URL"
 msgstr ""
 
-#: company/templates/company/company_base.html:46 templates/js/order.js:61
+#: company/templates/company/company_base.html:46 templates/js/order.js:63
 msgid "Create Purchase Order"
 msgstr "Satın Alma Emri Oluştur"
 
@@ -2235,7 +2235,7 @@ msgstr ""
 #: company/templates/company/company_base.html:126 order/models.py:544
 #: order/templates/order/sales_order_base.html:94 stock/models.py:453
 #: stock/models.py:454 stock/templates/stock/item_base.html:274
-#: templates/js/company.js:109 templates/js/order.js:329
+#: templates/js/company.js:109 templates/js/order.js:331
 #: templates/js/stock.js:1407
 msgid "Customer"
 msgstr "Müşteri"
@@ -2801,7 +2801,7 @@ msgid "Company from which the items are being ordered"
 msgstr ""
 
 #: order/models.py:264 order/templates/order/order_base.html:98
-#: templates/js/order.js:241
+#: templates/js/order.js:243
 msgid "Supplier Reference"
 msgstr ""
 
@@ -2869,7 +2869,7 @@ msgstr ""
 msgid "Target date for order completion. Order will be overdue after this date."
 msgstr ""
 
-#: order/models.py:559 templates/js/order.js:370
+#: order/models.py:559 templates/js/order.js:372
 msgid "Shipment Date"
 msgstr ""
 
@@ -2893,14 +2893,14 @@ msgstr ""
 msgid "Line item notes"
 msgstr ""
 
-#: order/models.py:745 order/models.py:823 templates/js/order.js:420
+#: order/models.py:745 order/models.py:823 templates/js/order.js:422
 msgid "Order"
 msgstr ""
 
 #: order/models.py:746 order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:24
 #: report/templates/report/inventree_po_report.html:77
-#: stock/templates/stock/item_base.html:336 templates/js/order.js:210
+#: stock/templates/stock/item_base.html:336 templates/js/order.js:212
 #: templates/js/stock.js:980 templates/js/stock.js:1388
 msgid "Purchase Order"
 msgstr ""
@@ -3030,11 +3030,11 @@ msgstr ""
 msgid "Issued"
 msgstr ""
 
-#: order/templates/order/order_base.html:184
+#: order/templates/order/order_base.html:185
 msgid "Edit Purchase Order"
 msgstr ""
 
-#: order/templates/order/order_base.html:195
+#: order/templates/order/order_base.html:196
 #: order/templates/order/purchase_order_detail.html:262
 #: part/templates/part/category.html:255 part/templates/part/category.html:297
 #: stock/templates/stock/location.html:259 templates/js/part.js:64
@@ -3042,7 +3042,7 @@ msgstr ""
 msgid "New Location"
 msgstr "Yeni Konum"
 
-#: order/templates/order/order_base.html:196
+#: order/templates/order/order_base.html:197
 #: order/templates/order/purchase_order_detail.html:263
 #: stock/templates/stock/location.html:42 templates/js/part.js:65
 msgid "Create new stock location"
@@ -3196,7 +3196,7 @@ msgid "Select existing purchase orders, or create new orders."
 msgstr ""
 
 #: order/templates/order/order_wizard/select_pos.html:31
-#: templates/js/order.js:267 templates/js/order.js:375
+#: templates/js/order.js:269 templates/js/order.js:377
 msgid "Items"
 msgstr ""
 
@@ -3348,11 +3348,11 @@ msgstr ""
 msgid "Sales Order Details"
 msgstr ""
 
-#: order/templates/order/sales_order_base.html:100 templates/js/order.js:342
+#: order/templates/order/sales_order_base.html:100 templates/js/order.js:344
 msgid "Customer Reference"
 msgstr ""
 
-#: order/templates/order/sales_order_base.html:177
+#: order/templates/order/sales_order_base.html:178
 msgid "Edit Sales Order"
 msgstr ""
 
@@ -5130,7 +5130,7 @@ msgid "Result"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:92
-#: templates/js/order.js:257 templates/js/stock.js:1322
+#: templates/js/order.js:259 templates/js/stock.js:1322
 msgid "Date"
 msgstr ""
 
@@ -6538,7 +6538,7 @@ msgstr ""
 msgid "No build order allocations found"
 msgstr ""
 
-#: templates/js/build.js:260 templates/js/order.js:449
+#: templates/js/build.js:260 templates/js/order.js:451
 msgid "Location not specified"
 msgstr ""
 
@@ -6846,27 +6846,27 @@ msgstr ""
 msgid "Supplier Part ID"
 msgstr ""
 
-#: templates/js/order.js:31
+#: templates/js/order.js:32
 msgid "Create Sales Order"
 msgstr ""
 
-#: templates/js/order.js:200
+#: templates/js/order.js:202
 msgid "No purchase orders found"
 msgstr ""
 
-#: templates/js/order.js:224 templates/js/order.js:319
+#: templates/js/order.js:226 templates/js/order.js:321
 msgid "Order is overdue"
 msgstr ""
 
-#: templates/js/order.js:296
+#: templates/js/order.js:298
 msgid "No sales orders found"
 msgstr ""
 
-#: templates/js/order.js:333
+#: templates/js/order.js:335
 msgid "Invalid Customer"
 msgstr ""
 
-#: templates/js/order.js:410
+#: templates/js/order.js:412
 msgid "No sales order allocations found"
 msgstr ""
 
