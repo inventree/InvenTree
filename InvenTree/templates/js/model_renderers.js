@@ -67,17 +67,15 @@ function renderStockItem(name, data, parameters, options) {
 // Renderer for "StockLocation" model
 function renderStockLocation(name, data, parameters, options) {
 
-    var html = `<span>${data.name}</span>`;
+    var level = '- '.repeat(data.level);
+
+    var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
     }
 
     html += `<span class='float-right'>{% trans "Location ID" %}: ${data.pk}</span>`;
-
-    if (data.pathstring) {
-        html += `<p><small>${data.pathstring}</small></p>`;
-    }
 
     return html;
 }
@@ -154,17 +152,15 @@ function renderOwner(name, data, parameters, options) {
 // Renderer for "PartCategory" model
 function renderPartCategory(name, data, parameters, options) {
 
-    var html = `<span><b>${data.name}</b></span>`;
+    var level = '- '.repeat(data.level);
+
+    var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
     }
 
     html += `<span class='float-right'>{% trans "Category ID" %}: ${data.pk}</span>`;
-
-    if (data.pathstring) {
-        html += `<p><small>${data.pathstring}</small></p>`;
-    }
 
     return html;
 }

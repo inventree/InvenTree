@@ -765,6 +765,9 @@ function attachSecondaryModal(modal, options) {
 function attachSecondaries(modal, secondaries) {
     /* Attach a provided list of secondary modals */
 
+    // 2021-07-18 - Secondary modals will be disabled for now, until they are re-implemented in the "API forms" architecture
+    return;
+
     for (var i = 0; i < secondaries.length; i++) {
         attachSecondaryModal(modal, secondaries[i]);
     }
