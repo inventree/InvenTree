@@ -363,6 +363,15 @@ class StockLocationList(generics.ListCreateAPIView):
     ordering_fields = [
         'name',
         'items',
+        'level',
+        'tree_id',
+        'lft',
+    ]
+
+    ordering = [
+        'tree_id',
+        'lft',
+        'name',
     ]
 
 
