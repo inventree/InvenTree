@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -20,6 +21,7 @@ from django.views.generic import ListView, DetailView, CreateView, FormView, Del
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from rest_framework.schemas.coreapi import SchemaGenerator
 from common.settings import currency_code_default, currency_codes
 
 from part.models import Part, PartCategory
@@ -762,6 +764,23 @@ class SearchView(TemplateView):
         context['query'] = query
 
         return super(TemplateView, self).render_to_response(context)
+
+
+class SearchResultView(TemplateView):
+    """Endpoint for search auto-complete
+    """
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('term', '')
+        if len(query) > 2:
+            objects = Part.objects.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(IPN__icontains=query) |
+                Q(keywords__icontains=query) |
+                Q(category__name__icontains=query)).order_by('name')
+            return JsonResponse([{'id': a.pk, 'value': a.name} for a in objects[0:5]], safe=False)
+        return JsonResponse({})
 
 
 class DynamicJsView(TemplateView):

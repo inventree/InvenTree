@@ -191,6 +191,14 @@ $(document).ready(function () {
     {% endif %}
 
     moment.locale('{{request.LANGUAGE_CODE}}');
+
+    $("#search-bar" ).autocomplete({
+      source: "{% url 'search-api' %}",
+      minLength: 2,
+      select: function( event, ui ) {
+        window.location = '/part/' + ui.item.id + '/';
+      }
+    });
 });
 
 </script>

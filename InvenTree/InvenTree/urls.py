@@ -37,7 +37,7 @@ from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
 from .views import auth_request
-from .views import IndexView, SearchView, DatabaseStatsView
+from .views import IndexView, SearchView, SearchResultView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
 from .views import CurrencySettingsView, CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
@@ -157,6 +157,7 @@ urlpatterns = [
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
+    url(r'^searchresult/', SearchResultView.as_view(), name='search-api'),
     url(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
     url(r'^auth/?', auth_request),
