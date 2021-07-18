@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 11:47+0000\n"
-"PO-Revision-Date: 2021-07-18 12:00\n"
+"PO-Revision-Date: 2021-07-18 21:02\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -134,7 +134,7 @@ msgstr "data przesłania"
 
 #: InvenTree/models.py:102
 msgid "Invalid choice"
-msgstr ""
+msgstr "Błędny wybór"
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:414
 #: label/models.py:112 part/models.py:680 part/models.py:2191
@@ -176,7 +176,7 @@ msgstr "nadrzędny"
 
 #: InvenTree/serializers.py:52 part/models.py:2427
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Numer musi być prawidłowy"
 
 #: InvenTree/settings.py:505
 msgid "English"
@@ -269,7 +269,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Utworzono element magazynowy"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
@@ -277,19 +277,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Przypisano numer seryjny"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Zapas policzony"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Zapas dodany ręcznie"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Zapas usunięty ręcznie"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
@@ -421,19 +421,19 @@ msgstr ""
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr ""
+msgstr "Nie znaleziono pasujących elementów"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
-msgstr ""
+msgstr "Kod kreskowy już pasuje do obiektu StockItem"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
-msgstr ""
+msgstr "Kod kreskowy już pasuje do obiektu StockItem"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr ""
+msgstr "Kod kreskowy już pasuje do obiektu StockItem"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
@@ -524,7 +524,7 @@ msgstr ""
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
-msgstr ""
+msgstr "Potwierdź brak alokacji zapasów"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
@@ -586,7 +586,7 @@ msgstr ""
 
 #: build/forms.py:266
 msgid "Select quantity of stock to allocate"
-msgstr ""
+msgstr "Wybierz ilość zapasów do rezerwacji"
 
 #: build/models.py:105
 msgid "Invalid choice for parent build"
@@ -2716,7 +2716,7 @@ msgstr ""
 
 #: label/models.py:154 report/models.py:291
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Wzór nazwy pliku"
 
 #: label/models.py:155
 msgid "Pattern for generating label filenames"
@@ -2794,7 +2794,7 @@ msgstr "Odniesienie zamówienia"
 
 #: order/models.py:252 order/models.py:549
 msgid "Purchase order status"
-msgstr ""
+msgstr "Status zamówienia"
 
 #: order/models.py:261
 msgid "Company from which the items are being ordered"
@@ -2819,11 +2819,11 @@ msgstr "Data wydania"
 
 #: order/models.py:277
 msgid "Date order was issued"
-msgstr ""
+msgstr "Data wystawienia zamówienia"
 
 #: order/models.py:282
 msgid "Target Delivery Date"
-msgstr ""
+msgstr "Data Dostawy Towaru"
 
 #: order/models.py:283
 msgid "Expected date for order delivery. Order will be overdue after this date."
@@ -2847,7 +2847,7 @@ msgstr ""
 
 #: order/models.py:420
 msgid "Quantity must be an integer"
-msgstr ""
+msgstr "Wartość musi być liczbą całkowitą"
 
 #: order/models.py:422
 msgid "Quantity must be a positive number"
@@ -2903,7 +2903,7 @@ msgstr "Zamówienie"
 #: stock/templates/stock/item_base.html:336 templates/js/order.js:212
 #: templates/js/stock.js:980 templates/js/stock.js:1388
 msgid "Purchase Order"
-msgstr ""
+msgstr "Zlecenie zakupu"
 
 #: order/models.py:767
 msgid "Supplier part"
@@ -2931,7 +2931,7 @@ msgstr "Cena zakupu jednostkowego"
 
 #: order/models.py:785
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr ""
+msgstr "Gdzie kupujący chce przechowywać ten przedmiot?"
 
 #: order/models.py:831 part/templates/part/part_pricing.html:97
 #: part/templates/part/prices.html:97 part/templates/part/prices.html:266
@@ -3008,17 +3008,17 @@ msgstr ""
 
 #: order/templates/order/order_base.html:64
 msgid "Export order to file"
-msgstr ""
+msgstr "Eksportuj zamówienie do pliku"
 
 #: order/templates/order/order_base.html:72
 #: order/templates/order/po_navbar.html:12
 msgid "Purchase Order Details"
-msgstr ""
+msgstr "Szczegóły zamówienia"
 
 #: order/templates/order/order_base.html:77
 #: order/templates/order/sales_order_base.html:79
 msgid "Order Reference"
-msgstr ""
+msgstr "Numer zamówienia"
 
 #: order/templates/order/order_base.html:82
 #: order/templates/order/sales_order_base.html:84
@@ -3139,7 +3139,7 @@ msgstr "Wiersz"
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
-msgstr ""
+msgstr "Wybierz dostawcę części"
 
 #: order/templates/order/order_wizard/po_upload.html:11
 msgid "Upload File for Purchase Order"
