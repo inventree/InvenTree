@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 01:05+0000\n"
+"POT-Creation-Date: 2021-07-18 11:33+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -6820,15 +6820,15 @@ msgstr ""
 msgid "Company ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:76
+#: templates/js/model_renderers.js:78
 msgid "Location ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:97
+#: templates/js/model_renderers.js:95
 msgid "Build ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:116
+#: templates/js/model_renderers.js:114
 msgid "Part ID"
 msgstr ""
 
@@ -6836,7 +6836,7 @@ msgstr ""
 msgid "Category ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:203
+#: templates/js/model_renderers.js:199
 msgid "Supplier Part ID"
 msgstr ""
 
