@@ -67,9 +67,9 @@ function renderStockItem(name, data, parameters, options) {
 // Renderer for "StockLocation" model
 function renderStockLocation(name, data, parameters, options) {
 
-    var level = '-'.repeat(data.level);
+    var level = '- '.repeat(data.level);
 
-    var html = `<span>${level} ${data.pathstring}</span>`;
+    var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
@@ -152,9 +152,9 @@ function renderOwner(name, data, parameters, options) {
 // Renderer for "PartCategory" model
 function renderPartCategory(name, data, parameters, options) {
 
-    var level = '-'.repeat(data.level);
+    var level = '- '.repeat(data.level);
 
-    var html = `<span>${level} ${data.pathstring}</span>`;
+    var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
