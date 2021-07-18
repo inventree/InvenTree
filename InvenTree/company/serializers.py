@@ -96,7 +96,9 @@ class CompanySerializer(InvenTreeModelSerializer):
 
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
-    """ Serializer for ManufacturerPart object """
+    """
+    Serializer for ManufacturerPart object
+    """
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -106,8 +108,8 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
 
-        part_detail = kwargs.pop('part_detail', False)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
 
         super(ManufacturerPartSerializer, self).__init__(*args, **kwargs)

@@ -801,27 +801,16 @@
         )
     });
 
+    function reloadSupplierPartTable() {
+        $('#supplier-part-table').bootstrapTable('refresh');
+    }
+
     $('#supplier-create').click(function () {
-        launchModalForm(
-            "{% url 'supplier-part-create' %}",
-            {
-                reload: true,
-                data: {
-                    part: {{ part.id }}
-                },
-                secondary: [
-                    {
-                        field: 'supplier',
-                        label: '{% trans "New Supplier" %}',
-                        title: '{% trans "Create new supplier" %}',
-                    },
-                    {
-                        field: 'manufacturer',
-                        label: '{% trans "New Manufacturer" %}',
-                        title: '{% trans "Create new manufacturer" %}',
-                    }
-                ]
-            });
+
+        createSupplierPart({
+            part: {{ part.pk }},
+            onSuccess: reloadSupplierPartTable,
+        });
     });
 
     $("#supplier-part-delete").click(function() {

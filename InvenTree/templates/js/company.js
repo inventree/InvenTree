@@ -1,6 +1,63 @@
 {% load i18n %}
 
 
+function supplierPartFields() {
+
+    return {
+        part: {},
+        supplier: {},
+        SKU: {
+            icon: 'fa-hashtag',
+        },
+        manufacturer_part: {
+            filters: {
+                part_detail: true,
+                manufacturer_detail: true,
+            }
+        },
+        description: {},
+        link: {
+            icon: 'fa-link',
+        },
+        note: {
+            icon: 'fa-pencil-alt',
+        },
+        packaging: {
+            icon: 'fa-box',
+        }
+    };
+}
+
+/*
+ * Launch a form to create a new ManufacturerPart
+ */
+function createSupplierPart(options={}) {
+
+    var fields = supplierPartFields();
+
+    if (options.part) {
+        fields.manufacturer_part.filters.part = options.part;
+        fields.part.hidden = true;
+        fields.part.value = options.part;
+    }
+
+    if (options.supplier) {
+        fields.supplier.value = options.supplier;
+    }
+
+    if (options.manufacturer_part) {
+        fields.manufacturer_part.value = options.manufacturer_part;
+    }
+
+    constructForm('{% url "api-supplier-part-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Supplier Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+
 // Returns a default form-set for creating / editing a Company object
 function companyFormFields(options={}) {
 

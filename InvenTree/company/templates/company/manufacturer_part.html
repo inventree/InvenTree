@@ -178,22 +178,16 @@ $('#parameter-create').click(function() {
     });
 });
 
+function reloadSupplierPartTable() {
+    $('#supplier-table').bootstrapTable('refresh');
+}
+
 $('#supplier-create').click(function () {
-    launchModalForm(
-        "{% url 'supplier-part-create' %}",
-        {
-            reload: true,
-            data: {
-                manufacturer_part: {{ part.id }}
-            },
-            secondary: [
-                {
-                    field: 'supplier',
-                    label: '{% trans "New Supplier" %}',
-                    title: '{% trans "Create new supplier" %}',
-                },
-            ]
-        });
+    createSupplierPart({
+        manufacturer_part: {{ part.pk }},
+        part: {{ part.part.pk }},
+        onSuccess: reloadSupplierPartTable,
+    });
 });
 
 $("#supplier-part-delete").click(function() {

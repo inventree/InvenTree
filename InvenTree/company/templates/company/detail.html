@@ -350,28 +350,16 @@
 
     {% if company.is_supplier %}
 
+    function reloadSupplierPartTable() {
+        $('#supplier-part-table').bootstrapTable('refresh');
+    }
+
     $("#supplier-part-create").click(function () {
-        launchModalForm(
-            "{% url 'supplier-part-create' %}",
-            {
-                data: {
-                    supplier: {{ company.id }},
-                },
-                reload: true,
-                secondary: [
-                    {
-                        field: 'part',
-                        label: '{% trans "New Part" %}',
-                        title: '{% trans "Create new Part" %}',
-                        url: "{% url 'part-create' %}"
-                    },
-                    {
-                        field: 'supplier',
-                        label: "{% trans 'New Supplier' %}",
-                        title: "{% trans 'Create new Supplier' %}",
-                    },
-                ]
-            });
+
+        createSupplierPart({
+            supplier: {{ company.pk }},
+            onSuccess: reloadSupplierPartTable,
+        });
     });
 
     loadSupplierPartTable(
