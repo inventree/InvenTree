@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 01:05+0000\n"
-"PO-Revision-Date: 2021-07-18 01:09\n"
+"POT-Creation-Date: 2021-07-18 11:47+0000\n"
+"PO-Revision-Date: 2021-07-18 12:00\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -779,7 +779,7 @@ msgstr ""
 #: company/templates/company/navbar.html:66 order/models.py:180
 #: order/models.py:715 order/templates/order/po_navbar.html:38
 #: order/templates/order/po_navbar.html:41
-#: order/templates/order/purchase_order_detail.html:409
+#: order/templates/order/purchase_order_detail.html:416
 #: order/templates/order/sales_order_detail.html:439
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:864
@@ -2982,7 +2982,7 @@ msgstr ""
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:359
+#: order/serializers.py:360
 msgid "Sale price currency"
 msgstr ""
 
@@ -3276,16 +3276,16 @@ msgstr ""
 msgid "Total price"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:421
+#: order/templates/order/purchase_order_detail.html:428
 #: order/templates/order/sales_order_detail.html:489
 msgid "Edit line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:422
+#: order/templates/order/purchase_order_detail.html:429
 msgid "Delete line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:427
+#: order/templates/order/purchase_order_detail.html:434
 msgid "Receive line item"
 msgstr ""
 
@@ -6275,7 +6275,7 @@ msgstr ""
 
 #: templates/about.html:100 templates/js/modals.js:33
 #: templates/js/modals.js:567 templates/js/modals.js:661
-#: templates/js/modals.js:954 templates/modals.html:29 templates/modals.html:54
+#: templates/js/modals.js:957 templates/modals.html:29 templates/modals.html:54
 msgid "Close"
 msgstr ""
 
@@ -6295,11 +6295,11 @@ msgstr ""
 msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
-#: templates/js/api.js:162 templates/js/modals.js:1024
+#: templates/js/api.js:162 templates/js/modals.js:1027
 msgid "No Response"
 msgstr ""
 
-#: templates/js/api.js:163 templates/js/modals.js:1025
+#: templates/js/api.js:163 templates/js/modals.js:1028
 msgid "No response from the InvenTree server"
 msgstr ""
 
@@ -6311,35 +6311,35 @@ msgstr ""
 msgid "API request returned error code 400"
 msgstr ""
 
-#: templates/js/api.js:172 templates/js/modals.js:1034
+#: templates/js/api.js:172 templates/js/modals.js:1037
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/api.js:173 templates/js/modals.js:1035
+#: templates/js/api.js:173 templates/js/modals.js:1038
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/api.js:176 templates/js/modals.js:1039
+#: templates/js/api.js:176 templates/js/modals.js:1042
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/api.js:177 templates/js/modals.js:1040
+#: templates/js/api.js:177 templates/js/modals.js:1043
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/api.js:180 templates/js/modals.js:1044
+#: templates/js/api.js:180 templates/js/modals.js:1047
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/api.js:181 templates/js/modals.js:1045
+#: templates/js/api.js:181 templates/js/modals.js:1048
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/api.js:184 templates/js/modals.js:1049
+#: templates/js/api.js:184 templates/js/modals.js:1052
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/api.js:185 templates/js/modals.js:1050
+#: templates/js/api.js:185 templates/js/modals.js:1053
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
@@ -6395,7 +6395,7 @@ msgstr ""
 msgid "Unknown response from server"
 msgstr ""
 
-#: templates/js/barcode.js:119 templates/js/modals.js:1014
+#: templates/js/barcode.js:119 templates/js/modals.js:1017
 msgid "Invalid server response"
 msgstr ""
 
@@ -6762,7 +6762,7 @@ msgid "Cancel"
 msgstr ""
 
 #: templates/js/modals.js:60 templates/js/modals.js:102
-#: templates/js/modals.js:660 templates/js/modals.js:953
+#: templates/js/modals.js:660 templates/js/modals.js:956
 #: templates/modals.html:30 templates/modals.html:55
 msgid "Submit"
 msgstr ""
@@ -6787,31 +6787,31 @@ msgstr ""
 msgid "Loading Data"
 msgstr ""
 
-#: templates/js/modals.js:904
+#: templates/js/modals.js:907
 msgid "Invalid response from server"
 msgstr ""
 
-#: templates/js/modals.js:904
+#: templates/js/modals.js:907
 msgid "Form data missing from server response"
 msgstr ""
 
-#: templates/js/modals.js:917
+#: templates/js/modals.js:920
 msgid "Error posting form data"
 msgstr ""
 
-#: templates/js/modals.js:1014
+#: templates/js/modals.js:1017
 msgid "JSON response missing form data"
 msgstr ""
 
-#: templates/js/modals.js:1029
+#: templates/js/modals.js:1032
 msgid "Error 400: Bad Request"
 msgstr ""
 
-#: templates/js/modals.js:1030
+#: templates/js/modals.js:1033
 msgid "Server returned error code 400"
 msgstr ""
 
-#: templates/js/modals.js:1053
+#: templates/js/modals.js:1056
 msgid "Error requesting form data"
 msgstr ""
 
@@ -6819,15 +6819,15 @@ msgstr ""
 msgid "Company ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:76
+#: templates/js/model_renderers.js:78
 msgid "Location ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:97
+#: templates/js/model_renderers.js:95
 msgid "Build ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:116
+#: templates/js/model_renderers.js:114
 msgid "Part ID"
 msgstr ""
 
@@ -6835,7 +6835,7 @@ msgstr ""
 msgid "Category ID"
 msgstr ""
 
-#: templates/js/model_renderers.js:203
+#: templates/js/model_renderers.js:199
 msgid "Supplier Part ID"
 msgstr ""
 
