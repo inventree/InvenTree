@@ -58,6 +58,26 @@ function createSupplierPart(options={}) {
 }
 
 
+function editSupplierPart(part, options={}) {
+
+    constructForm(`/api/company/part/${part}/`, {
+        fields: supplierPartFields(),
+        title: '{% trans "Edit Supplier Part" %}',
+        onSuccess: options.onSuccess
+    });
+}
+
+
+function deleteSupplierPart(part, options={}) {
+
+    constructForm(`/api/company/part/${part}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Supplier Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+
 // Returns a default form-set for creating / editing a Company object
 function companyFormFields(options={}) {
 
@@ -627,7 +647,51 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
                 sortable: false,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete manufacturer part" %}');
+
+                    html += '</div>';
+
+                    return html;
+                }
             }
         ],
+        onPostBody: function() {
+            // Callbacks
+            $(table).find('.button-supplier-part-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                editSupplierPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-supplier-part-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                deleteSupplierPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            })
+        }
     });
 }
