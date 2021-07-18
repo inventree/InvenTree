@@ -44,6 +44,7 @@ function createPurchaseOrder(options={}) {
             supplier: {
                 value: options.supplier,
             },
+            supplier_reference: {},
             description: {},
             target_date: {
                 icon: 'fa-calendar-alt',
