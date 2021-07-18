@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 11:33+0000\n"
+"POT-Creation-Date: 2021-07-18 11:42+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -779,7 +779,7 @@ msgstr ""
 #: company/templates/company/navbar.html:66 order/models.py:180
 #: order/models.py:715 order/templates/order/po_navbar.html:38
 #: order/templates/order/po_navbar.html:41
-#: order/templates/order/purchase_order_detail.html:409
+#: order/templates/order/purchase_order_detail.html:416
 #: order/templates/order/sales_order_detail.html:439
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:864
@@ -2982,7 +2982,7 @@ msgstr ""
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:359
+#: order/serializers.py:360
 msgid "Sale price currency"
 msgstr ""
 
@@ -3276,16 +3276,16 @@ msgstr ""
 msgid "Total price"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:421
+#: order/templates/order/purchase_order_detail.html:428
 #: order/templates/order/sales_order_detail.html:489
 msgid "Edit line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:422
+#: order/templates/order/purchase_order_detail.html:429
 msgid "Delete line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:427
+#: order/templates/order/purchase_order_detail.html:434
 msgid "Receive line item"
 msgstr ""
 
