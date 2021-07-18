@@ -9,9 +9,7 @@ import os
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps

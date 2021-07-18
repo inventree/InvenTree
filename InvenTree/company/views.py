@@ -10,30 +10,21 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 from django.urls import reverse
-from django.forms import HiddenInput
 from django.core.files.base import ContentFile
-
-from moneyed import CURRENCIES
 
 from PIL import Image
 import requests
 import io
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.helpers import str2bool
+from InvenTree.views import AjaxUpdateView
 from InvenTree.views import InvenTreeRoleMixin
 
 from .models import Company
 from .models import ManufacturerPart
 from .models import SupplierPart
 
-from part.models import Part
 
-from .forms import EditSupplierPartForm
 from .forms import CompanyImageDownloadForm
-
-import common.models
-import common.settings
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):
@@ -231,134 +222,3 @@ class SupplierPartDetail(DetailView):
         ctx = super().get_context_data(**kwargs)
 
         return ctx
-
-
-class SupplierPartEdit(AjaxUpdateView):
-    """ Update view for editing SupplierPart """
-
-    model = SupplierPart
-    context_object_name = 'part'
-    form_class = EditSupplierPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Supplier Part')
-
-    def save(self, supplier_part, form, **kwargs):
-        """ Process ManufacturerPart data """
-
-        manufacturer = form.cleaned_data.get('manufacturer', None)
-        MPN = form.cleaned_data.get('MPN', None)
-        kwargs = {'manufacturer': manufacturer,
-                  'MPN': MPN,
-                  }
-        supplier_part.save(**kwargs)
-
-    def get_form(self):
-        form = super().get_form()
-
-        supplier_part = self.get_object()
-
-        # Hide Manufacturer fields
-        form.fields['manufacturer'].widget = HiddenInput()
-        form.fields['MPN'].widget = HiddenInput()
-
-        # It appears that hiding a MoneyField fails validation
-        # Therefore the idea to set the value before hiding
-        if form.is_valid():
-            form.cleaned_data['single_pricing'] = supplier_part.unit_pricing
-        # Hide the single-pricing field (only for creating a new SupplierPart!)
-        form.fields['single_pricing'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-        """ Fetch data from ManufacturerPart """
-
-        initials = super(SupplierPartEdit, self).get_initial().copy()
-
-        supplier_part = self.get_object()
-
-        if supplier_part.manufacturer_part:
-            if supplier_part.manufacturer_part.manufacturer:
-                initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
-            initials['MPN'] = supplier_part.manufacturer_part.MPN
-
-        return initials
-
-
-class SupplierPartDelete(AjaxDeleteView):
-    """ Delete view for removing a SupplierPart.
-
-    SupplierParts can be deleted using a variety of 'selectors'.
-
-    - ?part=<pk> -> Delete a single SupplierPart object
-    - ?parts=[] -> Delete a list of SupplierPart objects
-
-    """
-
-    success_url = '/supplier/'
-    ajax_template_name = 'company/supplier_part_delete.html'
-    ajax_form_title = _('Delete Supplier Part')
-
-    role_required = 'purchase_order.delete'
-
-    parts = []
-
-    def get_context_data(self):
-        ctx = {}
-
-        ctx['parts'] = self.parts
-
-        return ctx
-
-    def get_parts(self):
-        """ Determine which SupplierPart object(s) the user wishes to delete.
-        """
-
-        self.parts = []
-
-        # User passes a single SupplierPart ID
-        if 'part' in self.request.GET:
-            try:
-                self.parts.append(SupplierPart.objects.get(pk=self.request.GET.get('part')))
-            except (ValueError, SupplierPart.DoesNotExist):
-                pass
-
-        elif 'parts[]' in self.request.GET:
-
-            part_id_list = self.request.GET.getlist('parts[]')
-
-            self.parts = SupplierPart.objects.filter(id__in=part_id_list)
-
-    def get(self, request, *args, **kwargs):
-        self.request = request
-        self.get_parts()
-
-        return self.renderJsonResponse(request, form=self.get_form())
-
-    def post(self, request, *args, **kwargs):
-        """ Handle the POST action for deleting supplier parts.
-        """
-
-        self.request = request
-        self.parts = []
-
-        for item in self.request.POST:
-            if item.startswith('supplier-part-'):
-                pk = item.replace('supplier-part-', '')
-
-                try:
-                    self.parts.append(SupplierPart.objects.get(pk=pk))
-                except (ValueError, SupplierPart.DoesNotExist):
-                    pass
-
-        confirm = str2bool(self.request.POST.get('confirm_delete', False))
-
-        data = {
-            'form_valid': confirm,
-        }
-
-        if confirm:
-            for part in self.parts:
-                part.delete()
-
-        return self.renderJsonResponse(self.request, data=data, form=self.get_form())

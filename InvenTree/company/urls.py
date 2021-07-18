@@ -35,14 +35,6 @@ manufacturer_part_urls = [
     ])),
 ]
 
-supplier_part_detail_urls = [
-    url(r'^edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
-
-    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
-]
-
 supplier_part_urls = [
-    url(r'delete/', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
-
-    url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
+    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
 ]

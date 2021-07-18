@@ -378,22 +378,27 @@
     {% endif %}
 
     $("#multi-part-delete").click(function() {
-        var selections = $("#part-table").bootstrapTable("getSelections");
+        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
-        var parts = [];
+        var requests = [];
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
-        });
-
-        var url = "{% url 'supplier-part-delete' %}"
-
-        launchModalForm(url, {
-            data: {
-                parts: parts,
-            },
-            reload: true,
-        });
+        showQuestionDialog(
+            '{% trans "Delete Supplier Parts?" %}',
+            '{% trans "All selected supplier parts will be deleted" %}',
+            {
+                accept: function() {
+                    selections.forEach(function(part) {
+                        var url = `/api/company/part/${part.pk}/`;
+            
+                        requests.push(inventreeDelete(url));
+                    });
+            
+                    $.when.apply($, requests).then(function() {
+                        $('#supplier-part-table').bootstrapTable('refresh');
+                    });
+                }
+            }
+        );
     });
 
     $("#multi-part-order").click(function() {
