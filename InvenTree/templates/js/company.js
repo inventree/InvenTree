@@ -1,6 +1,65 @@
 {% load i18n %}
 
 
+function manufacturerPartFields() {
+
+    return {
+        part: {},
+        manufacturer: {},
+        MPN: {
+            icon: 'fa-hashtag',
+        },
+        description: {},
+        link: {
+            icon: 'fa-link',
+        }
+    };
+}
+
+
+function createManufacturerPart(options={}) {
+
+    var fields = manufacturerPartFields();
+
+    if (options.part) {
+        fields.part.value = options.part;
+        fields.part.hidden = true;
+    }
+
+    if (options.manufacturer) {
+        fields.manufacturer.value = options.manufacturer;
+    }
+
+    constructForm('{% url "api-manufacturer-part-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Manufacturer Part" %}',
+        onSuccess: options.onSuccess
+    });
+}
+
+
+function editManufacturerPart(part, options={}) {
+
+    var url = `/api/company/part/manufacturer/${part}/`;
+
+    constructForm(url, {
+        fields: manufacturerPartFields(),
+        title: '{% trans "Edit Manufacturer Part" %}',
+        onSuccess: options.onSuccess
+    });
+}
+
+function deleteManufacturerPart(part, options={}) {
+
+    constructForm(`/api/company/part/manufacturer/${part}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Manufacturer Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+
 function supplierPartFields() {
 
     return {
@@ -400,8 +459,52 @@ function loadManufacturerPartTable(table, url, options) {
                 title: '{% trans "Description" %}',
                 sortable: false,
                 switchable: true,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
+
+                    html += '</div>';
+
+                    return html;
+                }
             }
         ],
+        onPostBody: function() {
+            // Callbacks
+            $(table).find('.button-manufacturer-part-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                editManufacturerPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-manufacturer-part-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                deleteManufacturerPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            })
+        }
     });
 }
 
@@ -659,7 +762,7 @@ function loadSupplierPartTable(table, url, options) {
                     var html = `<div class='btn-group float-right' role='group'>`;
 
                     html += makeIconButton('fa-edit icon-blue', 'button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete manufacturer part" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
 
                     html += '</div>';
 

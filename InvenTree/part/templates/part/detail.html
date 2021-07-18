@@ -879,21 +879,10 @@
     });
 
     $('#manufacturer-create').click(function () {
-
-        constructForm('{% url "api-manufacturer-part-list" %}', {
-            fields: {
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true,
-                },
-                manufacturer: {},
-                MPN: {},
-                description: {},
-                link: {},
-            },
-            method: 'POST',
-            title: '{% trans "Add Manufacturer Part" %}',
-            onSuccess: function() { 
+        
+        createManufacturerPart({
+            part: {{ part.pk }},
+            onSuccess: function() {
                 $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });

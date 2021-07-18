@@ -284,23 +284,9 @@
 
     $("#manufacturer-part-create").click(function () {
 
-        constructForm('{% url "api-manufacturer-part-list" %}', {
-            fields: {
-                part: {},
-                manufacturer: {
-                    value: {{ company.pk }},
-                },
-                MPN: {
-                    icon: 'fa-hashtag',
-                },
-                description: {},
-                link: {
-                    icon: 'fa-link',
-                },
-            },
-            method: 'POST',
-            title: '{% trans "Add Manufacturer Part" %}',
-            onSuccess: function() { 
+        createManufacturerPart({
+            manufacturer: {{ company.pk }},
+            onSuccess: function() {
                 $("#part-table").bootstrapTable("refresh");
             }
         });
