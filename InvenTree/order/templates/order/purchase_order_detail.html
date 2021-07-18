@@ -401,8 +401,15 @@ $("#po-table").inventreeTable({
             }
         },
         {
-            field: 'destination.pathstring',
+            field: 'destination',
             title: '{% trans "Destination" %}',
+            formatter: function(value, row) {
+                if (value) {
+                    return renderLink(row.destination_detail.pathstring, `/stock/location/${value}/`);
+                } else {
+                    return '-';
+                }
+            }
         },
         {
             field: 'notes',
