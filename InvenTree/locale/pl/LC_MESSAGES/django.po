@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 11:47+0000\n"
-"PO-Revision-Date: 2021-07-18 21:02\n"
+"PO-Revision-Date: 2021-07-18 22:06\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -822,7 +822,7 @@ msgstr ""
 #: build/models.py:1229
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
-msgstr ""
+msgstr "Przydzielona ilość ({n}) nie może przekraczać dostępnej ilości ({q})"
 
 #: build/models.py:1236 order/models.py:926
 msgid "StockItem is over-allocated"
@@ -830,7 +830,7 @@ msgstr ""
 
 #: build/models.py:1240 order/models.py:929
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Ilość musi być większa niż zero"
 
 #: build/models.py:1244
 msgid "Quantity must be 1 for serialized stock"
@@ -1251,7 +1251,7 @@ msgstr ""
 #: part/templates/part/detail.html:799 stock/templates/stock/item.html:232
 #: templates/attachment_table.html:6
 msgid "Add Attachment"
-msgstr ""
+msgstr "Dodaj załącznik"
 
 #: build/templates/build/detail.html:375
 #: order/templates/order/po_attachments.html:51
@@ -1667,7 +1667,7 @@ msgstr "Części są domyślnie wirtualne"
 
 #: common/models.py:209
 msgid "Show Quantity in Forms"
-msgstr ""
+msgstr "Pokaż ilość w formularzach"
 
 #: common/models.py:210
 msgid "Display available part quantity in some forms"
@@ -2371,7 +2371,7 @@ msgstr "Eksportuj"
 #: company/templates/company/detail.html:302
 #: part/templates/part/detail.html:899
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "Nowa część producenta"
 
 #: company/templates/company/detail.html:364
 #: part/templates/part/category.html:131 part/templates/part/detail.html:442
@@ -2467,7 +2467,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:176
 #: part/templates/part/detail.html:716
 msgid "Add Parameter"
-msgstr ""
+msgstr "Dodaj parametr"
 
 #: company/templates/company/manufacturer_part.html:193
 #: part/templates/part/detail.html:816
@@ -2835,7 +2835,7 @@ msgstr ""
 
 #: order/models.py:313 stock/models.py:308 stock/models.py:1023
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "Ilość musi być większa niż zero"
 
 #: order/models.py:318
 msgid "Part supplier must match PO supplier"
@@ -2851,7 +2851,7 @@ msgstr "Wartość musi być liczbą całkowitą"
 
 #: order/models.py:422
 msgid "Quantity must be a positive number"
-msgstr ""
+msgstr "Wartość musi być liczbą dodatnią"
 
 #: order/models.py:545
 msgid "Company to which the items are being sold"
@@ -2956,7 +2956,7 @@ msgstr ""
 
 #: order/models.py:922
 msgid "Allocation quantity cannot exceed stock quantity"
-msgstr ""
+msgstr "Zarezerwowana ilość nie może przekraczać ilości na stanie"
 
 #: order/models.py:932
 msgid "Quantity must be 1 for serialized stock item"
@@ -2990,7 +2990,7 @@ msgstr ""
 #: stock/templates/stock/attachment_delete.html:5
 #: templates/attachment_delete.html:5
 msgid "Are you sure you want to delete this attachment?"
-msgstr ""
+msgstr "Jesteś pewien, że chcesz usunąć ten załącznik?"
 
 #: order/templates/order/order_base.html:39
 #: order/templates/order/sales_order_base.html:50
@@ -3239,7 +3239,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:23
 #: order/templates/order/sales_order_detail.html:176
 msgid "Add Line Item"
-msgstr ""
+msgstr "Dodaj element zamówienia"
 
 #: order/templates/order/purchase_order_detail.html:55
 #: order/templates/order/sales_order_detail.html:54
@@ -3361,7 +3361,7 @@ msgstr ""
 #: part/templates/part/bom_duplicate.html:12
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
-msgstr ""
+msgstr "Ostrzeżenie"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -3417,7 +3417,7 @@ msgstr ""
 
 #: order/templates/order/sales_order_detail.html:479
 msgid "Purchase stock"
-msgstr ""
+msgstr "Cena zakupu"
 
 #: order/templates/order/sales_order_detail.html:483 templates/js/build.js:766
 #: templates/js/build.js:1210
@@ -3435,7 +3435,7 @@ msgstr ""
 
 #: order/templates/order/sales_order_detail.html:611
 msgid "Update Unit Price"
-msgstr ""
+msgstr "Zaktualizuj cenę jednostkową"
 
 #: order/templates/order/sales_order_ship.html:10
 msgid "This order has not been fully allocated. If the order is marked as shipped, it can no longer be adjusted."
@@ -3479,15 +3479,15 @@ msgstr ""
 
 #: order/views.py:104
 msgid "Cancel Order"
-msgstr ""
+msgstr "Anuluj zamówienie"
 
 #: order/views.py:113 order/views.py:139
 msgid "Confirm order cancellation"
-msgstr ""
+msgstr "Potwierdź anulowanie zamówienia"
 
 #: order/views.py:116 order/views.py:142
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "Zamówienie nie może zostać anulowane"
 
 #: order/views.py:130
 msgid "Cancel sales order"
@@ -3600,7 +3600,7 @@ msgstr ""
 
 #: order/views.py:1252
 msgid "Edit Allocation Quantity"
-msgstr ""
+msgstr "Edytuj zarezerwowaną ilość"
 
 #: order/views.py:1267
 msgid "Remove allocation"
@@ -3715,11 +3715,11 @@ msgstr ""
 
 #: part/forms.py:171
 msgid "Related Part"
-msgstr ""
+msgstr "Powiązane części"
 
 #: part/forms.py:178
 msgid "Select part category"
-msgstr ""
+msgstr "Wybierz kategorię części"
 
 #: part/forms.py:195
 msgid "Duplicate all BOM data for this part"
@@ -3727,7 +3727,7 @@ msgstr ""
 
 #: part/forms.py:196
 msgid "Copy BOM"
-msgstr ""
+msgstr "Kopiuj BOM"
 
 #: part/forms.py:201
 msgid "Duplicate all parameter data for this part"
@@ -3811,7 +3811,7 @@ msgstr ""
 
 #: part/models.py:679
 msgid "Part name"
-msgstr ""
+msgstr "Nazwa części"
 
 #: part/models.py:686
 msgid "Is Template"
@@ -3901,11 +3901,11 @@ msgstr ""
 
 #: part/models.py:828
 msgid "Can this part be built from other parts?"
-msgstr ""
+msgstr "Czy ta część może być zbudowana z innych części?"
 
 #: part/models.py:834
 msgid "Can this part be used to build other parts?"
-msgstr ""
+msgstr "Czy ta część może być użyta do budowy innych części?"
 
 #: part/models.py:840
 msgid "Does this part have tracking for unique items?"
@@ -4134,7 +4134,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "Nie masz uprawnień do edycji BOM."
 
 #: part/templates/part/bom.html:14
 #, python-format
@@ -4276,15 +4276,15 @@ msgstr ""
 
 #: part/templates/part/category.html:138
 msgid "Set category"
-msgstr ""
+msgstr "Ustaw kategorię"
 
 #: part/templates/part/category.html:138
 msgid "Set Category"
-msgstr ""
+msgstr "Ustaw kategorię"
 
 #: part/templates/part/category.html:141
 msgid "Export Data"
-msgstr ""
+msgstr "Eksportuj dane"
 
 #: part/templates/part/category.html:145
 msgid "View list display"
@@ -4306,15 +4306,15 @@ msgstr ""
 #: part/templates/part/category.html:261 part/templates/part/category.html:291
 #: templates/js/part.js:25
 msgid "New Category"
-msgstr ""
+msgstr "Nowa kategoria"
 
 #: part/templates/part/category.html:262
 msgid "Create new category"
-msgstr ""
+msgstr "Utwórz nową kategorię"
 
 #: part/templates/part/category.html:292
 msgid "Create new Part Category"
-msgstr ""
+msgstr "Utwórz nową kategorię części"
 
 #: part/templates/part/category.html:298 stock/views.py:907
 msgid "Create new Stock Location"
@@ -4322,15 +4322,15 @@ msgstr "Utwórz nową lokalizację magazynową"
 
 #: part/templates/part/category.html:317
 msgid "Select parent category"
-msgstr ""
+msgstr "Wybierz kategorię nadrzędną"
 
 #: part/templates/part/category.html:324 part/views.py:1848
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Edytuj kategorię części"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
-msgstr ""
+msgstr "Czy na pewno chcesz usunąć tę kategorię?"
 
 #: part/templates/part/category_delete.html:8
 #, python-format
@@ -4394,7 +4394,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:16
 msgid "Part Stock"
-msgstr ""
+msgstr "Zapasy cześci"
 
 #: part/templates/part/detail.html:21
 #, python-format
@@ -4423,15 +4423,15 @@ msgstr ""
 
 #: part/templates/part/detail.html:130 part/templates/part/navbar.html:21
 msgid "Part Variants"
-msgstr ""
+msgstr "Warianty Części"
 
 #: part/templates/part/detail.html:137
 msgid "Create new variant"
-msgstr ""
+msgstr "Utwórz nowy wariant"
 
 #: part/templates/part/detail.html:138
 msgid "New Variant"
-msgstr ""
+msgstr "Nowy wariant"
 
 #: part/templates/part/detail.html:161
 msgid "Add new parameter"
@@ -4444,7 +4444,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:188
 msgid "Add Related"
-msgstr ""
+msgstr "Dodaj powiązane"
 
 #: part/templates/part/detail.html:228 part/templates/part/navbar.html:35
 #: part/templates/part/navbar.html:38
@@ -4490,7 +4490,7 @@ msgstr ""
 #: part/templates/part/detail.html:443 part/views.py:451
 #: templates/js/stock.js:1623
 msgid "Create New Part"
-msgstr ""
+msgstr "Utwórz nową część"
 
 #: part/templates/part/detail.html:578
 msgid "Add Test Result Template"
@@ -4547,11 +4547,11 @@ msgstr ""
 
 #: part/templates/part/navbar.html:51 part/templates/part/navbar.html:54
 msgid "Used In"
-msgstr ""
+msgstr "Użyte w"
 
 #: part/templates/part/navbar.html:61
 msgid "Prices"
-msgstr ""
+msgstr "Ceny"
 
 #: part/templates/part/navbar.html:90
 msgid "Test Templates"
@@ -4559,13 +4559,13 @@ msgstr ""
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
-msgstr ""
+msgstr "Lista części"
 
 #: part/templates/part/part_base.html:26 templates/js/company.js:280
 #: templates/js/company.js:486 templates/js/part.js:172
 #: templates/js/part.js:249
 msgid "Inactive"
-msgstr ""
+msgstr "Nieaktywny"
 
 #: part/templates/part/part_base.html:36
 msgid "Part is virtual (not a physical part)"
@@ -4603,19 +4603,19 @@ msgstr ""
 #: stock/templates/stock/item_base.html:75
 #: stock/templates/stock/location.html:51
 msgid "Barcode actions"
-msgstr ""
+msgstr "Akcje kodów kreskowych"
 
 #: part/templates/part/part_base.html:69
 #: stock/templates/stock/item_base.html:77
 #: stock/templates/stock/location.html:53 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "Pokaż Kod QR"
 
 #: part/templates/part/part_base.html:70
 #: stock/templates/stock/item_base.html:93
 #: stock/templates/stock/location.html:54
 msgid "Print Label"
-msgstr ""
+msgstr "Drukuj etykietę"
 
 #: part/templates/part/part_base.html:75
 msgid "Show pricing information"
@@ -4625,7 +4625,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:140
 #: stock/templates/stock/location.html:62
 msgid "Stock actions"
-msgstr ""
+msgstr "Akcje magazynowe"
 
 #: part/templates/part/part_base.html:87
 msgid "Count part stock"
@@ -4641,15 +4641,15 @@ msgstr ""
 
 #: part/templates/part/part_base.html:113
 msgid "Duplicate part"
-msgstr ""
+msgstr "Duplikuj część"
 
 #: part/templates/part/part_base.html:116
 msgid "Edit part"
-msgstr ""
+msgstr "Edytuj część"
 
 #: part/templates/part/part_base.html:119
 msgid "Delete part"
-msgstr ""
+msgstr "Usuń część"
 
 #: part/templates/part/part_base.html:154
 msgid "Latest Serial Number"
@@ -4704,7 +4704,7 @@ msgstr ""
 #: part/templates/part/prices.html:52 part/templates/part/prices.html:84
 #: part/templates/part/prices.html:101
 msgid "Unit Cost"
-msgstr ""
+msgstr "Cena jednostkowa"
 
 #: part/templates/part/part_pricing.html:32
 #: part/templates/part/part_pricing.html:58
@@ -4748,7 +4748,7 @@ msgstr ""
 #: part/templates/part/partial_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
-msgstr ""
+msgstr "Czy na pewno chcesz usunąć część '<b>%(full_name)s</b>'?"
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -4869,7 +4869,7 @@ msgstr ""
 
 #: part/views.py:96
 msgid "Add Related Part"
-msgstr ""
+msgstr "Dodaj powiązaną część"
 
 #: part/views.py:151
 msgid "Delete Related Part"
@@ -5058,7 +5058,7 @@ msgstr ""
 
 #: report/models.py:423
 msgid "Part Filters"
-msgstr ""
+msgstr "Filtr części"
 
 #: report/models.py:424
 msgid "Part query filters (comma-separated list of key=value pairs"
@@ -5121,20 +5121,20 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:89
 #: stock/models.py:1765
 msgid "Result"
-msgstr ""
+msgstr "Wynik"
 
 #: report/templates/report/inventree_test_report_base.html:92
 #: templates/js/order.js:259 templates/js/stock.js:1322
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: report/templates/report/inventree_test_report_base.html:103
 msgid "Pass"
-msgstr ""
+msgstr "Zaliczone"
 
 #: report/templates/report/inventree_test_report_base.html:105
 msgid "Fail"
-msgstr ""
+msgstr "Niezaliczone"
 
 #: stock/api.py:146
 msgid "Request must contain list of stock items"
@@ -5154,11 +5154,11 @@ msgstr ""
 
 #: stock/api.py:178
 msgid "Invalid quantity value"
-msgstr ""
+msgstr "Nieprawidłowa ilość"
 
 #: stock/api.py:183
 msgid "Quantity must not be less than zero"
-msgstr ""
+msgstr "Ilość musi być większa niż zero"
 
 #: stock/api.py:211
 #, python-brace-format
@@ -5181,7 +5181,7 @@ msgstr ""
 #: stock/forms.py:81 stock/forms.py:341 stock/models.py:513
 #: stock/templates/stock/item_base.html:393 templates/js/stock.js:969
 msgid "Expiry Date"
-msgstr ""
+msgstr "Data ważności"
 
 #: stock/forms.py:82 stock/forms.py:342
 msgid "Expiration date for this stock item"
@@ -5197,7 +5197,7 @@ msgstr ""
 
 #: stock/forms.py:138
 msgid "Serial numbers"
-msgstr ""
+msgstr "Numery seryjne"
 
 #: stock/forms.py:138
 msgid "Unique serial numbers (must match quantity)"
@@ -5287,7 +5287,7 @@ msgstr ""
 
 #: stock/models.py:412
 msgid "Base part"
-msgstr ""
+msgstr "Część podstawowa"
 
 #: stock/models.py:421
 msgid "Select a matching supplier part for this stock item"
@@ -5323,7 +5323,7 @@ msgstr ""
 
 #: stock/models.py:476
 msgid "Stock Quantity"
-msgstr ""
+msgstr "Ilość w magazynie"
 
 #: stock/models.py:485
 msgid "Source Build"
@@ -5372,7 +5372,7 @@ msgstr ""
 
 #: stock/models.py:1020
 msgid "Quantity must be integer"
-msgstr ""
+msgstr "Ilość musi być liczbą całkowitą"
 
 #: stock/models.py:1026
 #, python-brace-format
@@ -5480,7 +5480,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:33
 #: stock/templates/stock/item_base.html:397 templates/js/table_filters.js:154
 msgid "Expired"
-msgstr ""
+msgstr "Termin minął"
 
 #: stock/templates/stock/item_base.html:43
 #: stock/templates/stock/item_base.html:399 templates/js/table_filters.js:159
@@ -5614,11 +5614,11 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:301 templates/js/build.js:628
 msgid "No location set"
-msgstr ""
+msgstr "Lokacje nie są ustawione"
 
 #: stock/templates/stock/item_base.html:308
 msgid "Barcode Identifier"
-msgstr ""
+msgstr "Skaner kodów"
 
 #: stock/templates/stock/item_base.html:350
 msgid "Parent Item"
@@ -5640,11 +5640,11 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:406 templates/js/stock.js:975
 msgid "Last Updated"
-msgstr ""
+msgstr "Ostatnia aktualizacja"
 
 #: stock/templates/stock/item_base.html:411
 msgid "Last Stocktake"
-msgstr ""
+msgstr "Ostatnia inwentaryzacja"
 
 #: stock/templates/stock/item_base.html:415
 msgid "No stocktake performed"
@@ -5664,7 +5664,7 @@ msgstr ""
 
 #: stock/templates/stock/item_delete.html:9
 msgid "Are you sure you want to delete this stock item?"
-msgstr ""
+msgstr "Czy na pewno chcesz usunąć tą część?"
 
 #: stock/templates/stock/item_delete.html:12
 #, python-format
@@ -5713,7 +5713,7 @@ msgstr ""
 
 #: stock/templates/stock/location.html:85
 msgid "Edit location"
-msgstr ""
+msgstr "Edytuj lokację"
 
 #: stock/templates/stock/location.html:87
 msgid "Delete location"
@@ -5753,11 +5753,11 @@ msgstr ""
 
 #: stock/templates/stock/location.html:166 templates/stock_table.html:41
 msgid "Print labels"
-msgstr ""
+msgstr "Drukuj etykiety"
 
 #: stock/templates/stock/location_delete.html:7
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "Czy na pewno chcesz skasować tą lokację?"
 
 #: stock/templates/stock/navbar.html:11
 msgid "Stock Item Tracking"
@@ -5765,7 +5765,7 @@ msgstr ""
 
 #: stock/templates/stock/navbar.html:14
 msgid "History"
-msgstr ""
+msgstr "Historia"
 
 #: stock/templates/stock/navbar.html:30
 msgid "Installed Items"
@@ -5894,7 +5894,7 @@ msgstr ""
 
 #: stock/views.py:1315
 msgid "Quantity cannot be negative"
-msgstr ""
+msgstr "Ilość nie może być ujemna"
 
 #: stock/views.py:1415
 msgid "Delete Stock Location"
@@ -5918,11 +5918,11 @@ msgstr ""
 
 #: templates/403.html:5 templates/403.html:11
 msgid "Permission Denied"
-msgstr ""
+msgstr "Odmowa dostępu"
 
 #: templates/403.html:14
 msgid "You do not have permission to view this page."
-msgstr ""
+msgstr "Nie masz uprawnień do przeglądania tej strony."
 
 #: templates/404.html:5 templates/404.html:11
 msgid "Page Not Found"
@@ -5934,7 +5934,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:7
 msgid "Index"
-msgstr ""
+msgstr "Indeks"
 
 #: templates/InvenTree/index.html:98
 msgid "Starred Parts"
@@ -6207,7 +6207,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:40
 msgid "Email Address"
-msgstr ""
+msgstr "Adres e-mail"
 
 #: templates/about.html:13
 msgid "InvenTree Version Information"
@@ -6321,11 +6321,11 @@ msgstr ""
 
 #: templates/js/api.js:176 templates/js/modals.js:1042
 msgid "Error 403: Permission Denied"
-msgstr ""
+msgstr "Błąd 403: Odmowa dostępu"
 
 #: templates/js/api.js:177 templates/js/modals.js:1043
 msgid "You do not have the required permissions to access this function"
-msgstr ""
+msgstr "Nie masz uprawnień wymaganych do dostępu do tej funkcji"
 
 #: templates/js/api.js:180 templates/js/modals.js:1047
 msgid "Error 404: Resource Not Found"
@@ -6545,7 +6545,7 @@ msgstr ""
 
 #: templates/js/build.js:700
 msgid "Quantity Per"
-msgstr ""
+msgstr "Ilość na"
 
 #: templates/js/build.js:770 templates/js/build.js:1214
 #: templates/stock_table.html:59
@@ -6587,7 +6587,7 @@ msgstr "Edytuj firmę"
 
 #: templates/js/company.js:66
 msgid "Add new Company"
-msgstr ""
+msgstr "Dodaj nową firmę"
 
 #: templates/js/company.js:143
 msgid "Parts Supplied"
@@ -6661,7 +6661,7 @@ msgstr ""
 
 #: templates/js/filters.js:268
 msgid "Add new filter"
-msgstr ""
+msgstr "Dodaj nowy filtr"
 
 #: templates/js/filters.js:271
 msgid "Clear all filters"
@@ -7046,11 +7046,11 @@ msgstr ""
 
 #: templates/js/stock.js:56
 msgid "Add Stock"
-msgstr ""
+msgstr "Dodaj stan"
 
 #: templates/js/stock.js:57 users/models.py:189
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 #: templates/js/stock.js:61 templates/stock_table.html:63
 msgid "Delete Stock"
@@ -7222,7 +7222,7 @@ msgstr ""
 
 #: templates/js/stock.js:1458
 msgid "Added"
-msgstr ""
+msgstr "Dodano"
 
 #: templates/js/stock.js:1466
 msgid "Removed"
@@ -7569,7 +7569,7 @@ msgstr ""
 
 #: templates/registration/password_reset_form.html:52
 msgid "Enter your email address below."
-msgstr ""
+msgstr "Wprowadź swój adres e-mail poniżej."
 
 #: templates/registration/password_reset_form.html:53
 msgid "An email will be sent with password reset instructions."
@@ -7705,7 +7705,7 @@ msgstr ""
 
 #: users/admin.py:211
 msgid "Permissions"
-msgstr ""
+msgstr "Uprawnienia"
 
 #: users/admin.py:214
 msgid "Important dates"
@@ -7713,7 +7713,7 @@ msgstr ""
 
 #: users/models.py:176
 msgid "Permission set"
-msgstr ""
+msgstr "Zbiór uprawnień"
 
 #: users/models.py:184
 msgid "Group"
@@ -7725,11 +7725,11 @@ msgstr ""
 
 #: users/models.py:187
 msgid "Permission to view items"
-msgstr ""
+msgstr "Uprawnienie do wyświetlania przedmiotów"
 
 #: users/models.py:189
 msgid "Permission to add items"
-msgstr ""
+msgstr "Uprawnienie do dodawania przedmiotów"
 
 #: users/models.py:191
 msgid "Change"
@@ -7737,9 +7737,9 @@ msgstr ""
 
 #: users/models.py:191
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Uprawnienie do edycji przedmiotów"
 
 #: users/models.py:193
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Uprawnienie do usuwania przedmiotów"
 
