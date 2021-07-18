@@ -80,6 +80,16 @@ function inventreeDocReady() {
     attachClipboard('.clip-btn');
     attachClipboard('.clip-btn', 'modal-about');  // modals
     attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
+
+    // Add autocomplete to the search-bar
+    $("#search-bar" ).autocomplete({
+        source: "{% url 'search-api' %}",
+        minLength: 2,
+        classes: {'ui-autocomplete': 'dropdown-menu'},
+        select: function( event, ui ) {
+          window.location = '/part/' + ui.item.id + '/';
+        }
+    });
 }
 
 function isFileTransfer(transfer) {

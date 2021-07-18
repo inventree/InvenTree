@@ -191,15 +191,6 @@ $(document).ready(function () {
     {% endif %}
 
     moment.locale('{{request.LANGUAGE_CODE}}');
-
-    $("#search-bar" ).autocomplete({
-      source: "{% url 'search-api' %}",
-      minLength: 2,
-      classes: {'ui-autocomplete': 'dropdown-menu'},
-      select: function( event, ui ) {
-        window.location = '/part/' + ui.item.id + '/';
-      }
-    });
 });
 
 </script>
