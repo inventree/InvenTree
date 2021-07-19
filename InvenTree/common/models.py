@@ -746,6 +746,33 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         verbose_name_plural = "InvenTree Settings"
 
 
+class InvenTreeUserSetting(BaseInvenTreeSetting):
+    """
+    An InvenTreeSetting object with a usercontext
+    """
+
+    GLOBAL_SETTINGS = {
+        'PART_ASSEMBLY': {
+            'name': _('Assembly'),
+            'description': _('Parts can be assembled from other components by default'),
+            'default': False,
+            'validator': bool,
+        },
+    }
+
+    class Meta:
+        verbose_name = "InvenTree User Setting"
+        verbose_name_plural = "InvenTree User Settings"
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=True, null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+
 class PriceBreak(models.Model):
     """
     Represents a PriceBreak model
