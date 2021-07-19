@@ -8,7 +8,7 @@ import json
 import os.path
 from PIL import Image
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -655,6 +655,10 @@ def clean_decimal(number):
             number = number.replace(',', '')
 
     # Convert to Decimal type
-    clean_number = Decimal(number)
+    try:
+        clean_number = Decimal(number)
+    except InvalidOperation:
+        # Number cannot be converted to Decimal (eg. a string containing letters)
+        return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
