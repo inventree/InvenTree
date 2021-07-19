@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 23:54+0000\n"
-"PO-Revision-Date: 2021-07-19 00:13\n"
+"POT-Creation-Date: 2021-07-19 01:18+0000\n"
+"PO-Revision-Date: 2021-07-19 02:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -136,18 +136,18 @@ msgstr "Hochladedatum"
 msgid "Invalid choice"
 msgstr ""
 
-#: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:414
+#: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:412
 #: label/models.py:112 part/models.py:680 part/models.py:2191
 #: report/models.py:181 templates/InvenTree/search.html:137
-#: templates/InvenTree/search.html:289 templates/js/company.js:365
+#: templates/InvenTree/search.html:289 templates/js/company.js:545
 #: templates/js/part.js:206 templates/js/part.js:339 templates/js/part.js:831
 #: templates/js/stock.js:1282
 msgid "Name"
 msgstr "Name"
 
 #: InvenTree/models.py:125 build/models.py:179
-#: build/templates/build/detail.html:24 company/models.py:353
-#: company/models.py:572 company/templates/company/manufacturer_part.html:76
+#: build/templates/build/detail.html:24 company/models.py:351
+#: company/models.py:519 company/templates/company/manufacturer_part.html:76
 #: company/templates/company/supplier_part.html:75 label/models.py:119
 #: order/models.py:158 order/templates/order/purchase_order_detail.html:309
 #: part/models.py:703 part/templates/part/set_category.html:14
@@ -157,8 +157,8 @@ msgstr "Name"
 #: templates/InvenTree/search.html:296
 #: templates/InvenTree/settings/header.html:9 templates/js/bom.js:190
 #: templates/js/build.js:868 templates/js/build.js:1162
-#: templates/js/company.js:125 templates/js/company.js:323
-#: templates/js/company.js:561 templates/js/order.js:247
+#: templates/js/company.js:261 templates/js/company.js:459
+#: templates/js/company.js:741 templates/js/order.js:247
 #: templates/js/order.js:349 templates/js/part.js:265 templates/js/part.js:449
 #: templates/js/part.js:626 templates/js/part.js:843 templates/js/part.js:911
 #: templates/js/stock.js:868 templates/js/stock.js:1294
@@ -470,7 +470,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
 #: build/templates/build/detail.html:34 common/models.py:748
-#: company/forms.py:104 company/templates/company/supplier_part.html:226
+#: company/forms.py:42 company/templates/company/supplier_part.html:226
 #: order/forms.py:120 order/forms.py:142 order/forms.py:159 order/models.py:706
 #: order/models.py:952 order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34
@@ -481,7 +481,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: order/templates/order/sales_order_detail.html:364 part/forms.py:323
 #: part/forms.py:353 part/forms.py:369 part/forms.py:385 part/models.py:2329
 #: part/templates/part/bom_upload/match_parts.html:31
-#: part/templates/part/detail.html:952 part/templates/part/detail.html:1038
+#: part/templates/part/detail.html:937 part/templates/part/detail.html:1023
 #: part/templates/part/part_pricing.html:16
 #: report/templates/report/inventree_build_order_base.html:114
 #: report/templates/report/inventree_po_report.html:91
@@ -494,7 +494,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: templates/js/build.js:1172 templates/js/model_renderers.js:56
 #: templates/js/order.js:462 templates/js/part.js:1016
 #: templates/js/part.js:1138 templates/js/part.js:1194
-#: templates/js/stock.js:1474 templates/js/stock.js:1693
+#: templates/js/stock.js:1474 templates/js/stock.js:1672
 msgid "Quantity"
 msgstr "Anzahl"
 
@@ -556,7 +556,7 @@ msgstr "Lagerort der Endprodukte"
 #: templates/js/barcode.js:119 templates/js/build.js:902
 #: templates/js/order.js:251 templates/js/order.js:354
 #: templates/js/stock.js:941 templates/js/stock.js:1443
-#: templates/js/stock.js:1709
+#: templates/js/stock.js:1688
 msgid "Status"
 msgstr "Status"
 
@@ -639,7 +639,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 
 #: build/models.py:197 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:128
-#: build/templates/build/detail.html:29 company/models.py:707
+#: build/templates/build/detail.html:29 company/models.py:654
 #: order/models.py:766 order/models.py:825
 #: order/templates/order/order_wizard/select_parts.html:32
 #: order/templates/order/purchase_order_detail.html:294
@@ -657,10 +657,10 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: templates/InvenTree/search.html:112 templates/InvenTree/search.html:210
 #: templates/js/barcode.js:362 templates/js/bom.js:163
 #: templates/js/build.js:586 templates/js/build.js:873
-#: templates/js/build.js:1139 templates/js/company.js:264
-#: templates/js/company.js:470 templates/js/part.js:430
+#: templates/js/build.js:1139 templates/js/company.js:400
+#: templates/js/company.js:650 templates/js/part.js:430
 #: templates/js/part.js:593 templates/js/stock.js:73 templates/js/stock.js:837
-#: templates/js/stock.js:1681
+#: templates/js/stock.js:1660
 msgid "Part"
 msgstr "Teil"
 
@@ -774,7 +774,7 @@ msgid "Link to external URL"
 msgstr "Link zu einer externen URL"
 
 #: build/models.py:306 build/templates/build/navbar.html:52
-#: company/models.py:141 company/models.py:579
+#: company/models.py:139 company/models.py:526
 #: company/templates/company/navbar.html:63
 #: company/templates/company/navbar.html:66 order/models.py:180
 #: order/models.py:715 order/templates/order/po_navbar.html:38
@@ -789,7 +789,7 @@ msgstr "Link zu einer externen URL"
 #: stock/forms.py:140 stock/forms.py:284 stock/forms.py:316 stock/models.py:536
 #: stock/models.py:1678 stock/models.py:1784
 #: stock/templates/stock/navbar.html:57 templates/js/barcode.js:37
-#: templates/js/bom.js:349 templates/js/company.js:566
+#: templates/js/bom.js:349 templates/js/company.js:746
 #: templates/js/stock.js:209 templates/js/stock.js:450
 #: templates/js/stock.js:1033
 msgid "Notes"
@@ -1120,7 +1120,7 @@ msgstr "Ziel-Lagerort nicht angegeben"
 
 #: build/templates/build/detail.html:73
 #: stock/templates/stock/item_base.html:315 templates/js/stock.js:949
-#: templates/js/stock.js:1716 templates/js/table_filters.js:116
+#: templates/js/stock.js:1695 templates/js/table_filters.js:116
 #: templates/js/table_filters.js:210
 msgid "Batch"
 msgstr "Losnummer"
@@ -1501,7 +1501,7 @@ msgstr "Name der Instanz verwenden"
 msgid "Use the instance name in the title-bar"
 msgstr "Den Namen der Instanz in der Titelleiste verwenden"
 
-#: common/models.py:72 company/models.py:99 company/models.py:100
+#: common/models.py:72 company/models.py:97 company/models.py:98
 msgid "Company name"
 msgstr "Firmenname"
 
@@ -1861,7 +1861,7 @@ msgstr "Nur Ganzzahl eingeben"
 msgid "Key string must be unique"
 msgstr "Schlüsseltext muss eindeutig sein"
 
-#: common/models.py:749 company/forms.py:105
+#: common/models.py:749 company/forms.py:43
 msgid "Price break quantity"
 msgstr "Preisstaffelungs Anzahl"
 
@@ -1935,259 +1935,250 @@ msgstr ""
 msgid "Previous Step"
 msgstr "Vorheriger Schritt"
 
-#: company/forms.py:25 part/forms.py:47
+#: company/forms.py:24 part/forms.py:47
 msgid "URL"
 msgstr "URL"
 
-#: company/forms.py:26 part/forms.py:48
+#: company/forms.py:25 part/forms.py:48
 msgid "Image URL"
 msgstr "Bild-URL"
 
-#: company/forms.py:47 templates/js/part.js:1129
-msgid "Single Price"
-msgstr "Einzelpreis"
-
-#: company/forms.py:48
-msgid "Single quantity price"
-msgstr "Preis für eine Einheit"
-
-#: company/forms.py:56 company/models.py:335
-msgid "Select manufacturer"
-msgstr "Hersteller auswählen"
-
-#: company/forms.py:62 company/models.py:342
-msgid "Manufacturer Part Number"
-msgstr "Hersteller-Teilenummer"
-
-#: company/forms.py:64 company/models.py:341
-#: company/templates/company/manufacturer_part.html:93
-#: company/templates/company/supplier_part.html:106
-#: order/templates/order/purchase_order_detail.html:328 part/bom.py:171
-#: part/bom.py:242 templates/js/company.js:305 templates/js/company.js:539
-msgid "MPN"
-msgstr "MPN"
-
-#: company/models.py:104
+#: company/models.py:102
 msgid "Company description"
 msgstr "Firmenbeschreibung"
 
-#: company/models.py:105
+#: company/models.py:103
 msgid "Description of the company"
 msgstr "Firmenbeschreibung"
 
-#: company/models.py:111 company/templates/company/company_base.html:70
-#: templates/js/company.js:129
+#: company/models.py:109 company/templates/company/company_base.html:70
+#: templates/js/company.js:265
 msgid "Website"
 msgstr "Website"
 
-#: company/models.py:112
+#: company/models.py:110
 msgid "Company website URL"
 msgstr "Firmenwebsite Adresse/URL"
 
-#: company/models.py:116 company/templates/company/company_base.html:88
+#: company/models.py:114 company/templates/company/company_base.html:88
 msgid "Address"
 msgstr "Adresse"
 
-#: company/models.py:117
+#: company/models.py:115
 msgid "Company address"
 msgstr "Firmenadresse"
 
-#: company/models.py:120
+#: company/models.py:118
 msgid "Phone number"
 msgstr "Kontakt-Tel."
 
-#: company/models.py:121
+#: company/models.py:119
 msgid "Contact phone number"
 msgstr "Kontakt-Telefon"
 
-#: company/models.py:124 company/templates/company/company_base.html:102
+#: company/models.py:122 company/templates/company/company_base.html:102
 msgid "Email"
 msgstr "Email"
 
-#: company/models.py:124
+#: company/models.py:122
 msgid "Contact email address"
 msgstr "Kontakt-Email"
 
-#: company/models.py:127 company/templates/company/company_base.html:109
+#: company/models.py:125 company/templates/company/company_base.html:109
 msgid "Contact"
 msgstr "Kontakt"
 
-#: company/models.py:128
+#: company/models.py:126
 msgid "Point of contact"
 msgstr "Anlaufstelle"
 
-#: company/models.py:130 company/models.py:347 company/models.py:566
+#: company/models.py:128 company/models.py:345 company/models.py:513
 #: order/models.py:160 part/models.py:736
 #: report/templates/report/inventree_build_order_base.html:165
-#: templates/js/company.js:312 templates/js/company.js:550
+#: templates/js/company.js:448 templates/js/company.js:730
 #: templates/js/part.js:687
 msgid "Link"
 msgstr "Link"
 
-#: company/models.py:130
+#: company/models.py:128
 msgid "Link to external company information"
 msgstr "Link auf externe Firmeninformation"
 
-#: company/models.py:138 part/models.py:746
+#: company/models.py:136 part/models.py:746
 msgid "Image"
 msgstr "Bild"
 
-#: company/models.py:143
+#: company/models.py:141
 msgid "is customer"
 msgstr "ist Kunde"
 
-#: company/models.py:143
+#: company/models.py:141
 msgid "Do you sell items to this company?"
 msgstr "Verkaufen Sie Teile an diese Firma?"
 
-#: company/models.py:145
+#: company/models.py:143
 msgid "is supplier"
 msgstr "ist Zulieferer"
 
-#: company/models.py:145
+#: company/models.py:143
 msgid "Do you purchase items from this company?"
 msgstr "Kaufen Sie Teile von dieser Firma?"
 
-#: company/models.py:147
+#: company/models.py:145
 msgid "is manufacturer"
 msgstr "ist Hersteller"
 
-#: company/models.py:147
+#: company/models.py:145
 msgid "Does this company manufacture parts?"
 msgstr "Produziert diese Firma Teile?"
 
-#: company/models.py:151 company/serializers.py:262
+#: company/models.py:149 company/serializers.py:245
 #: company/templates/company/company_base.html:76
 msgid "Currency"
 msgstr "Währung"
 
-#: company/models.py:154
+#: company/models.py:152
 msgid "Default currency used for this company"
 msgstr "Standard-Währung für diese Firma"
 
-#: company/models.py:319 company/models.py:537 stock/models.py:411
+#: company/models.py:317 company/models.py:484 stock/models.py:411
 #: stock/templates/stock/item_base.html:235
 msgid "Base Part"
 msgstr "Basisteil"
 
-#: company/models.py:323 company/models.py:541 order/views.py:1080
+#: company/models.py:321 company/models.py:488 order/views.py:1080
 msgid "Select part"
 msgstr "Teil auswählen"
 
-#: company/models.py:334 company/templates/company/company_base.html:116
+#: company/models.py:332 company/templates/company/company_base.html:116
 #: company/templates/company/manufacturer_part.html:89
 #: company/templates/company/supplier_part.html:98 part/bom.py:170
 #: part/bom.py:241 stock/templates/stock/item_base.html:364
-#: templates/js/company.js:113 templates/js/company.js:289
-#: templates/js/company.js:521
+#: templates/js/company.js:249 templates/js/company.js:425
+#: templates/js/company.js:701
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: company/models.py:348
+#: company/models.py:333
+msgid "Select manufacturer"
+msgstr "Hersteller auswählen"
+
+#: company/models.py:339 company/templates/company/manufacturer_part.html:93
+#: company/templates/company/supplier_part.html:106
+#: order/templates/order/purchase_order_detail.html:328 part/bom.py:171
+#: part/bom.py:242 templates/js/company.js:441 templates/js/company.js:719
+msgid "MPN"
+msgstr "MPN"
+
+#: company/models.py:340
+msgid "Manufacturer Part Number"
+msgstr "Hersteller-Teilenummer"
+
+#: company/models.py:346
 msgid "URL for external manufacturer part link"
 msgstr "Externe URL für das Herstellerteil"
 
-#: company/models.py:354
+#: company/models.py:352
 msgid "Manufacturer part description"
 msgstr "Teilbeschreibung des Herstellers"
 
-#: company/models.py:408 company/models.py:560
+#: company/models.py:406 company/models.py:507
 #: company/templates/company/manufacturer_part.html:6
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:374
 msgid "Manufacturer Part"
 msgstr "Herstellerteil"
 
-#: company/models.py:415
+#: company/models.py:413
 msgid "Parameter name"
 msgstr ""
 
-#: company/models.py:421
+#: company/models.py:419
 #: report/templates/report/inventree_test_report_base.html:90
 #: stock/models.py:1771 templates/InvenTree/settings/header.html:8
-#: templates/js/company.js:371 templates/js/part.js:348
+#: templates/js/company.js:551 templates/js/part.js:348
 #: templates/js/stock.js:446
 msgid "Value"
 msgstr "Wert"
 
-#: company/models.py:422
+#: company/models.py:420
 msgid "Parameter value"
 msgstr ""
 
-#: company/models.py:428 part/models.py:821 part/models.py:2193
-#: templates/js/company.js:377 templates/js/part.js:354
+#: company/models.py:426 part/models.py:821 part/models.py:2193
+#: templates/js/company.js:557 templates/js/part.js:354
 msgid "Units"
 msgstr "Einheiten"
 
-#: company/models.py:429
+#: company/models.py:427
 msgid "Parameter units"
 msgstr ""
 
-#: company/models.py:547 company/templates/company/company_base.html:121
+#: company/models.py:494 company/templates/company/company_base.html:121
 #: company/templates/company/supplier_part.html:88 order/models.py:260
 #: order/templates/order/order_base.html:92
 #: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
 #: part/bom.py:286 stock/templates/stock/item_base.html:381
-#: templates/js/company.js:117 templates/js/company.js:495
+#: templates/js/company.js:253 templates/js/company.js:675
 #: templates/js/order.js:234
 msgid "Supplier"
 msgstr "Zulieferer"
 
-#: company/models.py:548
+#: company/models.py:495
 msgid "Select supplier"
 msgstr "Zulieferer auswählen"
 
-#: company/models.py:553 company/templates/company/supplier_part.html:92
+#: company/models.py:500 company/templates/company/supplier_part.html:92
 #: order/templates/order/purchase_order_detail.html:315 part/bom.py:176
 #: part/bom.py:287
 msgid "SKU"
 msgstr "SKU (Lagerbestandseinheit)"
 
-#: company/models.py:554
+#: company/models.py:501
 msgid "Supplier stock keeping unit"
 msgstr "Lagerbestandseinheit (SKU) des Zulieferers"
 
-#: company/models.py:561
+#: company/models.py:508
 msgid "Select manufacturer part"
 msgstr "Herstellerteil auswählen"
 
-#: company/models.py:567
+#: company/models.py:514
 msgid "URL for external supplier part link"
 msgstr "Teil-URL des Zulieferers"
 
-#: company/models.py:573
+#: company/models.py:520
 msgid "Supplier part description"
 msgstr "Zuliefererbeschreibung des Teils"
 
-#: company/models.py:578 company/templates/company/supplier_part.html:120
+#: company/models.py:525 company/templates/company/supplier_part.html:120
 #: part/models.py:2341 report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
 msgstr "Notiz"
 
-#: company/models.py:582 part/models.py:1614
+#: company/models.py:529 part/models.py:1614
 msgid "base cost"
 msgstr "Basiskosten"
 
-#: company/models.py:582 part/models.py:1614
+#: company/models.py:529 part/models.py:1614
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Mindestpreis"
 
-#: company/models.py:584 company/templates/company/supplier_part.html:113
+#: company/models.py:531 company/templates/company/supplier_part.html:113
 #: stock/models.py:435 stock/templates/stock/item_base.html:322
-#: templates/js/company.js:571 templates/js/stock.js:1029
+#: templates/js/company.js:751 templates/js/stock.js:1029
 msgid "Packaging"
 msgstr "Verpackungen"
 
-#: company/models.py:584
+#: company/models.py:531
 msgid "Part packaging"
 msgstr "Teile-Verpackungen"
 
-#: company/models.py:586 part/models.py:1616
+#: company/models.py:533 part/models.py:1616
 msgid "multiple"
 msgstr "Vielfache"
 
-#: company/models.py:586
+#: company/models.py:533
 msgid "Order multiple"
 msgstr "Mehrere bestellen"
 
@@ -2201,7 +2192,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:9
 #: company/templates/company/company_base.html:35
-#: templates/InvenTree/search.html:304 templates/js/company.js:102
+#: templates/InvenTree/search.html:304 templates/js/company.js:238
 msgid "Company"
 msgstr "Firma"
 
@@ -2243,7 +2234,7 @@ msgstr "Telefon"
 #: company/templates/company/company_base.html:126 order/models.py:544
 #: order/templates/order/sales_order_base.html:94 stock/models.py:453
 #: stock/models.py:454 stock/templates/stock/item_base.html:274
-#: templates/js/company.js:109 templates/js/order.js:331
+#: templates/js/company.js:245 templates/js/order.js:331
 #: templates/js/stock.js:1407
 msgid "Customer"
 msgstr "Kunde"
@@ -2268,7 +2259,6 @@ msgstr "Neues Zuliefererteil anlegen"
 #: company/templates/company/detail.html:23
 #: company/templates/company/manufacturer_part.html:109
 #: part/templates/part/detail.html:289 templates/js/part.js:78
-#: templates/js/stock.js:1628
 msgid "New Supplier Part"
 msgstr "Neues Zuliefererteil"
 
@@ -2376,30 +2366,17 @@ msgstr "Firmenbemerkungen"
 msgid "Export"
 msgstr "Exportieren"
 
-#: company/templates/company/detail.html:302
-#: part/templates/part/detail.html:899
-msgid "Add Manufacturer Part"
+#: company/templates/company/detail.html:372
+#: company/templates/company/manufacturer_part.html:200
+#: part/templates/part/detail.html:823
+msgid "Delete Supplier Parts?"
 msgstr ""
 
-#: company/templates/company/detail.html:364
-#: part/templates/part/category.html:131 part/templates/part/detail.html:442
-#: templates/js/stock.js:1622
-msgid "New Part"
-msgstr "Neues Teil"
-
-#: company/templates/company/detail.html:365
-msgid "Create new Part"
-msgstr "Neues Teil hinzufügen"
-
-#: company/templates/company/detail.html:370
-#: company/templates/company/manufacturer_part.html:192 company/views.py:59
-#: part/templates/part/detail.html:815
-msgid "New Supplier"
-msgstr "Neuer Zulieferer"
-
-#: company/templates/company/detail.html:371
-msgid "Create new Supplier"
-msgstr "Neuen Zulieferer anlegen"
+#: company/templates/company/detail.html:373
+#: company/templates/company/manufacturer_part.html:201
+#: part/templates/part/detail.html:824
+msgid "All selected supplier parts will be deleted"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -2413,10 +2390,12 @@ msgid "Order part"
 msgstr "Teil bestellen"
 
 #: company/templates/company/manufacturer_part.html:45
+#: templates/js/company.js:473
 msgid "Edit manufacturer part"
 msgstr "Herstellerteil bearbeiten"
 
 #: company/templates/company/manufacturer_part.html:49
+#: templates/js/company.js:474
 msgid "Delete manufacturer part"
 msgstr "Herstellerteil löschen"
 
@@ -2431,7 +2410,7 @@ msgstr "Internes Teil"
 
 #: company/templates/company/manufacturer_part.html:103
 #: company/templates/company/manufacturer_part_navbar.html:21
-#: company/views.py:58 part/templates/part/navbar.html:65
+#: company/views.py:49 part/templates/part/navbar.html:65
 #: part/templates/part/navbar.html:68 part/templates/part/prices.html:144
 #: templates/InvenTree/search.html:316 templates/navbar.html:35
 msgid "Suppliers"
@@ -2444,9 +2423,9 @@ msgstr "Zuliefererteil entfernen"
 
 #: company/templates/company/manufacturer_part.html:114
 #: company/templates/company/manufacturer_part.html:138
-#: company/templates/company/manufacturer_part.html:238
+#: company/templates/company/manufacturer_part.html:239
 #: part/templates/part/detail.html:214 part/templates/part/detail.html:294
-#: part/templates/part/detail.html:317 templates/js/company.js:203
+#: part/templates/part/detail.html:317 templates/js/company.js:339
 #: users/models.py:193
 msgid "Delete"
 msgstr "Löschen"
@@ -2477,26 +2456,13 @@ msgstr ""
 msgid "Add Parameter"
 msgstr ""
 
-#: company/templates/company/manufacturer_part.html:193
-#: part/templates/part/detail.html:816
-msgid "Create new supplier"
-msgstr "Neuen Zulieferer anlegen"
-
-#: company/templates/company/manufacturer_part.html:223
+#: company/templates/company/manufacturer_part.html:224
 msgid "Selected parameters will be deleted"
 msgstr ""
 
-#: company/templates/company/manufacturer_part.html:235
+#: company/templates/company/manufacturer_part.html:236
 msgid "Delete Parameters"
 msgstr ""
-
-#: company/templates/company/manufacturer_part.html:311
-msgid "Edit Manufacturer Part"
-msgstr "Herstellerteil ändern"
-
-#: company/templates/company/manufacturer_part.html:320
-msgid "Delete Manufacturer Part"
-msgstr "Herstellerteil löschen"
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Stock"
@@ -2548,16 +2514,16 @@ msgstr "Teilbestand"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:420
-#: stock/templates/stock/item_base.html:386 templates/js/company.js:511
+#: stock/templates/stock/item_base.html:386 templates/js/company.js:691
 #: templates/js/stock.js:1001
 msgid "Supplier Part"
 msgstr "Zuliefererteil"
 
-#: company/templates/company/supplier_part.html:44
+#: company/templates/company/supplier_part.html:44 templates/js/company.js:764
 msgid "Edit supplier part"
 msgstr "Zuliefererteil bearbeiten"
 
-#: company/templates/company/supplier_part.html:48
+#: company/templates/company/supplier_part.html:48 templates/js/company.js:765
 msgid "Delete supplier part"
 msgstr "Zuliefererteil entfernen"
 
@@ -2611,10 +2577,6 @@ msgstr "Preisstaffel bearbeiten"
 msgid "Delete price break"
 msgstr "Preisstaffel löschen"
 
-#: company/templates/company/supplier_part_delete.html:5
-msgid "Are you sure you want to delete the following Supplier Parts?"
-msgstr "Sind Sie sicher, dass sie die folgenden Zuliefererteile löschen möchten?"
-
 #: company/templates/company/supplier_part_navbar.html:26
 msgid "Supplier Part Pricing"
 msgstr "Zuliefererteil Bepreisung"
@@ -2623,60 +2585,52 @@ msgstr "Zuliefererteil Bepreisung"
 msgid "Pricing"
 msgstr "Bepreisung"
 
-#: company/views.py:64 part/templates/part/prices.html:148
+#: company/views.py:50
+msgid "New Supplier"
+msgstr "Neuer Zulieferer"
+
+#: company/views.py:55 part/templates/part/prices.html:148
 #: templates/InvenTree/search.html:306 templates/navbar.html:36
 msgid "Manufacturers"
 msgstr "Hersteller"
 
-#: company/views.py:65 part/templates/part/detail.html:820
+#: company/views.py:56
 msgid "New Manufacturer"
 msgstr "Neuer Hersteller"
 
-#: company/views.py:70 templates/InvenTree/search.html:336
+#: company/views.py:61 templates/InvenTree/search.html:336
 #: templates/navbar.html:45
 msgid "Customers"
 msgstr "Kunden"
 
-#: company/views.py:71
+#: company/views.py:62
 msgid "New Customer"
 msgstr "Neuer Kunde"
 
-#: company/views.py:78
+#: company/views.py:69
 msgid "Companies"
 msgstr "Firmen"
 
-#: company/views.py:79
+#: company/views.py:70
 msgid "New Company"
 msgstr "Neue Firma"
 
-#: company/views.py:138 part/views.py:974
+#: company/views.py:129 part/views.py:974
 msgid "Download Image"
 msgstr "Bild herunterladen"
 
-#: company/views.py:167 part/views.py:1006
+#: company/views.py:158 part/views.py:1006
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "Bildgröße überschreitet maximal-erlaubte Größe für Downloads"
 
-#: company/views.py:174 part/views.py:1013
+#: company/views.py:165 part/views.py:1013
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Ungültige Antwort {code}"
 
-#: company/views.py:183 part/views.py:1022
+#: company/views.py:174 part/views.py:1022
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
-
-#: company/views.py:243
-msgid "Edit Supplier Part"
-msgstr "Zuliefererteil bearbeiten"
-
-#: company/views.py:294 templates/js/stock.js:1629
-msgid "Create new Supplier Part"
-msgstr "Neues Zuliefererteil anlegen"
-
-#: company/views.py:438
-msgid "Delete Supplier Part"
-msgstr "Zuliefererteil entfernen"
 
 #: label/api.py:57 report/api.py:201
 msgid "No valid objects provided to template"
@@ -3046,7 +3000,6 @@ msgstr "Bestellung bearbeiten"
 #: order/templates/order/purchase_order_detail.html:262
 #: part/templates/part/category.html:255 part/templates/part/category.html:297
 #: stock/templates/stock/location.html:259 templates/js/part.js:64
-#: templates/js/stock.js:1634
 msgid "New Location"
 msgstr "Neuer Lagerort"
 
@@ -4290,6 +4243,10 @@ msgstr "Teile-Daten exportieren"
 msgid "Create new part"
 msgstr "Neues Teil anlegen"
 
+#: part/templates/part/category.html:131 part/templates/part/detail.html:442
+msgid "New Part"
+msgstr "Neues Teil"
+
 #: part/templates/part/category.html:138
 msgid "Set category"
 msgstr "Teil-Kategorie auswählen"
@@ -4504,7 +4461,6 @@ msgid "All selected BOM items will be deleted"
 msgstr "Alle ausgewählte Stücklistenpositionen werden gelöscht"
 
 #: part/templates/part/detail.html:443 part/views.py:451
-#: templates/js/stock.js:1623
 msgid "Create New Part"
 msgstr "Neues Teil anlegen"
 
@@ -4524,26 +4480,22 @@ msgstr ""
 msgid "Edit Part Notes"
 msgstr ""
 
-#: part/templates/part/detail.html:821
-msgid "Create new manufacturer"
-msgstr "Neuen Hersteller anlegen"
-
-#: part/templates/part/detail.html:915
+#: part/templates/part/detail.html:900
 #, python-format
 msgid "Single Price - %(currency)s"
 msgstr "Einzelpreis - %(currency)s"
 
-#: part/templates/part/detail.html:927
+#: part/templates/part/detail.html:912
 #, python-format
 msgid "Single Price Difference - %(currency)s"
 msgstr "Einzelpreisdifferenz - %(currency)s"
 
-#: part/templates/part/detail.html:939
+#: part/templates/part/detail.html:924
 #, python-format
 msgid "Part Single Price - %(currency)s"
 msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
 
-#: part/templates/part/detail.html:1028
+#: part/templates/part/detail.html:1013
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr ""
@@ -4577,8 +4529,8 @@ msgstr ""
 msgid "Part List"
 msgstr "Teileliste"
 
-#: part/templates/part/part_base.html:26 templates/js/company.js:280
-#: templates/js/company.js:486 templates/js/part.js:172
+#: part/templates/part/part_base.html:26 templates/js/company.js:416
+#: templates/js/company.js:666 templates/js/part.js:172
 #: templates/js/part.js:249
 msgid "Inactive"
 msgstr "Inaktiv"
@@ -6600,69 +6552,93 @@ msgstr ""
 msgid "No parts allocated for"
 msgstr "Keine Teile zugeordnet zu"
 
-#: templates/js/company.js:45
+#: templates/js/company.js:36
+msgid "Add Manufacturer Part"
+msgstr ""
+
+#: templates/js/company.js:48
+msgid "Edit Manufacturer Part"
+msgstr "Herstellerteil ändern"
+
+#: templates/js/company.js:57
+msgid "Delete Manufacturer Part"
+msgstr "Herstellerteil löschen"
+
+#: templates/js/company.js:114
+msgid "Add Supplier Part"
+msgstr ""
+
+#: templates/js/company.js:124
+msgid "Edit Supplier Part"
+msgstr "Zuliefererteil bearbeiten"
+
+#: templates/js/company.js:134
+msgid "Delete Supplier Part"
+msgstr "Zuliefererteil entfernen"
+
+#: templates/js/company.js:181
 msgid "Edit Company"
 msgstr "Firma bearbeiten"
 
-#: templates/js/company.js:66
+#: templates/js/company.js:202
 msgid "Add new Company"
 msgstr ""
 
-#: templates/js/company.js:143
+#: templates/js/company.js:279
 msgid "Parts Supplied"
 msgstr "Teile geliefert"
 
-#: templates/js/company.js:152
+#: templates/js/company.js:288
 msgid "Parts Manufactured"
 msgstr "Hersteller-Teile"
 
-#: templates/js/company.js:165
+#: templates/js/company.js:301
 msgid "No company information found"
 msgstr "Keine Firmeninformation gefunden"
 
-#: templates/js/company.js:183
+#: templates/js/company.js:319
 msgid "The following manufacturer parts will be deleted"
 msgstr ""
 
-#: templates/js/company.js:200
+#: templates/js/company.js:336
 msgid "Delete Manufacturer Parts"
 msgstr ""
 
-#: templates/js/company.js:253
+#: templates/js/company.js:389
 msgid "No manufacturer parts found"
 msgstr "Keine Herstellerteile gefunden"
 
-#: templates/js/company.js:272 templates/js/company.js:478
+#: templates/js/company.js:408 templates/js/company.js:658
 #: templates/js/part.js:156 templates/js/part.js:241
 msgid "Template part"
 msgstr "Vorlagenteil"
 
-#: templates/js/company.js:276 templates/js/company.js:482
+#: templates/js/company.js:412 templates/js/company.js:662
 #: templates/js/part.js:160 templates/js/part.js:245
 msgid "Assembled part"
 msgstr "Baugruppe"
 
-#: templates/js/company.js:356 templates/js/part.js:330
+#: templates/js/company.js:536 templates/js/part.js:330
 msgid "No parameters found"
 msgstr ""
 
-#: templates/js/company.js:392 templates/js/part.js:371
+#: templates/js/company.js:572 templates/js/part.js:371
 msgid "Edit parameter"
 msgstr ""
 
-#: templates/js/company.js:393 templates/js/part.js:372
+#: templates/js/company.js:573 templates/js/part.js:372
 msgid "Delete parameter"
 msgstr ""
 
-#: templates/js/company.js:412 templates/js/part.js:389
+#: templates/js/company.js:592 templates/js/part.js:389
 msgid "Edit Parameter"
 msgstr ""
 
-#: templates/js/company.js:423 templates/js/part.js:401
+#: templates/js/company.js:603 templates/js/part.js:401
 msgid "Delete Parameter"
 msgstr ""
 
-#: templates/js/company.js:459
+#: templates/js/company.js:639
 msgid "No supplier parts found"
 msgstr "Keine Zuliefererteile gefunden"
 
@@ -6719,7 +6695,7 @@ msgstr "Fehler in Formular"
 msgid "Searching"
 msgstr ""
 
-#: templates/js/forms.js:1318
+#: templates/js/forms.js:1321
 msgid "Clear input"
 msgstr ""
 
@@ -6855,6 +6831,10 @@ msgid "Category ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:199
+msgid "Manufacturer Part ID"
+msgstr ""
+
+#: templates/js/model_renderers.js:227
 msgid "Supplier Part ID"
 msgstr ""
 
@@ -6968,6 +6948,10 @@ msgstr ""
 #, python-brace-format
 msgid "Delete ${human_name}"
 msgstr ""
+
+#: templates/js/part.js:1129
+msgid "Single Price"
+msgstr "Einzelpreis"
 
 #: templates/js/part.js:1148
 msgid "Single Price Difference"
@@ -7255,19 +7239,15 @@ msgstr "Tracking-Eintrag bearbeiten"
 msgid "Delete tracking entry"
 msgstr "Tracking-Eintrag löschen"
 
-#: templates/js/stock.js:1635
-msgid "Create New Location"
-msgstr "Neuen Lagerort anlegen"
-
-#: templates/js/stock.js:1676
+#: templates/js/stock.js:1655
 msgid "No installed items"
 msgstr "Keine installierten Elemente"
 
-#: templates/js/stock.js:1699
+#: templates/js/stock.js:1678
 msgid "Serial"
 msgstr "Seriennummer"
 
-#: templates/js/stock.js:1727
+#: templates/js/stock.js:1706
 msgid "Uninstall Stock Item"
 msgstr "Lagerbestand entfernen"
 
@@ -7445,56 +7425,56 @@ msgstr "Favorit"
 msgid "Purchasable"
 msgstr "Käuflich"
 
-#: templates/js/tables.js:336
+#: templates/js/tables.js:342
 msgid "Loading data"
 msgstr "Lade Daten"
 
-#: templates/js/tables.js:339
+#: templates/js/tables.js:345
 msgid "rows per page"
 msgstr "Zeilen pro Seite"
 
-#: templates/js/tables.js:342
+#: templates/js/tables.js:348
 msgid "Showing"
 msgstr "zeige"
 
-#: templates/js/tables.js:342
+#: templates/js/tables.js:348
 msgid "to"
 msgstr "bis"
 
-#: templates/js/tables.js:342
+#: templates/js/tables.js:348
 msgid "of"
 msgstr "von"
 
-#: templates/js/tables.js:342
+#: templates/js/tables.js:348
 msgid "rows"
 msgstr "Zeilen"
 
-#: templates/js/tables.js:345 templates/search_form.html:6
+#: templates/js/tables.js:351 templates/search_form.html:6
 #: templates/search_form.html:8
 msgid "Search"
 msgstr "Suche"
 
-#: templates/js/tables.js:348
+#: templates/js/tables.js:354
 msgid "No matching results"
 msgstr "Keine passenden Ergebnisse gefunden"
 
-#: templates/js/tables.js:351
+#: templates/js/tables.js:357
 msgid "Hide/Show pagination"
 msgstr "Zeige/Verstecke Pagination"
 
-#: templates/js/tables.js:354
+#: templates/js/tables.js:360
 msgid "Refresh"
 msgstr "Neu laden"
 
-#: templates/js/tables.js:357
+#: templates/js/tables.js:363
 msgid "Toggle"
 msgstr "umschalten"
 
-#: templates/js/tables.js:360
+#: templates/js/tables.js:366
 msgid "Columns"
 msgstr "Spalten"
 
-#: templates/js/tables.js:363
+#: templates/js/tables.js:369
 msgid "All"
 msgstr "Alle"
 
