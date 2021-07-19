@@ -44,7 +44,7 @@ def money_kwargs():
     """ returns the database settings for MoneyFields """
     kwargs = {}
     kwargs['currency_choices'] = common.settings.currency_code_mappings()
-    kwargs['default_currency'] = common.settings.currency_code_default
+    kwargs['default_currency'] = common.settings.currency_code_default()
     return kwargs
 
 
@@ -86,6 +86,7 @@ class InvenTreeMoneyField(MoneyField):
     def __init__(self, *args, **kwargs):
         # override initial values with the real info from database
         kwargs.update(money_kwargs())
+        print(kwargs)
         super().__init__(*args, **kwargs)
 
 

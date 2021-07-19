@@ -8,7 +8,7 @@ import json
 import os.path
 from PIL import Image
 
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
