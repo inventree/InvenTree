@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-19 07:46+0000\n"
-"PO-Revision-Date: 2021-07-19 07:47\n"
+"PO-Revision-Date: 2021-07-19 21:19\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -134,7 +134,7 @@ msgstr "Hochladedatum"
 
 #: InvenTree/models.py:102
 msgid "Invalid choice"
-msgstr ""
+msgstr "Ungültige Auswahl"
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 company/models.py:412
 #: label/models.py:112 part/models.py:680 part/models.py:2191
@@ -176,7 +176,7 @@ msgstr "Eltern"
 
 #: InvenTree/serializers.py:52 part/models.py:2427
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Muss eine gültige Nummer sein"
 
 #: InvenTree/settings.py:505
 msgid "English"
@@ -1242,7 +1242,7 @@ msgstr "Bauauftrags-Notizen"
 #: part/templates/part/detail.html:109 stock/templates/stock/item.html:102
 #: stock/templates/stock/item.html:168
 msgid "Edit Notes"
-msgstr ""
+msgstr "Anmerkungen bearbeiten"
 
 #: build/templates/build/detail.html:357
 #: order/templates/order/po_attachments.html:79
@@ -1267,7 +1267,7 @@ msgstr "Anhang bearbeiten"
 #: order/templates/order/sales_order_detail.html:124
 #: part/templates/part/detail.html:764 stock/templates/stock/item.html:209
 msgid "Confirm Delete Operation"
-msgstr ""
+msgstr "Löschvorgang bestätigen"
 
 #: build/templates/build/detail.html:383
 #: order/templates/order/po_attachments.html:59
@@ -1519,11 +1519,11 @@ msgstr "Basis-URL für dieses Instanz"
 
 #: common/models.py:85
 msgid "Default Currency"
-msgstr ""
+msgstr "Standardwährung"
 
 #: common/models.py:86
 msgid "Default currency"
-msgstr ""
+msgstr "Standardwährung"
 
 #: common/models.py:92
 msgid "Download from URL"
@@ -1675,51 +1675,51 @@ msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
 
 #: common/models.py:216
 msgid "Show Import in Views"
-msgstr ""
+msgstr "Import in Ansichten anzeigen"
 
 #: common/models.py:217
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "Importassistent in einigen Teil-Ansichten anzeigen"
 
 #: common/models.py:223
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "Preis in Formularen anzeigen"
 
 #: common/models.py:224
 msgid "Display part price in some forms"
-msgstr ""
+msgstr "Teilpreis in einigen Formularen anzeigen"
 
 #: common/models.py:230
 msgid "Show related parts"
-msgstr ""
+msgstr "Verwandte Teile anzeigen"
 
 #: common/models.py:231
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Verwandte Teile eines Teils anzeigen"
 
 #: common/models.py:237
 msgid "Create initial stock"
-msgstr ""
+msgstr "Ausgangsbestand erstellen"
 
 #: common/models.py:238
 msgid "Create initial stock on part creation"
-msgstr ""
+msgstr "Ausgangsbestand beim Erstellen von Teilen erstellen"
 
 #: common/models.py:244
 msgid "Internal Prices"
-msgstr ""
+msgstr "Interne Preise"
 
 #: common/models.py:245
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Interne Preise für Teile aktivieren"
 
 #: common/models.py:251
 msgid "Internal Price as BOM-Price"
-msgstr ""
+msgstr "Interner Preis als Stückliste-Preis"
 
 #: common/models.py:252
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr ""
+msgstr "Interner Preis (falls vorhanden) in Stücklisten-Preisberechnungen verwenden"
 
 #: common/models.py:258 templates/stats.html:25
 msgid "Debug Mode"
@@ -1921,7 +1921,7 @@ msgstr "Felder zuteilen fehlgeschlagen"
 
 #: common/views.py:586
 msgid "Parts imported"
-msgstr ""
+msgstr "Teile importiert"
 
 #: common/views.py:608 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -2091,7 +2091,7 @@ msgstr "Herstellerteil"
 
 #: company/models.py:413
 msgid "Parameter name"
-msgstr ""
+msgstr "Parametername"
 
 #: company/models.py:419
 #: report/templates/report/inventree_test_report_base.html:90
@@ -2103,7 +2103,7 @@ msgstr "Wert"
 
 #: company/models.py:420
 msgid "Parameter value"
-msgstr ""
+msgstr "Parameterwert"
 
 #: company/models.py:426 part/models.py:821 part/models.py:2193
 #: templates/js/company.js:557 templates/js/part.js:354
@@ -2112,7 +2112,7 @@ msgstr "Einheiten"
 
 #: company/models.py:427
 msgid "Parameter units"
-msgstr ""
+msgstr "Parametereinheit"
 
 #: company/models.py:494 company/templates/company/company_base.html:121
 #: company/templates/company/supplier_part.html:88 order/models.py:260
@@ -2184,11 +2184,11 @@ msgstr "Mehrere bestellen"
 
 #: company/serializers.py:68
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Standard-Währung für diesen Zulieferer"
 
 #: company/serializers.py:69
 msgid "Currency Code"
-msgstr ""
+msgstr "Währungscode"
 
 #: company/templates/company/company_base.html:9
 #: company/templates/company/company_base.html:35
@@ -2242,7 +2242,7 @@ msgstr "Kunde"
 #: company/templates/company/company_base.html:193
 #: part/templates/part/part_base.html:353
 msgid "Upload Image"
-msgstr ""
+msgstr "Bild hochladen"
 
 #: company/templates/company/detail.html:14
 #: company/templates/company/manufacturer_part_navbar.html:18
@@ -2363,13 +2363,13 @@ msgstr "Firmenbemerkungen"
 #: company/templates/company/manufacturer_part.html:200
 #: part/templates/part/detail.html:825
 msgid "Delete Supplier Parts?"
-msgstr ""
+msgstr "Zuliefererteil entfernen?"
 
 #: company/templates/company/detail.html:365
 #: company/templates/company/manufacturer_part.html:201
 #: part/templates/part/detail.html:826
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten Zulieferteile werden gelöscht"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -2442,20 +2442,20 @@ msgstr "Neuer Parameter"
 
 #: company/templates/company/manufacturer_part.html:138
 msgid "Delete parameters"
-msgstr ""
+msgstr "Parameter löschen"
 
 #: company/templates/company/manufacturer_part.html:176
 #: part/templates/part/detail.html:718
 msgid "Add Parameter"
-msgstr ""
+msgstr "Parameter hinzufügen"
 
 #: company/templates/company/manufacturer_part.html:224
 msgid "Selected parameters will be deleted"
-msgstr ""
+msgstr "Ausgewählte Parameter werden gelöscht"
 
 #: company/templates/company/manufacturer_part.html:236
 msgid "Delete Parameters"
-msgstr ""
+msgstr "Parameter löschen"
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Stock"
@@ -2939,7 +2939,7 @@ msgstr ""
 
 #: order/serializers.py:360
 msgid "Sale price currency"
-msgstr ""
+msgstr "Verkaufspreis-Währung"
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
@@ -3129,7 +3129,7 @@ msgstr "Zulieferer auswählen"
 
 #: order/templates/order/order_wizard/select_parts.html:57
 msgid "No price"
-msgstr ""
+msgstr "Kein Preis"
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
@@ -3421,11 +3421,11 @@ msgstr "Diese Aktion wird die folgenden BestandsObjekt vom Auftrag entfernen"
 
 #: order/templates/order/so_navbar.html:12
 msgid "Sales Order Line Items"
-msgstr ""
+msgstr "Auftragspositionen"
 
 #: order/templates/order/so_navbar.html:15
 msgid "Order Items"
-msgstr ""
+msgstr "Auftragspositionen"
 
 #: order/templates/order/so_navbar.html:26
 msgid "Sales Order Attachments"
@@ -3513,7 +3513,7 @@ msgstr "Keine Zeilen angegeben"
 
 #: order/views.py:703
 msgid "Update prices"
-msgstr ""
+msgstr "Preise aktualisieren"
 
 #: order/views.py:961
 #, python-brace-format
@@ -4159,11 +4159,11 @@ msgstr "Teil auswählen"
 
 #: part/templates/part/bom_upload/upload_file.html:7
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Stückliste-Datei hochgeladen"
 
 #: part/templates/part/bom_upload/upload_file.html:12
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "Stückliste hochladen"
 
 #: part/templates/part/bom_upload/upload_file.html:16
 msgid "Requirements for BOM upload"
@@ -4292,7 +4292,7 @@ msgstr "Neuen Lagerort erstellen"
 
 #: part/templates/part/category.html:317
 msgid "Select parent category"
-msgstr ""
+msgstr "Übergeordnete Kategorie auswählen"
 
 #: part/templates/part/category.html:324 part/views.py:1860
 msgid "Edit Part Category"
@@ -4336,7 +4336,7 @@ msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die oberste Kat. v
 #: part/templates/part/category_navbar.html:29
 #: part/templates/part/category_navbar.html:32
 msgid "Import Parts"
-msgstr ""
+msgstr "Teile importieren"
 
 #: part/templates/part/copy_part.html:9 part/views.py:327
 msgid "Duplicate Part"
@@ -4463,7 +4463,7 @@ msgstr "Neues Teil anlegen"
 
 #: part/templates/part/detail.html:588
 msgid "Add Test Result Template"
-msgstr ""
+msgstr "Testergebnis-Vorlage hinzufügen"
 
 #: part/templates/part/detail.html:606
 msgid "Edit Test Result Template"
@@ -4495,16 +4495,16 @@ msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
 #: part/templates/part/detail.html:1015
 #, python-format
 msgid "Unit Price - %(currency)s"
-msgstr ""
+msgstr "Stückpreis - %(currency)s"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:51
 msgid "Unsuffitient privileges."
-msgstr ""
+msgstr "Unzureichende Benutzerrechte."
 
 #: part/templates/part/import_wizard/part_upload.html:14
 msgid "Import Parts from File"
-msgstr ""
+msgstr "Teile aus Datei importieren"
 
 #: part/templates/part/navbar.html:24
 msgid "Variants"
@@ -4516,11 +4516,11 @@ msgstr "Benutzt in"
 
 #: part/templates/part/navbar.html:61
 msgid "Prices"
-msgstr ""
+msgstr "Preise"
 
 #: part/templates/part/navbar.html:90
 msgid "Test Templates"
-msgstr ""
+msgstr "Testvorlagen"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
@@ -4746,37 +4746,37 @@ msgstr "Preisspannen"
 
 #: part/templates/part/prices.html:22
 msgid "Show supplier cost"
-msgstr ""
+msgstr "Zuliefererkosten anzeigen"
 
 #: part/templates/part/prices.html:23
 msgid "Show purchase price"
-msgstr ""
+msgstr "Einkaufpreis anzeigen"
 
 #: part/templates/part/prices.html:50
 msgid "Show BOM cost"
-msgstr ""
+msgstr "Stücklisten-Kosten"
 
 #: part/templates/part/prices.html:98
 msgid "Show sale cost"
-msgstr ""
+msgstr "Verkaufskosten anzeigen"
 
 #: part/templates/part/prices.html:99
 msgid "Show sale price"
-msgstr ""
+msgstr "Verkaufspreis anzeigen"
 
 #: part/templates/part/prices.html:121
 msgid "Calculation parameters"
-msgstr ""
+msgstr "Berechnungsparameter"
 
 #: part/templates/part/prices.html:136
 msgid "Supplier Cost"
-msgstr ""
+msgstr "Zuliefererkosten"
 
 #: part/templates/part/prices.html:137 part/templates/part/prices.html:158
 #: part/templates/part/prices.html:183 part/templates/part/prices.html:213
 #: part/templates/part/prices.html:239 part/templates/part/prices.html:267
 msgid "Jump to overview"
-msgstr ""
+msgstr "Zur Übersicht gehen"
 
 #: part/templates/part/prices.html:162
 msgid "Stock Pricing"
@@ -4788,7 +4788,7 @@ msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 
 #: part/templates/part/prices.html:182
 msgid "Internal Cost"
-msgstr ""
+msgstr "Interne Kosten"
 
 #: part/templates/part/prices.html:197 part/views.py:2330
 msgid "Add Internal Price Break"
@@ -4796,11 +4796,11 @@ msgstr ""
 
 #: part/templates/part/prices.html:212
 msgid "BOM Cost"
-msgstr ""
+msgstr "Stücklistenkosten"
 
 #: part/templates/part/prices.html:238
 msgid "Sale Cost"
-msgstr ""
+msgstr "Verkaufskosten"
 
 #: part/templates/part/prices.html:278
 msgid "No sale pice history available for this part."
@@ -4871,7 +4871,7 @@ msgstr ""
 
 #: part/views.py:892
 msgid "None"
-msgstr ""
+msgstr "Kein(e)"
 
 #: part/views.py:951
 msgid "Part QR Code"
@@ -5562,11 +5562,11 @@ msgstr "BestandsObjekt-Details"
 
 #: stock/templates/stock/item_base.html:252
 msgid "previous page"
-msgstr ""
+msgstr "vorherige Seite"
 
 #: stock/templates/stock/item_base.html:258
 msgid "next page"
-msgstr ""
+msgstr "nächste Seite"
 
 #: stock/templates/stock/item_base.html:301 templates/js/build.js:628
 msgid "No location set"
@@ -5582,7 +5582,7 @@ msgstr "Elternposition"
 
 #: stock/templates/stock/item_base.html:368
 msgid "No manufacturer set"
-msgstr ""
+msgstr "Kein Hersteller ausgewählt"
 
 #: stock/templates/stock/item_base.html:397
 #, python-format
@@ -5616,7 +5616,7 @@ msgstr "Speichern"
 
 #: stock/templates/stock/item_base.html:512
 msgid "Edit Stock Status"
-msgstr ""
+msgstr "Bestandsstatus bearbeiten"
 
 #: stock/templates/stock/item_delete.html:9
 msgid "Are you sure you want to delete this stock item?"
@@ -5906,7 +5906,7 @@ msgstr "kürzlich aktualisiert"
 
 #: templates/InvenTree/index.html:131
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Verbrauchter Bestand"
 
 #: templates/InvenTree/index.html:146
 msgid "Expired Stock"
@@ -6055,11 +6055,11 @@ msgstr "Teil-Optionen"
 
 #: templates/InvenTree/settings/part.html:46
 msgid "Part Import"
-msgstr ""
+msgstr "Teileimport"
 
 #: templates/InvenTree/settings/part.html:49
 msgid "Import Part"
-msgstr ""
+msgstr "Teil importieren"
 
 #: templates/InvenTree/settings/part.html:62
 msgid "Part Parameter Templates"
@@ -6186,7 +6186,7 @@ msgstr "API-Version"
 
 #: templates/about.html:39
 msgid "Python Version"
-msgstr ""
+msgstr "Python-Version"
 
 #: templates/about.html:44
 msgid "Django Version"
@@ -6260,11 +6260,11 @@ msgstr "keine Antwort vom InvenTree Server"
 
 #: templates/js/api.js:168
 msgid "Error 400: Bad request"
-msgstr ""
+msgstr "Fehler 400: Fehlerhafte Anfrage"
 
 #: templates/js/api.js:169
 msgid "API request returned error code 400"
-msgstr ""
+msgstr "Fehler-Code 400 zurückgegeben"
 
 #: templates/js/api.js:172 templates/js/modals.js:1037
 msgid "Error 401: Not Authenticated"
@@ -6300,19 +6300,19 @@ msgstr "Verbindungszeitüberschreitung bei der Datenanforderung"
 
 #: templates/js/api.js:188
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Unbehandelter Fehler-Code"
 
 #: templates/js/api.js:189
 msgid "Error code"
-msgstr ""
+msgstr "Fehler-Code"
 
 #: templates/js/attachment.js:16
 msgid "No attachments found"
-msgstr ""
+msgstr "Keine Anhänge gefunden"
 
 #: templates/js/attachment.js:56
 msgid "Upload Date"
-msgstr ""
+msgstr "Hochladedatum"
 
 #: templates/js/attachment.js:69
 msgid "Edit attachment"
@@ -6428,7 +6428,7 @@ msgstr "Durchschnittlicher Kaufpreis"
 
 #: templates/js/bom.js:265
 msgid "Buy Price"
-msgstr ""
+msgstr "Kaufpreis"
 
 #: templates/js/bom.js:271
 msgid "No pricing available"
@@ -6526,11 +6526,11 @@ msgstr "Keine Benutzerinformation"
 
 #: templates/js/build.js:930
 msgid "Resposible"
-msgstr ""
+msgstr "Zuständig"
 
 #: templates/js/build.js:939
 msgid "No information"
-msgstr ""
+msgstr "Keine Information"
 
 #: templates/js/build.js:989
 msgid "No parts allocated for"
@@ -6538,7 +6538,7 @@ msgstr "Keine Teile zugeordnet zu"
 
 #: templates/js/company.js:36
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "Herstellerteil hinzufügen"
 
 #: templates/js/company.js:48
 msgid "Edit Manufacturer Part"
@@ -6550,7 +6550,7 @@ msgstr "Herstellerteil löschen"
 
 #: templates/js/company.js:114
 msgid "Add Supplier Part"
-msgstr ""
+msgstr "Zuliefererteil hinzufügen"
 
 #: templates/js/company.js:124
 msgid "Edit Supplier Part"
@@ -6840,7 +6840,7 @@ msgstr "Keine Aufträge gefunden"
 
 #: templates/js/order.js:335
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Ungültiger Kunde"
 
 #: templates/js/order.js:412
 msgid "No sales order allocations found"
@@ -6864,7 +6864,7 @@ msgstr ""
 
 #: templates/js/part.js:97
 msgid "Edit Part"
-msgstr ""
+msgstr "Teil bearbeiten"
 
 #: templates/js/part.js:148 templates/js/part.js:233
 msgid "Trackable part"
@@ -6921,17 +6921,17 @@ msgstr "Dieses Testergebnis ist für ein Hauptteil"
 #: templates/js/part.js:975
 #, python-brace-format
 msgid "No ${human_name} information found"
-msgstr ""
+msgstr "Keine ${human_name} Informationen gefunden"
 
 #: templates/js/part.js:1028
 #, python-brace-format
 msgid "Edit ${human_name}"
-msgstr ""
+msgstr "${human_name} bearbeiten"
 
 #: templates/js/part.js:1029
 #, python-brace-format
 msgid "Delete ${human_name}"
-msgstr ""
+msgstr "${human_name} löschen"
 
 #: templates/js/part.js:1129
 msgid "Single Price"
@@ -7009,7 +7009,7 @@ msgstr "Auftrag muss vor dem Berichtsdruck ausgewählt werden"
 
 #: templates/js/stock.js:29
 msgid "Export Stock"
-msgstr ""
+msgstr "Bestand exportieren"
 
 #: templates/js/stock.js:32
 msgid "Format"
@@ -7017,7 +7017,7 @@ msgstr ""
 
 #: templates/js/stock.js:33
 msgid "Select file format"
-msgstr ""
+msgstr "Dateiformat auswählen"
 
 #: templates/js/stock.js:45
 msgid "Include Sublocations"
@@ -7029,7 +7029,7 @@ msgstr ""
 
 #: templates/js/stock.js:88
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Bestand verschieben"
 
 #: templates/js/stock.js:89
 msgid "Move"
@@ -7037,7 +7037,7 @@ msgstr "Verschieben"
 
 #: templates/js/stock.js:95
 msgid "Count Stock"
-msgstr ""
+msgstr "Bestand zählen"
 
 #: templates/js/stock.js:96
 msgid "Count"
@@ -7045,7 +7045,7 @@ msgstr "Anzahl"
 
 #: templates/js/stock.js:100
 msgid "Remove Stock"
-msgstr ""
+msgstr "Bestand entfernen"
 
 #: templates/js/stock.js:101
 msgid "Take"
@@ -7053,7 +7053,7 @@ msgstr "Entfernen"
 
 #: templates/js/stock.js:105
 msgid "Add Stock"
-msgstr ""
+msgstr "Bestand hinzufügen"
 
 #: templates/js/stock.js:106 users/models.py:189
 msgid "Add"
@@ -7387,7 +7387,7 @@ msgstr "Status"
 
 #: templates/js/table_filters.js:215
 msgid "Has purchase price"
-msgstr ""
+msgstr "Hat Einkaufspreis"
 
 #: templates/js/table_filters.js:216
 msgid "Show stock items which have a purchase price set"
