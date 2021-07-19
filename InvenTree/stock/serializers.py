@@ -260,12 +260,15 @@ class LocationSerializer(InvenTreeModelSerializer):
 
     items = serializers.IntegerField(source='item_count', read_only=True)
 
+    level = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = StockLocation
         fields = [
             'pk',
             'url',
             'name',
+            'level',
             'description',
             'parent',
             'pathstring',

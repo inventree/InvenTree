@@ -44,7 +44,7 @@ from common.files import FileManager
 from common.views import FileManagementFormView, FileManagementAjaxView
 from common.forms import UploadFileForm, MatchFieldForm
 
-from stock.models import StockLocation
+from stock.models import StockItem, StockLocation
 
 import common.settings as inventree_settings
 
@@ -487,6 +487,10 @@ class PartCreate(AjaxCreateView):
         if not inventree_settings.stock_expiry_enabled():
             form.fields['default_expiry'].widget = HiddenInput()
 
+        # Hide the "initial stock amount" field if the feature is not enabled
+        if not InvenTreeSetting.get_setting('PART_CREATE_INITIAL'):
+            form.fields['initial_stock'].widget = HiddenInput()
+
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         form.fields['default_supplier'].widget = HiddenInput()
 
@@ -546,6 +550,14 @@ class PartCreate(AjaxCreateView):
 
             # Save part and pass category template settings
             part.save(**{'add_category_templates': add_category_templates})
+
+            # Add stock if set
+            init_stock = int(request.POST.get('initial_stock', 0))
+            if init_stock:
+                stock = StockItem(part=part,
+                                  quantity=init_stock,
+                                  location=part.default_location)
+                stock.save()
 
             data['pk'] = part.pk
             data['text'] = str(part)

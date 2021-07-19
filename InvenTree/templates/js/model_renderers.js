@@ -67,17 +67,15 @@ function renderStockItem(name, data, parameters, options) {
 // Renderer for "StockLocation" model
 function renderStockLocation(name, data, parameters, options) {
 
-    var html = `<span>${data.name}</span>`;
+    var level = '- '.repeat(data.level);
+
+    var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
     }
 
     html += `<span class='float-right'>{% trans "Location ID" %}: ${data.pk}</span>`;
-
-    if (data.pathstring) {
-        html += `<p><small>${data.pathstring}</small></p>`;
-    }
 
     return html;
 }
@@ -154,17 +152,15 @@ function renderOwner(name, data, parameters, options) {
 // Renderer for "PartCategory" model
 function renderPartCategory(name, data, parameters, options) {
 
-    var html = `<span><b>${data.name}</b></span>`;
+    var level = '- '.repeat(data.level);
+
+    var html = `<span>${level}${data.pathstring}</span>`;
 
     if (data.description) {
         html += ` - <i>${data.description}</i>`;
     }
 
     html += `<span class='float-right'>{% trans "Category ID" %}: ${data.pk}</span>`;
-
-    if (data.pathstring) {
-        html += `<p><small>${data.pathstring}</small></p>`;
-    }
 
     return html;
 }
@@ -178,7 +174,35 @@ function renderPartParameterTemplate(name, data, parameters, options) {
 }
 
 
-// Rendered for "SupplierPart" model
+// Renderer for "ManufacturerPart" model
+function renderManufacturerPart(name, data, parameters, options) {
+
+    var manufacturer_image = null;
+    var part_image = null;
+
+    if (data.manufacturer_detail) {
+        manufacturer_image = data.manufacturer_detail.image;
+    }
+
+    if (data.part_detail) {
+        part_image = data.part_detail.thumbnail || data.part_detail.image;
+    }
+
+    var html = '';
+
+    html += select2Thumbnail(manufacturer_image);
+    html += select2Thumbnail(part_image);
+
+    html += ` <span><b>${data.manufacturer_detail.name}</b> - ${data.MPN}</span>`;
+    html += ` - <i>${data.part_detail.full_name}</i>`;
+
+    html += `<span class='float-right'>{% trans "Manufacturer Part ID" %}: ${data.pk}</span>`;
+
+    return html;
+}
+
+
+// Renderer for "SupplierPart" model
 function renderSupplierPart(name, data, parameters, options) {
 
     var supplier_image = null;

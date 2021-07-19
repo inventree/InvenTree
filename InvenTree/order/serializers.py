@@ -132,7 +132,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
-    destination = LocationBriefSerializer(source='get_destination', read_only=True)
+    destination_detail = LocationBriefSerializer(source='get_destination', read_only=True)
 
     purchase_price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
@@ -156,6 +156,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_currency',
             'purchase_price_string',
             'destination',
+            'destination_detail',
         ]
 
 
