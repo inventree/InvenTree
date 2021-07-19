@@ -174,7 +174,35 @@ function renderPartParameterTemplate(name, data, parameters, options) {
 }
 
 
-// Rendered for "SupplierPart" model
+// Renderer for "ManufacturerPart" model
+function renderManufacturerPart(name, data, parameters, options) {
+
+    var manufacturer_image = null;
+    var part_image = null;
+
+    if (data.manufacturer_detail) {
+        manufacturer_image = data.manufacturer_detail.image;
+    }
+
+    if (data.part_detail) {
+        part_image = data.part_detail.thumbnail || data.part_detail.image;
+    }
+
+    var html = '';
+
+    html += select2Thumbnail(manufacturer_image);
+    html += select2Thumbnail(part_image);
+
+    html += ` <span><b>${data.manufacturer_detail.name}</b> - ${data.MPN}</span>`;
+    html += ` - <i>${data.part_detail.full_name}</i>`;
+
+    html += `<span class='float-right'>{% trans "Manufacturer Part ID" %}: ${data.pk}</span>`;
+
+    return html;
+}
+
+
+// Renderer for "SupplierPart" model
 function renderSupplierPart(name, data, parameters, options) {
 
     var supplier_image = null;

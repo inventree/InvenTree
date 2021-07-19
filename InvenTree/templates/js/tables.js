@@ -1,5 +1,11 @@
 {% load i18n %}
 
+
+function reloadtable(table) {
+    $(table).bootstrapTable('refresh');
+}
+
+
 function editButton(url, text='Edit') {
     return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
 }

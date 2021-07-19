@@ -233,6 +233,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_CREATE_INITIAL': {
+            'name': _('Create initial stock'),
+            'description': _('Create initial stock on part creation'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PART_INTERNAL_PRICE': {
             'name': _('Internal Prices'),
             'description': _('Enable internal prices for parts'),
