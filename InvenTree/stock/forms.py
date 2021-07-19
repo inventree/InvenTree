@@ -13,7 +13,6 @@ from django.core.exceptions import ValidationError
 
 from mptt.fields import TreeNodeChoiceField
 
-from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
