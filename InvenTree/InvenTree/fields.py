@@ -87,7 +87,6 @@ class InvenTreeMoneyField(MoneyField):
     def __init__(self, *args, **kwargs):
         # override initial values with the real info from database
         kwargs.update(money_kwargs())
-        print(kwargs)
         super().__init__(*args, **kwargs)
 
 
