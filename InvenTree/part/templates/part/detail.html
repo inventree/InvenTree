@@ -370,6 +370,16 @@
         sub_part_detail: true,
     });
 
+    // Load the BOM table data in the pricing view
+    loadBomTable($("#bom-pricing-table"), {
+        editable: {{ editing_enabled }},
+        bom_url: "{% url 'api-bom-list' %}",
+        part_url: "{% url 'api-part-list' %}",
+        parent_id: {{ part.id }} ,
+        sub_part_detail: true,
+    });
+
+
     linkButtonsToSelection($("#bom-table"),
         [
             "#bom-item-delete",
