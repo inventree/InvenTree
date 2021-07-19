@@ -5,17 +5,50 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django.conf.urls import url, include
+
 from rest_framework import filters
 from rest_framework import generics
 
-from django.conf.urls import url, include
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 
+from InvenTree.api import AttachmentMixin
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.status_codes import BuildStatus
 
-from .models import Build, BuildItem
-from .serializers import BuildSerializer, BuildItemSerializer
+from .models import Build, BuildItem, BuildOrderAttachment
+from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
+
+
+class BuildFilter(rest_filters.FilterSet):
+    """
+    Custom filterset for BuildList API endpoint
+    """
+
+    status = rest_filters.NumberFilter(label='Status')
+
+    active = rest_filters.BooleanFilter(label='Build is active', method='filter_active')
+
+    def filter_active(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
+        else:
+            queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
+
+        return queryset
+
+    overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
+
+    def filter_overdue(self, queryset, name, value):
+
+        if str2bool(value):
+            queryset = queryset.filter(Build.OVERDUE_FILTER)
+        else:
+            queryset = queryset.exclude(Build.OVERDUE_FILTER)
+
+        return queryset
 
 
 class BuildList(generics.ListCreateAPIView):
@@ -27,15 +60,12 @@ class BuildList(generics.ListCreateAPIView):
 
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
+    filterset_class = BuildFilter
 
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
-        'sales_order',
     ]
 
     ordering_fields = [
@@ -46,6 +76,8 @@ class BuildList(generics.ListCreateAPIView):
         'target_date',
         'completion_date',
         'quantity',
+        'issued_by',
+        'responsible',
     ]
 
     search_fields = [
@@ -78,6 +110,12 @@ class BuildList(generics.ListCreateAPIView):
         if parent is not None:
             queryset = queryset.filter(parent=parent)
 
+        # Filter by sales_order
+        sales_order = params.get('sales_order', None)
+
+        if sales_order is not None:
+            queryset = queryset.filter(sales_order=sales_order)
+
         # Filter by "ancestor" builds
         ancestor = params.get('ancestor', None)
 
@@ -93,34 +131,6 @@ class BuildList(generics.ListCreateAPIView):
 
             except (ValueError, Build.DoesNotExist):
                 pass
-
-        # Filter by build status?
-        status = params.get('status', None)
-
-        if status is not None:
-            queryset = queryset.filter(status=status)
-
-        # Filter by "pending" status
-        active = params.get('active', None)
-
-        if active is not None:
-            active = str2bool(active)
-
-            if active:
-                queryset = queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
-            else:
-                queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
-
-        # Filter by "overdue" status?
-        overdue = params.get('overdue', None)
-
-        if overdue is not None:
-            overdue = str2bool(overdue)
-
-            if overdue:
-                queryset = queryset.filter(Build.OVERDUE_FILTER)
-            else:
-                queryset = queryset.exclude(Build.OVERDUE_FILTER)
 
         # Filter by associated part?
         part = params.get('part', None)
@@ -226,14 +236,48 @@ class BuildItemList(generics.ListCreateAPIView):
     ]
 
 
-build_item_api_urls = [
-    url('^.*$', BuildItemList.as_view(), name='api-build-item-list'),
-]
+class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+    """
+    API endpoint for listing (and creating) BuildOrderAttachment objects
+    """
+
+    queryset = BuildOrderAttachment.objects.all()
+    serializer_class = BuildAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'build',
+    ]
+
+
+class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for a BuildOrderAttachment object
+    """
+
+    queryset = BuildOrderAttachment.objects.all()
+    serializer_class = BuildAttachmentSerializer
+
 
 build_api_urls = [
-    url(r'^item/', include(build_item_api_urls)),
 
+    # Attachments
+    url(r'^attachment/', include([
+        url(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        url('^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+    ])),
+
+    # Build Items
+    url(r'^item/', include([
+        url('^.*$', BuildItemList.as_view(), name='api-build-item-list')
+    ])),
+
+    # Build Detail
     url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
 
+    # Build List
     url(r'^.*$', BuildList.as_view(), name='api-build-list'),
 ]

@@ -5,8 +5,6 @@ from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 
-from django.conf import settings
-
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
@@ -15,13 +13,12 @@ from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
 
-from mptt.exceptions import InvalidMove
-
 from decimal import Decimal
 
 import InvenTree.tasks
 
 from stock.models import StockLocation
+from common.settings import currency_codes
 
 
 class ValidatorTest(TestCase):
@@ -203,7 +200,7 @@ class TestMPTT(TestCase):
         loc = StockLocation.objects.get(pk=4)
         loc.parent = loc
 
-        with self.assertRaises(InvalidMove):
+        with self.assertRaises(ValidationError):
             loc.save()
 
     def test_child_as_parent(self):
@@ -214,7 +211,7 @@ class TestMPTT(TestCase):
 
         parent.parent = child
 
-        with self.assertRaises(InvalidMove):
+        with self.assertRaises(ValidationError):
             parent.save()
 
     def test_move(self):
@@ -337,13 +334,11 @@ class CurrencyTests(TestCase):
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'AUD'), 'USD')
 
-        currencies = settings.CURRENCIES
-
         InvenTree.tasks.update_exchange_rates()
 
         rates = Rate.objects.all()
 
-        self.assertEqual(rates.count(), len(currencies))
+        self.assertEqual(rates.count(), len(currency_codes()))
 
         # Now that we have some exchange rate information, we can perform conversions
 

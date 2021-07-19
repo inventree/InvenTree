@@ -14,11 +14,11 @@ from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
-from djmoney.models.fields import MoneyField
+from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from common.settings import currency_code_default
+import common.settings
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
@@ -79,6 +79,13 @@ class InvenTreeSetting(models.Model):
             'description': _('Base URL for server instance'),
             'validator': URLValidator(),
             'default': '',
+        },
+
+        'INVENTREE_DEFAULT_CURRENCY': {
+            'name': _('Default Currency'),
+            'description': _('Default currency'),
+            'default': 'USD',
+            'choices': CURRENCY_CHOICES,
         },
 
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -205,9 +212,23 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_SHOW_IMPORT': {
+            'name': _('Show Import in Views'),
+            'description': _('Display the import wizard in some part views'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PART_SHOW_PRICE_IN_FORMS': {
             'name': _('Show Price in Forms'),
             'description': _('Display part price in some forms'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_SHOW_RELATED': {
+            'name': _('Show related parts'),
+            'description': _('Display related parts for a part'),
             'default': True,
             'validator': bool,
         },
@@ -721,10 +742,9 @@ class PriceBreak(models.Model):
         help_text=_('Price break quantity'),
     )
 
-    price = MoneyField(
+    price = InvenTree.fields.InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         null=True,
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),
@@ -777,7 +797,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
     if currency is None:
         # Default currency selection
-        currency = currency_code_default()
+        currency = common.settings.currency_code_default()
 
     pb_min = None
     for pb in price_breaks:

@@ -158,21 +158,6 @@ class PartDetailTest(PartViewTestCase):
 class PartTests(PartViewTestCase):
     """ Tests for Part forms """
 
-    def test_part_edit(self):
-
-        response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        keys = response.context.keys()
-        data = str(response.content)
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertIn('part', keys)
-        self.assertIn('csrf_token', keys)
-
-        self.assertIn('html_form', data)
-        self.assertIn('"title":', data)
-
     def test_part_create(self):
         """ Launch form to create a new part """
         response = self.client.get(reverse('part-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -232,29 +217,6 @@ class PartRelatedTests(PartViewTestCase):
         self.assertEqual(n, 1)
 
 
-class PartAttachmentTests(PartViewTestCase):
-
-    def test_valid_create(self):
-        """ test creation of an attachment for a valid part """
-
-        response = self.client.get(reverse('part-attachment-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # TODO - Create a new attachment using this view
-
-    def test_invalid_create(self):
-        """ test creation of an attachment for an invalid part """
-
-        # TODO
-        pass
-
-    def test_edit(self):
-        """ test editing an attachment """
-
-        # TODO
-        pass
-
-
 class PartQRTest(PartViewTestCase):
     """ Tests for the Part QR Code AJAX view """
 
@@ -292,11 +254,6 @@ class CategoryTest(PartViewTestCase):
         response = self.client.get(reverse('category-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Form should still return OK
-        self.assertEqual(response.status_code, 200)
-
-    def test_edit(self):
-        """ Retrieve the part category editing form """
-        response = self.client.get(reverse('category-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
     def test_set_category(self):

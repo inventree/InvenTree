@@ -5,11 +5,12 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf.urls import url, include
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
-from rest_framework import filters
-
-from django.conf.urls import url, include
+from rest_framework import filters, status
+from rest_framework.response import Response
 
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
@@ -37,6 +38,20 @@ class POList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Save user information on create
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
 
@@ -239,10 +254,12 @@ class POLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class POLineItemDetail(generics.RetrieveUpdateAPIView):
-    """ API endpoint for detail view of a PurchaseOrderLineItem object """
+class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail API endpoint for PurchaseOrderLineItem object
+    """
 
-    queryset = PurchaseOrderLineItem
+    queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
 
@@ -254,9 +271,22 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = SalesOrderAttachment.objects.all()
     serializer_class = SOAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
     filter_fields = [
         'order',
     ]
+
+
+class SOAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for SalesOrderAttachment
+    """
+
+    queryset = SalesOrderAttachment.objects.all()
+    serializer_class = SOAttachmentSerializer
 
 
 class SOList(generics.ListCreateAPIView):
@@ -269,6 +299,20 @@ class SOList(generics.ListCreateAPIView):
 
     queryset = SalesOrder.objects.all()
     serializer_class = SalesOrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Save user information on create
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        item = serializer.save()
+        item.created_by = request.user
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
 
@@ -474,7 +518,7 @@ class SOLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class SOLineItemDetail(generics.RetrieveUpdateAPIView):
+class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a SalesOrderLineItem object """
 
     queryset = SalesOrderLineItem.objects.all()
@@ -553,13 +597,31 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = PurchaseOrderAttachment.objects.all()
     serializer_class = POAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'order',
+    ]
+
+
+class POAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+    """
+    Detail endpoint for a PurchaseOrderAttachment
+    """
+
+    queryset = PurchaseOrderAttachment.objects.all()
+    serializer_class = POAttachmentSerializer
+
 
 order_api_urls = [
     # API endpoints for purchase orders
-    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
     url(r'po/attachment/', include([
+        url(r'^(?P<pk>\d+)/$', POAttachmentDetail.as_view(), name='api-po-attachment-detail'),
         url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
     ])),
+    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
     url(r'^po/.*$', POList.as_view(), name='api-po-list'),
 
     # API endpoints for purchase order line items
@@ -568,12 +630,12 @@ order_api_urls = [
 
     # API endpoints for sales ordesr
     url(r'^so/', include([
-        url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
         url(r'attachment/', include([
+            url(r'^(?P<pk>\d+)/$', SOAttachmentDetail.as_view(), name='api-so-attachment-detail'),
             url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
         ])),
 
-        # List all sales orders
+        url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
         url(r'^.*$', SOList.as_view(), name='api-so-list'),
     ])),
 

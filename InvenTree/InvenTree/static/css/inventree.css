@@ -640,6 +640,14 @@
   z-index: 9999;
 }
 
+.modal-header {
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+    border-top: 1px solid #ddd;
+}
+
 .modal-primary {
     z-index: 10000;
 }
@@ -718,7 +726,7 @@
   position:relative;
   height: auto !important;
   max-height: calc(100vh - 200px) !important;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px;
 }
 
@@ -773,8 +781,8 @@ input[type="submit"] {
 }
 
 .sidenav .list-group-item.active {
-    background-color: #ddd;
-    border-color: #ccc;
+    background-color: #c6d4ea;
+    border: 2px #aab solid;
 }
 
 /* The side navigation menu */
@@ -829,6 +837,12 @@ input[type="submit"] {
     pointer-events: none; /* Prevent this div from blocking links underneath */
 }
 
+.notes {
+    border-radius: 5px;
+    background-color: #fafafa;
+    padding: 5px;
+}
+
 .alert {
     display: none;
     border-radius: 5px;
@@ -843,6 +857,11 @@ input[type="submit"] {
 .btn {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.btn-small {
+    padding: 3px;
+    padding-left: 5px;
 }
 
 .btn-remove {
@@ -891,6 +910,10 @@ input[type="submit"] {
 .panel-inventree {
     padding: 10px;
     box-shadow: 1px 1px #DDD;
+}
+
+.panel-hidden {
+    display: none;
 }
 
 .float-right {
@@ -961,3 +984,56 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .sidebar-icon {
     min-width: 19px;
 }
+
+.row.full-height {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.full-height > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -60px;
+    visibility: hidden;
+}
+
+.select2-close-mask {
+    z-index: 99999;
+}
+
+.select2-dropdown {
+    z-index: 99998;
+}
+
+.select2-container {
+    width: 100%;
+}
+
+.select2-container .select2-selection--single {
+    height: 30px;
+}
+
+.select2-thumbnail {
+    max-width: 24px;
+    max-height: 24px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.select2-selection {
+    overflow-y: clip;
+}
+
+.form-clear {
+    padding: 6px 6px;
+}
+
+.form-control {
+    height: 30px;
+}
+

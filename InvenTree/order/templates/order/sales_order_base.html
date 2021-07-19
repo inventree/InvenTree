@@ -153,7 +153,28 @@ enableNavbar({
 });
 
 $("#edit-order").click(function() {
-    launchModalForm("{% url 'so-edit' order.id %}", {
+
+    constructForm('{% url "api-so-detail" order.pk %}', {
+        fields: {
+            reference: {
+                prefix: "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}",
+            },
+            {% if order.lines.count == 0 and order.status == SalesOrderStatus.PENDING %}
+            customer: {
+            },
+            {% endif %}
+            description: {},
+            target_date: {
+                icon: 'fa-calendar-alt',
+            },
+            link: {
+                icon: 'fa-link',
+            },
+            responsible: {
+                icon: 'fa-user',
+            },
+        },
+        title: '{% trans "Edit Sales Order" %}',
         reload: true,
     });
 });

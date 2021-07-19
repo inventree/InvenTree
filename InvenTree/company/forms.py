@@ -6,66 +6,14 @@ Django Forms for interacting with Company app
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
-from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
 
 from django.utils.translation import ugettext_lazy as _
 import django.forms
 
-import djmoney.settings
-from djmoney.forms.fields import MoneyField
-
-from common.settings import currency_code_default
-
-from .models import Company, ManufacturerPartParameter
-from .models import ManufacturerPart
+from .models import Company
 from .models import SupplierPart
 from .models import SupplierPriceBreak
-
-
-class EditCompanyForm(HelperForm):
-    """ Form for editing a Company object """
-
-    field_prefix = {
-        'website': 'fa-globe-asia',
-        'email': 'fa-at',
-        'address': 'fa-envelope',
-        'contact': 'fa-user-tie',
-        'phone': 'fa-phone',
-    }
-
-    currency = django.forms.ChoiceField(
-        required=False,
-        label=_('Currency'),
-        help_text=_('Default currency used for this company'),
-        choices=[('', '----------')] + djmoney.settings.CURRENCY_CHOICES,
-        initial=currency_code_default,
-    )
-
-    class Meta:
-        model = Company
-        fields = [
-            'name',
-            'description',
-            'website',
-            'address',
-            'currency',
-            'phone',
-            'email',
-            'contact',
-            'is_supplier',
-            'is_manufacturer',
-            'is_customer',
-        ]
-
-
-class CompanyImageForm(HelperForm):
-    """ Form for uploading a Company image """
-
-    class Meta:
-        model = Company
-        fields = [
-            'image'
-        ]
 
 
 class CompanyImageDownloadForm(HelperForm):
@@ -86,40 +34,6 @@ class CompanyImageDownloadForm(HelperForm):
         ]
 
 
-class EditManufacturerPartForm(HelperForm):
-    """ Form for editing a ManufacturerPart object """
-
-    field_prefix = {
-        'link': 'fa-link',
-        'MPN': 'fa-hashtag',
-    }
-
-    class Meta:
-        model = ManufacturerPart
-        fields = [
-            'part',
-            'manufacturer',
-            'MPN',
-            'description',
-            'link',
-        ]
-
-
-class EditManufacturerPartParameterForm(HelperForm):
-    """
-    Form for creating / editing a ManufacturerPartParameter object
-    """
-
-    class Meta:
-        model = ManufacturerPartParameter
-        fields = [
-            'manufacturer_part',
-            'name',
-            'value',
-            'units',
-        ]
-
-
 class EditSupplierPartForm(HelperForm):
     """ Form for editing a SupplierPart object """
 
@@ -129,9 +43,8 @@ class EditSupplierPartForm(HelperForm):
         'note': 'fa-pencil-alt',
     }
 
-    single_pricing = MoneyField(
+    single_pricing = InvenTreeMoneyField(
         label=_('Single Price'),
-        default_currency=currency_code_default(),
         help_text=_('Single quantity price'),
         decimal_places=4,
         max_digits=19,

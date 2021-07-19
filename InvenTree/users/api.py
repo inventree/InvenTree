@@ -1,17 +1,39 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
-from rest_framework import generics, permissions
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from .serializers import UserSerializer
 
+from django.conf.urls import url, include
+
+from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import RuleSet, check_user_role
+from .serializers import UserSerializer, OwnerSerializer
+
+from .models import RuleSet, Owner, check_user_role
+
+
+class OwnerList(generics.ListAPIView):
+    """
+    List API endpoint for Owner model. Cannot create.
+    """
+
+    queryset = Owner.objects.all()
+    serializer_class = OwnerSerializer
+
+
+class OwnerDetail(generics.RetrieveAPIView):
+    """
+    Detail API endpoint for Owner model. Cannot edit or delete
+    """
+
+    queryset = Owner.objects.all()
+    serializer_class = OwnerSerializer
 
 
 class RoleDetails(APIView):
@@ -110,3 +132,18 @@ class GetAuthToken(APIView):
         except (AttributeError, ObjectDoesNotExist):
             return Response({"error": "Bad request"},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+user_urls = [
+
+    url(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
+    url(r'token/?$', GetAuthToken.as_view(), name='api-token'),
+
+    url(r'^owner/', include([
+        url(r'^(?P<pk>[0-9]+)/$', OwnerDetail.as_view(), name='api-owner-detail'),
+        url(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+    ])),
+
+    url(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
+    url(r'^$', UserList.as_view()),
+]

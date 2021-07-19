@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -86,6 +87,7 @@ class RuleSet(models.Model):
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
+            'label_partlabel',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -208,7 +210,7 @@ class RuleSet(models.Model):
                     return True
 
         # Print message instead of throwing an error
-        print("Failed permission check for", table, permission)
+        logger.info(f"User '{user.name}' failed permission check for {table}.{permission}")
         return False
 
     @staticmethod
@@ -460,6 +462,10 @@ class Owner(models.Model):
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-owner-list')
+
     class Meta:
         # Ensure all owners are unique
         constraints = [
@@ -476,6 +482,18 @@ class Owner(models.Model):
     def __str__(self):
         """ Defines the owner string representation """
         return f'{self.owner} ({self.owner_type.name})'
+
+    def name(self):
+        """
+        Return the 'name' of this owner
+        """
+        return str(self.owner)
+
+    def label(self):
+        """
+        Return the 'type' label of this owner i.e. 'user' or 'group'
+        """
+        return str(self.owner_type.name)
 
     @classmethod
     def create(cls, obj):

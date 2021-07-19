@@ -20,7 +20,7 @@ class CompanyTest(InvenTreeAPITestCase):
 
         super().setUp()
 
-        Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
+        self.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
         Company.objects.create(name='Drippy Cup Co.', description='Customer', is_customer=True, is_supplier=False)
         Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
 
@@ -44,7 +44,11 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_company_detail(self):
-        url = reverse('api-company-detail', kwargs={'pk': 1})
+        """
+        Tests for the Company detail endpoint
+        """
+
+        url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
         response = self.get(url)
 
         self.assertEqual(response.data['name'], 'ACME')
@@ -52,21 +56,92 @@ class CompanyTest(InvenTreeAPITestCase):
         # Change the name of the company
         # Note we should not have the correct permissions (yet)
         data = response.data
-        data['name'] = 'ACMOO'
         response = self.client.patch(url, data, format='json', expected_code=400)
 
         self.assignRole('company.change')
 
+        # Update the name and set the currency to a valid value
+        data['name'] = 'ACMOO'
+        data['currency'] = 'NZD'
+
         response = self.client.patch(url, data, format='json', expected_code=200)
 
         self.assertEqual(response.data['name'], 'ACMOO')
+        self.assertEqual(response.data['currency'], 'NZD')
 
     def test_company_search(self):
-        # Test search functionality in company list
+        """
+        Test search functionality in company list
+        """
+
         url = reverse('api-company-list')
         data = {'search': 'cup'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
+
+    def test_company_create(self):
+        """
+        Test that we can create a company via the API!
+        """
+
+        url = reverse('api-company-list')
+
+        # Name is required
+        response = self.post(
+            url,
+            {
+                'description': 'A description!',
+            },
+            expected_code=400
+        )
+
+        # Minimal example, checking default values
+        response = self.post(
+            url,
+            {
+                'name': 'My API Company',
+                'description': 'A company created via the API',
+            },
+            expected_code=201
+        )
+
+        self.assertTrue(response.data['is_supplier'])
+        self.assertFalse(response.data['is_customer'])
+        self.assertFalse(response.data['is_manufacturer'])
+
+        self.assertEqual(response.data['currency'], 'USD')
+
+        # Maximal example, specify values
+        response = self.post(
+            url,
+            {
+                'name': "Another Company",
+                'description': "Also created via the API!",
+                'currency': 'AUD',
+                'is_supplier': False,
+                'is_manufacturer': True,
+                'is_customer': True,
+            },
+            expected_code=201
+        )
+
+        self.assertEqual(response.data['currency'], 'AUD')
+        self.assertFalse(response.data['is_supplier'])
+        self.assertTrue(response.data['is_customer'])
+        self.assertTrue(response.data['is_manufacturer'])
+
+        # Attempt to create with invalid currency
+        response = self.post(
+            url,
+            {
+                'name': "A name",
+                'description': 'A description',
+                'currency': 'POQD',
+            },
+            expected_code=400
+        )
+
+        self.assertTrue('currency' in response.data)
 
 
 class ManufacturerTest(InvenTreeAPITestCase):
@@ -115,6 +190,9 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_manufacturer_part_detail(self):
+        """
+        Tests for the ManufacturerPart detail endpoint
+        """
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
 
         response = self.get(url)
@@ -152,7 +230,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Check manufacturer part
-        manufacturer_part_id = int(response.data['manufacturer_part']['pk'])
+        manufacturer_part_id = int(response.data['manufacturer_part_detail']['pk'])
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': manufacturer_part_id})
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'PART_NUMBER')

@@ -17,12 +17,6 @@ part_related_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartRelatedDelete.as_view(), name='part-related-delete'),
 ]
 
-part_attachment_urls = [
-    url(r'^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
-    url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
-    url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
-]
-
 sale_price_break_urls = [
     url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
     url(r'^(?P<pk>\d+)/edit/', views.PartSalePriceBreakEdit.as_view(), name='sale-price-break-edit'),
@@ -39,14 +33,9 @@ part_parameter_urls = [
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     url(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
     url(r'^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
-
-    url(r'^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
 ]
 
 part_detail_urls = [
-    url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
@@ -58,30 +47,9 @@ part_detail_urls = [
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
-    url(r'^params/', views.PartDetail.as_view(template_name='part/params.html'), name='part-params'),
-    url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
-    url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
-    url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
-    url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
-    url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
-    url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
-    url(r'^order-prices/', views.PartPricingView.as_view(template_name='part/order_prices.html'), name='part-order-prices'),
-    url(r'^manufacturers/?', views.PartDetail.as_view(template_name='part/manufacturer.html'), name='part-manufacturers'),
-    url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
-    url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
-    url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
-    url(r'^sale-prices/', views.PartDetail.as_view(template_name='part/sale_prices.html'), name='part-sale-prices'),
-    url(r'^internal-prices/', views.PartDetail.as_view(template_name='part/internal_prices.html'), name='part-internal-prices'),
-    url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
-    url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
-    url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
-    url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
-    url(r'^notes/?', views.PartNotes.as_view(), name='part-notes'),
-
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
     # Normal thumbnail with form
-    url(r'^thumbnail/?', views.PartImageUpload.as_view(), name='part-image-upload'),
     url(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
     url(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 
@@ -105,12 +73,8 @@ category_urls = [
 
     # Category detail views
     url(r'(?P<pk>\d+)/', include([
-        url(r'^edit/', views.CategoryEdit.as_view(), name='category-edit'),
         url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         url(r'^parameters/', include(category_parameter_urls)),
-
-        url(r'^subcategory/', views.CategoryDetail.as_view(template_name='part/subcategory.html'), name='category-subcategory'),
-        url(r'^parametric/', views.CategoryParametric.as_view(), name='category-parametric'),
 
         # Anything else
         url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
@@ -119,7 +83,6 @@ category_urls = [
 
 part_bom_urls = [
     url(r'^edit/?', views.BomItemEdit.as_view(), name='bom-item-edit'),
-    url('^delete/?', views.BomItemDelete.as_view(), name='bom-item-delete'),
 ]
 
 # URL list for part web interface
@@ -127,6 +90,10 @@ part_urls = [
 
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
+
+    # Upload a part
+    url(r'^import/', views.PartImport.as_view(), name='part-import'),
+    url(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
 
     # Create a new BOM item
     url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
@@ -146,21 +113,11 @@ part_urls = [
     # Part related
     url(r'^related-parts/', include(part_related_urls)),
 
-    # Part attachments
-    url(r'^attachment/', include(part_attachment_urls)),
-
     # Part price breaks
     url(r'^sale-price/', include(sale_price_break_urls)),
 
     # Part internal price breaks
     url(r'^internal-price/', include(internal_price_break_urls)),
-
-    # Part test templates
-    url(r'^test-template/', include([
-        url(r'^new/', views.PartTestTemplateCreate.as_view(), name='part-test-template-create'),
-        url(r'^(?P<pk>\d+)/edit/', views.PartTestTemplateEdit.as_view(), name='part-test-template-edit'),
-        url(r'^(?P<pk>\d+)/delete/', views.PartTestTemplateDelete.as_view(), name='part-test-template-delete'),
-    ])),
 
     # Part parameters
     url(r'^parameter/', include(part_parameter_urls)),

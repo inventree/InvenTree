@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
+from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
 from common.models import InvenTreeSetting
@@ -85,6 +85,29 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/item.html'
     queryset = StockItem.objects.all()
     model = StockItem
+
+    def get_context_data(self, **kwargs):
+        """ add previous and next item """
+        data = super().get_context_data(**kwargs)
+
+        if self.object.serialized:
+            serial_elem = {int(a.serial): a for a in self.object.part.stock_items.all() if a.serialized}
+            serials = serial_elem.keys()
+            current = int(self.object.serial)
+
+            # previous
+            for nbr in range(current - 1, -1, -1):
+                if nbr in serials:
+                    data['previous'] = serial_elem.get(nbr, None)
+                    break
+
+            # next
+            for nbr in range(current + 1, max(serials) + 1):
+                if nbr in serials:
+                    data['next'] = serial_elem.get(nbr, None)
+                    break
+
+        return data
 
 
 class StockItemNotes(InvenTreeRoleMixin, UpdateView):
@@ -255,85 +278,6 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemAttachmentCreate(AjaxCreateView):
-    """
-    View for adding a new attachment for a StockItem
-    """
-
-    model = StockItemAttachment
-    form_class = StockForms.EditStockItemAttachmentForm
-    ajax_form_title = _("Add Stock Item Attachment")
-    ajax_template_name = "modal_form.html"
-
-    def save(self, form, **kwargs):
-        """ Record the user that uploaded the attachment """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _("Added attachment")
-        }
-
-    def get_initial(self):
-        """
-        Get initial data for the new StockItem attachment object.
-
-        - Client must provide a valid StockItem ID
-        """
-
-        initials = super().get_initial()
-
-        try:
-            initials['stock_item'] = StockItem.objects.get(id=self.request.GET.get('item', None))
-        except (ValueError, StockItem.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemAttachmentEdit(AjaxUpdateView):
-    """
-    View for editing a StockItemAttachment object.
-    """
-
-    model = StockItemAttachment
-    form_class = StockForms.EditStockItemAttachmentForm
-    ajax_form_title = _("Edit Stock Item Attachment")
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemAttachmentDelete(AjaxDeleteView):
-    """
-    View for deleting a StockItemAttachment object.
-    """
-
-    model = StockItemAttachment
-    ajax_form_title = _("Delete Stock Item Attachment")
-    ajax_template_name = "attachment_delete.html"
-    context_object_name = "attachment"
-
-    def get_data(self):
-        return {
-            'danger': _("Deleted attachment"),
-        }
-
-
 class StockItemAssignToCustomer(AjaxUpdateView):
     """
     View for manually assigning a StockItem to a Customer
@@ -432,74 +376,6 @@ class StockItemDeleteTestData(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, form, data)
-
-
-class StockItemTestResultCreate(AjaxCreateView):
-    """
-    View for adding a new StockItemTestResult
-    """
-
-    model = StockItemTestResult
-    form_class = StockForms.EditStockItemTestResultForm
-    ajax_form_title = _("Add Test Result")
-
-    def save(self, form, **kwargs):
-        """
-        Record the user that uploaded the test result
-        """
-
-        result = form.save(commit=False)
-        result.user = self.request.user
-        result.save()
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        try:
-            stock_id = self.request.GET.get('stock_item', None)
-            initials['stock_item'] = StockItem.objects.get(pk=stock_id)
-        except (ValueError, StockItem.DoesNotExist):
-            pass
-
-        initials['test'] = self.request.GET.get('test', '')
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemTestResultEdit(AjaxUpdateView):
-    """
-    View for editing a StockItemTestResult
-    """
-
-    model = StockItemTestResult
-    form_class = StockForms.EditStockItemTestResultForm
-    ajax_form_title = _("Edit Test Result")
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        form.fields['stock_item'].widget = HiddenInput()
-
-        return form
-
-
-class StockItemTestResultDelete(AjaxDeleteView):
-    """
-    View for deleting a StockItemTestResult
-    """
-
-    model = StockItemTestResult
-    ajax_form_title = _("Delete Test Result")
-    context_object_name = "result"
 
 
 class StockExportOptions(AjaxView):
@@ -871,366 +747,6 @@ class StockItemUninstall(AjaxView, FormMixin):
         context['stock_items'] = self.get_stock_items()
 
         return context
-
-
-class StockAdjust(AjaxView, FormMixin):
-    """ View for enacting simple stock adjustments:
-
-    - Take items from stock
-    - Add items to stock
-    - Count items
-    - Move stock
-    - Delete stock items
-
-    """
-
-    ajax_template_name = 'stock/stock_adjust.html'
-    ajax_form_title = _('Adjust Stock')
-    form_class = StockForms.AdjustStockForm
-    stock_items = []
-    role_required = 'stock.change'
-
-    def get_GET_items(self):
-        """ Return list of stock items initally requested using GET.
-
-        Items can be retrieved by:
-
-        a) List of stock ID - stock[]=1,2,3,4,5
-        b) Parent part - part=3
-        c) Parent location - location=78
-        d) Single item - item=2
-        """
-
-        # Start with all 'in stock' items
-        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
-
-        # Client provides a list of individual stock items
-        if 'stock[]' in self.request.GET:
-            items = items.filter(id__in=self.request.GET.getlist('stock[]'))
-
-        # Client provides a PART reference
-        elif 'part' in self.request.GET:
-            items = items.filter(part=self.request.GET.get('part'))
-
-        # Client provides a LOCATION reference
-        elif 'location' in self.request.GET:
-            items = items.filter(location=self.request.GET.get('location'))
-
-        # Client provides a single StockItem lookup
-        elif 'item' in self.request.GET:
-            items = [StockItem.objects.get(id=self.request.GET.get('item'))]
-
-        # Unsupported query (no items)
-        else:
-            items = []
-
-        for item in items:
-
-            # Initialize quantity to zero for addition/removal
-            if self.stock_action in ['take', 'add']:
-                item.new_quantity = 0
-            # Initialize quantity at full amount for counting or moving
-            else:
-                item.new_quantity = item.quantity
-
-        return items
-
-    def get_POST_items(self):
-        """ Return list of stock items sent back by client on a POST request """
-
-        items = []
-
-        for item in self.request.POST:
-            if item.startswith('stock-id-'):
-
-                pk = item.replace('stock-id-', '')
-                q = self.request.POST[item]
-
-                try:
-                    stock_item = StockItem.objects.get(pk=pk)
-                except StockItem.DoesNotExist:
-                    continue
-
-                stock_item.new_quantity = q
-
-                items.append(stock_item)
-
-        return items
-
-    def get_context_data(self):
-
-        context = super().get_context_data()
-
-        context['stock_items'] = self.stock_items
-
-        context['stock_action'] = self.stock_action.strip().lower()
-
-        context['stock_action_title'] = self.stock_action_title
-
-        # Quantity column will be read-only in some circumstances
-        context['edit_quantity'] = not self.stock_action == 'delete'
-
-        return context
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        if not self.stock_action == 'move':
-            form.fields.pop('destination')
-            form.fields.pop('set_loc')
-
-        return form
-
-    def get(self, request, *args, **kwargs):
-
-        self.request = request
-
-        # Action
-        self.stock_action = request.GET.get('action', '').lower()
-
-        # Pick a default action...
-        if self.stock_action not in ['move', 'count', 'take', 'add', 'delete']:
-            self.stock_action = 'count'
-
-        # Choose form title and action column based on the action
-        titles = {
-            'move': [_('Move Stock Items'), _('Move')],
-            'count': [_('Count Stock Items'), _('Count')],
-            'take': [_('Remove From Stock'), _('Take')],
-            'add': [_('Add Stock Items'), _('Add')],
-            'delete': [_('Delete Stock Items'), _('Delete')],
-        }
-
-        self.ajax_form_title = titles[self.stock_action][0]
-        self.stock_action_title = titles[self.stock_action][1]
-
-        # Save list of items!
-        self.stock_items = self.get_GET_items()
-
-        return self.renderJsonResponse(request, self.get_form())
-
-    def post(self, request, *args, **kwargs):
-
-        self.request = request
-
-        self.stock_action = request.POST.get('stock_action', 'invalid').strip().lower()
-
-        # Update list of stock items
-        self.stock_items = self.get_POST_items()
-
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        for item in self.stock_items:
-
-            try:
-                item.new_quantity = Decimal(item.new_quantity)
-            except ValueError:
-                item.error = _('Must enter integer value')
-                valid = False
-                continue
-
-            if item.new_quantity < 0:
-                item.error = _('Quantity must be positive')
-                valid = False
-                continue
-
-            if self.stock_action in ['move', 'take']:
-
-                if item.new_quantity > item.quantity:
-                    item.error = _('Quantity must not exceed {x}').format(x=item.quantity)
-                    valid = False
-                    continue
-
-        confirmed = str2bool(request.POST.get('confirm'))
-
-        if not confirmed:
-            valid = False
-            form.add_error('confirm', _('Confirm stock adjustment'))
-
-        data = {
-            'form_valid': valid,
-        }
-
-        if valid:
-            result = self.do_action()
-
-            data['success'] = result
-
-            # Special case - Single Stock Item
-            # If we deplete the stock item, we MUST redirect to a new view
-            single_item = len(self.stock_items) == 1
-
-            if result and single_item:
-
-                # Was the entire stock taken?
-                item = self.stock_items[0]
-
-                if item.quantity == 0:
-                    # Instruct the form to redirect
-                    data['url'] = reverse('stock-index')
-
-        return self.renderJsonResponse(request, form, data=data)
-
-    def do_action(self):
-        """ Perform stock adjustment action """
-
-        if self.stock_action == 'move':
-            destination = None
-
-            set_default_loc = str2bool(self.request.POST.get('set_loc', False))
-
-            try:
-                destination = StockLocation.objects.get(id=self.request.POST.get('destination'))
-            except StockLocation.DoesNotExist:
-                pass
-            except ValueError:
-                pass
-
-            return self.do_move(destination, set_default_loc)
-
-        elif self.stock_action == 'add':
-            return self.do_add()
-
-        elif self.stock_action == 'take':
-            return self.do_take()
-
-        elif self.stock_action == 'count':
-            return self.do_count()
-
-        elif self.stock_action == 'delete':
-            return self.do_delete()
-
-        else:
-            return _('No action performed')
-
-    def do_add(self):
-
-        count = 0
-        note = self.request.POST['note']
-
-        for item in self.stock_items:
-            if item.new_quantity <= 0:
-                continue
-
-            item.add_stock(item.new_quantity, self.request.user, notes=note)
-
-            count += 1
-
-        return _('Added stock to {n} items').format(n=count)
-
-    def do_take(self):
-
-        count = 0
-        note = self.request.POST['note']
-
-        for item in self.stock_items:
-            if item.new_quantity <= 0:
-                continue
-
-            item.take_stock(item.new_quantity, self.request.user, notes=note)
-
-            count += 1
-
-        return _('Removed stock from {n} items').format(n=count)
-
-    def do_count(self):
-
-        count = 0
-        note = self.request.POST['note']
-
-        for item in self.stock_items:
-
-            item.stocktake(item.new_quantity, self.request.user, notes=note)
-
-            count += 1
-
-        return _("Counted stock for {n} items".format(n=count))
-
-    def do_move(self, destination, set_loc=None):
-        """ Perform actual stock movement """
-
-        count = 0
-
-        note = self.request.POST['note']
-
-        for item in self.stock_items:
-            # Avoid moving zero quantity
-            if item.new_quantity <= 0:
-                continue
-
-            # If we wish to set the destination location to the default one
-            if set_loc:
-                item.part.default_location = destination
-                item.part.save()
-
-            # Do not move to the same location (unless the quantity is different)
-            if destination == item.location and item.new_quantity == item.quantity:
-                continue
-
-            item.move(destination, note, self.request.user, quantity=item.new_quantity)
-
-            count += 1
-
-        # Is ownership control enabled?
-        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
-
-        if stock_ownership_control:
-            # Fetch destination owner
-            destination_owner = destination.owner
-
-            if destination_owner:
-                # Update owner
-                item.owner = destination_owner
-                item.save()
-
-        if count == 0:
-            return _('No items were moved')
-
-        else:
-            return _('Moved {n} items to {dest}').format(
-                n=count,
-                dest=destination.pathstring)
-
-    def do_delete(self):
-        """ Delete multiple stock items """
-
-        count = 0
-        # note = self.request.POST['note']
-
-        for item in self.stock_items:
-
-            # TODO - In the future, StockItems should not be 'deleted'
-            # TODO - Instead, they should be marked as "inactive"
-
-            item.delete()
-
-            count += 1
-
-        return _("Deleted {n} stock items").format(n=count)
-
-
-class StockItemEditStatus(AjaxUpdateView):
-    """
-    View for editing stock item status field
-    """
-
-    model = StockItem
-    form_class = StockForms.EditStockItemStatusForm
-    ajax_form_title = _('Edit Stock Item Status')
-
-    def save(self, object, form, **kwargs):
-        """
-        Override the save method, to track the user who updated the model
-        """
-
-        item = form.save(commit=False)
-
-        item.save(user=self.request.user)
-
-        return item
 
 
 class StockItemEdit(AjaxUpdateView):
