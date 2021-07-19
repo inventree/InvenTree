@@ -252,6 +252,11 @@ function constructDeleteForm(fields, options) {
  */
 function constructForm(url, options) {
 
+    // An "empty" form will be defined locally
+    if (url == null) {
+        constructFormBody({}, options);
+    }
+
     // Save the URL 
     options.url = url;
 
@@ -376,6 +381,11 @@ function constructFormBody(fields, options) {
             // Custom placeholder
             if (field_options.placeholder) {
                 fields[field].placeholder = field_options.placeholder;
+            }
+
+            // Choices
+            if (field_options.choices) {
+                fields[field].choices = field_options.choices;
             }
 
             // Field prefix
@@ -1113,7 +1123,7 @@ function initializeRelatedField(name, field, options) {
         var pk = field.value;
         var url = `${field.api_url}/${pk}/`.replace('//', '/');
 
-        inventreeGet(url, {}, {
+        inventreeGet(url, field.filters || {}, {
             success: function(data) {
                 setRelatedFieldData(name, data, options);
             }
@@ -1210,6 +1220,9 @@ function renderModelData(name, model, data, parameters, options) {
             break;
         case 'partparametertemplate':
             renderer = renderPartParameterTemplate;
+            break;
+        case 'manufacturerpart':
+            renderer = renderManufacturerPart;
             break;
         case 'supplierpart':
             renderer = renderSupplierPart;

@@ -32,6 +32,8 @@ class CategorySerializer(InvenTreeModelSerializer):
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
 
+    level = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = PartCategory
         fields = [
@@ -40,10 +42,11 @@ class CategorySerializer(InvenTreeModelSerializer):
             'description',
             'default_location',
             'default_keywords',
-            'pathstring',
-            'url',
+            'level',
             'parent',
             'parts',
+            'pathstring',
+            'url',
         ]
 
 
