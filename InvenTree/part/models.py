@@ -1465,7 +1465,7 @@ class Part(MPTTModel):
         return self.supplier_parts.count()
 
     @property
-    def has_pricing_info(self,internal=False):
+    def has_pricing_info(self, internal=False):
         """ Return true if there is pricing information for this part """
         return self.get_price_range(internal=internal) is not None
 
