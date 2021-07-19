@@ -765,19 +765,6 @@ class SearchView(TemplateView):
         return super(TemplateView, self).render_to_response(context)
 
 
-class SearchResultView(TemplateView):
-    """Endpoint for search auto-complete
-    """
-
-    def get(self, request, *args, **kwargs):
-        query = request.GET.get('term', '')
-        if len(query) > 2:
-            objects = Part.objects.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(IPN__icontains=query)
-                                          | Q(keywords__icontains=query) | Q(category__name__icontains=query)).order_by('name')
-            return JsonResponse([{'id': a.pk, 'value': a.name} for a in objects[0:5]], safe=False)
-        return JsonResponse({})
-
-
 class DynamicJsView(TemplateView):
     """
     View for returning javacsript files,

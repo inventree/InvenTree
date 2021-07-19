@@ -83,7 +83,24 @@ function inventreeDocReady() {
 
     // Add autocomplete to the search-bar
     $("#search-bar" ).autocomplete({
-        source: "{% url 'search-api' %}",
+        source: function (request, response) {
+            $.ajax({
+                url: '/api/part/',
+                data: { search: request.term },
+                success: function (data) {
+                    var transformed = $.map(data, function (el) {
+                        return {
+                            label: el.name,
+                            id: el.pk
+                        };
+                    });
+                    response(transformed);
+                },
+                error: function () {
+                    response([]);
+                }
+            });
+        },
         minLength: 2,
         classes: {'ui-autocomplete': 'dropdown-menu'},
         select: function( event, ui ) {
