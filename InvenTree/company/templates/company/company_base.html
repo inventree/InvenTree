@@ -71,6 +71,17 @@
     <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html"%}</td>
 </tr>
 {% endif %}
+<tr>
+    <td><span class='fas fa-dollar-sign'></span></td>
+    <td>{% trans "Currency" %}</td>
+    <td>
+        {% if company.currency %}
+        {{ company.currency }}
+        {% else %}
+        <i>{% trans "Uses default currency" %}</i>
+        {% endif %}
+    </td>
+</tr>
 {% if company.address %}
 <tr>
     <td><span class='fas fa-map-marked-alt'></span></td>
@@ -99,6 +110,22 @@
     <td>{{ company.contact }}{% include "clip.html"%}</td>
 </tr>
 {% endif %}
+
+<tr>
+    <td><span class='fas fa-industry'></span></td>
+    <td>{%trans "Manufacturer" %}</td>
+    <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
+</tr>
+<tr>
+    <td><span class='fas fa-building'></span></td>
+    <td>{% trans "Supplier" %}</td>
+    <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+</tr>
+<tr>
+    <td><span class='fas fa-user-tie'></span></td>
+    <td>{% trans "Customer" %}</td>
+    <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+</tr>
 </table>
 {% endblock %}
 
@@ -111,31 +138,30 @@
     });
 
     $('#company-edit').click(function() {
-        launchModalForm(
-            "{% url 'company-edit' company.id %}",
-            {
-                reload: true
-            });
+        editCompany({{ company.id }});
     });
 
     $("#company-order-2").click(function() {
-        launchModalForm("{% url 'po-create' %}",
-        {
-            data: {
-                supplier: {{ company.id }},
-            },
-            follow: true,
+        createPurchaseOrder({
+            supplier: {{ company.pk }},
         });
     });
 
-
     $('#company-delete').click(function() {
-        launchModalForm(
-            "{% url 'company-delete' company.id %}",
-            {
-                redirect: "{% url 'company-index' %}"
-            });
+        constructForm('{% url "api-company-detail" company.pk %}', {
+            method: 'DELETE',
+            title: '{% trans "Delete Company" %}',
+            redirect: '{% url "company-index" %}',
+        });
     });
+
+    function reloadImage(data) {
+        if (data.image) {
+            $('#company-image').attr('src', data.image);
+        } else {
+            location.reload();
+        }
+    }
 
     enableDragAndDrop(
         "#company-thumb",
@@ -144,12 +170,7 @@
             label: 'image',
             method: 'PATCH',
             success: function(data, status, xhr) {
-
-                if (data.image) {
-                    $('#company-image').attr('src', data.image);
-                } else {
-                    location.reload();
-                }
+                reloadImage(data);
             }
         }
     );
@@ -161,10 +182,18 @@
     {% endif %}
 
     $("#company-image-upload").click(function() {
-        launchModalForm(
-            "{% url 'company-image' company.id %}",
+
+        constructForm(
+            '{% url "api-company-detail" company.pk %}',
             {
-                reload: true
+                method: 'PATCH',
+                fields: {
+                    image: {},
+                },
+                title: '{% trans "Upload Image" %}',
+                onSuccess: function(data) {
+                    reloadImage(data);
+                }
             }
         );
     });

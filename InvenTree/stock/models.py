@@ -20,13 +20,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from common.settings import currency_code_default
-
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
-
-from djmoney.models.fields import MoneyField
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
@@ -38,7 +34,7 @@ import label.models
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 
 from users.models import Owner
 
@@ -51,6 +47,10 @@ class StockLocation(InvenTreeTree):
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-location-list')
 
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
                               verbose_name=_('Owner'),
@@ -160,6 +160,10 @@ class StockItem(MPTTModel):
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stock-list')
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
@@ -533,10 +537,9 @@ class StockItem(MPTTModel):
         help_text=_('Stock Item Notes')
     )
 
-    purchase_price = MoneyField(
+    purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
-        default_currency=currency_code_default(),
         blank=True,
         null=True,
         verbose_name=_('Purchase Price'),
@@ -1208,7 +1211,7 @@ class StockItem(MPTTModel):
             # We need to split the stock!
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user)
+            self.splitStock(quantity, location, user, **{'notes': notes})
 
             return True
 
@@ -1608,6 +1611,10 @@ class StockItemAttachment(InvenTreeAttachment):
     Model for storing file attachments against a StockItem object.
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stock-attachment-list')
+
     def getSubdir(self):
         return os.path.join("stock_files", str(self.stock_item.id))
 
@@ -1638,6 +1645,10 @@ class StockItemTracking(models.Model):
         user: The user associated with this tracking info
         deltas: The changes associated with this history item
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stock-tracking-list')
 
     def get_absolute_url(self):
         return '/stock/track/{pk}'.format(pk=self.id)
@@ -1696,6 +1707,10 @@ class StockItemTestResult(models.Model):
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-stock-test-result-list')
 
     def save(self, *args, **kwargs):
 

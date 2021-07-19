@@ -21,8 +21,10 @@
         {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_EDIT_IPN" %}
         {% include "InvenTree/settings/setting.html" with key="PART_SHOW_QUANTITY_IN_FORMS" icon="fa-hashtag" %}
         {% include "InvenTree/settings/setting.html" with key="PART_SHOW_PRICE_IN_FORMS" icon="fa-dollar-sign" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_SHOW_RELATED" icon="fa-random" %}
         {% include "InvenTree/settings/setting.html" with key="PART_RECENT_COUNT" icon="fa-clock" %}
-        <tr><td colspan='5  '></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="PART_CREATE_INITIAL" icon="fa-boxes" %}
+        <tr><td colspan='5'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="PART_TEMPLATE" icon="fa-clone" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ASSEMBLY" icon="fa-tools" %}
         {% include "InvenTree/settings/setting.html" with key="PART_COMPONENT" icon="fa-th"%}
@@ -41,6 +43,22 @@
     </tbody>
 </table>
 
+<h4>{% trans "Part Import" %}</h4>
+
+    <button class='btn btn-success' id='import-part'>
+        <span class='fas fa-plus-circle'></span> {% trans "Import Part" %}
+    </button>
+
+
+<table class='table table-striped table-condensed'>
+    {% include "InvenTree/settings/header.html" %}
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PART_SHOW_IMPORT" icon="fa-file-upload" %}
+    </tbody>
+</table>
+
+
+
 <h4>{% trans "Part Parameter Templates" %}</h4>
 
 <div id='param-buttons'>
@@ -58,7 +76,7 @@
 {{ block.super }}
 
     $("#param-table").inventreeTable({
-        url: "{% url 'api-part-param-template-list' %}",
+        url: "{% url 'api-part-parameter-template-list' %}",
         queryParams: {
             ordering: 'name',
         },
@@ -123,6 +141,10 @@
                 $("#param-table").bootstrapTable('refresh');
             }
         });
+    });
+
+    $("#import-part").click(function() {
+        launchModalForm("{% url 'api-part-import' %}?reset", {});
     });
 
 {% endblock %}

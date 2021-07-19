@@ -15,7 +15,7 @@ from InvenTree.fields import DatePickerFormField
 
 from InvenTree.status_codes import StockStatus
 
-from .models import Build, BuildItem, BuildOrderAttachment
+from .models import Build, BuildItem
 
 from stock.models import StockLocation, StockItem
 
@@ -274,18 +274,4 @@ class EditBuildItemForm(HelperForm):
             'stock_item',
             'quantity',
             'install_into',
-        ]
-
-
-class EditBuildAttachmentForm(HelperForm):
-    """
-    Form for creating / editing a BuildAttachment object
-    """
-
-    class Meta:
-        model = BuildOrderAttachment
-        fields = [
-            'build',
-            'attachment',
-            'comment'
         ]

@@ -23,6 +23,7 @@ import moneyed
 
 import yaml
 from django.utils.translation import gettext_lazy as _
+from django.contrib.messages import constants as messages
 
 
 def _is_true(x):
@@ -341,6 +342,7 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata'
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -521,10 +523,6 @@ for currency in CURRENCIES:
         print(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
-BASE_CURRENCY = get_setting(
-    'INVENTREE_BASE_CURRENCY',
-    CONFIG.get('base_currency', 'USD')
-)
 
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
@@ -611,3 +609,9 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'alert alert-block alert-success',
+    messages.ERROR: 'alert alert-block alert-danger',
+    messages.INFO: 'alert alert-block alert-info',
+}

@@ -42,6 +42,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Trackable Part" %}'
             },
+            sub_part_assembly: {
+                type: 'bool',
+                title: '{% trans "Assembled Part" %}',
+            },
             validated: {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
@@ -205,7 +209,12 @@ function getAvailableTableFilters(tableKey) {
             batch: {
                 title: '{% trans "Batch" %}',
                 description: '{% trans "Batch code" %}',
-            }
+            },
+            has_purchase_price: {
+                type: 'bool',
+                title: '{% trans "Has purchase price" %}',
+                description: '{% trans "Show stock items which have a purchase price set" %}',
+            },
         };
     }
 

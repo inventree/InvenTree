@@ -170,7 +170,7 @@ def update_exchange_rates():
     try:
         from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-        from django.conf import settings
+        from common.settings import currency_code_default, currency_codes
     except AppRegistryNotReady:
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
@@ -192,14 +192,14 @@ def update_exchange_rates():
     backend = InvenTreeExchange()
     print(f"Updating exchange rates from {backend.url}")
 
-    base = settings.BASE_CURRENCY
+    base = currency_code_default()
 
     print(f"Using base currency '{base}'")
 
     backend.update_rates(base_currency=base)
 
     # Remove any exchange rates which are not in the provided currencies
-    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=settings.CURRENCIES).delete()
+    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
 
 
 def send_email(subject, body, recipients, from_email=None):

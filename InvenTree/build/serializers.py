@@ -10,13 +10,14 @@ from django.db.models import BooleanField
 
 from rest_framework import serializers
 
-from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializerField, UserSerializerBrief
 
 from stock.serializers import StockItemSerializerBrief
 from stock.serializers import LocationSerializer
 from part.serializers import PartSerializer, PartBriefSerializer
+from users.serializers import OwnerSerializer
 
-from .models import Build, BuildItem
+from .models import Build, BuildItem, BuildOrderAttachment
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -30,6 +31,10 @@ class BuildSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     overdue = serializers.BooleanField(required=False, read_only=True)
+
+    issued_by_detail = UserSerializerBrief(source='issued_by', read_only=True)
+
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -57,7 +62,7 @@ class BuildSerializer(InvenTreeModelSerializer):
         return queryset
 
     def __init__(self, *args, **kwargs):
-        part_detail = kwargs.pop('part_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
 
         super().__init__(*args, **kwargs)
 
@@ -70,9 +75,12 @@ class BuildSerializer(InvenTreeModelSerializer):
             'pk',
             'url',
             'title',
+            'batch',
             'creation_date',
             'completed',
             'completion_date',
+            'destination',
+            'parent',
             'part',
             'part_detail',
             'overdue',
@@ -82,8 +90,13 @@ class BuildSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
             'target_date',
+            'take_from',
             'notes',
             'link',
+            'issued_by',
+            'issued_by_detail',
+            'responsible',
+            'responsible_detail',
         ]
 
         read_only_fields = [
@@ -142,4 +155,27 @@ class BuildItemSerializer(InvenTreeModelSerializer):
             'stock_item',
             'stock_item_detail',
             'quantity'
+        ]
+
+
+class BuildAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a BuildAttachment
+    """
+
+    attachment = InvenTreeAttachmentSerializerField(required=True)
+
+    class Meta:
+        model = BuildOrderAttachment
+
+        fields = [
+            'pk',
+            'build',
+            'attachment',
+            'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]

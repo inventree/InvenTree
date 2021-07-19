@@ -260,12 +260,15 @@ class LocationSerializer(InvenTreeModelSerializer):
 
     items = serializers.IntegerField(source='item_count', read_only=True)
 
+    level = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = StockLocation
         fields = [
             'pk',
             'url',
             'name',
+            'level',
             'description',
             'parent',
             'pathstring',
@@ -287,6 +290,8 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
     user_detail = UserSerializerBrief(source='user', read_only=True)
 
     attachment = InvenTreeAttachmentSerializerField(required=True)
+
+    # TODO: Record the uploading user when creating or updating an attachment!
 
     class Meta:
         model = StockItemAttachment

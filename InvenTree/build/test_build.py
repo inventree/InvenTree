@@ -5,10 +5,11 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
-from build.models import Build, BuildItem
+from InvenTree import status_codes as status
+
+from build.models import Build, BuildItem, get_next_build_number
 from stock.models import StockItem
 from part.models import Part, BomItem
-from InvenTree import status_codes as status
 
 
 class BuildTest(TestCase):
@@ -80,8 +81,14 @@ class BuildTest(TestCase):
             quantity=2
         )
 
+        ref = get_next_build_number()
+
+        if ref is None:
+            ref = "0001"
+
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
+            reference=ref,
             title="This is a build",
             part=self.assembly,
             quantity=10

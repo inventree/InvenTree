@@ -158,6 +158,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         'manufacturer__name',
         'description',
         'MPN',
+        'part__IPN',
         'part__name',
         'part__description',
     ]
@@ -262,11 +263,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all().prefetch_related(
-        'part',
-        'supplier',
-        'manufacturer_part__manufacturer',
-    )
+    queryset = SupplierPart.objects.all()
 
     def get_queryset(self):
 
@@ -355,6 +352,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         'manufacturer_part__manufacturer__name',
         'description',
         'manufacturer_part__MPN',
+        'part__IPN',
         'part__name',
         'part__description',
     ]
@@ -394,6 +392,15 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     ]
 
 
+class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for SupplierPriceBreak object
+    """
+
+    queryset = SupplierPriceBreak.objects.all()
+    serializer_class = SupplierPriceBreakSerializer
+
+
 manufacturer_part_api_urls = [
 
     url(r'^parameter/', include([
@@ -424,7 +431,12 @@ company_api_urls = [
 
     url(r'^part/', include(supplier_part_api_urls)),
 
-    url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
+    # Supplier price breaks
+    url(r'^price-break/', include([
+
+        url(r'^(?P<pk>\d+)/?', SupplierPriceBreakDetail.as_view(), name='api-part-supplier-price-detail'),
+        url(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
+    ])),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

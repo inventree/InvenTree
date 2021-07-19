@@ -9,9 +9,7 @@ import os
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
@@ -31,6 +29,7 @@ import InvenTree.validators
 
 import common.models
 import common.settings
+from common.settings import currency_code_default
 
 
 def rename_company_image(instance, filename):
@@ -84,6 +83,10 @@ class Company(models.Model):
         currency_code: Specifies the default currency for the company
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-company-list')
+
     class Meta:
         ordering = ['name', ]
         constraints = [
@@ -101,7 +104,11 @@ class Company(models.Model):
         blank=True,
     )
 
-    website = models.URLField(blank=True, verbose_name=_('Website'), help_text=_('Company website URL'))
+    website = models.URLField(
+        blank=True,
+        verbose_name=_('Website'),
+        help_text=_('Company website URL')
+    )
 
     address = models.CharField(max_length=200,
                                verbose_name=_('Address'),
@@ -141,6 +148,7 @@ class Company(models.Model):
         max_length=3,
         verbose_name=_('Currency'),
         blank=True,
+        default=currency_code_default,
         help_text=_('Default currency used for this company'),
         validators=[InvenTree.validators.validate_currency_code],
     )
@@ -297,6 +305,10 @@ class ManufacturerPart(models.Model):
         description: Descriptive notes field
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-manufacturer-part-list')
+
     class Meta:
         unique_together = ('part', 'manufacturer', 'MPN')
 
@@ -380,6 +392,10 @@ class ManufacturerPartParameter(models.Model):
     Each parameter is a simple string (text) value.
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-manufacturer-part-parameter-list')
+
     class Meta:
         unique_together = ('manufacturer_part', 'name')
 
@@ -412,6 +428,22 @@ class ManufacturerPartParameter(models.Model):
     )
 
 
+class SupplierPartManager(models.Manager):
+    """ Define custom SupplierPart objects manager
+
+        The main purpose of this manager is to improve database hit as the
+        SupplierPart model involves A LOT of foreign keys lookups
+    """
+
+    def get_queryset(self):
+        # Always prefetch related models
+        return super().get_queryset().prefetch_related(
+            'part',
+            'supplier',
+            'manufacturer_part__manufacturer',
+        )
+
+
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a SKU (Supplier Part Number)
@@ -432,59 +464,14 @@ class SupplierPart(models.Model):
         packaging: packaging that the part is supplied in, e.g. "Reel"
     """
 
+    objects = SupplierPartManager()
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-supplier-part-list')
+
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
-
-    def save(self, *args, **kwargs):
-        """ Overriding save method to process the linked ManufacturerPart
-        """
-
-        if 'manufacturer' in kwargs:
-            manufacturer_id = kwargs.pop('manufacturer')
-
-            try:
-                manufacturer = Company.objects.get(pk=int(manufacturer_id))
-            except (ValueError, Company.DoesNotExist):
-                manufacturer = None
-        else:
-            manufacturer = None
-        if 'MPN' in kwargs:
-            MPN = kwargs.pop('MPN')
-        else:
-            MPN = None
-
-        if manufacturer or MPN:
-            if not self.manufacturer_part:
-                # Create ManufacturerPart
-                manufacturer_part = ManufacturerPart.create(part=self.part,
-                                                            manufacturer=manufacturer,
-                                                            mpn=MPN,
-                                                            description=self.description)
-                self.manufacturer_part = manufacturer_part
-            else:
-                # Update ManufacturerPart (if ID exists)
-                try:
-                    manufacturer_part_id = self.manufacturer_part.id
-                except AttributeError:
-                    manufacturer_part_id = None
-
-                if manufacturer_part_id:
-                    try:
-                        (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
-                                                                                                 manufacturer=manufacturer,
-                                                                                                 MPN=MPN)
-                    except IntegrityError:
-                        manufacturer_part = None
-                        raise ValidationError(f'ManufacturerPart linked to {self.part} from manufacturer {manufacturer.name}'
-                                              f'with part number {MPN} already exists!')
-
-                if manufacturer_part:
-                    self.manufacturer_part = manufacturer_part
-
-        self.clean()
-        self.validate_unique()
-
-        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
@@ -659,6 +646,10 @@ class SupplierPriceBreak(common.models.PriceBreak):
         cost: Cost at specified quantity
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-part-supplier-price-list')
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
 

@@ -13,6 +13,94 @@ function yesNoLabel(value) {
     }
 }
 
+
+function editPart(pk, options={}) {
+
+    var url = `/api/part/${pk}/`;
+
+    var fields =  {
+        category: {
+            /*
+            secondary: {
+                label: '{% trans "New Category" %}',
+                title: '{% trans "Create New Part Category" %}',
+                api_url: '{% url "api-part-category-list" %}',
+                method: 'POST',
+                fields: {
+                    name: {},
+                    description: {},
+                    parent: {
+                        secondary: {
+                            title: '{% trans "New Parent" %}',
+                            api_url: '{% url "api-part-category-list" %}',
+                            method: 'POST',
+                            fields: {
+                                name: {},
+                                description: {},
+                                parent: {},
+                            }
+                        }
+                    },
+                }
+            },
+            */
+        },
+        name: {
+            placeholder: 'part name',
+        },
+        IPN: {},
+        description: {},
+        revision: {},
+        keywords: {
+            icon: 'fa-key',
+        },
+        variant_of: {},
+        link: {
+            icon: 'fa-link',
+        },
+        default_location: {
+            /*
+            secondary: {
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new stock location" %}',
+            },
+            */
+        },
+        default_supplier: {
+            filters: {
+                part: pk,
+                part_detail: true,
+                manufacturer_detail: true,
+                supplier_detail: true,
+            },
+            /*
+            secondary: {
+                label: '{% trans "New Supplier Part" %}',
+                title: '{% trans "Create new supplier part" %}',
+            }
+            */
+        },
+        units: {},
+        minimum_stock: {},
+        virtual: {},
+        is_template: {},
+        assembly: {},
+        component: {},
+        trackable: {},
+        purchaseable: {},
+        salable: {},
+        active: {},
+    };
+
+    constructForm(url, {
+        fields: fields,
+        title: '{% trans "Edit Part" %}',
+        reload: true,
+    });
+
+}
+
+
 function toggleStar(options) {
     /* Toggle the 'starred' status of a part.
      * Performs AJAX queries and updates the display on the button.
@@ -217,6 +305,107 @@ function loadSimplePartTable(table, url, options={}) {
     options.disableFilters = true;
 
     loadPartTable(table, url, options);
+}
+
+
+function loadPartParameterTable(table, url, options) {
+
+    var params = options.params || {};
+
+    // Load filters
+    var filters = loadTableFilters("part-parameters");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    // setupFilterLsit("#part-parameters", $(table));
+
+    $(table).inventreeTable({
+        url: url,
+        original: params,
+        queryParams: filters,
+        name: 'partparameters',
+        groupBy: false,
+        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        columns: [
+            {
+                checkbox: true,
+                switchable: false,
+                visible: true,
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.template_detail.name;
+                }
+            },
+            {
+                field: 'data',
+                title: '{% trans "Value" %}',
+                switchable: false,
+                sortable: true,
+            },
+            {
+                field: 'units',
+                title: '{% trans "Units" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return row.template_detail.units;
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+
+                    html += `</div>`;
+
+                    return html;
+                }
+            }
+        ],
+        onPostBody: function() {
+            // Setup button callbacks
+            $(table).find('.button-parameter-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/parameter/${pk}/`, {
+                    fields: {
+                        data: {},
+                    },
+                    title: '{% trans "Edit Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-parameter-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/parameter/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Parameter" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+    });
 }
 
 
@@ -525,7 +714,7 @@ function loadPartTable(table, url, options={}) {
 
             var html = '';
 
-            html = `<div class='row'>`;
+            html = `<div class='row full-height'>`;
 
             data.forEach(function(row, index) {
                 
@@ -769,6 +958,159 @@ function loadPartTestTemplateTable(table, options) {
 }
 
 
+function loadPriceBreakTable(table, options) {
+    /*
+     * Load PriceBreak table.
+     */
+
+    var name = options.name || 'pricebreak';
+    var human_name = options.human_name || 'price break';
+    var linkedGraph = options.linkedGraph || null;
+    var chart = null;
+
+    table.inventreeTable({
+        name: name,
+        method: 'get',
+        formatNoMatches: function() {
+            return `{% trans "No ${human_name} information found" %}`;
+        },
+        url: options.url,
+        onLoadSuccess: function(tableData) {
+            if (linkedGraph) {
+                // sort array
+                tableData = tableData.sort((a,b)=>a.quantity-b.quantity);
+
+                // split up for graph definition
+                var graphLabels = Array.from(tableData, x => x.quantity);
+                var graphData = Array.from(tableData, x => parseFloat(x.price));
+
+                // destroy chart if exists
+                if (chart){
+                    chart.destroy();
+                }
+                chart = loadLineChart(linkedGraph,
+                    {
+                        labels: graphLabels,
+                        datasets:  [
+                        {
+                        label: '{% trans "Unit Price" %}',
+                        data: graphData,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgb(255, 206, 86)',
+                        stepped: true,
+                        fill: true,
+                        },]
+                    }
+                );
+            }
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                sortable: true,
+            },
+            {
+                field: 'price',
+                title: '{% trans "Price" %}',
+                sortable: true,
+                formatter: function(value, row, index) {
+                    var html = value;
+    
+                    html += `<div class='btn-group float-right' role='group'>`
+
+                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
+                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
+    
+                    html += `</div>`;
+    
+                    return html;
+                }
+            },
+        ]
+    });
+}
+
+function loadLineChart(context, data) {
+    return new Chart(context, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {position: 'bottom'},
+            }
+        }
+    });
+}
+
+function initPriceBreakSet(table, options) {
+
+    var part_id = options.part_id;
+    var pb_human_name = options.pb_human_name;
+    var pb_url_slug = options.pb_url_slug;
+    var pb_url = options.pb_url;
+    var pb_new_btn = options.pb_new_btn;
+    var pb_new_url = options.pb_new_url;
+
+    var linkedGraph = options.linkedGraph || null;
+
+    loadPriceBreakTable(
+        table,
+        {
+            name: pb_url_slug,
+            human_name: pb_human_name,
+            url: pb_url,
+            linkedGraph: linkedGraph,
+        }
+    );
+
+    function reloadPriceBreakTable(){
+        table.bootstrapTable("refresh");
+    }
+
+    pb_new_btn.click(function() {
+        launchModalForm(pb_new_url,
+            {
+                success: reloadPriceBreakTable,
+                data: {
+                    part: part_id,
+                }
+            }
+        );
+    });
+
+    table.on('click', `.button-${pb_url_slug}-delete`, function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(
+            `/part/${pb_url_slug}/${pk}/delete/`,
+            {
+                success: reloadPriceBreakTable
+            }
+        );
+    });
+
+    table.on('click', `.button-${pb_url_slug}-edit`, function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(
+            `/part/${pb_url_slug}/${pk}/edit/`,
+            {
+                success: reloadPriceBreakTable
+            }
+        );
+    });
+}
+
+
 function loadStockPricingChart(context, data) {
     return new Chart(context, {
         type: 'bar',
@@ -821,6 +1163,39 @@ function loadBomChart(context, data) {
             maintainAspectRatio: false,
             plugins: {legend: {position: 'bottom'},
             scales: {xAxes: [{beginAtZero: true, ticks: {autoSkip: false}}]}}
+        }
+    });
+}
+
+function loadSellPricingChart(context, data) {
+    return new Chart(context, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {legend: {position: 'bottom'}},
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    grid: {display: false},
+                    title: {
+                        display: true,
+                        text: '{% trans "Unit Price" %}'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    grid: {display: false},
+                    titel: {
+                        display: true,
+                        text: '{% trans "Quantity" %}',
+                        position: 'right'
+                    }
+                },
+            },
         }
     });
 }

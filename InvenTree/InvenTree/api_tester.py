@@ -18,6 +18,7 @@ class InvenTreeAPITestCase(APITestCase):
     email = 'test@testing.com'
 
     superuser = False
+    is_staff = True
     auto_login = True
 
     # Set list of roles automatically associated with the user
@@ -40,8 +41,12 @@ class InvenTreeAPITestCase(APITestCase):
 
         if self.superuser:
             self.user.is_superuser = True
-            self.user.save()
 
+        if self.is_staff:
+            self.user.is_staff = True
+
+        self.user.save()
+        
         for role in self.roles:
             self.assignRole(role)
 
@@ -72,6 +77,22 @@ class InvenTreeAPITestCase(APITestCase):
 
                 ruleset.save()
                 break
+
+    def getActions(self, url):
+        """
+        Return a dict of the 'actions' available at a given endpoint.
+        Makes use of the HTTP 'OPTIONS' method to request this.
+        """
+
+        response = self.client.options(url)
+        self.assertEqual(response.status_code, 200)
+
+        actions = response.data.get('actions', None)
+
+        if not actions:
+            actions = {}
+
+        return actions
 
     def get(self, url, data={}, expected_code=200):
         """

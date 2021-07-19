@@ -7,12 +7,11 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
-from django.urls import reverse
 
 from part.models import Part
-from .models import Build, BuildItem, BuildOrderAttachment
+from .models import Build, BuildItem
 from . import forms
 from stock.models import StockLocation, StockItem
 
@@ -593,31 +592,6 @@ class BuildOutputComplete(AjaxUpdateView):
         }
 
 
-class BuildNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for editing the 'notes' field of a Build object.
-    """
-
-    context_object_name = 'build'
-    template_name = 'build/notes.html'
-    model = Build
-
-    # Override the default permission role for this View
-    role_required = 'build.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        return reverse('build-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        return ctx
-
-
 class BuildDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view of a single Build object. """
 
@@ -635,156 +609,15 @@ class BuildDetail(InvenTreeRoleMixin, DetailView):
         ctx['BuildStatus'] = BuildStatus
         ctx['sub_build_count'] = build.sub_build_count()
 
-        return ctx
-
-
-class BuildAllocate(InvenTreeRoleMixin, DetailView):
-    """ View for allocating parts to a Build """
-    model = Build
-    context_object_name = 'build'
-    template_name = 'build/allocate.html'
-
-    def get_context_data(self, **kwargs):
-        """ Provide extra context information for the Build allocation page """
-
-        context = super(DetailView, self).get_context_data(**kwargs)
-
-        build = self.get_object()
         part = build.part
         bom_items = build.bom_items
 
-        context['part'] = part
-        context['bom_items'] = bom_items
-        context['has_tracked_bom_items'] = build.has_tracked_bom_items()
-        context['has_untracked_bom_items'] = build.has_untracked_bom_items()
-        context['BuildStatus'] = BuildStatus
+        ctx['part'] = part
+        ctx['bom_items'] = bom_items
+        ctx['has_tracked_bom_items'] = build.has_tracked_bom_items()
+        ctx['has_untracked_bom_items'] = build.has_untracked_bom_items()
 
-        context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
-
-        if str2bool(self.request.GET.get('edit', None)):
-            context['editing'] = True
-
-        return context
-
-
-class BuildCreate(AjaxCreateView):
-    """
-    View to create a new Build object
-    """
-
-    model = Build
-    context_object_name = 'build'
-    form_class = forms.EditBuildForm
-    ajax_form_title = _('New Build Order')
-    ajax_template_name = 'modal_form.html'
-
-    def get_form(self):
-        form = super().get_form()
-
-        if form['part'].value():
-            form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-        """ Get initial parameters for Build creation.
-
-        If 'part' is specified in the GET query, initialize the Build with the specified Part
-        """
-
-        initials = super(BuildCreate, self).get_initial().copy()
-
-        initials['parent'] = self.request.GET.get('parent', None)
-
-        # User has provided a SalesOrder ID
-        initials['sales_order'] = self.request.GET.get('sales_order', None)
-
-        initials['quantity'] = self.request.GET.get('quantity', 1)
-
-        part = self.request.GET.get('part', None)
-
-        if part:
-
-            try:
-                part = Part.objects.get(pk=part)
-                # User has provided a Part ID
-                initials['part'] = part
-                initials['destination'] = part.get_default_location()
-
-                to_order = part.quantity_to_order
-
-                if to_order < 1:
-                    to_order = 1
-
-                initials['quantity'] = to_order
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        initials['reference'] = Build.getNextBuildNumber()
-
-        # Pre-fill the issued_by user
-        initials['issued_by'] = self.request.user
-
-        return initials
-
-    def get_data(self):
-        return {
-            'success': _('Created new build'),
-        }
-
-    def validate(self, build, form, **kwargs):
-        """
-        Perform extra form validation.
-
-        - If part is trackable, check that either batch or serial numbers are calculated
-
-        By this point form.is_valid() has been executed
-        """
-
-        pass
-
-
-class BuildUpdate(AjaxUpdateView):
-    """ View for editing a Build object """
-
-    model = Build
-    form_class = forms.EditBuildForm
-    context_object_name = 'build'
-    ajax_form_title = _('Edit Build Order Details')
-    ajax_template_name = 'modal_form.html'
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        build = self.get_object()
-
-        # Fields which are included in the form, but hidden
-        hidden = [
-            'parent',
-            'sales_order',
-        ]
-
-        if build.is_complete:
-            # Fields which cannot be edited once the build has been completed
-
-            hidden += [
-                'part',
-                'quantity',
-                'batch',
-                'take_from',
-                'destination',
-            ]
-
-        for field in hidden:
-            form.fields[field].widget = HiddenInput()
-
-        return form
-
-    def get_data(self):
-        return {
-            'info': _('Edited build'),
-        }
+        return ctx
 
 
 class BuildDelete(AjaxDeleteView):
@@ -1058,88 +891,3 @@ class BuildItemEdit(AjaxUpdateView):
         form.fields['install_into'].widget = HiddenInput()
 
         return form
-
-
-class BuildAttachmentCreate(AjaxCreateView):
-    """
-    View for creating a BuildAttachment
-    """
-
-    model = BuildOrderAttachment
-    form_class = forms.EditBuildAttachmentForm
-    ajax_form_title = _('Add Build Order Attachment')
-
-    def save(self, form, **kwargs):
-        """
-        Add information on the user that uploaded the attachment
-        """
-
-        attachment = form.save(commit=False)
-        attachment.user = self.request.user
-        attachment.save()
-
-    def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
-
-    def get_initial(self):
-        """
-        Get initial data for creating an attachment
-        """
-
-        initials = super().get_initial()
-
-        try:
-            initials['build'] = Build.objects.get(pk=self.request.GET.get('build', -1))
-        except (ValueError, Build.DoesNotExist):
-            pass
-
-        return initials
-
-    def get_form(self):
-        """
-        Hide the 'build' field if specified
-        """
-
-        form = super().get_form()
-
-        form.fields['build'].widget = HiddenInput()
-
-        return form
-
-
-class BuildAttachmentEdit(AjaxUpdateView):
-    """
-    View for editing a BuildAttachment object
-    """
-
-    model = BuildOrderAttachment
-    form_class = forms.EditBuildAttachmentForm
-    ajax_form_title = _('Edit Attachment')
-
-    def get_form(self):
-        form = super().get_form()
-        form.fields['build'].widget = HiddenInput()
-
-        return form
-
-    def get_data(self):
-        return {
-            'success': _('Attachment updated')
-        }
-
-
-class BuildAttachmentDelete(AjaxDeleteView):
-    """
-    View for deleting a BuildAttachment
-    """
-
-    model = BuildOrderAttachment
-    ajax_form_title = _('Delete Attachment')
-    context_object_name = 'attachment'
-
-    def get_data(self):
-        return {
-            'danger': _('Deleted attachment')
-        }
