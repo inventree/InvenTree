@@ -1616,27 +1616,6 @@ function createNewStockItem(options) {
         },
     ];
 
-    options.secondary = [
-        {
-            field: 'part',
-            label: '{% trans "New Part" %}',
-            title: '{% trans "Create New Part" %}',
-            url: "{% url 'part-create' %}",
-        },
-        {
-            field: 'supplier_part',
-            label: '{% trans "New Supplier Part" %}',
-            title: '{% trans "Create new Supplier Part" %}',
-            url: "{% url 'supplier-part-create' %}"
-        },
-        {
-            field: 'location',
-            label: '{% trans "New Location" %}',
-            title: '{% trans "Create New Location" %}',
-            url: "{% url 'stock-location-create' %}",
-        },
-    ];
-
     launchModalForm("{% url 'stock-item-create' %}", options);
 }
 
