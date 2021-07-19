@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-19 07:46+0000\n"
-"PO-Revision-Date: 2021-07-12 14:31\n"
+"PO-Revision-Date: 2021-07-19 07:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1698,16 +1698,12 @@ msgid "Display related parts for a part"
 msgstr ""
 
 #: common/models.py:237
-#, fuzzy
-#| msgid "Create new Stock Item"
 msgid "Create initial stock"
-msgstr "Neues BestandsObjekt hinzufügen"
+msgstr ""
 
 #: common/models.py:238
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Create initial stock on part creation"
-msgstr "Neuen Lagerort anlegen"
+msgstr ""
 
 #: common/models.py:244
 msgid "Internal Prices"
@@ -2366,18 +2362,14 @@ msgstr "Firmenbemerkungen"
 #: company/templates/company/detail.html:364
 #: company/templates/company/manufacturer_part.html:200
 #: part/templates/part/detail.html:825
-#, fuzzy
-#| msgid "Delete Supplier Part"
 msgid "Delete Supplier Parts?"
-msgstr "Zuliefererteil entfernen"
+msgstr ""
 
 #: company/templates/company/detail.html:365
 #: company/templates/company/manufacturer_part.html:201
 #: part/templates/part/detail.html:826
-#, fuzzy
-#| msgid "All selected BOM items will be deleted"
 msgid "All selected supplier parts will be deleted"
-msgstr "Alle ausgewählte Stücklistenpositionen werden gelöscht"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3428,16 +3420,12 @@ msgid "This action will unallocate the following stock from the Sales Order"
 msgstr "Diese Aktion wird die folgenden BestandsObjekt vom Auftrag entfernen"
 
 #: order/templates/order/so_navbar.html:12
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Line Items"
-msgstr "Auftrags-Positionen"
+msgstr ""
 
 #: order/templates/order/so_navbar.html:15
-#, fuzzy
-#| msgid "Order notes"
 msgid "Order Items"
-msgstr "Bestell-Notizen"
+msgstr ""
 
 #: order/templates/order/so_navbar.html:26
 msgid "Sales Order Attachments"
@@ -3716,16 +3704,12 @@ msgid "Include parent categories parameter templates"
 msgstr "Über-Kategorie Parameter-Vorlage einschließen"
 
 #: part/forms.py:222
-#, fuzzy
-#| msgid "Uninstall stock item"
 msgid "Initial stock amount"
-msgstr "BestandsObjekt deinstallieren"
+msgstr ""
 
 #: part/forms.py:223
-#, fuzzy
-#| msgid "Show stock for active parts"
 msgid "Create stock for this part"
-msgstr "Bestand aktiver Teile anzeigen"
+msgstr ""
 
 #: part/forms.py:303
 msgid "Add parameter template to same level categories"
@@ -4178,10 +4162,8 @@ msgid "Upload BOM File"
 msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:12
-#, fuzzy
-#| msgid "Export Bill of Materials"
 msgid "Upload Bill of Materials"
-msgstr "Stückliste exportieren"
+msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:16
 msgid "Requirements for BOM upload"
@@ -4406,10 +4388,8 @@ msgid "New Order"
 msgstr "Neue Bestellung"
 
 #: part/templates/part/detail.html:90
-#, fuzzy
-#| msgid "Sales Order Notes"
 msgid "Sales Order Allocations"
-msgstr "Auftrags-Positionen"
+msgstr ""
 
 #: part/templates/part/detail.html:130 part/templates/part/navbar.html:21
 msgid "Part Variants"
@@ -5986,13 +5966,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -6571,10 +6549,8 @@ msgid "Delete Manufacturer Part"
 msgstr "Herstellerteil löschen"
 
 #: templates/js/company.js:114
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Add Supplier Part"
-msgstr "Zuliefererteil"
+msgstr ""
 
 #: templates/js/company.js:124
 msgid "Edit Supplier Part"
@@ -6839,10 +6815,8 @@ msgid "Category ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:199
-#, fuzzy
-#| msgid "Manufacturer Part"
 msgid "Manufacturer Part ID"
-msgstr "Herstellerteil"
+msgstr ""
 
 #: templates/js/model_renderers.js:227
 msgid "Supplier Part ID"
@@ -7034,34 +7008,24 @@ msgid "Sales Order(s) must be selected before printing report"
 msgstr "Auftrag muss vor dem Berichtsdruck ausgewählt werden"
 
 #: templates/js/stock.js:29
-#, fuzzy
-#| msgid "Expired Stock"
 msgid "Export Stock"
-msgstr "abgelaufener Bestand"
+msgstr ""
 
 #: templates/js/stock.js:32
-#, fuzzy
-#| msgid "File Format"
 msgid "Format"
-msgstr "Dateiformat"
+msgstr ""
 
 #: templates/js/stock.js:33
-#, fuzzy
-#| msgid "Select output file format"
 msgid "Select file format"
-msgstr "Ausgabe-Dateiformat auswählen"
+msgstr ""
 
 #: templates/js/stock.js:45
-#, fuzzy
-#| msgid "Include sublocations"
 msgid "Include Sublocations"
-msgstr "Unter-Lagerorte einschließen"
+msgstr ""
 
 #: templates/js/stock.js:46
-#, fuzzy
-#| msgid "Include stock items in sub locations"
 msgid "Include stock items in sublocations"
-msgstr "BestandsObjekt in untergeordneten Lagerorten einschließen"
+msgstr ""
 
 #: templates/js/stock.js:88
 msgid "Transfer Stock"
@@ -7786,92 +7750,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Stock Export Options"
-#~ msgstr "Lagerbestand Exportoptionen"
-
-#~ msgid "Single quantity price"
-#~ msgstr "Preis für eine Einheit"
-
-#~ msgid "Create new Part"
-#~ msgstr "Neues Teil hinzufügen"
-
-#~ msgid "Create new Supplier"
-#~ msgstr "Neuen Zulieferer anlegen"
-
-#~ msgid "Create new supplier"
-#~ msgstr "Neuen Zulieferer anlegen"
-
-#~ msgid "Are you sure you want to delete the following Supplier Parts?"
-#~ msgstr "Sind Sie sicher, dass sie die folgenden Zuliefererteile löschen möchten?"
-
-#~ msgid "Create new Supplier Part"
-#~ msgstr "Neues Zuliefererteil anlegen"
-
-#~ msgid "Create new manufacturer"
-#~ msgstr "Neuen Hersteller anlegen"
-
-#~ msgid "Create New Location"
-#~ msgstr "Neuen Lagerort anlegen"
-
-#~ msgid "Allocate Parts"
-#~ msgstr "Teile zuweisen"
-
-#~ msgid "Edit notes"
-#~ msgstr "Bermerkungen bearbeiten"
-
-#~ msgid "Company Name"
-#~ msgstr "Firmenname"
-
-#~ msgid "No website specified"
-#~ msgstr "Keine Website angegeben"
-
-#~ msgid "Part Details"
-#~ msgstr "Teil Details"
-
-#~ msgid "No serial numbers recorded"
-#~ msgstr "Keine Seriennummern gefunden"
-
-#~ msgid "Stock Expiry Time"
-#~ msgstr "Bestands-Ablauf Zeit"
-
-#~ msgid "Responsible User"
-#~ msgstr "Verantwortlicher Benutzer"
-
-#~ msgid "Part is not a virtual part"
-#~ msgstr "Teil ist nicht virtuell"
-
-#~ msgid "Part is not a template part"
-#~ msgstr "Teil ist kein Vorlage-Teil"
-
-#~ msgid "Part cannot be assembled from other parts"
-#~ msgstr "Teil kann nicht aus anderen Teilen angefertigt werden"
-
-#~ msgid "Part cannot be used in assemblies"
-#~ msgstr "Teil kann nicht in Baugruppen benutzt werden"
-
-#~ msgid "Part stock is not tracked by serial number"
-#~ msgstr "Teil wird nicht per Seriennummer verfolgt"
-
-#~ msgid "Part cannot be sold to customers"
-#~ msgstr "Teil kann nicht an Kunden verkauft werden"
-
-#~ msgid "Part is active"
-#~ msgstr "Teil ist aktiv"
-
-#~ msgid "Part is not active"
-#~ msgstr "Teil ist nicht aktiv"
-
-#~ msgid "Allocated Stock"
-#~ msgstr "Lagerbestand zuweisen"
-
-#~ msgid "Allocations"
-#~ msgstr "Zuweisungen"
-
-#~ msgid "Part Tracking"
-#~ msgstr "Teileverfolgung"
-
-#~ msgid "Edit Part Properties"
-#~ msgstr "Teileigenschaften bearbeiten"
-
-#~ msgid "Stock Item Attachments"
-#~ msgstr "BestandsObjekt-Anhang"

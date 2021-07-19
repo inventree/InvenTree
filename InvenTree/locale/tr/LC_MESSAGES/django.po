@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-19 07:46+0000\n"
-"PO-Revision-Date: 2021-07-12 14:31\n"
+"PO-Revision-Date: 2021-07-19 07:47\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1698,16 +1698,12 @@ msgid "Display related parts for a part"
 msgstr ""
 
 #: common/models.py:237
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Create initial stock"
-msgstr "Yeni stok konumu oluştur"
+msgstr ""
 
 #: common/models.py:238
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Create initial stock on part creation"
-msgstr "Yeni stok konumu oluştur"
+msgstr ""
 
 #: common/models.py:244
 msgid "Internal Prices"
@@ -2366,18 +2362,14 @@ msgstr ""
 #: company/templates/company/detail.html:364
 #: company/templates/company/manufacturer_part.html:200
 #: part/templates/part/detail.html:825
-#, fuzzy
-#| msgid "Delete supplier parts"
 msgid "Delete Supplier Parts?"
-msgstr "Tedarikçi parçalarını sil"
+msgstr ""
 
 #: company/templates/company/detail.html:365
 #: company/templates/company/manufacturer_part.html:201
 #: part/templates/part/detail.html:826
-#, fuzzy
-#| msgid "Delete supplier parts"
 msgid "All selected supplier parts will be deleted"
-msgstr "Tedarikçi parçalarını sil"
+msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -3428,16 +3420,12 @@ msgid "This action will unallocate the following stock from the Sales Order"
 msgstr "Bu işlem Sipariş Emrinden belirtilen stok kalemleri tahsis edemedi"
 
 #: order/templates/order/so_navbar.html:12
-#, fuzzy
-#| msgid "Sales Orders"
 msgid "Sales Order Line Items"
-msgstr "Satış Emirleri"
+msgstr ""
 
 #: order/templates/order/so_navbar.html:15
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Order Items"
-msgstr "Parça Siparişi"
+msgstr ""
 
 #: order/templates/order/so_navbar.html:26
 msgid "Sales Order Attachments"
@@ -3720,10 +3708,8 @@ msgid "Initial stock amount"
 msgstr ""
 
 #: part/forms.py:223
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Create stock for this part"
-msgstr "Yeni stok konumu oluştur"
+msgstr ""
 
 #: part/forms.py:303
 msgid "Add parameter template to same level categories"
@@ -4402,10 +4388,8 @@ msgid "New Order"
 msgstr ""
 
 #: part/templates/part/detail.html:90
-#, fuzzy
-#| msgid "Sales Orders"
 msgid "Sales Order Allocations"
-msgstr "Satış Emirleri"
+msgstr ""
 
 #: part/templates/part/detail.html:130 part/templates/part/navbar.html:21
 msgid "Part Variants"
@@ -5982,8 +5966,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6563,10 +6546,8 @@ msgid "Delete Manufacturer Part"
 msgstr ""
 
 #: templates/js/company.js:114
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Add Supplier Part"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: templates/js/company.js:124
 msgid "Edit Supplier Part"
@@ -7024,34 +7005,24 @@ msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
 #: templates/js/stock.js:29
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Export Stock"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: templates/js/stock.js:32
-#, fuzzy
-#| msgid "File Format"
 msgid "Format"
-msgstr "Dosya Biçimi"
+msgstr ""
 
 #: templates/js/stock.js:33
-#, fuzzy
-#| msgid "Select output file format"
 msgid "Select file format"
-msgstr "Çıktı dosyası biçimi seçin"
+msgstr ""
 
 #: templates/js/stock.js:45
-#, fuzzy
-#| msgid "Include sublocations"
 msgid "Include Sublocations"
-msgstr "Alt konumları dahil et"
+msgstr ""
 
 #: templates/js/stock.js:46
-#, fuzzy
-#| msgid "Include stock items in sub locations"
 msgid "Include stock items in sublocations"
-msgstr "Stok kalemlerine alt konumları dahil et"
+msgstr ""
 
 #: templates/js/stock.js:88
 msgid "Transfer Stock"
@@ -7776,26 +7747,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Are you sure you want to delete the following Supplier Parts?"
-#~ msgstr "Aşağıdaki Tedarikçi Parçalarını silmek istediğinizden emin misin?"
-
-#~ msgid "Create New Location"
-#~ msgstr "Yeni Konum Oluştur"
-
-#~ msgid "Allocate Parts"
-#~ msgstr "Parçaları Tahsis Et"
-
-#~ msgid "Edit notes"
-#~ msgstr "Notları Düzenle"
-
-#~ msgid "No serial numbers recorded"
-#~ msgstr "Seri numaraları kaydedildi"
-
-#~ msgid "Part is not a template part"
-#~ msgstr "Parça şablon parçası değil"
-
-#~ msgid "Part stock is not tracked by serial number"
-#~ msgstr "Parça stoku seri numarası ile takip edilemez"
-
-#~ msgid "Allocations"
-#~ msgstr "Tahsisler"

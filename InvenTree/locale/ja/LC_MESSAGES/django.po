@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-19 07:46+0000\n"
-"PO-Revision-Date: 2021-07-12 14:31\n"
+"PO-Revision-Date: 2021-07-19 07:47\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -23,15 +23,15 @@ msgstr "APIエンドポイントが見つかりません"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "アクションが指定されていません"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "一致するアクションが見つかりませんでした"
 
 #: InvenTree/fields.py:99
 msgid "Enter date"
-msgstr ""
+msgstr "日付を入力する"
 
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
@@ -80,26 +80,26 @@ msgstr ""
 #: InvenTree/helpers.py:403 order/models.py:315 order/models.py:425
 #: stock/views.py:1278
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "数量コードが無効です"
 
 #: InvenTree/helpers.py:406
 msgid "Empty serial number string"
-msgstr ""
+msgstr "シリアル番号は空です"
 
 #: InvenTree/helpers.py:428 InvenTree/helpers.py:431 InvenTree/helpers.py:434
 #: InvenTree/helpers.py:459
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "無効なグループ： {g}"
 
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "重複シリアル: {g}"
 
 #: InvenTree/helpers.py:472
 msgid "No serial numbers found"
-msgstr ""
+msgstr "シリアル番号が見つかりません"
 
 #: InvenTree/helpers.py:476
 #, python-brace-format
@@ -108,11 +108,11 @@ msgstr ""
 
 #: InvenTree/models.py:61 stock/models.py:1778
 msgid "Attachment"
-msgstr ""
+msgstr "添付ファイル"
 
 #: InvenTree/models.py:62
 msgid "Select file to attach"
-msgstr ""
+msgstr "添付ファイルを選択"
 
 #: InvenTree/models.py:64 templates/js/attachment.js:52
 msgid "Comment"
@@ -208,35 +208,35 @@ msgstr "メールアドレスが未設定です"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "InvenTree システムのヘルスチェックに失敗しました"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "処理待ち"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "設置済"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "完了"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "キャンセル済"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "紛失"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "返品済"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
@@ -253,7 +253,7 @@ msgstr "注意が必要です"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "破損"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
@@ -261,7 +261,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "却下済み"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -2362,10 +2362,8 @@ msgstr ""
 #: company/templates/company/detail.html:364
 #: company/templates/company/manufacturer_part.html:200
 #: part/templates/part/detail.html:825
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Delete Supplier Parts?"
-msgstr "サプライヤー・パーツ"
+msgstr ""
 
 #: company/templates/company/detail.html:365
 #: company/templates/company/manufacturer_part.html:201
@@ -3426,10 +3424,8 @@ msgid "Sales Order Line Items"
 msgstr ""
 
 #: order/templates/order/so_navbar.html:15
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Order Items"
-msgstr "パーツの注文"
+msgstr ""
 
 #: order/templates/order/so_navbar.html:26
 msgid "Sales Order Attachments"
@@ -5970,8 +5966,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6551,10 +6546,8 @@ msgid "Delete Manufacturer Part"
 msgstr "メーカー・パーツを削除"
 
 #: templates/js/company.js:114
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Add Supplier Part"
-msgstr "サプライヤー・パーツ"
+msgstr ""
 
 #: templates/js/company.js:124
 msgid "Edit Supplier Part"
@@ -6819,10 +6812,8 @@ msgid "Category ID"
 msgstr ""
 
 #: templates/js/model_renderers.js:199
-#, fuzzy
-#| msgid "Manufacturer Part"
 msgid "Manufacturer Part ID"
-msgstr "メーカー・パーツ"
+msgstr ""
 
 #: templates/js/model_renderers.js:227
 msgid "Supplier Part ID"
@@ -7022,10 +7013,8 @@ msgid "Format"
 msgstr ""
 
 #: templates/js/stock.js:33
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select file format"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/js/stock.js:45
 msgid "Include Sublocations"
@@ -7758,8 +7747,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Create new Part"
-#~ msgstr "新規パーツを作成"
-
-#~ msgid "Allocate Parts"
-#~ msgstr "パーツを割り当て"
