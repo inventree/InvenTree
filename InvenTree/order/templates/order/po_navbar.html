@@ -15,14 +15,6 @@
             {% trans "Order Items" %}
         </a>
     </li>
-    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
-    <li class='list-group-item' title='{% trans "Upload File" %}'>
-        <a href='{% url "po-upload" order.id %}'>
-            <span class='fas fa-file-upload side-icon'></span>
-            {% trans "Upload File" %}
-        </a>
-    </li>
-    {% endif %}
     <li class='list-group-item' title='{% trans "Received Stock Items" %}'>
         <a href='#' id='select-received-items' class='nav-toggle'>
             <span class='fas fa-sign-in-alt side-icon'></span>
