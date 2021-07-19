@@ -267,16 +267,8 @@
     });
 
     $("#stock-export").click(function() {
-        launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: '{% trans "Export" %}',
-            success: function(response) {
-                var url = "{% url 'stock-export' %}";
-
-                url += "?format=" + response.format;
-                url += "&supplier={{ company.id }}";
-
-                location.href = url;
-            },
+        exportStock({
+            supplier: {{ company.id }}
         });
     });
 

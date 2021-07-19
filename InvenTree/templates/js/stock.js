@@ -20,6 +20,55 @@ function stockStatusCodes() {
 }
 
 
+/*
+ * Export stock table
+ */
+function exportStock(params={}) {
+
+    constructFormBody({}, {
+        title: '{% trans "Export Stock" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: 'csv',
+                choices: [
+                    { value: 'csv', display_name: 'CSV' },
+                    { value: 'tsv', display_name: 'TSV' },
+                    { value: 'xls', display_name: 'XLS' },
+                    { value: 'xlsx', display_name: 'XLSX' },
+                ]
+            },
+            sublocations: {
+                label: '{% trans "Include Sublocations" %}',
+                help_text: '{% trans "Include stock items in sublocations" %}',
+                type: 'boolean',
+                value: 'true',
+            }
+        },
+        onSubmit: function(fields, form_options) {
+
+            var format = getFormFieldValue('format', fields['format'], form_options);
+            var cascade = getFormFieldValue('sublocations', fields['sublocations'], form_options);
+
+            // Hide the modal
+            $(form_options.modal).modal('hide');
+
+            var url = `{% url "stock-export" %}?format=${format}&cascade=${cascade}`;
+
+            for (var key in params) {
+                url += `&${key}=${params[key]}`;
+            }
+
+            console.log(url);
+            location.href = url;
+        }
+    });
+}
+
+
 /**
  * Perform stock adjustments
  */

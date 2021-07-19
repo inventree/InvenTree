@@ -226,33 +226,6 @@ class TestReportFormatForm(HelperForm):
     template = forms.ChoiceField(label=_('Template'), help_text=_('Select test report template'))
 
 
-class ExportOptionsForm(HelperForm):
-    """ Form for selecting stock export options """
-
-    file_format = forms.ChoiceField(label=_('File Format'), help_text=_('Select output file format'))
-
-    include_sublocations = forms.BooleanField(required=False, initial=True, label=_('Include sublocations'), help_text=_("Include stock items in sub locations"))
-
-    class Meta:
-        model = StockLocation
-        fields = [
-            'file_format',
-            'include_sublocations',
-        ]
-
-    def get_format_choices(self):
-        """ File format choices """
-
-        choices = [(x, x.upper()) for x in GetExportFormats()]
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['file_format'].choices = self.get_format_choices()
-
-
 class InstallStockForm(HelperForm):
     """
     Form for manually installing a stock item into another stock item

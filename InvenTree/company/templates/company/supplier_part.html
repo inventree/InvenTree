@@ -284,18 +284,11 @@ loadStockTable($("#stock-table"), {
 });
 
 $("#stock-export").click(function() {
-    launchModalForm("{% url 'stock-export-options' %}", {
-        submit_text: '{% trans "Export" %}',
-        success: function(response) {
-            var url = "{% url 'stock-export' %}";
 
-            url += "?format=" + response.format;
-            url += "&cascade=" + response.cascade;
-            url += "&supplier_part={{ part.id }}";
-
-            location.href = url;
-        },
+    exportStock({
+        supplier_part: {{ part.pk }},
     });
+
 });
 
 $("#item-create").click(function() {

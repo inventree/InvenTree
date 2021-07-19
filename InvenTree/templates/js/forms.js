@@ -252,6 +252,11 @@ function constructDeleteForm(fields, options) {
  */
 function constructForm(url, options) {
 
+    // An "empty" form will be defined locally
+    if (url == null) {
+        constructFormBody({}, options);
+    }
+
     // Save the URL 
     options.url = url;
 
@@ -376,6 +381,11 @@ function constructFormBody(fields, options) {
             // Custom placeholder
             if (field_options.placeholder) {
                 fields[field].placeholder = field_options.placeholder;
+            }
+
+            // Choices
+            if (field_options.choices) {
+                fields[field].choices = field_options.choices;
             }
 
             // Field prefix
