@@ -56,7 +56,6 @@ stock_urls = [
 
     url(r'^track/', include(stock_tracking_urls)),
 
-    url(r'^export-options/?', views.StockExportOptions.as_view(), name='stock-export-options'),
     url(r'^export/?', views.StockExport.as_view(), name='stock-export'),
 
     # Individual stock items
