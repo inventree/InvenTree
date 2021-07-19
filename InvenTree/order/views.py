@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput, IntegerField
 
@@ -95,53 +95,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
     template_name = 'order/sales_order_detail.html'
-
-
-class PurchaseOrderNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for updating the 'notes' field of a PurchaseOrder """
-
-    context_object_name = 'order'
-    template_name = 'order/order_notes.html'
-    model = PurchaseOrder
-
-    # Override the default permission roles
-    role_required = 'purchase_order.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-
-        return reverse('po-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
-
-        return ctx
-
-
-class SalesOrderNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for editing the 'notes' field of a SalesORder """
-
-    context_object_name = 'order'
-    template_name = 'order/sales_order_notes.html'
-    model = SalesOrder
-    role_required = 'sales_order.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        return reverse('so-notes', kwargs={'pk': self.get_object().pk})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
-
-        return ctx
 
 
 class PurchaseOrderCancel(AjaxUpdateView):

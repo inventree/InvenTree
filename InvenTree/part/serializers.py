@@ -33,6 +33,8 @@ class CategorySerializer(InvenTreeModelSerializer):
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
 
+    level = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = PartCategory
         fields = [
@@ -41,10 +43,11 @@ class CategorySerializer(InvenTreeModelSerializer):
             'description',
             'default_location',
             'default_keywords',
-            'pathstring',
-            'url',
+            'level',
             'parent',
             'parts',
+            'pathstring',
+            'url',
         ]
 
 
@@ -509,19 +512,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartParameterSerializer(InvenTreeModelSerializer):
-    """ JSON serializers for the PartParameter model """
-
-    class Meta:
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'data'
-        ]
-
-
 class PartParameterTemplateSerializer(InvenTreeModelSerializer):
     """ JSON serializer for the PartParameterTemplate model """
 
@@ -531,6 +521,22 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'units',
+        ]
+
+
+class PartParameterSerializer(InvenTreeModelSerializer):
+    """ JSON serializers for the PartParameter model """
+
+    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
+
+    class Meta:
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'template',
+            'template_detail',
+            'data'
         ]
 
 

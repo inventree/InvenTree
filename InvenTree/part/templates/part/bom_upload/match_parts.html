@@ -1,0 +1,127 @@
+{% extends "part/bom_upload/upload_file.html" %}
+{% load inventree_extras %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block form_alert %}
+{% if form.errors %}
+{% endif %}
+{% if form_errors %}
+<div class='alert alert-danger alert-block' role='alert'>
+    {% trans "Errors exist in the submitted data" %}
+</div>
+{% endif %}
+{% endblock form_alert %}
+
+{% block form_buttons_top %}
+    {% if wizard.steps.prev %}
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+    {% endif %}
+    <button type="submit" class="save btn btn-default">{% trans "Submit Selections" %}</button>
+{% endblock form_buttons_top %}
+
+{% block form_content %}
+        <thead>
+            <tr>
+                <th></th>
+                <th>{% trans "Row" %}</th>
+                <th>{% trans "Select Part" %}</th>
+                <th>{% trans "Reference" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                {% for col in columns %}
+                {% if col.guess != 'Quantity' %}
+                <th>
+                    <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
+                    <input type='hidden' name='col_guess_{{ forloop.counter0 }}' value='{{ col.guess }}'/>
+                    {% if col.guess %}
+                    {{ col.guess }}
+                    {% else %}
+                    {{ col.name }}
+                    {% endif %}
+                </th>
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+             <tr></tr> {% comment %} Dummy row for javascript del_row method {% endcomment %}
+            {% for row in rows %}
+            <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
+                <td>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row.index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
+                            <span row_id='{{ row.index }}' class='fas fa-trash-alt icon-red'></span>
+                    </button>
+                </td>
+                <td>
+                {% add row.index 1 %}
+                </td>
+                <td>
+                    {% for field in form.visible_fields %}
+                        {% if field.name == row.item_select %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if row.errors.part %}
+                    <p class='help-inline'>{{ row.errors.part }}</p>
+                    {% endif %}
+                </td>
+                <td>
+                    {% for field in form.visible_fields %}
+                        {% if field.name == row.reference %}
+                            {{ field|as_crispy_field }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if row.errors.reference %}
+                        <p class='help-inline'>{{ row.errors.reference }}</p>
+                    {% endif %}
+                </td>
+                <td>
+                    {% for field in form.visible_fields %}
+                        {% if field.name == row.quantity %}
+                            {{ field|as_crispy_field }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if row.errors.quantity %}
+                        <p class='help-inline'>{{ row.errors.quantity }}</p>
+                    {% endif %}
+                </td>
+                {% for item in row.data %}
+                {% if item.column.guess != 'Quantity' %}
+                <td>
+                    {% if item.column.guess == 'Overage' %}
+                        {% for field in form.visible_fields %}
+                            {% if field.name == row.overage %}
+                                {{ field|as_crispy_field }}
+                            {% endif %}
+                        {% endfor %}
+                    {% elif item.column.guess == 'Note' %}
+                        {% for field in form.visible_fields %}
+                            {% if field.name == row.note %}
+                                {{ field|as_crispy_field }}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {{ item.cell }}
+                    {% endif %}
+                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
+                </td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+{% endblock form_content %}
+
+{% block form_buttons_bottom %}
+{% endblock form_buttons_bottom %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('.bomselect').select2({
+    dropdownAutoWidth: true,
+    matcher: partialMatcher,
+});
+
+{% endblock %}

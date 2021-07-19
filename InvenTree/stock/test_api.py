@@ -7,8 +7,8 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 
-from rest_framework import status
 from django.urls import reverse
+from rest_framework import status
 
 from InvenTree.status_codes import StockStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -456,30 +456,32 @@ class StocktakeTest(StockAPITestCase):
 
             # POST without a PK
             response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'must contain a valid integer primary-key', status_code=status.HTTP_400_BAD_REQUEST)
 
-            # POST with a PK but no quantity
+            # POST with an invalid PK
             data['items'] = [{
                 'pk': 10
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'does not match valid stock item', status_code=status.HTTP_400_BAD_REQUEST)
 
+            # POST with missing quantity value
             data['items'] = [{
                 'pk': 1234
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'Invalid quantity value', status_code=status.HTTP_400_BAD_REQUEST)
 
+            # POST with an invalid quantity value
             data['items'] = [{
                 'pk': 1234,
                 'quantity': '10x0d'
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'Invalid quantity value', status_code=status.HTTP_400_BAD_REQUEST)
 
             data['items'] = [{
                 'pk': 1234,

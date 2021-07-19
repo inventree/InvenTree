@@ -43,8 +43,10 @@ def get_next_po_number():
 
     attempts = set([order.reference])
 
+    reference = order.reference
+
     while 1:
-        reference = increment(order.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion
@@ -70,8 +72,10 @@ def get_next_so_number():
 
     attempts = set([order.reference])
 
+    reference = order.reference
+
     while 1:
-        reference = increment(order.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion
@@ -743,8 +747,15 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     def get_base_part(self):
-        """ Return the base-part for the line item """
-        return self.part.part
+        """
+        Return the base part.Part object for the line item
+        
+        Note: Returns None if the SupplierPart is not set!
+        """
+        if self.part is None:
+            return None
+        else:
+            return self.part.part
 
     # TODO - Function callback for when the SupplierPart is deleted?
 

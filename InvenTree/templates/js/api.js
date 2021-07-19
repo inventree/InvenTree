@@ -1,4 +1,15 @@
+{% load i18n %}
+{% load inventree_extras %}
+
 var jQuery = window.$;
+
+$.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null) {
+       return null;
+    }
+    return decodeURI(results[1]) || 0;
+}
 
 // using jQuery
 function getCookie(name) {
@@ -138,4 +149,49 @@ function inventreeDelete(url, options={}) {
 
     inventreePut(url, {}, options);
 
+}
+
+
+function showApiError(xhr) {
+
+    var title = null;
+    var message = null;
+
+    switch (xhr.status) {
+    case 0:     // No response
+        title = '{% trans "No Response" %}';
+        message = '{% trans "No response from the InvenTree server" %}';
+        break;
+    case 400:   // Bad request
+        // Note: Normally error code 400 is handled separately,
+        //       and should now be shown here!
+        title = '{% trans "Error 400: Bad request" %}';
+        message = '{% trans "API request returned error code 400" %}';
+        break;
+    case 401:   // Not authenticated
+        title = '{% trans "Error 401: Not Authenticated" %}';
+        message = '{% trans "Authentication credentials not supplied" %}';
+        break;
+    case 403:   // Permission denied
+        title = '{% trans "Error 403: Permission Denied" %}';
+        message = '{% trans "You do not have the required permissions to access this function" %}';
+        break;
+    case 404:   // Resource not found
+        title = '{% trans "Error 404: Resource Not Found" %}';
+        message = '{% trans "The requested resource could not be located on the server" %}';
+        break;
+    case 408:   // Timeout
+        title = '{% trans "Error 408: Timeout" %}';
+        message = '{% trans "Connection timeout while requesting data from server" %}';
+        break;
+    default:
+        title = '{% trans "Unhandled Error Code" %}';
+        message = `{% trans "Error code" %}: ${xhr.status}`;
+        break;
+    }
+
+    message += "<hr>";
+    message += renderErrorMessage(xhr);
+
+    showAlertDialog(title, message);
 }

@@ -88,6 +88,7 @@ class RuleSet(models.Model):
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
+            'label_partlabel',
         ],
         'stock_location': [
             'stock_stocklocation',

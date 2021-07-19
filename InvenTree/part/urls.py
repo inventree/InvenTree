@@ -33,14 +33,9 @@ part_parameter_urls = [
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     url(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
     url(r'^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
-
-    url(r'^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
 ]
 
 part_detail_urls = [
-    url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
@@ -51,24 +46,6 @@ part_detail_urls = [
 
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
-
-    url(r'^params/', views.PartDetail.as_view(template_name='part/params.html'), name='part-params'),
-    url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
-    url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
-    url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
-    url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
-    url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
-    url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
-    url(r'^prices/', views.PartPricingView.as_view(template_name='part/prices.html'), name='part-prices'),
-    url(r'^manufacturers/?', views.PartDetail.as_view(template_name='part/manufacturer.html'), name='part-manufacturers'),
-    url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
-    url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
-    url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
-    url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
-    url(r'^history/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-history'),
-    url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
-    url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
-    url(r'^notes/?', views.PartNotes.as_view(), name='part-notes'),
 
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
@@ -98,9 +75,6 @@ category_urls = [
     url(r'(?P<pk>\d+)/', include([
         url(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         url(r'^parameters/', include(category_parameter_urls)),
-
-        url(r'^subcategory/', views.CategoryDetail.as_view(template_name='part/subcategory.html'), name='category-subcategory'),
-        url(r'^parametric/', views.CategoryParametric.as_view(), name='category-parametric'),
 
         # Anything else
         url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
