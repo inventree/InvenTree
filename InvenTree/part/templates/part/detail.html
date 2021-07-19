@@ -370,6 +370,16 @@
         sub_part_detail: true,
     });
 
+    // Load the BOM table data in the pricing view
+    loadBomTable($("#bom-pricing-table"), {
+        editable: {{ editing_enabled }},
+        bom_url: "{% url 'api-bom-list' %}",
+        part_url: "{% url 'api-part-list' %}",
+        parent_id: {{ part.id }} ,
+        sub_part_detail: true,
+    });
+
+
     linkButtonsToSelection($("#bom-table"),
         [
             "#bom-item-delete",
@@ -634,17 +644,9 @@
     });
 
     $("#stock-export").click(function() {
-        launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: "{% trans 'Export' %}",
-            success: function(response) {
-                var url = "{% url 'stock-export' %}";
 
-                url += "?format=" + response.format;
-                url += "&cascade=" + response.cascade;
-                url += "&part={{ part.id }}";
-
-                location.href = url;
-            },
+        exportStock({
+            part: {{ part.pk }}
         });
     });
 
@@ -801,45 +803,41 @@
         )
     });
 
+    function reloadSupplierPartTable() {
+        $('#supplier-part-table').bootstrapTable('refresh');
+    }
+
     $('#supplier-create').click(function () {
-        launchModalForm(
-            "{% url 'supplier-part-create' %}",
-            {
-                reload: true,
-                data: {
-                    part: {{ part.id }}
-                },
-                secondary: [
-                    {
-                        field: 'supplier',
-                        label: '{% trans "New Supplier" %}',
-                        title: '{% trans "Create new supplier" %}',
-                    },
-                    {
-                        field: 'manufacturer',
-                        label: '{% trans "New Manufacturer" %}',
-                        title: '{% trans "Create new manufacturer" %}',
-                    }
-                ]
-            });
+
+        createSupplierPart({
+            part: {{ part.pk }},
+            onSuccess: reloadSupplierPartTable,
+        });
     });
 
     $("#supplier-part-delete").click(function() {
 
         var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
-        var parts = [];
+        var requests = [];
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
-        });
-
-        launchModalForm("{% url 'supplier-part-delete' %}", {
-            data: {
-                parts: parts,
-            },
-            reload: true,
-        });
+        showQuestionDialog(
+            '{% trans "Delete Supplier Parts?" %}',
+            '{% trans "All selected supplier parts will be deleted" %}',
+            {
+                accept: function() {
+                    selections.forEach(function(part) {
+                        var url = `/api/company/part/${part.pk}/`;
+            
+                        requests.push(inventreeDelete(url));
+                    });
+            
+                    $.when.apply($, requests).then(function() {
+                        reloadSupplierPartTable();
+                    });
+                }
+            }
+        );
     });
 
     loadSupplierPartTable(
@@ -883,21 +881,10 @@
     });
 
     $('#manufacturer-create').click(function () {
-
-        constructForm('{% url "api-manufacturer-part-list" %}', {
-            fields: {
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true,
-                },
-                manufacturer: {},
-                MPN: {},
-                description: {},
-                link: {},
-            },
-            method: 'POST',
-            title: '{% trans "Add Manufacturer Part" %}',
-            onSuccess: function() { 
+        
+        createManufacturerPart({
+            part: {{ part.pk }},
+            onSuccess: function() {
                 $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });

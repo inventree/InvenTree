@@ -178,40 +178,41 @@ $('#parameter-create').click(function() {
     });
 });
 
+function reloadSupplierPartTable() {
+    $('#supplier-table').bootstrapTable('refresh');
+}
+
 $('#supplier-create').click(function () {
-    launchModalForm(
-        "{% url 'supplier-part-create' %}",
-        {
-            reload: true,
-            data: {
-                manufacturer_part: {{ part.id }}
-            },
-            secondary: [
-                {
-                    field: 'supplier',
-                    label: '{% trans "New Supplier" %}',
-                    title: '{% trans "Create new supplier" %}',
-                },
-            ]
-        });
+    createSupplierPart({
+        manufacturer_part: {{ part.pk }},
+        part: {{ part.part.pk }},
+        onSuccess: reloadSupplierPartTable,
+    });
 });
 
 $("#supplier-part-delete").click(function() {
 
     var selections = $("#supplier-table").bootstrapTable("getSelections");
 
-    var parts = [];
+    var requests = [];
 
-    selections.forEach(function(item) {
-        parts.push(item.pk);
-    });
-
-    launchModalForm("{% url 'supplier-part-delete' %}", {
-        data: {
-            parts: parts,
-        },
-        reload: true,
-    });
+    showQuestionDialog(
+        '{% trans "Delete Supplier Parts?" %}',
+        '{% trans "All selected supplier parts will be deleted" %}',
+        {
+            accept: function() {
+                selections.forEach(function(part) {
+                    var url = `/api/company/part/${part.pk}/`;
+        
+                    requests.push(inventreeDelete(url));
+                });
+        
+                $.when.apply($, requests).then(function() {
+                    reloadSupplierPartTable();
+                });
+            }
+        }
+    );
 });
 
 $("#multi-parameter-delete").click(function() {
@@ -296,29 +297,19 @@ $('#order-part, #order-part2').click(function() {
 
 $('#edit-part').click(function () {
 
-    constructForm('{% url "api-manufacturer-part-detail" part.pk %}', {
-        fields: {
-            part: {},
-            manufacturer: {},
-            MPN: {
-                icon: 'fa-hashtag',
-            },
-            description: {},
-            link: {
-                icon: 'fa-link',
-            },
-        },
-        title: '{% trans "Edit Manufacturer Part" %}',
-        reload: true,
+    editManufacturerPart({{ part.pk }}, {
+        onSuccess: function() {
+            location.reload();
+        }
     });
 });
 
 $('#delete-part').click(function() {
 
-    constructForm('{% url "api-manufacturer-part-detail" part.pk %}', {
-        method: 'DELETE',
-        title: '{% trans "Delete Manufacturer Part" %}',
-        redirect: "{% url 'company-detail' part.manufacturer.id %}",
+    deleteManufacturerPart({{ part.pk }}, {
+        onSuccess: function() {
+            window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
+        }
     });
 });
 
