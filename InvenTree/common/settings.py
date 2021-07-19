@@ -13,11 +13,12 @@ def currency_code_default():
     """
     Returns the default currency code (or USD if not specified)
     """
+    from django.db.utils import ProgrammingError
     from common.models import InvenTreeSetting
 
     try:
         code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-    except django.db.utils.ProgrammingError:
+    except ProgrammingError:
         # database is not initialized yet
         code = ''
 
