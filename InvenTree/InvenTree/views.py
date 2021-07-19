@@ -12,7 +12,6 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.db.models import Q
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
