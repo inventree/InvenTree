@@ -296,8 +296,9 @@ class PartManager(models.Manager):
 
         return super().get_queryset().prefetch_related(
             'category',
+            'category__parent',
             'stock_items',
-            'builds',    
+            'builds',
         )
 
 

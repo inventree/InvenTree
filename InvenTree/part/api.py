@@ -536,14 +536,74 @@ class PartList(generics.ListCreateAPIView):
 
         kwargs['starred_parts'] = self.starred_parts
 
-        try:
-            params = self.request.query_params
-
-            kwargs['category_detail'] = str2bool(params.get('category_detail', False))
-        except AttributeError:
-            pass
-
         return self.serializer_class(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Overide the 'list' method, as the PartCategory objects are
+        very expensive to serialize!
+
+        So we will serialize them first, and keep them in memory,
+        so that they do not have to be serialized multiple times...
+        """
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        # Do we wish to include PartCategory detail?
+        if str2bool(request.query_params.get('category_detail', False)):
+
+            # Work out which part categories we need to query
+            category_ids = set()
+
+            for part in data:
+                cat_id = part['category']
+
+                if cat_id is not None:
+                    category_ids.add(cat_id)
+
+            # Fetch only the required PartCategory objects from the database
+            categories = PartCategory.objects.filter(pk__in=category_ids).prefetch_related(
+                'parts',
+                'parent',
+                'children',
+            )
+
+            category_map = {}
+
+            # Serialize each PartCategory object
+            for category in categories:
+                category_map[category.pk] = part_serializers.CategorySerializer(category).data
+
+            for part in data:
+                cat_id = part['category']
+
+                if cat_id is not None and cat_id in category_map.keys():
+                    detail = category_map[cat_id]
+                else:
+                    detail = None
+
+                part['category_detail'] = detail
+
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
 
     def perform_create(self, serializer):
         """
