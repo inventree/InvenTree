@@ -768,6 +768,10 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError):
                 pass
 
+        # Variant list request (is_template): exclude itself from list
+        if params.get('is_template', False) and params.get('part', None):
+            queryset = queryset.exclude(pk=params.get('part', None))
+
         return queryset
 
     filter_backends = [

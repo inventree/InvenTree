@@ -54,7 +54,11 @@ function editPart(pk, options={}) {
         keywords: {
             icon: 'fa-key',
         },
-        variant_of: {},
+        variant_of: {
+            filters: {
+                part: pk,
+            },
+        },
         link: {
             icon: 'fa-link',
         },
