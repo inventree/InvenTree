@@ -393,16 +393,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 p_val = row['data'][p_idx]['cell']
 
                 if p_val:
-                    # Delete commas
-                    p_val = p_val.replace(',', '')
-
-                    try:
-                        # Attempt to extract a valid decimal value from the field
-                        purchase_price = Decimal(p_val)
-                        # Store the 'purchase_price' value
-                        row['purchase_price'] = purchase_price
-                    except (ValueError, InvalidOperation):
-                        pass
+                    row['purchase_price'] = p_val
 
             # Check if there is a column corresponding to "reference"
             if r_idx >= 0:

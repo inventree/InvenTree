@@ -1473,16 +1473,16 @@ class Part(MPTTModel):
         return self.supplier_parts.count()
 
     @property
-    def has_pricing_info(self):
+    def has_pricing_info(self, internal=False):
         """ Return true if there is pricing information for this part """
-        return self.get_price_range() is not None
+        return self.get_price_range(internal=internal) is not None
 
     @property
     def has_complete_bom_pricing(self):
         """ Return true if there is pricing information for each item in the BOM. """
-
+        use_internal = common.models.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         for item in self.get_bom_items().all().select_related('sub_part'):
-            if not item.sub_part.has_pricing_info:
+            if not item.sub_part.has_pricing_info(use_internal):
                 return False
 
         return True
