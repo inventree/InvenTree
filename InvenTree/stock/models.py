@@ -23,6 +23,7 @@ from django.dispatch import receiver
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.managers import TreeManager
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
@@ -128,6 +129,31 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+class StockItemManager(TreeManager):
+    """
+    Custom database manager for the StockItem class.
+
+    StockItem querysets will automatically prefetch related fields.
+    """
+
+    def get_queryset(self):
+
+        return super().get_queryset().prefetch_related(
+            'belongs_to',
+            'build',
+            'customer',
+            'purchase_order',
+            'sales_order',
+            'supplier_part',
+            'supplier_part__supplier',
+            'allocations',
+            'sales_order_allocations',
+            'location',
+            'part',
+            'tracking_info'
+        )
 
 
 class StockItem(MPTTModel):

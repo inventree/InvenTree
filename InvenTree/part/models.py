@@ -27,6 +27,7 @@ from markdownx.models import MarkdownxField
 from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey, MPTTModel
+from mptt.managers import TreeManager
 
 from stdimage.models import StdImageField
 
@@ -284,6 +285,24 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
     return matches
 
 
+class PartManager(TreeManager):
+    """
+    Defines a custom object manager for the Part model.
+
+    The main purpose of this manager is to reduce the number of database hits,
+    as the Part model has a large number of ForeignKey fields!
+    """
+
+    def get_queryset(self):
+
+        return super().get_queryset().prefetch_related(
+            'category',
+            'category__parent',
+            'stock_items',
+            'builds',
+        )
+
+
 @cleanup.ignore
 class Part(MPTTModel):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
@@ -320,6 +339,8 @@ class Part(MPTTModel):
         creation_user: User who added this part to the database
         responsible: User who is responsible for this part (optional)
     """
+
+    objects = PartManager()
 
     class Meta:
         verbose_name = _("Part")
