@@ -86,9 +86,9 @@ function inventreeDocReady() {
         source: function (request, response) {
             $.ajax({
                 url: '/api/part/',
-                data: { search: request.term },
+                data: { search: request.term, limit: 4, offset: 0 },
                 success: function (data) {
-                    var transformed = $.map(data, function (el) {
+                    var transformed = $.map(data.results, function (el) {
                         return {
                             label: el.name,
                             id: el.pk
