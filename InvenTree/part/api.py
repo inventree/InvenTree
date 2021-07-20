@@ -118,9 +118,17 @@ class CategoryList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'name',
+        'level',
+        'tree_id',
+        'lft',
     ]
 
-    ordering = 'name'
+    # Use hierarchical ordering by default
+    ordering = [
+        'tree_id',
+        'lft',
+        'name'
+    ]
 
     search_fields = [
         'name',

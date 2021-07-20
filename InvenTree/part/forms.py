@@ -217,6 +217,11 @@ class EditPartForm(HelperForm):
                                                    label=_('Include parent categories parameter templates'),
                                                    widget=forms.HiddenInput())
 
+    initial_stock = forms.IntegerField(required=False,
+                                       initial=0,
+                                       label=_('Initial stock amount'),
+                                       help_text=_('Create stock for this part'))
+
     class Meta:
         model = Part
         fields = [
@@ -238,6 +243,7 @@ class EditPartForm(HelperForm):
             'default_expiry',
             'units',
             'minimum_stock',
+            'initial_stock',
             'component',
             'assembly',
             'is_template',
