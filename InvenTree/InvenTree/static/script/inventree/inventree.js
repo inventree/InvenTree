@@ -104,7 +104,6 @@ function inventreeDocReady() {
         },
         create: function () {
             $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
-                console.log(item);
                 return $('<li>')
                     .append('<span>' + imageHoverIcon(item.thumbnail) + item.label + '</span>')
                     .appendTo(ul);
