@@ -84,7 +84,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = StockItemSerializer.prefetch_queryset(queryset)
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
         return queryset
@@ -637,7 +636,6 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = StockItemSerializer.prefetch_queryset(queryset)
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
         return queryset
