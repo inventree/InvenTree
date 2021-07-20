@@ -12,7 +12,7 @@
     {% load crispy_forms_tags %}
 
     <label class='control-label'>{% trans "Parts" %}</label>
-    <p class='help-block'>{% trans "Select parts to receive against this order" %}</p>
+    <p class='help-block'>{% trans "Fill out number of parts received, the status and destination" %}</p>
 
     <table class='table table-striped'>
         <tr>
@@ -55,7 +55,14 @@
                 </div>
             </td>
             <td>
-                {{ line.get_destination }}
+                <div class='control-group'>
+                    <select class='select' name='destination-{{ line.id }}'>
+                        <option value="">----------</option>
+                        {% for location in stock_locations %}
+                        <option value="{{ location.pk }}" {% if location == line.get_destination %}selected="selected"{% endif %}>{{ location }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </td>
             <td>
                 <button class='btn btn-default btn-remove' onClick="removeOrderRowFromOrderWizard()" id='del_item_{{ line.id }}' title='{% trans "Remove line" %}' type='button'>
@@ -67,6 +74,8 @@
     </table>
 
     {% crispy form %}
+
+    <div id='form-errors'>{{ form_errors }}</div>
 </form>
 
 {% endblock %}
