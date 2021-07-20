@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-20 01:36+0000\n"
-"PO-Revision-Date: 2021-07-19 07:47\n"
+"POT-Creation-Date: 2021-07-19 21:59+0000\n"
+"PO-Revision-Date: 2021-07-19 22:24\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1457,10 +1457,8 @@ msgid "Unsupported file format: {ext.upper()}"
 msgstr "Desteklenmeyen dosya formatı: {ext.upper()}"
 
 #: common/files.py:69
-#, fuzzy
-#| msgid "Error reading file (invalid format)"
 msgid "Error reading file (invalid encoding)"
-msgstr "Dosya okurken hata (geçersiz biçim)"
+msgstr ""
 
 #: common/files.py:74
 msgid "Error reading file (invalid format)"
@@ -5973,8 +5971,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7754,3 +7751,4 @@ msgstr ""
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr ""
+
