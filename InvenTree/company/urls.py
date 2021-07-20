@@ -30,11 +30,9 @@ company_urls = [
 
 manufacturer_part_urls = [
     
-    url(r'^(?P<pk>\d+)/', include([
-        url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part.html'), name='manufacturer-part-detail'),
-    ])),
+    url(r'^(?P<pk>\d+)/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part.html'), name='manufacturer-part-detail'),
 ]
 
 supplier_part_urls = [
-    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
+    url(r'^(?P<pk>\d+)/', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
 ]
