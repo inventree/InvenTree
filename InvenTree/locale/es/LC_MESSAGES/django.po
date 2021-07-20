@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-20 05:22+0000\n"
+"POT-Creation-Date: 2021-07-20 22:10+0000\n"
 "PO-Revision-Date: 2021-07-19 22:24\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -1173,7 +1173,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:180
 #: company/templates/company/detail.html:33
-#: company/templates/company/detail.html:75 order/views.py:668
+#: company/templates/company/detail.html:75 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
 msgstr ""
@@ -2051,7 +2051,7 @@ msgstr ""
 msgid "Base Part"
 msgstr ""
 
-#: company/models.py:321 company/models.py:488 order/views.py:1071
+#: company/models.py:321 company/models.py:488 order/views.py:1082
 msgid "Select part"
 msgstr ""
 
@@ -2717,7 +2717,7 @@ msgid "Ship order"
 msgstr ""
 
 #: order/forms.py:89
-msgid "Receive parts to this location"
+msgid "Set all received parts listed above to this location (if left blank, use \"Destination\" column value in above table)"
 msgstr ""
 
 #: order/forms.py:116
@@ -3271,7 +3271,7 @@ msgid "Parts"
 msgstr ""
 
 #: order/templates/order/receive_parts.html:15
-msgid "Select parts to receive against this order"
+msgid "Fill out number of parts received, the status and destination"
 msgstr ""
 
 #: order/templates/order/receive_parts.html:20
@@ -3291,7 +3291,7 @@ msgstr ""
 msgid "Error: Referenced part has been removed"
 msgstr ""
 
-#: order/templates/order/receive_parts.html:61
+#: order/templates/order/receive_parts.html:68
 msgid "Remove line"
 msgstr ""
 
@@ -3496,89 +3496,85 @@ msgstr ""
 msgid "Receive Parts"
 msgstr ""
 
-#: order/views.py:550
+#: order/views.py:552
 msgid "Items received"
 msgstr ""
 
-#: order/views.py:564
-msgid "No destination set"
-msgstr ""
-
-#: order/views.py:609
+#: order/views.py:620
 msgid "Error converting quantity to number"
 msgstr ""
 
-#: order/views.py:615
+#: order/views.py:626
 msgid "Receive quantity less than zero"
 msgstr ""
 
-#: order/views.py:621
+#: order/views.py:632
 msgid "No lines specified"
 msgstr ""
 
-#: order/views.py:694
+#: order/views.py:705
 msgid "Update prices"
 msgstr ""
 
-#: order/views.py:952
+#: order/views.py:963
 #, python-brace-format
 msgid "Ordered {n} parts"
 msgstr ""
 
-#: order/views.py:1005
+#: order/views.py:1016
 msgid "Allocate Serial Numbers"
 msgstr ""
 
-#: order/views.py:1050
+#: order/views.py:1061
 #, python-brace-format
 msgid "Allocated {n} items"
 msgstr ""
 
-#: order/views.py:1066
+#: order/views.py:1077
 msgid "Select line item"
 msgstr ""
 
-#: order/views.py:1097
+#: order/views.py:1108
 #, python-brace-format
 msgid "No matching item for serial {serial}"
 msgstr ""
 
-#: order/views.py:1107
+#: order/views.py:1118
 #, python-brace-format
 msgid "{serial} is not in stock"
 msgstr ""
 
-#: order/views.py:1115
+#: order/views.py:1126
 #, python-brace-format
 msgid "{serial} already allocated to an order"
 msgstr ""
 
-#: order/views.py:1169
+#: order/views.py:1180
 msgid "Allocate Stock to Order"
 msgstr ""
 
-#: order/views.py:1243
+#: order/views.py:1254
 msgid "Edit Allocation Quantity"
 msgstr ""
 
-#: order/views.py:1258
+#: order/views.py:1269
 msgid "Remove allocation"
 msgstr ""
 
-#: order/views.py:1330
+#: order/views.py:1341
 msgid "Sales order not found"
 msgstr ""
 
-#: order/views.py:1336
+#: order/views.py:1347
 msgid "Price not found"
 msgstr ""
 
-#: order/views.py:1339
+#: order/views.py:1350
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
 msgstr ""
 
-#: order/views.py:1344
+#: order/views.py:1355
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
