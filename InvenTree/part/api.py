@@ -571,10 +571,6 @@ class PartList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
-        # Annotate calculated data to the queryset
-        # (This will be used for further filtering)
-        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
         queryset = super().filter_queryset(queryset)
 
         # Filter by "uses" query - Limit to parts which use the provided part
