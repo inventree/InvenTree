@@ -91,7 +91,8 @@ function inventreeDocReady() {
                     var transformed = $.map(data.results, function (el) {
                         return {
                             label: el.name,
-                            id: el.pk
+                            id: el.pk,
+                            thumbnail: el.thumbnail
                         };
                     });
                     response(transformed);
@@ -101,11 +102,19 @@ function inventreeDocReady() {
                 }
             });
         },
-        minLength: 2,
-        classes: {'ui-autocomplete': 'dropdown-menu'},
+        create: function () {
+            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+                console.log(item);
+                return $('<li>')
+                    .append('<span>' + imageHoverIcon(item.thumbnail) + item.label + '</span>')
+                    .appendTo(ul);
+            };
+        },
         select: function( event, ui ) {
-          window.location = '/part/' + ui.item.id + '/';
-        }
+            window.location = '/part/' + ui.item.id + '/';
+        },
+        minLength: 2,
+        classes: {'ui-autocomplete': 'dropdown-menu search-menu'},
     });
 }
 
