@@ -491,6 +491,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
         ctx = {
             'order': self.order,
             'lines': self.lines,
+            'stock_locations': StockLocation.objects.all(),
         }
 
         return ctx
@@ -543,6 +544,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
         self.request = request
         self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+        errors = False
 
         self.lines = []
         self.destination = None
@@ -556,12 +558,6 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 self.destination = StockLocation.objects.get(id=pk)
             except (StockLocation.DoesNotExist, ValueError):
                 pass
-
-        errors = False
-
-        if self.destination is None:
-            errors = True
-            msg = _("No destination set")
 
         # Extract information on all submitted line items
         for item in request.POST:
@@ -586,6 +582,21 @@ class PurchaseOrderReceive(AjaxUpdateView):
                     line.status_code = status
                 else:
                     line.status_code = StockStatus.OK
+
+                # Check the destination field
+                line.destination = None
+                if self.destination:
+                    # If global destination is set, overwrite line value
+                    line.destination = self.destination
+                else:
+                    destination_key = f'destination-{pk}'
+                    destination = request.POST.get(destination_key, None)
+
+                    if destination:
+                        try:
+                            line.destination = StockLocation.objects.get(pk=destination)
+                        except (StockLocation.DoesNotExist, ValueError):
+                            pass
 
                 # Check that line matches the order
                 if not line.order == self.order:
@@ -645,7 +656,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
             self.order.receive_line_item(
                 line,
-                self.destination,
+                line.destination,
                 line.receive_quantity,
                 self.request.user,
                 status=line.status_code,
