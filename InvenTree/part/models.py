@@ -27,6 +27,7 @@ from markdownx.models import MarkdownxField
 from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey, MPTTModel
+from mptt.managers import TreeManager
 
 from stdimage.models import StdImageField
 
@@ -284,7 +285,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
     return matches
 
 
-class PartManager(models.Manager):
+class PartManager(TreeManager):
     """
     Defines a custom object manager for the Part model.
 
