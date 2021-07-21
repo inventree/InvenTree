@@ -351,7 +351,7 @@ class StockLocationList(generics.ListCreateAPIView):
                 loc = StockLocation.objects.get(pk=exclude_tree)
 
                 queryset = queryset.exclude(
-                    pk__in=[l.pk for l in loc.get_descendants(include_self=True)]
+                    pk__in=[subloc.pk for subloc in loc.get_descendants(include_self=True)]
                 )
 
             except (ValueError, StockLocation.DoesNotExist):

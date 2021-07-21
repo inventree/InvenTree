@@ -371,7 +371,6 @@ class Part(MPTTModel):
             }
         }
 
-
     def get_context_data(self, request, **kwargs):
         """
         Return some useful context data about this part for template rendering
