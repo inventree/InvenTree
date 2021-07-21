@@ -191,6 +191,17 @@ class StockItem(MPTTModel):
     def get_api_url():
         return reverse('api-stock-list')
 
+    def api_instance_filters(self):
+        """
+        Custom API instance filters
+        """
+
+        return {
+            'parent': {
+                'exclude_tree': self.pk,
+            }
+        }
+
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
         quantity__gt=0,

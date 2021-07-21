@@ -27,6 +27,7 @@ from markdownx.models import MarkdownxField
 from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey, MPTTModel
+from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 
 from stdimage.models import StdImageField
@@ -359,6 +360,17 @@ class Part(MPTTModel):
 
         return reverse('api-part-list')
 
+    def api_instance_filters(self):
+        """
+        Return API query filters for limiting field results against this instance
+        """
+
+        return {
+            'variant_of': {
+                'exclude_tree': self.pk,
+            }
+        }
+
     def get_context_data(self, request, **kwargs):
         """
         Return some useful context data about this part for template rendering
@@ -414,7 +426,12 @@ class Part(MPTTModel):
 
         self.full_clean()
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except InvalidMove:
+            raise ValidationError({
+                'variant_of': _('Invalid choice for parent part'),
+            })
 
         if add_category_templates:
             # Get part category

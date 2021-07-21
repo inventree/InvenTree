@@ -32,6 +32,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
     def determine_metadata(self, request, view):
         
+        self.request = request
+        self.view = view
+
         metadata = super().determine_metadata(request, view)
 
         user = request.user
@@ -135,6 +138,42 @@ class InvenTreeMetadata(SimpleMetadata):
 
         except AttributeError:
             pass
+
+        # Try to extract 'instance' information
+        instance = None
+
+        # Extract extra information if an instance is available
+        if hasattr(serializer, 'instance'):
+            instance = serializer.instance
+        
+        if instance is None:
+            try:
+                instance = self.view.get_object()
+            except:
+                pass
+
+        if instance is not None:
+            """
+            If there is an instance associated with this API View,
+            introspect that instance to find any specific API info.
+            """
+
+            if hasattr(instance, 'api_instance_filters'):
+
+                instance_filters = instance.api_instance_filters()
+
+                for field_name, field_filters in instance_filters.items():
+
+                    if field_name not in serializer_info.keys():
+                        # The field might be missing, but is added later on
+                        # This function seems to get called multiple times?
+                        continue
+
+                    if 'instance_filters' not in serializer_info[field_name].keys():
+                        serializer_info[field_name]['instance_filters'] = {}
+
+                    for key, value in field_filters.items():
+                        serializer_info[field_name]['instance_filters'][key] = value
 
         return serializer_info
 

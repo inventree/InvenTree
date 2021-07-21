@@ -104,6 +104,21 @@ class BuildList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        # exclude parent tree
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+
+            try:
+                build = Build.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[bld.pk for bld in build.get_descendants(include_self=True)]
+                )
+
+            except (ValueError, Build.DoesNotExist):
+                pass
+
         # Filter by "parent"
         parent = params.get('parent', None)
 

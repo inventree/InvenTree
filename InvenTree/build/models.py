@@ -96,6 +96,14 @@ class Build(MPTTModel):
     def get_api_url():
         return reverse('api-build-list')
 
+    def api_instance_filters(self):
+
+        return {
+            'parent': {
+                'exclude_tree': self.pk,
+            }
+        }
+
     def save(self, *args, **kwargs):
 
         try:
