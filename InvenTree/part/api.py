@@ -644,6 +644,20 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Exclude part variant tree?
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+            try:
+                top_level_part = Part.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[prt.pk for prt in top_level_part.get_descendants(include_self=True)]
+                )
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by 'ancestor'?
         ancestor = params.get('ancestor', None)
 
