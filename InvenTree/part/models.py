@@ -359,6 +359,18 @@ class Part(MPTTModel):
 
         return reverse('api-part-list')
 
+    def api_instance_filters(self):
+        """
+        Return API query filters for limiting field results against this instance
+        """
+
+        return {
+            'variant_of': {
+                'exclude_tree': self.pk,
+            }
+        }
+
+
     def get_context_data(self, request, **kwargs):
         """
         Return some useful context data about this part for template rendering
