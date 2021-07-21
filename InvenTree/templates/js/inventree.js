@@ -1,3 +1,5 @@
+{% load inventree_extras %}
+
 function attachClipboard(selector, containerselector, textElement) {
     // set container
     if (containerselector){
@@ -13,7 +15,8 @@ function attachClipboard(selector, containerselector, textElement) {
         }
     } else {
         text = function(trigger) {
-            var content = trigger.parentElement.parentElement.textContent;return content.trim();
+            var content = trigger.parentElement.parentElement.textContent;
+            return content.trim();
         }
     }
 
@@ -86,7 +89,11 @@ function inventreeDocReady() {
         source: function (request, response) {
             $.ajax({
                 url: '/api/part/',
-                data: { search: request.term, limit: 4, offset: 0 },
+                data: {
+                    search: request.term,
+                    limit: {% settings_value 'SEARCH_PREVIEW_RESULTS' %},
+                    offset: 0
+                },
                 success: function (data) {
                     var transformed = $.map(data.results, function (el) {
                         return {
