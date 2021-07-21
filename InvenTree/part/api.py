@@ -105,6 +105,20 @@ class CategoryList(generics.ListCreateAPIView):
             except (ValueError, PartCategory.DoesNotExist):
                 pass
 
+        # Exclude PartCategory tree
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+            try:
+                cat = PartCategory.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[c.pk for c in cat.get_descendants(include_self=True)]
+                )
+
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
+
         return queryset
 
     filter_backends = [
