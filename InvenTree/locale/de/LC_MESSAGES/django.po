@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-21 12:35+0000\n"
-"PO-Revision-Date: 2021-07-21 12:53\n"
+"PO-Revision-Date: 2021-07-21 21:30\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -590,7 +590,7 @@ msgstr "Menge der BestandsObjekte für Zuordnung auswählen"
 
 #: build/models.py:113
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Ungültige Wahl für übergeordneten Bauauftrag"
 
 #: build/models.py:117 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
@@ -1458,7 +1458,7 @@ msgstr "Dateiformat nicht unterstützt: {ext.upper()}"
 
 #: common/files.py:69
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Fehler beim Lesen der Datei (ungültige Kodierung)"
 
 #: common/files.py:74
 msgid "Error reading file (invalid format)"
@@ -1751,11 +1751,11 @@ msgstr "Erstellung von Test-Berichten aktivieren"
 
 #: common/models.py:281
 msgid "Search Preview Results"
-msgstr ""
+msgstr "Anzahl Suchergebnisse"
 
 #: common/models.py:282
 msgid "Number of results to show in search preview window"
-msgstr ""
+msgstr "Anzahl der Ergebnisse, die in der Vorschau angezeigt werden sollen"
 
 #: common/models.py:288
 msgid "Stock Expiry"
@@ -3761,7 +3761,7 @@ msgstr "Teil-Kategorien"
 
 #: part/models.py:433
 msgid "Invalid choice for parent part"
-msgstr ""
+msgstr "Ungültige Auswahl für übergeordnetes Teil"
 
 #: part/models.py:495 part/models.py:507
 #, python-brace-format
@@ -6056,7 +6056,7 @@ msgstr "Barcode-Einstellungen"
 
 #: templates/InvenTree/settings/global.html:34
 msgid "Search Settings"
-msgstr ""
+msgstr "Sucheinstellungen"
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
@@ -7030,7 +7030,7 @@ msgstr "Bestand exportieren"
 
 #: templates/js/stock.js:32
 msgid "Format"
-msgstr ""
+msgstr "Format"
 
 #: templates/js/stock.js:33
 msgid "Select file format"
