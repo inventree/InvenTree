@@ -398,4 +398,5 @@ class PartLabel(LabelTemplate):
             'revision': part.revision,
             'qr_data': part.format_barcode(brief=True),
             'qr_url': part.format_barcode(url=True, request=request),
+            'parameters': part.parameters_map(),
         }
