@@ -277,6 +277,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_RESULTS': {
+            'name': _('Search Preview Results'),
+            'description': _('Number of results to show in search preview window'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
+        },
+
         'STOCK_ENABLE_EXPIRY': {
             'name': _('Stock Expiry'),
             'description': _('Enable stock expiry functionality'),
