@@ -80,6 +80,41 @@ function inventreeDocReady() {
     attachClipboard('.clip-btn');
     attachClipboard('.clip-btn', 'modal-about');  // modals
     attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
+
+    // Add autocomplete to the search-bar
+    $("#search-bar" ).autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/api/part/',
+                data: { search: request.term, limit: 4, offset: 0 },
+                success: function (data) {
+                    var transformed = $.map(data.results, function (el) {
+                        return {
+                            label: el.name,
+                            id: el.pk,
+                            thumbnail: el.thumbnail
+                        };
+                    });
+                    response(transformed);
+                },
+                error: function () {
+                    response([]);
+                }
+            });
+        },
+        create: function () {
+            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+                return $('<li>')
+                    .append('<span>' + imageHoverIcon(item.thumbnail) + item.label + '</span>')
+                    .appendTo(ul);
+            };
+        },
+        select: function( event, ui ) {
+            window.location = '/part/' + ui.item.id + '/';
+        },
+        minLength: 2,
+        classes: {'ui-autocomplete': 'dropdown-menu search-menu'},
+    });
 }
 
 function isFileTransfer(transfer) {
