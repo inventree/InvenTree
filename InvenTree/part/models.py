@@ -1904,6 +1904,23 @@ class Part(MPTTModel):
 
         return self.parameters.order_by('template__name')
 
+    def parameters_map(self):
+        """
+        Return a map (dict) of parameter values assocaited with this Part instance,
+        of the form:
+        {
+            "name_1": "value_1",
+            "name_2": "value_2",
+        }
+        """
+
+        params = {}
+
+        for parameter in self.parameters.all():
+            params[parameter.template.name] = parameter.data
+
+        return params
+
     @property
     def has_variants(self):
         """ Check if this Part object has variants underneath it. """
