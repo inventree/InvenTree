@@ -762,10 +762,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
 
     GLOBAL_SETTINGS = {
-        'PART_ASSEMBLY': {
-            'name': _('Assembly'),
-            'description': _('Parts can be assembled from other components by default'),
-            'default': False,
+        'HOMEPAGE_PART_STARRED': {
+            'name': _('Show starred parts'),
+            'description': _('Show starred parts on the homepage'),
+            'default': True,
             'validator': bool,
         },
     }
