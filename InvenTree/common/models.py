@@ -745,6 +745,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
+    key = models.CharField(
+        max_length=50,
+        blank=False,
+        unique=True,
+        help_text=_('Settings key (must be unique - case insensitive'),
+    )
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
@@ -763,6 +769,16 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     class Meta:
         verbose_name = "InvenTree User Setting"
         verbose_name_plural = "InvenTree User Settings"
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
+        ]
+
+    key = models.CharField(
+        max_length=50,
+        blank=False,
+        unique=False,
+        help_text=_('Settings key (must be unique - case insensitive'),
+    )
 
     user = models.ForeignKey(
         User,
