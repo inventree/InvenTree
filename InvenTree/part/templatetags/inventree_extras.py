@@ -18,7 +18,7 @@ from InvenTree import version, settings
 
 import InvenTree.helpers
 
-from common.models import InvenTreeSetting, ColorTheme
+from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
 
 register = template.Library()
@@ -182,11 +182,12 @@ def setting_object(key, *args, **kwargs):
     """
     Return a setting object speciifed by the given key
     (Or return None if the setting does not exist)
+    if a user-setting was requested return that
     """
 
-    setting = InvenTreeSetting.get_setting_object(key)
-
-    return setting
+    if 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+    return InvenTreeSetting.get_setting_object(key)
 
 
 @register.simple_tag()
