@@ -35,7 +35,6 @@ class BaseInvenTreeSetting(models.Model):
     single values (e.g. one-off settings values).
     """
 
-
     GLOBAL_SETTINGS = {}
 
     class Meta:
@@ -755,6 +754,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         unique=True,
         help_text=_('Settings key (must be unique - case insensitive'),
     )
+
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
