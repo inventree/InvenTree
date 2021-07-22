@@ -111,6 +111,18 @@ class SettingEdit(AjaxUpdateView):
                 form.add_error('value', _('Supplied value must be a boolean'))
 
 
+class UserSettingEdit(SettingEdit):
+    """
+    View for editing an InvenTree key:value user  settings object,
+    (or creating it if the key does not already exist)
+    """
+
+    model = models.InvenTreeUserSetting
+    ajax_form_title = _('Change User Setting')
+    form_class = forms.SettingEditForm
+    ajax_template_name = "common/edit_setting.html"
+
+
 class MultiStepFormView(SessionWizardView):
     """ Setup basic methods of multi-step form
 
