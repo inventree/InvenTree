@@ -259,7 +259,7 @@ class BaseInvenTreeSetting(models.Model):
         setting.value = str(value)
         setting.save()
 
-    key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key (must be unique - case insensitive'))
+    key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive'))
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
 
