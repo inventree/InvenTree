@@ -45,8 +45,8 @@ class SettingEdit(AjaxUpdateView):
 
         ctx['key'] = setting.key
         ctx['value'] = setting.value
-        ctx['name'] = models.InvenTreeSetting.get_setting_name(setting.key)
-        ctx['description'] = models.InvenTreeSetting.get_setting_description(setting.key)
+        ctx['name'] = self.model.get_setting_name(setting.key)
+        ctx['description'] = self.model.get_setting_description(setting.key)
 
         return ctx
 
@@ -69,12 +69,12 @@ class SettingEdit(AjaxUpdateView):
             self.object.value = str2bool(setting.value)
             form.fields['value'].value = str2bool(setting.value)
 
-        name = models.InvenTreeSetting.get_setting_name(setting.key)
+        name = self.model.get_setting_name(setting.key)
 
         if name:
             form.fields['value'].label = name
 
-        description = models.InvenTreeSetting.get_setting_description(setting.key)
+        description = self.model.get_setting_description(setting.key)
 
         if description:
             form.fields['value'].help_text = description
