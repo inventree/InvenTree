@@ -145,7 +145,11 @@ class BaseInvenTreeSetting(models.Model):
         return choices
 
     @classmethod
-    def get_setting_object(cls, key):
+    def get_filters(cls, key, **kwargs):
+        return {'key__iexact': key}
+
+    @classmethod
+    def get_setting_object(cls, key, **kwargs):
         """
         Return an InvenTreeSetting object matching the given key.
 
@@ -156,7 +160,7 @@ class BaseInvenTreeSetting(models.Model):
         key = str(key).strip().upper()
 
         try:
-            setting = cls.objects.filter(key__iexact=key).first()
+            setting = cls.objects.filter(**cls.get_filters(key, **kwargs)).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
         except (IntegrityError, OperationalError):
@@ -165,7 +169,7 @@ class BaseInvenTreeSetting(models.Model):
         # Setting does not exist! (Try to create it)
         if not setting:
 
-            setting = cls(key=key, value=cls.get_setting_default(key))
+            setting = cls(key=key, value=cls.get_setting_default(key), **kwargs)
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -224,7 +228,7 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
     @classmethod
-    def set_setting(cls, key, value, user, create=True):
+    def set_setting(cls, key, value, change_user, create=True, **kwargs):
         """
         Set the value of a particular setting.
         If it does not exist, option to create it.
@@ -232,19 +236,19 @@ class BaseInvenTreeSetting(models.Model):
         Args:
             key: settings key
             value: New value
-            user: User object (must be staff member to update a core setting)
+            change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
 
-        if user is not None and not user.is_staff:
+        if change_user is not None and not change_user.is_staff:
             return
 
         try:
-            setting = cls.objects.get(key__iexact=key)
+            setting = cls.objects.get(**cls.get_filters(key, **kwargs))
         except cls.DoesNotExist:
 
             if create:
-                setting = cls(key=key)
+                setting = cls(key=key, **kwargs)
             else:
                 return
 
@@ -338,7 +342,7 @@ class BaseInvenTreeSetting(models.Model):
             # We can accept function validators with a single argument
             validator(self.value)
 
-    def validate_unique(self, exclude=None):
+    def validate_unique(self, exclude=None, **kwargs):
         """ Ensure that the key:value pair is unique.
         In addition to the base validators, this ensures that the 'key'
         is unique, using a case-insensitive comparison.
@@ -347,7 +351,7 @@ class BaseInvenTreeSetting(models.Model):
         super().validate_unique(exclude)
 
         try:
-            setting = self.__class__.objects.exclude(id=self.id).filter(key__iexact=self.key)
+            setting = self.__class__.objects.exclude(id=self.id).filter(**self.get_filters(self.key, **kwargs))
             if setting.exists():
                 raise ValidationError({'key': _('Key string must be unique')})
         except self.DoesNotExist:
