@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-21 12:35+0000\n"
-"PO-Revision-Date: 2021-07-19 22:24\n"
+"PO-Revision-Date: 2021-07-21 12:53\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -3760,10 +3760,8 @@ msgid "Part Categories"
 msgstr ""
 
 #: part/models.py:433
-#, fuzzy
-#| msgid "Invalid character in part name"
 msgid "Invalid choice for parent part"
-msgstr "Błędny znak w nazwie elementu"
+msgstr ""
 
 #: part/models.py:495 part/models.py:507
 #, python-brace-format
@@ -5981,8 +5979,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6055,10 +6052,8 @@ msgid "Barcode Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/global.html:34
-#, fuzzy
-#| msgid "Change Setting"
 msgid "Search Settings"
-msgstr "Zmień ustawienie"
+msgstr ""
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
@@ -7769,5 +7764,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "No destination set"
-#~ msgstr "Nie ustawiono miejsca docelowego"
