@@ -792,6 +792,17 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         help_text=_('User'),
     )
 
+    @classmethod
+    def get_setting_object(cls, key, user):
+        return super().get_setting_object(key, user=user)
+
+    def validate_unique(self, exclude=None):
+        return super().validate_unique(exclude=exclude, user=self.user)
+
+    @classmethod
+    def get_filters(cls, key, **kwargs):
+        return {'key__iexact': key, 'user__id__iexact': kwargs['user'].id}
+
 
 class PriceBreak(models.Model):
     """
