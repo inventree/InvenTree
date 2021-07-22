@@ -19,8 +19,6 @@ from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-import common.settings
-
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
@@ -670,6 +668,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_RESULTS': {
+            'name': _('Search Preview Results'),
+            'description': _('Number of results to show in search preview window'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
+        },
+
         'STOCK_ENABLE_EXPIRY': {
             'name': _('Stock Expiry'),
             'description': _('Enable stock expiry functionality'),
@@ -853,6 +858,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     - If MOQ (minimum order quantity) is required, bump quantity
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
+    from common.settings import currency_code_default
 
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()
@@ -876,7 +882,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
     if currency is None:
         # Default currency selection
-        currency = common.settings.currency_code_default()
+        currency = currency_code_default()
 
     pb_min = None
     for pb in price_breaks:
