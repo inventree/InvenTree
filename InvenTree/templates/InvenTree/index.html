@@ -95,11 +95,21 @@ function addHeaderAction(label, title, icon, options) {
 
 {% if roles.part.view %}
 addHeaderTitle('{% trans "Parts" %}');
+
+{% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
+{% if setting_part_starred %}
 addHeaderAction('starred-parts', '{% trans "Starred Parts" %}', 'fa-star');
+loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
+    params: {
+        "starred": true,
+    },
+    name: 'starred_parts',
+});
+{% endif %}
+
+{% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
+{% if setting_part_latest %}
 addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
-addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
-
-
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
@@ -107,21 +117,18 @@ loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     },
     name: 'latest_parts',
 });
+{% endif %}
 
-loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
-    params: {
-        "starred": true,
-    },
-    name: 'starred_parts',
-});
-
+{% settings_value 'HOMEPAGE_BOM_VALIDATION' user=request.user as setting_bom_validation %}
+{% if setting_bom_validation %}
+addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
     params: {
         "bom_valid": false,
     },
     name: 'bom_invalid_parts',
 });
-
+{% endif %}
 {% endif %}
 
 {% if roles.stock.view %}
