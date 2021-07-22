@@ -69,6 +69,47 @@ def offload_task(taskname, *args, **kwargs):
     task.run()
 
 
+def run_task(taskname):
+    """
+        1. Check if task is implemented
+            - yes: proceed
+            - no: return
+        2. Check if worker cluster is running
+            - yes: add task to queue
+            - no: run it as blocking process
+    """
+
+    # Get task list
+    tasks = get_task_list()
+
+    # Check if task exists
+    if taskname not in tasks:
+        logger.warning(f'Task "{taskname}" is not implemented')
+        return
+
+    from InvenTree.status import is_worker_running
+
+    if is_worker_running():
+        # Append module path
+        taskname = 'InvenTree.tasks.' + taskname
+        # Running as task
+        offload_task(taskname)
+    else:
+        # Retrieve local method from task name
+        _func = eval(taskname)
+        # Run it as blocking process
+        _func()
+
+
+def get_task_list():
+    return [task for task in LOCAL_METHODS if task not in TASK_MANAGEMENT]
+
+
+# Keep TASK_MANAGEMENT before task methods
+TASK_MANAGEMENT = [key for key, value in locals().items() if callable(value) and value.__module__ == __name__]
+#
+
+
 def heartbeat():
     """
     Simple task which runs at 5 minute intervals,
@@ -217,3 +258,8 @@ def send_email(subject, body, recipients, from_email=None):
         from_email,
         recipients,
     )
+
+
+# Keep LOCAL_METHODS at the end of the file
+LOCAL_METHODS = [key for key, value in locals().items() if callable(value) and value.__module__ == __name__]
+#

@@ -803,17 +803,11 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        # Define associated task
-        task_name = 'InvenTree.tasks.update_exchange_rates'
+        # Define associated task from InvenTree.tasks list of methods
+        taskname = 'update_exchange_rates'
 
-        if InvenTree.status.is_worker_running():
-            # Running as task
-            InvenTree.tasks.offload_task(task_name)
-        else:
-            # Retrieve function from task name
-            _func = eval(task_name)
-            # Run it: will block for a little bit
-            _func()
+        # Run it
+        InvenTree.tasks.run_task(taskname)
 
         return self.get(request, *args, **kwargs)
 
