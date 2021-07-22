@@ -27,6 +27,7 @@ from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
 
+import InvenTree.status
 import InvenTree.tasks
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
@@ -802,8 +803,17 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        # Will block for a little bit
-        InvenTree.tasks.update_exchange_rates()
+        # Define associated task
+        task_name = 'InvenTree.tasks.update_exchange_rates'
+
+        if InvenTree.status.is_worker_running():
+            # Running as task
+            InvenTree.tasks.offload_task(task_name)
+        else:
+            # Retrieve function from task name
+            _func = eval(task_name)
+            # Run it: will block for a little bit
+            _func()
 
         return self.get(request, *args, **kwargs)
 
