@@ -780,7 +780,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'HOMEPAGE_BOM_VALIDATION': {
-            'name': _('Show starunvalidated BOMs'),
+            'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
             'default': True,
             'validator': bool,
