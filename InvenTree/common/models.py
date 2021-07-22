@@ -194,7 +194,7 @@ class BaseInvenTreeSetting(models.Model):
             return None
 
     @classmethod
-    def get_setting(cls, key, backup_value=None):
+    def get_setting(cls, key, backup_value=None, **kwargs):
         """
         Get the value of a particular setting.
         If it does not exist, return the backup value (default = None)
@@ -204,7 +204,7 @@ class BaseInvenTreeSetting(models.Model):
         if backup_value is None:
             backup_value = cls.get_setting_default(key)
 
-        setting = cls.get_setting_object(key)
+        setting = cls.get_setting_object(key, **kwargs)
 
         if setting:
             value = setting.value
