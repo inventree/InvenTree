@@ -1037,3 +1037,10 @@ a.anchor {
     height: 30px;
 }
 
+.search-menu {
+    padding-top: 2rem;
+}
+
+.search-menu .ui-menu-item {
+    margin-top: 0.5rem;
+}

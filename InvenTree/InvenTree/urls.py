@@ -111,6 +111,7 @@ dynamic_javascript_urls = [
     url(r'^company.js', DynamicJsView.as_view(template_name='js/company.js'), name='company.js'),
     url(r'^filters.js', DynamicJsView.as_view(template_name='js/filters.js'), name='filters.js'),
     url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
+    url(r'^inventree.js', DynamicJsView.as_view(template_name='js/inventree.js'), name='inventree.js'),
     url(r'^label.js', DynamicJsView.as_view(template_name='js/label.js'), name='label.js'),
     url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
     url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),

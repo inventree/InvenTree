@@ -296,7 +296,9 @@ class StockItemLabel(LabelTemplate):
             'uid': stock_item.uid,
             'qr_data': stock_item.format_barcode(brief=True),
             'qr_url': stock_item.format_barcode(url=True, request=request),
-            'tests': stock_item.testResultMap()
+            'tests': stock_item.testResultMap(),
+            'parameters': stock_item.part.parameters_map(),
+
         }
 
 
@@ -398,4 +400,5 @@ class PartLabel(LabelTemplate):
             'revision': part.revision,
             'qr_data': part.format_barcode(brief=True),
             'qr_url': part.format_barcode(url=True, request=request),
+            'parameters': part.parameters_map(),
         }

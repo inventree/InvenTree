@@ -24,14 +24,14 @@
 
     {% comment "for later" %}
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Manufacturer Part Stock" %}'>
-        <a href='{% url "manufacturer-part-stock" part.id %}'>
+        <a href='#'>
             <span class='fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
     
     <li class='list-group-item {% if tab == "orders" %}active{% endif %}' title='{% trans "Manufacturer Part Orders" %}'>
-        <a href='{% url "manufacturer-part-orders" part.id %}'>
+        <a href='#'>
             <span class='fas fa-shopping-cart sidebar-icon'></span>
             {% trans "Orders" %}
         </a>
