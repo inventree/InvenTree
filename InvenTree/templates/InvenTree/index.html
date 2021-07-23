@@ -93,6 +93,7 @@ function addHeaderAction(label, title, icon, options) {
     });
 }
 
+
 {% if roles.part.view %}
 addHeaderTitle('{% trans "Parts" %}');
 
@@ -131,13 +132,13 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% endif %}
 {% endif %}
 
+
 {% if roles.stock.view %}
 addHeaderTitle('{% trans "Stock" %}');
-addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
-addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
-addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
-addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
 
+{% settings_value 'HOMEPAGE_STOCK_RECENT' user=request.user as setting_stock_recent %}
+{% if setting_stock_recent %}
+addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
         part_detail: true,
@@ -147,12 +148,48 @@ loadStockTable($('#table-recently-updated-stock'), {
     name: 'recently-updated-stock',
     grouping: false,
 });
+{% endif %}
+
+{% settings_value 'HOMEPAGE_STOCK_LOW' user=request.user as setting_stock_low %}
+{% if setting_stock_low %}
+addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
+loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
+    params: {
+        low_stock: true,
+    },
+    name: "low_stock_parts",
+});
+{% endif %}
+
+{% settings_value 'HOMEPAGE_STOCK_DEPLETED' user=request.user as setting_stock_depleted %}
+{% if setting_stock_depleted %}
+addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
+loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
+    params: {
+        depleted_stock: true,
+    },
+    name: "depleted_stock_parts",
+});
+{% endif %}
+
+{% settings_value 'HOMEPAGE_STOCK_NEEDED' user=request.user as setting_stock_needed %}
+{% if setting_stock_needed %}
+addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
+loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
+    params: {
+        stock_to_build: true,
+    },
+    name: "to_build_parts",
+});
+{% endif %}
+
 
 {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
 {% if expiry %}
-addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
-addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
 
+{% settings_value 'HOMEPAGE_STOCK_EXPIRED' user=request.user as setting_stock_expired %}
+{% if setting_stock_expired %}
+addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
 loadStockTable($("#table-expired-stock"), {
     params: {
         expired: true,
@@ -160,7 +197,11 @@ loadStockTable($("#table-expired-stock"), {
         part_detail: true,
     },
 });
+{% endif %}
 
+{% settings_value 'HOMEPAGE_STOCK_STALE' user=request.user as setting_stock_stale %}
+{% if setting_stock_stale %}
+addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
 loadStockTable($("#table-stale-stock"), {
     params: {
         stale: true,
@@ -171,34 +212,16 @@ loadStockTable($("#table-stale-stock"), {
 });
 {% endif %}
 
-loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
-    params: {
-        low_stock: true,
-    },
-    name: "low_stock_parts",
-});
-
-loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
-    params: {
-        depleted_stock: true,
-    },
-    name: "depleted_stock_parts",
-});
-
-loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
-    params: {
-        stock_to_build: true,
-    },
-    name: "to_build_parts",
-});
-
 {% endif %}
+{% endif %}
+
 
 {% if roles.build.view %}
 addHeaderTitle('{% trans "Build Orders" %}');
-addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
-addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
 
+{% settings_value 'HOMEPAGE_BUILD_PENDING' user=request.user as setting_build_pending %}
+{% if setting_build_pending %}
+addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
 loadBuildTable("#table-build-pending", {
     url: "{% url 'api-build-list' %}",
     params: {
@@ -206,7 +229,11 @@ loadBuildTable("#table-build-pending", {
     },
     disableFilters: true,
 });
+{% endif %}
 
+{% settings_value 'HOMEPAGE_BUILD_OVERDUE' user=request.user as setting_build_overdue %}
+{% if setting_build_overdue %}
+addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
 loadBuildTable("#table-build-overdue", {
     url: "{% url 'api-build-list' %}",
     params: {
@@ -216,11 +243,15 @@ loadBuildTable("#table-build-overdue", {
 });
 {% endif %}
 
+{% endif %}
+
+
 {% if roles.purchase_order.view %}
 addHeaderTitle('{% trans "Purchase Orders" %}');
-addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
-addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" %}', 'fa-calendar-times');
 
+{% settings_value 'HOMEPAGE_PO_OUTSTANDING' user=request.user as setting_po_outstanding %}
+{% if setting_po_outstanding %}
+addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
 loadPurchaseOrderTable("#table-po-outstanding", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -228,7 +259,11 @@ loadPurchaseOrderTable("#table-po-outstanding", {
         outstanding: true,
     }
 });
+{% endif %}
 
+{% settings_value 'HOMEPAGE_PO_OVERDUE' user=request.user as setting_po_overdue %}
+{% if setting_po_overdue %}
+addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" %}', 'fa-calendar-times');
 loadPurchaseOrderTable("#table-po-overdue", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -236,14 +271,17 @@ loadPurchaseOrderTable("#table-po-overdue", {
         overdue: true,
     }
 });
+{% endif %}
 
 {% endif %}
 
+
 {% if roles.sales_order.view %}
 addHeaderTitle('{% trans "Sales Orders" %}');
-addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
-addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" %}', 'fa-calendar-times');
 
+{% settings_value 'HOMEPAGE_SO_OUTSTANDING' user=request.user as setting_so_outstanding %}
+{% if setting_so_outstanding %}
+addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
 loadSalesOrderTable("#table-so-outstanding", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -251,7 +289,11 @@ loadSalesOrderTable("#table-so-outstanding", {
         outstanding: true,
     },
 });
+{% endif %}
 
+{% settings_value 'HOMEPAGE_SO_OVERDUE' user=request.user as setting_so_overdue %}
+{% if setting_so_overdue %}
+addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" %}', 'fa-calendar-times');
 loadSalesOrderTable("#table-so-overdue", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -259,6 +301,7 @@ loadSalesOrderTable("#table-so-overdue", {
         customer_detail: true,
     }
 });
+{% endif %}
 
 {% endif %}
 

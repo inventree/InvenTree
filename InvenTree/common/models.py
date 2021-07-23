@@ -785,6 +785,78 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'HOMEPAGE_STOCK_RECENT': {
+            'name': _('Show recent stock changes'),
+            'description': _('Show recently changed stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_LOW': {
+            'name': _('Show low stock'),
+            'description': _('Show low stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_DEPLETED': {
+            'name': _('Show depleted stock'),
+            'description': _('Show depleted stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_NEEDED': {
+            'name': _('Show needed stock'),
+            'description': _('Show stock items needed for builds on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_EXPIRED': {
+            'name': _('Show expired stock'),
+            'description': _('Show expired stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_STALE': {
+            'name': _('Show stale stock'),
+            'description': _('Show stale stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_BUILD_PENDING': {
+            'name': _('Show pending builds'),
+            'description': _('Show pending builds on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_BUILD_OVERDUE': {
+            'name': _('Show overdue builds'),
+            'description': _('Show overdue builds on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_PO_OUTSTANDING': {
+            'name': _('Show outstanding POs'),
+            'description': _('Show outstanding POs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_PO_OVERDUE': {
+            'name': _('Show overdue POs'),
+            'description': _('Show overdue POs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_SO_OUTSTANDING': {
+            'name': _('Show outstanding SOs'),
+            'description': _('Show outstanding SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_SO_OVERDUE': {
+            'name': _('Show overdue SOs'),
+            'description': _('Show overdue SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:
