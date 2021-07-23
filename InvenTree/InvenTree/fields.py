@@ -55,7 +55,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
     
     def __init__(self, **kwargs):
         # detect if creating migration
-        if 'makemigrations' in sys.argv:
+        if 'migrate' in sys.argv or 'makemigrations' in sys.argv:
             # remove currency information for a clean migration
             kwargs['default_currency'] = ''
             kwargs['currency_choices'] = []
