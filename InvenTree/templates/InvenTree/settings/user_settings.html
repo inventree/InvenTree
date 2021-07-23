@@ -1,0 +1,25 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='user_settings' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "User Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+<div class='row'>
+    <table class='table table-striped table-condensed'>
+        {% include "InvenTree/settings/header.html" %}
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_PART_STARRED" user_setting=True %}
+            {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_PART_LATEST" user_setting=True %}
+            {% include "InvenTree/settings/setting.html" with key="HOMEPAGE_BOM_VALIDATION" user_setting=True %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

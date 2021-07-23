@@ -79,6 +79,7 @@ apipatterns = [
 
 settings_urls = [
 
+    url(r'^usersettings/', SettingsView.as_view(template_name='InvenTree/settings/user_settings.html'), name='settings-user-settings'),
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^i18n/?', include('django.conf.urls.i18n')),
