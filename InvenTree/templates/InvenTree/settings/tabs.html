@@ -9,7 +9,7 @@
         <a href="{% url 'settings-appearance' %}"><span class='fas fa-fill'></span> {% trans "Appearance" %}</a>
     </li>
     <li{% ifequal tab 'user_settings' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-user-settings' %}"><span class='fas fa-fill'></span> {% trans "User Settings" %}</a>
+        <a href="{% url 'settings-user-settings' %}"><span class='fas fa-cog'></span> {% trans "User Settings" %}</a>
     </li>
 </ul>
 {% if user.is_staff %}
