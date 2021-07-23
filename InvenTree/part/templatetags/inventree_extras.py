@@ -70,6 +70,12 @@ def add(x, y, *args, **kwargs):
 
 
 @register.simple_tag()
+def to_list(*args):
+    """ Return the input arguments as list """
+    return args
+
+
+@register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 
