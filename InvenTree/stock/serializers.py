@@ -71,29 +71,6 @@ class StockItemSerializer(InvenTreeModelSerializer):
     """
 
     @staticmethod
-    def prefetch_queryset(queryset):
-        """
-        Prefetch related database tables,
-        to reduce database hits.
-        """
-
-        return queryset.prefetch_related(
-            'belongs_to',
-            'build',
-            'customer',
-            'purchase_order',
-            'sales_order',
-            'supplier_part',
-            'supplier_part__supplier',
-            'supplier_part__manufacturer_part__manufacturer',
-            'allocations',
-            'sales_order_allocations',
-            'location',
-            'part',
-            'tracking_info',
-        )
-
-    @staticmethod
     def annotate_queryset(queryset):
         """
         Add some extra annotations to the queryset,

@@ -94,6 +94,17 @@ class InvenTreeTree(MPTTModel):
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
 
+    def api_instance_filters(self):
+        """
+        Instance filters for InvenTreeTree models
+        """
+
+        return {
+            'parent': {
+                'exclude_tree': self.pk,
+            }
+        }
+
     def save(self, *args, **kwargs):
 
         try:

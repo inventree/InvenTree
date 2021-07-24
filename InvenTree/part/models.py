@@ -27,6 +27,8 @@ from markdownx.models import MarkdownxField
 from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey, MPTTModel
+from mptt.exceptions import InvalidMove
+from mptt.managers import TreeManager
 
 from stdimage.models import StdImageField
 
@@ -284,6 +286,24 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
     return matches
 
 
+class PartManager(TreeManager):
+    """
+    Defines a custom object manager for the Part model.
+
+    The main purpose of this manager is to reduce the number of database hits,
+    as the Part model has a large number of ForeignKey fields!
+    """
+
+    def get_queryset(self):
+
+        return super().get_queryset().prefetch_related(
+            'category',
+            'category__parent',
+            'stock_items',
+            'builds',
+        )
+
+
 @cleanup.ignore
 class Part(MPTTModel):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
@@ -321,6 +341,8 @@ class Part(MPTTModel):
         responsible: User who is responsible for this part (optional)
     """
 
+    objects = PartManager()
+
     class Meta:
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
@@ -337,6 +359,17 @@ class Part(MPTTModel):
     def get_api_url():
 
         return reverse('api-part-list')
+
+    def api_instance_filters(self):
+        """
+        Return API query filters for limiting field results against this instance
+        """
+
+        return {
+            'variant_of': {
+                'exclude_tree': self.pk,
+            }
+        }
 
     def get_context_data(self, request, **kwargs):
         """
@@ -393,7 +426,12 @@ class Part(MPTTModel):
 
         self.full_clean()
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except InvalidMove:
+            raise ValidationError({
+                'variant_of': _('Invalid choice for parent part'),
+            })
 
         if add_category_templates:
             # Get part category
@@ -1473,16 +1511,16 @@ class Part(MPTTModel):
         return self.supplier_parts.count()
 
     @property
-    def has_pricing_info(self):
+    def has_pricing_info(self, internal=False):
         """ Return true if there is pricing information for this part """
-        return self.get_price_range() is not None
+        return self.get_price_range(internal=internal) is not None
 
     @property
     def has_complete_bom_pricing(self):
         """ Return true if there is pricing information for each item in the BOM. """
-
+        use_internal = common.models.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         for item in self.get_bom_items().all().select_related('sub_part'):
-            if not item.sub_part.has_pricing_info:
+            if not item.sub_part.has_pricing_info(use_internal):
                 return False
 
         return True
@@ -1865,6 +1903,23 @@ class Part(MPTTModel):
         """ Return all parameters for this part, ordered by name """
 
         return self.parameters.order_by('template__name')
+
+    def parameters_map(self):
+        """
+        Return a map (dict) of parameter values assocaited with this Part instance,
+        of the form:
+        {
+            "name_1": "value_1",
+            "name_2": "value_2",
+        }
+        """
+
+        params = {}
+
+        for parameter in self.parameters.all():
+            params[parameter.template.name] = parameter.data
+
+        return params
 
     @property
     def has_variants(self):

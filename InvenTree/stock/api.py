@@ -81,7 +81,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = StockItemSerializer.prefetch_queryset(queryset)
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
         return queryset
@@ -337,6 +336,20 @@ class StockLocationList(generics.ListCreateAPIView):
 
                 else:
                     queryset = queryset.filter(parent=location)
+
+            except (ValueError, StockLocation.DoesNotExist):
+                pass
+
+        # Exclude StockLocation tree
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+            try:
+                loc = StockLocation.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[subloc.pk for subloc in loc.get_descendants(include_self=True)]
+                )
 
             except (ValueError, StockLocation.DoesNotExist):
                 pass
@@ -634,7 +647,6 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = StockItemSerializer.prefetch_queryset(queryset)
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
         return queryset
@@ -717,6 +729,20 @@ class StockList(generics.ListCreateAPIView):
 
         if customer:
             queryset = queryset.filter(customer=customer)
+
+        # Exclude stock item tree
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+            try:
+                item = StockItem.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[it.pk for it in item.get_descendants(include_self=True)]
+                )
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
 
         # Filter by 'allocated' parts?
         allocated = params.get('allocated', None)

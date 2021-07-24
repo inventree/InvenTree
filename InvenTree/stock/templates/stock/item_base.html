@@ -272,7 +272,7 @@
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail-assigned-stock' item.customer.id %}">{{ item.customer.name }}</a></td>
+        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
     </tr>
     {% endif %}
     {% if item.belongs_to %}
