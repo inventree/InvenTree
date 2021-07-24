@@ -18,7 +18,7 @@
     </li>
     {% endif %}
 
-    {% if company.is_supplier or company.is_manufacturer %}
+    {% if company.is_supplier %}
     <li class='list-group-item' title='{% trans "Supplied Parts" %}'>
         <a href='#' id='select-supplier-parts' class='nav-toggle'>
             <span class='fas fa-building sidebar-icon'></span>
