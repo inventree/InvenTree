@@ -135,7 +135,7 @@ class InvenTreeAPITestCase(APITestCase):
         Issue a PATCH request
         """
 
-        response = self.client.patch(url, data=data, files=files, format='json')
+        response = self.client.patch(url, data=data, format='json', **{'files': files})
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)
