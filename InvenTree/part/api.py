@@ -105,6 +105,20 @@ class CategoryList(generics.ListCreateAPIView):
             except (ValueError, PartCategory.DoesNotExist):
                 pass
 
+        # Exclude PartCategory tree
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+            try:
+                cat = PartCategory.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[c.pk for c in cat.get_descendants(include_self=True)]
+                )
+
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
+
         return queryset
 
     filter_backends = [
@@ -361,7 +375,6 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         return queryset
@@ -619,8 +632,6 @@ class PartList(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         return queryset
@@ -633,10 +644,6 @@ class PartList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
-        # Annotate calculated data to the queryset
-        # (This will be used for further filtering)
-        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
-
         queryset = super().filter_queryset(queryset)
 
         # Filter by "uses" query - Limit to parts which use the provided part
@@ -647,6 +654,20 @@ class PartList(generics.ListCreateAPIView):
                 uses = Part.objects.get(pk=uses)
 
                 queryset = queryset.filter(uses.get_used_in_filter())
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # Exclude part variant tree?
+        exclude_tree = params.get('exclude_tree', None)
+
+        if exclude_tree is not None:
+            try:
+                top_level_part = Part.objects.get(pk=exclude_tree)
+
+                queryset = queryset.exclude(
+                    pk__in=[prt.pk for prt in top_level_part.get_descendants(include_self=True)]
+                )
 
             except (ValueError, Part.DoesNotExist):
                 pass

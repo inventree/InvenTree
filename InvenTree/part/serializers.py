@@ -216,25 +216,6 @@ class PartSerializer(InvenTreeModelSerializer):
             self.fields.pop('category_detail')
 
     @staticmethod
-    def prefetch_queryset(queryset):
-        """
-        Prefetch related database tables,
-        to reduce database hits.
-        """
-
-        return queryset.prefetch_related(
-            'category',
-            'category__parts',
-            'category__parent',
-            'stock_items',
-            'bom_items',
-            'builds',
-            'supplier_parts',
-            'supplier_parts__purchase_order_line_items',
-            'supplier_parts__purchase_order_line_items__order',
-        )
-
-    @staticmethod
     def annotate_queryset(queryset):
         """
         Add some extra annotations to the queryset,

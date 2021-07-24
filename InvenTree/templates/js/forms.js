@@ -350,6 +350,12 @@ function constructFormBody(fields, options) {
     for(field in fields) {
         fields[field].name = field;
 
+        
+        // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
+        if (fields[field].instance_filters) {
+            fields[field].filters = Object.assign(fields[field].filters || {}, fields[field].instance_filters);
+        }
+
         var field_options = displayed_fields[field];
 
         // Copy custom options across to the fields object
