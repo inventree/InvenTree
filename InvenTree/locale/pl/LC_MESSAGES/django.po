@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-24 00:08+0000\n"
-"PO-Revision-Date: 2021-07-21 12:53\n"
+"POT-Creation-Date: 2021-07-21 12:35+0000\n"
+"PO-Revision-Date: 2021-07-25 22:36\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -421,7 +421,7 @@ msgstr ""
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr "Nie znaleziono pasujących elementów"
+msgstr "Nie znaleziono pasujących stanów magazynowych"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
@@ -830,7 +830,7 @@ msgstr ""
 
 #: build/models.py:1248 order/models.py:929
 msgid "Allocation quantity must be greater than zero"
-msgstr "Ilość musi być większa niż zero"
+msgstr "Alokowana ilość musi być większa niż zero"
 
 #: build/models.py:1252
 msgid "Quantity must be 1 for serialized stock"
@@ -954,7 +954,7 @@ msgstr "Zaległe"
 
 #: build/templates/build/build_base.html:90
 msgid "Print actions"
-msgstr "Akcje druku"
+msgstr "Akcje drukowania"
 
 #: build/templates/build/build_base.html:94
 msgid "Print Build Order"
@@ -2273,7 +2273,7 @@ msgstr "Utwórz nowego dostawcę części"
 #: company/templates/company/manufacturer_part.html:109
 #: part/templates/part/detail.html:289 templates/js/part.js:78
 msgid "New Supplier Part"
-msgstr "Now dostawca części"
+msgstr "Nowy dostawca części"
 
 #: company/templates/company/detail.html:28
 #: company/templates/company/detail.html:70
@@ -2762,7 +2762,7 @@ msgstr "Odniesienie zamówienia"
 
 #: order/models.py:252 order/models.py:549
 msgid "Purchase order status"
-msgstr "Status zamówienia"
+msgstr "Status zamówienia zakupu"
 
 #: order/models.py:261
 msgid "Company from which the items are being ordered"
@@ -4377,7 +4377,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:16
 msgid "Part Stock"
-msgstr "Zapasy cześci"
+msgstr "Zapasy części"
 
 #: part/templates/part/detail.html:21
 #, python-format
@@ -5979,8 +5979,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -6515,7 +6514,7 @@ msgstr ""
 
 #: templates/js/build.js:700
 msgid "Quantity Per"
-msgstr "Ilość na"
+msgstr "Ilość za"
 
 #: templates/js/build.js:770 templates/js/build.js:1214
 #: templates/stock_table.html:59
@@ -6553,7 +6552,7 @@ msgstr ""
 
 #: templates/js/company.js:36
 msgid "Add Manufacturer Part"
-msgstr "Nowa część producenta"
+msgstr "Dodaj część producenta"
 
 #: templates/js/company.js:48
 msgid "Edit Manufacturer Part"
@@ -7735,7 +7734,7 @@ msgstr ""
 
 #: users/models.py:176
 msgid "Permission set"
-msgstr "Zbiór uprawnień"
+msgstr "Uprawnienia nadane"
 
 #: users/models.py:184
 msgid "Group"
@@ -7764,3 +7763,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:193
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
