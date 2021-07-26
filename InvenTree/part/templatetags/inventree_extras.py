@@ -232,10 +232,15 @@ def get_available_themes(*args, **kwargs):
     Return the available theme choices
     """
 
-    print("available:")
-    print(ColorTheme.get_color_themes_choices())
+    themes = []
 
-    return ColorTheme.get_color_themes_choices()
+    for key, name in ColorTheme.get_color_themes_choices():
+        themes.append({
+            'key': key,
+            'name': name
+        })
+
+    return themes
 
 
 @register.filter

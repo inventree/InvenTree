@@ -82,9 +82,9 @@ settings_urls = [
     url(r'^i18n/?', include('django.conf.urls.i18n')),
     
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
+    url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
-    url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     url(r'^(?P<pk>\d+)/edit/user', UserSettingEdit.as_view(), name='user-setting-edit'),
     url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),

@@ -821,12 +821,8 @@ class CurrencyRefreshView(RedirectView):
         return redirect(reverse_lazy('settings'))
 
 
-class AppearanceSelectView(FormView):
+class AppearanceSelectView(RedirectView):
     """ View for selecting a color theme """
-
-    form_class = ColorThemeSelectForm
-    success_url = reverse_lazy('settings-appearance')
-    template_name = "InvenTree/settings/appearance.html"
 
     def get_user_theme(self):
         """ Get current user color theme """
@@ -837,40 +833,10 @@ class AppearanceSelectView(FormView):
 
         return user_theme
 
-    def get_initial(self):
-        """ Select current user color theme as initial choice """
-
-        initial = super(AppearanceSelectView, self).get_initial()
-
-        user_theme = self.get_user_theme()
-        if user_theme:
-            initial['name'] = user_theme.name
-        return initial
-
-    def get(self, request, *args, **kwargs):
-        """ Check if current color theme exists, else display alert box """
-
-        context = {}
-
-        form = self.get_form()
-        context['form'] = form
-
-        user_theme = self.get_user_theme()
-        if user_theme:
-            # Check color theme is a valid choice
-            if not ColorTheme.is_valid_choice(user_theme):
-                user_color_theme_name = user_theme.name
-                if not user_color_theme_name:
-                    user_color_theme_name = 'default'
-
-                context['invalid_color_theme'] = user_color_theme_name
-
-        return self.render_to_response(context)
-
     def post(self, request, *args, **kwargs):
         """ Save user color theme selection """
 
-        form = self.get_form()
+        theme = request.POST.get('theme', None)
 
         # Get current user theme
         user_theme = self.get_user_theme()
@@ -880,20 +846,10 @@ class AppearanceSelectView(FormView):
             user_theme = ColorTheme()
             user_theme.user = request.user
 
-        if form.is_valid():
-            theme_selected = form.cleaned_data['name']
+        user_theme.name = theme
+        user_theme.save()
 
-            # Set color theme to form selection
-            user_theme.name = theme_selected
-            user_theme.save()
-
-            return self.form_valid(form)
-        else:
-            # Set color theme to default
-            user_theme.name = ColorTheme.default_color_theme[0]
-            user_theme.save()
-
-            return self.form_invalid(form)
+        return redirect(reverse_lazy('settings'))
 
 
 class SettingCategorySelectView(FormView):

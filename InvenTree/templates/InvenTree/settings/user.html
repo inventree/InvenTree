@@ -44,14 +44,24 @@
 
 <div class='row'>
 
-    <form action='' method='post'>
+    <form action='{% url "settings-appearance" %}' method='post'>
         {% csrf_token %}
         <input name='next' type='hidden' value='{% url "settings" %}'>
-        <select name='theme' class='select form-control'>
-            {% for theme in get_available_themes %}
-            {{ theme }}
-            {% endfor %}
-        </select>
+        <div class="col-sm-6" style="width: 200px;">
+            <div id="div_id_themes" class="form-group">
+                <div class="controls ">
+                    <select name='theme' class='select form-control'>
+                        {% get_available_themes as themes %}
+                        {% for theme in themes %}
+                        <option value='{{ theme.key }}'>{{ theme.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" style="width: auto;">
+            <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn btn-primary">
+        </div>
     </form>
 
 </div>
@@ -64,7 +74,7 @@
     <form action="{% url 'set_language' %}" method="post">
         {% csrf_token %}
         <input name="next" type="hidden" value="{% url 'settings' %}">
-        <div class="col-sm-6" style="width: 200px;"><div id="div_id_name" class="form-group"><div class="controls ">
+        <div class="col-sm-6" style="width: 200px;"><div id="div_id_language" class="form-group"><div class="controls ">
             <select name="language" class="select form-control">
                 {% get_current_language as LANGUAGE_CODE %}
                 {% get_available_languages as LANGUAGES %}
