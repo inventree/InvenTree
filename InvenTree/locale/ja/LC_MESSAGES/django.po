@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-26 13:20+0000\n"
-"PO-Revision-Date: 2021-07-26 13:50\n"
+"POT-Creation-Date: 2021-07-26 22:33+0000\n"
+"PO-Revision-Date: 2021-07-26 23:05\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -6391,59 +6391,59 @@ msgstr ""
 msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
-#: templates/js/api.js:162 templates/js/modals.js:1027
+#: templates/js/api.js:161 templates/js/modals.js:1027
 msgid "No Response"
 msgstr ""
 
-#: templates/js/api.js:163 templates/js/modals.js:1028
+#: templates/js/api.js:162 templates/js/modals.js:1028
 msgid "No response from the InvenTree server"
 msgstr ""
 
-#: templates/js/api.js:168
+#: templates/js/api.js:167
 msgid "Error 400: Bad request"
 msgstr ""
 
-#: templates/js/api.js:169
+#: templates/js/api.js:168
 msgid "API request returned error code 400"
 msgstr ""
 
-#: templates/js/api.js:172 templates/js/modals.js:1037
+#: templates/js/api.js:171 templates/js/modals.js:1037
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/api.js:173 templates/js/modals.js:1038
+#: templates/js/api.js:172 templates/js/modals.js:1038
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/api.js:176 templates/js/modals.js:1042
+#: templates/js/api.js:175 templates/js/modals.js:1042
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/api.js:177 templates/js/modals.js:1043
+#: templates/js/api.js:176 templates/js/modals.js:1043
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/api.js:180 templates/js/modals.js:1047
+#: templates/js/api.js:179 templates/js/modals.js:1047
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/api.js:181 templates/js/modals.js:1048
+#: templates/js/api.js:180 templates/js/modals.js:1048
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/api.js:184 templates/js/modals.js:1052
+#: templates/js/api.js:183 templates/js/modals.js:1052
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/api.js:185 templates/js/modals.js:1053
+#: templates/js/api.js:184 templates/js/modals.js:1053
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
-#: templates/js/api.js:188
+#: templates/js/api.js:187
 msgid "Unhandled Error Code"
 msgstr ""
 
-#: templates/js/api.js:189
+#: templates/js/api.js:188
 msgid "Error code"
 msgstr ""
 
