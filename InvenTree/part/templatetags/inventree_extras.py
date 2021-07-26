@@ -18,7 +18,7 @@ from InvenTree import version, settings
 
 import InvenTree.helpers
 
-from common.models import InvenTreeSetting, ColorTheme
+from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
 
 register = template.Library()
@@ -67,6 +67,12 @@ def multiply(x, y, *args, **kwargs):
 def add(x, y, *args, **kwargs):
     """ Add two numbers together """
     return x + y
+
+
+@register.simple_tag()
+def to_list(*args):
+    """ Return the input arguments as list """
+    return args
 
 
 @register.simple_tag()
@@ -182,11 +188,12 @@ def setting_object(key, *args, **kwargs):
     """
     Return a setting object speciifed by the given key
     (Or return None if the setting does not exist)
+    if a user-setting was requested return that
     """
 
-    setting = InvenTreeSetting.get_setting_object(key)
-
-    return setting
+    if 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+    return InvenTreeSetting.get_setting_object(key)
 
 
 @register.simple_tag()
@@ -195,6 +202,8 @@ def settings_value(key, *args, **kwargs):
     Return a settings value specified by the given key
     """
 
+    if 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
     return InvenTreeSetting.get_setting(key)
 
 
