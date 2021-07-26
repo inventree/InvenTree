@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}global{% endblock %}
+{% block label %}server{% endblock %}
 
 
 {% block heading %}
-{% trans "Global InvenTree Settings" %}
+{% trans "Server Settings" %}
 {% endblock %}
 
 {% block content %}
@@ -22,12 +22,9 @@
     </tbody>
 </table>
 
-<h4>{% trans "Barcode Settings" %}</h4>
 <table class='table table-striped table-condensed'>
     {% include "InvenTree/settings/header.html" %}
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="BARCODE_ENABLE" icon="fa-qrcode" %}
-    </tbody>
 </table>
 
 <h4>{% trans "Search Settings" %}</h4>
