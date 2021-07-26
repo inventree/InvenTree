@@ -13,7 +13,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
-from common.models import ColorTheme
 from part.models import PartCategory
 
 
