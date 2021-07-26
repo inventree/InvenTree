@@ -1,16 +1,14 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
+
 {% load i18n %}
-{% load inventree_extras %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='theme' %}
+{% block label %}appearance{% endblock %}
+
+{% block heading %}
+{% trans "Appearance" %}
 {% endblock %}
 
-{% block subtitle %}
-{% trans "Theme Settings" %}
-{% endblock %}
-
-{% block settings %}
+{% block content %}
 
 <div class='row'>
     <div class='col-sm-6'>
@@ -33,14 +31,11 @@
     </div>
 {% endif %}
 
-
 <div class='row'>
     <div class='col-sm-6'>
         <h4>{% trans "Language" %}</h4>
     </div>
 </div>
-
-
 
 <div class="row">
     <form action="{% url 'set_language' %}" method="post">{% csrf_token %}

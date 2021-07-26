@@ -79,19 +79,11 @@ apipatterns = [
 
 settings_urls = [
 
-    url(r'^usersettings/', SettingsView.as_view(template_name='InvenTree/settings/user_settings.html'), name='settings-user-settings'),
-    url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
-    url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^i18n/?', include('django.conf.urls.i18n')),
+    
+    url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
 
-    url(r'^global/', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
-    url(r'^report/', SettingsView.as_view(template_name='InvenTree/settings/report.html'), name='settings-report'),
     url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
-    url(r'^part/', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
-    url(r'^stock/', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),
-    url(r'^build/', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
-    url(r'^purchase-order/', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
-    url(r'^sales-order/', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
     url(r'^currencies/', CurrencySettingsView.as_view(), name='settings-currencies'),
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
@@ -99,7 +91,7 @@ settings_urls = [
     url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
 
     # Catch any other urls
-    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
+    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
 ]
 
 # Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer

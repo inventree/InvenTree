@@ -1,69 +1,39 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
 
 {% load i18n %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='user' %}
+{% block label %}account{% endblock %}
+
+{% block heading %}
+{% trans "Account Settings" %}
 {% endblock %}
 
-{% block subtitle %}
-{% trans "User Settings" %}
-{% endblock %}
-
-{% block settings %}
-
-<div class='container'>
-    <h4>{% trans "User Information" %}</h4>
-    <div class='btn-group' style='float: right;'>
-        <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
-            <span class='fas fa-user-cog'></span> {% trans "Edit" %}
-        </div>
-        <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-            <span class='fas fa-key'></span> {% trans "Set Password" %}
-        </div>
+{% block content %}
+<div class='btn-group' style='float: right;'>
+    <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
+        <span class='fas fa-user-cog'></span> {% trans "Edit" %}
     </div>
-
-    <table class='table table-striped table-condensed'>
-        <tr>
-            <td>{% trans "Username" %}</td>
-            <td>{{ user.username }}</td>
-        </tr>
-        <tr>
-            <td>{% trans "First Name" %}</td>
-            <td>{{ user.first_name }}</td>
-        </tr>
-        <tr>
-            <td>{% trans "Last Name" %}</td>
-            <td>{{ user.last_name }}</td>
-        </tr>
-        <tr>
-            <td>{% trans "Email Address" %}</td>
-            <td>{{ user.email }}</td>
-        </tr>
-    </table>
+    <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+        <span class='fas fa-key'></span> {% trans "Set Password" %}
+    </div>
 </div>
 
-{% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
-
-    $("#edit-user").on('click', function() {
-        launchModalForm(
-            "{% url 'edit-user' %}",
-            {
-                reload: true,
-            }
-        );
-    });
-
-    $("#edit-password").on('click', function() {
-        launchModalForm(
-            "{% url 'set-password' %}",
-            {
-                reload: true,
-            }
-        );
-    });
-
+<table class='table table-striped table-condensed'>
+    <tr>
+        <td>{% trans "Username" %}</td>
+        <td>{{ user.username }}</td>
+    </tr>
+    <tr>
+        <td>{% trans "First Name" %}</td>
+        <td>{{ user.first_name }}</td>
+    </tr>
+    <tr>
+        <td>{% trans "Last Name" %}</td>
+        <td>{{ user.last_name }}</td>
+    </tr>
+    <tr>
+        <td>{% trans "Email Address" %}</td>
+        <td>{{ user.email }}</td>
+    </tr>
+</table>
 {% endblock %}

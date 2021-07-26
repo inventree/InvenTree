@@ -1,15 +1,13 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
 {% load i18n %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='part' %}
-{% endblock %}
+{% block label %}parts{% endblock %}
 
-{% block subtitle %}
+{% block heading %}
 {% trans "Part Settings" %}
 {% endblock %}
 
-{% block settings %}
+{% block content %}
 
 <h4>{% trans "Part Options" %}</h4>
 

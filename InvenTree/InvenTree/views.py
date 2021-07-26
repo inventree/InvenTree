@@ -779,7 +779,7 @@ class SettingsView(TemplateView):
     """ View for configuring User settings
     """
 
-    template_name = "InvenTree/settings.html"
+    template_name = "InvenTree/settings/settings.html"
 
     def get_context_data(self, **kwargs):
 

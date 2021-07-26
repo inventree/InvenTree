@@ -1,16 +1,15 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
+
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='user_settings' %}
-{% endblock %}
+{% block label %}user-settings{% endblock %}
 
-{% block subtitle %}
+{% block heading %}
 {% trans "User Settings" %}
 {% endblock %}
 
-{% block settings %}
+{% block content %}
 
 <div class='row'>
     <table class='table table-striped table-condensed'>
@@ -38,4 +37,5 @@
         </tbody>
     </table>
 </div>
+
 {% endblock %}

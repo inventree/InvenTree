@@ -8,30 +8,26 @@
 {% inventree_title %} | {% trans "Settings" %}
 {% endblock %}
 
+{% block menubar %}
+{% include "InvenTree/settings/navbar.html" %}
+{% endblock %}
+
 {% block content %}
-<div class='settings-container'>
 
-    <h3>InvenTree {% trans "Settings" %}</h3>
-    <hr>
+{% include "InvenTree/settings/user.html" %}
+{% include "InvenTree/settings/user_settings.html" %}
 
-    <div class='settings-nav'>
-        {% block tabs %}
-        {% include "InvenTree/settings/tabs.html" %} 
-        {% endblock %}
-    </div>
+{% if user.is_staff %}
 
-    <div class='settings-content'>
-        <h3>
-            {% block subtitle %}
-            SUBTITLE GOES HERE
-            {% endblock %}
-        </h3>
-        <hr>
-        {% block settings %}
-        {% endblock %}
-    </div>
+{% include "InvenTree/settings/global.html" %}
+{% include "InvenTree/settings/report.html" %}
+{% include "InvenTree/settings/part.html" %}
+{% include "InvenTree/settings/stock.html" %}
+{% include "InvenTree/settings/build.html" %}
+{% include "InvenTree/settings/po.html" %}
+{% include "InvenTree/settings/so.html" %}
 
-</div>
+{% endif %}
 
 {% endblock %}
 
@@ -57,6 +53,36 @@ $('table').find('.btn-edit-setting').click(function() {
             reload: true,
         }
     );
+});
+
+$("#edit-user").on('click', function() {
+    launchModalForm(
+        "{% url 'edit-user' %}",
+        {
+            reload: true,
+        }
+    );
+});
+
+$("#edit-password").on('click', function() {
+    launchModalForm(
+        "{% url 'set-password' %}",
+        {
+            reload: true,
+        }
+    );
+});
+
+
+
+enableNavbar({
+    label: 'settings',
+    toggleId: '#item-menu-toggle',
+});
+
+attachNavCallbacks({
+    name: 'settings',
+    default: 'account'
 });
 
 {% endblock %}
