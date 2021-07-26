@@ -43,7 +43,7 @@ from .views import CurrencySettingsView, CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
-from common.views import SettingEdit
+from common.views import SettingEdit, UserSettingEdit
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
@@ -79,6 +79,7 @@ apipatterns = [
 
 settings_urls = [
 
+    url(r'^usersettings/', SettingsView.as_view(template_name='InvenTree/settings/user_settings.html'), name='settings-user-settings'),
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^i18n/?', include('django.conf.urls.i18n')),
@@ -94,6 +95,7 @@ settings_urls = [
     url(r'^currencies/', CurrencySettingsView.as_view(), name='settings-currencies'),
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
+    url(r'^(?P<pk>\d+)/edit/user', UserSettingEdit.as_view(), name='user-setting-edit'),
     url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
 
     # Catch any other urls

@@ -45,9 +45,14 @@
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
+    var url = `/settings/${pk}/edit/`;
+
+    if ($(this).attr('user')){
+        url += `user/`;
+    }
 
     launchModalForm(
-        `/settings/${pk}/edit/`,
+        url,
         {
             reload: true,
         }

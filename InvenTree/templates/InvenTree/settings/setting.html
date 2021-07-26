@@ -1,7 +1,12 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% setting_object key as setting %}
+{% if user_setting %}
+    {% setting_object key user=request.user as setting %}
+{% else %}
+    {% setting_object key as setting %}
+{% endif %}
+
 <tr>
     <td>
         {% if icon %}
@@ -28,7 +33,7 @@
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ key }}' title='{% trans "Edit setting" %}'>
+            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ key }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>
