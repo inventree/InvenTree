@@ -519,7 +519,7 @@ LANGUAGES = [
     ('th', _('Thai')),
     ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh', _('Chinese')),
+    ('zh-cn', _('Chinese')),
 ]
 
 # Currencies available for use
