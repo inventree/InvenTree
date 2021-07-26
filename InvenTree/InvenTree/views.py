@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -787,6 +788,18 @@ class SettingsView(TemplateView):
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
 
+        ctx["base_currency"] = currency_code_default()
+        ctx["currencies"] = currency_codes
+
+        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+
+        # When were the rates last updated?
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            ctx["rates_updated"] = backend.last_update
+        except:
+            ctx["rates_updated"] = None
+
         return ctx
 
 
@@ -805,34 +818,7 @@ class CurrencyRefreshView(RedirectView):
         # Will block for a little bit
         InvenTree.tasks.update_exchange_rates()
 
-        return self.get(request, *args, **kwargs)
-
-
-class CurrencySettingsView(TemplateView):
-    """
-    View for configuring currency settings
-    """
-
-    template_name = "InvenTree/settings/currencies.html"
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs).copy()
-
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-        ctx["base_currency"] = currency_code_default()
-        ctx["currencies"] = currency_codes
-
-        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
-
-        # When were the rates last updated?
-        try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
-        except:
-            ctx["rates_updated"] = None
-
-        return ctx
+        return redirect(reverse_lazy('settings'))
 
 
 class AppearanceSelectView(FormView):

@@ -39,7 +39,7 @@ from rest_framework.documentation import include_docs_urls
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
-from .views import CurrencySettingsView, CurrencyRefreshView
+from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
@@ -84,7 +84,6 @@ settings_urls = [
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
 
     url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
-    url(r'^currencies/', CurrencySettingsView.as_view(), name='settings-currencies'),
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     url(r'^(?P<pk>\d+)/edit/user', UserSettingEdit.as_view(), name='user-setting-edit'),
