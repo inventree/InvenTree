@@ -11,6 +11,7 @@ import decimal
 import math
 
 from django.db import models, transaction
+from django.contrib.auth.models import User
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
@@ -26,7 +27,397 @@ import InvenTree.helpers
 import InvenTree.fields
 
 
-class InvenTreeSetting(models.Model):
+class BaseInvenTreeSetting(models.Model):
+    """
+    An base InvenTreeSetting object is a key:value pair used for storing
+    single values (e.g. one-off settings values).
+    """
+
+    GLOBAL_SETTINGS = {}
+
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def get_setting_name(cls, key):
+        """
+        Return the name of a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('name', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_description(cls, key):
+        """
+        Return the description for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('description', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_units(cls, key):
+        """
+        Return the units for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('units', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_validator(cls, key):
+        """
+        Return the validator for a particular setting.
+
+        If it does not exist, return None
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('validator', None)
+        else:
+            return None
+
+    @classmethod
+    def get_setting_default(cls, key):
+        """
+        Return the default value for a particular setting.
+
+        If it does not exist, return an empty string
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('default', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_choices(cls, key):
+        """
+        Return the validator choices available for a particular setting.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            choices = setting.get('choices', None)
+        else:
+            choices = None
+
+        """
+        TODO:
+        if type(choices) is function:
+            # Evaluate the function (we expect it will return a list of tuples...)
+            return choices()
+        """
+
+        return choices
+
+    @classmethod
+    def get_filters(cls, key, **kwargs):
+        return {'key__iexact': key}
+
+    @classmethod
+    def get_setting_object(cls, key, **kwargs):
+        """
+        Return an InvenTreeSetting object matching the given key.
+
+        - Key is case-insensitive
+        - Returns None if no match is made
+        """
+
+        key = str(key).strip().upper()
+
+        try:
+            setting = cls.objects.filter(**cls.get_filters(key, **kwargs)).first()
+        except (ValueError, cls.DoesNotExist):
+            setting = None
+        except (IntegrityError, OperationalError):
+            setting = None
+
+        # Setting does not exist! (Try to create it)
+        if not setting:
+
+            setting = cls(key=key, value=cls.get_setting_default(key), **kwargs)
+
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save()
+            except (IntegrityError, OperationalError):
+                # It might be the case that the database isn't created yet
+                pass
+
+        return setting
+
+    @classmethod
+    def get_setting_pk(cls, key):
+        """
+        Return the primary-key value for a given setting.
+
+        If the setting does not exist, return None
+        """
+
+        setting = cls.get_setting_object(cls)
+
+        if setting:
+            return setting.pk
+        else:
+            return None
+
+    @classmethod
+    def get_setting(cls, key, backup_value=None, **kwargs):
+        """
+        Get the value of a particular setting.
+        If it does not exist, return the backup value (default = None)
+        """
+
+        # If no backup value is specified, atttempt to retrieve a "default" value
+        if backup_value is None:
+            backup_value = cls.get_setting_default(key)
+
+        setting = cls.get_setting_object(key, **kwargs)
+
+        if setting:
+            value = setting.value
+
+            # If the particular setting is defined as a boolean, cast the value to a boolean
+            if setting.is_bool():
+                value = InvenTree.helpers.str2bool(value)
+
+            if setting.is_int():
+                try:
+                    value = int(value)
+                except (ValueError, TypeError):
+                    value = backup_value
+
+        else:
+            value = backup_value
+
+        return value
+
+    @classmethod
+    def set_setting(cls, key, value, change_user, create=True, **kwargs):
+        """
+        Set the value of a particular setting.
+        If it does not exist, option to create it.
+
+        Args:
+            key: settings key
+            value: New value
+            change_user: User object (must be staff member to update a core setting)
+            create: If True, create a new setting if the specified key does not exist.
+        """
+
+        if change_user is not None and not change_user.is_staff:
+            return
+
+        try:
+            setting = cls.objects.get(**cls.get_filters(key, **kwargs))
+        except cls.DoesNotExist:
+
+            if create:
+                setting = cls(key=key, **kwargs)
+            else:
+                return
+
+        # Enforce standard boolean representation
+        if setting.is_bool():
+            value = InvenTree.helpers.str2bool(value)
+
+        setting.value = str(value)
+        setting.save()
+
+    key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive'))
+
+    value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+
+    @property
+    def name(self):
+        return self.__class__.get_setting_name(self.key)
+
+    @property
+    def default_value(self):
+        return self.__class__.get_setting_default(self.key)
+
+    @property
+    def description(self):
+        return self.__class__.get_setting_description(self.key)
+
+    @property
+    def units(self):
+        return self.__class__.get_setting_units(self.key)
+
+    def clean(self):
+        """
+        If a validator (or multiple validators) are defined for a particular setting key,
+        run them against the 'value' field.
+        """
+
+        super().clean()
+
+        validator = self.__class__.get_setting_validator(self.key)
+
+        if self.is_bool():
+            self.value = InvenTree.helpers.str2bool(self.value)
+
+        if self.is_int():
+            try:
+                self.value = int(self.value)
+            except (ValueError):
+                raise ValidationError(_('Must be an integer value'))
+
+        if validator is not None:
+            self.run_validator(validator)
+
+    def run_validator(self, validator):
+        """
+        Run a validator against the 'value' field for this InvenTreeSetting object.
+        """
+
+        if validator is None:
+            return
+
+        value = self.value
+
+        # Boolean validator
+        if self.is_bool():
+            # Value must "look like" a boolean value
+            if InvenTree.helpers.is_bool(value):
+                # Coerce into either "True" or "False"
+                value = InvenTree.helpers.str2bool(value)
+            else:
+                raise ValidationError({
+                    'value': _('Value must be a boolean value')
+                })
+
+        # Integer validator
+        if self.is_int():
+
+            try:
+                # Coerce into an integer value
+                value = int(value)
+            except (ValueError, TypeError):
+                raise ValidationError({
+                    'value': _('Value must be an integer value'),
+                })
+
+        # If a list of validators is supplied, iterate through each one
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                self.run_validator(v)
+
+        if callable(validator):
+            # We can accept function validators with a single argument
+            validator(self.value)
+
+    def validate_unique(self, exclude=None, **kwargs):
+        """ Ensure that the key:value pair is unique.
+        In addition to the base validators, this ensures that the 'key'
+        is unique, using a case-insensitive comparison.
+        """
+
+        super().validate_unique(exclude)
+
+        try:
+            setting = self.__class__.objects.exclude(id=self.id).filter(**self.get_filters(self.key, **kwargs))
+            if setting.exists():
+                raise ValidationError({'key': _('Key string must be unique')})
+        except self.DoesNotExist:
+            pass
+
+    def choices(self):
+        """
+        Return the available choices for this setting (or None if no choices are defined)
+        """
+
+        return self.__class__.get_setting_choices(self.key)
+
+    def is_bool(self):
+        """
+        Check if this setting is required to be a boolean value
+        """
+
+        validator = self.__class__.get_setting_validator(self.key)
+
+        if validator == bool:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == bool:
+                    return True
+
+    def as_bool(self):
+        """
+        Return the value of this setting converted to a boolean value.
+
+        Warning: Only use on values where is_bool evaluates to true!
+        """
+
+        return InvenTree.helpers.str2bool(self.value)
+
+    def is_int(self):
+        """
+        Check if the setting is required to be an integer value:
+        """
+
+        validator = self.__class__.get_setting_validator(self.key)
+
+        if validator == int:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == int:
+                    return True
+
+        return False
+
+    def as_int(self):
+        """
+        Return the value of this setting converted to a boolean value.
+
+        If an error occurs, return the default value
+        """
+
+        try:
+            value = int(self.value)
+        except (ValueError, TypeError):
+            value = self.default_value()
+
+        return value
+
+
+class InvenTreeSetting(BaseInvenTreeSetting):
     """
     An InvenTreeSetting object is a key:value pair used for storing
     single values (e.g. one-off settings values).
@@ -362,379 +753,144 @@ class InvenTreeSetting(models.Model):
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
-    @classmethod
-    def get_setting_name(cls, key):
-        """
-        Return the name of a particular setting.
+    key = models.CharField(
+        max_length=50,
+        blank=False,
+        unique=True,
+        help_text=_('Settings key (must be unique - case insensitive'),
+    )
 
-        If it does not exist, return an empty string.
-        """
 
-        key = str(key).strip().upper()
+class InvenTreeUserSetting(BaseInvenTreeSetting):
+    """
+    An InvenTreeSetting object with a usercontext
+    """
 
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('name', '')
-        else:
-            return ''
+    GLOBAL_SETTINGS = {
+        'HOMEPAGE_PART_STARRED': {
+            'name': _('Show starred parts'),
+            'description': _('Show starred parts on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_PART_LATEST': {
+            'name': _('Show latest parts'),
+            'description': _('Show latest parts on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_BOM_VALIDATION': {
+            'name': _('Show unvalidated BOMs'),
+            'description': _('Show BOMs that await validation on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_RECENT': {
+            'name': _('Show recent stock changes'),
+            'description': _('Show recently changed stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_LOW': {
+            'name': _('Show low stock'),
+            'description': _('Show low stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_DEPLETED': {
+            'name': _('Show depleted stock'),
+            'description': _('Show depleted stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_NEEDED': {
+            'name': _('Show needed stock'),
+            'description': _('Show stock items needed for builds on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_EXPIRED': {
+            'name': _('Show expired stock'),
+            'description': _('Show expired stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_STOCK_STALE': {
+            'name': _('Show stale stock'),
+            'description': _('Show stale stock items on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_BUILD_PENDING': {
+            'name': _('Show pending builds'),
+            'description': _('Show pending builds on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_BUILD_OVERDUE': {
+            'name': _('Show overdue builds'),
+            'description': _('Show overdue builds on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_PO_OUTSTANDING': {
+            'name': _('Show outstanding POs'),
+            'description': _('Show outstanding POs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_PO_OVERDUE': {
+            'name': _('Show overdue POs'),
+            'description': _('Show overdue POs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_SO_OUTSTANDING': {
+            'name': _('Show outstanding SOs'),
+            'description': _('Show outstanding SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_SO_OVERDUE': {
+            'name': _('Show overdue SOs'),
+            'description': _('Show overdue SOs on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+    }
 
-    @classmethod
-    def get_setting_description(cls, key):
-        """
-        Return the description for a particular setting.
+    class Meta:
+        verbose_name = "InvenTree User Setting"
+        verbose_name_plural = "InvenTree User Settings"
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
+        ]
 
-        If it does not exist, return an empty string.
-        """
+    key = models.CharField(
+        max_length=50,
+        blank=False,
+        unique=False,
+        help_text=_('Settings key (must be unique - case insensitive'),
+    )
 
-        key = str(key).strip().upper()
-
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('description', '')
-        else:
-            return ''
-
-    @classmethod
-    def get_setting_units(cls, key):
-        """
-        Return the units for a particular setting.
-
-        If it does not exist, return an empty string.
-        """
-
-        key = str(key).strip().upper()
-
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('units', '')
-        else:
-            return ''
-
-    @classmethod
-    def get_setting_validator(cls, key):
-        """
-        Return the validator for a particular setting.
-
-        If it does not exist, return None
-        """
-
-        key = str(key).strip().upper()
-
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('validator', None)
-        else:
-            return None
-
-    @classmethod
-    def get_setting_default(cls, key):
-        """
-        Return the default value for a particular setting.
-
-        If it does not exist, return an empty string
-        """
-
-        key = str(key).strip().upper()
-
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('default', '')
-        else:
-            return ''
-
-    @classmethod
-    def get_setting_choices(cls, key):
-        """
-        Return the validator choices available for a particular setting.
-        """
-
-        key = str(key).strip().upper()
-
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            choices = setting.get('choices', None)
-        else:
-            choices = None
-
-        """
-        TODO:
-        if type(choices) is function:
-            # Evaluate the function (we expect it will return a list of tuples...)
-            return choices()
-        """
-
-        return choices
-
-    @classmethod
-    def get_setting_object(cls, key):
-        """
-        Return an InvenTreeSetting object matching the given key.
-
-        - Key is case-insensitive
-        - Returns None if no match is made
-        """
-
-        key = str(key).strip().upper()
-
-        try:
-            setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
-        except (ValueError, InvenTreeSetting.DoesNotExist):
-            setting = None
-        except (IntegrityError, OperationalError):
-            setting = None
-
-        # Setting does not exist! (Try to create it)
-        if not setting:
-
-            setting = InvenTreeSetting(key=key, value=InvenTreeSetting.get_setting_default(key))
-
-            try:
-                # Wrap this statement in "atomic", so it can be rolled back if it fails
-                with transaction.atomic():
-                    setting.save()
-            except (IntegrityError, OperationalError):
-                # It might be the case that the database isn't created yet
-                pass
-
-        return setting
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=True, null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
 
     @classmethod
-    def get_setting_pk(cls, key):
-        """
-        Return the primary-key value for a given setting.
-
-        If the setting does not exist, return None
-        """
-
-        setting = InvenTreeSetting.get_setting_object(cls)
-
-        if setting:
-            return setting.pk
-        else:
-            return None
-
-    @classmethod
-    def get_setting(cls, key, backup_value=None):
-        """
-        Get the value of a particular setting.
-        If it does not exist, return the backup value (default = None)
-        """
-
-        # If no backup value is specified, atttempt to retrieve a "default" value
-        if backup_value is None:
-            backup_value = cls.get_setting_default(key)
-
-        setting = InvenTreeSetting.get_setting_object(key)
-
-        if setting:
-            value = setting.value
-
-            # If the particular setting is defined as a boolean, cast the value to a boolean
-            if setting.is_bool():
-                value = InvenTree.helpers.str2bool(value)
-
-            if setting.is_int():
-                try:
-                    value = int(value)
-                except (ValueError, TypeError):
-                    value = backup_value
-
-        else:
-            value = backup_value
-
-        return value
-
-    @classmethod
-    def set_setting(cls, key, value, user, create=True):
-        """
-        Set the value of a particular setting.
-        If it does not exist, option to create it.
-
-        Args:
-            key: settings key
-            value: New value
-            user: User object (must be staff member to update a core setting)
-            create: If True, create a new setting if the specified key does not exist.
-        """
-
-        if user is not None and not user.is_staff:
-            return
-
-        try:
-            setting = InvenTreeSetting.objects.get(key__iexact=key)
-        except InvenTreeSetting.DoesNotExist:
-
-            if create:
-                setting = InvenTreeSetting(key=key)
-            else:
-                return
-
-        # Enforce standard boolean representation
-        if setting.is_bool():
-            value = InvenTree.helpers.str2bool(value)
-
-        setting.value = str(value)
-        setting.save()
-
-    key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key (must be unique - case insensitive'))
-
-    value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
-
-    @property
-    def name(self):
-        return InvenTreeSetting.get_setting_name(self.key)
-
-    @property
-    def default_value(self):
-        return InvenTreeSetting.get_setting_default(self.key)
-
-    @property
-    def description(self):
-        return InvenTreeSetting.get_setting_description(self.key)
-
-    @property
-    def units(self):
-        return InvenTreeSetting.get_setting_units(self.key)
-
-    def clean(self):
-        """
-        If a validator (or multiple validators) are defined for a particular setting key,
-        run them against the 'value' field.
-        """
-
-        super().clean()
-
-        validator = InvenTreeSetting.get_setting_validator(self.key)
-
-        if self.is_bool():
-            self.value = InvenTree.helpers.str2bool(self.value)
-
-        if self.is_int():
-            try:
-                self.value = int(self.value)
-            except (ValueError):
-                raise ValidationError(_('Must be an integer value'))
-
-        if validator is not None:
-            self.run_validator(validator)
-
-    def run_validator(self, validator):
-        """
-        Run a validator against the 'value' field for this InvenTreeSetting object.
-        """
-
-        if validator is None:
-            return
-
-        value = self.value
-
-        # Boolean validator
-        if self.is_bool():
-            # Value must "look like" a boolean value
-            if InvenTree.helpers.is_bool(value):
-                # Coerce into either "True" or "False"
-                value = InvenTree.helpers.str2bool(value)
-            else:
-                raise ValidationError({
-                    'value': _('Value must be a boolean value')
-                })
-
-        # Integer validator
-        if self.is_int():
-
-            try:
-                # Coerce into an integer value
-                value = int(value)
-            except (ValueError, TypeError):
-                raise ValidationError({
-                    'value': _('Value must be an integer value'),
-                })
-
-        # If a list of validators is supplied, iterate through each one
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                self.run_validator(v)
-
-        if callable(validator):
-            # We can accept function validators with a single argument
-            validator(self.value)
+    def get_setting_object(cls, key, user):
+        return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None):
-        """ Ensure that the key:value pair is unique.
-        In addition to the base validators, this ensures that the 'key'
-        is unique, using a case-insensitive comparison.
-        """
+        return super().validate_unique(exclude=exclude, user=self.user)
 
-        super().validate_unique(exclude)
-
-        try:
-            setting = InvenTreeSetting.objects.exclude(id=self.id).filter(key__iexact=self.key)
-            if setting.exists():
-                raise ValidationError({'key': _('Key string must be unique')})
-        except InvenTreeSetting.DoesNotExist:
-            pass
-
-    def choices(self):
-        """
-        Return the available choices for this setting (or None if no choices are defined)
-        """
-
-        return InvenTreeSetting.get_setting_choices(self.key)
-
-    def is_bool(self):
-        """
-        Check if this setting is required to be a boolean value
-        """
-
-        validator = InvenTreeSetting.get_setting_validator(self.key)
-
-        if validator == bool:
-            return True
-
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                if v == bool:
-                    return True
-
-    def as_bool(self):
-        """
-        Return the value of this setting converted to a boolean value.
-
-        Warning: Only use on values where is_bool evaluates to true!
-        """
-
-        return InvenTree.helpers.str2bool(self.value)
-
-    def is_int(self):
-        """
-        Check if the setting is required to be an integer value:
-        """
-
-        validator = InvenTreeSetting.get_setting_validator(self.key)
-
-        if validator == int:
-            return True
-
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                if v == int:
-                    return True
-
-        return False
-
-    def as_int(self):
-        """
-        Return the value of this setting converted to a boolean value.
-
-        If an error occurs, return the default value
-        """
-
-        try:
-            value = int(self.value)
-        except (ValueError, TypeError):
-            value = self.default_value()
-
-        return value
+    @classmethod
+    def get_filters(cls, key, **kwargs):
+        return {'key__iexact': key, 'user__id__iexact': kwargs['user'].id}
 
 
 class PriceBreak(models.Model):
