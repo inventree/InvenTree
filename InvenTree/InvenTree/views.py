@@ -31,7 +31,7 @@ from users.models import check_user_role, RuleSet
 import InvenTree.tasks
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .forms import ColorThemeSelectForm, SettingCategorySelectForm
+from .forms import SettingCategorySelectForm
 from .helpers import str2bool
 
 from rest_framework import views
