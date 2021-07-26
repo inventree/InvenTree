@@ -502,11 +502,24 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
-    ('en', _('English')),
-    ('fr', _('French')),
     ('de', _('German')),
+    ('el', _('Greek')),
+    ('en', _('English')),
+    ('es', _('Spanish')),
+    ('fr', _('French')),
+    ('he', _('Hebrew')),
+    ('it', _('Italian')),
+    ('ja', _('Japanese')),
+    ('ko', _('Korean')),
+    ('nl', _('Dutch')),
+    ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('ru', _('Russian')),
+    ('sv', _('Swedish')),
+    ('th', _('Thai')),
     ('tr', _('Turkish')),
+    ('vi', _('Vietnamese')),
+    ('zh-cn', _('Chinese')),
 ]
 
 # Currencies available for use
