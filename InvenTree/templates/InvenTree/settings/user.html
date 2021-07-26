@@ -37,6 +37,25 @@
         <td>{{ user.email }}</td>
     </tr>
 </table>
+
+<div class='panel-heading'>
+    <h4>{% trans "Theme Settings" %}</h4>
+</div>
+
+<div class='row'>
+
+    <form action='' method='post'>
+        {% csrf_token %}
+        <input name='next' type='hidden' value='{% url "settings" %}'>
+        <select name='theme' class='select form-control'>
+            {% for theme in get_available_themes %}
+            {{ theme }}
+            {% endfor %}
+        </select>
+    </form>
+
+</div>
+
 <div class='panel-heading'>
     <h4>{% trans "Language Settings" %}</h4>
 </div>
