@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-27 03:12+0000\n"
+"POT-Creation-Date: 2021-07-27 21:01+0000\n"
 "PO-Revision-Date: 2021-07-27 00:13\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
@@ -78,7 +78,7 @@ msgid "Duplicate serial: {n}"
 msgstr ""
 
 #: InvenTree/helpers.py:403 order/models.py:315 order/models.py:425
-#: stock/views.py:1278
+#: stock/views.py:1295
 msgid "Invalid quantity provided"
 msgstr ""
 
@@ -1404,7 +1404,7 @@ msgstr ""
 msgid "Maximum output quantity is "
 msgstr ""
 
-#: build/views.py:183 stock/views.py:1304
+#: build/views.py:183 stock/views.py:1321
 msgid "Serial numbers already exist"
 msgstr ""
 
@@ -1420,7 +1420,7 @@ msgstr ""
 msgid "Confirm unallocation of build stock"
 msgstr ""
 
-#: build/views.py:280 build/views.py:370 stock/views.py:369
+#: build/views.py:280 build/views.py:370 stock/views.py:386
 msgid "Check the confirmation box"
 msgstr ""
 
@@ -4476,7 +4476,7 @@ msgstr ""
 msgid "Create new Part Category"
 msgstr ""
 
-#: part/templates/part/category.html:298 stock/views.py:874
+#: part/templates/part/category.html:298 stock/views.py:891
 msgid "Create new Stock Location"
 msgstr ""
 
@@ -5937,7 +5937,7 @@ msgstr ""
 msgid "The following stock items will be uninstalled"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:847
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:864
 msgid "Convert Stock Item"
 msgstr ""
 
@@ -5958,103 +5958,103 @@ msgstr ""
 msgid "Are you sure you want to delete this stock tracking entry?"
 msgstr ""
 
-#: stock/views.py:146
+#: stock/views.py:163
 msgid "Edit Stock Location"
 msgstr ""
 
-#: stock/views.py:253 stock/views.py:826 stock/views.py:948 stock/views.py:1313
+#: stock/views.py:270 stock/views.py:843 stock/views.py:965 stock/views.py:1330
 msgid "Owner is required (ownership control is enabled)"
 msgstr ""
 
-#: stock/views.py:268
+#: stock/views.py:285
 msgid "Stock Location QR code"
 msgstr ""
 
-#: stock/views.py:287
+#: stock/views.py:304
 msgid "Assign to Customer"
 msgstr ""
 
-#: stock/views.py:296
+#: stock/views.py:313
 msgid "Customer must be specified"
 msgstr ""
 
-#: stock/views.py:320
+#: stock/views.py:337
 msgid "Return to Stock"
 msgstr ""
 
-#: stock/views.py:329
+#: stock/views.py:346
 msgid "Specify a valid location"
 msgstr ""
 
-#: stock/views.py:340
+#: stock/views.py:357
 msgid "Stock item returned from customer"
 msgstr ""
 
-#: stock/views.py:351
+#: stock/views.py:368
 msgid "Delete All Test Data"
 msgstr ""
 
-#: stock/views.py:368
+#: stock/views.py:385
 msgid "Confirm test data deletion"
 msgstr ""
 
-#: stock/views.py:473
+#: stock/views.py:490
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: stock/views.py:499
+#: stock/views.py:516
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/views.py:598
+#: stock/views.py:615
 msgid "Uninstall Stock Items"
 msgstr ""
 
-#: stock/views.py:695 templates/js/stock.js:272
+#: stock/views.py:712 templates/js/stock.js:272
 msgid "Confirm stock adjustment"
 msgstr ""
 
-#: stock/views.py:706
+#: stock/views.py:723
 msgid "Uninstalled stock items"
 msgstr ""
 
-#: stock/views.py:728
+#: stock/views.py:745
 msgid "Edit Stock Item"
 msgstr ""
 
-#: stock/views.py:965
+#: stock/views.py:982
 msgid "Serialize Stock"
 msgstr ""
 
-#: stock/views.py:1058 templates/js/build.js:365
+#: stock/views.py:1075 templates/js/build.js:365
 msgid "Create new Stock Item"
 msgstr ""
 
-#: stock/views.py:1200
+#: stock/views.py:1217
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/views.py:1282
+#: stock/views.py:1299
 msgid "Quantity cannot be negative"
 msgstr ""
 
-#: stock/views.py:1382
+#: stock/views.py:1399
 msgid "Delete Stock Location"
 msgstr ""
 
-#: stock/views.py:1395
+#: stock/views.py:1412
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:1406
+#: stock/views.py:1423
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1413
+#: stock/views.py:1430
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1422
+#: stock/views.py:1439
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
