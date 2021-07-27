@@ -17,16 +17,21 @@
     <td>
         {% if setting.is_bool %}
         <div>
-            <input fieldname='{{ setting.key }}' class='slidey' type='checkbox' data-offstyle='warning' data-onstyle='success' data-size='small' data-toggle='toggle' disabled autocomplete='off' {% if setting.as_bool %}checked=''{% endif %}>
+            <input fieldname='{{ setting.key }}' id='setting-value-{{ setting.key }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
         </div>
         {% else %}
-        {% if setting.value %}
-        <i><b>
-            {{ setting.value }}</b> {{ setting.units }}
-        </i>
-        {% else %}
-        <i>{% trans "No value set" %}</i>
-        {% endif %}
+        <div id='setting-{{ setting.pk }}'>
+            <b>
+            <span id='setting-value-{{ setting.key }}'>
+                {% if setting.value %}
+                {{ setting.value }}
+                {% else %}
+                <i>{% trans "No value set" %}</i>
+                {% endif %}
+            </span>
+            </b>
+            {{ setting.units }}
+        </div>
         {% endif %}
     <td>
         {% trans setting.description %}
