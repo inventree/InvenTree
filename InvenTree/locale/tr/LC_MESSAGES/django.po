@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-26 23:48+0000\n"
-"PO-Revision-Date: 2021-07-21 12:53\n"
+"PO-Revision-Date: 2021-07-27 00:13\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1935,10 +1935,8 @@ msgid "Show starred parts on the homepage"
 msgstr ""
 
 #: common/models.py:777
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Show latest parts"
-msgstr "Parçaları sil"
+msgstr ""
 
 #: common/models.py:778
 msgid "Show latest parts on the homepage"
@@ -1953,20 +1951,16 @@ msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
 #: common/models.py:789
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Show recent stock changes"
-msgstr "Kaynak stok kalemi"
+msgstr ""
 
 #: common/models.py:790
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
 #: common/models.py:795
-#, fuzzy
-#| msgid "Low Stock"
 msgid "Show low stock"
-msgstr "Düşük Stok"
+msgstr ""
 
 #: common/models.py:796
 msgid "Show low stock items on the homepage"
@@ -1989,20 +1983,16 @@ msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
 #: common/models.py:813
-#, fuzzy
-#| msgid "Serialize stock"
 msgid "Show expired stock"
-msgstr "Stoku seri numarala"
+msgstr ""
 
 #: common/models.py:814
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
 #: common/models.py:819
-#, fuzzy
-#| msgid "Serialize stock"
 msgid "Show stale stock"
-msgstr "Stoku seri numarala"
+msgstr ""
 
 #: common/models.py:820
 msgid "Show stale stock items on the homepage"
@@ -2090,10 +2080,8 @@ msgid "Supplied value must be a boolean"
 msgstr ""
 
 #: common/views.py:121
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Change User Setting"
-msgstr "Kategori Ayarları"
+msgstr ""
 
 #: common/views.py:196 order/templates/order/order_wizard/po_upload.html:42
 #: order/templates/order/po_navbar.html:19
@@ -6168,8 +6156,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
@@ -7955,3 +7942,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

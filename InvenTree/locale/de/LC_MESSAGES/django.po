@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-26 23:48+0000\n"
-"PO-Revision-Date: 2021-07-21 21:30\n"
+"PO-Revision-Date: 2021-07-27 00:13\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -192,10 +192,8 @@ msgid "English"
 msgstr "Englisch"
 
 #: InvenTree/settings.py:508
-#, fuzzy
-#| msgid "Companies"
 msgid "Spanish"
-msgstr "Firmen"
+msgstr ""
 
 #: InvenTree/settings.py:509
 msgid "French"
@@ -246,10 +244,8 @@ msgid "Turkish"
 msgstr "Türkisch"
 
 #: InvenTree/settings.py:521
-#, fuzzy
-#| msgid "Test name"
 msgid "Vietnamese"
-msgstr "Name des Tests"
+msgstr ""
 
 #: InvenTree/settings.py:522
 msgid "Chinese"
@@ -1931,104 +1927,76 @@ msgid "Prefix value for purchase order reference"
 msgstr "Präfix für Bestellungs-Referenz"
 
 #: common/models.py:771
-#, fuzzy
-#| msgid "Starred part"
 msgid "Show starred parts"
-msgstr "Favoritenteil"
+msgstr ""
 
 #: common/models.py:772
 msgid "Show starred parts on the homepage"
 msgstr ""
 
 #: common/models.py:777
-#, fuzzy
-#| msgid "Show related parts"
 msgid "Show latest parts"
-msgstr "Verwandte Teile anzeigen"
+msgstr ""
 
 #: common/models.py:778
 msgid "Show latest parts on the homepage"
 msgstr ""
 
 #: common/models.py:783
-#, fuzzy
-#| msgid "Validate BOM"
 msgid "Show unvalidated BOMs"
-msgstr "Stückliste überprüfen"
+msgstr ""
 
 #: common/models.py:784
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
 #: common/models.py:789
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Show recent stock changes"
-msgstr "Quell-BestandsObjekt"
+msgstr ""
 
 #: common/models.py:790
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
 #: common/models.py:795
-#, fuzzy
-#| msgid "Low stock"
 msgid "Show low stock"
-msgstr "Bestand niedrig"
+msgstr ""
 
 #: common/models.py:796
-#, fuzzy
-#| msgid "Show stock items which have expired"
 msgid "Show low stock items on the homepage"
-msgstr "Zeige abgelaufene BestandsObjekte"
+msgstr ""
 
 #: common/models.py:801
-#, fuzzy
-#| msgid "Depleted Stock"
 msgid "Show depleted stock"
-msgstr "Verbrauchter Bestand"
+msgstr ""
 
 #: common/models.py:802
-#, fuzzy
-#| msgid "Show stock items which have expired"
 msgid "Show depleted stock items on the homepage"
-msgstr "Zeige abgelaufene BestandsObjekte"
+msgstr ""
 
 #: common/models.py:807
-#, fuzzy
-#| msgid "Add stock"
 msgid "Show needed stock"
-msgstr "Bestand hinzufügen"
+msgstr ""
 
 #: common/models.py:808
-#, fuzzy
-#| msgid "Show stock items which are installed in another item"
 msgid "Show stock items needed for builds on the homepage"
-msgstr "BestandsObjekte, die in anderen Elementen verbaut sind, anzeigen"
+msgstr ""
 
 #: common/models.py:813
-#, fuzzy
-#| msgid "Sell Expired Stock"
 msgid "Show expired stock"
-msgstr "Abgelaufenen Bestand verkaufen"
+msgstr ""
 
 #: common/models.py:814
-#, fuzzy
-#| msgid "Show stock items which have expired"
 msgid "Show expired stock items on the homepage"
-msgstr "Zeige abgelaufene BestandsObjekte"
+msgstr ""
 
 #: common/models.py:819
-#, fuzzy
-#| msgid "Show sale cost"
 msgid "Show stale stock"
-msgstr "Verkaufskosten anzeigen"
+msgstr ""
 
 #: common/models.py:820
-#, fuzzy
-#| msgid "Show stock items which have expired"
 msgid "Show stale stock items on the homepage"
-msgstr "Zeige abgelaufene BestandsObjekte"
+msgstr ""
 
 #: common/models.py:825
 msgid "Show pending builds"
@@ -2039,20 +2007,16 @@ msgid "Show pending builds on the homepage"
 msgstr ""
 
 #: common/models.py:831
-#, fuzzy
-#| msgid "Overdue Build Orders"
 msgid "Show overdue builds"
-msgstr "überfällige Bauaufträge"
+msgstr ""
 
 #: common/models.py:832
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
 #: common/models.py:837
-#, fuzzy
-#| msgid "Outstanding"
 msgid "Show outstanding POs"
-msgstr "ausstehend"
+msgstr ""
 
 #: common/models.py:838
 msgid "Show outstanding POs on the homepage"
@@ -2067,10 +2031,8 @@ msgid "Show overdue POs on the homepage"
 msgstr ""
 
 #: common/models.py:849
-#, fuzzy
-#| msgid "Outstanding"
 msgid "Show outstanding SOs"
-msgstr "ausstehend"
+msgstr ""
 
 #: common/models.py:850
 msgid "Show outstanding SOs on the homepage"
@@ -2118,10 +2080,8 @@ msgid "Supplied value must be a boolean"
 msgstr "Angegebener Wert muss ein Wahrheitswert sein"
 
 #: common/views.py:121
-#, fuzzy
-#| msgid "Change Setting"
 msgid "Change User Setting"
-msgstr "Einstellungen ändern"
+msgstr ""
 
 #: common/views.py:196 order/templates/order/order_wizard/po_upload.html:42
 #: order/templates/order/po_navbar.html:19
@@ -6196,13 +6156,11 @@ msgstr "Farbschemata"
 
 #: templates/InvenTree/settings/appearance.html:29
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
 "        Please select another color theme :)\n"
 "    "
-msgstr ""
-"\n"
+msgstr "\n"
 "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
 "\t\tBitte ein anderes Farbschema auswählen:)\n"
 "\t    "
@@ -7987,3 +7945,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+

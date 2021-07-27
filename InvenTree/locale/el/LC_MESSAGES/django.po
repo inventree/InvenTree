@@ -5,72 +5,72 @@ msgstr ""
 "POT-Creation-Date: 2021-07-26 23:48+0000\n"
 "PO-Revision-Date: 2021-07-27 00:13\n"
 "Last-Translator: \n"
-"Language-Team: Japanese\n"
-"Language: ja_JP\n"
+"Language-Team: Greek\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: ja\n"
+"X-Crowdin-Language: el\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 138\n"
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr "APIエンドポイントが見つかりません"
+msgstr ""
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr "アクションが指定されていません"
+msgstr ""
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr "日付を入力する"
+msgstr ""
 
 #: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:109 templates/js/forms.js:526
 msgid "Confirm"
-msgstr "確認"
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Confirm delete"
-msgstr "削除の確認"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Confirm item deletion"
-msgstr "削除の確認"
+msgstr ""
 
 #: InvenTree/forms.py:161 templates/registration/login.html:76
 msgid "Enter password"
-msgstr "パスワードを入力してください"
+msgstr ""
 
 #: InvenTree/forms.py:162
 msgid "Enter new password"
-msgstr "新しいパスワードを入力してください。"
+msgstr ""
 
 #: InvenTree/forms.py:169
 msgid "Confirm password"
-msgstr "パスワードの確認"
+msgstr ""
 
 #: InvenTree/forms.py:170
 msgid "Confirm new password"
-msgstr "新しいパスワードの確認"
+msgstr ""
 
 #: InvenTree/forms.py:205
 msgid "Apply Theme"
-msgstr "テーマを適用"
+msgstr ""
 
 #: InvenTree/forms.py:235
 msgid "Select Category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: InvenTree/helpers.py:396
 #, python-brace-format
@@ -80,26 +80,26 @@ msgstr ""
 #: InvenTree/helpers.py:403 order/models.py:315 order/models.py:425
 #: stock/views.py:1278
 msgid "Invalid quantity provided"
-msgstr "数量コードが無効です"
+msgstr ""
 
 #: InvenTree/helpers.py:406
 msgid "Empty serial number string"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: InvenTree/helpers.py:428 InvenTree/helpers.py:431 InvenTree/helpers.py:434
 #: InvenTree/helpers.py:459
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr "無効なグループ： {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr "重複シリアル: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:472
 msgid "No serial numbers found"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: InvenTree/helpers.py:476
 #, python-brace-format
@@ -108,34 +108,34 @@ msgstr ""
 
 #: InvenTree/models.py:61 stock/models.py:1815
 msgid "Attachment"
-msgstr "添付ファイル"
+msgstr ""
 
 #: InvenTree/models.py:62
 msgid "Select file to attach"
-msgstr "添付ファイルを選択"
+msgstr ""
 
 #: InvenTree/models.py:64 templates/js/attachment.js:52
 msgid "Comment"
-msgstr "コメント："
+msgstr ""
 
 #: InvenTree/models.py:64
 msgid "File comment"
-msgstr "ファイルコメント"
+msgstr ""
 
 #: InvenTree/models.py:70 InvenTree/models.py:71 common/models.py:880
 #: common/models.py:881 part/models.py:2097
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1538
 msgid "User"
-msgstr "ユーザー"
+msgstr ""
 
 #: InvenTree/models.py:74
 msgid "upload date"
-msgstr "アップロード日時"
+msgstr ""
 
 #: InvenTree/models.py:113
 msgid "Invalid choice"
-msgstr "無効な選択です"
+msgstr ""
 
 #: InvenTree/models.py:129 InvenTree/models.py:130 company/models.py:412
 #: label/models.py:112 part/models.py:718 part/models.py:2246
@@ -144,7 +144,7 @@ msgstr "無効な選択です"
 #: templates/js/part.js:206 templates/js/part.js:339 templates/js/part.js:831
 #: templates/js/stock.js:1331
 msgid "Name"
-msgstr "お名前"
+msgstr ""
 
 #: InvenTree/models.py:136 build/models.py:187
 #: build/templates/build/detail.html:24 company/models.py:351
@@ -165,23 +165,23 @@ msgstr "お名前"
 #: templates/js/stock.js:917 templates/js/stock.js:1343
 #: templates/js/stock.js:1388
 msgid "Description"
-msgstr "説明"
+msgstr ""
 
 #: InvenTree/models.py:137
 msgid "Description (optional)"
-msgstr "説明 (オプション)"
+msgstr ""
 
 #: InvenTree/models.py:145
 msgid "parent"
-msgstr "親"
+msgstr ""
 
 #: InvenTree/serializers.py:52 part/models.py:2482
 msgid "Must be a valid number"
-msgstr "有効な数字でなければなりません"
+msgstr ""
 
 #: InvenTree/settings.py:505
 msgid "German"
-msgstr "ドイツ語"
+msgstr ""
 
 #: InvenTree/settings.py:506
 msgid "Greek"
@@ -189,7 +189,7 @@ msgstr ""
 
 #: InvenTree/settings.py:507
 msgid "English"
-msgstr "英語"
+msgstr ""
 
 #: InvenTree/settings.py:508
 msgid "Spanish"
@@ -197,7 +197,7 @@ msgstr ""
 
 #: InvenTree/settings.py:509
 msgid "French"
-msgstr "フランス語"
+msgstr ""
 
 #: InvenTree/settings.py:510
 msgid "Hebrew"
@@ -225,7 +225,7 @@ msgstr ""
 
 #: InvenTree/settings.py:516
 msgid "Polish"
-msgstr "ポーランド語"
+msgstr ""
 
 #: InvenTree/settings.py:517
 msgid "Russian"
@@ -241,7 +241,7 @@ msgstr ""
 
 #: InvenTree/settings.py:520
 msgid "Turkish"
-msgstr "トルコ語"
+msgstr ""
 
 #: InvenTree/settings.py:521
 msgid "Vietnamese"
@@ -253,60 +253,60 @@ msgstr ""
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr "バックグラウンドワーカーのチェックに失敗しました"
+msgstr ""
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr "メールアドレスが未設定です"
+msgstr ""
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr "InvenTree システムのヘルスチェックに失敗しました"
+msgstr ""
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr "処理待ち"
+msgstr ""
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr "設置済"
+msgstr ""
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr "完了"
+msgstr ""
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr "キャンセル済"
+msgstr ""
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr "紛失"
+msgstr ""
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr "返品済"
+msgstr ""
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr "発送済み"
+msgstr ""
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr "注意が必要です"
+msgstr ""
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr "破損"
+msgstr ""
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
@@ -314,7 +314,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr "却下済み"
+msgstr ""
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -600,7 +600,7 @@ msgstr ""
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr "完了したパーツの場所"
+msgstr ""
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:62 order/models.py:549
@@ -715,7 +715,7 @@ msgstr ""
 #: templates/js/part.js:593 templates/js/stock.js:122 templates/js/stock.js:886
 #: templates/js/stock.js:1709
 msgid "Part"
-msgstr "パーツ"
+msgstr ""
 
 #: build/models.py:213
 msgid "Select part to build"
@@ -902,7 +902,7 @@ msgstr ""
 
 #: build/models.py:1373
 msgid "Build to allocate parts"
-msgstr "パーツを割り当てるためにビルドする"
+msgstr ""
 
 #: build/models.py:1389 stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:31
@@ -1222,14 +1222,14 @@ msgstr ""
 
 #: build/templates/build/detail.html:179
 msgid "Order required parts"
-msgstr "注文必須パーツ"
+msgstr ""
 
 #: build/templates/build/detail.html:180
 #: company/templates/company/detail.html:33
 #: company/templates/company/detail.html:75 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
-msgstr "パーツの注文"
+msgstr ""
 
 #: build/templates/build/detail.html:186
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1690,36 +1690,36 @@ msgstr ""
 #: stock/forms.py:225 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:324
 msgid "Template"
-msgstr "テンプレート"
+msgstr ""
 
 #: common/models.py:550
 msgid "Parts are templates by default"
-msgstr "パーツはデフォルトのテンプレートです"
+msgstr ""
 
 #: common/models.py:556 part/models.py:865 templates/js/table_filters.js:132
 #: templates/js/table_filters.js:336
 msgid "Assembly"
-msgstr "アセンブリ"
+msgstr ""
 
 #: common/models.py:557
 msgid "Parts can be assembled from other components by default"
-msgstr "パーツはデフォルトで他のコンポーネントから組み立てることができます"
+msgstr ""
 
 #: common/models.py:563 part/models.py:871 templates/js/table_filters.js:340
 msgid "Component"
-msgstr "コンポーネント"
+msgstr ""
 
 #: common/models.py:564
 msgid "Parts can be used as sub-components by default"
-msgstr "パーツはデフォルトでサブコンポーネントとして使用できます"
+msgstr ""
 
 #: common/models.py:570 part/models.py:882
 msgid "Purchaseable"
-msgstr "購入可能"
+msgstr ""
 
 #: common/models.py:571
 msgid "Parts are purchaseable by default"
-msgstr "パーツはデフォルトで購入可能です"
+msgstr ""
 
 #: common/models.py:577 part/models.py:887 templates/js/table_filters.js:348
 msgid "Salable"
@@ -1727,16 +1727,16 @@ msgstr ""
 
 #: common/models.py:578
 msgid "Parts are salable by default"
-msgstr "パーツはデフォルトで販売可能です"
+msgstr ""
 
 #: common/models.py:584 part/models.py:877 templates/js/table_filters.js:33
 #: templates/js/table_filters.js:352
 msgid "Trackable"
-msgstr "追跡可能"
+msgstr ""
 
 #: common/models.py:585
 msgid "Parts are trackable by default"
-msgstr "パーツはデフォルトで追跡可能です"
+msgstr ""
 
 #: common/models.py:591 part/models.py:897 templates/js/table_filters.js:29
 msgid "Virtual"
@@ -2277,7 +2277,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:374
 msgid "Manufacturer Part"
-msgstr "メーカー・パーツ"
+msgstr ""
 
 #: company/models.py:413
 msgid "Parameter name"
@@ -2438,19 +2438,19 @@ msgstr ""
 #: company/templates/company/manufacturer_part_navbar.html:18
 #: templates/InvenTree/search.html:164
 msgid "Supplier Parts"
-msgstr "サプライヤー・パーツ"
+msgstr ""
 
 #: company/templates/company/detail.html:22
 #: order/templates/order/order_wizard/select_parts.html:44
 #: templates/js/part.js:79
 msgid "Create new supplier part"
-msgstr "新しいサプライヤー・パーツを作成"
+msgstr ""
 
 #: company/templates/company/detail.html:23
 #: company/templates/company/manufacturer_part.html:109
 #: part/templates/part/detail.html:289 templates/js/part.js:78
 msgid "New Supplier Part"
-msgstr "新しいサプライヤー・パーツ"
+msgstr ""
 
 #: company/templates/company/detail.html:28
 #: company/templates/company/detail.html:70
@@ -2465,29 +2465,29 @@ msgstr ""
 #: company/templates/company/detail.html:75
 #: part/templates/part/category.html:140
 msgid "Order parts"
-msgstr "パーツの注文"
+msgstr ""
 
 #: company/templates/company/detail.html:36
 #: company/templates/company/detail.html:78
 msgid "Delete parts"
-msgstr "パーツを削除"
+msgstr ""
 
 #: company/templates/company/detail.html:36
 #: company/templates/company/detail.html:78
 msgid "Delete Parts"
-msgstr "パーツを削除"
+msgstr ""
 
 #: company/templates/company/detail.html:56 templates/InvenTree/search.html:149
 msgid "Manufacturer Parts"
-msgstr "メーカー・パーツ"
+msgstr ""
 
 #: company/templates/company/detail.html:64
 msgid "Create new manufacturer part"
-msgstr "新しいメーカー・パーツを作成"
+msgstr ""
 
 #: company/templates/company/detail.html:65 part/templates/part/detail.html:312
 msgid "New Manufacturer Part"
-msgstr "新しいメーカ―・パーツ"
+msgstr ""
 
 #: company/templates/company/detail.html:97
 msgid "Supplier Stock"
@@ -2570,26 +2570,26 @@ msgstr ""
 #: company/templates/company/supplier_part.html:146
 #: part/templates/part/detail.html:55 part/templates/part/part_base.html:101
 msgid "Order part"
-msgstr "パーツの注文"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:45
 #: templates/js/company.js:473
 msgid "Edit manufacturer part"
-msgstr "メーカー・パーツの編集"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:49
 #: templates/js/company.js:474
 msgid "Delete manufacturer part"
-msgstr "メーカー・パーツを削除"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:61
 msgid "Manufacturer Part Details"
-msgstr "メーカー・パーツの詳細"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:66
 #: company/templates/company/supplier_part.html:65
 msgid "Internal Part"
-msgstr "内部パーツ"
+msgstr ""
 
 #: company/templates/company/manufacturer_part.html:103
 #: company/templates/company/manufacturer_part_navbar.html:21
@@ -2649,7 +2649,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Stock"
-msgstr "メーカー・パーツの在庫"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:29
 #: company/templates/company/navbar.html:34
@@ -2667,7 +2667,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:33
 msgid "Manufacturer Part Orders"
-msgstr "メーカー・パーツの注文"
+msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:36
 #: company/templates/company/supplier_part_navbar.html:22
@@ -3311,7 +3311,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
-msgstr "購入可能なパーツが選択されていません"
+msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:33
 msgid "Select Supplier"
@@ -3441,7 +3441,7 @@ msgstr ""
 #: order/templates/order/receive_parts.html:8
 #, python-format
 msgid "Receive outstanding parts for <b>%(order)s</b> - <i>%(desc)s</i>"
-msgstr "<b>%(order)s</b> - <i>%(desc)s</i> の未処理のパーツを受け取る"
+msgstr ""
 
 #: order/templates/order/receive_parts.html:14 part/api.py:47
 #: part/models.py:348 part/templates/part/cat_link.html:7
@@ -3453,7 +3453,7 @@ msgstr "<b>%(order)s</b> - <i>%(desc)s</i> の未処理のパーツを受け取�
 #: templates/navbar.html:23 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
-msgstr "パーツ"
+msgstr ""
 
 #: order/templates/order/receive_parts.html:15
 msgid "Fill out number of parts received, the status and destination"
@@ -4382,7 +4382,7 @@ msgstr ""
 
 #: part/templates/part/category.html:33
 msgid "All parts"
-msgstr "全てのパーツ"
+msgstr ""
 
 #: part/templates/part/category.html:38 part/views.py:1912
 msgid "Create new part category"
@@ -4432,7 +4432,7 @@ msgstr ""
 
 #: part/templates/part/category.html:131 part/templates/part/detail.html:452
 msgid "New Part"
-msgstr "新規パーツ"
+msgstr ""
 
 #: part/templates/part/category.html:138
 msgid "Set category"
@@ -6735,11 +6735,11 @@ msgstr ""
 
 #: templates/js/company.js:48
 msgid "Edit Manufacturer Part"
-msgstr "メーカー・パーツの編集"
+msgstr ""
 
 #: templates/js/company.js:57
 msgid "Delete Manufacturer Part"
-msgstr "メーカー・パーツを削除"
+msgstr ""
 
 #: templates/js/company.js:114
 msgid "Add Supplier Part"
