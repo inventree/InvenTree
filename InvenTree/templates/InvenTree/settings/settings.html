@@ -56,18 +56,11 @@ $('table').find('.btn-edit-setting').click(function() {
         {
             success: function(response) {
 
-                console.log(`setting ${pk} -> ${response.value}`);
-
                 if (response.is_bool) {
                     var enabled = response.value.toLowerCase() == 'true';
-
-                    console.log("bool result:", enabled);
-
                     $(`#setting-value-${setting}`).prop('checked', enabled);
                 } else {
                     $(`#setting-value-${setting}`).html(response.value);
-
-                    console.log("Normal result:", response.value);
                 }
             }
         }

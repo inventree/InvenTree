@@ -17,12 +17,12 @@
     <td>
         {% if setting.is_bool %}
         <div>
-            <input fieldname='{{ setting.key }}' id='setting-value-{{ setting.key }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
+            <input fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
             <b>
-            <span id='setting-value-{{ setting.key }}'>
+            <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
                 {% if setting.value %}
                 {{ setting.value }}
                 {% else %}
@@ -38,7 +38,7 @@
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ key }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
+            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>
