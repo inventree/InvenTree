@@ -11,6 +11,7 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
@@ -108,6 +109,22 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
                     break
 
         return data
+
+    def get(self, request, *args, **kwargs):
+        """ check if item exists else return to stock index """
+
+        stock_pk = kwargs.get('pk', None)
+
+        if stock_pk:
+            try:
+                stock_item = StockItem.objects.get(pk=stock_pk)
+            except StockItem.DoesNotExist:
+                stock_item = None
+
+            if not stock_item:
+                return HttpResponseRedirect(reverse('stock-index'))
+
+        return super().get(request, *args, **kwargs)
 
 
 class StockItemNotes(InvenTreeRoleMixin, UpdateView):
