@@ -147,8 +147,7 @@ function inventreeDelete(url, options={}) {
 
     options.method = 'DELETE';
 
-    inventreePut(url, {}, options);
-
+    return inventreePut(url, {}, options);
 }
 
 
