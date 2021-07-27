@@ -668,13 +668,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'SEARCH_PREVIEW_RESULTS': {
-            'name': _('Search Preview Results'),
-            'description': _('Number of results to show in search preview window'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
         'STOCK_ENABLE_EXPIRY': {
             'name': _('Stock Expiry'),
             'description': _('Enable stock expiry functionality'),
@@ -856,6 +849,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Show overdue SOs on the homepage'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_RESULTS': {
+            'name': _('Search Preview Results'),
+            'description': _('Number of results to show in search preview window'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
         },
     }
 
