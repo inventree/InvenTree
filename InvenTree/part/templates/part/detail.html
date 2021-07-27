@@ -416,7 +416,7 @@
                     });
 
                     // Wait for *all* the requests to complete
-                    $.when.apply($, requests).then(function() {
+                    $.when.apply($, requests).done(function() {
                         location.reload();
                     });
                 }
@@ -832,7 +832,7 @@
                         requests.push(inventreeDelete(url));
                     });
             
-                    $.when.apply($, requests).then(function() {
+                    $.when.apply($, requests).done(function() {
                         reloadSupplierPartTable();
                     });
                 }

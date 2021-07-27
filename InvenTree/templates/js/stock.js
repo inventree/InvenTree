@@ -287,7 +287,7 @@ function adjustStock(action, items, options={}) {
                 });
 
                 // Wait for *all* the requests to complete
-                $.when.apply($, requests).then(function() {
+                $.when.apply($, requests).done(function() {
                     // Destroy the modal window
                     $(modal).modal('hide');
 
@@ -1265,7 +1265,7 @@ function loadStockTable(table, options) {
                 );
             });
 
-            $.when.apply($, requests).then(function() {
+            $.when.apply($, requests).done(function() {
                 $("#stock-table").bootstrapTable('refresh');
             });
         })
