@@ -1,0 +1,28 @@
+# Check javascript template files
+
+name: Javascript Templates
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches-ignore:
+      - l10*
+
+jobs:
+
+  python:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Check Files
+        run: |
+          cd ci
+          python check_js_templates.py
+  
