@@ -159,7 +159,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PartCategory.objects.all()
 
 
-class CategoryParameters(generics.ListAPIView):
+class CategoryParameterList(generics.ListAPIView):
     """ API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
@@ -176,30 +176,27 @@ class CategoryParameters(generics.ListAPIView):
         - Allow traversing all parent categories
         """
 
-        try:
-            cat_id = int(self.kwargs.get('pk', None))
-        except TypeError:
-            cat_id = None
-        fetch_parent = str2bool(self.request.query_params.get('fetch_parent', 'true'))
-
         queryset = super().get_queryset()
 
-        if isinstance(cat_id, int):
+        params = self.request.query_params
 
+        category = params.get('category', None)
+
+        if category is not None:
             try:
-                category = PartCategory.objects.get(pk=cat_id)
-            except PartCategory.DoesNotExist:
-                # Return empty queryset
-                return PartCategoryParameterTemplate.objects.none()
+                
+                category = PartCategory.objects.get(pk=category)
 
-            category_list = [cat_id]
+                fetch_parent = str2bool(params.get('fetch_parent', True))
 
-            if fetch_parent:
-                parent_categories = category.get_ancestors()
-                for parent in parent_categories:
-                    category_list.append(parent.pk)
+                if fetch_parent:
+                    parents = category.get_ancestors(include_self=True)
+                    queryset = queryset.filter(category__in=[cat.pk for cat in parents])
+                else:
+                    queryset = queryset.filter(category=category)
 
-            queryset = queryset.filter(category__in=category_list)
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
 
         return queryset
 
@@ -1094,7 +1091,8 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
-        url(r'^(?P<pk>\d+)/parameters/?', CategoryParameters.as_view(), name='api-part-category-parameters'),
+        url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
+
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
         url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
     ])),
