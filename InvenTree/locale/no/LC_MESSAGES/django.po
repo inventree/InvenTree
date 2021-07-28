@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-28 12:51+0000\n"
-"PO-Revision-Date: 2021-07-28 05:13\n"
+"POT-Creation-Date: 2021-07-28 05:05+0000\n"
+"PO-Revision-Date: 2021-07-28 13:03\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -38,7 +38,7 @@ msgstr ""
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:109 templates/js/forms.js:526
 msgid "Confirm"
-msgstr ""
+msgstr "Bekreft"
 
 #: InvenTree/forms.py:127
 msgid "Confirm delete"
@@ -50,19 +50,19 @@ msgstr ""
 
 #: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "Skriv inn passord"
 
 #: InvenTree/forms.py:161
 msgid "Enter new password"
-msgstr ""
+msgstr "Skriv inn nytt passord"
 
 #: InvenTree/forms.py:168
 msgid "Confirm password"
-msgstr ""
+msgstr "Bekreft passord"
 
 #: InvenTree/forms.py:169
 msgid "Confirm new password"
-msgstr ""
+msgstr "Bekreft nytt passord"
 
 #: InvenTree/forms.py:201
 msgid "Select Category"
@@ -7943,3 +7943,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+
