@@ -45,5 +45,7 @@ python3 manage.py migrate --noinput || exit 1
 python3 manage.py migrate --run-syncdb || exit 1
 python3 manage.py clearsessions || exit 1
 
+invoke static
+
 # Launch a development server
 python3 manage.py runserver ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}
