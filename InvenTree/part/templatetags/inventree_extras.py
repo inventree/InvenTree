@@ -226,6 +226,23 @@ def get_color_theme_css(username):
     return inventree_css_static_url
 
 
+@register.simple_tag()
+def get_available_themes(*args, **kwargs):
+    """
+    Return the available theme choices
+    """
+
+    themes = []
+
+    for key, name in ColorTheme.get_color_themes_choices():
+        themes.append({
+            'key': key,
+            'name': name
+        })
+
+    return themes
+
+
 @register.filter
 def keyvalue(dict, key):
     """

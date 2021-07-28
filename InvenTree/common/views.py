@@ -50,6 +50,23 @@ class SettingEdit(AjaxUpdateView):
 
         return ctx
 
+    def get_data(self):
+        """
+        Custom data to return to the client after POST success
+        """
+
+        data = {}
+
+        setting = self.get_object()
+
+        data['pk'] = setting.pk
+        data['key'] = setting.key
+        data['value'] = setting.value
+        data['is_bool'] = setting.is_bool()
+        data['is_int'] = setting.is_int()
+
+        return data
+
     def get_form(self):
         """
         Override default get_form behaviour

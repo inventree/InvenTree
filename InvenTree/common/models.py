@@ -538,13 +538,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool
         },
 
-        'PART_RECENT_COUNT': {
-            'name': _('Recent Part Count'),
-            'description': _('Number of recent parts to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
         'PART_TEMPLATE': {
             'name': _('Template'),
             'description': _('Parts are templates by default'),
@@ -668,13 +661,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'SEARCH_PREVIEW_RESULTS': {
-            'name': _('Search Preview Results'),
-            'description': _('Number of results to show in search preview window'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
         'STOCK_ENABLE_EXPIRY': {
             'name': _('Stock Expiry'),
             'description': _('Enable stock expiry functionality'),
@@ -716,13 +702,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Group stock items by part reference in table views'),
             'default': True,
             'validator': bool,
-        },
-
-        'STOCK_RECENT_COUNT': {
-            'name': _('Recent Stock Count'),
-            'description': _('Number of recent stock items to display on index page'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
         },
 
         'BUILDORDER_REFERENCE_PREFIX': {
@@ -779,6 +758,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'PART_RECENT_COUNT': {
+            'name': _('Recent Part Count'),
+            'description': _('Number of recent parts to display on index page'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
+        },
+
         'HOMEPAGE_BOM_VALIDATION': {
             'name': _('Show unvalidated BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
@@ -790,6 +776,12 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Show recently changed stock items on the homepage'),
             'default': True,
             'validator': bool,
+        },
+        'STOCK_RECENT_COUNT': {
+            'name': _('Recent Stock Count'),
+            'description': _('Number of recent stock items to display on index page'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
         },
         'HOMEPAGE_STOCK_LOW': {
             'name': _('Show low stock'),
@@ -856,6 +848,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Show overdue SOs on the homepage'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_RESULTS': {
+            'name': _('Search Preview Results'),
+            'description': _('Number of results to show in search preview window'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
         },
     }
 
