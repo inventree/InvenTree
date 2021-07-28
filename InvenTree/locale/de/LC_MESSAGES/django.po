@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-28 05:05+0000\n"
-"PO-Revision-Date: 2021-07-27 00:13\n"
+"PO-Revision-Date: 2021-07-28 05:13\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6185,10 +6185,8 @@ msgid "Update Now"
 msgstr "Jetzt aktualisieren"
 
 #: templates/InvenTree/settings/global.html:9
-#, fuzzy
-#| msgid "Sales Order Settings"
 msgid "Server Settings"
-msgstr "Auftrags-Einstellungen"
+msgstr ""
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
@@ -6232,10 +6230,8 @@ msgstr "Server"
 
 #: templates/InvenTree/settings/navbar.html:53
 #: templates/InvenTree/settings/navbar.html:55
-#, fuzzy
-#| msgid "Barcode"
 msgid "Barcodes"
-msgstr "Barcode"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:59
 #: templates/InvenTree/settings/navbar.html:61
@@ -6244,10 +6240,8 @@ msgstr "Währungen"
 
 #: templates/InvenTree/settings/navbar.html:65
 #: templates/InvenTree/settings/navbar.html:67
-#, fuzzy
-#| msgid "Report"
 msgid "Reporting"
-msgstr "Bericht"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:77
 #: templates/InvenTree/settings/navbar.html:79
@@ -6317,10 +6311,8 @@ msgid "Stock Settings"
 msgstr "Bestands-Einstellungen"
 
 #: templates/InvenTree/settings/user.html:9
-#, fuzzy
-#| msgid "Report Settings"
 msgid "Account Settings"
-msgstr "Berichts-Einstellungen"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:15
 msgid "Edit"
@@ -6352,26 +6344,20 @@ msgid "Theme Settings"
 msgstr "Anzeige-Einstellungen"
 
 #: templates/InvenTree/settings/user.html:63
-#, fuzzy
-#| msgid "Apply Theme"
 msgid "Set Theme"
-msgstr "Thema anwenden"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:70
-#, fuzzy
-#| msgid "Change Setting"
 msgid "Language Settings"
-msgstr "Einstellungen ändern"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:90
 msgid "Set Language"
 msgstr "Sprache festlegen"
 
 #: templates/InvenTree/settings/user_homepage.html:9
-#, fuzzy
-#| msgid "Part Settings"
 msgid "Home Page Settings"
-msgstr "Teil-Einstellungen"
+msgstr ""
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
@@ -7958,34 +7944,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Color Themes"
-#~ msgstr "Farbschemata"
-
-#~ msgid ""
-#~ "\n"
-#~ "        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
-#~ "        Please select another color theme :)\n"
-#~ "    "
-#~ msgstr ""
-#~ "\n"
-#~ "\t\tDie CSS Datei \"%(invalid_color_theme)s.css\" für das aktuell ausgewählte Farbschema wurde nicht gefunden.<br>\n"
-#~ "\t\tBitte ein anderes Farbschema auswählen:)\n"
-#~ "\t    "
-
-#~ msgid "Language"
-#~ msgstr "Sprache"
-
-#~ msgid "Category Parameter Templates"
-#~ msgstr "Kategorie-Parametervorlagen"
-
-#~ msgid "Global InvenTree Settings"
-#~ msgstr "Systemweite InvenTree-Einstellungen"
-
-#~ msgid "Appearance"
-#~ msgstr "Anzeige"
-
-#~ msgid "Global"
-#~ msgstr "Systemweit"
-
-#~ msgid "User Information"
-#~ msgstr "Benutzerinformation"

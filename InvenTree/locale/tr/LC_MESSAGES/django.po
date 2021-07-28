@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-28 05:05+0000\n"
-"PO-Revision-Date: 2021-07-27 00:13\n"
+"PO-Revision-Date: 2021-07-28 05:13\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -6185,10 +6185,8 @@ msgid "Update Now"
 msgstr ""
 
 #: templates/InvenTree/settings/global.html:9
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Server Settings"
-msgstr "Kategori Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
@@ -6232,10 +6230,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:53
 #: templates/InvenTree/settings/navbar.html:55
-#, fuzzy
-#| msgid "Barcode actions"
 msgid "Barcodes"
-msgstr "Barkod işlemleri"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:59
 #: templates/InvenTree/settings/navbar.html:61
@@ -6315,10 +6311,8 @@ msgid "Stock Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:9
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Account Settings"
-msgstr "Kategori Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:15
 msgid "Edit"
@@ -6350,26 +6344,20 @@ msgid "Theme Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:63
-#, fuzzy
-#| msgid "Apply Theme"
 msgid "Set Theme"
-msgstr "Temayı Uygula"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:70
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Language Settings"
-msgstr "Kategori Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:90
 msgid "Set Language"
 msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Home Page Settings"
-msgstr "Kategori Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
@@ -7956,5 +7944,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Category Parameter Templates"
-#~ msgstr "Kategori Parametre Şablonu"
