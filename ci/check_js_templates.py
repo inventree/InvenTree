@@ -71,14 +71,14 @@ def check_prohibited_tags(data):
         for tag in re.findall(pattern, line):
 
             if tag not in allowed_tags:
-                print(f" > Line {idx+1} - '{tag}'")
+                print(f" > Line {idx+1} contains prohibited template tag '{tag}'")
                 err_count += 1
 
             if tag == 'trans':
                 has_trans = True
 
     if not has_trans:
-        print(f" > missing 'trans' tag")
+        print(f" > file is missing 'trans' tags")
         err_count += 1
 
     return err_count
@@ -113,7 +113,7 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
         if len(results) > 0:
             errors += 1
 
-            print(f" > {{% trans %}} tag found at line {idx + 1}")
+            print(f" > prohibited {{% trans %}} tag found at line {idx + 1}")
 
 if errors > 0:
     print(f"Found {errors} incorrect template tags")
