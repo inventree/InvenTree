@@ -6,10 +6,9 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.db.models.expressions import Value
 from django.urls import reverse
 from django.http import JsonResponse
-from django.db.models import Q, F, Count, Min, Max, Avg, query
+from django.db.models import Q, F, Count, Min, Max, Avg
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
