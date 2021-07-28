@@ -94,7 +94,7 @@ function inventreeDocReady() {
                     {% if request.user %}
                     limit: {% settings_value 'SEARCH_PREVIEW_RESULTS' user=request.user %},
                     {% else %}
-                    limit: 25
+                    limit: 25,
                     {% endif %}
                     offset: 0
                 },
