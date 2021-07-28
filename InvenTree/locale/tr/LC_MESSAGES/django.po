@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-26 23:48+0000\n"
-"PO-Revision-Date: 2021-07-27 00:13\n"
+"POT-Creation-Date: 2021-07-28 05:05+0000\n"
+"PO-Revision-Date: 2021-07-28 05:13\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -33,42 +33,38 @@ msgstr "Eşleşen eylem bulunamadı"
 msgid "Enter date"
 msgstr "Tarih giriniz"
 
-#: InvenTree/forms.py:112 build/forms.py:102 build/forms.py:123
+#: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:109 templates/js/forms.js:526
 msgid "Confirm"
 msgstr "Onay"
 
-#: InvenTree/forms.py:128
+#: InvenTree/forms.py:127
 msgid "Confirm delete"
 msgstr "Silmeyi Onayla"
 
-#: InvenTree/forms.py:129
+#: InvenTree/forms.py:128
 msgid "Confirm item deletion"
 msgstr "Silmeyi onayla"
 
-#: InvenTree/forms.py:161 templates/registration/login.html:76
+#: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
 msgstr "Şifrenizi girin"
 
-#: InvenTree/forms.py:162
+#: InvenTree/forms.py:161
 msgid "Enter new password"
 msgstr "Lütfen Yeni Parolayı Girin"
 
-#: InvenTree/forms.py:169
+#: InvenTree/forms.py:168
 msgid "Confirm password"
 msgstr "Parolayı doğrulayın"
 
-#: InvenTree/forms.py:170
+#: InvenTree/forms.py:169
 msgid "Confirm new password"
 msgstr "Yeni parolayı doğrulayın"
 
-#: InvenTree/forms.py:205
-msgid "Apply Theme"
-msgstr "Temayı Uygula"
-
-#: InvenTree/forms.py:235
+#: InvenTree/forms.py:201
 msgid "Select Category"
 msgstr "Kategori Seçin"
 
@@ -78,7 +74,7 @@ msgid "Duplicate serial: {n}"
 msgstr "Tekrarlanan seri {n}"
 
 #: InvenTree/helpers.py:403 order/models.py:315 order/models.py:425
-#: stock/views.py:1278
+#: stock/views.py:1295
 msgid "Invalid quantity provided"
 msgstr "Geçersiz veri sağlandı"
 
@@ -122,8 +118,8 @@ msgstr "Yorum"
 msgid "File comment"
 msgstr "Dosya yorumu"
 
-#: InvenTree/models.py:70 InvenTree/models.py:71 common/models.py:880
-#: common/models.py:881 part/models.py:2097
+#: InvenTree/models.py:70 InvenTree/models.py:71 common/models.py:879
+#: common/models.py:880 part/models.py:2097
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/stock.js:1538
 msgid "User"
@@ -432,27 +428,27 @@ msgstr "Fazlalık %100'ü geçmemelidir"
 msgid "Overage must be an integer value or a percentage"
 msgstr "Fazlalık bir tamsayı veya yüzde olmalıdır"
 
-#: InvenTree/views.py:608
+#: InvenTree/views.py:609
 msgid "Delete Item"
 msgstr "Ögeyi Sil"
 
-#: InvenTree/views.py:657
+#: InvenTree/views.py:658
 msgid "Check box to confirm item deletion"
 msgstr "Öge silme işlemini onaylamak için kutuyu işaretleyin"
 
-#: InvenTree/views.py:672 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:673 templates/InvenTree/settings/user.html:14
 msgid "Edit User Information"
 msgstr "Kullanıcı Bilgisini Düzenle"
 
-#: InvenTree/views.py:683 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:684 templates/InvenTree/settings/user.html:18
 msgid "Set Password"
 msgstr "Şifre Belirle"
 
-#: InvenTree/views.py:702
+#: InvenTree/views.py:703
 msgid "Password fields must match"
 msgstr "Parola alanları eşleşmelidir"
 
-#: InvenTree/views.py:953 templates/navbar.html:95
+#: InvenTree/views.py:897 templates/navbar.html:95
 msgid "System Information"
 msgstr "Sistem Bilgisi"
 
@@ -522,7 +518,7 @@ msgstr "Yapım işinin tamamlanması için hedef tarih. Bu tarihten sonra yapım
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:34 common/models.py:909
+#: build/templates/build/detail.html:34 common/models.py:908
 #: company/forms.py:42 company/templates/company/supplier_part.html:226
 #: order/forms.py:120 order/forms.py:142 order/forms.py:159 order/models.py:706
 #: order/models.py:952 order/templates/order/order_wizard/match_parts.html:30
@@ -659,7 +655,8 @@ msgstr "Yapım İşi Emri"
 #: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:42
 #: part/templates/part/navbar.html:45 templates/InvenTree/index.html:229
 #: templates/InvenTree/search.html:185
-#: templates/InvenTree/settings/tabs.html:37 users/models.py:44
+#: templates/InvenTree/settings/navbar.html:89
+#: templates/InvenTree/settings/navbar.html:91 users/models.py:44
 msgid "Build Orders"
 msgstr "Yapım İşi Emirleri"
 
@@ -1404,7 +1401,7 @@ msgstr "Yapım İşi Çıktısı Oluştur"
 msgid "Maximum output quantity is "
 msgstr "Maksimum çıktı miktarı "
 
-#: build/views.py:183 stock/views.py:1304
+#: build/views.py:183 stock/views.py:1321
 msgid "Serial numbers already exist"
 msgstr "Seri numaraları zaten mevcut"
 
@@ -1420,7 +1417,7 @@ msgstr "Yapım İşi Çıktısı Sil"
 msgid "Confirm unallocation of build stock"
 msgstr "Yapım işi stoku tahsisinin iptalini onayla"
 
-#: build/views.py:280 build/views.py:370 stock/views.py:369
+#: build/views.py:280 build/views.py:370 stock/views.py:386
 msgid "Check the confirmation box"
 msgstr "Onay kutusunu işaretleyin"
 
@@ -1542,7 +1539,7 @@ msgstr "{name.title()} Dosya"
 msgid "Select {name} file to upload"
 msgstr "{name} dosyasını yüklemek için seçin"
 
-#: common/models.py:259 common/models.py:760 common/models.py:873
+#: common/models.py:259 common/models.py:739 common/models.py:872
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
@@ -1678,388 +1675,388 @@ msgstr "Kategori Paremetre Sablonu Kopyala"
 msgid "Copy category parameter templates when creating a part"
 msgstr "Parça oluştururken kategori parametre şablonlarını kopyala"
 
-#: common/models.py:542
-msgid "Recent Part Count"
-msgstr ""
-
-#: common/models.py:543
-msgid "Number of recent parts to display on index page"
-msgstr ""
-
-#: common/models.py:549 part/models.py:2280 report/models.py:187
+#: common/models.py:542 part/models.py:2280 report/models.py:187
 #: stock/forms.py:225 templates/js/table_filters.js:25
 #: templates/js/table_filters.js:324
 msgid "Template"
 msgstr "Şablon"
 
-#: common/models.py:550
+#: common/models.py:543
 msgid "Parts are templates by default"
 msgstr "Parçaları varsayılan olan şablondur"
 
-#: common/models.py:556 part/models.py:865 templates/js/table_filters.js:132
+#: common/models.py:549 part/models.py:865 templates/js/table_filters.js:132
 #: templates/js/table_filters.js:336
 msgid "Assembly"
 msgstr "Montaj"
 
-#: common/models.py:557
+#: common/models.py:550
 msgid "Parts can be assembled from other components by default"
 msgstr "Parçalar varsayılan olarak başka bileşenlerden monte edilebilir"
 
-#: common/models.py:563 part/models.py:871 templates/js/table_filters.js:340
+#: common/models.py:556 part/models.py:871 templates/js/table_filters.js:340
 msgid "Component"
 msgstr "Bileşen"
 
-#: common/models.py:564
+#: common/models.py:557
 msgid "Parts can be used as sub-components by default"
 msgstr "Parçalar varsayılan olarak alt bileşen olarak kullanılabilir"
 
-#: common/models.py:570 part/models.py:882
+#: common/models.py:563 part/models.py:882
 msgid "Purchaseable"
 msgstr "Satın Alınabilir"
 
-#: common/models.py:571
+#: common/models.py:564
 msgid "Parts are purchaseable by default"
 msgstr "Parçalar varsayılan olarak satın alınabilir"
 
-#: common/models.py:577 part/models.py:887 templates/js/table_filters.js:348
+#: common/models.py:570 part/models.py:887 templates/js/table_filters.js:348
 msgid "Salable"
 msgstr "Satılabilir"
 
-#: common/models.py:578
+#: common/models.py:571
 msgid "Parts are salable by default"
 msgstr "Parçalar varsayılan olarak satılabilir"
 
-#: common/models.py:584 part/models.py:877 templates/js/table_filters.js:33
+#: common/models.py:577 part/models.py:877 templates/js/table_filters.js:33
 #: templates/js/table_filters.js:352
 msgid "Trackable"
 msgstr "Takip Edilebilir"
 
-#: common/models.py:585
+#: common/models.py:578
 msgid "Parts are trackable by default"
 msgstr "Parçalar varsayılan olarak takip edilebilir"
 
-#: common/models.py:591 part/models.py:897 templates/js/table_filters.js:29
+#: common/models.py:584 part/models.py:897 templates/js/table_filters.js:29
 msgid "Virtual"
 msgstr "Sanal"
 
-#: common/models.py:592
+#: common/models.py:585
 msgid "Parts are virtual by default"
 msgstr "Parçalar varsayılan olarak sanaldır"
 
-#: common/models.py:598
+#: common/models.py:591
 msgid "Show Quantity in Forms"
 msgstr ""
 
-#: common/models.py:599
+#: common/models.py:592
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:605
+#: common/models.py:598
 msgid "Show Import in Views"
 msgstr ""
 
-#: common/models.py:606
+#: common/models.py:599
 msgid "Display the import wizard in some part views"
 msgstr ""
 
-#: common/models.py:612
+#: common/models.py:605
 msgid "Show Price in Forms"
 msgstr ""
 
-#: common/models.py:613
+#: common/models.py:606
 msgid "Display part price in some forms"
 msgstr ""
 
-#: common/models.py:619
+#: common/models.py:612
 msgid "Show related parts"
 msgstr ""
 
-#: common/models.py:620
+#: common/models.py:613
 msgid "Display related parts for a part"
 msgstr ""
 
-#: common/models.py:626
+#: common/models.py:619
 msgid "Create initial stock"
 msgstr ""
 
-#: common/models.py:627
+#: common/models.py:620
 msgid "Create initial stock on part creation"
 msgstr ""
 
-#: common/models.py:633
+#: common/models.py:626
 msgid "Internal Prices"
 msgstr ""
 
-#: common/models.py:634
+#: common/models.py:627
 msgid "Enable internal prices for parts"
 msgstr ""
 
-#: common/models.py:640
+#: common/models.py:633
 msgid "Internal Price as BOM-Price"
 msgstr ""
 
-#: common/models.py:641
+#: common/models.py:634
 msgid "Use the internal price (if set) in BOM-price calculations"
 msgstr ""
 
-#: common/models.py:647 templates/stats.html:25
+#: common/models.py:640 templates/stats.html:25
 msgid "Debug Mode"
 msgstr ""
 
-#: common/models.py:648
+#: common/models.py:641
 msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
-#: common/models.py:654
+#: common/models.py:647
 msgid "Page Size"
 msgstr ""
 
-#: common/models.py:655
+#: common/models.py:648
 msgid "Default page size for PDF reports"
 msgstr ""
 
-#: common/models.py:665
+#: common/models.py:658
 msgid "Test Reports"
 msgstr ""
 
-#: common/models.py:666
+#: common/models.py:659
 msgid "Enable generation of test reports"
 msgstr ""
 
-#: common/models.py:672
-msgid "Search Preview Results"
-msgstr ""
-
-#: common/models.py:673
-msgid "Number of results to show in search preview window"
-msgstr ""
-
-#: common/models.py:679
+#: common/models.py:665
 msgid "Stock Expiry"
 msgstr ""
 
-#: common/models.py:680
+#: common/models.py:666
 msgid "Enable stock expiry functionality"
 msgstr ""
 
-#: common/models.py:686
+#: common/models.py:672
 msgid "Sell Expired Stock"
 msgstr ""
 
-#: common/models.py:687
+#: common/models.py:673
 msgid "Allow sale of expired stock"
 msgstr ""
 
-#: common/models.py:693
+#: common/models.py:679
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/models.py:694
+#: common/models.py:680
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/models.py:696
+#: common/models.py:682
 msgid "days"
 msgstr ""
 
-#: common/models.py:701
+#: common/models.py:687
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/models.py:702
+#: common/models.py:688
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/models.py:708
+#: common/models.py:694
 msgid "Stock Ownership Control"
 msgstr ""
 
-#: common/models.py:709
+#: common/models.py:695
 msgid "Enable ownership control over stock locations and items"
 msgstr "Stok konumu ve ögeler üzerinde sahiplik kontrolünü etkinleştirin"
 
-#: common/models.py:715
+#: common/models.py:701
 msgid "Group by Part"
 msgstr ""
 
-#: common/models.py:716
+#: common/models.py:702
 msgid "Group stock items by part reference in table views"
 msgstr ""
 
-#: common/models.py:722
-msgid "Recent Stock Count"
-msgstr ""
-
-#: common/models.py:723
-msgid "Number of recent stock items to display on index page"
-msgstr ""
-
-#: common/models.py:729
+#: common/models.py:708
 msgid "Build Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:730
+#: common/models.py:709
 msgid "Prefix value for build order reference"
 msgstr ""
 
-#: common/models.py:735
+#: common/models.py:714
 msgid "Build Order Reference Regex"
 msgstr ""
 
-#: common/models.py:736
+#: common/models.py:715
 msgid "Regular expression pattern for matching build order reference"
 msgstr ""
 
-#: common/models.py:740
+#: common/models.py:719
 msgid "Sales Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:741
+#: common/models.py:720
 msgid "Prefix value for sales order reference"
 msgstr ""
 
-#: common/models.py:746
+#: common/models.py:725
 msgid "Purchase Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:747
+#: common/models.py:726
 msgid "Prefix value for purchase order reference"
 msgstr ""
 
-#: common/models.py:771
+#: common/models.py:750
 msgid "Show starred parts"
 msgstr ""
 
-#: common/models.py:772
+#: common/models.py:751
 msgid "Show starred parts on the homepage"
 msgstr ""
 
-#: common/models.py:777
+#: common/models.py:756
 msgid "Show latest parts"
 msgstr ""
 
-#: common/models.py:778
+#: common/models.py:757
 msgid "Show latest parts on the homepage"
 msgstr ""
 
-#: common/models.py:783
+#: common/models.py:762
+msgid "Recent Part Count"
+msgstr ""
+
+#: common/models.py:763
+msgid "Number of recent parts to display on index page"
+msgstr ""
+
+#: common/models.py:769
 msgid "Show unvalidated BOMs"
 msgstr ""
 
-#: common/models.py:784
+#: common/models.py:770
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:789
+#: common/models.py:775
 msgid "Show recent stock changes"
 msgstr ""
 
-#: common/models.py:790
+#: common/models.py:776
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
-#: common/models.py:795
+#: common/models.py:781
+msgid "Recent Stock Count"
+msgstr ""
+
+#: common/models.py:782
+msgid "Number of recent stock items to display on index page"
+msgstr ""
+
+#: common/models.py:787
 msgid "Show low stock"
 msgstr ""
 
-#: common/models.py:796
+#: common/models.py:788
 msgid "Show low stock items on the homepage"
 msgstr ""
 
-#: common/models.py:801
+#: common/models.py:793
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:802
+#: common/models.py:794
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:807
+#: common/models.py:799
 msgid "Show needed stock"
 msgstr ""
 
-#: common/models.py:808
+#: common/models.py:800
 msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
-#: common/models.py:813
+#: common/models.py:805
 msgid "Show expired stock"
 msgstr ""
 
-#: common/models.py:814
+#: common/models.py:806
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:819
+#: common/models.py:811
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:820
+#: common/models.py:812
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:825
+#: common/models.py:817
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:826
+#: common/models.py:818
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:831
+#: common/models.py:823
 msgid "Show overdue builds"
 msgstr ""
 
-#: common/models.py:832
+#: common/models.py:824
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
-#: common/models.py:837
+#: common/models.py:829
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:838
+#: common/models.py:830
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:843
+#: common/models.py:835
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:844
+#: common/models.py:836
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:849
+#: common/models.py:841
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:850
+#: common/models.py:842
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:855
+#: common/models.py:847
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:856
+#: common/models.py:848
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:910 company/forms.py:43
+#: common/models.py:854
+msgid "Search Preview Results"
+msgstr ""
+
+#: common/models.py:855
+msgid "Number of results to show in search preview window"
+msgstr ""
+
+#: common/models.py:909 company/forms.py:43
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:917 company/templates/company/supplier_part.html:231
+#: common/models.py:916 company/templates/company/supplier_part.html:231
 #: templates/js/part.js:1021
 msgid "Price"
 msgstr ""
 
-#: common/models.py:918
+#: common/models.py:917
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1011
+#: common/models.py:1010
 msgid "Default"
 msgstr ""
 
@@ -2071,19 +2068,19 @@ msgstr ""
 msgid "Change Setting"
 msgstr ""
 
-#: common/views.py:102
+#: common/views.py:119
 msgid "Supplied value is not allowed"
 msgstr ""
 
-#: common/views.py:111
+#: common/views.py:128
 msgid "Supplied value must be a boolean"
 msgstr ""
 
-#: common/views.py:121
+#: common/views.py:138
 msgid "Change User Setting"
 msgstr ""
 
-#: common/views.py:196 order/templates/order/order_wizard/po_upload.html:42
+#: common/views.py:213 order/templates/order/order_wizard/po_upload.html:42
 #: order/templates/order/po_navbar.html:19
 #: order/templates/order/po_navbar.html:22
 #: order/templates/order/purchase_order_detail.html:26 order/views.py:290
@@ -2093,7 +2090,7 @@ msgstr ""
 msgid "Upload File"
 msgstr "Dosya Yükle"
 
-#: common/views.py:197 order/templates/order/order_wizard/match_fields.html:52
+#: common/views.py:214 order/templates/order/order_wizard/match_fields.html:52
 #: order/views.py:291 part/templates/part/bom_upload/match_fields.html:52
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:635
@@ -2101,19 +2098,19 @@ msgstr "Dosya Yükle"
 msgid "Match Fields"
 msgstr ""
 
-#: common/views.py:198
+#: common/views.py:215
 msgid "Match Items"
 msgstr ""
 
-#: common/views.py:543
+#: common/views.py:560
 msgid "Fields matching failed"
 msgstr ""
 
-#: common/views.py:598
+#: common/views.py:615
 msgid "Parts imported"
 msgstr ""
 
-#: common/views.py:620 order/templates/order/order_wizard/match_fields.html:27
+#: common/views.py:637 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:40
 #: part/templates/part/bom_upload/match_fields.html:27
@@ -2501,7 +2498,8 @@ msgstr "Tedarikçi Stoku"
 #: part/templates/part/detail.html:50 part/templates/part/navbar.html:71
 #: part/templates/part/navbar.html:74 templates/InvenTree/index.html:260
 #: templates/InvenTree/search.html:325
-#: templates/InvenTree/settings/tabs.html:40 templates/navbar.html:37
+#: templates/InvenTree/settings/navbar.html:95
+#: templates/InvenTree/settings/navbar.html:97 templates/navbar.html:37
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "Satın Alma Emirleri"
@@ -2524,7 +2522,8 @@ msgstr "Yeni Satın Alma Emri"
 #: part/templates/part/detail.html:71 part/templates/part/navbar.html:79
 #: part/templates/part/navbar.html:82 templates/InvenTree/index.html:291
 #: templates/InvenTree/search.html:345
-#: templates/InvenTree/settings/tabs.html:43 templates/navbar.html:46
+#: templates/InvenTree/settings/navbar.html:101
+#: templates/InvenTree/settings/navbar.html:103 templates/navbar.html:46
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "Satış Emirleri"
@@ -2625,8 +2624,8 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:133
 #: part/templates/part/detail.html:162
-#: templates/InvenTree/settings/category.html:29
-#: templates/InvenTree/settings/part.html:66
+#: templates/InvenTree/settings/category.html:26
+#: templates/InvenTree/settings/part.html:63
 msgid "New Parameter"
 msgstr ""
 
@@ -2659,7 +2658,8 @@ msgstr ""
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:150 templates/InvenTree/search.html:196
 #: templates/InvenTree/search.html:232
-#: templates/InvenTree/settings/tabs.html:34 templates/js/part.js:269
+#: templates/InvenTree/settings/navbar.html:83
+#: templates/InvenTree/settings/navbar.html:85 templates/js/part.js:269
 #: templates/js/part.js:494 templates/js/part.js:654 templates/js/stock.js:123
 #: templates/js/stock.js:926 templates/navbar.html:26
 msgid "Stock"
@@ -3449,7 +3449,8 @@ msgstr ""
 #: part/templates/part/category_navbar.html:21
 #: part/templates/part/category_navbar.html:24
 #: templates/InvenTree/index.html:102 templates/InvenTree/search.html:114
-#: templates/InvenTree/settings/tabs.html:31 templates/js/part.js:855
+#: templates/InvenTree/settings/navbar.html:71
+#: templates/InvenTree/settings/navbar.html:73 templates/js/part.js:855
 #: templates/navbar.html:23 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
@@ -3995,7 +3996,8 @@ msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
 #: part/models.py:755 part/models.py:2323
-#: part/templates/part/set_category.html:15 templates/js/part.js:641
+#: part/templates/part/set_category.html:15
+#: templates/InvenTree/settings/settings.html:165 templates/js/part.js:641
 msgid "Category"
 msgstr ""
 
@@ -4175,7 +4177,7 @@ msgid "Parameter Units"
 msgstr ""
 
 #: part/models.py:2280 part/models.py:2329 part/models.py:2330
-#: templates/InvenTree/settings/category.html:62
+#: templates/InvenTree/settings/settings.html:160
 msgid "Parameter Template"
 msgstr "Parametre Şablonu"
 
@@ -4187,7 +4189,7 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2334 templates/InvenTree/settings/category.html:67
+#: part/models.py:2334 templates/InvenTree/settings/settings.html:169
 msgid "Default Value"
 msgstr ""
 
@@ -4476,7 +4478,7 @@ msgstr ""
 msgid "Create new Part Category"
 msgstr ""
 
-#: part/templates/part/category.html:298 stock/views.py:874
+#: part/templates/part/category.html:298 stock/views.py:891
 msgid "Create new Stock Location"
 msgstr "Yeni Stok konumu oluştur"
 
@@ -5937,7 +5939,7 @@ msgstr ""
 msgid "The following stock items will be uninstalled"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:847
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:864
 msgid "Convert Stock Item"
 msgstr "Stok Kalemine Dönüştür"
 
@@ -5958,103 +5960,103 @@ msgstr "Bu işlem kolayca geri alınamaz"
 msgid "Are you sure you want to delete this stock tracking entry?"
 msgstr ""
 
-#: stock/views.py:146
+#: stock/views.py:163
 msgid "Edit Stock Location"
 msgstr "Stok konumunu düzenle"
 
-#: stock/views.py:253 stock/views.py:826 stock/views.py:948 stock/views.py:1313
+#: stock/views.py:270 stock/views.py:843 stock/views.py:965 stock/views.py:1330
 msgid "Owner is required (ownership control is enabled)"
 msgstr "Sahip gerekli (sahip kontrolü etkinleştirildi)"
 
-#: stock/views.py:268
+#: stock/views.py:285
 msgid "Stock Location QR code"
 msgstr "Stok Konumu QR Kodu"
 
-#: stock/views.py:287
+#: stock/views.py:304
 msgid "Assign to Customer"
 msgstr ""
 
-#: stock/views.py:296
+#: stock/views.py:313
 msgid "Customer must be specified"
 msgstr ""
 
-#: stock/views.py:320
+#: stock/views.py:337
 msgid "Return to Stock"
 msgstr ""
 
-#: stock/views.py:329
+#: stock/views.py:346
 msgid "Specify a valid location"
 msgstr "Geçerli bir konum belirtiniz"
 
-#: stock/views.py:340
+#: stock/views.py:357
 msgid "Stock item returned from customer"
 msgstr ""
 
-#: stock/views.py:351
+#: stock/views.py:368
 msgid "Delete All Test Data"
 msgstr ""
 
-#: stock/views.py:368
+#: stock/views.py:385
 msgid "Confirm test data deletion"
 msgstr ""
 
-#: stock/views.py:473
+#: stock/views.py:490
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: stock/views.py:499
+#: stock/views.py:516
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/views.py:598
+#: stock/views.py:615
 msgid "Uninstall Stock Items"
 msgstr ""
 
-#: stock/views.py:695 templates/js/stock.js:272
+#: stock/views.py:712 templates/js/stock.js:272
 msgid "Confirm stock adjustment"
 msgstr "Stok ayarlamasını onayla"
 
-#: stock/views.py:706
+#: stock/views.py:723
 msgid "Uninstalled stock items"
 msgstr ""
 
-#: stock/views.py:728
+#: stock/views.py:745
 msgid "Edit Stock Item"
 msgstr ""
 
-#: stock/views.py:965
+#: stock/views.py:982
 msgid "Serialize Stock"
 msgstr "Stoku Seri Numarala"
 
-#: stock/views.py:1058 templates/js/build.js:365
+#: stock/views.py:1075 templates/js/build.js:365
 msgid "Create new Stock Item"
 msgstr ""
 
-#: stock/views.py:1200
+#: stock/views.py:1217
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/views.py:1282
+#: stock/views.py:1299
 msgid "Quantity cannot be negative"
 msgstr ""
 
-#: stock/views.py:1382
+#: stock/views.py:1399
 msgid "Delete Stock Location"
 msgstr "Stok Konumunu Sil"
 
-#: stock/views.py:1395
+#: stock/views.py:1412
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:1406
+#: stock/views.py:1423
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1413
+#: stock/views.py:1430
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1422
+#: stock/views.py:1439
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
@@ -6146,119 +6148,139 @@ msgstr ""
 msgid "No stock location set"
 msgstr "Stok konumu ayarlanmadı"
 
-#: templates/InvenTree/settings/appearance.html:10
-msgid "Theme Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/appearance.html:17
-msgid "Color Themes"
-msgstr ""
-
-#: templates/InvenTree/settings/appearance.html:29
-#, python-format
-msgid "\n"
-"        The CSS sheet \"%(invalid_color_theme)s.css\" for the currently selected color theme was not found.<br>\n"
-"        Please select another color theme :)\n"
-"    "
-msgstr ""
-
-#: templates/InvenTree/settings/appearance.html:39
-msgid "Language"
-msgstr ""
-
-#: templates/InvenTree/settings/appearance.html:61
-msgid "Set Language"
-msgstr ""
-
-#: templates/InvenTree/settings/build.html:10
-msgid "Build Order Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/category.html:9
-msgid "Category Settings"
-msgstr "Kategori Ayarları"
-
-#: templates/InvenTree/settings/category.html:25
-msgid "Category Parameter Templates"
-msgstr "Kategori Parametre Şablonu"
-
-#: templates/InvenTree/settings/category.html:52
-msgid "No category parameter templates found"
-msgstr "Kategori parametre şablonu bulunamadı"
-
-#: templates/InvenTree/settings/category.html:70
-#: templates/InvenTree/settings/part.html:103
-msgid "Edit Template"
-msgstr "Şablonu Düzenle"
-
-#: templates/InvenTree/settings/category.html:71
-#: templates/InvenTree/settings/part.html:104
-msgid "Delete Template"
-msgstr "Şablonu Sil"
-
-#: templates/InvenTree/settings/currencies.html:10
-msgid "Currency Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/currencies.html:25
-msgid "Base Currency"
-msgstr ""
-
-#: templates/InvenTree/settings/currencies.html:29
-msgid "Exchange Rates"
-msgstr ""
-
-#: templates/InvenTree/settings/currencies.html:39
-msgid "Last Update"
-msgstr ""
-
-#: templates/InvenTree/settings/currencies.html:45
-msgid "Never"
-msgstr ""
-
-#: templates/InvenTree/settings/currencies.html:50
-msgid "Update Now"
-msgstr ""
-
-#: templates/InvenTree/settings/global.html:10
-msgid "Global InvenTree Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/global.html:26
+#: templates/InvenTree/settings/barcode.html:8
 msgid "Barcode Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/global.html:34
-msgid "Search Settings"
+#: templates/InvenTree/settings/build.html:8
+msgid "Build Order Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/category.html:7
+msgid "Category Settings"
+msgstr "Kategori Ayarları"
+
+#: templates/InvenTree/settings/currencies.html:8
+msgid "Currency Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:23
+msgid "Base Currency"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:27
+msgid "Exchange Rates"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:37
+msgid "Last Update"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:43
+msgid "Never"
+msgstr ""
+
+#: templates/InvenTree/settings/currencies.html:48
+msgid "Update Now"
+msgstr ""
+
+#: templates/InvenTree/settings/global.html:9
+msgid "Server Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:9
+#: templates/InvenTree/settings/navbar.html:12
+#: templates/InvenTree/settings/user_settings.html:9
+msgid "User Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:15
+#: templates/InvenTree/settings/navbar.html:17
+msgid "Account"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:21
+#: templates/InvenTree/settings/navbar.html:23
+msgid "Home Page"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:27
+#: templates/InvenTree/settings/navbar.html:29 templates/js/tables.js:351
+#: templates/search_form.html:6 templates/search_form.html:8
+msgid "Search"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:34
+#: templates/InvenTree/settings/navbar.html:36
+#: templates/InvenTree/settings/settings.html:8 templates/navbar.html:84
+msgid "Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:44
+msgid "InvenTree Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:47
+#: templates/InvenTree/settings/navbar.html:49 templates/stats.html:9
+msgid "Server"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:53
+#: templates/InvenTree/settings/navbar.html:55
+msgid "Barcodes"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:59
+#: templates/InvenTree/settings/navbar.html:61
+msgid "Currencies"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:65
+#: templates/InvenTree/settings/navbar.html:67
+msgid "Reporting"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:77
+#: templates/InvenTree/settings/navbar.html:79
+msgid "Categories"
+msgstr ""
+
+#: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:14
+#: templates/InvenTree/settings/part.html:12
 msgid "Part Options"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:46
+#: templates/InvenTree/settings/part.html:43
 msgid "Part Import"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:49
+#: templates/InvenTree/settings/part.html:46
 msgid "Import Part"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:62
+#: templates/InvenTree/settings/part.html:59
 msgid "Part Parameter Templates"
 msgstr "Parça Parametre Şablonu"
 
-#: templates/InvenTree/settings/part.html:83
+#: templates/InvenTree/settings/part.html:80
 msgid "No part parameter templates found"
 msgstr "Parça parametre şablonu bulunamadı"
+
+#: templates/InvenTree/settings/part.html:100
+#: templates/InvenTree/settings/settings.html:172
+msgid "Edit Template"
+msgstr "Şablonu Düzenle"
+
+#: templates/InvenTree/settings/part.html:101
+#: templates/InvenTree/settings/settings.html:173
+msgid "Delete Template"
+msgstr "Şablonu Sil"
 
 #: templates/InvenTree/settings/po.html:9
 msgid "Purchase Order Settings"
@@ -6268,93 +6290,77 @@ msgstr ""
 msgid "Report Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:28
+#: templates/InvenTree/settings/setting.html:29
 msgid "No value set"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:36
+#: templates/InvenTree/settings/setting.html:41
 msgid "Edit setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:8
-#: templates/InvenTree/settings/settings.html:14 templates/navbar.html:84
-msgid "Settings"
-msgstr ""
+#: templates/InvenTree/settings/settings.html:150
+msgid "No category parameter templates found"
+msgstr "Kategori parametre şablonu bulunamadı"
 
-#: templates/InvenTree/settings/so.html:9
+#: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/stock.html:9
+#: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/stock.html:13 templates/stock_table.html:50
-msgid "Stock Options"
+#: templates/InvenTree/settings/user.html:9
+msgid "Account Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/tabs.html:3
-#: templates/InvenTree/settings/tabs.html:12
-#: templates/InvenTree/settings/user.html:10
-#: templates/InvenTree/settings/user_settings.html:10
-msgid "User Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:6
-msgid "Account"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:9
-msgid "Appearance"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:16
-msgid "InvenTree Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:19
-msgid "Global"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:22
-msgid "Currencies"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:25
-msgid "Report"
-msgstr ""
-
-#: templates/InvenTree/settings/tabs.html:28
-msgid "Categories"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:16
-msgid "User Information"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:19
+#: templates/InvenTree/settings/user.html:15
 msgid "Edit"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:21
+#: templates/InvenTree/settings/user.html:17
 msgid "Change Password"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:28
+#: templates/InvenTree/settings/user.html:24
 #: templates/registration/login.html:58
 msgid "Username"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:32
+#: templates/InvenTree/settings/user.html:28
 msgid "First Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:36
+#: templates/InvenTree/settings/user.html:32
 msgid "Last Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:40
+#: templates/InvenTree/settings/user.html:36
 msgid "Email Address"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:42
+msgid "Theme Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:63
+msgid "Set Theme"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:70
+msgid "Language Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:90
+msgid "Set Language"
+msgstr ""
+
+#: templates/InvenTree/settings/user_homepage.html:9
+msgid "Home Page Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user_search.html:9
+msgid "Search Settings"
 msgstr ""
 
 #: templates/about.html:13
@@ -7650,11 +7656,6 @@ msgstr ""
 msgid "rows"
 msgstr ""
 
-#: templates/js/tables.js:351 templates/search_form.html:6
-#: templates/search_form.html:8
-msgid "Search"
-msgstr ""
-
 #: templates/js/tables.js:354
 msgid "No matching results"
 msgstr ""
@@ -7779,10 +7780,6 @@ msgstr ""
 msgid "Send email"
 msgstr ""
 
-#: templates/stats.html:9
-msgid "Server"
-msgstr ""
-
 #: templates/stats.html:13
 msgid "Instance Name"
 msgstr ""
@@ -7841,6 +7838,10 @@ msgstr "Barkod İşlemleri"
 
 #: templates/stock_table.html:43
 msgid "Print test reports"
+msgstr ""
+
+#: templates/stock_table.html:50
+msgid "Stock Options"
 msgstr ""
 
 #: templates/stock_table.html:55
