@@ -793,6 +793,8 @@ class SettingsView(TemplateView):
 
         ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
 
+        ctx["categories"] = PartCategory.objects.all().order_by('tree_id', 'lft', 'name')
+
         # When were the rates last updated?
         try:
             backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
