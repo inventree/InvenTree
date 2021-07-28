@@ -91,6 +91,14 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
     Custom API filters for the ManufacturerPart list endpoint.
     """
 
+    class Meta:
+        model = ManufacturerPart
+        fields = [
+            'manufacturer',
+            'MPN',
+            'part',
+        ]
+
     # Filter by 'active' status of linked part
     active = rest_filters.BooleanFilter(field_name='part__active')
 
@@ -131,12 +139,6 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
-        'MPN',
-        'manufacturer',
-        'part',
     ]
 
     search_fields = [
