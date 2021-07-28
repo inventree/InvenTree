@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-28 05:05+0000\n"
-"PO-Revision-Date: 2021-07-28 14:00\n"
+"PO-Revision-Date: 2021-07-28 15:27\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -458,19 +458,19 @@ msgstr "Må oppgi gyldig strekkode_data parameter"
 
 #: barcodes/api.py:126
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Ingen treff funnet for strekkodedata"
 
 #: barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Treff funnet for strekkodedata"
 
 #: barcodes/api.py:153
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "Må oppgi lagervareparameter"
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr ""
+msgstr "Ingen samsvarende lagervare funnet"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
