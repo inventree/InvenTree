@@ -32,6 +32,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
     def determine_metadata(self, request, view):
         
+        self.request = request
+        self.view = view
+
         metadata = super().determine_metadata(request, view)
 
         user = request.user
@@ -136,6 +139,42 @@ class InvenTreeMetadata(SimpleMetadata):
         except AttributeError:
             pass
 
+        # Try to extract 'instance' information
+        instance = None
+
+        # Extract extra information if an instance is available
+        if hasattr(serializer, 'instance'):
+            instance = serializer.instance
+        
+        if instance is None:
+            try:
+                instance = self.view.get_object()
+            except:
+                pass
+
+        if instance is not None:
+            """
+            If there is an instance associated with this API View,
+            introspect that instance to find any specific API info.
+            """
+
+            if hasattr(instance, 'api_instance_filters'):
+
+                instance_filters = instance.api_instance_filters()
+
+                for field_name, field_filters in instance_filters.items():
+
+                    if field_name not in serializer_info.keys():
+                        # The field might be missing, but is added later on
+                        # This function seems to get called multiple times?
+                        continue
+
+                    if 'instance_filters' not in serializer_info[field_name].keys():
+                        serializer_info[field_name]['instance_filters'] = {}
+
+                    for key, value in field_filters.items():
+                        serializer_info[field_name]['instance_filters'][key] = value
+
         return serializer_info
 
     def get_field_info(self, field):
@@ -153,6 +192,11 @@ class InvenTreeMetadata(SimpleMetadata):
         if 'default' not in field_info and not field.default == empty:
             field_info['default'] = field.get_default()
 
+        # Force non-nullable fields to read as "required"
+        # (even if there is a default value!)
+        if not field.allow_null and not (hasattr(field, 'allow_blank') and field.allow_blank):
+            field_info['required'] = True
+
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
             
@@ -166,7 +210,12 @@ class InvenTreeMetadata(SimpleMetadata):
             if model:
                 # Mark this field as "related", and point to the URL where we can get the data!
                 field_info['type'] = 'related field'
-                field_info['api_url'] = model.get_api_url()
                 field_info['model'] = model._meta.model_name
+
+                # Special case for 'user' model
+                if field_info['model'] == 'user':
+                    field_info['api_url'] = '/api/user/'
+                else:
+                    field_info['api_url'] = model.get_api_url()
 
         return field_info

@@ -8,8 +8,15 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "suppliers" %}active{% endif %}' title='{% trans "Supplier Parts" %}'>
-        <a href='{% url "manufacturer-part-suppliers" part.id %}'>
+    <li class='list-group-item' title='{% trans "Parameters" %}'>
+        <a href='#' id='select-parameters' class='nav-toggle'>
+            <span class='fas fa-th-list sidebar-icon'></span>
+            {% trans "Parameters" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Supplier Parts" %}'>
+        <a href='#' id='select-supplier-parts' class='nav-toggle'>
             <span class='fas fa-building sidebar-icon'></span>
             {% trans "Suppliers" %}
         </a>
@@ -17,14 +24,14 @@
 
     {% comment "for later" %}
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Manufacturer Part Stock" %}'>
-        <a href='{% url "manufacturer-part-stock" part.id %}'>
+        <a href='#'>
             <span class='fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
-
+    
     <li class='list-group-item {% if tab == "orders" %}active{% endif %}' title='{% trans "Manufacturer Part Orders" %}'>
-        <a href='{% url "manufacturer-part-orders" part.id %}'>
+        <a href='#'>
             <span class='fas fa-shopping-cart sidebar-icon'></span>
             {% trans "Orders" %}
         </a>

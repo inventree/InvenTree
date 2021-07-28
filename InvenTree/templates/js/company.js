@@ -1,6 +1,142 @@
 {% load i18n %}
 
 
+function manufacturerPartFields() {
+
+    return {
+        part: {},
+        manufacturer: {},
+        MPN: {
+            icon: 'fa-hashtag',
+        },
+        description: {},
+        link: {
+            icon: 'fa-link',
+        }
+    };
+}
+
+
+function createManufacturerPart(options={}) {
+
+    var fields = manufacturerPartFields();
+
+    if (options.part) {
+        fields.part.value = options.part;
+        fields.part.hidden = true;
+    }
+
+    if (options.manufacturer) {
+        fields.manufacturer.value = options.manufacturer;
+    }
+
+    constructForm('{% url "api-manufacturer-part-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Manufacturer Part" %}',
+        onSuccess: options.onSuccess
+    });
+}
+
+
+function editManufacturerPart(part, options={}) {
+
+    var url = `/api/company/part/manufacturer/${part}/`;
+
+    constructForm(url, {
+        fields: manufacturerPartFields(),
+        title: '{% trans "Edit Manufacturer Part" %}',
+        onSuccess: options.onSuccess
+    });
+}
+
+function deleteManufacturerPart(part, options={}) {
+
+    constructForm(`/api/company/part/manufacturer/${part}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Manufacturer Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+
+function supplierPartFields() {
+
+    return {
+        part: {},
+        supplier: {},
+        SKU: {
+            icon: 'fa-hashtag',
+        },
+        manufacturer_part: {
+            filters: {
+                part_detail: true,
+                manufacturer_detail: true,
+            }
+        },
+        description: {},
+        link: {
+            icon: 'fa-link',
+        },
+        note: {
+            icon: 'fa-pencil-alt',
+        },
+        packaging: {
+            icon: 'fa-box',
+        }
+    };
+}
+
+/*
+ * Launch a form to create a new ManufacturerPart
+ */
+function createSupplierPart(options={}) {
+
+    var fields = supplierPartFields();
+
+    if (options.part) {
+        fields.manufacturer_part.filters.part = options.part;
+        fields.part.hidden = true;
+        fields.part.value = options.part;
+    }
+
+    if (options.supplier) {
+        fields.supplier.value = options.supplier;
+    }
+
+    if (options.manufacturer_part) {
+        fields.manufacturer_part.value = options.manufacturer_part;
+    }
+
+    constructForm('{% url "api-supplier-part-list" %}', {
+        fields: fields,
+        method: 'POST',
+        title: '{% trans "Add Supplier Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+
+function editSupplierPart(part, options={}) {
+
+    constructForm(`/api/company/part/${part}/`, {
+        fields: supplierPartFields(),
+        title: '{% trans "Edit Supplier Part" %}',
+        onSuccess: options.onSuccess
+    });
+}
+
+
+function deleteSupplierPart(part, options={}) {
+
+    constructForm(`/api/company/part/${part}/`, {
+        method: 'DELETE',
+        title: '{% trans "Delete Supplier Part" %}',
+        onSuccess: options.onSuccess,
+    });
+}
+
+
 // Returns a default form-set for creating / editing a Company object
 function companyFormFields(options={}) {
 
@@ -213,7 +349,7 @@ function deleteManufacturerParts(selections, options={}) {
                 });
 
                 // Wait for all the requests to complete
-                $.when.apply($, requests).then(function() {
+                $.when.apply($, requests).done(function() {
 
                     if (options.onSuccess) {
                         options.onSuccess();
@@ -318,7 +454,57 @@ function loadManufacturerPartTable(table, url, options) {
                     }
                 }
             },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
+
+                    html += '</div>';
+
+                    return html;
+                }
+            }
         ],
+        onPostBody: function() {
+            // Callbacks
+            $(table).find('.button-manufacturer-part-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                editManufacturerPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-manufacturer-part-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                deleteManufacturerPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            })
+        }
     });
 }
 
@@ -533,7 +719,7 @@ function loadSupplierPartTable(table, url, options) {
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (value && row.manufacturer_part) {
-                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part.pk}/`);
+                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`);
                     } else {
                         return "-";
                     }
@@ -550,6 +736,65 @@ function loadSupplierPartTable(table, url, options) {
                     }
                 }
             },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+            },
+            {
+                field: 'note',
+                title: '{% trans "Notes" %}',
+                sortable: false,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
+                sortable: false,
+            },
+            {
+                field: 'actions',
+                title: '',
+                sortable: false,
+                switchable: false,
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-edit icon-blue', 'button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
+
+                    html += '</div>';
+
+                    return html;
+                }
+            }
         ],
+        onPostBody: function() {
+            // Callbacks
+            $(table).find('.button-supplier-part-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                editSupplierPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-supplier-part-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                deleteSupplierPart(
+                    pk, 
+                    {
+                        onSuccess: function() {
+                            $(table).bootstrapTable('refresh');
+                    }
+                });
+            })
+        }
     });
 }

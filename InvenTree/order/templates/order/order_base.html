@@ -145,10 +145,6 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-enableNavbar({
-    label: 'po',
-    toggleId: '#po-menu-toggle',
-});
 
 {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
@@ -174,6 +170,7 @@ $("#edit-order").click(function() {
             supplier: {
             },
             {% endif %}
+            supplier_reference: {},
             description: {},
             target_date: {
                 icon: 'fa-calendar-alt',

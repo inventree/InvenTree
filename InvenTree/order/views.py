@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput, IntegerField
 
@@ -95,53 +95,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
     template_name = 'order/sales_order_detail.html'
-
-
-class PurchaseOrderNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for updating the 'notes' field of a PurchaseOrder """
-
-    context_object_name = 'order'
-    template_name = 'order/order_notes.html'
-    model = PurchaseOrder
-
-    # Override the default permission roles
-    role_required = 'purchase_order.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-
-        return reverse('po-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
-
-        return ctx
-
-
-class SalesOrderNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for editing the 'notes' field of a SalesORder """
-
-    context_object_name = 'order'
-    template_name = 'order/sales_order_notes.html'
-    model = SalesOrder
-    role_required = 'sales_order.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        return reverse('so-notes', kwargs={'pk': self.get_object().pk})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
-
-        return ctx
 
 
 class PurchaseOrderCancel(AjaxUpdateView):
@@ -440,16 +393,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 p_val = row['data'][p_idx]['cell']
 
                 if p_val:
-                    # Delete commas
-                    p_val = p_val.replace(',', '')
-
-                    try:
-                        # Attempt to extract a valid decimal value from the field
-                        purchase_price = Decimal(p_val)
-                        # Store the 'purchase_price' value
-                        row['purchase_price'] = purchase_price
-                    except (ValueError, InvalidOperation):
-                        pass
+                    row['purchase_price'] = p_val
 
             # Check if there is a column corresponding to "reference"
             if r_idx >= 0:
@@ -547,6 +491,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
         ctx = {
             'order': self.order,
             'lines': self.lines,
+            'stock_locations': StockLocation.objects.all(),
         }
 
         return ctx
@@ -599,6 +544,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
         self.request = request
         self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+        errors = False
 
         self.lines = []
         self.destination = None
@@ -612,12 +558,6 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 self.destination = StockLocation.objects.get(id=pk)
             except (StockLocation.DoesNotExist, ValueError):
                 pass
-
-        errors = False
-
-        if self.destination is None:
-            errors = True
-            msg = _("No destination set")
 
         # Extract information on all submitted line items
         for item in request.POST:
@@ -642,6 +582,21 @@ class PurchaseOrderReceive(AjaxUpdateView):
                     line.status_code = status
                 else:
                     line.status_code = StockStatus.OK
+
+                # Check the destination field
+                line.destination = None
+                if self.destination:
+                    # If global destination is set, overwrite line value
+                    line.destination = self.destination
+                else:
+                    destination_key = f'destination-{pk}'
+                    destination = request.POST.get(destination_key, None)
+
+                    if destination:
+                        try:
+                            line.destination = StockLocation.objects.get(pk=destination)
+                        except (StockLocation.DoesNotExist, ValueError):
+                            pass
 
                 # Check that line matches the order
                 if not line.order == self.order:
@@ -701,7 +656,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
             self.order.receive_line_item(
                 line,
-                self.destination,
+                line.destination,
                 line.receive_quantity,
                 self.request.user,
                 status=line.status_code,

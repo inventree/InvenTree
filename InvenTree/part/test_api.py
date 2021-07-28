@@ -805,7 +805,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         Test for listing part parameters
         """
 
-        url = reverse('api-part-param-list')
+        url = reverse('api-part-parameter-list')
 
         response = self.client.get(url, format='json')
 
@@ -838,7 +838,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         Test that we can create a param via the API
         """
 
-        url = reverse('api-part-param-list')
+        url = reverse('api-part-parameter-list')
 
         response = self.client.post(
             url,
@@ -860,7 +860,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         Tests for the PartParameter detail endpoint
         """
 
-        url = reverse('api-part-param-detail', kwargs={'pk': 5})
+        url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
 
         response = self.client.get(url)
 

@@ -235,7 +235,7 @@
         <td>{% trans "Base Part" %}</td>
         <td>
             {% if roles.part.view %}
-            <a href="{% url 'part-stock' item.part.id %}">
+            <a href="{% url 'part-detail' item.part.id %}">
             {% endif %}
             {{ item.part.full_name }}
             {% if roles.part.view %}
@@ -247,7 +247,19 @@
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Serial Number" %}</td>
-        <td>{{ item.serial }}</td>
+        <td>
+        {% if previous %}
+            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
+                <small>{{ previous.serial }}</small>  ‹
+            </a>
+        {% endif %}
+        <span class="btn" href=""><strong>{{ item.serial }}</strong></span>
+        {% if next %}
+            <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
+                ›  <small>{{ next.serial }}</small>
+            </a>
+        {% endif %}
+        </td>
     </tr>
     {% else %}
     <tr>
@@ -260,7 +272,7 @@
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail-assigned-stock' item.customer.id %}">{{ item.customer.name }}</a></td>
+        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
     </tr>
     {% endif %}
     {% if item.belongs_to %}
@@ -416,6 +428,7 @@
     </tr>
     {% endif %}
 </table>
+
 {% endblock %}
 
 {% block js_ready %}
@@ -522,14 +535,21 @@ $("#barcode-scan-into-location").click(function() {
 });
 
 function itemAdjust(action) {
-    launchModalForm("/stock/adjust/", 
+
+    inventreeGet(
+        '{% url "api-stock-detail" item.pk %}',
         {
-            data: {
-                action: action,
-                item: {{ item.id }},
-            },
-            reload: true,
-            follow: true,
+            part_detail: true,
+            location_detail: true,
+        },
+        {
+            success: function(item) {
+                adjustStock(action, [item], {
+                    onSuccess: function() {
+                        location.reload();
+                    }
+                });
+            }
         }
     );
 }
@@ -542,7 +562,7 @@ $("#stock-delete").click(function () {
     launchModalForm(
         "{% url 'stock-item-delete' item.id %}",
         {
-            redirect: "{% url 'part-stock' item.part.id %}"
+            redirect: "{% url 'part-detail' item.part.id %}"
         }
     );
 });
@@ -590,5 +610,10 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
+
+attachNavCallbacks({
+    name: 'stockitem',
+    default: 'history'
+});
 
 {% endblock %}

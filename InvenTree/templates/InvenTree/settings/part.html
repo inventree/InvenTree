@@ -1,15 +1,13 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
 {% load i18n %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='part' %}
-{% endblock %}
+{% block label %}parts{% endblock %}
 
-{% block subtitle %}
+{% block heading %}
 {% trans "Part Settings" %}
 {% endblock %}
 
-{% block settings %}
+{% block content %}
 
 <h4>{% trans "Part Options" %}</h4>
 
@@ -22,8 +20,8 @@
         {% include "InvenTree/settings/setting.html" with key="PART_SHOW_QUANTITY_IN_FORMS" icon="fa-hashtag" %}
         {% include "InvenTree/settings/setting.html" with key="PART_SHOW_PRICE_IN_FORMS" icon="fa-dollar-sign" %}
         {% include "InvenTree/settings/setting.html" with key="PART_SHOW_RELATED" icon="fa-random" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_RECENT_COUNT" icon="fa-clock" %}
-        <tr><td colspan='5  '></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="PART_CREATE_INITIAL" icon="fa-boxes" %}
+        <tr><td colspan='5'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="PART_TEMPLATE" icon="fa-clone" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ASSEMBLY" icon="fa-tools" %}
         {% include "InvenTree/settings/setting.html" with key="PART_COMPONENT" icon="fa-th"%}
@@ -75,7 +73,7 @@
 {{ block.super }}
 
     $("#param-table").inventreeTable({
-        url: "{% url 'api-part-param-template-list' %}",
+        url: "{% url 'api-part-parameter-template-list' %}",
         queryParams: {
             ordering: 'name',
         },

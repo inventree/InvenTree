@@ -23,6 +23,7 @@ from django.dispatch import receiver
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.managers import TreeManager
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
@@ -137,6 +138,31 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         child.save()
 
 
+class StockItemManager(TreeManager):
+    """
+    Custom database manager for the StockItem class.
+
+    StockItem querysets will automatically prefetch related fields.
+    """
+
+    def get_queryset(self):
+
+        return super().get_queryset().prefetch_related(
+            'belongs_to',
+            'build',
+            'customer',
+            'purchase_order',
+            'sales_order',
+            'supplier_part',
+            'supplier_part__supplier',
+            'allocations',
+            'sales_order_allocations',
+            'location',
+            'part',
+            'tracking_info'
+        )
+
+
 class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
@@ -171,6 +197,17 @@ class StockItem(MPTTModel):
     @staticmethod
     def get_api_url():
         return reverse('api-stock-list')
+
+    def api_instance_filters(self):
+        """
+        Custom API instance filters
+        """
+
+        return {
+            'parent': {
+                'exclude_tree': self.pk,
+            }
+        }
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
