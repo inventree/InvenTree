@@ -12,6 +12,7 @@ database setup in this file.
 """
 
 import logging
+from multiprocessing import Value
 import os
 import random
 import string
@@ -347,10 +348,22 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
+background_workers = os.environ.get('INVENTREE_BACKGROUND_WORKERS', None)
+
+if background_workers is not None:
+    try:
+        background_workers = int(background_workers)
+    except ValueError:
+        background_workers = None
+
+if background_workers is None:
+    # Sensible default?
+    background_workers = 4
+
 # django-q configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
-    'workers': 4,
+    'workers': background_workers,
     'timeout': 90,
     'retry': 120,
     'queue_limit': 50,
