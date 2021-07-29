@@ -91,11 +91,7 @@ function inventreeDocReady() {
                 url: '/api/part/',
                 data: {
                     search: request.term,
-                    {% if request.user %}
-                    limit: {% settings_value 'SEARCH_PREVIEW_RESULTS' user=request.user %},
-                    {% else %}
-                    limit: 25
-                    {% endif %}
+                    limit: user_settings.SEARCH_PREVIEW_RESULTS,
                     offset: 0
                 },
                 success: function (data) {

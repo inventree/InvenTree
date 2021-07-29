@@ -6,8 +6,6 @@
  * Requires api.js to be loaded first
  */
 
-{% settings_value 'BARCODE_ENABLE' as barcodes %}
-
 function stockStatusCodes() {
     return [
         {% for code in StockStatus.list %}
@@ -704,8 +702,7 @@ function loadStockTable(table, options) {
         name: 'stock',
         original: original,
         showColumns: true,
-        {% settings_value 'STOCK_GROUP_BY_PART' as group_by_part %}
-        {% if group_by_part %}
+        {% if False %}
         groupByField: options.groupByField || 'part',
         groupBy: grouping,
         groupByFormatter: function(field, id, data) {
@@ -1011,14 +1008,13 @@ function loadStockTable(table, options) {
                 title: '{% trans "Stocktake" %}',
                 sortable: true,
             },
-            {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
-            {% if expiry %}
             {
                 field: 'expiry_date',
                 title: '{% trans "Expiry Date" %}',
                 sortable: true,
+                visible: global_settings.STOCK_ENABLE_EXPIRY,
+                switchable: global_settings.STOCK_ENABLE_EXPIRY,
             },
-            {% endif %}
             {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
@@ -1037,7 +1033,7 @@ function loadStockTable(table, options) {
 
                     if (row.purchase_order_reference) {
 
-                        var prefix = '{% settings_value "PURCHASEORDER_REFERENCE_PREFIX" %}';
+                        var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
 
                         text = prefix + row.purchase_order_reference;
                     }
@@ -1090,15 +1086,18 @@ function loadStockTable(table, options) {
     }
     */
 
+    var buttons = [
+        '#stock-print-options',
+        '#stock-options',
+    ];
+
+    if (global_settings.BARCODE_ENABLE) {
+        buttons.push('#stock-barcode-options');
+    }
+
     linkButtonsToSelection(
         table,
-        [
-            '#stock-print-options',
-            {% if barcodes %}
-            '#stock-barcode-options',
-            {% endif %}
-            '#stock-options',
-        ]
+        buttons,
     );
 
 
@@ -1138,19 +1137,19 @@ function loadStockTable(table, options) {
         printTestReports(items);
     })
 
-    {% if barcodes %}
-    $('#multi-item-barcode-scan-into-location').click(function() {        
-        var selections = $('#stock-table').bootstrapTable('getSelections');
+    if (global_settings.BARCODE_ENABLE) {
+        $('#multi-item-barcode-scan-into-location').click(function() {        
+            var selections = $('#stock-table').bootstrapTable('getSelections');
 
-        var items = [];
+            var items = [];
 
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        })
+            selections.forEach(function(item) {
+                items.push(item.pk);
+            })
 
-        scanItemsIntoLocation(items);
-    });
-    {% endif %}
+            scanItemsIntoLocation(items);
+        });
+    }
 
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');
