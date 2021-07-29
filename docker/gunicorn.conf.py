@@ -3,7 +3,7 @@ import os
 import logging
 
 
-logger = logging.get('inventree')
+logger = logging.getLogger('inventree')
 
 workers = os.environ.get('INVENTREE_GUNICORN_WORKERS', None)
 
