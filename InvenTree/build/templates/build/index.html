@@ -82,7 +82,7 @@
             },
             {
                 success: function(response) {
-                    var prefix = '{% settings_value "BUILDORDER_REFERENCE_PREFIX" %}';
+                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
 
                     for (var idx = 0; idx < response.length; idx++) {
 
