@@ -85,7 +85,7 @@ class BaseInvenTreeSetting(models.Model):
 
             # Convert to javascript compatible booleans
             if cls.validator_is_bool(validator):
-                value = value.lower()
+                value = str(value).lower()
 
             # Numerical values remain the same
             elif cls.validator_is_int(validator):
