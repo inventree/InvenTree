@@ -5,7 +5,7 @@
 function buildFormFields() {
     return {
         reference: {
-            prefix: "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}",
+            prefix: global_settings.BUILDORDER_REFERENCE_PREFIX,
         },
         title: {},
         part: {},
@@ -232,7 +232,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
-                    var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
+                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
 
                     var ref = `${prefix}${row.build_detail.reference}`;
 
@@ -848,7 +848,7 @@ function loadBuildTable(table, options) {
                 switchable: true,
                 formatter: function(value, row, index, field) {
 
-                    var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
+                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
 
                     if (prefix) {
                         value = `${prefix}${value}`;

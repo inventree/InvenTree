@@ -6,8 +6,6 @@
  * Requires api.js to be loaded first
  */
 
-{% settings_value 'BARCODE_ENABLE' as barcodes %}
-
 function stockStatusCodes() {
     return [
         {% for code in StockStatus.list %}
@@ -1037,7 +1035,7 @@ function loadStockTable(table, options) {
 
                     if (row.purchase_order_reference) {
 
-                        var prefix = '{% settings_value "PURCHASEORDER_REFERENCE_PREFIX" %}';
+                        var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
 
                         text = prefix + row.purchase_order_reference;
                     }
@@ -1090,15 +1088,18 @@ function loadStockTable(table, options) {
     }
     */
 
+    var buttons = [
+        '#stock-print-options',
+        '#stock-options';
+    ];
+
+    if (global_settings.BARCODE_ENABLE) {
+        buttons.push('#stock-barcode-options');
+    }
+
     linkButtonsToSelection(
         table,
-        [
-            '#stock-print-options',
-            {% if barcodes %}
-            '#stock-barcode-options',
-            {% endif %}
-            '#stock-options',
-        ]
+        buttons,
     );
 
 
@@ -1138,19 +1139,19 @@ function loadStockTable(table, options) {
         printTestReports(items);
     })
 
-    {% if barcodes %}
-    $('#multi-item-barcode-scan-into-location').click(function() {        
-        var selections = $('#stock-table').bootstrapTable('getSelections');
+    if (global_settings.BARCODE_ENABLE) {
+        $('#multi-item-barcode-scan-into-location').click(function() {        
+            var selections = $('#stock-table').bootstrapTable('getSelections');
 
-        var items = [];
+            var items = [];
 
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        })
+            selections.forEach(function(item) {
+                items.push(item.pk);
+            })
 
-        scanItemsIntoLocation(items);
-    });
-    {% endif %}
+            scanItemsIntoLocation(items);
+        });
+    }
 
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');

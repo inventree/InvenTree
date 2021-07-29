@@ -812,6 +812,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         help_text=_('Settings key (must be unique - case insensitive'),
     )
 
+
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
     An InvenTreeSetting object with a usercontext
