@@ -97,6 +97,7 @@ settings_urls = [
 dynamic_javascript_urls = [
     url(r'^inventree.js', DynamicJsView.as_view(template_name='js/dynamic/inventree.js'), name='inventree.js'),
     url(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
+    url(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
 ]
 
 # These javascript files are pased through the Django translation layer
@@ -113,7 +114,6 @@ translated_javascript_urls = [
     url(r'^label.js', DynamicJsView.as_view(template_name='js/translated/label.js'), name='label.js'),
     url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/translated/model_renderers.js'), name='model_renderers.js'),
     url(r'^modals.js', DynamicJsView.as_view(template_name='js/translated/modals.js'), name='modals.js'),
-    url(r'^nav.js', DynamicJsView.as_view(template_name='js/translated/nav.js'), name='nav.js'),
     url(r'^order.js', DynamicJsView.as_view(template_name='js/translated/order.js'), name='order.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/translated/part.js'), name='part.js'),
     url(r'^report.js', DynamicJsView.as_view(template_name='js/translated/report.js'), name='report.js'),
