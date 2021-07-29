@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 03:44+0000\n"
-"PO-Revision-Date: 2021-07-29 03:51\n"
+"POT-Creation-Date: 2021-07-29 07:20+0000\n"
+"PO-Revision-Date: 2021-07-29 07:46\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -177,75 +177,75 @@ msgstr "親"
 msgid "Must be a valid number"
 msgstr "有効な数字でなければなりません"
 
-#: InvenTree/settings.py:505
+#: InvenTree/settings.py:518
 msgid "German"
 msgstr "ドイツ語"
 
-#: InvenTree/settings.py:506
+#: InvenTree/settings.py:519
 msgid "Greek"
 msgstr ""
 
-#: InvenTree/settings.py:507
+#: InvenTree/settings.py:520
 msgid "English"
 msgstr "英語"
 
-#: InvenTree/settings.py:508
+#: InvenTree/settings.py:521
 msgid "Spanish"
 msgstr ""
 
-#: InvenTree/settings.py:509
+#: InvenTree/settings.py:522
 msgid "French"
 msgstr "フランス語"
 
-#: InvenTree/settings.py:510
+#: InvenTree/settings.py:523
 msgid "Hebrew"
 msgstr ""
 
-#: InvenTree/settings.py:511
+#: InvenTree/settings.py:524
 msgid "Italian"
 msgstr ""
 
-#: InvenTree/settings.py:512
+#: InvenTree/settings.py:525
 msgid "Japanese"
 msgstr ""
 
-#: InvenTree/settings.py:513
+#: InvenTree/settings.py:526
 msgid "Korean"
 msgstr ""
 
-#: InvenTree/settings.py:514
+#: InvenTree/settings.py:527
 msgid "Dutch"
 msgstr ""
 
-#: InvenTree/settings.py:515
+#: InvenTree/settings.py:528
 msgid "Norwegian"
 msgstr ""
 
-#: InvenTree/settings.py:516
+#: InvenTree/settings.py:529
 msgid "Polish"
 msgstr "ポーランド語"
 
-#: InvenTree/settings.py:517
+#: InvenTree/settings.py:530
 msgid "Russian"
 msgstr ""
 
-#: InvenTree/settings.py:518
+#: InvenTree/settings.py:531
 msgid "Swedish"
 msgstr ""
 
-#: InvenTree/settings.py:519
+#: InvenTree/settings.py:532
 msgid "Thai"
 msgstr ""
 
-#: InvenTree/settings.py:520
+#: InvenTree/settings.py:533
 msgid "Turkish"
 msgstr "トルコ語"
 
-#: InvenTree/settings.py:521
+#: InvenTree/settings.py:534
 msgid "Vietnamese"
 msgstr ""
 
-#: InvenTree/settings.py:522
+#: InvenTree/settings.py:535
 msgid "Chinese"
 msgstr ""
 
