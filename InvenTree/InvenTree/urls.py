@@ -96,8 +96,9 @@ settings_urls = [
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
     url(r'^inventree.js', DynamicJsView.as_view(template_name='js/dynamic/inventree.js'), name='inventree.js'),
-    url(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
+    url(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
     url(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
+    url(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
 ]
 
 # These javascript files are pased through the Django translation layer
@@ -107,7 +108,6 @@ translated_javascript_urls = [
     url(r'^barcode.js', DynamicJsView.as_view(template_name='js/translated/barcode.js'), name='barcode.js'),
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/translated/bom.js'), name='bom.js'),
     url(r'^build.js', DynamicJsView.as_view(template_name='js/translated/build.js'), name='build.js'),
-    url(r'^calendar.js', DynamicJsView.as_view(template_name='js/translated/calendar.js'), name='calendar.js'),
     url(r'^company.js', DynamicJsView.as_view(template_name='js/translated/company.js'), name='company.js'),
     url(r'^filters.js', DynamicJsView.as_view(template_name='js/translated/filters.js'), name='filters.js'),
     url(r'^forms.js', DynamicJsView.as_view(template_name='js/translated/forms.js'), name='forms.js'),
