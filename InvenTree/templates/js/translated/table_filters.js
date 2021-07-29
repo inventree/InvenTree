@@ -147,6 +147,7 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Depleted" %}',
                 description: '{% trans "Show stock items which are depleted" %}',
             },
+            
             {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
             {% if expiry %}
             expired: {

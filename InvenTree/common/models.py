@@ -75,6 +75,28 @@ class BaseInvenTreeSetting(models.Model):
                     "value": cls.get_setting_default(key)
                 })
         
+        # Enforce javascript formatting
+        for idx, setting in enumerate(settings):
+
+            key = setting['key']
+            value = setting['value']
+
+            validator = cls.get_setting_validator(key)
+
+            # Convert to javascript compatible booleans
+            if cls.validator_is_bool(validator):
+                value = 'true' if value else 'false'
+
+            # Numerical values remain the same
+            elif cls.validator_is_int(validator):
+                pass
+                
+            # Wrap strings with quotes
+            else:
+                value = f"'{value}'"
+
+            setting["value"] = value
+
         return settings
 
     @classmethod
@@ -407,13 +429,7 @@ class BaseInvenTreeSetting(models.Model):
 
         validator = self.__class__.get_setting_validator(self.key)
 
-        if validator == bool:
-            return True
-
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                if v == bool:
-                    return True
+        return self.__class__.validator_is_bool(validator)
 
     def as_bool(self):
         """
@@ -424,12 +440,30 @@ class BaseInvenTreeSetting(models.Model):
 
         return InvenTree.helpers.str2bool(self.value)
 
+    @classmethod
+    def validator_is_bool(cls, validator):
+
+        if validator == bool:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == bool:
+                    return True
+
+        return False
+
     def is_int(self):
         """
         Check if the setting is required to be an integer value:
         """
 
         validator = self.__class__.get_setting_validator(self.key)
+
+        return self.__class__.validator_is_int(validator)
+
+    @classmethod
+    def validator_is_int(cls, validator):
 
         if validator == int:
             return True
