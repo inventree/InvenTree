@@ -145,8 +145,11 @@
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
-<!-- translated -->
-<script type='text/javascript' src="{% i18n_static 'inventree.js' %}"></script>
+<!-- dynamic javascript templates -->
+<script type='text/javascript' src="{% url 'inventree.js' %}"></script>
+<script type='text/javascript' src="{% url 'settings.js' %}"></script>
+
+<!-- translated javascript templates-->
 <script type='text/javascript' src="{% i18n_static 'api.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'attachment.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>

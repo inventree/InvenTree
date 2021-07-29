@@ -39,6 +39,45 @@ class BaseInvenTreeSetting(models.Model):
         abstract = True
 
     @classmethod
+    def allValues(cls, user=None):
+        """
+        Return a dict of "all" defined global settings.
+
+        This performs a single database lookup,
+        and then any settings which are not *in* the database
+        are assigned their default values
+        """
+
+        keys = set()
+        settings = []
+
+        results = cls.objects.all()
+
+        if user is not None:
+            results = results.filter(user=user)
+
+        # Query the database
+        for setting in results:
+            settings.append({
+                "key": setting.key.upper(),
+                "value": setting.value
+            })
+
+            keys.add(setting.key.upper())
+
+        # Specify any "default" values which are not in the database
+        for key in cls.GLOBAL_SETTINGS.keys():
+
+            if key.upper() not in keys:
+
+                settings.append({
+                    "key": key.upper(),
+                    "value": cls.get_setting_default(key)
+                })
+        
+        return settings
+
+    @classmethod
     def get_setting_name(cls, key):
         """
         Return the name of a particular setting.
@@ -738,7 +777,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         unique=True,
         help_text=_('Settings key (must be unique - case insensitive'),
     )
-
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
