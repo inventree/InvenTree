@@ -198,17 +198,16 @@
         );
     });
 
-    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+    if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
 
-    {% if allow_download %}
-    $('#company-image-url').click(function() {
-        launchModalForm(
-            '{% url "company-image-download" company.id %}',
-            {
-                reload: true,
-            }
-        )
-    });
-    {% endif %}
+        $('#company-image-url').click(function() {
+            launchModalForm(
+                '{% url "company-image-download" company.id %}',
+                {
+                    reload: true,
+                }
+            )
+        });
+    }
 
 {% endblock %}
