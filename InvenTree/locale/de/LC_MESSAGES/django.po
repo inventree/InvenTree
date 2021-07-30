@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-29 07:20+0000\n"
-"PO-Revision-Date: 2021-07-29 07:46\n"
+"PO-Revision-Date: 2021-07-30 13:23\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -183,7 +183,7 @@ msgstr "Deutsch"
 
 #: InvenTree/settings.py:519
 msgid "Greek"
-msgstr ""
+msgstr "Griechisch"
 
 #: InvenTree/settings.py:520
 msgid "English"
@@ -191,7 +191,7 @@ msgstr "Englisch"
 
 #: InvenTree/settings.py:521
 msgid "Spanish"
-msgstr ""
+msgstr "Spanisch"
 
 #: InvenTree/settings.py:522
 msgid "French"
@@ -199,27 +199,27 @@ msgstr "Französisch"
 
 #: InvenTree/settings.py:523
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebräisch"
 
 #: InvenTree/settings.py:524
 msgid "Italian"
-msgstr ""
+msgstr "Italienisch"
 
 #: InvenTree/settings.py:525
 msgid "Japanese"
-msgstr ""
+msgstr "Japanisch"
 
 #: InvenTree/settings.py:526
 msgid "Korean"
-msgstr ""
+msgstr "Koreanisch"
 
 #: InvenTree/settings.py:527
 msgid "Dutch"
-msgstr ""
+msgstr "Niederländisch"
 
 #: InvenTree/settings.py:528
 msgid "Norwegian"
-msgstr ""
+msgstr "Norwegisch"
 
 #: InvenTree/settings.py:529
 msgid "Polish"
@@ -227,15 +227,15 @@ msgstr "Polnisch"
 
 #: InvenTree/settings.py:530
 msgid "Russian"
-msgstr ""
+msgstr "Russisch"
 
 #: InvenTree/settings.py:531
 msgid "Swedish"
-msgstr ""
+msgstr "Schwedisch"
 
 #: InvenTree/settings.py:532
 msgid "Thai"
-msgstr ""
+msgstr "Thailändisch"
 
 #: InvenTree/settings.py:533
 msgid "Turkish"
@@ -243,11 +243,11 @@ msgstr "Türkisch"
 
 #: InvenTree/settings.py:534
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamesisch"
 
 #: InvenTree/settings.py:535
 msgid "Chinese"
-msgstr ""
+msgstr "Chinesisch"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -1917,19 +1917,19 @@ msgstr "Präfix für Bestellungs-Referenz"
 
 #: common/models.py:823
 msgid "Show starred parts"
-msgstr ""
+msgstr "Markierte Teile anzeigen"
 
 #: common/models.py:824
 msgid "Show starred parts on the homepage"
-msgstr ""
+msgstr "Zeige markierte Teile auf der Startseite"
 
 #: common/models.py:829
 msgid "Show latest parts"
-msgstr ""
+msgstr "Neueste Teile anzeigen"
 
 #: common/models.py:830
 msgid "Show latest parts on the homepage"
-msgstr ""
+msgstr "Zeige neueste Teile auf der Startseite"
 
 #: common/models.py:835
 msgid "Recent Part Count"
@@ -1941,7 +1941,7 @@ msgstr "Anzahl der neusten Teile auf der Startseite"
 
 #: common/models.py:842
 msgid "Show unvalidated BOMs"
-msgstr ""
+msgstr "Nicht validierte Stücklisten anzeigen"
 
 #: common/models.py:843
 msgid "Show BOMs that await validation on the homepage"
@@ -1949,11 +1949,11 @@ msgstr ""
 
 #: common/models.py:848
 msgid "Show recent stock changes"
-msgstr ""
+msgstr "Neueste Lagerbestand Änderungen anzeigen"
 
 #: common/models.py:849
 msgid "Show recently changed stock items on the homepage"
-msgstr ""
+msgstr "Zeige zuletzt geänderte Lagerbestände auf der Startseite"
 
 #: common/models.py:854
 msgid "Recent Stock Count"
@@ -1965,11 +1965,11 @@ msgstr "Anzahl des geänderten Bestands auf der Startseite"
 
 #: common/models.py:860
 msgid "Show low stock"
-msgstr ""
+msgstr "Niedrigen Bestand anzeigen"
 
 #: common/models.py:861
 msgid "Show low stock items on the homepage"
-msgstr ""
+msgstr "Zeige geringen Lagerbestand auf der Startseite"
 
 #: common/models.py:866
 msgid "Show depleted stock"
@@ -1981,19 +1981,19 @@ msgstr ""
 
 #: common/models.py:872
 msgid "Show needed stock"
-msgstr ""
+msgstr "Benötigten Bestand anzeigen"
 
 #: common/models.py:873
 msgid "Show stock items needed for builds on the homepage"
-msgstr ""
+msgstr "Zeige Bestand für Bauaufträge auf der Startseite"
 
 #: common/models.py:878
 msgid "Show expired stock"
-msgstr ""
+msgstr "Abgelaufenen Bestand anzeigen"
 
 #: common/models.py:879
 msgid "Show expired stock items on the homepage"
-msgstr ""
+msgstr "Zeige Abgelaufene Lagerbestände auf der Startseite"
 
 #: common/models.py:884
 msgid "Show stale stock"
@@ -2005,51 +2005,51 @@ msgstr ""
 
 #: common/models.py:890
 msgid "Show pending builds"
-msgstr ""
+msgstr "Ausstehende Bauaufträge anzeigen"
 
 #: common/models.py:891
 msgid "Show pending builds on the homepage"
-msgstr ""
+msgstr "Zeige ausstehende Bauaufträge auf der Startseite"
 
 #: common/models.py:896
 msgid "Show overdue builds"
-msgstr ""
+msgstr "Zeige überfällige Bauaufträge"
 
 #: common/models.py:897
 msgid "Show overdue builds on the homepage"
-msgstr ""
+msgstr "Zeige überfällige Bauaufträge auf der Startseite"
 
 #: common/models.py:902
 msgid "Show outstanding POs"
-msgstr ""
+msgstr "Ausstehende POs anzeigen"
 
 #: common/models.py:903
 msgid "Show outstanding POs on the homepage"
-msgstr ""
+msgstr "Ausstehende POs auf der Startseite anzeigen"
 
 #: common/models.py:908
 msgid "Show overdue POs"
-msgstr ""
+msgstr "Überfällige POs anzeigen"
 
 #: common/models.py:909
 msgid "Show overdue POs on the homepage"
-msgstr ""
+msgstr "Überfällige POs auf der Startseite anzeigen"
 
 #: common/models.py:914
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Ausstehende SOs anzeigen"
 
 #: common/models.py:915
 msgid "Show outstanding SOs on the homepage"
-msgstr ""
+msgstr "Ausstehende SOs auf der Startseite anzeigen"
 
 #: common/models.py:920
 msgid "Show overdue SOs"
-msgstr ""
+msgstr "Überfällige SOs anzeigen"
 
 #: common/models.py:921
 msgid "Show overdue SOs on the homepage"
-msgstr ""
+msgstr "Überfällige SOs auf der Startseite anzeigen"
 
 #: common/models.py:927
 msgid "Search Preview Results"
@@ -2094,7 +2094,7 @@ msgstr "Angegebener Wert muss ein Wahrheitswert sein"
 
 #: common/views.py:138
 msgid "Change User Setting"
-msgstr ""
+msgstr "Benutzereinstellungen ändern"
 
 #: common/views.py:213 order/templates/order/order_wizard/po_upload.html:42
 #: order/templates/order/po_navbar.html:19
@@ -6227,7 +6227,7 @@ msgstr "Jetzt aktualisieren"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
-msgstr ""
+msgstr "Server Einstellungen"
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
@@ -6246,7 +6246,7 @@ msgstr "Konto"
 #: templates/InvenTree/settings/navbar.html:21
 #: templates/InvenTree/settings/navbar.html:23
 msgid "Home Page"
-msgstr ""
+msgstr "Startseite"
 
 #: templates/InvenTree/settings/navbar.html:27
 #: templates/InvenTree/settings/navbar.html:29
@@ -6273,7 +6273,7 @@ msgstr "Server"
 #: templates/InvenTree/settings/navbar.html:53
 #: templates/InvenTree/settings/navbar.html:55
 msgid "Barcodes"
-msgstr ""
+msgstr "Barcodes"
 
 #: templates/InvenTree/settings/navbar.html:59
 #: templates/InvenTree/settings/navbar.html:61
@@ -6283,7 +6283,7 @@ msgstr "Währungen"
 #: templates/InvenTree/settings/navbar.html:65
 #: templates/InvenTree/settings/navbar.html:67
 msgid "Reporting"
-msgstr ""
+msgstr "Berichte"
 
 #: templates/InvenTree/settings/navbar.html:77
 #: templates/InvenTree/settings/navbar.html:79
@@ -6354,7 +6354,7 @@ msgstr "Bestands-Einstellungen"
 
 #: templates/InvenTree/settings/user.html:9
 msgid "Account Settings"
-msgstr ""
+msgstr "Kontoeinstellungen"
 
 #: templates/InvenTree/settings/user.html:15
 msgid "Edit"
@@ -6387,11 +6387,11 @@ msgstr "Anzeige-Einstellungen"
 
 #: templates/InvenTree/settings/user.html:63
 msgid "Set Theme"
-msgstr ""
+msgstr "Design auswählen"
 
 #: templates/InvenTree/settings/user.html:70
 msgid "Language Settings"
-msgstr ""
+msgstr "Spracheinstellung"
 
 #: templates/InvenTree/settings/user.html:90
 msgid "Set Language"
@@ -6399,7 +6399,7 @@ msgstr "Sprache festlegen"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Startseite-Einstellungen"
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
