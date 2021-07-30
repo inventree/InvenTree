@@ -207,7 +207,7 @@ $("#supplier-part-delete").click(function() {
                     requests.push(inventreeDelete(url));
                 });
         
-                $.when.apply($, requests).then(function() {
+                $.when.apply($, requests).done(function() {
                     reloadSupplierPartTable();
                 });
             }
@@ -247,7 +247,7 @@ $("#multi-parameter-delete").click(function() {
                     requests.push(inventreeDelete(url));
                 });
 
-                $.when.apply($, requests).then(function() {
+                $.when.apply($, requests).done(function() {
                     $('#parameter-table').bootstrapTable('refresh');
                 });
             }

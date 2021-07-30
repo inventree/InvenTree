@@ -9,7 +9,7 @@ function createSalesOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}',
+                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
             },
             customer: {
                 value: options.customer,
@@ -40,7 +40,7 @@ function createPurchaseOrder(options={}) {
         method: 'POST',
         fields: {
             reference: {
-                prefix: "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}",   
+                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
             },
             supplier: {
                 value: options.supplier,
@@ -214,7 +214,7 @@ function loadPurchaseOrderTable(table, options) {
                 switchable: false,
                 formatter: function(value, row, index, field) {
 
-                    var prefix = "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}";
+                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
 
                     if (prefix) {
                         value = `${prefix}${value}`;
@@ -309,7 +309,7 @@ function loadSalesOrderTable(table, options) {
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row, index, field) {
 
-                    var prefix = "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}";
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
                     if (prefix) {
                         value = `${prefix}${value}`;
@@ -423,7 +423,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 switchable: false,
                 formatter: function(value, row) {
 
-                    var prefix = "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}";
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
                     var ref = `${prefix}${row.order_detail.reference}`;
 

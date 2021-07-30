@@ -208,6 +208,24 @@ def settings_value(key, *args, **kwargs):
 
 
 @register.simple_tag()
+def user_settings(user, *args, **kwargs):
+    """
+    Return all USER settings as a key:value dict
+    """
+
+    return InvenTreeUserSetting.allValues(user=user)
+
+
+@register.simple_tag()
+def global_settings(*args, **kwargs):
+    """
+    Return all GLOBAL InvenTree settings as a key:value dict
+    """
+
+    return InvenTreeSetting.allValues()
+
+
+@register.simple_tag()
 def get_color_theme_css(username):
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
@@ -224,6 +242,23 @@ def get_color_theme_css(username):
     inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
 
     return inventree_css_static_url
+
+
+@register.simple_tag()
+def get_available_themes(*args, **kwargs):
+    """
+    Return the available theme choices
+    """
+
+    themes = []
+
+    for key, name in ColorTheme.get_color_themes_choices():
+        themes.append({
+            'key': key,
+            'name': name
+        })
+
+    return themes
 
 
 @register.filter

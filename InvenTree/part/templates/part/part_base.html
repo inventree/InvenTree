@@ -422,17 +422,16 @@
 
     {% if roles.part.change %}
 
-    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
-    {% if allow_download %}
-    $("#part-image-url").click(function() {
-        launchModalForm(
-            '{% url "part-image-download" part.id %}',
-            {
-                reload: true,
-            }
-        );
-    });
-    {% endif %}
+    if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
+        $("#part-image-url").click(function() {
+            launchModalForm(
+                '{% url "part-image-download" part.id %}',
+                {
+                    reload: true,
+                }
+            );
+        });
+    }
 
     $("#part-image-select").click(function() {
         launchModalForm("{% url 'part-image-select' part.id %}",

@@ -12,6 +12,7 @@ database setup in this file.
 """
 
 import logging
+
 import os
 import random
 import string
@@ -202,7 +203,7 @@ STATICFILES_DIRS = [
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js')
+STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
 STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
@@ -347,10 +348,22 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
+background_workers = os.environ.get('INVENTREE_BACKGROUND_WORKERS', None)
+
+if background_workers is not None:
+    try:
+        background_workers = int(background_workers)
+    except ValueError:
+        background_workers = None
+
+if background_workers is None:
+    # Sensible default?
+    background_workers = 4
+
 # django-q configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
-    'workers': 4,
+    'workers': background_workers,
     'timeout': 90,
     'retry': 120,
     'queue_limit': 50,
@@ -502,11 +515,24 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
-    ('en', _('English')),
-    ('fr', _('French')),
     ('de', _('German')),
+    ('el', _('Greek')),
+    ('en', _('English')),
+    ('es', _('Spanish')),
+    ('fr', _('French')),
+    ('he', _('Hebrew')),
+    ('it', _('Italian')),
+    ('ja', _('Japanese')),
+    ('ko', _('Korean')),
+    ('nl', _('Dutch')),
+    ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('ru', _('Russian')),
+    ('sv', _('Swedish')),
+    ('th', _('Thai')),
     ('tr', _('Turkish')),
+    ('vi', _('Vietnamese')),
+    ('zh-cn', _('Chinese')),
 ]
 
 # Currencies available for use
