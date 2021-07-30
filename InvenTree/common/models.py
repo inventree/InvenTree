@@ -58,12 +58,13 @@ class BaseInvenTreeSetting(models.Model):
 
         # Query the database
         for setting in results:
-            settings.append({
-                "key": setting.key.upper(),
-                "value": setting.value
-            })
+            if setting.key:
+                settings.append({
+                    "key": setting.key.upper(),
+                    "value": setting.value
+                })
 
-            keys.add(setting.key.upper())
+                keys.add(setting.key.upper())
 
         # Specify any "default" values which are not in the database
         for key in cls.GLOBAL_SETTINGS.keys():
