@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-29 07:20+0000\n"
-"PO-Revision-Date: 2021-07-30 08:42\n"
+"PO-Revision-Date: 2021-07-30 09:43\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -488,11 +488,11 @@ msgstr "Barcode komt al overeen met Part object"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
-msgstr ""
+msgstr "Barcode komt al overeen met StockItem object"
 
 #: barcodes/api.py:222
 msgid "Barcode associated with StockItem"
-msgstr ""
+msgstr "Barcode gekoppeld aan StockItem"
 
 #: build/forms.py:37
 msgid "Build Order reference"
@@ -500,7 +500,7 @@ msgstr ""
 
 #: build/forms.py:38
 msgid "Order target date"
-msgstr ""
+msgstr "Order streefdatum"
 
 #: build/forms.py:42 build/templates/build/build_base.html:146
 #: build/templates/build/detail.html:124
@@ -510,7 +510,7 @@ msgstr ""
 #: templates/js/translated/build.js:945 templates/js/translated/order.js:264
 #: templates/js/translated/order.js:367
 msgid "Target Date"
-msgstr ""
+msgstr "Streefdatum"
 
 #: build/forms.py:43 build/models.py:277
 msgid "Target date for build completion. Build will be overdue after this date."
@@ -549,43 +549,43 @@ msgstr ""
 #: templates/js/translated/part.js:1138 templates/js/translated/part.js:1194
 #: templates/js/translated/stock.js:1522 templates/js/translated/stock.js:1720
 msgid "Quantity"
-msgstr ""
+msgstr "Aantal"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr ""
+msgstr "Aantal items om te maken"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Voer hoeveelheid in voor build-output"
 
 #: build/forms.py:95 order/forms.py:114 stock/forms.py:84
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Serienummers"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Voer serienummers in voor build-outputs"
 
 #: build/forms.py:103
 msgid "Confirm creation of build output"
-msgstr ""
+msgstr "Bevestig het maken van build-output"
 
 #: build/forms.py:124
 msgid "Confirm deletion of build output"
-msgstr ""
+msgstr "Bevestig verwijdering van build-output"
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
-msgstr ""
+msgstr "Bevestig het ongedaan maken van de toewijzing van voorraad"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Bevestig de voorraadtoewijzing"
 
 #: build/forms.py:186
 msgid "Mark build as complete"
-msgstr ""
+msgstr "Markeer build als voltooid"
 
 #: build/forms.py:210 build/templates/build/auto_allocate.html:18
 #: stock/forms.py:286 stock/templates/stock/item_base.html:297
@@ -596,11 +596,11 @@ msgstr ""
 #: templates/js/translated/stock.js:122 templates/js/translated/stock.js:248
 #: templates/js/translated/stock.js:1000 templates/js/translated/stock.js:1414
 msgid "Location"
-msgstr ""
+msgstr "Locatie"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr ""
+msgstr "Locatie van voltooide onderdelen"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:62 order/models.py:549
@@ -611,39 +611,39 @@ msgstr ""
 #: templates/js/translated/stock.js:987 templates/js/translated/stock.js:1491
 #: templates/js/translated/stock.js:1736
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: build/forms.py:216
 msgid "Build output stock status"
-msgstr ""
+msgstr "Build output voorraad status"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
-msgstr ""
+msgstr "Bevestig onvolledigheid"
 
 #: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
-msgstr ""
+msgstr "Bevestig voltooiing met onvolledige voorraadtoewijzing"
 
 #: build/forms.py:227
 msgid "Confirm build completion"
-msgstr ""
+msgstr "Bevestig build voltooiing"
 
 #: build/forms.py:252
 msgid "Confirm cancel"
-msgstr ""
+msgstr "Annuleren bevestigen"
 
 #: build/forms.py:252 build/views.py:65
 msgid "Confirm build cancellation"
-msgstr ""
+msgstr "Bevestig annulering van de build"
 
 #: build/forms.py:266
 msgid "Select quantity of stock to allocate"
-msgstr ""
+msgstr "Selecteer de te toewijzen hoeveelheid voorraad"
 
 #: build/models.py:113
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Ongeldige keuze voor bovenliggende build"
 
 #: build/models.py:117 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
@@ -677,11 +677,11 @@ msgstr ""
 #: templates/js/translated/bom.js:197 templates/js/translated/build.js:695
 #: templates/js/translated/build.js:1166
 msgid "Reference"
-msgstr ""
+msgstr "Referentie"
 
 #: build/models.py:190
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Korte beschrijving van de build"
 
 #: build/models.py:199 build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:80
@@ -690,7 +690,7 @@ msgstr ""
 
 #: build/models.py:200
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "BuildOrder waaraan deze build is toegewezen"
 
 #: build/models.py:205 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:128
@@ -717,31 +717,31 @@ msgstr ""
 #: templates/js/translated/part.js:593 templates/js/translated/stock.js:120
 #: templates/js/translated/stock.js:883 templates/js/translated/stock.js:1708
 msgid "Part"
-msgstr ""
+msgstr "Onderdeel"
 
 #: build/models.py:213
 msgid "Select part to build"
-msgstr ""
+msgstr "Selecteer onderdeel om te bouwen"
 
 #: build/models.py:218
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Verkoop Order Referentie"
 
 #: build/models.py:222
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Verkooporder waaraan deze build is toegewezen"
 
 #: build/models.py:227
 msgid "Source Location"
-msgstr ""
+msgstr "Bron Locatie"
 
 #: build/models.py:231
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Selecteer de locatie waar de voorraad van de build vandaan moet komen (laat leeg om vanaf elke standaard locatie te nemen)"
 
 #: build/models.py:236
 msgid "Destination Location"
-msgstr ""
+msgstr "Bestemmings Locatie"
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
@@ -995,7 +995,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:62
 #: stock/templates/stock/location.html:31
 msgid "Admin view"
-msgstr ""
+msgstr "Beheerder weergave"
 
 #: build/templates/build/build_base.html:81
 #: build/templates/build/build_base.html:150
@@ -1007,38 +1007,38 @@ msgstr ""
 #: templates/js/translated/table_filters.js:278
 #: templates/js/translated/table_filters.js:295
 msgid "Overdue"
-msgstr ""
+msgstr "Achterstallig"
 
 #: build/templates/build/build_base.html:90
 msgid "Print actions"
-msgstr ""
+msgstr "Afdruk acties"
 
 #: build/templates/build/build_base.html:94
 msgid "Print Build Order"
-msgstr ""
+msgstr "Print Bouw Order"
 
 #: build/templates/build/build_base.html:100
 #: build/templates/build/build_base.html:222
 msgid "Complete Build"
-msgstr ""
+msgstr "Voltooi Build"
 
 #: build/templates/build/build_base.html:105
 msgid "Build actions"
-msgstr ""
+msgstr "Build acties"
 
 #: build/templates/build/build_base.html:109
 msgid "Edit Build"
-msgstr ""
+msgstr "Bewerk Build"
 
 #: build/templates/build/build_base.html:111
 #: build/templates/build/build_base.html:206 build/views.py:56
 msgid "Cancel Build"
-msgstr ""
+msgstr "Annuleer Build"
 
 #: build/templates/build/build_base.html:124
 #: build/templates/build/detail.html:15
 msgid "Build Details"
-msgstr ""
+msgstr "Build details"
 
 #: build/templates/build/build_base.html:150
 #, python-format
@@ -1048,7 +1048,7 @@ msgstr ""
 #: build/templates/build/build_base.html:157
 #: build/templates/build/detail.html:67
 msgid "Progress"
-msgstr ""
+msgstr "Voortgang"
 
 #: build/templates/build/build_base.html:170
 #: build/templates/build/detail.html:87 order/models.py:823
@@ -1060,13 +1060,13 @@ msgstr ""
 #: stock/templates/stock/item_base.html:291
 #: templates/js/translated/order.js:309
 msgid "Sales Order"
-msgstr ""
+msgstr "Verkoop Order"
 
 #: build/templates/build/build_base.html:177
 #: build/templates/build/detail.html:101
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
-msgstr ""
+msgstr "Uitgegeven door"
 
 #: build/templates/build/build_base.html:214
 msgid "Incomplete Outputs"
