@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-29 07:20+0000\n"
-"PO-Revision-Date: 2021-07-30 15:03\n"
+"PO-Revision-Date: 2021-07-30 16:09\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -717,7 +717,7 @@ msgstr ""
 #: templates/js/translated/part.js:593 templates/js/translated/stock.js:120
 #: templates/js/translated/stock.js:883 templates/js/translated/stock.js:1708
 msgid "Part"
-msgstr "Запчасть"
+msgstr "Детали"
 
 #: build/models.py:213
 msgid "Select part to build"
@@ -1236,7 +1236,7 @@ msgstr ""
 #: company/templates/company/detail.html:75 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
-msgstr "Заказать запчасти"
+msgstr "Заказать детали"
 
 #: build/templates/build/detail.html:186
 msgid "Untracked stock has been fully allocated for this Build Order"
