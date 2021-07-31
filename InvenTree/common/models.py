@@ -20,6 +20,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 
@@ -91,10 +92,10 @@ class BaseInvenTreeSetting(models.Model):
             # Numerical values remain the same
             elif cls.validator_is_int(validator):
                 pass
-                
+
             # Wrap strings with quotes
             else:
-                value = f"'{value}'"
+                value = format_html("'{}'", value)
 
             setting["value"] = value
 

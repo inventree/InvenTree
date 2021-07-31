@@ -6,12 +6,12 @@
 
 var user_settings = {
     {% for setting in USER_SETTINGS %}
-    {{ setting.key }}: {{ setting.value|safe }},
+    {{ setting.key }}: {{ setting.value }},
     {% endfor %}
 };
 
 var global_settings = {
     {% for setting in GLOBAL_SETTINGS %}
-    {{ setting.key }}: {{ setting.value|safe }},
+    {{ setting.key }}: {{ setting.value }},
     {% endfor %}
 };
