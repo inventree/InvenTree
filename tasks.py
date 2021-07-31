@@ -138,6 +138,14 @@ def rebuild(c):
     manage(c, "rebuild_models")
 
 @task
+def clean_settings(c):
+    """
+    Clean the setting tables of old settings
+    """
+
+    manage(c, "clean_settings")
+
+@task
 def migrate(c):
     """
     Performs database migrations.
@@ -167,7 +175,7 @@ def static(c):
     manage(c, "collectstatic --no-input")
 
 
-@task(pre=[install, migrate, static])
+@task(pre=[install, migrate, static, clean_settings])
 def update(c):
     """
     Update InvenTree installation.
