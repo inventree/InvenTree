@@ -21,7 +21,6 @@ class Command(BaseCommand):
 
         # check if key exist and delete if not
         for setting in db_settings:
-            print(setting.key)
             if setting.key not in model_settings:
                 setting.delete()
                 print(f"deleted setting '{setting.key}'")
@@ -32,7 +31,6 @@ class Command(BaseCommand):
 
         # check if key exist and delete if not
         for setting in db_settings:
-            print(setting.key)
             if setting.key not in model_settings:
                 setting.delete()
                 print(f"deleted user setting '{setting.key}'")
