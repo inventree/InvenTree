@@ -32,4 +32,3 @@ class InvenTreeExchange(SimpleExchangeBackend):
         # catch connection errors
         except (HTTPError, URLError):
             print('Encountered connection error while updating')
-
