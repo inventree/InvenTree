@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-01 22:48+0000\n"
-"PO-Revision-Date: 2021-08-02 17:30\n"
+"PO-Revision-Date: 2021-08-02 18:26\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -6445,11 +6445,11 @@ msgstr "Django Sürümü"
 
 #: templates/about.html:51
 msgid "Commit Hash"
-msgstr ""
+msgstr "Commit Hash Değeri"
 
 #: templates/about.html:58
 msgid "Commit Date"
-msgstr ""
+msgstr "Commit Tarihi"
 
 #: templates/about.html:63
 msgid "InvenTree Documentation"
@@ -6461,30 +6461,30 @@ msgstr ""
 
 #: templates/about.html:73
 msgid "Credits"
-msgstr ""
+msgstr "Katkıda Bulunanlar"
 
 #: templates/about.html:78
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobil Uygulama"
 
 #: templates/about.html:83
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Hata Raporu Gönder"
 
 #: templates/about.html:90 templates/clip.html:4
 msgid "copy to clipboard"
-msgstr ""
+msgstr "panoya kopyala"
 
 #: templates/about.html:90
 msgid "copy version information"
-msgstr ""
+msgstr "sürüm bilgisini kopyala"
 
 #: templates/about.html:100 templates/js/translated/modals.js:33
 #: templates/js/translated/modals.js:567 templates/js/translated/modals.js:661
 #: templates/js/translated/modals.js:957 templates/modals.html:29
 #: templates/modals.html:54
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -6550,7 +6550,7 @@ msgstr "Seçili yapım işleri için rapor şablonu bulunamadı"
 #: templates/js/report.js:205 templates/js/translated/label.js:115
 #: templates/js/translated/report.js:205
 msgid "Select Parts"
-msgstr ""
+msgstr "Parçaları Seçin"
 
 #: templates/js/report.js:206 templates/js/translated/report.js:206
 msgid "Part(s) must be selected before printing reports"
@@ -6583,7 +6583,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:161 templates/js/translated/modals.js:1027
 msgid "No Response"
-msgstr ""
+msgstr "Cevap Yok"
 
 #: templates/js/translated/api.js:162 templates/js/translated/modals.js:1028
 msgid "No response from the InvenTree server"
