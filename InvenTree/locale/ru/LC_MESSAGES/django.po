@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-01 22:48+0000\n"
-"PO-Revision-Date: 2021-07-28 05:13\n"
+"PO-Revision-Date: 2021-08-01 23:34\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -185,7 +185,7 @@ msgstr "Немецкий"
 
 #: InvenTree/settings.py:519
 msgid "Greek"
-msgstr ""
+msgstr "Греческий"
 
 #: InvenTree/settings.py:520
 msgid "English"
@@ -193,7 +193,7 @@ msgstr "Английский"
 
 #: InvenTree/settings.py:521
 msgid "Spanish"
-msgstr ""
+msgstr "Испанский"
 
 #: InvenTree/settings.py:522
 msgid "French"
@@ -201,27 +201,27 @@ msgstr "Французский"
 
 #: InvenTree/settings.py:523
 msgid "Hebrew"
-msgstr ""
+msgstr "Иврит"
 
 #: InvenTree/settings.py:524
 msgid "Italian"
-msgstr ""
+msgstr "Итальянский"
 
 #: InvenTree/settings.py:525
 msgid "Japanese"
-msgstr ""
+msgstr "Японский"
 
 #: InvenTree/settings.py:526
 msgid "Korean"
-msgstr ""
+msgstr "Корейский"
 
 #: InvenTree/settings.py:527
 msgid "Dutch"
-msgstr ""
+msgstr "Голландский"
 
 #: InvenTree/settings.py:528
 msgid "Norwegian"
-msgstr ""
+msgstr "Норвежский"
 
 #: InvenTree/settings.py:529
 msgid "Polish"
@@ -229,15 +229,15 @@ msgstr "Польский"
 
 #: InvenTree/settings.py:530
 msgid "Russian"
-msgstr ""
+msgstr "Русский"
 
 #: InvenTree/settings.py:531
 msgid "Swedish"
-msgstr ""
+msgstr "Шведский"
 
 #: InvenTree/settings.py:532
 msgid "Thai"
-msgstr ""
+msgstr "Тайский"
 
 #: InvenTree/settings.py:533
 msgid "Turkish"
@@ -245,11 +245,11 @@ msgstr "Турецкий"
 
 #: InvenTree/settings.py:534
 msgid "Vietnamese"
-msgstr ""
+msgstr "Вьетнамский"
 
 #: InvenTree/settings.py:535
 msgid "Chinese"
-msgstr ""
+msgstr "Китайский"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -719,7 +719,7 @@ msgstr ""
 #: templates/js/translated/part.js:593 templates/js/translated/stock.js:120
 #: templates/js/translated/stock.js:883 templates/js/translated/stock.js:1708
 msgid "Part"
-msgstr ""
+msgstr "Детали"
 
 #: build/models.py:213
 msgid "Select part to build"
@@ -796,7 +796,7 @@ msgstr ""
 
 #: build/models.py:286
 msgid "completed by"
-msgstr ""
+msgstr "выполнено"
 
 #: build/models.py:294 templates/js/translated/build.js:915
 msgid "Issued by"
@@ -812,7 +812,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:140 part/models.py:917
 #: report/templates/report/inventree_build_order_base.html:159
 msgid "Responsible"
-msgstr ""
+msgstr "Ответственный"
 
 #: build/models.py:304
 msgid "User responsible for this build order"
@@ -824,11 +824,11 @@ msgstr ""
 #: part/templates/part/part_base.html:258 stock/models.py:501
 #: stock/templates/stock/item_base.html:357
 msgid "External Link"
-msgstr ""
+msgstr "Внешняя ссылка"
 
 #: build/models.py:310 part/models.py:775 stock/models.py:503
 msgid "Link to external URL"
-msgstr ""
+msgstr "Ссылка на внешний URL"
 
 #: build/models.py:314 build/templates/build/navbar.html:52
 #: company/models.py:139 company/models.py:526
@@ -850,7 +850,7 @@ msgstr ""
 #: templates/js/translated/stock.js:256 templates/js/translated/stock.js:497
 #: templates/js/translated/stock.js:1078
 msgid "Notes"
-msgstr ""
+msgstr "Заметки"
 
 #: build/models.py:315
 msgid "Extra build notes"
@@ -902,7 +902,7 @@ msgstr ""
 #: templates/InvenTree/search.html:183 templates/js/translated/build.js:846
 #: templates/navbar.html:29
 msgid "Build"
-msgstr ""
+msgstr "Сборка"
 
 #: build/models.py:1373
 msgid "Build to allocate parts"
@@ -1009,7 +1009,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:278
 #: templates/js/translated/table_filters.js:295
 msgid "Overdue"
-msgstr ""
+msgstr "Просрочено"
 
 #: build/templates/build/build_base.html:90
 msgid "Print actions"
@@ -1022,7 +1022,7 @@ msgstr ""
 #: build/templates/build/build_base.html:100
 #: build/templates/build/build_base.html:222
 msgid "Complete Build"
-msgstr ""
+msgstr "Завершить сборку"
 
 #: build/templates/build/build_base.html:105
 msgid "Build actions"
@@ -1068,7 +1068,7 @@ msgstr ""
 #: build/templates/build/detail.html:101
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
-msgstr ""
+msgstr "Выдано"
 
 #: build/templates/build/build_base.html:214
 msgid "Incomplete Outputs"
@@ -1184,18 +1184,18 @@ msgstr ""
 #: templates/js/translated/table_filters.js:116
 #: templates/js/translated/table_filters.js:198
 msgid "Batch"
-msgstr ""
+msgstr "Партия"
 
 #: build/templates/build/detail.html:119
 #: order/templates/order/order_base.html:111
 #: order/templates/order/sales_order_base.html:113
 #: templates/js/translated/build.js:910
 msgid "Created"
-msgstr ""
+msgstr "Создано"
 
 #: build/templates/build/detail.html:130
 msgid "No target date set"
-msgstr ""
+msgstr "Нет конечной даты"
 
 #: build/templates/build/detail.html:135 templates/js/translated/build.js:888
 msgid "Completed"
@@ -1238,7 +1238,7 @@ msgstr ""
 #: company/templates/company/detail.html:75 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
-msgstr ""
+msgstr "Заказать детали"
 
 #: build/templates/build/detail.html:186
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1288,11 +1288,11 @@ msgstr ""
 #: stock/templates/stock/item.html:87 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
-msgstr ""
+msgstr "Приложения"
 
 #: build/templates/build/detail.html:257
 msgid "Build Notes"
-msgstr ""
+msgstr "Заметки сборки"
 
 #: build/templates/build/detail.html:261 build/templates/build/detail.html:397
 #: company/templates/company/detail.html:173
@@ -8028,3 +8028,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+
