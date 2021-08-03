@@ -371,7 +371,7 @@
                         requests.push(inventreeDelete(url));
                     });
             
-                    $.when.apply($, requests).then(function() {
+                    $.when.apply($, requests).done(function() {
                         $('#supplier-part-table').bootstrapTable('refresh');
                     });
                 }

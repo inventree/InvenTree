@@ -1,16 +1,14 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='report' %}
-{% endblock %}
+{% block label %}reporting{% endblock %}
 
-{% block subtitle %}
+{% block heading %}
 {% trans "Report Settings" %}
 {% endblock %}
 
-{% block settings %}
+{% block content %}
 
 <table class='table table-striped table-condensed'>
     {% include "InvenTree/settings/header.html" %}
