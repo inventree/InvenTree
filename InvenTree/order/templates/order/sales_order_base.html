@@ -157,7 +157,7 @@ $("#edit-order").click(function() {
     constructForm('{% url "api-so-detail" order.pk %}', {
         fields: {
             reference: {
-                prefix: "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}",
+                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
             },
             {% if order.lines.count == 0 and order.status == SalesOrderStatus.PENDING %}
             customer: {

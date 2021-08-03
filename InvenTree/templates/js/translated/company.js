@@ -349,7 +349,7 @@ function deleteManufacturerParts(selections, options={}) {
                 });
 
                 // Wait for all the requests to complete
-                $.when.apply($, requests).then(function() {
+                $.when.apply($, requests).done(function() {
 
                     if (options.onSuccess) {
                         options.onSuccess();
