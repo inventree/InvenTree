@@ -253,7 +253,7 @@
                 <small>{{ previous.serial }}</small>  ‹
             </a>
         {% endif %}
-        <span class="btn" href=""><strong>{{ item.serial }}</strong></span>
+        {{ item.serial }}
         {% if next %}
             <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
                 ›  <small>{{ next.serial }}</small>
