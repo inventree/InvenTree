@@ -127,9 +127,11 @@
                 <li><a href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
                 {% endif %}
                 {% if item.belongs_to %}
-                <li>
-                    <a href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a>
-                </li>
+                <li><a href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
+                {% else %}
+                {% if item.part.get_used_in %}
+                <li><a href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+                {% endif %}
                 {% endif %}
             </ul>
         </div>
@@ -461,13 +463,27 @@ $("#stock-serialize").click(function() {
     );
 });
 
+$('#stock-install-in').click(function() {
+
+    launchModalForm(
+        "{% url 'stock-item-install' item.pk %}",
+        {
+            data: {
+                'part': {{ item.part.pk }},
+                'install_in': true,
+            },
+            reload: true,
+        }
+    );
+});
+
 $('#stock-uninstall').click(function() {
 
     launchModalForm(
         "{% url 'stock-item-uninstall' %}",
         {
             data: {
-                'items[]': [{{ item.pk}}],
+                'items[]': [{{ item.pk }}],
             },
             reload: true,
         }
