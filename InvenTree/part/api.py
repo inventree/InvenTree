@@ -443,6 +443,8 @@ class PartFilter(rest_filters.FilterSet):
         else:
             queryset = queryset.filter(IPN='')
 
+        return queryset
+
     # Regex filter for name
     name_regex = rest_filters.CharFilter(label='Filter by name (regex)', field_name='name', lookup_expr='iregex')
 
