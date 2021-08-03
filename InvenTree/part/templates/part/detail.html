@@ -899,7 +899,7 @@
                     {% for line in price_history %}'{{ line.date }}',{% endfor %}
                 ],
                 datasets: [{
-                    label: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}',
+                    label: '{% blocktrans %}Purchase Unit Price - {{currency}}{% endblocktrans %}',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgb(255, 99, 132)',
                     yAxisID: 'y',
@@ -911,7 +911,7 @@
                 },
                 {% if 'price_diff' in price_history.0 %}
                 {
-                    label: '{% blocktrans %}Single Price Difference - {{currency}}{% endblocktrans %}',
+                    label: '{% blocktrans %}Unit Price-Cost Difference - {{currency}}{% endblocktrans %}',
                     backgroundColor: 'rgba(68, 157, 68, 0.2)',
                     borderColor: 'rgb(68, 157, 68)',
                     yAxisID: 'y2',
@@ -923,7 +923,7 @@
                     hidden: true,
                 },
                 {
-                    label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
+                    label: '{% blocktrans %}Supplier Unit Cost - {{currency}}{% endblocktrans %}',
                     backgroundColor: 'rgba(70, 127, 155, 0.2)',
                     borderColor: 'rgb(70, 127, 155)',
                     yAxisID: 'y',
