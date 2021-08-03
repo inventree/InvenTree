@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-03 00:04+0000\n"
-"PO-Revision-Date: 2021-08-03 00:24\n"
+"PO-Revision-Date: 2021-08-03 08:22\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -3823,7 +3823,7 @@ msgstr ""
 
 #: part/forms.py:68
 msgid "Levels"
-msgstr ""
+msgstr "Seviyeler"
 
 #: part/forms.py:68
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
