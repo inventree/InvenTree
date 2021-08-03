@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-03 23:02+0000\n"
+"POT-Creation-Date: 2021-08-03 23:04+0000\n"
 "PO-Revision-Date: 2021-08-01 23:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -4713,19 +4713,22 @@ msgid "Edit Part Notes"
 msgstr "Teilenotizen bearbeiten"
 
 #: part/templates/part/detail.html:902
-#, python-format
-msgid "Single Price - %(currency)s"
-msgstr "Einzelpreis - %(currency)s"
+#, fuzzy, python-format
+#| msgid "Unit Price - %(currency)s"
+msgid "Purchase Unit Price - %(currency)s"
+msgstr "Stückpreis - %(currency)s"
 
 #: part/templates/part/detail.html:914
-#, python-format
-msgid "Single Price Difference - %(currency)s"
+#, fuzzy, python-format
+#| msgid "Single Price Difference - %(currency)s"
+msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr "Einzelpreisdifferenz - %(currency)s"
 
 #: part/templates/part/detail.html:926
-#, python-format
-msgid "Part Single Price - %(currency)s"
-msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
+#, fuzzy, python-format
+#| msgid "Unit Price - %(currency)s"
+msgid "Supplier Unit Cost - %(currency)s"
+msgstr "Stückpreis - %(currency)s"
 
 #: part/templates/part/detail.html:1015
 #, python-format
@@ -4923,6 +4926,7 @@ msgid "Total Cost"
 msgstr "Gesamtkosten"
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
+#: templates/js/translated/bom.js:271
 msgid "No supplier pricing available"
 msgstr "Keine Zulieferer-Preise verfügbar"
 
@@ -5010,7 +5014,7 @@ msgstr "Verkaufspreis anzeigen"
 msgid "Calculation parameters"
 msgstr "Berechnungsparameter"
 
-#: part/templates/part/prices.html:136
+#: part/templates/part/prices.html:136 templates/js/translated/bom.js:265
 msgid "Supplier Cost"
 msgstr "Zuliefererkosten"
 
@@ -6803,14 +6807,6 @@ msgstr "Kaufpreisspanne"
 msgid "Purchase Price Average"
 msgstr "Durchschnittlicher Kaufpreis"
 
-#: templates/js/translated/bom.js:265
-msgid "Buy Price"
-msgstr "Kaufpreis"
-
-#: templates/js/translated/bom.js:271
-msgid "No pricing available"
-msgstr "Keine Preisinformation verfügbar"
-
 #: templates/js/translated/bom.js:306 templates/js/translated/bom.js:392
 msgid "View BOM"
 msgstr "Stückliste anzeigen"
@@ -8071,6 +8067,18 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Single Price - %(currency)s"
+#~ msgstr "Einzelpreis - %(currency)s"
+
+#~ msgid "Part Single Price - %(currency)s"
+#~ msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
+
+#~ msgid "Buy Price"
+#~ msgstr "Kaufpreis"
+
+#~ msgid "No pricing available"
+#~ msgstr "Keine Preisinformation verfügbar"
 
 #~ msgid "Stock quantity to assign"
 #~ msgstr "Bestandmenge zum Zuweisen"

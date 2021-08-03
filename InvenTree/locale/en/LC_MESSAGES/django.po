@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-03 23:02+0000\n"
+"POT-Creation-Date: 2021-08-03 23:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4713,17 +4713,17 @@ msgstr ""
 
 #: part/templates/part/detail.html:902
 #, python-format
-msgid "Single Price - %(currency)s"
+msgid "Purchase Unit Price - %(currency)s"
 msgstr ""
 
 #: part/templates/part/detail.html:914
 #, python-format
-msgid "Single Price Difference - %(currency)s"
+msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr ""
 
 #: part/templates/part/detail.html:926
 #, python-format
-msgid "Part Single Price - %(currency)s"
+msgid "Supplier Unit Cost - %(currency)s"
 msgstr ""
 
 #: part/templates/part/detail.html:1015
@@ -4922,6 +4922,7 @@ msgid "Total Cost"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
+#: templates/js/translated/bom.js:271
 msgid "No supplier pricing available"
 msgstr ""
 
@@ -5009,7 +5010,7 @@ msgstr ""
 msgid "Calculation parameters"
 msgstr ""
 
-#: part/templates/part/prices.html:136
+#: part/templates/part/prices.html:136 templates/js/translated/bom.js:265
 msgid "Supplier Cost"
 msgstr ""
 
@@ -6784,14 +6785,6 @@ msgstr ""
 
 #: templates/js/translated/bom.js:257
 msgid "Purchase Price Average"
-msgstr ""
-
-#: templates/js/translated/bom.js:265
-msgid "Buy Price"
-msgstr ""
-
-#: templates/js/translated/bom.js:271
-msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:306 templates/js/translated/bom.js:392
