@@ -245,16 +245,6 @@ class InstallStockForm(HelperForm):
         required=False,
     )
 
-    # quantity_to_install = RoundingDecimalFormField(
-    #     max_digits=10, decimal_places=5,
-    #     initial=1,
-    #     label=_('Quantity'),
-    #     help_text=_('Stock quantity to assign'),
-    #     validators=[
-    #         MinValueValidator(0.001)
-    #     ]
-    # )
-
     notes = forms.CharField(
         required=False,
         help_text=_('Notes')

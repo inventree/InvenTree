@@ -595,7 +595,6 @@ class StockItemInstall(AjaxUpdateView):
         if items.count() == 1:
             item = items.first()
             initials['stock_item'] = item.pk
-            # initials['quantity_to_install'] = item.quantity
 
         if self.part:
             initials['part'] = self.part
@@ -629,7 +628,6 @@ class StockItemInstall(AjaxUpdateView):
             data = form.cleaned_data
 
             other_stock_item = data['stock_item']
-            # quantity = data['quantity_to_install']
             # Quantity will always be 1 for serialized item
             quantity = 1
             notes = data['notes']
