@@ -262,13 +262,13 @@ function loadBomTable(table, options) {
     cols.push(
     {
         field: 'price_range',
-        title: '{% trans "Buy Price" %}',
+        title: '{% trans "Supplier Cost" %}',
         sortable: true,
         formatter: function(value, row, index, field) {
             if (value) {
                 return value;
             } else {
-                return "<span class='warning-msg'>{% trans 'No pricing available' %}</span>";
+                return "<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>";
             }
         }
     });
