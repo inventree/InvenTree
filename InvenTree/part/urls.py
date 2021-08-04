@@ -65,9 +65,6 @@ category_parameter_urls = [
 
 category_urls = [
 
-    # Create a new category
-    url(r'^new/', views.CategoryCreate.as_view(), name='category-create'),
-
     # Top level subcategory display
     url(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
 
