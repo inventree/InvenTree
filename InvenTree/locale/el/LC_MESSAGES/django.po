@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-04 05:00+0000\n"
+"POT-Creation-Date: 2021-08-04 08:08+0000\n"
 "PO-Revision-Date: 2021-08-01 23:34\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
@@ -36,7 +36,7 @@ msgstr ""
 #: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
-#: order/forms.py:74 part/forms.py:109 templates/js/translated/forms.js:526
+#: order/forms.py:74 part/forms.py:108 templates/js/translated/forms.js:526
 msgid "Confirm"
 msgstr ""
 
@@ -155,7 +155,7 @@ msgstr ""
 #: templates/InvenTree/search.html:144 templates/InvenTree/search.html:224
 #: templates/InvenTree/search.html:296
 #: templates/InvenTree/settings/header.html:9
-#: templates/js/translated/bom.js:190 templates/js/translated/build.js:868
+#: templates/js/translated/bom.js:210 templates/js/translated/build.js:868
 #: templates/js/translated/build.js:1162 templates/js/translated/company.js:261
 #: templates/js/translated/company.js:459
 #: templates/js/translated/company.js:741 templates/js/translated/order.js:247
@@ -531,8 +531,8 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:200
 #: order/templates/order/sales_order_detail.html:207
 #: order/templates/order/sales_order_detail.html:292
-#: order/templates/order/sales_order_detail.html:364 part/forms.py:323
-#: part/forms.py:353 part/forms.py:369 part/forms.py:385 part/models.py:2384
+#: order/templates/order/sales_order_detail.html:364 part/forms.py:325
+#: part/forms.py:341 part/forms.py:357 part/models.py:2384
 #: part/templates/part/bom_upload/match_parts.html:31
 #: part/templates/part/detail.html:939 part/templates/part/detail.html:1025
 #: part/templates/part/part_pricing.html:16
@@ -542,7 +542,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:77
 #: stock/forms.py:140 stock/templates/stock/item_base.html:269
 #: stock/templates/stock/stock_adjust.html:18
-#: templates/js/translated/barcode.js:364 templates/js/translated/bom.js:205
+#: templates/js/translated/barcode.js:364 templates/js/translated/bom.js:225
 #: templates/js/translated/build.js:271 templates/js/translated/build.js:606
 #: templates/js/translated/build.js:1172
 #: templates/js/translated/model_renderers.js:56
@@ -675,7 +675,7 @@ msgstr ""
 #: part/templates/part/bom_upload/match_parts.html:30
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
-#: templates/js/translated/bom.js:197 templates/js/translated/build.js:695
+#: templates/js/translated/bom.js:217 templates/js/translated/build.js:695
 #: templates/js/translated/build.js:1166
 msgid "Reference"
 msgstr ""
@@ -711,7 +711,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:112 templates/InvenTree/search.html:210
-#: templates/js/translated/barcode.js:362 templates/js/translated/bom.js:163
+#: templates/js/translated/barcode.js:362 templates/js/translated/bom.js:183
 #: templates/js/translated/build.js:586 templates/js/translated/build.js:873
 #: templates/js/translated/build.js:1139 templates/js/translated/company.js:400
 #: templates/js/translated/company.js:650 templates/js/translated/part.js:461
@@ -845,7 +845,7 @@ msgstr ""
 #: stock/forms.py:138 stock/forms.py:250 stock/forms.py:282 stock/models.py:573
 #: stock/models.py:1715 stock/models.py:1821
 #: stock/templates/stock/navbar.html:57 templates/js/translated/barcode.js:37
-#: templates/js/translated/bom.js:349 templates/js/translated/company.js:746
+#: templates/js/translated/bom.js:369 templates/js/translated/company.js:746
 #: templates/js/translated/stock.js:256 templates/js/translated/stock.js:497
 #: templates/js/translated/stock.js:1078
 msgid "Notes"
@@ -1500,7 +1500,7 @@ msgstr ""
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/views.py:705 templates/js/translated/bom.js:230
+#: build/views.py:705 templates/js/translated/bom.js:250
 #: templates/js/translated/build.js:705 templates/js/translated/build.js:1000
 #: templates/js/translated/build.js:1179
 msgid "Available"
@@ -2144,11 +2144,11 @@ msgstr ""
 msgid "Previous Step"
 msgstr ""
 
-#: company/forms.py:24 part/forms.py:47
+#: company/forms.py:24 part/forms.py:46
 msgid "URL"
 msgstr ""
 
-#: company/forms.py:25 part/forms.py:48
+#: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
 msgstr ""
 
@@ -2765,7 +2765,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:164
 #: company/templates/company/supplier_part.html:265
-#: part/templates/part/prices.html:253 part/views.py:2216
+#: part/templates/part/prices.html:253 part/views.py:2088
 msgid "Add Price Break"
 msgstr ""
 
@@ -2773,11 +2773,11 @@ msgstr ""
 msgid "No price break information found"
 msgstr ""
 
-#: company/templates/company/supplier_part.html:199 part/views.py:2278
+#: company/templates/company/supplier_part.html:199 part/views.py:2150
 msgid "Delete Price Break"
 msgstr ""
 
-#: company/templates/company/supplier_part.html:213 part/views.py:2264
+#: company/templates/company/supplier_part.html:213 part/views.py:2136
 msgid "Edit Price Break"
 msgstr ""
 
@@ -3549,7 +3549,7 @@ msgid "Sales Order Items"
 msgstr ""
 
 #: order/templates/order/sales_order_detail.html:225
-#: templates/js/translated/bom.js:358 templates/js/translated/build.js:759
+#: templates/js/translated/bom.js:378 templates/js/translated/build.js:759
 #: templates/js/translated/build.js:1202
 msgid "Actions"
 msgstr ""
@@ -3808,143 +3808,139 @@ msgstr ""
 msgid "Available Stock"
 msgstr ""
 
-#: part/forms.py:64
+#: part/forms.py:63
 msgid "File Format"
 msgstr ""
 
-#: part/forms.py:64
+#: part/forms.py:63
 msgid "Select output file format"
 msgstr ""
 
-#: part/forms.py:66
+#: part/forms.py:65
 msgid "Cascading"
 msgstr ""
 
-#: part/forms.py:66
+#: part/forms.py:65
 msgid "Download cascading / multi-level BOM"
 msgstr ""
 
-#: part/forms.py:68
+#: part/forms.py:67
 msgid "Levels"
 msgstr ""
 
-#: part/forms.py:68
+#: part/forms.py:67
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
 msgstr ""
 
-#: part/forms.py:70
+#: part/forms.py:69
 msgid "Include Parameter Data"
 msgstr ""
 
-#: part/forms.py:70
+#: part/forms.py:69
 msgid "Include part parameters data in exported BOM"
 msgstr ""
 
-#: part/forms.py:72
+#: part/forms.py:71
 msgid "Include Stock Data"
 msgstr ""
 
-#: part/forms.py:72
+#: part/forms.py:71
 msgid "Include part stock data in exported BOM"
 msgstr ""
 
-#: part/forms.py:74
+#: part/forms.py:73
 msgid "Include Manufacturer Data"
 msgstr ""
 
-#: part/forms.py:74
+#: part/forms.py:73
 msgid "Include part manufacturer data in exported BOM"
 msgstr ""
 
-#: part/forms.py:76
+#: part/forms.py:75
 msgid "Include Supplier Data"
 msgstr ""
 
-#: part/forms.py:76
+#: part/forms.py:75
 msgid "Include part supplier data in exported BOM"
 msgstr ""
 
-#: part/forms.py:97 part/models.py:2278
+#: part/forms.py:96 part/models.py:2278
 msgid "Parent Part"
 msgstr ""
 
-#: part/forms.py:98 part/templates/part/bom_duplicate.html:7
+#: part/forms.py:97 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
 msgstr ""
 
-#: part/forms.py:104
+#: part/forms.py:103
 msgid "Clear existing BOM items"
 msgstr ""
 
-#: part/forms.py:110
+#: part/forms.py:109
 msgid "Confirm BOM duplication"
 msgstr ""
 
-#: part/forms.py:128
+#: part/forms.py:127
 msgid "validate"
 msgstr ""
 
-#: part/forms.py:128
+#: part/forms.py:127
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:171
+#: part/forms.py:170
 msgid "Related Part"
 msgstr ""
 
-#: part/forms.py:178
+#: part/forms.py:177
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:195
+#: part/forms.py:194
 msgid "Duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:196
+#: part/forms.py:195
 msgid "Copy BOM"
 msgstr ""
 
-#: part/forms.py:201
+#: part/forms.py:200
 msgid "Duplicate all parameter data for this part"
 msgstr ""
 
-#: part/forms.py:202
+#: part/forms.py:201
 msgid "Copy Parameters"
 msgstr ""
 
-#: part/forms.py:207
+#: part/forms.py:206
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:212
+#: part/forms.py:211
 msgid "Include category parameter templates"
 msgstr ""
 
-#: part/forms.py:217
+#: part/forms.py:216
 msgid "Include parent categories parameter templates"
 msgstr ""
 
-#: part/forms.py:222
+#: part/forms.py:221
 msgid "Initial stock amount"
 msgstr ""
 
-#: part/forms.py:223
+#: part/forms.py:222
 msgid "Create stock for this part"
 msgstr ""
 
-#: part/forms.py:303
+#: part/forms.py:302
 msgid "Add parameter template to same level categories"
 msgstr ""
 
-#: part/forms.py:307
+#: part/forms.py:306
 msgid "Add parameter template to all categories"
 msgstr ""
 
-#: part/forms.py:325 part/models.py:2377
-msgid "Sub part"
-msgstr ""
-
-#: part/forms.py:354
+#: part/forms.py:326
 msgid "Input quantity for price calculation"
 msgstr ""
 
@@ -4240,6 +4236,10 @@ msgstr ""
 msgid "Select parent part"
 msgstr ""
 
+#: part/models.py:2377
+msgid "Sub part"
+msgstr ""
+
 #: part/models.py:2378
 msgid "Select part to be used in BOM"
 msgstr ""
@@ -4248,8 +4248,8 @@ msgstr ""
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:2386 templates/js/translated/bom.js:216
-#: templates/js/translated/bom.js:278
+#: part/models.py:2386 templates/js/translated/bom.js:236
+#: templates/js/translated/bom.js:298
 msgid "Optional"
 msgstr ""
 
@@ -4281,8 +4281,8 @@ msgstr ""
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:2402 templates/js/translated/bom.js:295
-#: templates/js/translated/bom.js:302
+#: part/models.py:2402 templates/js/translated/bom.js:315
+#: templates/js/translated/bom.js:322
 #: templates/js/translated/table_filters.js:55
 msgid "Inherited"
 msgstr ""
@@ -4291,7 +4291,7 @@ msgstr ""
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:2408 templates/js/translated/bom.js:287
+#: part/models.py:2408 templates/js/translated/bom.js:307
 msgid "Allow Variants"
 msgstr ""
 
@@ -4473,7 +4473,7 @@ msgstr ""
 msgid "Create new part"
 msgstr ""
 
-#: part/templates/part/category.html:131 part/templates/part/detail.html:452
+#: part/templates/part/category.html:131
 msgid "New Part"
 msgstr ""
 
@@ -4668,8 +4668,8 @@ msgstr ""
 msgid "All selected BOM items will be deleted"
 msgstr ""
 
-#: part/templates/part/detail.html:453 part/views.py:451
-msgid "Create New Part"
+#: part/templates/part/detail.html:454
+msgid "Create BOM Item"
 msgstr ""
 
 #: part/templates/part/detail.html:588
@@ -4849,7 +4849,7 @@ msgstr ""
 msgid "Allocated to Orders"
 msgstr ""
 
-#: part/templates/part/part_base.html:196 templates/js/translated/bom.js:316
+#: part/templates/part/part_base.html:196 templates/js/translated/bom.js:336
 msgid "Can Build"
 msgstr ""
 
@@ -4903,7 +4903,7 @@ msgid "Total Cost"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
-#: templates/js/translated/bom.js:271
+#: templates/js/translated/bom.js:291
 msgid "No supplier pricing available"
 msgstr ""
 
@@ -4991,7 +4991,7 @@ msgstr ""
 msgid "Calculation parameters"
 msgstr ""
 
-#: part/templates/part/prices.html:136 templates/js/translated/bom.js:265
+#: part/templates/part/prices.html:136 templates/js/translated/bom.js:285
 msgid "Supplier Cost"
 msgstr ""
 
@@ -5013,7 +5013,7 @@ msgstr ""
 msgid "Internal Cost"
 msgstr ""
 
-#: part/templates/part/prices.html:197 part/views.py:2287
+#: part/templates/part/prices.html:197 part/views.py:2159
 msgid "Add Internal Price Break"
 msgstr ""
 
@@ -5033,7 +5033,7 @@ msgstr ""
 msgid "Set category for the following parts"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:239
+#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:259
 #: templates/js/translated/part.js:522 templates/js/translated/part.js:709
 msgid "No Stock"
 msgstr ""
@@ -5082,6 +5082,10 @@ msgstr ""
 
 #: part/views.py:386 part/views.py:528
 msgid "Possible matches exist - confirm creation of new part"
+msgstr ""
+
+#: part/views.py:451
+msgid "Create New Part"
 msgstr ""
 
 #: part/views.py:456
@@ -5184,23 +5188,15 @@ msgstr ""
 msgid "Delete Category Parameter Template"
 msgstr ""
 
-#: part/views.py:2089
-msgid "Create BOM Item"
-msgstr ""
-
-#: part/views.py:2159
-msgid "Edit BOM item"
-msgstr ""
-
-#: part/views.py:2220
+#: part/views.py:2092
 msgid "Added new price break"
 msgstr ""
 
-#: part/views.py:2296
+#: part/views.py:2168
 msgid "Edit Internal Price Break"
 msgstr ""
 
-#: part/views.py:2304
+#: part/views.py:2176
 msgid "Delete Internal Price Break"
 msgstr ""
 
@@ -6764,39 +6760,39 @@ msgstr ""
 msgid "Barcode does not match a valid location"
 msgstr ""
 
-#: templates/js/translated/bom.js:175 templates/js/translated/build.js:1152
+#: templates/js/translated/bom.js:195 templates/js/translated/build.js:1152
 msgid "Open subassembly"
 msgstr ""
 
-#: templates/js/translated/bom.js:249
+#: templates/js/translated/bom.js:269
 msgid "Purchase Price Range"
 msgstr ""
 
-#: templates/js/translated/bom.js:257
+#: templates/js/translated/bom.js:277
 msgid "Purchase Price Average"
 msgstr ""
 
-#: templates/js/translated/bom.js:306 templates/js/translated/bom.js:392
+#: templates/js/translated/bom.js:326 templates/js/translated/bom.js:412
 msgid "View BOM"
 msgstr ""
 
-#: templates/js/translated/bom.js:366
+#: templates/js/translated/bom.js:386
 msgid "Validate BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:368
+#: templates/js/translated/bom.js:388
 msgid "This line has been validated"
 msgstr ""
 
-#: templates/js/translated/bom.js:370
+#: templates/js/translated/bom.js:390 templates/js/translated/bom.js:555
 msgid "Edit BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:372 templates/js/translated/bom.js:519
+#: templates/js/translated/bom.js:392 templates/js/translated/bom.js:539
 msgid "Delete BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:463 templates/js/translated/build.js:458
+#: templates/js/translated/bom.js:483 templates/js/translated/build.js:458
 #: templates/js/translated/build.js:1250
 msgid "No BOM items found"
 msgstr ""
