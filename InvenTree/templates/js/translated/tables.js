@@ -187,7 +187,7 @@ $.fn.inventreeTable = function(options) {
     if (!options.disablePagination) {
         options.pagination = true;
         options.paginationVAlign = options.paginationVAlign || 'both';
-        options.pageSize = inventreeLoad(varName, 25);
+        options.pageSize = options.pageSize || inventreeLoad(varName, 25);
         options.pageList = [25, 50, 100, 250, 'all'];
         options.totalField = 'count';
         options.dataField = 'results';
