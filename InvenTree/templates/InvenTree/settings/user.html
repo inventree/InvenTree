@@ -90,6 +90,8 @@
             <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
         </div>
     </form>
+    <h3>{% trans "Help the translation efforts!" %}</h3>
+    <p>{% blocktrans with link="https://crowdin.com/project/inventree" %}Native language translation of the InvenTree web application is <a href="{{link}}">community contributed via crowdin</a>. Contributions are welcomed and encouraged.{% endblocktrans} %}</p>
 </div>
 
 {% endblock %}
