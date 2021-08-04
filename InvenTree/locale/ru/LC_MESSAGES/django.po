@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-04 02:30+0000\n"
-"PO-Revision-Date: 2021-08-04 03:07\n"
+"POT-Creation-Date: 2021-08-04 05:00+0000\n"
+"PO-Revision-Date: 2021-08-04 05:04\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -6973,12 +6973,12 @@ msgid "No supplier parts found"
 msgstr ""
 
 #: templates/js/translated/filters.js:167
-#: templates/js/translated/filters.js:397
+#: templates/js/translated/filters.js:404
 msgid "true"
 msgstr ""
 
 #: templates/js/translated/filters.js:171
-#: templates/js/translated/filters.js:398
+#: templates/js/translated/filters.js:405
 msgid "false"
 msgstr ""
 
@@ -6987,14 +6987,18 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:268
+msgid "Reload data"
+msgstr ""
+
+#: templates/js/translated/filters.js:270
 msgid "Add new filter"
 msgstr ""
 
-#: templates/js/translated/filters.js:271
+#: templates/js/translated/filters.js:273
 msgid "Clear all filters"
 msgstr ""
 
-#: templates/js/translated/filters.js:296
+#: templates/js/translated/filters.js:303
 msgid "Create filter"
 msgstr ""
 
