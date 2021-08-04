@@ -360,6 +360,7 @@ class PartThumbs(generics.ListAPIView):
         'category__name',
     ]
 
+
 class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     """ API endpoint for updating Part thumbnails"""
 
