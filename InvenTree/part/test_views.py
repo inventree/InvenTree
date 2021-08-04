@@ -243,19 +243,6 @@ class PartQRTest(PartViewTestCase):
 class CategoryTest(PartViewTestCase):
     """ Tests for PartCategory related views """
 
-    def test_create(self):
-        """ Test view for creating a new category """
-        response = self.client.get(reverse('category-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_invalid_parent(self):
-        """ test creation of a new category with an invalid parent """
-        response = self.client.get(reverse('category-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        # Form should still return OK
-        self.assertEqual(response.status_code, 200)
-
     def test_set_category(self):
         """ Test that the "SetCategory" view works """
 

@@ -240,32 +240,20 @@
     });
 
     $("#cat-create").click(function() {
-        launchModalForm(
-            "{% url 'category-create' %}",
-            {
-                follow: true,
-                data: {
-                    {% if category %}
-                    category: {{ category.id }}
-                    {% endif %}
-                },
-                secondary: [
-                    {
-                        field: 'default_location',
-                        label: '{% trans "New Location" %}',
-                        title: '{% trans "Create new location" %}',
-                        url: "{% url 'stock-location-create' %}",
-                    },
-                    {
-                        field: 'parent',
-                        label: '{% trans "New Category" %}',
-                        title: '{% trans "Create new category" %}',
-                        url: "{% url 'category-create' %}",
-                    },
-                ]
-            }
-        );
-    })
+
+        var fields = categoryFields();
+
+        {% if category %}
+        fields.parent.value = {{ category.pk }};
+        {% endif %}
+
+        constructForm('{% url "api-part-category-list" %}', {
+            fields: fields,
+            method: 'POST',
+            title: '{% trans "Create Part Category" %}',
+            follow: true,
+        });
+    });
 
     $("#part-export").click(function() {
 
@@ -287,12 +275,6 @@
                 },
                 secondary: [
                     {
-                        field: 'category',
-                        label: '{% trans "New Category" %}',
-                        title: '{% trans "Create new Part Category" %}',
-                        url: "{% url 'category-create' %}",
-                    },
-                    {
                         field: 'default_location',
                         label: '{% trans "New Location" %}',
                         title: '{% trans "Create new Stock Location" %}',
@@ -307,24 +289,7 @@
     {% if category %}
     $("#cat-edit").click(function () {
 
-        constructForm(
-            '{% url "api-part-category-detail" category.pk %}',
-            {
-                fields: {
-                    name: {},
-                    description: {},
-                    parent: {
-                        help_text: '{% trans "Select parent category" %}',
-                    },
-                    default_location: {},
-                    default_keywords: {
-                        icon: 'fa-key',
-                    }
-                },
-                title: '{% trans "Edit Part Category" %}',
-                reload: true
-            }
-        );
+        editCategory({{ category.pk }});
     });
 
     {% if category.parent %}
