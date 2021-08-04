@@ -651,6 +651,34 @@ class PartList(generics.ListCreateAPIView):
 
         part.save(**{'add_category_templates': copy_templates})
 
+        # Optionally copy data from another part (e.g. when duplicating)
+        copy_from = request.data.get('copy_from', None)
+
+        if copy_from is not None:
+
+            try:
+                original = Part.objects.get(pk=copy_from)
+
+                copy_bom = str2bool(request.data.get('copy_bom', False))
+                copy_parameters = str2bool(request.data.get('copy_parameters', False))
+                copy_image = str2bool(request.data.get('copy_image', True))
+
+                # Copy image?
+                if copy_image:
+                    part.image = original.image
+                    part.save()
+
+                # Copy BOM?
+                if copy_bom:
+                    part.copy_bom_from(original)
+
+                # Copy parameter data?
+                if copy_parameters:
+                    part.copy_parameters_from(original)
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Optionally create initial stock item
         try:
             initial_stock = Decimal(request.data.get('initial_stock', 0))

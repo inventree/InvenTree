@@ -486,12 +486,7 @@
 
     {% if roles.part.add %}
     $("#part-duplicate").click(function() {
-        launchModalForm(
-            "{% url 'part-duplicate' part.id %}",
-            {
-                follow: true,
-            }
-        );
+        duplicatePart({{ part.pk }});
     });
     {% endif %}
 

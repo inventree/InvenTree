@@ -40,7 +40,6 @@ part_detail_urls = [
     url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
-    url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
     url(r'^make-variant/', views.MakePartVariant.as_view(), name='make-part-variant'),
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
 

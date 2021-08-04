@@ -110,6 +110,19 @@ function partFields(options={}) {
             html: `<hr><h4><i>{% trans "Part Duplication Options" %}</i></h4><hr>`,
         };
 
+        fields.copy_from = {
+            type: 'integer',
+            hidden: true,
+            value: options.duplicate,
+        },
+
+        fields.copy_image = {
+            type: 'boolean',
+            label: '{% trans "Copy Image" %}',
+            help_text: '{% trans "Copy image from original part" %}',
+            value: true,
+        },
+
         fields.copy_bom = {
             type: 'boolean',
             label: '{% trans "Copy BOM" %}',
@@ -184,7 +197,7 @@ function duplicatePart(pk, options={}) {
         success: function(response) {
             
             var fields = partFields({
-                duplicate: true
+                duplicate: pk,
             });
             
             constructForm('{% url "api-part-list" %}', {
