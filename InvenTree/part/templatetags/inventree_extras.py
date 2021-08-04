@@ -269,7 +269,7 @@ def keyvalue(dict, key):
     usage:
     {% mydict|keyvalue:mykey %}
     """
-    return dict[key]
+    return dict.get(key)
 
 
 @register.simple_tag()
