@@ -40,8 +40,7 @@ part_detail_urls = [
     url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
-    url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
-    url(r'^make-variant/', views.MakePartVariant.as_view(), name='make-part-variant'),
+    
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
 
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
@@ -78,22 +77,12 @@ category_urls = [
     ]))
 ]
 
-part_bom_urls = [
-    url(r'^edit/?', views.BomItemEdit.as_view(), name='bom-item-edit'),
-]
-
 # URL list for part web interface
 part_urls = [
-
-    # Create a new part
-    url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
 
     # Upload a part
     url(r'^import/', views.PartImport.as_view(), name='part-import'),
     url(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
-
-    # Create a new BOM item
-    url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
 
     # Download a BOM upload template
     url(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
@@ -121,9 +110,6 @@ part_urls = [
 
     # Change category for multiple parts
     url(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
-
-    # Bom Items
-    url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 
     # Individual part using IPN as slug
     url(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),

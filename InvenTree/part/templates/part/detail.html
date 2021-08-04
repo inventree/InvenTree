@@ -440,22 +440,22 @@
     });
 
     $("#bom-item-new").click(function () {
-        launchModalForm(
-            "{% url 'bom-item-create' %}?parent={{ part.id }}",
-            {
-                success: function() {
-                    $("#bom-table").bootstrapTable('refresh');
-                },
-                secondary: [
-                    {
-                        field: 'sub_part',
-                        label: '{% trans "New Part" %}',
-                        title: '{% trans "Create New Part" %}',
-                        url: "{% url 'part-create' %}",
-                    },
-                ]
+
+        var fields = bomItemFields();
+
+        fields.part.value = {{ part.pk }};
+        fields.sub_part.filters = {
+            active: true,
+        };
+
+        constructForm('{% url "api-bom-list" %}', {
+            fields: fields,
+            method: 'POST',
+            title: '{% trans "Create BOM Item" %}',
+            onSuccess: function() {
+                $('#bom-table').bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     {% else %}
@@ -525,10 +525,11 @@
     loadPartVariantTable($('#variants-table'), {{ part.pk }});
 
     $('#new-variant').click(function() {
-        launchModalForm(
-            "{% url 'make-part-variant' part.id %}",
+
+        duplicatePart(
+            {{ part.pk}},
             {
-                follow: true,
+                variant: true,
             }
         );
     });

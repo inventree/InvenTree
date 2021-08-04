@@ -18,7 +18,6 @@ import common.models
 from common.forms import MatchItemForm
 
 from .models import Part, PartCategory, PartRelated
-from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -178,82 +177,6 @@ class SetPartCategoryForm(forms.Form):
     part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
 
 
-class EditPartForm(HelperForm):
-    """
-    Form for editing a Part object.
-    """
-
-    field_prefix = {
-        'keywords': 'fa-key',
-        'link': 'fa-link',
-        'IPN': 'fa-hashtag',
-        'default_expiry': 'fa-stopwatch',
-    }
-
-    bom_copy = forms.BooleanField(required=False,
-                                  initial=True,
-                                  help_text=_("Duplicate all BOM data for this part"),
-                                  label=_('Copy BOM'),
-                                  widget=forms.HiddenInput())
-
-    parameters_copy = forms.BooleanField(required=False,
-                                         initial=True,
-                                         help_text=_("Duplicate all parameter data for this part"),
-                                         label=_('Copy Parameters'),
-                                         widget=forms.HiddenInput())
-
-    confirm_creation = forms.BooleanField(required=False,
-                                          initial=False,
-                                          help_text=_('Confirm part creation'),
-                                          widget=forms.HiddenInput())
-
-    selected_category_templates = forms.BooleanField(required=False,
-                                                     initial=False,
-                                                     label=_('Include category parameter templates'),
-                                                     widget=forms.HiddenInput())
-
-    parent_category_templates = forms.BooleanField(required=False,
-                                                   initial=False,
-                                                   label=_('Include parent categories parameter templates'),
-                                                   widget=forms.HiddenInput())
-
-    initial_stock = forms.IntegerField(required=False,
-                                       initial=0,
-                                       label=_('Initial stock amount'),
-                                       help_text=_('Create stock for this part'))
-
-    class Meta:
-        model = Part
-        fields = [
-            'confirm_creation',
-            'category',
-            'selected_category_templates',
-            'parent_category_templates',
-            'name',
-            'IPN',
-            'description',
-            'revision',
-            'bom_copy',
-            'parameters_copy',
-            'keywords',
-            'variant_of',
-            'link',
-            'default_location',
-            'default_supplier',
-            'default_expiry',
-            'units',
-            'minimum_stock',
-            'initial_stock',
-            'component',
-            'assembly',
-            'is_template',
-            'trackable',
-            'purchaseable',
-            'salable',
-            'virtual',
-        ]
-
-
 class EditPartParameterTemplateForm(HelperForm):
     """ Form for editing a PartParameterTemplate object """
 
@@ -315,33 +238,6 @@ class EditCategoryParameterTemplateForm(HelperForm):
             'add_to_same_level_categories',
             'add_to_all_categories',
         ]
-
-
-class EditBomItemForm(HelperForm):
-    """ Form for editing a BomItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    sub_part = PartModelChoiceField(queryset=Part.objects.all(), label=_('Sub part'))
-
-    class Meta:
-        model = BomItem
-        fields = [
-            'part',
-            'sub_part',
-            'quantity',
-            'reference',
-            'overage',
-            'note',
-            'allow_variants',
-            'inherited',
-            'optional',
-        ]
-
-        # Prevent editing of the part associated with this BomItem
-        widgets = {
-            'part': forms.HiddenInput()
-        }
 
 
 class PartPriceForm(forms.Form):

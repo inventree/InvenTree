@@ -8,6 +8,26 @@
  */
 
 
+function bomItemFields() {
+
+    return {
+        part: {
+            hidden: true,
+        },
+        sub_part: {
+        },
+        quantity: {},
+        reference: {},
+        overage: {},
+        note: {},
+        allow_variants: {},
+        inherited: {},
+        optional: {},
+    };
+
+}
+
+
 function reloadBomTable(table, options) {
 
     table.bootstrapTable('refresh');
@@ -528,14 +548,15 @@ function loadBomTable(table, options) {
             var pk = $(this).attr('pk');
             var url = `/part/bom/${pk}/edit/`;
 
-            launchModalForm(
-                url,
-                {
-                    success: function() {
-                        reloadBomTable(table);
-                    }
+            var fields = bomItemFields();
+
+            constructForm(`/api/bom/${pk}/`, {
+                fields: fields,
+                title: '{% trans "Edit BOM Item" %}',
+                onSuccess: function() {
+                    reloadBomTable(table);
                 }
-            );
+            });
         });
 
         table.on('click', '.bom-validate-button', function() {

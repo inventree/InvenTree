@@ -434,8 +434,8 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertTrue(data['active'])
         self.assertFalse(data['virtual'])
 
-        # By default, parts are not purchaseable
-        self.assertFalse(data['purchaseable'])
+        # By default, parts are purchaseable
+        self.assertTrue(data['purchaseable'])
 
         # Set the default 'purchaseable' status to True
         InvenTreeSetting.set_setting(
