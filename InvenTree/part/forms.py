@@ -18,7 +18,6 @@ import common.models
 from common.forms import MatchItemForm
 
 from .models import Part, PartCategory, PartRelated
-from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -315,33 +314,6 @@ class EditCategoryParameterTemplateForm(HelperForm):
             'add_to_same_level_categories',
             'add_to_all_categories',
         ]
-
-
-class EditBomItemForm(HelperForm):
-    """ Form for editing a BomItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    sub_part = PartModelChoiceField(queryset=Part.objects.all(), label=_('Sub part'))
-
-    class Meta:
-        model = BomItem
-        fields = [
-            'part',
-            'sub_part',
-            'quantity',
-            'reference',
-            'overage',
-            'note',
-            'allow_variants',
-            'inherited',
-            'optional',
-        ]
-
-        # Prevent editing of the part associated with this BomItem
-        widgets = {
-            'part': forms.HiddenInput()
-        }
 
 
 class PartPriceForm(forms.Form):
