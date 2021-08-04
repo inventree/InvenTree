@@ -155,25 +155,6 @@ class PartDetailTest(PartViewTestCase):
         self.assertIn('streaming_content', dir(response))
 
 
-class PartTests(PartViewTestCase):
-    """ Tests for Part forms """
-
-    def test_part_duplicate(self):
-        """ Launch form to duplicate part """
-
-        # First try with an invalid part
-        response = self.client.get(reverse('part-duplicate', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(reverse('part-duplicate', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_make_variant(self):
-
-        response = self.client.get(reverse('make-part-variant', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-
 class PartRelatedTests(PartViewTestCase):
 
     def test_valid_create(self):

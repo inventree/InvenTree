@@ -525,10 +525,11 @@
     loadPartVariantTable($('#variants-table'), {{ part.pk }});
 
     $('#new-variant').click(function() {
-        launchModalForm(
-            "{% url 'make-part-variant' part.id %}",
+
+        duplicatePart(
+            {{ part.pk}},
             {
-                follow: true,
+                variant: true,
             }
         );
     });

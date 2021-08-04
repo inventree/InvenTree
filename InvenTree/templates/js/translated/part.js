@@ -189,22 +189,30 @@ function editPart(pk, options={}) {
 }
 
 
+// Launch form to duplicate a part
 function duplicatePart(pk, options={}) {
 
     // First we need all the part information
     inventreeGet(`/api/part/${pk}/`, {}, {
 
-        success: function(response) {
+        success: function(data) {
             
             var fields = partFields({
                 duplicate: pk,
             });
+
+            // If we are making a "variant" part
+            if (options.variant) {
+
+                // Override the "variant_of" field
+                data.variant_of = pk;
+            }
             
             constructForm('{% url "api-part-list" %}', {
                 method: 'POST',
                 fields: fields,
                 title: '{% trans "Duplicate Part" %}',
-                data: response,
+                data: data,
                 onSuccess: function(data) {
                     // Follow the new part
                     location.href = `/part/${data.pk}/`;
