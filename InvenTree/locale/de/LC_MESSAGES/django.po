@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-04 01:53+0000\n"
-"PO-Revision-Date: 2021-08-04 01:57\n"
+"POT-Creation-Date: 2021-08-04 02:30+0000\n"
+"PO-Revision-Date: 2021-08-04 03:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4866,13 +4866,17 @@ msgstr "letzte Seriennummer"
 msgid "Calculate"
 msgstr "Berechnen"
 
-#: part/templates/part/part_base.html:507
-#: part/templates/part/part_base.html:532
+#: part/templates/part/part_base.html:426
+msgid "No matching images found"
+msgstr ""
+
+#: part/templates/part/part_base.html:511
+#: part/templates/part/part_base.html:536
 msgid "Hide Part Details"
 msgstr ""
 
-#: part/templates/part/part_base.html:512
-#: part/templates/part/part_base.html:538
+#: part/templates/part/part_base.html:516
+#: part/templates/part/part_base.html:542
 msgid "Show Part Details"
 msgstr ""
 
