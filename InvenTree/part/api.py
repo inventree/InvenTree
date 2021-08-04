@@ -338,9 +338,7 @@ class PartThumbs(generics.ListAPIView):
         - Images may be used for multiple parts!
         """
 
-        queryset = self.get_queryset()
-
-        # TODO - We should return the thumbnails here, not the full image!
+        queryset = self.filter_queryset(self.get_queryset())
 
         # Return the most popular parts first
         data = queryset.values(
@@ -348,6 +346,19 @@ class PartThumbs(generics.ListAPIView):
         ).annotate(count=Count('image')).order_by('-count')
 
         return Response(data)
+
+    filter_backends = [
+        filters.SearchFilter,
+    ]
+
+    search_fields = [
+        'name',
+        'description',
+        'IPN',
+        'revision',
+        'keywords',
+        'category__name',
+    ]
 
 
 class PartThumbsUpdate(generics.RetrieveUpdateAPIView):

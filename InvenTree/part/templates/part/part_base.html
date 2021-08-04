@@ -415,13 +415,16 @@
         // Callback when the image-selection modal form is displayed
         // Populate the form with image data (requested via AJAX)
 
-        $("#modal-form").find("#image-select-table").bootstrapTable({
-            pagination: true,
-            pageSize: 25,
+        $("#modal-form").find("#image-select-table").inventreeTable({
             url: "{% url 'api-part-thumbs' %}",
             showHeader: false,
+            showColumns: false,
             clickToSelect: true,
+            sidePagination: 'server',
             singleSelect: true,
+            formatNoMatches: function() {
+                return '{% trans "No matching images found" %}';
+            },
             columns: [
                 {
                     checkbox: true,
@@ -429,6 +432,7 @@
                 {
                     field: 'image',
                     title: 'Image',
+                    searchable: true,
                     formatter: function(value, row, index, field) {
                         return "<img src='/media/" + value + "' class='grid-image'/>"
                     }
