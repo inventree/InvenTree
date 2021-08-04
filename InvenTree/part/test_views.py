@@ -259,22 +259,3 @@ class CategoryTest(PartViewTestCase):
 
         response = self.client.post(url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-
-
-class BomItemTests(PartViewTestCase):
-    """ Tests for BomItem related views """
-
-    def test_create_valid_parent(self):
-        """ Create a BomItem for a valid part """
-        response = self.client.get(reverse('bom-item-create'), {'parent': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_no_parent(self):
-        """ Create a BomItem without a parent """
-        response = self.client.get(reverse('bom-item-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_invalid_parent(self):
-        """ Create a BomItem with an invalid parent """
-        response = self.client.get(reverse('bom-item-create'), {'parent': 99999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
