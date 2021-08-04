@@ -810,7 +810,6 @@ msgstr "Bu yapım işi emrini veren kullanıcı"
 #: order/templates/order/order_base.html:138
 #: order/templates/order/sales_order_base.html:140 part/models.py:855
 #: report/templates/report/inventree_build_order_base.html:159
-#: templates/js/translated/build.js:930
 msgid "Responsible"
 msgstr "Sorumlu"
 
@@ -6829,6 +6828,10 @@ msgstr ""
 
 #: templates/js/translated/build.js:924 templates/js/translated/stock.js:1546
 msgid "No user information"
+msgstr ""
+
+#: templates/js/translated/build.js:930
+msgid "Resposible"
 msgstr ""
 
 #: templates/js/translated/build.js:939

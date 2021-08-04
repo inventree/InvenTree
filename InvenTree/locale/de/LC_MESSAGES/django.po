@@ -810,7 +810,6 @@ msgstr "Nutzer der diesen Bauauftrag erstellt hat"
 #: order/templates/order/order_base.html:138
 #: order/templates/order/sales_order_base.html:140 part/models.py:855
 #: report/templates/report/inventree_build_order_base.html:159
-#: templates/js/translated/build.js:930
 msgid "Responsible"
 msgstr "Verantwortlicher Benutzer"
 
@@ -6838,6 +6837,10 @@ msgstr "Bauauftrag ist überfällig"
 msgid "No user information"
 msgstr "Keine Benutzerinformation"
 
+#: templates/js/translated/build.js:930
+msgid "Resposible"
+msgstr "Zuständig"
+
 #: templates/js/translated/build.js:939
 msgid "No information"
 msgstr "Keine Information"
@@ -8113,9 +8116,6 @@ msgstr "Berechtigung Einträge zu löschen"
 
 #~ msgid "Created new part"
 #~ msgstr "Neues Teil angelegt"
-
-#~ msgid "Resposible"
-#~ msgstr "Zuständig"
 
 #~ msgid "New Category"
 #~ msgstr "Neue Kategorie"
