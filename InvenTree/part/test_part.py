@@ -287,7 +287,7 @@ class PartSettingsTest(TestCase):
         part = self.make_part()
 
         self.assertTrue(part.component)
-        self.assertFalse(part.purchaseable)
+        self.assertTrue(part.purchaseable)
         self.assertFalse(part.salable)
         self.assertFalse(part.trackable)
 
