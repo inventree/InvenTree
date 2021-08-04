@@ -51,32 +51,17 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
-def offload_task(taskname, *args, **kwargs):
+def offload_task(taskname, force_sync=False, *args, **kwargs):
     """
-    Create an AsyncTask.
-    This is different to a 'scheduled' task,
-    in that it only runs once!
-    """
+        First check if the task method pointed
+        by taskname is implemented inside this file.
 
-    try:
-        from django_q.tasks import AsyncTask
-    except (AppRegistryNotReady):
-        logger.warning("Could not offload task - app registry not ready")
-        return
+        Then create an AsyncTask if workers are running.
+        This is different to a 'scheduled' task,
+        in that it only runs once!
 
-    task = AsyncTask(taskname, *args, **kwargs)
-
-    task.run()
-
-
-def run_task(taskname):
-    """
-        1. Check if task is implemented
-            - yes: proceed
-            - no: return
-        2. Check if worker cluster is running
-            - yes: add task to queue
-            - no: run it as blocking process
+        If workers are not running or force_sync flag
+        is set then the task is ran synchronously.
     """
 
     # Get task list
@@ -84,20 +69,26 @@ def run_task(taskname):
 
     # Check if task exists
     if taskname not in tasks:
-        logger.warning(f'Task "{taskname}" is not implemented')
+        logger.warning(f'Task "{taskname}" is not implemented in InvenTree/tasks.py')
         return
 
+    try:
+        from django_q.tasks import AsyncTask
+    except (AppRegistryNotReady):
+        logger.warning("Could not offload task - app registry not ready")
+        return
     from InvenTree.status import is_worker_running
 
-    if is_worker_running():
+    if is_worker_running() and not force_sync:
         # Append module path
         taskname = 'InvenTree.tasks.' + taskname
-        # Running as task
-        offload_task(taskname)
+        # Running as asynchronous task
+        task = AsyncTask(taskname, *args, **kwargs)
+        task.run()
     else:
         # Retrieve local method from task name
         _func = eval(taskname)
-        # Run it as blocking process
+        # Run it as synchronous task
         _func()
 
 

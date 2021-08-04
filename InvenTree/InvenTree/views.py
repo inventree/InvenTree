@@ -815,13 +815,13 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        from InvenTree.tasks import run_task
+        from InvenTree.tasks import offload_task
 
         # Define associated task from InvenTree.tasks list of methods
         taskname = 'update_exchange_rates'
 
         # Run it
-        run_task(taskname)
+        offload_task(taskname, force_sync=True)
 
         return redirect(reverse_lazy('settings'))
 
