@@ -65,6 +65,11 @@ function partFields(options={}) {
         },
     };
 
+    // If editing a part, we can set the "active" status
+    if (options.edit) {
+        fields.active = {};
+    }
+
     // Pop expiry field
     if (!global_settings.STOCK_ENABLE_EXPIRY) {
         delete fields["default_expiry"];
@@ -159,79 +164,9 @@ function editPart(pk, options={}) {
 
     var url = `/api/part/${pk}/`;
 
-    var fields =  {
-        category: {
-            /*
-            secondary: {
-                label: '{% trans "New Category" %}',
-                title: '{% trans "Create New Part Category" %}',
-                api_url: '{% url "api-part-category-list" %}',
-                method: 'POST',
-                fields: {
-                    name: {},
-                    description: {},
-                    parent: {
-                        secondary: {
-                            title: '{% trans "New Parent" %}',
-                            api_url: '{% url "api-part-category-list" %}',
-                            method: 'POST',
-                            fields: {
-                                name: {},
-                                description: {},
-                                parent: {},
-                            }
-                        }
-                    },
-                }
-            },
-            */
-        },
-        name: {
-            placeholder: 'part name',
-        },
-        IPN: {},
-        description: {},
-        revision: {},
-        keywords: {
-            icon: 'fa-key',
-        },
-        variant_of: {},
-        link: {
-            icon: 'fa-link',
-        },
-        default_location: {
-            /*
-            secondary: {
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-            },
-            */
-        },
-        default_supplier: {
-            filters: {
-                part: pk,
-                part_detail: true,
-                manufacturer_detail: true,
-                supplier_detail: true,
-            },
-            /*
-            secondary: {
-                label: '{% trans "New Supplier Part" %}',
-                title: '{% trans "Create new supplier part" %}',
-            }
-            */
-        },
-        units: {},
-        minimum_stock: {},
-        virtual: {},
-        is_template: {},
-        assembly: {},
-        component: {},
-        trackable: {},
-        purchaseable: {},
-        salable: {},
-        active: {},
-    };
+    var fields = partFields({
+        edit: true
+    });
 
     constructForm(url, {
         fields: fields,
