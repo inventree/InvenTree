@@ -564,7 +564,7 @@ function submitFormData(fields, options) {
     var has_files = false;
 
     // Extract values for each field
-    for (var idx = 0; idx < options.fields_names.length; idx++) {
+    for (var idx = 0; idx < options.field_names.length; idx++) {
 
         var name = options.field_names[idx];
 

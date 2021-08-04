@@ -13,6 +13,116 @@ function yesNoLabel(value) {
     }
 }
 
+// Construct fieldset for part forms
+function partFields(options={}) {
+
+    var fields = {
+        category: {},
+        name: {},
+        IPN: {},
+        revision: {},
+        description: {},
+        variant_of: {},
+        keywords: {
+            icon: 'fa-key',
+        },
+        units: {},
+        link: {
+            icon: 'fa-link',
+        },
+        default_location: {},
+        default_supplier: {},
+        default_expiry: {
+            icon: 'fa-calendar-alt',
+        },
+        minimum_stock: {
+            icon: 'fa-boxes',
+        },
+        attributes: {
+            type: 'candy',
+            html: `<hr><h4><i>{% trans "Part Attributes" %}</i></h4><hr>`
+        },
+        component: {
+            value: global_settings.PART_COMPONENT,
+        },
+        assembly: {
+            value: global_settings.PART_ASSEMBLY,
+        },
+        is_template: {
+            value: global_settings.PART_TEMPLATE,
+        },
+        trackable: {
+            value: global_settings.PART_TRACKABLE,
+        },
+        purchaseable: {
+            value: global_settings.PART_PURCHASEABLE,
+        },
+        salable: {
+            value: global_settings.PART_SALABLE,
+        },
+        virtual: {
+            value: global_settings.PART_VIRTUAL,
+        },
+    };
+
+    // Pop expiry field
+    if (!global_settings.STOCK_ENABLE_EXPIRY) {
+        delete fields["default_expiry"];
+    }
+
+    // Additional fields when "creating" a new part
+    if (options.create) {
+
+        // No supplier parts available yet
+        delete fields["default_supplier"];
+
+        fields.create = {
+            type: 'candy',
+            html: `<hr><h4><i>{% trans "Part Creation Options" %}</i></h4><hr>`,
+        };
+
+        if (global_settings.PART_CREATE_INITIAL) {
+            fields.initial_stock = {
+                type: 'decimal',
+                label: '{% trans "Initial Stock Quantity" %}',
+                help_text: '{% trans "Initialize part stock with specified quantity" %}',
+            };
+        }
+
+        fields.copy_category_parameters = {
+            type: 'boolean',
+            label: '{% trans "Copy Category Parameters" %}',
+            help_text: '{% trans "Copy parameter templates from selected part category" %}',
+            value: global_settings.PART_CATEGORY_PARAMETERS,
+        };
+    }
+
+    // Additional fields when "duplicating" a part
+    if (options.duplicate) {
+
+        fields.duplicate = {
+            type: 'candy',
+            html: `<hr><h4><i>{% trans "Part Duplication Options" %}</i></h4><hr>`,
+        };
+
+        fields.copy_bom = {
+            type: 'boolean',
+            label: '{% trans "Copy BOM" %}',
+            help_text: '{% trans "Copy bill of materials from original part" %}',
+            value: global_settings.PART_COPY_BOM,
+        };
+
+        fields.copy_parameters = {
+            type: 'boolean',
+            label: '{% trans "Copy Parameters" %}',
+            help_text: '{% trans "Copy parameter data from original part" %}',
+            value: global_settings.PART_COPY_PARAMETERS,
+        };
+    }
+
+    return fields;
+}
+
 
 function categoryFields() {
     return {

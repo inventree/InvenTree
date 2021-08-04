@@ -23,6 +23,7 @@ from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
+from decimal import Decimal
 
 from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
@@ -30,6 +31,7 @@ from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 from .models import PartCategoryParameterTemplate
 
+from stock.models import StockItem
 from common.models import InvenTreeSetting
 from build.models import Build
 
