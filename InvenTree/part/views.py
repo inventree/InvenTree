@@ -12,7 +12,6 @@ from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
@@ -1903,49 +1902,6 @@ class CategoryDelete(AjaxDeleteView):
         return {
             'danger': _('Part category was deleted'),
         }
-
-
-class CategoryCreate(AjaxCreateView):
-    """ Create view to make a new PartCategory """
-    model = PartCategory
-    ajax_form_action = reverse_lazy('category-create')
-    ajax_form_title = _('Create new part category')
-    ajax_template_name = 'modal_form.html'
-    form_class = part_forms.EditCategoryForm
-
-    def get_context_data(self, **kwargs):
-        """ Add extra context data to template.
-
-        - If parent category provided, pass the category details to the template
-        """
-        context = super(CategoryCreate, self).get_context_data(**kwargs).copy()
-
-        parent_id = self.request.GET.get('category', None)
-
-        if parent_id:
-            try:
-                context['category'] = PartCategory.objects.get(pk=parent_id)
-            except PartCategory.DoesNotExist:
-                pass
-
-        return context
-
-    def get_initial(self):
-        """ Get initial data for new PartCategory
-
-        - If parent provided, pre-fill the parent category
-        """
-        initials = super(CategoryCreate, self).get_initial().copy()
-
-        parent_id = self.request.GET.get('category', None)
-
-        if parent_id:
-            try:
-                initials['parent'] = PartCategory.objects.get(pk=parent_id)
-            except PartCategory.DoesNotExist:
-                pass
-
-        return initials
 
 
 class CategoryParameterTemplateCreate(AjaxCreateView):

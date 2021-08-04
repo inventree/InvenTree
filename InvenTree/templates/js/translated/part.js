@@ -14,6 +14,37 @@ function yesNoLabel(value) {
 }
 
 
+function categoryFields() {
+    return {
+        parent: {
+            help_text: '{% trans "Parent part category" %}',
+        },
+        name: {},
+        description: {},
+        default_location: {},
+        default_keywords: {
+            icon: 'fa-key',
+        }
+    };
+}
+
+
+// Edit a PartCategory via the API
+function editCategory(pk, options={}) {
+
+    var url = `/api/part/category/${pk}/`;
+
+    var fields = categoryFields();
+
+    constructForm(url, {
+        fields: fields,
+        title: '{% trans "Edit Part Category" %}',
+        reload: true,
+    });
+
+}
+
+
 function editPart(pk, options={}) {
 
     var url = `/api/part/${pk}/`;
