@@ -34,7 +34,6 @@ from stdimage.models import StdImageField
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
-from rapidfuzz import fuzz
 import hashlib
 
 from InvenTree import helpers
