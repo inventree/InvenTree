@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 import os
 
 from .models import Part, PartCategory, PartTestTemplate
-from .models import rename_part_image, match_part_names
+from .models import rename_part_image
 from .templatetags import inventree_extras
 
 import part.settings
@@ -162,12 +162,6 @@ class PartTest(TestCase):
 
     def test_copy(self):
         self.r2.deep_copy(self.r1, image=True, bom=True)
-
-    def test_match_names(self):
-
-        matches = match_part_names('M2x5 LPHS')
-
-        self.assertTrue(len(matches) > 0)
 
     def test_sell_pricing(self):
         # check that the sell pricebreaks were loaded

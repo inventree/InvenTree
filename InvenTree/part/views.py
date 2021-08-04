@@ -14,8 +14,7 @@ from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
-from django.forms.models import model_to_dict
-from django.forms import HiddenInput, CheckboxInput
+from django.forms import HiddenInput
 from django.conf import settings
 from django.contrib import messages
 
@@ -35,7 +34,6 @@ from .models import PartCategory, Part, PartRelated
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
-from .models import match_part_names
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting

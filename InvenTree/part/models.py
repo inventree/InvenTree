@@ -235,57 +235,6 @@ def rename_part_image(instance, filename):
     return os.path.join(base, fname)
 
 
-def match_part_names(match, threshold=80, reverse=True, compare_length=False):
-    """ Return a list of parts whose name matches the search term using fuzzy search.
-
-    Args:
-        match: Term to match against
-        threshold: Match percentage that must be exceeded (default = 65)
-        reverse: Ordering for search results (default = True - highest match is first)
-        compare_length: Include string length checks
-
-    Returns:
-        A sorted dict where each element contains the following key:value pairs:
-            - 'part' : The matched part
-            - 'ratio' : The matched ratio
-    """
-
-    match = str(match).strip().lower()
-
-    if len(match) == 0:
-        return []
-
-    parts = Part.objects.all()
-
-    matches = []
-
-    for part in parts:
-        compare = str(part.name).strip().lower()
-
-        if len(compare) == 0:
-            continue
-
-        ratio = fuzz.partial_token_sort_ratio(compare, match)
-
-        if compare_length:
-            # Also employ primitive length comparison
-            # TODO - Improve this somewhat...
-            l_min = min(len(match), len(compare))
-            l_max = max(len(match), len(compare))
-
-            ratio *= (l_min / l_max)
-
-        if ratio >= threshold:
-            matches.append({
-                'part': part,
-                'ratio': round(ratio, 1)
-            })
-
-    matches = sorted(matches, key=lambda item: item['ratio'], reverse=reverse)
-
-    return matches
-
-
 class PartManager(TreeManager):
     """
     Defines a custom object manager for the Part model.
