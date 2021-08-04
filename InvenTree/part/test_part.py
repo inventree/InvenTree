@@ -275,7 +275,7 @@ class PartSettingsTest(TestCase):
         """
 
         self.assertTrue(part.settings.part_component_default())
-        self.assertFalse(part.settings.part_purchaseable_default())
+        self.assertTrue(part.settings.part_purchaseable_default())
         self.assertFalse(part.settings.part_salable_default())
         self.assertFalse(part.settings.part_trackable_default())
 
