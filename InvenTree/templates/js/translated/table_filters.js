@@ -121,7 +121,8 @@ function getAvailableTableFilters(tableKey) {
 
     // Filters for the "Stock" table
     if (tableKey == 'stock') {
-        return {
+
+        var filters = {
             active: {
                 type: 'bool',
                 title: '{% trans "Active parts" %}',
@@ -147,19 +148,6 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Depleted" %}',
                 description: '{% trans "Show stock items which are depleted" %}',
             },
-            {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
-            {% if expiry %}
-            expired: {
-                type: 'bool',
-                title: '{% trans "Expired" %}',
-                description: '{% trans "Show stock items which have expired" %}',
-            },
-            stale: {
-                type: 'bool',
-                title: '{% trans "Stale" %}',
-                description: '{% trans "Show stock which is close to expiring" %}',
-            },
-            {% endif %}
             in_stock: {
                 type: 'bool',
                 title: '{% trans "In Stock" %}',
@@ -216,6 +204,23 @@ function getAvailableTableFilters(tableKey) {
                 description: '{% trans "Show stock items which have a purchase price set" %}',
             },
         };
+
+        // Optional filters if stock expiry functionality is enabled
+        if (global_settings.STOCK_ENABLE_EXPIRY) {
+            filters.expired = {
+                type: 'bool',
+                title: '{% trans "Expired" %}',
+                description: '{% trans "Show stock items which have expired" %}',
+            };
+
+            filters.stale = {
+                type: 'bool',
+                title: '{% trans "Stale" %}',
+                description: '{% trans "Show stock which is close to expiring" %}',
+            };
+        }
+
+        return filters;
     }
 
     // Filters for the 'stock test' table

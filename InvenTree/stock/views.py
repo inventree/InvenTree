@@ -11,6 +11,7 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
@@ -91,23 +92,57 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
-            serial_elem = {int(a.serial): a for a in self.object.part.stock_items.all() if a.serialized}
-            serials = serial_elem.keys()
-            current = int(self.object.serial)
 
-            # previous
-            for nbr in range(current - 1, -1, -1):
-                if nbr in serials:
-                    data['previous'] = serial_elem.get(nbr, None)
-                    break
+            serial_elem = {}
 
-            # next
-            for nbr in range(current + 1, max(serials) + 1):
-                if nbr in serials:
-                    data['next'] = serial_elem.get(nbr, None)
-                    break
+            try:
+                current = int(self.object.serial)
+
+                for item in self.object.part.stock_items.all():
+
+                    if item.serialized:
+                        try:
+                            sn = int(item.serial)
+                            serial_elem[sn] = item
+                        except ValueError:
+                            # We only support integer serial number progression
+                            pass
+
+                serials = serial_elem.keys()
+
+                # previous
+                for nbr in range(current - 1, min(serials), -1):
+                    if nbr in serials:
+                        data['previous'] = serial_elem.get(nbr, None)
+                        break
+
+                # next
+                for nbr in range(current + 1, max(serials) + 1):
+                    if nbr in serials:
+                        data['next'] = serial_elem.get(nbr, None)
+                        break
+
+            except ValueError:
+                # We only support integer serial number progression
+                pass
 
         return data
+
+    def get(self, request, *args, **kwargs):
+        """ check if item exists else return to stock index """
+
+        stock_pk = kwargs.get('pk', None)
+
+        if stock_pk:
+            try:
+                stock_item = StockItem.objects.get(pk=stock_pk)
+            except StockItem.DoesNotExist:
+                stock_item = None
+
+            if not stock_item:
+                return HttpResponseRedirect(reverse('stock-index'))
+
+        return super().get(request, *args, **kwargs)
 
 
 class StockItemNotes(InvenTreeRoleMixin, UpdateView):
@@ -501,35 +536,72 @@ class StockItemInstall(AjaxUpdateView):
 
     part = None
 
+    def get_params(self):
+        """ Retrieve GET parameters """
+
+        # Look at GET params
+        self.part_id = self.request.GET.get('part', None)
+        self.install_in = self.request.GET.get('install_in', False)
+        self.install_item = self.request.GET.get('install_item', False)
+
+        if self.part_id is None:
+            # Look at POST params
+            self.part_id = self.request.POST.get('part', None)
+
+        try:
+            self.part = Part.objects.get(pk=self.part_id)
+        except (ValueError, Part.DoesNotExist):
+            self.part = None
+
     def get_stock_items(self):
         """
         Return a list of stock items suitable for displaying to the user.
 
         Requirements:
         - Items must be in stock
-
-        Filters:
-        - Items can be filtered by Part reference
+        - Items must be in BOM of stock item
+        - Items must be serialized
         """
-
+        
+        # Filter items in stock
         items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
 
-        # Filter by Part association
+        # Filter serialized stock items
+        items = items.exclude(serial__isnull=True).exclude(serial__exact='')
 
-        # Look at GET params
-        part_id = self.request.GET.get('part', None)
+        if self.part:
+            # Filter for parts to install this item in
+            if self.install_in:
+                # Get parts using this part
+                allowed_parts = self.part.get_used_in()
+                # Filter
+                items = items.filter(part__in=allowed_parts)
 
-        if part_id is None:
-            # Look at POST params
-            part_id = self.request.POST.get('part', None)
-
-        try:
-            self.part = Part.objects.get(pk=part_id)
-            items = items.filter(part=self.part)
-        except (ValueError, Part.DoesNotExist):
-            self.part = None
+            # Filter for parts to install in this item
+            if self.install_item:
+                # Get parts used in this part's BOM
+                bom_items = self.part.get_bom_items()
+                allowed_parts = [item.sub_part for item in bom_items]
+                # Filter
+                items = items.filter(part__in=allowed_parts)
 
         return items
+
+    def get_context_data(self, **kwargs):
+        """ Retrieve parameters and update context """
+
+        ctx = super().get_context_data(**kwargs)
+
+        # Get request parameters
+        self.get_params()
+
+        ctx.update({
+            'part': self.part,
+            'install_in': self.install_in,
+            'install_item': self.install_item,
+        })
+
+        return ctx
 
     def get_initial(self):
 
@@ -541,10 +613,15 @@ class StockItemInstall(AjaxUpdateView):
         if items.count() == 1:
             item = items.first()
             initials['stock_item'] = item.pk
-            initials['quantity_to_install'] = item.quantity
 
         if self.part:
             initials['part'] = self.part
+
+        try:
+            # Is this stock item being installed in the other stock item?
+            initials['to_install'] = self.install_in or not self.install_item
+        except AttributeError:
+            pass
 
         return initials
 
@@ -558,6 +635,8 @@ class StockItemInstall(AjaxUpdateView):
 
     def post(self, request, *args, **kwargs):
 
+        self.get_params()
+
         form = self.get_form()
 
         valid = form.is_valid()
@@ -567,13 +646,19 @@ class StockItemInstall(AjaxUpdateView):
             data = form.cleaned_data
 
             other_stock_item = data['stock_item']
-            quantity = data['quantity_to_install']
+            # Quantity will always be 1 for serialized item
+            quantity = 1
             notes = data['notes']
 
-            # Install the other stock item into this one
+            # Get stock item
             this_stock_item = self.get_object()
 
-            this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
+            if data['to_install']:
+                # Install this stock item into the other stock item
+                other_stock_item.installStockItem(this_stock_item, quantity, request.user, notes)
+            else:
+                # Install the other stock item into this one
+                this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
 
         data = {
             'form_valid': valid,

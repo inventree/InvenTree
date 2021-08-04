@@ -12,7 +12,7 @@ from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
@@ -1905,49 +1905,6 @@ class CategoryDelete(AjaxDeleteView):
         }
 
 
-class CategoryCreate(AjaxCreateView):
-    """ Create view to make a new PartCategory """
-    model = PartCategory
-    ajax_form_action = reverse_lazy('category-create')
-    ajax_form_title = _('Create new part category')
-    ajax_template_name = 'modal_form.html'
-    form_class = part_forms.EditCategoryForm
-
-    def get_context_data(self, **kwargs):
-        """ Add extra context data to template.
-
-        - If parent category provided, pass the category details to the template
-        """
-        context = super(CategoryCreate, self).get_context_data(**kwargs).copy()
-
-        parent_id = self.request.GET.get('category', None)
-
-        if parent_id:
-            try:
-                context['category'] = PartCategory.objects.get(pk=parent_id)
-            except PartCategory.DoesNotExist:
-                pass
-
-        return context
-
-    def get_initial(self):
-        """ Get initial data for new PartCategory
-
-        - If parent provided, pre-fill the parent category
-        """
-        initials = super(CategoryCreate, self).get_initial().copy()
-
-        parent_id = self.request.GET.get('category', None)
-
-        if parent_id:
-            try:
-                initials['parent'] = PartCategory.objects.get(pk=parent_id)
-            except PartCategory.DoesNotExist:
-                pass
-
-        return initials
-
-
 class CategoryParameterTemplateCreate(AjaxCreateView):
     """ View for creating a new PartCategoryParameterTemplate """
 
@@ -2119,134 +2076,6 @@ class CategoryParameterTemplateDelete(AjaxDeleteView):
             return None
 
         return self.object
-
-
-class BomItemCreate(AjaxCreateView):
-    """
-    Create view for making a new BomItem object
-    """
-
-    model = BomItem
-    form_class = part_forms.EditBomItemForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Create BOM Item')
-
-    def get_form(self):
-        """ Override get_form() method to reduce Part selection options.
-
-        - Do not allow part to be added to its own BOM
-        - Remove any Part items that are already in the BOM
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        part_id = form['part'].value()
-
-        # Construct a queryset for the part field
-        part_query = Part.objects.filter(active=True)
-
-        # Construct a queryset for the sub_part field
-        sub_part_query = Part.objects.filter(
-            component=True,
-            active=True
-        )
-
-        try:
-            part = Part.objects.get(id=part_id)
-
-            # Hide the 'part' field
-            form.fields['part'].widget = HiddenInput()
-
-            # Exclude the part from its own BOM
-            sub_part_query = sub_part_query.exclude(id=part.id)
-
-            # Eliminate any options that are already in the BOM!
-            sub_part_query = sub_part_query.exclude(id__in=[item.id for item in part.getRequiredParts()])
-
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        # Set the querysets for the fields
-        form.fields['part'].queryset = part_query
-        form.fields['sub_part'].queryset = sub_part_query
-
-        return form
-
-    def get_initial(self):
-        """ Provide initial data for the BomItem:
-
-        - If 'parent' provided, set the parent part field
-        """
-
-        # Look for initial values
-        initials = super(BomItemCreate, self).get_initial().copy()
-
-        # Parent part for this item?
-        parent_id = self.request.GET.get('parent', None)
-
-        if parent_id:
-            try:
-                initials['part'] = Part.objects.get(pk=parent_id)
-            except Part.DoesNotExist:
-                pass
-
-        return initials
-
-
-class BomItemEdit(AjaxUpdateView):
-    """ Update view for editing BomItem """
-
-    model = BomItem
-    form_class = part_forms.EditBomItemForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit BOM item')
-
-    def get_form(self):
-        """ Override get_form() method to filter part selection options
-
-        - Do not allow part to be added to its own BOM
-        - Remove any part items that are already in the BOM
-        """
-
-        item = self.get_object()
-
-        form = super().get_form()
-
-        part_id = form['part'].value()
-
-        try:
-            part = Part.objects.get(pk=part_id)
-
-            # Construct a queryset
-            query = Part.objects.filter(component=True)
-
-            # Limit to "active" items, *unless* the currently selected item is not active
-            if item.sub_part.active:
-                query = query.filter(active=True)
-
-            # Prevent the parent part from being selected
-            query = query.exclude(pk=part_id)
-
-            # Eliminate any options that are already in the BOM,
-            # *except* for the item which is already selected
-            try:
-                sub_part_id = int(form['sub_part'].value())
-            except ValueError:
-                sub_part_id = -1
-
-            existing = [item.pk for item in part.getRequiredParts()]
-
-            if sub_part_id in existing:
-                existing.remove(sub_part_id)
-
-            query = query.exclude(id__in=existing)
-
-            form.fields['sub_part'].queryset = query
-
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return form
 
 
 class PartSalePriceBreakCreate(AjaxCreateView):

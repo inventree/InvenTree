@@ -416,7 +416,7 @@
                     });
 
                     // Wait for *all* the requests to complete
-                    $.when.apply($, requests).then(function() {
+                    $.when.apply($, requests).done(function() {
                         location.reload();
                     });
                 }
@@ -440,22 +440,22 @@
     });
 
     $("#bom-item-new").click(function () {
-        launchModalForm(
-            "{% url 'bom-item-create' %}?parent={{ part.id }}",
-            {
-                success: function() {
-                    $("#bom-table").bootstrapTable('refresh');
-                },
-                secondary: [
-                    {
-                        field: 'sub_part',
-                        label: '{% trans "New Part" %}',
-                        title: '{% trans "Create New Part" %}',
-                        url: "{% url 'part-create' %}",
-                    },
-                ]
+
+        var fields = bomItemFields();
+
+        fields.part.value = {{ part.pk }};
+        fields.sub_part.filters = {
+            active: true,
+        };
+
+        constructForm('{% url "api-bom-list" %}', {
+            fields: fields,
+            method: 'POST',
+            title: '{% trans "Create BOM Item" %}',
+            onSuccess: function() {
+                $('#bom-table').bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     {% else %}
@@ -832,7 +832,7 @@
                         requests.push(inventreeDelete(url));
                     });
             
-                    $.when.apply($, requests).then(function() {
+                    $.when.apply($, requests).done(function() {
                         reloadSupplierPartTable();
                     });
                 }
@@ -899,7 +899,7 @@
                     {% for line in price_history %}'{{ line.date }}',{% endfor %}
                 ],
                 datasets: [{
-                    label: '{% blocktrans %}Single Price - {{currency}}{% endblocktrans %}',
+                    label: '{% blocktrans %}Purchase Unit Price - {{currency}}{% endblocktrans %}',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgb(255, 99, 132)',
                     yAxisID: 'y',
@@ -911,7 +911,7 @@
                 },
                 {% if 'price_diff' in price_history.0 %}
                 {
-                    label: '{% blocktrans %}Single Price Difference - {{currency}}{% endblocktrans %}',
+                    label: '{% blocktrans %}Unit Price-Cost Difference - {{currency}}{% endblocktrans %}',
                     backgroundColor: 'rgba(68, 157, 68, 0.2)',
                     borderColor: 'rgb(68, 157, 68)',
                     yAxisID: 'y2',
@@ -923,7 +923,7 @@
                     hidden: true,
                 },
                 {
-                    label: '{% blocktrans %}Part Single Price - {{currency}}{% endblocktrans %}',
+                    label: '{% blocktrans %}Supplier Unit Cost - {{currency}}{% endblocktrans %}',
                     backgroundColor: 'rgba(70, 127, 155, 0.2)',
                     borderColor: 'rgb(70, 127, 155)',
                     yAxisID: 'y',

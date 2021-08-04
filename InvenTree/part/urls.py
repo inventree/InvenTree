@@ -65,9 +65,6 @@ category_parameter_urls = [
 
 category_urls = [
 
-    # Create a new category
-    url(r'^new/', views.CategoryCreate.as_view(), name='category-create'),
-
     # Top level subcategory display
     url(r'^subcategory/', views.PartIndex.as_view(template_name='part/subcategory.html'), name='category-index-subcategory'),
 
@@ -81,10 +78,6 @@ category_urls = [
     ]))
 ]
 
-part_bom_urls = [
-    url(r'^edit/?', views.BomItemEdit.as_view(), name='bom-item-edit'),
-]
-
 # URL list for part web interface
 part_urls = [
 
@@ -94,9 +87,6 @@ part_urls = [
     # Upload a part
     url(r'^import/', views.PartImport.as_view(), name='part-import'),
     url(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
-
-    # Create a new BOM item
-    url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
 
     # Download a BOM upload template
     url(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
@@ -124,9 +114,6 @@ part_urls = [
 
     # Change category for multiple parts
     url(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
-
-    # Bom Items
-    url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 
     # Individual part using IPN as slug
     url(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),
