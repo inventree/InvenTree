@@ -409,7 +409,7 @@ class Part(MPTTModel):
         """
 
         # Get category templates settings
-        add_category_templates = kwargs.pop('add_category_templates', None)
+        add_category_templates = kwargs.pop('add_category_templates', False)
 
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
@@ -437,39 +437,29 @@ class Part(MPTTModel):
             # Get part category
             category = self.category
 
-            if category and add_category_templates:
-                # Store templates added to part
+            if category is not None:
+
                 template_list = []
 
-                # Create part parameters for selected category
-                category_templates = add_category_templates['main']
-                if category_templates:
+                parent_categories = category.get_ancestors(include_self=True)
+
+                for category in parent_categories:
                     for template in category.get_parameter_templates():
-                        parameter = PartParameter.create(part=self,
-                                                         template=template.parameter_template,
-                                                         data=template.default_value,
-                                                         save=True)
-                        if parameter:
+                        # Check that template wasn't already added
+                        if template.parameter_template not in template_list:
+
                             template_list.append(template.parameter_template)
 
-                # Create part parameters for parent category
-                category_templates = add_category_templates['parent']
-                if category_templates:
-                    # Get parent categories
-                    parent_categories = category.get_ancestors()
-
-                    for category in parent_categories:
-                        for template in category.get_parameter_templates():
-                            # Check that template wasn't already added
-                            if template.parameter_template not in template_list:
-                                try:
-                                    PartParameter.create(part=self,
-                                                         template=template.parameter_template,
-                                                         data=template.default_value,
-                                                         save=True)
-                                except IntegrityError:
-                                    # PartParameter already exists
-                                    pass
+                            try:
+                                PartParameter.create(
+                                    part=self,
+                                    template=template.parameter_template,
+                                    data=template.default_value,
+                                    save=True
+                                )
+                            except IntegrityError:
+                                # PartParameter already exists
+                                pass
 
     def __str__(self):
         return f"{self.full_name} - {self.description}"

@@ -81,9 +81,6 @@ category_urls = [
 # URL list for part web interface
 part_urls = [
 
-    # Create a new part
-    url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
-
     # Upload a part
     url(r'^import/', views.PartImport.as_view(), name='part-import'),
     url(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),

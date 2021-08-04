@@ -630,16 +630,47 @@ class PartList(generics.ListCreateAPIView):
         else:
             return Response(data)
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         """
         We wish to save the user who created this part!
 
         Note: Implementation copied from DRF class CreateModelMixin
         """
 
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         part = serializer.save()
         part.creation_user = self.request.user
-        part.save()
+
+        # Optionally copy templates from category or parent category
+        copy_templates = {
+            'main': str2bool(request.data.get('copy_category_templates', False)),
+            'parent': str2bool(request.data.get('copy_parent_templates', False))
+        }
+
+        part.save(**{'add_category_templates': copy_templates})
+
+        # Optionally create initial stock item
+        try:
+            initial_stock = Decimal(request.data.get('initial_stock', 0))
+
+            if initial_stock > 0 and part.default_location is not None:
+
+                stock_item = StockItem(
+                    part=part,
+                    quantity=initial_stock,
+                    location=part.default_location,
+                )
+
+                stock_item.save(user=request.user)
+
+        except:
+            pass
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self, *args, **kwargs):
 

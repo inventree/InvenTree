@@ -158,19 +158,6 @@ class PartDetailTest(PartViewTestCase):
 class PartTests(PartViewTestCase):
     """ Tests for Part forms """
 
-    def test_part_create(self):
-        """ Launch form to create a new part """
-        response = self.client.get(reverse('part-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # And again, with an invalid category
-        response = self.client.get(reverse('part-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # And again, with no category
-        response = self.client.get(reverse('part-create'), {'name': 'Test part'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
     def test_part_duplicate(self):
         """ Launch form to duplicate part """
 
