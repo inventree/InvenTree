@@ -173,7 +173,32 @@ function editPart(pk, options={}) {
         title: '{% trans "Edit Part" %}',
         reload: true,
     });
+}
 
+
+function duplicatePart(pk, options={}) {
+
+    // First we need all the part information
+    inventreeGet(`/api/part/${pk}/`, {}, {
+
+        success: function(response) {
+            
+            var fields = partFields({
+                duplicate: true
+            });
+            
+            constructForm('{% url "api-part-list" %}', {
+                method: 'POST',
+                fields: fields,
+                title: '{% trans "Duplicate Part" %}',
+                data: response,
+                onSuccess: function(data) {
+                    // Follow the new part
+                    location.href = `/part/${data.pk}/`;
+                }
+            });
+        }
+    });
 }
 
 
