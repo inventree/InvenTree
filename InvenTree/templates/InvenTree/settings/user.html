@@ -71,25 +71,38 @@
 </div>
 
 <div class="row">
-    <form action="{% url 'set_language' %}" method="post">
-        {% csrf_token %}
-        <input name="next" type="hidden" value="{% url 'settings' %}">
-        <div class="col-sm-6" style="width: 200px;"><div id="div_id_language" class="form-group"><div class="controls ">
-            <select name="language" class="select form-control">
-                {% get_current_language as LANGUAGE_CODE %}
-                {% get_available_languages as LANGUAGES %}
-                {% get_language_info_list for LANGUAGES as languages %}
-                {% for language in languages %}
-                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                        {{ language.name_local }} ({{ language.code }})
-                    </option>
-                {% endfor %}
-            </select>
-        </div></div></div>
-        <div class="col-sm-6" style="width: auto;">
-            <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
-        </div>
-    </form>
+    <div class="col">
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{% url 'settings' %}">
+            <div class="col-sm-6" style="width: 200px;"><div id="div_id_language" class="form-group"><div class="controls ">
+                <select name="language" class="select form-control">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        {% define language.code as lang_code %}
+                        {% define locale_stats|keyvalue:lang_code as lang_translated %}
+                        <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ lang_code }}) 
+                            {% if lang_translated %}
+                                {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
+                            {% else %}
+                                {% trans 'No translations available' %}
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div></div></div>
+            <div class="col-sm-6" style="width: auto;">
+                <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-6">
+        <h4>{% trans "Help the translation efforts!" %}</h4>
+        <p>{% blocktrans with link="https://crowdin.com/project/inventree" %}Native language translation of the InvenTree web application is <a href="{{link}}">community contributed via crowdin</a>. Contributions are welcomed and encouraged.{% endblocktrans %}</p>
+    </div>
 </div>
 
 {% endblock %}
