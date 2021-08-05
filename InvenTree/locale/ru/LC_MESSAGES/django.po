@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-05 03:25+0000\n"
-"PO-Revision-Date: 2021-08-01 23:34\n"
+"PO-Revision-Date: 2021-08-05 03:29\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1038,10 +1038,8 @@ msgid "Cancel Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:114
-#, fuzzy
-#| msgid "Complete Build"
 msgid "Delete Build"
-msgstr "Завершить сборку"
+msgstr ""
 
 #: build/templates/build/build_base.html:124
 #: build/templates/build/detail.html:15
@@ -4467,16 +4465,12 @@ msgid "Part Parameters"
 msgstr ""
 
 #: part/templates/part/category.html:253
-#, fuzzy
-#| msgid "Select Category"
 msgid "Create Part Category"
-msgstr "Выбрать категорию"
+msgstr ""
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Select Category"
 msgid "Create Part"
-msgstr "Выбрать категорию"
+msgstr ""
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4836,10 +4830,8 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:426
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching images found"
-msgstr "Соответствующее действие не найдено"
+msgstr ""
 
 #: part/templates/part/part_base.html:506
 #: part/templates/part/part_base.html:531
@@ -5681,10 +5673,8 @@ msgid "Uninstall"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:133
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Install stock item"
-msgstr "Отредактированный товар"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:133
 msgid "Install"
@@ -6936,10 +6926,8 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:268
-#, fuzzy
-#| msgid "upload date"
 msgid "Reload data"
-msgstr "дата загрузки"
+msgstr ""
 
 #: templates/js/translated/filters.js:270
 msgid "Add new filter"
@@ -7160,10 +7148,8 @@ msgid "Part Creation Options"
 msgstr ""
 
 #: templates/js/translated/part.js:92
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Initial Stock Quantity"
-msgstr "Отредактированный товар"
+msgstr ""
 
 #: templates/js/translated/part.js:93
 msgid "Initialize part stock with specified quantity"
@@ -8041,3 +8027,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

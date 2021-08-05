@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-05 03:25+0000\n"
-"PO-Revision-Date: 2021-08-01 23:34\n"
+"PO-Revision-Date: 2021-08-05 03:29\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1038,10 +1038,8 @@ msgid "Cancel Build"
 msgstr "Anuluj Budowę"
 
 #: build/templates/build/build_base.html:114
-#, fuzzy
-#| msgid "Parent Build"
 msgid "Delete Build"
-msgstr "Budowa nadrzędna"
+msgstr ""
 
 #: build/templates/build/build_base.html:124
 #: build/templates/build/detail.html:15
@@ -4467,16 +4465,12 @@ msgid "Part Parameters"
 msgstr "Parametry części"
 
 #: part/templates/part/category.html:253
-#, fuzzy
-#| msgid "Create new Part Category"
 msgid "Create Part Category"
-msgstr "Utwórz nową kategorię części"
+msgstr ""
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Create New Part"
 msgid "Create Part"
-msgstr "Utwórz nową część"
+msgstr ""
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4836,10 +4830,8 @@ msgid "Calculate"
 msgstr ""
 
 #: part/templates/part/part_base.html:426
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching images found"
-msgstr "Nie znaleziono pasującej akcji"
+msgstr ""
 
 #: part/templates/part/part_base.html:506
 #: part/templates/part/part_base.html:531
@@ -5681,16 +5673,12 @@ msgid "Uninstall"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:133
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Install stock item"
-msgstr "Docelowa lokalizacja magazynowa przedmiotu"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:133
-#, fuzzy
-#| msgid "Install into"
 msgid "Install"
-msgstr "Zainstaluj do"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:145
 msgid "Convert to variant"
@@ -6938,10 +6926,8 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:268
-#, fuzzy
-#| msgid "upload date"
 msgid "Reload data"
-msgstr "data przesłania"
+msgstr ""
 
 #: templates/js/translated/filters.js:270
 msgid "Add new filter"
@@ -7154,54 +7140,40 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:43
-#, fuzzy
-#| msgid "Part Filters"
 msgid "Part Attributes"
-msgstr "Filtr części"
+msgstr ""
 
 #: templates/js/translated/part.js:86
-#, fuzzy
-#| msgid "Part description"
 msgid "Part Creation Options"
-msgstr "Opis części"
+msgstr ""
 
 #: templates/js/translated/part.js:92
-#, fuzzy
-#| msgid "Stock Quantity"
 msgid "Initial Stock Quantity"
-msgstr "Ilość w magazynie"
+msgstr ""
 
 #: templates/js/translated/part.js:93
 msgid "Initialize part stock with specified quantity"
 msgstr ""
 
 #: templates/js/translated/part.js:99
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Copy Category Parameters"
-msgstr "Parametry części"
+msgstr ""
 
 #: templates/js/translated/part.js:100
 msgid "Copy parameter templates from selected part category"
 msgstr ""
 
 #: templates/js/translated/part.js:110
-#, fuzzy
-#| msgid "Part description"
 msgid "Part Duplication Options"
-msgstr "Opis części"
+msgstr ""
 
 #: templates/js/translated/part.js:121
-#, fuzzy
-#| msgid "Image"
 msgid "Copy Image"
-msgstr "Obraz"
+msgstr ""
 
 #: templates/js/translated/part.js:122
-#, fuzzy
-#| msgid "Copy BOM from parent part"
 msgid "Copy image from original part"
-msgstr "Kopiuj BOM z części nadrzędnej"
+msgstr ""
 
 #: templates/js/translated/part.js:128
 msgid "Copy BOM"
@@ -7220,10 +7192,8 @@ msgid "Copy parameter data from original part"
 msgstr ""
 
 #: templates/js/translated/part.js:148
-#, fuzzy
-#| msgid "Select part category"
 msgid "Parent part category"
-msgstr "Wybierz kategorię części"
+msgstr ""
 
 #: templates/js/translated/part.js:186
 msgid "Edit Part"
@@ -8058,11 +8028,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "New Category"
-#~ msgstr "Nowa kategoria"
-
-#~ msgid "Create new category"
-#~ msgstr "Utwórz nową kategorię"
-
-#~ msgid "Select parent category"
-#~ msgstr "Wybierz kategorię nadrzędną"

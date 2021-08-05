@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-05 03:25+0000\n"
-"PO-Revision-Date: 2021-08-01 23:34\n"
+"PO-Revision-Date: 2021-08-05 03:29\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1038,10 +1038,8 @@ msgid "Cancel Build"
 msgstr "Bauauftrag abbrechen"
 
 #: build/templates/build/build_base.html:114
-#, fuzzy
-#| msgid "Delete Build Order"
 msgid "Delete Build"
-msgstr "Bauauftrag löschen"
+msgstr ""
 
 #: build/templates/build/build_base.html:124
 #: build/templates/build/detail.html:15
@@ -4467,16 +4465,12 @@ msgid "Part Parameters"
 msgstr "Teilparameter"
 
 #: part/templates/part/category.html:253
-#, fuzzy
-#| msgid "Create new Part Category"
 msgid "Create Part Category"
-msgstr "Neue Teil-Kategorie anlegen"
+msgstr ""
 
 #: part/templates/part/category.html:279
-#, fuzzy
-#| msgid "Create New Part"
 msgid "Create Part"
-msgstr "Neues Teil anlegen"
+msgstr ""
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4658,22 +4652,19 @@ msgid "Edit Part Notes"
 msgstr "Teilenotizen bearbeiten"
 
 #: part/templates/part/detail.html:903
-#, fuzzy, python-format
-#| msgid "Unit Price - %(currency)s"
+#, python-format
 msgid "Purchase Unit Price - %(currency)s"
-msgstr "Stückpreis - %(currency)s"
+msgstr ""
 
 #: part/templates/part/detail.html:915
-#, fuzzy, python-format
-#| msgid "Single Price Difference - %(currency)s"
+#, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
-msgstr "Einzelpreisdifferenz - %(currency)s"
+msgstr ""
 
 #: part/templates/part/detail.html:927
-#, fuzzy, python-format
-#| msgid "Unit Price - %(currency)s"
+#, python-format
 msgid "Supplier Unit Cost - %(currency)s"
-msgstr "Stückpreis - %(currency)s"
+msgstr ""
 
 #: part/templates/part/detail.html:1016
 #, python-format
@@ -4839,10 +4830,8 @@ msgid "Calculate"
 msgstr "Berechnen"
 
 #: part/templates/part/part_base.html:426
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching images found"
-msgstr "Keine passende Aktion gefunden"
+msgstr ""
 
 #: part/templates/part/part_base.html:506
 #: part/templates/part/part_base.html:531
@@ -5684,16 +5673,12 @@ msgid "Uninstall"
 msgstr "Deinstallieren"
 
 #: stock/templates/stock/item_base.html:133
-#, fuzzy
-#| msgid "Uninstall stock item"
 msgid "Install stock item"
-msgstr "BestandsObjekt deinstallieren"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:133
-#, fuzzy
-#| msgid "Installed"
 msgid "Install"
-msgstr "Installiert"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:145
 msgid "Convert to variant"
@@ -5823,10 +5808,8 @@ msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock.
 msgstr "Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b> entfernt."
 
 #: stock/templates/stock/item_install.html:8
-#, fuzzy
-#| msgid "Install another StockItem into this item."
 msgid "Install another Stock Item into this item."
-msgstr "Ein weiteres BestandsObjekt in dieses Teil installiert"
+msgstr ""
 
 #: stock/templates/stock/item_install.html:11
 #: stock/templates/stock/item_install.html:24
@@ -5834,38 +5817,28 @@ msgid "Stock items can only be installed if they meet the following criteria"
 msgstr "BestandsObjekte können nur installiert werden wenn folgende Kriterien erfüllt werden"
 
 #: stock/templates/stock/item_install.html:14
-#, fuzzy
-#| msgid "The StockItem links to a Part which is in the BOM for this StockItem"
 msgid "The Stock Item links to a Part which is in the BOM for this Stock Item"
-msgstr "Das BestandsObjekt ist auf ein Teil verknüpft das in der Stückliste für dieses BestandsObjekt ist"
+msgstr ""
 
 #: stock/templates/stock/item_install.html:15
-#, fuzzy
-#| msgid "The StockItem is currently in stock"
 msgid "The Stock Item is currently in stock"
-msgstr "Dieses BestandsObjekt ist aktuell vorhanden"
+msgstr ""
 
 #: stock/templates/stock/item_install.html:16
-#, fuzzy
-#| msgid "Stock item has been installed in another item"
 msgid "The Stock Item is serialized and does not belong to another item"
-msgstr "BestandsObjekt in anderem Element verbaut"
+msgstr ""
 
 #: stock/templates/stock/item_install.html:21
-#, fuzzy
-#| msgid "Install another StockItem into this item."
 msgid "Install this Stock Item in another stock item."
-msgstr "Ein weiteres BestandsObjekt in dieses Teil installiert"
+msgstr ""
 
 #: stock/templates/stock/item_install.html:27
 msgid "The part associated to this Stock Item belongs to another part's BOM"
 msgstr ""
 
 #: stock/templates/stock/item_install.html:28
-#, fuzzy
-#| msgid "This stock item does not have any child items"
 msgid "This Stock Item is serialized and does not belong to another item"
-msgstr "Dieses BestandsObjekt hat keine Kinder"
+msgstr ""
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
@@ -6953,10 +6926,8 @@ msgid "Select filter"
 msgstr "Filter auswählen"
 
 #: templates/js/translated/filters.js:268
-#, fuzzy
-#| msgid "upload date"
 msgid "Reload data"
-msgstr "Hochladedatum"
+msgstr ""
 
 #: templates/js/translated/filters.js:270
 msgid "Add new filter"
@@ -7169,84 +7140,60 @@ msgid "NO"
 msgstr "NEIN"
 
 #: templates/js/translated/part.js:43
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Part Attributes"
-msgstr "Teil-Kategorien"
+msgstr ""
 
 #: templates/js/translated/part.js:86
-#, fuzzy
-#| msgid "Part Options"
 msgid "Part Creation Options"
-msgstr "Teil-Optionen"
+msgstr ""
 
 #: templates/js/translated/part.js:92
-#, fuzzy
-#| msgid "Stock Quantity"
 msgid "Initial Stock Quantity"
-msgstr "Bestand"
+msgstr ""
 
 #: templates/js/translated/part.js:93
-#, fuzzy
-#| msgid "Unit price at specified quantity"
 msgid "Initialize part stock with specified quantity"
-msgstr "Stückpreis für die angegebene Anzahl"
+msgstr ""
 
 #: templates/js/translated/part.js:99
-#, fuzzy
-#| msgid "Copy Category Parameter Templates"
 msgid "Copy Category Parameters"
-msgstr "Kategorie-Parametervorlage kopieren"
+msgstr ""
 
 #: templates/js/translated/part.js:100
-#, fuzzy
-#| msgid "Add parameter template to same level categories"
 msgid "Copy parameter templates from selected part category"
-msgstr "Parameter-Vorlage zu Kategorien dieser Ebene hinzufügen"
+msgstr ""
 
 #: templates/js/translated/part.js:110
-#, fuzzy
-#| msgid "Part Options"
 msgid "Part Duplication Options"
-msgstr "Teil-Optionen"
+msgstr ""
 
 #: templates/js/translated/part.js:121
-#, fuzzy
-#| msgid "Image"
 msgid "Copy Image"
-msgstr "Bild"
+msgstr ""
 
 #: templates/js/translated/part.js:122
-#, fuzzy
-#| msgid "Copy BOM from parent part"
 msgid "Copy image from original part"
-msgstr "Stückliste von übergeordnetem Teil kopieren"
+msgstr ""
 
 #: templates/js/translated/part.js:128
 msgid "Copy BOM"
 msgstr "Stückliste kopieren"
 
 #: templates/js/translated/part.js:129
-#, fuzzy
-#| msgid "The Bill of Materials contains trackable parts"
 msgid "Copy bill of materials from original part"
-msgstr "Die Stückliste enthält verfolgbare Teile"
+msgstr ""
 
 #: templates/js/translated/part.js:135
 msgid "Copy Parameters"
 msgstr "Parameter kopieren"
 
 #: templates/js/translated/part.js:136
-#, fuzzy
-#| msgid "Copy parameter data by default when duplicating a part"
 msgid "Copy parameter data from original part"
-msgstr "Parameter-Daten für dieses Teil kopieren wenn das Teil dupliziert wird"
+msgstr ""
 
 #: templates/js/translated/part.js:148
-#, fuzzy
-#| msgid "Select part category"
 msgid "Parent part category"
-msgstr "Teil-Kategorie wählen"
+msgstr ""
 
 #: templates/js/translated/part.js:186
 msgid "Edit Part"
@@ -8081,68 +8028,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Resposible"
-#~ msgstr "Zuständig"
-
-#~ msgid "Duplicate all BOM data for this part"
-#~ msgstr "Stückliste für dieses Teil kopieren"
-
-#~ msgid "Duplicate all parameter data for this part"
-#~ msgstr "Alle Parameter-Daten für dieses Teil kopieren"
-
-#~ msgid "Confirm part creation"
-#~ msgstr "Erstellen des Teils bestätigen"
-
-#~ msgid "Include category parameter templates"
-#~ msgstr "Kategorie Parameter-Vorlage einschließen"
-
-#~ msgid "Include parent categories parameter templates"
-#~ msgstr "Über-Kategorie Parameter-Vorlage einschließen"
-
-#~ msgid "Initial stock amount"
-#~ msgstr "Anfangsbestand"
-
-#~ msgid "Create stock for this part"
-#~ msgstr "Bestand für dieses Teil erstellen"
-
-#~ msgid "Create Variant"
-#~ msgstr "Variante anlegen"
-
-#~ msgid "Copied part"
-#~ msgstr "Teil kopiert"
-
-#~ msgid "Possible matches exist - confirm creation of new part"
-#~ msgstr "Übereinstimmung gefunden - Teil trotzdem anlegen"
-
-#~ msgid "Created new part"
-#~ msgstr "Neues Teil angelegt"
-
-#~ msgid "New Category"
-#~ msgstr "Neue Kategorie"
-
-#~ msgid "Create New Part Category"
-#~ msgstr "Neue Teil-Kategorie anlegen"
-
-#~ msgid "Edit BOM item"
-#~ msgstr "Stücklisten-Position bearbeiten"
-
-#~ msgid "Create new category"
-#~ msgstr "Teil-Kategorie anlegen"
-
-#~ msgid "Select parent category"
-#~ msgstr "Übergeordnete Kategorie auswählen"
-
-#~ msgid "Single Price - %(currency)s"
-#~ msgstr "Einzelpreis - %(currency)s"
-
-#~ msgid "Part Single Price - %(currency)s"
-#~ msgstr "Einzelpreis für Zuliefererteil- %(currency)s"
-
-#~ msgid "Buy Price"
-#~ msgstr "Kaufpreis"
-
-#~ msgid "No pricing available"
-#~ msgstr "Keine Preisinformation verfügbar"
-
-#~ msgid "Stock quantity to assign"
-#~ msgstr "Bestandmenge zum Zuweisen"
