@@ -637,7 +637,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PART_PURCHASEABLE': {
             'name': _('Purchaseable'),
             'description': _('Parts are purchaseable by default'),
-            'default': False,
+            'default': True,
             'validator': bool,
         },
 
@@ -662,6 +662,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        # TODO: Remove this setting in future, new API forms make this not useful
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),

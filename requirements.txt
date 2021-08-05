@@ -21,7 +21,8 @@ coverage==5.3                   # Unit test coverage
 coveralls==2.1.2                # Coveralls linking (for Travis)
 rapidfuzz==0.7.6                # Fuzzy string matching
 django-stdimage==5.1.1          # Advanced ImageField management
-django-weasyprint==1.0.1        # HTML PDF export
+weasyprint==52.5                # PDF generation library (Note: in the future need to update to 53)
+django-weasyprint==1.0.1        # django weasyprint integration
 django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-admin-shell==0.1.2       # Python shell for the admin interface
 py-moneyed==0.8.0               # Specific version requirement for py-moneyed

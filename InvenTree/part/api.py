@@ -23,6 +23,7 @@ from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
+from decimal import Decimal
 
 from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
@@ -30,6 +31,7 @@ from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 from .models import PartCategoryParameterTemplate
 
+from stock.models import StockItem
 from common.models import InvenTreeSetting
 from build.models import Build
 
@@ -338,9 +340,7 @@ class PartThumbs(generics.ListAPIView):
         - Images may be used for multiple parts!
         """
 
-        queryset = self.get_queryset()
-
-        # TODO - We should return the thumbnails here, not the full image!
+        queryset = self.filter_queryset(self.get_queryset())
 
         # Return the most popular parts first
         data = queryset.values(
@@ -348,6 +348,19 @@ class PartThumbs(generics.ListAPIView):
         ).annotate(count=Count('image')).order_by('-count')
 
         return Response(data)
+
+    filter_backends = [
+        filters.SearchFilter,
+    ]
+
+    search_fields = [
+        'name',
+        'description',
+        'IPN',
+        'revision',
+        'keywords',
+        'category__name',
+    ]
 
 
 class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
@@ -442,6 +455,8 @@ class PartFilter(rest_filters.FilterSet):
             queryset = queryset.exclude(IPN='')
         else:
             queryset = queryset.filter(IPN='')
+
+        return queryset
 
     # Regex filter for name
     name_regex = rest_filters.CharFilter(label='Filter by name (regex)', field_name='name', lookup_expr='iregex')
@@ -615,16 +630,75 @@ class PartList(generics.ListCreateAPIView):
         else:
             return Response(data)
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         """
         We wish to save the user who created this part!
 
         Note: Implementation copied from DRF class CreateModelMixin
         """
 
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         part = serializer.save()
         part.creation_user = self.request.user
-        part.save()
+
+        # Optionally copy templates from category or parent category
+        copy_templates = {
+            'main': str2bool(request.data.get('copy_category_templates', False)),
+            'parent': str2bool(request.data.get('copy_parent_templates', False))
+        }
+
+        part.save(**{'add_category_templates': copy_templates})
+
+        # Optionally copy data from another part (e.g. when duplicating)
+        copy_from = request.data.get('copy_from', None)
+
+        if copy_from is not None:
+
+            try:
+                original = Part.objects.get(pk=copy_from)
+
+                copy_bom = str2bool(request.data.get('copy_bom', False))
+                copy_parameters = str2bool(request.data.get('copy_parameters', False))
+                copy_image = str2bool(request.data.get('copy_image', True))
+
+                # Copy image?
+                if copy_image:
+                    part.image = original.image
+                    part.save()
+
+                # Copy BOM?
+                if copy_bom:
+                    part.copy_bom_from(original)
+
+                # Copy parameter data?
+                if copy_parameters:
+                    part.copy_parameters_from(original)
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # Optionally create initial stock item
+        try:
+            initial_stock = Decimal(request.data.get('initial_stock', 0))
+
+            if initial_stock > 0 and part.default_location is not None:
+
+                stock_item = StockItem(
+                    part=part,
+                    quantity=initial_stock,
+                    location=part.default_location,
+                )
+
+                stock_item.save(user=request.user)
+
+        except:
+            pass
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self, *args, **kwargs):
 
