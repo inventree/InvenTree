@@ -232,7 +232,7 @@ function reloadTotal() {
         })
         .then(function(data){
             html = `{% trans '${data.sell_price_string} (calculated ${data.total_price_string})' %}`;
-            html += `<span class='label label-`;
+            html += `<span class='badge badge-`;
             if (data.is_valid){
                 html += `success'>`;
                 html += `{% trans "Validated" %}`;
