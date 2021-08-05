@@ -240,6 +240,7 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
+ * - data: map of data to fill out field values with
  * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
  * - onSuccess: callback function when form action is successful
@@ -262,6 +263,11 @@ function constructForm(url, options) {
 
     // Default HTTP method
     options.method = options.method || 'PATCH';
+
+    // Construct an "empty" data object if not provided
+    if (!options.data) {
+        options.data = {};
+    }
 
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
@@ -346,10 +352,19 @@ function constructFormBody(fields, options) {
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
 
+    // Handle initial data overrides
+    if (options.data) {
+        for (const field in options.data) {
+
+            if (field in fields) {
+                fields[field].value = options.data[field];
+            }
+        }
+    }
+
     // Provide each field object with its own name
     for(field in fields) {
         fields[field].name = field;
-
         
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
         if (fields[field].instance_filters) {
@@ -365,6 +380,10 @@ function constructFormBody(fields, options) {
             fields[field].filters = Object.assign(fields[field].filters || {}, field_options.filters);
 
             // TODO: Refactor the following code with Object.assign (see above)
+
+            // "before" and "after" renders
+            fields[field].before = field_options.before;
+            fields[field].after = field_options.after;
 
             // Secondary modal options
             fields[field].secondary = field_options.secondary;
@@ -560,9 +579,14 @@ function submitFormData(fields, options) {
     var has_files = false;
 
     // Extract values for each field
-    options.field_names.forEach(function(name) {
+    for (var idx = 0; idx < options.field_names.length; idx++) {
+
+        var name = options.field_names[idx];
 
         var field = fields[name] || null;
+
+        // Ignore visual fields
+        if (field && field.type == 'candy') continue;
 
         if (field) {
 
@@ -593,7 +617,7 @@ function submitFormData(fields, options) {
         } else {
             console.log(`WARNING: Could not find field matching '${name}'`);
         }
-    });
+    }
 
     var upload_func = inventreePut;
 
@@ -1279,6 +1303,11 @@ function renderModelData(name, model, data, parameters, options) {
  */
 function constructField(name, parameters, options) {
 
+    // Shortcut for simple visual fields
+    if (parameters.type == 'candy') {
+        return constructCandyInput(name, parameters, options);
+    }
+
     var field_name = `id_${name}`;
 
     // Hidden inputs are rendered without label / help text / etc
@@ -1292,7 +1321,14 @@ function constructField(name, parameters, options) {
         form_classes += ' has-error';
     }
 
-    var html = `<div id='div_${field_name}' class='${form_classes}'>`;
+    var html = '';
+    
+    // Optional content to render before the field
+    if (parameters.before) {
+        html += parameters.before;
+    }
+    
+    html += `<div id='div_${field_name}' class='${form_classes}'>`;
 
     // Add a label
     html += constructLabel(name, parameters);
@@ -1352,6 +1388,10 @@ function constructField(name, parameters, options) {
     html += `</div>`;   // controls
     html += `</div>`;   // form-group
     
+    if (parameters.after) {
+        html += parameters.after;
+    }
+
     return html;
 }
 
@@ -1429,6 +1469,9 @@ function constructInput(name, parameters, options) {
             break;
         case 'date':
             func = constructDateInput;
+            break;
+        case 'candy':
+            func = constructCandyInput;
             break;
         default:
             // Unsupported field type!
@@ -1655,6 +1698,17 @@ function constructDateInput(name, parameters, options) {
         'date',
         parameters
     );
+}
+
+
+/*
+ * Construct a "candy" field input
+ * No actual field data!
+ */
+function constructCandyInput(name, parameters, options) {
+
+    return parameters.html;
+
 }
 
 
