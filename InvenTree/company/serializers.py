@@ -231,6 +231,24 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier_detail',
         ]
 
+    def create(self, validated_data):
+        """ Extract manufacturer data and process ManufacturerPart """
+
+        # Create SupplierPart
+        supplier_part = super().create(validated_data)
+
+        # Get ManufacturerPart raw data (unvalidated)
+        manufacturer_id = self.initial_data.get('manufacturer', None)
+        MPN = self.initial_data.get('MPN', None)
+
+        if manufacturer_id or MPN:
+            kwargs = {'manufacturer': manufacturer_id,
+                      'MPN': MPN,
+                      }
+            supplier_part.save(**kwargs)
+
+        return supplier_part
+
 
 class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     """ Serializer for SupplierPriceBreak object """
