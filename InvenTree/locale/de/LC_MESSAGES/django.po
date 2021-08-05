@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-04 22:16+0000\n"
+"POT-Creation-Date: 2021-08-05 03:25+0000\n"
 "PO-Revision-Date: 2021-08-01 23:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -810,6 +810,7 @@ msgstr "Nutzer der diesen Bauauftrag erstellt hat"
 #: order/templates/order/order_base.html:138
 #: order/templates/order/sales_order_base.html:140 part/models.py:855
 #: report/templates/report/inventree_build_order_base.html:159
+#: templates/js/translated/build.js:930
 msgid "Responsible"
 msgstr "Verantwortlicher Benutzer"
 
@@ -6837,10 +6838,6 @@ msgstr "Bauauftrag ist überfällig"
 msgid "No user information"
 msgstr "Keine Benutzerinformation"
 
-#: templates/js/translated/build.js:930
-msgid "Resposible"
-msgstr "Zuständig"
-
 #: templates/js/translated/build.js:939
 msgid "No information"
 msgstr "Keine Information"
@@ -8083,6 +8080,9 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Resposible"
+#~ msgstr "Zuständig"
 
 #~ msgid "Duplicate all BOM data for this part"
 #~ msgstr "Stückliste für dieses Teil kopieren"
