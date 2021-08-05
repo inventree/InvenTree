@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-05 03:25+0000\n"
+"POT-Creation-Date: 2021-08-05 10:29+0000\n"
 "PO-Revision-Date: 2021-08-05 03:29\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -432,27 +432,27 @@ msgstr "Fazlalık %100'ü geçmemelidir"
 msgid "Overage must be an integer value or a percentage"
 msgstr "Fazlalık bir tamsayı veya yüzde olmalıdır"
 
-#: InvenTree/views.py:609
+#: InvenTree/views.py:612
 msgid "Delete Item"
 msgstr "Ögeyi Sil"
 
-#: InvenTree/views.py:658
+#: InvenTree/views.py:661
 msgid "Check box to confirm item deletion"
 msgstr "Öge silme işlemini onaylamak için kutuyu işaretleyin"
 
-#: InvenTree/views.py:673 templates/InvenTree/settings/user.html:14
+#: InvenTree/views.py:676 templates/InvenTree/settings/user.html:14
 msgid "Edit User Information"
 msgstr "Kullanıcı Bilgisini Düzenle"
 
-#: InvenTree/views.py:684 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:687 templates/InvenTree/settings/user.html:18
 msgid "Set Password"
 msgstr "Şifre Belirle"
 
-#: InvenTree/views.py:703
+#: InvenTree/views.py:706
 msgid "Password fields must match"
 msgstr "Parola alanları eşleşmelidir"
 
-#: InvenTree/views.py:897 templates/navbar.html:95
+#: InvenTree/views.py:907 templates/navbar.html:95
 msgid "System Information"
 msgstr "Sistem Bilgisi"
 
@@ -6362,9 +6362,27 @@ msgstr "Tema Seç"
 msgid "Language Settings"
 msgstr "Dil Ayarları"
 
-#: templates/InvenTree/settings/user.html:90
+#: templates/InvenTree/settings/user.html:89
+#, python-format
+msgid "%(lang_translated)s%% translated"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:91
+msgid "No translations available"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:98
 msgid "Set Language"
 msgstr "Dili Ayarla"
+
+#: templates/InvenTree/settings/user.html:103
+msgid "Help the translation efforts!"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:104
+#, python-format
+msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
+msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -8027,4 +8045,3 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
-
