@@ -1013,12 +1013,12 @@ function addSecondaryModal(field, fields, options) {
         // Determine the API query URL
         var url = secondary.api_url || field.api_url;
 
-        // Extract form values at time of button press
-        var data = extractFormData(fields, options)
-
         // If the "fields" attribute is a function, call it with data
         if (secondary.fields instanceof Function) {
-            console.log("Fields is a function!");
+
+            // Extract form values at time of button press
+            var data = extractFormData(fields, options)
+
             secondary.fields = secondary.fields(data);
         }
 
