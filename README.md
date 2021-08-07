@@ -24,7 +24,7 @@ However, powerful business logic works in the background to ensure that stock tr
 
 InvenTree is [available via Docker](https://hub.docker.com/r/inventree/inventree). Read the [docker guide](https://inventree.readthedocs.io/en/latest/start/docker/) for full details.
 
-# Companion App
+# Mobile App
 
 InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality. 
 
