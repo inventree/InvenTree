@@ -254,6 +254,8 @@ class ReportPrintMixin:
             else:
                 pdf = outputs[0].get_document().write_pdf()
 
+            inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user)
+
             return InvenTree.helpers.DownloadFile(
                 pdf,
                 report_name,
