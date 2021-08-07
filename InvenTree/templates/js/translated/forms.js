@@ -1016,9 +1016,10 @@ function addSecondaryModal(field, fields, options) {
         // Extract form values at time of button press
         var data = extractFormData(fields, options)
 
-        // Allow the secondary form to be "prefilled" with a custom function
-        if (secondary.prefill) {
-            secondary.fields = secondary.prefill(data);
+        // If the "fields" attribute is a function, call it with data
+        if (secondary.fields instanceof Function) {
+            console.log("Fields is a function!");
+            secondary.fields = secondary.fields(data);
         }
 
         // If no onSuccess function is defined, provide a default one
