@@ -979,7 +979,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     @classmethod
     def get_filters(cls, key, **kwargs):
-        return {'key__iexact': key, 'user__id': kwargs['user'].id}
+        return {
+            'key__iexact': key,
+            'user__id': kwargs['user'].id
+        }
 
 
 class PriceBreak(models.Model):
