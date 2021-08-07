@@ -565,6 +565,30 @@ function insertConfirmButton(options) {
 
 
 /*
+ * Extract all specified form values as a single object
+ */
+function extractFormData(fields, options) {
+
+    var data = {};
+
+    for (var idx = 0; idx < options.field_names.length; idx++) {
+        
+        var name = options.field_names[idx];
+
+        var field = fields[name] || null;
+
+        if (!field) continue;
+
+        if (field.type == 'candy') continue;
+
+        data[name] = getFormFieldValue(name, field, options);
+    }
+
+    return data;
+}
+
+
+/*
  * Submit form data to the server.
  * 
  */
