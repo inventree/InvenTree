@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-07 01:17+0000\n"
+"POT-Creation-Date: 2021-08-07 11:08+0000\n"
 "PO-Revision-Date: 2021-08-05 03:29\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -6279,20 +6279,6 @@ msgstr ""
 msgid "Part Parameter Templates"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:80
-msgid "No part parameter templates found"
-msgstr ""
-
-#: templates/InvenTree/settings/part.html:100
-#: templates/InvenTree/settings/settings.html:172
-msgid "Edit Template"
-msgstr ""
-
-#: templates/InvenTree/settings/part.html:101
-#: templates/InvenTree/settings/settings.html:173
-msgid "Delete Template"
-msgstr ""
-
 #: templates/InvenTree/settings/po.html:9
 msgid "Purchase Order Settings"
 msgstr ""
@@ -6311,6 +6297,20 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:150
 msgid "No category parameter templates found"
+msgstr ""
+
+#: templates/InvenTree/settings/settings.html:172
+#: templates/InvenTree/settings/settings.html:269
+msgid "Edit Template"
+msgstr ""
+
+#: templates/InvenTree/settings/settings.html:173
+#: templates/InvenTree/settings/settings.html:270
+msgid "Delete Template"
+msgstr ""
+
+#: templates/InvenTree/settings/settings.html:249
+msgid "No part parameter templates found"
 msgstr ""
 
 #: templates/InvenTree/settings/so.html:7
