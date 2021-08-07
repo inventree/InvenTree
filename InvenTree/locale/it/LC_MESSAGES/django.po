@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-07 12:28+0000\n"
-"PO-Revision-Date: 2021-08-07 13:25\n"
+"POT-Creation-Date: 2021-08-07 14:08+0000\n"
+"PO-Revision-Date: 2021-08-07 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -23,22 +23,22 @@ msgstr ""
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Nessuna azione specificata"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Nessuna azione corrispondente trovata"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Inserisci la data"
 
 #: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:108 templates/js/translated/forms.js:545
 msgid "Confirm"
-msgstr ""
+msgstr "Conferma"
 
 #: InvenTree/forms.py:127
 msgid "Confirm delete"
@@ -50,23 +50,23 @@ msgstr ""
 
 #: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "Inserire la password"
 
 #: InvenTree/forms.py:161
 msgid "Enter new password"
-msgstr ""
+msgstr "Inserire una nuova password"
 
 #: InvenTree/forms.py:168
 msgid "Confirm password"
-msgstr ""
+msgstr "Conferma la password"
 
 #: InvenTree/forms.py:169
 msgid "Confirm new password"
-msgstr ""
+msgstr "Conferma la nuova password"
 
 #: InvenTree/forms.py:201
 msgid "Select Category"
-msgstr ""
+msgstr "Selezione una categoria"
 
 #: InvenTree/helpers.py:401
 #, python-brace-format
@@ -137,7 +137,7 @@ msgstr ""
 #: label/models.py:112 part/models.py:656 part/models.py:2196
 #: part/templates/part/part_base.html:233 report/models.py:181
 #: templates/InvenTree/search.html:137 templates/InvenTree/search.html:289
-#: templates/js/translated/company.js:545 templates/js/translated/part.js:328
+#: templates/js/translated/company.js:583 templates/js/translated/part.js:328
 #: templates/js/translated/part.js:461 templates/js/translated/part.js:953
 #: templates/js/translated/stock.js:1330
 msgid "Name"
@@ -156,9 +156,9 @@ msgstr ""
 #: templates/InvenTree/search.html:296
 #: templates/InvenTree/settings/header.html:9
 #: templates/js/translated/bom.js:210 templates/js/translated/build.js:868
-#: templates/js/translated/build.js:1162 templates/js/translated/company.js:261
-#: templates/js/translated/company.js:459
-#: templates/js/translated/company.js:741 templates/js/translated/order.js:247
+#: templates/js/translated/build.js:1162 templates/js/translated/company.js:299
+#: templates/js/translated/company.js:497
+#: templates/js/translated/company.js:779 templates/js/translated/order.js:247
 #: templates/js/translated/order.js:349 templates/js/translated/part.js:387
 #: templates/js/translated/part.js:571 templates/js/translated/part.js:748
 #: templates/js/translated/part.js:965 templates/js/translated/part.js:1033
@@ -181,75 +181,75 @@ msgstr ""
 
 #: InvenTree/settings.py:518
 msgid "German"
-msgstr ""
+msgstr "Tedesco"
 
 #: InvenTree/settings.py:519
 msgid "Greek"
-msgstr ""
+msgstr "Greco"
 
 #: InvenTree/settings.py:520
 msgid "English"
-msgstr ""
+msgstr "Inglese"
 
 #: InvenTree/settings.py:521
 msgid "Spanish"
-msgstr ""
+msgstr "Spagnolo"
 
 #: InvenTree/settings.py:522
 msgid "French"
-msgstr ""
+msgstr "Francese"
 
 #: InvenTree/settings.py:523
 msgid "Hebrew"
-msgstr ""
+msgstr "Ebraico"
 
 #: InvenTree/settings.py:524
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: InvenTree/settings.py:525
 msgid "Japanese"
-msgstr ""
+msgstr "Giapponese"
 
 #: InvenTree/settings.py:526
 msgid "Korean"
-msgstr ""
+msgstr "Coreano"
 
 #: InvenTree/settings.py:527
 msgid "Dutch"
-msgstr ""
+msgstr "Olandese"
 
 #: InvenTree/settings.py:528
 msgid "Norwegian"
-msgstr ""
+msgstr "Norvegese"
 
 #: InvenTree/settings.py:529
 msgid "Polish"
-msgstr ""
+msgstr "Polacco"
 
 #: InvenTree/settings.py:530
 msgid "Russian"
-msgstr ""
+msgstr "Russo"
 
 #: InvenTree/settings.py:531
 msgid "Swedish"
-msgstr ""
+msgstr "Svedese"
 
 #: InvenTree/settings.py:532
 msgid "Thai"
-msgstr ""
+msgstr "Thailandese"
 
 #: InvenTree/settings.py:533
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: InvenTree/settings.py:534
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: InvenTree/settings.py:535
 msgid "Chinese"
-msgstr ""
+msgstr "Cinese"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -266,7 +266,7 @@ msgstr ""
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "In attesa"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
@@ -274,31 +274,31 @@ msgstr ""
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "Completo"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "Annullato"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "Perso"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Reso"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "Spedito"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
@@ -550,7 +550,7 @@ msgstr ""
 #: templates/js/translated/part.js:1260 templates/js/translated/part.js:1316
 #: templates/js/translated/stock.js:1522 templates/js/translated/stock.js:1720
 msgid "Quantity"
-msgstr ""
+msgstr "Quantità"
 
 #: build/forms.py:49
 msgid "Number of items to build"
@@ -713,8 +713,8 @@ msgstr ""
 #: templates/InvenTree/search.html:112 templates/InvenTree/search.html:210
 #: templates/js/translated/barcode.js:362 templates/js/translated/bom.js:183
 #: templates/js/translated/build.js:586 templates/js/translated/build.js:873
-#: templates/js/translated/build.js:1139 templates/js/translated/company.js:400
-#: templates/js/translated/company.js:650 templates/js/translated/part.js:552
+#: templates/js/translated/build.js:1139 templates/js/translated/company.js:438
+#: templates/js/translated/company.js:688 templates/js/translated/part.js:552
 #: templates/js/translated/part.js:715 templates/js/translated/stock.js:120
 #: templates/js/translated/stock.js:883 templates/js/translated/stock.js:1708
 msgid "Part"
@@ -846,7 +846,7 @@ msgstr ""
 #: stock/forms.py:138 stock/forms.py:250 stock/forms.py:282 stock/models.py:573
 #: stock/models.py:1715 stock/models.py:1821
 #: stock/templates/stock/navbar.html:57 templates/js/translated/barcode.js:37
-#: templates/js/translated/bom.js:369 templates/js/translated/company.js:746
+#: templates/js/translated/bom.js:369 templates/js/translated/company.js:784
 #: templates/js/translated/stock.js:256 templates/js/translated/stock.js:497
 #: templates/js/translated/stock.js:1078
 msgid "Notes"
@@ -2178,7 +2178,7 @@ msgid "Description of the company"
 msgstr ""
 
 #: company/models.py:109 company/templates/company/company_base.html:70
-#: templates/js/translated/company.js:265
+#: templates/js/translated/company.js:303
 msgid "Website"
 msgstr ""
 
@@ -2221,8 +2221,8 @@ msgstr ""
 #: company/models.py:128 company/models.py:345 company/models.py:513
 #: order/models.py:160 part/models.py:712
 #: report/templates/report/inventree_build_order_base.html:165
-#: templates/js/translated/company.js:448
-#: templates/js/translated/company.js:730 templates/js/translated/part.js:809
+#: templates/js/translated/company.js:486
+#: templates/js/translated/company.js:768 templates/js/translated/part.js:809
 msgid "Link"
 msgstr ""
 
@@ -2280,9 +2280,9 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:89
 #: company/templates/company/supplier_part.html:98 part/bom.py:170
 #: part/bom.py:241 stock/templates/stock/item_base.html:366
-#: templates/js/translated/company.js:249
-#: templates/js/translated/company.js:425
-#: templates/js/translated/company.js:701
+#: templates/js/translated/company.js:287
+#: templates/js/translated/company.js:463
+#: templates/js/translated/company.js:739
 msgid "Manufacturer"
 msgstr ""
 
@@ -2293,8 +2293,8 @@ msgstr ""
 #: company/models.py:339 company/templates/company/manufacturer_part.html:93
 #: company/templates/company/supplier_part.html:106
 #: order/templates/order/purchase_order_detail.html:331 part/bom.py:171
-#: part/bom.py:242 templates/js/translated/company.js:441
-#: templates/js/translated/company.js:719
+#: part/bom.py:242 templates/js/translated/company.js:479
+#: templates/js/translated/company.js:757
 msgid "MPN"
 msgstr ""
 
@@ -2324,7 +2324,7 @@ msgstr ""
 #: company/models.py:419
 #: report/templates/report/inventree_test_report_base.html:90
 #: stock/models.py:1808 templates/InvenTree/settings/header.html:8
-#: templates/js/translated/company.js:551 templates/js/translated/part.js:470
+#: templates/js/translated/company.js:589 templates/js/translated/part.js:470
 #: templates/js/translated/stock.js:493
 msgid "Value"
 msgstr ""
@@ -2334,7 +2334,7 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:426 part/models.py:797 part/models.py:2204
-#: templates/js/translated/company.js:557 templates/js/translated/part.js:476
+#: templates/js/translated/company.js:595 templates/js/translated/part.js:476
 msgid "Units"
 msgstr ""
 
@@ -2347,8 +2347,8 @@ msgstr ""
 #: order/templates/order/order_base.html:92
 #: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
 #: part/bom.py:286 stock/templates/stock/item_base.html:383
-#: templates/js/translated/company.js:253
-#: templates/js/translated/company.js:675 templates/js/translated/order.js:234
+#: templates/js/translated/company.js:291
+#: templates/js/translated/company.js:713 templates/js/translated/order.js:234
 msgid "Supplier"
 msgstr ""
 
@@ -2394,7 +2394,7 @@ msgstr ""
 
 #: company/models.py:531 company/templates/company/supplier_part.html:113
 #: stock/models.py:472 stock/templates/stock/item_base.html:324
-#: templates/js/translated/company.js:751 templates/js/translated/stock.js:1074
+#: templates/js/translated/company.js:789 templates/js/translated/stock.js:1074
 msgid "Packaging"
 msgstr ""
 
@@ -2420,7 +2420,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:9
 #: company/templates/company/company_base.html:35
-#: templates/InvenTree/search.html:304 templates/js/translated/company.js:238
+#: templates/InvenTree/search.html:304 templates/js/translated/company.js:276
 msgid "Company"
 msgstr ""
 
@@ -2463,7 +2463,7 @@ msgstr ""
 #: company/templates/company/company_base.html:126 order/models.py:544
 #: order/templates/order/sales_order_base.html:94 stock/models.py:490
 #: stock/models.py:491 stock/templates/stock/item_base.html:276
-#: templates/js/translated/company.js:245 templates/js/translated/order.js:331
+#: templates/js/translated/company.js:283 templates/js/translated/order.js:331
 #: templates/js/translated/stock.js:1455
 msgid "Customer"
 msgstr ""
@@ -2614,12 +2614,12 @@ msgid "Order part"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:45
-#: templates/js/translated/company.js:473
+#: templates/js/translated/company.js:511
 msgid "Edit manufacturer part"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:49
-#: templates/js/translated/company.js:474
+#: templates/js/translated/company.js:512
 msgid "Delete manufacturer part"
 msgstr ""
 
@@ -2649,7 +2649,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:138
 #: company/templates/company/manufacturer_part.html:239
 #: part/templates/part/detail.html:214 part/templates/part/detail.html:294
-#: part/templates/part/detail.html:317 templates/js/translated/company.js:339
+#: part/templates/part/detail.html:317 templates/js/translated/company.js:377
 #: users/models.py:194
 msgid "Delete"
 msgstr ""
@@ -2741,17 +2741,17 @@ msgstr ""
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:457
 #: stock/templates/stock/item_base.html:388
-#: templates/js/translated/company.js:691 templates/js/translated/stock.js:1046
+#: templates/js/translated/company.js:729 templates/js/translated/stock.js:1046
 msgid "Supplier Part"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:44
-#: templates/js/translated/company.js:764
+#: templates/js/translated/company.js:802
 msgid "Edit supplier part"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:48
-#: templates/js/translated/company.js:765
+#: templates/js/translated/company.js:803
 msgid "Delete supplier part"
 msgstr ""
 
@@ -4749,8 +4749,8 @@ msgstr ""
 msgid "Part is virtual (not a physical part)"
 msgstr ""
 
-#: part/templates/part/part_base.html:53 templates/js/translated/company.js:416
-#: templates/js/translated/company.js:666 templates/js/translated/part.js:294
+#: part/templates/part/part_base.html:53 templates/js/translated/company.js:454
+#: templates/js/translated/company.js:704 templates/js/translated/part.js:294
 #: templates/js/translated/part.js:371
 msgid "Inactive"
 msgstr ""
@@ -6873,95 +6873,103 @@ msgstr ""
 msgid "No parts allocated for"
 msgstr ""
 
-#: templates/js/translated/company.js:36
+#: templates/js/translated/company.js:34
+msgid "Add Manufacturer"
+msgstr ""
+
+#: templates/js/translated/company.js:47 templates/js/translated/company.js:136
 msgid "Add Manufacturer Part"
 msgstr ""
 
-#: templates/js/translated/company.js:48
+#: templates/js/translated/company.js:59
 msgid "Edit Manufacturer Part"
 msgstr ""
 
-#: templates/js/translated/company.js:57
+#: templates/js/translated/company.js:68
 msgid "Delete Manufacturer Part"
 msgstr ""
 
-#: templates/js/translated/company.js:114
+#: templates/js/translated/company.js:124
+msgid "Add Supplier"
+msgstr ""
+
+#: templates/js/translated/company.js:152
 msgid "Add Supplier Part"
 msgstr ""
 
-#: templates/js/translated/company.js:124
+#: templates/js/translated/company.js:162
 msgid "Edit Supplier Part"
 msgstr ""
 
-#: templates/js/translated/company.js:134
+#: templates/js/translated/company.js:172
 msgid "Delete Supplier Part"
 msgstr ""
 
-#: templates/js/translated/company.js:181
+#: templates/js/translated/company.js:219
 msgid "Edit Company"
 msgstr ""
 
-#: templates/js/translated/company.js:202
+#: templates/js/translated/company.js:240
 msgid "Add new Company"
 msgstr ""
 
-#: templates/js/translated/company.js:279
+#: templates/js/translated/company.js:317
 msgid "Parts Supplied"
 msgstr ""
 
-#: templates/js/translated/company.js:288
+#: templates/js/translated/company.js:326
 msgid "Parts Manufactured"
 msgstr ""
 
-#: templates/js/translated/company.js:301
+#: templates/js/translated/company.js:339
 msgid "No company information found"
 msgstr ""
 
-#: templates/js/translated/company.js:319
+#: templates/js/translated/company.js:357
 msgid "The following manufacturer parts will be deleted"
 msgstr ""
 
-#: templates/js/translated/company.js:336
+#: templates/js/translated/company.js:374
 msgid "Delete Manufacturer Parts"
 msgstr ""
 
-#: templates/js/translated/company.js:389
+#: templates/js/translated/company.js:427
 msgid "No manufacturer parts found"
 msgstr ""
 
-#: templates/js/translated/company.js:408
-#: templates/js/translated/company.js:658 templates/js/translated/part.js:278
+#: templates/js/translated/company.js:446
+#: templates/js/translated/company.js:696 templates/js/translated/part.js:278
 #: templates/js/translated/part.js:363
 msgid "Template part"
 msgstr ""
 
-#: templates/js/translated/company.js:412
-#: templates/js/translated/company.js:662 templates/js/translated/part.js:282
+#: templates/js/translated/company.js:450
+#: templates/js/translated/company.js:700 templates/js/translated/part.js:282
 #: templates/js/translated/part.js:367
 msgid "Assembled part"
 msgstr ""
 
-#: templates/js/translated/company.js:536 templates/js/translated/part.js:452
+#: templates/js/translated/company.js:574 templates/js/translated/part.js:452
 msgid "No parameters found"
 msgstr ""
 
-#: templates/js/translated/company.js:572 templates/js/translated/part.js:493
+#: templates/js/translated/company.js:610 templates/js/translated/part.js:493
 msgid "Edit parameter"
 msgstr ""
 
-#: templates/js/translated/company.js:573 templates/js/translated/part.js:494
+#: templates/js/translated/company.js:611 templates/js/translated/part.js:494
 msgid "Delete parameter"
 msgstr ""
 
-#: templates/js/translated/company.js:592 templates/js/translated/part.js:511
+#: templates/js/translated/company.js:630 templates/js/translated/part.js:511
 msgid "Edit Parameter"
 msgstr ""
 
-#: templates/js/translated/company.js:603 templates/js/translated/part.js:523
+#: templates/js/translated/company.js:641 templates/js/translated/part.js:523
 msgid "Delete Parameter"
 msgstr ""
 
-#: templates/js/translated/company.js:639
+#: templates/js/translated/company.js:677
 msgid "No supplier parts found"
 msgstr ""
 
@@ -7016,16 +7024,16 @@ msgstr ""
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:841 templates/modals.html:21
+#: templates/js/translated/forms.js:865 templates/modals.html:21
 #: templates/modals.html:47
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1208
+#: templates/js/translated/forms.js:1256
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:1373
+#: templates/js/translated/forms.js:1421
 msgid "Clear input"
 msgstr ""
 
