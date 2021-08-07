@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-07 12:01+0000\n"
+"POT-Creation-Date: 2021-08-07 12:28+0000\n"
 "PO-Revision-Date: 2021-08-05 03:29\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -68,36 +68,36 @@ msgstr "Подтвердите новый пароль"
 msgid "Select Category"
 msgstr "Выбрать категорию"
 
-#: InvenTree/helpers.py:396
+#: InvenTree/helpers.py:401
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr "Дублировать серийный номер: {n}"
 
-#: InvenTree/helpers.py:403 order/models.py:315 order/models.py:425
+#: InvenTree/helpers.py:408 order/models.py:315 order/models.py:425
 #: stock/views.py:1363
 msgid "Invalid quantity provided"
 msgstr "недопустимое количество"
 
-#: InvenTree/helpers.py:406
+#: InvenTree/helpers.py:411
 msgid "Empty serial number string"
 msgstr "Пустая строка серийного номера"
 
-#: InvenTree/helpers.py:428 InvenTree/helpers.py:431 InvenTree/helpers.py:434
-#: InvenTree/helpers.py:459
+#: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
+#: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Некорректный идентификатор группы {g}"
 
-#: InvenTree/helpers.py:464
+#: InvenTree/helpers.py:469
 #, python-brace-format
 msgid "Duplicate serial: {g}"
 msgstr "Повторяющийся серийный {g}"
 
-#: InvenTree/helpers.py:472
+#: InvenTree/helpers.py:477
 msgid "No serial numbers found"
 msgstr "Серийных номеров не найдено"
 
-#: InvenTree/helpers.py:476
+#: InvenTree/helpers.py:481
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Число уникальных серийных номеров ({s}) должно соответствовать количеству ({q})"
@@ -118,8 +118,8 @@ msgstr "Комментарий"
 msgid "File comment"
 msgstr "Комментарий к файлу"
 
-#: InvenTree/models.py:70 InvenTree/models.py:71 common/models.py:955
-#: common/models.py:956 part/models.py:2035
+#: InvenTree/models.py:70 InvenTree/models.py:71 common/models.py:969
+#: common/models.py:970 part/models.py:2035
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1537
 msgid "User"
@@ -522,7 +522,7 @@ msgstr "Целевая дата для сборки. Сборка будет п�
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/auto_allocate.html:17
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:34 common/models.py:984
+#: build/templates/build/detail.html:34 common/models.py:1001
 #: company/forms.py:42 company/templates/company/supplier_part.html:226
 #: order/forms.py:120 order/forms.py:142 order/forms.py:159 order/models.py:706
 #: order/models.py:952 order/templates/order/order_wizard/match_parts.html:30
@@ -660,8 +660,8 @@ msgstr "Порядок сборки"
 #: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:42
 #: part/templates/part/navbar.html:45 templates/InvenTree/index.html:229
 #: templates/InvenTree/search.html:185
-#: templates/InvenTree/settings/navbar.html:89
-#: templates/InvenTree/settings/navbar.html:91 users/models.py:44
+#: templates/InvenTree/settings/navbar.html:101
+#: templates/InvenTree/settings/navbar.html:103 users/models.py:44
 msgid "Build Orders"
 msgstr "Порядок сборки"
 
@@ -1556,7 +1556,7 @@ msgstr ""
 msgid "Select {name} file to upload"
 msgstr ""
 
-#: common/models.py:322 common/models.py:815 common/models.py:948
+#: common/models.py:322 common/models.py:815 common/models.py:962
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
@@ -2059,27 +2059,43 @@ msgid "Show overdue SOs on the homepage"
 msgstr ""
 
 #: common/models.py:930
-msgid "Search Preview Results"
+msgid "Inline label display"
 msgstr ""
 
 #: common/models.py:931
+msgid "Display PDF labels in the browser, instead of downloading as a file"
+msgstr ""
+
+#: common/models.py:937
+msgid "Inline report display"
+msgstr ""
+
+#: common/models.py:938
+msgid "Display PDF reports in the browser, instead of downloading as a file"
+msgstr ""
+
+#: common/models.py:944
+msgid "Search Preview Results"
+msgstr ""
+
+#: common/models.py:945
 msgid "Number of results to show in search preview window"
 msgstr ""
 
-#: common/models.py:985 company/forms.py:43
+#: common/models.py:1002 company/forms.py:43
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:992 company/templates/company/supplier_part.html:231
+#: common/models.py:1009 company/templates/company/supplier_part.html:231
 #: templates/js/translated/part.js:1143
 msgid "Price"
 msgstr ""
 
-#: common/models.py:993
+#: common/models.py:1010
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1086
+#: common/models.py:1103
 msgid "Default"
 msgstr ""
 
@@ -2523,8 +2539,8 @@ msgstr ""
 #: part/templates/part/detail.html:50 part/templates/part/navbar.html:71
 #: part/templates/part/navbar.html:74 templates/InvenTree/index.html:260
 #: templates/InvenTree/search.html:325
-#: templates/InvenTree/settings/navbar.html:95
-#: templates/InvenTree/settings/navbar.html:97 templates/navbar.html:37
+#: templates/InvenTree/settings/navbar.html:107
+#: templates/InvenTree/settings/navbar.html:109 templates/navbar.html:37
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2547,8 +2563,8 @@ msgstr ""
 #: part/templates/part/detail.html:71 part/templates/part/navbar.html:79
 #: part/templates/part/navbar.html:82 templates/InvenTree/index.html:291
 #: templates/InvenTree/search.html:345
-#: templates/InvenTree/settings/navbar.html:101
-#: templates/InvenTree/settings/navbar.html:103 templates/navbar.html:46
+#: templates/InvenTree/settings/navbar.html:113
+#: templates/InvenTree/settings/navbar.html:115 templates/navbar.html:46
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -2684,8 +2700,8 @@ msgstr ""
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:150 templates/InvenTree/search.html:196
 #: templates/InvenTree/search.html:232
-#: templates/InvenTree/settings/navbar.html:83
-#: templates/InvenTree/settings/navbar.html:85
+#: templates/InvenTree/settings/navbar.html:95
+#: templates/InvenTree/settings/navbar.html:97
 #: templates/js/translated/part.js:391 templates/js/translated/part.js:616
 #: templates/js/translated/part.js:776 templates/js/translated/stock.js:121
 #: templates/js/translated/stock.js:923 templates/navbar.html:26
@@ -3479,8 +3495,8 @@ msgstr ""
 #: part/templates/part/category_navbar.html:21
 #: part/templates/part/category_navbar.html:24
 #: templates/InvenTree/index.html:102 templates/InvenTree/search.html:114
-#: templates/InvenTree/settings/navbar.html:71
-#: templates/InvenTree/settings/navbar.html:73
+#: templates/InvenTree/settings/navbar.html:83
+#: templates/InvenTree/settings/navbar.html:85
 #: templates/js/translated/part.js:977 templates/navbar.html:23
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
@@ -3990,7 +4006,7 @@ msgstr ""
 
 #: part/models.py:693 part/models.py:2279
 #: part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:165
+#: templates/InvenTree/settings/settings.html:167
 #: templates/js/translated/part.js:763
 msgid "Category"
 msgstr ""
@@ -4181,7 +4197,7 @@ msgid "Parameter Units"
 msgstr ""
 
 #: part/models.py:2236 part/models.py:2285 part/models.py:2286
-#: templates/InvenTree/settings/settings.html:160
+#: templates/InvenTree/settings/settings.html:162
 msgid "Parameter Template"
 msgstr ""
 
@@ -4193,7 +4209,7 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2290 templates/InvenTree/settings/settings.html:169
+#: part/models.py:2290 templates/InvenTree/settings/settings.html:171
 msgid "Default Value"
 msgstr ""
 
@@ -6230,38 +6246,48 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: templates/InvenTree/settings/navbar.html:34
-#: templates/InvenTree/settings/navbar.html:36
+#: templates/InvenTree/settings/navbar.html:33
+#: templates/InvenTree/settings/navbar.html:35
+msgid "Labels"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:39
+#: templates/InvenTree/settings/navbar.html:41
+msgid "Reports"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:46
+#: templates/InvenTree/settings/navbar.html:48
 #: templates/InvenTree/settings/settings.html:8 templates/navbar.html:84
 msgid "Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/navbar.html:44
+#: templates/InvenTree/settings/navbar.html:56
 msgid "InvenTree Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/navbar.html:47
-#: templates/InvenTree/settings/navbar.html:49 templates/stats.html:9
-msgid "Server"
-msgstr ""
-
-#: templates/InvenTree/settings/navbar.html:53
-#: templates/InvenTree/settings/navbar.html:55
-msgid "Barcodes"
-msgstr ""
-
 #: templates/InvenTree/settings/navbar.html:59
-#: templates/InvenTree/settings/navbar.html:61
-msgid "Currencies"
+#: templates/InvenTree/settings/navbar.html:61 templates/stats.html:9
+msgid "Server"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:65
 #: templates/InvenTree/settings/navbar.html:67
-msgid "Reporting"
+msgid "Barcodes"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:71
+#: templates/InvenTree/settings/navbar.html:73
+msgid "Currencies"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:77
 #: templates/InvenTree/settings/navbar.html:79
+msgid "Reporting"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:89
+#: templates/InvenTree/settings/navbar.html:91
 msgid "Categories"
 msgstr ""
 
@@ -6290,6 +6316,7 @@ msgid "Purchase Order Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/report.html:10
+#: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
 msgstr ""
 
@@ -6301,21 +6328,21 @@ msgstr ""
 msgid "Edit setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:150
+#: templates/InvenTree/settings/settings.html:152
 msgid "No category parameter templates found"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:172
-#: templates/InvenTree/settings/settings.html:269
+#: templates/InvenTree/settings/settings.html:174
+#: templates/InvenTree/settings/settings.html:271
 msgid "Edit Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:173
-#: templates/InvenTree/settings/settings.html:270
+#: templates/InvenTree/settings/settings.html:175
+#: templates/InvenTree/settings/settings.html:272
 msgid "Delete Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:249
+#: templates/InvenTree/settings/settings.html:251
 msgid "No part parameter templates found"
 msgstr ""
 
@@ -6392,6 +6419,10 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user_labels.html:9
+msgid "Label Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_search.html:9
