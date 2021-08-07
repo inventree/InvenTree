@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-05 10:29+0000\n"
-"PO-Revision-Date: 2021-08-05 11:29\n"
+"POT-Creation-Date: 2021-08-07 11:08+0000\n"
+"PO-Revision-Date: 2021-08-07 11:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6279,20 +6279,6 @@ msgstr "Teil importieren"
 msgid "Part Parameter Templates"
 msgstr "Teil-Parametervorlage"
 
-#: templates/InvenTree/settings/part.html:80
-msgid "No part parameter templates found"
-msgstr "Keine Teilparametervorlagen gefunden"
-
-#: templates/InvenTree/settings/part.html:100
-#: templates/InvenTree/settings/settings.html:172
-msgid "Edit Template"
-msgstr "Vorlage bearbeiten"
-
-#: templates/InvenTree/settings/part.html:101
-#: templates/InvenTree/settings/settings.html:173
-msgid "Delete Template"
-msgstr "Vorlage löschen"
-
 #: templates/InvenTree/settings/po.html:9
 msgid "Purchase Order Settings"
 msgstr "Bestellungs-Einstellungen"
@@ -6312,6 +6298,20 @@ msgstr "Einstellungen ändern"
 #: templates/InvenTree/settings/settings.html:150
 msgid "No category parameter templates found"
 msgstr "Keine Kategorie-Parametervorlagen gefunden"
+
+#: templates/InvenTree/settings/settings.html:172
+#: templates/InvenTree/settings/settings.html:269
+msgid "Edit Template"
+msgstr "Vorlage bearbeiten"
+
+#: templates/InvenTree/settings/settings.html:173
+#: templates/InvenTree/settings/settings.html:270
+msgid "Delete Template"
+msgstr "Vorlage löschen"
+
+#: templates/InvenTree/settings/settings.html:249
+msgid "No part parameter templates found"
+msgstr "Keine Teilparametervorlagen gefunden"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
