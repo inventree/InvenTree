@@ -7,12 +7,15 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import json
 
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -801,6 +804,13 @@ class SettingsView(TemplateView):
             ctx["rates_updated"] = backend.last_update
         except:
             ctx["rates_updated"] = None
+
+        # load locale stats
+        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        try:
+            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
+        except:
+            ctx["locale_stats"] = {}
 
         return ctx
 
