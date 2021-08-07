@@ -17,7 +17,16 @@ function yesNoLabel(value) {
 function partFields(options={}) {
 
     var fields = {
-        category: {},
+        category: {
+            secondary: {
+                title: '{% trans "Add Part Category" %}',
+                fields: function(data) {
+                    var fields = categoryFields();
+
+                    return fields;
+                }
+            }
+        },
         name: {},
         IPN: {},
         revision: {},
@@ -30,7 +39,8 @@ function partFields(options={}) {
         link: {
             icon: 'fa-link',
         },
-        default_location: {},
+        default_location: {
+        },
         default_supplier: {},
         default_expiry: {
             icon: 'fa-calendar-alt',
