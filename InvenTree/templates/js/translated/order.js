@@ -13,6 +13,16 @@ function createSalesOrder(options={}) {
             },
             customer: {
                 value: options.customer,
+                secondary: {
+                    title: '{% trans "Add Customer" %}',
+                    fields: function(data) {
+                        var fields = companyFormFields();
+                        
+                        fields.is_customer.value = true;
+
+                        return fields;
+                    }
+                }
             },
             customer_reference: {},
             description: {},
