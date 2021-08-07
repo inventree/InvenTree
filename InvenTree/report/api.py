@@ -259,7 +259,8 @@ class ReportPrintMixin:
             return InvenTree.helpers.DownloadFile(
                 pdf,
                 report_name,
-                content_type='application/pdf'
+                content_type='application/pdf',
+                inline=inline,
             )
 
 
