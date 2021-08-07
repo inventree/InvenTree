@@ -1240,7 +1240,9 @@ function setRelatedFieldData(name, data, options) {
 }
 
 
-function initializeChoiceField(name, field, options) {
+function initializeChoiceField(field, fields, options) {
+
+    var name = field.name;
 
     var select = $(options.modal).find(`#id_${name}`);
 
