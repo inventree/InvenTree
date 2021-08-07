@@ -30,6 +30,17 @@ function createManufacturerPart(options={}) {
         fields.manufacturer.value = options.manufacturer;
     }
 
+    fields.manufacturer.secondary = {
+        title: '{% trans "Add Manufacturer" %}',
+        fields: function(data) {
+            var company_fields = companyFormFields();
+
+            company_fields.is_manufacturer.value = true;
+            
+            return company_fields;
+        }
+    }
+
     constructForm('{% url "api-manufacturer-part-list" %}', {
         fields: fields,
         method: 'POST',
