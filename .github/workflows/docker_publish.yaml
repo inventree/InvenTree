@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
+      - name: Check Release tag
+        run: |
+          python3 ci/check_version_number.py ${{ github.event.release.tag_name }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
