@@ -2143,6 +2143,16 @@ class PartTestTemplate(models.Model):
     )
 
 
+def validate_template_name(name):
+    """
+    Prevent illegal characters in "name" field for PartParameterTemplate
+    """
+
+    for c in "!@#$%^&*()<>{}[].,?/\|~`_+-=\'\"":
+        if c in str(name):
+            raise ValidationError(_(f"Illegal character in template name ({c})"))
+
+
 class PartParameterTemplate(models.Model):
     """
     A PartParameterTemplate provides a template for key:value pairs for extra
@@ -2181,7 +2191,15 @@ class PartParameterTemplate(models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
-    name = models.CharField(max_length=100, verbose_name=_('Name'), help_text=_('Parameter Name'), unique=True)
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Parameter Name'),
+        unique=True,
+        validators=[
+            validate_template_name,
+        ]
+    )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
 
