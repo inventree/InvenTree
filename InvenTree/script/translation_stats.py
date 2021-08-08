@@ -3,6 +3,7 @@ This script calculates translation coverage for various languages
 """
 
 import os
+import json
 
 
 def calculate_coverage(filename):
@@ -36,8 +37,10 @@ if __name__ == '__main__':
 
     MY_DIR = os.path.dirname(os.path.realpath(__file__))
     LC_DIR = os.path.abspath(os.path.join(MY_DIR, '..', 'locale'))
+    STAT_FILE = os.path.abspath(os.path.join(MY_DIR, '..', 'InvenTree/locale_stats.json'))
 
     locales = {}
+    locales_perc = {}
 
     print("InvenTree translation coverage:")
 
@@ -64,5 +67,10 @@ if __name__ == '__main__':
             percentage = 0
 
         print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
+        locales_perc[locale] = percentage
 
     print("-" * 16)
+
+    # write locale stats
+    with open(STAT_FILE, 'w') as target:
+        json.dump(locales_perc, target)

@@ -565,6 +565,30 @@ function insertConfirmButton(options) {
 
 
 /*
+ * Extract all specified form values as a single object
+ */
+function extractFormData(fields, options) {
+
+    var data = {};
+
+    for (var idx = 0; idx < options.field_names.length; idx++) {
+        
+        var name = options.field_names[idx];
+
+        var field = fields[name] || null;
+
+        if (!field) continue;
+
+        if (field.type == 'candy') continue;
+
+        data[name] = getFormFieldValue(name, field, options);
+    }
+
+    return data;
+}
+
+
+/*
  * Submit form data to the server.
  * 
  */
@@ -950,10 +974,10 @@ function initializeRelatedFields(fields, options) {
 
         switch (field.type) {
             case 'related field':
-                initializeRelatedField(name, field, options);
+                initializeRelatedField(field, fields, options);
                 break;
             case 'choice':
-                initializeChoiceField(name, field, options);
+                initializeChoiceField(field, fields, options);
                 break;
         }
     }
@@ -968,7 +992,9 @@ function initializeRelatedFields(fields, options) {
  * - field: The field data object
  * - options: The options object provided by the client
  */
-function addSecondaryModal(name, field, options) {
+function addSecondaryModal(field, fields, options) {
+
+    var name = field.name;
 
     var secondary = field.secondary;
 
@@ -981,22 +1007,42 @@ function addSecondaryModal(name, field, options) {
 
     $(options.modal).find(`label[for="id_${name}"]`).append(html);
 
-    // TODO: Launch a callback
+    // Callback function when the secondary button is pressed
     $(options.modal).find(`#btn-new-${name}`).click(function() {
 
-        if (secondary.callback) {
-            // A "custom" callback can be specified for the button
-            secondary.callback(field, options);
-        } else if (secondary.api_url) {
-            // By default, a new modal form is created, with the parameters specified
-            // The parameters match the "normal" form creation parameters
+        // Determine the API query URL
+        var url = secondary.api_url || field.api_url;
 
-            secondary.onSuccess = function(data, opts) {
-                setRelatedFieldData(name, data, options);
-            };
+        // If the "fields" attribute is a function, call it with data
+        if (secondary.fields instanceof Function) {
 
-            constructForm(secondary.api_url, secondary);
+            // Extract form values at time of button press
+            var data = extractFormData(fields, options)
+
+            secondary.fields = secondary.fields(data);
         }
+
+        // If no onSuccess function is defined, provide a default one
+        if (!secondary.onSuccess) {
+            secondary.onSuccess = function(data, opts) {
+
+                // Force refresh from the API, to get full detail
+                inventreeGet(`${url}${data.pk}/`, {}, {
+                    success: function(responseData) {
+
+                        setRelatedFieldData(name, responseData, options);
+                    }
+                });
+            };
+        }
+
+        // Method should be "POST" for creation
+        secondary.method = secondary.method || 'POST';
+
+        constructForm(
+            url,
+            secondary
+        );
     });
 }
 
@@ -1010,7 +1056,9 @@ function addSecondaryModal(name, field, options) {
  * - field: Field definition from the OPTIONS request
  * - options: Original options object provided by the client
  */
-function initializeRelatedField(name, field, options) {
+function initializeRelatedField(field, fields, options) {
+
+    var name = field.name;
 
     if (!field.api_url) {
         // TODO: Provide manual api_url option?
@@ -1023,7 +1071,7 @@ function initializeRelatedField(name, field, options) {
 
     // Add a button to launch a 'secondary' modal
     if (field.secondary != null) {
-        addSecondaryModal(name, field, options);
+        addSecondaryModal(field, fields, options);
     }
 
     // TODO: Add 'placeholder' support for entry select2 fields
@@ -1192,7 +1240,9 @@ function setRelatedFieldData(name, data, options) {
 }
 
 
-function initializeChoiceField(name, field, options) {
+function initializeChoiceField(field, fields, options) {
+
+    var name = field.name;
 
     var select = $(options.modal).find(`#id_${name}`);
 
