@@ -982,6 +982,12 @@ class SalesOrderAdditionalLineItem(OrderLineItem):
         help_text=_('Unit sale price'),
     )
 
+    def sale_price_converted(self):
+        return convert_money(self.sale_price, currency_code_default())
+
+    def sale_price_converted_currency(self):
+        return currency_code_default()
+
     class Meta:
         unique_together = [
         ]
