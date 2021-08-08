@@ -1106,6 +1106,7 @@ function loadPriceBreakTable(table, options) {
         formatNoMatches: function() {
             return `{% trans "No ${human_name} information found" %}`;
         },
+        queryParams: {part: options.part},
         url: options.url,
         onLoadSuccess: function(tableData) {
             if (linkedGraph) {
@@ -1201,6 +1202,7 @@ function initPriceBreakSet(table, options) {
             human_name: pb_human_name,
             url: pb_url,
             linkedGraph: linkedGraph,
+            part: part_id,
         }
     );
 
