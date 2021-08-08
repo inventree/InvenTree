@@ -410,11 +410,11 @@ $("#so-lines-table").inventreeTable({
             },
             footerFormatter: function(data) {
                 var total = data.map(function (row) {
-                  return +row['sale_price']*row['quantity']
+                  return +row['sale_price_converted']*row['quantity']
                 }).reduce(function (sum, i) {
                   return sum + i
                 }, 0)
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency)  || 'USD';
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_converted_currency)  || 'USD';
                 var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
                 return formatter.format(total)
               }
@@ -708,11 +708,11 @@ $("#so-additional-lines-table").inventreeTable({
             },
             footerFormatter: function(data) {
                 var total = data.map(function (row) {
-                  return +row['sale_price']*row['quantity']
+                  return +row['sale_price_converted']*row['quantity']
                 }).reduce(function (sum, i) {
                   return sum + i
                 }, 0)
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency)  || 'USD';
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_converted_currency)  || 'USD';
                 var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
                 return formatter.format(total)
               }

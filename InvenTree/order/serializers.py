@@ -380,6 +380,16 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Sale price currency'),
     )
 
+    sale_price_converted = InvenTreeMoneySerializer(
+        max_digits=19,
+        decimal_places=4,
+        allow_null=True
+    )
+
+    sale_price_converted_string = serializers.CharField(source='sale_price_converted', read_only=True)
+
+    sale_price_converted_currency = serializers.CharField(read_only=True)
+
     class Meta:
         model = SalesOrderLineItem
 
@@ -398,6 +408,9 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
+            'sale_price_converted',
+            'sale_price_converted_currency',
+            'sale_price_converted_string',
         ]
 
 

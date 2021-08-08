@@ -953,6 +953,12 @@ class SalesOrderLineItem(OrderLineItem):
         """ Return True if this line item is over allocated """
         return self.allocated_quantity() > self.quantity
 
+    def sale_price_converted(self):
+        return convert_money(self.sale_price, currency_code_default())
+
+    def sale_price_converted_currency(self):
+        return currency_code_default()
+
 
 class SalesOrderAdditionalLineItem(OrderLineItem):
     """
