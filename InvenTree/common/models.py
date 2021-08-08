@@ -926,6 +926,20 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        "LABEL_INLINE": {
+            'name': _('Inline label display'),
+            'description': _('Display PDF labels in the browser, instead of downloading as a file'),
+            'default': True,
+            'validator': bool,
+        },
+
+        "REPORT_INLINE": {
+            'name': _('Inline report display'),
+            'description': _('Display PDF reports in the browser, instead of downloading as a file'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in search preview window'),
@@ -965,7 +979,10 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     @classmethod
     def get_filters(cls, key, **kwargs):
-        return {'key__iexact': key, 'user__id': kwargs['user'].id}
+        return {
+            'key__iexact': key,
+            'user__id': kwargs['user'].id
+        }
 
 
 class PriceBreak(models.Model):

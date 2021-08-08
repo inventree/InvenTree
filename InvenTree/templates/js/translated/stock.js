@@ -2,6 +2,18 @@
 {% load inventree_extras %}
 {% load status_codes %}
 
+
+function locationFields() {
+    return {
+        parent: {
+            help_text: '{% trans "Parent stock location" %}',
+        },
+        name: {},
+        description: {},
+    };
+}
+
+
 /* Stock API functions
  * Requires api.js to be loaded first
  */

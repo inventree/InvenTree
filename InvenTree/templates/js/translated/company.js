@@ -30,6 +30,17 @@ function createManufacturerPart(options={}) {
         fields.manufacturer.value = options.manufacturer;
     }
 
+    fields.manufacturer.secondary = {
+        title: '{% trans "Add Manufacturer" %}',
+        fields: function(data) {
+            var company_fields = companyFormFields();
+
+            company_fields.is_manufacturer.value = true;
+            
+            return company_fields;
+        }
+    }
+
     constructForm('{% url "api-manufacturer-part-list" %}', {
         fields: fields,
         method: 'POST',
@@ -72,7 +83,7 @@ function supplierPartFields() {
             filters: {
                 part_detail: true,
                 manufacturer_detail: true,
-            }
+            },
         },
         description: {},
         link: {
@@ -107,6 +118,33 @@ function createSupplierPart(options={}) {
     if (options.manufacturer_part) {
         fields.manufacturer_part.value = options.manufacturer_part;
     }
+
+    // Add a secondary modal for the supplier
+    fields.supplier.secondary = {
+        title: '{% trans "Add Supplier" %}',
+        fields: function(data) {
+            var company_fields = companyFormFields();
+
+            company_fields.is_supplier.value = true;
+
+            return company_fields;
+        }
+    };
+
+    // Add a secondary modal for the manufacturer part
+    fields.manufacturer_part.secondary = {
+        title: '{% trans "Add Manufacturer Part" %}',
+        fields: function(data) {
+            var mp_fields = manufacturerPartFields();
+
+            if (data.part) {
+                mp_fields.part.value = data.part;
+                mp_fields.part.hidden = true;
+            }
+
+            return mp_fields;
+        }
+    };
 
     constructForm('{% url "api-supplier-part-list" %}', {
         fields: fields,

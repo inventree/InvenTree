@@ -344,13 +344,15 @@ def GetExportFormats():
     ]
 
 
-def DownloadFile(data, filename, content_type='application/text'):
-    """ Create a dynamic file for the user to download.
+def DownloadFile(data, filename, content_type='application/text', inline=False):
+    """
+    Create a dynamic file for the user to download.
 
     Args:
         data: Raw file data (string or bytes)
         filename: Filename for the file download
         content_type: Content type for the download
+        inline: Download "inline" or as attachment? (Default = attachment)
 
     Return:
         A StreamingHttpResponse object wrapping the supplied data
@@ -365,7 +367,10 @@ def DownloadFile(data, filename, content_type='application/text'):
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
     response['Content-Length'] = len(data)
-    response['Content-Disposition'] = 'attachment; filename={f}'.format(f=filename)
+
+    disposition = "inline" if inline else "attachment"
+
+    response['Content-Disposition'] = f'{disposition}; filename={filename}'
 
     return response
 
