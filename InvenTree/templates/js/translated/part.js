@@ -1115,7 +1115,7 @@ function loadPriceBreakTable(table, options) {
 
                 // split up for graph definition
                 var graphLabels = Array.from(tableData, x => x.quantity);
-                var graphData = Array.from(tableData, x => parseFloat(x.price));
+                var graphData = Array.from(tableData, x => x.price);
 
                 // destroy chart if exists
                 if (chart){
