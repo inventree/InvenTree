@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -4179,10 +4179,9 @@ msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
 #: part/models.py:2153
-#, fuzzy, python-brace-format
-#| msgid "Illegal character in name ({x})"
+#, python-brace-format
 msgid "Illegal character in template name ({c})"
-msgstr "Недопустимый символ в имени ({x})"
+msgstr ""
 
 #: part/models.py:2189
 msgid "Parameter template name must be unique"
@@ -7207,10 +7206,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:22
-#, fuzzy
-#| msgid "Select Category"
 msgid "Add Part Category"
-msgstr "Выбрать категорию"
+msgstr ""
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
@@ -7349,10 +7346,8 @@ msgid "Single Price Difference"
 msgstr ""
 
 #: templates/js/translated/stock.js:9
-#, fuzzy
-#| msgid "Confirm stock allocation"
 msgid "Parent stock location"
-msgstr "Подтвердите выделение запасов"
+msgstr ""
 
 #: templates/js/translated/stock.js:39
 msgid "Export Stock"
@@ -8106,3 +8101,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -6252,10 +6252,8 @@ msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:39
 #: templates/InvenTree/settings/navbar.html:41
-#, fuzzy
-#| msgid "Export"
 msgid "Reports"
-msgstr "Exportar"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:46
 #: templates/InvenTree/settings/navbar.html:48
@@ -6876,10 +6874,8 @@ msgid "No parts allocated for"
 msgstr ""
 
 #: templates/js/translated/company.js:34
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Add Manufacturer"
-msgstr "Fabricante"
+msgstr ""
 
 #: templates/js/translated/company.js:47 templates/js/translated/company.js:136
 msgid "Add Manufacturer Part"
@@ -6894,10 +6890,8 @@ msgid "Delete Manufacturer Part"
 msgstr ""
 
 #: templates/js/translated/company.js:124 templates/js/translated/order.js:58
-#, fuzzy
-#| msgid "Supplier"
 msgid "Add Supplier"
-msgstr "Proveedor"
+msgstr ""
 
 #: templates/js/translated/company.js:152
 msgid "Add Supplier Part"
@@ -7176,10 +7170,8 @@ msgid "Supplier Part ID"
 msgstr ""
 
 #: templates/js/translated/order.js:17
-#, fuzzy
-#| msgid "Customer"
 msgid "Add Customer"
-msgstr "Cliente"
+msgstr ""
 
 #: templates/js/translated/order.js:42
 msgid "Create Sales Order"
@@ -7214,10 +7206,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:22
-#, fuzzy
-#| msgid "Select Category"
 msgid "Add Part Category"
-msgstr "Seleccionar Categoría"
+msgstr ""
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
@@ -8111,3 +8101,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

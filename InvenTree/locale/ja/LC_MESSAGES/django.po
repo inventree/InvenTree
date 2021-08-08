@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -6874,10 +6874,8 @@ msgid "No parts allocated for"
 msgstr ""
 
 #: templates/js/translated/company.js:34
-#, fuzzy
-#| msgid "Edit Manufacturer Part"
 msgid "Add Manufacturer"
-msgstr "メーカー・パーツの編集"
+msgstr ""
 
 #: templates/js/translated/company.js:47 templates/js/translated/company.js:136
 msgid "Add Manufacturer Part"
@@ -6892,10 +6890,8 @@ msgid "Delete Manufacturer Part"
 msgstr "メーカー・パーツを削除"
 
 #: templates/js/translated/company.js:124 templates/js/translated/order.js:58
-#, fuzzy
-#| msgid "New Supplier Part"
 msgid "Add Supplier"
-msgstr "新しいサプライヤー・パーツ"
+msgstr ""
 
 #: templates/js/translated/company.js:152
 msgid "Add Supplier Part"
@@ -7210,10 +7206,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:22
-#, fuzzy
-#| msgid "Select Category"
 msgid "Add Part Category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
@@ -8107,3 +8101,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

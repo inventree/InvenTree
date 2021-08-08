@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -7206,10 +7206,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:22
-#, fuzzy
-#| msgid "Select Category"
 msgid "Add Part Category"
-msgstr "Categorie selecteren"
+msgstr ""
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
@@ -7348,10 +7346,8 @@ msgid "Single Price Difference"
 msgstr ""
 
 #: templates/js/translated/stock.js:9
-#, fuzzy
-#| msgid "Confirm stock allocation"
 msgid "Parent stock location"
-msgstr "Bevestig de voorraadtoewijzing"
+msgstr ""
 
 #: templates/js/translated/stock.js:39
 msgid "Export Stock"
@@ -8105,3 +8101,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

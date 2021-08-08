@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -23,22 +23,22 @@ msgstr ""
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Nessuna azione specificata"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Nessuna azione corrispondente trovata"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Inserisci la data"
 
 #: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:108 templates/js/translated/forms.js:545
 msgid "Confirm"
-msgstr ""
+msgstr "Conferma"
 
 #: InvenTree/forms.py:127
 msgid "Confirm delete"
@@ -50,23 +50,23 @@ msgstr ""
 
 #: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "Inserire la password"
 
 #: InvenTree/forms.py:161
 msgid "Enter new password"
-msgstr ""
+msgstr "Inserire una nuova password"
 
 #: InvenTree/forms.py:168
 msgid "Confirm password"
-msgstr ""
+msgstr "Conferma la password"
 
 #: InvenTree/forms.py:169
 msgid "Confirm new password"
-msgstr ""
+msgstr "Conferma la nuova password"
 
 #: InvenTree/forms.py:201
 msgid "Select Category"
-msgstr ""
+msgstr "Selezione una categoria"
 
 #: InvenTree/helpers.py:401
 #, python-brace-format
@@ -181,75 +181,75 @@ msgstr ""
 
 #: InvenTree/settings.py:518
 msgid "German"
-msgstr ""
+msgstr "Tedesco"
 
 #: InvenTree/settings.py:519
 msgid "Greek"
-msgstr ""
+msgstr "Greco"
 
 #: InvenTree/settings.py:520
 msgid "English"
-msgstr ""
+msgstr "Inglese"
 
 #: InvenTree/settings.py:521
 msgid "Spanish"
-msgstr ""
+msgstr "Spagnolo"
 
 #: InvenTree/settings.py:522
 msgid "French"
-msgstr ""
+msgstr "Francese"
 
 #: InvenTree/settings.py:523
 msgid "Hebrew"
-msgstr ""
+msgstr "Ebraico"
 
 #: InvenTree/settings.py:524
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: InvenTree/settings.py:525
 msgid "Japanese"
-msgstr ""
+msgstr "Giapponese"
 
 #: InvenTree/settings.py:526
 msgid "Korean"
-msgstr ""
+msgstr "Coreano"
 
 #: InvenTree/settings.py:527
 msgid "Dutch"
-msgstr ""
+msgstr "Olandese"
 
 #: InvenTree/settings.py:528
 msgid "Norwegian"
-msgstr ""
+msgstr "Norvegese"
 
 #: InvenTree/settings.py:529
 msgid "Polish"
-msgstr ""
+msgstr "Polacco"
 
 #: InvenTree/settings.py:530
 msgid "Russian"
-msgstr ""
+msgstr "Russo"
 
 #: InvenTree/settings.py:531
 msgid "Swedish"
-msgstr ""
+msgstr "Svedese"
 
 #: InvenTree/settings.py:532
 msgid "Thai"
-msgstr ""
+msgstr "Thailandese"
 
 #: InvenTree/settings.py:533
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: InvenTree/settings.py:534
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: InvenTree/settings.py:535
 msgid "Chinese"
-msgstr ""
+msgstr "Cinese"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -266,7 +266,7 @@ msgstr ""
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "In attesa"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
@@ -274,31 +274,31 @@ msgstr ""
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "Completo"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "Annullato"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "Perso"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Reso"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "Spedito"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
@@ -550,7 +550,7 @@ msgstr ""
 #: templates/js/translated/part.js:1270 templates/js/translated/part.js:1326
 #: templates/js/translated/stock.js:1534 templates/js/translated/stock.js:1732
 msgid "Quantity"
-msgstr ""
+msgstr "Quantità"
 
 #: build/forms.py:49
 msgid "Number of items to build"
@@ -8101,3 +8101,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

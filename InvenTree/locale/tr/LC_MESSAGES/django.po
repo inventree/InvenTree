@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -4179,10 +4179,9 @@ msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
 #: part/models.py:2153
-#, fuzzy, python-brace-format
-#| msgid "Illegal character in name ({x})"
+#, python-brace-format
 msgid "Illegal character in template name ({c})"
-msgstr "({x}) adında geçersiz karakter"
+msgstr ""
 
 #: part/models.py:2189
 msgid "Parameter template name must be unique"
@@ -6248,17 +6247,13 @@ msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:33
 #: templates/InvenTree/settings/navbar.html:35
-#, fuzzy
-#| msgid "Label"
 msgid "Labels"
-msgstr "Etiket"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:39
 #: templates/InvenTree/settings/navbar.html:41
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Reports"
-msgstr "Test Raporları"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:46
 #: templates/InvenTree/settings/navbar.html:48
@@ -6426,10 +6421,8 @@ msgid "Home Page Settings"
 msgstr "Ana Sayfa Ayarları"
 
 #: templates/InvenTree/settings/user_labels.html:9
-#, fuzzy
-#| msgid "Language Settings"
 msgid "Label Settings"
-msgstr "Dil Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
@@ -6881,10 +6874,8 @@ msgid "No parts allocated for"
 msgstr ""
 
 #: templates/js/translated/company.js:34
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Add Manufacturer"
-msgstr "Üretici"
+msgstr ""
 
 #: templates/js/translated/company.js:47 templates/js/translated/company.js:136
 msgid "Add Manufacturer Part"
@@ -6899,10 +6890,8 @@ msgid "Delete Manufacturer Part"
 msgstr ""
 
 #: templates/js/translated/company.js:124 templates/js/translated/order.js:58
-#, fuzzy
-#| msgid "Supplier"
 msgid "Add Supplier"
-msgstr "Tedarikçi"
+msgstr ""
 
 #: templates/js/translated/company.js:152
 msgid "Add Supplier Part"
@@ -7181,10 +7170,8 @@ msgid "Supplier Part ID"
 msgstr ""
 
 #: templates/js/translated/order.js:17
-#, fuzzy
-#| msgid "Customer"
 msgid "Add Customer"
-msgstr "Müşteri"
+msgstr ""
 
 #: templates/js/translated/order.js:42
 msgid "Create Sales Order"
@@ -7219,10 +7206,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:22
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Add Part Category"
-msgstr "Parça Kategorileri"
+msgstr ""
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
@@ -7361,10 +7346,8 @@ msgid "Single Price Difference"
 msgstr ""
 
 #: templates/js/translated/stock.js:9
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Parent stock location"
-msgstr "Yeni stok konumu oluştur"
+msgstr ""
 
 #: templates/js/translated/stock.js:39
 msgid "Export Stock"
@@ -8118,3 +8101,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

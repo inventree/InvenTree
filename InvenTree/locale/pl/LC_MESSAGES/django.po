@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-07 15:14+0000\n"
-"PO-Revision-Date: 2021-08-05 03:29\n"
+"PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -185,7 +185,7 @@ msgstr "Niemiecki"
 
 #: InvenTree/settings.py:519
 msgid "Greek"
-msgstr ""
+msgstr "Grecki"
 
 #: InvenTree/settings.py:520
 msgid "English"
@@ -193,7 +193,7 @@ msgstr "Angielski"
 
 #: InvenTree/settings.py:521
 msgid "Spanish"
-msgstr ""
+msgstr "Hiszpański"
 
 #: InvenTree/settings.py:522
 msgid "French"
@@ -201,27 +201,27 @@ msgstr "Francuski"
 
 #: InvenTree/settings.py:523
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebrajski"
 
 #: InvenTree/settings.py:524
 msgid "Italian"
-msgstr ""
+msgstr "Włoski"
 
 #: InvenTree/settings.py:525
 msgid "Japanese"
-msgstr ""
+msgstr "Japoński"
 
 #: InvenTree/settings.py:526
 msgid "Korean"
-msgstr ""
+msgstr "Koreański"
 
 #: InvenTree/settings.py:527
 msgid "Dutch"
-msgstr ""
+msgstr "Holenderski"
 
 #: InvenTree/settings.py:528
 msgid "Norwegian"
-msgstr ""
+msgstr "Norweski"
 
 #: InvenTree/settings.py:529
 msgid "Polish"
@@ -229,15 +229,15 @@ msgstr "Polski"
 
 #: InvenTree/settings.py:530
 msgid "Russian"
-msgstr ""
+msgstr "Rosyjski"
 
 #: InvenTree/settings.py:531
 msgid "Swedish"
-msgstr ""
+msgstr "Szwedzki"
 
 #: InvenTree/settings.py:532
 msgid "Thai"
-msgstr ""
+msgstr "Tajski"
 
 #: InvenTree/settings.py:533
 msgid "Turkish"
@@ -245,11 +245,11 @@ msgstr "Turecki"
 
 #: InvenTree/settings.py:534
 msgid "Vietnamese"
-msgstr ""
+msgstr "Wietnamski"
 
 #: InvenTree/settings.py:535
 msgid "Chinese"
-msgstr ""
+msgstr "Chiński"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -4179,10 +4179,9 @@ msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
 #: part/models.py:2153
-#, fuzzy, python-brace-format
-#| msgid "Illegal character in name ({x})"
+#, python-brace-format
 msgid "Illegal character in template name ({c})"
-msgstr "Niedozwolony znak w nazwie ({x})"
+msgstr ""
 
 #: part/models.py:2189
 msgid "Parameter template name must be unique"
@@ -6248,17 +6247,13 @@ msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:33
 #: templates/InvenTree/settings/navbar.html:35
-#, fuzzy
-#| msgid "Label"
 msgid "Labels"
-msgstr "Etykieta"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:39
 #: templates/InvenTree/settings/navbar.html:41
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Reports"
-msgstr "Raporty testów"
+msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:46
 #: templates/InvenTree/settings/navbar.html:48
@@ -6426,10 +6421,8 @@ msgid "Home Page Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_labels.html:9
-#, fuzzy
-#| msgid "Change Setting"
 msgid "Label Settings"
-msgstr "Zmień ustawienie"
+msgstr ""
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
@@ -6881,10 +6874,8 @@ msgid "No parts allocated for"
 msgstr ""
 
 #: templates/js/translated/company.js:34
-#, fuzzy
-#| msgid "Add Manufacturer Part"
 msgid "Add Manufacturer"
-msgstr "Dodaj część producenta"
+msgstr ""
 
 #: templates/js/translated/company.js:47 templates/js/translated/company.js:136
 msgid "Add Manufacturer Part"
@@ -6899,10 +6890,8 @@ msgid "Delete Manufacturer Part"
 msgstr ""
 
 #: templates/js/translated/company.js:124 templates/js/translated/order.js:58
-#, fuzzy
-#| msgid "Supplier"
 msgid "Add Supplier"
-msgstr "Dostawca"
+msgstr ""
 
 #: templates/js/translated/company.js:152
 msgid "Add Supplier Part"
@@ -7181,10 +7170,8 @@ msgid "Supplier Part ID"
 msgstr ""
 
 #: templates/js/translated/order.js:17
-#, fuzzy
-#| msgid "Customer"
 msgid "Add Customer"
-msgstr "Klient"
+msgstr ""
 
 #: templates/js/translated/order.js:42
 msgid "Create Sales Order"
@@ -7219,10 +7206,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/part.js:22
-#, fuzzy
-#| msgid "Edit Part Category"
 msgid "Add Part Category"
-msgstr "Edytuj kategorię części"
+msgstr ""
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
@@ -7361,10 +7346,8 @@ msgid "Single Price Difference"
 msgstr ""
 
 #: templates/js/translated/stock.js:9
-#, fuzzy
-#| msgid "Confirm stock allocation"
 msgid "Parent stock location"
-msgstr "Potwierdź przydział zapasów"
+msgstr ""
 
 #: templates/js/translated/stock.js:39
 msgid "Export Stock"
@@ -8118,3 +8101,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
