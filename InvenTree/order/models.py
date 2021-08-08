@@ -629,6 +629,8 @@ class SalesOrder(Order):
         # additional lines
         total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
 
+        # set decimal-places
+        total.decimal_places = 4
         return total
 
     @property
