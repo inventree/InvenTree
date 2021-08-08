@@ -8,7 +8,7 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.4.2"
+INVENTREE_SW_VERSION = "0.4.4"
 
 INVENTREE_API_VERSION = 8
 
