@@ -15,7 +15,8 @@ from djmoney.contrib.django_rest_framework import MoneyField
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeImageSerializerField,
-                                   InvenTreeModelSerializer)
+                                   InvenTreeModelSerializer,
+                                   InvenTreeMoneySerializer)
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
@@ -102,7 +103,12 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    price = serializers.CharField()
+    price = InvenTreeMoneySerializer(
+        max_digits=19, decimal_places=4,
+        allow_null=True
+    )
+
+    price_string = serializers.CharField(source='price', read_only=True)
 
     class Meta:
         model = PartSellPriceBreak
@@ -111,6 +117,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_string',
         ]
 
 
@@ -121,7 +128,12 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    price = serializers.CharField()
+    price = InvenTreeMoneySerializer(
+        max_digits=19, decimal_places=4,
+        allow_null=True
+    )
+
+    price_string = serializers.CharField(source='price', read_only=True)
 
     class Meta:
         model = PartInternalPriceBreak
@@ -130,6 +142,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_string',
         ]
 
 
