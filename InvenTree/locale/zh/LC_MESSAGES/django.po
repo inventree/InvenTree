@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-09 22:24+0000\n"
+"POT-Creation-Date: 2021-08-09 23:12+0000\n"
 "PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -135,7 +135,7 @@ msgstr ""
 
 #: InvenTree/models.py:129 InvenTree/models.py:130 company/models.py:412
 #: label/models.py:112 part/models.py:656 part/models.py:2196
-#: part/templates/part/part_base.html:233 report/models.py:181
+#: part/templates/part/part_base.html:234 report/models.py:181
 #: templates/InvenTree/search.html:137 templates/InvenTree/search.html:289
 #: templates/js/translated/company.js:583 templates/js/translated/part.js:338
 #: templates/js/translated/part.js:471 templates/js/translated/part.js:963
@@ -148,7 +148,7 @@ msgstr "名称"
 #: company/models.py:519 company/templates/company/manufacturer_part.html:76
 #: company/templates/company/supplier_part.html:75 label/models.py:119
 #: order/models.py:158 order/templates/order/purchase_order_detail.html:312
-#: part/models.py:679 part/templates/part/part_base.html:238
+#: part/models.py:679 part/templates/part/part_base.html:239
 #: part/templates/part/set_category.html:14 report/models.py:194
 #: report/models.py:551 report/models.py:590
 #: report/templates/report/inventree_build_order_base.html:118
@@ -534,7 +534,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:364 part/forms.py:249
 #: part/forms.py:265 part/forms.py:281 part/models.py:2340
 #: part/templates/part/bom_upload/match_parts.html:31
-#: part/templates/part/detail.html:940 part/templates/part/detail.html:1026
+#: part/templates/part/detail.html:934 part/templates/part/detail.html:1020
 #: part/templates/part/part_pricing.html:16
 #: report/templates/report/inventree_build_order_base.html:114
 #: report/templates/report/inventree_po_report.html:91
@@ -781,7 +781,7 @@ msgid "Batch code for this build output"
 msgstr ""
 
 #: build/models.py:272 order/models.py:162 part/models.py:851
-#: part/templates/part/part_base.html:264 templates/js/translated/order.js:382
+#: part/templates/part/part_base.html:265 templates/js/translated/order.js:382
 msgid "Creation Date"
 msgstr ""
 
@@ -821,7 +821,7 @@ msgstr ""
 #: build/models.py:309 build/templates/build/detail.html:94
 #: company/templates/company/manufacturer_part.html:83
 #: company/templates/company/supplier_part.html:82
-#: part/templates/part/part_base.html:258 stock/models.py:501
+#: part/templates/part/part_base.html:259 stock/models.py:501
 #: stock/templates/stock/item_base.html:359
 msgid "External Link"
 msgstr ""
@@ -1314,7 +1314,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:79
 #: order/templates/order/purchase_order_detail.html:156
 #: order/templates/order/sales_order_detail.html:145
-#: part/templates/part/detail.html:802 stock/templates/stock/item.html:252
+#: part/templates/part/detail.html:796 stock/templates/stock/item.html:252
 #: templates/attachment_table.html:6
 msgid "Add Attachment"
 msgstr ""
@@ -1323,7 +1323,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:51
 #: order/templates/order/purchase_order_detail.html:128
 #: order/templates/order/sales_order_detail.html:118
-#: part/templates/part/detail.html:756 stock/templates/stock/item.html:220
+#: part/templates/part/detail.html:750 stock/templates/stock/item.html:220
 msgid "Edit Attachment"
 msgstr ""
 
@@ -1331,7 +1331,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:58
 #: order/templates/order/purchase_order_detail.html:135
 #: order/templates/order/sales_order_detail.html:124
-#: part/templates/part/detail.html:765 stock/templates/stock/item.html:229
+#: part/templates/part/detail.html:759 stock/templates/stock/item.html:229
 msgid "Confirm Delete Operation"
 msgstr ""
 
@@ -1339,7 +1339,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:59
 #: order/templates/order/purchase_order_detail.html:136
 #: order/templates/order/sales_order_detail.html:125
-#: part/templates/part/detail.html:766 stock/templates/stock/item.html:230
+#: part/templates/part/detail.html:760 stock/templates/stock/item.html:230
 msgid "Delete Attachment"
 msgstr ""
 
@@ -2123,7 +2123,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:19
 #: order/templates/order/po_navbar.html:22
 #: order/templates/order/purchase_order_detail.html:26 order/views.py:290
-#: part/templates/part/bom_upload/upload_file.html:45
+#: part/templates/part/bom_upload/upload_file.html:65
 #: part/templates/part/import_wizard/part_upload.html:45 part/views.py:268
 #: part/views.py:882
 msgid "Upload File"
@@ -2154,7 +2154,7 @@ msgstr ""
 #: order/templates/order/order_wizard/po_upload.html:40
 #: part/templates/part/bom_upload/match_fields.html:27
 #: part/templates/part/bom_upload/match_parts.html:19
-#: part/templates/part/bom_upload/upload_file.html:43
+#: part/templates/part/bom_upload/upload_file.html:63
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:43
@@ -2469,7 +2469,7 @@ msgid "Customer"
 msgstr ""
 
 #: company/templates/company/company_base.html:193
-#: part/templates/part/part_base.html:405
+#: part/templates/part/part_base.html:411
 msgid "Upload Image"
 msgstr ""
 
@@ -2592,13 +2592,13 @@ msgstr ""
 
 #: company/templates/company/detail.html:364
 #: company/templates/company/manufacturer_part.html:200
-#: part/templates/part/detail.html:826
+#: part/templates/part/detail.html:820
 msgid "Delete Supplier Parts?"
 msgstr ""
 
 #: company/templates/company/detail.html:365
 #: company/templates/company/manufacturer_part.html:201
-#: part/templates/part/detail.html:827
+#: part/templates/part/detail.html:821
 msgid "All selected supplier parts will be deleted"
 msgstr ""
 
@@ -2676,7 +2676,7 @@ msgid "Delete parameters"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:176
-#: part/templates/part/detail.html:719
+#: part/templates/part/detail.html:713
 msgid "Add Parameter"
 msgstr ""
 
@@ -3336,7 +3336,7 @@ msgid "Upload File for Purchase Order"
 msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:18
-#: part/templates/part/bom_upload/upload_file.html:24
+#: part/templates/part/bom_upload/upload_file.html:34
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:21
 #, python-format
@@ -3815,7 +3815,7 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
 #: part/bom.py:133 part/models.py:73 part/models.py:731
-#: part/templates/part/category.html:75 part/templates/part/part_base.html:282
+#: part/templates/part/category.html:75 part/templates/part/part_base.html:283
 msgid "Default Location"
 msgstr ""
 
@@ -3996,7 +3996,7 @@ msgid "Part description"
 msgstr ""
 
 #: part/models.py:685 part/templates/part/category.html:82
-#: part/templates/part/part_base.html:251
+#: part/templates/part/part_base.html:252
 msgid "Keywords"
 msgstr ""
 
@@ -4015,7 +4015,7 @@ msgstr ""
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:699 part/templates/part/part_base.html:227
+#: part/models.py:699 part/templates/part/part_base.html:228
 #: templates/js/translated/part.js:389 templates/js/translated/part.js:617
 msgid "IPN"
 msgstr ""
@@ -4028,7 +4028,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:707 part/templates/part/part_base.html:244
+#: part/models.py:707 part/templates/part/part_base.html:245
 #: report/models.py:200 templates/js/translated/part.js:393
 msgid "Revision"
 msgstr ""
@@ -4037,7 +4037,7 @@ msgstr ""
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:776 part/templates/part/part_base.html:289
+#: part/models.py:776 part/templates/part/part_base.html:290
 msgid "Default Supplier"
 msgstr ""
 
@@ -4374,27 +4374,28 @@ msgstr ""
 msgid "Select Part"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:7
-msgid "Upload BOM File"
+#: part/templates/part/bom_upload/upload_file.html:13
+#: part/templates/part/bom_upload/upload_file.html:16
+msgid "Return To BOM"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:12
+#: part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:16
+#: part/templates/part/bom_upload/upload_file.html:46
 msgid "Requirements for BOM upload"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:18
+#: part/templates/part/bom_upload/upload_file.html:48
 msgid "The BOM file must contain the required named columns as provided in the "
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:18
+#: part/templates/part/bom_upload/upload_file.html:48
 msgid "BOM Upload Template"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:19
+#: part/templates/part/bom_upload/upload_file.html:49
 msgid "Each part must already exist in the database"
 msgstr ""
 
@@ -4644,50 +4645,50 @@ msgstr ""
 msgid "Delete manufacturer parts"
 msgstr ""
 
-#: part/templates/part/detail.html:402
+#: part/templates/part/detail.html:396
 msgid "Delete selected BOM items?"
 msgstr ""
 
-#: part/templates/part/detail.html:403
+#: part/templates/part/detail.html:397
 msgid "All selected BOM items will be deleted"
 msgstr ""
 
-#: part/templates/part/detail.html:454
+#: part/templates/part/detail.html:448
 msgid "Create BOM Item"
 msgstr ""
 
-#: part/templates/part/detail.html:589
+#: part/templates/part/detail.html:583
 msgid "Add Test Result Template"
 msgstr ""
 
-#: part/templates/part/detail.html:607
+#: part/templates/part/detail.html:601
 msgid "Edit Test Result Template"
 msgstr ""
 
-#: part/templates/part/detail.html:619
+#: part/templates/part/detail.html:613
 msgid "Delete Test Result Template"
 msgstr ""
 
-#: part/templates/part/detail.html:670
+#: part/templates/part/detail.html:664
 msgid "Edit Part Notes"
 msgstr ""
 
-#: part/templates/part/detail.html:903
+#: part/templates/part/detail.html:897
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:915
+#: part/templates/part/detail.html:909
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:927
+#: part/templates/part/detail.html:921
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1016
+#: part/templates/part/detail.html:1010
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr ""
@@ -4842,26 +4843,27 @@ msgstr ""
 msgid "Building"
 msgstr ""
 
-#: part/templates/part/part_base.html:275
+#: part/templates/part/part_base.html:216
+#: part/templates/part/part_base.html:517
+#: part/templates/part/part_base.html:543
+msgid "Show Part Details"
+msgstr ""
+
+#: part/templates/part/part_base.html:276
 msgid "Latest Serial Number"
 msgstr ""
 
-#: part/templates/part/part_base.html:383 part/templates/part/prices.html:125
+#: part/templates/part/part_base.html:389 part/templates/part/prices.html:125
 msgid "Calculate"
 msgstr ""
 
-#: part/templates/part/part_base.html:426
+#: part/templates/part/part_base.html:432
 msgid "No matching images found"
 msgstr ""
 
-#: part/templates/part/part_base.html:506
-#: part/templates/part/part_base.html:531
-msgid "Hide Part Details"
-msgstr ""
-
-#: part/templates/part/part_base.html:511
+#: part/templates/part/part_base.html:512
 #: part/templates/part/part_base.html:537
-msgid "Show Part Details"
+msgid "Hide Part Details"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
