@@ -828,7 +828,7 @@ class CurrencyRefreshView(RedirectView):
         from InvenTree.tasks import offload_task
 
         # Define associated task from InvenTree.tasks list of methods
-        taskname = 'update_exchange_rates'
+        taskname = 'InvenTree.tasks.update_exchange_rates'
 
         # Run it
         offload_task(taskname, force_sync=True)

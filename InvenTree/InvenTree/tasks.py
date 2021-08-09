@@ -53,10 +53,7 @@ def schedule_task(taskname, **kwargs):
 
 def offload_task(taskname, force_sync=False, *args, **kwargs):
     """
-        First check if the task method pointed
-        by taskname is implemented inside this file.
-
-        Then create an AsyncTask if workers are running.
+        Create an AsyncTask if workers are running.
         This is different to a 'scheduled' task,
         in that it only runs once!
 
@@ -64,41 +61,53 @@ def offload_task(taskname, force_sync=False, *args, **kwargs):
         is set then the task is ran synchronously.
     """
 
-    # Get task list
-    tasks = get_task_list()
-
-    # Check if task exists
-    if taskname not in tasks:
-        logger.warning(f'Task "{taskname}" is not implemented in InvenTree/tasks.py')
-        return
-
     try:
         from django_q.tasks import AsyncTask
     except (AppRegistryNotReady):
         logger.warning("Could not offload task - app registry not ready")
         return
+    import importlib
     from InvenTree.status import is_worker_running
 
     if is_worker_running() and not force_sync:
-        # Append module path
-        taskname = 'InvenTree.tasks.' + taskname
         # Running as asynchronous task
-        task = AsyncTask(taskname, *args, **kwargs)
-        task.run()
+        try:
+            task = AsyncTask(taskname, *args, **kwargs)
+            task.run()
+        except ImportError:
+            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
     else:
-        # Retrieve local method from task name
-        _func = eval(taskname)
-        # Run it as synchronous task
+        # Split path
+        try:
+            app, mod, func = taskname.split('.')
+            app_mod = app + '.' + mod
+        except ValueError:
+            logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+            return
+
+        # Import module from app
+        try:
+            _mod = importlib.import_module(app_mod)
+        except ModuleNotFoundError:
+            logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+            return
+
+        # Retrieve function
+        try:
+            _func = getattr(_mod, func)
+        except AttributeError:
+            # getattr does not work for local import
+            _func = None
+
+        try:
+            if not _func:
+                _func = eval(func)
+        except NameError:
+            logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+            return
+        
+        # Workers are not running: run it as synchronous task
         _func()
-
-
-def get_task_list():
-    return [task for task in LOCAL_METHODS if task not in TASK_MANAGEMENT]
-
-
-# Keep TASK_MANAGEMENT before task methods
-TASK_MANAGEMENT = [key for key, value in locals().items() if callable(value) and value.__module__ == __name__]
-#
 
 
 def heartbeat():
@@ -249,8 +258,3 @@ def send_email(subject, body, recipients, from_email=None):
         from_email,
         recipients,
     )
-
-
-# Keep LOCAL_METHODS at the end of the file
-LOCAL_METHODS = [key for key, value in locals().items() if callable(value) and value.__module__ == __name__]
-#
