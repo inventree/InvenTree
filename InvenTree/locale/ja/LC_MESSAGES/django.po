@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-08 23:45+0000\n"
+"POT-Creation-Date: 2021-08-09 04:51+0000\n"
 "PO-Revision-Date: 2021-08-07 15:30\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -546,8 +546,8 @@ msgstr ""
 #: templates/js/translated/build.js:271 templates/js/translated/build.js:606
 #: templates/js/translated/build.js:1172
 #: templates/js/translated/model_renderers.js:56
-#: templates/js/translated/order.js:482 templates/js/translated/part.js:1148
-#: templates/js/translated/part.js:1270 templates/js/translated/part.js:1326
+#: templates/js/translated/order.js:482 templates/js/translated/part.js:1149
+#: templates/js/translated/part.js:1272 templates/js/translated/part.js:1328
 #: templates/js/translated/stock.js:1534 templates/js/translated/stock.js:1732
 msgid "Quantity"
 msgstr ""
@@ -2087,7 +2087,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:1009 company/templates/company/supplier_part.html:231
-#: templates/js/translated/part.js:1153
+#: templates/js/translated/part.js:1154
 msgid "Price"
 msgstr ""
 
@@ -3457,7 +3457,7 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:360
 #: order/templates/order/sales_order_detail.html:376
-#: templates/js/translated/part.js:1128 templates/js/translated/part.js:1317
+#: templates/js/translated/part.js:1129 templates/js/translated/part.js:1319
 msgid "Unit Price"
 msgstr ""
 
@@ -7327,21 +7327,21 @@ msgstr ""
 msgid "No ${human_name} information found"
 msgstr ""
 
-#: templates/js/translated/part.js:1160
+#: templates/js/translated/part.js:1161
 #, python-brace-format
 msgid "Edit ${human_name}"
 msgstr ""
 
-#: templates/js/translated/part.js:1161
+#: templates/js/translated/part.js:1162
 #, python-brace-format
 msgid "Delete ${human_name}"
 msgstr ""
 
-#: templates/js/translated/part.js:1261
+#: templates/js/translated/part.js:1263
 msgid "Single Price"
 msgstr ""
 
-#: templates/js/translated/part.js:1280
+#: templates/js/translated/part.js:1282
 msgid "Single Price Difference"
 msgstr ""
 
