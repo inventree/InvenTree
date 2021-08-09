@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-09 04:51+0000\n"
-"PO-Revision-Date: 2021-08-09 05:12\n"
+"POT-Creation-Date: 2021-08-09 11:43+0000\n"
+"PO-Revision-Date: 2021-08-09 12:07\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1289,7 +1289,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:43
 #: order/templates/order/so_navbar.html:29 part/templates/part/detail.html:173
 #: part/templates/part/navbar.html:102 part/templates/part/navbar.html:105
-#: stock/templates/stock/item.html:87 stock/templates/stock/navbar.html:47
+#: stock/templates/stock/item.html:88 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
 msgstr ""
@@ -1305,8 +1305,8 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:95
 #: order/templates/order/sales_order_detail.html:58
 #: order/templates/order/sales_order_detail.html:85
-#: part/templates/part/detail.html:109 stock/templates/stock/item.html:102
-#: stock/templates/stock/item.html:187
+#: part/templates/part/detail.html:109 stock/templates/stock/item.html:103
+#: stock/templates/stock/item.html:188
 msgid "Edit Notes"
 msgstr ""
 
@@ -1314,7 +1314,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:79
 #: order/templates/order/purchase_order_detail.html:156
 #: order/templates/order/sales_order_detail.html:145
-#: part/templates/part/detail.html:802 stock/templates/stock/item.html:251
+#: part/templates/part/detail.html:802 stock/templates/stock/item.html:252
 #: templates/attachment_table.html:6
 msgid "Add Attachment"
 msgstr ""
@@ -1323,7 +1323,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:51
 #: order/templates/order/purchase_order_detail.html:128
 #: order/templates/order/sales_order_detail.html:118
-#: part/templates/part/detail.html:756 stock/templates/stock/item.html:219
+#: part/templates/part/detail.html:756 stock/templates/stock/item.html:220
 msgid "Edit Attachment"
 msgstr ""
 
@@ -1331,7 +1331,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:58
 #: order/templates/order/purchase_order_detail.html:135
 #: order/templates/order/sales_order_detail.html:124
-#: part/templates/part/detail.html:765 stock/templates/stock/item.html:228
+#: part/templates/part/detail.html:765 stock/templates/stock/item.html:229
 msgid "Confirm Delete Operation"
 msgstr ""
 
@@ -1339,7 +1339,7 @@ msgstr ""
 #: order/templates/order/po_attachments.html:59
 #: order/templates/order/purchase_order_detail.html:136
 #: order/templates/order/sales_order_detail.html:125
-#: part/templates/part/detail.html:766 stock/templates/stock/item.html:229
+#: part/templates/part/detail.html:766 stock/templates/stock/item.html:230
 msgid "Delete Attachment"
 msgstr ""
 
@@ -5497,7 +5497,7 @@ msgstr ""
 msgid "Delete this Stock Item when stock is depleted"
 msgstr ""
 
-#: stock/models.py:574 stock/templates/stock/item.html:98
+#: stock/models.py:574 stock/templates/stock/item.html:99
 #: stock/templates/stock/navbar.html:54
 msgid "Stock Item Notes"
 msgstr ""
@@ -5568,56 +5568,56 @@ msgstr ""
 msgid "Test notes"
 msgstr ""
 
-#: stock/templates/stock/item.html:16
+#: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
 msgstr ""
 
-#: stock/templates/stock/item.html:29
+#: stock/templates/stock/item.html:30
 msgid "New Entry"
 msgstr ""
 
-#: stock/templates/stock/item.html:42
+#: stock/templates/stock/item.html:43
 msgid "Child Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:49
+#: stock/templates/stock/item.html:50
 msgid "This stock item does not have any child items"
 msgstr ""
 
-#: stock/templates/stock/item.html:57 stock/templates/stock/navbar.html:19
+#: stock/templates/stock/item.html:58 stock/templates/stock/navbar.html:19
 #: stock/templates/stock/navbar.html:22
 msgid "Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:65
+#: stock/templates/stock/item.html:66
 msgid "Delete Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:69
+#: stock/templates/stock/item.html:70
 msgid "Add Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:72 stock/templates/stock/item_base.html:95
+#: stock/templates/stock/item.html:73 stock/templates/stock/item_base.html:95
 msgid "Test Report"
 msgstr ""
 
-#: stock/templates/stock/item.html:119 stock/templates/stock/navbar.html:27
+#: stock/templates/stock/item.html:120 stock/templates/stock/navbar.html:27
 msgid "Installed Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:124 stock/views.py:534
+#: stock/templates/stock/item.html:125 stock/views.py:534
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/templates/stock/item.html:299 stock/templates/stock/item.html:324
+#: stock/templates/stock/item.html:300 stock/templates/stock/item.html:325
 msgid "Add Test Result"
 msgstr ""
 
-#: stock/templates/stock/item.html:344
+#: stock/templates/stock/item.html:345
 msgid "Edit Test Result"
 msgstr ""
 
-#: stock/templates/stock/item.html:358
+#: stock/templates/stock/item.html:359
 msgid "Delete Test Result"
 msgstr ""
 
