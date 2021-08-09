@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
-from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.models import convert_money, Money
 from common.settings import currency_code_default
 
 from users import models as UserModels
@@ -620,11 +620,11 @@ class SalesOrder(Order):
         """
         Calculates the total price of all order lines
         """
-        total = 0
         target_currency = self.sell_price_currency if self.sell_price else currency_code_default()
+        total = Money(0, target_currency)
 
         # order items
-        total = sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.lines.all() if a.sale_price])
+        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.lines.all() if a.sale_price])
 
         # additional lines
         total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
