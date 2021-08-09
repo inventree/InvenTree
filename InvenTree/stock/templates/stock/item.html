@@ -3,6 +3,7 @@
 {% load static %}
 {% load inventree_extras %}
 {% load i18n %}
+{% load l10n %}
 {% load markdownify %}
 
 {% block menubar %}
@@ -152,7 +153,7 @@
         {
             stock_item: {{ item.pk }},
             part: {{ item.part.pk }},
-            quantity: {{ item.quantity }},
+            quantity: {{ item.quantity|unlocalize }},
         }
     );
 
