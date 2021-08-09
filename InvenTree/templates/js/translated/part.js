@@ -13,6 +13,144 @@ function yesNoLabel(value) {
     }
 }
 
+// Construct fieldset for part forms
+function partFields(options={}) {
+
+    var fields = {
+        category: {
+            secondary: {
+                title: '{% trans "Add Part Category" %}',
+                fields: function(data) {
+                    var fields = categoryFields();
+
+                    return fields;
+                }
+            }
+        },
+        name: {},
+        IPN: {},
+        revision: {},
+        description: {},
+        variant_of: {},
+        keywords: {
+            icon: 'fa-key',
+        },
+        units: {},
+        link: {
+            icon: 'fa-link',
+        },
+        default_location: {
+        },
+        default_supplier: {},
+        default_expiry: {
+            icon: 'fa-calendar-alt',
+        },
+        minimum_stock: {
+            icon: 'fa-boxes',
+        },
+        attributes: {
+            type: 'candy',
+            html: `<hr><h4><i>{% trans "Part Attributes" %}</i></h4><hr>`
+        },
+        component: {
+            value: global_settings.PART_COMPONENT,
+        },
+        assembly: {
+            value: global_settings.PART_ASSEMBLY,
+        },
+        is_template: {
+            value: global_settings.PART_TEMPLATE,
+        },
+        trackable: {
+            value: global_settings.PART_TRACKABLE,
+        },
+        purchaseable: {
+            value: global_settings.PART_PURCHASEABLE,
+        },
+        salable: {
+            value: global_settings.PART_SALABLE,
+        },
+        virtual: {
+            value: global_settings.PART_VIRTUAL,
+        },
+    };
+
+    // If editing a part, we can set the "active" status
+    if (options.edit) {
+        fields.active = {};
+    }
+
+    // Pop expiry field
+    if (!global_settings.STOCK_ENABLE_EXPIRY) {
+        delete fields["default_expiry"];
+    }
+
+    // Additional fields when "creating" a new part
+    if (options.create) {
+
+        // No supplier parts available yet
+        delete fields["default_supplier"];
+
+        fields.create = {
+            type: 'candy',
+            html: `<hr><h4><i>{% trans "Part Creation Options" %}</i></h4><hr>`,
+        };
+
+        if (global_settings.PART_CREATE_INITIAL) {
+            fields.initial_stock = {
+                type: 'decimal',
+                label: '{% trans "Initial Stock Quantity" %}',
+                help_text: '{% trans "Initialize part stock with specified quantity" %}',
+            };
+        }
+
+        fields.copy_category_parameters = {
+            type: 'boolean',
+            label: '{% trans "Copy Category Parameters" %}',
+            help_text: '{% trans "Copy parameter templates from selected part category" %}',
+            value: global_settings.PART_CATEGORY_PARAMETERS,
+        };
+    }
+
+    // Additional fields when "duplicating" a part
+    if (options.duplicate) {
+
+        fields.duplicate = {
+            type: 'candy',
+            html: `<hr><h4><i>{% trans "Part Duplication Options" %}</i></h4><hr>`,
+        };
+
+        fields.copy_from = {
+            type: 'integer',
+            hidden: true,
+            value: options.duplicate,
+        },
+
+        fields.copy_image = {
+            type: 'boolean',
+            label: '{% trans "Copy Image" %}',
+            help_text: '{% trans "Copy image from original part" %}',
+            value: true,
+        },
+
+        fields.copy_bom = {
+            type: 'boolean',
+            label: '{% trans "Copy BOM" %}',
+            help_text: '{% trans "Copy bill of materials from original part" %}',
+            value: global_settings.PART_COPY_BOM,
+        };
+
+        fields.copy_parameters = {
+            type: 'boolean',
+            label: '{% trans "Copy Parameters" %}',
+            help_text: '{% trans "Copy parameter data from original part" %}',
+            value: global_settings.PART_COPY_PARAMETERS,
+        };
+    }
+
+    return fields;
+}
+
 
 function categoryFields() {
     return {
@@ -49,86 +187,49 @@ function editPart(pk, options={}) {
 
     var url = `/api/part/${pk}/`;
 
-    var fields =  {
-        category: {
-            /*
-            secondary: {
-                label: '{% trans "New Category" %}',
-                title: '{% trans "Create New Part Category" %}',
-                api_url: '{% url "api-part-category-list" %}',
-                method: 'POST',
-                fields: {
-                    name: {},
-                    description: {},
-                    parent: {
-                        secondary: {
-                            title: '{% trans "New Parent" %}',
-                            api_url: '{% url "api-part-category-list" %}',
-                            method: 'POST',
-                            fields: {
-                                name: {},
-                                description: {},
-                                parent: {},
-                            }
-                        }
-                    },
-                }
-            },
-            */
-        },
-        name: {
-            placeholder: 'part name',
-        },
-        IPN: {},
-        description: {},
-        revision: {},
-        keywords: {
-            icon: 'fa-key',
-        },
-        variant_of: {},
-        link: {
-            icon: 'fa-link',
-        },
-        default_location: {
-            /*
-            secondary: {
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-            },
-            */
-        },
-        default_supplier: {
-            filters: {
-                part: pk,
-                part_detail: true,
-                manufacturer_detail: true,
-                supplier_detail: true,
-            },
-            /*
-            secondary: {
-                label: '{% trans "New Supplier Part" %}',
-                title: '{% trans "Create new supplier part" %}',
-            }
-            */
-        },
-        units: {},
-        minimum_stock: {},
-        virtual: {},
-        is_template: {},
-        assembly: {},
-        component: {},
-        trackable: {},
-        purchaseable: {},
-        salable: {},
-        active: {},
-    };
+    var fields = partFields({
+        edit: true
+    });
 
     constructForm(url, {
         fields: fields,
         title: '{% trans "Edit Part" %}',
         reload: true,
     });
+}
 
+
+// Launch form to duplicate a part
+function duplicatePart(pk, options={}) {
+
+    // First we need all the part information
+    inventreeGet(`/api/part/${pk}/`, {}, {
+
+        success: function(data) {
+            
+            var fields = partFields({
+                duplicate: pk,
+            });
+
+            // If we are making a "variant" part
+            if (options.variant) {
+
+                // Override the "variant_of" field
+                data.variant_of = pk;
+            }
+            
+            constructForm('{% url "api-part-list" %}', {
+                method: 'POST',
+                fields: fields,
+                title: '{% trans "Duplicate Part" %}',
+                data: data,
+                onSuccess: function(data) {
+                    // Follow the new part
+                    location.href = `/part/${data.pk}/`;
+                }
+            });
+        }
+    });
 }
 
 
@@ -1005,6 +1106,7 @@ function loadPriceBreakTable(table, options) {
         formatNoMatches: function() {
             return `{% trans "No ${human_name} information found" %}`;
         },
+        queryParams: {part: options.part},
         url: options.url,
         onLoadSuccess: function(tableData) {
             if (linkedGraph) {
@@ -1013,7 +1115,7 @@ function loadPriceBreakTable(table, options) {
 
                 // split up for graph definition
                 var graphLabels = Array.from(tableData, x => x.quantity);
-                var graphData = Array.from(tableData, x => parseFloat(x.price));
+                var graphData = Array.from(tableData, x => x.price);
 
                 // destroy chart if exists
                 if (chart){
@@ -1100,6 +1202,7 @@ function initPriceBreakSet(table, options) {
             human_name: pb_human_name,
             url: pb_url,
             linkedGraph: linkedGraph,
+            part: part_id,
         }
     );
 

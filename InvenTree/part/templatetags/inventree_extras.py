@@ -204,6 +204,7 @@ def settings_value(key, *args, **kwargs):
 
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
+        
     return InvenTreeSetting.get_setting(key)
 
 
@@ -269,7 +270,7 @@ def keyvalue(dict, key):
     usage:
     {% mydict|keyvalue:mykey %}
     """
-    return dict[key]
+    return dict.get(key)
 
 
 @register.simple_tag()

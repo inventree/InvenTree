@@ -13,6 +13,16 @@ function createSalesOrder(options={}) {
             },
             customer: {
                 value: options.customer,
+                secondary: {
+                    title: '{% trans "Add Customer" %}',
+                    fields: function(data) {
+                        var fields = companyFormFields();
+                        
+                        fields.is_customer.value = true;
+
+                        return fields;
+                    }
+                }
             },
             customer_reference: {},
             description: {},
@@ -44,6 +54,16 @@ function createPurchaseOrder(options={}) {
             },
             supplier: {
                 value: options.supplier,
+                secondary: {
+                    title: '{% trans "Add Supplier" %}',
+                    fields: function(data) {
+                        var fields = companyFormFields();
+
+                        fields.is_supplier.value = true;
+
+                        return fields;
+                    }
+                }
             },
             supplier_reference: {},
             description: {},

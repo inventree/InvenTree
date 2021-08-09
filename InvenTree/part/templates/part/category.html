@@ -264,25 +264,25 @@
 
     {% if roles.part.add %}
     $("#part-create").click(function() {
-        launchModalForm(
-            "{% url 'part-create' %}",
-            {
-                follow: true,
-                data: {
-                {% if category %}
-                    category: {{ category.id }}
-                {% endif %}
-                },
-                secondary: [
-                    {
-                        field: 'default_location',
-                        label: '{% trans "New Location" %}',
-                        title: '{% trans "Create new Stock Location" %}',
-                        url: "{% url 'stock-location-create' %}",
-                    }
-                ]   
-            }
-        );
+
+        var fields = partFields({
+            create: true,
+        });
+
+        {% if category %}
+        fields.category.value = {{ category.pk }};
+        {% endif %}
+
+        constructForm('{% url "api-part-list" %}', {
+            method: 'POST',
+            fields: fields,
+            title: '{% trans "Create Part" %}',
+            onSuccess: function(data) {
+                // Follow the new part
+                location.href = `/part/${data.pk}/`;
+            },
+        });
+        
     });
     {% endif %}
 

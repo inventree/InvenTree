@@ -109,10 +109,13 @@ class LabelPrintMixin:
             else:
                 pdf = outputs[0].get_document().write_pdf()
 
+            inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user)
+
             return InvenTree.helpers.DownloadFile(
                 pdf,
                 label_name,
-                content_type='application/pdf'
+                content_type='application/pdf',
+                inline=inline
             )
 
 
