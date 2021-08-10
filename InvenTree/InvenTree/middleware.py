@@ -21,26 +21,15 @@ class AuthRequiredMiddleware(object):
 
         assert hasattr(request, 'user')
 
+        # API requests are handled by the DRF library
+        if request.path_info.startswith('/api/'):
+            return self.get_response(request)
+
         if not request.user.is_authenticated:
             """
             Normally, a web-based session would use csrftoken based authentication.
-            However when running an external application (e.g. the InvenTree app),
-            we wish to use token-based auth to grab media files.
-
-            So, we will allow token-based authentication but ONLY for the /media/ directory.
-
-            What problem is this solving?
-            - The InvenTree mobile app does not use csrf token auth
-            - Token auth is used by the Django REST framework, but that is under the /api/ endpoint
-            - Media files (e.g. Part images) are required to be served to the app
-            - We do not want to make /media/ files accessible without login!
-
-            There is PROBABLY a better way of going about this?
-            a) Allow token-based authentication against a user?
-            b) Serve /media/ files in a duplicate location e.g. /api/media/ ?
-            c) Is there a "standard" way of solving this problem?
-
-            My [google|stackoverflow]-fu has failed me. So this hack has been created.
+            However when running an external application (e.g. the InvenTree app or Python library),
+            we must validate the user token manually.
             """
 
             authorized = False
@@ -57,18 +46,19 @@ class AuthRequiredMiddleware(object):
             elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
                 auth = request.headers.get('Authorization', request.headers.get('authorization')).strip()
 
-                if auth.startswith('Token') and len(auth.split()) == 2:
-                    token = auth.split()[1]
+                if auth.lower().startswith('token') and len(auth.split()) == 2:
+                    token_key = auth.split()[1]
 
                     # Does the provided token match a valid user?
                     try:
-                        token = Token.objects.get(key=token)
+                        token = Token.objects.get(key=token_key)
 
                         # Provide the user information to the request
                         request.user = token.user
                         authorized = True
 
                     except Token.DoesNotExist:
+                        logger.warning(f"Access denied for unknown token {token_key}")
                         pass
 
             # No authorization was found for the request
