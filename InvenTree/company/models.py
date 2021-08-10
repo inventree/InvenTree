@@ -9,6 +9,8 @@ import os
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
 from django.db import models
 from django.db.models import Sum, Q, UniqueConstraint
 
@@ -478,6 +480,18 @@ class SupplierPart(models.Model):
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
+
+    def clean(self):
+
+        super().clean()
+
+        # Ensure that the linked manufacturer_part points to the same part!
+        if self.manufacturer_part and self.part:
+
+            if not self.manufacturer_part.part == self.part:
+                raise ValidationError({
+                    'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
+                })
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',
