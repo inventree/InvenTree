@@ -21,8 +21,6 @@ class AuthRequiredMiddleware(object):
 
         assert hasattr(request, 'user')
 
-        response = self.get_response(request)
-
         if not request.user.is_authenticated:
             """
             Normally, a web-based session would use csrftoken based authentication.
@@ -56,20 +54,22 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
-            elif 'Authorization' in request.headers.keys():
-                auth = request.headers['Authorization'].strip()
+            elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
+                auth = request.headers.get('Authorization', request.headers.get('authorization')).strip()
 
                 if auth.startswith('Token') and len(auth.split()) == 2:
                     token = auth.split()[1]
 
                     # Does the provided token match a valid user?
-                    if Token.objects.filter(key=token).exists():
+                    try:
+                        token = Token.objects.get(key=token)
 
-                        allowed = ['/api/', '/media/']
+                        # Provide the user information to the request
+                        request.user = token.user
+                        authorized = True
 
-                        # Only allow token-auth for /media/ or /static/ dirs!
-                        if any([request.path_info.startswith(a) for a in allowed]):
-                            authorized = True
+                    except Token.DoesNotExist:
+                        pass
 
             # No authorization was found for the request
             if not authorized:
@@ -92,8 +92,7 @@ class AuthRequiredMiddleware(object):
 
                     return redirect('%s?next=%s' % (reverse_lazy('login'), request.path))
 
-        # Code to be executed for each request/response after
-        # the view is called.
+        response = self.get_response(request)
 
         return response
 
