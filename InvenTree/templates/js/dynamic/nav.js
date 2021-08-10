@@ -72,7 +72,12 @@ function activatePanel(panelName, options={}) {
 
     // Display the panel
     $(panel).addClass('panel-visible');
-    $(panel).fadeIn(100);
+
+    // Load the data
+    $(panel).trigger('fadeInStarted');
+
+    $(panel).fadeIn(100, function() {
+    });
 
     // Un-select all selectors
     $('.list-group-item').removeClass('active');
@@ -81,4 +86,23 @@ function activatePanel(panelName, options={}) {
     var select = `#select-${panelName}`;
 
     $(select).parent('.list-group-item').addClass('active');
+}
+
+
+function onPanelLoad(panel, callback) {
+    // One-time callback when a panel is first displayed
+    // Used to implement lazy-loading, rather than firing 
+    // multiple AJAX queries when the page is first loaded.
+
+    var panelId = `#panel-${panel}`;
+
+    $(panelId).on('fadeInStarted', function(e) {
+
+        // Trigger the callback
+        callback();
+
+        // Turn off the event
+        $(panelId).off('fadeInStarted');
+
+    });
 }
