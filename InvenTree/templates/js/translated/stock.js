@@ -667,6 +667,7 @@ function loadStockTable(table, options) {
     // List of user-params which override the default filters
 
     options.params['location_detail'] = true;
+    options.params['part_detail'] = true;
 
     var params = options.params || {};
 
@@ -1116,11 +1117,11 @@ function loadStockTable(table, options) {
 
 
     function stockAdjustment(action) {
-        var items = $("#stock-table").bootstrapTable("getSelections");
+        var items = $(table).bootstrapTable("getSelections");
 
         adjustStock(action, items, {
             onSuccess: function() {
-                $('#stock-table').bootstrapTable('refresh');
+                $(table).bootstrapTable('refresh');
             }
         });
     }
@@ -1128,7 +1129,7 @@ function loadStockTable(table, options) {
     // Automatically link button callbacks
 
     $('#multi-item-print-label').click(function() {
-        var selections = $('#stock-table').bootstrapTable('getSelections');
+        var selections = $(table).bootstrapTable('getSelections');
 
         var items = [];
 
@@ -1140,7 +1141,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-print-test-report').click(function() {
-        var selections = $('#stock-table').bootstrapTable('getSelections');
+        var selections = $(table).bootstrapTable('getSelections');
 
         var items = [];
 
@@ -1153,7 +1154,7 @@ function loadStockTable(table, options) {
 
     if (global_settings.BARCODE_ENABLE) {
         $('#multi-item-barcode-scan-into-location').click(function() {        
-            var selections = $('#stock-table').bootstrapTable('getSelections');
+            var selections = $(table).bootstrapTable('getSelections');
 
             var items = [];
 
@@ -1182,7 +1183,7 @@ function loadStockTable(table, options) {
     });
 
     $("#multi-item-order").click(function() {
-        var selections = $("#stock-table").bootstrapTable("getSelections");
+        var selections = $(table).bootstrapTable("getSelections");
 
         var stock = [];
 
@@ -1199,7 +1200,7 @@ function loadStockTable(table, options) {
 
     $("#multi-item-set-status").click(function() {
         // Select and set the STATUS field for selected stock items
-        var selections = $("#stock-table").bootstrapTable('getSelections');
+        var selections = $(table).bootstrapTable('getSelections');
 
         // Select stock status
         var modal = '#modal-form';
@@ -1279,13 +1280,13 @@ function loadStockTable(table, options) {
             });
 
             $.when.apply($, requests).done(function() {
-                $("#stock-table").bootstrapTable('refresh');
+                $(table).bootstrapTable('refresh');
             });
         })
     });
 
     $("#multi-item-delete").click(function() {
-        var selections = $("#stock-table").bootstrapTable("getSelections");
+        var selections = $(table).bootstrapTable("getSelections");
 
         var stock = [];
 
