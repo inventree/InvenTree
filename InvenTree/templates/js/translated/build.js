@@ -927,7 +927,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'responsible',
-                title: '{% trans "Resposible" %}',
+                title: '{% trans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     if (value)

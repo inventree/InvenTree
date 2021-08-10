@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
 from mptt.fields import TreeNodeChoiceField
@@ -241,14 +240,9 @@ class InstallStockForm(HelperForm):
         help_text=_('Stock item to install')
     )
 
-    quantity_to_install = RoundingDecimalFormField(
-        max_digits=10, decimal_places=5,
-        initial=1,
-        label=_('Quantity'),
-        help_text=_('Stock quantity to assign'),
-        validators=[
-            MinValueValidator(0.001)
-        ]
+    to_install = forms.BooleanField(
+        widget=forms.HiddenInput(),
+        required=False,
     )
 
     notes = forms.CharField(
@@ -261,7 +255,7 @@ class InstallStockForm(HelperForm):
         fields = [
             'part',
             'stock_item',
-            'quantity_to_install',
+            # 'quantity_to_install',
             'notes',
         ]
 

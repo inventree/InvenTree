@@ -68,3 +68,6 @@ htmlcov/
 
 # Development files
 dev/
+
+# Locale stats file
+locale_stats.json

@@ -3,6 +3,7 @@
 {% load static %}
 {% load inventree_extras %}
 {% load i18n %}
+{% load l10n %}
 {% load markdownify %}
 
 {% block menubar %}
@@ -119,6 +120,11 @@
         <h4>{% trans "Installed Stock Items" %}</h4>
     </div>
     <div class='panel-content'>
+        <div class='btn-group'>
+        <button type='button' class='btn btn-success' id='stock-item-install'>
+            <span class='fas fa-plus-circle'></span> {% trans "Install Stock Item" %}
+        </button>
+        </div>
         <table class='table table-striped table-condensed' id='installed-table'></table>
     </div>
 </div>
@@ -128,12 +134,26 @@
 {% block js_ready %}
 {{ block.super }}
 
+    $('#stock-item-install').click(function() {
+
+        launchModalForm(
+            "{% url 'stock-item-install' item.pk %}",
+            {
+                data: {
+                    'part': {{ item.part.pk }},
+                    'install_item': true,
+                },
+                reload: true,
+            }
+        );
+    });
+
     loadInstalledInTable(
         $('#installed-table'),
         {
             stock_item: {{ item.pk }},
             part: {{ item.part.pk }},
-            quantity: {{ item.quantity }},
+            quantity: {{ item.quantity|unlocalize }},
         }
     );
 

@@ -85,8 +85,10 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     """
 
     def __init__(self, instance=None, data=empty, **kwargs):
-
-        # self.instance = instance
+        """
+        Custom __init__ routine to ensure that *default* values (as specified in the ORM)
+        are used by the DRF serializers, *if* the values are not provided by the user.
+        """
 
         # If instance is None, we are creating a new instance
         if instance is None and data is not empty:
@@ -193,7 +195,15 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         try:
             instance.full_clean()
         except (ValidationError, DjangoValidationError) as exc:
-            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+            data = exc.message_dict
+
+            # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
+            if '__all__' in data:
+                data['non_field_errors'] = data['__all__']
+                del data['__all__']
+
+            raise ValidationError(data)
 
         return data
 

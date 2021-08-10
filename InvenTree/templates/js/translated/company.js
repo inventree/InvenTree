@@ -30,6 +30,17 @@ function createManufacturerPart(options={}) {
         fields.manufacturer.value = options.manufacturer;
     }
 
+    fields.manufacturer.secondary = {
+        title: '{% trans "Add Manufacturer" %}',
+        fields: function(data) {
+            var company_fields = companyFormFields();
+
+            company_fields.is_manufacturer.value = true;
+            
+            return company_fields;
+        }
+    }
+
     constructForm('{% url "api-manufacturer-part-list" %}', {
         fields: fields,
         method: 'POST',
@@ -43,8 +54,12 @@ function editManufacturerPart(part, options={}) {
 
     var url = `/api/company/part/manufacturer/${part}/`;
 
+    var fields = manufacturerPartFields();
+
+    fields.part.hidden = true;
+
     constructForm(url, {
-        fields: manufacturerPartFields(),
+        fields: fields,
         title: '{% trans "Edit Manufacturer Part" %}',
         onSuccess: options.onSuccess
     });
@@ -72,7 +87,7 @@ function supplierPartFields() {
             filters: {
                 part_detail: true,
                 manufacturer_detail: true,
-            }
+            },
         },
         description: {},
         link: {
@@ -108,6 +123,33 @@ function createSupplierPart(options={}) {
         fields.manufacturer_part.value = options.manufacturer_part;
     }
 
+    // Add a secondary modal for the supplier
+    fields.supplier.secondary = {
+        title: '{% trans "Add Supplier" %}',
+        fields: function(data) {
+            var company_fields = companyFormFields();
+
+            company_fields.is_supplier.value = true;
+
+            return company_fields;
+        }
+    };
+
+    // Add a secondary modal for the manufacturer part
+    fields.manufacturer_part.secondary = {
+        title: '{% trans "Add Manufacturer Part" %}',
+        fields: function(data) {
+            var mp_fields = manufacturerPartFields();
+
+            if (data.part) {
+                mp_fields.part.value = data.part;
+                mp_fields.part.hidden = true;
+            }
+
+            return mp_fields;
+        }
+    };
+
     constructForm('{% url "api-supplier-part-list" %}', {
         fields: fields,
         method: 'POST',
@@ -119,8 +161,13 @@ function createSupplierPart(options={}) {
 
 function editSupplierPart(part, options={}) {
 
+    var fields = supplierPartFields();
+
+    // Hide the "part" field
+    fields.part.hidden = true;
+
     constructForm(`/api/company/part/${part}/`, {
-        fields: supplierPartFields(),
+        fields: fields,
         title: '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
     });

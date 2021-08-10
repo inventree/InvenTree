@@ -111,8 +111,8 @@ src="{% static 'img/blank_image.png' %}"
             <li><a href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
             {% endif %}
             {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
-            <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build"% }</a>
-                {% endif %}
+            <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build" %}</a>
+            {% endif %}
         </ul>
     </div>
     {% endif %}

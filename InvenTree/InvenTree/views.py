@@ -7,12 +7,15 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import json
 
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -27,8 +30,6 @@ from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
-
-import InvenTree.tasks
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import SettingCategorySelectForm
@@ -802,6 +803,13 @@ class SettingsView(TemplateView):
         except:
             ctx["rates_updated"] = None
 
+        # load locale stats
+        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        try:
+            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
+        except:
+            ctx["locale_stats"] = {}
+
         return ctx
 
 
@@ -817,8 +825,13 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        # Will block for a little bit
-        InvenTree.tasks.update_exchange_rates()
+        from InvenTree.tasks import offload_task
+
+        # Define associated task from InvenTree.tasks list of methods
+        taskname = 'InvenTree.tasks.update_exchange_rates'
+
+        # Run it
+        offload_task(taskname, force_sync=True)
 
         return redirect(reverse_lazy('settings'))
 
