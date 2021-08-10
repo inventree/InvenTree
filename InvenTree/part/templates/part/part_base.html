@@ -12,13 +12,19 @@
 
 <div class="panel panel-default panel-inventree">
     <!-- Default panel contents -->
-    <div class="panel-heading"><h3>{{ part.full_name }}</h3></div>
+<!--    <div class="panel-heading row"><h3>{{ part.full_name }}</h3></div>-->
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-6">
-            {% include "part/part_thumb.html" %}
-            <div class="media-body">
-                <p> 
+                {% include "part/part_thumb.html" %}
+                <div class="media-body">
+                    <h3 style="margin-top: 0px">
+                        {{ part.full_name }}
+                    </h3>
+                    {% if part.description %}
+                    <p><em>{{ part.description }}</em></p>
+                    {% endif %}
+                    <p>
                     <h3>
                     <!-- Admin View -->
                     {% if user.is_staff and roles.part.change %}
@@ -130,8 +136,15 @@
                     </div>
                     {% endif %}
                 </div>
+                <div>
+                    <!-- Details show/hide button -->
+                    <button id="toggle-part-details" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
+                        <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
+                    </button>
+                </div>
             </div>
             </div>
+
             <div class='info-messages'>
                 {% if part.variant_of %}
                 <div class='alert alert-info alert-block' style='padding: 10px;'>
@@ -210,13 +223,6 @@
         </div>
     </div>
 
-    <p>
-        <!-- Details show/hide button -->
-        <button id="toggle-part-details" class="btn btn-primary" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
-        <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
-        </button>
-    </p>
-        
     <div class="collapse" id="collapsible-part-details">
         <div class="card card-body">
             <!-- Details Table -->
