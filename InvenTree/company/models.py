@@ -475,6 +475,15 @@ class SupplierPart(models.Model):
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
+    def api_instance_filters(self):
+        
+        return {
+            'manufacturer_part': {
+                'part': self.part.pk
+            }
+        }
+
+
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
