@@ -6,7 +6,8 @@ import json
 import requests
 import logging
 
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
@@ -125,7 +126,7 @@ def heartbeat():
     except AppRegistryNotReady:
         return
 
-    threshold = datetime.now() - timedelta(minutes=30)
+    threshold = timezone.now() - timedelta(minutes=30)
 
     # Delete heartbeat results more than half an hour old,
     # otherwise they just create extra noise
@@ -149,7 +150,7 @@ def delete_successful_tasks():
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
-    threshold = datetime.now() - timedelta(days=30)
+    threshold = timezone.now() - timedelta(days=30)
 
     results = Success.objects.filter(
         started__lte=threshold
