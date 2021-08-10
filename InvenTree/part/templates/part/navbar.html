@@ -4,6 +4,8 @@
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
+{% settings_value 'PART_DISPLAY_SUMMARY' user=request.user as display_summary %}
+
 
 <ul class='list-group'>
     <li class='list-group-item'>
@@ -11,6 +13,14 @@
             <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
         </a>
     </li>
+    {% if display_summary %}
+    <li class='list-group-item' title='Summary'>
+        <a href='#' id='select-summary' class='nav-toggle'>
+            <span class='menu-tab-icon fas fa-info-circle sidebar-icon'></span>
+            Summary
+        </a>
+    </li>
+    {% endif %}
     <li class='list-group-item' title='{% trans "Parameters" %}'>
         <a href='#' id='select-part-parameters' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-th-list sidebar-icon'></span>

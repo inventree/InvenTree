@@ -10,6 +10,42 @@
 {% endblock %}
 
 {% block page_content %}
+{% settings_value 'PART_DISPLAY_SUMMARY' user=request.user as display_summary %}
+
+{% if display_summary %}
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-summary'>
+    <div class='panel-body'>
+        <div class="col-md-6">
+            {% if part.notes %}
+            <h4>{% trans "Notes" %}</h4>
+            {{ part.notes | markdownify }}
+            {% endif %}
+
+            <div style="margin-top: 20px">
+            <h4>{% trans "Parameters" %}</h4>
+            <table id='summary-parameter-table' class='table table-sm'><tbody><tr><td><p class="text-center">Loading...</p></td></tr></tbody></table>
+            </div>
+
+            <div>
+            <h4>{% trans "Attachments" %}</h4>
+            <table id='summary-attachment-table' class='table table-sm table-borderless'><tbody><tr><td><p class="text-center">Loading...</p></td></tr></tbody></table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>{% trans "Part Stock" %}</h4>
+            <table id='summary-stock-table' class='table table-sm table-bordered'>
+                <thead><tr>
+                    <th>{% trans "Stock" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Location" %}</th>
+                    <th>{% trans "Purchase Price" %}</th>
+                </tr></thead>
+                <tbody><tr><td colspan="4"><p class="text-center">Loading...</p></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-part-stock'>
     <div class='panel-heading'>
@@ -332,6 +368,8 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+{% settings_value 'PART_DISPLAY_SUMMARY' user=request.user as display_summary %}
 
     // Load the "suppliers" tab
     onPanelLoad('suppliers', function() {
@@ -1074,4 +1112,59 @@
         default: 'part-stock'
     });
 
+    {% if display_summary %}
+    $('#panel-part-parameters').trigger('fadeInStarted')
+    $('#parameter-table').on('load-success.bs.table', function(e, data) {
+        var table = $('#summary-parameter-table');
+        table.find('tbody').empty();
+        if (jQuery.isEmptyObject(data)) {
+            table.parent().hide();
+            return;
+        } else {
+            table.parent().show();
+        }
+        for (var param of data) {
+            table.find('tbody').append('<tr><td>'+param.template_detail.name+'</td><td>'+param.data+' '+param.template_detail.units+'</td></tr>');
+        }
+    })
+
+    $('#panel-part-attachments').trigger('fadeInStarted')
+    $('#attachment-table').on('load-success.bs.table', function(e, data) {
+        var table = $('#summary-attachment-table');
+        table.find('tbody').empty();
+
+        if (jQuery.isEmptyObject(data)) {
+            table.parent().hide();
+            return;
+        }
+        for (var attachment of data) {
+            var filename = attachment.attachment.split('\\').pop().split('/').pop();
+            var badge = "";
+            if (filename.indexOf('.') !== -1) {
+                var fileExt = filename.split('.').pop();
+                badge='<span class="badge">'+fileExt+'</span> '
+            }
+            table.find('tbody').append('<tr><td>'+badge+'<a href="'+attachment.attachment+'">'+(attachment.comment?attachment.comment:filename)+'</a></td></tr>');
+        };
+    })
+
+    $('#panel-part-stock').trigger('fadeInStarted')
+    $('#stock-table').on('load-success.bs.table', function(e, data) {
+        var table = $('#summary-stock-table');
+        table.find('tbody').empty();
+
+        if (data.count==0) {
+            table.parent().hide();
+            return;
+        }
+        for (var stock of data.results) {
+            table.find('tbody').append('<tr>\
+                <td class="col-md-1"><a href="/stock/item/'+stock.pk+'/">'+stock.quantity+'</a></td>\
+                <td class="col-md-1">'+stockStatusDisplay(stock.status)+'</td>\
+                <td><a href="/stock/location/'+stock.location_detail.pk+'/">'+stock.location_detail.pathstring+'</a></td>\
+                <td>'+stock.purchase_price+'</td>\
+            </tr>');
+        }
+    })
+    {% endif %}
 {% endblock %}
