@@ -6,6 +6,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+.env
 inventree-env/
 ./build/
 develop-eggs/
