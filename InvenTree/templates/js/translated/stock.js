@@ -263,11 +263,13 @@ function adjustStock(action, items, options={}) {
             required: true,
             api_url: `/api/stock/location/`,
             model: 'stocklocation',
+            name: 'location',
         },
         notes: {
             label: '{% trans "Notes" %}',
             help_text: '{% trans "Stock transaction notes" %}',
             type: 'string',
+            name: 'notes',
         }
     };
 
