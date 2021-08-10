@@ -946,6 +946,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': 10,
             'validator': [int, MinValueValidator(1)]
         },
+        'PART_DISPLAY_SUMMARY': {
+            'name': _('Part Summary'),
+            'description': _('Display Part Summary'),
+            'default': False,
+            'validator': bool,
+        },
+    
     }
 
     class Meta:
