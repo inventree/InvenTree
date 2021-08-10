@@ -14,10 +14,17 @@ db-setup:
 	docker-compose down 
 
 inventree-setup:
-	#docker-compose run inventree-server invoke migrate #&& invoke static && invoke superuser
+	docker-compose run inventree-server invoke migrate
 	docker-compose run inventree-server invoke static
 	docker-compose run inventree-server invoke superuser
 
 
 up:
 	docker-compose up
+
+build-dev:
+	docker build . -f Dockerfile --target dev
+
+up-dev: build-dev
+	docker-compose -f docker-compose.dev.yml -p dev_inventree up
+
