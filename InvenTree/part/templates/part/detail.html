@@ -333,42 +333,301 @@
 {% block js_ready %}
     {{ block.super }}
 
-    enableNavbar({
-        label: 'part',
-        toggleId: '#part-menu-toggle',
-    });
-
-
-    loadBuildOrderAllocationTable("#build-order-allocation-table", {
-        params: {
-            part: {{ part.id }},
+    // Load the "suppliers" tab
+    onPanelLoad('suppliers', function() {
+        function reloadSupplierPartTable() {
+            $('#supplier-part-table').bootstrapTable('refresh');
         }
+    
+        $('#supplier-create').click(function () {
+    
+            createSupplierPart({
+                part: {{ part.pk }},
+                onSuccess: reloadSupplierPartTable,
+            });
+        });
+    
+        $("#supplier-part-delete").click(function() {
+    
+            var selections = $("#supplier-part-table").bootstrapTable("getSelections");
+    
+            var requests = [];
+    
+            showQuestionDialog(
+                '{% trans "Delete Supplier Parts?" %}',
+                '{% trans "All selected supplier parts will be deleted" %}',
+                {
+                    accept: function() {
+                        selections.forEach(function(part) {
+                            var url = `/api/company/part/${part.pk}/`;
+                
+                            requests.push(inventreeDelete(url));
+                        });
+                
+                        $.when.apply($, requests).done(function() {
+                            reloadSupplierPartTable();
+                        });
+                    }
+                }
+            );
+        });
+    
+        loadSupplierPartTable(
+            "#supplier-part-table",
+            "{% url 'api-supplier-part-list' %}",
+            {
+                params: {
+                    part: {{ part.id }},
+                    part_detail: false,
+                    supplier_detail: true,
+                    manufacturer_detail: true,
+                },
+            }
+        );
+    
+        linkButtonsToSelection($("#supplier-part-table"), ['#supplier-part-options']);
+    
+        loadManufacturerPartTable(
+            '#manufacturer-part-table',
+            "{% url 'api-manufacturer-part-list' %}",
+            {
+                params: {
+                    part: {{ part.id }},
+                    part_detail: true,
+                    manufacturer_detail: true,
+                },
+            }
+        );
+    
+        linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-part-options']);
+    
+        $("#manufacturer-part-delete").click(function() {
+    
+            var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+    
+            deleteManufacturerParts(selections, {
+                onSuccess: function() { 
+                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                }
+            });
+        });
+    
+        $('#manufacturer-create').click(function () {
+            
+            createManufacturerPart({
+                part: {{ part.pk }},
+                onSuccess: function() {
+                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                }
+            });
+        });
     });
 
-    loadSalesOrderAllocationTable("#sales-order-allocation-table", {
-        params: {
-            part: {{ part.id }},
-        }
-    });
+    // Load the "builds" tab
+    onPanelLoad("build-orders", function() {
 
-    loadPartTable('#used-table',
-        '{% url "api-part-list" %}',
-        {
+        $("#start-build").click(function() {
+            newBuildOrder({
+                part: {{ part.pk }},
+            });
+        });
+    
+        loadBuildTable($("#build-table"), {
+            url: "{% url 'api-build-list' %}",
             params: {
-                uses: {{ part.pk }},
-            },
-            filterTarget: '#filter-list-usedin',
-        }
-    );
+                part: {{ part.id }},
+            }
+        });
 
-    // Load the BOM table data
-    loadBomTable($("#bom-table"), {
-        editable: {{ editing_enabled }},
-        bom_url: "{% url 'api-bom-list' %}",
-        part_url: "{% url 'api-part-list' %}",
-        parent_id: {{ part.id }} ,
-        sub_part_detail: true,
+        loadBuildOrderAllocationTable("#build-order-allocation-table", {
+            params: {
+                part: {{ part.id }},
+            }
+        });
+    
     });
+
+    // Load the "sales orders" tab
+    onPanelLoad("sales-orders", function() {
+        loadSalesOrderAllocationTable("#sales-order-allocation-table", {
+            params: {
+                part: {{ part.id }},
+            }
+        });
+    });
+
+    // Load the "used in" tab
+    onPanelLoad("used-in", function() {
+        loadPartTable('#used-table',
+            '{% url "api-part-list" %}',
+            {
+                params: {
+                    uses: {{ part.pk }},
+                },
+                filterTarget: '#filter-list-usedin',
+            }
+        );
+    });
+
+    // Load the "BOM" tab
+    onPanelLoad("bom", function() {
+        // Load the BOM table data
+        loadBomTable($("#bom-table"), {
+            editable: {{ editing_enabled }},
+            bom_url: "{% url 'api-bom-list' %}",
+            part_url: "{% url 'api-part-list' %}",
+            parent_id: {{ part.id }} ,
+            sub_part_detail: true,
+        });
+
+        linkButtonsToSelection($("#bom-table"),
+            [
+                "#bom-item-delete",
+            ]
+        );
+
+        {% if editing_enabled %}
+        $("#editing-finished").click(function() {
+            location.href = "{% url 'part-detail' part.id %}?display=bom";
+        });
+
+        $('#bom-item-delete').click(function() {
+
+            // Get a list of the selected BOM items
+            var rows = $("#bom-table").bootstrapTable('getSelections');
+
+            // TODO - In the future, display (in the dialog) which items are going to be deleted
+
+            showQuestionDialog(
+                '{% trans "Delete selected BOM items?" %}',
+                '{% trans "All selected BOM items will be deleted" %}',
+                {
+                    accept: function() {
+
+                        // Keep track of each DELETE request
+                        var requests = [];
+
+                        rows.forEach(function(row) {
+                            requests.push(
+                                inventreeDelete(
+                                    `/api/bom/${row.pk}/`,
+                                )
+                            );
+                        });
+
+                        // Wait for *all* the requests to complete
+                        $.when.apply($, requests).done(function() {
+                            location.reload();
+                        });
+                    }
+                }
+            );
+        });
+
+        $('#bom-upload').click(function() {
+            location.href = "{% url 'upload-bom' part.id %}";
+        });
+
+        $('#bom-duplicate').click(function() {
+            launchModalForm(
+                "{% url 'duplicate-bom' part.id %}",
+                {
+                    success: function() {
+                        $('#bom-table').bootstrapTable('refresh');
+                    }
+                }
+            );
+        });
+
+        $("#bom-item-new").click(function () {
+
+            var fields = bomItemFields();
+
+            fields.part.value = {{ part.pk }};
+            fields.sub_part.filters = {
+                active: true,
+            };
+
+            constructForm('{% url "api-bom-list" %}', {
+                fields: fields,
+                method: 'POST',
+                title: '{% trans "Create BOM Item" %}',
+                onSuccess: function() {
+                    $('#bom-table').bootstrapTable('refresh');
+                }
+            });
+        });
+
+        {% else %}
+
+        $("#validate-bom").click(function() {
+            launchModalForm(
+                "{% url 'bom-validate' part.id %}",
+                {
+                    reload: true,
+                }
+            );
+        });
+
+        $("#edit-bom").click(function () {
+            location.href = "{% url 'part-detail' part.id %}?display=bom&edit=1";
+        });
+
+        $("#download-bom").click(function () {
+            launchModalForm("{% url 'bom-export' part.id %}",
+                {
+                    success: function(response) {
+                        location.href = response.url;
+                    },
+                }
+            );
+        });
+
+        {% endif %}
+
+        $("#print-bom-report").click(function() {
+            printBomReports([{{ part.pk }}]);
+        });
+    });
+
+    // Load the "related parts" tab
+    onPanelLoad("related-parts", function() {
+        $('#table-related-part').inventreeTable({
+        });
+
+        $("#add-related-part").click(function() {
+            launchModalForm("{% url 'part-related-create' %}", {
+                data: {
+                    part: {{ part.id }},
+                },
+                reload: true,
+            });
+        });
+
+        $('.delete-related-part').click(function() {
+            var button = $(this);
+    
+            launchModalForm(button.attr('url'), {
+                reload: true,
+            });
+        });
+    });
+
+    // Load the "variants" tab
+    onPanelLoad("variants", function() {
+        loadPartVariantTable($('#variants-table'), {{ part.pk }});
+
+        $('#new-variant').click(function() {
+    
+            duplicatePart(
+                {{ part.pk}},
+                {
+                    variant: true,
+                }
+            );
+        });
+    });
+
 
     // Load the BOM table data in the pricing view
     loadBomTable($("#bom-pricing-table"), {
@@ -379,168 +638,25 @@
         sub_part_detail: true,
     });
 
-
-    linkButtonsToSelection($("#bom-table"),
-        [
-            "#bom-item-delete",
-        ]
-    );
-
-    {% if editing_enabled %}
-    $("#editing-finished").click(function() {
-        location.href = "{% url 'part-detail' part.id %}?display=bom";
-    });
-
-    $('#bom-item-delete').click(function() {
-
-        // Get a list of the selected BOM items
-        var rows = $("#bom-table").bootstrapTable('getSelections');
-
-        // TODO - In the future, display (in the dialog) which items are going to be deleted
-
-        showQuestionDialog(
-            '{% trans "Delete selected BOM items?" %}',
-            '{% trans "All selected BOM items will be deleted" %}',
-            {
-                accept: function() {
-
-                    // Keep track of each DELETE request
-                    var requests = [];
-
-                    rows.forEach(function(row) {
-                        requests.push(
-                            inventreeDelete(
-                                `/api/bom/${row.pk}/`,
-                            )
-                        );
-                    });
-
-                    // Wait for *all* the requests to complete
-                    $.when.apply($, requests).done(function() {
-                        location.reload();
-                    });
-                }
-            }
-        );
-    });
-
-    $('#bom-upload').click(function() {
-        location.href = "{% url 'upload-bom' part.id %}";
-    });
-
-    $('#bom-duplicate').click(function() {
-        launchModalForm(
-            "{% url 'duplicate-bom' part.id %}",
-            {
-                success: function() {
-                    $('#bom-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
-    $("#bom-item-new").click(function () {
-
-        var fields = bomItemFields();
-
-        fields.part.value = {{ part.pk }};
-        fields.sub_part.filters = {
-            active: true,
-        };
-
-        constructForm('{% url "api-bom-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Create BOM Item" %}',
-            onSuccess: function() {
-                $('#bom-table').bootstrapTable('refresh');
-            }
-        });
-    });
-
-    {% else %}
-
-    $("#validate-bom").click(function() {
-        launchModalForm(
-            "{% url 'bom-validate' part.id %}",
-            {
-                reload: true,
-            }
-        );
-    });
-
-    $("#edit-bom").click(function () {
-        location.href = "{% url 'part-detail' part.id %}?display=bom&edit=1";
-    });
-
-    $("#download-bom").click(function () {
-        launchModalForm("{% url 'bom-export' part.id %}",
-            {
-                success: function(response) {
-                    location.href = response.url;
-                },
-            }
-        );
-    });
-
-    {% endif %}
-
-    $("#print-bom-report").click(function() {
-        printBomReports([{{ part.pk }}]);
-    });
-
-    $("#start-build").click(function() {
-        newBuildOrder({
-            part: {{ part.pk }},
-        });
-    });
-
-    loadBuildTable($("#build-table"), {
-        url: "{% url 'api-build-list' %}",
-        params: {
-            part: {{ part.id }},
-        }
-    });
-
-    $('#table-related-part').inventreeTable({
-    });
-
-    $("#add-related-part").click(function() {
-        launchModalForm("{% url 'part-related-create' %}", {
-            data: {
+    onPanelLoad("purchase-orders", function() {
+        loadPurchaseOrderTable($("#purchase-order-table"), {
+            url: "{% url 'api-po-list' %}",
+            params: {
                 part: {{ part.id }},
             },
-            reload: true,
         });
     });
 
-    $('.delete-related-part').click(function() {
-        var button = $(this);
-
-        launchModalForm(button.attr('url'), {
-            reload: true,
-        });
+    onPanelLoad("sales-orders", function() {
+        loadSalesOrderTable($("#sales-order-table"), {
+            url: "{% url 'api-so-list' %}",
+            params: {
+                part: {{ part.id }},
+            },
+        });    
     });
 
-    loadPartVariantTable($('#variants-table'), {{ part.pk }});
 
-    $('#new-variant').click(function() {
-
-        duplicatePart(
-            {{ part.pk}},
-            {
-                variant: true,
-            }
-        );
-    });
-
-    loadPurchaseOrderTable($("#purchase-order-table"), {
-        url: "{% url 'api-po-list' %}",
-        params: {
-            part: {{ part.id }},
-        },
-    });
-    
     $("#part-order2").click(function() {
         launchModalForm("{% url 'order-parts' %}", {
             data: {
@@ -550,113 +666,111 @@
         });
     });
 
-    loadSalesOrderTable($("#sales-order-table"), {
-        url: "{% url 'api-so-list' %}",
-        params: {
-            part: {{ part.id }},
-        },
-    });
-
-    loadPartTestTemplateTable(
-        $("#test-template-table"),
-        {
-            part: {{ part.pk }},
-            params: {
+    onPanelLoad("test-templates", function() {
+        loadPartTestTemplateTable(
+            $("#test-template-table"),
+            {
                 part: {{ part.pk }},
-            }
-        }
-    );
-    
-    function reloadTable() {
-        $("#test-template-table").bootstrapTable("refresh");
-    }
-    
-    $("#add-test-template").click(function() {
-    
-        constructForm('{% url "api-part-test-template-list" %}', {
-            method: 'POST',
-            fields: {
-                test_name: {},
-                description: {},
-                required: {},
-                requires_value: {},
-                requires_attachment: {},
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true,
+                params: {
+                    part: {{ part.pk }},
                 }
-            },
-            title: '{% trans "Add Test Result Template" %}',
-            onSuccess: reloadTable
-        });
-    });
-    
-    $("#test-template-table").on('click', '.button-test-edit', function() {
-        var pk = $(this).attr('pk');
-    
-        var url = `/api/part/test-template/${pk}/`;
-    
-        constructForm(url, {
-            fields: {
-                test_name: {},
-                description: {},
-                required: {},
-                requires_value: {},
-                requires_attachment: {},
-            },
-            title: '{% trans "Edit Test Result Template" %}',
-            onSuccess: reloadTable,
-        });
-    });
-    
-    $("#test-template-table").on('click', '.button-test-delete', function() {
-        var pk = $(this).attr('pk');
-    
-        var url = `/api/part/test-template/${pk}/`;
-    
-        constructForm(url, {
-            method: 'DELETE',
-            title: '{% trans "Delete Test Result Template" %}',
-            onSuccess: reloadTable,
-        });
-    });
-
-    $('#add-stock-item').click(function () {
-        createNewStockItem({
-            reload: true,
-            data: {
-                part: {{ part.id }},
             }
-        });
-    });
+        ); 
 
-    loadStockTable($("#stock-table"), {
-        params: {
-            part: {{ part.id }},
-            location_detail: true,
-            part_detail: true,
-            supplier_part_detail: true,
-        },
-        groupByField: 'location',
-        buttons: [
-            '#stock-options',
-        ],
-        url: "{% url 'api-stock-list' %}",
-    });
-
-    $("#stock-export").click(function() {
-
-        exportStock({
-            part: {{ part.pk }}
-        });
-    });
-
-    $('#item-create').click(function () {
-        createNewStockItem({
-            reload: true,
-            data: {
-                part: {{ part.id }},
+        $("#add-test-template").click(function() {
+    
+            function reloadTestTemplateTable() {
+                $("#test-template-table").bootstrapTable("refresh");
             }
+
+            constructForm('{% url "api-part-test-template-list" %}', {
+                method: 'POST',
+                fields: {
+                    test_name: {},
+                    description: {},
+                    required: {},
+                    requires_value: {},
+                    requires_attachment: {},
+                    part: {
+                        value: {{ part.pk }},
+                        hidden: true,
+                    }
+                },
+                title: '{% trans "Add Test Result Template" %}',
+                onSuccess: reloadTestTemplateTable
+            });
+
+            $("#test-template-table").on('click', '.button-test-edit', function() {
+                var pk = $(this).attr('pk');
+            
+                var url = `/api/part/test-template/${pk}/`;
+            
+                constructForm(url, {
+                    fields: {
+                        test_name: {},
+                        description: {},
+                        required: {},
+                        requires_value: {},
+                        requires_attachment: {},
+                    },
+                    title: '{% trans "Edit Test Result Template" %}',
+                    onSuccess: reloadTestTemplateTable,
+                });
+            });
+
+            $("#test-template-table").on('click', '.button-test-delete', function() {
+                var pk = $(this).attr('pk');
+            
+                var url = `/api/part/test-template/${pk}/`;
+            
+                constructForm(url, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Test Result Template" %}',
+                    onSuccess: reloadTestTemplateTable,
+                });
+            });
+
+        });
+    });
+
+    onPanelLoad("part-stock", function() {
+        $('#add-stock-item').click(function () {
+            createNewStockItem({
+                reload: true,
+                data: {
+                    part: {{ part.id }},
+                }
+            });
+        });
+    
+        loadStockTable($("#stock-table"), {
+            params: {
+                part: {{ part.id }},
+                location_detail: true,
+                part_detail: true,
+                supplier_part_detail: true,
+            },
+            groupByField: 'location',
+            buttons: [
+                '#stock-options',
+            ],
+            url: "{% url 'api-stock-list' %}",
+        });
+    
+        $("#stock-export").click(function() {
+    
+            exportStock({
+                part: {{ part.pk }}
+            });
+        });
+    
+        $('#item-create').click(function () {
+            createNewStockItem({
+                reload: true,
+                data: {
+                    part: {{ part.id }},
+                }
+            });
         });
     });
 
@@ -690,206 +804,124 @@
         );
     });
 
-    loadPartParameterTable(
-        '#parameter-table', 
-        '{% url "api-part-parameter-list" %}',
-        {
-            params: {
-                part: {{ part.pk }},
-            }
-        }
-    );
-
-    $('#param-table').inventreeTable({
-    });
-
-    {% if roles.part.add %}
-    $('#param-create').click(function() {
-
-        constructForm('{% url "api-part-parameter-list" %}', {
-            method: 'POST',
-            fields: {
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true,
-                },
-                template: {},
-                data: {},
-            },
-            title: '{% trans "Add Parameter" %}',
-            onSuccess: function() {
-                $('#parameter-table').bootstrapTable('refresh');
-            }
-        });
-    });
-    {% endif %}
-
-    $('.param-edit').click(function() {
-        var button = $(this);
-
-        launchModalForm(button.attr('url'), {
-            reload: true,
-        });
-    });
-
-    $('.param-delete').click(function() {
-        var button = $(this);
-
-        launchModalForm(button.attr('url'), {
-            reload: true,
-        });
-    });
-
-    loadAttachmentTable(
-        '{% url "api-part-attachment-list" %}',
-        {
-            filters: {
-                part: {{ part.pk }},
-            },
-            onEdit: function(pk) {
-                var url = `/api/part/attachment/${pk}/`;
-
-                constructForm(url, {
-                    fields: {
-                        comment: {},
-                    },
-                    title: '{% trans "Edit Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
-            },
-            onDelete: function(pk) {
-                var url = `/api/part/attachment/${pk}/`;
-
-                constructForm(url, {
-                    method: 'DELETE',
-                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                    title: '{% trans "Delete Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
-            }
-        }
-    );
-
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-part-attachment-list" %}',
-        {
-            data: {
-                part: {{ part.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                reloadAttachmentTable();
-            }
-        }
-    );
-
-    $("#new-attachment").click(function() {
-
-        constructForm(
-            '{% url "api-part-attachment-list" %}',
+    onPanelLoad("part-parameters", function() {
+        loadPartParameterTable(
+            '#parameter-table', 
+            '{% url "api-part-parameter-list" %}',
             {
+                params: {
+                    part: {{ part.pk }},
+                }
+            }
+        );
+    
+        $('#param-table').inventreeTable({
+        });
+    
+        {% if roles.part.add %}
+        $('#param-create').click(function() {
+    
+            constructForm('{% url "api-part-parameter-list" %}', {
                 method: 'POST',
                 fields: {
-                    attachment: {},
-                    comment: {},
                     part: {
                         value: {{ part.pk }},
                         hidden: true,
-                    }
+                    },
+                    template: {},
+                    data: {},
                 },
-                onSuccess: reloadAttachmentTable,
-                title: '{% trans "Add Attachment" %}',
-            }
-        )
-    });
-
-    function reloadSupplierPartTable() {
-        $('#supplier-part-table').bootstrapTable('refresh');
-    }
-
-    $('#supplier-create').click(function () {
-
-        createSupplierPart({
-            part: {{ part.pk }},
-            onSuccess: reloadSupplierPartTable,
+                title: '{% trans "Add Parameter" %}',
+                onSuccess: function() {
+                    $('#parameter-table').bootstrapTable('refresh');
+                }
+            });
+        });
+        {% endif %}
+    
+        $('.param-edit').click(function() {
+            var button = $(this);
+    
+            launchModalForm(button.attr('url'), {
+                reload: true,
+            });
+        });
+    
+        $('.param-delete').click(function() {
+            var button = $(this);
+    
+            launchModalForm(button.attr('url'), {
+                reload: true,
+            });
         });
     });
 
-    $("#supplier-part-delete").click(function() {
-
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
-
-        var requests = [];
-
-        showQuestionDialog(
-            '{% trans "Delete Supplier Parts?" %}',
-            '{% trans "All selected supplier parts will be deleted" %}',
+    onPanelLoad("part-attachments", function() {
+        loadAttachmentTable(
+            '{% url "api-part-attachment-list" %}',
             {
-                accept: function() {
-                    selections.forEach(function(part) {
-                        var url = `/api/company/part/${part.pk}/`;
-            
-                        requests.push(inventreeDelete(url));
+                filters: {
+                    part: {{ part.pk }},
+                },
+                onEdit: function(pk) {
+                    var url = `/api/part/attachment/${pk}/`;
+    
+                    constructForm(url, {
+                        fields: {
+                            comment: {},
+                        },
+                        title: '{% trans "Edit Attachment" %}',
+                        onSuccess: reloadAttachmentTable,
                     });
-            
-                    $.when.apply($, requests).done(function() {
-                        reloadSupplierPartTable();
+                },
+                onDelete: function(pk) {
+                    var url = `/api/part/attachment/${pk}/`;
+    
+                    constructForm(url, {
+                        method: 'DELETE',
+                        confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                        title: '{% trans "Delete Attachment" %}',
+                        onSuccess: reloadAttachmentTable,
                     });
                 }
             }
         );
-    });
-
-    loadSupplierPartTable(
-        "#supplier-part-table",
-        "{% url 'api-supplier-part-list' %}",
-        {
-            params: {
-                part: {{ part.id }},
-                part_detail: false,
-                supplier_detail: true,
-                manufacturer_detail: true,
-            },
-        }
-    );
-
-    linkButtonsToSelection($("#supplier-part-table"), ['#supplier-part-options']);
-
-    loadManufacturerPartTable(
-        '#manufacturer-part-table',
-        "{% url 'api-manufacturer-part-list' %}",
-        {
-            params: {
-                part: {{ part.id }},
-                part_detail: true,
-                manufacturer_detail: true,
-            },
-        }
-    );
-
-    linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-part-options']);
-
-    $("#manufacturer-part-delete").click(function() {
-
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
-
-        deleteManufacturerParts(selections, {
-            onSuccess: function() { 
-                $("#manufacturer-part-table").bootstrapTable("refresh");
+    
+        enableDragAndDrop(
+            '#attachment-dropzone',
+            '{% url "api-part-attachment-list" %}',
+            {
+                data: {
+                    part: {{ part.id }},
+                },
+                label: 'attachment',
+                success: function(data, status, xhr) {
+                    reloadAttachmentTable();
+                }
             }
+        );
+    
+        $("#new-attachment").click(function() {
+    
+            constructForm(
+                '{% url "api-part-attachment-list" %}',
+                {
+                    method: 'POST',
+                    fields: {
+                        attachment: {},
+                        comment: {},
+                        part: {
+                            value: {{ part.pk }},
+                            hidden: true,
+                        }
+                    },
+                    onSuccess: reloadAttachmentTable,
+                    title: '{% trans "Add Attachment" %}',
+                }
+            )
         });
     });
 
-    $('#manufacturer-create').click(function () {
-        
-        createManufacturerPart({
-            part: {{ part.pk }},
-            onSuccess: function() {
-                $("#manufacturer-part-table").bootstrapTable("refresh");
-            }
-        });
-    });
 
     {% default_currency as currency %}
 
