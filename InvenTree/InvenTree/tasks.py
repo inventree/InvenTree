@@ -6,7 +6,8 @@ import json
 import requests
 import logging
 
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
@@ -51,11 +52,14 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
-def offload_task(taskname, *args, **kwargs):
+def offload_task(taskname, force_sync=False, *args, **kwargs):
     """
-    Create an AsyncTask.
-    This is different to a 'scheduled' task,
-    in that it only runs once!
+        Create an AsyncTask if workers are running.
+        This is different to a 'scheduled' task,
+        in that it only runs once!
+
+        If workers are not running or force_sync flag
+        is set then the task is ran synchronously.
     """
 
     try:
@@ -63,10 +67,48 @@ def offload_task(taskname, *args, **kwargs):
     except (AppRegistryNotReady):
         logger.warning("Could not offload task - app registry not ready")
         return
+    import importlib
+    from InvenTree.status import is_worker_running
 
-    task = AsyncTask(taskname, *args, **kwargs)
+    if is_worker_running() and not force_sync:
+        # Running as asynchronous task
+        try:
+            task = AsyncTask(taskname, *args, **kwargs)
+            task.run()
+        except ImportError:
+            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+    else:
+        # Split path
+        try:
+            app, mod, func = taskname.split('.')
+            app_mod = app + '.' + mod
+        except ValueError:
+            logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+            return
 
-    task.run()
+        # Import module from app
+        try:
+            _mod = importlib.import_module(app_mod)
+        except ModuleNotFoundError:
+            logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+            return
+
+        # Retrieve function
+        try:
+            _func = getattr(_mod, func)
+        except AttributeError:
+            # getattr does not work for local import
+            _func = None
+
+        try:
+            if not _func:
+                _func = eval(func)
+        except NameError:
+            logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+            return
+        
+        # Workers are not running: run it as synchronous task
+        _func()
 
 
 def heartbeat():
@@ -84,7 +126,7 @@ def heartbeat():
     except AppRegistryNotReady:
         return
 
-    threshold = datetime.now() - timedelta(minutes=30)
+    threshold = timezone.now() - timedelta(minutes=30)
 
     # Delete heartbeat results more than half an hour old,
     # otherwise they just create extra noise
@@ -108,7 +150,7 @@ def delete_successful_tasks():
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
-    threshold = datetime.now() - timedelta(days=30)
+    threshold = timezone.now() - timedelta(days=30)
 
     results = Success.objects.filter(
         started__lte=threshold
