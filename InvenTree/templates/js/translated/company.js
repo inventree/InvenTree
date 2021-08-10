@@ -54,8 +54,12 @@ function editManufacturerPart(part, options={}) {
 
     var url = `/api/company/part/manufacturer/${part}/`;
 
+    var fields = manufacturerPartFields();
+
+    fields.part.hidden = true;
+
     constructForm(url, {
-        fields: manufacturerPartFields(),
+        fields: fields,
         title: '{% trans "Edit Manufacturer Part" %}',
         onSuccess: options.onSuccess
     });
@@ -157,8 +161,13 @@ function createSupplierPart(options={}) {
 
 function editSupplierPart(part, options={}) {
 
+    var fields = supplierPartFields();
+
+    // Hide the "part" field
+    fields.part.hidden = true;
+
     constructForm(`/api/company/part/${part}/`, {
-        fields: supplierPartFields(),
+        fields: fields,
         title: '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
     });

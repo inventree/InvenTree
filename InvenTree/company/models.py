@@ -483,7 +483,6 @@ class SupplierPart(models.Model):
             }
         }
 
-
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
