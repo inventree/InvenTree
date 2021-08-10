@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-10 14:30+0000\n"
-"PO-Revision-Date: 2021-08-10 14:33\n"
+"PO-Revision-Date: 2021-08-10 22:02\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4185,7 +4185,7 @@ msgstr "Muss für diesen Test ein Anhang für das Test-Ergebnis hinzugefügt wer
 #: part/models.py:2153
 #, python-brace-format
 msgid "Illegal character in template name ({c})"
-msgstr ""
+msgstr "Ungültiges Zeichen im Vorlagename ({c})"
 
 #: part/models.py:2189
 msgid "Parameter template name must be unique"
@@ -4381,7 +4381,7 @@ msgstr "Teil auswählen"
 #: part/templates/part/bom_upload/upload_file.html:13
 #: part/templates/part/bom_upload/upload_file.html:16
 msgid "Return To BOM"
-msgstr ""
+msgstr "Zurück zur Stückliste"
 
 #: part/templates/part/bom_upload/upload_file.html:27
 msgid "Upload Bill of Materials"
@@ -4492,11 +4492,11 @@ msgstr "Teilparameter"
 
 #: part/templates/part/category.html:253
 msgid "Create Part Category"
-msgstr ""
+msgstr "Teil-Kategorie hinzufügen"
 
 #: part/templates/part/category.html:279
 msgid "Create Part"
-msgstr ""
+msgstr "Teil hinzufügen"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4680,17 +4680,17 @@ msgstr "Teilenotizen bearbeiten"
 #: part/templates/part/detail.html:935
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
-msgstr ""
+msgstr "Stückpreis Einkauf - %(currency)s"
 
 #: part/templates/part/detail.html:947
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
-msgstr ""
+msgstr "Stückpreis Differenz - %(currency)s"
 
 #: part/templates/part/detail.html:959
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
-msgstr ""
+msgstr "Stückpreis Zulieferer - %(currency)s"
 
 #: part/templates/part/detail.html:1048
 #, python-format
@@ -4851,7 +4851,7 @@ msgstr "Im Bau"
 #: part/templates/part/part_base.html:517
 #: part/templates/part/part_base.html:543
 msgid "Show Part Details"
-msgstr ""
+msgstr "Teildetails anzeigen"
 
 #: part/templates/part/part_base.html:276
 msgid "Latest Serial Number"
@@ -4863,12 +4863,12 @@ msgstr "Berechnen"
 
 #: part/templates/part/part_base.html:432
 msgid "No matching images found"
-msgstr ""
+msgstr "Keine passenden Bilder gefunden"
 
 #: part/templates/part/part_base.html:512
 #: part/templates/part/part_base.html:537
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Teildetails ausblenden"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
@@ -5005,7 +5005,7 @@ msgstr "Interne Kosten"
 
 #: part/templates/part/prices.html:197 part/views.py:1793
 msgid "Add Internal Price Break"
-msgstr ""
+msgstr "Interne Preisspanne hinzufügen"
 
 #: part/templates/part/prices.html:212
 msgid "BOM Cost"
@@ -5164,11 +5164,11 @@ msgstr "neue Preisstaffel hinzufügt"
 
 #: part/views.py:1802
 msgid "Edit Internal Price Break"
-msgstr ""
+msgstr "Interne Preisspanne bearbeiten"
 
 #: part/views.py:1810
 msgid "Delete Internal Price Break"
-msgstr ""
+msgstr "Interne Preisspanne löschen"
 
 #: report/models.py:182
 msgid "Template name"
@@ -5701,11 +5701,11 @@ msgstr "Deinstallieren"
 
 #: stock/templates/stock/item_base.html:133
 msgid "Install stock item"
-msgstr ""
+msgstr "BestandsObjekt installieren"
 
 #: stock/templates/stock/item_base.html:133
 msgid "Install"
-msgstr ""
+msgstr "Installieren"
 
 #: stock/templates/stock/item_base.html:145
 msgid "Convert to variant"
@@ -5836,7 +5836,7 @@ msgstr "Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b
 
 #: stock/templates/stock/item_install.html:8
 msgid "Install another Stock Item into this item."
-msgstr ""
+msgstr "Ein weiteres BestandsObjekt in dieses Teil installiert."
 
 #: stock/templates/stock/item_install.html:11
 #: stock/templates/stock/item_install.html:24
@@ -6254,12 +6254,12 @@ msgstr "Suche"
 #: templates/InvenTree/settings/navbar.html:33
 #: templates/InvenTree/settings/navbar.html:35
 msgid "Labels"
-msgstr ""
+msgstr "Labels"
 
 #: templates/InvenTree/settings/navbar.html:39
 #: templates/InvenTree/settings/navbar.html:41
 msgid "Reports"
-msgstr ""
+msgstr "Berichte"
 
 #: templates/InvenTree/settings/navbar.html:46
 #: templates/InvenTree/settings/navbar.html:48
@@ -6403,11 +6403,11 @@ msgstr "Spracheinstellung"
 #: templates/InvenTree/settings/user.html:89
 #, python-format
 msgid "%(lang_translated)s%% translated"
-msgstr ""
+msgstr "%(lang_translated)s%% übersetzt"
 
 #: templates/InvenTree/settings/user.html:91
 msgid "No translations available"
-msgstr ""
+msgstr "Keine Übersetzungen verfügbar"
 
 #: templates/InvenTree/settings/user.html:98
 msgid "Set Language"
@@ -6415,12 +6415,12 @@ msgstr "Sprache festlegen"
 
 #: templates/InvenTree/settings/user.html:103
 msgid "Help the translation efforts!"
-msgstr ""
+msgstr "Hilf bei der Übersetzung!"
 
 #: templates/InvenTree/settings/user.html:104
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "Die Übersetzung von InvenTree wird <a href=\"%(link)s\">von Nutzern mit Crowdin</a> betrieben. Wir ermutigen zur und freuen uns über jeden Mithilfe!"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -6428,7 +6428,7 @@ msgstr "Startseite-Einstellungen"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "Labeleinstellungen"
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
@@ -6881,7 +6881,7 @@ msgstr "Keine Teile zugeordnet zu"
 
 #: templates/js/translated/company.js:34
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "Hersteller hinzufügen"
 
 #: templates/js/translated/company.js:47 templates/js/translated/company.js:140
 msgid "Add Manufacturer Part"
@@ -6897,7 +6897,7 @@ msgstr "Herstellerteil löschen"
 
 #: templates/js/translated/company.js:128 templates/js/translated/order.js:58
 msgid "Add Supplier"
-msgstr ""
+msgstr "Zulieferer hinzufügen"
 
 #: templates/js/translated/company.js:156
 msgid "Add Supplier Part"
@@ -6995,7 +6995,7 @@ msgstr "Filter auswählen"
 
 #: templates/js/translated/filters.js:268
 msgid "Reload data"
-msgstr ""
+msgstr "Daten neu laden"
 
 #: templates/js/translated/filters.js:270
 msgid "Add new filter"
@@ -7177,7 +7177,7 @@ msgstr "Zuliefererteil-ID"
 
 #: templates/js/translated/order.js:17
 msgid "Add Customer"
-msgstr ""
+msgstr "Kunden hinzufügen"
 
 #: templates/js/translated/order.js:42
 msgid "Create Sales Order"
@@ -7213,27 +7213,27 @@ msgstr "NEIN"
 
 #: templates/js/translated/part.js:22
 msgid "Add Part Category"
-msgstr ""
+msgstr "Teil-Kategorie hinzufügen"
 
 #: templates/js/translated/part.js:53
 msgid "Part Attributes"
-msgstr ""
+msgstr "Teileigenschaften"
 
 #: templates/js/translated/part.js:96
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Erstellungsoptionen für Teile"
 
 #: templates/js/translated/part.js:102
 msgid "Initial Stock Quantity"
-msgstr ""
+msgstr "Start-Bestandsmenge"
 
 #: templates/js/translated/part.js:103
 msgid "Initialize part stock with specified quantity"
-msgstr ""
+msgstr "Teilbestand mit angegebener Menge anlegen"
 
 #: templates/js/translated/part.js:109
 msgid "Copy Category Parameters"
-msgstr ""
+msgstr "Kategorieparameter kopieren"
 
 #: templates/js/translated/part.js:110
 msgid "Copy parameter templates from selected part category"
@@ -7241,15 +7241,15 @@ msgstr ""
 
 #: templates/js/translated/part.js:120
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "Einstellungen für Teilkopien"
 
 #: templates/js/translated/part.js:131
 msgid "Copy Image"
-msgstr ""
+msgstr "Bild kopieren"
 
 #: templates/js/translated/part.js:132
 msgid "Copy image from original part"
-msgstr ""
+msgstr "Bild vom Originalteil kopieren"
 
 #: templates/js/translated/part.js:138
 msgid "Copy BOM"
@@ -7257,7 +7257,7 @@ msgstr "Stückliste kopieren"
 
 #: templates/js/translated/part.js:139
 msgid "Copy bill of materials from original part"
-msgstr ""
+msgstr "Stückliste vom Originalteil kopieren"
 
 #: templates/js/translated/part.js:145
 msgid "Copy Parameters"
@@ -7265,7 +7265,7 @@ msgstr "Parameter kopieren"
 
 #: templates/js/translated/part.js:146
 msgid "Copy parameter data from original part"
-msgstr ""
+msgstr "Parameterdaten vom Originalteil kopieren"
 
 #: templates/js/translated/part.js:158
 msgid "Parent part category"
@@ -7610,7 +7610,7 @@ msgstr "Nachverfolgbares Teil"
 
 #: templates/js/translated/table_filters.js:47
 msgid "Assembled Part"
-msgstr ""
+msgstr "Baugruppe"
 
 #: templates/js/translated/table_filters.js:51
 msgid "Validated"
@@ -7744,7 +7744,7 @@ msgstr "Hat Einkaufspreis"
 
 #: templates/js/translated/table_filters.js:204
 msgid "Show stock items which have a purchase price set"
-msgstr ""
+msgstr "Bestand mit Einkaufspreis anzeigen"
 
 #: templates/js/translated/table_filters.js:213
 msgid "Show stock items which have expired"
