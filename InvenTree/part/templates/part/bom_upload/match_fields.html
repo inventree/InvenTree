@@ -5,7 +5,7 @@
 
 {% block form_alert %}
 {% if missing_columns and missing_columns|length > 0 %}
-<div class='alert alert-danger alert-block' role='alert'>
+<div class='alert alert-danger alert-block' style='margin-top:12px;' role='alert'>
     {% trans "Missing selections for the following required columns" %}:
     <br>
     <ul>

@@ -213,6 +213,7 @@
     <p>
         <!-- Details show/hide button -->
         <button id="toggle-part-details" class="btn btn-primary" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
+        <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
         </button>
     </p>
         
@@ -304,6 +305,11 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    enableNavbar({
+        label: 'part',
+        toggleId: '#part-menu-toggle',
+    });
 
     {% if part.image %}
     $('#part-thumb').click(function() {

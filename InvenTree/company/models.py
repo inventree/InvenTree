@@ -10,6 +10,7 @@ import os
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+
 from django.db import models
 from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
@@ -475,6 +476,32 @@ class SupplierPart(models.Model):
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
+    def api_instance_filters(self):
+        
+        return {
+            'manufacturer_part': {
+                'part': self.part.pk
+            }
+        }
+
+    class Meta:
+        unique_together = ('part', 'supplier', 'SKU')
+
+        # This model was moved from the 'Part' app
+        db_table = 'part_supplierpart'
+
+    def clean(self):
+
+        super().clean()
+
+        # Ensure that the linked manufacturer_part points to the same part!
+        if self.manufacturer_part and self.part:
+
+            if not self.manufacturer_part.part == self.part:
+                raise ValidationError({
+                    'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
+                })
+
     def save(self, *args, **kwargs):
         """ Overriding save method to process the linked ManufacturerPart
         """
@@ -525,12 +552,6 @@ class SupplierPart(models.Model):
         self.validate_unique()
 
         super().save(*args, **kwargs)
-
-    class Meta:
-        unique_together = ('part', 'supplier', 'SKU')
-
-        # This model was moved from the 'Part' app
-        db_table = 'part_supplierpart'
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',

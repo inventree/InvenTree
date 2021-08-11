@@ -10,10 +10,13 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.0 pre"
 
-INVENTREE_API_VERSION = 8
+INVENTREE_API_VERSION = 9
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v9 -> 2021-08-09
+    - Adds "price_string" to part pricing serializers
 
 v8 -> 2021-07-19
     - Refactors the API interface for SupplierPart and ManufacturerPart models
