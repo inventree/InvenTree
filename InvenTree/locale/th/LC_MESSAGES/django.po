@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-10 14:30+0000\n"
+"POT-Creation-Date: 2021-08-11 23:16+0000\n"
 "PO-Revision-Date: 2021-08-10 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
@@ -145,7 +145,7 @@ msgstr ""
 
 #: InvenTree/models.py:136 build/models.py:187
 #: build/templates/build/detail.html:24 company/models.py:353
-#: company/models.py:541 company/templates/company/manufacturer_part.html:76
+#: company/models.py:569 company/templates/company/manufacturer_part.html:76
 #: company/templates/company/supplier_part.html:75 label/models.py:119
 #: order/models.py:158 order/templates/order/purchase_order_detail.html:312
 #: part/models.py:679 part/templates/part/part_base.html:239
@@ -695,7 +695,7 @@ msgstr ""
 
 #: build/models.py:205 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:128
-#: build/templates/build/detail.html:29 company/models.py:676
+#: build/templates/build/detail.html:29 company/models.py:704
 #: order/models.py:766 order/models.py:825
 #: order/templates/order/order_wizard/select_parts.html:32
 #: order/templates/order/purchase_order_detail.html:297
@@ -831,7 +831,7 @@ msgid "Link to external URL"
 msgstr ""
 
 #: build/models.py:314 build/templates/build/navbar.html:52
-#: company/models.py:141 company/models.py:548
+#: company/models.py:141 company/models.py:576
 #: company/templates/company/navbar.html:63
 #: company/templates/company/navbar.html:66 order/models.py:180
 #: order/models.py:715 order/templates/order/po_navbar.html:38
@@ -2218,7 +2218,7 @@ msgstr ""
 msgid "Point of contact"
 msgstr ""
 
-#: company/models.py:130 company/models.py:347 company/models.py:535
+#: company/models.py:130 company/models.py:347 company/models.py:563
 #: order/models.py:160 part/models.py:712
 #: report/templates/report/inventree_build_order_base.html:165
 #: templates/js/translated/company.js:495
@@ -2258,7 +2258,7 @@ msgstr ""
 msgid "Does this company manufacture parts?"
 msgstr ""
 
-#: company/models.py:151 company/serializers.py:245
+#: company/models.py:151 company/serializers.py:264
 #: company/templates/company/company_base.html:76
 msgid "Currency"
 msgstr ""
@@ -2267,12 +2267,12 @@ msgstr ""
 msgid "Default currency used for this company"
 msgstr ""
 
-#: company/models.py:319 company/models.py:506 stock/models.py:448
+#: company/models.py:319 company/models.py:534 stock/models.py:448
 #: stock/templates/stock/item_base.html:237
 msgid "Base Part"
 msgstr ""
 
-#: company/models.py:323 company/models.py:510 order/views.py:1082
+#: company/models.py:323 company/models.py:538 order/views.py:1082
 msgid "Select part"
 msgstr ""
 
@@ -2310,7 +2310,7 @@ msgstr ""
 msgid "Manufacturer part description"
 msgstr ""
 
-#: company/models.py:408 company/models.py:529
+#: company/models.py:408 company/models.py:557
 #: company/templates/company/manufacturer_part.html:6
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:376
@@ -2346,7 +2346,7 @@ msgstr ""
 msgid "Linked manufacturer part must reference the same base part"
 msgstr ""
 
-#: company/models.py:516 company/templates/company/company_base.html:121
+#: company/models.py:544 company/templates/company/company_base.html:121
 #: company/templates/company/supplier_part.html:88 order/models.py:260
 #: order/templates/order/order_base.html:92
 #: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
@@ -2356,61 +2356,61 @@ msgstr ""
 msgid "Supplier"
 msgstr ""
 
-#: company/models.py:517
+#: company/models.py:545
 msgid "Select supplier"
 msgstr ""
 
-#: company/models.py:522 company/templates/company/supplier_part.html:92
+#: company/models.py:550 company/templates/company/supplier_part.html:92
 #: order/templates/order/purchase_order_detail.html:318 part/bom.py:176
 #: part/bom.py:287
 msgid "SKU"
 msgstr ""
 
-#: company/models.py:523
+#: company/models.py:551
 msgid "Supplier stock keeping unit"
 msgstr ""
 
-#: company/models.py:530
+#: company/models.py:558
 msgid "Select manufacturer part"
 msgstr ""
 
-#: company/models.py:536
+#: company/models.py:564
 msgid "URL for external supplier part link"
 msgstr ""
 
-#: company/models.py:542
+#: company/models.py:570
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:547 company/templates/company/supplier_part.html:120
+#: company/models.py:575 company/templates/company/supplier_part.html:120
 #: part/models.py:2352 report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
 msgstr ""
 
-#: company/models.py:551 part/models.py:1590
+#: company/models.py:579 part/models.py:1590
 msgid "base cost"
 msgstr ""
 
-#: company/models.py:551 part/models.py:1590
+#: company/models.py:579 part/models.py:1590
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:553 company/templates/company/supplier_part.html:113
+#: company/models.py:581 company/templates/company/supplier_part.html:113
 #: stock/models.py:472 stock/templates/stock/item_base.html:324
 #: templates/js/translated/company.js:798 templates/js/translated/stock.js:1089
 msgid "Packaging"
 msgstr ""
 
-#: company/models.py:553
+#: company/models.py:581
 msgid "Part packaging"
 msgstr ""
 
-#: company/models.py:555 part/models.py:1592
+#: company/models.py:583 part/models.py:1592
 msgid "multiple"
 msgstr ""
 
-#: company/models.py:555
+#: company/models.py:583
 msgid "Order multiple"
 msgstr ""
 
@@ -8107,4 +8107,3 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
-
