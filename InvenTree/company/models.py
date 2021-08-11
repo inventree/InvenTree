@@ -12,7 +12,6 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
 from django.db import models
-from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
@@ -503,50 +502,27 @@ class SupplierPart(models.Model):
                 })
 
     def save(self, *args, **kwargs):
-        """ Overriding save method to process the linked ManufacturerPart
-        """
+        """ Overriding save method to connect an existing ManufacturerPart """
 
-        if 'manufacturer' in kwargs:
-            manufacturer_id = kwargs.pop('manufacturer')
+        manufacturer_part = None
 
-            try:
-                manufacturer = Company.objects.get(pk=int(manufacturer_id))
-            except (ValueError, Company.DoesNotExist):
-                manufacturer = None
-        else:
-            manufacturer = None
-        if 'MPN' in kwargs:
+        if all(key in kwargs for key in ('manufacturer', 'MPN')):
+            manufacturer_name = kwargs.pop('manufacturer')
             MPN = kwargs.pop('MPN')
-        else:
-            MPN = None
 
-        if manufacturer or MPN:
+            # Retrieve manufacturer part
+            try:
+                manufacturer_part = ManufacturerPart.objects.get(manufacturer__name=manufacturer_name, MPN=MPN)
+            except (ValueError, Company.DoesNotExist):
+                # ManufacturerPart does not exist
+                pass
+
+        if manufacturer_part:
             if not self.manufacturer_part:
-                # Create ManufacturerPart
-                manufacturer_part = ManufacturerPart.create(part=self.part,
-                                                            manufacturer=manufacturer,
-                                                            mpn=MPN,
-                                                            description=self.description)
+                # Connect ManufacturerPart to SupplierPart
                 self.manufacturer_part = manufacturer_part
             else:
-                # Update ManufacturerPart (if ID exists)
-                try:
-                    manufacturer_part_id = self.manufacturer_part.id
-                except AttributeError:
-                    manufacturer_part_id = None
-
-                if manufacturer_part_id:
-                    try:
-                        (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
-                                                                                                 manufacturer=manufacturer,
-                                                                                                 MPN=MPN)
-                    except IntegrityError:
-                        manufacturer_part = None
-                        raise ValidationError(f'ManufacturerPart linked to {self.part} from manufacturer {manufacturer.name}'
-                                              f'with part number {MPN} already exists!')
-
-                if manufacturer_part:
-                    self.manufacturer_part = manufacturer_part
+                raise ValidationError(f'SupplierPart {self.__str__} is already linked to {self.manufacturer_part}')
 
         self.clean()
         self.validate_unique()

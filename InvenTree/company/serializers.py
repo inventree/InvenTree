@@ -204,9 +204,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
-    manufacturer = serializers.PrimaryKeyRelatedField(source='manufacturer_part.manufacturer', read_only=True)
+    manufacturer = serializers.CharField(read_only=True)
 
-    MPN = serializers.StringRelatedField(source='manufacturer_part.MPN')
+    MPN = serializers.CharField(read_only=True)
 
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
@@ -238,13 +238,14 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         supplier_part = super().create(validated_data)
 
         # Get ManufacturerPart raw data (unvalidated)
-        manufacturer_id = self.initial_data.get('manufacturer', None)
+        manufacturer = self.initial_data.get('manufacturer', None)
         MPN = self.initial_data.get('MPN', None)
 
-        if manufacturer_id or MPN:
-            kwargs = {'manufacturer': manufacturer_id,
-                      'MPN': MPN,
-                      }
+        if manufacturer and MPN:
+            kwargs = {
+                'manufacturer': manufacturer,
+                'MPN': MPN,
+            }
             supplier_part.save(**kwargs)
 
         return supplier_part
