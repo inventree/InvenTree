@@ -501,6 +501,34 @@ class SupplierPart(models.Model):
                     'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
                 })
 
+    def save(self, *args, **kwargs):
+        """ Overriding save method to connect an existing ManufacturerPart """
+
+        manufacturer_part = None
+
+        if all(key in kwargs for key in ('manufacturer', 'MPN')):
+            manufacturer_name = kwargs.pop('manufacturer')
+            MPN = kwargs.pop('MPN')
+
+            # Retrieve manufacturer part
+            try:
+                manufacturer_part = ManufacturerPart.objects.get(manufacturer__name=manufacturer_name, MPN=MPN)
+            except (ValueError, Company.DoesNotExist):
+                # ManufacturerPart does not exist
+                pass
+
+        if manufacturer_part:
+            if not self.manufacturer_part:
+                # Connect ManufacturerPart to SupplierPart
+                self.manufacturer_part = manufacturer_part
+            else:
+                raise ValidationError(f'SupplierPart {self.__str__} is already linked to {self.manufacturer_part}')
+
+        self.clean()
+        self.validate_unique()
+
+        super().save(*args, **kwargs)
+
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',
                              verbose_name=_('Base Part'),
