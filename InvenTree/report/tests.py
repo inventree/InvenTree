@@ -140,8 +140,6 @@ class TestReportTest(ReportTest):
         Printing tests for the TestReport
         """
 
-        report = self.model.objects.get(pk=1)
-
         url = reverse(self.print_url, kwargs={'pk': 1})
 
         # Try to print without providing a valid StockItem
@@ -180,8 +178,6 @@ class BuildReportTest(ReportTest):
         Printing tests for the BuildReport
         """
 
-        report = self.model.objects.get(pk=1)
-
         url = reverse(self.print_url, kwargs={'pk': 1})
 
         # Try to print without providing a valid BuildOrder
@@ -209,7 +205,7 @@ class BuildReportTest(ReportTest):
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
         self.assertEqual(headers['Content-Disposition'], 'inline; filename="report.pdf"')
-        
+
 
 class BOMReportTest(ReportTest):
 
