@@ -538,6 +538,7 @@ LANGUAGES = [
     ('zh-cn', _('Chinese')),
 ]
 
+
 # dynamic base currency
 def BASE_CURRENCY():
     if canAppAccessDatabase():
@@ -547,6 +548,7 @@ def BASE_CURRENCY():
         except (AppRegistryNotReady):
             pass
     return 'USD'
+
 
 # Currencies available for use
 CURRENCIES = CONFIG.get(
