@@ -3,8 +3,6 @@ Unit testing for BOM export functionality
 """
 
 import csv
-from os import read
-from django.http import response
 
 from django.test import TestCase
 
