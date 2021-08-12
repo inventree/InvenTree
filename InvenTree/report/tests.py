@@ -4,12 +4,14 @@ from __future__ import unicode_literals
 import os
 import shutil
 
+from django.http.response import StreamingHttpResponse
 from django.urls import reverse
 from django.conf import settings
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 import report.models as report_models
+from common.models import InvenTreeUserSetting
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -22,6 +24,8 @@ class ReportTest(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
         'stock_tests',
+        'bom',
+        'build',
     ]
 
     model = None
@@ -131,6 +135,31 @@ class TestReportTest(ReportTest):
 
         return super().setUp()
 
+    def test_print(self):
+        """
+        Printing tests for the TestReport
+        """
+
+        report = self.model.objects.get(pk=1)
+
+        url = reverse(self.print_url, kwargs={'pk': 1})
+
+        # Try to print without providing a valid StockItem
+        response = self.get(url, expected_code=400)
+
+        # Try to print with an invalid StockItem
+        response = self.get(url, {'item': 9999}, expected_code=400)
+
+        # Now print with a valid StockItem
+        response = self.get(url, {'item': 1})
+
+        # Response should be a StreamingHttpResponse (PDF file)
+        self.assertEqual(type(response), StreamingHttpResponse)
+
+        headers = response.headers
+
+        self.assertEqual(headers['Content-Type'], 'application/pdf')
+
 
 class BuildReportTest(ReportTest):
 
@@ -146,6 +175,41 @@ class BuildReportTest(ReportTest):
 
         return super().setUp()
 
+    def test_print(self):
+        """
+        Printing tests for the BuildReport
+        """
+
+        report = self.model.objects.get(pk=1)
+
+        url = reverse(self.print_url, kwargs={'pk': 1})
+
+        # Try to print without providing a valid BuildOrder
+        response = self.get(url, expected_code=400)
+
+        # Try to print with an invalid BuildOrder
+        response = self.get(url, {'build': 9999}, expected_code=400)
+
+        # Now print with a valid BuildOrder
+        response = self.get(url, {'build': 1})
+        
+        self.assertEqual(type(response), StreamingHttpResponse)
+
+        headers = response.headers
+
+        self.assertEqual(headers['Content-Type'], 'application/pdf')
+        self.assertEqual(headers['Content-Disposition'], 'attachment; filename="report.pdf"')
+
+        # Now, set the download type to be "inline"
+        inline = InvenTreeUserSetting.get_setting_object('REPORT_INLINE', self.user)
+        inline.value = True
+        inline.save()
+
+        response = self.get(url, {'build': 1})
+        headers = response.headers
+        self.assertEqual(headers['Content-Type'], 'application/pdf')
+        self.assertEqual(headers['Content-Disposition'], 'inline; filename="report.pdf"')
+        
 
 class BOMReportTest(ReportTest):
 
