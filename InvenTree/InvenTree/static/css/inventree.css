@@ -1037,6 +1037,11 @@ a.anchor {
     height: 30px;
 }
 
+/* Force minimum width of number input fields to show at least ~5 digits */
+input[type='number']{
+    min-width: 80px;
+}
+
 .search-menu {
     padding-top: 2rem;
 }
