@@ -77,10 +77,7 @@ RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
 RUN apk add --no-cache mariadb-connector-c mariadb-dev mariadb-client
 
 # Install required python packages
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -U invoke
 RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
-RUN pip install --no-cache-dir -U gunicorn
 
 FROM base as production
 # Clone source code
