@@ -25,6 +25,9 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+from django.core.exceptions import AppRegistryNotReady
+
+from InvenTree.ready import canAppAccessDatabase
 
 
 def _is_true(x):
@@ -534,6 +537,16 @@ LANGUAGES = [
     ('vi', _('Vietnamese')),
     ('zh-cn', _('Chinese')),
 ]
+
+# dynamic base currency
+def BASE_CURRENCY():
+    if canAppAccessDatabase():
+        try:
+            from common.settings import currency_code_default
+            return currency_code_default()
+        except (AppRegistryNotReady):
+            pass
+    return 'USD'
 
 # Currencies available for use
 CURRENCIES = CONFIG.get(
