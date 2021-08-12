@@ -12,6 +12,8 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 import report.models as report_models
 from common.models import InvenTreeUserSetting
+from stock.models import StockItem
+from build.models import Build
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -140,7 +142,9 @@ class TestReportTest(ReportTest):
         Printing tests for the TestReport
         """
 
-        url = reverse(self.print_url, kwargs={'pk': 1})
+        report = self.model.objects.first()
+
+        url = reverse(self.print_url, kwargs={'pk': report.pk})
 
         # Try to print without providing a valid StockItem
         response = self.get(url, expected_code=400)
@@ -149,7 +153,9 @@ class TestReportTest(ReportTest):
         response = self.get(url, {'item': 9999}, expected_code=400)
 
         # Now print with a valid StockItem
-        response = self.get(url, {'item': 1})
+        item = StockItem.objects.first()
+
+        response = self.get(url, {'item': item.pk})
 
         # Response should be a StreamingHttpResponse (PDF file)
         self.assertEqual(type(response), StreamingHttpResponse)
@@ -178,7 +184,9 @@ class BuildReportTest(ReportTest):
         Printing tests for the BuildReport
         """
 
-        url = reverse(self.print_url, kwargs={'pk': 1})
+        report = self.model.objects.first()
+
+        url = reverse(self.print_url, kwargs={'pk': report.pk})
 
         # Try to print without providing a valid BuildOrder
         response = self.get(url, expected_code=400)
@@ -187,7 +195,10 @@ class BuildReportTest(ReportTest):
         response = self.get(url, {'build': 9999}, expected_code=400)
 
         # Now print with a valid BuildOrder
-        response = self.get(url, {'build': 1})
+
+        build = Build.objects.first()
+
+        response = self.get(url, {'build': build.pk})
         
         self.assertEqual(type(response), StreamingHttpResponse)
 
