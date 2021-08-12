@@ -79,6 +79,7 @@ class POReportTest(ReportTest):
     detail_url = 'api-po-report-detail'
     print_url = 'api-po-report-print'
 
+
 class SOReportTest(ReportTest):
 
     model = report_models.SalesOrderReport
