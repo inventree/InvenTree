@@ -842,10 +842,12 @@ function handleFormErrors(errors, fields, options) {
 
     var non_field_errors = $(options.modal).find('#non-field-errors');
 
+    // TODO: Display the JSON error text when hovering over the "info" icon
     non_field_errors.append(
         `<div class='alert alert-block alert-danger'>
             <b>{% trans "Form errors exist" %}</b>
-            <span id='form-errors-info' class='float-right fas fa-info-circle icon-red'></span>
+            <span id='form-errors-info' class='float-right fas fa-info-circle icon-red'>
+            </span>
         </div>`
     );
 
@@ -985,6 +987,28 @@ function initializeGroups(fields, options) {
         } else {
             $(modal).find(`#form-panel-content-${group}`).collapse("show");
         }
+
+        if (group_options.hidden) {
+            hideFormGroup(group, options);
+        }
+    }
+}
+
+// Hide a form group
+function hideFormGroup(group, options) {
+    $(options.modal).find(`#form-panel-${group}`).hide();
+}
+
+// Show a form group
+function showFormGroup(group, options) {
+    $(options.modal).find(`#form-panel-${group}`).show();
+}
+
+function setFormGroupVisibility(group, vis, options) {
+    if (vis) {
+        showFormGroup(group, options);
+    } else {
+        hideFormGroup(group, options);
     }
 }
 
