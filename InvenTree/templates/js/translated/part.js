@@ -117,10 +117,29 @@ function partFields(options={}) {
         delete fields["default_supplier"];
 
         if (global_settings.PART_CREATE_INITIAL) {
+
             fields.initial_stock = {
+                type: 'boolean',
+                label: '{% trans "Create Initial Stock" %}',
+                help_text: '{% trans "Create an initial stock item for this part" %}',
+                group: 'create',
+            };
+
+            fields.initial_stock_quantity = {
                 type: 'decimal',
                 label: '{% trans "Initial Stock Quantity" %}',
-                help_text: '{% trans "Initialize part stock with specified quantity" %}',
+                help_text: '{% trans "Specify initial stock quantity for this part" %}',
+                group: 'create',
+            };
+
+            // TODO - Allow initial location of stock to be specified
+            fields.initial_stock_location = {
+                label: '{% trans "Location" %}',
+                help_text: '{% trans "Select destination stock location" %}',
+                type: 'related field',
+                required: true,
+                api_url: `/api/stock/location/`,
+                model: 'stocklocation',
                 group: 'create',
             };
         }

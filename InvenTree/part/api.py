@@ -9,12 +9,14 @@ from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
 from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -23,7 +25,7 @@ from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
@@ -31,7 +33,9 @@ from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 from .models import PartCategoryParameterTemplate
 
-from stock.models import StockItem
+
+from stock.models import StockItem, StockLocation
+
 from common.models import InvenTreeSetting
 from build.models import Build
 
@@ -630,12 +634,15 @@ class PartList(generics.ListCreateAPIView):
         else:
             return Response(data)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         """
         We wish to save the user who created this part!
 
         Note: Implementation copied from DRF class CreateModelMixin
         """
+
+        #TODO: Unit tests for this function!
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -680,21 +687,49 @@ class PartList(generics.ListCreateAPIView):
                 pass
 
         # Optionally create initial stock item
-        try:
-            initial_stock = Decimal(request.data.get('initial_stock', 0))
+        initial_stock = str2bool(request.data.get('initial_stock', False))
 
-            if initial_stock > 0 and part.default_location is not None:
+        if initial_stock:
+            try:
+
+                print("q:", request.data.get('initial_stock_quantity'))
+
+                initial_stock_quantity = Decimal(request.data.get('initial_stock_quantity', None))
+
+                if initial_stock_quantity <= 0:
+                    raise ValidationError({
+                        'initial_stock_quantity': [_('Must be greater than zero')],
+                    })
+            except (ValueError, InvalidOperation):  # Invalid quantity provided
+                raise ValidationError({
+                    'initial_stock_quantity': [_('Must be a valid quantity')],
+                })
+            
+            # If an initial stock quantity is specified...
+            if initial_stock_quantity > 0:
+
+                initial_stock_location = request.data.get('initial_stock_location', None)
+
+                try:
+                    initial_stock_location = StockLocation.objects.get(pk=initial_stock_location)
+                except (ValueError, StockLocation.DoesNotExist):
+                    initial_stock_location = None
+
+                if initial_stock_location is None:
+                    if part.default_location is not None:
+                        initial_stock_location = part.default_location
+                    else:
+                        raise ValidationError({
+                            'initial_stock_location': [_('Specify location for initial part stock')],
+                        })
 
                 stock_item = StockItem(
                     part=part,
-                    quantity=initial_stock,
-                    location=part.default_location,
+                    quantity=initial_stock_quantity,
+                    location=initial_stock_location,
                 )
 
                 stock_item.save(user=request.user)
-
-        except:
-            pass
 
         headers = self.get_success_headers(serializer.data)
 
