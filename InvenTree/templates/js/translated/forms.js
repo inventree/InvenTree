@@ -490,6 +490,8 @@ function constructFormBody(fields, options) {
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
 
+    attachToggle(modal);
+
     $(modal + ' .select2-container').addClass('select-full-width');
     $(modal + ' .select2-container').css('width', '100%');
 
@@ -1699,7 +1701,7 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     if (parameters.type == 'boolean') {
-        opts.push(`style='float: right;'`);
+        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
     }
 
     if (parameters.multiline) {
@@ -1878,7 +1880,7 @@ function constructHelpText(name, parameters, options) {
     var style = '';
 
     if (parameters.type == 'boolean') {
-        style = `style='display: inline;' `;
+        style = `style='display: inline-block; margin-left: 25px' `;
     }
 
     var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
