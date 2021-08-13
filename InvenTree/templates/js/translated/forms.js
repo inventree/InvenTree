@@ -490,8 +490,6 @@ function constructFormBody(fields, options) {
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
 
-    attachToggle(modal);
-
     $(modal + ' .select2-container').addClass('select-full-width');
     $(modal + ' .select2-container').css('width', '100%');
 
@@ -1528,12 +1526,13 @@ function constructField(name, parameters, options) {
         html += `</div>`;   // input-group
     }
 
-    // Div for error messages
-    html += `<div id='errors-${name}'></div>`;
-
     if (parameters.help_text) {
         html += constructHelpText(name, parameters, options);
     }
+
+    // Div for error messages
+    html += `<div id='errors-${name}'></div>`;
+
 
     html += `</div>`;   // controls
     html += `</div>`;   // form-group
@@ -1697,6 +1696,10 @@ function constructInputOptions(name, classes, type, parameters) {
     // Placeholder?
     if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);
+    }
+
+    if (parameters.type == 'boolean') {
+        opts.push(`style='float: right;'`);
     }
 
     if (parameters.multiline) {
@@ -1872,7 +1875,13 @@ function constructCandyInput(name, parameters, options) {
  */
 function constructHelpText(name, parameters, options) {
     
-    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
+    var style = '';
+
+    if (parameters.type == 'boolean') {
+        style = `style='display: inline;' `;
+    }
+
+    var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
 }
