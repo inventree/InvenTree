@@ -28,6 +28,11 @@ function partGroups(options={}) {
         duplicate: {
             title: '{% trans "Part Duplication Options" %}',
             collapsible: true,
+        },
+        supplier: {
+            title: '{% trans "Supplier Options" %}',
+            collapsible: true,
+            hidden: !global_settings.PART_PURCHASEABLE,
         }
     }
 
@@ -87,6 +92,9 @@ function partFields(options={}) {
         purchaseable: {
             value: global_settings.PART_PURCHASEABLE,
             group: 'attributes',
+            onEdit: function(value, name, field, options) {
+                setFormGroupVisibility('supplier', value, options);
+            }
         },
         salable: {
             value: global_settings.PART_SALABLE,
@@ -151,6 +159,53 @@ function partFields(options={}) {
             value: global_settings.PART_CATEGORY_PARAMETERS,
             group: 'create',
         };
+
+        // Supplier options
+        fields.add_supplier_info = {
+            type: 'boolean',
+            label: '{% trans "Add Supplier Data" %}',
+            help_text: '{% trans "Create initial supplier data for this part" %}',
+            group: 'supplier',
+        };
+        
+        fields.supplier = {
+            type: 'related field',
+            model: 'company',
+            label: '{% trans "Supplier" %}',
+            help_text: '{% trans "Select supplier" %}',
+            filters: {
+                'is_supplier': true,
+            },
+            api_url: '{% url "api-company-list" %}',
+            group: 'supplier',
+        };
+        
+        fields.SKU = {
+            type: 'string',
+            label: '{% trans "SKU" %}', 
+            help_text: '{% trans "Supplier stock keeping unit" %}',
+            group: 'supplier',
+        };
+        
+        fields.manufacturer = {
+            type: 'related field',
+            model: 'company',
+            label: '{% trans "Manufacturer" %}',
+            help_text: '{% trans "Select manufacturer" %}',
+            filters: {
+                'is_manufacturer': true,
+            },
+            api_url: '{% url "api-company-list" %}',
+            group: 'supplier',
+        };
+        
+        fields.MPN = {
+            type: 'string',
+            label: '{% trans "MPN" %}',
+            help_text: '{% trans "Manufacturer Part Number" %}',
+            group: 'supplier',
+        };
+
     }
 
     // Additional fields when "duplicating" a part
