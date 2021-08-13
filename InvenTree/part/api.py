@@ -643,7 +643,7 @@ class PartList(generics.ListCreateAPIView):
         Note: Implementation copied from DRF class CreateModelMixin
         """
 
-        #TODO: Unit tests for this function!
+        # TODO: Unit tests for this function!
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -733,9 +733,7 @@ class PartList(generics.ListCreateAPIView):
                 stock_item.save(user=request.user)
 
         # Optionally add manufacturer / supplier data to the part
-        add_supplier_info = str2bool(request.data.get('add_supplier_info', False))
-
-        if add_supplier_info:
+        if part.purchaseable and str2bool(request.data.get('add_supplier_info', False)):
 
             try:
                 manufacturer = Company.objects.get(pk=request.data.get('manufacturer', None))
@@ -780,7 +778,7 @@ class PartList(generics.ListCreateAPIView):
                         'SKU': [_("This field is required")]
                     })
 
-                supplier_part = SupplierPart.objects.create(
+                SupplierPart.objects.create(
                     part=part,
                     supplier=supplier,
                     SKU=sku,
