@@ -264,6 +264,10 @@ function constructForm(url, options) {
     // Default HTTP method
     options.method = options.method || 'PATCH';
 
+    // Default "groups" definition
+    options.groups = options.groups || {};
+    options.current_group = null;
+
     // Construct an "empty" data object if not provided
     if (!options.data) {
         options.data = {};
@@ -413,6 +417,11 @@ function constructFormBody(fields, options) {
                 fields[field].choices = field_options.choices;
             }
 
+            // Group
+            if (field_options.group) {
+                fields[field].group = field_options.group;
+            }
+
             // Field prefix
             if (field_options.prefix) {
                 fields[field].prefix = field_options.prefix;
@@ -465,8 +474,12 @@ function constructFormBody(fields, options) {
         html += constructField(name, field, options);
     }
 
-    // TODO: Dynamically create the modals,
-    //       so that we can have an infinite number of stacks!
+    if (options.current_group) {
+        // Close out the current group
+        html += `</div></div>`;
+
+        console.log(`finally, ending group '${console.current_group}'`);
+    }
 
     // Create a new modal if one does not exists
     if (!options.modal) {
@@ -535,6 +548,8 @@ function constructFormBody(fields, options) {
             submitFormData(fields, options);
         }
     });
+
+    initializeGroups(fields, options);
 }
 
 
@@ -960,6 +975,49 @@ function addClearCallback(name, field, options) {
 }
 
 
+// Initialize callbacks and initial states for groups
+function initializeGroups(fields, options) {
+
+    var modal = options.modal;
+
+    // Callback for when the group is expanded
+    $(modal).find('.form-panel-content').on('show.bs.collapse', function() {
+
+        var panel = $(this).closest('.form-panel');
+        var group = panel.attr('group');
+
+        var icon = $(modal).find(`#group-icon-${group}`);
+
+        icon.removeClass('fa-angle-right');
+        icon.addClass('fa-angle-up');
+    });
+
+    // Callback for when the group is collapsed
+    $(modal).find('.form-panel-content').on('hide.bs.collapse', function() {
+
+        var panel = $(this).closest('.form-panel');
+        var group = panel.attr('group');
+
+        var icon = $(modal).find(`#group-icon-${group}`);
+
+        icon.removeClass('fa-angle-up');
+        icon.addClass('fa-angle-right');
+    });
+
+    // Set initial state of each specified group
+    for (var group in options.groups) {
+
+        var group_options = options.groups[group];
+
+        if (group_options.collapsed) {
+            $(modal).find(`#form-panel-content-${group}`).collapse("hide");
+        } else {
+            $(modal).find(`#form-panel-content-${group}`).collapse("show");
+        }
+    }
+}
+
+
 function initializeRelatedFields(fields, options) {
 
     var field_names = options.field_names;
@@ -1353,6 +1411,8 @@ function renderModelData(name, model, data, parameters, options) {
  */
 function constructField(name, parameters, options) {
 
+    var html = '';
+
     // Shortcut for simple visual fields
     if (parameters.type == 'candy') {
         return constructCandyInput(name, parameters, options);
@@ -1365,13 +1425,62 @@ function constructField(name, parameters, options) {
         return constructHiddenInput(name, parameters, options);
     }
 
+    // Are we ending a group?
+    if (options.current_group && parameters.group != options.current_group) {
+        html += `</div></div>`;
+
+        console.log(`ending group '${options.current_group}'`);
+
+        // Null out the current "group" so we can start a new one
+        options.current_group = null;
+    }
+
+    // Are we starting a new group?
+    if (parameters.group) {
+
+        var group = parameters.group;
+
+        var group_options = options.groups[group] || {};
+
+        // Are we starting a new group?
+        // Add HTML for the start of a separate panel
+        if (parameters.group != options.current_group) {
+
+            console.log(`starting group '${group}'`);
+
+            html += `
+            <div class='panel form-panel' id='form-panel-${group}' group='${group}'>
+                <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
+            if (group_options.collapsible) {
+                html += `
+                <div data-toggle='collapse' data-target='#form-panel-content-${group}'>
+                    <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
+                `;
+            } else {
+                html += `<div>`;
+            }
+
+            html += `<h4 style='display: inline;'>${group_options.title || group}</h4>`;
+
+            if (group_options.collapsible) {
+                html += `</a>`;
+            }
+
+            html += `
+                </div></div>
+                <div class='panel-content form-panel-content' id='form-panel-content-${group}'>
+            `;
+        }
+
+        // Keep track of the group we are in
+        options.current_group = group;
+    }
+
     var form_classes = 'form-group';
 
     if (parameters.errors) {
         form_classes += ' has-error';
     }
-
-    var html = '';
     
     // Optional content to render before the field
     if (parameters.before) {
