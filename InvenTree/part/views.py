@@ -1380,7 +1380,6 @@ class PartPricing(AjaxView):
                     ctx['max_total_bom_purchase_price'] = round(max_bom_purchase_price, 3)
                     ctx['max_unit_bom_purchase_price'] = round(max_bom_purchase_price / quantity, 3)
 
-
         # internal part pricing information
         internal_part_price = part.get_internal_price(quantity)
         if internal_part_price is not None:
