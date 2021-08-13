@@ -33,6 +33,7 @@ from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 from .models import PartCategoryParameterTemplate
 
+from company.models import Company, ManufacturerPart, SupplierPart
 
 from stock.models import StockItem, StockLocation
 
@@ -730,6 +731,61 @@ class PartList(generics.ListCreateAPIView):
                 )
 
                 stock_item.save(user=request.user)
+
+        # Optionally add manufacturer / supplier data to the part
+        add_supplier_info = str2bool(request.data.get('add_supplier_info', False))
+
+        if add_supplier_info:
+
+            try:
+                manufacturer = Company.objects.get(pk=request.data.get('manufacturer', None))
+            except:
+                manufacturer = None
+
+            try:
+                supplier = Company.objects.get(pk=request.data.get('supplier', None))
+            except:
+                supplier = None
+
+            mpn = str(request.data.get('MPN', '')).strip()
+            sku = str(request.data.get('SKU', '')).strip()
+
+            # Construct a manufacturer part
+            if manufacturer or mpn:
+                if not manufacturer:
+                    raise ValidationError({
+                        'manufacturer': [_("This field is required")]
+                    })
+                if not mpn:
+                    raise ValidationError({
+                        'MPN': [_("This field is required")]
+                    })
+
+                manufacturer_part = ManufacturerPart.objects.create(
+                    part=part,
+                    manufacturer=manufacturer,
+                    MPN=mpn
+                )
+            else:
+                # No manufacturer part data specified
+                manufacturer_part = None
+
+            if supplier or sku:
+                if not supplier:
+                    raise ValidationError({
+                        'supplier': [_("This field is required")]
+                    })
+                if not sku:
+                    raise ValidationError({
+                        'SKU': [_("This field is required")]
+                    })
+
+                supplier_part = SupplierPart.objects.create(
+                    part=part,
+                    supplier=supplier,
+                    SKU=sku,
+                    manufacturer_part=manufacturer_part,
+                )
 
         headers = self.get_success_headers(serializer.data)
 
