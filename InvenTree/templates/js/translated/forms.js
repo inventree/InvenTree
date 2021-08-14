@@ -899,8 +899,6 @@ function handleFormErrors(errors, fields, options) {
         }
     }
 
-    var offset = 0;
-
     if (first_error_field) {
         // Ensure that the field in question is visible
         document.querySelector(`#div_id_${field_name}`).scrollIntoView({
@@ -908,7 +906,7 @@ function handleFormErrors(errors, fields, options) {
         });
     } else {
         // Scroll to the top of the form
-        $(options.modal).find('.modal-form-content-wrapper').scrollTop(offset);
+        $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
     }
 
     $(options.modal).find('.modal-content').addClass('modal-error');
