@@ -276,6 +276,7 @@
         constructForm('{% url "api-part-list" %}', {
             method: 'POST',
             fields: fields,
+            groups: partGroups(),
             title: '{% trans "Create Part" %}',
             onSuccess: function(data) {
                 // Follow the new part

@@ -264,6 +264,10 @@ function constructForm(url, options) {
     // Default HTTP method
     options.method = options.method || 'PATCH';
 
+    // Default "groups" definition
+    options.groups = options.groups || {};
+    options.current_group = null;
+
     // Construct an "empty" data object if not provided
     if (!options.data) {
         options.data = {};
@@ -362,6 +366,14 @@ function constructFormBody(fields, options) {
         }
     }
 
+    // Initialize an "empty" field for each specified field
+    for (field in displayed_fields) {
+        if (!(field in fields)) {
+            console.log("adding blank field for ", field);
+            fields[field] = {};
+        }
+    }
+
     // Provide each field object with its own name
     for(field in fields) {
         fields[field].name = field;
@@ -379,52 +391,18 @@ function constructFormBody(fields, options) {
             // Override existing query filters (if provided!)
             fields[field].filters = Object.assign(fields[field].filters || {}, field_options.filters);
 
-            // TODO: Refactor the following code with Object.assign (see above)
+            for (var opt in field_options) {
 
-            // "before" and "after" renders
-            fields[field].before = field_options.before;
-            fields[field].after = field_options.after;
+                var val = field_options[opt];
 
-            // Secondary modal options
-            fields[field].secondary = field_options.secondary;
-
-            // Edit callback
-            fields[field].onEdit = field_options.onEdit;
-
-            fields[field].multiline = field_options.multiline;
-
-            // Custom help_text
-            if (field_options.help_text) {
-                fields[field].help_text = field_options.help_text;
-            }
-
-            // Custom label
-            if (field_options.label) {
-                fields[field].label = field_options.label;
-            }
-
-            // Custom placeholder
-            if (field_options.placeholder) {
-                fields[field].placeholder = field_options.placeholder;
-            }
-
-            // Choices
-            if (field_options.choices) {
-                fields[field].choices = field_options.choices;
-            }
-
-            // Field prefix
-            if (field_options.prefix) {
-                fields[field].prefix = field_options.prefix;
-            } else if (field_options.icon) {
-                // Specify icon like 'fa-user'
-                fields[field].prefix = `<span class='fas ${field_options.icon}'></span>`;
-            }
-
-            fields[field].hidden = field_options.hidden;
-
-            if (field_options.read_only != null) {
-                fields[field].read_only = field_options.read_only;
+                if (opt == 'filters') {
+                    // ignore filters (see above)
+                } else if (opt == 'icon') {
+                    // Specify custom icon
+                    fields[field].prefix = `<span class='fas ${val}'></span>`;
+                } else {
+                    fields[field][opt] = field_options[opt];
+                }
             }
         }
     }
@@ -465,8 +443,10 @@ function constructFormBody(fields, options) {
         html += constructField(name, field, options);
     }
 
-    // TODO: Dynamically create the modals,
-    //       so that we can have an infinite number of stacks!
+    if (options.current_group) {
+        // Close out the current group
+        html += `</div></div>`;
+    }
 
     // Create a new modal if one does not exists
     if (!options.modal) {
@@ -535,6 +515,8 @@ function constructFormBody(fields, options) {
             submitFormData(fields, options);
         }
     });
+
+    initializeGroups(fields, options);
 }
 
 
@@ -860,9 +842,12 @@ function handleFormErrors(errors, fields, options) {
 
     var non_field_errors = $(options.modal).find('#non-field-errors');
 
+    // TODO: Display the JSON error text when hovering over the "info" icon
     non_field_errors.append(
         `<div class='alert alert-block alert-danger'>
             <b>{% trans "Form errors exist" %}</b>
+            <span id='form-errors-info' class='float-right fas fa-info-circle icon-red'>
+            </span>
         </div>`
     );
 
@@ -932,7 +917,10 @@ function addFieldCallbacks(fields, options) {
 function addFieldCallback(name, field, options) {
 
     $(options.modal).find(`#id_${name}`).change(function() {
-        field.onEdit(name, field, options);
+
+        var value = getFormFieldValue(name, field, options);
+
+        field.onEdit(value, name, field, options);
     });
 }
 
@@ -957,6 +945,71 @@ function addClearCallback(name, field, options) {
     $(options.modal).find(`#clear_${name}`).click(function() {
         updateFieldValue(name, null, field, options);
     });
+}
+
+
+// Initialize callbacks and initial states for groups
+function initializeGroups(fields, options) {
+
+    var modal = options.modal;
+
+    // Callback for when the group is expanded
+    $(modal).find('.form-panel-content').on('show.bs.collapse', function() {
+
+        var panel = $(this).closest('.form-panel');
+        var group = panel.attr('group');
+
+        var icon = $(modal).find(`#group-icon-${group}`);
+
+        icon.removeClass('fa-angle-right');
+        icon.addClass('fa-angle-up');
+    });
+
+    // Callback for when the group is collapsed
+    $(modal).find('.form-panel-content').on('hide.bs.collapse', function() {
+
+        var panel = $(this).closest('.form-panel');
+        var group = panel.attr('group');
+
+        var icon = $(modal).find(`#group-icon-${group}`);
+
+        icon.removeClass('fa-angle-up');
+        icon.addClass('fa-angle-right');
+    });
+
+    // Set initial state of each specified group
+    for (var group in options.groups) {
+
+        var group_options = options.groups[group];
+
+        if (group_options.collapsed) {
+            $(modal).find(`#form-panel-content-${group}`).collapse("hide");
+        } else {
+            $(modal).find(`#form-panel-content-${group}`).collapse("show");
+        }
+
+        if (group_options.hidden) {
+            hideFormGroup(group, options);
+        }
+    }
+}
+
+// Hide a form group
+function hideFormGroup(group, options) {
+    $(options.modal).find(`#form-panel-${group}`).hide();
+}
+
+// Show a form group
+function showFormGroup(group, options) {
+    $(options.modal).find(`#form-panel-${group}`).show();
+}
+
+function setFormGroupVisibility(group, vis, options) {
+    if (vis) {
+        showFormGroup(group, options);
+    } else {
+        hideFormGroup(group, options);
+    }
 }
 
 
@@ -1353,6 +1406,8 @@ function renderModelData(name, model, data, parameters, options) {
  */
 function constructField(name, parameters, options) {
 
+    var html = '';
+
     // Shortcut for simple visual fields
     if (parameters.type == 'candy') {
         return constructCandyInput(name, parameters, options);
@@ -1365,13 +1420,58 @@ function constructField(name, parameters, options) {
         return constructHiddenInput(name, parameters, options);
     }
 
+    // Are we ending a group?
+    if (options.current_group && parameters.group != options.current_group) {
+        html += `</div></div>`;
+
+        // Null out the current "group" so we can start a new one
+        options.current_group = null;
+    }
+
+    // Are we starting a new group?
+    if (parameters.group) {
+
+        var group = parameters.group;
+
+        var group_options = options.groups[group] || {};
+
+        // Are we starting a new group?
+        // Add HTML for the start of a separate panel
+        if (parameters.group != options.current_group) {
+
+            html += `
+            <div class='panel form-panel' id='form-panel-${group}' group='${group}'>
+                <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
+            if (group_options.collapsible) {
+                html += `
+                <div data-toggle='collapse' data-target='#form-panel-content-${group}'>
+                    <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
+                `;
+            } else {
+                html += `<div>`;
+            }
+
+            html += `<h4 style='display: inline;'>${group_options.title || group}</h4>`;
+
+            if (group_options.collapsible) {
+                html += `</a>`;
+            }
+
+            html += `
+                </div></div>
+                <div class='panel-content form-panel-content' id='form-panel-content-${group}'>
+            `;
+        }
+
+        // Keep track of the group we are in
+        options.current_group = group;
+    }
+
     var form_classes = 'form-group';
 
     if (parameters.errors) {
         form_classes += ' has-error';
     }
-
-    var html = '';
     
     // Optional content to render before the field
     if (parameters.before) {
@@ -1428,12 +1528,13 @@ function constructField(name, parameters, options) {
         html += `</div>`;   // input-group
     }
 
-    // Div for error messages
-    html += `<div id='errors-${name}'></div>`;
-
     if (parameters.help_text) {
         html += constructHelpText(name, parameters, options);
     }
+
+    // Div for error messages
+    html += `<div id='errors-${name}'></div>`;
+
 
     html += `</div>`;   // controls
     html += `</div>`;   // form-group
@@ -1597,6 +1698,10 @@ function constructInputOptions(name, classes, type, parameters) {
     // Placeholder?
     if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);
+    }
+
+    if (parameters.type == 'boolean') {
+        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
     }
 
     if (parameters.multiline) {
@@ -1772,7 +1877,13 @@ function constructCandyInput(name, parameters, options) {
  */
 function constructHelpText(name, parameters, options) {
     
-    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
+    var style = '';
+
+    if (parameters.type == 'boolean') {
+        style = `style='display: inline-block; margin-left: 25px' `;
+    }
+
+    var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
 }

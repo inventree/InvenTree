@@ -13,6 +13,31 @@ function yesNoLabel(value) {
     }
 }
 
+
+function partGroups(options={}) {
+
+    return {
+        attributes: {
+            title: '{% trans "Part Attributes" %}',
+            collapsible: true,
+        },
+        create: {
+            title: '{% trans "Part Creation Options" %}',
+            collapsible: true,
+        },
+        duplicate: {
+            title: '{% trans "Part Duplication Options" %}',
+            collapsible: true,
+        },
+        supplier: {
+            title: '{% trans "Supplier Options" %}',
+            collapsible: true,
+            hidden: !global_settings.PART_PURCHASEABLE,
+        }
+    }
+
+}
+
 // Construct fieldset for part forms
 function partFields(options={}) {
 
@@ -48,36 +73,44 @@ function partFields(options={}) {
         minimum_stock: {
             icon: 'fa-boxes',
         },
-        attributes: {
-            type: 'candy',
-            html: `<hr><h4><i>{% trans "Part Attributes" %}</i></h4><hr>`
-        },
         component: {
             value: global_settings.PART_COMPONENT,
+            group: 'attributes',
         },
         assembly: {
             value: global_settings.PART_ASSEMBLY,
+            group: 'attributes',
         },
         is_template: {
             value: global_settings.PART_TEMPLATE,
+            group: 'attributes',
         },
         trackable: {
             value: global_settings.PART_TRACKABLE,
+            group: 'attributes',
         },
         purchaseable: {
             value: global_settings.PART_PURCHASEABLE,
+            group: 'attributes',
+            onEdit: function(value, name, field, options) {
+                setFormGroupVisibility('supplier', value, options);
+            }
         },
         salable: {
             value: global_settings.PART_SALABLE,
+            group: 'attributes',
         },
         virtual: {
             value: global_settings.PART_VIRTUAL,
+            group: 'attributes',
         },
     };
 
     // If editing a part, we can set the "active" status
     if (options.edit) {
-        fields.active = {};
+        fields.active = {
+            group: 'attributes'
+        };
     }
 
     // Pop expiry field
@@ -91,16 +124,32 @@ function partFields(options={}) {
         // No supplier parts available yet
         delete fields["default_supplier"];
 
-        fields.create = {
-            type: 'candy',
-            html: `<hr><h4><i>{% trans "Part Creation Options" %}</i></h4><hr>`,
-        };
-
         if (global_settings.PART_CREATE_INITIAL) {
+
             fields.initial_stock = {
+                type: 'boolean',
+                label: '{% trans "Create Initial Stock" %}',
+                help_text: '{% trans "Create an initial stock item for this part" %}',
+                group: 'create',
+            };
+
+            fields.initial_stock_quantity = {
                 type: 'decimal',
+                value: 1,
                 label: '{% trans "Initial Stock Quantity" %}',
-                help_text: '{% trans "Initialize part stock with specified quantity" %}',
+                help_text: '{% trans "Specify initial stock quantity for this part" %}',
+                group: 'create',
+            };
+
+            // TODO - Allow initial location of stock to be specified
+            fields.initial_stock_location = {
+                label: '{% trans "Location" %}',
+                help_text: '{% trans "Select destination stock location" %}',
+                type: 'related field',
+                required: true,
+                api_url: `/api/stock/location/`,
+                model: 'stocklocation',
+                group: 'create',
             };
         }
 
@@ -109,21 +158,65 @@ function partFields(options={}) {
             label: '{% trans "Copy Category Parameters" %}',
             help_text: '{% trans "Copy parameter templates from selected part category" %}',
             value: global_settings.PART_CATEGORY_PARAMETERS,
+            group: 'create',
         };
+
+        // Supplier options
+        fields.add_supplier_info = {
+            type: 'boolean',
+            label: '{% trans "Add Supplier Data" %}',
+            help_text: '{% trans "Create initial supplier data for this part" %}',
+            group: 'supplier',
+        };
+        
+        fields.supplier = {
+            type: 'related field',
+            model: 'company',
+            label: '{% trans "Supplier" %}',
+            help_text: '{% trans "Select supplier" %}',
+            filters: {
+                'is_supplier': true,
+            },
+            api_url: '{% url "api-company-list" %}',
+            group: 'supplier',
+        };
+        
+        fields.SKU = {
+            type: 'string',
+            label: '{% trans "SKU" %}', 
+            help_text: '{% trans "Supplier stock keeping unit" %}',
+            group: 'supplier',
+        };
+        
+        fields.manufacturer = {
+            type: 'related field',
+            model: 'company',
+            label: '{% trans "Manufacturer" %}',
+            help_text: '{% trans "Select manufacturer" %}',
+            filters: {
+                'is_manufacturer': true,
+            },
+            api_url: '{% url "api-company-list" %}',
+            group: 'supplier',
+        };
+        
+        fields.MPN = {
+            type: 'string',
+            label: '{% trans "MPN" %}',
+            help_text: '{% trans "Manufacturer Part Number" %}',
+            group: 'supplier',
+        };
+
     }
 
     // Additional fields when "duplicating" a part
     if (options.duplicate) {
 
-        fields.duplicate = {
-            type: 'candy',
-            html: `<hr><h4><i>{% trans "Part Duplication Options" %}</i></h4><hr>`,
-        };
-
         fields.copy_from = {
             type: 'integer',
             hidden: true,
             value: options.duplicate,
+            group: 'duplicate',
         },
 
         fields.copy_image = {
@@ -131,6 +224,7 @@ function partFields(options={}) {
             label: '{% trans "Copy Image" %}',
             help_text: '{% trans "Copy image from original part" %}',
             value: true,
+            group: 'duplicate',
         },
 
         fields.copy_bom = {
@@ -138,6 +232,7 @@ function partFields(options={}) {
             label: '{% trans "Copy BOM" %}',
             help_text: '{% trans "Copy bill of materials from original part" %}',
             value: global_settings.PART_COPY_BOM,
+            group: 'duplicate',
         };
 
         fields.copy_parameters = {
@@ -145,6 +240,7 @@ function partFields(options={}) {
             label: '{% trans "Copy Parameters" %}',
             help_text: '{% trans "Copy parameter data from original part" %}',
             value: global_settings.PART_COPY_PARAMETERS,
+            group: 'duplicate',
         };
     }
 
@@ -191,8 +287,11 @@ function editPart(pk, options={}) {
         edit: true
     });
 
+    var groups = partGroups({});
+
     constructForm(url, {
         fields: fields,
+        groups: partGroups(),
         title: '{% trans "Edit Part" %}',
         reload: true,
     });
@@ -221,6 +320,7 @@ function duplicatePart(pk, options={}) {
             constructForm('{% url "api-part-list" %}', {
                 method: 'POST',
                 fields: fields,
+                groups: partGroups(),
                 title: '{% trans "Duplicate Part" %}',
                 data: data,
                 onSuccess: function(data) {

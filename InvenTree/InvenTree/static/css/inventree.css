@@ -730,6 +730,13 @@
   padding: 10px;
 }
 
+.form-panel {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+
 .modal input {
     width: 100%;
 }
