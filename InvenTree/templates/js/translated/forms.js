@@ -516,6 +516,9 @@ function constructFormBody(fields, options) {
     });
 
     initializeGroups(fields, options);
+
+    // Scroll to the top
+    $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
 }
 
 
@@ -867,6 +870,8 @@ function handleFormErrors(errors, fields, options) {
         }
     }
 
+    var first_error_field = null;
+
     for (field_name in errors) {
 
         // Add the 'has-error' class
@@ -875,6 +880,10 @@ function handleFormErrors(errors, fields, options) {
         var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
 
         var field_errors = errors[field_name];
+
+        if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+            first_error_field = field_name;
+        }
 
         // Add an entry for each returned error message
         for (var idx = field_errors.length-1; idx >= 0; idx--) {
@@ -889,6 +898,26 @@ function handleFormErrors(errors, fields, options) {
             field_dom.append(html);
         }
     }
+
+    var offset = 0;
+
+    if (first_error_field) {
+        // Ensure that the field in question is visible
+        document.querySelector(`#div_id_${field_name}`).scrollIntoView({
+            behavior: 'smooth',
+        });
+    } else {
+        // Scroll to the top of the form
+        $(options.modal).find('.modal-form-content-wrapper').scrollTop(offset);
+    }
+
+    $(options.modal).find('.modal-content').addClass('modal-error');
+}
+
+
+function isFieldVisible(field, options) {
+
+    return $(options.modal).find(`#div_id_${field}`).is(':visible');
 }
 
 

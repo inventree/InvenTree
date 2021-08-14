@@ -640,6 +640,11 @@
   z-index: 9999;
 }
 
+.modal-error {
+    border: 2px #F99 solid;
+    background-color: #faf0f0;
+}
+
 .modal-header {
     border-bottom: 1px solid #ddd;
 }
