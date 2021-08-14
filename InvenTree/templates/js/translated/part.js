@@ -135,6 +135,7 @@ function partFields(options={}) {
 
             fields.initial_stock_quantity = {
                 type: 'decimal',
+                value: 1,
                 label: '{% trans "Initial Stock Quantity" %}',
                 help_text: '{% trans "Specify initial stock quantity for this part" %}',
                 group: 'create',
