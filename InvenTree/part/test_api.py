@@ -580,6 +580,15 @@ class PartAPITest(InvenTreeAPITestCase):
 
         self.assertEqual(Part.objects.count(), n + 1)
 
+        pk = response.data['pk']
+
+        new_part = Part.objects.get(pk=pk)
+
+        # Check that there is a new manufacturer part *and* a new supplier part
+        self.assertEqual(new_part.supplier_parts.count(), 1)
+        self.assertEqual(new_part.manufacturer_parts.count(), 1)
+        
+
 class PartDetailTests(InvenTreeAPITestCase):
     """
     Test that we can create / edit / delete Part objects via the API

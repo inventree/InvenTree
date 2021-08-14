@@ -704,31 +704,28 @@ class PartList(generics.ListCreateAPIView):
                     'initial_stock_quantity': [_('Must be a valid quantity')],
                 })
             
-            # If an initial stock quantity is specified...
-            if initial_stock_quantity > 0:
+            initial_stock_location = request.data.get('initial_stock_location', None)
 
-                initial_stock_location = request.data.get('initial_stock_location', None)
+            try:
+                initial_stock_location = StockLocation.objects.get(pk=initial_stock_location)
+            except (ValueError, StockLocation.DoesNotExist):
+                initial_stock_location = None
 
-                try:
-                    initial_stock_location = StockLocation.objects.get(pk=initial_stock_location)
-                except (ValueError, StockLocation.DoesNotExist):
-                    initial_stock_location = None
+            if initial_stock_location is None:
+                if part.default_location is not None:
+                    initial_stock_location = part.default_location
+                else:
+                    raise ValidationError({
+                        'initial_stock_location': [_('Specify location for initial part stock')],
+                    })
 
-                if initial_stock_location is None:
-                    if part.default_location is not None:
-                        initial_stock_location = part.default_location
-                    else:
-                        raise ValidationError({
-                            'initial_stock_location': [_('Specify location for initial part stock')],
-                        })
+            stock_item = StockItem(
+                part=part,
+                quantity=initial_stock_quantity,
+                location=initial_stock_location,
+            )
 
-                stock_item = StockItem(
-                    part=part,
-                    quantity=initial_stock_quantity,
-                    location=initial_stock_location,
-                )
-
-                stock_item.save(user=request.user)
+            stock_item.save(user=request.user)
 
         # Optionally add manufacturer / supplier data to the part
         if part.purchaseable and str2bool(request.data.get('add_supplier_info', False)):
