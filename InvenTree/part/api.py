@@ -693,9 +693,7 @@ class PartList(generics.ListCreateAPIView):
         if initial_stock:
             try:
 
-                print("q:", request.data.get('initial_stock_quantity'))
-
-                initial_stock_quantity = Decimal(request.data.get('initial_stock_quantity', None))
+                initial_stock_quantity = Decimal(request.data.get('initial_stock_quantity', ''))
 
                 if initial_stock_quantity <= 0:
                     raise ValidationError({
