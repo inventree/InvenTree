@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-14 02:13+0000\n"
+"POT-Creation-Date: 2021-08-14 03:58+0000\n"
 "PO-Revision-Date: 2021-08-10 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -36,7 +36,7 @@ msgstr "Ingrese la fecha"
 #: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
-#: order/forms.py:74 part/forms.py:108 templates/js/translated/forms.js:527
+#: order/forms.py:74 part/forms.py:108 templates/js/translated/forms.js:529
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -7048,16 +7048,16 @@ msgstr ""
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:848 templates/modals.html:21
+#: templates/js/translated/forms.js:850 templates/modals.html:21
 #: templates/modals.html:47
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1311
+#: templates/js/translated/forms.js:1337
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:1523
+#: templates/js/translated/forms.js:1549
 msgid "Clear input"
 msgstr ""
 
