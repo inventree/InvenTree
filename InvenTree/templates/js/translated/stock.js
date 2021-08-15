@@ -1066,7 +1066,7 @@ function loadStockTable(table, options) {
                         return '-';
                     }
 
-                    var link = `/supplier-part/${row.supplier_part}/stock/`;
+                    var link = `/supplier-part/${row.supplier_part}/?display=stock`;
 
                     var text = '';
 
