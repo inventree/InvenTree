@@ -49,55 +49,37 @@ class BaseInvenTreeSetting(models.Model):
         are assigned their default values
         """
 
-        keys = set()
-        settings = []
-
         results = cls.objects.all()
 
         if user is not None:
             results = results.filter(user=user)
 
         # Query the database
+        settings = {}
+
         for setting in results:
             if setting.key:
-                settings.append({
-                    "key": setting.key.upper(),
-                    "value": setting.value
-                })
-
-                keys.add(setting.key.upper())
+                settings[setting.key.upper()] = setting.value
 
         # Specify any "default" values which are not in the database
         for key in cls.GLOBAL_SETTINGS.keys():
 
-            if key.upper() not in keys:
+            if key.upper() not in settings:
 
-                settings.append({
-                    "key": key.upper(),
-                    "value": cls.get_setting_default(key)
-                })
-        
-        # Enforce javascript formatting
-        for idx, setting in enumerate(settings):
+                settings[key.upper()] = cls.get_setting_default(key)
 
-            key = setting['key']
-            value = setting['value']
-
+        for key, value in settings.items():
             validator = cls.get_setting_validator(key)
 
-            # Convert to javascript compatible booleans
             if cls.validator_is_bool(validator):
-                value = str(value).lower()
-
-            # Numerical values remain the same
+                value = InvenTree.helpers.str2bool(value)
             elif cls.validator_is_int(validator):
-                pass
+                try:
+                    value = int(value)
+                except ValueError:
+                    value = cls.get_setting_default(key)
 
-            # Wrap strings with quotes
-            else:
-                value = format_html("'{}'", value)
-
-            setting["value"] = value
+            settings[key] = value
 
         return settings
 

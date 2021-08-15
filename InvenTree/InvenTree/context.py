@@ -10,6 +10,8 @@ from InvenTree.status_codes import StockHistoryCode
 
 import InvenTree.status
 
+import common.models
+
 from users.models import RuleSet
 
 
@@ -68,6 +70,26 @@ def status_codes(request):
         'StockStatus': StockStatus,
         'StockHistoryCode': StockHistoryCode,
     }
+
+
+def inventree_settings(request):
+    """
+    Adds two context objects to the request:
+
+    user_settings - A key:value dict of all user InvenTree settings for the current user
+    global_settings - A key:value dict of all global InvenTree settings
+
+    Providing a single context object for all settings should reduce the number of db hits
+    """
+
+    ctx = {}
+
+    if request.user:
+        ctx["user_settings"] = common.models.InvenTreeUserSetting.allValues(user=request.user)
+
+    ctx["global_settings"] = common.models.InvenTreeSetting.allValues()
+
+    return ctx
 
 
 def user_roles(request):
