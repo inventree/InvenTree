@@ -324,7 +324,6 @@ TEMPLATES = [
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
-                'InvenTree.context.inventree_settings',
             ],
         },
     },
