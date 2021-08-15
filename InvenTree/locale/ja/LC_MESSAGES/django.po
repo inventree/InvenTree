@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-15 02:58+0000\n"
+"POT-Creation-Date: 2021-08-15 12:11+0000\n"
 "PO-Revision-Date: 2021-08-10 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -110,7 +110,7 @@ msgstr "添付ファイル"
 msgid "Select file to attach"
 msgstr "添付ファイルを選択"
 
-#: InvenTree/models.py:64 templates/js/translated/attachment.js:52
+#: InvenTree/models.py:64 templates/js/translated/attachment.js:75
 msgid "Comment"
 msgstr "コメント："
 
@@ -6680,15 +6680,15 @@ msgstr ""
 msgid "No attachments found"
 msgstr ""
 
-#: templates/js/translated/attachment.js:56
+#: templates/js/translated/attachment.js:79
 msgid "Upload Date"
 msgstr ""
 
-#: templates/js/translated/attachment.js:69
+#: templates/js/translated/attachment.js:92
 msgid "Edit attachment"
 msgstr ""
 
-#: templates/js/translated/attachment.js:76
+#: templates/js/translated/attachment.js:99
 msgid "Delete attachment"
 msgstr ""
 
