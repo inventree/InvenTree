@@ -55,6 +55,20 @@ class InvenTreeAttachment(models.Model):
 
         return "attachments"
 
+    def get_filename(self):
+
+        return os.path.basename(self.attachment.name)
+
+    def rename(self, filename):
+        """
+        Rename this attachment with the provided filename.
+
+        - Filename cannot be empty
+        - Filename must have an extension
+        - Filename will have random data appended if a file exists with the same name
+        """
+        pass
+
     def __str__(self):
         return os.path.basename(self.attachment.name)
 

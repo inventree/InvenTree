@@ -208,6 +208,32 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='get_filename',
+    )
+
+    def update(self, instance, validated_data):
+        """
+        Filename can only be edited on "update"
+        """
+
+        instance = super().update(instance, validated_data)
+
+        print(validated_data)
+
+        return instance
+
+
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """
     Override the DRF native FileField serializer,
