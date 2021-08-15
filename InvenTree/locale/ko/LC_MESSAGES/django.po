@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-15 02:58+0000\n"
-"PO-Revision-Date: 2021-08-15 03:06\n"
+"POT-Creation-Date: 2021-08-15 12:11+0000\n"
+"PO-Revision-Date: 2021-08-15 12:14\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -110,7 +110,7 @@ msgstr ""
 msgid "Select file to attach"
 msgstr ""
 
-#: InvenTree/models.py:64 templates/js/translated/attachment.js:52
+#: InvenTree/models.py:64 templates/js/translated/attachment.js:75
 msgid "Comment"
 msgstr ""
 
@@ -6678,15 +6678,15 @@ msgstr ""
 msgid "No attachments found"
 msgstr ""
 
-#: templates/js/translated/attachment.js:56
+#: templates/js/translated/attachment.js:79
 msgid "Upload Date"
 msgstr ""
 
-#: templates/js/translated/attachment.js:69
+#: templates/js/translated/attachment.js:92
 msgid "Edit attachment"
 msgstr ""
 
-#: templates/js/translated/attachment.js:76
+#: templates/js/translated/attachment.js:99
 msgid "Delete attachment"
 msgstr ""
 
