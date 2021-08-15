@@ -20,7 +20,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import format_html
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 

@@ -282,6 +282,7 @@ def primitive_to_javascript(primitive):
         # Wrap with quotes
         return format_html("'{}'", primitive)
 
+
 @register.filter
 def keyvalue(dict, key):
     """

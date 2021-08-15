@@ -10,8 +10,6 @@ from InvenTree.status_codes import StockHistoryCode
 
 import InvenTree.status
 
-import common.models
-
 from users.models import RuleSet
 
 
