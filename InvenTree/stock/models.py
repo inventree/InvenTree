@@ -116,6 +116,13 @@ class StockLocation(InvenTreeTree):
         """
         return self.stock_item_count()
 
+    @property
+    def description_as_list(self):
+        """ Simply returns the number of stock items in this location.
+        Required for tree view serializer.
+        """
+        return self.description.split("-")
+
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
 def before_delete_stock_location(sender, instance, using, **kwargs):
