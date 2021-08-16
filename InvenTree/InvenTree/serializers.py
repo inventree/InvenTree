@@ -167,6 +167,18 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         return self.instance
 
+    def update(self, instance, validated_data):
+        """
+        Catch any django ValidationError, and re-throw as a DRF ValidationError
+        """
+
+        try:
+            instance = super().update(instance, validated_data)
+        except (ValidationError, DjangoValidationError) as exc:
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+        return instance
+
     def run_validation(self, data=empty):
         """
         Perform serializer validation.
@@ -188,7 +200,10 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
             # Update instance fields
             for attr, value in data.items():
-                setattr(instance, attr, value)
+                try:
+                    setattr(instance, attr, value)
+                except (ValidationError, DjangoValidationError) as exc:
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
 
         # Run a 'full_clean' on the model.
         # Note that by default, DRF does *not* perform full model validation!
@@ -219,19 +234,9 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
     filename = serializers.CharField(
         label=_('Filename'),
         required=False,
-        source='get_filename',
+        source='basename',
+        allow_blank=False,
     )
-
-    def update(self, instance, validated_data):
-        """
-        Filename can only be edited on "update"
-        """
-
-        instance = super().update(instance, validated_data)
-
-        print(validated_data)
-
-        return instance
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
