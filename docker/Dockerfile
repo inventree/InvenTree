@@ -4,6 +4,9 @@ FROM alpine:3.13 as base
 ARG repository="https://github.com/inventree/InvenTree.git"
 ARG branch="master"
 
+# Optionally specify a particular tag to checkout
+ARG tag=""
+
 ENV PYTHONUNBUFFERED 1
 
 # InvenTree key settings
@@ -12,8 +15,9 @@ ENV PYTHONUNBUFFERED 1
 ENV INVENTREE_HOME="/home/inventree"
 
 # GitHub settings
-ENV INVENTREE_REPO="${repository}"
-ENV INVENTREE_BRANCH="${branch}"
+ENV INVENTREE_GIT_REPO="${repository}"
+ENV INVENTREE_GIT_BRANCH="${branch}"
+ENV INVENTREE_GIT_TAG="${tag}"
 
 ENV INVENTREE_LOG_LEVEL="INFO"
 ENV INVENTREE_DOCKER="true"
@@ -73,15 +77,16 @@ RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
 RUN apk add --no-cache mariadb-connector-c mariadb-dev mariadb-client
 
 # Install required python packages
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -U invoke
 RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
-RUN pip install --no-cache-dir -U gunicorn
 
 FROM base as production
 # Clone source code
-RUN echo "Downloading InvenTree from ${INVENTREE_REPO}"
-RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_HOME}
+RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"
+
+RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
+
+# Checkout against a particular git tag
+RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
 
 # Install InvenTree packages
 RUN pip install --no-cache-dir -U -r ${INVENTREE_HOME}/requirements.txt
