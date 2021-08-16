@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-16 01:15+0000\n"
-"PO-Revision-Date: 2021-08-10 22:02\n"
+"PO-Revision-Date: 2021-08-16 01:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -130,10 +130,8 @@ msgid "upload date"
 msgstr "Hochladedatum"
 
 #: InvenTree/models.py:99
-#, fuzzy
-#| msgid "Overage value must not be negative"
 msgid "Filename must not be empty"
-msgstr "Überschuss-Wert darf nicht negativ sein"
+msgstr ""
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
@@ -149,16 +147,12 @@ msgid "Filename missing extension"
 msgstr ""
 
 #: InvenTree/models.py:142
-#, fuzzy
-#| msgid "StockItem with this serial number already exists"
 msgid "Attachment with this filename already exists"
-msgstr "Ein BestandsObjekt mit dieser Seriennummer existiert bereits"
+msgstr ""
 
 #: InvenTree/models.py:149
-#, fuzzy
-#| msgid "Error reading file (invalid format)"
 msgid "Error renaming file"
-msgstr "Fehler beim Lesen der Datei (ungültiges Format)"
+msgstr ""
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
@@ -211,10 +205,8 @@ msgid "Must be a valid number"
 msgstr "Muss eine gültige Nummer sein"
 
 #: InvenTree/serializers.py:235
-#, fuzzy
-#| msgid "Filename Pattern"
 msgid "Filename"
-msgstr "Dateinamen-Muster"
+msgstr ""
 
 #: InvenTree/settings.py:519
 msgid "German"
@@ -3858,16 +3850,12 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "{part} Stückpreis auf {price} und Menge auf {qty} aktualisiert"
 
 #: part/api.py:700
-#, fuzzy
-#| msgid "Quantity must be greater than zero"
 msgid "Must be greater than zero"
-msgstr "Anzahl muss größer Null sein"
+msgstr ""
 
 #: part/api.py:704
-#, fuzzy
-#| msgid "Must be a valid number"
 msgid "Must be a valid quantity"
-msgstr "Muss eine gültige Nummer sein"
+msgstr ""
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
@@ -7283,36 +7271,28 @@ msgid "Part Duplication Options"
 msgstr "Einstellungen für Teilkopien"
 
 #: templates/js/translated/part.js:33
-#, fuzzy
-#| msgid "Supplier List"
 msgid "Supplier Options"
-msgstr "Zulieferer-Liste"
+msgstr ""
 
 #: templates/js/translated/part.js:47
 msgid "Add Part Category"
 msgstr "Teil-Kategorie hinzufügen"
 
 #: templates/js/translated/part.js:131
-#, fuzzy
-#| msgid "Create initial stock"
 msgid "Create Initial Stock"
-msgstr "Ausgangsbestand erstellen"
+msgstr ""
 
 #: templates/js/translated/part.js:132
-#, fuzzy
-#| msgid "Create initial stock on part creation"
 msgid "Create an initial stock item for this part"
-msgstr "Ausgangsbestand beim Erstellen von Teilen erstellen"
+msgstr ""
 
 #: templates/js/translated/part.js:139
 msgid "Initial Stock Quantity"
 msgstr "Start-Bestandsmenge"
 
 #: templates/js/translated/part.js:140
-#, fuzzy
-#| msgid "Specify stock quantity"
 msgid "Specify initial stock quantity for this part"
-msgstr "Bestandsanzahl angeben"
+msgstr ""
 
 #: templates/js/translated/part.js:147 templates/js/translated/stock.js:261
 msgid "Select destination stock location"
@@ -7327,16 +7307,12 @@ msgid "Copy parameter templates from selected part category"
 msgstr ""
 
 #: templates/js/translated/part.js:167
-#, fuzzy
-#| msgid "Add Supplier Part"
 msgid "Add Supplier Data"
-msgstr "Zuliefererteil hinzufügen"
+msgstr ""
 
 #: templates/js/translated/part.js:168
-#, fuzzy
-#| msgid "Create new supplier part"
 msgid "Create initial supplier data for this part"
-msgstr "Neues Zuliefererteil anlegen"
+msgstr ""
 
 #: templates/js/translated/part.js:224
 msgid "Copy Image"
@@ -8199,5 +8175,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Initialize part stock with specified quantity"
-#~ msgstr "Teilbestand mit angegebener Menge anlegen"

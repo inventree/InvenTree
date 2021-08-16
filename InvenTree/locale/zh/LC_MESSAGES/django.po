@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-16 01:15+0000\n"
-"PO-Revision-Date: 2021-08-10 14:33\n"
+"PO-Revision-Date: 2021-08-16 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -205,10 +205,8 @@ msgid "Must be a valid number"
 msgstr ""
 
 #: InvenTree/serializers.py:235
-#, fuzzy
-#| msgid "File comment"
 msgid "Filename"
-msgstr "文件注释"
+msgstr ""
 
 #: InvenTree/settings.py:519
 msgid "German"
@@ -8176,3 +8174,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

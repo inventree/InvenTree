@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-16 01:15+0000\n"
-"PO-Revision-Date: 2021-08-10 14:33\n"
+"PO-Revision-Date: 2021-08-16 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -130,10 +130,8 @@ msgid "upload date"
 msgstr "yükleme tarihi"
 
 #: InvenTree/models.py:99
-#, fuzzy
-#| msgid "Overage value must not be negative"
 msgid "Filename must not be empty"
-msgstr "Fazlalık değeri negatif olmamalıdır"
+msgstr ""
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
@@ -149,16 +147,12 @@ msgid "Filename missing extension"
 msgstr ""
 
 #: InvenTree/models.py:142
-#, fuzzy
-#| msgid "StockItem with this serial number already exists"
 msgid "Attachment with this filename already exists"
-msgstr "Bu seri numarasına sahip stok kalemi zaten var"
+msgstr ""
 
 #: InvenTree/models.py:149
-#, fuzzy
-#| msgid "Error reading file (invalid format)"
 msgid "Error renaming file"
-msgstr "Dosya okurken hata (geçersiz biçim)"
+msgstr ""
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
@@ -211,10 +205,8 @@ msgid "Must be a valid number"
 msgstr "Geçerli bir numara olmalı"
 
 #: InvenTree/serializers.py:235
-#, fuzzy
-#| msgid "Filename Pattern"
 msgid "Filename"
-msgstr "Dosya Adı Deseni"
+msgstr ""
 
 #: InvenTree/settings.py:519
 msgid "German"
@@ -3858,16 +3850,12 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
 #: part/api.py:700
-#, fuzzy
-#| msgid "Allocation quantity must be greater than zero"
 msgid "Must be greater than zero"
-msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
+msgstr ""
 
 #: part/api.py:704
-#, fuzzy
-#| msgid "Must be a valid number"
 msgid "Must be a valid quantity"
-msgstr "Geçerli bir numara olmalı"
+msgstr ""
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
@@ -7283,26 +7271,20 @@ msgid "Part Duplication Options"
 msgstr ""
 
 #: templates/js/translated/part.js:33
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier Options"
-msgstr "Tedarikçi Parçaları"
+msgstr ""
 
 #: templates/js/translated/part.js:47
 msgid "Add Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:131
-#, fuzzy
-#| msgid "Create new Stock Location"
 msgid "Create Initial Stock"
-msgstr "Yeni Stok konumu oluştur"
+msgstr ""
 
 #: templates/js/translated/part.js:132
-#, fuzzy
-#| msgid "Include stock items for variant parts"
 msgid "Create an initial stock item for this part"
-msgstr "Çeşit parçaların stok kalemlerini dahil et"
+msgstr ""
 
 #: templates/js/translated/part.js:139
 msgid "Initial Stock Quantity"
@@ -7325,16 +7307,12 @@ msgid "Copy parameter templates from selected part category"
 msgstr ""
 
 #: templates/js/translated/part.js:167
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Add Supplier Data"
-msgstr "Tedarikçi Parçası"
+msgstr ""
 
 #: templates/js/translated/part.js:168
-#, fuzzy
-#| msgid "Create new supplier part"
 msgid "Create initial supplier data for this part"
-msgstr "Yeni tedarikçi parçası oluştur"
+msgstr ""
 
 #: templates/js/translated/part.js:224
 msgid "Copy Image"
@@ -8196,3 +8174,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

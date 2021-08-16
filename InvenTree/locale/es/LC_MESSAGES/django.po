@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-16 01:15+0000\n"
-"PO-Revision-Date: 2021-08-10 14:33\n"
+"PO-Revision-Date: 2021-08-16 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -7271,10 +7271,8 @@ msgid "Part Duplication Options"
 msgstr ""
 
 #: templates/js/translated/part.js:33
-#, fuzzy
-#| msgid "Supplier"
 msgid "Supplier Options"
-msgstr "Proveedor"
+msgstr ""
 
 #: templates/js/translated/part.js:47
 msgid "Add Part Category"
@@ -7309,10 +7307,8 @@ msgid "Copy parameter templates from selected part category"
 msgstr ""
 
 #: templates/js/translated/part.js:167
-#, fuzzy
-#| msgid "Supplier"
 msgid "Add Supplier Data"
-msgstr "Proveedor"
+msgstr ""
 
 #: templates/js/translated/part.js:168
 msgid "Create initial supplier data for this part"
@@ -8178,3 +8174,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

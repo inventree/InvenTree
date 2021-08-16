@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-16 01:15+0000\n"
-"PO-Revision-Date: 2021-08-10 14:33\n"
+"PO-Revision-Date: 2021-08-16 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -205,10 +205,8 @@ msgid "Must be a valid number"
 msgstr "Nummer må være gyldig"
 
 #: InvenTree/serializers.py:235
-#, fuzzy
-#| msgid "Vietnamese"
 msgid "Filename"
-msgstr "Vietnamesisk"
+msgstr ""
 
 #: InvenTree/settings.py:519
 msgid "German"
@@ -3856,10 +3854,8 @@ msgid "Must be greater than zero"
 msgstr ""
 
 #: part/api.py:704
-#, fuzzy
-#| msgid "Must be a valid number"
 msgid "Must be a valid quantity"
-msgstr "Nummer må være gyldig"
+msgstr ""
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
@@ -8178,3 +8174,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+
