@@ -903,6 +903,18 @@ function loadPartTable(table, url, options={}) {
         });
     });
 
+    $('#multi-part-print-label').click(function() {
+        var selections = $(table).bootstrapTable('getSelections');
+
+        var items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        });
+
+        printPartLabels(items);
+    });
+
     $('#multi-part-export').click(function() {
         var selections = $(table).bootstrapTable("getSelections");
 
