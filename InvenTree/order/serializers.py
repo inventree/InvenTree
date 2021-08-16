@@ -14,6 +14,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
@@ -160,7 +161,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class POAttachmentSerializer(InvenTreeModelSerializer):
+class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the PurchaseOrderAttachment model
     """
@@ -174,6 +175,7 @@ class POAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'order',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]
@@ -381,7 +383,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SOAttachmentSerializer(InvenTreeModelSerializer):
+class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """
@@ -395,6 +397,7 @@ class SOAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'order',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]
