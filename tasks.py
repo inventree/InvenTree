@@ -175,22 +175,6 @@ def static(c):
     manage(c, "collectstatic --no-input")
 
 
-@task(pre=[install, migrate, static, clean_settings])
-def update(c):
-    """
-    Update InvenTree installation.
-
-    This command should be invoked after source code has been updated,
-    e.g. downloading new code from GitHub.
-
-    The following tasks are performed, in order:
-
-    - install
-    - migrate
-    - static
-    """
-    pass
-
 @task(post=[static])
 def translate(c):
     """
@@ -208,6 +192,25 @@ def translate(c):
 
     c.run(f'python {path}')
 
+
+@task(pre=[install, migrate, translate, clean_settings])
+def update(c):
+    """
+    Update InvenTree installation.
+
+    This command should be invoked after source code has been updated,
+    e.g. downloading new code from GitHub.
+
+    The following tasks are performed, in order:
+
+    - install
+    - migrate
+    - translate
+    - clean_settings
+    """
+    pass
+
+
 @task
 def style(c):
     """
@@ -216,6 +219,7 @@ def style(c):
 
     print("Running PEP style checks...")
     c.run('flake8 InvenTree')
+
 
 @task
 def test(c, database=None):
@@ -227,6 +231,7 @@ def test(c, database=None):
 
     # Run coverage tests
     manage(c, 'test', pty=True)
+
 
 @task
 def coverage(c):
