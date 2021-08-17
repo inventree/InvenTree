@@ -167,7 +167,7 @@ else:
         SECRET_KEY = open(key_file, "r").read().strip()
     except Exception:
         logger.exception(f"Couldn't load keyfile {key_file}")
-        sys.exit(-1)
+        sys.exit(3)  # File IO error
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
@@ -436,15 +436,18 @@ for key in db_keys:
         db_config[key] = env_var
 
 # Check that required database configuration options are specified
-reqiured_keys = ['ENGINE', 'NAME']
-
-for key in reqiured_keys:
+required_keys = ['ENGINE', 'NAME']
+db_key_errors = []
+for key in required_keys:
     if key not in db_config:
-        error_msg = f'Missing required database configuration value {key}'
+        error_msg = f'Missing required database configuration value {key} sourced from INVENTREE_DB_{key}'
         logger.error(error_msg)
+        db_key_errors.append(error_msg)
 
-        print('Error: ' + error_msg)
-        sys.exit(-1)
+if len(db_key_errors) > 0:
+    # TODO: Logging already displays these messages, is print required?
+    [print('Error: ' + error_msg) for error_msg in db_key_errors]
+    sys.exit(2)  # Parse error
 
 """
 Special considerations for the database 'ENGINE' setting.
@@ -548,7 +551,7 @@ CURRENCIES = CONFIG.get(
 for currency in CURRENCIES:
     if currency not in moneyed.CURRENCIES:
         print(f"Currency code '{currency}' is not supported")
-        sys.exit(1)
+        sys.exit(2)  # Parse error
 
 
 # Custom currency exchange backend
