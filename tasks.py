@@ -156,7 +156,7 @@ def migrate(c):
     print("========================================")
 
     manage(c, "makemigrations")
-    manage(c, "migrate")
+    manage(c, "migrate --noinput")
     manage(c, "migrate --run-syncdb")
     manage(c, "check")
 

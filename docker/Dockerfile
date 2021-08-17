@@ -114,7 +114,7 @@ ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
 
 # Location for python virtual environment
 # If the INVENTREE_PY_ENV variable is set, the entrypoint script will use it!
-ENV INVENTREE_PY_ENV="${INVENTREE_HOME}/dev/env"
+ENV INVENTREE_PY_ENV="${INVENTREE_DEV}/env"
 
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
