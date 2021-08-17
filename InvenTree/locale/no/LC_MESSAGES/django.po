@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-16 01:15+0000\n"
+"POT-Creation-Date: 2021-08-17 00:00+0000\n"
 "PO-Revision-Date: 2021-08-16 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -8174,4 +8174,3 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
-
