@@ -213,14 +213,12 @@ if cors_opt:
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
-]
+STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
 STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
-STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_I18_TRG = os.path.join(BASE_DIR, 'InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
 
