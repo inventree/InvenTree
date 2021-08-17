@@ -59,28 +59,27 @@ RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
-    zlib zlib-dev
-
-# Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
-RUN apk add --no-cache cairo cairo-dev pango pango-dev
-RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
-
-# Python
-RUN apk add --no-cache python3 python3-dev py3-pip
-
-# SQLite support
-RUN apk add --no-cache sqlite
-
-# PostgreSQL support
-RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
-
-# MySQL support
-RUN apk add --no-cache mariadb-connector-c mariadb-dev mariadb-client
+    zlib zlib-dev \
+    # Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
+    cairo cairo-dev pango pango-dev \
+    # Fonts
+    fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto \
+    # Core python
+    python3 python3-dev py3-pip \
+    # SQLite support
+    sqlite \
+    # PostgreSQL support
+    postgresql postgresql-contrib postgresql-dev libpq \
+    # MySQL/MariaDB support
+    mariadb-connector-c mariadb-dev mariadb-client
 
 # Install required python packages
 RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
 
+ENTRYPOINT ["/sbin/tini", "--"]
+
 FROM base as production
+
 # Clone source code
 RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"
 
@@ -89,23 +88,22 @@ RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} $
 # Checkout against a particular git tag
 RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
 
-# Install InvenTree packages
-RUN pip install --no-cache-dir -U -r ${INVENTREE_HOME}/requirements.txt
-
-# Copy gunicorn config file
-COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
-
-# Copy startup scripts
-COPY start_prod_server.sh ${INVENTREE_HOME}/start_prod_server.sh
-COPY start_prod_worker.sh ${INVENTREE_HOME}/start_prod_worker.sh
-
-RUN chmod 755 ${INVENTREE_HOME}/start_prod_server.sh
-RUN chmod 755 ${INVENTREE_HOME}/start_prod_worker.sh
+RUN chown -R inventree:inventreegroup ${INVENTREE_HOME}/*
 
 WORKDIR ${INVENTREE_HOME}
 
-# Let us begin
-CMD ["bash", "./start_prod_server.sh"]
+# Drop to the inventree user
+USER inventree
+
+# Install InvenTree packages
+RUN pip3 install --no-cache-dir --disable-pip-version-check pip==21.2.3 setuptools==57.4.0 wheel>=0.37.0 \
+ && pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
+
+# Server init entrypoint
+ENTRYPOINT ./docker/init-server.sh
+
+# Launch the production server
+CMD ["gunicorn -c ./docker/gunicorn.conf.py -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} InvenTree.wsgi"]
 
 FROM base as dev
 
@@ -113,6 +111,10 @@ FROM base as dev
 # So from here, we don't actually "do" anything, apart from some file management
 
 ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
+
+# Location for python virtual environment
+# If the INVENTREE_PY_ENV variable is set, the entrypoint script will use it!
+ENV INVENTREE_PY_ENV="${INVENTREE_HOME}/dev/env"
 
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
@@ -122,5 +124,8 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 
 WORKDIR ${INVENTREE_HOME}
 
+# Entrypoint
+ENTRYPOINT ./docker/init-server.sh
+
 # Launch the development server
-CMD ["bash", "/home/inventree/docker/start_dev_server.sh"]
+CMD ["python3 manage.py runserver ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
