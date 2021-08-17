@@ -96,8 +96,7 @@ WORKDIR ${INVENTREE_HOME}
 USER inventree
 
 # Install InvenTree packages
-RUN pip3 install --no-cache-dir --disable-pip-version-check pip==21.2.3 setuptools==57.4.0 wheel>=0.37.0 \
- && pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
+RUN pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 # Server init entrypoint
 ENTRYPOINT ./docker/init-server.sh
@@ -114,7 +113,7 @@ ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
 
 # Location for python virtual environment
 # If the INVENTREE_PY_ENV variable is set, the entrypoint script will use it!
-ENV INVENTREE_PY_ENV="${INVENTREE_DEV}/env"
+ENV INVENTREE_PY_ENV="${INVENTREE_DEV_DIR}/env"
 
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
