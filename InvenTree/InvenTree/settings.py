@@ -169,6 +169,30 @@ else:
         logger.exception(f"Couldn't load keyfile {key_file}")
         sys.exit(-1)
 
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_STATIC_ROOT',
+        CONFIG.get('static_root', None)
+    )
+)
+
+if STATIC_ROOT is None:
+    print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
+    sys.exit(1)
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_MEDIA_ROOT',
+        CONFIG.get('media_root', None)
+    )
+)
+
+if MEDIA_ROOT is None:
+    print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
+    sys.exit(1)
+
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -189,22 +213,12 @@ if cors_opt:
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
-# The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', '/home/inventree/data/static')
-    )
-)
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
-]
+STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
 STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
-STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_I18_TRG = os.path.join(BASE_DIR, 'InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
 
@@ -217,14 +231,6 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
-
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', '/home/inventree/data/media')
-    )
-)
 
 if DEBUG:
     logger.info("InvenTree running in DEBUG mode")

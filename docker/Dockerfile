@@ -35,7 +35,8 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 ENV INVENTREE_GUNICORN_WORKERS="4"
 ENV INVENTREE_BACKGROUND_WORKERS="4"
 
-# Default web server port is 8000
+# Default web server address:port
+ENV INVENTREE_WEB_ADDR="0.0.0.0"
 ENV INVENTREE_WEB_PORT="8000"
 
 LABEL org.label-schema.schema-version="1.0" \
@@ -111,7 +112,7 @@ FROM base as dev
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
 
-ENV INVENTREE_DEV_DIR = "${INVENTREE_HOME}/dev"
+ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
 
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
