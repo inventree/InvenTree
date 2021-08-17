@@ -73,8 +73,6 @@ RUN apk add --no-cache git make bash \
 # Install required python packages
 RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
 
-ENTRYPOINT ["/sbin/tini", "--"]
-
 FROM base as production
 
 # Clone source code
@@ -96,7 +94,7 @@ USER inventree
 RUN pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 # Server init entrypoint
-ENTRYPOINT ./docker/init-server.sh
+ENTRYPOINT ["/bin/bash", "./docker/init.sh"]
 
 # Launch the production server
 CMD ["gunicorn -c ./docker/gunicorn.conf.py -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} InvenTree.wsgi"]
@@ -120,8 +118,9 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 
 WORKDIR ${INVENTREE_HOME}
 
-# Entrypoint
-ENTRYPOINT ./docker/init-server.sh
+# Entrypoint ensures that we are running in the python virtual environment
+ENTRYPOINT ["/bin/bash", "./docker/init.sh"]
 
 # Launch the development server
-CMD ["python3 manage.py runserver ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+

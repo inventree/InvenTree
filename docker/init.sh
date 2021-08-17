@@ -32,38 +32,25 @@ if [[ -n "$INVENTREE_PY_ENV" ]]; then
     # Activate the virtual environment
     source ${INVENTREE_PY_ENV}/bin/activate
 
-    echo "Installing required packages..."
-    pip install --no-cache-dir -U -r ${INVENTREE_HOME}/requirements.txt
+    # Note: Python packages will have to be installed on first run
+    # e.g docker-compose -f docker-compose.dev.yml run inventree-dev-server invoke install
 fi
 
 # Wait for the InvenTree database to be ready
-cd ${INVENTREE_MNG_DIR}
-echo "InvenTree: Waiting for database connection"
-python3 manage.py wait_for_db && echo "InvenTree: db found, sleeping 10" || { echo "InvenTree: Failed to connect to db due to errors, aborting"; exit 1; }
-sleep 10
+# cd ${INVENTREE_MNG_DIR}
+# echo "InvenTree: Waiting for database connection"
+# invoke wait && echo "InvenTree: Database connection successful" || { echo "InvenTree: Failed to connect to db due to errors, aborting"; exit 1; }
+# sleep 5
 
-# Check database migrations
 cd ${INVENTREE_HOME}
 
 # We assume at this stage that the database is up and running
-# Ensure that the database schema are up to date
-echo "InvenTree: Checking database..."
-invoke check || exit 1
-echo "InvenTree: Check successful"
-echo "InvenTree: Database Migrations..."
-invoke migrate || exit 1
-echo "InvenTree: Migrations successful"
-echo "InvenTree: Collecting static files..."
-# Note: "translate" calls "static" also
-invoke translate || exit 1
-echo "InvenTree: static successful"
+# echo "InvenTree: Checking database..."
+# invoke check || exit 1
 
 # Can be run as a cron job or directly to clean out expired sessions.
-cd ${INVENTREE_MNG_DIR}
-python3 manage.py clearsessions || exit 1
-echo "InvenTree: migrations complete"
+# cd ${INVENTREE_MNG_DIR}
+# python3 manage.py clearsessions || exit 1
 
-#Launch the CMD
-#echo "init-server launching $@"
-#exec "$@"
-#echo "init-server exiting"
+# Launch the CMD *after* the ENTRYPOINT completes
+exec "$@"

@@ -65,7 +65,7 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
+    result = c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
@@ -80,14 +80,6 @@ def install(c):
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
 
-    # If a config.yaml file does not exist, copy from the template!
-    CONFIG_FILE = os.path.join(localDir(), 'InvenTree', 'config.yaml')
-    CONFIG_TEMPLATE_FILE = os.path.join(localDir(), 'InvenTree', 'config_template.yaml')
-
-    if not os.path.exists(CONFIG_FILE):
-        print("Config file 'config.yaml' does not exist - copying from template.")
-        copyfile(CONFIG_TEMPLATE_FILE, CONFIG_FILE)
-
 
 @task
 def shell(c):
@@ -97,13 +89,6 @@ def shell(c):
 
     manage(c, 'shell', pty=True)
 
-@task
-def worker(c):
-    """
-    Run the InvenTree background worker process
-    """
-
-    manage(c, 'qcluster', pty=True)
 
 @task
 def superuser(c):
@@ -113,6 +98,7 @@ def superuser(c):
 
     manage(c, 'createsuperuser', pty=True)
 
+
 @task
 def check(c):
     """
@@ -121,13 +107,24 @@ def check(c):
 
     manage(c, "check")
 
+
 @task
 def wait(c):
     """
     Wait until the database connection is ready
     """
 
-    manage(c, "wait_for_db")
+    return manage(c, "wait_for_db")
+
+
+@task(pre=[wait])
+def worker(c):
+    """
+    Run the InvenTree background worker process
+    """
+
+    manage(c, 'qcluster', pty=True)
+
 
 @task
 def rebuild(c):
@@ -137,6 +134,7 @@ def rebuild(c):
 
     manage(c, "rebuild_models")
 
+
 @task
 def clean_settings(c):
     """
@@ -145,7 +143,7 @@ def clean_settings(c):
 
     manage(c, "clean_settings")
 
-@task
+@task(post=[rebuild])
 def migrate(c):
     """
     Performs database migrations.
