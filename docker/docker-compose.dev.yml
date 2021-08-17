@@ -16,44 +16,46 @@ services:
     inventree-dev-server:
         container_name: inventree-dev-server
         build:
-            context: .
+            context: ../
             target: dev
+            dockerfile: docker/Dockerfile
+        environment:
+            INVENTREE_DEV_VENV: "True"
         ports:
             - 8000:8000
+        user: root
         volumes:
-            # Ensure you specify the location of the 'src' directory at the end of this file
-            - src:/home/inventree
+            # Ensure you specify the location of the 'INVENTREE_SRC_DIR' in the dev-config.env file
+            - ${INVENTREE_SRC_DIR:?inventree_src_dir}:/home/inventree
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
 
         restart: unless-stopped
+
+        command: ["/init-server.sh", "python3", "manage.py", "runserver", "0.0.0.0:8000"]
+
 
     # Background worker process handles long-running or periodic tasks
     inventree-dev-worker:
         container_name: inventree-dev-worker
         build:
-            context: .
+            context: ../
             target: dev
-        entrypoint: /home/inventree/docker/start_dev_worker.sh
+            dockerfile: docker/Dockerfile
+        environment:
+            INVENTREE_DEV_VENV: "True"
         depends_on:
             - inventree-dev-server
         volumes:
-            # Ensure you specify the location of the 'src' directory at the end of this file
-            - src:/home/inventree
+            # Ensure you specify the location of the 'INVENTREE_SRC_DIR' in the dev-config.env file
+            - ${INVENTREE_SRC_DIR:?inventree_src_dir}:/home/inventree
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
         restart: unless-stopped
 
-volumes:
-    # NOTE: Change "../" to a directory on your local machine, where the InvenTree source code is located
-    # Persistent data, stored external to the container(s)
-    src:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            # This directory specified where InvenTree source code is stored "outside" the docker containers
-            # By default, this directory is one level above the "docker" directory
-            device: ../
+        command: [ "/wait-for-it.sh", "--timeout=0", "inventree-dev-server:8000", "--",
+                   "/init-worker.sh",
+                   "python3", "manage.py", "qcluster"]
+

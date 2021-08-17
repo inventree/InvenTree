@@ -54,59 +54,74 @@ RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 WORKDIR ${INVENTREE_HOME}
 
 # Install required system packages
-RUN apk add --no-cache git make bash \
+RUN apk add --no-cache tini \
+    git make bash \
     gcc libgcc g++ libstdc++ \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
-    zlib zlib-dev
+    zlib zlib-dev \
+    # Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement) 
+    cairo cairo-dev pango pango-dev \
+    #fonts
+    fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto \
+    # Python
+    python3 python3-dev py3-pip \
+    # SQLite support
+    sqlite \
+    # Postgres support
+    postgresql postgresql-contrib postgresql-dev libpq \
+    # MySQL/Mariadb support
+    mariadb-connector-c mariadb-dev mariadb-client
 
-# Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
-RUN apk add --no-cache cairo cairo-dev pango pango-dev
-RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
+ENTRYPOINT ["/sbin/tini", "--"]
 
-# Python
-RUN apk add --no-cache python3 python3-dev py3-pip
-
-# SQLite support
-RUN apk add --no-cache sqlite
-
-# PostgreSQL support
-RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
-
-# MySQL support
-RUN apk add --no-cache mariadb-connector-c mariadb-dev mariadb-client
-
-# Install required python packages
-RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
-
+ 
 FROM base as production
 # Clone source code
-RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"
-
-RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
+RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}" \
+  &&  git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
 
 # Checkout against a particular git tag
 RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
-
-# Install InvenTree packages
-RUN pip install --no-cache-dir -U -r ${INVENTREE_HOME}/requirements.txt
-
-# Copy gunicorn config file
-COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
-
-# Copy startup scripts
-COPY start_prod_server.sh ${INVENTREE_HOME}/start_prod_server.sh
-COPY start_prod_worker.sh ${INVENTREE_HOME}/start_prod_worker.sh
-
-RUN chmod 755 ${INVENTREE_HOME}/start_prod_server.sh
-RUN chmod 755 ${INVENTREE_HOME}/start_prod_worker.sh
+RUN chown -R inventree:inventreegroup ${INVENTREE_HOME}/*
 
 WORKDIR ${INVENTREE_HOME}
+#temporary entrypoint copy test. Can be removed after merge
+RUN if test -f docker/init-server.sh; then \
+	cp docker/init-server.sh /init-server.sh; \
+	cp docker/init-worker.sh /init-worker.sh; \
+    cp docker/wait-for-it.sh /wait-for-it.sh; \
+	fi;
 
-# Let us begin
-CMD ["bash", "./start_prod_server.sh"]
+# Install InvenTree packages
+RUN pip3 install --no-cache-dir --disable-pip-version-check pip==21.2.3 setuptools==57.4.0 wheel>=0.37.0 \
+ && pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
-FROM base as dev
+#Drop to the inventree user
+USER inventree
+
+# Example production command
+CMD ["gunicorn -c ./docker/gunicorn.conf.py -b 0.0.0.0:8000 InvenTree.wsgi"]
+ 
+
+FROM production as local
+
+# This development image is to avoid a locally produced virtualenv and is to produce an 'as close'
+# to prod environment as possible. 
+# This image adds the local repository owned as the inventree user. To run a live-restarting variant
+# simply mount the code directory (as per the dev image) and add `--user root`
+
+USER root
+ADD --chown=inventree:inventreegroup requirements.txt ${INVENTREE_HOME}/requirements.txt
+RUN pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
+USER inventree
+
+ADD --chown=inventree:inventreegroup . ${INVENTREE_HOME}/
+#replace the entrypoints in case they have changed
+COPY ./docker/init-server.sh ./docker/init-worker.sh ./docker/wait-for-it.sh /
+
+
+FROM local as dev
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
@@ -122,4 +137,5 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 WORKDIR ${INVENTREE_HOME}
 
 # Launch the development server
-CMD ["bash", "/home/inventree/docker/start_dev_server.sh"]
+CMD ["python3 manage.py runserver 0.0.0.0:8000"]
+

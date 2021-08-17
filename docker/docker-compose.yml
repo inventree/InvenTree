@@ -38,7 +38,7 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
-        image: inventree/inventree:latest
+        image: inventree:local
         expose:
             - 8000
         depends_on:
@@ -56,13 +56,23 @@ services:
             - INVENTREE_DB_NAME=inventree
             - INVENTREE_DB_HOST=inventree-db
             - INVENTREE_DB_PORT=5432
+            - DJANGO_SUPERUSER_USERNAME=admin
+            - DJANGO_SUPERUSER_EMAIL=admin@inventree.com
+            - DJANGO_SUPERUSER_PASSWORD=password
+     
         restart: unless-stopped
+        command: ["/wait-for-it.sh", "--timeout=0", "inventree-db:5432", "--", 
+                  "/init-server.sh",
+                  "gunicorn",
+                    "-c", "/home/inventree/docker/gunicorn.conf.py", 
+                    "-b", "0.0.0.0:8000",
+                    "InvenTree.wsgi"]
+
 
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
         container_name: inventree-worker
-        image: inventree/inventree:latest
-        entrypoint: ./start_prod_worker.sh
+        image: inventree:local
         depends_on:
             - inventree-db
             - inventree-server
@@ -80,6 +90,12 @@ services:
             - INVENTREE_DB_HOST=inventree-db
             - INVENTREE_DB_PORT=5432
         restart: unless-stopped
+
+        # Launch the background worker process
+        command: ["/wait-for-it.sh", "--timeout=0", "inventree-server:8000", "--",
+                  "/init-worker.sh",
+                    "python3",  "manage.py", "qcluster"]
+
 
     # nginx acts as a reverse proxy
     # static files are served directly by nginx
@@ -112,4 +128,5 @@ volumes:
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
             # Change this path to a local system path where you want InvenTree data stored
-            device: /path/to/data
+            device: /Users/markdedeuge/data
+
