@@ -46,6 +46,7 @@ jobs:
           python-version: 3.7
       - name: Install Dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install -y \
             libmariadb3 libmariadb-dev \
             sqlite \
