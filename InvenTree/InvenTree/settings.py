@@ -169,6 +169,30 @@ else:
         logger.exception(f"Couldn't load keyfile {key_file}")
         sys.exit(-1)
 
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_STATIC_ROOT',
+        CONFIG.get('static_root', None)
+    )
+)
+
+if STATIC_ROOT is None:
+    print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
+    sys.exit(1)
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_MEDIA_ROOT',
+        CONFIG.get('media_root', None)
+    )
+)
+
+if MEDIA_ROOT is None:
+    print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
+    sys.exit(1)
+
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -188,14 +212,6 @@ if cors_opt:
 
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
-
-# The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', '/home/inventree/data/static')
-    )
-)
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
@@ -217,14 +233,6 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
-
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', '/home/inventree/data/media')
-    )
-)
 
 if DEBUG:
     logger.info("InvenTree running in DEBUG mode")
