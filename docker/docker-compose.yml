@@ -38,7 +38,7 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
-        image: inventree:local
+        image: inventree/inventree:latest
         expose:
             - 8000
         depends_on:
@@ -72,7 +72,7 @@ services:
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
         container_name: inventree-worker
-        image: inventree:local
+        image: inventree/inventree:latest
         depends_on:
             - inventree-db
             - inventree-server
