@@ -112,7 +112,7 @@ FROM base as dev
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
 
-ENV INVENTREE_DEV_DIR = "${INVENTREE_HOME}/dev"
+ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
 
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
