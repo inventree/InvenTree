@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-17 02:43+0000\n"
-"PO-Revision-Date: 2021-08-16 01:44\n"
+"PO-Revision-Date: 2021-08-17 02:50\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -4522,10 +4522,8 @@ msgid "Set Category"
 msgstr "Ustaw kategorię"
 
 #: part/templates/part/category.html:141
-#, fuzzy
-#| msgid "Print Label"
 msgid "Print Labels"
-msgstr "Drukuj etykietę"
+msgstr ""
 
 #: part/templates/part/category.html:142
 msgid "Export Data"
@@ -8180,3 +8178,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
