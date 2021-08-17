@@ -36,18 +36,15 @@ ENV INVENTREE_GUNICORN_WORKERS="4"
 ENV INVENTREE_BACKGROUND_WORKERS="4"
 
 # Default web server address:port
-ENV INVENTREE_WEB_ADDR="0.0.0.0"
-ENV INVENTREE_WEB_PORT="8000"
+ENV INVENTREE_WEB_ADDR=0.0.0.0
+ENV INVENTREE_WEB_PORT=8000
 
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
       org.label-schema.vendor="inventree" \
       org.label-schema.name="inventree/inventree" \
       org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.version=${INVENTREE_VERSION} \
-      org.label-schema.vcs-url=${INVENTREE_REPO} \
-      org.label-schema.vcs-branch=${BRANCH} \
-      org.label-schema.vcs-ref=${COMMIT}
+      org.label-schema.vcs-url=${INVENTREE_REPO}
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
