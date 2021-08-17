@@ -37,6 +37,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gettext
+          sudo apt-get install -y \
+            libmariadb3 libmariadb-dev \
+            sqlite \
+            libpq-dev
           pip3 install invoke
           invoke install
           invoke static

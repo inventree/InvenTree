@@ -46,7 +46,10 @@ jobs:
           python-version: 3.7
       - name: Install Dependencies
         run: |
-          sudo apt-get install libpq-dev
+          sudo apt-get install -y \
+            libmariadb3 libmariadb-dev \
+            sqlite \
+            libpq-dev
           pip3 install invoke
           pip3 install psycopg2
           invoke install
