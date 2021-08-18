@@ -100,7 +100,7 @@ WORKDIR ${INVENTREE_MNG_DIR}
 ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
 
 # Launch the production server
-CMD ["gunicorn", "-c", "../docker/gunicorn.conf.py", "InvenTree.wsgi", "-b", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}", "--pythonpath", "${INVENTREE_MNG_DIR}"]
+CMD gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM base as dev
 
