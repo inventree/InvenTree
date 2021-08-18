@@ -72,9 +72,9 @@ RUN apk add --no-cache git make bash \
     # MySQL/MariaDB support
     mariadb-connector-c mariadb-dev mariadb-client
 
-# Install required python packages
-RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
-
+# Install required base-level python packages
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -U -r requirements.txt
 FROM base as production
 
 # Clone source code
