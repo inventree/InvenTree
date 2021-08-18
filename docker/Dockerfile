@@ -87,19 +87,20 @@ RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --
 
 RUN chown -R inventree:inventreegroup ${INVENTREE_HOME}/*
 
-WORKDIR ${INVENTREE_HOME}
-
 # Drop to the inventree user
 USER inventree
 
 # Install InvenTree packages
 RUN pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
+# Need to be running from within this directory
+WORKDIR ${INVENTREE_MNG_DIR}
+
 # Server init entrypoint
-ENTRYPOINT ["/bin/bash", "./docker/init.sh"]
+ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
 
 # Launch the production server
-CMD ["gunicorn -c ./docker/gunicorn.conf.py -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} InvenTree.wsgi"]
+CMD ["gunicorn", "-c", "../docker/gunicorn.conf.py", "InvenTree.wsgi", "-b", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}", "--pythonpath", "${INVENTREE_MNG_DIR}"]
 
 FROM base as dev
 

@@ -36,7 +36,7 @@ def schedule_task(taskname, **kwargs):
         # If this task is already scheduled, don't schedule it again
         # Instead, update the scheduling parameters
         if Schedule.objects.filter(func=taskname).exists():
-            logger.info(f"Scheduled task '{taskname}' already exists - updating!")
+            logger.debug(f"Scheduled task '{taskname}' already exists - updating!")
 
             Schedule.objects.filter(func=taskname).update(**kwargs)
         else:
