@@ -51,8 +51,6 @@ LABEL org.label-schema.schema-version="1.0" \
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 
-WORKDIR ${INVENTREE_HOME}
-
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
@@ -75,6 +73,8 @@ RUN apk add --no-cache git make bash \
 # Install required base-level python packages
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -U -r requirements.txt
+
+# Production code (pulled from tagged github release)
 FROM base as production
 
 # Clone source code
