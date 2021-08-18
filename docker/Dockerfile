@@ -46,7 +46,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
       org.label-schema.vcs-url=${INVENTREE_GIT_REPO} \
       org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
-      org.label-schema.vss-ref=${INVENTREE_GIT_TAG}
+      org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
