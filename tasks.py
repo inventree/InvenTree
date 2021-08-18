@@ -188,7 +188,7 @@ def translate(c):
 
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')
 
-    c.run(f'python {path}')
+    c.run(f'python3 {path}')
 
 
 @task(pre=[install, migrate, translate, clean_settings])
