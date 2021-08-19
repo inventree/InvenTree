@@ -1652,8 +1652,10 @@ class Part(MPTTModel):
 
     def get_purchase_price(self, quantity):
         currency = currency_code_default()
-        prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all()]
-        return min(prices) * quantity, max(prices) * quantity
+        prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        if prices:
+            return min(prices) * quantity, max(prices) * quantity
+        return None
 
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
