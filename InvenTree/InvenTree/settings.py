@@ -235,8 +235,8 @@ MEDIA_URL = '/media/'
 if DEBUG:
     logger.info("InvenTree running in DEBUG mode")
 
-logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
 # Application definition
 
@@ -420,7 +420,7 @@ Configure the database backend based on the user-specified values.
 - The following code lets the user "mix and match" database configuration
 """
 
-logger.info("Configuring database backend:")
+logger.debug("Configuring database backend:")
 
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
@@ -474,11 +474,9 @@ if db_engine in ['sqlite3', 'postgresql', 'mysql']:
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
-print("InvenTree Database Configuration")
-print("================================")
-print(f"ENGINE: {db_engine}")
-print(f"NAME: {db_name}")
-print(f"HOST: {db_host}")
+logger.info(f"DB_ENGINE: {db_engine}")
+logger.info(f"DB_NAME: {db_name}")
+logger.info(f"DB_HOST: {db_host}")
 
 DATABASES['default'] = db_config
 

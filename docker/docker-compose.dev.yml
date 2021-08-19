@@ -35,7 +35,7 @@ services:
         build:
             context: .
             target: dev
-        entrypoint: /home/inventree/docker/start_dev_worker.sh
+        command: invoke worker
         depends_on:
             - inventree-dev-server
         volumes:
