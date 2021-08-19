@@ -1,11 +1,5 @@
-# Basic package requirements
-setuptools>=57.4.0
-wheel>=0.37.0
-invoke>=1.4.0                   # Invoke build tool
-gunicorn>=20.1.0                # Gunicorn web server
-
 # Django framework
-Django==3.2.4                     # Django package
+Django==3.2.4                   # Django package
 
 pillow==8.2.0                   # Image manipulation
 djangorestframework==3.12.4     # DRF framework
