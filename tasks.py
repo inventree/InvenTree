@@ -198,7 +198,7 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(pre=[install, migrate, translate_stats, clean_settings])
+@task(pre=[install, migrate, translate_stats, static, clean_settings])
 def update(c):
     """
     Update InvenTree installation.
@@ -211,6 +211,7 @@ def update(c):
     - install
     - migrate
     - translate_stats
+    - static
     - clean_settings
     """
     pass
