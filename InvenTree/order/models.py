@@ -818,7 +818,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = (
-            ('order', 'part')
+            ('order', 'part', 'quantity', 'purchase_price')
         )
 
     def __str__(self):

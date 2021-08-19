@@ -6,6 +6,7 @@ over and above the built-in Django tags.
 
 import os
 import sys
+from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as djangosettings
@@ -260,6 +261,26 @@ def get_available_themes(*args, **kwargs):
         })
 
     return themes
+
+
+@register.simple_tag()
+def primitive_to_javascript(primitive):
+    """
+    Convert a python primitive to a javascript primitive.
+
+    e.g. True -> true
+         'hello' -> '"hello"'
+    """
+
+    if type(primitive) is bool:
+        return str(primitive).lower()
+
+    elif type(primitive) in [int, float]:
+        return primitive
+
+    else:
+        # Wrap with quotes
+        return format_html("'{}'", primitive)
 
 
 @register.filter

@@ -252,7 +252,7 @@ function loadBomTable(table, options) {
         sortable: true,
         formatter: function(value, row, index, field) {
 
-            var url = `/part/${row.sub_part_detail.pk}/stock/`;
+            var url = `/part/${row.sub_part_detail.pk}/?display=stock`;
             var text = value;
 
             if (value == null || value <= 0) {

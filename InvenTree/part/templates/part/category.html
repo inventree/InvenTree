@@ -132,12 +132,13 @@
             </button>
             {% endif %}
             <div class='btn-group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %}<span class='caret'></span></button>
+                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %} <span class='caret'></span></button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
                     <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
                     {% endif %}
                     <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                    <li><a href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
                     <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
             </div>
@@ -276,6 +277,7 @@
         constructForm('{% url "api-part-list" %}', {
             method: 'POST',
             fields: fields,
+            groups: partGroups(),
             title: '{% trans "Create Part" %}',
             onSuccess: function(data) {
                 // Follow the new part

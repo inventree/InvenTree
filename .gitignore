@@ -37,6 +37,7 @@ local_settings.py
 
 # Files used for testing
 dummy_image.*
+_tmp.csv
 
 # Sphinx files
 docs/_build
