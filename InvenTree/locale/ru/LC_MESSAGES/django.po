@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-19 06:54+0000\n"
+"POT-Creation-Date: 2021-08-19 21:48+0000\n"
 "PO-Revision-Date: 2021-08-19 02:24\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -1268,8 +1268,8 @@ msgid "Order required parts"
 msgstr ""
 
 #: build/templates/build/detail.html:180
-#: company/templates/company/detail.html:33
-#: company/templates/company/detail.html:75 order/views.py:679
+#: company/templates/company/detail.html:32
+#: company/templates/company/detail.html:72 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
 msgstr "Заказать детали"
@@ -1329,8 +1329,8 @@ msgid "Build Notes"
 msgstr "Заметки сборки"
 
 #: build/templates/build/detail.html:261 build/templates/build/detail.html:398
-#: company/templates/company/detail.html:173
-#: company/templates/company/detail.html:200
+#: company/templates/company/detail.html:169
+#: company/templates/company/detail.html:196
 #: order/templates/order/purchase_order_detail.html:62
 #: order/templates/order/purchase_order_detail.html:95
 #: order/templates/order/sales_order_detail.html:58
@@ -2525,8 +2525,8 @@ msgstr ""
 msgid "New Supplier Part"
 msgstr ""
 
-#: company/templates/company/detail.html:28
-#: company/templates/company/detail.html:70
+#: company/templates/company/detail.html:27
+#: company/templates/company/detail.html:67
 #: company/templates/company/manufacturer_part.html:112
 #: company/templates/company/manufacturer_part.html:136
 #: part/templates/part/category.html:135 part/templates/part/detail.html:292
@@ -2534,39 +2534,39 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: company/templates/company/detail.html:33
-#: company/templates/company/detail.html:75
+#: company/templates/company/detail.html:32
+#: company/templates/company/detail.html:72
 #: part/templates/part/category.html:140
 msgid "Order parts"
 msgstr ""
 
-#: company/templates/company/detail.html:36
-#: company/templates/company/detail.html:78
+#: company/templates/company/detail.html:35
+#: company/templates/company/detail.html:75
 msgid "Delete parts"
 msgstr ""
 
-#: company/templates/company/detail.html:36
-#: company/templates/company/detail.html:78
+#: company/templates/company/detail.html:35
+#: company/templates/company/detail.html:75
 msgid "Delete Parts"
 msgstr ""
 
-#: company/templates/company/detail.html:56 templates/InvenTree/search.html:149
+#: company/templates/company/detail.html:54 templates/InvenTree/search.html:149
 msgid "Manufacturer Parts"
 msgstr ""
 
-#: company/templates/company/detail.html:64
+#: company/templates/company/detail.html:62
 msgid "Create new manufacturer part"
 msgstr ""
 
-#: company/templates/company/detail.html:65 part/templates/part/detail.html:312
+#: company/templates/company/detail.html:63 part/templates/part/detail.html:312
 msgid "New Manufacturer Part"
 msgstr ""
 
-#: company/templates/company/detail.html:97
+#: company/templates/company/detail.html:93
 msgid "Supplier Stock"
 msgstr ""
 
-#: company/templates/company/detail.html:106
+#: company/templates/company/detail.html:102
 #: company/templates/company/navbar.html:40
 #: company/templates/company/navbar.html:43
 #: order/templates/order/purchase_orders.html:8
@@ -2580,17 +2580,17 @@ msgstr ""
 msgid "Purchase Orders"
 msgstr ""
 
-#: company/templates/company/detail.html:112
+#: company/templates/company/detail.html:108
 #: order/templates/order/purchase_orders.html:20
 msgid "Create new purchase order"
 msgstr ""
 
-#: company/templates/company/detail.html:113
+#: company/templates/company/detail.html:109
 #: order/templates/order/purchase_orders.html:21
 msgid "New Purchase Order"
 msgstr ""
 
-#: company/templates/company/detail.html:128
+#: company/templates/company/detail.html:124
 #: company/templates/company/navbar.html:49
 #: company/templates/company/navbar.html:52
 #: order/templates/order/sales_orders.html:8
@@ -2604,24 +2604,24 @@ msgstr ""
 msgid "Sales Orders"
 msgstr ""
 
-#: company/templates/company/detail.html:134
+#: company/templates/company/detail.html:130
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
 msgstr ""
 
-#: company/templates/company/detail.html:135
+#: company/templates/company/detail.html:131
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
 msgstr ""
 
-#: company/templates/company/detail.html:151
+#: company/templates/company/detail.html:147
 #: company/templates/company/navbar.html:55
 #: company/templates/company/navbar.html:58
 #: templates/js/translated/build.js:597
 msgid "Assigned Stock"
 msgstr ""
 
-#: company/templates/company/detail.html:169
+#: company/templates/company/detail.html:165
 msgid "Company Notes"
 msgstr ""
 
