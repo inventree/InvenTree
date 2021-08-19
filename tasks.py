@@ -173,7 +173,18 @@ def static(c):
     manage(c, "collectstatic --no-input")
 
 
-@task(post=[static])
+@task
+def translate_stats(c):
+    """
+    Collect translation stats.
+    The file generated from this is needed for the UI.
+    """
+
+    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
+    c.run(f'python3 {path}')
+
+
+@task(post=[translate_stats, static])
 def translate(c):
     """
     Regenerate translation files.
@@ -186,12 +197,8 @@ def translate(c):
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
-    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
 
-    c.run(f'python3 {path}')
-
-
-@task(pre=[install, migrate, translate, clean_settings])
+@task(pre=[install, migrate, translate_stats, clean_settings])
 def update(c):
     """
     Update InvenTree installation.
@@ -203,7 +210,7 @@ def update(c):
 
     - install
     - migrate
-    - translate
+    - translate_stats
     - clean_settings
     """
     pass
