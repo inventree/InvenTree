@@ -12,19 +12,22 @@ database setup in this file.
 """
 
 import logging
-
 import os
 import random
-import string
 import shutil
+import socket
+import string
 import sys
 from datetime import datetime
 
 import moneyed
-
 import yaml
-from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+from django.utils.translation import gettext_lazy as _
+from psycopg2.extensions import (
+    ISOLATION_LEVEL_READ_COMMITTED,
+    ISOLATION_LEVEL_SERIALIZABLE,
+)
 
 
 def _is_true(x):
@@ -355,30 +358,6 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
-background_workers = os.environ.get('INVENTREE_BACKGROUND_WORKERS', None)
-
-if background_workers is not None:
-    try:
-        background_workers = int(background_workers)
-    except ValueError:
-        background_workers = None
-
-if background_workers is None:
-    # Sensible default?
-    background_workers = 4
-
-# django-q configuration
-Q_CLUSTER = {
-    'name': 'InvenTree',
-    'workers': background_workers,
-    'timeout': 90,
-    'retry': 120,
-    'queue_limit': 50,
-    'bulk': 10,
-    'orm': 'default',
-    'sync': False,
-}
-
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
@@ -462,6 +441,36 @@ It can be specified in config.yaml (or envvar) as either (for example):
 
 db_engine = db_config['ENGINE'].lower()
 
+# Set useful sensible timeouts for a transactional webserver to communicate
+# with its database server
+if db_engine == "postgresql" and "OPTIONS" not in db_config:
+    db_config["OPTIONS"] = {
+        # The DB server is in the same DC, it should not take very long
+        # to connect to the database server
+        # # seconds, 2 is minium allowed by libpq
+        "connect_timeout": int(os.getenv("PGCONNECT_TIMEOUT", "2")),
+        # Setup TCP keepalive
+        # DB server is in the same DC, it should go walk about for very
+        # long
+        # # 0 - TCP Keepalives disabled; 1 - enabled
+        "keepalives": int(os.getenv("PGTCP_KEEPALIVES", "1")),
+        # # Seconds after connection is idle to send keep alive
+        "keepalives_idle": int(os.getenv("PGTCP_KEEPALIVES_IDLE", "1")),
+        # # Seconds after missing ACK to send another keep alive
+        "keepalives_interval": int(
+            os.getenv("PGTCP_KEEPALIVES_INTERVAL", "1")
+        ),
+        # # Number of missing ACKs before we close the connection
+        "keepalives_count": int(os.getenv("PGTCP_KEEPALIVES_COUNT", "5")),
+        # # Milliseconds for how long pending data should remain unacked
+        # by the remote server
+        # TODO: Supported starting in PSQL 11
+        # "tcp_user_timeout": int(os.getenv("PGTCP_USER_TIMEOUT", "1000"),
+        "isolation_level": ISOLATION_LEVEL_SERIALIZABLE
+        if _is_true(os.getenv("PG_ISOLATION_SERIALIZABLE", "false"))
+        else ISOLATION_LEVEL_READ_COMMITTED,
+    }
+
 # Correct common misspelling
 if db_engine == 'sqlite':
     db_engine = 'sqlite3'
@@ -480,11 +489,83 @@ logger.info(f"DB_HOST: {db_host}")
 
 DATABASES['default'] = db_config
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
+_cache_config = CONFIG.get("cache", {})
+_cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
+_cache_port = _cache_config.get("port", os.getenv("INVENTREE_CACHE_PORT"))
+
+if _cache_host:
+    _cache_options = {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
+        "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
+        "CONNECTION_POOL_KWARGS": {
+            "socket_keepalive": _is_true(
+                os.getenv("CACHE_TCP_KEEPALIVE", "1")
+            ),
+            "socket_keepalive_options": {
+                socket.TCP_KEEPCNT: int(
+                    os.getenv("CACHE_KEEPALIVES_COUNT", "5")
+                ),
+                socket.TCP_KEEPIDLE: int(
+                    os.getenv("CACHE_KEEPALIVES_IDLE", "1")
+                ),
+                socket.TCP_KEEPINTVL: int(
+                    os.getenv("CACHE_KEEPALIVES_INTERVAL", "1")
+                ),
+                socket.TCP_USER_TIMEOUT: int(
+                    os.getenv("CACHE_TCP_USER_TIMEOUT", "1000")
+                ),
+            },
+        },
+    }
+    CACHES = {
+        # Connection configuration for Django Q Cluster
+        "worker": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
+            "OPTIONS": _cache_options,
+        },
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/1",
+            "OPTIONS": _cache_options,
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        },
+    }
+
+background_workers = os.environ.get("INVENTREE_BACKGROUND_WORKERS", None)
+
+if background_workers is not None:
+    try:
+        background_workers = int(background_workers)
+    except ValueError:
+        background_workers = None
+
+if background_workers is None:
+    # Sensible default?
+    background_workers = 4
+
+# django-q configuration
+Q_CLUSTER = {
+    "name": "InvenTree",
+    "workers": background_workers,
+    "timeout": 90,
+    "retry": 120,
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default",
+    "sync": False,
 }
+
+if _cache_host:
+    # If using external redis cache, make the cache the broker for Django Q
+    # as well
+    Q_CLUSTER["django_redis"] = "worker"
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
