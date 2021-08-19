@@ -19,6 +19,7 @@ services:
             context: .
             target: dev
         ports:
+            # Expose web server on port 8000
             - 8000:8000
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
@@ -26,7 +27,6 @@ services:
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
-
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -35,7 +35,7 @@ services:
         build:
             context: .
             target: dev
-        entrypoint: /home/inventree/docker/start_dev_worker.sh
+        command: invoke worker
         depends_on:
             - inventree-dev-server
         volumes:

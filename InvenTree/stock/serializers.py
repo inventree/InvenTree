@@ -25,7 +25,7 @@ import common.models
 from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
+from InvenTree.serializers import InvenTreeAttachmentSerializer, InvenTreeAttachmentSerializerField
 
 
 class LocationBriefSerializer(InvenTreeModelSerializer):
@@ -253,7 +253,7 @@ class LocationSerializer(InvenTreeModelSerializer):
         ]
 
 
-class StockItemAttachmentSerializer(InvenTreeModelSerializer):
+class StockItemAttachmentSerializer(InvenTreeAttachmentSerializer):
     """ Serializer for StockItemAttachment model """
 
     def __init__(self, *args, **kwargs):
@@ -277,6 +277,7 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'stock_item',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
             'user',
