@@ -16,15 +16,19 @@ django-formtools==2.3           # Form wizard tools
 django-import-export==2.5.0     # Data import / export for admin interface
 django-markdownify==0.8.0       # Markdown rendering
 django-markdownx==3.0.1         # Markdown form fields
+django-minio-storage            # Allows Django to put media files in minio
 django-money==1.1               # Django app for currency management
 django-mptt==0.11.0             # Modified Preorder Tree Traversal
 django-q==1.3.4                 # Background task scheduling
+django-redis                    # Allows Django to use Redis for caching
 django-sql-utils==0.5.0         # Advanced query annotation / aggregation
 django-stdimage==5.1.1          # Advanced ImageField management
+django-storages                 # Allows Django to put media files into various external object stores
 django-test-migrations==1.1.0   # Unit testing for database migrations
 django-weasyprint==1.0.1        # django weasyprint integration
 djangorestframework==3.12.4     # DRF framework
 flake8==3.8.3                   # PEP checking
+google-cloud-storage            # Allows Django to put media files into Google Cloud Storage
 pep8-naming==0.11.1             # PEP naming convention extension
 pillow==8.2.0                   # Image manipulation
 py-moneyed==0.8.0               # Specific version requirement for py-moneyed
