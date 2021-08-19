@@ -8,13 +8,6 @@ No pushing to master! New featues must be submitted in a separate branch (one br
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
 
-## Update Translation Files
-
-Any PRs which update translatable strings (i.e. text strings that will appear in the web-front UI) must also update the translation (locale) files to include hooks for the translated strings. 
-
-*This does not mean that all translations must be provided, but that the translation files must include locations for the translated strings to be written.*
-
-To perform this step, simply run `invoke translate` from the top level directory before submitting the PR.
 
 ## Testing
 
