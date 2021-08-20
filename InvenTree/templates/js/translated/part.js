@@ -890,11 +890,10 @@ function loadPartTable(table, url, options={}) {
     };
     columns.push(col);
 
-    columns.push({
+    col = {
         field: 'in_stock',
         title: '{% trans "Stock" %}',
         searchable: false,
-        sortable: true,
         formatter: function(value, row, index, field) {            
             var link = "stock";
 
@@ -921,7 +920,11 @@ function loadPartTable(table, url, options={}) {
 
             return renderLink(value, '/part/' + row.pk + "/" + link + "/");
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'link',
