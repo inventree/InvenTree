@@ -1514,7 +1514,7 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_bom_price_range(self, quantity=1, internal=False):
+    def get_bom_price_range(self, quantity=1, internal=False, note=False):
         """ Return the price range of the BOM for this part.
         Adds the minimum price for all components in the BOM.
 
@@ -1525,6 +1525,10 @@ class Part(MPTTModel):
         min_price = None
         max_price = None
 
+        # init note
+        if note:
+            note_text = []
+
         for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
@@ -1534,6 +1538,8 @@ class Part(MPTTModel):
             prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal)
 
             if prices is None:
+                if note:
+                    note_text += f"{str(item)}: {_('No price available')}"
                 continue
 
             low, high = prices
@@ -1548,11 +1554,16 @@ class Part(MPTTModel):
             max_price += high
 
         if min_price is None or max_price is None:
+            if note:
+                return None, None
             return None
 
         min_price = normalize(min_price)
         max_price = normalize(max_price)
 
+        if note:
+            note_text = "<br>".join(note_text)
+            return (min_price, max_price), note_text
         return (min_price, max_price)
 
     def get_price_range(self, quantity=1, buy=True, bom=True, internal=False):

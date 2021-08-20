@@ -1350,7 +1350,7 @@ class PartPricing(AjaxView):
         if part.bom_count > 0:
 
             use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-            bom_price = part.get_bom_price_range(quantity, internal=use_internal)
+            bom_price, bom_note = part.get_bom_price_range(quantity, internal=use_internal, note=True)
 
             if bom_price is not None:
                 min_bom_price, max_bom_price = bom_price
@@ -1371,6 +1371,10 @@ class PartPricing(AjaxView):
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_unit_bom_price
+
+            # add a note about how the price came together
+            if bom_note:
+                ctx['bom_price_note'] = bom_note
 
         # internal part pricing information
         internal_part_price = part.get_internal_price(quantity)
