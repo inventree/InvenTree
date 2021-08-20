@@ -1539,7 +1539,7 @@ class Part(MPTTModel):
 
             if prices is None:
                 if note:
-                    note_text += f"{str(item)}: {_('No price available')}"
+                    note_text.append(f"{str(item)}: {_('No price available')}")
                 continue
 
             low, high = prices
