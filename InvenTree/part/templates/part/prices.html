@@ -49,7 +49,9 @@
                         <td><b>{% trans 'BOM Pricing' %}</b>
                             <a href="#bom-cost" title='{% trans "Show BOM cost" %}'><span class="fas fa-search-dollar"></span></a>
                         </td>
-                        <td>{% trans 'Unit Cost' %}</td>
+                        <td>{% trans 'Unit Cost' %}
+                            {% if bom_price_note %}<i class="fas fa-info-circle" title="{{bom_price_note}}"></i>{% endif %}
+                        </td>
                         <td>Min: {% include "price.html" with price=min_unit_bom_price %}</td>
                         <td>Max: {% include "price.html" with price=max_unit_bom_price %}</td>
                     </tr>

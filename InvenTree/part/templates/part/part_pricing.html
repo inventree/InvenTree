@@ -49,7 +49,9 @@
     <table class='table table-striped table-condensed table-price-three'>
     {% if min_total_bom_price %}
     <tr>
-        <td><b>{% trans 'Unit Cost' %}</b></td>
+        <td><b>{% trans 'Unit Cost' %}</b>
+            {% if bom_price_note %}<i class="fas fa-info-circle" title="{{bom_price_note}}"></i>{% endif %}
+        </td>
         <td>Min: {% include "price.html" with price=min_unit_bom_price %}</td>
         <td>Max: {% include "price.html" with price=max_unit_bom_price %}</td>
     </tr>
