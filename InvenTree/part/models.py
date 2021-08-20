@@ -1562,7 +1562,7 @@ class Part(MPTTModel):
         max_price = normalize(max_price)
 
         if note:
-            note_text = "<br>".join(note_text)
+            note_text = "&#10;".join(note_text)
             return (min_price, max_price), note_text
         return (min_price, max_price)
 
