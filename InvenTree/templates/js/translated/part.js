@@ -814,11 +814,14 @@ function loadPartTable(table, url, options={}) {
         });
     }
 
-    columns.push({
+    col = {
         field: 'IPN',
         title: 'IPN',
-        sortable: true,
-    }),
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'name',
