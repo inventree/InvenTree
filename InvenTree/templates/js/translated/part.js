@@ -872,8 +872,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    columns.push({
-        sortable: true,
+    col = {
         sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
@@ -885,7 +884,11 @@ function loadPartTable(table, url, options={}) {
                 return '{% trans "No category" %}';
             }
         }   
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'in_stock',
