@@ -823,10 +823,9 @@ function loadPartTable(table, url, options={}) {
     };
     columns.push(col);
 
-    columns.push({
+    col = {
         field: 'name',
         title: '{% trans "Part" %}',
-        sortable: true,
         switchable: false,
         formatter: function(value, row, index, field) {
 
@@ -854,7 +853,11 @@ function loadPartTable(table, url, options={}) {
 
             return display; 
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'description',
