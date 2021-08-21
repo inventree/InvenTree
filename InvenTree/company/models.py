@@ -570,10 +570,10 @@ class SupplierPart(models.Model):
         help_text=_('Supplier part description')
     )
 
-    note = models.CharField(
-        max_length=100, blank=True, null=True,
-        verbose_name=_('Note'),
-        help_text=_('Notes')
+    note = MarkdownxField(
+        blank=True, null=True,
+        verbose_name=_('Notes'),
+        help_text=_('Part notes - supports Markdown formatting')
     )
 
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
