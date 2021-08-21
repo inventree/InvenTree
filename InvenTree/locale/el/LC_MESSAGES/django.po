@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-19 21:48+0000\n"
-"PO-Revision-Date: 2021-08-19 21:51\n"
+"POT-Creation-Date: 2021-08-21 22:21+0000\n"
+"PO-Revision-Date: 2021-08-21 22:41\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -2816,7 +2816,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:164
 #: company/templates/company/supplier_part.html:265
-#: part/templates/part/prices.html:253 part/views.py:1722
+#: part/templates/part/prices.html:252 part/views.py:1722
 msgid "Add Price Break"
 msgstr ""
 
@@ -3161,7 +3161,7 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
 #: order/models.py:831 part/templates/part/part_pricing.html:97
-#: part/templates/part/prices.html:97 part/templates/part/prices.html:266
+#: part/templates/part/prices.html:97 part/templates/part/prices.html:265
 msgid "Sale Price"
 msgstr ""
 
@@ -4949,7 +4949,7 @@ msgid "No supplier pricing available"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:49
-#: part/templates/part/prices.html:225
+#: part/templates/part/prices.html:224
 msgid "BOM Pricing"
 msgstr ""
 
@@ -5037,8 +5037,8 @@ msgid "Supplier Cost"
 msgstr ""
 
 #: part/templates/part/prices.html:137 part/templates/part/prices.html:158
-#: part/templates/part/prices.html:183 part/templates/part/prices.html:213
-#: part/templates/part/prices.html:239 part/templates/part/prices.html:267
+#: part/templates/part/prices.html:182 part/templates/part/prices.html:212
+#: part/templates/part/prices.html:238 part/templates/part/prices.html:266
 msgid "Jump to overview"
 msgstr ""
 
@@ -5046,27 +5046,27 @@ msgstr ""
 msgid "Stock Pricing"
 msgstr ""
 
-#: part/templates/part/prices.html:172
+#: part/templates/part/prices.html:171
 msgid "No stock pricing history is available for this part."
 msgstr ""
 
-#: part/templates/part/prices.html:182
+#: part/templates/part/prices.html:181
 msgid "Internal Cost"
 msgstr ""
 
-#: part/templates/part/prices.html:197 part/views.py:1793
+#: part/templates/part/prices.html:196 part/views.py:1793
 msgid "Add Internal Price Break"
 msgstr ""
 
-#: part/templates/part/prices.html:212
+#: part/templates/part/prices.html:211
 msgid "BOM Cost"
 msgstr ""
 
-#: part/templates/part/prices.html:238
+#: part/templates/part/prices.html:237
 msgid "Sale Cost"
 msgstr ""
 
-#: part/templates/part/prices.html:278
+#: part/templates/part/prices.html:277
 msgid "No sale pice history available for this part."
 msgstr ""
 
