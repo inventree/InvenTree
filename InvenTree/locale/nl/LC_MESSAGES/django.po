@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-19 21:48+0000\n"
-"PO-Revision-Date: 2021-08-21 19:32\n"
+"PO-Revision-Date: 2021-08-21 20:36\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -351,47 +351,47 @@ msgstr "Verouderde trackingscode"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Voorraaditem gemaakt"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Bewerken voorraaditem"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Serienummer toegewezen"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Voorraad geteld"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Voorraad handmatig toegevoegd"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Voorraad handmatig verwijderd"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Locatie veranderd"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Gemonteerd"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Gedemonteerd"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Gemonteerd item"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Gedemonteerd item"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
@@ -403,19 +403,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:294 templates/js/translated/table_filters.js:173
 msgid "Sent to customer"
-msgstr ""
+msgstr "Naar klant verzonden"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Geretourneerd door klant"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "Montageopdracht gecreëerd"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Montageopdracht voltooid"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
@@ -423,35 +423,35 @@ msgstr ""
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
-msgstr ""
+msgstr "Productie"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Foute valutacode"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Foute letter in onderdeelnaam"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN moet overeenkomen met regex-patroon {pat}"
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Refernetie moet overeenkomen met patroon {pattern}"
 
 #: InvenTree/validators.py:113
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Illegale letter in naam ({x})"
 
 #: InvenTree/validators.py:132 InvenTree/validators.py:148
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Overschrijdingswaarde mag niet negatief zijn"
 
 #: InvenTree/validators.py:150
 msgid "Overage must not exceed 100%"
@@ -946,11 +946,11 @@ msgstr ""
 #: templates/js/translated/build.js:993 templates/js/translated/order.js:455
 #: templates/js/translated/order.js:460 templates/js/translated/stock.js:1488
 msgid "Stock Item"
-msgstr ""
+msgstr "Voorraaditem"
 
 #: build/models.py:1390
 msgid "Source stock item"
-msgstr ""
+msgstr "Voorraadbronitem"
 
 #: build/models.py:1403
 msgid "Stock quantity to allocate to build"
@@ -973,7 +973,7 @@ msgstr ""
 #: templates/js/translated/build.js:604
 #: templates/js/translated/model_renderers.js:54
 msgid "Serial Number"
-msgstr ""
+msgstr "Serienummer"
 
 #: build/templates/build/auto_allocate.html:9
 msgid "Automatically Allocate Stock"
@@ -1196,7 +1196,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:38
 msgid "Stock Source"
-msgstr ""
+msgstr "Voorraadbron"
 
 #: build/templates/build/detail.html:43
 msgid "Stock can be taken from any available location."
@@ -1218,14 +1218,14 @@ msgstr ""
 #: templates/js/translated/table_filters.js:116
 #: templates/js/translated/table_filters.js:198
 msgid "Batch"
-msgstr ""
+msgstr "Batch"
 
 #: build/templates/build/detail.html:119
 #: order/templates/order/order_base.html:111
 #: order/templates/order/sales_order_base.html:113
 #: templates/js/translated/build.js:910
 msgid "Created"
-msgstr ""
+msgstr "Gecreëerd"
 
 #: build/templates/build/detail.html:130
 msgid "No target date set"
