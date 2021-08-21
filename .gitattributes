@@ -1,4 +1,4 @@
-* text=auto
+* text eol=lf
 
 *.py text
 *.md text
