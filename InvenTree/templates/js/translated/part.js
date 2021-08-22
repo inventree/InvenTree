@@ -814,16 +814,18 @@ function loadPartTable(table, url, options={}) {
         });
     }
 
-    columns.push({
+    col = {
         field: 'IPN',
         title: 'IPN',
-        sortable: true,
-    }),
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'name',
         title: '{% trans "Part" %}',
-        sortable: true,
         switchable: false,
         formatter: function(value, row, index, field) {
 
@@ -851,7 +853,11 @@ function loadPartTable(table, url, options={}) {
 
             return display; 
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'description',
@@ -866,8 +872,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    columns.push({
-        sortable: true,
+    col = {
         sortName: 'category',
         field: 'category_detail',
         title: '{% trans "Category" %}',
@@ -879,13 +884,16 @@ function loadPartTable(table, url, options={}) {
                 return '{% trans "No category" %}';
             }
         }   
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'in_stock',
         title: '{% trans "Stock" %}',
         searchable: false,
-        sortable: true,
         formatter: function(value, row, index, field) {            
             var link = "stock";
 
@@ -912,7 +920,11 @@ function loadPartTable(table, url, options={}) {
 
             return renderLink(value, '/part/' + row.pk + "/" + link + "/");
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'link',
