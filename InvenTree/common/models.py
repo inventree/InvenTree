@@ -783,6 +783,44 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Prefix value for purchase order reference'),
             'default': 'PO',
         },
+
+        # enable/diable ui elements
+        'BUILD_FUNCTION_ENABLE': {
+            'name': _('Enable build'),
+            'description': _('Enable build functionally in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'BUY_FUNCTION_ENABLE': {
+            'name': _('Enable buy'),
+            'description': _('Enable buy functionally in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'SELL_FUNCTION_ENABLE': {
+            'name': _('Enable sell'),
+            'description': _('Enable sell functionally in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'STOCK_FUNCTION_ENABLE': {
+            'name': _('Enable stock'),
+            'description': _('Enable stock functionally in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'SO_FUNCTION_ENABLE': {
+            'name': _('Enable SO'),
+            'description': _('Enable SO functionally in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'PO_FUNCTION_ENABLE': {
+            'name': _('Enable PO'),
+            'description': _('Enable PO functionally in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:
