@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-22 14:50+0000\n"
-"PO-Revision-Date: 2021-08-22 15:00\n"
+"PO-Revision-Date: 2021-08-22 17:52\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -463,7 +463,7 @@ msgstr ""
 
 #: InvenTree/views.py:610
 msgid "Delete Item"
-msgstr ""
+msgstr "Verwijder item"
 
 #: InvenTree/views.py:659
 msgid "Check box to confirm item deletion"
@@ -471,15 +471,15 @@ msgstr ""
 
 #: InvenTree/views.py:674 templates/InvenTree/settings/user.html:14
 msgid "Edit User Information"
-msgstr ""
+msgstr "Gebruikersgegevens bewerken"
 
 #: InvenTree/views.py:685 templates/InvenTree/settings/user.html:18
 msgid "Set Password"
-msgstr ""
+msgstr "Wachtwoord instellen"
 
 #: InvenTree/views.py:704
 msgid "Password fields must match"
-msgstr ""
+msgstr "Wachtwoordvelden komen niet overeen"
 
 #: InvenTree/views.py:910 templates/navbar.html:95
 msgid "System Information"
@@ -681,7 +681,7 @@ msgstr "Ongeldige keuze voor bovenliggende build"
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:233
 msgid "Build Order"
-msgstr ""
+msgstr "Bouwopdracht"
 
 #: build/models.py:118 build/templates/build/index.html:8
 #: build/templates/build/index.html:15
@@ -693,11 +693,11 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:101
 #: templates/InvenTree/settings/navbar.html:103 users/models.py:44
 msgid "Build Orders"
-msgstr ""
+msgstr "Bouwopdrachten"
 
 #: build/models.py:178
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Bouwopdracht referentie"
 
 #: build/models.py:179 order/models.py:246 order/models.py:533
 #: order/models.py:713 order/templates/order/purchase_order_detail.html:344
@@ -717,7 +717,7 @@ msgstr "Korte beschrijving van de build"
 #: build/models.py:199 build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:80
 msgid "Parent Build"
-msgstr ""
+msgstr "Bovenliggende bouw"
 
 #: build/models.py:200
 msgid "BuildOrder to which this build is allocated"
@@ -776,11 +776,11 @@ msgstr "Bestemmings Locatie"
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Selecteer locatie waar de voltooide items zullen worden opgeslagen"
 
 #: build/models.py:244
 msgid "Build Quantity"
-msgstr ""
+msgstr "Bouwkwaliteit"
 
 #: build/models.py:247
 msgid "Number of stock items to build"
