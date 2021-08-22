@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-21 22:21+0000\n"
-"PO-Revision-Date: 2021-08-21 22:41\n"
+"PO-Revision-Date: 2021-08-22 07:26\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -932,11 +932,11 @@ msgstr ""
 #: templates/InvenTree/search.html:183 templates/js/translated/build.js:846
 #: templates/navbar.html:29
 msgid "Build"
-msgstr ""
+msgstr "Product"
 
 #: build/models.py:1373
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Product om onderdelen toe te wijzen"
 
 #: build/models.py:1389 stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:31
@@ -946,23 +946,23 @@ msgstr ""
 #: templates/js/translated/build.js:993 templates/js/translated/order.js:455
 #: templates/js/translated/order.js:460 templates/js/translated/stock.js:1488
 msgid "Stock Item"
-msgstr "Voorraaditem"
+msgstr "Voorraadartikel"
 
 #: build/models.py:1390
 msgid "Source stock item"
-msgstr "Voorraadbronitem"
+msgstr "Bron voorraadartikel"
 
 #: build/models.py:1403
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Voorraad hoeveelheid te alloceren aan product"
 
 #: build/models.py:1411
 msgid "Install into"
-msgstr ""
+msgstr "Installeren in"
 
 #: build/models.py:1412
 msgid "Destination stock item"
-msgstr ""
+msgstr "Bestemming voorraadartikel"
 
 #: build/templates/build/allocation_card.html:21
 #: build/templates/build/complete_output.html:46
@@ -977,19 +977,19 @@ msgstr "Serienummer"
 
 #: build/templates/build/auto_allocate.html:9
 msgid "Automatically Allocate Stock"
-msgstr ""
+msgstr "Automatisch voorraad toewijzen"
 
 #: build/templates/build/auto_allocate.html:10
 msgid "The following stock items will be allocated to the specified build output"
-msgstr ""
+msgstr "De volgende voorraadartikelen zullen worden toegewezen aan het opgegeven product"
 
 #: build/templates/build/auto_allocate.html:37
 msgid "No stock items found that can be automatically allocated to this build"
-msgstr ""
+msgstr "Geen voorraadartikelen gevonden die automatisch aan dit product toegewezen kunnen worden"
 
 #: build/templates/build/auto_allocate.html:39
 msgid "Stock items will have to be manually allocated"
-msgstr ""
+msgstr "Voorraad items zullen handmatig moeten worden toegewezen"
 
 #: build/templates/build/build_base.html:18
 #, python-format
