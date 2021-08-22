@@ -78,7 +78,13 @@ function createPurchaseOrder(options={}) {
             }
         },
         onSuccess: function(data) {
-            location.href = `/order/purchase-order/${data.pk}/`;
+
+            if (options.onSuccess) {
+                options.onSuccess(data);
+            } else {
+                // Default action is to redirect browser to the new PO
+                location.href = `/order/purchase-order/${data.pk}/`;
+            }
         },
         title: '{% trans "Create Purchase Order" %}',
     });
@@ -116,7 +122,7 @@ function newSupplierPartFromOrderWizard(e) {
 
     createSupplierPart({
         part: part,
-        onSuccess: function(response) {
+        onSuccess: function(data) {
                         
             // TODO: 2021-08-23 - This whole form wizard needs to be refactored.
             // In the future, use the API forms functionality to add the new item
@@ -124,7 +130,7 @@ function newSupplierPartFromOrderWizard(e) {
 
             var dropdown = `#id_supplier_part_${part}`;
 
-            var pk = response.pk;
+            var pk = data.pk;
 
             inventreeGet(
                 `/api/company/part/${pk}/`,
@@ -165,21 +171,41 @@ function newPurchaseOrderFromOrderWizard(e) {
 
     var supplier = $(src).attr('supplierid');
 
-    launchModalForm("/order/purchase-order/new/", {
-        modal: '#modal-form-secondary',
-        data: {
-            supplier: supplier,
-        },
-        success: function(response) {
-            /* A new purchase order has been created! */
+    createPurchaseOrder({
+        supplier: supplier,
+        onSuccess: function(data) {
 
-            var dropdown = '#id-purchase-order-' + supplier;
+            // TODO: 2021-08-23 - The whole form wizard needs to be refactored
+            // In the future, the drop-down should be using a dynamic AJAX request
+            // to fill out the select2 options!
 
-            var option = new Option(response.text, response.pk, true, true);
+            var pk = data.pk;
 
-            $('#modal-form').find(dropdown).append(option).trigger('change');
-        },
-    });
+            inventreeGet(
+                `/api/order/po/${pk}/`,
+                {
+                    supplier_detail: true,
+                },
+                {
+                    success: function(response) {
+                        var text = global_settings.PURCHASEORDER_REFERENCE_PREFIX || '';
+
+                        text += response.reference;
+
+                        if (response.supplier_detail) {
+                            text += ` ${response.supplier_detail.name}`;
+                        }
+
+                        var dropdown = `#id-purchase-order-${supplier}`;
+
+                        var option = new Option(text, pk, true, true);
+            
+                        $('#modal-form').find(dropdown).append(option).trigger('change');
+                    }
+                }
+            )
+        }
+    }); 
 }
 
 function editPurchaseOrderLineItem(e) {
