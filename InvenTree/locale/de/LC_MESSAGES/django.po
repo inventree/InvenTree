@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-22 23:11+0000\n"
-"PO-Revision-Date: 2021-08-19 02:24\n"
+"POT-Creation-Date: 2021-08-22 14:50+0000\n"
+"PO-Revision-Date: 2021-08-22 15:01\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -131,28 +131,28 @@ msgstr "Hochladedatum"
 
 #: InvenTree/models.py:99
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Dateiname darf nicht leer sein"
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Ungültiges Verzeichnis für Anhang"
 
 #: InvenTree/models.py:132
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Dateiname enthält ungültiges Zeichen '{c}'"
 
 #: InvenTree/models.py:135
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Dateiendung fehlt"
 
 #: InvenTree/models.py:142
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Anhang mit diesem Dateinamen bereits vorhanden"
 
 #: InvenTree/models.py:149
 msgid "Error renaming file"
-msgstr ""
+msgstr "Fehler beim Umbenennen"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
@@ -206,7 +206,7 @@ msgstr "Muss eine gültige Nummer sein"
 
 #: InvenTree/serializers.py:235
 msgid "Filename"
-msgstr ""
+msgstr "Dateiname"
 
 #: InvenTree/settings.py:523
 msgid "German"
@@ -1069,7 +1069,7 @@ msgstr "Bauauftrag abbrechen"
 
 #: build/templates/build/build_base.html:114
 msgid "Delete Build"
-msgstr ""
+msgstr "Bauauftrag löschen"
 
 #: build/templates/build/build_base.html:124
 #: build/templates/build/detail.html:15
@@ -3851,19 +3851,19 @@ msgstr "{part} Stückpreis auf {price} und Menge auf {qty} aktualisiert"
 
 #: part/api.py:700
 msgid "Must be greater than zero"
-msgstr ""
+msgstr "Muss größer als 0 sein"
 
 #: part/api.py:704
 msgid "Must be a valid quantity"
-msgstr ""
+msgstr "Muss eine gültige Nummer sein"
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
-msgstr ""
+msgstr "Standort für anfänglichen Bestand angeben"
 
 #: part/api.py:750 part/api.py:754 part/api.py:769 part/api.py:773
 msgid "This field is required"
-msgstr ""
+msgstr "Dieses Feld ist erforderlich"
 
 #: part/bom.py:133 part/models.py:73 part/models.py:731
 #: part/templates/part/category.html:75 part/templates/part/part_base.html:283
@@ -4523,7 +4523,7 @@ msgstr "Teil-Kategorie auswählen"
 
 #: part/templates/part/category.html:141
 msgid "Print Labels"
-msgstr ""
+msgstr "Label drucken"
 
 #: part/templates/part/category.html:142
 msgid "Export Data"
@@ -4640,7 +4640,7 @@ msgstr "Neue Bestellung"
 
 #: part/templates/part/detail.html:90
 msgid "Sales Order Allocations"
-msgstr ""
+msgstr "Verkaufsauftragszuweisungen"
 
 #: part/templates/part/detail.html:130 part/templates/part/navbar.html:21
 msgid "Part Variants"
@@ -4686,7 +4686,7 @@ msgstr "Neuen Bauauftrag beginnen"
 
 #: part/templates/part/detail.html:274
 msgid "Build Order Allocations"
-msgstr ""
+msgstr "Bauauftragszuweisungen"
 
 #: part/templates/part/detail.html:283
 msgid "Part Suppliers"
@@ -7276,7 +7276,7 @@ msgstr "Einstellungen für Teilkopien"
 
 #: templates/js/translated/part.js:33
 msgid "Supplier Options"
-msgstr ""
+msgstr "Zuliefereroptionen"
 
 #: templates/js/translated/part.js:47
 msgid "Add Part Category"
@@ -7284,11 +7284,11 @@ msgstr "Teil-Kategorie hinzufügen"
 
 #: templates/js/translated/part.js:131
 msgid "Create Initial Stock"
-msgstr ""
+msgstr "Anfänglichen Bestand erstellen"
 
 #: templates/js/translated/part.js:132
 msgid "Create an initial stock item for this part"
-msgstr ""
+msgstr "Anfänglichen Bestand für dieses Teil erstellen"
 
 #: templates/js/translated/part.js:139
 msgid "Initial Stock Quantity"
@@ -7296,7 +7296,7 @@ msgstr "Start-Bestandsmenge"
 
 #: templates/js/translated/part.js:140
 msgid "Specify initial stock quantity for this part"
-msgstr ""
+msgstr "Menge des anfänglichen Bestands für dieses Teil angeben"
 
 #: templates/js/translated/part.js:147 templates/js/translated/stock.js:261
 msgid "Select destination stock location"
@@ -7344,7 +7344,7 @@ msgstr "Parameterdaten vom Originalteil kopieren"
 
 #: templates/js/translated/part.js:254
 msgid "Parent part category"
-msgstr ""
+msgstr "Übergeordnete Teilkategorie"
 
 #: templates/js/translated/part.js:295
 msgid "Edit Part"
@@ -7428,7 +7428,7 @@ msgstr "Einzelpreisdifferenz"
 
 #: templates/js/translated/stock.js:9
 msgid "Parent stock location"
-msgstr ""
+msgstr "Übergeordneter Lagerort"
 
 #: templates/js/translated/stock.js:39
 msgid "Export Stock"
@@ -7444,7 +7444,7 @@ msgstr "Dateiformat auswählen"
 
 #: templates/js/translated/stock.js:55
 msgid "Include Sublocations"
-msgstr ""
+msgstr "Einschließlich Unterstandorte"
 
 #: templates/js/translated/stock.js:56
 msgid "Include stock items in sublocations"
@@ -7500,7 +7500,7 @@ msgstr "Sie müssen mindestens einen Lagerbestand auswählen"
 
 #: templates/js/translated/stock.js:270
 msgid "Stock transaction notes"
-msgstr ""
+msgstr "Bestandsbewegungsnotizen"
 
 #: templates/js/translated/stock.js:408
 msgid "PASS"
@@ -8178,3 +8178,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
