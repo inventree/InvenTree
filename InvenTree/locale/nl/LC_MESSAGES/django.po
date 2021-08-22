@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-22 14:50+0000\n"
-"PO-Revision-Date: 2021-08-22 17:52\n"
+"PO-Revision-Date: 2021-08-22 19:07\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -813,19 +813,19 @@ msgstr ""
 #: build/models.py:272 order/models.py:162 part/models.py:851
 #: part/templates/part/part_base.html:265 templates/js/translated/order.js:428
 msgid "Creation Date"
-msgstr ""
+msgstr "Aanmaakdatum"
 
 #: build/models.py:276 order/models.py:555
 msgid "Target completion date"
-msgstr ""
+msgstr "Verwachte voltooiingsdatum"
 
 #: build/models.py:280 order/models.py:288 templates/js/translated/build.js:950
 msgid "Completion Date"
-msgstr ""
+msgstr "Voltooiingsdatum"
 
 #: build/models.py:286
 msgid "completed by"
-msgstr ""
+msgstr "voltooid door"
 
 #: build/models.py:294 templates/js/translated/build.js:915
 msgid "Issued by"
@@ -833,7 +833,7 @@ msgstr ""
 
 #: build/models.py:295
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Gebruiker die bouwopdracht heeft gegeven"
 
 #: build/models.py:303 build/templates/build/build_base.html:184
 #: build/templates/build/detail.html:108 order/models.py:176
@@ -842,11 +842,11 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:159
 #: templates/js/translated/build.js:930
 msgid "Responsible"
-msgstr ""
+msgstr "Verantwoordelijke"
 
 #: build/models.py:304
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Gebruiker verantwoordelijk voor deze bouwopdracht"
 
 #: build/models.py:309 build/templates/build/detail.html:94
 #: company/templates/company/manufacturer_part.html:83
@@ -854,11 +854,11 @@ msgstr ""
 #: part/templates/part/part_base.html:259 stock/models.py:501
 #: stock/templates/stock/item_base.html:359
 msgid "External Link"
-msgstr ""
+msgstr "Externe Link"
 
 #: build/models.py:310 part/models.py:713 stock/models.py:503
 msgid "Link to external URL"
-msgstr ""
+msgstr "Link naar externe URL"
 
 #: build/models.py:314 build/templates/build/navbar.html:52
 #: company/models.py:141 company/models.py:576
@@ -880,23 +880,23 @@ msgstr ""
 #: templates/js/translated/stock.js:269 templates/js/translated/stock.js:511
 #: templates/js/translated/stock.js:1093
 msgid "Notes"
-msgstr ""
+msgstr "Opmerkingen"
 
 #: build/models.py:315
 msgid "Extra build notes"
-msgstr ""
+msgstr "Opmerkingen over de bouw"
 
 #: build/models.py:792
 msgid "No build output specified"
-msgstr ""
+msgstr "Geen bouwuitvoer opgegeven"
 
 #: build/models.py:795
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Bouwuitvoer is al voltooid"
 
 #: build/models.py:798
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Bouwuitvoer komt niet overeen met bouwopdracht"
 
 #: build/models.py:1208
 msgid "BuildItem must be unique for build, stock_item and install_into"
@@ -1253,15 +1253,15 @@ msgstr ""
 
 #: build/templates/build/detail.html:173
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Automatisch toewijzen"
 
 #: build/templates/build/detail.html:175 templates/js/translated/build.js:778
 msgid "Unallocate stock"
-msgstr ""
+msgstr "Niet toegewezen voorraad"
 
 #: build/templates/build/detail.html:176 build/views.py:318 build/views.py:638
 msgid "Unallocate Stock"
-msgstr ""
+msgstr "Niet toegewezen voorraad"
 
 #: build/templates/build/detail.html:179
 msgid "Order required parts"
@@ -1272,7 +1272,7 @@ msgstr ""
 #: company/templates/company/detail.html:72 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
-msgstr ""
+msgstr "Bestel onderdelen"
 
 #: build/templates/build/detail.html:186
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1628,31 +1628,31 @@ msgstr ""
 
 #: common/models.py:517 company/models.py:99 company/models.py:100
 msgid "Company name"
-msgstr ""
+msgstr "Bedrijfsnaam"
 
 #: common/models.py:518
 msgid "Internal company name"
-msgstr ""
+msgstr "Interne bedrijfsnaam"
 
 #: common/models.py:523
 msgid "Base URL"
-msgstr ""
+msgstr "Basis URL"
 
 #: common/models.py:524
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "Basis URL voor serverinstantie"
 
 #: common/models.py:530
 msgid "Default Currency"
-msgstr ""
+msgstr "Standaard valuta"
 
 #: common/models.py:531
 msgid "Default currency"
-msgstr ""
+msgstr "Standaard valuta"
 
 #: common/models.py:537
 msgid "Download from URL"
-msgstr ""
+msgstr "Download van URL"
 
 #: common/models.py:538
 msgid "Allow download of remote images and files from external URL"
@@ -1660,19 +1660,19 @@ msgstr ""
 
 #: common/models.py:544
 msgid "Barcode Support"
-msgstr ""
+msgstr "Barcode ondersteuning"
 
 #: common/models.py:545
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "Barcodescanner ondersteuning inschakelen"
 
 #: common/models.py:551
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN Regex"
 
 #: common/models.py:552
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Reguliere expressiepatroon voor het corresponderen van deel IPN"
 
 #: common/models.py:556
 msgid "Allow Duplicate IPN"
@@ -1680,7 +1680,7 @@ msgstr ""
 
 #: common/models.py:557
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "Toestaan dat meerdere onderdelen dezelfde IPN gebruiken"
 
 #: common/models.py:563
 msgid "Allow Editing IPN"
