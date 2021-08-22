@@ -109,27 +109,47 @@ function newSupplierPartFromOrderWizard(e) {
 
     var part = $(src).attr('part');
 
-    console.log('part: ' + part);
-
     if (!part) {
         part = $(src).closest('button').attr('part');
         console.log('parent: ' + part);
     }
 
-    launchModalForm("/supplier-part/new/", {
-        modal: '#modal-form-secondary',
-        data: {
-            part: part,
-        },
-        success: function(response) {
-            /* A new supplier part has been created! */
+    createSupplierPart({
+        part: part,
+        onSuccess: function(response) {
+                        
+            // TODO: 2021-08-23 - This whole form wizard needs to be refactored.
+            // In the future, use the API forms functionality to add the new item
+            // For now, this hack will have to do...
 
-            var dropdown = '#id_supplier_part_' + part;
+            var dropdown = `#id_supplier_part_${part}`;
 
-            var option = new Option(response.text, response.pk, true, true);
+            var pk = response.pk;
 
-            $('#modal-form').find(dropdown).append(option).trigger('change');
-        },
+            inventreeGet(
+                `/api/company/part/${pk}/`,
+                {
+                    supplier_detail: true,
+                },
+                {
+                    success: function(response) {
+                        var text = '';
+
+                        if (response.supplier_detail) {
+                            text += response.supplier_detail.name;
+                            text += " | ";
+                        }
+
+                        text += response.SKU;
+
+                        var option = new Option(text, pk, true, true);
+
+                        $('#modal-form').find(dropdown).append(option).trigger('change');
+                    }
+                }
+            )
+
+        }
     });
 }
 
