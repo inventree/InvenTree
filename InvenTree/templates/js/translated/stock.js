@@ -721,11 +721,10 @@ function loadStockTable(table, options) {
         }
     ];
 
-    columns.push({
+    col = {
         field: 'part_detail.full_name',
         title: '{% trans "Part" %}',
         sortName: 'part__name',
-        sortable: true,
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row, index, field) {
@@ -740,19 +739,26 @@ function loadStockTable(table, options) {
 
             return html;
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'part_detail.IPN',
         title: 'IPN',
         sortName: 'part__IPN',
-        sortable: true,
         visible: params['part_detail'],
         switchable: params['part_detail'],
         formatter: function(value, row, index, field) {
             return row.part_detail.IPN;
         },
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'part_detail.description',
@@ -764,10 +770,9 @@ function loadStockTable(table, options) {
         }
     });
 
-    columns.push({
+    col = {
         field: 'quantity',
         title: '{% trans "Stock" %}',
-        sortable: true,
         formatter: function(value, row, index, field) {
 
             var val = parseFloat(value);
@@ -828,51 +833,73 @@ function loadStockTable(table, options) {
 
             return html;
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'status',
         title: '{% trans "Status" %}',
-        sortable: 'true',
         formatter: function(value, row, index, field) {
             return stockStatusDisplay(value);
         },
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'batch',
         title: '{% trans "Batch" %}',
-        sortable: true,
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'location_detail.pathstring',
         title: '{% trans "Location" %}',
-        sortable: true,
         formatter: function(value, row, index, field) {
             return locationDetail(row);
         }
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'stocktake_date',
         title: '{% trans "Stocktake" %}',
-        sortable: true,
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'expiry_date',
         title: '{% trans "Expiry Date" %}',
-        sortable: true,
         visible: global_settings.STOCK_ENABLE_EXPIRY,
         switchable: global_settings.STOCK_ENABLE_EXPIRY,
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
-    columns.push({
+    col = {
         field: 'updated',
         title: '{% trans "Last Updated" %}',
-        sortable: true,
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'purchase_order',
@@ -919,11 +946,14 @@ function loadStockTable(table, options) {
         }
     });
 
-    columns.push({
+    col = {
         field: 'purchase_price_string',
         title: '{% trans "Purchase Price" %}',
-        sortable: true,
-    });
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
 
     columns.push({
         field: 'packaging',
