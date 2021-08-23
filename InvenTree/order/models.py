@@ -433,7 +433,7 @@ class PurchaseOrder(Order):
                 quantity=quantity,
                 purchase_order=self,
                 status=status,
-                purchase_price=purchase_price,
+                purchase_price=line.purchase_price,
             )
 
             stock.save(add_note=False)

@@ -20,6 +20,8 @@ from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
+from InvenTree.status_codes import StockStatus
+
 import company.models
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 
@@ -200,10 +202,17 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         required=True,
     )
 
+    status = serializers.ChoiceField(
+        choices=StockStatus.options,
+        default=StockStatus.OK,
+        label=_('Status'),
+    )
+
     class Meta:
         fields = [
             'supplier_part',
             'location',
+            'status',
         ]
 
 

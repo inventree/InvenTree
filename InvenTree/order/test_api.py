@@ -2,6 +2,7 @@
 Tests for the Order API
 """
 
+from InvenTree.stock.models import StockItem
 from datetime import datetime, timedelta
 
 from rest_framework import status
@@ -213,6 +214,9 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.url = reverse('api-po-receive', kwargs={'pk': 1})
 
+        # Number of stock items which exist at the start of each test
+        self.n = StockItem.objects.count()
+
     def test_empty(self):
         """
         Test without any POST data
@@ -222,6 +226,9 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertIn('This field is required', str(data['items']))
         self.assertIn('This field is required', str(data['location']))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
 
     def test_no_items(self):
         """
@@ -238,6 +245,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         ).data
 
         self.assertIn('Line items must be provided', str(data['items']))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
 
     def test_invalid_items(self):
         """
@@ -262,6 +272,34 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertIn('Invalid pk "12345"', str(items['line_item']))
         self.assertIn("object does not exist", str(items['location']))
 
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_invalid_status(self):
+        """
+        Test with an invalid StockStatus value
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "line_item": 22,
+                        "location": 1,
+                        "status": 99999,
+                        "quantity": 5,
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('"99999" is not a valid choice.', str(data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
     def test_mismatched_items(self):
         """
         Test for supplier parts which *do* exist but do not match the order supplier
@@ -283,6 +321,9 @@ class PurchaseOrderReceiveTest(OrderTest):
         ).data
 
         self.assertIn('Line item does not match purchase order', str(data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
 
 
 class SalesOrderTest(OrderTest):

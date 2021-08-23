@@ -5,7 +5,9 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
+from django.db import transaction
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
@@ -13,7 +15,6 @@ from rest_framework import filters, status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from django.utils.translation import ugettext_lazy as _
 
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
@@ -252,25 +253,34 @@ class POReceive(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Check that the received line items are indeed correct
-        self.validate(serializer.validated_data)
+        # Receive the line items
+        self.receive_items(serializer)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def validate(self, data):
+    @transaction.atomic
+    def receive_items(self, serializer):
         """
-        Validate the deserialized data.
+        Receive the items
 
-        At this point, much of the heavy lifting has been done for us by DRF serializers
+        At this point, much of the heavy lifting has been done for us by DRF serializers!
+
+        We have a list of "items", each a dict which contains:
+        - line_item: A PurchaseOrderLineItem matching this order
+        - location: A destination location
+        - quantity: A validated numerical quantity
+        - status: The status code for the received item
         """
+
+        data = serializer.validated_data
 
         location = data['location']
 
-        # Keep track of validated data "on the fly"
-        self.items = []
+        items = data['items']
 
-        for item in data['items']:
+        # Check if the location is not specified for any particular item
+        for item in items:
 
             supplier_part = item['supplier_part']
 
@@ -287,7 +297,15 @@ class POReceive(generics.CreateAPIView):
 
                 item['location'] = location
 
-            quantity = item['quantity']
+        # Now we can actually receive the items
+        for item in items:
+            self.order.receive_line_item(
+                item['line_item'],
+                item['location'],
+                item['quantity'],
+                self.request.user,
+                status=item['status'],
+            )
 
 
 class POLineItemList(generics.ListCreateAPIView):
