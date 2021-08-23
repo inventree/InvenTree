@@ -11,6 +11,8 @@ from django.db.models import Case, When, Value
 from django.db.models import BooleanField
 
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+
 from sql_util.utils import SubqueryCount
 
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -18,8 +20,12 @@ from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
+import company.models
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+
 from part.serializers import PartBriefSerializer
+
+import stock.models
 from stock.serializers import LocationBriefSerializer, StockItemSerializer, LocationSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
@@ -158,6 +164,72 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_string',
             'destination',
             'destination_detail',
+        ]
+
+
+class POLineItemReceiveSerializer(serializers.Serializer):
+    """
+    A serializer for receiving a single purchase order line item against a purchase order
+    """
+
+    supplier_part = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.SupplierPart.objects.all(),
+        many=False,
+        label=_('Supplier Part'),
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    class Meta:
+        fields = [
+            'supplier_part',
+            'location',
+        ]
+
+
+class POReceiveSerializer(serializers.Serializer):
+    """
+    Serializer for receiving items against a purchase order
+    """
+
+    items = serializers.StringRelatedField(
+        many=True
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    def is_valid(self, raise_exception=False):
+
+        super().is_valid(raise_exception)
+
+        # Custom validation
+        data = self.validated_data
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError({
+                'items': _('Line items must be provided'),
+            })
+
+        return not bool(self._errors)
+
+    class Meta:
+        fields = [
+            'items',
+            'location',
         ]
 
 
