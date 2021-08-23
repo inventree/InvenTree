@@ -11,6 +11,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
+
+from django.utils.translation import ugettext_lazy as _
 
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
@@ -27,6 +30,7 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
 from .models import SalesOrderAttachment
 from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
 from .serializers import SalesOrderAllocationSerializer
+from .serializers import POReceiveSerializer, POLineItemReceiveSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -202,6 +206,41 @@ class PODetail(generics.RetrieveUpdateDestroyAPIView):
         queryset = POSerializer.annotate_queryset(queryset)
 
         return queryset
+
+
+class POReceive(generics.CreateAPIView):
+    """
+    API endpoint to receive stock items against a purchase order.
+
+    - The purchase order is specified in the URL.
+    - Items to receive are specified as a list called "items" with the following options:
+        - supplier_part: pk value of the supplier part
+        - quantity: quantity to receive
+        - status: stock item status
+        - location: destination for stock item (optional)
+    - A global location can also be specified
+    """
+
+    queryset = PurchaseOrderLineItem.objects.none()
+
+    serializer_class = POReceiveSerializer
+
+    def get_order(self):
+        """
+        Returns the PurchaseOrder associated with this API endpoint
+        """
+
+        order = PurchaseOrder.objects.get(pk=self.kwargs['pk'])
+
+        return order
+
+    def create(self, request, *args, **kwargs):
+        # Validate the serialized data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class POLineItemList(generics.ListCreateAPIView):
@@ -616,13 +655,25 @@ class POAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin)
 
 
 order_api_urls = [
+
     # API endpoints for purchase orders
-    url(r'po/attachment/', include([
-        url(r'^(?P<pk>\d+)/$', POAttachmentDetail.as_view(), name='api-po-attachment-detail'),
-        url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
+    url(r'^po/', include([
+
+        # Purchase order attachments
+        url(r'attachment/', include([
+            url(r'^(?P<pk>\d+)/$', POAttachmentDetail.as_view(), name='api-po-attachment-detail'),
+            url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
+        ])),
+
+        # Individual purchase order detail URLs
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^receive/', POReceive.as_view(), name='api-po-receive'),
+            url(r'.*$', PODetail.as_view(), name='api-po-detail'),
+        ])),
+
+        # Purchase order list
+        url(r'^.*$', POList.as_view(), name='api-po-list'),
     ])),
-    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
-    url(r'^po/.*$', POList.as_view(), name='api-po-list'),
 
     # API endpoints for purchase order line items
     url(r'^po-line/(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),

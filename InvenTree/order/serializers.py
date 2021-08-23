@@ -186,6 +186,13 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         help_text=_('Select destination location for received items'),
     )
 
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+    )
+
     class Meta:
         fields = [
             'supplier_part',
@@ -198,8 +205,8 @@ class POReceiveSerializer(serializers.Serializer):
     Serializer for receiving items against a purchase order
     """
 
-    items = serializers.StringRelatedField(
-        many=True
+    items = POLineItemReceiveSerializer(
+        many=True,
     )
 
     location = serializers.PrimaryKeyRelatedField(
@@ -220,9 +227,10 @@ class POReceiveSerializer(serializers.Serializer):
         items = data.get('items', [])
 
         if len(items) == 0:
-            raise ValidationError({
-                'items': _('Line items must be provided'),
-            })
+            self._errors['items'] = _('Line items must be provided')
+
+        if self._errors and raise_exception:
+            raise ValidationError(self.errors)
 
         return not bool(self._errors)
 

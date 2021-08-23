@@ -201,6 +201,73 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url, expected_code=404)
 
 
+class PurchaseOrderReceiveTest(OrderTest):
+    """
+    Unit tests for receiving items against a PurchaseOrder
+    """
+
+    def setUp(self):
+        super().setUp()
+        
+        self.assignRole('purchase_order.add')
+
+        self.url = reverse('api-po-receive', kwargs={'pk': 1})
+
+    def test_empty(self):
+        """
+        Test without any POST data
+        """
+
+        data = self.post(self.url, {}, expected_code=400).data
+
+        self.assertIn('This field is required', str(data['items']))
+        self.assertIn('This field is required', str(data['location']))
+
+    def test_no_items(self):
+        """
+        Test with an empty list of items
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [],
+                "location": None,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('Line items must be provided', str(data['items']))
+
+    def test_invalid_items(self):
+        """
+        Test than errors are returned as expected for invalid data 
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "supplier_part": 12345,
+                        "location": 12345
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        items = data['items']
+
+        self.assertIn('Invalid pk "12345"', str(items['supplier_part']))
+        self.assertIn("object does not exist", str(items['location']))
+
+    def test_mismatched_items(self):
+        """
+        Test for supplier parts which *do* exist but do not match the order supplier
+        """
+
+
 class SalesOrderTest(OrderTest):
     """
     Tests for the SalesOrder API
