@@ -49,7 +49,9 @@ class InvenTreeMoneySerializer(MoneyField):
             if amount is not None:
                 amount = Decimal(amount)
         except:
-            raise ValidationError(_("Must be a valid number"))
+            raise ValidationError({
+                self.field_name: _("Must be a valid number")
+            })
 
         currency = data.get(get_currency_field_name(self.field_name), self.default_currency)
 
