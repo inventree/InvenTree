@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-23 10:30+0000\n"
-"PO-Revision-Date: 2021-08-23 10:44\n"
+"PO-Revision-Date: 2021-08-23 12:55\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1854,7 +1854,7 @@ msgstr ""
 
 #: common/models.py:704
 msgid "Page Size"
-msgstr ""
+msgstr "Paginagrootte"
 
 #: common/models.py:705
 msgid "Default page size for PDF reports"
@@ -1862,7 +1862,7 @@ msgstr ""
 
 #: common/models.py:715
 msgid "Test Reports"
-msgstr ""
+msgstr "Testrapport"
 
 #: common/models.py:716
 msgid "Enable generation of test reports"
@@ -1870,19 +1870,19 @@ msgstr ""
 
 #: common/models.py:722
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Verlopen voorraad"
 
 #: common/models.py:723
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Verlopen voorraad functionaliteit inschakelen"
 
 #: common/models.py:729
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Verkoop verlopen voorraad"
 
 #: common/models.py:730
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Verkoop verlopen voorraad toestaan"
 
 #: common/models.py:736
 msgid "Stock Stale Time"
