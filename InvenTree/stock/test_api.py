@@ -428,6 +428,67 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
+    def test_purchase_price(self):
+        """
+        Test that we can correctly read and adjust purchase price information via the API
+        """
+
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        data = self.get(url, expected_code=200).data
+
+        # Check fixture values
+        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
+
+        # Update just the amount
+        data = self.patch(
+            url,
+            {
+                'purchase_price': 456
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price_currency'], 'AUD')
+
+        # Update the currency
+        data = self.patch(
+            url,
+            {
+                'purchase_price_currency': 'NZD',
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price_currency'], 'NZD')
+
+        # Clear the price field
+        data = self.patch(
+            url,
+            {
+                'purchase_price': None,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price'], None)
+        self.assertEqual(data['purchase_price_string'], '-')
+
+        # Invalid currency code
+        data = self.patch(
+            url,
+            {
+                'purchase_price_currency': 'xyz',
+            },
+            expected_code=400
+        )
+
+        data = self.get(url).data
+        self.assertEqual(data['purchase_price_currency'], 'NZD')
+
 
 class StocktakeTest(StockAPITestCase):
     """

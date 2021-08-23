@@ -1080,7 +1080,7 @@ function loadStockTable(table, options) {
                 }
             },
             {
-                field: 'purchase_price',
+                field: 'purchase_price_string',
                 title: '{% trans "Purchase Price" %}',
                 sortable: true,
             },

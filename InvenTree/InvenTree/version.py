@@ -10,34 +10,39 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.0 pre"
 
-INVENTREE_API_VERSION = 9
+INVENTREE_API_VERSION = 10
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v9 -> 2021-08-09
+v10 -> 2021-08-23
+    - Adds "purchase_price_currency" to StockItem serializer
+    - Adds "purchase_price_string" to StockItem serializer
+    - Purchase price is now writable for StockItem serializer
+
+v9  -> 2021-08-09
     - Adds "price_string" to part pricing serializers
 
-v8 -> 2021-07-19
+v8  -> 2021-07-19
     - Refactors the API interface for SupplierPart and ManufacturerPart models
     - ManufacturerPart objects can no longer be created via the SupplierPart API endpoint
 
-v7 -> 2021-07-03
+v7  -> 2021-07-03
     - Introduced the concept of "API forms" in https://github.com/inventree/InvenTree/pull/1716
     - API OPTIONS endpoints provide comprehensive field metedata
     - Multiple new API endpoints added for database models
 
-v6 -> 2021-06-23
+v6  -> 2021-06-23
     - Part and Company images can now be directly uploaded via the REST API
 
-v5 -> 2021-06-21
+v5  -> 2021-06-21
     - Adds API interface for manufacturer part parameters
 
-v4 -> 2021-06-01
+v4  -> 2021-06-01
     - BOM items can now accept "variant stock" to be assigned against them
     - Many slight API tweaks were needed to get this to work properly!
 
-v3 -> 2021-05-22:
+v3  -> 2021-05-22:
     - The updated StockItem "history tracking" now uses a different interface
 
 """

@@ -12,6 +12,8 @@
 <table class='table table-striped table-condensed'>
     {% include "InvenTree/settings/header.html" %}
     <tbody>
+        {% include "InvenTree/settings/setting.html" with key="STOCK_FUNCTION_ENABLE" icon="fa-check" %}
+        <tr><td colspan='5'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="STOCK_GROUP_BY_PART" icon="fa-layer-group" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_ENABLE_EXPIRY" icon="fa-stopwatch" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_STALE_DAYS" icon="fa-calendar" %}
