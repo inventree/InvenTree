@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-23 12:55+0000\n"
-"PO-Revision-Date: 2021-08-23 14:28\n"
+"PO-Revision-Date: 2021-08-23 18:23\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1830,7 +1830,7 @@ msgstr ""
 
 #: common/models.py:688
 msgid "Internal Prices"
-msgstr ""
+msgstr "Interne prijzen"
 
 #: common/models.py:689
 msgid "Enable internal prices for parts"
@@ -1846,7 +1846,7 @@ msgstr ""
 
 #: common/models.py:702 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Foutopsporingsmodus"
 
 #: common/models.py:703
 msgid "Generate reports in debug mode (HTML output)"
@@ -1894,7 +1894,7 @@ msgstr ""
 
 #: common/models.py:744
 msgid "days"
-msgstr ""
+msgstr "dagen"
 
 #: common/models.py:749
 msgid "Build Expired Stock"
@@ -3984,7 +3984,7 @@ msgstr ""
 
 #: part/forms.py:97 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
-msgstr ""
+msgstr "Selecteer bovenliggend onderdeel om stuklijst van te kopiëren"
 
 #: part/forms.py:103
 msgid "Clear existing BOM items"
@@ -4412,7 +4412,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "U heeft geen toestemming om de stuklijst te bewerken."
 
 #: part/templates/part/bom.html:14
 #, python-format
@@ -4443,7 +4443,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:38
 msgid "New BOM Item"
-msgstr ""
+msgstr "Nieuw stuklijstitem"
 
 #: part/templates/part/bom.html:41
 msgid "Finish Editing"
@@ -4451,7 +4451,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:46
 msgid "Edit BOM"
-msgstr ""
+msgstr "Bewerk stuklijst"
 
 #: part/templates/part/bom.html:50
 msgid "Validate Bill of Materials"
