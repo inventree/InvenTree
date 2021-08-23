@@ -12,6 +12,8 @@
     tree_id: 0
     lft: 0
     rght: 0
+    purchase_price: 123
+    purchase_price_currency: AUD
 
 # 5,000 screws in the bathroom
 - model: stock.stockitem
