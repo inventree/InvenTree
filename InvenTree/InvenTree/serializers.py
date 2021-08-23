@@ -46,7 +46,7 @@ class InvenTreeMoneySerializer(MoneyField):
             amount = None
 
         try:
-            if amount is not None:
+            if amount is not None and amount is not empty:
                 amount = Decimal(amount)
         except:
             raise ValidationError({
