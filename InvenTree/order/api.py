@@ -225,6 +225,15 @@ class POReceive(generics.CreateAPIView):
 
     serializer_class = POReceiveSerializer
 
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+
+        # Pass the purchase order through to the serializer for validation
+        context['order'] = self.get_order()
+
+        return context
+
     def get_order(self):
         """
         Returns the PurchaseOrder associated with this API endpoint
@@ -235,12 +244,50 @@ class POReceive(generics.CreateAPIView):
         return order
 
     def create(self, request, *args, **kwargs):
+
+        # Which purchase order are we receiving against?
+        self.order = self.get_order()
+
         # Validate the serialized data
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # Check that the received line items are indeed correct
+        self.validate(serializer.validated_data)
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def validate(self, data):
+        """
+        Validate the deserialized data.
+
+        At this point, much of the heavy lifting has been done for us by DRF serializers
+        """
+
+        location = data['location']
+
+        # Keep track of validated data "on the fly"
+        self.items = []
+
+        for item in data['items']:
+
+            supplier_part = item['supplier_part']
+
+            # Location specified for this part
+            item_location = item['location']
+
+            if not item_location:
+                
+                # Both item_location and location are not specified
+                if not location:
+                    raise ValidationError({
+                        'location': _("Destination location must be specified"),
+                    })
+
+                item['location'] = location
+
+            quantity = item['quantity']
 
 
 class POLineItemList(generics.ListCreateAPIView):

@@ -172,11 +172,18 @@ class POLineItemReceiveSerializer(serializers.Serializer):
     A serializer for receiving a single purchase order line item against a purchase order
     """
 
-    supplier_part = serializers.PrimaryKeyRelatedField(
-        queryset=company.models.SupplierPart.objects.all(),
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=PurchaseOrderLineItem.objects.all(),
         many=False,
-        label=_('Supplier Part'),
+        allow_null=False,
+        required=True,
+        label=_('Line Item'),
     )
+
+    def validate_line_item(self, item):
+
+        if item.order != self.context['order']:
+            raise ValidationError(_('Line item does not match purchase order'))
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -205,9 +212,7 @@ class POReceiveSerializer(serializers.Serializer):
     Serializer for receiving items against a purchase order
     """
 
-    items = POLineItemReceiveSerializer(
-        many=True,
-    )
+    items = POLineItemReceiveSerializer(many=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
