@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-23 01:08+0000\n"
-"PO-Revision-Date: 2021-08-22 15:00\n"
+"PO-Revision-Date: 2021-08-23 01:55\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -4954,16 +4954,12 @@ msgid "BOM Pricing"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:65 part/templates/part/prices.html:69
-#, fuzzy
-#| msgid "Unit purchase price"
 msgid "Unit Purchase Price"
-msgstr "Cena zakupu jednostkowego"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Total Purchase Price"
-msgstr "Cena zakupu"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
@@ -8190,3 +8186,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
