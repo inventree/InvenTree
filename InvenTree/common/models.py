@@ -26,6 +26,11 @@ from django.core.exceptions import ValidationError
 import InvenTree.helpers
 import InvenTree.fields
 
+import logging
+
+
+logger = logging.getLogger('inventree')
+
 
 class BaseInvenTreeSetting(models.Model):
     """
@@ -1040,7 +1045,7 @@ class PriceBreak(models.Model):
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
-            print(f"WARNING: No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            logger.warning(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
             return self.price.amount
 
         return converted.amount
