@@ -249,7 +249,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             {
                 "items": [
                     {
-                        "supplier_part": 12345,
+                        "line_item": 12345,
                         "location": 12345
                     }
                 ]
@@ -257,15 +257,32 @@ class PurchaseOrderReceiveTest(OrderTest):
             expected_code=400
         ).data
 
-        items = data['items']
+        items = data['items'][0]
 
-        self.assertIn('Invalid pk "12345"', str(items['supplier_part']))
+        self.assertIn('Invalid pk "12345"', str(items['line_item']))
         self.assertIn("object does not exist", str(items['location']))
 
     def test_mismatched_items(self):
         """
         Test for supplier parts which *do* exist but do not match the order supplier
         """
+
+        data = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 22,
+                        'quantity': 123,
+                        'location': 1,
+                    }
+                ],
+                'location': None,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('Line item does not match purchase order', str(data))
 
 
 class SalesOrderTest(OrderTest):
