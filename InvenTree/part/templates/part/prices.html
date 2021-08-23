@@ -61,6 +61,25 @@
                             <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
                         </tr>
                     {% endif %}
+
+
+                    {% if min_total_bom_purchase_price %}
+                    <tr>
+                        <td></td>
+                        <td>{% trans 'Unit Purchase Price' %}</td>
+                        <td>Min: {% include "price.html" with price=min_unit_bom_purchase_price %}</td>
+                        <td>Max: {% include "price.html" with price=max_unit_bom_purchase_price %}</td>
+                    </tr>
+                    {% if quantity > 1 %}
+                    <tr>
+                        <td></td>
+                        <td>{% trans 'Total Purchase Price' %}</td>
+                        <td>Min: {% include "price.html" with price=min_total_bom_purchase_price %}</td>
+                        <td>Max: {% include "price.html" with price=max_total_bom_purchase_price %}</td>
+                    </tr>
+                    {% endif %}
+                    {% endif %}
+
                     {% if part.has_complete_bom_pricing == False %}
                         <tr>
                             <td colspan='4'>

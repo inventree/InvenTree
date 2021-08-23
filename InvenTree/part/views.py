@@ -1351,6 +1351,7 @@ class PartPricing(AjaxView):
 
             use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
             bom_price = part.get_bom_price_range(quantity, internal=use_internal)
+            purchase_price = part.get_bom_price_range(quantity, purchase=True)
 
             if bom_price is not None:
                 min_bom_price, max_bom_price = bom_price
@@ -1358,19 +1359,26 @@ class PartPricing(AjaxView):
                 min_bom_price /= scaler
                 max_bom_price /= scaler
 
-                min_unit_bom_price = round(min_bom_price / quantity, 3)
-                max_unit_bom_price = round(max_bom_price / quantity, 3)
-
-                min_bom_price = round(min_bom_price, 3)
-                max_bom_price = round(max_bom_price, 3)
-
                 if min_bom_price:
-                    ctx['min_total_bom_price'] = min_bom_price
-                    ctx['min_unit_bom_price'] = min_unit_bom_price
+                    ctx['min_total_bom_price'] = round(min_bom_price, 3)
+                    ctx['min_unit_bom_price'] = round(min_bom_price / quantity, 3)
 
                 if max_bom_price:
-                    ctx['max_total_bom_price'] = max_bom_price
-                    ctx['max_unit_bom_price'] = max_unit_bom_price
+                    ctx['max_total_bom_price'] = round(max_bom_price, 3)
+                    ctx['max_unit_bom_price'] = round(max_bom_price / quantity, 3)
+
+            if purchase_price is not None:
+                min_bom_purchase_price, max_bom_purchase_price = purchase_price
+
+                min_bom_purchase_price /= scaler
+                max_bom_purchase_price /= scaler
+                if min_bom_purchase_price:
+                    ctx['min_total_bom_purchase_price'] = round(min_bom_purchase_price, 3)
+                    ctx['min_unit_bom_purchase_price'] = round(min_bom_purchase_price / quantity, 3)
+
+                if max_bom_purchase_price:
+                    ctx['max_total_bom_purchase_price'] = round(max_bom_purchase_price, 3)
+                    ctx['max_unit_bom_purchase_price'] = round(max_bom_purchase_price / quantity, 3)
 
         # internal part pricing information
         internal_part_price = part.get_internal_price(quantity)

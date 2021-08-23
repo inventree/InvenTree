@@ -35,6 +35,8 @@ from stdimage.models import StdImageField
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 import hashlib
+from djmoney.contrib.exchange.models import convert_money
+from common.settings import currency_code_default
 
 from InvenTree import helpers
 from InvenTree import validators
@@ -1514,7 +1516,7 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_bom_price_range(self, quantity=1, internal=False):
+    def get_bom_price_range(self, quantity=1, internal=False, purchase=False):
         """ Return the price range of the BOM for this part.
         Adds the minimum price for all components in the BOM.
 
@@ -1531,7 +1533,7 @@ class Part(MPTTModel):
                 print("Warning: Item contains itself in BOM")
                 continue
 
-            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal)
+            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
 
             if prices is None:
                 continue
@@ -1555,22 +1557,29 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False):
+    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False):
 
         """ Return the price range for this part. This price can be either:
 
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
         - Internal price (if set for the part)
+        - Purchase price (if set for the part)
 
         Returns:
-            Minimum of the supplier, BOM or internal price. If no pricing available, returns None
+            Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
         """
 
         # only get internal price if set and should be used
         if internal and self.has_internal_price_breaks:
             internal_price = self.get_internal_price(quantity)
             return internal_price, internal_price
+
+        # only get purchase price if set and should be used
+        if purchase:
+            purchase_price = self.get_purchase_price(quantity)
+            if purchase_price:
+                return purchase_price
 
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
         bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
@@ -1640,6 +1649,13 @@ class Part(MPTTModel):
     @property
     def internal_unit_pricing(self):
         return self.get_internal_price(1)
+
+    def get_purchase_price(self, quantity):
+        currency = currency_code_default()
+        prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        if prices:
+            return min(prices) * quantity, max(prices) * quantity
+        return None
 
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
