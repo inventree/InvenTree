@@ -74,34 +74,34 @@ function partFields(options={}) {
             icon: 'fa-boxes',
         },
         component: {
-            value: global_settings.PART_COMPONENT,
+            default: global_settings.PART_COMPONENT,
             group: 'attributes',
         },
         assembly: {
-            value: global_settings.PART_ASSEMBLY,
+            default: global_settings.PART_ASSEMBLY,
             group: 'attributes',
         },
         is_template: {
-            value: global_settings.PART_TEMPLATE,
+            default: global_settings.PART_TEMPLATE,
             group: 'attributes',
         },
         trackable: {
-            value: global_settings.PART_TRACKABLE,
+            default: global_settings.PART_TRACKABLE,
             group: 'attributes',
         },
         purchaseable: {
-            value: global_settings.PART_PURCHASEABLE,
+            default: global_settings.PART_PURCHASEABLE,
             group: 'attributes',
             onEdit: function(value, name, field, options) {
                 setFormGroupVisibility('supplier', value, options);
             }
         },
         salable: {
-            value: global_settings.PART_SALABLE,
+            default: global_settings.PART_SALABLE,
             group: 'attributes',
         },
         virtual: {
-            value: global_settings.PART_VIRTUAL,
+            default: global_settings.PART_VIRTUAL,
             group: 'attributes',
         },
     };
