@@ -103,6 +103,146 @@ function removeOrderRowFromOrderWizard(e) {
     $('#' + row).remove();
 }
 
+
+function receivePurchaseOrder(orderId, options={}) {
+    /* Receive parts against a purchase order.
+     * Launches a modal form.
+     * 
+     * Required Args: 
+     * - orderId: pk value for the PurchaseOrder
+     * 
+     * Optional Args:
+     * - lines: List of purchase order lines to receive
+     *          (If omitted, lines will be requested via the API)
+     */
+
+    // List of lines to receive
+    var selectedLines = options.lines || [];
+
+    // List of line items to receive
+    var lineItems = [];
+
+    inventreeGet(
+        '{% url "api-po-line-list" %}',
+        {
+            order: orderId,
+            part_detail: true,
+        },
+        {
+            success: function(results) {
+                for (var idx = 0; idx < results.length; idx++) {
+                    var line = results[idx];
+
+                    // Skip / ignore lines missing part information
+                    if (!line.part || !line.supplier_part_detail.part) {
+                        continue;
+                    }
+
+                    // Skip / ignore lines which are fully received
+                    if (line.received >= line.quantity) {
+                        continue;
+                    }
+
+                    if (selectedLines.length == 0 || selectedLines.includes(line.pk)) {
+                        lineItems.push(line);
+                    }
+                }
+
+                // Construct a form for processing
+                var html = `
+                <table class='table table-striped' id='line-items-table'>
+                    <thead><tr>
+                        <th>{% trans "Part" %}</th>
+                        <th>{% trans "SKU" %}</th>
+                        <th>{% trans "On Order" %}</th>
+                        <th>{% trans "Received" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Destination" %}</th>
+                        <th></th>
+                    </tr></thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                `;
+
+                constructForm(`/api/order/po/${orderId}/receive/`, {
+                    method: 'POST',
+                    title: '{% trans "Receive Items" %}',
+                    confirm: true,
+                    fields: {
+                        location: {},
+                    },
+                    preFormContent: html,
+                    afterRender: function(fields, options) {
+                        
+                        var table = $(options.modal).find('#line-items-table').children('tbody');
+
+                        options.hideLabels = true;
+
+                        var parameters = {};
+
+                        // Insert a row for each item
+                        lineItems.forEach(function(item) {
+                            
+                            var part = item.part_detail;
+                            var supplier_part = item.supplier_part_detail;
+
+                            var row = '';
+
+                            // Part detail
+                            row += `<td>${thumbnailImage(part.thumbnail)} ${part.full_name}</td>`;
+
+                            // Order code
+                            row += `<td>${supplier_part.SKU}</td>`;
+
+                            // Quantity on order
+                            row += `<td>${line.quantity}</td>`;
+
+                            // Quantity received
+                            row += `<td>${line.received}</td>`;
+
+                            parameters = fields.items.child.children.quantity;   
+                            parameters.value = line.quantity - line.received;
+
+                            // Quantity input
+                            row += tdWrap(constructField(
+                                `quantity_${line.pk}`,
+                                parameters,
+                                options
+                            ));
+
+                            // Status input
+                            row += tdWrap(constructField(
+                                `status_${line.pk}`,
+                                fields.items.child.children.status,
+                                options
+                            ));
+
+                            // Location input
+                            row += tdWrap(constructField(
+                                `location_${line.pk}`,
+                                fields.items.child.children.location,
+                                options
+                            ));
+
+                            table.append(trWrap(row));
+
+                            parameters = fields.items.child.children.location;
+
+                            parameters.name = `location_${line.pk}`;
+
+                            initializeRelatedField(parameters, fields, options);
+
+                        });
+                    }
+                });
+            }
+        }
+    );
+}
+
+
 function newSupplierPartFromOrderWizard(e) {
     /* Create a new supplier part directly from an order form.
      * Launches a secondary modal and (if successful),
@@ -117,7 +257,6 @@ function newSupplierPartFromOrderWizard(e) {
 
     if (!part) {
         part = $(src).closest('button').attr('part');
-        console.log('parent: ' + part);
     }
 
     createSupplierPart({

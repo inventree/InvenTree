@@ -188,6 +188,11 @@ $("#edit-order").click(function() {
 });
 
 $("#receive-order").click(function() {
+
+    receivePurchaseOrder({{ order.pk }});
+
+    return;
+
     launchModalForm("{% url 'po-receive' order.id %}", {
         reload: true,
         secondary: [
