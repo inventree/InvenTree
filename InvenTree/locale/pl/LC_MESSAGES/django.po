@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-24 04:15+0000\n"
-"PO-Revision-Date: 2021-08-22 15:00\n"
+"PO-Revision-Date: 2021-08-24 04:52\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1953,60 +1953,48 @@ msgid "Prefix value for purchase order reference"
 msgstr ""
 
 #: common/models.py:794
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable build"
-msgstr "Aktywne"
+msgstr ""
 
 #: common/models.py:795
 msgid "Enable build functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:800
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable buy"
-msgstr "Aktywne"
+msgstr ""
 
 #: common/models.py:801
 msgid "Enable buy functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:806
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable sell"
-msgstr "Aktywne"
+msgstr ""
 
 #: common/models.py:807
 msgid "Enable sell functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:812
-#, fuzzy
-#| msgid "Unallocate stock"
 msgid "Enable stock"
-msgstr "Cofnij przydział zapasów"
+msgstr ""
 
 #: common/models.py:813
 msgid "Enable stock functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:818
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable SO"
-msgstr "Aktywne"
+msgstr ""
 
 #: common/models.py:819
 msgid "Enable SO functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:824
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable PO"
-msgstr "Aktywne"
+msgstr ""
 
 #: common/models.py:825
 msgid "Enable PO functionality in InvenTree interface"
@@ -5014,16 +5002,12 @@ msgid "BOM Pricing"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:65 part/templates/part/prices.html:69
-#, fuzzy
-#| msgid "Unit purchase price"
 msgid "Unit Purchase Price"
-msgstr "Cena zakupu jednostkowego"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Total Purchase Price"
-msgstr "Cena zakupu"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
@@ -8250,3 +8234,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+

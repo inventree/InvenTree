@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-24 04:15+0000\n"
-"PO-Revision-Date: 2021-08-22 19:07\n"
+"PO-Revision-Date: 2021-08-24 04:52\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1830,7 +1830,7 @@ msgstr ""
 
 #: common/models.py:688
 msgid "Internal Prices"
-msgstr ""
+msgstr "Interne prijzen"
 
 #: common/models.py:689
 msgid "Enable internal prices for parts"
@@ -1846,7 +1846,7 @@ msgstr ""
 
 #: common/models.py:702 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Foutopsporingsmodus"
 
 #: common/models.py:703
 msgid "Generate reports in debug mode (HTML output)"
@@ -1854,7 +1854,7 @@ msgstr ""
 
 #: common/models.py:709
 msgid "Page Size"
-msgstr ""
+msgstr "Paginagrootte"
 
 #: common/models.py:710
 msgid "Default page size for PDF reports"
@@ -1862,7 +1862,7 @@ msgstr ""
 
 #: common/models.py:720
 msgid "Test Reports"
-msgstr ""
+msgstr "Testrapport"
 
 #: common/models.py:721
 msgid "Enable generation of test reports"
@@ -1870,19 +1870,19 @@ msgstr ""
 
 #: common/models.py:727
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Verlopen voorraad"
 
 #: common/models.py:728
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Verlopen voorraad functionaliteit inschakelen"
 
 #: common/models.py:734
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Verkoop verlopen voorraad"
 
 #: common/models.py:735
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Verkoop verlopen voorraad toestaan"
 
 #: common/models.py:741
 msgid "Stock Stale Time"
@@ -1894,7 +1894,7 @@ msgstr ""
 
 #: common/models.py:744
 msgid "days"
-msgstr ""
+msgstr "dagen"
 
 #: common/models.py:749
 msgid "Build Expired Stock"
@@ -1977,10 +1977,8 @@ msgid "Enable sell functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:812
-#, fuzzy
-#| msgid "Unallocate stock"
 msgid "Enable stock"
-msgstr "Niet toegewezen voorraad"
+msgstr ""
 
 #: common/models.py:813
 msgid "Enable stock functionality in InvenTree interface"
@@ -3986,7 +3984,7 @@ msgstr ""
 
 #: part/forms.py:97 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
-msgstr ""
+msgstr "Selecteer bovenliggend onderdeel om stuklijst van te kopiëren"
 
 #: part/forms.py:103
 msgid "Clear existing BOM items"
@@ -4414,7 +4412,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "U heeft geen toestemming om de stuklijst te bewerken."
 
 #: part/templates/part/bom.html:14
 #, python-format
@@ -4445,7 +4443,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:38
 msgid "New BOM Item"
-msgstr ""
+msgstr "Nieuw stuklijstitem"
 
 #: part/templates/part/bom.html:41
 msgid "Finish Editing"
@@ -4453,7 +4451,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:46
 msgid "Edit BOM"
-msgstr ""
+msgstr "Bewerk stuklijst"
 
 #: part/templates/part/bom.html:50
 msgid "Validate Bill of Materials"
@@ -8236,3 +8234,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+
