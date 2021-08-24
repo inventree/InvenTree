@@ -85,17 +85,16 @@
                         </div>
                         {% endif %}
 
-                        <button class='pull-right btn btn-primary login-button' type="submit">{% trans "Login" %}</button>
-
                         <hr>
+
+                        <button class='pull-right btn btn-primary login-button' type="submit">{% trans "Login" %}</button>
 
                         {% get_providers as socialaccount_providers %}
 
                         {% if socialaccount_providers %}
-                        <h4>{% trans 'Login with provider' %}</h4>
+                        <br><br>
                         {% for provider in socialaccount_providers %}
-                            {{ provider.name }}
-                            <a class="btn btn-primary" href="{% provider_login_url 'github' %}">
+                            <a class="btn btn-primary" href="{% provider_login_url provider.id %}">
                                 {% blocktrans with name=provider.name %}Login with {{name}}{% endblocktrans%}
                             </a>
                         {% endfor %}
