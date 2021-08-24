@@ -19,7 +19,7 @@
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
-            <button type='button' class='btn btn-primary' id='new-po-line'>
+            <button type='button' class='btn btn-success' id='new-po-line'>
                 <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
             </button>
             <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>

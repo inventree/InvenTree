@@ -706,6 +706,264 @@ function loadStockTable(table, options) {
     // Ref: https://github.com/wenzhixin/bootstrap-table/issues/3250
     grouping = false;
 
+    var columns = [
+        {
+            checkbox: true,
+            title: '{% trans "Select" %}',
+            searchable: false,
+            switchable: false,
+        },
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        }
+    ];
+
+    col = {
+        field: 'part_detail.full_name',
+        title: '{% trans "Part" %}',
+        sortName: 'part__name',
+        visible: params['part_detail'],
+        switchable: params['part_detail'],
+        formatter: function(value, row, index, field) {
+
+            var url = `/stock/item/${row.pk}/`;
+            var thumb = row.part_detail.thumbnail;
+            var name = row.part_detail.full_name;
+
+            html = imageHoverIcon(thumb) + renderLink(name, url);
+
+            html += makePartIcons(row.part_detail);
+
+            return html;
+        }
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'part_detail.IPN',
+        title: 'IPN',
+        sortName: 'part__IPN',
+        visible: params['part_detail'],
+        switchable: params['part_detail'],
+        formatter: function(value, row, index, field) {
+            return row.part_detail.IPN;
+        },
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    columns.push({
+        field: 'part_detail.description',
+        title: '{% trans "Description" %}',
+        visible: params['part_detail'],
+        switchable: params['part_detail'],
+        formatter: function(value, row, index, field) {
+            return row.part_detail.description;
+        }
+    });
+
+    col = {
+        field: 'quantity',
+        title: '{% trans "Stock" %}',
+        formatter: function(value, row, index, field) {
+
+            var val = parseFloat(value);
+
+            // If there is a single unit with a serial number, use the serial number
+            if (row.serial && row.quantity == 1) {
+                val = '# ' + row.serial;
+            } else {
+                val = +val.toFixed(5);
+            }
+
+            var html = renderLink(val, `/stock/item/${row.pk}/`);
+
+            if (row.is_building) {
+                html += makeIconBadge('fa-tools', '{% trans "Stock item is in production" %}');
+            } 
+
+            if (row.sales_order) {
+                // Stock item has been assigned to a sales order
+                html += makeIconBadge('fa-truck', '{% trans "Stock item assigned to sales order" %}');
+            } else if (row.customer) {
+                // StockItem has been assigned to a customer
+                html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
+            }
+
+            if (row.expired) {
+                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
+            } else if (row.stale) {
+                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
+            }
+
+            if (row.allocated) {
+                html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
+            }
+
+            if (row.belongs_to) {
+                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
+            }
+
+            // Special stock status codes
+
+            // REJECTED
+            if (row.status == {{ StockStatus.REJECTED }}) {
+                html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
+            }
+
+            // LOST
+            else if (row.status == {{ StockStatus.LOST }}) {
+                html += makeIconBadge('fa-question-circle','{% trans "Stock item is lost" %}');
+            }
+            else if (row.status == {{ StockStatus.DESTROYED }}) {
+                html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
+            }
+
+            if (row.quantity <= 0) {
+                html += `<span class='label label-right label-danger'>{% trans "Depleted" %}</span>`;
+            }
+
+            return html;
+        }
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'status',
+        title: '{% trans "Status" %}',
+        formatter: function(value, row, index, field) {
+            return stockStatusDisplay(value);
+        },
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'batch',
+        title: '{% trans "Batch" %}',
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'location_detail.pathstring',
+        title: '{% trans "Location" %}',
+        formatter: function(value, row, index, field) {
+            return locationDetail(row);
+        }
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'stocktake_date',
+        title: '{% trans "Stocktake" %}',
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'expiry_date',
+        title: '{% trans "Expiry Date" %}',
+        visible: global_settings.STOCK_ENABLE_EXPIRY,
+        switchable: global_settings.STOCK_ENABLE_EXPIRY,
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    col = {
+        field: 'updated',
+        title: '{% trans "Last Updated" %}',
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    columns.push({
+        field: 'purchase_order',
+        title: '{% trans "Purchase Order" %}',
+        formatter: function(value, row) {
+            if (!value) {
+                return '-';
+            }
+
+            var link = `/order/purchase-order/${row.purchase_order}/`;
+            var text = `${row.purchase_order}`;
+
+            if (row.purchase_order_reference) {
+
+                var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+
+                text = prefix + row.purchase_order_reference;
+            }
+
+            return renderLink(text, link);
+        }
+    },
+    {
+        field: 'supplier_part',
+        title: '{% trans "Supplier Part" %}',
+        visible: params['supplier_part_detail'] || false,
+        switchable: params['supplier_part_detail'] || false,
+        formatter: function(value, row) {
+            if (!value) {
+                return '-';
+            }
+
+            var link = `/supplier-part/${row.supplier_part}/?display=stock`;
+
+            var text = '';
+
+            if (row.supplier_part_detail) {
+                text = `${row.supplier_part_detail.SKU}`;
+            } else {
+                text = `<i>{% trans "Supplier part not specified" %}</i>`;
+            }
+
+            return renderLink(text, link);
+        }
+    });
+
+    col = {
+        field: 'purchase_price_string',
+        title: '{% trans "Purchase Price" %}',
+    };
+    if (!options.params.ordering) {
+        col['sortable'] = true;
+    };
+    columns.push(col);
+
+    columns.push({
+        field: 'packaging',
+        title: '{% trans "Packaging" %}',
+    },
+    {
+        field: 'notes',
+        title: '{% trans "Notes" %}',
+    });
+
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
@@ -717,6 +975,7 @@ function loadStockTable(table, options) {
         name: 'stock',
         original: original,
         showColumns: true,
+        columns: columns,
         {% if False %}
         groupByField: options.groupByField || 'part',
         groupBy: grouping,
@@ -734,8 +993,7 @@ function loadStockTable(table, options) {
                 html += makePartIcons(row.part_detail);
 
                 return html;
-            }
-            else if (field == 'part_detail.IPN') {
+            } else if (field == 'part_detail.IPN') {
                 var ipn = row.part_detail.IPN;
 
                 if (ipn) {
@@ -743,11 +1001,9 @@ function loadStockTable(table, options) {
                 } else {
                     return '-';
                 }
-            }
-            else if (field == 'part_detail.description') {
+            } else if (field == 'part_detail.description') {
                 return row.part_detail.description;
-            }
-            else if (field == 'packaging') {
+            } else if (field == 'packaging') {
                 var packaging = [];
 
                 data.forEach(function(item) {
@@ -769,8 +1025,7 @@ function loadStockTable(table, options) {
                 } else {
                     return "-";
                 }
-            }
-            else if (field == 'quantity') {
+            } else if (field == 'quantity') {
                 var stock = 0;
                 var items = 0;
 
@@ -874,225 +1129,11 @@ function loadStockTable(table, options) {
                 } else {
                     return '-';
                 }
-            }
-            else {
+            } else {
                 return '';
             }
         },
         {% endif %}
-        columns: [
-            {
-                checkbox: true,
-                title: '{% trans "Select" %}',
-                searchable: false,
-                switchable: false,
-            },
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'part_detail.full_name',
-                title: '{% trans "Part" %}',
-                sortName: 'part__name',
-                sortable: true,
-                visible: params['part_detail'],
-                switchable: params['part_detail'],
-                formatter: function(value, row, index, field) {
-
-                    var url = `/stock/item/${row.pk}/`;
-                    var thumb = row.part_detail.thumbnail;
-                    var name = row.part_detail.full_name;
-
-                    html = imageHoverIcon(thumb) + renderLink(name, url);
-
-                    html += makePartIcons(row.part_detail);
-
-                    return html;
-                }
-            },
-            {
-                field: 'part_detail.IPN',
-                title: 'IPN',
-                sortName: 'part__IPN',
-                sortable: true,
-                visible: params['part_detail'],
-                switchable: params['part_detail'],
-                formatter: function(value, row, index, field) {
-                    return row.part_detail.IPN;
-                },
-            },
-            {
-                field: 'part_detail.description',
-                title: '{% trans "Description" %}',
-                visible: params['part_detail'],
-                switchable: params['part_detail'],
-                formatter: function(value, row, index, field) {
-                    return row.part_detail.description;
-                }
-            },
-            {
-                field: 'quantity',
-                title: '{% trans "Stock" %}',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-
-                    var val = parseFloat(value);
-
-                    // If there is a single unit with a serial number, use the serial number
-                    if (row.serial && row.quantity == 1) {
-                        val = '# ' + row.serial;
-                    } else {
-                        val = +val.toFixed(5);
-                    }
-
-                    var html = renderLink(val, `/stock/item/${row.pk}/`);
-
-                    if (row.is_building) {
-                        html += makeIconBadge('fa-tools', '{% trans "Stock item is in production" %}');
-                    } 
-
-                    if (row.sales_order) {
-                        // Stock item has been assigned to a sales order
-                        html += makeIconBadge('fa-truck', '{% trans "Stock item assigned to sales order" %}');
-                    } else if (row.customer) {
-                        // StockItem has been assigned to a customer
-                        html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
-                    }
-
-                    if (row.expired) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
-                    } else if (row.stale) {
-                        html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
-                    }
-
-                    if (row.allocated) {
-                        html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
-                    }
-
-                    if (row.belongs_to) {
-                        html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
-                    }
-
-                    // Special stock status codes
-
-                    // REJECTED
-                    if (row.status == {{ StockStatus.REJECTED }}) {
-                        html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
-                    }
-                    // LOST
-                    else if (row.status == {{ StockStatus.LOST }}) {
-                        html += makeIconBadge('fa-question-circle','{% trans "Stock item is lost" %}');
-                    }
-                    else if (row.status == {{ StockStatus.DESTROYED }}) {
-                        html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
-                    }
-
-                    if (row.quantity <= 0) {
-                        html += `<span class='label label-right label-danger'>{% trans "Depleted" %}</span>`;
-                    }
-
-                    return html;
-                }
-            },
-            {
-                field: 'status',
-                title: '{% trans "Status" %}',
-                sortable: 'true',
-                formatter: function(value, row, index, field) {
-                    return stockStatusDisplay(value);
-                },
-            },
-            {
-                field: 'batch',
-                title: '{% trans "Batch" %}',
-                sortable: true,
-            },
-            {
-                field: 'location_detail.pathstring',
-                title: '{% trans "Location" %}',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return locationDetail(row);
-                }
-            },
-            {
-                field: 'stocktake_date',
-                title: '{% trans "Stocktake" %}',
-                sortable: true,
-            },
-            {
-                field: 'expiry_date',
-                title: '{% trans "Expiry Date" %}',
-                sortable: true,
-                visible: global_settings.STOCK_ENABLE_EXPIRY,
-                switchable: global_settings.STOCK_ENABLE_EXPIRY,
-            },
-            {
-                field: 'updated',
-                title: '{% trans "Last Updated" %}',
-                sortable: true,
-            },
-            {
-                field: 'purchase_order',
-                title: '{% trans "Purchase Order" %}',
-                formatter: function(value, row) {
-                    if (!value) {
-                        return '-';
-                    }
-
-                    var link = `/order/purchase-order/${row.purchase_order}/`;
-                    var text = `${row.purchase_order}`;
-
-                    if (row.purchase_order_reference) {
-
-                        var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
-
-                        text = prefix + row.purchase_order_reference;
-                    }
-
-                    return renderLink(text, link);
-                }
-            },
-            {
-                field: 'supplier_part',
-                title: '{% trans "Supplier Part" %}',
-                visible: params['supplier_part_detail'] || false,
-                switchable: params['supplier_part_detail'] || false,
-                formatter: function(value, row) {
-                    if (!value) {
-                        return '-';
-                    }
-
-                    var link = `/supplier-part/${row.supplier_part}/?display=stock`;
-
-                    var text = '';
-
-                    if (row.supplier_part_detail) {
-                        text = `${row.supplier_part_detail.SKU}`;
-                    } else {
-                        text = `<i>{% trans "Supplier part not specified" %}</i>`;
-                    }
-
-                    return renderLink(text, link);
-                }
-            },
-            {
-                field: 'purchase_price_string',
-                title: '{% trans "Purchase Price" %}',
-                sortable: true,
-            },
-            {
-                field: 'packaging',
-                title: '{% trans "Packaging" %}',
-            },
-            {
-                field: 'notes',
-                title: '{% trans "Notes" %}',
-            }
-        ],
     });
 
     /*
