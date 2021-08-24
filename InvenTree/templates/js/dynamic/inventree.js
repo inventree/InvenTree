@@ -315,6 +315,22 @@ function enableDragAndDrop(element, url, options) {
     });
 }
 
+
+function thumbnailImage(url, options={}) {
+    /* Render a simple thumbnail image from the provided URL */
+
+    if (!url) {
+        url = '/static/img/blank_img.png';
+    }
+
+    // TODO: Support insertion of custom classes
+
+    var html = `<img class='hover-img-thumb' src='${url}'>`;
+
+    return html;
+
+}
+
 function imageHoverIcon(url) {
     /* Render a small thumbnail icon for an image.
      * On mouseover, display a full-size version of the image
