@@ -206,7 +206,7 @@ class POLineItemReceiveSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=StockStatus.options,
+        choices=list(StockStatus.items()),
         default=StockStatus.OK,
         label=_('Status'),
     )
