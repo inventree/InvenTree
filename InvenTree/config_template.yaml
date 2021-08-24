@@ -157,3 +157,7 @@ static_root: '/home/inventree/data/static'
 #  - 'django.contrib.messages.middleware.MessageMiddleware'
 #  - 'django.middleware.clickjacking.XFrameOptionsMiddleware'
 #  - 'InvenTree.middleware.AuthRequiredMiddleware'
+
+# Add SSO login-backends
+# social_backends:
+#  - 'allauth.socialaccount.providers.github'
