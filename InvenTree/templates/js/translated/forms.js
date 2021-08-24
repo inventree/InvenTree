@@ -1514,7 +1514,9 @@ function constructField(name, parameters, options) {
     html += `<div id='div_${field_name}' class='${form_classes}'>`;
 
     // Add a label
-    html += constructLabel(name, parameters);
+    if (!options.hideLabels) {
+        html += constructLabel(name, parameters);
+    }
 
     html += `<div class='controls'>`;
 
@@ -1561,7 +1563,7 @@ function constructField(name, parameters, options) {
         html += `</div>`;   // input-group
     }
 
-    if (parameters.help_text) {
+    if (parameters.help_text && !options.hideLabels) {
         html += constructHelpText(name, parameters, options);
     }
 
