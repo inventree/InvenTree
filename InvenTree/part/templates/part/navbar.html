@@ -87,7 +87,7 @@
     </li>
     {% endif %}
     {% endif %}
-    {% if roles.sales_order.view and enable_sell and enable_so %}
+    {% if part.salable and roles.sales_order.view and enable_sell and enable_so %}
     <li class='list-group-item' title='{% trans "Sales Orders" %}'>
         <a href='#' id='select-sales-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-truck sidebar-icon'></span>
