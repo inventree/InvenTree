@@ -2,7 +2,6 @@
 Tests for the Order API
 """
 
-from InvenTree.stock.models import StockItem
 from datetime import datetime, timedelta
 
 from rest_framework import status
@@ -10,8 +9,11 @@ from rest_framework import status
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import PurchaseOrderStatus
 
-from .models import PurchaseOrder, SalesOrder
+from stock.models import StockItem
+
+from .models import PurchaseOrder, PurchaseOrderLineItem, SalesOrder
 
 
 class OrderTest(InvenTreeAPITestCase):
@@ -217,6 +219,11 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Number of stock items which exist at the start of each test
         self.n = StockItem.objects.count()
 
+        # Mark the order as "placed" so we can receive line items
+        order = PurchaseOrder.objects.get(pk=1)
+        order.status = PurchaseOrderStatus.PLACED
+        order.save()
+
     def test_empty(self):
         """
         Test without any POST data
@@ -324,6 +331,59 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_valid(self):
+        """
+        Test receipt of valid data
+        """
+
+        line_1 = PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = PurchaseOrderLineItem.objects.get(pk=2)
+
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_1.part).count(), 0)
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_2.part).count(), 0)
+
+        self.assertEqual(line_1.received, 0)
+        self.assertEqual(line_2.received, 50)
+
+        # Receive two separate line items against this order
+        data = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                    },
+                    {
+                        'line_item': 2,
+                        'quantity': 200,
+                        'location': 2,  # Explicit location
+                    }
+                ],
+                'location': 1,  # Default location
+            },
+        ).data
+
+        # There should be two newly created stock items
+        self.assertEqual(self.n + 2, StockItem.objects.count())
+
+        line_1 = PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = PurchaseOrderLineItem.objects.get(pk=2)
+
+        self.assertEqual(line_1.received, 50)
+        self.assertEqual(line_2.received, 250)
+
+        stock_1 = StockItem.objects.filter(supplier_part=line_1.part)
+        stock_2 = StockItem.objects.filter(supplier_part=line_2.part)
+
+        # 1 new stock item created for each supplier part
+        self.assertEqual(stock_1.count(), 1)
+        self.assertEqual(stock_2.count(), 1)
+
+        # Different location for each received item
+        self.assertEqual(stock_1.last().location.pk, 1)
+        self.assertEqual(stock_2.last().location.pk, 2)
 
 
 class SalesOrderTest(OrderTest):

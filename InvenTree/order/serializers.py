@@ -187,10 +187,13 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         if item.order != self.context['order']:
             raise ValidationError(_('Line item does not match purchase order'))
 
+        return item
+
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
         many=False,
         allow_null=True,
+        required=False,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
     )
@@ -210,8 +213,9 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
     class Meta:
         fields = [
-            'supplier_part',
+            'line_item',
             'location',
+            'quantity',
             'status',
         ]
 
