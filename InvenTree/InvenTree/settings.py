@@ -249,6 +249,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -279,6 +280,10 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+
+    'allauth',                              # Base app for SSO
+    'allauth.account',                      # Extend user with accounts
+    'allauth.socialaccount',                # Use 'social' providers
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -298,7 +303,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
 # If the debug toolbar is enabled, add the modules
@@ -646,3 +652,5 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert alert-block alert-danger',
     messages.INFO: 'alert alert-block alert-info',
 }
+
+SITE_ID = 1

@@ -165,6 +165,7 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^markdownx/', include('markdownx.urls')),
+    url(r'^accounts/', include('allauth.urls')),        # SSO
 ]
 
 # Server running in "DEBUG" mode?
