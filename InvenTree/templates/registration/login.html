@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
+{% load socialaccount %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -84,9 +85,21 @@
                         </div>
                         {% endif %}
 
+                        <button class='pull-right btn btn-primary login-button' type="submit">{% trans "Login" %}</button>
+
                         <hr>
 
-                        <button class='pull-right btn btn-primary login-button' type="submit">{% trans "Login" %}</button>
+                        {% get_providers as socialaccount_providers %}
+
+                        {% if socialaccount_providers %}
+                        <h4>{% trans 'Login with provider' %}</h4>
+                        {% for provider in socialaccount_providers %}
+                            {{ provider.name }}
+                            <a class="btn btn-primary" href="{% provider_login_url 'github' %}">
+                                {% blocktrans with name=provider.name %}Login with {{name}}{% endblocktrans%}
+                            </a>
+                        {% endfor %}
+                        {% endif %}
 
                     </form>
 
@@ -100,6 +113,8 @@
         </div>
 
 </div>
+
+{% providers_media_js %}
 
 </body>
 </html>
