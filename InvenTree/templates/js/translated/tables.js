@@ -1,6 +1,29 @@
 {% load i18n %}
 
 
+function tdWrap(html, options={}) {
+    /* Wraps provided html in <td>..</td> elements
+    */
+
+    var colspan = '';
+
+    if (options.colspan) {
+        colspan = ` colspan=${options.colspan}`;
+    }
+
+    return `<td${colspan}>${html}</td>`;
+}
+
+
+function trWrap(html) {
+    /* Wraps provided html in <tr>..</tr> elements
+    */
+
+    return `<tr>${html}</tr>`;
+}
+
+
+
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
