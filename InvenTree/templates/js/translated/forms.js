@@ -1570,7 +1570,6 @@ function constructField(name, parameters, options) {
     // Div for error messages
     html += `<div id='errors-${name}'></div>`;
 
-
     html += `</div>`;   // controls
     html += `</div>`;   // form-group
     

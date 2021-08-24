@@ -258,7 +258,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
     def test_invalid_items(self):
         """
-        Test than errors are returned as expected for invalid data 
+        Test than errors are returned as expected for invalid data
         """
 
         data = self.post(
@@ -347,7 +347,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(line_2.received, 50)
 
         # Receive two separate line items against this order
-        data = self.post(
+        self.post(
             self.url,
             {
                 'items': [
@@ -363,7 +363,8 @@ class PurchaseOrderReceiveTest(OrderTest):
                 ],
                 'location': 1,  # Default location
             },
-        ).data
+            expected_code=201,
+        )
 
         # There should be two newly created stock items
         self.assertEqual(self.n + 2, StockItem.objects.count())

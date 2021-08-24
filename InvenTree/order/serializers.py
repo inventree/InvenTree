@@ -22,7 +22,6 @@ from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from InvenTree.status_codes import StockStatus
 
-import company.models
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 
 from part.serializers import PartBriefSerializer

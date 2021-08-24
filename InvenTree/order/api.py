@@ -31,7 +31,7 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
 from .models import SalesOrderAttachment
 from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
 from .serializers import SalesOrderAllocationSerializer
-from .serializers import POReceiveSerializer, POLineItemReceiveSerializer
+from .serializers import POReceiveSerializer
 
 
 class POList(generics.ListCreateAPIView):
