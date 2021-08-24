@@ -258,6 +258,8 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
+    options.fields = options.fields || {};
+
     // Save the URL 
     options.url = url;
 
@@ -516,6 +518,11 @@ function constructFormBody(fields, options) {
     });
 
     initializeGroups(fields, options);
+
+    if (options.afterRender) {
+        // Custom callback function after form rendering
+        options.afterRender(fields, options);
+    }
 
     // Scroll to the top
     $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
