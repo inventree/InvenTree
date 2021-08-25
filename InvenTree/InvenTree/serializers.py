@@ -10,6 +10,8 @@ import os
 
 from decimal import Decimal
 
+from collections import OrderedDict
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -94,6 +96,14 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         # If instance is None, we are creating a new instance
         if instance is None and data is not empty:
+
+            if data is None:
+                data = OrderedDict()
+            else:
+                new_data = OrderedDict()
+                new_data.update(data)
+
+                data = new_data
 
             # Add missing fields which have default values
             ModelClass = self.Meta.model
