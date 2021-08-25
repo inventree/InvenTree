@@ -94,9 +94,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         # If instance is None, we are creating a new instance
         if instance is None and data is not empty:
-            
-            # Required to side-step immutability of a QueryDict
-            data = data.copy()
 
             # Add missing fields which have default values
             ModelClass = self.Meta.model
