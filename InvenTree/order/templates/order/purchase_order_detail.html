@@ -28,7 +28,7 @@
             {% endif %}
         </div>
         
-        <table class='table table-striped table-condensed' id='po-table' data-toolbar='#order-toolbar-buttons'>
+        <table class='table table-striped table-condensed' id='po-line-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
 </div>
@@ -208,13 +208,13 @@ $('#new-po-line').click(function() {
 {% endif %}
 
 function reloadTable() {
-    $("#po-table").bootstrapTable("refresh");
+    $("#po-line-table").bootstrapTable("refresh");
 }
 
 function setupCallbacks() {
     // Setup callbacks for the line buttons
 
-    var table = $("#po-table");
+    var table = $("#po-line-table");
 
     {% if order.status == PurchaseOrderStatus.PENDING %}
     table.find(".button-line-edit").click(function() {
@@ -273,9 +273,9 @@ function setupCallbacks() {
 
 }
 
-$("#po-table").inventreeTable({
+$("#po-line-table").inventreeTable({
     onPostBody: setupCallbacks,
-    name: 'purchaseorder',
+    name: 'purchaseorderlines',
     sidePagination: 'server',
     formatNoMatches: function() { return "{% trans 'No line items found' %}"; },
     queryParams: {
@@ -365,6 +365,7 @@ $("#po-table").inventreeTable({
         },
         {
             sortable: true,
+            field: 'total_price',
             title: '{% trans "Total price" %}',
             formatter: function(value, row) {
                 var total = row.purchase_price * row.quantity;
