@@ -921,8 +921,10 @@ function loadStockTable(table, options) {
 
             return renderLink(text, link);
         }
-    },
-    {
+    });
+
+    col = {
+        
         field: 'supplier_part',
         title: '{% trans "Supplier Part" %}',
         visible: params['supplier_part_detail'] || false,
@@ -944,15 +946,25 @@ function loadStockTable(table, options) {
 
             return renderLink(text, link);
         }
-    });
+    };
+
+    if (!options.params.ordering) {
+        col.sortable = true;
+        col.sortName = 'SKU';
+    }
+
+    columns.push(col);
 
     col = {
         field: 'purchase_price_string',
         title: '{% trans "Purchase Price" %}',
     };
+
     if (!options.params.ordering) {
-        col['sortable'] = true;
+        col.sortable = true;
+        col.sortName = 'purchase_price';
     };
+
     columns.push(col);
 
     columns.push({
