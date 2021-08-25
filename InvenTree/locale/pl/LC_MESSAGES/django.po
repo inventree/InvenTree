@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-25 05:06+0000\n"
+"POT-Creation-Date: 2021-08-25 21:03+0000\n"
 "PO-Revision-Date: 2021-08-24 04:52\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -866,7 +866,7 @@ msgstr "Link do zewnętrznego adresu URL"
 #: company/templates/company/navbar.html:72 order/models.py:180
 #: order/models.py:715 order/templates/order/po_navbar.html:38
 #: order/templates/order/po_navbar.html:41
-#: order/templates/order/purchase_order_detail.html:420
+#: order/templates/order/purchase_order_detail.html:421
 #: order/templates/order/sales_order_detail.html:440
 #: order/templates/order/so_navbar.html:33
 #: order/templates/order/so_navbar.html:36 part/models.py:842
@@ -1203,7 +1203,7 @@ msgid "Stock can be taken from any available location."
 msgstr ""
 
 #: build/templates/build/detail.html:49 order/forms.py:88 order/models.py:782
-#: order/templates/order/purchase_order_detail.html:409
+#: order/templates/order/purchase_order_detail.html:410
 #: order/templates/order/receive_parts.html:25 stock/forms.py:134
 msgid "Destination"
 msgstr "Przeznaczenie"
@@ -3184,7 +3184,7 @@ msgid "Supplier part"
 msgstr ""
 
 #: order/models.py:770 order/templates/order/order_base.html:131
-#: order/templates/order/purchase_order_detail.html:389
+#: order/templates/order/purchase_order_detail.html:390
 #: order/templates/order/receive_parts.html:22
 #: order/templates/order/sales_order_base.html:133
 msgid "Received"
@@ -3544,21 +3544,21 @@ msgstr ""
 msgid "Unit Price"
 msgstr "Cena jednostkowa"
 
-#: order/templates/order/purchase_order_detail.html:368
+#: order/templates/order/purchase_order_detail.html:369
 #: order/templates/order/sales_order_detail.html:384
 msgid "Total price"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:432
+#: order/templates/order/purchase_order_detail.html:433
 #: order/templates/order/sales_order_detail.html:490
 msgid "Edit line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:433
+#: order/templates/order/purchase_order_detail.html:434
 msgid "Delete line item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:438
+#: order/templates/order/purchase_order_detail.html:439
 msgid "Receive line item"
 msgstr ""
 
@@ -6445,16 +6445,16 @@ msgid "No category parameter templates found"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:174
-#: templates/InvenTree/settings/settings.html:271
+#: templates/InvenTree/settings/settings.html:269
 msgid "Edit Template"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:175
-#: templates/InvenTree/settings/settings.html:272
+#: templates/InvenTree/settings/settings.html:270
 msgid "Delete Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:251
+#: templates/InvenTree/settings/settings.html:249
 msgid "No part parameter templates found"
 msgstr ""
 
