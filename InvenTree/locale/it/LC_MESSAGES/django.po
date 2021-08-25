@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-24 12:31+0000\n"
+"POT-Creation-Date: 2021-08-25 05:06+0000\n"
 "PO-Revision-Date: 2021-08-24 04:52\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -200,11 +200,11 @@ msgstr ""
 msgid "parent"
 msgstr ""
 
-#: InvenTree/serializers.py:53 part/models.py:2454
+#: InvenTree/serializers.py:55 part/models.py:2454
 msgid "Must be a valid number"
 msgstr ""
 
-#: InvenTree/serializers.py:237
+#: InvenTree/serializers.py:244
 msgid "Filename"
 msgstr ""
 
