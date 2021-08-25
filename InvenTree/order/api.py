@@ -7,11 +7,12 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url, include
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
 
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
@@ -144,7 +145,7 @@ class POList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
@@ -226,9 +227,9 @@ class POLineItemList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter
+        InvenTreeOrderingFilter
     ]
 
     ordering_fields = [
@@ -272,7 +273,7 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = SOAttachmentSerializer
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     filter_fields = [
@@ -396,7 +397,7 @@ class SOList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
@@ -495,7 +496,7 @@ class SOLineItemList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter
     ]
@@ -580,7 +581,7 @@ class SOAllocationList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     # Default filterable fields
@@ -598,7 +599,7 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = POAttachmentSerializer
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     filter_fields = [
