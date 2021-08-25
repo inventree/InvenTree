@@ -239,12 +239,13 @@ class POLineItemList(generics.ListCreateAPIView):
     }
 
     ordering_fields = [
-        'part_name',
         'MPN',
-        'SKU',
-        'reference',
+        'part_name',
+        'purchase_price',
         'quantity',
         'received',
+        'reference',
+        'SKU',
     ]
 
     search_fields = [
