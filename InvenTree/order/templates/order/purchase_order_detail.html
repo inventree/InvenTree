@@ -364,7 +364,8 @@ $("#po-table").inventreeTable({
             }
         },
         {
-            sortable: false,
+            field: 'total_price',
+            sortable: true,
             title: '{% trans "Total price" %}',
             formatter: function(value, row) {
                 var total = row.purchase_price * row.quantity;

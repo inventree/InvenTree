@@ -215,6 +215,14 @@ class POLineItemList(generics.ListCreateAPIView):
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = POLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
     def get_serializer(self, *args, **kwargs):
 
         try:
@@ -246,6 +254,7 @@ class POLineItemList(generics.ListCreateAPIView):
         'received',
         'reference',
         'SKU',
+        'total_price',
     ]
 
     search_fields = [
@@ -269,6 +278,14 @@ class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
+
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        queryset = POLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
 
 
 class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
