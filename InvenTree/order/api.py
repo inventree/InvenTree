@@ -232,10 +232,16 @@ class POLineItemList(generics.ListCreateAPIView):
         InvenTreeOrderingFilter
     ]
 
+    ordering_field_aliases = {
+        'MPN': 'part__manufacturer_part__MPN',
+        'SKU': 'part__SKU',
+        'part_name': 'part__part__name',
+    }
+
     ordering_fields = [
-        'part__part__name',
-        'part__MPN',
-        'part__SKU',
+        'part_name',
+        'MPN',
+        'SKU',
         'reference',
         'quantity',
         'received',
