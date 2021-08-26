@@ -294,7 +294,7 @@ $("#po-line-table").inventreeTable({
         {
             field: 'part',
             sortable: true,
-            sortName: 'part__part__name',
+            sortName: 'part_name',
             title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
@@ -314,7 +314,7 @@ $("#po-line-table").inventreeTable({
         },
         {
             sortable: true,
-            sortName: 'part__SKU',
+            sortName: 'SKU',
             field: 'supplier_part_detail.SKU',
             title: '{% trans "SKU" %}',
             formatter: function(value, row, index, field) {
@@ -327,7 +327,7 @@ $("#po-line-table").inventreeTable({
         },
         {
             sortable: true,
-            sortName: 'part__MPN',
+            sortName: 'MPN',
             field: 'supplier_part_detail.manufacturer_part_detail.MPN',
             title: '{% trans "MPN" %}',
             formatter: function(value, row, index, field) {
@@ -364,6 +364,7 @@ $("#po-line-table").inventreeTable({
             }
         },
         {
+            field: 'total_price',
             sortable: true,
             field: 'total_price',
             title: '{% trans "Total price" %}',
@@ -384,7 +385,7 @@ $("#po-line-table").inventreeTable({
               }
         },
         {
-            sortable: true,
+            sortable: false,
             field: 'received',
             switchable: false,
             title: '{% trans "Received" %}',

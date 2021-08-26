@@ -43,6 +43,7 @@ from .serializers import StockItemTestResultSerializer
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
+from InvenTree.filters import InvenTreeOrderingFilter
 
 from decimal import Decimal, InvalidOperation
 
@@ -882,10 +883,16 @@ class StockList(generics.ListCreateAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
+    ordering_field_aliases = {
+        'SKU': 'supplier_part__SKU',
+    }
+
     ordering_fields = [
+        'batch',
+        'location',
         'part__name',
         'part__IPN',
         'updated',
@@ -893,10 +900,13 @@ class StockList(generics.ListCreateAPIView):
         'expiry_date',
         'quantity',
         'status',
+        'SKU',
     ]
 
     ordering = [
-        'part__name'
+        'part__name',
+        'quantity',
+        'location',
     ]
 
     search_fields = [
