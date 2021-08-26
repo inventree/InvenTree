@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 12:14+0000\n"
+"POT-Creation-Date: 2021-08-26 13:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6446,16 +6446,16 @@ msgid "No category parameter templates found"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:174
-#: templates/InvenTree/settings/settings.html:269
+#: templates/InvenTree/settings/settings.html:273
 msgid "Edit Template"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:175
-#: templates/InvenTree/settings/settings.html:270
+#: templates/InvenTree/settings/settings.html:274
 msgid "Delete Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:249
+#: templates/InvenTree/settings/settings.html:253
 msgid "No part parameter templates found"
 msgstr ""
 
