@@ -68,7 +68,9 @@
                     {% if min_total_bom_purchase_price %}
                     <tr>
                         <td></td>
-                        <td>{% trans 'Unit Purchase Price' %}</td>
+                        <td>{% trans 'Unit Purchase Price' %}
+                            {% if purchase_price_note %}<i class="fas fa-info-circle" title="{{purchase_price_note}}"></i>{% endif %}
+                        </td>
                         <td>Min: {% include "price.html" with price=min_unit_bom_purchase_price %}</td>
                         <td>Max: {% include "price.html" with price=max_unit_bom_purchase_price %}</td>
                     </tr>
