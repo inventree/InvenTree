@@ -208,7 +208,11 @@ $("#new-cat-param").click(function() {
 
     launchModalForm(`/part/category/${pk}/parameters/new/`, {
         success: function() {
-            $("#cat-param-table").bootstrapTable('refresh');
+            $("#cat-param-table").bootstrapTable('refresh', {
+                query: {
+                    category: pk,
+                }
+            });
         },
     });
 });
