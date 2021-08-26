@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-25 21:03+0000\n"
-"PO-Revision-Date: 2021-08-25 21:34\n"
+"PO-Revision-Date: 2021-08-26 08:08\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -788,11 +788,11 @@ msgstr ""
 
 #: build/models.py:251
 msgid "Completed items"
-msgstr ""
+msgstr "Voltooide voorraadartikelen"
 
 #: build/models.py:253
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Aantal voorraadartikelen die zijn voltooid"
 
 #: build/models.py:257 part/templates/part/part_base.html:198
 msgid "Build Status"
