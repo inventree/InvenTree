@@ -7,11 +7,12 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url, include
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
 
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
@@ -144,7 +145,7 @@ class POList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
@@ -214,6 +215,14 @@ class POLineItemList(generics.ListCreateAPIView):
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = POLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
     def get_serializer(self, *args, **kwargs):
 
         try:
@@ -226,18 +235,26 @@ class POLineItemList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter
+        InvenTreeOrderingFilter
     ]
 
+    ordering_field_aliases = {
+        'MPN': 'part__manufacturer_part__MPN',
+        'SKU': 'part__SKU',
+        'part_name': 'part__part__name',
+    }
+
     ordering_fields = [
-        'part__part__name',
-        'part__MPN',
-        'part__SKU',
-        'reference',
+        'MPN',
+        'part_name',
+        'purchase_price',
         'quantity',
         'received',
+        'reference',
+        'SKU',
+        'total_price',
     ]
 
     search_fields = [
@@ -262,6 +279,14 @@ class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        queryset = POLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
 
 class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
@@ -272,7 +297,7 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = SOAttachmentSerializer
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     filter_fields = [
@@ -396,7 +421,7 @@ class SOList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
@@ -495,7 +520,7 @@ class SOLineItemList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter
     ]
@@ -580,7 +605,7 @@ class SOAllocationList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     # Default filterable fields
@@ -598,7 +623,7 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = POAttachmentSerializer
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     filter_fields = [

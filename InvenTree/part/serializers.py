@@ -206,6 +206,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'stock',
             'trackable',
             'virtual',
+            'units',
         ]
 
 

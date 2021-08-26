@@ -111,9 +111,17 @@ function inventreeDocReady() {
         },
         create: function () {
             $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
-                return $('<li>')
-                    .append('<span>' + imageHoverIcon(item.thumbnail) + item.label + '</span>')
-                    .appendTo(ul);
+
+                var html = `<a href='/part/${item.id}/'><span>`;
+
+                html += `<img class='hover-img-thumb' src='`;
+                html += item.thumbnail || `/static/img/blank_image.png`;
+                html += `'> `;
+                html += item.label;
+
+                html += '</span></a>';
+
+                return $('<li>').append(html).appendTo(ul);
             };
         },
         select: function( event, ui ) {

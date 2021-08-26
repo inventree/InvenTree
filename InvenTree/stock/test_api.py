@@ -5,6 +5,8 @@ Unit testing for the Stock API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from datetime import datetime, timedelta
 
 from django.urls import reverse
@@ -666,3 +668,37 @@ class StockTestResultTest(StockAPITestCase):
         test = response.data[0]
         self.assertEqual(test['value'], '150kPa')
         self.assertEqual(test['user'], self.user.pk)
+
+    def test_post_bitmap(self):
+        """
+        2021-08-25
+
+        For some (unknown) reason, prior to fix https://github.com/inventree/InvenTree/pull/2018
+        uploading a bitmap image would result in a failure.
+
+        This test has been added to ensure that there is no regression.
+
+        As a bonus this also tests the file-upload component
+        """
+
+        here = os.path.dirname(__file__)
+
+        image_file = os.path.join(here, 'fixtures', 'test_image.bmp')
+
+        with open(image_file, 'rb') as bitmap:
+
+            data = {
+                'stock_item': 105,
+                'test': 'Checked Steam Valve',
+                'result': False,
+                'value': '150kPa',
+                'notes': 'I guess there was just too much pressure?',
+                "attachment": bitmap,
+            }
+
+            response = self.client.post(self.get_url(), data)
+
+            self.assertEqual(response.status_code, 201)
+
+            # Check that an attachment has been uploaded
+            self.assertIsNotNone(response.data['attachment'])

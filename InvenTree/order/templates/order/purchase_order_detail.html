@@ -19,7 +19,7 @@
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
-            <button type='button' class='btn btn-primary' id='new-po-line'>
+            <button type='button' class='btn btn-success' id='new-po-line'>
                 <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
             </button>
             <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>
@@ -28,7 +28,7 @@
             {% endif %}
         </div>
         
-        <table class='table table-striped table-condensed' id='po-table' data-toolbar='#order-toolbar-buttons'>
+        <table class='table table-striped table-condensed' id='po-line-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
 </div>
@@ -208,13 +208,13 @@ $('#new-po-line').click(function() {
 {% endif %}
 
 function reloadTable() {
-    $("#po-table").bootstrapTable("refresh");
+    $("#po-line-table").bootstrapTable("refresh");
 }
 
 function setupCallbacks() {
     // Setup callbacks for the line buttons
 
-    var table = $("#po-table");
+    var table = $("#po-line-table");
 
     {% if order.status == PurchaseOrderStatus.PENDING %}
     table.find(".button-line-edit").click(function() {
@@ -273,9 +273,9 @@ function setupCallbacks() {
 
 }
 
-$("#po-table").inventreeTable({
+$("#po-line-table").inventreeTable({
     onPostBody: setupCallbacks,
-    name: 'purchaseorder',
+    name: 'purchaseorderlines',
     sidePagination: 'server',
     formatNoMatches: function() { return "{% trans 'No line items found' %}"; },
     queryParams: {
@@ -294,7 +294,7 @@ $("#po-table").inventreeTable({
         {
             field: 'part',
             sortable: true,
-            sortName: 'part__part__name',
+            sortName: 'part_name',
             title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
@@ -314,7 +314,7 @@ $("#po-table").inventreeTable({
         },
         {
             sortable: true,
-            sortName: 'part__SKU',
+            sortName: 'SKU',
             field: 'supplier_part_detail.SKU',
             title: '{% trans "SKU" %}',
             formatter: function(value, row, index, field) {
@@ -327,7 +327,7 @@ $("#po-table").inventreeTable({
         },
         {
             sortable: true,
-            sortName: 'part__MPN',
+            sortName: 'MPN',
             field: 'supplier_part_detail.manufacturer_part_detail.MPN',
             title: '{% trans "MPN" %}',
             formatter: function(value, row, index, field) {
@@ -364,7 +364,9 @@ $("#po-table").inventreeTable({
             }
         },
         {
+            field: 'total_price',
             sortable: true,
+            field: 'total_price',
             title: '{% trans "Total price" %}',
             formatter: function(value, row) {
                 var total = row.purchase_price * row.quantity;
@@ -383,7 +385,7 @@ $("#po-table").inventreeTable({
               }
         },
         {
-            sortable: true,
+            sortable: false,
             field: 'received',
             switchable: false,
             title: '{% trans "Received" %}',
