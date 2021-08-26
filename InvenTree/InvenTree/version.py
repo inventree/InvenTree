@@ -10,7 +10,7 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.0 pre"
 
-INVENTREE_API_VERSION = 10
+INVENTREE_API_VERSION = 11
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
