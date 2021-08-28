@@ -36,6 +36,7 @@ jobs:
           sudo apt-get install gettext
           pip3 install invoke
           invoke install
+          invoke static
       - name: Check Templated Files
         run: |
           cd ci
