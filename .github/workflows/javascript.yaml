@@ -18,11 +18,19 @@ jobs:
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: inventree
     steps:
+      - name: Install node.js
+        uses: actions/setup-node@v2
+      - run: npm install
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Check Files
+      - name: Check Templated Files
         run: |
           cd ci
           python check_js_templates.py
-  
+      - name: Lint Javascript Files
+        run: |
+          invoke render-js-files
+          npx eslint js_tmp/*.js

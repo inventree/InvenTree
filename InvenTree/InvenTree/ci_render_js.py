@@ -74,20 +74,27 @@ class RenderJavascriptFiles(TestCase):
 
         js_files = pathlib.Path(directory).rglob('*.js')
 
+        n = 0
+
         for f in js_files:
             js = os.path.basename(f)
 
             self.download_file(js, prefix)
+
+            n += 1
+
+        return n
 
     def test_render_files(self):
         """
         Look for all javascript files
         """
 
-        self.download_files('translated', '/js/i18n')
-        self.download_files('dynamic', '/js/dynamic')
+        n = 0
 
+        print("Rendering javascript files...")
 
+        n += self.download_files('translated', '/js/i18n')
+        n += self.download_files('dynamic', '/js/dynamic')
 
-
-
+        print(f"Rendered {n} javascript files.")
