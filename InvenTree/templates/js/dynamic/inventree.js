@@ -1,6 +1,6 @@
 {% load inventree_extras %}
 
-function attachClipboard(selector, containerselector, textElement) {
+export function attachClipboard(selector, containerselector, textElement) {
     // set container
     if (containerselector){
         containerselector = document.getElementById(containerselector);
@@ -28,7 +28,7 @@ function attachClipboard(selector, containerselector, textElement) {
 }
 
 
-function inventreeDocReady() {
+export function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
      * This will be called for every page that extends "base.html"
      */
@@ -132,7 +132,7 @@ function inventreeDocReady() {
     });
 }
 
-function isFileTransfer(transfer) {
+export function isFileTransfer(transfer) {
     /* Determine if a transfer (e.g. drag-and-drop) is a file transfer 
      */
 
@@ -140,27 +140,7 @@ function isFileTransfer(transfer) {
 }
 
 
-function isOnlineTransfer(transfer) {
-    /* Determine if a drag-and-drop transfer is from another website.
-     * e.g. dragged from another browser window
-     */
-
-    return transfer.items.length > 0;
-}
-
-
-function getImageUrlFromTransfer(transfer) {
-    /* Extract external image URL from a drag-and-dropped image
-     */
-
-    var url = transfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1];
-
-    console.log('Image URL: ' + url);
-
-    return url;
-}
-
-function makeIconBadge(icon, title) {
+export function makeIconBadge(icon, title) {
     // Construct an 'icon badge' which floats to the right of an object
 
     var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
@@ -168,7 +148,8 @@ function makeIconBadge(icon, title) {
     return html;
 }
 
-function makeIconButton(icon, cls, pk, title, options={}) {
+
+export function makeIconButton(icon, cls, pk, title, options={}) {
     // Construct an 'icon button' using the fontawesome set
 
     var classes = `btn btn-default btn-glyph ${cls}`;
@@ -190,7 +171,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
     return html;
 }
 
-function makeProgressBar(value, maximum, opts={}) {
+export function makeProgressBar(value, maximum, opts={}) {
     /*
      * Render a progessbar!
      * 
@@ -258,7 +239,7 @@ function makeProgressBar(value, maximum, opts={}) {
 }
 
 
-function enableDragAndDrop(element, url, options) {
+export function enableDragAndDrop(element, url, options) {
     /* Enable drag-and-drop file uploading for a given element.
     
     Params:
@@ -315,7 +296,7 @@ function enableDragAndDrop(element, url, options) {
     });
 }
 
-function imageHoverIcon(url) {
+export function imageHoverIcon(url) {
     /* Render a small thumbnail icon for an image.
      * On mouseover, display a full-size version of the image
      */
@@ -334,7 +315,7 @@ function imageHoverIcon(url) {
     return html;
 }
 
-function inventreeSave(name, value) {
+export function inventreeSave(name, value) {
     /*
      * Save a key:value pair to local storage
      */
@@ -343,7 +324,7 @@ function inventreeSave(name, value) {
     localStorage.setItem(key, value);
 }
 
-function inventreeLoad(name, defaultValue) {
+export function inventreeLoad(name, defaultValue) {
     /* 
      * Retrieve a key:value pair from local storage
      */
@@ -357,28 +338,4 @@ function inventreeLoad(name, defaultValue) {
     } else {
         return value;
     }
-}
-
-function inventreeLoadInt(name) {
-    /*
-     * Retrieve a value from local storage, and attempt to cast to integer
-     */
-
-    var data = inventreeLoad(name);
-
-    return parseInt(data, 10);
-}
-
-function inventreeLoadFloat(name) {
-
-    var data = inventreeLoad(name);
-
-    return parseFloat(data);
-}
-
-function inventreeDel(name) {
-
-    var key = 'inventree-' + name;
-
-    localStorage.removeItem(key);
 }

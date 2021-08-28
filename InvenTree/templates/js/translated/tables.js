@@ -1,29 +1,29 @@
 {% load i18n %}
 
+import { inventreeLoad, inventreeSave } from '{% url "inventree.js" %}';
 
-function reloadtable(table) {
+
+export function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
 
 
-function editButton(url, text='Edit') {
+export function editButton(url, text='{% trans "Edit" %}') {
     return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
 }
 
 
-function deleteButton(url, text='Delete') {
+export function deleteButton(url, text='{% trans "Delete" %}') {
     return "<button class='btn btn-danger delete-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
 }
 
 
-function renderLink(text, url, options={}) {
+export function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
     }
 
     var max_length = options.max_length || -1;
-
-    var remove_http = options.remove_http || false;
 
     // Shorten the displayed length if required
     if ((max_length > 0) && (text.length > max_length)) {
@@ -39,14 +39,14 @@ function renderLink(text, url, options={}) {
 }
 
 
-function enableButtons(elements, enabled) {
+export function enableButtons(elements, enabled) {
     for (let item of elements) {
         $(item).prop('disabled', !enabled);
     }
 }
 
 
-function linkButtonsToSelection(table, buttons) {
+export function linkButtonsToSelection(table, buttons) {
     /* Link a bootstrap-table object to one or more buttons.
      * The buttons will only be enabled if there is at least one row selected
      */
@@ -59,7 +59,7 @@ function linkButtonsToSelection(table, buttons) {
     enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
 
     // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function(row) {
+    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
         enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
     });
 }
@@ -74,7 +74,7 @@ function isNumeric(n) {
  * Reload a table which has already been made into a bootstrap table.
  * New filters can be optionally provided, to change the query params.
  */
-function reloadTableFilters(table, filters) {
+export function reloadTableFilters(table, filters) {
 
     // Simply perform a refresh
     if (filters == null) {
@@ -88,8 +88,8 @@ function reloadTableFilters(table, filters) {
     // Construct a new list of filters to use for the query
     var params = {};
 
-    for (var key in filters) {
-        params[key] = filters[key];
+    for (var k in filters) {
+        params[k] = filters[k];
     }
 
     // Original query params will override
@@ -220,7 +220,7 @@ $.fn.inventreeTable = function(options) {
     };
 
     // Callback when a column is changed
-    options.onColumnSwitch = function(field, checked) {
+    options.onColumnSwitch = function() {
 
         var columns = table.bootstrapTable('getVisibleColumns');
 
@@ -263,7 +263,7 @@ $.fn.inventreeTable = function(options) {
     }
 }
 
-function customGroupSorter(sortName, sortOrder, sortData) {
+export function customGroupSorter(sortName, sortOrder, sortData) {
 
     var order = sortOrder === 'desc' ? -1 : 1;
 
