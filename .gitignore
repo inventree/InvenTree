@@ -67,6 +67,9 @@ secret_key.txt
 .coverage
 htmlcov/
 
+# Temporary javascript files (used for testing)
+js_tmp/
+
 # Development files
 dev/
 
