@@ -42,7 +42,7 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string, normalize, decimal2money
+from InvenTree.helpers import decimal2string, normalize, decimal2money, NOTE_NEWLINE
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -1571,11 +1571,11 @@ class Part(MPTTModel):
         max_price = normalize(max_price)
 
         if note:
-            note_text = "&#10;".join(note_text)
+            note_text = NOTE_NEWLINE.join(note_text)
             return (min_price, max_price, note_text)
         return (min_price, max_price)
 
-    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False):
+    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False, note=False):
 
         """ Return the price range for this part. This price can be either:
 
@@ -1591,24 +1591,45 @@ class Part(MPTTModel):
         # only get internal price if set and should be used
         if internal and self.has_internal_price_breaks:
             internal_price = self.get_internal_price(quantity)
+            if note:
+                return internal_price, internal_price, _('internal price')
             return internal_price, internal_price
 
         # only get purchase price if set and should be used
         if purchase:
             purchase_price = self.get_purchase_price(quantity)
             if purchase_price:
+                if note:
+                    return (*purchase_price, _('purchase price'))
                 return purchase_price
 
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
-        bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
+        if bom and note:
+            *bom_price_range, add_note = self.get_bom_price_range(quantity, internal=internal, note=True)
+        else:
+            bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
 
         if buy_price_range is None:
+            if note:
+                new_note = None
+                if add_note:
+                    split_notes = add_note.split(NOTE_NEWLINE)
+                    new_note = _('bom cost/price') + NOTE_NEWLINE + NOTE_NEWLINE.join(['   ' + a for a in split_notes])
+                return (*bom_price_range, new_note)
             return bom_price_range
 
-        elif bom_price_range is None:
+        elif bom_price_range is None or bom_price_range[0] is None:
+            if note:
+                return (*buy_price_range, _('purchase cost'))
             return buy_price_range
 
         else:
+            if note:
+                return (
+                    min(buy_price_range[0], bom_price_range[0]),
+                    max(buy_price_range[1], bom_price_range[1]),
+                    _('mixed prices between bom and buy')
+                )
             return (
                 min(buy_price_range[0], bom_price_range[0]),
                 max(buy_price_range[1], bom_price_range[1])
