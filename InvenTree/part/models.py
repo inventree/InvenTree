@@ -1537,12 +1537,19 @@ class Part(MPTTModel):
                 print("Warning: Item contains itself in BOM")
                 continue
 
-            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
+            if note:
+                *prices, add_note = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase, note=True)
+            else:
+                prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
+                add_note = False
 
-            if prices is None:
+            if prices is None or prices[0] is None:
                 if note:
-                    note_text.append(f"{item.sub_part}: {_('No price available!')}")
+                    note_text.append(f"{item.sub_part.name}: {_('No price available!')}")
                 continue
+
+            if note and add_note:
+                note_text.append(f"{item.sub_part.name}: {add_note}")
 
             low, high = prices
 
@@ -1565,7 +1572,7 @@ class Part(MPTTModel):
 
         if note:
             note_text = "&#10;".join(note_text)
-            return (min_price, max_price), note_text
+            return (min_price, max_price, note_text)
         return (min_price, max_price)
 
     def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False):
