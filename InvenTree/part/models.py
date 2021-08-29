@@ -63,8 +63,11 @@ def contiditional_ret(value=None, return_note=None, show_note: bool = False):
     return values with notes - if enabled
     """
     # handle case where None is supplied as value
-    if not value:
-        value = [value]
+    if value is None:
+        if show_note:
+            return None, return_note
+        return None
+
     if show_note:
         return (*value, return_note)
     return value
