@@ -58,6 +58,18 @@ import part.settings as part_settings
 logger = logging.getLogger("inventree")
 
 
+def contiditional_ret(value=None, return_note=None, show_note: bool = False):
+    """
+    return values with notes - if enabled
+    """
+    # handle case where None is supplied as value
+    if not value:
+        value = [value]
+    if show_note:
+        return (*value, return_note)
+    return value
+
+
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
 
@@ -1526,10 +1538,7 @@ class Part(MPTTModel):
 
         min_price = None
         max_price = None
-
-        # init note
-        if note:
-            note_text = []
+        note_text = []
 
         for item in self.get_bom_items().all().select_related('sub_part'):
 
@@ -1543,12 +1552,13 @@ class Part(MPTTModel):
                 prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
                 add_note = False
 
-            if prices is None or prices[0] is None:
+            if prices is None:
                 if note:
                     note_text.append(f"{item.sub_part.name}: {_('No price available!')}")
                 continue
 
             if note and add_note:
+                # add note for bom_item
                 note_text.append(f"{item.sub_part.name}: {add_note}")
 
             low, high = prices
@@ -1563,17 +1573,13 @@ class Part(MPTTModel):
             max_price += high
 
         if min_price is None or max_price is None:
-            if note:
-                return None, None
-            return None
+            return contiditional_ret(None, None, note)
 
         min_price = normalize(min_price)
         max_price = normalize(max_price)
 
-        if note:
-            note_text = NOTE_NEWLINE.join(note_text)
-            return (min_price, max_price, note_text)
-        return (min_price, max_price)
+        note_text = NOTE_NEWLINE.join(note_text)
+        return contiditional_ret((min_price, max_price), note_text, note)
 
     def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False, note=False):
 
@@ -1591,17 +1597,13 @@ class Part(MPTTModel):
         # only get internal price if set and should be used
         if internal and self.has_internal_price_breaks:
             internal_price = self.get_internal_price(quantity)
-            if note:
-                return internal_price, internal_price, _('internal price')
-            return internal_price, internal_price
+            return contiditional_ret((internal_price, internal_price), _('internal price'), note)
 
         # only get purchase price if set and should be used
         if purchase:
             purchase_price = self.get_purchase_price(quantity)
             if purchase_price:
-                if note:
-                    return (*purchase_price, _('purchase price'))
-                return purchase_price
+                return contiditional_ret(purchase_price, _('purchase price'), note)
 
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
         if bom and note:
@@ -1610,29 +1612,20 @@ class Part(MPTTModel):
             bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
 
         if buy_price_range is None:
-            if note:
-                new_note = None
-                if add_note:
-                    split_notes = add_note.split(NOTE_NEWLINE)
-                    new_note = _('bom cost/price') + NOTE_NEWLINE + NOTE_NEWLINE.join(['   ' + a for a in split_notes])
-                return (*bom_price_range, new_note)
-            return bom_price_range
+            if note and add_note:
+                split_notes = add_note.split(NOTE_NEWLINE)
+                add_note = _('bom cost/price') + NOTE_NEWLINE + NOTE_NEWLINE.join(['   ' + a for a in split_notes])
+            return contiditional_ret(bom_price_range, add_note if note else None, note)
 
-        elif bom_price_range is None or bom_price_range[0] is None:
-            if note:
-                return (*buy_price_range, _('purchase cost'))
-            return buy_price_range
+        elif bom_price_range is None or bom_price_range:
+            return contiditional_ret(buy_price_range, _('purchase cost'), note)
 
         else:
-            if note:
-                return (
-                    min(buy_price_range[0], bom_price_range[0]),
-                    max(buy_price_range[1], bom_price_range[1]),
-                    _('mixed prices between bom and buy')
-                )
-            return (
+            return contiditional_ret((
                 min(buy_price_range[0], bom_price_range[0]),
-                max(buy_price_range[1], bom_price_range[1])
+                max(buy_price_range[1], bom_price_range[1])),
+                _('mixed prices between bom and buy'),
+                note
             )
 
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
