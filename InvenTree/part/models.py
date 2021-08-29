@@ -1555,7 +1555,7 @@ class Part(MPTTModel):
                 prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
                 add_note = False
 
-            if prices is None:
+            if prices is None or prices[0] is None:
                 if note:
                     note_text.append(f"{item.sub_part.name}: {_('No price available!')}")
                 continue
@@ -1614,13 +1614,13 @@ class Part(MPTTModel):
         else:
             bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
 
-        if buy_price_range is None:
+        if buy_price_range is None or buy_price_range[0] is None:
             if note and add_note:
                 split_notes = add_note.split(NOTE_NEWLINE)
                 add_note = _('bom cost/price') + NOTE_NEWLINE + NOTE_NEWLINE.join(['   ' + a for a in split_notes])
             return contiditional_ret(bom_price_range, add_note if note else None, note)
 
-        elif bom_price_range is None or bom_price_range:
+        elif bom_price_range is None or bom_price_range[0] is None:
             return contiditional_ret(buy_price_range, _('purchase cost'), note)
 
         else:
