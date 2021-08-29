@@ -28,6 +28,7 @@ from djmoney.money import Money
 
 NOTE_NEWLINE = '&#10;'  # new line char for note
 
+
 def getSetting(key, backup_value=None):
     """
     Shortcut for reading a setting value from the database
