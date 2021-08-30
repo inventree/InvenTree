@@ -1,5 +1,18 @@
 {% load i18n %}
 
+/* exported
+    blankImage,
+    deleteButton,
+    editButton,
+    imageHoverIcon,
+    makeIconBadge,
+    makeIconButton,
+    makeProgressBar,
+    renderLink,
+    select2Thumbnail,
+    yesNoLabel,
+*/
+
 function yesNoLabel(value) {
     if (value) {
         return `<span class='label label-green'>{% trans "YES" %}</span>`;
@@ -9,9 +22,14 @@ function yesNoLabel(value) {
 }
 
 
-/*
- * A set of simple helper functions 
- */
+function editButton(url, text='{% trans "Edit" %}') {
+    return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
+}
+
+
+function deleteButton(url, text='{% trans "Delete" %}') {
+    return "<button class='btn btn-danger delete-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
+}
 
 
 function blankImage() {
@@ -165,5 +183,5 @@ function renderLink(text, url, options={}) {
         text = `${text_start}...${text_end}`;
     }
 
-    return '<a href="' + url + '">' + text + '</a>';
+    return `<a href="${url}">${text}</a>`;
 }

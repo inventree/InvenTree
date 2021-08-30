@@ -2,6 +2,63 @@
 {% load inventree_extras %}
 {% load status_codes %}
 
+/* globals
+    attachSelect,
+    attachToggle,
+    blankImage,
+    enableField,
+    clearField,
+    clearFieldOptions,
+    closeModal,
+    constructFormBody,
+    constructNumberInput,
+    createNewModal,
+    getFormFieldValue,
+    global_settings,
+    handleFormErrors,
+    imageHoverIcon,
+    inventreeDelete,
+    inventreeGet,
+    inventreePut,
+    launchModalForm,
+    linkButtonsToSelection,
+    loadTableFilters,
+    makeIconBadge,
+    makeIconButton,
+    makeOptionsList,
+    makePartIcons,
+    modalEnable,
+    modalSetContent,
+    modalSetTitle,
+    modalSubmit,
+    moment,
+    openModal,
+    printStockItemLabels,
+    printTestReports,
+    renderLink,
+    reloadFieldOptions,
+    scanItemsIntoLocation,
+    showAlertDialog,
+    setFieldValue,
+    setupFilterList,
+    showApiError,
+    stockStatusDisplay,
+*/
+
+/* exported
+    createNewStockItem,
+    exportStock,
+    loadInstalledInTable,
+    loadStockLocationTable,
+    loadStockTable,
+    loadStockTestResultsTable,
+    loadStockTrackingTable,
+    loadTableFilters,
+    locationFields,
+    removeStockRow,
+    stockStatusCodes,
+*/
+
 
 function locationFields() {
     return {
@@ -209,7 +266,7 @@ function adjustStock(action, items, options={}) {
                     title: readonly ? '{% trans "Quantity cannot be adjusted for serialized stock" %}' : '{% trans "Specify stock quantity" %}',
                 }
             )
-        };
+        }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
@@ -283,7 +340,7 @@ function adjustStock(action, items, options={}) {
         confirm: true,
         confirmMessage: '{% trans "Confirm stock adjustment" %}',
         modal: modal,
-        onSubmit: function(fields, opts) {
+        onSubmit: function(fields) {
 
             // "Delete" action gets handled differently
             if (action == 'delete') {
@@ -327,7 +384,7 @@ function adjustStock(action, items, options={}) {
             });
 
             // Add in extra field data
-            for (field_name in extraFields) {
+            for (var field_name in extraFields) {
                 data[field_name] = getFormFieldValue(
                     field_name,
                     fields[field_name],
@@ -342,7 +399,7 @@ function adjustStock(action, items, options={}) {
                 data,
                 {
                     method: 'POST',
-                    success: function(response, status) {
+                    success: function() {
 
                         // Destroy the modal window
                         $(modal).modal('hide');
@@ -544,7 +601,7 @@ function loadStockTestResultsTable(table, options) {
                 {
                     success: function(data) {
                         // Iterate through the returned test data
-                        data.forEach(function(item, index) {
+                        data.forEach(function(item) {
 
                             var match = false;
                             var override = false;
@@ -683,8 +740,8 @@ function loadStockTable(table, options) {
 
     var original = {};
 
-    for (var key in params) {
-        original[key] = params[key];
+    for (var k in params) {
+        original[k] = params[k];
     }
 
     setupFilterList(filterKey, table, filterListElement);
@@ -700,10 +757,13 @@ function loadStockTable(table, options) {
         grouping = options.grouping;
     }
 
+    var col = null;
+
     // Explicitly disable part grouping functionality
     // Might be able to add this in later on,
     // but there is a bug which makes this crash if paginating on the server side.
     // Ref: https://github.com/wenzhixin/bootstrap-table/issues/3250
+    // eslint-disable-next-line no-unused-vars
     grouping = false;
 
     var columns = [
@@ -727,22 +787,24 @@ function loadStockTable(table, options) {
         sortName: 'part__name',
         visible: params['part_detail'],
         switchable: params['part_detail'],
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
 
             var url = `/stock/item/${row.pk}/`;
             var thumb = row.part_detail.thumbnail;
             var name = row.part_detail.full_name;
 
-            html = imageHoverIcon(thumb) + renderLink(name, url);
+            var html = imageHoverIcon(thumb) + renderLink(name, url);
 
             html += makePartIcons(row.part_detail);
 
             return html;
         }
     };
+    
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     col = {
@@ -751,13 +813,15 @@ function loadStockTable(table, options) {
         sortName: 'part__IPN',
         visible: params['part_detail'],
         switchable: params['part_detail'],
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             return row.part_detail.IPN;
         },
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     columns.push({
@@ -765,7 +829,7 @@ function loadStockTable(table, options) {
         title: '{% trans "Description" %}',
         visible: params['part_detail'],
         switchable: params['part_detail'],
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             return row.part_detail.description;
         }
     });
@@ -773,7 +837,7 @@ function loadStockTable(table, options) {
     col = {
         field: 'quantity',
         title: '{% trans "Stock" %}',
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
 
             var val = parseFloat(value);
 
@@ -834,51 +898,61 @@ function loadStockTable(table, options) {
             return html;
         }
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+    
     columns.push(col);
 
     col = {
         field: 'status',
         title: '{% trans "Status" %}',
-        formatter: function(value, row, index, field) {
+        formatter: function(value) {
             return stockStatusDisplay(value);
         },
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     col = {
         field: 'batch',
         title: '{% trans "Batch" %}',
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     col = {
         field: 'location_detail.pathstring',
         title: '{% trans "Location" %}',
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             return locationDetail(row);
         }
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     col = {
         field: 'stocktake_date',
         title: '{% trans "Stocktake" %}',
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     col = {
@@ -887,18 +961,22 @@ function loadStockTable(table, options) {
         visible: global_settings.STOCK_ENABLE_EXPIRY,
         switchable: global_settings.STOCK_ENABLE_EXPIRY,
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     col = {
         field: 'updated',
         title: '{% trans "Last Updated" %}',
     };
+
     if (!options.params.ordering) {
         col['sortable'] = true;
-    };
+    }
+
     columns.push(col);
 
     columns.push({
@@ -963,7 +1041,7 @@ function loadStockTable(table, options) {
     if (!options.params.ordering) {
         col.sortable = true;
         col.sortName = 'purchase_price';
-    };
+    }
 
     columns.push(col);
 
@@ -1368,8 +1446,8 @@ function loadStockLocationTable(table, options) {
 
     var original = {};
 
-    for (var key in params) {
-        original[key] = params[key];
+    for (var k in params) {
+        original[k] = params[k];
     }
 
     setupFilterList(filterKey, table, filterListElement);
@@ -1437,7 +1515,7 @@ function loadStockTrackingTable(table, options) {
         field: 'date',
         title: '{% trans "Date" %}',
         sortable: true,
-        formatter: function(value, row, index, field) {
+        formatter: function(value) {
             var m = moment(value);
 
             if (m.isValid()) {
@@ -1453,7 +1531,7 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         field: 'label',
         title: '{% trans "Description" %}',
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             var html = "<b>" + value + "</b>";
 
             if (row.notes) {
@@ -1468,7 +1546,7 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         field: 'deltas',
         title: '{% trans "Details" %}',
-        formatter: function(details, row, index, field) {
+        formatter: function(details, row) {
             var html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
             if (!details) {
@@ -1603,7 +1681,7 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         field: 'user',
         title: '{% trans "User" %}',
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             if (value)
             {
                 // TODO - Format the user's first and last names
@@ -1741,26 +1819,6 @@ function loadInstalledInTable(table, options) {
     * Display a table showing the stock items which are installed in this stock item.
     */
 
-    function updateCallbacks() {
-        // Setup callback functions when buttons are pressed
-        table.find('.button-install').click(function() {
-            var pk = $(this).attr('pk');
-
-            launchModalForm(
-                `/stock/item/${options.stock_item}/install/`,
-                {
-                    data: {
-                        part: pk,
-                    },
-                    success: function() {
-                        // Refresh entire table!
-                        table.bootstrapTable('refresh');
-                    }
-                }
-            );
-        });
-    }
-
     table.inventreeTable({
         url: "{% url 'api-stock-list' %}",
         queryParams: {
@@ -1802,7 +1860,7 @@ function loadInstalledInTable(table, options) {
             {
                 field: 'status',
                 title: '{% trans "Status" %}',
-                formatter: function(value, row) {
+                formatter: function(value) {
                     return stockStatusDisplay(value);
                 }
             },

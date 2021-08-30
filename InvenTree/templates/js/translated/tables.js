@@ -1,20 +1,20 @@
 {% load i18n %}
 
+/* global
+    inventreeLoad,
+    inventreeSave,
+*/
+
+/* exported
+    customGroupSorter,
+    reloadtable,
+    renderLink,
+    reloadTableFilters,
+*/
 
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
-
-
-function editButton(url, text='{% trans "Edit" %}') {
-    return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
-}
-
-
-function deleteButton(url, text='{% trans "Delete" %}') {
-    return "<button class='btn btn-danger delete-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
-}
-
 
 function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
