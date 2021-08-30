@@ -1,6 +1,33 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+/* globals
+    companyFormFields,
+    constructForm,
+    createSupplierPart,
+    global_settings,
+    imageHoverIcon,
+    inventreeGet,
+    launchModalForm,
+    loadTableFilters,
+    makeIconBadge,
+    purchaseOrderStatusDisplay,
+    renderLink,
+    salesOrderStatusDisplay,
+    setupFilterList,
+*/
+
+/* exported
+    createSalesOrder,
+    editPurchaseOrderLineItem,
+    loadPurchaseOrderTable,
+    loadSalesOrderAllocationTable,
+    loadSalesOrderTable,
+    newPurchaseOrderFromOrderWizard,
+    newSupplierPartFromOrderWizard,
+    removeOrderRowFromOrderWizard,
+    removePurchaseOrderLineItem,
+*/
 
 // Create a new SalesOrder
 function createSalesOrder(options={}) {
@@ -15,7 +42,7 @@ function createSalesOrder(options={}) {
                 value: options.customer,
                 secondary: {
                     title: '{% trans "Add Customer" %}',
-                    fields: function(data) {
+                    fields: function() {
                         var fields = companyFormFields();
                         
                         fields.is_customer.value = true;
@@ -56,7 +83,7 @@ function createPurchaseOrder(options={}) {
                 value: options.supplier,
                 secondary: {
                     title: '{% trans "Add Supplier" %}',
-                    fields: function(data) {
+                    fields: function() {
                         var fields = companyFormFields();
 
                         fields.is_supplier.value = true;
@@ -278,7 +305,7 @@ function loadPurchaseOrderTable(table, options) {
                 title: '{% trans "Purchase Order" %}',
                 sortable: true,
                 switchable: false,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
 
@@ -300,7 +327,7 @@ function loadPurchaseOrderTable(table, options) {
                 title: '{% trans "Supplier" %}',
                 sortable: true,
                 sortName: 'supplier__name',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
                 }
             },
@@ -316,7 +343,7 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return purchaseOrderStatusDisplay(row.status, row.status_text);
                 }
             },
@@ -373,7 +400,7 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'reference',
                 title: '{% trans "Sales Order" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
@@ -395,7 +422,7 @@ function loadSalesOrderTable(table, options) {
                 sortName: 'customer__name',
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     if (!row.customer_detail) {
                         return '{% trans "Invalid Customer" %}';
@@ -418,7 +445,7 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'status',
                 title: '{% trans "Status" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return salesOrderStatusDisplay(row.status, row.status_text);
                 }
             },
@@ -486,7 +513,6 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 field: 'order',
                 switchable: false,
                 title: '{% trans "Order" %}',
-                switchable: false,
                 formatter: function(value, row) {
 
                     var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
