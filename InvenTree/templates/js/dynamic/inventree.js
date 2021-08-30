@@ -1,5 +1,20 @@
 {% load inventree_extras %}
 
+/* globals
+    ClipboardJS,
+    inventreeFormDataUpload,
+    launchModalForm,
+    user_settings,
+*/
+
+/* exported
+    attachClipboard,
+    enableDragAndDrop,
+    inventreeDocReady,
+    inventreeLoad,
+    inventreeSave,
+*/
+
 function attachClipboard(selector, containerselector, textElement) {
     // set container
     if (containerselector){
@@ -7,6 +22,8 @@ function attachClipboard(selector, containerselector, textElement) {
     } else {
         containerselector = document.body;
     }
+
+    var text = null;
 
     // set text-function
     if (textElement){
@@ -21,6 +38,7 @@ function attachClipboard(selector, containerselector, textElement) {
     }
 
     // create Clipboard
+    // eslint-disable-next-line no-unused-vars
     var cis = new ClipboardJS(selector, {
         text: text,
         container: containerselector
@@ -51,12 +69,13 @@ function inventreeDocReady() {
         // TODO - Only indicate that a drop event will occur if a file is being dragged
         var transfer = event.originalEvent.dataTransfer;
 
+        // eslint-disable-next-line no-constant-condition
         if (true || isFileTransfer(transfer)) {
             $(this).addClass('dragover');
         }
     });
 
-    $('.dropzone').on('dragleave drop', function(event) {
+    $('.dropzone').on('dragleave drop', function() {
         $(this).removeClass('dragover');
     });
 
@@ -154,7 +173,7 @@ function enableDragAndDrop(element, url, options) {
             method - HTTP method
     */
 
-    data = options.data || {};
+    var data = options.data || {};
 
     $(element).on('drop', function(event) {
 
