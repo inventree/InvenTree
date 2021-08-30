@@ -25,7 +25,9 @@ jobs:
     steps:
       - name: Install node.js
         uses: actions/setup-node@v2
-      - run: npm install
+      - run: |
+          npm install
+          npm install eslint eslint-config-google
       - name: Checkout Code
         uses: actions/checkout@v2
       - name: Setup Python
