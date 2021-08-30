@@ -1,6 +1,34 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+/* globals
+    attachToggle,
+    createNewModal,
+    inventreeFormDataUpload,
+    inventreeGet,
+    inventreePut,
+    modalEnable,
+    modalShowSubmitButton,
+    renderBuild,
+    renderCompany,
+    renderManufacturerPart,
+    renderOwner,
+    renderPart,
+    renderPartCategory,
+    renderPartParameterTemplate,
+    renderStockItem,
+    renderStockLocation,
+    renderSupplierPart,
+    renderUser,
+    showAlertDialog,
+    showAlertOrCache,
+    showApiError,
+*/
+
+/* exported
+    setFormGroupVisibility
+*/
+
 /**
  *
  * This file contains code for rendering (and managing) HTML forms
@@ -81,7 +109,7 @@ function canDelete(OPTIONS) {
  * Get the API endpoint options at the provided URL,
  * using a HTTP options request.
  */
-function getApiEndpointOptions(url, callback, options) {
+function getApiEndpointOptions(url, callback) {
 
     // Return the ajax request object
     $.ajax({
@@ -93,7 +121,7 @@ function getApiEndpointOptions(url, callback, options) {
             json: 'application/json',
         },
         success: callback,
-        error: function(request, status, error) {
+        error: function() {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
         }
@@ -172,7 +200,7 @@ function constructChangeForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function(request, status, error) {
+        error: function() {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
         }
@@ -211,7 +239,7 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function(request, status, error) {
+        error: function() {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
         }
@@ -427,9 +455,9 @@ function constructFormBody(fields, options) {
 
     for (var idx = 0; idx < field_names.length; idx++) {
 
-        var name = field_names[idx];
+        var field_name = field_names[idx];
 
-        var field = fields[name];
+        var field = fields[field_name];
 
         switch (field.type) {
             // Skip field types which are simply not supported
@@ -640,10 +668,10 @@ function submitFormData(fields, options) {
         data,
         {
             method: options.method,
-            success: function(response, status) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             },
-            error: function(xhr, status, thrownError) {
+            error: function(xhr) {
                 
                 switch (xhr.status) {
                     case 400:   // Bad request
@@ -872,7 +900,7 @@ function handleFormErrors(errors, fields, options) {
 
     var first_error_field = null;
 
-    for (field_name in errors) {
+    for (var field_name in errors) {
 
         // Add the 'has-error' class
         $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
@@ -886,16 +914,16 @@ function handleFormErrors(errors, fields, options) {
         }
 
         // Add an entry for each returned error message
-        for (var idx = field_errors.length-1; idx >= 0; idx--) {
+        for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-            var error_text = field_errors[idx];
+            var error_text = field_errors[ii];
 
-            var html = `
-            <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
+            var error_html = `
+            <span id='error_${ii+1}_id_${field_name}' class='help-block form-error-message'>
                 <strong>${error_text}</strong>
             </span>`;
 
-            field_dom.append(html);
+            field_dom.append(error_html);
         }
     }
 
@@ -1103,7 +1131,7 @@ function addSecondaryModal(field, fields, options) {
 
         // If no onSuccess function is defined, provide a default one
         if (!secondary.onSuccess) {
-            secondary.onSuccess = function(data, opts) {
+            secondary.onSuccess = function(data) {
 
                 // Force refresh from the API, to get full detail
                 inventreeGet(`${url}${data.pk}/`, {}, {
@@ -1169,6 +1197,8 @@ function initializeRelatedField(field, fields, options) {
             cache: true,
             data: function(params) {
 
+                var offset = 0;
+
                 if (!params.page) {
                     offset = 0;
                 } else {
@@ -1222,7 +1252,7 @@ function initializeRelatedField(field, fields, options) {
                 return results;
             },
         },
-        templateResult: function(item, container) {
+        templateResult: function(item) {
 
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
@@ -1247,7 +1277,7 @@ function initializeRelatedField(field, fields, options) {
                 return `${name} - ${item.id}`;
             }
         },
-        templateSelection: function(item, container) {
+        templateSelection: function(item) {
 
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
@@ -1259,7 +1289,6 @@ function initializeRelatedField(field, fields, options) {
 
             if (!data.pk) {
                 return field.placeholder || '';
-                return $(searching());
             }
 
             // Custom formatting for selected item
@@ -1739,7 +1768,7 @@ function constructInputOptions(name, classes, type, parameters) {
 
 
 // Construct a "hidden" input
-function constructHiddenInput(name, parameters, options) {
+function constructHiddenInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1751,7 +1780,7 @@ function constructHiddenInput(name, parameters, options) {
 
 
 // Construct a "checkbox" input
-function constructCheckboxInput(name, parameters, options) {
+function constructCheckboxInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1763,7 +1792,7 @@ function constructCheckboxInput(name, parameters, options) {
 
 
 // Construct a "text" input
-function constructTextInput(name, parameters, options) {
+function constructTextInput(name, parameters) {
 
     var classes = '';
     var type = '';
@@ -1793,7 +1822,7 @@ function constructTextInput(name, parameters, options) {
 
 
 // Construct a "number" field
-function constructNumberInput(name, parameters, options) {
+function constructNumberInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1805,7 +1834,7 @@ function constructNumberInput(name, parameters, options) {
 
 
 // Construct a "choice" input
-function constructChoiceInput(name, parameters, options) {
+function constructChoiceInput(name, parameters) {
 
     var html = `<select id='id_${name}' class='select form-control' name='${name}'>`;
 
@@ -1838,7 +1867,7 @@ function constructChoiceInput(name, parameters, options) {
  * be converted into a select2 input.
  * This will then be served custom data from the API (as required)...
  */
-function constructRelatedFieldInput(name, parameters, options) {
+function constructRelatedFieldInput(name) {
 
     var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
 
@@ -1851,7 +1880,7 @@ function constructRelatedFieldInput(name, parameters, options) {
 /*
  * Construct a field for file upload
  */
-function constructFileUploadInput(name, parameters, options) {
+function constructFileUploadInput(name, parameters) {
 
     var cls = 'clearablefileinput';
 
@@ -1871,7 +1900,7 @@ function constructFileUploadInput(name, parameters, options) {
 /*
  * Construct a field for a date input
  */
-function constructDateInput(name, parameters, options) {
+function constructDateInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1886,7 +1915,7 @@ function constructDateInput(name, parameters, options) {
  * Construct a "candy" field input
  * No actual field data!
  */
-function constructCandyInput(name, parameters, options) {
+function constructCandyInput(name, parameters) {
 
     return parameters.html;
 
@@ -1901,7 +1930,7 @@ function constructCandyInput(name, parameters, options) {
  * - parameters: Field parameters returned by the OPTIONS method
  *  
  */
-function constructHelpText(name, parameters, options) {
+function constructHelpText(name, parameters) {
     
     var style = '';
 

@@ -1,5 +1,22 @@
 {% load i18n %}
 
+/* globals
+    imageHoverIcon,
+    inventreePut,
+    modalEnable,
+    modalSetContent,
+    modalSetTitle,
+    modalShowSubmitButton,
+    modalSubmit,
+    showAlertOrCache,
+*/
+
+/* exported
+    barcodeScanDialog,
+    linkBarcodeDialog,
+    barcodeCheckIn,
+*/
+
 function makeBarcodeInput(placeholderText='', hintText='') {
     /*
      * Generate HTML for a barcode input

@@ -50,7 +50,7 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'attachment',
                 title: '{% trans "File" %}',
-                formatter: function(value, row) {
+                formatter: function(value) {
 
                     var icon = 'fa-file-alt';
 
