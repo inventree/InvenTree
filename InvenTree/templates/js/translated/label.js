@@ -1,6 +1,25 @@
 {% load i18n %}
 
-function printStockItemLabels(items, options={}) {
+/* globals
+    attachSelect,
+    closeModal,
+    inventreeGet,
+    makeOptionsList,
+    modalEnable,
+    modalSetContent,
+    modalSetTitle,
+    modalSubmit,
+    openModal,
+    showAlertDialog,
+*/
+
+/* exported
+    printPartLabels,
+    printStockItemLabels,
+    printStockLocationLabels,
+*/
+
+function printStockItemLabels(items) {
     /**
      * Print stock item labels for the given stock items
      */
@@ -54,7 +73,7 @@ function printStockItemLabels(items, options={}) {
     );
 }
 
-function printStockLocationLabels(locations, options={}) {
+function printStockLocationLabels(locations) {
 
     if (locations.length == 0) {
         showAlertDialog(
@@ -105,7 +124,7 @@ function printStockLocationLabels(locations, options={}) {
 }
 
 
-function printPartLabels(parts, options={}) {
+function printPartLabels(parts) {
     /**
      * Print labels for the provided parts
      */
