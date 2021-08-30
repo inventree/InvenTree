@@ -12,10 +12,22 @@
     reloadTableFilters,
 */
 
+/**
+ * Reload a named table
+ * @param table 
+ */
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
 
+
+/**
+ * Render a URL for display
+ * @param {String} text 
+ * @param {String} url 
+ * @param {object} options 
+ * @returns link text
+ */
 function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
@@ -63,6 +75,11 @@ function linkButtonsToSelection(table, buttons) {
 }
 
 
+/**
+ * Returns true if the input looks like a valid number
+ * @param {String} n 
+ * @returns 
+ */
 function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
@@ -134,7 +151,6 @@ function convertQueryParameters(params, filters) {
         var ordering = params['sort'] || null;
 
         if (ordering) {
-
             if (order == 'desc') {
                 ordering = `-${ordering}`;
             }
@@ -332,38 +348,38 @@ function customGroupSorter(sortName, sortOrder, sortData) {
 }
 
 // Expose default bootstrap table string literals to translation layer
-(function ($) {
+(function($) {
     'use strict';
 
     $.fn.bootstrapTable.locales['en-US-custom'] = {
-        formatLoadingMessage: function () {
+        formatLoadingMessage: function() {
             return '{% trans "Loading data" %}';
         },
-        formatRecordsPerPage: function (pageNumber) {
+        formatRecordsPerPage: function(pageNumber) {
             return `${pageNumber} {% trans "rows per page" %}`;
         },
-        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+        formatShowingRows: function(pageFrom, pageTo, totalRows) {
             return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
         },
-        formatSearch: function () {
+        formatSearch: function() {
             return '{% trans "Search" %}';
         },
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '{% trans "No matching results" %}';
         },
-        formatPaginationSwitch: function () {
+        formatPaginationSwitch: function() {
             return '{% trans "Hide/Show pagination" %}';
         },
-        formatRefresh: function () {
+        formatRefresh: function() {
             return '{% trans "Refresh" %}';
         },
-        formatToggle: function () {
+        formatToggle: function() {
             return '{% trans "Toggle" %}';
         },
-        formatColumns: function () {
+        formatColumns: function() {
             return '{% trans "Columns" %}';
         },
-        formatAllRows: function () {
+        formatAllRows: function() {
             return '{% trans "All" %}';
         }
     };
