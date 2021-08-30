@@ -7,4 +7,8 @@ extends:
   - google
 parserOptions:
   ecmaVersion: 12
-rules: {}
+rules: {
+  indent:
+    - error
+    - 4
+}
