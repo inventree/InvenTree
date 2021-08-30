@@ -3,22 +3,22 @@
 import { inventreeLoad, inventreeSave } from '{% url "inventree.js" %}';
 
 
-export function reloadtable(table) {
+function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
 
 
-export function editButton(url, text='{% trans "Edit" %}') {
+function editButton(url, text='{% trans "Edit" %}') {
     return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
 }
 
 
-export function deleteButton(url, text='{% trans "Delete" %}') {
+function deleteButton(url, text='{% trans "Delete" %}') {
     return "<button class='btn btn-danger delete-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
 }
 
 
-export function renderLink(text, url, options={}) {
+function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
     }
@@ -39,14 +39,14 @@ export function renderLink(text, url, options={}) {
 }
 
 
-export function enableButtons(elements, enabled) {
+function enableButtons(elements, enabled) {
     for (let item of elements) {
         $(item).prop('disabled', !enabled);
     }
 }
 
 
-export function linkButtonsToSelection(table, buttons) {
+function linkButtonsToSelection(table, buttons) {
     /* Link a bootstrap-table object to one or more buttons.
      * The buttons will only be enabled if there is at least one row selected
      */
@@ -74,7 +74,7 @@ function isNumeric(n) {
  * Reload a table which has already been made into a bootstrap table.
  * New filters can be optionally provided, to change the query params.
  */
-export function reloadTableFilters(table, filters) {
+function reloadTableFilters(table, filters) {
 
     // Simply perform a refresh
     if (filters == null) {
@@ -263,7 +263,7 @@ $.fn.inventreeTable = function(options) {
     }
 }
 
-export function customGroupSorter(sortName, sortOrder, sortData) {
+function customGroupSorter(sortName, sortOrder, sortData) {
 
     var order = sortOrder === 'desc' ? -1 : 1;
 

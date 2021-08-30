@@ -2,16 +2,14 @@
 // InvenTree settings
 
 {% user_settings request.user as USER_SETTINGS %}
-
-export const user_settings = {
+const user_settings = {
     {% for key, value in USER_SETTINGS.items %}
     {{ key }}: {% primitive_to_javascript value %},
     {% endfor %}
 };
 
 {% global_settings as GLOBAL_SETTINGS %}
-
-export const global_settings = {
+const global_settings = {
     {% for key, value in GLOBAL_SETTINGS.items %}
     {{ key }}: {% primitive_to_javascript value %},
     {% endfor %}

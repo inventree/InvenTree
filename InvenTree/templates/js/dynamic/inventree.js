@@ -1,6 +1,6 @@
 {% load inventree_extras %}
 
-export function attachClipboard(selector, containerselector, textElement) {
+function attachClipboard(selector, containerselector, textElement) {
     // set container
     if (containerselector){
         containerselector = document.getElementById(containerselector);
@@ -28,7 +28,7 @@ export function attachClipboard(selector, containerselector, textElement) {
 }
 
 
-export function inventreeDocReady() {
+function inventreeDocReady() {
     /* Run this function when the HTML document is loaded.
      * This will be called for every page that extends "base.html"
      */
@@ -132,7 +132,7 @@ export function inventreeDocReady() {
     });
 }
 
-export function isFileTransfer(transfer) {
+function isFileTransfer(transfer) {
     /* Determine if a transfer (e.g. drag-and-drop) is a file transfer 
      */
 
@@ -140,106 +140,7 @@ export function isFileTransfer(transfer) {
 }
 
 
-export function makeIconBadge(icon, title) {
-    // Construct an 'icon badge' which floats to the right of an object
-
-    var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
-
-    return html;
-}
-
-
-export function makeIconButton(icon, cls, pk, title, options={}) {
-    // Construct an 'icon button' using the fontawesome set
-
-    var classes = `btn btn-default btn-glyph ${cls}`;
-
-    var id = `${cls}-${pk}`;
-
-    var html = '';
-
-    var extraProps = '';
-
-    if (options.disabled) {
-        extraProps += "disabled='true' ";
-    }
-
-    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
-    html += `<span class='fas ${icon}'></span>`;
-    html += `</button>`;
-
-    return html;
-}
-
-export function makeProgressBar(value, maximum, opts={}) {
-    /*
-     * Render a progessbar!
-     * 
-     * @param value is the current value of the progress bar
-     * @param maximum is the maximum value of the progress bar
-     */
-
-    var options = opts || {};
-
-    value = parseFloat(value);
-
-    var percent = 100;
-
-    // Prevent div-by-zero or null value
-    if (maximum && maximum > 0) {
-        maximum = parseFloat(maximum);
-        percent = parseInt(value / maximum * 100);
-    }
-
-    if (percent > 100) {
-        percent = 100;
-    }
-
-    var extraclass = '';
-
-    if (value > maximum) {
-        extraclass='progress-bar-over';
-    } else if (value < maximum) {
-        extraclass = 'progress-bar-under';
-    }
-
-    var style = options.style || '';
-
-    var text = '';
-
-    if (style == 'percent') {
-        // Display e.g. "50%"
-
-        text = `${percent}%`;
-    } else if (style == 'max') {
-        // Display just the maximum value
-        text = `${maximum}`;
-    } else if (style == 'value') {
-        // Display just the current value
-        text = `${value}`;
-    } else if (style == 'blank') {
-        // No display!
-        text = '';
-    } else {
-        /* Default style
-        * Display e.g. "5 / 10"
-        */
-
-        text = `${value} / ${maximum}`;
-    }
-
-    var id = options.id || 'progress-bar';
-
-    return `
-    <div id='${id}' class='progress'>
-        <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
-        <div class='progress-value'>${text}</div>
-    </div>
-    `;
-}
-
-
-export function enableDragAndDrop(element, url, options) {
+function enableDragAndDrop(element, url, options) {
     /* Enable drag-and-drop file uploading for a given element.
     
     Params:
@@ -296,26 +197,8 @@ export function enableDragAndDrop(element, url, options) {
     });
 }
 
-export function imageHoverIcon(url) {
-    /* Render a small thumbnail icon for an image.
-     * On mouseover, display a full-size version of the image
-     */
 
-    if (!url) {
-        url = '/static/img/blank_image.png';
-    }
-
-    var html = `
-        <a class='hover-icon'>
-            <img class='hover-img-thumb' src='` + url + `'>
-            <img class='hover-img-large' src='` + url + `'>
-        </a>
-        `;
-
-    return html;
-}
-
-export function inventreeSave(name, value) {
+function inventreeSave(name, value) {
     /*
      * Save a key:value pair to local storage
      */
@@ -324,7 +207,7 @@ export function inventreeSave(name, value) {
     localStorage.setItem(key, value);
 }
 
-export function inventreeLoad(name, defaultValue) {
+function inventreeLoad(name, defaultValue) {
     /* 
      * Retrieve a key:value pair from local storage
      */

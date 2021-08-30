@@ -11,7 +11,7 @@ import { global_settings } from '{% url "settings.js" %}';
 {% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
 
 
-export function getAvailableTableFilters(tableKey) {
+function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
