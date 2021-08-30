@@ -1,5 +1,25 @@
 {% load i18n %}
 
+/* globals
+    attachSelect,
+    closeModal,
+    inventreeGet,
+    openModal,
+    makeOptionsList,
+    modalEnable,
+    modalSetContent,
+    modalSetTitle,
+    modalSubmit,
+    showAlertDialog,
+*/
+
+/* exported
+    printBomReports,
+    printBuildReports,
+    printPurchaseOrderReports,
+    printSalesOrderReports,
+    printTestReports,
+*/
 
 function selectReport(reports, items, options={}) {
     /**
@@ -88,7 +108,7 @@ function selectReport(reports, items, options={}) {
 }
 
 
-function printTestReports(items, options={}) {
+function printTestReports(items) {
     /**
      * Print test reports for the provided stock item(s)
      */
@@ -142,7 +162,7 @@ function printTestReports(items, options={}) {
 }
 
 
-function printBuildReports(builds, options={}) {
+function printBuildReports(builds) {
     /**
      * Print Build report for the provided build(s)
      */
@@ -195,7 +215,7 @@ function printBuildReports(builds, options={}) {
 }
 
 
-function printBomReports(parts, options={}) {
+function printBomReports(parts) {
     /**
      * Print BOM reports for the provided part(s)
      */
@@ -249,7 +269,7 @@ function printBomReports(parts, options={}) {
 }
 
 
-function printPurchaseOrderReports(orders, options={}) {
+function printPurchaseOrderReports(orders) {
     /**
      * Print PO reports for the provided purchase order(s)
      */
@@ -303,7 +323,7 @@ function printPurchaseOrderReports(orders, options={}) {
 }
 
 
-function printSalesOrderReports(orders, options={}) {
+function printSalesOrderReports(orders) {
     /**
      * Print SO reports for the provided purchase order(s)
      */

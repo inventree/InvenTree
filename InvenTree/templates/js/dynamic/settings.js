@@ -1,5 +1,9 @@
 {% load inventree_extras %}
-// InvenTree settings
+
+/* exported
+    user_settings,
+    global_settings,
+*/
 
 {% user_settings request.user as USER_SETTINGS %}
 const user_settings = {
