@@ -1,5 +1,15 @@
 {% load i18n %}
 
+/* globals
+    makeIconButton,
+    renderLink,
+*/
+
+/* exported
+    loadAttachmentTable,
+    reloadAttachmentTable,
+*/
+
 function reloadAttachmentTable() {
 
     $('#attachment-table').bootstrapTable("refresh");

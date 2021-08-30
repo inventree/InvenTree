@@ -1,5 +1,16 @@
 {% load i18n %}
 
+/* globals
+    getAvailableTableFilters,
+    inventreeLoad,
+    inventreeSave,
+    reloadTableFilters,
+*/
+   
+/* exported
+   setupFilterList,
+*/
+
 /**
  * Code for managing query filters / table options.
  * 
@@ -42,7 +53,7 @@ function loadTableFilters(tableKey) {
 
     var filters = {};
 
-    filterstring.split("&").forEach(function(item, index) {
+    filterstring.split("&").forEach(function(item) {
         item = item.trim();
 
         if (item.length > 0) {
@@ -227,7 +238,7 @@ function generateFilterInput(tableKey, filterKey) {
         html = `<select class='form-control filter-input' id='${id}' name='value'>`;
 
         for (var key in options) {
-            option = options[key];
+            var option = options[key];
             html += `<option value='${key}'>${option.value}</option>`;
         }
 
@@ -346,7 +357,7 @@ function setupFilterList(tableKey, table, target) {
     });
 
     // Add callback for deleting each filter
-    element.find(".close").click(function(event) {
+    element.find(".close").click(function() {
         var me = $(this);
 
         var filter = me.attr(`filter-tag-${tableKey}`);
@@ -371,15 +382,6 @@ function getFilterTitle(tableKey, filterKey) {
     return settings.title || filterKey;
 }
 
-
-/**
- * Return the pretty description for the given table and filter selection
- */
-function getFilterDescription(tableKey, filterKey) {
-    var settings = getFilterSettings(tableKey, filterKey);
-
-    return settings.title;
-}
 
 /*
  * Return a description for the given table and filter selection.

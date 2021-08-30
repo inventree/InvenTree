@@ -1,7 +1,17 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-var jQuery = window.$;
+/* globals
+    renderErrorMessage,
+    showAlertDialog,
+*/
+
+/* exported
+    inventreeGet,
+    inventreeDelete,
+    inventreeFormDataUpload,
+    showApiError,
+*/
 
 $.urlParam = function(name){
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -35,7 +45,7 @@ function inventreeGet(url, filters={}, options={}) {
     var csrftoken = getCookie('csrftoken');
 
     return $.ajax({
-        beforeSend: function(xhr, settings) {
+        beforeSend: function(xhr) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
         url: url,
@@ -73,7 +83,7 @@ function inventreeFormDataUpload(url, data, options={}) {
     var csrftoken = getCookie('csrftoken');
 
     return $.ajax({
-        beforeSend: function(xhr, settings) {
+        beforeSend: function(xhr) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
         url: url,
@@ -105,7 +115,7 @@ function inventreePut(url, data={}, options={}) {
     var csrftoken = getCookie('csrftoken');
 
     return $.ajax({
-        beforeSend: function(xhr, settings) {
+        beforeSend: function(xhr) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
         url: url,

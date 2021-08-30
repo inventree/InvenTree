@@ -1,5 +1,14 @@
 {% load i18n %}
 
+/* globals
+*/
+
+/* exported
+    clearEvents,
+    endDate,
+    startDate,
+*/
+
 /**
  * Helper functions for calendar display
  */

@@ -1,5 +1,22 @@
 {% load i18n %}
 
+/* globals
+    inventreeGet,
+    showAlertOrCache,
+*/
+
+/* exported
+    attachSecondaryModal,
+    clearField,
+    clearFieldOptions,
+    closeModal,
+    enableField,
+    getFieldValue,
+    reloadFieldOptions,
+    showModalImage,
+    removeRowFromModalForm,
+    showQuestionDialog,
+*/
 
 /*
  * Create and display a new modal dialog
@@ -77,7 +94,7 @@ function createNewModal(options={}) {
     });
 
     // Automatically remove the modal when it is deleted!
-    $(modal_name).on('hidden.bs.modal', function(e) {
+    $(modal_name).on('hidden.bs.modal', function() {
         $(modal_name).remove();
     });
 
@@ -253,7 +270,7 @@ function reloadFieldOptions(fieldName, options) {
             // Update the target field with the new options
             setFieldOptions(fieldName, opts);
         },
-        error: function(response) {
+        error: function() {
             console.log("Error GETting field options");
         }
     });
@@ -344,7 +361,7 @@ function attachToggle(modal) {
      * and also larger toggle style buttons are easier to press!
      */
 
-    $(modal).find("input[type='checkbox']").each(function(x) {
+    $(modal).find("input[type='checkbox']").each(function() {
         $(this).bootstrapToggle({
             size: 'small',
             onstyle: 'success',
@@ -554,7 +571,7 @@ function renderErrorMessage(xhr) {
 }
 
 
-function showAlertDialog(title, content, options={}) {
+function showAlertDialog(title, content) {
     /* Display a modal dialog message box.
      * 
      * title - Title text 
@@ -762,15 +779,15 @@ function attachSecondaryModal(modal, options) {
 }
 
 
+// eslint-disable-next-line no-unused-vars
 function attachSecondaries(modal, secondaries) {
     /* Attach a provided list of secondary modals */
 
     // 2021-07-18 - Secondary modals will be disabled for now, until they are re-implemented in the "API forms" architecture
-    return;
 
-    for (var i = 0; i < secondaries.length; i++) {
-        attachSecondaryModal(modal, secondaries[i]);
-    }
+    // for (var i = 0; i < secondaries.length; i++) {
+    //     attachSecondaryModal(modal, secondaries[i]);
+    // }
 }
 
 function insertActionButton(modal, options) {
@@ -838,8 +855,6 @@ function handleModalForm(url, options) {
 
     var form = $(modal).find('.js-modal-form');
 
-    var _form = $(modal).find(".js-modal-form");
-
     form.ajaxForm({
         url: url,
         dataType: 'json',
@@ -860,7 +875,7 @@ function handleModalForm(url, options) {
                 modalEnable(modal, false);
             },
             // POST was successful
-            success: function(response, status, xhr, f) {
+            success: function(response) {
                 // Re-enable the modal
                 modalEnable(modal, true);
                 if ('form_valid' in response) {
@@ -913,13 +928,13 @@ function handleModalForm(url, options) {
                     afterForm(response, options);
                 }
             },
-            error: function(xhr, ajaxOptions, thrownError) {
+            error: function(xhr) {
                 // There was an error submitting form data via POST
 
                 $(modal).modal('hide'); 
                 showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
             },
-            complete: function(xhr) {
+            complete: function() {
                 //TODO
             }
         });
@@ -960,7 +975,7 @@ function launchModalForm(url, options = {}) {
     $(modal).find('#modal-footer-buttons').html('');
 
     // Form the ajax request to retrieve the django form data
-    ajax_data = {
+    var ajax_data = {
         url: url,
         type: 'get',
         dataType: 'json',
@@ -1017,7 +1032,7 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Invalid server response" %}', '{% trans "JSON response missing form data" %}');
             }
         },
-        error: function (xhr, ajaxOptions, thrownError) {
+        error: function (xhr) {
 
             $(modal).modal('hide');
 
