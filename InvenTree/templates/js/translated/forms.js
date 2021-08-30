@@ -467,7 +467,7 @@ function constructFormBody(fields, options) {
                 break;
         }
         
-        html += constructField(name, field, options);
+        html += constructField(field_name, field, options);
     }
 
     if (options.current_group) {
