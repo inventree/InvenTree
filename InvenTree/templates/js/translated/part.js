@@ -5,15 +5,6 @@
  * Requires api.js to be loaded first
  */
 
-function yesNoLabel(value) {
-    if (value) {
-        return `<span class='label label-green'>{% trans "YES" %}</span>`;
-    } else {
-        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
-    }
-}
-
-
 function partGroups(options={}) {
 
     return {

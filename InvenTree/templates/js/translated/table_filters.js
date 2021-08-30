@@ -2,8 +2,6 @@
 {% load status_codes %}
 {% load inventree_extras %}
 
-import { global_settings } from '{% url "settings.js" %}';
-
 {% include "status_codes.html" with label='stock' options=StockStatus.list %}
 {% include "status_codes.html" with label='stockHistory' options=StockHistoryCode.list %}
 {% include "status_codes.html" with label='build' options=BuildStatus.list %}

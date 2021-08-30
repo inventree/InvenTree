@@ -1,7 +1,5 @@
 {% load i18n %}
 
-import { inventreeLoad, inventreeSave } from '{% url "inventree.js" %}';
-
 
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');

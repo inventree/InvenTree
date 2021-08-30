@@ -1,3 +1,14 @@
+{% load i18n %}
+
+function yesNoLabel(value) {
+    if (value) {
+        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+    } else {
+        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+    }
+}
+
+
 /*
  * A set of simple helper functions 
  */
