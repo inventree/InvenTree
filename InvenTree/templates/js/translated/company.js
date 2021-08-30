@@ -1,5 +1,28 @@
 {% load i18n %}
 
+/* globals
+    constructForm,
+    imageHoverIcon,
+    inventreeDelete,
+    loadTableFilters,
+    makeIconButton,
+    renderLink,
+    setupFilterList,
+    showQuestionDialog,
+*/
+   
+/* exported
+    createCompany,
+    createManufacturerPart,
+    createSupplierPart,
+    deleteManufacturerParts,
+    editCompany,
+    loadCompanyTable,
+    loadManufacturerPartTable,
+    loadManufacturerPartParameterTable,
+    loadSupplierPartTable,
+*/
+
 
 function manufacturerPartFields() {
 
@@ -32,7 +55,7 @@ function createManufacturerPart(options={}) {
 
     fields.manufacturer.secondary = {
         title: '{% trans "Add Manufacturer" %}',
-        fields: function(data) {
+        fields: function() {
             var company_fields = companyFormFields();
 
             company_fields.is_manufacturer.value = true;
@@ -126,7 +149,7 @@ function createSupplierPart(options={}) {
     // Add a secondary modal for the supplier
     fields.supplier.secondary = {
         title: '{% trans "Add Supplier" %}',
-        fields: function(data) {
+        fields: function() {
             var company_fields = companyFormFields();
 
             company_fields.is_supplier.value = true;
@@ -185,7 +208,7 @@ function deleteSupplierPart(part, options={}) {
 
 
 // Returns a default form-set for creating / editing a Company object
-function companyFormFields(options={}) {
+function companyFormFields() {
 
     return {
         name: {},
@@ -228,7 +251,7 @@ function editCompany(pk, options={}) {
             title: '{% trans "Edit Company" %}',
         }
     );
-};
+}
 
 /*
  * Launches a form to create a new company.
@@ -285,7 +308,7 @@ function loadCompanyTable(table, url, options={}) {
             title: '{% trans "Company" %}',
             sortable: true,
             switchable: false,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
                 var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
                 if (row.is_customer) {
@@ -310,7 +333,7 @@ function loadCompanyTable(table, url, options={}) {
         {
             field: 'website',
             title: '{% trans "Website" %}',
-            formatter: function(value, row, index, field) {
+            formatter: function(value) {
                 if (value) {
                     return renderLink(value, value);
                 }
@@ -445,7 +468,7 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var url = `/part/${row.part}/`;
 
@@ -470,7 +493,7 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: true,
                 field: 'manufacturer',
                 title: '{% trans "Manufacturer" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value && row.manufacturer_detail) {
                         var name = row.manufacturer_detail.name;
                         var url = `/company/${value}/`;
@@ -486,14 +509,14 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: true,
                 field: 'MPN',
                 title: '{% trans "MPN" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return renderLink(value, `/manufacturer-part/${row.pk}/`);
                 }
             },
             {
                 field: 'link',
                 title: '{% trans "Link" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
                     } else {
@@ -695,7 +718,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var url = `/part/${row.part}/`;
 
@@ -720,7 +743,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'supplier',
                 title: '{% trans "Supplier" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value) {
                         var name = row.supplier_detail.name;
                         var url = `/company/${value}/`; 
@@ -736,7 +759,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'SKU',
                 title: '{% trans "Supplier Part" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return renderLink(value, `/supplier-part/${row.pk}/`);
                 }
             },
@@ -746,7 +769,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'manufacturer_detail.name',
                 title: '{% trans "Manufacturer" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value && row.manufacturer_detail) {
                         var name = value;
                         var url = `/company/${row.manufacturer_detail.pk}/`;
@@ -764,7 +787,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'manufacturer_part_detail.MPN',
                 title: '{% trans "MPN" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value && row.manufacturer_part) {
                         return renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`);
                     } else {
@@ -775,7 +798,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 field: 'link',
                 title: '{% trans "Link" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
                     } else {
