@@ -8,7 +8,6 @@ Passes URL lookup downstream to each app as required.
 from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 
 from company.urls import company_urls
 from company.urls import manufacturer_part_urls
@@ -142,9 +141,6 @@ urlpatterns = [
 
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    url(r'^login/?', auth_views.LoginView.as_view(), name='login'),
-    url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
-
     url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
@@ -153,7 +149,6 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
-    url(r'accounts/', include('django.contrib.auth.urls')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
