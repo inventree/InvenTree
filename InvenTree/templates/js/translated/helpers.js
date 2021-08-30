@@ -29,8 +29,8 @@ function imageHoverIcon(url) {
 
     var html = `
         <a class='hover-icon'>
-            <img class='hover-img-thumb' src='{url}'>
-            <img class='hover-img-large' src='{url}'>
+            <img class='hover-img-thumb' src='${url}'>
+            <img class='hover-img-large' src='${url}'>
         </a>
         `;
 
