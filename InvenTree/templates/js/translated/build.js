@@ -1,6 +1,33 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+/* globals
+    buildStatusDisplay,
+    constructForm,
+    getFieldByName,
+    global_settings,
+    imageHoverIcon,
+    inventreeGet,
+    launchModalForm,
+    linkButtonsToSelection,
+    loadTableFilters,
+    makeIconBadge,
+    makeIconButton,
+    makePartIcons,
+    makeProgressBar,
+    renderLink,
+    setupFilterList,
+*/
+
+/* exported
+    editBuildOrder,
+    loadAllocationTable,
+    loadBuildOrderAllocationTable,
+    loadBuildOutputAllocationTable,
+    loadBuildPartsTable,
+    loadBuildTable,
+*/
+
 
 function buildFormFields() {
     return {
@@ -32,7 +59,7 @@ function buildFormFields() {
 }
 
 
-function editBuildOrder(pk, options={}) {
+function editBuildOrder(pk) {
 
     var fields = buildFormFields();
 
@@ -76,10 +103,10 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
     var buildId = buildInfo.pk;
 
+    var outputId = 'untracked';
+
     if (output) {
         outputId = output.pk;
-    } else {
-        outputId = 'untracked';
     }
 
     var panel = `#allocation-panel-${outputId}`;
@@ -400,10 +427,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
         // Callback for 'buy' button
         $(table).find('.button-buy').click(function() {
-            var pk = $(this).attr('pk');
 
-            var idx = $(this).closest('tr').attr('data-index');
-            var row = $(table).bootstrapTable('getData')[idx];
+            var pk = $(this).attr('pk');
 
             launchModalForm('{% url "order-parts" %}', {
                 data: {
@@ -573,8 +598,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
             element.html(html);
 
-            var lineItem = row;
-
             var subTable = $(`#${subTableId}`);
 
             subTable.bootstrapTable({
@@ -595,7 +618,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         width: '50%',
                         field: 'quantity',
                         title: '{% trans "Assigned Stock" %}',
-                        formatter: function(value, row, index, field) {
+                        formatter: function(value, row) {
                             var text = '';
 
                             var url = '';
@@ -618,7 +641,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     {
                         field: 'location',
                         title: '{% trans "Location" %}',
-                        formatter: function(value, row, index, field) {
+                        formatter: function(value, row) {
                             if (row.stock_item_detail.location) {
                                 var text = row.stock_item_detail.location_name;
                                 var url = `/stock/location/${row.stock_item_detail.location}/`;
@@ -631,7 +654,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     },
                     {
                         field: 'actions',
-                        formatter: function(value, row, index, field) {
+                        formatter: function(value, row) {
                             /* Actions available for a particular stock item allocation:
                              * 
                              * - Edit the allocation quantity
@@ -678,7 +701,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'sub_part_detail.full_name',
                 title: '{% trans "Required Part" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     var url = `/part/${row.sub_part}/`;
                     var thumb = row.sub_part_detail.thumbnail;
                     var name = row.sub_part_detail.full_name;
@@ -709,7 +732,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     var allocated = 0;
 
                     if (row.allocations) {
@@ -757,7 +780,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 field: 'actions',
                 title: '{% trans "Actions" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     // Generate action buttons for this build output
                     var html = `<div class='btn-group float-right' role='group'>`;
 
@@ -846,7 +869,7 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Build" %}',
                 sortable: true,
                 switchable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
 
@@ -873,7 +896,7 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Part" %}',
                 sortable: true,
                 sortName: 'part__name',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var html = imageHoverIcon(row.part_detail.thumbnail);
 
@@ -887,7 +910,7 @@ function loadBuildTable(table, options) {
                 field: 'quantity',
                 title: '{% trans "Completed" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return makeProgressBar(
                         row.completed,
                         row.quantity,
@@ -901,7 +924,7 @@ function loadBuildTable(table, options) {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     return buildStatusDisplay(value);
                 },
             },
@@ -914,7 +937,7 @@ function loadBuildTable(table, options) {
                 field: 'issued_by',
                 title: '{% trans "Issued by" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value)
                     {
                         return row.issued_by_detail.username;
@@ -929,7 +952,7 @@ function loadBuildTable(table, options) {
                 field: 'responsible',
                 title: '{% trans "Responsible" %}',
                 sortable: true,
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value)
                     {
                         return row.responsible_detail.name;
@@ -991,21 +1014,21 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
             {
                 field: 'stock_item_detail',
                 title: '{% trans "Stock Item" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     return '' + parseFloat(value.quantity) + ' x ' + value.part_name + ' @ ' + value.location_name;
                 }
             },
             {
                 field: 'stock_item_detail.quantity',
                 title: '{% trans "Available" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     return parseFloat(value);
                 }
             },
             {
                 field: 'quantity',
                 title: '{% trans "Allocated" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     var html = parseFloat(value);
 
                     var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='{% trans "Edit stock allocation" %}' url='/build/item/" + row.pk + "/edit/'><span class='fas fa-edit'></span></button>";
@@ -1028,7 +1051,7 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
         });
     });
 
-    table.on('load-success.bs.table', function(data) {
+    table.on('load-success.bs.table', function() {
         // Extract table data
         var results = table.bootstrapTable('getData');
 
@@ -1106,9 +1129,6 @@ function loadBuildPartsTable(table, options={}) {
         $(table).find('.button-buy').click(function() {
             var pk = $(this).attr('pk');
 
-            var idx = $(this).closest('tr').attr('data-index');
-            var row = $(table).bootstrapTable('getData')[idx];
-
             launchModalForm('{% url "order-parts" %}', {
                 data: {
                     parts: [
@@ -1121,10 +1141,6 @@ function loadBuildPartsTable(table, options={}) {
         // Callback for 'build' button
         $(table).find('.button-build').click(function() {
             var pk = $(this).attr('pk');
-
-            // Extract row data from the table
-            var idx = $(this).closest('tr').attr('data-index');
-            var row = $(table).bootstrapTable('getData')[idx];
 
             newBuildOrder({
                 part: pk,
@@ -1139,7 +1155,7 @@ function loadBuildPartsTable(table, options={}) {
             title: '{% trans "Part" %}',
             switchable: false,
             sortable: true,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
                 var url = `/part/${row.sub_part}/`;
                 var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
@@ -1177,7 +1193,7 @@ function loadBuildPartsTable(table, options={}) {
             switchable: false,
             field: 'sub_part_detail.stock',
             title: '{% trans "Available" %}',
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
                 return makeProgressBar(
                     value,
                     row.quantity * options.build_remaining,
@@ -1201,7 +1217,7 @@ function loadBuildPartsTable(table, options={}) {
             field: 'actions',
             title: '{% trans "Actions" %}',
             switchable: false,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
 
                 // Generate action buttons against the part
                 var html = `<div class='btn-group float-right' role='group'>`;
@@ -1228,7 +1244,7 @@ function loadBuildPartsTable(table, options={}) {
         sortable: true,
         search: true,
         onPostBody: setupTableCallbacks,
-        rowStyle: function(row, index) {
+        rowStyle: function(row) {
             var classes = [];
 
             // Shade rows differently if they are for different parent parts
