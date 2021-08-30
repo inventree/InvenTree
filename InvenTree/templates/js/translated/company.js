@@ -368,7 +368,9 @@ function loadCompanyTable(table, url, options={}) {
         queryParams: filters,
         groupBy: false,
         sidePagination: 'server',
-        formatNoMatches: function() { return "{% trans "No company information found" %}"; },
+        formatNoMatches: function() {
+            return '{% trans "No company information found" %}';
+        },
         showColumns: true,
         name: options.pagetype || 'company',
         columns: columns,
@@ -456,7 +458,9 @@ function loadManufacturerPartTable(table, url, options) {
         queryParams: filters,
         name: 'manufacturerparts',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No manufacturer parts found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No manufacturer parts found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -850,8 +854,9 @@ function loadSupplierPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
+                );
             });
 
             $(table).find('.button-supplier-part-delete').click(function() {
@@ -862,8 +867,9 @@ function loadSupplierPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
+                );
             })
         }
     });

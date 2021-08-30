@@ -703,7 +703,9 @@ function updateFieldValues(fields, options) {
 
         var field = fields[name] || null;
 
-        if (field == null) { continue; }
+        if (field == null) {
+            continue;
+        }
 
         var value = field.value;
 
@@ -711,7 +713,9 @@ function updateFieldValues(fields, options) {
             value = field.default;
         }
 
-        if (value == null) { continue; }
+        if (value == null) {
+            continue;
+        }
 
         updateFieldValue(name, value, field, options);
     }
@@ -1085,6 +1089,8 @@ function initializeRelatedFields(fields, options) {
                 break;
             case 'choice':
                 initializeChoiceField(field, fields, options);
+                break;
+            default:
                 break;
         }
     }

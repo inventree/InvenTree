@@ -23,7 +23,9 @@ function loadAttachmentTable(url, options) {
     $(table).inventreeTable({
         url: url,
         name: options.name || 'attachments',
-        formatNoMatches: function() { return '{% trans "No attachments found" %}'},
+        formatNoMatches: function() {
+            return '{% trans "No attachments found" %}'
+        },
         sortable: true,
         search: false,
         queryParams: options.filters || {},

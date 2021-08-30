@@ -292,7 +292,9 @@ function loadPurchaseOrderTable(table, options) {
         groupBy: false,
         sidePagination: 'server',
         original: options.params,
-        formatNoMatches: function() { return '{% trans "No purchase orders found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No purchase orders found" %}';
+        },
         columns: [
             {
                 title: '',
@@ -388,7 +390,9 @@ function loadSalesOrderTable(table, options) {
         groupBy: false,
         sidePagination: 'server',
         original: options.params,
-        formatNoMatches: function() { return '{% trans "No sales orders found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No sales orders found" %}';
+        },
         columns: [
             {
                 title: '',
@@ -502,7 +506,9 @@ function loadSalesOrderAllocationTable(table, options={}) {
         search: false,
         paginationVAlign: 'bottom',
         original: options.params,
-        formatNoMatches: function() { return '{% trans "No sales order allocations found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No sales order allocations found" %}';
+        },
         columns: [
             {
                 field: 'pk',

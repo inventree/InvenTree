@@ -418,12 +418,15 @@ function afterForm(response, options) {
     if (response.success) {
         showAlertOrCache("alert-success", response.success, cache);
     }
+
     if (response.info) {
         showAlertOrCache("alert-info", response.info, cache);
     }
+    
     if (response.warning) {
         showAlertOrCache("alert-warning", response.warning, cache);
     }
+    
     if (response.danger) {
         showAlertOrCache("alert-danger", response.danger, cache);
     }
@@ -431,14 +434,11 @@ function afterForm(response, options) {
     // Was a callback provided?
     if (options.success) {
         options.success(response);
-    }
-    else if (options.follow && response.url) {
+    } else if (options.follow && response.url) {
         window.location.href = response.url;
-    }
-    else if (options.redirect) {
+    } else if (options.redirect) {
         window.location.href = options.redirect;
-    }
-    else if (options.reload) {
+    } else if (options.reload) {
         location.reload();
     }
 }
@@ -883,9 +883,8 @@ function handleModalForm(url, options) {
                     if (response.form_valid) {
                         $(modal).modal('hide');
                         afterForm(response, options);
-                    }
-                    // Form was returned, invalid!
-                    else {
+                    } else {
+                        // Form was returned, invalid!
 
                         // Disable error message with option or response
                         if (!options.hideErrorMessage && !response.hideErrorMessage) {
@@ -916,14 +915,12 @@ function handleModalForm(url, options) {
                             if (response.buttons) {
                                 attachButtons(modal, response.buttons);
                             }
-                        }
-                        else {
+                        } else {
                             $(modal).modal('hide');
                             showAlertDialog('{% trans "Invalid response from server" %}', '{% trans "Form data missing from server response" %}');
                         }
                     }
-                }
-                else {
+                } else {
                     $(modal).modal('hide');
                     afterForm(response, options);
                 }

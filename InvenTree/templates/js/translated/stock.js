@@ -881,13 +881,9 @@ function loadStockTable(table, options) {
             // REJECTED
             if (row.status == {{ StockStatus.REJECTED }}) {
                 html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
-            }
-
-            // LOST
-            else if (row.status == {{ StockStatus.LOST }}) {
+            } else if (row.status == {{ StockStatus.LOST }}) {
                 html += makeIconBadge('fa-question-circle','{% trans "Stock item is lost" %}');
-            }
-            else if (row.status == {{ StockStatus.DESTROYED }}) {
+            } else if (row.status == {{ StockStatus.DESTROYED }}) {
                 html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
             }
 
@@ -1682,13 +1678,10 @@ function loadStockTrackingTable(table, options) {
         field: 'user',
         title: '{% trans "User" %}',
         formatter: function(value, row) {
-            if (value)
-            {
+            if (value) {
                 // TODO - Format the user's first and last names
                 return row.user_detail.username;
-            }
-            else
-            {
+            } else {
                 return `<i>{% trans "No user information" %}</i>`;
             }
         }

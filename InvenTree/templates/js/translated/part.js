@@ -539,7 +539,9 @@ function loadPartVariantTable(table, partId, options={}) {
         showColumns: true,
         original: params,
         queryParams: filters,
-        formatNoMatches: function() { return '{% trans "No variants found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No variants found" %}';
+        },
         columns: cols,
         treeEnable: true,
         rootParentId: partId,
@@ -587,7 +589,9 @@ function loadPartParameterTable(table, url, options) {
         queryParams: filters,
         name: 'partparameters',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No parameters found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -726,7 +730,9 @@ function loadParametricPartTable(table, options={}) {
         queryParams: table_headers,
         groupBy: false,
         name: options.name || 'parametric',
-        formatNoMatches: function() { return '{% trans "No parts found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No parts found" %}';
+        },
         columns: columns,
         showColumns: true,
         data: table_data,
@@ -913,8 +919,7 @@ function loadPartTable(table, url, options={}) {
         formatter: function(value, row) {
             if (row.category) {
                 return renderLink(value.pathstring, "/part/category/" + row.category + "/");
-            }
-            else {
+            } else {
                 return '{% trans "No category" %}';
             }
         }   
@@ -987,7 +992,9 @@ function loadPartTable(table, url, options={}) {
         original: params,
         sidePagination: 'server',
         pagination: 'true',
-        formatNoMatches: function() { return '{% trans "No parts found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No parts found" %}';
+        },
         columns: columns,
         showColumns: true,
         showCustomView: false,

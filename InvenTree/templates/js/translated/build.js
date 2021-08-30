@@ -938,12 +938,9 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Issued by" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    if (value)
-                    {
+                    if (value) {
                         return row.issued_by_detail.username;
-                    }
-                    else
-                    {
+                    } else {
                         return `<i>{% trans "No user information" %}</i>`;
                     }
                 }
@@ -953,12 +950,9 @@ function loadBuildTable(table, options) {
                 title: '{% trans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    if (value)
-                    {
+                    if (value) {
                         return row.responsible_detail.name;
-                    }
-                    else
-                    {
+                    } else {
                         return '{% trans "No information" %}';
                     }
                 }
@@ -1009,7 +1003,9 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
     table.bootstrapTable({
         url: url,
         sortable: false,
-        formatNoMatches: function() { return '{% trans "No parts allocated for" %} ' + part; },
+        formatNoMatches: function() {
+            return '{% trans "No parts allocated for" %} ' + part;
+        },
         columns: [
             {
                 field: 'stock_item_detail',
