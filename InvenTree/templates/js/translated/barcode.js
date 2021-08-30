@@ -3,18 +3,23 @@
 /* globals
     imageHoverIcon,
     inventreePut,
+    makeIconButton,
     modalEnable,
     modalSetContent,
     modalSetTitle,
+    modalSetSubmitText,
     modalShowSubmitButton,
     modalSubmit,
     showAlertOrCache,
+    showQuestionDialog,
 */
 
 /* exported
+    barcodeCheckIn,
     barcodeScanDialog,
     linkBarcodeDialog,
-    barcodeCheckIn,
+    scanItemsIntoLocation,
+    unlinkBarcode,
 */
 
 function makeBarcodeInput(placeholderText='', hintText='') {
@@ -297,7 +302,7 @@ function barcodeScanDialog() {
 /*
  * Dialog for linking a particular barcode to a stock item.
  */
-function linkBarcodeDialog(stockitem, options={}) {
+function linkBarcodeDialog(stockitem) {
 
     var modal = '#modal-form';
 
@@ -308,7 +313,7 @@ function linkBarcodeDialog(stockitem, options={}) {
             data: {
                 stockitem: stockitem,
             },
-            onScan: function(response) {
+            onScan: function() {
 
                 $(modal).modal('hide');
                 location.reload();
@@ -341,7 +346,7 @@ function unlinkBarcode(stockitem) {
                     },
                     {
                         method: 'PATCH',
-                        success: function(response, status) {
+                        success: function() {
                             location.reload();
                         },
                     },
@@ -355,7 +360,7 @@ function unlinkBarcode(stockitem) {
 /*
  * Display dialog to check multiple stock items in to a stock location.
  */
-function barcodeCheckIn(location_id, options={}) {
+function barcodeCheckIn(location_id) {
 
     var modal = '#modal-form';
 
@@ -447,7 +452,9 @@ function barcodeCheckIn(location_id, options={}) {
 
                 // Called when the 'check-in' button is pressed
 
-                var data = {location: location_id};
+                var data = {
+                    location: location_id
+                };
 
                 // Extract 'notes' field
                 data.notes = $(modal + ' #notes').val();
@@ -484,7 +491,7 @@ function barcodeCheckIn(location_id, options={}) {
             },
             onScan: function(response) {
                 if ('stockitem' in response) {
-                    stockitem = response.stockitem;
+                    var stockitem = response.stockitem;
 
                     var duplicate = false;
 
@@ -542,12 +549,12 @@ function scanItemsIntoLocation(item_id_list, options={}) {
     function updateLocationInfo(location) {
         var div = $(modal + ' #header-div');
 
-        if (stock_location && stock_location.pk) {
+        if (location && location.pk) {
             div.html(`
             <div class='alert alert-block alert-info'>
             <b>{% trans "Location" %}</b></br>
-            ${stock_location.name}<br>
-            <i>${stock_location.description}</i>
+            ${location.name}<br>
+            <i>${location.description}</i>
             </div>
             `);
         } else {
