@@ -17,13 +17,17 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.conf import settings
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from allauth.account.forms import AddEmailForm
+from allauth.account.models import EmailAddress
+from allauth.account.views import EmailView
+
 from common.settings import currency_code_default, currency_codes
 
 from part.models import Part, PartCategory
@@ -809,6 +813,10 @@ class SettingsView(TemplateView):
             ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
         except:
             ctx["locale_stats"] = {}
+
+        # Forms and context for allauth
+        ctx['add_email_form'] = AddEmailForm
+        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
 
         return ctx
 
