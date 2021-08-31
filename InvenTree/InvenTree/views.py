@@ -820,6 +820,7 @@ class SettingsView(TemplateView):
 
         return ctx
 
+
 class CustomEmailView(LoginRequiredMixin, EmailView):
     """
     Override of allauths EmailView to always show the settings but leave the functions allow
