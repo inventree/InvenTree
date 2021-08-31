@@ -43,7 +43,7 @@
     <h4>{% trans "Social Accounts" %}</h4>
 </div>
 
-<div class='row'>
+<div>
     {% if form.accounts %}
     <p>{% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}</p>
     
@@ -81,7 +81,9 @@
     {% endif %}
 
     <h3>{% trans 'Add a 3rd Party Account' %}</h3>
-    {% include "socialaccount/snippets/provider_list.html" with process="connect" %} 
+    <ul>
+    {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+    </ul>
     {% include "socialaccount/snippets/login_extra.html" %}
 
 </div>
