@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-26 13:13+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"PO-Revision-Date: 2021-08-31 18:47\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -467,7 +467,7 @@ msgstr "Verwijder item"
 
 #: InvenTree/views.py:659
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Selectievakje aanvinken om de verwijdering van items te bevestigen"
 
 #: InvenTree/views.py:674 templates/InvenTree/settings/user.html:14
 msgid "Edit User Information"
@@ -527,7 +527,7 @@ msgstr "Barcode gekoppeld aan StockItem"
 
 #: build/forms.py:37
 msgid "Build Order reference"
-msgstr ""
+msgstr "Bouwopdracht referentie"
 
 #: build/forms.py:38
 msgid "Order target date"
@@ -1322,11 +1322,11 @@ msgstr ""
 #: stock/templates/stock/item.html:88 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
-msgstr ""
+msgstr "Bijlagen"
 
 #: build/templates/build/detail.html:257
 msgid "Build Notes"
-msgstr ""
+msgstr "Bouw notities"
 
 #: build/templates/build/detail.html:261 build/templates/build/detail.html:398
 #: company/templates/company/detail.html:169
@@ -1338,7 +1338,7 @@ msgstr ""
 #: part/templates/part/detail.html:109 stock/templates/stock/item.html:103
 #: stock/templates/stock/item.html:188
 msgid "Edit Notes"
-msgstr ""
+msgstr "Notities Bewerken"
 
 #: build/templates/build/detail.html:357
 #: order/templates/order/po_attachments.html:79
