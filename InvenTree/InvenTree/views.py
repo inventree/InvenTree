@@ -812,6 +812,16 @@ class SettingsView(TemplateView):
 
         return ctx
 
+class CustomEmailView(LoginRequiredMixin, EmailView):
+    """
+    Override of allauths EmailView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+    def get(self, request, *args, **kwargs):
+        # always redirect to settings
+        return HttpResponseRedirect(self.success_url)
+
 
 class CurrencyRefreshView(RedirectView):
     """
