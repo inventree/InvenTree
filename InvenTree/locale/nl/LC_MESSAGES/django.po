@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-26 13:13+0000\n"
-"PO-Revision-Date: 2021-08-31 18:47\n"
+"PO-Revision-Date: 2021-08-31 19:43\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1588,43 +1588,43 @@ msgstr ""
 
 #: common/models.py:308 common/models.py:839 common/models.py:986
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Instellingssleutel (moet uniek zijn - hoofdletter ongevoelig"
 
 #: common/models.py:310
 msgid "Settings value"
-msgstr ""
+msgstr "Waarde van de instelling"
 
 #: common/models.py:345
 msgid "Must be an integer value"
-msgstr ""
+msgstr "Moet een geheel getal zijn"
 
 #: common/models.py:368
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "Waarde moet een booleaanse waarde zijn"
 
 #: common/models.py:379
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "Waarde moet een geheel getal zijn"
 
 #: common/models.py:402
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Sleutelreeks moet uniek zijn"
 
 #: common/models.py:509
 msgid "InvenTree Instance Name"
-msgstr ""
+msgstr "Inventree Instantie Naam"
 
 #: common/models.py:511
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "String-beschrijving voor de server instantie"
 
 #: common/models.py:515
 msgid "Use instance name"
-msgstr ""
+msgstr "Gebruik de instantie naam"
 
 #: common/models.py:516
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Gebruik de naam van de instantie in de titelbalk"
 
 #: common/models.py:522 company/models.py:99 company/models.py:100
 msgid "Company name"
@@ -1656,7 +1656,7 @@ msgstr "Download van URL"
 
 #: common/models.py:543
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Download van afbeeldingen en bestanden vanaf een externe URL toestaan"
 
 #: common/models.py:549
 msgid "Barcode Support"
@@ -1676,7 +1676,7 @@ msgstr "Reguliere expressiepatroon voor het corresponderen van deel IPN"
 
 #: common/models.py:561
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Dubbele IPN toestaan"
 
 #: common/models.py:562
 msgid "Allow multiple parts to share the same IPN"
@@ -1684,11 +1684,11 @@ msgstr "Toestaan dat meerdere onderdelen dezelfde IPN gebruiken"
 
 #: common/models.py:568
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Bewerken IPN toestaan"
 
 #: common/models.py:569
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "Sta het wijzigen van de IPN toe tijdens het bewerken van een onderdeel"
 
 #: common/models.py:575
 msgid "Copy Part BOM Data"
