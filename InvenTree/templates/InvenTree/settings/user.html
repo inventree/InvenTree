@@ -65,9 +65,9 @@
         {% endfor %}
 
         <div class="buttonHolder">
-            <button class="secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
-            <button class="secondaryAction" type="submit" name="action_send" >{% trans 'Re-send Verification' %}</button>
-            <button class="primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
+            <button class="btn btn-primary secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
+            <button class="btn btn-primary secondaryAction" type="submit" name="action_send" >{% trans 'Re-send Verification' %}</button>
+            <button class="btn btn-primary primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
         </div>
 
         </fieldset>
@@ -87,7 +87,7 @@
         <form method="post" action="{% url 'account_email' %}" class="add_email">
             {% csrf_token %}
             {{ add_email_form.as_p }}
-            <button name="action_add" type="submit">{% trans "Add E-mail" %}</button>
+            <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add E-mail" %}</button>
         </form>
     {% endif %}
     <br>
@@ -124,7 +124,7 @@
     {% endfor %}
 
     <div>
-    <button type="submit">{% trans 'Remove' %}</button>
+    <button class="btn btn-primary" type="submit">{% trans 'Remove' %}</button>
     </div>
     
     </fieldset>
