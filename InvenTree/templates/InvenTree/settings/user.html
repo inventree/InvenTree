@@ -136,10 +136,11 @@
 
     <br>
     <h4>{% trans 'Add a 3rd Party Account' %}</h4>
-    <ul>
+    <div>
     {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-    </ul>
+    </div>
     {% include "socialaccount/snippets/login_extra.html" %}
+    <br>
 
 </div>
 
