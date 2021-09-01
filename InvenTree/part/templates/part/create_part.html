@@ -8,13 +8,13 @@
 
 {% if matches %}
 <div class='alert alert-block alert-warning'>
-    <b>{% trans "Possible Matching Parts" %}</b>
+    <strong>{% trans "Possible Matching Parts" %}</strong>
     <p>{% trans "The new part may be a duplicate of these existing parts" %}:</p>
     <ul class='list-group'>
     {% for match in matches %}
     <li class='list-group-item list-group-item-condensed'>
         {% decimal match.ratio as match_per %}
-        {% blocktrans with full_name=match.part.full_name desc=match.part.description %}{{full_name}} - <i>{{desc}}</i> ({{match_per}}% match){% endblocktrans %}
+        {% blocktrans with full_name=match.part.full_name desc=match.part.description %}{{full_name}} - <em>{{desc}}</em> ({{match_per}}% match){% endblocktrans %}
     </li>
     {% endfor %}
 </ul>

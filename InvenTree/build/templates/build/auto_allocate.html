@@ -6,7 +6,7 @@
 {{ block.super }}
 
 <div class='alert alert-block alert-info'>
-    <b>{% trans "Automatically Allocate Stock" %}</b><br>
+    <strong>{% trans "Automatically Allocate Stock" %}</strong><br>
     {% trans "The following stock items will be allocated to the specified build output" %}
 </div>
 {% if allocations %}
@@ -24,7 +24,7 @@
     </td>
     <td>
         {{ item.stock_item.part.full_name }}<br>
-        <i>{{ item.stock_item.part.description }}</i>
+        <em>{{ item.stock_item.part.description }}</em>
     </td>
     <td>{% decimal item.quantity %}</td>
     <td>{{ item.stock_item.location }}</td>

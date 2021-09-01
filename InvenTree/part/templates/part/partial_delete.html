@@ -4,7 +4,7 @@
 {% block pre_form_content %}
 
 <div class='alert alert-block alert-danger'>
-    {% blocktrans with full_name=part.full_name %}Are you sure you want to delete part '<b>{{full_name}}</b>'?{% endblocktrans %}
+    {% blocktrans with full_name=part.full_name %}Are you sure you want to delete part '<strong>{{full_name}}</strong>'?{% endblocktrans %}
 </div>
 
 {% if part.used_in_count %}
