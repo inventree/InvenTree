@@ -37,7 +37,7 @@
     {% else %}
     <tr>
         <td colspan='3'>
-            <span class='warning-msg'><i>{% trans 'No supplier pricing available' %}</i></span>
+            <span class='warning-msg'><em>{% trans 'No supplier pricing available' %}</em></span>
         </td>
     </tr>
     {% endif %}
@@ -78,14 +78,14 @@
     {% if part.has_complete_bom_pricing == False %}
     <tr>
         <td colspan='3'>
-            <span class='warning-msg'><i>{% trans 'Note: BOM pricing is incomplete for this part' %}</i></span>
+            <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
         </td>
     </tr>
     {% endif %}
     {% else %}
     <tr>
         <td colspan='3'>
-            <span class='warning-msg'><i>{% trans 'No BOM pricing available' %}</i></span>
+            <span class='warning-msg'><em>{% trans 'No BOM pricing available' %}</em></span>
         </td>
     </tr>
     {% endif %}

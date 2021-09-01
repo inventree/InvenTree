@@ -21,7 +21,7 @@
 {% if query %}
 {% else %}
 <div id='empty-search-query'>
-    <h4><i>{% trans "Enter a search query" %}</i></h4>
+    <h4><em>{% trans "Enter a search query" %}</em></h4>
 </div>
 {% endif %}
 
@@ -268,7 +268,7 @@
                             var text = "{% trans "Shipped to customer" %}";
                             return renderLink(text, `/company/${row.customer}/assigned-stock/`);
                         } else {
-                            return '<i>{% trans "No stock location set" %}</i>';
+                            return '<em>{% trans "No stock location set" %}</em>';
                         }
                     }
                 }

@@ -40,7 +40,7 @@
                 {% if rates_updated %}
                 {{ rates_updated }}
                 {% else %}
-                <i>{% trans "Never" %}</i>
+                <em>{% trans "Never" %}</em>
                 {% endif %}
                 <form action='{% url "settings-currencies-refresh" %}' method='post'>
                     <div id='refresh-rates-form'>
