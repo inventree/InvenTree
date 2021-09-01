@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 13:13+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-01 22:49+0000\n"
+"PO-Revision-Date: 2021-09-01 22:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1178,8 +1178,8 @@ msgstr "BestandsObjekt zur Zuordnung zum ausgewählten Endprodukt auswählen"
 
 #: build/templates/build/create_build_item.html:11
 #, python-format
-msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
-msgstr "Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:<br><i>%(output)s</i>"
+msgid "The allocated stock will be installed into the following build output:<br><em>%(output)s</em>"
+msgstr ""
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -3452,8 +3452,8 @@ msgstr "Kein Preis"
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
-msgid "Select a supplier for <i>%(name)s</i>"
-msgstr "Zulieferer auswählen für <i>%(name)s</i>"
+msgid "Select a supplier for <em>%(name)s</em>"
+msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
@@ -3569,8 +3569,8 @@ msgstr "Berichte drucken"
 
 #: order/templates/order/receive_parts.html:8
 #, python-format
-msgid "Receive outstanding parts for <b>%(order)s</b> - <i>%(desc)s</i>"
-msgstr "Ausstehende Teile für <b>%(order)s</b> - <i>%(desc)s</i> empfangen"
+msgid "Receive outstanding parts for <strong>%(order)s</strong> - <em>%(desc)s</em>"
+msgstr ""
 
 #: order/templates/order/receive_parts.html:14 part/api.py:54
 #: part/models.py:298 part/templates/part/cat_link.html:7
@@ -4416,18 +4416,18 @@ msgstr "Sie haben keine Berechtigung zum Bearbeiten der Stückliste."
 
 #: part/templates/part/bom.html:14
 #, python-format
-msgid "The BOM for <i>%(part)s</i> has changed, and must be validated.<br>"
-msgstr "Die Stückliste für <i>%(part)s</i> hat sich geändert und muss kontrolliert werden.<br>"
+msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
+msgstr ""
 
 #: part/templates/part/bom.html:16
 #, python-format
-msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
-msgstr "Die Stückliste für <i>%(part)s</i> wurde zuletzt von %(checker)s am %(check_date)s kontrolliert"
+msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+msgstr ""
 
 #: part/templates/part/bom.html:20
 #, python-format
-msgid "The BOM for <i>%(part)s</i> has not been validated."
-msgstr "Die Stückliste für <i>%(part)s</i> wurde noch nicht kontrolliert"
+msgid "The BOM for <em>%(part)s</em> has not been validated."
+msgstr ""
 
 #: part/templates/part/bom.html:27
 msgid "Remove selected BOM items"
@@ -4500,8 +4500,8 @@ msgstr "Jedes Teil muss bereits in der Datenbank bestehen"
 
 #: part/templates/part/bom_validate.html:6
 #, python-format
-msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
-msgstr "Bestätigen Sie das die Stückliste für <br><i>%(part)s</i> korrekt ist"
+msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><em>%(part)s</em>"
+msgstr ""
 
 #: part/templates/part/bom_validate.html:9
 msgid "This will validate each line in the BOM."
@@ -4658,8 +4658,8 @@ msgstr "Teil evtl. Duplikat dieser Teile"
 
 #: part/templates/part/create_part.html:17
 #, python-format
-msgid "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% match)"
-msgstr "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% übereinstimmend)"
+msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
+msgstr ""
 
 #: part/templates/part/detail.html:16
 msgid "Part Stock"
@@ -4667,8 +4667,8 @@ msgstr "Teilbestand"
 
 #: part/templates/part/detail.html:21
 #, python-format
-msgid "Showing stock for all variants of <i>%(full_name)s</i>"
-msgstr "Lagerbestand aller Varianten von <i>%(full_name)s</i>"
+msgid "Showing stock for all variants of <em>%(full_name)s</em>"
+msgstr ""
 
 #: part/templates/part/detail.html:30 part/templates/part/navbar.html:99
 msgid "Part Test Templates"
@@ -5032,8 +5032,8 @@ msgstr "Aus vorhandenen Bildern auswählen"
 
 #: part/templates/part/partial_delete.html:7
 #, python-format
-msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
-msgstr "Sind Sie sicher, dass Sie das Teil '<b>%(full_name)s</b>' löschen wollen?"
+msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
+msgstr ""
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -5145,8 +5145,8 @@ msgstr "Neue Teilevariante anlegen"
 
 #: part/templates/part/variant_part.html:10
 #, python-format
-msgid "Create a new variant of template <i>'%(full_name)s'</i>."
-msgstr "Neue Variante von Vorlage anlegen <i>'%(full_name)s'</i>."
+msgid "Create a new variant of template <em>'%(full_name)s'</em>."
+msgstr ""
 
 #: part/templatetags/inventree_extras.py:106
 msgid "Unknown database"
@@ -5938,8 +5938,8 @@ msgstr "Sind Sie sicher, dass Sie dieses BestandsObjekt löschen wollen?"
 
 #: stock/templates/stock/item_delete.html:12
 #, python-format
-msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
-msgstr "Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b> entfernt."
+msgid "This will remove <strong>%(qty)s</strong> units of <strong>%(full_name)s</strong> from stock."
+msgstr ""
 
 #: stock/templates/stock/item_install.html:8
 msgid "Install another Stock Item into this item."
@@ -6088,8 +6088,8 @@ msgstr "BestandsObjekt umwandeln"
 
 #: stock/templates/stock/stockitem_convert.html:8
 #, python-format
-msgid "This stock item is current an instance of <i>%(part)s</i>"
-msgstr "BestandsObjekt ist aktuell eine Instanz von <i>%(part)s</i>"
+msgid "This stock item is current an instance of <em>%(part)s</em>"
+msgstr ""
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
