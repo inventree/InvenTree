@@ -12,15 +12,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- CSS -->
+<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap_3.3.7_css_bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
 
-<script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
 
 <style>
     .login-error {
@@ -84,5 +81,21 @@
 
     {% block extra_body %}
     {% endblock %}
+
+<script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
+<script type='text/javascript' src="{% url 'inventree.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
+
+
+<script type='text/javascript'>
+
+$(document).ready(function () {
+    inventreeDocReady();
+});
+
+</script>
+
 </body>
 </html>
