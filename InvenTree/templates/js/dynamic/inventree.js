@@ -130,6 +130,11 @@ function inventreeDocReady() {
         minLength: 2,
         classes: {'ui-autocomplete': 'dropdown-menu search-menu'},
     });
+
+    // Generate brand-icons
+    $('.brand-icon').each(function(i, obj){
+        loadBrandIcon($(this), $(this).attr('brand_name'));
+    });
 }
 
 function isFileTransfer(transfer) {
@@ -381,4 +386,14 @@ function inventreeDel(name) {
     var key = 'inventree-' + name;
 
     localStorage.removeItem(key);
+}
+
+function loadBrandIcon(elem, name) {
+    // check if icon exists
+    var icon = window.FontAwesome.icon({prefix: 'fab', iconName: name});
+
+    if (icon){
+        // add icon to button
+        elem.addClass('fab fa-' + name);
+    }
 }
