@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 13:13+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-01 22:49+0000\n"
+"PO-Revision-Date: 2021-09-01 22:51\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -1178,7 +1178,7 @@ msgstr ""
 
 #: build/templates/build/create_build_item.html:11
 #, python-format
-msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
+msgid "The allocated stock will be installed into the following build output:<br><em>%(output)s</em>"
 msgstr ""
 
 #: build/templates/build/create_build_item.html:17
@@ -3452,7 +3452,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
-msgid "Select a supplier for <i>%(name)s</i>"
+msgid "Select a supplier for <em>%(name)s</em>"
 msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:77
@@ -3569,7 +3569,7 @@ msgstr ""
 
 #: order/templates/order/receive_parts.html:8
 #, python-format
-msgid "Receive outstanding parts for <b>%(order)s</b> - <i>%(desc)s</i>"
+msgid "Receive outstanding parts for <strong>%(order)s</strong> - <em>%(desc)s</em>"
 msgstr ""
 
 #: order/templates/order/receive_parts.html:14 part/api.py:54
@@ -4416,17 +4416,17 @@ msgstr ""
 
 #: part/templates/part/bom.html:14
 #, python-format
-msgid "The BOM for <i>%(part)s</i> has changed, and must be validated.<br>"
+msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
 msgstr ""
 
 #: part/templates/part/bom.html:16
 #, python-format
-msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
+msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
 msgstr ""
 
 #: part/templates/part/bom.html:20
 #, python-format
-msgid "The BOM for <i>%(part)s</i> has not been validated."
+msgid "The BOM for <em>%(part)s</em> has not been validated."
 msgstr ""
 
 #: part/templates/part/bom.html:27
@@ -4500,7 +4500,7 @@ msgstr ""
 
 #: part/templates/part/bom_validate.html:6
 #, python-format
-msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
+msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><em>%(part)s</em>"
 msgstr ""
 
 #: part/templates/part/bom_validate.html:9
@@ -4658,7 +4658,7 @@ msgstr ""
 
 #: part/templates/part/create_part.html:17
 #, python-format
-msgid "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% match)"
+msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
 msgstr ""
 
 #: part/templates/part/detail.html:16
@@ -4667,7 +4667,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:21
 #, python-format
-msgid "Showing stock for all variants of <i>%(full_name)s</i>"
+msgid "Showing stock for all variants of <em>%(full_name)s</em>"
 msgstr ""
 
 #: part/templates/part/detail.html:30 part/templates/part/navbar.html:99
@@ -5032,7 +5032,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:7
 #, python-format
-msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
+msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:12
@@ -5145,7 +5145,7 @@ msgstr ""
 
 #: part/templates/part/variant_part.html:10
 #, python-format
-msgid "Create a new variant of template <i>'%(full_name)s'</i>."
+msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr ""
 
 #: part/templatetags/inventree_extras.py:106
@@ -5938,7 +5938,7 @@ msgstr ""
 
 #: stock/templates/stock/item_delete.html:12
 #, python-format
-msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
+msgid "This will remove <strong>%(qty)s</strong> units of <strong>%(full_name)s</strong> from stock."
 msgstr ""
 
 #: stock/templates/stock/item_install.html:8
@@ -6088,7 +6088,7 @@ msgstr ""
 
 #: stock/templates/stock/stockitem_convert.html:8
 #, python-format
-msgid "This stock item is current an instance of <i>%(part)s</i>"
+msgid "This stock item is current an instance of <em>%(part)s</em>"
 msgstr ""
 
 #: stock/templates/stock/stockitem_convert.html:9
