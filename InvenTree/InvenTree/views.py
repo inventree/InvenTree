@@ -827,37 +827,34 @@ class SettingsView(TemplateView):
         return ctx
 
 
-class CustomEmailView(LoginRequiredMixin, EmailView):
+class AllauthOverrides(LoginRequiredMixin):
+    """
+    Override allauths views to always redirect to success_url
+    """
+    def get(self, request, *args, **kwargs):
+        # always redirect to settings
+        return HttpResponseRedirect(self.success_url)
+
+
+class CustomEmailView(AllauthOverrides, EmailView):
     """
     Override of allauths EmailView to always show the settings but leave the functions allow
     """
     success_url = reverse_lazy("settings")
 
-    def get(self, request, *args, **kwargs):
-        # always redirect to settings
-        return HttpResponseRedirect(self.success_url)
 
-
-class CustomConnectionsView(LoginRequiredMixin, ConnectionsView):
+class CustomConnectionsView(AllauthOverrides, ConnectionsView):
     """
     Override of allauths ConnectionsView to always show the settings but leave the functions allow
     """
     success_url = reverse_lazy("settings")
-
-    def get(self, request, *args, **kwargs):
-        # always redirect to settings
-        return HttpResponseRedirect(self.success_url)
 
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     """
     Override of allauths PasswordChangeView to always show the settings but leave the functions allow
     """
-    success_url = reverse_lazy("settings")
-
-    def get(self, request, *args, **kwargs):
-        # always redirect to settings
-        return HttpResponseRedirect(self.success_url)
+    success_url = reverse_lazy("login")
 
 
 class CurrencyRefreshView(RedirectView):
