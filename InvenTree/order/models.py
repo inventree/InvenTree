@@ -778,7 +778,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     destination = TreeForeignKey(
-        'stock.StockLocation', on_delete=models.DO_NOTHING,
+        'stock.StockLocation', on_delete=models.SET_NULL,
         verbose_name=_('Destination'),
         related_name='po_lines',
         blank=True, null=True,
