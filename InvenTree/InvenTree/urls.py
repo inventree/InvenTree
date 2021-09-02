@@ -37,7 +37,7 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView
+from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordChangeView
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
@@ -165,6 +165,7 @@ urlpatterns = [
     # overrides of urlpatterns
     url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
+    url(r'^accounts/password/change/', CustomPasswordChangeView.as_view(), name='account_change_password'),
     url(r'^accounts/', include('allauth.urls')),  # included urlpatterns
 ]
 
