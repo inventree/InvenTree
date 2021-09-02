@@ -18,4 +18,11 @@
   <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
 </form>
 
+<br>
+<h4>{% trans 'Or use a SSO-provider for signup' %}</h4>
+<div>
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+</div>
+{% include "socialaccount/snippets/login_extra.html" %}
+
 {% endblock %}
