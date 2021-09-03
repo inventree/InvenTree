@@ -1,8 +1,18 @@
 {% load i18n %}
 
+/* globals
+    makeIconButton,
+    renderLink,
+*/
+
+/* exported
+    loadAttachmentTable,
+    reloadAttachmentTable,
+*/
+
 function reloadAttachmentTable() {
 
-    $('#attachment-table').bootstrapTable("refresh");
+    $('#attachment-table').bootstrapTable('refresh');
 }
 
 
@@ -13,7 +23,9 @@ function loadAttachmentTable(url, options) {
     $(table).inventreeTable({
         url: url,
         name: options.name || 'attachments',
-        formatNoMatches: function() { return '{% trans "No attachments found" %}'},
+        formatNoMatches: function() {
+            return '{% trans "No attachments found" %}';
+        },
         sortable: true,
         search: false,
         queryParams: options.filters || {},
@@ -40,7 +52,7 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'attachment',
                 title: '{% trans "File" %}',
-                formatter: function(value, row) {
+                formatter: function(value) {
 
                     var icon = 'fa-file-alt';
 
@@ -55,7 +67,7 @@ function loadAttachmentTable(url, options) {
                     } else {
                         var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
 
-                        images.forEach(function (suffix) {
+                        images.forEach(function(suffix) {
                             if (fn.endsWith(suffix)) {
                                 icon = 'fa-file-image';
                             }
