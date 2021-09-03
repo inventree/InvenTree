@@ -44,3 +44,7 @@ jobs:
         run: |
           npm install markuplint
           npx markuplint InvenTree/templates/*.html
+          npx markuplint InvenTree/templates/InvenTree/*.html
+          npx markuplint InvenTree/templates/InvenTree/settings/*.html
+          npm markuplint InvenTree/part/templates/part/*.html
+
