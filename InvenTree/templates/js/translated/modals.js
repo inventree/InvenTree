@@ -103,7 +103,7 @@ function createNewModal(options={}) {
         if (event.keyCode == 13) {
             event.preventDefault();
             // Simulate a click on the 'Submit' button
-            $(modal_name).find("#modal-form-submit").click();
+            $(modal_name).find('#modal-form-submit').click();
             
             return false;
         }
@@ -271,7 +271,7 @@ function reloadFieldOptions(fieldName, options) {
             setFieldOptions(fieldName, opts);
         },
         error: function() {
-            console.log("Error GETting field options");
+            console.log('Error GETting field options');
         }
     });
 }
@@ -290,7 +290,7 @@ function enableField(fieldName, enabled, options={}) {
 
     var field = getFieldByName(modal, fieldName);
 
-    field.prop("disabled", !enabled);
+    field.prop('disabled', !enabled);
 }
 
 function clearField(fieldName, options={}) {
@@ -361,7 +361,7 @@ function attachToggle(modal) {
      * and also larger toggle style buttons are easier to press!
      */
 
-    $(modal).find("input[type='checkbox']").each(function() {
+    $(modal).find(`input[type='checkbox']`).each(function() {
         $(this).bootstrapToggle({
             size: 'small',
             onstyle: 'success',
@@ -376,7 +376,7 @@ function attachSelect(modal) {
      * Provides search filtering for dropdown items
      */
 
-     $(modal + ' .select').select2({
+    $(modal + ' .select').select2({
         dropdownParent: $(modal),
         // dropdownAutoWidth parameter is required to work properly with modal forms
         dropdownAutoWidth: false,
@@ -394,7 +394,7 @@ function loadingMessageContent() {
      */
 
     // TODO - This can be made a lot better
-    return "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}";
+    return `<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}`;
 }
 
 
@@ -409,26 +409,26 @@ function afterForm(response, options) {
      * - Reload the page
      */
 
-     // Should we show alerts immediately or cache them?
+    // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
                 options.redirect ||
                 options.reload;
 
     // Display any messages
     if (response.success) {
-        showAlertOrCache("alert-success", response.success, cache);
+        showAlertOrCache('alert-success', response.success, cache);
     }
 
     if (response.info) {
-        showAlertOrCache("alert-info", response.info, cache);
+        showAlertOrCache('alert-info', response.info, cache);
     }
     
     if (response.warning) {
-        showAlertOrCache("alert-warning", response.warning, cache);
+        showAlertOrCache('alert-warning', response.warning, cache);
     }
     
     if (response.danger) {
-        showAlertOrCache("alert-danger", response.danger, cache);
+        showAlertOrCache('alert-danger', response.danger, cache);
     }
 
     // Was a callback provided?
@@ -612,7 +612,7 @@ function showQuestionDialog(title, content, options={}) {
 
     modalSetContent(modal, content);
 
-    $(modal).on('click', "#modal-form-submit", function() {
+    $(modal).on('click', '#modal-form-submit', function() {
         $(modal).modal('hide');
 
         if (options.accept) {
@@ -653,7 +653,7 @@ function openModal(options) {
             event.preventDefault();
 
             // Simulate a click on the 'Submit' button
-            $(modal).find("#modal-form-submit").click();
+            $(modal).find('#modal-form-submit').click();
 
             return false;
         }
@@ -715,17 +715,17 @@ function insertNewItemButton(modal, options) {
      * Inserts a button at the end of this lael element.
      */
 
-    var html = "<span style='float: right;'>";
+    var html = `<span style='float: right;'>`;
 
-    html += "<div type='button' class='btn btn-primary btn-secondary'";
+    html += `<div type='button' class='btn btn-primary btn-secondary'`;
 
     if (options.title) {
-        html += " title='" + options.title + "'";
+        html += ` title='${ options.title}'`;
     }
 
-    html += " id='btn-new-" + options.field + "'>" + options.label + "</div>";
+    html += ` id='btn-new-${options.field}'>${options.label}</div>`;
 
-    html += "</span>";
+    html += '</span>';
 
     $(modal).find('label[for="id_'+ options.field + '"]').append(html);
 }
@@ -750,7 +750,7 @@ function attachSecondaryModal(modal, options) {
     var data = options.data || {};
 
     // Add a callback to the button
-    $(modal).find("#btn-new-" + options.field).on('click', function() {
+    $(modal).find('#btn-new-' + options.field).on('click', function() {
 
         // Launch the secondary modal
         launchModalForm(
@@ -791,12 +791,14 @@ function attachSecondaries(modal, secondaries) {
 }
 
 function insertActionButton(modal, options) {
-    /* Insert a custom submition button */
+    /* Insert a custom submission button */
 
-    var html = "<span style='float: right;'>";
-    html += "<button name='" + options.name + "' type='submit' class='btn btn-default modal-form-button'";
-    html += " value='" + options.name + "'>" + options.title + "</button>";
-    html += "</span>";
+    var html = `
+    <span style='float: right;'>
+        <button name='${options.name}' type='submit' class='btn btn-default modal-form-button' value='${options.name}'>
+            ${options.title}
+        </button>
+    </span>`;
 
     $(modal).find('#modal-footer-buttons').append(html);
 }
@@ -819,8 +821,8 @@ function attachFieldCallback(modal, callback) {
      * - action: A function to perform
      */
 
-     // Find the field input in the form
-     var field = getFieldByName(modal, callback.field);
+    // Find the field input in the form
+    var field = getFieldByName(modal, callback.field);
 
     field.change(function() {
 
@@ -932,7 +934,7 @@ function handleModalForm(url, options) {
                 showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
             },
             complete: function() {
-                //TODO
+                // TODO
             }
         });
     });
@@ -976,7 +978,7 @@ function launchModalForm(url, options = {}) {
         url: url,
         type: 'get',
         dataType: 'json',
-        beforeSend: function () {
+        beforeSend: function() {
             openModal({
                 modal: modal,
                 submit_text: submit_text,
@@ -1029,7 +1031,7 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Invalid server response" %}', '{% trans "JSON response missing form data" %}');
             }
         },
-        error: function (xhr) {
+        error: function(xhr) {
 
             $(modal).modal('hide');
 
@@ -1068,8 +1070,8 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
             }
 
-            console.log("Modal form error: " + xhr.status);
-            console.log("Message: " + xhr.responseText);
+            console.log('Modal form error: ' + xhr.status);
+            console.log('Message: ' + xhr.responseText);
         }
     };
 

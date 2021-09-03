@@ -15,6 +15,11 @@ rules:
   padded-blocks: off
   prefer-const: off
   max-len: off
+  require-jsdoc: off
+  valid-jsdoc: off
+  no-multiple-empty-lines: off
+  comma-dangle: off
+  prefer-spread: off
   indent:
     - error
     - 4

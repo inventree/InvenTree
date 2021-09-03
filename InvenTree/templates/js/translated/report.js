@@ -208,10 +208,10 @@ function printBuildReports(builds) {
                             window.location.href = href;
                         }
                     }
-                )
+                );
             }
         }
-    )
+    );
 }
 
 
@@ -265,7 +265,7 @@ function printBomReports(parts) {
                 );
             }
         }
-    )
+    );
 }
 
 
@@ -316,10 +316,10 @@ function printPurchaseOrderReports(orders) {
                             window.location.href = href;
                         }
                     }
-                )
+                );
             }
         }
-    )
+    );
 }
 
 
@@ -370,8 +370,8 @@ function printSalesOrderReports(orders) {
                             window.location.href = href;
                         }
                     }
-                )
+                );
             }
         }
-    )
+    );
 }

@@ -17,7 +17,7 @@
 
 function attachClipboard(selector, containerselector, textElement) {
     // set container
-    if (containerselector){
+    if (containerselector) {
         containerselector = document.getElementById(containerselector);
     } else {
         containerselector = document.body;
@@ -26,15 +26,15 @@ function attachClipboard(selector, containerselector, textElement) {
     var text = null;
 
     // set text-function
-    if (textElement){
+    if (textElement) {
         text = function() {
             return document.getElementById(textElement).textContent;
-        }
+        };
     } else {
         text = function(trigger) {
             var content = trigger.parentElement.parentElement.textContent;
             return content.trim();
-        }
+        };
     }
 
     // create Clipboard
@@ -51,15 +51,15 @@ function inventreeDocReady() {
      * This will be called for every page that extends "base.html"
      */
 
-    window.addEventListener("dragover",function(e){
+    window.addEventListener('dragover', function(e) {
         e = e || event;
         e.preventDefault();
-      },false);
+    }, false);
 
-    window.addEventListener("drop",function(e){
+    window.addEventListener('drop', function(e) {
         e = e || event;
         e.preventDefault();
-      },false);
+    }, false);
 
     /* Add drag-n-drop functionality to any element
      * marked with the class 'dropzone'
@@ -93,19 +93,19 @@ function inventreeDocReady() {
 
     // Callback to launch the 'Database Stats' window
     $('#launch-stats').click(function() {
-        launchModalForm("/stats/", {
+        launchModalForm('/stats/', {
             no_post: true,
         });
     });
 
     // Initialize clipboard-buttons
     attachClipboard('.clip-btn');
-    attachClipboard('.clip-btn', 'modal-about');  // modals
-    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
+    attachClipboard('.clip-btn', 'modal-about');
+    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');
 
     // Add autocomplete to the search-bar
-    $("#search-bar" ).autocomplete({
-        source: function (request, response) {
+    $('#search-bar').autocomplete({
+        source: function(request, response) {
             $.ajax({
                 url: '/api/part/',
                 data: {
@@ -113,8 +113,8 @@ function inventreeDocReady() {
                     limit: user_settings.SEARCH_PREVIEW_RESULTS,
                     offset: 0
                 },
-                success: function (data) {
-                    var transformed = $.map(data.results, function (el) {
+                success: function(data) {
+                    var transformed = $.map(data.results, function(el) {
                         return {
                             label: el.name,
                             id: el.pk,
@@ -123,13 +123,13 @@ function inventreeDocReady() {
                     });
                     response(transformed);
                 },
-                error: function () {
+                error: function() {
                     response([]);
                 }
             });
         },
-        create: function () {
-            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+        create: function() {
+            $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
 
                 var html = `<a href='/part/${item.id}/'><span>`;
 
@@ -147,7 +147,9 @@ function inventreeDocReady() {
             window.location = '/part/' + ui.item.id + '/';
         },
         minLength: 2,
-        classes: {'ui-autocomplete': 'dropdown-menu search-menu'},
+        classes: {
+            'ui-autocomplete': 'dropdown-menu search-menu',
+        },
     });
 }
 
@@ -217,21 +219,27 @@ function enableDragAndDrop(element, url, options) {
 }
 
 
+/**
+ * Save a key:value pair to local storage
+ * @param {String} name - settting key 
+ * @param {String} value - setting value
+ */
 function inventreeSave(name, value) {
-    /*
-     * Save a key:value pair to local storage
-     */
 
-    var key = "inventree-" + name;
+    var key = `inventree-${name}`;
     localStorage.setItem(key, value);
 }
 
-function inventreeLoad(name, defaultValue) {
-    /* 
-     * Retrieve a key:value pair from local storage
-     */
 
-    var key = "inventree-" + name;
+/**
+ * Retrieve a key:value pair from local storage
+ * @param {*} name - setting key
+ * @param {*} defaultValue - default value (returned if no matching key:value pair is found)
+ * @returns 
+ */
+function inventreeLoad(name, defaultValue) {
+
+    var key = `inventree-${name}`;
 
     var value = localStorage.getItem(key);
 

@@ -80,7 +80,7 @@ function stockStatusCodes() {
         {% for code in StockStatus.list %}
         {
             key: {{ code.key }},
-            text: "{{ code.value }}",
+            text: '{{ code.value }}',
         },
         {% endfor %}
     ];
@@ -102,11 +102,23 @@ function exportStock(params={}) {
                 type: 'choice',
                 value: 'csv',
                 choices: [
-                    { value: 'csv', display_name: 'CSV' },
-                    { value: 'tsv', display_name: 'TSV' },
-                    { value: 'xls', display_name: 'XLS' },
-                    { value: 'xlsx', display_name: 'XLSX' },
-                ]
+                    {
+                        value: 'csv',
+                        display_name: 'CSV',
+                    },
+                    {
+                        value: 'tsv',
+                        display_name: 'TSV',
+                    },
+                    {
+                        value: 'xls',
+                        display_name: 'XLS',
+                    },
+                    {
+                        value: 'xlsx',
+                        display_name: 'XLSX',
+                    },
+                ],
             },
             sublocations: {
                 label: '{% trans "Include Sublocations" %}',
@@ -151,34 +163,34 @@ function adjustStock(action, items, options={}) {
     var allowSerializedStock = false;
 
     switch (action) {
-        case 'move':
-            formTitle = '{% trans "Transfer Stock" %}';
-            actionTitle = '{% trans "Move" %}';
-            specifyLocation = true;
-            allowSerializedStock = true;
-            url = '{% url "api-stock-transfer" %}';
-            break;
-        case 'count':
-            formTitle = '{% trans "Count Stock" %}';
-            actionTitle = '{% trans "Count" %}';
-            url = '{% url "api-stock-count" %}';
-            break;
-        case 'take':
-            formTitle = '{% trans "Remove Stock" %}';
-            actionTitle = '{% trans "Take" %}';
-            url = '{% url "api-stock-remove" %}';
-            break;
-        case 'add':
-            formTitle = '{% trans "Add Stock" %}';
-            actionTitle = '{% trans "Add" %}';
-            url = '{% url "api-stock-add" %}';
-            break;
-        case 'delete':
-            formTitle = '{% trans "Delete Stock" %}';
-            allowSerializedStock = true;
-            break;
-        default:
-            break;
+    case 'move':
+        formTitle = '{% trans "Transfer Stock" %}';
+        actionTitle = '{% trans "Move" %}';
+        specifyLocation = true;
+        allowSerializedStock = true;
+        url = '{% url "api-stock-transfer" %}';
+        break;
+    case 'count':
+        formTitle = '{% trans "Count Stock" %}';
+        actionTitle = '{% trans "Count" %}';
+        url = '{% url "api-stock-count" %}';
+        break;
+    case 'take':
+        formTitle = '{% trans "Remove Stock" %}';
+        actionTitle = '{% trans "Take" %}';
+        url = '{% url "api-stock-remove" %}';
+        break;
+    case 'add':
+        formTitle = '{% trans "Add Stock" %}';
+        actionTitle = '{% trans "Add" %}';
+        url = '{% url "api-stock-add" %}';
+        break;
+    case 'delete':
+        formTitle = '{% trans "Delete Stock" %}';
+        allowSerializedStock = true;
+        break;
+    default:
+        break;
     }
 
     // Generate modal HTML content
@@ -214,25 +226,25 @@ function adjustStock(action, items, options={}) {
         var value = null;
 
         switch (action) {
-            case 'move':
-                minValue = 0;
-                maxValue = item.quantity;
-                value = item.quantity;
-                break;
-            case 'add':
-                minValue = 0;
-                value = 0;
-                break;
-            case 'take':
-                minValue = 0;
-                value = 0;
-                break;
-            case 'count':
-                minValue = 0;
-                value = item.quantity;
-                break;
-            default:
-                break;
+        case 'move':
+            minValue = 0;
+            maxValue = item.quantity;
+            value = item.quantity;
+            break;
+        case 'add':
+            minValue = 0;
+            value = 0;
+            break;
+        case 'take':
+            minValue = 0;
+            value = 0;
+            break;
+        case 'count':
+            minValue = 0;
+            value = item.quantity;
+            break;
+        default:
+            break;
         }
 
         var image = item.part_detail.thumbnail || item.part_detail.image || blankImage();
@@ -265,7 +277,7 @@ function adjustStock(action, items, options={}) {
                     read_only: readonly,
                     title: readonly ? '{% trans "Quantity cannot be adjusted for serialized stock" %}' : '{% trans "Specify stock quantity" %}',
                 }
-            )
+            );
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
@@ -352,7 +364,7 @@ function adjustStock(action, items, options={}) {
                         inventreeDelete(
                             `/api/stock/${item.pk}/`,
                         )
-                    )
+                    );
                 });
 
                 // Wait for *all* the requests to complete
@@ -410,22 +422,22 @@ function adjustStock(action, items, options={}) {
                     },
                     error: function(xhr) {
                         switch (xhr.status) {
-                            case 400:
+                        case 400:
 
-                                // Handle errors for standard fields
-                                handleFormErrors(
-                                    xhr.responseJSON,
-                                    extraFields,
-                                    {
-                                        modal: modal,
-                                    }
-                                )
+                            // Handle errors for standard fields
+                            handleFormErrors(
+                                xhr.responseJSON,
+                                extraFields,
+                                {
+                                    modal: modal,
+                                }
+                            );
 
-                                break;
-                            default:
-                                $(modal).modal('hide');
-                                showApiError(xhr);
-                                break;
+                            break;
+                        default:
+                            $(modal).modal('hide');
+                            showApiError(xhr);
+                            break;
                         }
                     }
                 }
@@ -503,15 +515,15 @@ function loadStockTestResultsTable(table, options) {
             html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
         }
 
-        html += "</div>";
+        html += '</div>';
 
         return html;
     }
 
-    var parent_node = "parent node";
+    var parent_node = 'parent node';
 
     table.inventreeTable({
-        url: "{% url 'api-part-test-template-list' %}",
+        url: '{% url "api-part-test-template-list" %}',
         method: 'get',
         name: 'testresult',
         treeEnable: true,
@@ -530,7 +542,7 @@ function loadStockTestResultsTable(table, options) {
             table.treegrid({
                 treeColumn: 0,
             });
-            table.treegrid("collapseAll");
+            table.treegrid('collapseAll');
         },
         columns: [
             {
@@ -596,7 +608,7 @@ function loadStockTestResultsTable(table, options) {
                     stock_item: options.stock_item,
                     user_detail: true,
                     attachment_detail: true,
-                    ordering: "-date",
+                    ordering: '-date',
                 },
                 {
                     success: function(data) {
@@ -646,13 +658,12 @@ function loadStockTestResultsTable(table, options) {
                         });
 
                         // Push data back into the table
-                        table.bootstrapTable("load", tableData);
+                        table.bootstrapTable('load', tableData);
                     }
                 }
-            )
+            );
         }
     });
-
 }
 
 
@@ -728,11 +739,11 @@ function loadStockTable(table, options) {
 
     var params = options.params || {};
 
-    var filterListElement = options.filterList || "#filter-list-stock";
+    var filterListElement = options.filterList || '#filter-list-stock';
 
     var filters = {};
 
-    var filterKey = options.filterKey || options.name || "stock";
+    var filterKey = options.filterKey || options.name || 'stock';
 
     if (!options.disableFilters) {
         filters = loadTableFilters(filterKey);
@@ -882,7 +893,7 @@ function loadStockTable(table, options) {
             if (row.status == {{ StockStatus.REJECTED }}) {
                 html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
             } else if (row.status == {{ StockStatus.LOST }}) {
-                html += makeIconBadge('fa-question-circle','{% trans "Stock item is lost" %}');
+                html += makeIconBadge('fa-question-circle', '{% trans "Stock item is lost" %}');
             } else if (row.status == {{ StockStatus.DESTROYED }}) {
                 html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
             }
@@ -1055,7 +1066,7 @@ function loadStockTable(table, options) {
         formatNoMatches: function() {
             return '{% trans "No stock items matching query" %}';
         },
-        url: options.url || "{% url 'api-stock-list' %}",
+        url: options.url || '{% url "api-stock-list" %}',
         queryParams: filters,
         sidePagination: 'server',
         name: 'stock',
@@ -1122,7 +1133,7 @@ function loadStockTable(table, options) {
 
                 stock = +stock.toFixed(5);
 
-                return stock + " (" + items + " items)";
+                return `${stock} (${items} {% trans "items" %})`;
             } else if (field == 'status') {
                 var statii = [];
 
@@ -1244,7 +1255,7 @@ function loadStockTable(table, options) {
 
 
     function stockAdjustment(action) {
-        var items = $(table).bootstrapTable("getSelections");
+        var items = $(table).bootstrapTable('getSelections');
 
         adjustStock(action, items, {
             onSuccess: function() {
@@ -1277,7 +1288,7 @@ function loadStockTable(table, options) {
         });
 
         printTestReports(items);
-    })
+    });
 
     if (global_settings.BARCODE_ENABLE) {
         $('#multi-item-barcode-scan-into-location').click(function() {        
@@ -1287,7 +1298,7 @@ function loadStockTable(table, options) {
 
             selections.forEach(function(item) {
                 items.push(item.pk);
-            })
+            });
 
             scanItemsIntoLocation(items);
         });
@@ -1305,12 +1316,12 @@ function loadStockTable(table, options) {
         stockAdjustment('add');
     });
 
-    $("#multi-item-move").click(function() {
+    $('#multi-item-move').click(function() {
         stockAdjustment('move');
     });
 
-    $("#multi-item-order").click(function() {
-        var selections = $(table).bootstrapTable("getSelections");
+    $('#multi-item-order').click(function() {
+        var selections = $(table).bootstrapTable('getSelections');
 
         var stock = [];
 
@@ -1318,14 +1329,14 @@ function loadStockTable(table, options) {
             stock.push(item.pk);
         });
 
-        launchModalForm("/order/purchase-order/order-parts/", {
+        launchModalForm('/order/purchase-order/order-parts/', {
             data: {
                 stock: stock,
             },
         });
     });
 
-    $("#multi-item-set-status").click(function() {
+    $('#multi-item-set-status').click(function() {
         // Select and set the STATUS field for selected stock items
         var selections = $(table).bootstrapTable('getSelections');
 
@@ -1337,7 +1348,7 @@ function loadStockTable(table, options) {
             function(item) {
                 return item.text;
             },
-            function (item) {
+            function(item) {
                 return item.key;
             }
         );
@@ -1409,11 +1420,11 @@ function loadStockTable(table, options) {
             $.when.apply($, requests).done(function() {
                 $(table).bootstrapTable('refresh');
             });
-        })
+        });
     });
 
-    $("#multi-item-delete").click(function() {
-        var selections = $(table).bootstrapTable("getSelections");
+    $('#multi-item-delete').click(function() {
+        var selections = $(table).bootstrapTable('getSelections');
 
         var stock = [];
 
@@ -1528,10 +1539,10 @@ function loadStockTrackingTable(table, options) {
         field: 'label',
         title: '{% trans "Description" %}',
         formatter: function(value, row) {
-            var html = "<b>" + value + "</b>";
+            var html = '<b>' + value + '</b>';
 
             if (row.notes) {
-                html += "<br><i>" + row.notes + "</i>";
+                html += '<br><i>' + row.notes + '</i>';
             }
 
             return html;
@@ -1763,7 +1774,7 @@ function createNewStockItem(options) {
                 reloadFieldOptions(
                     'supplier_part',
                     {
-                        url: "{% url 'api-supplier-part-list' %}",
+                        url: '{% url "api-supplier-part-list" %}',
                         params: {
                             part: value,
                             pretty: true,
@@ -1794,7 +1805,7 @@ function createNewStockItem(options) {
                             } else {
                                 var expiry = moment().add(response.default_expiry, 'days');
 
-                                setFieldValue('expiry_date', expiry.format("YYYY-MM-DD"));
+                                setFieldValue('expiry_date', expiry.format('YYYY-MM-DD'));
                             }
                         }
                     }
@@ -1803,7 +1814,7 @@ function createNewStockItem(options) {
         },
     ];
 
-    launchModalForm("{% url 'stock-item-create' %}", options);
+    launchModalForm('{% url "stock-item-create" %}', options);
 }
 
 
@@ -1813,7 +1824,7 @@ function loadInstalledInTable(table, options) {
     */
 
     table.inventreeTable({
-        url: "{% url 'api-stock-list' %}",
+        url: '{% url "api-stock-list" %}',
         queryParams: {
             installed_in: options.stock_item,
             part_detail: true,
@@ -1892,7 +1903,7 @@ function loadInstalledInTable(table, options) {
                             table.bootstrapTable('refresh');
                         }
                     }
-                )
+                );
             });
         }
     });

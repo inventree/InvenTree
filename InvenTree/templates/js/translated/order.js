@@ -170,7 +170,7 @@ function newSupplierPartFromOrderWizard(e) {
 
                         if (response.supplier_detail) {
                             text += response.supplier_detail.name;
-                            text += " | ";
+                            text += ' | ';
                         }
 
                         text += response.SKU;
@@ -180,8 +180,7 @@ function newSupplierPartFromOrderWizard(e) {
                         $('#modal-form').find(dropdown).append(option).trigger('change');
                     }
                 }
-            )
-
+            );
         }
     });
 }
@@ -230,7 +229,7 @@ function newPurchaseOrderFromOrderWizard(e) {
                         $('#modal-form').find(dropdown).append(option).trigger('change');
                     }
                 }
-            )
+            );
         }
     }); 
 }
@@ -275,7 +274,7 @@ function loadPurchaseOrderTable(table, options) {
 
     options.params['supplier_detail'] = true;
 
-    var filters = loadTableFilters("purchaseorder");
+    var filters = loadTableFilters('purchaseorder');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
@@ -283,7 +282,7 @@ function loadPurchaseOrderTable(table, options) {
 
     options.url = options.url || '{% url "api-po-list" %}';
 
-    setupFilterList("purchaseorder", $(table));
+    setupFilterList('purchaseorder', $(table));
 
     $(table).inventreeTable({
         url: options.url,
@@ -373,7 +372,7 @@ function loadSalesOrderTable(table, options) {
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
-    var filters = loadTableFilters("salesorder");
+    var filters = loadTableFilters('salesorder');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
@@ -381,7 +380,7 @@ function loadSalesOrderTable(table, options) {
 
     options.url = options.url || '{% url "api-so-list" %}';
 
-    setupFilterList("salesorder", $(table));
+    setupFilterList('salesorder', $(table));
 
     $(table).inventreeTable({
         url: options.url,
@@ -490,13 +489,13 @@ function loadSalesOrderAllocationTable(table, options={}) {
     options.params['item_detail'] = true;
     options.params['order_detail'] = true;
 
-    var filters = loadTableFilters("salesorderallocation");
+    var filters = loadTableFilters('salesorderallocation');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList("salesorderallocation", $(table));
+    setupFilterList('salesorderallocation', $(table));
 
     $(table).inventreeTable({
         url: '{% url "api-so-allocation-list" %}',

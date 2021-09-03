@@ -120,7 +120,7 @@ function printStockLocationLabels(locations) {
                 );
             }
         }
-    )
+    );
 }
 
 

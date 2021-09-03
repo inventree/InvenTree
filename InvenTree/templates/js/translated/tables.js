@@ -253,7 +253,7 @@ $.fn.inventreeTable = function(options) {
 
     // If a set of visible columns has been saved, load!
     if (visibleColumns) {
-        var columns = visibleColumns.split(",");
+        var columns = visibleColumns.split(',');
 
         // Which columns are currently visible?
         var visible = table.bootstrapTable('getVisibleColumns');
@@ -275,7 +275,8 @@ $.fn.inventreeTable = function(options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
-}
+};
+
 
 function customGroupSorter(sortName, sortOrder, sortData) {
 
@@ -381,7 +382,7 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         },
         formatAllRows: function() {
             return '{% trans "All" %}';
-        }
+        },
     };
 
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);

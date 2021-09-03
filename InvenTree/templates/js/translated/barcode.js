@@ -121,7 +121,7 @@ function postBarcodeData(barcode_data, options={}) {
                 }
             }
         }
-    )
+    );
 }
 
 
@@ -131,7 +131,7 @@ function showBarcodeMessage(modal, message, style='danger') {
 
     html += message;
 
-    html += "</div>";
+    html += '</div>';
 
     $(modal + ' #barcode-error-message').html(html);
 }
@@ -278,7 +278,7 @@ function barcodeScanDialog() {
     var modal = '#modal-form';
 
     barcodeDialog(
-        "Scan Barcode",
+        '{% trans "Scan Barcode" %}',
         {
             onScan: function(response) {
                 if ('url' in response) {
@@ -307,7 +307,7 @@ function linkBarcodeDialog(stockitem) {
     var modal = '#modal-form';
 
     barcodeDialog(
-        "{% trans 'Link Barcode to Stock Item' %}",
+        '{% trans "Link Barcode to Stock Item" %}',
         {
             url: '/api/barcode/link/',
             data: {
@@ -330,13 +330,13 @@ function unlinkBarcode(stockitem) {
 
     var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
 
-    html += "{% trans 'This will remove the association between this stock item and the barcode' %}";
+    html += '{% trans "This will remove the association between this stock item and the barcode" %}';
 
     showQuestionDialog(
-        "{% trans 'Unlink Barcode' %}",
+        '{% trans "Unlink Barcode" %}',
         html,
         {
-            accept_text: "{% trans 'Unlink' %}",
+            accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
                     `/api/stock/${stockitem}/`,
@@ -471,7 +471,7 @@ function barcodeCheckIn(location_id) {
                 data.items = entries;
 
                 inventreePut(
-                    "{% url 'api-stock-transfer' %}",
+                    '{% url "api-stock-transfer" %}',
                     data,
                     {
                         method: 'POST',
@@ -502,7 +502,7 @@ function barcodeCheckIn(location_id) {
                     });
 
                     if (duplicate) {
-                        showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', "warning");
+                        showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', 'warning');
                     } else {
 
                         if (stockitem.location == location_id) {
@@ -513,14 +513,14 @@ function barcodeCheckIn(location_id) {
                         // Add this stock item to the list
                         items.push(stockitem);
 
-                        showBarcodeMessage(modal, '{% trans "Added stock item" %}', "success");
+                        showBarcodeMessage(modal, '{% trans "Added stock item" %}', 'success');
 
                         reloadTable();
                     }
 
                 } else {
                     // Barcode does not match a stock item
-                    showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', "warning");
+                    showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', 'warning');
                 }
             },
         }
@@ -585,7 +585,7 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                     items.push({
                         pk: pk,
                     });
-                })
+                });
 
                 var data = {
                     location: stock_location.pk,
@@ -611,7 +611,7 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                             }
                         }
                     }
-                )
+                );
             },
             onScan: function(response) {
                 updateLocationInfo(null);
@@ -627,10 +627,10 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                     showBarcodeMessage(
                         modal,
                         '{% trans "Barcode does not match a valid location" %}',
-                        "warning",
+                        'warning',
                     );
                 }
             }
         }
-    )
+    );
 }

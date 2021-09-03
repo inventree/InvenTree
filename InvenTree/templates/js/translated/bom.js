@@ -146,7 +146,7 @@ function loadBomTable(table, options) {
     var params = {
         part: options.parent_id,
         ordering: 'name',
-    }
+    };
 
     if (options.part_detail) {
         params.part_detail = true;
@@ -264,8 +264,7 @@ function loadBomTable(table, options) {
         },
     });
 
-    cols.push(
-    {
+    cols.push({
         field: 'sub_part_detail.stock',
         title: '{% trans "Available" %}',
         searchable: false,
@@ -283,24 +282,21 @@ function loadBomTable(table, options) {
         }
     });
     
-    cols.push(
-    {
+    cols.push({
         field: 'purchase_price_range',
         title: '{% trans "Purchase Price Range" %}',
         searchable: false,
         sortable: true,
     });
 
-    cols.push(
-    {
+    cols.push({
         field: 'purchase_price_avg',
         title: '{% trans "Purchase Price Average" %}',
         searchable: false,
         sortable: true,
     });
 
-    cols.push(
-    {
+    cols.push({
         field: 'price_range',
         title: '{% trans "Supplier Cost" %}',
         sortable: true,
@@ -308,7 +304,7 @@ function loadBomTable(table, options) {
             if (value) {
                 return value;
             } else {
-                return "<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>";
+                return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
             }
         }
     });
@@ -328,7 +324,7 @@ function loadBomTable(table, options) {
         formatter: function(value) {
             return yesNoLabel(value);
         }
-    })
+    });
 
     cols.push({
         field: 'inherited',
@@ -352,8 +348,8 @@ function loadBomTable(table, options) {
 
     cols.push(
         {
-            'field': 'can_build',
-            'title': '{% trans "Can Build" %}',
+            field: 'can_build',
+            title: '{% trans "Can Build" %}',
             formatter: function(value, row) {
                 var can_build = 0;
 
@@ -380,7 +376,7 @@ function loadBomTable(table, options) {
             },
             sortable: true,
         }
-    )
+    );
 
     // Part notes
     cols.push(
@@ -411,7 +407,7 @@ function loadBomTable(table, options) {
 
                     var bDelt = `<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
 
-                    var html = "<div class='btn-group' role='group'>";
+                    var html = `<div class='btn-group' role='group'>`;
 
                     html += bEdit;
                     html += bDelt;
@@ -422,7 +418,7 @@ function loadBomTable(table, options) {
                         html += bValid;
                     }
 
-                    html += "</div>";
+                    html += `</div>`;
 
                     return html;
                 } else {
@@ -454,7 +450,7 @@ function loadBomTable(table, options) {
                         response[idx].parentId = bom_pk;
 
                         if (response[idx].sub_part_detail.assembly) {
-                            requestSubItems(response[idx].pk, response[idx].sub_part)
+                            requestSubItems(response[idx].pk, response[idx].sub_part);
                         }
                     }
 
@@ -466,7 +462,7 @@ function loadBomTable(table, options) {
                     console.log('Error requesting BOM for part=' + part_pk);
                 }
             }
-        )
+        );
     }
 
     table.inventreeTable({

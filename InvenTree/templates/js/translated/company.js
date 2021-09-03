@@ -24,6 +24,10 @@
 */
 
 
+/**
+ * Construct a set of form fields for creating / editing a ManufacturerPart
+ * @returns 
+ */
 function manufacturerPartFields() {
 
     return {
@@ -40,6 +44,10 @@ function manufacturerPartFields() {
 }
 
 
+/**
+ * Launches a form to create a new ManufacturerPart
+ * @param {object} options 
+ */
 function createManufacturerPart(options={}) {
 
     var fields = manufacturerPartFields();
@@ -62,7 +70,7 @@ function createManufacturerPart(options={}) {
             
             return company_fields;
         }
-    }
+    };
 
     constructForm('{% url "api-manufacturer-part-list" %}', {
         fields: fields,
@@ -73,6 +81,11 @@ function createManufacturerPart(options={}) {
 }
 
 
+/**
+ * Launches a form to edit a ManufacturerPart
+ * @param {integer} part - ID of a ManufacturerPart
+ * @param {object} options 
+ */
 function editManufacturerPart(part, options={}) {
 
     var url = `/api/company/part/manufacturer/${part}/`;
@@ -288,13 +301,13 @@ function loadCompanyTable(table, url, options={}) {
     // Query parameters
     var params = options.params || {};
 
-    var filters = loadTableFilters("company");
+    var filters = loadTableFilters('company');
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("company", $(table));
+    setupFilterList('company', $(table));
 
     var columns = [
         {
@@ -391,18 +404,18 @@ function deleteManufacturerParts(selections, options={}) {
             <p>{% trans "The following manufacturer parts will be deleted" %}:</p>
             <ul>`;
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
+    selections.forEach(function(item) {
+        parts.push(item.pk);
 
-            text += `
-            <li>
-                <p>${item.MPN} - ${item.part_detail.full_name}</p>
-            </li>`;
-        });
-                
         text += `
-            </ul>
-        </div>`;
+        <li>
+            <p>${item.MPN} - ${item.part_detail.full_name}</p>
+        </li>`;
+    });
+            
+    text += `
+        </ul>
+    </div>`;
 
     showQuestionDialog(
         '{% trans "Delete Manufacturer Parts" %}',
@@ -426,7 +439,7 @@ function deleteManufacturerParts(selections, options={}) {
                     if (options.onSuccess) {
                         options.onSuccess();
                     }
-                })
+                });
             }
         }
     );
@@ -443,13 +456,13 @@ function loadManufacturerPartTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters("manufacturer-part");
+    var filters = loadTableFilters('manufacturer-part');
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("manufacturer-part", $(table));
+    setupFilterList('manufacturer-part', $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -505,7 +518,7 @@ function loadManufacturerPartTable(table, url, options) {
 
                         return html;
                     } else {
-                        return "-";
+                        return '-';
                     }
                 }
             },
@@ -563,8 +576,9 @@ function loadManufacturerPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
+                );
             });
 
             $(table).find('.button-manufacturer-part-delete').click(function() {
@@ -575,9 +589,10 @@ function loadManufacturerPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
-            })
+                );
+            });
         }
     });
 }
@@ -591,7 +606,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters("manufacturer-part-parameters");
+    var filters = loadTableFilters('manufacturer-part-parameters');
 
     // Overwrite explicit parameters
     for (var key in params) {
@@ -607,7 +622,9 @@ function loadManufacturerPartParameterTable(table, url, options) {
         queryParams: filters,
         name: 'manufacturerpartparameters',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No parameters found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -695,13 +712,13 @@ function loadSupplierPartTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters("supplier-part");
+    var filters = loadTableFilters('supplier-part');
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("supplier-part", $(table));
+    setupFilterList('supplier-part', $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -710,7 +727,9 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No supplier parts found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No supplier parts found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -755,7 +774,7 @@ function loadSupplierPartTable(table, url, options) {
 
                         return html;
                     } else {
-                        return "-";
+                        return '-';
                     }
                 },
             },
@@ -781,7 +800,7 @@ function loadSupplierPartTable(table, url, options) {
 
                         return html;
                     } else {
-                        return "-";
+                        return '-';
                     }
                 }
             },
@@ -795,7 +814,7 @@ function loadSupplierPartTable(table, url, options) {
                     if (value && row.manufacturer_part) {
                         return renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`);
                     } else {
-                        return "-";
+                        return '-';
                     }
                 }
             },
@@ -870,7 +889,7 @@ function loadSupplierPartTable(table, url, options) {
                         }
                     }
                 );
-            })
+            });
         }
     });
 }

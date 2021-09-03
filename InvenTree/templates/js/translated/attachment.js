@@ -12,7 +12,7 @@
 
 function reloadAttachmentTable() {
 
-    $('#attachment-table').bootstrapTable("refresh");
+    $('#attachment-table').bootstrapTable('refresh');
 }
 
 
@@ -24,7 +24,7 @@ function loadAttachmentTable(url, options) {
         url: url,
         name: options.name || 'attachments',
         formatNoMatches: function() {
-            return '{% trans "No attachments found" %}'
+            return '{% trans "No attachments found" %}';
         },
         sortable: true,
         search: false,
@@ -67,7 +67,7 @@ function loadAttachmentTable(url, options) {
                     } else {
                         var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
 
-                        images.forEach(function (suffix) {
+                        images.forEach(function(suffix) {
                             if (fn.endsWith(suffix)) {
                                 icon = 'fa-file-image';
                             }

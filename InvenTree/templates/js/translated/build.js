@@ -125,7 +125,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
         html += makeIconButton(
             'fa-magic icon-blue', 'button-output-auto', outputId,
             '{% trans "Auto-allocate stock items to this output" %}',
-            );
+        );
     }
 
     if (lines > 0) {
@@ -133,7 +133,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
         html += makeIconButton(
             'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
             '{% trans "Unallocate stock from build output" %}',
-            );
+        );
     }
 
 
@@ -144,7 +144,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
             'fa-check icon-green', 'button-output-complete', outputId,
             '{% trans "Complete build output" %}',
             {
-                //disabled: true
+                // disabled: true
             }
         );
 
@@ -152,7 +152,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
         html += makeIconButton(
             'fa-trash-alt icon-red', 'button-output-delete', outputId,
             '{% trans "Delete build output" %}',
-            );
+        );
 
         // TODO - Add a button to "destroy" the particular build output (mark as damaged, scrap)
     }
@@ -229,13 +229,13 @@ function loadBuildOrderAllocationTable(table, options={}) {
     options.params['build_detail'] = true;
     options.params['location_detail'] = true;
 
-    var filters = loadTableFilters("buildorderallocation");
+    var filters = loadTableFilters('buildorderallocation');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList("buildorderallocation", $(table));
+    setupFilterList('buildorderallocation', $(table));
 
     $(table).inventreeTable({
         url: '{% url "api-build-item-list" %}',
@@ -246,7 +246,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
         paginationVAlign: 'bottom',
         original: options.params,
         formatNoMatches: function() {
-            return '{% trans "No build order allocations found" %}'
+            return '{% trans "No build order allocations found" %}';
         },
         columns: [
             {
@@ -372,13 +372,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         // Register button callbacks once table data are loaded
 
         // Callback for 'allocate' button
-        $(table).find(".button-add").click(function() {
+        $(table).find('.button-add').click(function() {
 
             // Primary key of the 'sub_part'
             var pk = $(this).attr('pk');
 
             // Launch form to allocate new stock against this output
-            launchModalForm("{% url 'build-item-create' %}", {
+            launchModalForm('{% url "build-item-create" %}', {
                 success: reloadTable,
                 data: {
                     part: pk,
@@ -418,7 +418,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                         }
                                     }
                                 }
-                            )
+                            );
                         }
                     }
                 ]
@@ -472,7 +472,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     // Load table of BOM items
     $(table).inventreeTable({
-        url: "{% url 'api-bom-list' %}",
+        url: '{% url "api-bom-list" %}',
         queryParams: {
             part: partId,
             sub_part_detail: true,
@@ -492,7 +492,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 build: buildId,
                 part_detail: true,
                 location_detail: true,
-            }
+            };
 
             if (output) {
                 params.sub_part_trackable = true;
@@ -521,7 +521,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             var key = parseInt(part);
 
                             if (!(key in allocations)) {
-                                allocations[key] = new Array();
+                                allocations[key] = [];
                             }
 
                             allocations[key].push(item);
@@ -827,7 +827,7 @@ function loadBuildTable(table, options) {
     params['part_detail'] = true;
 
     if (!options.disableFilters) {
-        filters = loadTableFilters("build");
+        filters = loadTableFilters('build');
     }
 
     for (var key in params) {
@@ -838,7 +838,7 @@ function loadBuildTable(table, options) {
 
     var filterTarget = options.filterTarget || null;
 
-    setupFilterList("build", table, filterTarget);
+    setupFilterList('build', table, filterTarget);
 
     $(table).inventreeTable({
         method: 'get',
@@ -915,7 +915,7 @@ function loadBuildTable(table, options) {
                         row.completed,
                         row.quantity,
                         {
-                            //style: 'max',
+                            // style: 'max',
                         }
                     );
                 }
@@ -985,7 +985,7 @@ function updateAllocationTotal(id, count, required) {
 
     $('#allocation-total-'+id).html(count);
 
-    var el = $("#allocation-panel-" + id);
+    var el = $('#allocation-panel-' + id);
     el.removeClass('part-allocation-pass part-allocation-underallocated part-allocation-overallocated');
 
     if (count < required) {
@@ -1027,10 +1027,15 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
                 formatter: function(value, row) {
                     var html = parseFloat(value);
 
-                    var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='{% trans "Edit stock allocation" %}' url='/build/item/" + row.pk + "/edit/'><span class='fas fa-edit'></span></button>";
-                    var bDel = "<button class='btn item-del-button btn-sm' type='button' title='{% trans "Delete stock allocation" %}' url='/build/item/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'></span></button>";
+                    var bEdit = `<button class='btn item-edit-button btn-sm' type='button' title='{% trans "Edit stock allocation" %}' url='/build/item/${row.pk}/edit/'><span class='fas fa-edit'></span></button>`;
+                    var bDel = `<button class='btn item-del-button btn-sm' type='button' title='{% trans "Delete stock allocation" %}' url='/build/item/${row.pk}/delete/'><span class='fas fa-trash-alt icon-red'></span></button>`;
 
-                    html += "<div class='btn-group' style='float: right;'>" + bEdit + bDel + "</div>";
+                    html += `
+                    <div class='btn-group' style='float: right;'>
+                        ${bEdit}
+                        ${bDel}
+                    </div>
+                    `;
 
                     return html;
                 }

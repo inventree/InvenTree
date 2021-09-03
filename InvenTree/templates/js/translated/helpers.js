@@ -23,12 +23,12 @@ function yesNoLabel(value) {
 
 
 function editButton(url, text='{% trans "Edit" %}') {
-    return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
+    return `<button class='btn btn-success edit-button btn-sm' type='button' url='${url}'>${text}</button>`;
 }
 
 
 function deleteButton(url, text='{% trans "Delete" %}') {
-    return "<button class='btn btn-danger delete-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
+    return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
 }
 
 
@@ -87,7 +87,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
     var extraProps = '';
 
     if (options.disabled) {
-        extraProps += "disabled='true' ";
+        extraProps += `disabled='true' `;
     }
 
     html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
