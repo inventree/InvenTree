@@ -42,12 +42,12 @@ jobs:
       - name: Check HTML Files
         run: |
           npm install markuplint
-          npm markuplint InvenTree/build/templates/build/*.html
-          npm markuplint InvenTree/common/templates/common/*.html
-          npm markuplint InvenTree/company/templates/company/*.html
-          npm markuplint InvenTree/order/templates/order/*.html
-          npm markuplint InvenTree/part/templates/part/*.html
-          npm markuplint InvenTree/stock/templates/stock/*.html
+          npx markuplint InvenTree/build/templates/build/*.html
+          npx markuplint InvenTree/common/templates/common/*.html
+          npx markuplint InvenTree/company/templates/company/*.html
+          npx markuplint InvenTree/order/templates/order/*.html
+          npx markuplint InvenTree/part/templates/part/*.html
+          npx markuplint InvenTree/stock/templates/stock/*.html
           npx markuplint InvenTree/templates/*.html
           npx markuplint InvenTree/templates/InvenTree/*.html
           npx markuplint InvenTree/templates/InvenTree/settings/*.html
