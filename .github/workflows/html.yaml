@@ -1,0 +1,54 @@
+# Check javascript template files
+
+name: HTML Templates
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches-ignore:
+      - l10*
+
+jobs:
+
+  html:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_MEDIA_ROOT: ./media
+      INVENTREE_STATIC_ROOT: ./static
+    steps:
+      - name: Install node.js
+        uses: actions/setup-node@v2
+      - run: npm install
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install gettext
+          pip3 install invoke
+          invoke install
+          invoke static
+      - name: Check HTML Files
+        run: |
+          npm install markuplint
+          npx markuplint InvenTree/build/templates/build/*.html
+          npx markuplint InvenTree/common/templates/common/*.html
+          npx markuplint InvenTree/company/templates/company/*.html
+          npx markuplint InvenTree/order/templates/order/*.html
+          npx markuplint InvenTree/part/templates/part/*.html
+          npx markuplint InvenTree/stock/templates/stock/*.html
+          npx markuplint InvenTree/templates/*.html
+          npx markuplint InvenTree/templates/InvenTree/*.html
+          npx markuplint InvenTree/templates/InvenTree/settings/*.html
+
