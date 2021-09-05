@@ -6,9 +6,9 @@
 <div class='alert alert-block alert-warning'>
     {% trans "This action will unallocate the following stock from the Sales Order" %}:
     <br>
-    <b>
+    <strong>
         {% decimal allocation.get_allocated %} x {{ allocation.line.part.full_name }}
         {% if allocation.item.location %} ({{ allocation.get_location }}){% endif %}
-    </b>
+    </strong>
 </div>
 {% endblock %}

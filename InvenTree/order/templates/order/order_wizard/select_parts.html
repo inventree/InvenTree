@@ -38,7 +38,7 @@
         <tr id='part_row_{{ part.id }}'>
             <td>
                 {% include "hover_image.html" with image=part.image hover=False %}
-                {{ part.full_name }} <small><i>{{ part.description }}</i></small>
+                {{ part.full_name }} <small><em>{{ part.description }}</em></small>
             </td>
             <td>
                 <button class='btn btn-default btn-create' onClick='newSupplierPartFromOrderWizard()' id='new_supplier_part_{{ part.id }}' part='{{ part.pk }}' title='{% trans "Create new supplier part" %}' type='button'>
@@ -62,7 +62,7 @@
                         </select>
                     </div>
                     {% if not part.order_supplier %}
-                    <span class='help-inline'>{% blocktrans with name=part.name %}Select a supplier for <i>{{name}}</i>{% endblocktrans %}</span>
+                    <span class='help-inline'>{% blocktrans with name=part.name %}Select a supplier for <em>{{name}}</em>{% endblocktrans %}</span>
                     {% endif %}
                 </div>
             </td>

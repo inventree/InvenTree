@@ -18,7 +18,7 @@
     <div class='panel-content'>
         {% if part.is_template %}
         <div class='alert alert-info alert-block'>
-            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <i>{{full_name}}</i>{% endblocktrans %}
+            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <em>{{full_name}}</em>{% endblocktrans %}
         </div>
         {% endif %}
         {% include "stock_table.html" %}

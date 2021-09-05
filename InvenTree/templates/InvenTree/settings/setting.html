@@ -13,7 +13,7 @@
         <span class='fas {{ icon }}'></span>
         {% endif %}
     </td>
-    <td><b>{% trans setting.name %}</b></td>
+    <td><strong>{% trans setting.name %}</strong></td>
     <td>
         {% if setting.is_bool %}
         <div>
@@ -21,15 +21,15 @@
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
-            <b>
+            <strong>
             <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
                 {% if setting.value %}
                 {{ setting.value }}
                 {% else %}
-                <i>{% trans "No value set" %}</i>
+                <em>{% trans "No value set" %}</em>
                 {% endif %}
             </span>
-            </b>
+            </strong>
             {{ setting.units }}
         </div>
         {% endif %}

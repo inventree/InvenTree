@@ -10,10 +10,14 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.0 pre"
 
-INVENTREE_API_VERSION = 10
+INVENTREE_API_VERSION = 11
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v11 -> 2021-08-26
+    - Adds "units" field to PartBriefSerializer
+    - This allows units to be introspected from the "part_detail" field in the StockItem serializer
 
 v10 -> 2021-08-23
     - Adds "purchase_price_currency" to StockItem serializer
