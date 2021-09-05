@@ -1,10 +1,12 @@
 {% extends "account/base.html" %}
 
-{% load i18n account socialaccount crispy_forms_tags %}
+{% load i18n account socialaccount crispy_forms_tags inventree_extras %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
+
+{% settings_value 'LOGIN_ENABLE_PWD_FORGOT' as enable_pwd_forgot %}
 
 <h1>{% trans "Sign In" %}</h1>
 
@@ -27,7 +29,9 @@ for a account and sign in below:{% endblocktrans %}</p>
 
   <div class="btn-toolbar">
     <button class="btn btn-primary col-md-8" type="submit">{% trans "Sign In" %}</button>
+    {% if enable_pwd_forgot %}
     <a class="btn btn-primary" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+    {% endif %}
 </div>
 </form>
 

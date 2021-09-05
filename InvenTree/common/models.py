@@ -826,6 +826,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        # login / SSO
+        'LOGIN_ENABLE_PWD_FORGOT': {
+            'name': _('Enable password forgot'),
+            'description': _('Enable password forgot function on the login-pages'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:
