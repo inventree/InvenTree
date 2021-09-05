@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %}
-{% load crispy_forms_tags %}
 {% load inventree_extras %}
 
 <!DOCTYPE html>
@@ -20,11 +19,6 @@
 
 <link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
-<style>
-    .login-error {
-        color: #F88;
-    }
-</style>
 
 <title>
     {% inventree_title %} | {% block head_title %}{% endblock %}
