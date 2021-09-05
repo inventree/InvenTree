@@ -1,14 +1,17 @@
 {% extends "account/base.html" %}
 
-{% load i18n crispy_forms_tags %}
+{% load i18n crispy_forms_tags inventree_extras %}
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
+{% settings_value 'LOGIN_ENABLE_REG' as enable_reg %}
+
 <h1>{% trans "Sign Up" %}</h1>
 
 <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
+{% if enable_reg %}
 <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}
   {{ form|crispy }}
@@ -24,5 +27,11 @@
     {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>
 {% include "socialaccount/snippets/login_extra.html" %}
+
+{% else %}
+<div class='alert alert-block alert-danger'>
+    <p>{% trans "This function is currently disabled. Please contact an administrator." %}</p>
+</div>
+{% endif %}
 
 {% endblock %}

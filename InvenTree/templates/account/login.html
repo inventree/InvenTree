@@ -6,10 +6,12 @@
 
 {% block content %}
 
+{% settings_value 'LOGIN_ENABLE_REG' as enable_reg %}
 {% settings_value 'LOGIN_ENABLE_PWD_FORGOT' as enable_pwd_forgot %}
 
 <h1>{% trans "Sign In" %}</h1>
 
+{% if enable_reg %}
 {% get_providers as socialaccount_providers %}
 {% if socialaccount_providers %}
 <p>{% blocktrans with site.name as site_name %}Please sign in with one
@@ -18,6 +20,7 @@ for a account and sign in below:{% endblocktrans %}</p>
 {% else %}
 <p>{% blocktrans %}If you have not created an account yet, then please
 <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+{% endif %}
 {% endif %}
 
 <form class="login" method="POST" action="{% url 'account_login' %}">

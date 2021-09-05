@@ -834,6 +834,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'LOGIN_ENABLE_REG': {
+            'name': _('Enable registration'),
+            'description': _('Enable self-registration for users on the login-pages'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:
