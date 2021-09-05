@@ -45,17 +45,6 @@
     </div>
     {% endif %}
 
-    <div class='info-messages'>
-        {% if part.variant_of %}
-        <div class='alert alert-info alert-block' style='padding: 10px;'>
-            {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
-            {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
-        </div>
-        {% endif %}
-    </div>
-
-
-
     <div class='main body-wrapper login-screen'>
 
         <div class='login-container'>
