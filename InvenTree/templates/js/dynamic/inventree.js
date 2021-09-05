@@ -153,7 +153,7 @@ function inventreeDocReady() {
     });
 
     // Generate brand-icons
-    $('.brand-icon').each(function(i, obj){
+    $('.brand-icon').each(function(i, obj) {
         loadBrandIcon($(this), $(this).attr('brand_name'));
     });
 }
@@ -255,12 +255,12 @@ function inventreeLoad(name, defaultValue) {
     }
 }
 
-function loadBrandIcon(elem, name) {
+function loadBrandIcon(element, name) {
     // check if icon exists
     var icon = window.FontAwesome.icon({prefix: 'fab', iconName: name});
 
-    if (icon){
+    if (icon) {
         // add icon to button
-        elem.addClass('fab fa-' + name);
+        element.addClass('fab fa-' + name);
     }
 }
