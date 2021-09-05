@@ -840,6 +840,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_ENABLE_SSO': {
+            'name': _('Enable SSO'),
+            'description': _('Enable SSO on the login-pages'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:

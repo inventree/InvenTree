@@ -6,6 +6,7 @@
 
 {% block content %}
 {% settings_value 'LOGIN_ENABLE_REG' as enable_reg %}
+{% settings_value 'LOGIN_ENABLE_SSO' as enable_sso %}
 
 <h1>{% trans "Sign Up" %}</h1>
 
@@ -21,12 +22,14 @@
   <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
 </form>
 
+{% if enable_sso %}
 <br>
 <h4>{% trans 'Or use a SSO-provider for signup' %}</h4>
 <div>
     {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>
 {% include "socialaccount/snippets/login_extra.html" %}
+{% endif %}
 
 {% else %}
 <div class='alert alert-block alert-danger'>

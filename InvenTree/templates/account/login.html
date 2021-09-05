@@ -8,6 +8,7 @@
 
 {% settings_value 'LOGIN_ENABLE_REG' as enable_reg %}
 {% settings_value 'LOGIN_ENABLE_PWD_FORGOT' as enable_pwd_forgot %}
+{% settings_value 'LOGIN_ENABLE_SSO' as enable_sso %}
 
 <h1>{% trans "Sign In" %}</h1>
 
@@ -38,12 +39,13 @@ for a account and sign in below:{% endblocktrans %}</p>
 </div>
 </form>
 
-
+{% if enable_sso %}
 <br>
 <h4 class="text-center">{% trans 'or use SSO' %}</h4>
 <div>
   {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>
 {% include "socialaccount/snippets/login_extra.html" %}
+{% endif %}
 
 {% endblock %}
