@@ -286,11 +286,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',                # Use 'social' providers
 ]
 
-# Load the allauth social backends
-SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
-for app in SOCIAL_BACKENDS:
-    INSTALLED_APPS.append(app)
-
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -659,3 +654,10 @@ MESSAGE_TAGS = {
 }
 
 SITE_ID = 1
+
+
+# Load the allauth social backends
+SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+for app in SOCIAL_BACKENDS:
+    INSTALLED_APPS.append(app)
+
