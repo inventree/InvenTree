@@ -660,3 +660,15 @@ SITE_ID = 1
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)
+
+# settings for allauth
+ACCOUNT_FORMS = {
+    'login': 'allauth.account.forms.LoginForm',
+    'signup': 'InvenTree.forms.CustomSignupForm',
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+}

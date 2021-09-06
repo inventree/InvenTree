@@ -13,8 +13,10 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
-from part.models import PartCategory
+from allauth.account.forms import SignupForm
 
+from part.models import PartCategory
+from common.models import InvenTreeSetting
 
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
@@ -203,3 +205,13 @@ class SettingCategorySelectForm(forms.ModelForm):
                 css_class='row',
             ),
         )
+
+
+# override allauth forms
+class CustomSignupForm(SignupForm):
+    """
+    Override to use dynamic settings
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
+        super().__init__(*args, **kwargs)
