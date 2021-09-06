@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-03 13:36+0000\n"
-"PO-Revision-Date: 2021-09-03 13:38\n"
+"PO-Revision-Date: 2021-09-06 21:12\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1179,7 +1179,7 @@ msgstr "BestandsObjekt zur Zuordnung zum ausgewählten Endprodukt auswählen"
 #: build/templates/build/create_build_item.html:11
 #, python-format
 msgid "The allocated stock will be installed into the following build output:<br><em>%(output)s</em>"
-msgstr ""
+msgstr "Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:<br><em>%(output)s</em>"
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -2146,11 +2146,11 @@ msgstr ""
 
 #: common/models.py:961
 msgid "Inline report display"
-msgstr ""
+msgstr "Berichte inline anzeigen"
 
 #: common/models.py:962
 msgid "Display PDF reports in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "PDF-Berichte im Browser anzeigen, anstatt als Datei herunterzuladen"
 
 #: common/models.py:968
 msgid "Search Preview Results"
@@ -3453,7 +3453,7 @@ msgstr "Kein Preis"
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
 msgid "Select a supplier for <em>%(name)s</em>"
-msgstr ""
+msgstr "Zulieferer auswählen für <em>%(name)s</em>"
 
 #: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
@@ -3570,7 +3570,7 @@ msgstr "Berichte drucken"
 #: order/templates/order/receive_parts.html:8
 #, python-format
 msgid "Receive outstanding parts for <strong>%(order)s</strong> - <em>%(desc)s</em>"
-msgstr ""
+msgstr "Ausstehende Teile für <strong>%(order)s</strong> - <em>%(desc)s</em> empfangen"
 
 #: order/templates/order/receive_parts.html:14 part/api.py:54
 #: part/models.py:298 part/templates/part/cat_link.html:7
@@ -4417,17 +4417,17 @@ msgstr "Sie haben keine Berechtigung zum Bearbeiten der Stückliste."
 #: part/templates/part/bom.html:14
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr ""
+msgstr "Die Stückliste für <em>%(part)s</em> hat sich geändert und muss kontrolliert werden.<br>"
 
 #: part/templates/part/bom.html:16
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "Die Stückliste für <em>%(part)s</em> wurde zuletzt von %(checker)s am %(check_date)s kontrolliert"
 
 #: part/templates/part/bom.html:20
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "Die Stückliste für <em>%(part)s</em> wurde noch nicht kontrolliert."
 
 #: part/templates/part/bom.html:27
 msgid "Remove selected BOM items"
@@ -4501,7 +4501,7 @@ msgstr "Jedes Teil muss bereits in der Datenbank bestehen"
 #: part/templates/part/bom_validate.html:6
 #, python-format
 msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><em>%(part)s</em>"
-msgstr ""
+msgstr "Bestätigen Sie das die Stückliste für <br><em>%(part)s</em> korrekt ist"
 
 #: part/templates/part/bom_validate.html:9
 msgid "This will validate each line in the BOM."
@@ -4659,7 +4659,7 @@ msgstr "Teil evtl. Duplikat dieser Teile"
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% übereinstimmend)"
 
 #: part/templates/part/detail.html:16
 msgid "Part Stock"
@@ -4668,7 +4668,7 @@ msgstr "Teilbestand"
 #: part/templates/part/detail.html:21
 #, python-format
 msgid "Showing stock for all variants of <em>%(full_name)s</em>"
-msgstr ""
+msgstr "Lagerbestand aller Varianten von <em>%(full_name)s</em>"
 
 #: part/templates/part/detail.html:30 part/templates/part/navbar.html:99
 msgid "Part Test Templates"
@@ -5003,11 +5003,11 @@ msgstr "Stücklistenpreise"
 
 #: part/templates/part/part_pricing.html:65 part/templates/part/prices.html:69
 msgid "Unit Purchase Price"
-msgstr ""
+msgstr "Kaufpreis pro Einheit"
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
 msgid "Total Purchase Price"
-msgstr ""
+msgstr "Gesamter Kaufpreis"
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
@@ -5033,7 +5033,7 @@ msgstr "Aus vorhandenen Bildern auswählen"
 #: part/templates/part/partial_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie das Teil '<strong>%(full_name)s</strong>' löschen wollen?"
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -5146,7 +5146,7 @@ msgstr "Neue Teilevariante anlegen"
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr ""
+msgstr "Neue Variante von Vorlage anlegen <em>'%(full_name)s'</em>."
 
 #: part/templatetags/inventree_extras.py:106
 msgid "Unknown database"
@@ -5939,7 +5939,7 @@ msgstr "Sind Sie sicher, dass Sie dieses BestandsObjekt löschen wollen?"
 #: stock/templates/stock/item_delete.html:12
 #, python-format
 msgid "This will remove <strong>%(qty)s</strong> units of <strong>%(full_name)s</strong> from stock."
-msgstr ""
+msgstr "Damit werden <strong>%(qty)s</strong> Elemente vom Bestand von <strong>%(full_name)s</strong> entfernt."
 
 #: stock/templates/stock/item_install.html:8
 msgid "Install another Stock Item into this item."
@@ -6089,7 +6089,7 @@ msgstr "BestandsObjekt umwandeln"
 #: stock/templates/stock/stockitem_convert.html:8
 #, python-format
 msgid "This stock item is current an instance of <em>%(part)s</em>"
-msgstr ""
+msgstr "BestandsObjekt ist aktuell eine Instanz von <em>%(part)s</em>"
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
@@ -7373,7 +7373,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:195
 msgid "Add Supplier Data"
-msgstr ""
+msgstr "Zuliefererdaten hinzufügen"
 
 #: templates/js/translated/part.js:196
 msgid "Create initial supplier data for this part"
