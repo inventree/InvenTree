@@ -662,6 +662,8 @@ for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)
 
 # settings for allauth
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
 ACCOUNT_FORMS = {
     'login': 'allauth.account.forms.LoginForm',
     'signup': 'InvenTree.forms.CustomSignupForm',
