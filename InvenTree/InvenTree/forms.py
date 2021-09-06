@@ -14,6 +14,7 @@ from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
 from allauth.account.forms import SignupForm
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from part.models import PartCategory
 from common.models import InvenTreeSetting
@@ -208,7 +209,7 @@ class SettingCategorySelectForm(forms.ModelForm):
         )
 
 
-# override allauth forms
+# override allauth
 class CustomSignupForm(SignupForm):
     """
     Override to use dynamic settings
@@ -216,3 +217,13 @@ class CustomSignupForm(SignupForm):
     def __init__(self, *args, **kwargs):
         kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
         super().__init__(*args, **kwargs)
+
+
+class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+    """
+    Override of adapter to use dynamic settings
+    """
+    def is_auto_signup_allowed(self, request, sociallogin):
+        if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
+            return super().is_auto_signup_allowed(request, sociallogin)
+        return False

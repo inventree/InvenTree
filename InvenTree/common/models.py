@@ -852,6 +852,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_SIGNUP_SSO_AUTO': {
+            'name': _('Auto-fill SSO users'),
+            'description': _('Automatically fill out user-details from SSO account-data'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:

@@ -664,6 +664,8 @@ for app in SOCIAL_BACKENDS:
 # settings for allauth
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
+
+# override forms / adapters
 ACCOUNT_FORMS = {
     'login': 'allauth.account.forms.LoginForm',
     'signup': 'InvenTree.forms.CustomSignupForm',
@@ -674,3 +676,5 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
+
+SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
