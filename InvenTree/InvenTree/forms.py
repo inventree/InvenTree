@@ -18,6 +18,7 @@ from allauth.account.forms import SignupForm
 from part.models import PartCategory
 from common.models import InvenTreeSetting
 
+
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
 
