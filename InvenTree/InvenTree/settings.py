@@ -660,4 +660,3 @@ SITE_ID = 1
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)
-
