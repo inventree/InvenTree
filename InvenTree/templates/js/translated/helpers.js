@@ -10,6 +10,7 @@
     makeProgressBar,
     renderLink,
     select2Thumbnail,
+    thumbnailImage
     yesNoLabel,
 */
 
