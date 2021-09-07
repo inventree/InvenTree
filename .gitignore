@@ -67,8 +67,16 @@ secret_key.txt
 .coverage
 htmlcov/
 
+# Temporary javascript files (used for testing)
+js_tmp/
+
 # Development files
 dev/
 
 # Locale stats file
 locale_stats.json
+
+# node.js
+package-lock.json
+package.json
+node_modules/

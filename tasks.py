@@ -457,3 +457,12 @@ def server(c, address="127.0.0.1:8000"):
     """
 
     manage(c, "runserver {address}".format(address=address), pty=True)
+
+
+@task
+def render_js_files(c):
+    """
+    Render templated javascript files (used for static testing).
+    """
+
+    manage(c, "test InvenTree.ci_render_js")

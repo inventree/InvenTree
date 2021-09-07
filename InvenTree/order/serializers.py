@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
+from django.db import models
 from django.db.models import Case, When, Value
-from django.db.models import BooleanField
+from django.db.models import BooleanField, ExpressionWrapper, F
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -116,6 +117,23 @@ class POSerializer(InvenTreeModelSerializer):
 
 class POLineItemSerializer(InvenTreeModelSerializer):
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to this queryset:
+
+        - Total price = purchase_price * quantity
+        """
+
+        queryset = queryset.annotate(
+            total_price=ExpressionWrapper(
+                F('purchase_price') * F('quantity'),
+                output_field=models.DecimalField()
+            )
+        )
+
+        return queryset
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -129,6 +147,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
+
+    total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
@@ -165,6 +185,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_string',
             'destination',
             'destination_detail',
+            'total_price',
         ]
 
 

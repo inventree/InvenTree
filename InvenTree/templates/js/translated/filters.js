@@ -1,5 +1,16 @@
 {% load i18n %}
 
+/* globals
+    getAvailableTableFilters,
+    inventreeLoad,
+    inventreeSave,
+    reloadTableFilters,
+*/
+   
+/* exported
+   setupFilterList,
+*/
+
 /**
  * Code for managing query filters / table options.
  * 
@@ -16,12 +27,12 @@
 
 function defaultFilters() {
     return {
-        stock: "cascade=1&in_stock=1",
-        build: "",
-        parts: "cascade=1",
-        company: "",
-        salesorder: "",
-        purchaseorder: "",
+        stock: 'cascade=1&in_stock=1',
+        build: '',
+        parts: 'cascade=1',
+        company: '',
+        salesorder: '',
+        purchaseorder: '',
     };
 }
 
@@ -34,7 +45,7 @@ function defaultFilters() {
  */
 function loadTableFilters(tableKey) {
 
-    var lookup = "table-filters-" + tableKey.toLowerCase();
+    var lookup = 'table-filters-' + tableKey.toLowerCase();
 
     var defaults = defaultFilters()[tableKey] || '';
 
@@ -42,7 +53,7 @@ function loadTableFilters(tableKey) {
 
     var filters = {};
 
-    filterstring.split("&").forEach(function(item, index) {
+    filterstring.split('&').forEach(function(item) {
         item = item.trim();
 
         if (item.length > 0) {
@@ -67,7 +78,7 @@ function loadTableFilters(tableKey) {
  * @param {*} filters - object of string:string pairs
  */
 function saveTableFilters(tableKey, filters) {
-    var lookup = "table-filters-" + tableKey.toLowerCase();
+    var lookup = 'table-filters-' + tableKey.toLowerCase();
 
     var strings = [];
 
@@ -190,7 +201,7 @@ function generateAvailableFilterList(tableKey) {
 
     var html = `<select class='form-control filter-input' id='${id}' name='tag'>`;
 
-    html += "<option value=''>{% trans 'Select filter' %}</option>";
+    html += `<option value=''>{% trans 'Select filter' %}</option>`;
 
     for (var opt in remaining) {
         var title = getFilterTitle(tableKey, opt);
@@ -227,7 +238,7 @@ function generateFilterInput(tableKey, filterKey) {
         html = `<select class='form-control filter-input' id='${id}' name='value'>`;
 
         for (var key in options) {
-            option = options[key];
+            var option = options[key];
             html += `<option value='${key}'>${option.value}</option>`;
         }
 
@@ -295,14 +306,10 @@ function setupFilterList(tableKey, table, target) {
 
             var html = '';
 
-            //`<div class='filter-input'>`;
-
             html += generateAvailableFilterList(tableKey);
             html += generateFilterInput(tableKey);
 
             html += `<button title='{% trans "Create filter" %}' class='btn btn-default filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
-
-            //html += '</div>';
 
             element.append(html);
 
@@ -346,7 +353,7 @@ function setupFilterList(tableKey, table, target) {
     });
 
     // Add callback for deleting each filter
-    element.find(".close").click(function(event) {
+    element.find('.close').click(function() {
         var me = $(this);
 
         var filter = me.attr(`filter-tag-${tableKey}`);
@@ -371,15 +378,6 @@ function getFilterTitle(tableKey, filterKey) {
     return settings.title || filterKey;
 }
 
-
-/**
- * Return the pretty description for the given table and filter selection
- */
-function getFilterDescription(tableKey, filterKey) {
-    var settings = getFilterSettings(tableKey, filterKey);
-
-    return settings.title;
-}
 
 /*
  * Return a description for the given table and filter selection.

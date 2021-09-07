@@ -1,12 +1,13 @@
 /*
  * Status codes for the {{ label }} model.
  */
-var {{ label }}Codes = {
+const {{ label }}Codes = {
     {% for opt in options %}'{{ opt.key }}': {
         key: '{{ opt.key }}',
         value: '{{ opt.value }}',{% if opt.color %}
         label: 'label-{{ opt.color }}',{% endif %}
-    },{% endfor %}
+    },
+    {% endfor %}
 };
 
 /* 

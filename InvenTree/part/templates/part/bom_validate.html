@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block pre_form_content %}
-{% blocktrans with part.full_name as part %}Confirm that the Bill of Materials (BOM) is valid for:<br><i>{{ part }}</i>{% endblocktrans %}
+{% blocktrans with part.full_name as part %}Confirm that the Bill of Materials (BOM) is valid for:<br><em>{{ part }}</em>{% endblocktrans %}
 
 <div class='alert alert-warning alert-block'>
     {% trans 'This will validate each line in the BOM.' %}

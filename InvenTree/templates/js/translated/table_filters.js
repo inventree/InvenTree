@@ -8,13 +8,26 @@
 {% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
 {% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
 
+/* globals
+    global_settings
+*/
+
+/* exported
+    buildStatusDisplay,
+    getAvailableTableFilters,
+    purchaseOrderStatusDisplay,
+    salesOrderStatusDisplay,
+    stockHistoryStatusDisplay,
+    stockStatusDisplay,
+*/
+
 
 function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
     // Filters for "variant" table
-    if (tableKey == "variants") {
+    if (tableKey == 'variants') {
         return {
             active: {
                 type: 'bool',
@@ -36,11 +49,11 @@ function getAvailableTableFilters(tableKey) {
     }
 
     // Filters for Bill of Materials table
-    if (tableKey == "bom") {
+    if (tableKey == 'bom') {
         return {
             sub_part_trackable: {
                 type: 'bool',
-                title: '{% trans "Trackable Part" %}'
+                title: '{% trans "Trackable Part" %}',
             },
             sub_part_assembly: {
                 type: 'bool',
@@ -57,7 +70,7 @@ function getAvailableTableFilters(tableKey) {
             allow_variants: {
                 type: 'bool',
                 title: '{% trans "Allow Variant Stock" %}',
-            }
+            },
         };
     }
 
@@ -72,29 +85,29 @@ function getAvailableTableFilters(tableKey) {
     }
 
     // Filters for "stock location" table
-    if (tableKey == "location") {
+    if (tableKey == 'location') {
         return {
             cascade: {
                 type: 'bool',
                 title: '{% trans "Include sublocations" %}',
                 description: '{% trans "Include locations" %}',
-            }
+            },
         };
     }
 
     // Filters for "part category" table
-    if (tableKey == "category") {
+    if (tableKey == 'category') {
         return {
             cascade: {
                 type: 'bool',
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include subcategories" %}',
-            }
+            },
         };
     }
 
     // Filters for the "customer stock" table (really a subset of "stock")
-    if (tableKey == "customerstock") {
+    if (tableKey == 'customerstock') {
         return {
             serialized: {
                 type: 'bool',
@@ -102,7 +115,7 @@ function getAvailableTableFilters(tableKey) {
             },
             serial_gte: {
                 title: '{% trans "Serial number GTE" %}',
-                description: '{% trans "Serial number greater than or equal to" %}'
+                description: '{% trans "Serial number greater than or equal to" %}',
             },
             serial_lte: {
                 title: '{% trans "Serial number LTE" %}',
@@ -110,7 +123,7 @@ function getAvailableTableFilters(tableKey) {
             },
             serial: {
                 title: '{% trans "Serial number" %}',
-                description: '{% trans "Serial number" %}'
+                description: '{% trans "Serial number" %}',
             },
             batch: {
                 title: '{% trans "Batch" %}',
@@ -179,11 +192,11 @@ function getAvailableTableFilters(tableKey) {
             },
             serial: {
                 title: '{% trans "Serial number" %}',
-                description: '{% trans "Serial number" %}'
+                description: '{% trans "Serial number" %}',
             },
             serial_gte: {
                 title: '{% trans "Serial number GTE" %}',
-                description: '{% trans "Serial number greater than or equal to" %}'
+                description: '{% trans "Serial number greater than or equal to" %}',
             },
             serial_lte: {
                 title: '{% trans "Serial number LTE" %}',
@@ -239,7 +252,7 @@ function getAvailableTableFilters(tableKey) {
             required: {
                 type: 'bool',
                 title: '{% trans "Required" %}',
-            }
+            },
         };
     }
 
@@ -262,7 +275,7 @@ function getAvailableTableFilters(tableKey) {
     }
 
     // Filters for the "Order" table
-    if (tableKey == "purchaseorder") {
+    if (tableKey == 'purchaseorder') {
 
         return {
             status: {
@@ -280,7 +293,7 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
-    if (tableKey == "salesorder") {
+    if (tableKey == 'salesorder') {
         return {
             status: {
                 title: '{% trans "Order status" %}',
@@ -302,12 +315,12 @@ function getAvailableTableFilters(tableKey) {
             active: {
                 type: 'bool',
                 title: '{% trans "Active parts" %}',
-            }
+            },
         };
     }
 
     // Filters for the "Parts" table
-    if (tableKey == "parts") {
+    if (tableKey == 'parts') {
         return {
             cascade: {
                 type: 'bool',
@@ -330,7 +343,7 @@ function getAvailableTableFilters(tableKey) {
             },
             has_stock: {
                 type: 'bool',
-                title: '{% trans "Stock available" %}'
+                title: '{% trans "Stock available" %}',
             },
             low_stock: {
                 type: 'bool',
