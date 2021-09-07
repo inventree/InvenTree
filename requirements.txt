@@ -1,5 +1,6 @@
 # Django framework
 Django==3.2.4                   # Django package
+gunicorn>=20.1.0                # Gunicorn web server
 
 pillow==8.2.0                   # Image manipulation
 djangorestframework==3.12.4     # DRF framework
