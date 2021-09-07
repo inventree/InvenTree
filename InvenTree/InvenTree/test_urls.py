@@ -112,7 +112,7 @@ class URLTest(TestCase):
             return
 
         # TODO can this be more elegant?
-        if url == 'account_reset_password':
+        if url.startswith("account_"):
             return
 
         if pk:
