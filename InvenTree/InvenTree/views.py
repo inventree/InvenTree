@@ -27,7 +27,7 @@ from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from allauth.account.forms import AddEmailForm
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import EmailView, PasswordChangeView, PasswordResetFromKeyView
+from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.views import ConnectionsView
 
 from common.settings import currency_code_default, currency_codes
@@ -848,13 +848,6 @@ class CustomConnectionsView(AllauthOverrides, ConnectionsView):
     Override of allauths ConnectionsView to always show the settings but leave the functions allow
     """
     success_url = reverse_lazy("settings")
-
-
-class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
-    """
-    Override of allauths PasswordChangeView to always show the settings but leave the functions allow
-    """
-    success_url = reverse_lazy("login")
 
 
 class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
