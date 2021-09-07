@@ -10,10 +10,13 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.0 pre"
 
-INVENTREE_API_VERSION = 11
+INVENTREE_API_VERSION = 12
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v12 -> 2021-09-07
+    - Adds API endpoint to receive stock items against a PurchaseOrder
 
 v11 -> 2021-08-26
     - Adds "units" field to PartBriefSerializer
