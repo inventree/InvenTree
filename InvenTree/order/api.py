@@ -311,6 +311,7 @@ class POReceive(generics.CreateAPIView):
                 item['quantity'],
                 self.request.user,
                 status=item['status'],
+                barcode=item.get('barcode', ''),
             )
 
 

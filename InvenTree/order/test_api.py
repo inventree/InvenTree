@@ -332,6 +332,61 @@ class PurchaseOrderReceiveTest(OrderTest):
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
 
+    def test_invalid_barcodes(self):
+        """
+        Tests for checking in items with invalid barcodes:
+
+        - Cannot check in "duplicate" barcodes
+        - Barcodes cannot match UID field for existing StockItem
+        """
+
+        # Set stock item barcode
+        item = StockItem.objects.get(pk=1)
+        item.uid = 'MY-BARCODE-HASH'
+        item.save()
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'barcode': 'MY-BARCODE-HASH',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Barcode is already in use', str(response.data))
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 5,
+                        'barcode': 'MY-BARCODE-HASH-1',
+                    },
+                    {
+                        'line_item': 1,
+                        'quantity': 5,
+                        'barcode': 'MY-BARCODE-HASH-1'
+                    },
+                ],
+                'location': 1,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('barcode values must be unique', str(response.data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
     def test_valid(self):
         """
         Test receipt of valid data
@@ -354,11 +409,13 @@ class PurchaseOrderReceiveTest(OrderTest):
                     {
                         'line_item': 1,
                         'quantity': 50,
+                        'barcode': 'MY-UNIQUE-BARCODE-123',
                     },
                     {
                         'line_item': 2,
                         'quantity': 200,
                         'location': 2,  # Explicit location
+                        'barcode': 'MY-UNIQUE-BARCODE-456',
                     }
                 ],
                 'location': 1,  # Default location
@@ -385,6 +442,10 @@ class PurchaseOrderReceiveTest(OrderTest):
         # Different location for each received item
         self.assertEqual(stock_1.last().location.pk, 1)
         self.assertEqual(stock_2.last().location.pk, 2)
+
+        # Barcodes should have been assigned to the stock items
+        self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-123').exists())
+        self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-456').exists())
 
 
 class SalesOrderTest(OrderTest):

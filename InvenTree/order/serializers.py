@@ -233,6 +233,8 @@ class POLineItemReceiveSerializer(serializers.Serializer):
     barcode = serializers.CharField(
         label=_('Barcode Hash'),
         help_text=_('Unique identifier field'),
+        default='',
+        required=False,
     )
 
     def validate_barcode(self, barcode):
@@ -246,6 +248,8 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         if stock.models.StockItem.objects.filter(uid=barcode).exists():
             raise ValidationError(_('Barcode is already in use'))
+
+        return barcode
 
     class Meta:
         fields = [
@@ -288,7 +292,7 @@ class POReceiveSerializer(serializers.Serializer):
             unique_barcodes = set()
 
             for item in items:
-                barcode = item.get('barcode', None)
+                barcode = item.get('barcode', '')
 
                 if barcode:
                     if barcode in unique_barcodes:

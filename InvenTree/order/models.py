@@ -411,6 +411,11 @@ class PurchaseOrder(Order):
         """
 
         notes = kwargs.get('notes', '')
+        barcode = kwargs.get('barcode', '')
+
+        # Prevent null values for barcode
+        if barcode is None:
+            barcode = ''
 
         if not self.status == PurchaseOrderStatus.PLACED:
             raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
@@ -434,6 +439,7 @@ class PurchaseOrder(Order):
                 purchase_order=self,
                 status=status,
                 purchase_price=line.purchase_price,
+                uid=barcode
             )
 
             stock.save(add_note=False)
