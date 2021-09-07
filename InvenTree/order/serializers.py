@@ -144,7 +144,6 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             self.fields.pop('part_detail')
             self.fields.pop('supplier_part_detail')
 
-    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
 
@@ -231,8 +230,26 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         label=_('Status'),
     )
 
+    barcode = serializers.CharField(
+        label=_('Barcode Hash'),
+        help_text=_('Unique identifier field'),
+    )
+
+    def validate_barcode(self, barcode):
+        """
+        Cannot check in a LineItem with a barcode that is already assigned
+        """
+
+        # Ignore empty barcode values
+        if not barcode or barcode.strip() == '':
+            return
+
+        if stock.models.StockItem.objects.filter(uid=barcode).exists():
+            raise ValidationError(_('Barcode is already in use'))
+
     class Meta:
         fields = [
+            'barcode',
             'line_item',
             'location',
             'quantity',
@@ -266,6 +283,19 @@ class POReceiveSerializer(serializers.Serializer):
 
         if len(items) == 0:
             self._errors['items'] = _('Line items must be provided')
+        else:
+            # Ensure barcodes are unique
+            unique_barcodes = set()
+
+            for item in items:
+                barcode = item.get('barcode', None)
+
+                if barcode:
+                    if barcode in unique_barcodes:
+                        self._errors['items'] = _('Supplied barcode values must be unique')
+                        break
+                    else:
+                        unique_barcodes.add(barcode)
 
         if self._errors and raise_exception:
             raise ValidationError(self.errors)
