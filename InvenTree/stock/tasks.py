@@ -30,6 +30,6 @@ def delete_old_stock_items():
 
     items = StockItem.objects.filter(scheduled_for_deletion=True)
 
-    logger.info(f"Removing {items.count()} StockItem objects scheduled for deletion")
-
-    items.delete()
+    if items.count() > 0:
+        logger.info(f"Removing {items.count()} StockItem objects scheduled for deletion")
+        items.delete()

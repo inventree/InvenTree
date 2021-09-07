@@ -1305,7 +1305,6 @@ class StockItem(MPTTModel):
 
         self.quantity = quantity
 
-
         if quantity == 0 and self.delete_on_deplete and self.can_delete():
             self.mark_for_deletion()
 
