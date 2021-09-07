@@ -63,6 +63,13 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
+        # Delete "old" stock items
+        InvenTree.tasks.schedule_task(
+            'stock.tasks.delete_old_stock_items',
+            schedule_type=Schedule.MINUTES,
+            minutes=30,
+        )
+
     def update_exchange_rates(self):
         """
         Update exchange rates each time the server is started, *if*:
