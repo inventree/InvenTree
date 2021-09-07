@@ -653,6 +653,9 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
+        # Do not expose StockItem objects which are scheduled for deletion
+        queryset = queryset.filter(scheduled_for_deletion=False)
+
         return queryset
 
     def filter_queryset(self, queryset):

@@ -209,7 +209,8 @@ class StockItem(MPTTModel):
         belongs_to=None,
         customer=None,
         is_building=False,
-        status__in=StockStatus.AVAILABLE_CODES
+        status__in=StockStatus.AVAILABLE_CODES,
+        scheduled_for_deletion=False,
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
@@ -587,6 +588,12 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
+
+    scheduled_for_deletion = models.BooleanField(
+        default=False,
+        verbose_name=_('Scheduled for deletion'),
+        help_text=_('This StockItem will be deleted by the background worker'),
+    )
 
     def is_stale(self):
         """
