@@ -662,6 +662,10 @@ for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)
 
 # settings for allauth
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
+
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
+
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 # override forms / adapters
