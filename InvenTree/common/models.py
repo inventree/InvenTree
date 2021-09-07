@@ -864,6 +864,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_SIGNUP_PWD_TWICE': {
+            'name': _('Password twice'),
+            'description': _('On signup ask users twice for their password'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:

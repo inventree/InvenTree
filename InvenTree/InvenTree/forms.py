@@ -231,8 +231,12 @@ class CustomSignupForm(SignupForm):
                 ),
             )
 
-            # reorder fields
-            set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
+        # check for two password fields
+        if not InvenTreeSetting.get_setting('LOGIN_SIGNUP_PWD_TWICE'):
+            self.fields.pop("password2")
+
+        # reorder fields
+        set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
         cleaned_data = super().clean()

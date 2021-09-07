@@ -664,7 +664,6 @@ for app in SOCIAL_BACKENDS:
 # settings for allauth
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
-
 # override forms / adapters
 ACCOUNT_FORMS = {
     'login': 'allauth.account.forms.LoginForm',
