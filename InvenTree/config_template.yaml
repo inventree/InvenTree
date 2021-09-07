@@ -168,4 +168,11 @@ static_root: '/home/inventree/data/static'
 
 # Add SSO login-backends
 # social_backends:
-#  - 'allauth.socialaccount.providers.github'
+#  - 'allauth.socialaccount.providers.keycloak'
+
+# Add specific settings
+# social_providers:
+#   keycloak:
+#     KEYCLOAK_URL: 'https://keycloak.custom/auth'
+#     KEYCLOAK_REALM: 'master'
+

@@ -660,6 +660,8 @@ SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
 for app in SOCIAL_BACKENDS:
     INSTALLED_APPS.append(app)
 
+SOCIALACCOUNT_PROVIDERS  = CONFIG.get('social_providers', [])
+
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
 
