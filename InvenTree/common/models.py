@@ -858,6 +858,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'LOGIN_SIGNUP_MAIL_TWICE': {
+            'name': _('Mail twice'),
+            'description': _('On signup ask users twice for their mail'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:

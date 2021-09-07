@@ -13,7 +13,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
-from allauth.account.forms import SignupForm
+from allauth.account.forms import SignupForm, set_form_field_order
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from part.models import PartCategory
@@ -216,7 +216,35 @@ class CustomSignupForm(SignupForm):
     """
     def __init__(self, *args, **kwargs):
         kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
+
         super().__init__(*args, **kwargs)
+
+        # check for two mail fields
+        if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
+            self.fields["email2"] = forms.EmailField(
+                label=_("E-mail (again)"),
+                widget=forms.TextInput(
+                    attrs={
+                        "type": "email",
+                        "placeholder": _("E-mail address confirmation"),
+                    }
+                ),
+            )
+
+            # reorder fields
+            set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # check for two mail fields
+        if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
+            email = cleaned_data.get("email")
+            email2 = cleaned_data.get("email2")
+            if (email and email2) and email != email2:
+                self.add_error("email2", _("You must type the same email each time."))
+
+        return cleaned_data
 
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
