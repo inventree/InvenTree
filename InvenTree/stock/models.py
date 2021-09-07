@@ -216,6 +216,11 @@ class StockItem(MPTTModel):
     # A query filter which can be used to filter StockItem objects which have expired
     EXPIRED_FILTER = IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=datetime.now().date())
 
+    def mark_for_deletion(self):
+
+        self.scheduled_for_deletion = True
+        self.save()
+
     def save(self, *args, **kwargs):
         """
         Save this StockItem to the database. Performs a number of checks:
@@ -1300,10 +1305,10 @@ class StockItem(MPTTModel):
 
         self.quantity = quantity
 
-        if quantity == 0 and self.delete_on_deplete and self.can_delete():
 
-            # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
-            self.delete()
+        if quantity == 0 and self.delete_on_deplete and self.can_delete():
+            self.mark_for_deletion()
+
             return False
         else:
             self.save()
