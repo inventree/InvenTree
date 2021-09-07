@@ -286,6 +286,8 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
+    options.fields = options.fields || {};
+
     // Save the URL 
     options.url = url;
 
@@ -544,6 +546,11 @@ function constructFormBody(fields, options) {
     });
 
     initializeGroups(fields, options);
+
+    if (options.afterRender) {
+        // Custom callback function after form rendering
+        options.afterRender(fields, options);
+    }
 
     // Scroll to the top
     $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
@@ -1542,7 +1549,9 @@ function constructField(name, parameters, options) {
     html += `<div id='div_${field_name}' class='${form_classes}'>`;
 
     // Add a label
-    html += constructLabel(name, parameters);
+    if (!options.hideLabels) {
+        html += constructLabel(name, parameters);
+    }
 
     html += `<div class='controls'>`;
 
@@ -1589,7 +1598,7 @@ function constructField(name, parameters, options) {
         html += `</div>`; // input-group
     }
 
-    if (parameters.help_text) {
+    if (parameters.help_text && !options.hideLabels) {
         html += constructHelpText(name, parameters, options);
     }
 

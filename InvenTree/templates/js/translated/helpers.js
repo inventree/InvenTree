@@ -10,6 +10,7 @@
     makeProgressBar,
     renderLink,
     select2Thumbnail,
+    thumbnailImage
     yesNoLabel,
 */
 
@@ -53,6 +54,26 @@ function imageHoverIcon(url) {
         `;
 
     return html;
+}
+
+
+/**
+ * Renders a simple thumbnail image
+ * @param {String} url is the image URL 
+ * @returns html <img> tag
+ */
+function thumbnailImage(url) {
+
+    if (!url) {
+        url = '/static/img/blank_img.png';
+    }
+
+    // TODO: Support insertion of custom classes
+
+    var html = `<img class='hover-img-thumb' src='${url}'>`;
+
+    return html;
+
 }
 
 
