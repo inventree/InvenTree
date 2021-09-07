@@ -655,7 +655,6 @@ MESSAGE_TAGS = {
 
 SITE_ID = 1
 
-
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
 for app in SOCIAL_BACKENDS:
