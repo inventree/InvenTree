@@ -201,7 +201,9 @@ $('#new-po-line').click(function() {
         },
         method: 'POST',
         title: '{% trans "Add Line Item" %}',
-        onSuccess: reloadTable,
+        onSuccess: function() {
+            $('#po-line-table').bootstrapTable('refresh');
+        },
     });
 });
 
