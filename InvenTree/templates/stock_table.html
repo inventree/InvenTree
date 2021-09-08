@@ -16,7 +16,7 @@
             </button>
 
             {% if owner_control.value == "True" and user in owners or user.is_superuser or owner_control.value == "False" %}
-            {% if not read_only and roles.stock.add %}
+            {% if not read_only and not prevent_new_stock and roles.stock.add %}
             <button class="btn btn-success" id='item-create' title='{% trans "New Stock Item" %}'>
                 <span class='fas fa-plus-circle'></span>
             </button>

@@ -38,7 +38,7 @@
         <h4>{% trans "Received Items" %}</h4>
     </div>
     <div class='panel-content'>
-        {% include "stock_table.html" with read_only=True %}
+        {% include "stock_table.html" with prevent_new_stock=True %}
     </div>
 </div>
 
