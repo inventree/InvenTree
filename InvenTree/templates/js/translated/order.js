@@ -144,7 +144,6 @@ function newSupplierPartFromOrderWizard(e) {
 
     if (!part) {
         part = $(src).closest('button').attr('part');
-        console.log('parent: ' + part);
     }
 
     createSupplierPart({
@@ -366,6 +365,262 @@ function loadPurchaseOrderTable(table, options) {
         ],
     });
 }
+
+
+/**
+ * Load a table displaying line items for a particular PurchasesOrder
+ * @param {String} table - HTML ID tag e.g. '#table' 
+ * @param {Object} options - options which must provide:
+ *      - order (integer PK)
+ *      - supplier (integer PK)
+ *      - allow_edit (boolean)
+ *      - allow_receive (boolean)
+ */
+function loadPurchaseOrderLineItemTable(table, options={}) {
+
+    function setupCallbacks() {
+        if (options.allow_edit) {
+            $(table).find('.button-line-edit').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/order/po-line/${pk}/`, {
+                    fields: {
+                        part: {
+                            filters: {
+                                part_detail: true,
+                                supplier_detail: true,
+                                supplier: options.supplier,
+                            }
+                        },
+                        quantity: {},
+                        reference: {},
+                        purchase_price: {},
+                        purchase_price_currency: {},
+                        destination: {},
+                        notes: {},
+                    },
+                    title: '{% trans "Edit Line Item" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+
+            $(table).find('.button-line-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/order/po-line/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Line Item" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        }
+
+        if (options.allow_receive) {
+            $(table).find('.button-line-receive').click(function() {
+                var pk = $(this).attr('pk');
+
+                launchModalForm(`/order/purchase-order/${options.order}/receive/`, {
+                    success: function() {
+                        $(table).bootstrapTable('refresh');
+                    },
+                    data: {
+                        line: pk,
+                    },
+                    secondary: [
+                        {
+                            field: 'location',
+                            label: '{% trans "New Location" %}',
+                            title: '{% trans "Create new stock location" %}',
+                            url: "{% url 'stock-location-create' %}",
+                        },
+                    ]
+                });
+            });
+        }
+    }
+
+    $(table).inventreeTable({
+        onPostBody: setupCallbacks,
+        name: 'purchaseorderlines',
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No line items found" %}';
+        },
+        queryParams: {
+            order: options.order,
+            part_detail: true
+        },
+        url: "{% url 'api-po-line-list' %}",
+        showFooter: true,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'part',
+                sortable: true,
+                sortName: 'part_name',
+                title: '{% trans "Part" %}',
+                switchable: false,
+                formatter: function(value, row, index, field) {
+                    if (row.part) {
+                        return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
+                    } else { 
+                        return '-';
+                    }
+                },
+                footerFormatter:  function() {
+                    return '{% trans "Total" %}'
+                }
+            },
+            {
+                field: 'part_detail.description',
+                title: '{% trans "Description" %}',
+            },
+            {
+                sortable: true,
+                sortName: 'SKU',
+                field: 'supplier_part_detail.SKU',
+                title: '{% trans "SKU" %}',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, `/supplier-part/${row.part}/`);
+                    } else {
+                        return '-';
+                    }
+                },
+            },
+            {
+                sortable: true,
+                sortName: 'MPN',
+                field: 'supplier_part_detail.manufacturer_part_detail.MPN',
+                title: '{% trans "MPN" %}',
+                formatter: function(value, row, index, field) {
+                    if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
+                        return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`);
+                    } else {
+                        return "-";
+                    }
+                },
+            },
+            {
+                sortable: true,
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+            },
+            {
+                sortable: true,
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                footerFormatter: function(data) {
+                    return data.map(function (row) {
+                      return +row['quantity']
+                    }).reduce(function (sum, i) {
+                      return sum + i
+                    }, 0)
+                  }
+            },
+            {
+                sortable: true,
+                field: 'purchase_price',
+                title: '{% trans "Unit Price" %}',
+                formatter: function(value, row) {
+                    return row.purchase_price_string || row.purchase_price;
+                }
+            },
+            {
+                field: 'total_price',
+                sortable: true,
+                field: 'total_price',
+                title: '{% trans "Total price" %}',
+                formatter: function(value, row) {
+                    var total = row.purchase_price * row.quantity;
+                    var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
+                    return formatter.format(total)
+                },
+                footerFormatter: function(data) {
+                    var total = data.map(function (row) {
+                      return +row['purchase_price']*row['quantity']
+                    }).reduce(function (sum, i) {
+                      return sum + i
+                    }, 0)
+                    var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency)  || 'USD';
+                    var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
+                    return formatter.format(total)
+                  }
+            },
+            {
+                sortable: false,
+                field: 'received',
+                switchable: false,
+                title: '{% trans "Received" %}',
+                formatter: function(value, row, index, field) {
+                    return makeProgressBar(row.received, row.quantity, {
+                        id: `order-line-progress-${row.pk}`,
+                    });
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+    
+                    if (rowA.received == 0 && rowB.received == 0) {
+                        return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                    }
+    
+                    var progressA = parseFloat(rowA.received) / rowA.quantity;
+                    var progressB = parseFloat(rowB.received) / rowB.quantity;
+    
+                    return (progressA < progressB) ? 1 : -1;
+                }
+            },
+            {
+                field: 'destination',
+                title: '{% trans "Destination" %}',
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderLink(row.destination_detail.pathstring, `/stock/location/${value}/`);
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'notes',
+                title: '{% trans "Notes" %}',
+            },
+            {
+                switchable: false,
+                field: 'buttons',
+                title: '',
+                formatter: function(value, row, index, field) {
+                    var html = `<div class='btn-group'>`;
+    
+                    var pk = row.pk;
+    
+                    if (options.allow_edit) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
+                    }
+
+                    if (options.allow_receive && row.received < row.quantity) {
+                        html += makeIconButton('fa-clipboard-check', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                    }
+        
+                    html += `</div>`;
+    
+                    return html;
+                },
+            }
+        ]
+    });
+
+}
+
 
 function loadSalesOrderTable(table, options) {
 
