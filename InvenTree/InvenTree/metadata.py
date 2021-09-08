@@ -105,7 +105,6 @@ class InvenTreeMetadata(SimpleMetadata):
 
             model_fields = model_meta.get_field_info(model_class)
 
-
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
 
