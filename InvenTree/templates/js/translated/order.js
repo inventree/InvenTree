@@ -522,9 +522,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Quantity" %}',
                 footerFormatter: function(data) {
                     return data.map(function(row) {
-                      return +row['quantity'];
+                        return +row['quantity'];
                     }).reduce(function(sum, i) {
-                      return sum + i
+                        return sum + i;
                     }, 0);
                 }
             },
@@ -548,12 +548,12 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 },
                 footerFormatter: function(data) {
                     var total = data.map(function(row) {
-                      return +row['purchase_price']*row['quantity'];
+                        return +row['purchase_price']*row['quantity'];
                     }).reduce(function(sum, i) {
-                      return sum + i;
+                        return sum + i;
                     }, 0);
 
-                    var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency)  || 'USD';
+                    var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency) || 'USD';
 
                     var formatter = new Intl.NumberFormat(
                         'en-US',
