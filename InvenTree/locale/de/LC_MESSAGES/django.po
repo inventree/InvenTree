@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 04:34+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-08 03:30+0000\n"
+"PO-Revision-Date: 2021-09-08 04:15\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1176,10 +1176,9 @@ msgid "Select a stock item to allocate to the selected build output"
 msgstr "BestandsObjekt zur Zuordnung zum ausgewählten Endprodukt auswählen"
 
 #: build/templates/build/create_build_item.html:11
-#, fuzzy, python-format
-#| msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
+#, python-format
 msgid "The allocated stock will be installed into the following build output:<br><em>%(output)s</em>"
-msgstr "Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:<br><i>%(output)s</i>"
+msgstr "Der zugeordnete Bestand wird in den folgenden Endprodukten verbaut werden:<br><em>%(output)s</em>"
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -2146,11 +2145,11 @@ msgstr ""
 
 #: common/models.py:961
 msgid "Inline report display"
-msgstr ""
+msgstr "Berichte inline anzeigen"
 
 #: common/models.py:962
 msgid "Display PDF reports in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "PDF-Berichte im Browser anzeigen, anstatt als Datei herunterzuladen"
 
 #: common/models.py:968
 msgid "Search Preview Results"
@@ -3013,10 +3012,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
 #: order/api.py:302
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Destination location must be specified"
-msgstr "Ziel-Lagerort nicht angegeben"
+msgstr ""
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -3264,48 +3261,36 @@ msgid "Purchase price currency"
 msgstr "Kaufpreiswährung"
 
 #: order/serializers.py:201
-#, fuzzy
-#| msgid "Line Items"
 msgid "Line Item"
-msgstr "Positionen"
+msgstr ""
 
 #: order/serializers.py:207
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Line item does not match purchase order"
-msgstr "Endprodukt stimmt nicht mit dem Bauauftrag überein"
+msgstr ""
 
 #: order/serializers.py:217 order/serializers.py:276
-#, fuzzy
-#| msgid "Destination location for uninstalled items"
 msgid "Select destination location for received items"
-msgstr "Ziel Lagerort für unverbaute Objekte"
+msgstr ""
 
 #: order/serializers.py:234
-#, fuzzy
-#| msgid "Barcodes"
 msgid "Barcode Hash"
-msgstr "Barcodes"
+msgstr ""
 
 #: order/serializers.py:235
 msgid "Unique identifier field"
 msgstr ""
 
 #: order/serializers.py:250
-#, fuzzy
-#| msgid "Barcode already matches Part object"
 msgid "Barcode is already in use"
-msgstr "Barcode entspricht bereits Teil"
+msgstr ""
 
 #: order/serializers.py:289
 msgid "Line items must be provided"
 msgstr ""
 
 #: order/serializers.py:299
-#, fuzzy
-#| msgid "Supplied value must be a boolean"
 msgid "Supplied barcode values must be unique"
-msgstr "Angegebener Wert muss ein Wahrheitswert sein"
+msgstr ""
 
 #: order/serializers.py:514
 msgid "Sale price currency"
@@ -3499,10 +3484,9 @@ msgid "No price"
 msgstr "Kein Preis"
 
 #: order/templates/order/order_wizard/select_parts.html:65
-#, fuzzy, python-format
-#| msgid "Select a supplier for <i>%(name)s</i>"
+#, python-format
 msgid "Select a supplier for <em>%(name)s</em>"
-msgstr "Zulieferer auswählen für <i>%(name)s</i>"
+msgstr "Zulieferer auswählen für <em>%(name)s</em>"
 
 #: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
@@ -3574,10 +3558,9 @@ msgid "Print Order Reports"
 msgstr "Berichte drucken"
 
 #: order/templates/order/receive_parts.html:8
-#, fuzzy, python-format
-#| msgid "Receive outstanding parts for <b>%(order)s</b> - <i>%(desc)s</i>"
+#, python-format
 msgid "Receive outstanding parts for <strong>%(order)s</strong> - <em>%(desc)s</em>"
-msgstr "Ausstehende Teile für <b>%(order)s</b> - <i>%(desc)s</i> empfangen"
+msgstr "Ausstehende Teile für <strong>%(order)s</strong> - <em>%(desc)s</em> empfangen"
 
 #: order/templates/order/receive_parts.html:14 part/api.py:54
 #: part/models.py:298 part/templates/part/cat_link.html:7
@@ -4453,22 +4436,19 @@ msgid "You do not have permission to edit the BOM."
 msgstr "Sie haben keine Berechtigung zum Bearbeiten der Stückliste."
 
 #: part/templates/part/bom.html:14
-#, fuzzy, python-format
-#| msgid "The BOM for <i>%(part)s</i> has changed, and must be validated.<br>"
+#, python-format
 msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr "Die Stückliste für <i>%(part)s</i> hat sich geändert und muss kontrolliert werden.<br>"
+msgstr "Die Stückliste für <em>%(part)s</em> hat sich geändert und muss kontrolliert werden.<br>"
 
 #: part/templates/part/bom.html:16
-#, fuzzy, python-format
-#| msgid "The BOM for <i>%(part)s</i> was last checked by %(checker)s on %(check_date)s"
+#, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr "Die Stückliste für <i>%(part)s</i> wurde zuletzt von %(checker)s am %(check_date)s kontrolliert"
+msgstr "Die Stückliste für <em>%(part)s</em> wurde zuletzt von %(checker)s am %(check_date)s kontrolliert"
 
 #: part/templates/part/bom.html:20
-#, fuzzy, python-format
-#| msgid "The BOM for <i>%(part)s</i> has not been validated."
+#, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr "Die Stückliste für <i>%(part)s</i> wurde noch nicht kontrolliert"
+msgstr "Die Stückliste für <em>%(part)s</em> wurde noch nicht kontrolliert."
 
 #: part/templates/part/bom.html:27
 msgid "Remove selected BOM items"
@@ -4540,10 +4520,9 @@ msgid "Each part must already exist in the database"
 msgstr "Jedes Teil muss bereits in der Datenbank bestehen"
 
 #: part/templates/part/bom_validate.html:6
-#, fuzzy, python-format
-#| msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><i>%(part)s</i>"
+#, python-format
 msgid "Confirm that the Bill of Materials (BOM) is valid for:<br><em>%(part)s</em>"
-msgstr "Bestätigen Sie das die Stückliste für <br><i>%(part)s</i> korrekt ist"
+msgstr "Bestätigen Sie das die Stückliste für <br><em>%(part)s</em> korrekt ist"
 
 #: part/templates/part/bom_validate.html:9
 msgid "This will validate each line in the BOM."
@@ -4699,20 +4678,18 @@ msgid "The new part may be a duplicate of these existing parts"
 msgstr "Teil evtl. Duplikat dieser Teile"
 
 #: part/templates/part/create_part.html:17
-#, fuzzy, python-format
-#| msgid "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% match)"
+#, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr "%(full_name)s - <i>%(desc)s</i> (%(match_per)s%% übereinstimmend)"
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% übereinstimmend)"
 
 #: part/templates/part/detail.html:16
 msgid "Part Stock"
 msgstr "Teilbestand"
 
 #: part/templates/part/detail.html:21
-#, fuzzy, python-format
-#| msgid "Showing stock for all variants of <i>%(full_name)s</i>"
+#, python-format
 msgid "Showing stock for all variants of <em>%(full_name)s</em>"
-msgstr "Lagerbestand aller Varianten von <i>%(full_name)s</i>"
+msgstr "Lagerbestand aller Varianten von <em>%(full_name)s</em>"
 
 #: part/templates/part/detail.html:30 part/templates/part/navbar.html:99
 msgid "Part Test Templates"
@@ -5047,11 +5024,11 @@ msgstr "Stücklistenpreise"
 
 #: part/templates/part/part_pricing.html:65 part/templates/part/prices.html:69
 msgid "Unit Purchase Price"
-msgstr ""
+msgstr "Kaufpreis pro Einheit"
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
 msgid "Total Purchase Price"
-msgstr ""
+msgstr "Gesamter Kaufpreis"
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
@@ -5075,10 +5052,9 @@ msgid "Select from existing images"
 msgstr "Aus vorhandenen Bildern auswählen"
 
 #: part/templates/part/partial_delete.html:7
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
+#, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-msgstr "Sind Sie sicher, dass Sie das Teil '<b>%(full_name)s</b>' löschen wollen?"
+msgstr "Sind Sie sicher, dass Sie das Teil '<strong>%(full_name)s</strong>' löschen wollen?"
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -5189,10 +5165,9 @@ msgid "Create new part variant"
 msgstr "Neue Teilevariante anlegen"
 
 #: part/templates/part/variant_part.html:10
-#, fuzzy, python-format
-#| msgid "Create a new variant of template <i>'%(full_name)s'</i>."
+#, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr "Neue Variante von Vorlage anlegen <i>'%(full_name)s'</i>."
+msgstr "Neue Variante von Vorlage anlegen <em>'%(full_name)s'</em>."
 
 #: part/templatetags/inventree_extras.py:106
 msgid "Unknown database"
@@ -5670,10 +5645,8 @@ msgid "Scheduled for deletion"
 msgstr ""
 
 #: stock/models.py:600
-#, fuzzy
-#| msgid "This stock item cannot be deleted as it has child items"
 msgid "This StockItem will be deleted by the background worker"
-msgstr "Dieses BestandsObjekt kann nicht gelöscht werden, da es Kinder besitzt"
+msgstr ""
 
 #: stock/models.py:1063
 msgid "Part is not set as trackable"
@@ -5993,10 +5966,9 @@ msgid "Are you sure you want to delete this stock item?"
 msgstr "Sind Sie sicher, dass Sie dieses BestandsObjekt löschen wollen?"
 
 #: stock/templates/stock/item_delete.html:12
-#, fuzzy, python-format
-#| msgid "This will remove <b>%(qty)s</b> units of <b>%(full_name)s</b> from stock."
+#, python-format
 msgid "This will remove <strong>%(qty)s</strong> units of <strong>%(full_name)s</strong> from stock."
-msgstr "Damit werden <b>%(qty)s</b> Elemente vom Bestand von <b>%(full_name)s</b> entfernt."
+msgstr "Damit werden <strong>%(qty)s</strong> Elemente vom Bestand von <strong>%(full_name)s</strong> entfernt."
 
 #: stock/templates/stock/item_install.html:8
 msgid "Install another Stock Item into this item."
@@ -6144,10 +6116,9 @@ msgid "Convert Stock Item"
 msgstr "BestandsObjekt umwandeln"
 
 #: stock/templates/stock/stockitem_convert.html:8
-#, fuzzy, python-format
-#| msgid "This stock item is current an instance of <i>%(part)s</i>"
+#, python-format
 msgid "This stock item is current an instance of <em>%(part)s</em>"
-msgstr "BestandsObjekt ist aktuell eine Instanz von <i>%(part)s</i>"
+msgstr "BestandsObjekt ist aktuell eine Instanz von <em>%(part)s</em>"
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
@@ -7443,7 +7414,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:195
 msgid "Add Supplier Data"
-msgstr ""
+msgstr "Zuliefererdaten hinzufügen"
 
 #: templates/js/translated/part.js:196
 msgid "Create initial supplier data for this part"
@@ -8305,3 +8276,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+

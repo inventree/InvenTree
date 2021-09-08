@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 04:34+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-08 03:30+0000\n"
+"PO-Revision-Date: 2021-09-08 04:15\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -71,7 +71,7 @@ msgstr "Seleccionar Categoría"
 #: InvenTree/helpers.py:401
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "Número de serie duplicado: {n}"
 
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:430
 #: stock/views.py:1363
@@ -80,7 +80,7 @@ msgstr "Cantidad proporcionada no válida"
 
 #: InvenTree/helpers.py:411
 msgid "Empty serial number string"
-msgstr ""
+msgstr "No se ha proporcionado un número de serie"
 
 #: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
 #: InvenTree/helpers.py:464
@@ -91,7 +91,7 @@ msgstr "Grupo no válido: un {g}"
 #: InvenTree/helpers.py:469
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "Número de serie duplicado: {g}"
 
 #: InvenTree/helpers.py:477
 msgid "No serial numbers found"
@@ -100,15 +100,15 @@ msgstr "Numeros de serie no encontrados"
 #: InvenTree/helpers.py:481
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "El número de números de serie únicos ({s}) debe coincidir con la cantidad ({q})"
 
 #: InvenTree/models.py:66 stock/models.py:1826
 msgid "Attachment"
-msgstr ""
+msgstr "Archivo adjunto"
 
 #: InvenTree/models.py:67
 msgid "Select file to attach"
-msgstr ""
+msgstr "Seleccionar archivo para adjuntar"
 
 #: InvenTree/models.py:69 templates/js/translated/attachment.js:87
 msgid "Comment"
@@ -116,7 +116,7 @@ msgstr "Comentario"
 
 #: InvenTree/models.py:69
 msgid "File comment"
-msgstr ""
+msgstr "Comentario del archivo"
 
 #: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:993
 #: common/models.py:994 part/models.py:2051
@@ -127,36 +127,36 @@ msgstr "Usuario"
 
 #: InvenTree/models.py:79
 msgid "upload date"
-msgstr ""
+msgstr "fecha de subida"
 
 #: InvenTree/models.py:99
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "El nombre del archivo no debe estar vacío"
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Directorio de archivos adjuntos no válido"
 
 #: InvenTree/models.py:132
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "El nombre del archivo contiene el carácter ilegal '{c}'"
 
 #: InvenTree/models.py:135
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Falta el nombre de extensión del archivo"
 
 #: InvenTree/models.py:142
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Ya existe un archivo adjunto con este nombre"
 
 #: InvenTree/models.py:149
 msgid "Error renaming file"
-msgstr ""
+msgstr "Error al cambiar el nombre del archivo"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
-msgstr ""
+msgstr "Selección no válida"
 
 #: InvenTree/models.py:200 InvenTree/models.py:201 company/models.py:414
 #: label/models.py:112 part/models.py:658 part/models.py:2212
@@ -194,19 +194,19 @@ msgstr "Descripción"
 
 #: InvenTree/models.py:208
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descripción (opcional)"
 
 #: InvenTree/models.py:216
 msgid "parent"
-msgstr ""
+msgstr "padre"
 
 #: InvenTree/serializers.py:55 part/models.py:2454
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Debe ser un numero valido"
 
 #: InvenTree/serializers.py:244
 msgid "Filename"
-msgstr ""
+msgstr "Nombre de Archivo"
 
 #: InvenTree/settings.py:523
 msgid "German"
@@ -214,7 +214,7 @@ msgstr "Alemán"
 
 #: InvenTree/settings.py:524
 msgid "Greek"
-msgstr ""
+msgstr "Griego"
 
 #: InvenTree/settings.py:525
 msgid "English"
@@ -222,7 +222,7 @@ msgstr "Inglés"
 
 #: InvenTree/settings.py:526
 msgid "Spanish"
-msgstr ""
+msgstr "Español"
 
 #: InvenTree/settings.py:527
 msgid "French"
@@ -230,27 +230,27 @@ msgstr "Francés"
 
 #: InvenTree/settings.py:528
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreo"
 
 #: InvenTree/settings.py:529
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: InvenTree/settings.py:530
 msgid "Japanese"
-msgstr ""
+msgstr "Japonés"
 
 #: InvenTree/settings.py:531
 msgid "Korean"
-msgstr ""
+msgstr "Coreano"
 
 #: InvenTree/settings.py:532
 msgid "Dutch"
-msgstr ""
+msgstr "Holandés"
 
 #: InvenTree/settings.py:533
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruego"
 
 #: InvenTree/settings.py:534
 msgid "Polish"
@@ -258,15 +258,15 @@ msgstr "Polaco"
 
 #: InvenTree/settings.py:535
 msgid "Russian"
-msgstr ""
+msgstr "Ruso"
 
 #: InvenTree/settings.py:536
 msgid "Swedish"
-msgstr ""
+msgstr "Sueco"
 
 #: InvenTree/settings.py:537
 msgid "Thai"
-msgstr ""
+msgstr "Tailandés"
 
 #: InvenTree/settings.py:538
 msgid "Turkish"
@@ -274,23 +274,23 @@ msgstr "Turco"
 
 #: InvenTree/settings.py:539
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: InvenTree/settings.py:540
 msgid "Chinese"
-msgstr ""
+msgstr "Chino"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Falló la comprobación en segundo plano del worker"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "No se ha configurado el backend de correo"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Las comprobaciones de estado del sistema InvenTree fallaron"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
@@ -318,7 +318,7 @@ msgstr "Perdida"
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Devuelto"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
@@ -347,7 +347,7 @@ msgstr "Rechazado"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Entrada antigua de rastreo de stock"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
@@ -379,39 +379,39 @@ msgstr "Ubicación cambiada"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Instalado en el ensamblaje"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Retirado del ensamblaje"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Artículo del componente instalado"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Elemento de componente eliminado"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Separar del elemento principal"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Dividir elemento secundario"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/table_filters.js:186
 msgid "Sent to customer"
-msgstr ""
+msgstr "Enviar al cliente"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Devolución del cliente"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "Trabajo de ensamblaje creado"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
@@ -427,39 +427,39 @@ msgstr "Producción"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "No es un código de moneda válido"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Carácter no válido en el nombre del artículo"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "El IPN debe coincidir con la expresión regular {pat}"
 
 #: InvenTree/validators.py:77 InvenTree/validators.py:91
 #: InvenTree/validators.py:105
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "La referencia debe coincidir con la expresión regular {pattern}"
 
 #: InvenTree/validators.py:113
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Carácter ilegal en el nombre ({x})"
 
 #: InvenTree/validators.py:132 InvenTree/validators.py:148
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "El valor excedente no debe ser negativo"
 
 #: InvenTree/validators.py:150
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "El excedente no debe superar el 100%"
 
 #: InvenTree/validators.py:157
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "El excedente debe ser un valor entero o un porcentaje"
 
 #: InvenTree/views.py:610
 msgid "Delete Item"
@@ -467,11 +467,11 @@ msgstr "Eliminar elemento"
 
 #: InvenTree/views.py:659
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Marque la casilla para confirmar la eliminación del artículo"
 
 #: InvenTree/views.py:674 templates/InvenTree/settings/user.html:14
 msgid "Edit User Information"
-msgstr ""
+msgstr "Editar datos del usuario"
 
 #: InvenTree/views.py:685 templates/InvenTree/settings/user.html:18
 msgid "Set Password"
@@ -479,7 +479,7 @@ msgstr "Configurar Contraseña"
 
 #: InvenTree/views.py:704
 msgid "Password fields must match"
-msgstr ""
+msgstr "Los campos de contraseña deben coincidir"
 
 #: InvenTree/views.py:910 templates/navbar.html:105
 msgid "System Information"
@@ -487,51 +487,51 @@ msgstr "Información del sistema"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "Debe proporcionar el parámetro barcode_data"
 
 #: barcodes/api.py:126
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "No se encontró ninguna coincidencia para los datos del código de barras"
 
 #: barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Coincidencia encontrada para datos de códigos de barras"
 
 #: barcodes/api.py:153
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "Debe proporcionar el parámetro stockitem"
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr ""
+msgstr "No se ha encontrado ningún artículo de stock que coincida"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
-msgstr ""
+msgstr "El código de barras ya corresponde al objeto de inventario"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
-msgstr ""
+msgstr "El código de barras ya corresponde a la ubicación de almacenamiento de existencias"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr ""
+msgstr "El código de barras ya corresponde a la parte"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
-msgstr ""
+msgstr "El código de barras ya está asignado a un objeto de inventario"
 
 #: barcodes/api.py:222
 msgid "Barcode associated with StockItem"
-msgstr ""
+msgstr "Código de barras asignado al objeto de inventario"
 
 #: build/forms.py:37
 msgid "Build Order reference"
-msgstr ""
+msgstr "Número de orden de construcción"
 
 #: build/forms.py:38
 msgid "Order target date"
-msgstr ""
+msgstr "Fecha objetivo de pedido"
 
 #: build/forms.py:42 build/templates/build/build_base.html:146
 #: build/templates/build/detail.html:124
@@ -541,11 +541,11 @@ msgstr ""
 #: templates/js/translated/build.js:962 templates/js/translated/order.js:358
 #: templates/js/translated/order.js:728
 msgid "Target Date"
-msgstr ""
+msgstr "Fecha objetivo"
 
 #: build/forms.py:43 build/models.py:277
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Fecha límite para la finalización de la construcción. La construcción estará vencida después de esta fecha."
 
 #: build/forms.py:48 build/forms.py:90 build/forms.py:266 build/models.py:1402
 #: build/templates/build/allocation_card.html:23
@@ -583,11 +583,11 @@ msgstr "Cantidad"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr ""
+msgstr "Número de elementos para construir"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Ingrese la cantidad para la producción de la construcción"
 
 #: build/forms.py:95 order/forms.py:114 stock/forms.py:83
 msgid "Serial Numbers"
@@ -595,27 +595,27 @@ msgstr "Números de serie"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Introduzca los números de serie de salidas de construcción"
 
 #: build/forms.py:103
 msgid "Confirm creation of build output"
-msgstr ""
+msgstr "Confirmar la creación de salida de construcción"
 
 #: build/forms.py:124
 msgid "Confirm deletion of build output"
-msgstr ""
+msgstr "Confirmar eliminación de salida de construcción"
 
 #: build/forms.py:145
 msgid "Confirm unallocation of stock"
-msgstr ""
+msgstr "Confirmar la desasignación de stock"
 
 #: build/forms.py:169
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Confirmar asignación de stock"
 
 #: build/forms.py:186
 msgid "Mark build as complete"
-msgstr ""
+msgstr "Marcar como construcción completa"
 
 #: build/forms.py:210 build/templates/build/auto_allocate.html:18
 #: order/serializers.py:216 order/serializers.py:275 stock/forms.py:280
@@ -632,7 +632,7 @@ msgstr "Unicación"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr ""
+msgstr "Ubicación de las partes completadas"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:62 order/models.py:555
@@ -647,19 +647,19 @@ msgstr "Estado"
 
 #: build/forms.py:216
 msgid "Build output stock status"
-msgstr ""
+msgstr "Generar estado de stock de salida"
 
 #: build/forms.py:223
 msgid "Confirm incomplete"
-msgstr ""
+msgstr "Confirmar incompleta"
 
 #: build/forms.py:224
 msgid "Confirm completion with incomplete stock allocation"
-msgstr ""
+msgstr "Confirmar la finalización con una asignación de stock incompleta"
 
 #: build/forms.py:227
 msgid "Confirm build completion"
-msgstr ""
+msgstr "Confirmar la terminación de construcción"
 
 #: build/forms.py:252
 msgid "Confirm cancel"
@@ -667,22 +667,22 @@ msgstr "Confirmar cancelación"
 
 #: build/forms.py:252 build/views.py:65
 msgid "Confirm build cancellation"
-msgstr ""
+msgstr "Confirmar la cancelación de construcción"
 
 #: build/forms.py:266
 msgid "Select quantity of stock to allocate"
-msgstr ""
+msgstr "Seleccione la cantidad de stock para asignar"
 
 #: build/models.py:113
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Opción no válida para la construcción padre"
 
 #: build/models.py:117 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:73
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:260
 msgid "Build Order"
-msgstr ""
+msgstr "Construir órden"
 
 #: build/models.py:118 build/templates/build/index.html:8
 #: build/templates/build/index.html:15
@@ -694,7 +694,7 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:101
 #: templates/InvenTree/settings/navbar.html:103 users/models.py:44
 msgid "Build Orders"
-msgstr ""
+msgstr "Construir órdenes"
 
 #: build/models.py:178
 msgid "Build Order Reference"
@@ -780,11 +780,11 @@ msgstr ""
 
 #: build/models.py:244
 msgid "Build Quantity"
-msgstr ""
+msgstr "Cantidad a crear"
 
 #: build/models.py:247
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Número de objetos existentes a construir"
 
 #: build/models.py:251
 msgid "Completed items"
@@ -792,48 +792,48 @@ msgstr "Elementos completados"
 
 #: build/models.py:253
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Número de productos en stock que se han completado"
 
 #: build/models.py:257 part/templates/part/part_base.html:198
 msgid "Build Status"
-msgstr ""
+msgstr "Estado de la construcción"
 
 #: build/models.py:261
 msgid "Build status code"
-msgstr ""
+msgstr "Código de estado de construcción"
 
 #: build/models.py:265 stock/models.py:513
 msgid "Batch Code"
-msgstr ""
+msgstr "Numero de lote"
 
 #: build/models.py:269
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Número de lote de este producto final"
 
 #: build/models.py:272 order/models.py:162 part/models.py:853
 #: part/templates/part/part_base.html:272 templates/js/translated/order.js:723
 msgid "Creation Date"
-msgstr ""
+msgstr "Fecha de Creación"
 
 #: build/models.py:276 order/models.py:561
 msgid "Target completion date"
-msgstr ""
+msgstr "Fecha límite de finalización"
 
 #: build/models.py:280 order/models.py:288 templates/js/translated/build.js:967
 msgid "Completion Date"
-msgstr ""
+msgstr "Fecha de finalización"
 
 #: build/models.py:286
 msgid "completed by"
-msgstr ""
+msgstr "terminado por"
 
 #: build/models.py:294 templates/js/translated/build.js:938
 msgid "Issued by"
-msgstr ""
+msgstr "Emitido por"
 
 #: build/models.py:295
 msgid "User who issued this build order"
-msgstr ""
+msgstr "El usuario que emitió esta orden"
 
 #: build/models.py:303 build/templates/build/build_base.html:184
 #: build/templates/build/detail.html:108 order/models.py:176
@@ -846,7 +846,7 @@ msgstr "Responsable"
 
 #: build/models.py:304
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Usuario responsable de esta orden"
 
 #: build/models.py:309 build/templates/build/detail.html:94
 #: company/templates/company/manufacturer_part.html:83
@@ -854,11 +854,11 @@ msgstr ""
 #: part/templates/part/part_base.html:266 stock/models.py:507
 #: stock/templates/stock/item_base.html:359
 msgid "External Link"
-msgstr ""
+msgstr "Link externo"
 
 #: build/models.py:310 part/models.py:715 stock/models.py:509
 msgid "Link to external URL"
-msgstr ""
+msgstr "Enlace a URL externa"
 
 #: build/models.py:314 build/templates/build/navbar.html:52
 #: company/models.py:141 company/models.py:576
@@ -883,19 +883,19 @@ msgstr "Notas"
 
 #: build/models.py:315
 msgid "Extra build notes"
-msgstr ""
+msgstr "Notas adicionales de construcción"
 
 #: build/models.py:792
 msgid "No build output specified"
-msgstr ""
+msgstr "No se ha especificado salida de construcción"
 
 #: build/models.py:795
 msgid "Build output is already completed"
-msgstr ""
+msgstr "La construcción de la salida ya está completa"
 
 #: build/models.py:798
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "La salida de la construcción no coincide con el orden de construcción"
 
 #: build/models.py:1208
 msgid "BuildItem must be unique for build, stock_item and install_into"
@@ -1101,7 +1101,7 @@ msgstr ""
 #: build/templates/build/detail.html:101
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
-msgstr ""
+msgstr "Emitido por"
 
 #: build/templates/build/build_base.html:214
 msgid "Incomplete Outputs"
@@ -3261,16 +3261,12 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:201
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Line Item"
-msgstr "Eliminar elemento"
+msgstr ""
 
 #: order/serializers.py:207
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Line item does not match purchase order"
-msgstr "Recibido contra la orden de compra"
+msgstr ""
 
 #: order/serializers.py:217 order/serializers.py:276
 msgid "Select destination location for received items"
@@ -8280,3 +8276,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

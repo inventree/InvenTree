@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 04:34+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-08 03:30+0000\n"
+"PO-Revision-Date: 2021-09-08 04:15\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3261,16 +3261,12 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:201
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Line Item"
-msgstr "Удалить элемент"
+msgstr ""
 
 #: order/serializers.py:207
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Line item does not match purchase order"
-msgstr "Получено по заказу на покупку"
+msgstr ""
 
 #: order/serializers.py:217 order/serializers.py:276
 msgid "Select destination location for received items"
@@ -3285,10 +3281,8 @@ msgid "Unique identifier field"
 msgstr ""
 
 #: order/serializers.py:250
-#, fuzzy
-#| msgid "Barcode already matches Part object"
 msgid "Barcode is already in use"
-msgstr "Штрих-код уже соответствует объекту Part"
+msgstr ""
 
 #: order/serializers.py:289
 msgid "Line items must be provided"
@@ -8282,3 +8276,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

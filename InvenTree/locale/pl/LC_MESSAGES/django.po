@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 04:34+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-08 03:30+0000\n"
+"PO-Revision-Date: 2021-09-08 04:15\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -3012,10 +3012,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
 #: order/api.py:302
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Destination location must be specified"
-msgstr "Nie określono lokalizacji docelowej"
+msgstr ""
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -3263,36 +3261,28 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:201
-#, fuzzy
-#| msgid "Add Line Item"
 msgid "Line Item"
-msgstr "Dodaj element zamówienia"
+msgstr ""
 
 #: order/serializers.py:207
 msgid "Line item does not match purchase order"
 msgstr ""
 
 #: order/serializers.py:217 order/serializers.py:276
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Select destination location for received items"
-msgstr "Nie określono lokalizacji docelowej"
+msgstr ""
 
 #: order/serializers.py:234
-#, fuzzy
-#| msgid "Barcode actions"
 msgid "Barcode Hash"
-msgstr "Akcje kodów kreskowych"
+msgstr ""
 
 #: order/serializers.py:235
 msgid "Unique identifier field"
 msgstr ""
 
 #: order/serializers.py:250
-#, fuzzy
-#| msgid "Barcode already matches Part object"
 msgid "Barcode is already in use"
-msgstr "Kod kreskowy już pasuje do obiektu StockItem"
+msgstr ""
 
 #: order/serializers.py:289
 msgid "Line items must be provided"
@@ -5062,10 +5052,9 @@ msgid "Select from existing images"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:7
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
+#, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-msgstr "Czy na pewno chcesz usunąć część '<b>%(full_name)s</b>'?"
+msgstr ""
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -5176,10 +5165,9 @@ msgid "Create new part variant"
 msgstr ""
 
 #: part/templates/part/variant_part.html:10
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete part '<b>%(full_name)s</b>'?"
+#, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr "Czy na pewno chcesz usunąć część '<b>%(full_name)s</b>'?"
+msgstr ""
 
 #: part/templatetags/inventree_extras.py:106
 msgid "Unknown database"
@@ -8288,3 +8276,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+

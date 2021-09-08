@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 04:34+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-08 03:30+0000\n"
+"PO-Revision-Date: 2021-09-08 04:15\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -467,7 +467,7 @@ msgstr "Verwijder item"
 
 #: InvenTree/views.py:659
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Selectievakje aanvinken om de verwijdering van items te bevestigen"
 
 #: InvenTree/views.py:674 templates/InvenTree/settings/user.html:14
 msgid "Edit User Information"
@@ -527,7 +527,7 @@ msgstr "Barcode gekoppeld aan StockItem"
 
 #: build/forms.py:37
 msgid "Build Order reference"
-msgstr ""
+msgstr "Bouwopdracht referentie"
 
 #: build/forms.py:38
 msgid "Order target date"
@@ -1176,10 +1176,9 @@ msgid "Select a stock item to allocate to the selected build output"
 msgstr ""
 
 #: build/templates/build/create_build_item.html:11
-#, fuzzy, python-format
-#| msgid "The following stock items will be allocated to the specified build output"
+#, python-format
 msgid "The allocated stock will be installed into the following build output:<br><em>%(output)s</em>"
-msgstr "De volgende voorraadartikelen zullen worden toegewezen aan het opgegeven product"
+msgstr ""
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -1322,11 +1321,11 @@ msgstr ""
 #: stock/templates/stock/item.html:88 stock/templates/stock/navbar.html:47
 #: stock/templates/stock/navbar.html:50
 msgid "Attachments"
-msgstr ""
+msgstr "Bijlagen"
 
 #: build/templates/build/detail.html:257
 msgid "Build Notes"
-msgstr ""
+msgstr "Bouw notities"
 
 #: build/templates/build/detail.html:261 build/templates/build/detail.html:398
 #: company/templates/company/detail.html:169
@@ -1338,7 +1337,7 @@ msgstr ""
 #: part/templates/part/detail.html:109 stock/templates/stock/item.html:103
 #: stock/templates/stock/item.html:188
 msgid "Edit Notes"
-msgstr ""
+msgstr "Notities Bewerken"
 
 #: build/templates/build/detail.html:357
 #: order/templates/order/po_attachments.html:79
@@ -1588,43 +1587,43 @@ msgstr ""
 
 #: common/models.py:308 common/models.py:839 common/models.py:986
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Instellingssleutel (moet uniek zijn - hoofdletter ongevoelig"
 
 #: common/models.py:310
 msgid "Settings value"
-msgstr ""
+msgstr "Waarde van de instelling"
 
 #: common/models.py:345
 msgid "Must be an integer value"
-msgstr ""
+msgstr "Moet een geheel getal zijn"
 
 #: common/models.py:368
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "Waarde moet een booleaanse waarde zijn"
 
 #: common/models.py:379
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "Waarde moet een geheel getal zijn"
 
 #: common/models.py:402
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Sleutelreeks moet uniek zijn"
 
 #: common/models.py:509
 msgid "InvenTree Instance Name"
-msgstr ""
+msgstr "Inventree Instantie Naam"
 
 #: common/models.py:511
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "String-beschrijving voor de server instantie"
 
 #: common/models.py:515
 msgid "Use instance name"
-msgstr ""
+msgstr "Gebruik de instantie naam"
 
 #: common/models.py:516
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Gebruik de naam van de instantie in de titelbalk"
 
 #: common/models.py:522 company/models.py:99 company/models.py:100
 msgid "Company name"
@@ -1656,7 +1655,7 @@ msgstr "Download van URL"
 
 #: common/models.py:543
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Download van afbeeldingen en bestanden vanaf een externe URL toestaan"
 
 #: common/models.py:549
 msgid "Barcode Support"
@@ -1676,7 +1675,7 @@ msgstr "Reguliere expressiepatroon voor het corresponderen van deel IPN"
 
 #: common/models.py:561
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Dubbele IPN toestaan"
 
 #: common/models.py:562
 msgid "Allow multiple parts to share the same IPN"
@@ -1684,11 +1683,11 @@ msgstr "Toestaan dat meerdere onderdelen dezelfde IPN gebruiken"
 
 #: common/models.py:568
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Bewerken IPN toestaan"
 
 #: common/models.py:569
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "Sta het wijzigen van de IPN toe tijdens het bewerken van een onderdeel"
 
 #: common/models.py:575
 msgid "Copy Part BOM Data"
@@ -3013,10 +3012,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
 #: order/api.py:302
-#, fuzzy
-#| msgid "Destination Location"
 msgid "Destination location must be specified"
-msgstr "Bestemmings Locatie"
+msgstr ""
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -3264,16 +3261,12 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:201
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Line Item"
-msgstr "Verwijder item"
+msgstr ""
 
 #: order/serializers.py:207
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Line item does not match purchase order"
-msgstr "Bouwuitvoer komt niet overeen met bouwopdracht"
+msgstr ""
 
 #: order/serializers.py:217 order/serializers.py:276
 msgid "Select destination location for received items"
@@ -3288,10 +3281,8 @@ msgid "Unique identifier field"
 msgstr ""
 
 #: order/serializers.py:250
-#, fuzzy
-#| msgid "Barcode already matches Part object"
 msgid "Barcode is already in use"
-msgstr "Barcode komt al overeen met Part object"
+msgstr ""
 
 #: order/serializers.py:289
 msgid "Line items must be provided"
@@ -8285,3 +8276,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+

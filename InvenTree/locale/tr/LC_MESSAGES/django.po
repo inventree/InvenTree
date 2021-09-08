@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 04:34+0000\n"
-"PO-Revision-Date: 2021-08-26 13:24\n"
+"POT-Creation-Date: 2021-09-08 03:30+0000\n"
+"PO-Revision-Date: 2021-09-08 04:15\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1176,10 +1176,9 @@ msgid "Select a stock item to allocate to the selected build output"
 msgstr "Seçili yapım işi emri için tahsis edilecek bir stok kalemi seçiniz"
 
 #: build/templates/build/create_build_item.html:11
-#, fuzzy, python-format
-#| msgid "The allocated stock will be installed into the following build output:<br><i>%(output)s</i>"
+#, python-format
 msgid "The allocated stock will be installed into the following build output:<br><em>%(output)s</em>"
-msgstr "Tahsis edilen stok bu yapım işi çıktısının kurulmasında kullanılacak: <br><i>%(output)s</i>"
+msgstr ""
 
 #: build/templates/build/create_build_item.html:17
 #, python-format
@@ -3013,10 +3012,8 @@ msgid "Part query filters (comma-separated value of key=value pairs)"
 msgstr ""
 
 #: order/api.py:302
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Destination location must be specified"
-msgstr "Hedef konumu belirtilmedi"
+msgstr ""
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -3264,38 +3261,28 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:201
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Line Item"
-msgstr "Ögeyi Sil"
+msgstr ""
 
 #: order/serializers.py:207
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Line item does not match purchase order"
-msgstr "Yapım işi çıktısı, yapım işi emri ile eşleşmiyor"
+msgstr ""
 
 #: order/serializers.py:217 order/serializers.py:276
-#, fuzzy
-#| msgid "Destination location for uninstalled items"
 msgid "Select destination location for received items"
-msgstr "Sökülen ögeler için hedef konum"
+msgstr ""
 
 #: order/serializers.py:234
-#, fuzzy
-#| msgid "Barcode actions"
 msgid "Barcode Hash"
-msgstr "Barkod işlemleri"
+msgstr ""
 
 #: order/serializers.py:235
 msgid "Unique identifier field"
 msgstr ""
 
 #: order/serializers.py:250
-#, fuzzy
-#| msgid "Barcode already matches Part object"
 msgid "Barcode is already in use"
-msgstr "Barkod başka bir parça nesnesi ile eşleşmektedir"
+msgstr ""
 
 #: order/serializers.py:289
 msgid "Line items must be provided"
@@ -4700,10 +4687,9 @@ msgid "Part Stock"
 msgstr "Parça Stoku"
 
 #: part/templates/part/detail.html:21
-#, fuzzy, python-format
-#| msgid "Showing stock for all variants of <i>%(full_name)s</i>"
+#, python-format
 msgid "Showing stock for all variants of <em>%(full_name)s</em>"
-msgstr "<i>%(full_name)s</i> için tüm çeşitlerin stokları gösteriliyor"
+msgstr ""
 
 #: part/templates/part/detail.html:30 part/templates/part/navbar.html:99
 msgid "Part Test Templates"
@@ -5066,10 +5052,9 @@ msgid "Select from existing images"
 msgstr ""
 
 #: part/templates/part/partial_delete.html:7
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete this stock location?"
+#, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-msgstr "Bu stok konumunu silmek istediğinizden emin misiniz?"
+msgstr ""
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -5180,10 +5165,9 @@ msgid "Create new part variant"
 msgstr "Yeni parça çeşidi oluştur"
 
 #: part/templates/part/variant_part.html:10
-#, fuzzy, python-format
-#| msgid "Create a new variant of template <i>'%(full_name)s'</i>."
+#, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr "<i>%(full_name)s</i> şablonu için yeni bir çeşit oluştur."
+msgstr ""
 
 #: part/templatetags/inventree_extras.py:106
 msgid "Unknown database"
@@ -6132,10 +6116,9 @@ msgid "Convert Stock Item"
 msgstr "Stok Kalemine Dönüştür"
 
 #: stock/templates/stock/stockitem_convert.html:8
-#, fuzzy, python-format
-#| msgid "This stock item is current an instance of <i>%(part)s</i>"
+#, python-format
 msgid "This stock item is current an instance of <em>%(part)s</em>"
-msgstr "Bu stok kalemi şu anda <i>%(part)s</i> parçasının örneğidir"
+msgstr ""
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
@@ -8293,3 +8276,4 @@ msgstr ""
 #: users/models.py:194
 msgid "Permission to delete items"
 msgstr ""
+
