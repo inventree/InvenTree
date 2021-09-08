@@ -20,6 +20,7 @@
 /* exported
     createSalesOrder,
     editPurchaseOrderLineItem,
+    loadPurchaseOrderLineItemTable,
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
     loadSalesOrderTable,
@@ -435,7 +436,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                             field: 'location',
                             label: '{% trans "New Location" %}',
                             title: '{% trans "Create new stock location" %}',
-                            url: "{% url 'stock-location-create' %}",
+                            url: '{% url "stock-location-create" %}',
                         },
                     ]
                 });
@@ -454,7 +455,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             order: options.order,
             part_detail: true
         },
-        url: "{% url 'api-po-line-list' %}",
+        url: '{% url "api-po-line-list" %}',
         showFooter: true,
         columns: [
             {
@@ -476,8 +477,8 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         return '-';
                     }
                 },
-                footerFormatter:  function() {
-                    return '{% trans "Total" %}'
+                footerFormatter: function() {
+                    return '{% trans "Total" %}';
                 }
             },
             {
@@ -506,7 +507,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
                         return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`);
                     } else {
-                        return "-";
+                        return '-';
                     }
                 },
             },
@@ -520,12 +521,12 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 footerFormatter: function(data) {
-                    return data.map(function (row) {
-                      return +row['quantity']
-                    }).reduce(function (sum, i) {
+                    return data.map(function(row) {
+                      return +row['quantity'];
+                    }).reduce(function(sum, i) {
                       return sum + i
-                    }, 0)
-                  }
+                    }, 0);
+                }
             },
             {
                 sortable: true,
@@ -543,18 +544,27 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 formatter: function(value, row) {
                     var total = row.purchase_price * row.quantity;
                     var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
-                    return formatter.format(total)
+                    return formatter.format(total);
                 },
                 footerFormatter: function(data) {
-                    var total = data.map(function (row) {
-                      return +row['purchase_price']*row['quantity']
-                    }).reduce(function (sum, i) {
-                      return sum + i
-                    }, 0)
+                    var total = data.map(function(row) {
+                      return +row['purchase_price']*row['quantity'];
+                    }).reduce(function(sum, i) {
+                      return sum + i;
+                    }, 0);
+
                     var currency = (data.slice(-1)[0] && data.slice(-1)[0].purchase_price_currency)  || 'USD';
-                    var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
-                    return formatter.format(total)
-                  }
+
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: currency
+                        }
+                    );
+                    
+                    return formatter.format(total);
+                }
             },
             {
                 sortable: false,
