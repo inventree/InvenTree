@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 03:30+0000\n"
-"PO-Revision-Date: 2021-09-08 04:15\n"
+"PO-Revision-Date: 2021-09-11 01:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -46,7 +46,7 @@ msgstr "确认删除"
 
 #: InvenTree/forms.py:128
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "确认删除"
 
 #: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
@@ -71,27 +71,27 @@ msgstr "选择分类"
 #: InvenTree/helpers.py:401
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "重复的序列号: {n}"
 
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:430
 #: stock/views.py:1363
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "提供的数量无效"
 
 #: InvenTree/helpers.py:411
 msgid "Empty serial number string"
-msgstr ""
+msgstr "空序列号字符串"
 
 #: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "无效的群组: {g}"
 
 #: InvenTree/helpers.py:469
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "重复的序列号: {g}"
 
 #: InvenTree/helpers.py:477
 msgid "No serial numbers found"
@@ -100,7 +100,7 @@ msgstr "未找到序列号"
 #: InvenTree/helpers.py:481
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 
 #: InvenTree/models.py:66 stock/models.py:1826
 msgid "Attachment"
@@ -131,32 +131,32 @@ msgstr "上传日期"
 
 #: InvenTree/models.py:99
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "文件名不能为空！"
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "非法的附件目录"
 
 #: InvenTree/models.py:132
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "文件名包含非法字符 '{c}'"
 
 #: InvenTree/models.py:135
 msgid "Filename missing extension"
-msgstr ""
+msgstr "缺少文件名扩展"
 
 #: InvenTree/models.py:142
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "使用此文件名的附件已存在"
 
 #: InvenTree/models.py:149
 msgid "Error renaming file"
-msgstr ""
+msgstr "重命名文件出错"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
-msgstr ""
+msgstr "选择无效"
 
 #: InvenTree/models.py:200 InvenTree/models.py:201 company/models.py:414
 #: label/models.py:112 part/models.py:658 part/models.py:2212
@@ -190,152 +190,152 @@ msgstr "名称"
 #: templates/js/translated/part.js:1210 templates/js/translated/stock.js:840
 #: templates/js/translated/stock.js:1495 templates/js/translated/stock.js:1540
 msgid "Description"
-msgstr ""
+msgstr "描述信息"
 
 #: InvenTree/models.py:208
 msgid "Description (optional)"
-msgstr ""
+msgstr "描述 (可选)"
 
 #: InvenTree/models.py:216
 msgid "parent"
-msgstr ""
+msgstr "上级项"
 
 #: InvenTree/serializers.py:55 part/models.py:2454
 msgid "Must be a valid number"
-msgstr ""
+msgstr "必须是有效数字"
 
 #: InvenTree/serializers.py:244
 msgid "Filename"
-msgstr ""
+msgstr "文件名"
 
 #: InvenTree/settings.py:523
 msgid "German"
-msgstr ""
+msgstr "德语"
 
 #: InvenTree/settings.py:524
 msgid "Greek"
-msgstr ""
+msgstr "希腊语"
 
 #: InvenTree/settings.py:525
 msgid "English"
-msgstr ""
+msgstr "英语"
 
 #: InvenTree/settings.py:526
 msgid "Spanish"
-msgstr ""
+msgstr "西班牙语"
 
 #: InvenTree/settings.py:527
 msgid "French"
-msgstr ""
+msgstr "法语"
 
 #: InvenTree/settings.py:528
 msgid "Hebrew"
-msgstr ""
+msgstr "希伯来语"
 
 #: InvenTree/settings.py:529
 msgid "Italian"
-msgstr ""
+msgstr "意大利语"
 
 #: InvenTree/settings.py:530
 msgid "Japanese"
-msgstr ""
+msgstr "日语"
 
 #: InvenTree/settings.py:531
 msgid "Korean"
-msgstr ""
+msgstr "韩语"
 
 #: InvenTree/settings.py:532
 msgid "Dutch"
-msgstr ""
+msgstr "荷兰语"
 
 #: InvenTree/settings.py:533
 msgid "Norwegian"
-msgstr ""
+msgstr "挪威语"
 
 #: InvenTree/settings.py:534
 msgid "Polish"
-msgstr ""
+msgstr "波兰语"
 
 #: InvenTree/settings.py:535
 msgid "Russian"
-msgstr ""
+msgstr "俄语"
 
 #: InvenTree/settings.py:536
 msgid "Swedish"
-msgstr ""
+msgstr "瑞典语"
 
 #: InvenTree/settings.py:537
 msgid "Thai"
-msgstr ""
+msgstr "泰语"
 
 #: InvenTree/settings.py:538
 msgid "Turkish"
-msgstr ""
+msgstr "土耳其语"
 
 #: InvenTree/settings.py:539
 msgid "Vietnamese"
-msgstr ""
+msgstr "越南语"
 
 #: InvenTree/settings.py:540
 msgid "Chinese"
-msgstr ""
+msgstr "中文（简体）"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "后台工作人员检查失败"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "未配置电子邮件后端"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "InventTree系统健康检查失败"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "待定"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "已添加"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "完成"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "已取消"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "丢失"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "已退回"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:126
 msgid "Shipped"
-msgstr ""
+msgstr "已发货"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "确定"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "注意"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "破损"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
@@ -579,19 +579,19 @@ msgstr ""
 #: templates/js/translated/part.js:1518 templates/js/translated/stock.js:1675
 #: templates/js/translated/stock.js:1850
 msgid "Quantity"
-msgstr ""
+msgstr "库存数"
 
 #: build/forms.py:49
 msgid "Number of items to build"
-msgstr ""
+msgstr "要构建的项目数量"
 
 #: build/forms.py:91
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "输入构建输出数量"
 
 #: build/forms.py:95 order/forms.py:114 stock/forms.py:83
 msgid "Serial Numbers"
-msgstr ""
+msgstr "序列号"
 
 #: build/forms.py:97
 msgid "Enter serial numbers for build outputs"
