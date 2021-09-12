@@ -30,8 +30,26 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--tag', help='Compare against specified version tag', action='store')
     parser.add_argument('-r', '--release', help='Check that this is a release version', action='store_true')
     parser.add_argument('-d', '--dev', help='Check that this is a development version', action='store_true')
+    parser.add_argument('-b', '--branch', help='Check against a particular branch', action='store')
 
     args = parser.parse_args()
+
+    if args.branch:
+        """
+        Version number requirement depends on format of branch
+
+        'master': development branch
+        'stable': release branch
+        """
+
+        print(f"Checking version number for branch '{args.branch}'")
+
+        if args.branch == 'master':
+            print("Development branch")
+            args.dev = True
+        elif args.branch == 'stable':
+            print("Stable release branch")
+            args.release = True
 
     if args.dev:
         """
@@ -59,6 +77,7 @@ if __name__ == '__main__':
 
         if result is None:
             print(f"Version number '{version}' does not match required pattern for stable branch")
+            sys.exit(1)
 
     if args.tag:
         if not args.tag == version:
