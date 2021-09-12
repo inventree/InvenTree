@@ -17,4 +17,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Check version number
         run: |
-          python3 ci/check_version_number.py --branch ${{ env.GITHUB_BASE_REF }}
+          python3 ci/check_version_number.py --branch ${{ github.base_ref }}
