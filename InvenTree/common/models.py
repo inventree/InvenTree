@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os
 import decimal
 import math
+import uuid
 
 from django.db import models, transaction
 from django.contrib.auth.models import User
@@ -1165,3 +1166,52 @@ class ColorTheme(models.Model):
                 return True
 
         return False
+
+
+class WebhookEndpoint(models.Model):
+    """ Defines a Webhook entdpoint
+
+    Attributes:
+        endpoint_id: Path to the webhook,
+        name: Name of the webhook,
+        active: Is this webhook active?,
+        user: User associated with webhook,
+        token: Token for sending a webhook,
+    """
+
+    endpoint_id = models.CharField(
+        max_length=255,
+        verbose_name=_('Endpoint'),
+        help_text=_('Endpoint at which this webhook is received'),
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Name'),
+        help_text=_('Name for this webhook')
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this webhook active')
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    token = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Token'),
+        help_text=_('Token for access'),
+        default=uuid.uuid4,
+    )

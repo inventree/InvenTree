@@ -54,7 +54,6 @@ admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
     url(r'^barcode/', include(barcode_api_urls)),
-    url(r'^common/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
@@ -69,6 +68,9 @@ apipatterns = [
 
     # Plugin endpoints
     url(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+
+    # Webhook enpoint
+    path('', include(common_api_urls)),
 
     # InvenTree information endpoint
     url(r'^$', InfoView.as_view(), name='api-inventree-info'),

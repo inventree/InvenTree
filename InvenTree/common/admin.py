@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
 
-from .models import InvenTreeSetting, InvenTreeUserSetting
+from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint
 
 
 class SettingsAdmin(ImportExportModelAdmin):
@@ -18,5 +18,11 @@ class UserSettingsAdmin(ImportExportModelAdmin):
     list_display = ('key', 'value', 'user', )
 
 
+class WebhookAdmin(ImportExportModelAdmin):
+
+    list_display = ('endpoint_id', 'name', 'active', 'user')
+
+
 admin.site.register(InvenTreeSetting, SettingsAdmin)
 admin.site.register(InvenTreeUserSetting, UserSettingsAdmin)
+admin.site.register(WebhookEndpoint, WebhookAdmin)
