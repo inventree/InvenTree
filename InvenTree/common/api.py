@@ -54,15 +54,17 @@ class WebhookView(CsrfExemptMixin, APIView):
         self.init(request, *args, **kwargs)
         # get webhook definition
         self.get_webhook(endpoint, *args, **kwargs)
+
         # check headers
         headers = request.headers
-        self.validate_token(headers)
-
-        # process data
         try:
             payload = json.loads(request.body)
         except json.decoder.JSONDecodeError as error:
             raise NotAcceptable(error.msg)
+
+        # validate
+        self.validate_token(payload, headers)
+        # process data
         self.save_data(payload, headers, request)
         self.process_payload(payload, headers, request)
 
@@ -87,25 +89,25 @@ class WebhookView(CsrfExemptMixin, APIView):
         if self.webhook.token:
             self.token = self.webhook.token
             self.verify = VerificationMethod.TOKEN
+            # TODO make a object-setting
         return True
 
-    def validate_token(self, headers):
+    def validate_token(self, payload, headers):
         token = headers.get(self.TOKEN_NAME, "")
 
         # no token
         if self.verify == VerificationMethod.NONE:
-            return True
+            pass
 
         # static token
         elif self.verify == VerificationMethod.TOKEN:
             if not compare_digest(token, self.token):
                 raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
-            return True
 
         # hmac token
         elif self.verify == VerificationMethod.HMAC:
-            # TODO write check
-            return True
+
+        return True
 
     def save_data(self, payload, headers=None, request=None):
         # TODO safe data
