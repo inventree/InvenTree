@@ -45,10 +45,10 @@ if __name__ == '__main__':
         print(f"Checking version number for branch '{args.branch}'")
 
         if args.branch == 'master':
-            print("Development branch")
+            print("- This is a development branch")
             args.dev = True
         elif args.branch == 'stable':
-            print("Stable release branch")
+            print("- This is a stable release branch")
             args.release = True
 
     if args.dev:
