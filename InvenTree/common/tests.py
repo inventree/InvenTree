@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from http import HTTPStatus
+import json
 
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 
-from .models import InvenTreeSetting
+from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage
+from .api import WebhookView
 
 
 class SettingsTest(TestCase):
@@ -85,3 +88,51 @@ class SettingsTest(TestCase):
 
                 if setting.default_value not in [True, False]:
                     raise ValueError(f'Non-boolean default value specified for {key}')
+
+
+class WebhookMessageTests(TestCase):
+    def setUp(self):
+        self.endpoint_def = WebhookEndpoint.objects.create()
+        self.url = f'/api/webhook/{self.endpoint_def.endpoint_id}/'
+        self.client = Client(enforce_csrf_checks=True)
+
+    def test_bad_method(self):
+        response = self.client.get(self.url)
+
+        assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+
+    def test_missing_token(self):
+        response = self.client.post(
+            self.url,
+            content_type='application/json',
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert (
+            json.loads(response.content)['detail'] == WebhookView.MESSAGE_TOKEN_ERROR
+        )
+
+    def test_bad_token(self):
+        response = self.client.post(
+            self.url,
+            content_type='application/json',
+            **{'HTTP_TOKEN': '1234567fghj'},
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert (
+            json.loads(response.content)['detail'] == WebhookView.MESSAGE_TOKEN_ERROR
+        )
+
+    def test_success(self):
+        response = self.client.post(
+            self.url,
+            data={"this": "is a message"},
+            content_type='application/json',
+            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert json.loads(response.content)['message'] == WebhookView.MESSAGE_OK
+        message = WebhookMessage.objects.get()
+        assert message.body == {"this": "is a message"}

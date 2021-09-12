@@ -135,7 +135,8 @@ class WebhookView(CsrfExemptMixin, APIView):
 
     def save_data(self, payload, headers=None, request=None):
         return WebhookMessage.objects.create(
-            host=request.host,
+            # host=request.host,
+            # TODO fix
             header=headers,
             body=payload,
             endpoint=self.webhook,
