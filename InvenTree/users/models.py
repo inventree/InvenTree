@@ -143,6 +143,7 @@ class RuleSet(models.Model):
         'common_inventreesetting',
         'common_inventreeusersetting',
         'common_webhookendpoint',
+        'common_webhookmessage',
         'company_contact',
         'users_owner',
 
