@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 03:30+0000\n"
-"PO-Revision-Date: 2021-09-08 04:15\n"
+"POT-Creation-Date: 2021-09-12 13:15+0000\n"
+"PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6579,63 +6579,67 @@ msgstr "InvenTree-Versionsinformationen"
 msgid "InvenTree Version"
 msgstr "InvenTree-Version"
 
-#: templates/about.html:26
+#: templates/about.html:27
+msgid "Development Version"
+msgstr ""
+
+#: templates/about.html:30
 msgid "Up to Date"
 msgstr "Aktuell"
 
-#: templates/about.html:28
+#: templates/about.html:32
 msgid "Update Available"
 msgstr "Aktualisierung verfügbar"
 
-#: templates/about.html:34
-msgid "API Version"
-msgstr "API-Version"
-
-#: templates/about.html:39
-msgid "Python Version"
-msgstr "Python-Version"
-
-#: templates/about.html:44
-msgid "Django Version"
-msgstr "Django-Version"
-
-#: templates/about.html:51
+#: templates/about.html:42
 msgid "Commit Hash"
 msgstr "Commit-Hash"
 
-#: templates/about.html:58
+#: templates/about.html:49
 msgid "Commit Date"
 msgstr "Commit-Datum"
 
-#: templates/about.html:63
+#: templates/about.html:55
 msgid "InvenTree Documentation"
 msgstr "InvenTree-Dokumentation"
 
-#: templates/about.html:68
+#: templates/about.html:60
+msgid "API Version"
+msgstr "API-Version"
+
+#: templates/about.html:65
+msgid "Python Version"
+msgstr "Python-Version"
+
+#: templates/about.html:70
+msgid "Django Version"
+msgstr "Django-Version"
+
+#: templates/about.html:75
 msgid "View Code on GitHub"
 msgstr "Code auf GitHub ansehen"
 
-#: templates/about.html:73
+#: templates/about.html:80
 msgid "Credits"
 msgstr "Danksagung"
 
-#: templates/about.html:78
+#: templates/about.html:85
 msgid "Mobile App"
 msgstr "Mobile App"
 
-#: templates/about.html:83
+#: templates/about.html:90
 msgid "Submit Bug Report"
 msgstr "Fehlerbericht senden"
 
-#: templates/about.html:90 templates/clip.html:4
+#: templates/about.html:97 templates/clip.html:4
 msgid "copy to clipboard"
 msgstr "In die Zwischenablage kopieren"
 
-#: templates/about.html:90
+#: templates/about.html:97
 msgid "copy version information"
 msgstr "Versionsinformationen kopieren"
 
-#: templates/about.html:100 templates/js/translated/modals.js:50
+#: templates/about.html:107 templates/js/translated/modals.js:50
 #: templates/js/translated/modals.js:584 templates/js/translated/modals.js:678
 #: templates/js/translated/modals.js:971 templates/modals.html:29
 #: templates/modals.html:54
