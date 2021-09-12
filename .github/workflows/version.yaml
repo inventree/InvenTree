@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
   steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Check version number
-        run: |
-          python3 ci/check_version_number.py --branch ${GITHUB_REF##*/}
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Check version number
+      run: |
+        python3 ci/check_version_number.py --branch ${GITHUB_REF##*/}
