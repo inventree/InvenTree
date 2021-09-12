@@ -1223,3 +1223,60 @@ class WebhookEndpoint(models.Model):
         verbose_name=_('Secret'),
         help_text=_('Shared secret for HMAC'),
     )
+
+
+class WebhookMessage(models.Model):
+    """ Defines a webhook message
+
+    Attributes:
+        message_id: Unique identifier for this message,
+        host: Host from which this message was received,
+        header: Header of this message,
+        body: Body of this message,
+        endpoint: Endpoint on which this message was received,
+        worked_on: Was the work on this message finished?
+    """
+
+    message_id = models.UUIDField(
+        verbose_name=_('Message ID'),
+        help_text=_('Unique identifier for this message'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    host = models.CharField(
+        max_length=255,
+        verbose_name=_('Host'),
+        help_text=_('Host from which this message was received'),
+        editable=False,
+    )
+
+    header = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Header'),
+        help_text=_('Header of this message'),
+        editable=False,
+    )
+
+    body = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Body'),
+        help_text=_('Body of this message'),
+        editable=False,
+    )
+
+    endpoint = models.ForeignKey(
+        WebhookEndpoint,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Endpoint'),
+        help_text=_('Endpoint on which this message was received'),
+    )
+
+    worked_on = models.BooleanField(
+        default=False,
+        verbose_name=_('Worked on'),
+        help_text=_('Was the work on this message finished?'),
+    )

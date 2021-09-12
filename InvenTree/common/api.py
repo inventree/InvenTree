@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, NotFound, NotAcceptable
 
-from .models import WebhookEndpoint
+from .models import WebhookEndpoint, WebhookMessage
 
 
 class CsrfExemptMixin(object):
@@ -68,8 +68,8 @@ class WebhookView(CsrfExemptMixin, APIView):
         # validate
         self.validate_token(payload, headers, request)
         # process data
-        self.save_data(payload, headers, request)
-        self.process_payload(payload, headers, request)
+        message = self.save_data(payload, headers, request)
+        self.process_payload(message, payload, headers)
 
         # return results
         return_kwargs = self.get_result(payload, headers, request)
@@ -122,11 +122,15 @@ class WebhookView(CsrfExemptMixin, APIView):
         return True
 
     def save_data(self, payload, headers=None, request=None):
-        # TODO safe data
-        return
+        return WebhookMessage.objects.create(
+            host=request.host,
+            header=headers,
+            body=payload,
+            endpoint=self.webhook,
+        )
 
-    def process_payload(self, payload, headers=None, request=None):
-        return
+    def process_payload(self, message, payload=None, headers=None):
+        return True
 
     def get_result(self, payload, headers=None, request=None):
         context = {}
