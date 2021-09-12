@@ -66,7 +66,7 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotAcceptable(error.msg)
 
         # validate
-        self.validate_token(payload, headers)
+        self.validate_token(payload, headers, request)
         # process data
         self.save_data(payload, headers, request)
         self.process_payload(payload, headers, request)
@@ -100,7 +100,7 @@ class WebhookView(CsrfExemptMixin, APIView):
             # TODO make a object-setting
         return True
 
-    def validate_token(self, payload, headers):
+    def validate_token(self, payload, headers, request):
         token = headers.get(self.TOKEN_NAME, "")
 
         # no token
@@ -114,7 +114,7 @@ class WebhookView(CsrfExemptMixin, APIView):
 
         # hmac token
         elif self.verify == VerificationMethod.HMAC:
-            digest = hmac.new(self.secret, payload.encode('utf-8'), hashlib.sha256).digest()
+            digest = hmac.new(self.secret.encode('utf-8'), request.body, hashlib.sha256).digest()
             computed_hmac = base64.b64encode(digest)
             if not hmac.compare_digest(computed_hmac, token.encode('utf-8')):
                 raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
