@@ -5,7 +5,7 @@ name: Docker Build
 on:
   push:
     branches:
-      - 'master'
+      - 'stable'
 
 jobs:
 
@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+      - name: Check version number
+        run: |
+          python3 ci/check_version_number.py --release
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -31,7 +34,9 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           target: production
+          build-args:
+            branch: stable
           repository: inventree/inventree
-          tags: inventree/inventree:latest
+          tags: inventree/inventree:stable
       - name: Image Digest
         run: echo ${{ steps.docker_build.outputs.digest }}
