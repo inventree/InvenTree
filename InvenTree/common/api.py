@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, NotFound, NotAcceptable
+from django_q.tasks import async_task
 
 from .models import WebhookEndpoint, WebhookMessage
 
@@ -45,6 +46,7 @@ class WebhookView(CsrfExemptMixin, APIView):
     authentication_classes = []
     permission_classes = []
     model_class = WebhookEndpoint
+    run_async = False
 
     # Token
     TOKEN_NAME = "Token"
@@ -69,11 +71,21 @@ class WebhookView(CsrfExemptMixin, APIView):
         self.validate_token(payload, headers, request)
         # process data
         message = self.save_data(payload, headers, request)
-        self.process_payload(message, payload, headers)
+        if self.run_async:
+            async_task(self._process_payload, message.id)
+        else:
+            message.worked_on = self.process_payload(message, payload, headers)
+            message.save()
 
         # return results
         return_kwargs = self.get_result(payload, headers, request)
         return Response(**return_kwargs)
+
+    def _process_payload(self, message_id):
+        message = WebhookMessage.objects.get(message_id=message_id)
+        process_result = self.process_payload(message, message.body, message.header)
+        message.worked_on = process_result
+        message.save()
 
     # To be overridden
     def init(self, request, *args, **kwargs):
