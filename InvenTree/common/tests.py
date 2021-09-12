@@ -124,7 +124,7 @@ class WebhookMessageTests(TestCase):
 
     def test_bad_url(self):
         response = self.client.post(
-            f'/api/webhook/1234/',
+            '/api/webhook/1234/',
             content_type='application/json',
         )
 
