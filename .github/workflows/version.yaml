@@ -3,10 +3,6 @@
 name: Version Numbering
 
 on:
-  push:
-    branches-ignore:
-      - l10*
-
   pull_request:
     branches-ignore:
       - l10*
@@ -21,4 +17,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Check version number
         run: |
-          python3 ci/check_version_number.py --branch ${{ GITHUB_REF }}
+          python3 ci/check_version_number.py --branch ${{ GITHUB_BASE_REF }}
