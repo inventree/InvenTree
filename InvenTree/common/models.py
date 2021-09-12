@@ -1177,6 +1177,7 @@ class WebhookEndpoint(models.Model):
         active: Is this webhook active?,
         user: User associated with webhook,
         token: Token for sending a webhook,
+        secret: Shared secret for HMAC verification,
     """
 
     endpoint_id = models.CharField(
@@ -1214,4 +1215,11 @@ class WebhookEndpoint(models.Model):
         verbose_name=_('Token'),
         help_text=_('Token for access'),
         default=uuid.uuid4,
+    )
+
+    secret = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Secret'),
+        help_text=_('Shared secret for HMAC'),
     )

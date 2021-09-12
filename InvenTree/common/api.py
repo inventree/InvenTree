@@ -6,6 +6,9 @@ Provides a JSON API for common components.
 from __future__ import unicode_literals
 
 import json
+import hmac
+import hashlib
+import base64
 from secrets import compare_digest
 
 from django.utils.decorators import method_decorator
@@ -75,6 +78,7 @@ class WebhookView(CsrfExemptMixin, APIView):
     # To be overridden
     def init(self, request, *args, **kwargs):
         self.token = ''
+        self.secret = ''
         self.verify = self.VERIFICATION_METHOD
 
     def get_webhook(self, endpoint):
@@ -89,6 +93,10 @@ class WebhookView(CsrfExemptMixin, APIView):
         if self.webhook.token:
             self.token = self.webhook.token
             self.verify = VerificationMethod.TOKEN
+            # TODO make a object-setting
+        if self.webhook.secret:
+            self.secret = self.webhook.secret
+            self.verify = VerificationMethod.HMAC
             # TODO make a object-setting
         return True
 
@@ -106,6 +114,10 @@ class WebhookView(CsrfExemptMixin, APIView):
 
         # hmac token
         elif self.verify == VerificationMethod.HMAC:
+            digest = hmac.new(self.secret, payload.encode('utf-8'), hashlib.sha256).digest()
+            computed_hmac = base64.b64encode(digest)
+            if not hmac.compare_digest(computed_hmac, token.encode('utf-8')):
+                raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
 
         return True
 
