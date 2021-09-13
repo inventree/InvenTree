@@ -41,7 +41,7 @@ class VerificationMethod:
 
 class WebhookView(CsrfExemptMixin, APIView):
     """
-    Endpoint for receiving webhoks.
+    Endpoint for receiving webhooks.
     """
     authentication_classes = []
     permission_classes = []
