@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-12 13:15+0000\n"
-"PO-Revision-Date: 2021-09-13 06:40\n"
+"PO-Revision-Date: 2021-09-13 07:41\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1436,27 +1436,27 @@ msgstr "生产已取消"
 
 #: build/views.py:137
 msgid "Allocated stock to build output"
-msgstr ""
+msgstr "已为生产分配库存"
 
 #: build/views.py:149
 msgid "Create Build Output"
-msgstr ""
+msgstr "创建创建生产产出"
 
 #: build/views.py:167
 msgid "Maximum output quantity is "
-msgstr ""
+msgstr "最大产出量是 "
 
 #: build/views.py:183 stock/views.py:1389
 msgid "Serial numbers already exist"
-msgstr ""
+msgstr "序列号已存在"
 
 #: build/views.py:192
 msgid "Serial numbers required for trackable build output"
-msgstr ""
+msgstr "可追踪的生产产出需要序列号"
 
 #: build/views.py:258
 msgid "Delete Build Output"
-msgstr ""
+msgstr "删除生产产出"
 
 #: build/views.py:279 build/views.py:369
 msgid "Confirm unallocation of build stock"
@@ -1464,23 +1464,23 @@ msgstr ""
 
 #: build/views.py:280 build/views.py:370 stock/views.py:404
 msgid "Check the confirmation box"
-msgstr ""
+msgstr "选中确认框"
 
 #: build/views.py:292
 msgid "Build output does not match build"
-msgstr ""
+msgstr "生产产出与生产不匹配"
 
 #: build/views.py:294 build/views.py:495
 msgid "Build output must be specified"
-msgstr ""
+msgstr "必须指定生成产出"
 
 #: build/views.py:306
 msgid "Build output deleted"
-msgstr ""
+msgstr "生产产出已删除"
 
 #: build/views.py:404
 msgid "Complete Build Order"
-msgstr ""
+msgstr "生产订单完成"
 
 #: build/views.py:410
 msgid "Build order cannot be completed - incomplete outputs remain"
@@ -1488,7 +1488,7 @@ msgstr ""
 
 #: build/views.py:421
 msgid "Completed build order"
-msgstr ""
+msgstr "已完成的生产订单"
 
 #: build/views.py:437
 msgid "Complete Build Output"
@@ -1496,11 +1496,11 @@ msgstr ""
 
 #: build/views.py:479
 msgid "Invalid stock status value selected"
-msgstr ""
+msgstr "选定的库存状态值无效"
 
 #: build/views.py:486
 msgid "Quantity to complete cannot exceed build output quantity"
-msgstr ""
+msgstr "完成数量不能超过生产产出数量"
 
 #: build/views.py:492
 msgid "Confirm completion of incomplete build"
@@ -1508,11 +1508,11 @@ msgstr ""
 
 #: build/views.py:591
 msgid "Build output completed"
-msgstr ""
+msgstr "生产产出已完成"
 
 #: build/views.py:628
 msgid "Delete Build Order"
-msgstr ""
+msgstr "删除生产订单"
 
 #: build/views.py:643
 msgid "Removed parts from build allocation"
@@ -1520,29 +1520,29 @@ msgstr ""
 
 #: build/views.py:655
 msgid "Allocate stock to build output"
-msgstr ""
+msgstr "为生产产出分配库存"
 
 #: build/views.py:698
 msgid "Item must be currently in stock"
-msgstr ""
+msgstr "项目必须是当前库存"
 
 #: build/views.py:704
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "库存物品分配过度！"
 
 #: build/views.py:705 templates/js/translated/bom.js:269
 #: templates/js/translated/build.js:728 templates/js/translated/build.js:1019
 #: templates/js/translated/build.js:1196
 msgid "Available"
-msgstr ""
+msgstr "空闲"
 
 #: build/views.py:707
 msgid "Stock item must be selected"
-msgstr ""
+msgstr "必须选择库存项"
 
 #: build/views.py:870
 msgid "Edit Stock Allocation"
-msgstr ""
+msgstr "编辑库存分配"
 
 #: build/views.py:874
 msgid "Updated Build Item"
@@ -1550,7 +1550,7 @@ msgstr ""
 
 #: common/files.py:67
 msgid "Unsupported file format: {ext.upper()}"
-msgstr ""
+msgstr "不支持的文件格式： {ext.uper()}"
 
 #: common/files.py:69
 msgid "Error reading file (invalid encoding)"
@@ -1725,7 +1725,7 @@ msgstr ""
 #: stock/forms.py:224 templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:342
 msgid "Template"
-msgstr ""
+msgstr "模板"
 
 #: common/models.py:604
 msgid "Parts are templates by default"
@@ -1735,7 +1735,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:146
 #: templates/js/translated/table_filters.js:354
 msgid "Assembly"
-msgstr ""
+msgstr "组装"
 
 #: common/models.py:611
 msgid "Parts can be assembled from other components by default"
@@ -1744,7 +1744,7 @@ msgstr ""
 #: common/models.py:617 part/models.py:811
 #: templates/js/translated/table_filters.js:358
 msgid "Component"
-msgstr ""
+msgstr "组件"
 
 #: common/models.py:618
 msgid "Parts can be used as sub-components by default"
@@ -1752,68 +1752,68 @@ msgstr ""
 
 #: common/models.py:624 part/models.py:822
 msgid "Purchaseable"
-msgstr ""
+msgstr "可购买"
 
 #: common/models.py:625
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "部件默认可购买"
 
 #: common/models.py:631 part/models.py:827
 #: templates/js/translated/table_filters.js:366
 msgid "Salable"
-msgstr ""
+msgstr "可销售"
 
 #: common/models.py:632
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "部件默认可销售"
 
 #: common/models.py:638 part/models.py:817
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:370
 msgid "Trackable"
-msgstr ""
+msgstr "可追踪"
 
 #: common/models.py:639
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "部件默认可跟踪"
 
 #: common/models.py:645 part/models.py:837
 #: part/templates/part/part_base.html:66
 #: templates/js/translated/table_filters.js:42
 msgid "Virtual"
-msgstr ""
+msgstr "虚拟"
 
 #: common/models.py:646
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "部件默认是虚拟的"
 
 #: common/models.py:653
 msgid "Show Quantity in Forms"
-msgstr ""
+msgstr "在表格中显示数量"
 
 #: common/models.py:654
 msgid "Display available part quantity in some forms"
-msgstr ""
+msgstr "在某些表格中显示可用的部件数量"
 
 #: common/models.py:660
 msgid "Show Import in Views"
-msgstr ""
+msgstr "视图中显示导入"
 
 #: common/models.py:661
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "在一些部件视图中显示导入向导"
 
 #: common/models.py:667
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "在表格中显示价格"
 
 #: common/models.py:668
 msgid "Display part price in some forms"
-msgstr ""
+msgstr "以某些表格显示部分价格"
 
 #: common/models.py:674
 msgid "Show related parts"
-msgstr ""
+msgstr "显示相关部件"
 
 #: common/models.py:675
 msgid "Display related parts for a part"
@@ -1821,7 +1821,7 @@ msgstr ""
 
 #: common/models.py:681
 msgid "Create initial stock"
-msgstr ""
+msgstr "创建初始库存"
 
 #: common/models.py:682
 msgid "Create initial stock on part creation"
