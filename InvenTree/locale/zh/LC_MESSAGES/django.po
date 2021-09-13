@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-12 13:15+0000\n"
-"PO-Revision-Date: 2021-09-13 08:56\n"
+"PO-Revision-Date: 2021-09-13 10:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2097,11 +2097,11 @@ msgstr ""
 
 #: common/models.py:923
 msgid "Show overdue builds"
-msgstr ""
+msgstr "显示逾期生产"
 
 #: common/models.py:924
 msgid "Show overdue builds on the homepage"
-msgstr ""
+msgstr "在主页上显示逾期的生产"
 
 #: common/models.py:929
 msgid "Show outstanding POs"
@@ -2153,11 +2153,11 @@ msgstr ""
 
 #: common/models.py:968
 msgid "Search Preview Results"
-msgstr ""
+msgstr "搜索预览结果"
 
 #: common/models.py:969
 msgid "Number of results to show in search preview window"
-msgstr ""
+msgstr "搜索预览窗口中显示的结果数"
 
 #: common/models.py:1026 company/forms.py:43
 msgid "Price break quantity"
@@ -2166,7 +2166,7 @@ msgstr ""
 #: common/models.py:1033 company/templates/company/supplier_part.html:231
 #: templates/js/translated/part.js:1322
 msgid "Price"
-msgstr ""
+msgstr "价格"
 
 #: common/models.py:1034
 msgid "Unit price at specified quantity"
@@ -2174,27 +2174,27 @@ msgstr ""
 
 #: common/models.py:1127
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 #: common/templates/common/edit_setting.html:11
 msgid "Current value"
-msgstr ""
+msgstr "当前数值"
 
 #: common/views.py:33
 msgid "Change Setting"
-msgstr ""
+msgstr "更改设置"
 
 #: common/views.py:119
 msgid "Supplied value is not allowed"
-msgstr ""
+msgstr "提供的值不被允许"
 
 #: common/views.py:128
 msgid "Supplied value must be a boolean"
-msgstr ""
+msgstr "提供的值必须为布尔值"
 
 #: common/views.py:138
 msgid "Change User Setting"
-msgstr ""
+msgstr "更改用户设置"
 
 #: common/views.py:213 order/templates/order/order_wizard/po_upload.html:42
 #: order/templates/order/po_navbar.html:19
@@ -2204,7 +2204,7 @@ msgstr ""
 #: part/templates/part/import_wizard/part_upload.html:45 part/views.py:268
 #: part/views.py:882
 msgid "Upload File"
-msgstr ""
+msgstr "上传文件"
 
 #: common/views.py:214 order/templates/order/order_wizard/match_fields.html:52
 #: order/views.py:291 part/templates/part/bom_upload/match_fields.html:52
@@ -2212,19 +2212,19 @@ msgstr ""
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:269
 #: part/views.py:883
 msgid "Match Fields"
-msgstr ""
+msgstr "匹配字段"
 
 #: common/views.py:215
 msgid "Match Items"
-msgstr ""
+msgstr "匹配项"
 
 #: common/views.py:560
 msgid "Fields matching failed"
-msgstr ""
+msgstr "字段匹配失败"
 
 #: common/views.py:615
 msgid "Parts imported"
-msgstr ""
+msgstr "已导入部件"
 
 #: common/views.py:637 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
