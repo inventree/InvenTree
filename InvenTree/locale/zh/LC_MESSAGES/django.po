@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-12 13:15+0000\n"
-"PO-Revision-Date: 2021-09-13 07:41\n"
+"PO-Revision-Date: 2021-09-13 08:56\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1829,59 +1829,59 @@ msgstr ""
 
 #: common/models.py:688
 msgid "Internal Prices"
-msgstr ""
+msgstr "内部价格"
 
 #: common/models.py:689
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "启用内部部件价格"
 
 #: common/models.py:695
 msgid "Internal Price as BOM-Price"
-msgstr ""
+msgstr "内部价格为BOM价格"
 
 #: common/models.py:696
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr ""
+msgstr "在 BOM价格计算中使用内部价格(如设置)"
 
 #: common/models.py:702 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "调试模式"
 
 #: common/models.py:703
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "在调试模式生成报告(HTML输出)"
 
 #: common/models.py:709
 msgid "Page Size"
-msgstr ""
+msgstr "页面大小"
 
 #: common/models.py:710
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "PDF 报表默认页面大小"
 
 #: common/models.py:720
 msgid "Test Reports"
-msgstr ""
+msgstr "测试报表"
 
 #: common/models.py:721
 msgid "Enable generation of test reports"
-msgstr ""
+msgstr "启用生成测试报表"
 
 #: common/models.py:727
 msgid "Stock Expiry"
-msgstr ""
+msgstr "库存到期"
 
 #: common/models.py:728
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "启用库存到期功能"
 
 #: common/models.py:734
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "销售过期库存"
 
 #: common/models.py:735
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "允许销售过期库存"
 
 #: common/models.py:741
 msgid "Stock Stale Time"
@@ -1893,7 +1893,7 @@ msgstr ""
 
 #: common/models.py:744
 msgid "days"
-msgstr ""
+msgstr "天"
 
 #: common/models.py:749
 msgid "Build Expired Stock"
@@ -1905,7 +1905,7 @@ msgstr ""
 
 #: common/models.py:756
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "库存所有权控制"
 
 #: common/models.py:757
 msgid "Enable ownership control over stock locations and items"
@@ -1913,7 +1913,7 @@ msgstr ""
 
 #: common/models.py:763
 msgid "Group by Part"
-msgstr ""
+msgstr "按部件分组"
 
 #: common/models.py:764
 msgid "Group stock items by part reference in table views"
@@ -1921,7 +1921,7 @@ msgstr ""
 
 #: common/models.py:770
 msgid "Build Order Reference Prefix"
-msgstr ""
+msgstr "生产订单参考前缀"
 
 #: common/models.py:771
 msgid "Prefix value for build order reference"
