@@ -797,7 +797,7 @@ function insertActionButton(modal, options) {
 
     // check if button already present
     var already_present = false;
-    for(var child=element[0].firstElementChild; child; child=child.nextElementSibling){
+    for (var child=element[0].firstElementChild; child; child=child.nextElementSibling) {
         if (item.firstElementChild.name == options.name) {
             already_present = true;
         }
