@@ -667,6 +667,8 @@
     });
 
     onPanelLoad("test-templates", function() {
+
+        // Load test template table
         loadPartTestTemplateTable(
             $("#test-template-table"),
             {
@@ -677,11 +679,8 @@
             }
         ); 
 
+        // Callback for "add test template" button
         $("#add-test-template").click(function() {
-    
-            function reloadTestTemplateTable() {
-                $("#test-template-table").bootstrapTable("refresh");
-            }
 
             constructForm('{% url "api-part-test-template-list" %}', {
                 method: 'POST',
@@ -697,39 +696,10 @@
                     }
                 },
                 title: '{% trans "Add Test Result Template" %}',
-                onSuccess: reloadTestTemplateTable
+                onSuccess: function() {
+                    $("#test-template-table").bootstrapTable("refresh");
+                }
             });
-
-            $("#test-template-table").on('click', '.button-test-edit', function() {
-                var pk = $(this).attr('pk');
-            
-                var url = `/api/part/test-template/${pk}/`;
-            
-                constructForm(url, {
-                    fields: {
-                        test_name: {},
-                        description: {},
-                        required: {},
-                        requires_value: {},
-                        requires_attachment: {},
-                    },
-                    title: '{% trans "Edit Test Result Template" %}',
-                    onSuccess: reloadTestTemplateTable,
-                });
-            });
-
-            $("#test-template-table").on('click', '.button-test-delete', function() {
-                var pk = $(this).attr('pk');
-            
-                var url = `/api/part/test-template/${pk}/`;
-            
-                constructForm(url, {
-                    method: 'DELETE',
-                    title: '{% trans "Delete Test Result Template" %}',
-                    onSuccess: reloadTestTemplateTable,
-                });
-            });
-
         });
     });
 

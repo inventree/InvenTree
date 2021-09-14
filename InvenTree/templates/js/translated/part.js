@@ -1252,7 +1252,43 @@ function loadPartTestTemplateTable(table, options) {
                     }
                 }
             }
-        ]
+        ],
+        onPostBody: function() {
+
+            table.find('.button-test-edit').click(function() {
+                var pk = $(this).attr('pk');
+            
+                var url = `/api/part/test-template/${pk}/`;
+            
+                constructForm(url, {
+                    fields: {
+                        test_name: {},
+                        description: {},
+                        required: {},
+                        requires_value: {},
+                        requires_attachment: {},
+                    },
+                    title: '{% trans "Edit Test Result Template" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    },
+                });
+            });
+
+            table.find('.button-test-delete').click(function() {
+                var pk = $(this).attr('pk');
+            
+                var url = `/api/part/test-template/${pk}/`;
+            
+                constructForm(url, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Test Result Template" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    },
+                });
+            });
+        }
     });
 }
 
