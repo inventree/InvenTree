@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 04:50\n"
+"PO-Revision-Date: 2021-09-14 05:58\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2240,11 +2240,11 @@ msgstr ""
 
 #: company/forms.py:24 part/forms.py:46
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
-msgstr ""
+msgstr "图片URL"
 
 #: company/models.py:104
 msgid "Company description"
@@ -2301,7 +2301,7 @@ msgstr ""
 #: templates/js/translated/company.js:535
 #: templates/js/translated/company.js:823 templates/js/translated/part.js:972
 msgid "Link"
-msgstr ""
+msgstr "链接"
 
 #: company/models.py:130
 msgid "Link to external company information"
@@ -2309,7 +2309,7 @@ msgstr ""
 
 #: company/models.py:138 part/models.py:724
 msgid "Image"
-msgstr ""
+msgstr "图片"
 
 #: company/models.py:143
 msgid "is customer"
@@ -2361,11 +2361,11 @@ msgstr "选择商品"
 #: templates/js/translated/company.js:512
 #: templates/js/translated/company.js:794 templates/js/translated/part.js:222
 msgid "Manufacturer"
-msgstr ""
+msgstr "制造商"
 
 #: company/models.py:335 templates/js/translated/part.js:223
 msgid "Select manufacturer"
-msgstr ""
+msgstr "选择制造商"
 
 #: company/models.py:341 company/templates/company/manufacturer_part.html:93
 #: company/templates/company/supplier_part.html:106 part/bom.py:171
@@ -2373,7 +2373,7 @@ msgstr ""
 #: templates/js/translated/company.js:812 templates/js/translated/order.js:505
 #: templates/js/translated/part.js:233
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
 #: company/models.py:342 templates/js/translated/part.js:234
 msgid "Manufacturer Part Number"
@@ -2413,7 +2413,7 @@ msgstr ""
 #: company/models.py:428 part/models.py:799 part/models.py:2220
 #: templates/js/translated/company.js:648 templates/js/translated/part.js:618
 msgid "Units"
-msgstr ""
+msgstr "单位"
 
 #: company/models.py:429
 msgid "Parameter units"
@@ -2432,17 +2432,17 @@ msgstr ""
 #: templates/js/translated/company.js:768 templates/js/translated/order.js:328
 #: templates/js/translated/part.js:203
 msgid "Supplier"
-msgstr ""
+msgstr "供应商"
 
 #: company/models.py:545 templates/js/translated/part.js:204
 msgid "Select supplier"
-msgstr ""
+msgstr "选择供应商"
 
 #: company/models.py:550 company/templates/company/supplier_part.html:92
 #: part/bom.py:176 part/bom.py:287 templates/js/translated/order.js:492
 #: templates/js/translated/part.js:214
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: company/models.py:551 templates/js/translated/part.js:215
 msgid "Supplier stock keeping unit"
@@ -2464,7 +2464,7 @@ msgstr "供应商商品描述"
 #: part/models.py:2368 report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
-msgstr ""
+msgstr "备注"
 
 #: company/models.py:579 part/models.py:1599
 msgid "base cost"
@@ -2472,13 +2472,13 @@ msgstr ""
 
 #: company/models.py:579 part/models.py:1599
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "最低收费(例如库存费)"
 
 #: company/models.py:581 company/templates/company/supplier_part.html:113
 #: stock/models.py:478 stock/templates/stock/item_base.html:324
 #: templates/js/translated/company.js:844 templates/js/translated/stock.js:1057
 msgid "Packaging"
-msgstr ""
+msgstr "打包"
 
 #: company/models.py:581
 msgid "Part packaging"
@@ -2509,12 +2509,12 @@ msgstr ""
 #: company/templates/company/company_base.html:25
 #: part/templates/part/part_thumb.html:21
 msgid "Upload new image"
-msgstr ""
+msgstr "上传新图片"
 
 #: company/templates/company/company_base.html:27
 #: part/templates/part/part_thumb.html:23
 msgid "Download image from URL"
-msgstr ""
+msgstr "从 URL 下载图片"
 
 #: company/templates/company/company_base.html:46
 #: templates/js/translated/order.js:117
@@ -2553,7 +2553,7 @@ msgstr ""
 #: company/templates/company/company_base.html:193
 #: part/templates/part/part_base.html:418
 msgid "Upload Image"
-msgstr ""
+msgstr "上传图片"
 
 #: company/templates/company/detail.html:14
 #: company/templates/company/manufacturer_part_navbar.html:18
@@ -2579,7 +2579,7 @@ msgstr "新建供应商商品"
 #: part/templates/part/category.html:135 part/templates/part/detail.html:292
 #: part/templates/part/detail.html:315
 msgid "Options"
-msgstr ""
+msgstr "选项"
 
 #: company/templates/company/detail.html:32
 #: company/templates/company/detail.html:72
@@ -2625,7 +2625,7 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:109 templates/navbar.html:44
 #: users/models.py:45
 msgid "Purchase Orders"
-msgstr ""
+msgstr "采购订单"
 
 #: company/templates/company/detail.html:108
 #: order/templates/order/purchase_orders.html:20
@@ -2649,7 +2649,7 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:115 templates/navbar.html:55
 #: users/models.py:46
 msgid "Sales Orders"
-msgstr ""
+msgstr "销售订单"
 
 #: company/templates/company/detail.html:130
 #: order/templates/order/sales_orders.html:20
@@ -2720,7 +2720,7 @@ msgstr "内部商品"
 #: part/templates/part/navbar.html:78 part/templates/part/prices.html:163
 #: templates/InvenTree/search.html:316 templates/navbar.html:41
 msgid "Suppliers"
-msgstr ""
+msgstr "供应商"
 
 #: company/templates/company/manufacturer_part.html:114
 #: part/templates/part/detail.html:294
@@ -2734,7 +2734,7 @@ msgstr "删除供应商商品"
 #: part/templates/part/detail.html:317 templates/js/translated/company.js:424
 #: templates/js/translated/helpers.js:31 users/models.py:194
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: company/templates/company/manufacturer_part.html:127
 #: company/templates/company/manufacturer_part_navbar.html:11
@@ -2744,31 +2744,31 @@ msgstr ""
 #: part/templates/part/detail.html:155 part/templates/part/navbar.html:20
 #: part/templates/part/navbar.html:23
 msgid "Parameters"
-msgstr ""
+msgstr "参数"
 
 #: company/templates/company/manufacturer_part.html:133
 #: part/templates/part/detail.html:162
 #: templates/InvenTree/settings/category.html:26
 #: templates/InvenTree/settings/part.html:63
 msgid "New Parameter"
-msgstr ""
+msgstr "新建参数"
 
 #: company/templates/company/manufacturer_part.html:138
 msgid "Delete parameters"
-msgstr ""
+msgstr "删除参数"
 
 #: company/templates/company/manufacturer_part.html:176
 #: part/templates/part/detail.html:804
 msgid "Add Parameter"
-msgstr ""
+msgstr "添加参数"
 
 #: company/templates/company/manufacturer_part.html:224
 msgid "Selected parameters will be deleted"
-msgstr ""
+msgstr "所选参数将被删除"
 
 #: company/templates/company/manufacturer_part.html:236
 msgid "Delete Parameters"
-msgstr ""
+msgstr "删除参数"
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Stock"
@@ -2788,7 +2788,7 @@ msgstr "制造商商品库存"
 #: templates/js/translated/part.js:934 templates/js/translated/stock.js:202
 #: templates/js/translated/stock.js:850 templates/navbar.html:32
 msgid "Stock"
-msgstr ""
+msgstr "库存"
 
 #: company/templates/company/manufacturer_part_navbar.html:33
 msgid "Manufacturer Part Orders"
@@ -2797,7 +2797,7 @@ msgstr "制造商商品订单"
 #: company/templates/company/manufacturer_part_navbar.html:36
 #: company/templates/company/supplier_part_navbar.html:22
 msgid "Orders"
-msgstr ""
+msgstr "订单"
 
 #: company/templates/company/navbar.html:17
 #: company/templates/company/navbar.html:20
@@ -2818,7 +2818,7 @@ msgstr ""
 #: templates/InvenTree/search.html:198 templates/js/translated/stock.js:1507
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
-msgstr ""
+msgstr "库存项"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:463
@@ -2859,7 +2859,7 @@ msgstr "订购商品"
 #: company/templates/company/supplier_part.html:158
 #: part/templates/part/navbar.html:67 part/templates/part/prices.html:7
 msgid "Pricing Information"
-msgstr ""
+msgstr "价格信息"
 
 #: company/templates/company/supplier_part.html:164
 #: company/templates/company/supplier_part.html:265
@@ -2893,7 +2893,7 @@ msgstr "供应商商品价格"
 
 #: company/templates/company/supplier_part_navbar.html:29
 msgid "Pricing"
-msgstr ""
+msgstr "定价"
 
 #: company/views.py:50
 msgid "New Supplier"
@@ -2902,7 +2902,7 @@ msgstr ""
 #: company/views.py:55 part/templates/part/prices.html:167
 #: templates/InvenTree/search.html:306 templates/navbar.html:42
 msgid "Manufacturers"
-msgstr ""
+msgstr "制造商"
 
 #: company/views.py:56
 msgid "New Manufacturer"
@@ -2927,20 +2927,20 @@ msgstr ""
 
 #: company/views.py:129 part/views.py:608
 msgid "Download Image"
-msgstr ""
+msgstr "下载图片"
 
 #: company/views.py:158 part/views.py:640
 msgid "Image size exceeds maximum allowable size for download"
-msgstr ""
+msgstr "图像大小超过下载允许的最大尺寸"
 
 #: company/views.py:165 part/views.py:647
 #, python-brace-format
 msgid "Invalid response: {code}"
-msgstr ""
+msgstr "无效响应: {code}"
 
 #: company/views.py:174 part/views.py:656
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "提供的 URL 不是一个有效的图片文件"
 
 #: label/api.py:57 report/api.py:201
 msgid "No valid objects provided to template"
@@ -3201,7 +3201,7 @@ msgstr ""
 #: stock/serializers.py:147 stock/templates/stock/item_base.html:345
 #: templates/js/translated/stock.js:1045
 msgid "Purchase Price"
-msgstr ""
+msgstr "采购价格"
 
 #: order/models.py:789
 msgid "Unit purchase price"
@@ -3214,7 +3214,7 @@ msgstr ""
 #: order/models.py:843 part/templates/part/part_pricing.html:112
 #: part/templates/part/prices.html:116 part/templates/part/prices.html:284
 msgid "Sale Price"
-msgstr ""
+msgstr "销售价格"
 
 #: order/models.py:844
 msgid "Unit sale price"
@@ -3402,14 +3402,14 @@ msgstr ""
 #: part/templates/part/import_wizard/ajax_match_fields.html:28
 #: part/templates/part/import_wizard/match_fields.html:35
 msgid "File Fields"
-msgstr ""
+msgstr "文件字段"
 
 #: order/templates/order/order_wizard/match_fields.html:42
 #: part/templates/part/bom_upload/match_fields.html:42
 #: part/templates/part/import_wizard/ajax_match_fields.html:35
 #: part/templates/part/import_wizard/match_fields.html:42
 msgid "Remove column"
-msgstr ""
+msgstr "移除列"
 
 #: order/templates/order/order_wizard/match_fields.html:60
 #: part/templates/part/bom_upload/match_fields.html:60
@@ -3427,21 +3427,21 @@ msgstr ""
 #: part/templates/part/import_wizard/match_fields.html:71
 #: part/templates/part/import_wizard/match_references.html:49
 msgid "Remove row"
-msgstr ""
+msgstr "移除行"
 
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/bom_upload/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
-msgstr ""
+msgstr "提交数据中存在错误"
 
 #: order/templates/order/order_wizard/match_parts.html:28
 #: part/templates/part/bom_upload/match_parts.html:28
 #: part/templates/part/import_wizard/ajax_match_references.html:21
 #: part/templates/part/import_wizard/match_references.html:28
 msgid "Row"
-msgstr ""
+msgstr "行"
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
@@ -5336,7 +5336,7 @@ msgstr ""
 
 #: report/models.py:423
 msgid "Part Filters"
-msgstr ""
+msgstr "商品过滤器"
 
 #: report/models.py:424
 msgid "Part query filters (comma-separated list of key=value pairs"
@@ -5525,7 +5525,7 @@ msgstr ""
 #: stock/models.py:358
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
-msgstr ""
+msgstr "商品类型 ('{pf}') 必须是 {pe}"
 
 #: stock/models.py:368 stock/models.py:377
 msgid "Quantity must be 1 for item with a serial number"
@@ -6247,11 +6247,11 @@ msgstr ""
 
 #: templates/InvenTree/index.html:105
 msgid "Starred Parts"
-msgstr ""
+msgstr "已加星标商品"
 
 #: templates/InvenTree/index.html:115
 msgid "Latest Parts"
-msgstr ""
+msgstr "最近商品"
 
 #: templates/InvenTree/index.html:126
 msgid "BOM Waiting Validation"
@@ -6702,7 +6702,7 @@ msgstr ""
 #: templates/js/report.js:205 templates/js/translated/label.js:134
 #: templates/js/translated/report.js:225
 msgid "Select Parts"
-msgstr ""
+msgstr "选择商品"
 
 #: templates/js/report.js:206 templates/js/translated/report.js:226
 msgid "Part(s) must be selected before printing reports"
@@ -7022,15 +7022,15 @@ msgstr ""
 
 #: templates/js/translated/company.js:78 templates/js/translated/company.js:176
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "添加制造商商品"
 
 #: templates/js/translated/company.js:99
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "编辑制造商商品"
 
 #: templates/js/translated/company.js:108
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "删除制造商商品"
 
 #: templates/js/translated/company.js:164 templates/js/translated/order.js:86
 msgid "Add Supplier"
@@ -7038,15 +7038,15 @@ msgstr ""
 
 #: templates/js/translated/company.js:192
 msgid "Add Supplier Part"
-msgstr ""
+msgstr "添加供应商商品"
 
 #: templates/js/translated/company.js:207
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "编辑供应商商品"
 
 #: templates/js/translated/company.js:217
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "删除供应商商品"
 
 #: templates/js/translated/company.js:264
 msgid "Edit Company"
@@ -7074,7 +7074,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:421
 msgid "Delete Manufacturer Parts"
-msgstr ""
+msgstr "删除制造商商品"
 
 #: templates/js/translated/company.js:475
 msgid "No manufacturer parts found"
@@ -7306,7 +7306,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:119
 msgid "Part ID"
-msgstr ""
+msgstr "商品ID"
 
 #: templates/js/translated/model_renderers.js:171
 msgid "Category ID"
@@ -7314,11 +7314,11 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:208
 msgid "Manufacturer Part ID"
-msgstr ""
+msgstr "制造商商品ID"
 
 #: templates/js/translated/model_renderers.js:237
 msgid "Supplier Part ID"
-msgstr ""
+msgstr "供应商商品ID"
 
 #: templates/js/translated/order.js:45
 msgid "Add Customer"
@@ -7783,7 +7783,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:56
 msgid "Trackable Part"
-msgstr ""
+msgstr "可追溯商品"
 
 #: templates/js/translated/table_filters.js:60
 msgid "Assembled Part"
@@ -7955,7 +7955,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:333
 msgid "Part has internal part number"
-msgstr ""
+msgstr "商品有内部编号"
 
 #: templates/js/translated/table_filters.js:338
 msgid "Show active parts"
