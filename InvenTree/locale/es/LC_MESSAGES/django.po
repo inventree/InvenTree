@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 01:43\n"
+"PO-Revision-Date: 2021-09-14 08:07\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -764,7 +764,7 @@ msgstr ""
 
 #: build/models.py:227
 msgid "Source Location"
-msgstr ""
+msgstr "Ubicación de la fuente"
 
 #: build/models.py:231
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
@@ -772,11 +772,11 @@ msgstr ""
 
 #: build/models.py:236
 msgid "Destination Location"
-msgstr ""
+msgstr "Ubicación de destino"
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Seleccione la ubicación donde se almacenarán los elementos completados"
 
 #: build/models.py:244
 msgid "Build Quantity"
@@ -908,7 +908,7 @@ msgstr ""
 #: build/models.py:1237
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
-msgstr ""
+msgstr "La cantidad asignada ({n}) no debe exceder la cantidad disponible ({q})"
 
 #: build/models.py:1244 order/models.py:938
 msgid "StockItem is over-allocated"
@@ -920,7 +920,7 @@ msgstr ""
 
 #: build/models.py:1252
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "La cantidad debe ser 1 para el stock serializado"
 
 #: build/models.py:1312
 #, python-brace-format
