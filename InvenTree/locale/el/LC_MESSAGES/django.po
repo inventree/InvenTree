@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-12 13:15+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-09-14 00:01+0000\n"
+"PO-Revision-Date: 2021-09-14 00:37\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -6641,7 +6641,7 @@ msgstr ""
 
 #: templates/about.html:107 templates/js/translated/modals.js:50
 #: templates/js/translated/modals.js:584 templates/js/translated/modals.js:678
-#: templates/js/translated/modals.js:971 templates/modals.html:29
+#: templates/js/translated/modals.js:982 templates/modals.html:29
 #: templates/modals.html:54
 msgid "Close"
 msgstr ""
@@ -6741,11 +6741,11 @@ msgstr ""
 msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
-#: templates/js/translated/api.js:174 templates/js/translated/modals.js:1041
+#: templates/js/translated/api.js:174 templates/js/translated/modals.js:1052
 msgid "No Response"
 msgstr ""
 
-#: templates/js/translated/api.js:175 templates/js/translated/modals.js:1042
+#: templates/js/translated/api.js:175 templates/js/translated/modals.js:1053
 msgid "No response from the InvenTree server"
 msgstr ""
 
@@ -6757,35 +6757,35 @@ msgstr ""
 msgid "API request returned error code 400"
 msgstr ""
 
-#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1051
+#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1062
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/translated/api.js:187 templates/js/translated/modals.js:1052
+#: templates/js/translated/api.js:187 templates/js/translated/modals.js:1063
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/translated/api.js:191 templates/js/translated/modals.js:1056
+#: templates/js/translated/api.js:191 templates/js/translated/modals.js:1067
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/translated/api.js:192 templates/js/translated/modals.js:1057
+#: templates/js/translated/api.js:192 templates/js/translated/modals.js:1068
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/translated/api.js:196 templates/js/translated/modals.js:1061
+#: templates/js/translated/api.js:196 templates/js/translated/modals.js:1072
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1062
+#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1073
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/translated/api.js:201 templates/js/translated/modals.js:1066
+#: templates/js/translated/api.js:201 templates/js/translated/modals.js:1077
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1067
+#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1078
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
@@ -6842,7 +6842,7 @@ msgid "Unknown response from server"
 msgstr ""
 
 #: templates/js/translated/barcode.js:141
-#: templates/js/translated/modals.js:1031
+#: templates/js/translated/modals.js:1042
 msgid "Invalid server response"
 msgstr ""
 
@@ -7247,7 +7247,7 @@ msgid "Cancel"
 msgstr ""
 
 #: templates/js/translated/modals.js:77 templates/js/translated/modals.js:119
-#: templates/js/translated/modals.js:677 templates/js/translated/modals.js:970
+#: templates/js/translated/modals.js:677 templates/js/translated/modals.js:981
 #: templates/modals.html:30 templates/modals.html:55
 msgid "Submit"
 msgstr ""
@@ -7272,31 +7272,31 @@ msgstr ""
 msgid "Loading Data"
 msgstr ""
 
-#: templates/js/translated/modals.js:922
+#: templates/js/translated/modals.js:933
 msgid "Invalid response from server"
 msgstr ""
 
-#: templates/js/translated/modals.js:922
+#: templates/js/translated/modals.js:933
 msgid "Form data missing from server response"
 msgstr ""
 
-#: templates/js/translated/modals.js:934
+#: templates/js/translated/modals.js:945
 msgid "Error posting form data"
 msgstr ""
 
-#: templates/js/translated/modals.js:1031
+#: templates/js/translated/modals.js:1042
 msgid "JSON response missing form data"
 msgstr ""
 
-#: templates/js/translated/modals.js:1046
+#: templates/js/translated/modals.js:1057
 msgid "Error 400: Bad Request"
 msgstr ""
 
-#: templates/js/translated/modals.js:1047
+#: templates/js/translated/modals.js:1058
 msgid "Server returned error code 400"
 msgstr ""
 
-#: templates/js/translated/modals.js:1070
+#: templates/js/translated/modals.js:1081
 msgid "Error requesting form data"
 msgstr ""
 
