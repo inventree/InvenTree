@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 03:42\n"
+"PO-Revision-Date: 2021-09-14 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -431,7 +431,7 @@ msgstr "不是有效的货币代码"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr "部件名称中存在无效字符"
+msgstr "商品名称中存在无效字符"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
@@ -515,7 +515,7 @@ msgstr "条形码已经匹配库存地对象"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr "条形码已经匹配部件对象"
+msgstr "条形码已经匹配商品对象"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
@@ -632,7 +632,7 @@ msgstr "所在地"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr "已完成部件所在地"
+msgstr "已完成商品所在地"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:62 order/models.py:555
@@ -752,7 +752,7 @@ msgstr "商品"
 
 #: build/models.py:213
 msgid "Select part to build"
-msgstr "选择生产所需部件"
+msgstr "选择要生产的商品"
 
 #: build/models.py:218
 msgid "Sales Order Reference"
@@ -1125,7 +1125,7 @@ msgstr ""
 
 #: build/templates/build/build_output_create.html:15
 msgid "Trackable parts can have serial numbers specified"
-msgstr "可追踪部件可以指定序列号"
+msgstr "可追踪商品可以指定序列号"
 
 #: build/templates/build/build_output_create.html:16
 msgid "Enter serial numbers to generate multiple single build outputs"
@@ -1756,7 +1756,7 @@ msgstr "可购买"
 
 #: common/models.py:625
 msgid "Parts are purchaseable by default"
-msgstr "部件默认可购买"
+msgstr "商品默认可购买"
 
 #: common/models.py:631 part/models.py:827
 #: templates/js/translated/table_filters.js:366
@@ -1765,7 +1765,7 @@ msgstr "可销售"
 
 #: common/models.py:632
 msgid "Parts are salable by default"
-msgstr "部件默认可销售"
+msgstr "商品默认可销售"
 
 #: common/models.py:638 part/models.py:817
 #: templates/js/translated/table_filters.js:46
@@ -1775,7 +1775,7 @@ msgstr "可追踪"
 
 #: common/models.py:639
 msgid "Parts are trackable by default"
-msgstr "部件默认可跟踪"
+msgstr "商品默认可跟踪"
 
 #: common/models.py:645 part/models.py:837
 #: part/templates/part/part_base.html:66
@@ -1785,7 +1785,7 @@ msgstr "虚拟"
 
 #: common/models.py:646
 msgid "Parts are virtual by default"
-msgstr "部件默认是虚拟的"
+msgstr "商品默认是虚拟的"
 
 #: common/models.py:653
 msgid "Show Quantity in Forms"
@@ -1793,7 +1793,7 @@ msgstr "在表格中显示数量"
 
 #: common/models.py:654
 msgid "Display available part quantity in some forms"
-msgstr "在某些表格中显示可用的部件数量"
+msgstr "在某些表格中显示可用的商品数量"
 
 #: common/models.py:660
 msgid "Show Import in Views"
@@ -1801,7 +1801,7 @@ msgstr "视图中显示导入"
 
 #: common/models.py:661
 msgid "Display the import wizard in some part views"
-msgstr "在一些部件视图中显示导入向导"
+msgstr "在一些商品视图中显示导入向导"
 
 #: common/models.py:667
 msgid "Show Price in Forms"
@@ -1809,11 +1809,11 @@ msgstr "在表格中显示价格"
 
 #: common/models.py:668
 msgid "Display part price in some forms"
-msgstr "以某些表格显示部分价格"
+msgstr "以某些表格显示商品价格"
 
 #: common/models.py:674
 msgid "Show related parts"
-msgstr "显示相关部件"
+msgstr "显示相关商品"
 
 #: common/models.py:675
 msgid "Display related parts for a part"
@@ -1833,7 +1833,7 @@ msgstr "内部价格"
 
 #: common/models.py:689
 msgid "Enable internal prices for parts"
-msgstr "启用内部部件价格"
+msgstr "启用内部商品价格"
 
 #: common/models.py:695
 msgid "Internal Price as BOM-Price"
@@ -1913,7 +1913,7 @@ msgstr ""
 
 #: common/models.py:763
 msgid "Group by Part"
-msgstr "按部件分组"
+msgstr "按商品分组"
 
 #: common/models.py:764
 msgid "Group stock items by part reference in table views"
@@ -2001,19 +2001,19 @@ msgstr ""
 
 #: common/models.py:850
 msgid "Show starred parts"
-msgstr ""
+msgstr "显示星标商品"
 
 #: common/models.py:851
 msgid "Show starred parts on the homepage"
-msgstr ""
+msgstr "在主页上显示星标商品"
 
 #: common/models.py:856
 msgid "Show latest parts"
-msgstr ""
+msgstr "显示最近商品"
 
 #: common/models.py:857
 msgid "Show latest parts on the homepage"
-msgstr ""
+msgstr "在主页上显示最近商品"
 
 #: common/models.py:862
 msgid "Recent Part Count"
@@ -2224,7 +2224,7 @@ msgstr "字段匹配失败"
 
 #: common/views.py:615
 msgid "Parts imported"
-msgstr "已导入部件"
+msgstr "已导入商品"
 
 #: common/views.py:637 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -2351,7 +2351,7 @@ msgstr ""
 
 #: company/models.py:323 company/models.py:538 order/views.py:1082
 msgid "Select part"
-msgstr ""
+msgstr "选择商品"
 
 #: company/models.py:334 company/templates/company/company_base.html:116
 #: company/templates/company/manufacturer_part.html:89
@@ -2385,7 +2385,7 @@ msgstr ""
 
 #: company/models.py:354
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "制造商商品描述"
 
 #: company/models.py:408 company/models.py:557
 #: company/templates/company/manufacturer_part.html:6
@@ -2450,15 +2450,15 @@ msgstr ""
 
 #: company/models.py:558
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "选择制造商商品"
 
 #: company/models.py:564
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "外部供货商商品链接URL"
 
 #: company/models.py:570
 msgid "Supplier part description"
-msgstr ""
+msgstr "供应商商品描述"
 
 #: company/models.py:575 company/templates/company/supplier_part.html:120
 #: part/models.py:2368 report/templates/report/inventree_po_report.html:93
@@ -2482,7 +2482,7 @@ msgstr ""
 
 #: company/models.py:581
 msgid "Part packaging"
-msgstr ""
+msgstr "商品打包"
 
 #: company/models.py:583 part/models.py:1601
 msgid "multiple"
@@ -2590,20 +2590,20 @@ msgstr "订购商品"
 #: company/templates/company/detail.html:35
 #: company/templates/company/detail.html:75
 msgid "Delete parts"
-msgstr ""
+msgstr "删除商品"
 
 #: company/templates/company/detail.html:35
 #: company/templates/company/detail.html:75
 msgid "Delete Parts"
-msgstr ""
+msgstr "删除商品"
 
 #: company/templates/company/detail.html:54 templates/InvenTree/search.html:149
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "制造商商品"
 
 #: company/templates/company/detail.html:62
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "新建制造商商品"
 
 #: company/templates/company/detail.html:63 part/templates/part/detail.html:312
 msgid "New Manufacturer Part"
@@ -3184,7 +3184,7 @@ msgstr ""
 
 #: order/models.py:773
 msgid "Supplier part"
-msgstr ""
+msgstr "供应商商品"
 
 #: order/models.py:780 order/templates/order/order_base.html:131
 #: order/templates/order/receive_parts.html:22
@@ -5175,7 +5175,7 @@ msgstr ""
 
 #: part/views.py:160
 msgid "Set Part Category"
-msgstr ""
+msgstr "设置商品类别"
 
 #: part/views.py:210
 #, python-brace-format
@@ -5192,19 +5192,19 @@ msgstr ""
 
 #: part/views.py:585
 msgid "Part QR Code"
-msgstr ""
+msgstr "商品二维码"
 
 #: part/views.py:687
 msgid "Select Part Image"
-msgstr ""
+msgstr "选择商品图像"
 
 #: part/views.py:713
 msgid "Updated part image"
-msgstr ""
+msgstr "更新商品图像"
 
 #: part/views.py:716
 msgid "Part image not found"
-msgstr ""
+msgstr "未找到商品图像"
 
 #: part/views.py:728
 msgid "Duplicate BOM"
@@ -5228,19 +5228,19 @@ msgstr ""
 
 #: part/views.py:884
 msgid "Match Parts"
-msgstr ""
+msgstr "匹配商品"
 
 #: part/views.py:1272
 msgid "Confirm Part Deletion"
-msgstr ""
+msgstr "确认删除商品"
 
 #: part/views.py:1279
 msgid "Part was deleted"
-msgstr ""
+msgstr "商品已删除"
 
 #: part/views.py:1288
 msgid "Part Pricing"
-msgstr ""
+msgstr "商品价格"
 
 #: part/views.py:1437
 msgid "Create Part Parameter Template"
@@ -5256,15 +5256,15 @@ msgstr ""
 
 #: part/views.py:1502 templates/js/translated/part.js:303
 msgid "Edit Part Category"
-msgstr ""
+msgstr "编辑商品类别"
 
 #: part/views.py:1540
 msgid "Delete Part Category"
-msgstr ""
+msgstr "删除商品类别"
 
 #: part/views.py:1546
 msgid "Part category was deleted"
-msgstr ""
+msgstr "商品类别已删除"
 
 #: part/views.py:1555
 msgid "Create Category Parameter Template"
@@ -6426,19 +6426,19 @@ msgstr ""
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
-msgstr ""
+msgstr "商品设置"
 
 #: templates/InvenTree/settings/part.html:12
 msgid "Part Options"
-msgstr ""
+msgstr "商品选项"
 
 #: templates/InvenTree/settings/part.html:43
 msgid "Part Import"
-msgstr ""
+msgstr "商品导入"
 
 #: templates/InvenTree/settings/part.html:46
 msgid "Import Part"
-msgstr ""
+msgstr "导入商品"
 
 #: templates/InvenTree/settings/part.html:59
 msgid "Part Parameter Templates"
@@ -7362,15 +7362,15 @@ msgstr ""
 
 #: templates/js/translated/part.js:49
 msgid "Part Attributes"
-msgstr ""
+msgstr "商品属性"
 
 #: templates/js/translated/part.js:53
 msgid "Part Creation Options"
-msgstr ""
+msgstr "商品创建选项"
 
 #: templates/js/translated/part.js:57
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "商品重复选项"
 
 #: templates/js/translated/part.js:61
 msgid "Supplier Options"
@@ -7378,7 +7378,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:75
 msgid "Add Part Category"
-msgstr ""
+msgstr "增加商品类别"
 
 #: templates/js/translated/part.js:159
 msgid "Create Initial Stock"
@@ -7446,23 +7446,23 @@ msgstr ""
 
 #: templates/js/translated/part.js:323
 msgid "Edit Part"
-msgstr ""
+msgstr "编辑商品"
 
 #: templates/js/translated/part.js:408 templates/js/translated/part.js:493
 msgid "Trackable part"
-msgstr ""
+msgstr "可追溯商品"
 
 #: templates/js/translated/part.js:412 templates/js/translated/part.js:497
 msgid "Virtual part"
-msgstr ""
+msgstr "虚拟商品"
 
 #: templates/js/translated/part.js:424
 msgid "Starred part"
-msgstr ""
+msgstr "已标记商品"
 
 #: templates/js/translated/part.js:428
 msgid "Salable part"
-msgstr ""
+msgstr "可销售商品"
 
 #: templates/js/translated/part.js:543
 msgid "No variants found"
