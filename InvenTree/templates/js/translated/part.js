@@ -7,8 +7,8 @@
     global_settings,
     imageHoverIcon,
     inventreeGet,
-    inventreePut,
-    launchModalForm,
+    inventreePuttt,
+    launchModalForddm,
     linkButtonsToSelection,
     loadTableFilters,
     makeIconBadge,
@@ -641,7 +641,7 @@ function loadPartParameterTable(table, url, options) {
                 }
             }
         ],
-        onPostBody: function() {
+        onPostBody: function () {
             // Setup button callbacks
             $(table).find('.button-parameter-edit').click(function() {
                 var pk = $(this).attr('pk');
