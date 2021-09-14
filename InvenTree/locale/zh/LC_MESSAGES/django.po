@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 07:06\n"
+"PO-Revision-Date: 2021-09-14 08:07\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -375,7 +375,7 @@ msgstr "库存手动删除"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr "位置已更改"
+msgstr "仓储地点已更改"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
@@ -511,7 +511,7 @@ msgstr "条形码已经匹配库存项"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
-msgstr "条形码已经匹配库存地对象"
+msgstr "条形码已经匹配仓储地对象"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
@@ -628,11 +628,11 @@ msgstr "标记生产已完成"
 #: templates/js/translated/stock.js:329 templates/js/translated/stock.js:942
 #: templates/js/translated/stock.js:1567
 msgid "Location"
-msgstr "所在地"
+msgstr "地点"
 
 #: build/forms.py:211
 msgid "Location of completed parts"
-msgstr "已完成商品所在地"
+msgstr "已完成商品所在仓储地点"
 
 #: build/forms.py:215 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:62 order/models.py:555
@@ -776,7 +776,7 @@ msgstr "目标地点"
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
-msgstr "选择已完成项目存储的位置"
+msgstr "选择已完成项目仓储地点"
 
 #: build/models.py:244
 msgid "Build Quantity"
@@ -2137,11 +2137,11 @@ msgstr ""
 
 #: common/models.py:954
 msgid "Inline label display"
-msgstr ""
+msgstr "内嵌标签显示"
 
 #: common/models.py:955
 msgid "Display PDF labels in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "在浏览器中显示 PDF 标签，而不是以文件形式下载"
 
 #: common/models.py:961
 msgid "Inline report display"
@@ -2149,7 +2149,7 @@ msgstr ""
 
 #: common/models.py:962
 msgid "Display PDF reports in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "在浏览器中显示 PDF 报告，而不是以文件形式下载"
 
 #: common/models.py:968
 msgid "Search Preview Results"
@@ -2944,51 +2944,51 @@ msgstr "提供的 URL 不是一个有效的图片文件"
 
 #: label/api.py:57 report/api.py:201
 msgid "No valid objects provided to template"
-msgstr ""
+msgstr "没有为模板提供有效对象"
 
 #: label/models.py:113
 msgid "Label name"
-msgstr ""
+msgstr "标签名称"
 
 #: label/models.py:120
 msgid "Label description"
-msgstr ""
+msgstr "标签说明"
 
 #: label/models.py:127 stock/forms.py:167
 msgid "Label"
-msgstr ""
+msgstr "标签"
 
 #: label/models.py:128
 msgid "Label template file"
-msgstr ""
+msgstr "标签模板文件"
 
 #: label/models.py:134 report/models.py:298
 msgid "Enabled"
-msgstr ""
+msgstr "已启用"
 
 #: label/models.py:135
 msgid "Label template is enabled"
-msgstr ""
+msgstr "标签模板已启用"
 
 #: label/models.py:140
 msgid "Width [mm]"
-msgstr ""
+msgstr "宽度 [mm]"
 
 #: label/models.py:141
 msgid "Label width, specified in mm"
-msgstr ""
+msgstr "标注宽度，以毫米为单位。"
 
 #: label/models.py:147
 msgid "Height [mm]"
-msgstr ""
+msgstr "高度 [mm]"
 
 #: label/models.py:148
 msgid "Label height, specified in mm"
-msgstr ""
+msgstr "标注高度，以毫米为单位。"
 
 #: label/models.py:154 report/models.py:291
 msgid "Filename Pattern"
-msgstr ""
+msgstr "文件名样式"
 
 #: label/models.py:155
 msgid "Pattern for generating label filenames"
@@ -2996,20 +2996,20 @@ msgstr ""
 
 #: label/models.py:258
 msgid "Query filters (comma-separated list of key=value pairs),"
-msgstr ""
+msgstr "查询筛选器 (逗号分隔的键值对列表)"
 
 #: label/models.py:259 label/models.py:319 label/models.py:366
 #: report/models.py:322 report/models.py:457 report/models.py:495
 msgid "Filters"
-msgstr ""
+msgstr "筛选器"
 
 #: label/models.py:318
 msgid "Query filters (comma-separated list of key=value pairs"
-msgstr ""
+msgstr "查询筛选器 (逗号分隔的键值对列表"
 
 #: label/models.py:365
 msgid "Part query filters (comma-separated value of key=value pairs)"
-msgstr ""
+msgstr "商品查询筛选器 (逗号分隔的键值对列表)"
 
 #: order/api.py:302
 msgid "Destination location must be specified"
@@ -3347,12 +3347,12 @@ msgstr ""
 #: order/templates/order/order_base.html:196
 #: stock/templates/stock/location.html:250 templates/js/translated/order.js:437
 msgid "New Location"
-msgstr ""
+msgstr "新建仓储地点"
 
 #: order/templates/order/order_base.html:197
 #: stock/templates/stock/location.html:42 templates/js/translated/order.js:438
 msgid "Create new stock location"
-msgstr ""
+msgstr "新建仓储地点"
 
 #: order/templates/order/order_cancel.html:8
 msgid "Cancelling this order means that the order and line items will no longer be editable."
@@ -3555,7 +3555,7 @@ msgstr ""
 #: order/templates/order/purchase_orders.html:24
 #: order/templates/order/sales_orders.html:24
 msgid "Print Order Reports"
-msgstr ""
+msgstr "打印订单报表"
 
 #: order/templates/order/receive_parts.html:8
 #, python-format
@@ -3928,7 +3928,7 @@ msgstr "必须是有效的数量"
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
-msgstr "指定初始初始商品库存位置"
+msgstr "指定初始初始商品仓储地点"
 
 #: part/api.py:750 part/api.py:754 part/api.py:769 part/api.py:773
 msgid "This field is required"
@@ -3937,7 +3937,7 @@ msgstr "此字段为必填"
 #: part/bom.py:133 part/models.py:75 part/models.py:733
 #: part/templates/part/category.html:75 part/templates/part/part_base.html:290
 msgid "Default Location"
-msgstr "默认位置"
+msgstr "默认仓储地点"
 
 #: part/bom.py:134 part/templates/part/part_base.html:156
 msgid "Available Stock"
@@ -4045,7 +4045,7 @@ msgstr ""
 
 #: part/models.py:76
 msgid "Default location for parts in this category"
-msgstr "此类别商品的默认位置"
+msgstr "此类别商品的默认仓储地点"
 
 #: part/models.py:79
 msgid "Default keywords"
@@ -4118,7 +4118,7 @@ msgstr "商品描述"
 #: part/models.py:687 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:259
 msgid "Keywords"
-msgstr ""
+msgstr "关键词"
 
 #: part/models.py:688
 msgid "Part keywords to improve visibility in search results"
@@ -4129,7 +4129,7 @@ msgstr "提高搜索结果可见性的关键字"
 #: templates/InvenTree/settings/settings.html:167
 #: templates/js/translated/part.js:916
 msgid "Category"
-msgstr ""
+msgstr "类别"
 
 #: part/models.py:696
 msgid "Part category"
@@ -4546,21 +4546,21 @@ msgstr "删除类别"
 
 #: part/templates/part/category.html:59 part/templates/part/category.html:98
 msgid "Category Details"
-msgstr ""
+msgstr "类别详细信息"
 
 #: part/templates/part/category.html:64
 msgid "Category Path"
-msgstr ""
+msgstr "类别路径"
 
 #: part/templates/part/category.html:69
 msgid "Category Description"
-msgstr ""
+msgstr "类别说明"
 
 #: part/templates/part/category.html:88 part/templates/part/category.html:175
 #: part/templates/part/category_navbar.html:14
 #: part/templates/part/category_navbar.html:17
 msgid "Subcategories"
-msgstr ""
+msgstr "子类别"
 
 #: part/templates/part/category.html:93
 msgid "Parts (Including subcategories)"
@@ -4572,7 +4572,7 @@ msgstr "导出商品数据"
 
 #: part/templates/part/category.html:127 part/templates/part/category.html:142
 msgid "Export"
-msgstr ""
+msgstr "导出"
 
 #: part/templates/part/category.html:130
 msgid "Create new part"
@@ -4584,27 +4584,27 @@ msgstr "新商品"
 
 #: part/templates/part/category.html:138
 msgid "Set category"
-msgstr ""
+msgstr "设置类别"
 
 #: part/templates/part/category.html:138
 msgid "Set Category"
-msgstr ""
+msgstr "设置类别"
 
 #: part/templates/part/category.html:141
 msgid "Print Labels"
-msgstr ""
+msgstr "打印标签"
 
 #: part/templates/part/category.html:142
 msgid "Export Data"
-msgstr ""
+msgstr "导出数据"
 
 #: part/templates/part/category.html:146
 msgid "View list display"
-msgstr ""
+msgstr "列表视图"
 
 #: part/templates/part/category.html:149
 msgid "View grid display"
-msgstr ""
+msgstr "网格视图"
 
 #: part/templates/part/category.html:165
 msgid "Part Parameters"
@@ -4620,20 +4620,20 @@ msgstr "创建商品"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
-msgstr ""
+msgstr "您确定要删除此类别吗？"
 
 #: part/templates/part/category_delete.html:8
 #, python-format
 msgid "This category contains %(count)s child categories"
-msgstr ""
+msgstr "此类别包含 %(count)s 个子类别"
 
 #: part/templates/part/category_delete.html:9
 msgid "If this category is deleted, these child categories will be moved to the"
-msgstr ""
+msgstr "如果删除此类别，则这些子类别将被移动到以下位置："
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
-msgstr ""
+msgstr "类别"
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
@@ -4647,7 +4647,7 @@ msgstr "此类别包含 %(count)s 个商品"
 #: part/templates/part/category_delete.html:27
 #, python-format
 msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
-msgstr ""
+msgstr "如果删除此类别，这些商品将移至其父类别 %(path)s"
 
 #: part/templates/part/category_delete.html:29
 msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
@@ -4892,7 +4892,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:93
 #: stock/templates/stock/location.html:54
 msgid "Print Label"
-msgstr ""
+msgstr "打印标签"
 
 #: part/templates/part/part_base.html:89
 msgid "Show pricing information"
@@ -5180,7 +5180,7 @@ msgstr "设置商品类别"
 #: part/views.py:210
 #, python-brace-format
 msgid "Set category for {n} parts"
-msgstr ""
+msgstr "为 {n} 个商品设置类别"
 
 #: part/views.py:270
 msgid "Match References"
@@ -5268,15 +5268,15 @@ msgstr "商品类别已删除"
 
 #: part/views.py:1555
 msgid "Create Category Parameter Template"
-msgstr ""
+msgstr "创建类别参数模板"
 
 #: part/views.py:1656
 msgid "Edit Category Parameter Template"
-msgstr ""
+msgstr "编辑类别参数模板"
 
 #: part/views.py:1712
 msgid "Delete Category Parameter Template"
-msgstr ""
+msgstr "删除类别参数模板"
 
 #: part/views.py:1734
 msgid "Added new price break"
@@ -5561,7 +5561,7 @@ msgstr ""
 
 #: stock/models.py:469 stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "仓储地点"
 
 #: stock/models.py:472
 msgid "Where is this stock item located?"
@@ -5904,7 +5904,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:303
 #: templates/js/translated/build.js:651
 msgid "No location set"
-msgstr ""
+msgstr "未设置仓储地点"
 
 #: stock/templates/stock/item_base.html:310
 msgid "Barcode Identifier"
@@ -6005,7 +6005,7 @@ msgstr ""
 
 #: stock/templates/stock/location.html:20
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
-msgstr ""
+msgstr "您不在此仓储地的所有者列表中，无法编辑此仓储地。"
 
 #: stock/templates/stock/location.html:37
 msgid "All stock items"
@@ -6017,27 +6017,27 @@ msgstr ""
 
 #: stock/templates/stock/location.html:83
 msgid "Location actions"
-msgstr ""
+msgstr "仓储地操作"
 
 #: stock/templates/stock/location.html:85
 msgid "Edit location"
-msgstr ""
+msgstr "编辑仓储地"
 
 #: stock/templates/stock/location.html:87
 msgid "Delete location"
-msgstr ""
+msgstr "删除仓储地"
 
 #: stock/templates/stock/location.html:99
 msgid "Location Details"
-msgstr ""
+msgstr "仓储地详细信息"
 
 #: stock/templates/stock/location.html:104
 msgid "Location Path"
-msgstr ""
+msgstr "仓储地路径"
 
 #: stock/templates/stock/location.html:109
 msgid "Location Description"
-msgstr ""
+msgstr "仓储地描述信息"
 
 #: stock/templates/stock/location.html:114
 #: stock/templates/stock/location.html:155
@@ -6053,23 +6053,23 @@ msgstr ""
 #: stock/templates/stock/location.html:129 templates/InvenTree/search.html:279
 #: templates/stats.html:97 users/models.py:42
 msgid "Stock Locations"
-msgstr "库存地点"
+msgstr "仓储地点"
 
 #: stock/templates/stock/location.html:162 templates/stock_table.html:37
 msgid "Printing Actions"
-msgstr ""
+msgstr "打印操作"
 
 #: stock/templates/stock/location.html:166 templates/stock_table.html:41
 msgid "Print labels"
-msgstr ""
+msgstr "打印标签"
 
 #: stock/templates/stock/location.html:251
 msgid "Create new location"
-msgstr ""
+msgstr "新建仓储地点"
 
 #: stock/templates/stock/location_delete.html:7
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "确实要删除此仓储地点吗?"
 
 #: stock/templates/stock/navbar.html:11
 msgid "Stock Item Tracking"
@@ -6126,7 +6126,7 @@ msgstr ""
 
 #: stock/views.py:181
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "编辑仓储地点"
 
 #: stock/views.py:288 stock/views.py:911 stock/views.py:1033
 #: stock/views.py:1398
@@ -6135,7 +6135,7 @@ msgstr ""
 
 #: stock/views.py:303
 msgid "Stock Location QR code"
-msgstr ""
+msgstr "仓储地点二维码"
 
 #: stock/views.py:322
 msgid "Assign to Customer"
@@ -6151,7 +6151,7 @@ msgstr ""
 
 #: stock/views.py:364
 msgid "Specify a valid location"
-msgstr ""
+msgstr "指定一个有效仓储地点"
 
 #: stock/views.py:375
 msgid "Stock item returned from customer"
@@ -6187,7 +6187,7 @@ msgstr ""
 
 #: stock/views.py:959
 msgid "Create new Stock Location"
-msgstr ""
+msgstr "新建仓储地点"
 
 #: stock/views.py:1050
 msgid "Serialize Stock"
@@ -6207,7 +6207,7 @@ msgstr ""
 
 #: stock/views.py:1467
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "删除仓储地点"
 
 #: stock/views.py:1480
 msgid "Delete Stock Item"
@@ -6311,43 +6311,43 @@ msgstr ""
 
 #: templates/InvenTree/search.html:271 templates/js/translated/stock.js:709
 msgid "No stock location set"
-msgstr ""
+msgstr "未设置仓储地点"
 
 #: templates/InvenTree/settings/barcode.html:8
 msgid "Barcode Settings"
-msgstr ""
+msgstr "条形码设置"
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
-msgstr ""
+msgstr "生产订单设置"
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
-msgstr ""
+msgstr "类别设置"
 
 #: templates/InvenTree/settings/currencies.html:8
 msgid "Currency Settings"
-msgstr ""
+msgstr "货币设置"
 
 #: templates/InvenTree/settings/currencies.html:23
 msgid "Base Currency"
-msgstr ""
+msgstr "基础货币"
 
 #: templates/InvenTree/settings/currencies.html:27
 msgid "Exchange Rates"
-msgstr ""
+msgstr "汇率"
 
 #: templates/InvenTree/settings/currencies.html:37
 msgid "Last Update"
-msgstr ""
+msgstr "上次更新"
 
 #: templates/InvenTree/settings/currencies.html:43
 msgid "Never"
-msgstr ""
+msgstr "从不"
 
 #: templates/InvenTree/settings/currencies.html:48
 msgid "Update Now"
-msgstr ""
+msgstr "立即更新"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
@@ -6370,7 +6370,7 @@ msgstr "帐户"
 #: templates/InvenTree/settings/navbar.html:21
 #: templates/InvenTree/settings/navbar.html:23
 msgid "Home Page"
-msgstr ""
+msgstr "主页"
 
 #: templates/InvenTree/settings/navbar.html:27
 #: templates/InvenTree/settings/navbar.html:29
@@ -6382,22 +6382,22 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:33
 #: templates/InvenTree/settings/navbar.html:35
 msgid "Labels"
-msgstr ""
+msgstr "标签"
 
 #: templates/InvenTree/settings/navbar.html:39
 #: templates/InvenTree/settings/navbar.html:41
 msgid "Reports"
-msgstr ""
+msgstr "报表"
 
 #: templates/InvenTree/settings/navbar.html:46
 #: templates/InvenTree/settings/navbar.html:48
 #: templates/InvenTree/settings/settings.html:8 templates/navbar.html:94
 msgid "Settings"
-msgstr ""
+msgstr "设置"
 
 #: templates/InvenTree/settings/navbar.html:56
 msgid "InvenTree Settings"
-msgstr ""
+msgstr "InventTree 设置"
 
 #: templates/InvenTree/settings/navbar.html:59
 #: templates/InvenTree/settings/navbar.html:61 templates/stats.html:9
@@ -6412,17 +6412,17 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:71
 #: templates/InvenTree/settings/navbar.html:73
 msgid "Currencies"
-msgstr ""
+msgstr "币种"
 
 #: templates/InvenTree/settings/navbar.html:77
 #: templates/InvenTree/settings/navbar.html:79
 msgid "Reporting"
-msgstr ""
+msgstr "报表"
 
 #: templates/InvenTree/settings/navbar.html:89
 #: templates/InvenTree/settings/navbar.html:91
 msgid "Categories"
-msgstr ""
+msgstr "类别管理"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -6446,7 +6446,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/po.html:9
 msgid "Purchase Order Settings"
-msgstr ""
+msgstr "采购订单设置"
 
 #: templates/InvenTree/settings/report.html:10
 #: templates/InvenTree/settings/user_reports.html:9
@@ -6463,7 +6463,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:152
 msgid "No category parameter templates found"
-msgstr ""
+msgstr "未找到类别参数模板"
 
 #: templates/InvenTree/settings/settings.html:174
 #: templates/InvenTree/settings/settings.html:273
@@ -6523,45 +6523,45 @@ msgstr "主题设置"
 
 #: templates/InvenTree/settings/user.html:63
 msgid "Set Theme"
-msgstr ""
+msgstr "设置主题"
 
 #: templates/InvenTree/settings/user.html:70
 msgid "Language Settings"
-msgstr ""
+msgstr "语言设置"
 
 #: templates/InvenTree/settings/user.html:89
 #, python-format
 msgid "%(lang_translated)s%% translated"
-msgstr ""
+msgstr "%(lang_translated)s%% 已翻译"
 
 #: templates/InvenTree/settings/user.html:91
 msgid "No translations available"
-msgstr ""
+msgstr "无可用翻译"
 
 #: templates/InvenTree/settings/user.html:98
 msgid "Set Language"
-msgstr ""
+msgstr "设置语言"
 
 #: templates/InvenTree/settings/user.html:103
 msgid "Help the translation efforts!"
-msgstr ""
+msgstr "帮助翻译工作！"
 
 #: templates/InvenTree/settings/user.html:104
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "InventTree web 应用程序的本地语言翻译是 <a href=\"%(link)s\">社区通过crowdin</a>贡献。欢迎并鼓励提交信息。"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "主页设置"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "标签设置"
 
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
-msgstr ""
+msgstr "搜索设置"
 
 #: templates/about.html:13
 msgid "InvenTree Version Information"
@@ -6669,11 +6669,11 @@ msgstr ""
 #: templates/js/report.js:98 templates/js/translated/label.js:29
 #: templates/js/translated/report.js:118 templates/js/translated/stock.js:313
 msgid "Select Stock Items"
-msgstr ""
+msgstr "选择库存项"
 
 #: templates/js/report.js:99 templates/js/translated/report.js:119
 msgid "Stock item(s) must be selected before printing reports"
-msgstr ""
+msgstr "在打印报表之前必须选择库存项目"
 
 #: templates/js/report.js:116 templates/js/report.js:169
 #: templates/js/report.js:223 templates/js/report.js:277
@@ -6681,7 +6681,7 @@ msgstr ""
 #: templates/js/translated/report.js:189 templates/js/translated/report.js:243
 #: templates/js/translated/report.js:297 templates/js/translated/report.js:351
 msgid "No Reports Found"
-msgstr ""
+msgstr "没有找到报表"
 
 #: templates/js/report.js:117 templates/js/translated/report.js:137
 msgid "No report templates found which match selected stock item(s)"
@@ -6693,7 +6693,7 @@ msgstr ""
 
 #: templates/js/report.js:153 templates/js/translated/report.js:173
 msgid "Build(s) must be selected before printing reports"
-msgstr ""
+msgstr "打印报表前必须选择Build(s)"
 
 #: templates/js/report.js:170 templates/js/translated/report.js:190
 msgid "No report templates found which match selected build(s)"
@@ -6706,7 +6706,7 @@ msgstr "选择商品"
 
 #: templates/js/report.js:206 templates/js/translated/report.js:226
 msgid "Part(s) must be selected before printing reports"
-msgstr ""
+msgstr "打印报表前必须选择商品"
 
 #: templates/js/report.js:224 templates/js/translated/report.js:244
 msgid "No report templates found which match selected part(s)"
@@ -6811,11 +6811,11 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:32
 msgid "Enter barcode data"
-msgstr ""
+msgstr "输入条形码数据"
 
 #: templates/js/translated/barcode.js:36
 msgid "Barcode"
-msgstr ""
+msgstr "条形码"
 
 #: templates/js/translated/barcode.js:54
 msgid "Enter optional notes for stock transfer"
@@ -6844,7 +6844,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:281 templates/navbar.html:65
 msgid "Scan Barcode"
-msgstr ""
+msgstr "扫描条形码"
 
 #: templates/js/translated/barcode.js:292
 msgid "No URL in response"
@@ -6971,7 +6971,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:287 templates/js/translated/order.js:813
 msgid "Location not specified"
-msgstr ""
+msgstr "未指定仓储地点"
 
 #: templates/js/translated/build.js:391 templates/stock_table.html:20
 msgid "New Stock Item"
@@ -7190,48 +7190,48 @@ msgstr ""
 
 #: templates/js/translated/label.js:30
 msgid "Stock item(s) must be selected before printing labels"
-msgstr ""
+msgstr "打印标签前必须选择库存项目"
 
 #: templates/js/translated/label.js:48 templates/js/translated/label.js:98
 #: templates/js/translated/label.js:153
 msgid "No Labels Found"
-msgstr ""
+msgstr "未找到标签"
 
 #: templates/js/translated/label.js:49
 msgid "No labels found which match selected stock item(s)"
-msgstr ""
+msgstr "没有找到与选定的库存项匹配的标签"
 
 #: templates/js/translated/label.js:80
 msgid "Select Stock Locations"
-msgstr ""
+msgstr "选择仓储地点"
 
 #: templates/js/translated/label.js:81
 msgid "Stock location(s) must be selected before printing labels"
-msgstr ""
+msgstr "打印标签前必须选择仓储地点"
 
 #: templates/js/translated/label.js:99
 msgid "No labels found which match selected stock location(s)"
-msgstr ""
+msgstr "没有找到匹配选定库存地点的标签"
 
 #: templates/js/translated/label.js:135
 msgid "Part(s) must be selected before printing labels"
-msgstr ""
+msgstr "打印标签前必须选择商品"
 
 #: templates/js/translated/label.js:154
 msgid "No labels found which match the selected part(s)"
-msgstr ""
+msgstr "没有找到与所选商品相匹配的标签"
 
 #: templates/js/translated/label.js:228
 msgid "stock items selected"
-msgstr ""
+msgstr "已选择库存项"
 
 #: templates/js/translated/label.js:236
 msgid "Select Label"
-msgstr ""
+msgstr "选择标签"
 
 #: templates/js/translated/label.js:251
 msgid "Select Label Template"
-msgstr ""
+msgstr "选择标签模板"
 
 #: templates/js/translated/modals.js:76 templates/js/translated/modals.js:120
 #: templates/js/translated/modals.js:610
@@ -7310,7 +7310,7 @@ msgstr "商品ID"
 
 #: templates/js/translated/model_renderers.js:171
 msgid "Category ID"
-msgstr ""
+msgstr "类别 ID"
 
 #: templates/js/translated/model_renderers.js:208
 msgid "Manufacturer Part ID"
@@ -7402,7 +7402,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:186
 msgid "Copy Category Parameters"
-msgstr ""
+msgstr "复制类别参数"
 
 #: templates/js/translated/part.js:187
 msgid "Copy parameter templates from selected part category"
@@ -7474,7 +7474,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:921
 msgid "No category"
-msgstr ""
+msgstr "没有分类"
 
 #: templates/js/translated/part.js:944
 #: templates/js/translated/table_filters.js:350
@@ -7586,7 +7586,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:185 users/models.py:190
 msgid "Add"
-msgstr ""
+msgstr "添加"
 
 #: templates/js/translated/stock.js:189 templates/stock_table.html:63
 msgid "Delete Stock"
@@ -8035,7 +8035,7 @@ msgstr "销售"
 
 #: templates/navbar.html:87 users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "管理员"
 
 #: templates/navbar.html:89
 msgid "Logout"
@@ -8175,7 +8175,7 @@ msgstr ""
 
 #: templates/stock_table.html:43
 msgid "Print test reports"
-msgstr ""
+msgstr "打印测试报表"
 
 #: templates/stock_table.html:50
 msgid "Stock Options"
@@ -8219,11 +8219,11 @@ msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "确定"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "取消"
 
 #: users/admin.py:64
 msgid "Users"
@@ -8239,45 +8239,45 @@ msgstr "以下用户是多个群组的成员："
 
 #: users/admin.py:210
 msgid "Personal info"
-msgstr ""
+msgstr "个人资料"
 
 #: users/admin.py:211
 msgid "Permissions"
-msgstr ""
+msgstr "权限"
 
 #: users/admin.py:214
 msgid "Important dates"
-msgstr ""
+msgstr "重要日期"
 
 #: users/models.py:177
 msgid "Permission set"
-msgstr ""
+msgstr "权限设置"
 
 #: users/models.py:185
 msgid "Group"
-msgstr ""
+msgstr "群组"
 
 #: users/models.py:188
 msgid "View"
-msgstr ""
+msgstr "视图"
 
 #: users/models.py:188
 msgid "Permission to view items"
-msgstr ""
+msgstr "查看项目权限"
 
 #: users/models.py:190
 msgid "Permission to add items"
-msgstr ""
+msgstr "添加项目权限"
 
 #: users/models.py:192
 msgid "Change"
-msgstr ""
+msgstr "更改"
 
 #: users/models.py:192
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "编辑项目权限"
 
 #: users/models.py:194
 msgid "Permission to delete items"
-msgstr ""
+msgstr "删除项目权限"
 
