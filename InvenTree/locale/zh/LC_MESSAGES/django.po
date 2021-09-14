@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 01:43\n"
+"PO-Revision-Date: 2021-09-14 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -908,7 +908,7 @@ msgstr ""
 #: build/models.py:1237
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
-msgstr ""
+msgstr "分配数量 ({n}) 不能超过可用数量 ({q})"
 
 #: build/models.py:1244 order/models.py:938
 msgid "StockItem is over-allocated"
@@ -957,7 +957,7 @@ msgstr ""
 
 #: build/models.py:1411
 msgid "Install into"
-msgstr ""
+msgstr "安装到"
 
 #: build/models.py:1412
 msgid "Destination stock item"
@@ -976,7 +976,7 @@ msgstr "序列号"
 
 #: build/templates/build/auto_allocate.html:9
 msgid "Automatically Allocate Stock"
-msgstr ""
+msgstr "自动分配库存"
 
 #: build/templates/build/auto_allocate.html:10
 msgid "The following stock items will be allocated to the specified build output"
@@ -988,7 +988,7 @@ msgstr ""
 
 #: build/templates/build/auto_allocate.html:39
 msgid "Stock items will have to be manually allocated"
-msgstr ""
+msgstr "必须手动分配库存项目"
 
 #: build/templates/build/build_base.html:18
 #, python-format
@@ -1010,7 +1010,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:42
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "所需生产数量尚未完成"
 
 #: build/templates/build/build_base.html:47
 msgid "Stock has not been fully allocated to this Build Order"
@@ -1125,7 +1125,7 @@ msgstr ""
 
 #: build/templates/build/build_output_create.html:15
 msgid "Trackable parts can have serial numbers specified"
-msgstr ""
+msgstr "可追踪部件可以指定序列号"
 
 #: build/templates/build/build_output_create.html:16
 msgid "Enter serial numbers to generate multiple single build outputs"
@@ -1133,7 +1133,7 @@ msgstr ""
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
-msgstr ""
+msgstr "是否确定取消生产？"
 
 #: build/templates/build/complete.html:8
 msgid "Build Order is complete"
@@ -1153,7 +1153,7 @@ msgstr "所需生产数量尚未完成"
 
 #: build/templates/build/complete.html:21
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "所需库存尚未完全分配"
 
 #: build/templates/build/complete_output.html:10
 msgid "Stock allocation is complete for this output"
@@ -1183,7 +1183,7 @@ msgstr ""
 #: build/templates/build/create_build_item.html:17
 #, python-format
 msgid "No stock available for %(part)s"
-msgstr ""
+msgstr "%(part)s 没有可用库存"
 
 #: build/templates/build/delete_build_item.html:8
 msgid "Are you sure you want to unallocate this stock?"
