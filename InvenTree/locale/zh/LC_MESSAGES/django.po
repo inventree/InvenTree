@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 08:07\n"
+"PO-Revision-Date: 2021-09-14 09:14\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -327,11 +327,11 @@ msgstr "已发货"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr "确定"
+msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr "注意"
+msgstr "需要关注"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
@@ -339,11 +339,11 @@ msgstr "破损"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr "销毁"
+msgstr "已销毁"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr "已拒绝"
+msgstr "Rejected"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -1663,7 +1663,7 @@ msgstr ""
 
 #: common/models.py:550
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "启用条形码扫描支持"
 
 #: common/models.py:556
 msgid "IPN Regex"
@@ -4318,7 +4318,7 @@ msgstr ""
 #: part/models.py:2252 part/models.py:2301 part/models.py:2302
 #: templates/InvenTree/settings/settings.html:162
 msgid "Parameter Template"
-msgstr ""
+msgstr "参数模板"
 
 #: part/models.py:2254
 msgid "Data"
@@ -4330,7 +4330,7 @@ msgstr ""
 
 #: part/models.py:2306 templates/InvenTree/settings/settings.html:171
 msgid "Default Value"
-msgstr ""
+msgstr "默认值"
 
 #: part/models.py:2307
 msgid "Default Parameter Value"
@@ -6355,7 +6355,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/header.html:7
 msgid "Setting"
-msgstr ""
+msgstr "设置"
 
 #: templates/InvenTree/settings/navbar.html:12
 #: templates/InvenTree/settings/user_settings.html:9
@@ -6377,7 +6377,7 @@ msgstr "主页"
 #: templates/js/translated/tables.js:366 templates/search_form.html:6
 #: templates/search_form.html:8
 msgid "Search"
-msgstr ""
+msgstr "搜索"
 
 #: templates/InvenTree/settings/navbar.html:33
 #: templates/InvenTree/settings/navbar.html:35
@@ -6407,7 +6407,7 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:65
 #: templates/InvenTree/settings/navbar.html:67
 msgid "Barcodes"
-msgstr ""
+msgstr "条形码"
 
 #: templates/InvenTree/settings/navbar.html:71
 #: templates/InvenTree/settings/navbar.html:73
@@ -6442,7 +6442,7 @@ msgstr "导入商品"
 
 #: templates/InvenTree/settings/part.html:59
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "商品参数模板"
 
 #: templates/InvenTree/settings/po.html:9
 msgid "Purchase Order Settings"
@@ -6455,11 +6455,11 @@ msgstr "报表设置"
 
 #: templates/InvenTree/settings/setting.html:29
 msgid "No value set"
-msgstr ""
+msgstr "未设置值"
 
 #: templates/InvenTree/settings/setting.html:41
 msgid "Edit setting"
-msgstr ""
+msgstr "编辑设置"
 
 #: templates/InvenTree/settings/settings.html:152
 msgid "No category parameter templates found"
@@ -6468,24 +6468,24 @@ msgstr "未找到类别参数模板"
 #: templates/InvenTree/settings/settings.html:174
 #: templates/InvenTree/settings/settings.html:273
 msgid "Edit Template"
-msgstr ""
+msgstr "编辑模板"
 
 #: templates/InvenTree/settings/settings.html:175
 #: templates/InvenTree/settings/settings.html:274
 msgid "Delete Template"
-msgstr ""
+msgstr "删除模板"
 
 #: templates/InvenTree/settings/settings.html:253
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "未找到商品参数模板"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
-msgstr ""
+msgstr "销售订单设置"
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
+msgstr "库存设置"
 
 #: templates/InvenTree/settings/user.html:9
 msgid "Account Settings"
@@ -8159,11 +8159,11 @@ msgstr ""
 
 #: templates/stats.html:63
 msgid "Email Settings"
-msgstr ""
+msgstr "电子邮件设置"
 
 #: templates/stats.html:66
 msgid "Email settings not configured"
-msgstr ""
+msgstr "电子邮件设置未配置"
 
 #: templates/stock_table.html:14
 msgid "Export Stock Information"
