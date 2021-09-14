@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 02:43\n"
+"PO-Revision-Date: 2021-09-14 03:42\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -748,7 +748,7 @@ msgstr "此次生生匹配的订单"
 #: templates/js/translated/stock.js:201 templates/js/translated/stock.js:797
 #: templates/js/translated/stock.js:1838
 msgid "Part"
-msgstr "部件"
+msgstr "商品"
 
 #: build/models.py:213
 msgid "Select part to build"
@@ -1271,7 +1271,7 @@ msgstr "订单所需部件"
 #: company/templates/company/detail.html:72 order/views.py:679
 #: part/templates/part/category.html:140
 msgid "Order Parts"
-msgstr "订单部件"
+msgstr "订购商品"
 
 #: build/templates/build/detail.html:186
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -2377,7 +2377,7 @@ msgstr ""
 
 #: company/models.py:342 templates/js/translated/part.js:234
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "制造商商品编号"
 
 #: company/models.py:348
 msgid "URL for external manufacturer part link"
@@ -2392,7 +2392,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:376
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "制造商商品"
 
 #: company/models.py:415
 msgid "Parameter name"
@@ -2559,18 +2559,18 @@ msgstr ""
 #: company/templates/company/manufacturer_part_navbar.html:18
 #: templates/InvenTree/search.html:164
 msgid "Supplier Parts"
-msgstr ""
+msgstr "供应商商品"
 
 #: company/templates/company/detail.html:22
 #: order/templates/order/order_wizard/select_parts.html:44
 msgid "Create new supplier part"
-msgstr ""
+msgstr "创建新的供应商商品"
 
 #: company/templates/company/detail.html:23
 #: company/templates/company/manufacturer_part.html:109
 #: part/templates/part/detail.html:289
 msgid "New Supplier Part"
-msgstr ""
+msgstr "新建供应商商品"
 
 #: company/templates/company/detail.html:27
 #: company/templates/company/detail.html:67
@@ -2585,7 +2585,7 @@ msgstr ""
 #: company/templates/company/detail.html:72
 #: part/templates/part/category.html:140
 msgid "Order parts"
-msgstr ""
+msgstr "订购商品"
 
 #: company/templates/company/detail.html:35
 #: company/templates/company/detail.html:75
@@ -2607,7 +2607,7 @@ msgstr ""
 
 #: company/templates/company/detail.html:63 part/templates/part/detail.html:312
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "新建制造商商品"
 
 #: company/templates/company/detail.html:93
 msgid "Supplier Stock"
@@ -2676,13 +2676,13 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:200
 #: part/templates/part/detail.html:357
 msgid "Delete Supplier Parts?"
-msgstr ""
+msgstr "删除供应商商品？"
 
 #: company/templates/company/detail.html:365
 #: company/templates/company/manufacturer_part.html:201
 #: part/templates/part/detail.html:358
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "删除所有选定的供应商商品"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -2693,26 +2693,26 @@ msgstr ""
 #: company/templates/company/supplier_part.html:146
 #: part/templates/part/detail.html:55 part/templates/part/part_base.html:116
 msgid "Order part"
-msgstr ""
+msgstr "订购商品"
 
 #: company/templates/company/manufacturer_part.html:45
 #: templates/js/translated/company.js:560
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "编辑制造商商品"
 
 #: company/templates/company/manufacturer_part.html:49
 #: templates/js/translated/company.js:561
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "删除生产商商品"
 
 #: company/templates/company/manufacturer_part.html:61
 msgid "Manufacturer Part Details"
-msgstr ""
+msgstr "制造商商品详细信息"
 
 #: company/templates/company/manufacturer_part.html:66
 #: company/templates/company/supplier_part.html:65
 msgid "Internal Part"
-msgstr ""
+msgstr "内部商品"
 
 #: company/templates/company/manufacturer_part.html:103
 #: company/templates/company/manufacturer_part_navbar.html:21
@@ -2725,7 +2725,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:114
 #: part/templates/part/detail.html:294
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "删除供应商商品"
 
 #: company/templates/company/manufacturer_part.html:114
 #: company/templates/company/manufacturer_part.html:138
@@ -2772,7 +2772,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Stock"
-msgstr ""
+msgstr "制造商商品库存"
 
 #: company/templates/company/manufacturer_part_navbar.html:29
 #: company/templates/company/navbar.html:39
@@ -2792,7 +2792,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part_navbar.html:33
 msgid "Manufacturer Part Orders"
-msgstr ""
+msgstr "制造商商品订单"
 
 #: company/templates/company/manufacturer_part_navbar.html:36
 #: company/templates/company/supplier_part_navbar.html:22
@@ -2825,36 +2825,36 @@ msgstr ""
 #: stock/templates/stock/item_base.html:388
 #: templates/js/translated/company.js:784 templates/js/translated/stock.js:1014
 msgid "Supplier Part"
-msgstr ""
+msgstr "供应商商品"
 
 #: company/templates/company/supplier_part.html:44
 #: templates/js/translated/company.js:857
 msgid "Edit supplier part"
-msgstr ""
+msgstr "编辑供应商商品"
 
 #: company/templates/company/supplier_part.html:48
 #: templates/js/translated/company.js:858
 msgid "Delete supplier part"
-msgstr ""
+msgstr "删除供应商商品"
 
 #: company/templates/company/supplier_part.html:60
 msgid "Supplier Part Details"
-msgstr ""
+msgstr "供应商商品详细信息"
 
 #: company/templates/company/supplier_part.html:131
 #: company/templates/company/supplier_part_navbar.html:12
 msgid "Supplier Part Stock"
-msgstr ""
+msgstr "供货商商品库存"
 
 #: company/templates/company/supplier_part.html:140
 #: company/templates/company/supplier_part_navbar.html:19
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "供应商商品订单"
 
 #: company/templates/company/supplier_part.html:147
 #: part/templates/part/detail.html:56
 msgid "Order Part"
-msgstr ""
+msgstr "订购商品"
 
 #: company/templates/company/supplier_part.html:158
 #: part/templates/part/navbar.html:67 part/templates/part/prices.html:7
@@ -2889,7 +2889,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:26
 msgid "Supplier Part Pricing"
-msgstr ""
+msgstr "供应商商品价格"
 
 #: company/templates/company/supplier_part_navbar.html:29
 msgid "Pricing"
@@ -3445,7 +3445,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
-msgstr ""
+msgstr "选择供应商商品"
 
 #: order/templates/order/order_wizard/po_upload.html:11
 msgid "Upload File for Purchase Order"
@@ -3465,7 +3465,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:11
 msgid "Step 1 of 2 - Select Part Suppliers"
-msgstr ""
+msgstr "步骤 1 / 2 - 选择商品供货商"
 
 #: order/templates/order/order_wizard/select_parts.html:16
 msgid "Select suppliers"
@@ -3473,7 +3473,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
-msgstr ""
+msgstr "未选择可购买的商品"
 
 #: order/templates/order/order_wizard/select_parts.html:33
 msgid "Select Supplier"
@@ -3491,7 +3491,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
 msgid "Remove part"
-msgstr ""
+msgstr "移除商品"
 
 #: order/templates/order/order_wizard/select_pos.html:8
 msgid "Step 2 of 2 - Select Purchase Orders"
@@ -3573,7 +3573,7 @@ msgstr ""
 #: templates/js/translated/part.js:1154 templates/navbar.html:29
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "商品"
 
 #: order/templates/order/receive_parts.html:15
 msgid "Fill out number of parts received, the status and destination"
@@ -3594,7 +3594,7 @@ msgstr ""
 
 #: order/templates/order/receive_parts.html:37
 msgid "Error: Referenced part has been removed"
-msgstr ""
+msgstr "错误：引用商品已被删除"
 
 #: order/templates/order/receive_parts.html:68
 msgid "Remove line"
@@ -3928,7 +3928,7 @@ msgstr ""
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
-msgstr ""
+msgstr "指定初始初始商品库存位置"
 
 #: part/api.py:750 part/api.py:754 part/api.py:769 part/api.py:773
 msgid "This field is required"
@@ -3973,7 +3973,7 @@ msgstr ""
 
 #: part/forms.py:69
 msgid "Include part parameters data in exported BOM"
-msgstr ""
+msgstr "在导出的BOM 中包含商品参数"
 
 #: part/forms.py:71
 msgid "Include Stock Data"
@@ -3981,7 +3981,7 @@ msgstr ""
 
 #: part/forms.py:71
 msgid "Include part stock data in exported BOM"
-msgstr ""
+msgstr "在导出 BOM 中包括库存数据"
 
 #: part/forms.py:73
 msgid "Include Manufacturer Data"
@@ -3989,7 +3989,7 @@ msgstr ""
 
 #: part/forms.py:73
 msgid "Include part manufacturer data in exported BOM"
-msgstr ""
+msgstr "在导出 BOM 中包含制造商数据"
 
 #: part/forms.py:75
 msgid "Include Supplier Data"
@@ -3997,7 +3997,7 @@ msgstr ""
 
 #: part/forms.py:75
 msgid "Include part supplier data in exported BOM"
-msgstr ""
+msgstr "在导出 BOM 中包含供应商数据"
 
 #: part/forms.py:96 part/models.py:2250
 msgid "Parent Part"
@@ -4029,7 +4029,7 @@ msgstr ""
 
 #: part/forms.py:177
 msgid "Select part category"
-msgstr ""
+msgstr "选择类别"
 
 #: part/forms.py:226
 msgid "Add parameter template to same level categories"
@@ -4045,7 +4045,7 @@ msgstr ""
 
 #: part/models.py:76
 msgid "Default location for parts in this category"
-msgstr ""
+msgstr "此类别商品的默认位置"
 
 #: part/models.py:79
 msgid "Default keywords"
@@ -4053,18 +4053,18 @@ msgstr ""
 
 #: part/models.py:79
 msgid "Default keywords for parts in this category"
-msgstr ""
+msgstr "此类别商品的默认关键字"
 
 #: part/models.py:89 part/models.py:2296
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
-msgstr ""
+msgstr "商品类别"
 
 #: part/models.py:90 part/templates/part/category.html:32
 #: part/templates/part/category.html:103 templates/InvenTree/search.html:127
 #: templates/stats.html:84 users/models.py:40
 msgid "Part Categories"
-msgstr ""
+msgstr "商品类别"
 
 #: part/models.py:383
 msgid "Invalid choice for parent part"
@@ -4089,11 +4089,11 @@ msgstr ""
 
 #: part/models.py:632
 msgid "Duplicate IPN not allowed in part settings"
-msgstr ""
+msgstr "在商品设置中不允许重复的IPN"
 
 #: part/models.py:657
 msgid "Part name"
-msgstr ""
+msgstr "商品名称"
 
 #: part/models.py:664
 msgid "Is Template"
@@ -4113,7 +4113,7 @@ msgstr ""
 
 #: part/models.py:682
 msgid "Part description"
-msgstr ""
+msgstr "商品描述"
 
 #: part/models.py:687 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:259
@@ -4122,7 +4122,7 @@ msgstr ""
 
 #: part/models.py:688
 msgid "Part keywords to improve visibility in search results"
-msgstr ""
+msgstr "提高搜索结果可见性的关键字"
 
 #: part/models.py:695 part/models.py:2295
 #: part/templates/part/set_category.html:15
@@ -4133,7 +4133,7 @@ msgstr ""
 
 #: part/models.py:696
 msgid "Part category"
-msgstr ""
+msgstr "商品类别"
 
 #: part/models.py:701 part/templates/part/part_base.html:235
 #: templates/js/translated/part.js:517 templates/js/translated/part.js:749
@@ -4142,11 +4142,11 @@ msgstr ""
 
 #: part/models.py:702
 msgid "Internal Part Number"
-msgstr ""
+msgstr "内部商品编号"
 
 #: part/models.py:708
 msgid "Part revision or version number"
-msgstr ""
+msgstr "商品版本号"
 
 #: part/models.py:709 part/templates/part/part_base.html:252
 #: report/models.py:200 templates/js/translated/part.js:521
@@ -4163,7 +4163,7 @@ msgstr ""
 
 #: part/models.py:779
 msgid "Default supplier part"
-msgstr ""
+msgstr "默认供应商商品"
 
 #: part/models.py:786
 msgid "Default Expiry"
@@ -4218,7 +4218,7 @@ msgstr ""
 
 #: part/models.py:838
 msgid "Is this a virtual part, such as a software product or license?"
-msgstr ""
+msgstr "这是一个虚拟商品，如软件产品或许可证吗？"
 
 #: part/models.py:843
 msgid "Part notes - supports Markdown formatting"
@@ -4492,7 +4492,7 @@ msgstr ""
 
 #: part/templates/part/bom_upload/match_parts.html:29
 msgid "Select Part"
-msgstr ""
+msgstr "选择商品"
 
 #: part/templates/part/bom_upload/upload_file.html:13
 #: part/templates/part/bom_upload/upload_file.html:16
@@ -4517,7 +4517,7 @@ msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:49
 msgid "Each part must already exist in the database"
-msgstr ""
+msgstr "每个商品必须已经存在于数据库"
 
 #: part/templates/part/bom_validate.html:6
 #, python-format
@@ -4530,19 +4530,19 @@ msgstr ""
 
 #: part/templates/part/category.html:33
 msgid "All parts"
-msgstr ""
+msgstr "所有商品"
 
 #: part/templates/part/category.html:38
 msgid "Create new part category"
-msgstr ""
+msgstr "新建商品类别"
 
 #: part/templates/part/category.html:44
 msgid "Edit part category"
-msgstr ""
+msgstr "编辑商品类别"
 
 #: part/templates/part/category.html:49
 msgid "Delete part category"
-msgstr ""
+msgstr "删除类别"
 
 #: part/templates/part/category.html:59 part/templates/part/category.html:98
 msgid "Category Details"
@@ -4564,11 +4564,11 @@ msgstr ""
 
 #: part/templates/part/category.html:93
 msgid "Parts (Including subcategories)"
-msgstr ""
+msgstr "商品 (包括子类别)"
 
 #: part/templates/part/category.html:126
 msgid "Export Part Data"
-msgstr ""
+msgstr "导出商品数据"
 
 #: part/templates/part/category.html:127 part/templates/part/category.html:142
 msgid "Export"
@@ -4576,11 +4576,11 @@ msgstr ""
 
 #: part/templates/part/category.html:130
 msgid "Create new part"
-msgstr ""
+msgstr "新建商品"
 
 #: part/templates/part/category.html:131
 msgid "New Part"
-msgstr ""
+msgstr "新商品"
 
 #: part/templates/part/category.html:138
 msgid "Set category"
@@ -4608,15 +4608,15 @@ msgstr ""
 
 #: part/templates/part/category.html:165
 msgid "Part Parameters"
-msgstr ""
+msgstr "商品参数"
 
 #: part/templates/part/category.html:254
 msgid "Create Part Category"
-msgstr ""
+msgstr "创建商品类别"
 
 #: part/templates/part/category.html:281
 msgid "Create Part"
-msgstr ""
+msgstr "创建商品"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4637,12 +4637,12 @@ msgstr ""
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
-msgstr ""
+msgstr "顶层商品类别"
 
 #: part/templates/part/category_delete.html:25
 #, python-format
 msgid "This category contains %(count)s parts"
-msgstr ""
+msgstr "此类别包含 %(count)s 个商品"
 
 #: part/templates/part/category_delete.html:27
 #, python-format
@@ -4656,11 +4656,11 @@ msgstr ""
 #: part/templates/part/category_navbar.html:29
 #: part/templates/part/category_navbar.html:32
 msgid "Import Parts"
-msgstr ""
+msgstr "导入商品"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:352
 msgid "Duplicate Part"
-msgstr ""
+msgstr "重复商品"
 
 #: part/templates/part/copy_part.html:10
 #, python-format
@@ -4684,7 +4684,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:16
 msgid "Part Stock"
-msgstr ""
+msgstr "商品库存"
 
 #: part/templates/part/detail.html:21
 #, python-format
@@ -4759,15 +4759,15 @@ msgstr ""
 
 #: part/templates/part/detail.html:283
 msgid "Part Suppliers"
-msgstr ""
+msgstr "商品供应商"
 
 #: part/templates/part/detail.html:305
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "商品制造商"
 
 #: part/templates/part/detail.html:317
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "删除制造商商品"
 
 #: part/templates/part/detail.html:502
 msgid "Delete selected BOM items?"
@@ -4787,7 +4787,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:754
 msgid "Edit Part Notes"
-msgstr ""
+msgstr "编辑商品注释"
 
 #: part/templates/part/detail.html:906
 #, python-format
@@ -4816,7 +4816,7 @@ msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:14
 msgid "Import Parts from File"
-msgstr ""
+msgstr "从文件导入商品"
 
 #: part/templates/part/navbar.html:30
 msgid "Variants"
@@ -4836,7 +4836,7 @@ msgstr ""
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
-msgstr ""
+msgstr "商品列表"
 
 #: part/templates/part/part_base.html:35
 msgid "Part is a template part (variants can be made from this part)"
@@ -4844,11 +4844,11 @@ msgstr ""
 
 #: part/templates/part/part_base.html:38
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "商品可以由其他部件组装"
 
 #: part/templates/part/part_base.html:41
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "商品可以用于组装成品"
 
 #: part/templates/part/part_base.html:44
 msgid "Part stock is tracked by serial number"
@@ -4856,15 +4856,15 @@ msgstr ""
 
 #: part/templates/part/part_base.html:47
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "商品可以从外部供应商处购买"
 
 #: part/templates/part/part_base.html:50
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "商品可以销售给客户"
 
 #: part/templates/part/part_base.html:57 part/templates/part/part_base.html:65
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "商品是虚拟的(不是实体零件)"
 
 #: part/templates/part/part_base.html:58 templates/js/translated/company.js:503
 #: templates/js/translated/company.js:759 templates/js/translated/part.js:432
@@ -4874,7 +4874,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:73
 msgid "Star this part"
-msgstr ""
+msgstr "标记此商品"
 
 #: part/templates/part/part_base.html:80
 #: stock/templates/stock/item_base.html:75
@@ -4906,7 +4906,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:102
 msgid "Count part stock"
-msgstr ""
+msgstr "清点商品库存"
 
 #: part/templates/part/part_base.html:108
 msgid "Transfer part stock"
@@ -4918,15 +4918,15 @@ msgstr ""
 
 #: part/templates/part/part_base.html:128
 msgid "Duplicate part"
-msgstr ""
+msgstr "重复的商品"
 
 #: part/templates/part/part_base.html:131
 msgid "Edit part"
-msgstr ""
+msgstr "编辑商品"
 
 #: part/templates/part/part_base.html:134
 msgid "Delete part"
-msgstr ""
+msgstr "删除商品"
 
 #: part/templates/part/part_base.html:146
 #, python-format
@@ -4963,7 +4963,7 @@ msgstr ""
 #: part/templates/part/part_base.html:524
 #: part/templates/part/part_base.html:550
 msgid "Show Part Details"
-msgstr ""
+msgstr "显示商品详细信息"
 
 #: part/templates/part/part_base.html:283
 msgid "Latest Serial Number"
@@ -4980,7 +4980,7 @@ msgstr ""
 #: part/templates/part/part_base.html:519
 #: part/templates/part/part_base.html:544
 msgid "Hide Part Details"
-msgstr ""
+msgstr "隐藏商品详细信息"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
@@ -5024,7 +5024,7 @@ msgstr ""
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
-msgstr ""
+msgstr "注：此商品BOM价格不完整。"
 
 #: part/templates/part/part_pricing.html:88 part/templates/part/prices.html:93
 msgid "No BOM pricing available"
@@ -5037,7 +5037,7 @@ msgstr ""
 #: part/templates/part/part_pricing.html:128
 #: part/templates/part/prices.html:134
 msgid "No pricing information is available for this part."
-msgstr ""
+msgstr "此商品无价格信息可用。"
 
 #: part/templates/part/part_thumb.html:20
 msgid "Select from existing images"
@@ -5046,7 +5046,7 @@ msgstr ""
 #: part/templates/part/partial_delete.html:7
 #, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-msgstr ""
+msgstr "您确定要删除商品 '<strong>%(full_name)s</strong> '吗？"
 
 #: part/templates/part/partial_delete.html:12
 #, python-format
@@ -5141,7 +5141,7 @@ msgstr ""
 
 #: part/templates/part/set_category.html:9
 msgid "Set category for the following parts"
-msgstr ""
+msgstr "为以下商品设置类别"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:278
 #: templates/js/translated/part.js:755 templates/js/translated/part.js:957
