@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 05:58\n"
+"PO-Revision-Date: 2021-09-14 07:06\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -423,7 +423,7 @@ msgstr "收到定购单"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
-msgstr "产品"
+msgstr "生产中"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
@@ -579,7 +579,7 @@ msgstr "生产完成的目标日期。生产将在此日期之后逾期。"
 #: templates/js/translated/part.js:1554 templates/js/translated/stock.js:1675
 #: templates/js/translated/stock.js:1850
 msgid "Quantity"
-msgstr "库存数"
+msgstr "数量"
 
 #: build/forms.py:49
 msgid "Number of items to build"
@@ -721,7 +721,7 @@ msgstr "上级生产"
 
 #: build/models.py:200
 msgid "BuildOrder to which this build is allocated"
-msgstr "此次生生匹配的订单"
+msgstr "此次生产匹配的订单"
 
 #: build/models.py:205 build/templates/build/auto_allocate.html:16
 #: build/templates/build/build_base.html:128
@@ -1627,11 +1627,11 @@ msgstr ""
 
 #: common/models.py:522 company/models.py:99 company/models.py:100
 msgid "Company name"
-msgstr ""
+msgstr "公司名称"
 
 #: common/models.py:523
 msgid "Internal company name"
-msgstr ""
+msgstr "内部公司名称"
 
 #: common/models.py:528
 msgid "Base URL"
@@ -1961,19 +1961,19 @@ msgstr ""
 
 #: common/models.py:800
 msgid "Enable buy"
-msgstr ""
+msgstr "启用采购"
 
 #: common/models.py:801
 msgid "Enable buy functionality in InvenTree interface"
-msgstr ""
+msgstr "在 InventTree 界面中启用采购功能"
 
 #: common/models.py:806
 msgid "Enable sell"
-msgstr ""
+msgstr "启用销售"
 
 #: common/models.py:807
 msgid "Enable sell functionality in InvenTree interface"
-msgstr ""
+msgstr "在 InventTree 界面中启用销售功能"
 
 #: common/models.py:812
 msgid "Enable stock"
@@ -2248,48 +2248,48 @@ msgstr "图片URL"
 
 #: company/models.py:104
 msgid "Company description"
-msgstr ""
+msgstr "公司简介"
 
 #: company/models.py:105
 msgid "Description of the company"
-msgstr ""
+msgstr "公司简介"
 
 #: company/models.py:111 company/templates/company/company_base.html:70
 #: templates/js/translated/company.js:348
 msgid "Website"
-msgstr ""
+msgstr "网站"
 
 #: company/models.py:112
 msgid "Company website URL"
-msgstr ""
+msgstr "公司网站"
 
 #: company/models.py:116 company/templates/company/company_base.html:88
 msgid "Address"
-msgstr ""
+msgstr "地址"
 
 #: company/models.py:117
 msgid "Company address"
-msgstr ""
+msgstr "公司地址"
 
 #: company/models.py:120
 msgid "Phone number"
-msgstr ""
+msgstr "电话号码"
 
 #: company/models.py:121
 msgid "Contact phone number"
-msgstr ""
+msgstr "联系电话"
 
 #: company/models.py:124 company/templates/company/company_base.html:102
 msgid "Email"
-msgstr ""
+msgstr "电子邮件"
 
 #: company/models.py:124
 msgid "Contact email address"
-msgstr ""
+msgstr "联系人电子邮件"
 
 #: company/models.py:127 company/templates/company/company_base.html:109
 msgid "Contact"
-msgstr ""
+msgstr "联系人"
 
 #: company/models.py:128
 msgid "Point of contact"
@@ -2305,7 +2305,7 @@ msgstr "链接"
 
 #: company/models.py:130
 msgid "Link to external company information"
-msgstr ""
+msgstr "链接到外部公司信息"
 
 #: company/models.py:138 part/models.py:724
 msgid "Image"
@@ -2313,36 +2313,36 @@ msgstr "图片"
 
 #: company/models.py:143
 msgid "is customer"
-msgstr ""
+msgstr "是客户"
 
 #: company/models.py:143
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "您是否向该公司出售商品？"
 
 #: company/models.py:145
 msgid "is supplier"
-msgstr ""
+msgstr "是供应商"
 
 #: company/models.py:145
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "您是否从该公司采购商品？"
 
 #: company/models.py:147
 msgid "is manufacturer"
-msgstr ""
+msgstr "是制造商"
 
 #: company/models.py:147
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "该公司制造商品吗？"
 
 #: company/models.py:151 company/serializers.py:264
 #: company/templates/company/company_base.html:76 stock/serializers.py:155
 msgid "Currency"
-msgstr ""
+msgstr "货币"
 
 #: company/models.py:154
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "该公司使用的默认货币"
 
 #: company/models.py:319 company/models.py:534 stock/models.py:454
 #: stock/templates/stock/item_base.html:237
@@ -2396,7 +2396,7 @@ msgstr "制造商商品"
 
 #: company/models.py:415
 msgid "Parameter name"
-msgstr ""
+msgstr "参数名称"
 
 #: company/models.py:421
 #: report/templates/report/inventree_test_report_base.html:90
@@ -2404,11 +2404,11 @@ msgstr ""
 #: templates/js/translated/company.js:642 templates/js/translated/part.js:612
 #: templates/js/translated/stock.js:576
 msgid "Value"
-msgstr ""
+msgstr "数值"
 
 #: company/models.py:422
 msgid "Parameter value"
-msgstr ""
+msgstr "参数值"
 
 #: company/models.py:428 part/models.py:799 part/models.py:2220
 #: templates/js/translated/company.js:648 templates/js/translated/part.js:618
@@ -2417,7 +2417,7 @@ msgstr "单位"
 
 #: company/models.py:429
 msgid "Parameter units"
-msgstr ""
+msgstr "参数单位"
 
 #: company/models.py:501
 msgid "Linked manufacturer part must reference the same base part"
@@ -2494,17 +2494,17 @@ msgstr ""
 
 #: company/serializers.py:68
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "该公司使用的默认货币"
 
 #: company/serializers.py:69
 msgid "Currency Code"
-msgstr ""
+msgstr "货币代码"
 
 #: company/templates/company/company_base.html:9
 #: company/templates/company/company_base.html:35
 #: templates/InvenTree/search.html:304 templates/js/translated/company.js:321
 msgid "Company"
-msgstr ""
+msgstr "公司"
 
 #: company/templates/company/company_base.html:25
 #: part/templates/part/part_thumb.html:21
@@ -2519,28 +2519,28 @@ msgstr "从 URL 下载图片"
 #: company/templates/company/company_base.html:46
 #: templates/js/translated/order.js:117
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "创建采购订单"
 
 #: company/templates/company/company_base.html:51
 msgid "Edit company information"
-msgstr ""
+msgstr "编辑公司信息"
 
 #: company/templates/company/company_base.html:56
 #: company/templates/company/company_base.html:153
 msgid "Delete Company"
-msgstr ""
+msgstr "删除该公司"
 
 #: company/templates/company/company_base.html:64
 msgid "Company Details"
-msgstr ""
+msgstr "公司详细信息"
 
 #: company/templates/company/company_base.html:81
 msgid "Uses default currency"
-msgstr ""
+msgstr "使用默认货币"
 
 #: company/templates/company/company_base.html:95
 msgid "Phone"
-msgstr ""
+msgstr "电话"
 
 #: company/templates/company/company_base.html:126 order/models.py:550
 #: order/templates/order/sales_order_base.html:94 stock/models.py:496
@@ -2548,7 +2548,7 @@ msgstr ""
 #: templates/js/translated/company.js:328 templates/js/translated/order.js:692
 #: templates/js/translated/stock.js:1608
 msgid "Customer"
-msgstr ""
+msgstr "客户"
 
 #: company/templates/company/company_base.html:193
 #: part/templates/part/part_base.html:418
@@ -2611,7 +2611,7 @@ msgstr "新建制造商商品"
 
 #: company/templates/company/detail.html:93
 msgid "Supplier Stock"
-msgstr ""
+msgstr "供货商库存"
 
 #: company/templates/company/detail.html:102
 #: company/templates/company/navbar.html:46
@@ -2630,12 +2630,12 @@ msgstr "采购订单"
 #: company/templates/company/detail.html:108
 #: order/templates/order/purchase_orders.html:20
 msgid "Create new purchase order"
-msgstr ""
+msgstr "新建采购订单"
 
 #: company/templates/company/detail.html:109
 #: order/templates/order/purchase_orders.html:21
 msgid "New Purchase Order"
-msgstr ""
+msgstr "新建采购订单"
 
 #: company/templates/company/detail.html:124
 #: company/templates/company/navbar.html:55
@@ -2654,12 +2654,12 @@ msgstr "销售订单"
 #: company/templates/company/detail.html:130
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "新建销售订单"
 
 #: company/templates/company/detail.html:131
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "新建销售订单"
 
 #: company/templates/company/detail.html:147
 #: company/templates/company/navbar.html:61
@@ -2670,7 +2670,7 @@ msgstr ""
 
 #: company/templates/company/detail.html:165
 msgid "Company Notes"
-msgstr ""
+msgstr "公司备注"
 
 #: company/templates/company/detail.html:364
 #: company/templates/company/manufacturer_part.html:200
@@ -2686,7 +2686,7 @@ msgstr "删除所有选定的供应商商品"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
-msgstr ""
+msgstr "供应商列表"
 
 #: company/templates/company/manufacturer_part.html:40
 #: company/templates/company/supplier_part.html:40
@@ -2802,12 +2802,12 @@ msgstr "订单"
 #: company/templates/company/navbar.html:17
 #: company/templates/company/navbar.html:20
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "制造商商品"
 
 #: company/templates/company/navbar.html:26
 #: company/templates/company/navbar.html:29
 msgid "Supplied Parts"
-msgstr ""
+msgstr "供应商商品"
 
 #: company/templates/company/navbar.html:36 part/templates/part/navbar.html:35
 #: stock/templates/stock/location.html:119
@@ -2897,7 +2897,7 @@ msgstr "定价"
 
 #: company/views.py:50
 msgid "New Supplier"
-msgstr ""
+msgstr "新增供应商"
 
 #: company/views.py:55 part/templates/part/prices.html:167
 #: templates/InvenTree/search.html:306 templates/navbar.html:42
@@ -2906,24 +2906,24 @@ msgstr "制造商"
 
 #: company/views.py:56
 msgid "New Manufacturer"
-msgstr ""
+msgstr "新建制造商"
 
 #: company/views.py:61 templates/InvenTree/search.html:336
 #: templates/navbar.html:53
 msgid "Customers"
-msgstr ""
+msgstr "客户信息"
 
 #: company/views.py:62
 msgid "New Customer"
-msgstr ""
+msgstr "新建客户"
 
 #: company/views.py:69
 msgid "Companies"
-msgstr ""
+msgstr "公司"
 
 #: company/views.py:70
 msgid "New Company"
-msgstr ""
+msgstr "新建公司信息"
 
 #: company/views.py:129 part/views.py:608
 msgid "Download Image"
@@ -3026,7 +3026,7 @@ msgstr ""
 #: order/forms.py:52 order/forms.py:63 order/templates/order/order_base.html:59
 #: order/templates/order/sales_order_base.html:61
 msgid "Cancel order"
-msgstr ""
+msgstr "取消订单"
 
 #: order/forms.py:74 order/templates/order/sales_order_base.html:58
 msgid "Ship order"
@@ -3058,7 +3058,7 @@ msgstr ""
 
 #: order/models.py:175
 msgid "User or group responsible for this order"
-msgstr ""
+msgstr "负责此订单的用户或群组"
 
 #: order/models.py:180
 msgid "Order notes"
@@ -3074,7 +3074,7 @@ msgstr ""
 
 #: order/models.py:261
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "订购该商品的公司"
 
 #: order/models.py:264 order/templates/order/order_base.html:98
 #: templates/js/translated/order.js:337
@@ -3123,15 +3123,15 @@ msgstr ""
 
 #: order/models.py:425
 msgid "Quantity must be an integer"
-msgstr ""
+msgstr "数量必须是整数"
 
 #: order/models.py:427
 msgid "Quantity must be a positive number"
-msgstr ""
+msgstr "数量必须大于0"
 
 #: order/models.py:551
 msgid "Company to which the items are being sold"
-msgstr ""
+msgstr "向其出售该商品的公司"
 
 #: order/models.py:557
 msgid "Customer Reference "
@@ -3457,7 +3457,7 @@ msgstr ""
 #: part/templates/part/import_wizard/part_upload.html:21
 #, python-format
 msgid "Step %(step)s of %(count)s"
-msgstr ""
+msgstr "步骤 %(step)s / %(count)s"
 
 #: order/templates/order/order_wizard/po_upload.html:48
 msgid "Order is already processed. Files cannot be uploaded."
@@ -3469,7 +3469,7 @@ msgstr "步骤 1 / 2 - 选择商品供货商"
 
 #: order/templates/order/order_wizard/select_parts.html:16
 msgid "Select suppliers"
-msgstr ""
+msgstr "选择供应商"
 
 #: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
@@ -3477,16 +3477,16 @@ msgstr "未选择可购买的商品"
 
 #: order/templates/order/order_wizard/select_parts.html:33
 msgid "Select Supplier"
-msgstr ""
+msgstr "选择供应商"
 
 #: order/templates/order/order_wizard/select_parts.html:57
 msgid "No price"
-msgstr ""
+msgstr "暂无价格"
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
 msgid "Select a supplier for <em>%(name)s</em>"
-msgstr ""
+msgstr "为 <em>%(name)s</em>选择一个供应商"
 
 #: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
@@ -3581,7 +3581,7 @@ msgstr ""
 
 #: order/templates/order/receive_parts.html:20
 msgid "Order Code"
-msgstr ""
+msgstr "订单编码"
 
 #: order/templates/order/receive_parts.html:21
 #: part/templates/part/part_base.html:167 templates/js/translated/part.js:949
@@ -3626,7 +3626,7 @@ msgstr ""
 #: part/templates/part/bom_duplicate.html:12
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -3669,7 +3669,7 @@ msgstr ""
 #: templates/js/translated/order.js:534 templates/js/translated/part.js:1332
 #: templates/js/translated/part.js:1543
 msgid "Unit Price"
-msgstr ""
+msgstr "单价"
 
 #: order/templates/order/sales_order_detail.html:384
 #: templates/js/translated/order.js:543
@@ -3777,19 +3777,19 @@ msgstr ""
 
 #: order/views.py:104
 msgid "Cancel Order"
-msgstr ""
+msgstr "取消订单"
 
 #: order/views.py:113 order/views.py:139
 msgid "Confirm order cancellation"
-msgstr ""
+msgstr "确认取消订单"
 
 #: order/views.py:116 order/views.py:142
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "无法取消订单"
 
 #: order/views.py:130
 msgid "Cancel sales order"
-msgstr ""
+msgstr "取消销售订单"
 
 #: order/views.py:156
 msgid "Issue Order"
@@ -3920,11 +3920,11 @@ msgstr ""
 
 #: part/api.py:700
 msgid "Must be greater than zero"
-msgstr ""
+msgstr "必须大于0"
 
 #: part/api.py:704
 msgid "Must be a valid quantity"
-msgstr ""
+msgstr "必须是有效的数量"
 
 #: part/api.py:719
 msgid "Specify location for initial part stock"
@@ -3932,24 +3932,24 @@ msgstr "指定初始初始商品库存位置"
 
 #: part/api.py:750 part/api.py:754 part/api.py:769 part/api.py:773
 msgid "This field is required"
-msgstr ""
+msgstr "此字段为必填"
 
 #: part/bom.py:133 part/models.py:75 part/models.py:733
 #: part/templates/part/category.html:75 part/templates/part/part_base.html:290
 msgid "Default Location"
-msgstr ""
+msgstr "默认位置"
 
 #: part/bom.py:134 part/templates/part/part_base.html:156
 msgid "Available Stock"
-msgstr ""
+msgstr "可用库存"
 
 #: part/forms.py:63
 msgid "File Format"
-msgstr ""
+msgstr "文件格式"
 
 #: part/forms.py:63
 msgid "Select output file format"
-msgstr ""
+msgstr "选择输出文件格式"
 
 #: part/forms.py:65
 msgid "Cascading"
@@ -3961,7 +3961,7 @@ msgstr ""
 
 #: part/forms.py:67
 msgid "Levels"
-msgstr ""
+msgstr "等级"
 
 #: part/forms.py:67
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
@@ -3969,7 +3969,7 @@ msgstr ""
 
 #: part/forms.py:69
 msgid "Include Parameter Data"
-msgstr ""
+msgstr "包含参数数据"
 
 #: part/forms.py:69
 msgid "Include part parameters data in exported BOM"
@@ -3977,7 +3977,7 @@ msgstr "在导出的BOM 中包含商品参数"
 
 #: part/forms.py:71
 msgid "Include Stock Data"
-msgstr ""
+msgstr "包括库存数据"
 
 #: part/forms.py:71
 msgid "Include part stock data in exported BOM"
@@ -3985,7 +3985,7 @@ msgstr "在导出 BOM 中包括库存数据"
 
 #: part/forms.py:73
 msgid "Include Manufacturer Data"
-msgstr ""
+msgstr "包括制造商数据"
 
 #: part/forms.py:73
 msgid "Include part manufacturer data in exported BOM"
@@ -3993,7 +3993,7 @@ msgstr "在导出 BOM 中包含制造商数据"
 
 #: part/forms.py:75
 msgid "Include Supplier Data"
-msgstr ""
+msgstr "包含供应商数据"
 
 #: part/forms.py:75
 msgid "Include part supplier data in exported BOM"
@@ -4021,7 +4021,7 @@ msgstr ""
 
 #: part/forms.py:127
 msgid "Confirm that the BOM is correct"
-msgstr ""
+msgstr "确认BOM 正确"
 
 #: part/forms.py:170
 msgid "Related Part"
@@ -4203,7 +4203,7 @@ msgstr ""
 
 #: part/models.py:828
 msgid "Can this part be sold to customers?"
-msgstr ""
+msgstr "此商品可以销售给客户吗?"
 
 #: part/models.py:832 templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:82
@@ -4242,7 +4242,7 @@ msgstr ""
 
 #: part/models.py:855
 msgid "Creation User"
-msgstr ""
+msgstr "新建用户"
 
 #: part/models.py:1601
 msgid "Sell multiple"
@@ -5857,7 +5857,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:180
 msgid "This stock item is in production and cannot be edited."
-msgstr ""
+msgstr "此库存项目正在生产中，无法编辑。"
 
 #: stock/templates/stock/item_base.html:181
 msgid "Edit the stock item from the build view."
@@ -6053,7 +6053,7 @@ msgstr ""
 #: stock/templates/stock/location.html:129 templates/InvenTree/search.html:279
 #: templates/stats.html:97 users/models.py:42
 msgid "Stock Locations"
-msgstr ""
+msgstr "库存地点"
 
 #: stock/templates/stock/location.html:162 templates/stock_table.html:37
 msgid "Printing Actions"
@@ -6360,12 +6360,12 @@ msgstr ""
 #: templates/InvenTree/settings/navbar.html:12
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "用户设置"
 
 #: templates/InvenTree/settings/navbar.html:15
 #: templates/InvenTree/settings/navbar.html:17
 msgid "Account"
-msgstr ""
+msgstr "帐户"
 
 #: templates/InvenTree/settings/navbar.html:21
 #: templates/InvenTree/settings/navbar.html:23
@@ -6451,7 +6451,7 @@ msgstr ""
 #: templates/InvenTree/settings/report.html:10
 #: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
-msgstr ""
+msgstr "报表设置"
 
 #: templates/InvenTree/settings/setting.html:29
 msgid "No value set"
@@ -6489,37 +6489,37 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:9
 msgid "Account Settings"
-msgstr ""
+msgstr "帐户设置"
 
 #: templates/InvenTree/settings/user.html:15
 #: templates/js/translated/helpers.js:26
 msgid "Edit"
-msgstr ""
+msgstr "编辑"
 
 #: templates/InvenTree/settings/user.html:17
 msgid "Change Password"
-msgstr ""
+msgstr "更改密码"
 
 #: templates/InvenTree/settings/user.html:24
 #: templates/registration/login.html:58
 msgid "Username"
-msgstr ""
+msgstr "用户名"
 
 #: templates/InvenTree/settings/user.html:28
 msgid "First Name"
-msgstr ""
+msgstr "名字"
 
 #: templates/InvenTree/settings/user.html:32
 msgid "Last Name"
-msgstr ""
+msgstr "姓氏"
 
 #: templates/InvenTree/settings/user.html:36
 msgid "Email Address"
-msgstr ""
+msgstr "电子邮件地址"
 
 #: templates/InvenTree/settings/user.html:42
 msgid "Theme Settings"
-msgstr ""
+msgstr "主题设置"
 
 #: templates/InvenTree/settings/user.html:63
 msgid "Set Theme"
@@ -7006,7 +7006,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:944 templates/js/translated/stock.js:1696
 msgid "No user information"
-msgstr ""
+msgstr "没有用户信息"
 
 #: templates/js/translated/build.js:956
 msgid "No information"
@@ -7018,7 +7018,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:65
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "添加制造商"
 
 #: templates/js/translated/company.js:78 templates/js/translated/company.js:176
 msgid "Add Manufacturer Part"
@@ -7034,7 +7034,7 @@ msgstr "删除制造商商品"
 
 #: templates/js/translated/company.js:164 templates/js/translated/order.js:86
 msgid "Add Supplier"
-msgstr ""
+msgstr "添加供应商"
 
 #: templates/js/translated/company.js:192
 msgid "Add Supplier Part"
@@ -7050,11 +7050,11 @@ msgstr "删除供应商商品"
 
 #: templates/js/translated/company.js:264
 msgid "Edit Company"
-msgstr ""
+msgstr "编辑公司信息"
 
 #: templates/js/translated/company.js:285
 msgid "Add new Company"
-msgstr ""
+msgstr "增加新的公司信息"
 
 #: templates/js/translated/company.js:362
 msgid "Parts Supplied"
@@ -7066,7 +7066,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:385
 msgid "No company information found"
-msgstr ""
+msgstr "未找到该公司信息"
 
 #: templates/js/translated/company.js:404
 msgid "The following manufacturer parts will be deleted"
@@ -7094,27 +7094,27 @@ msgstr ""
 
 #: templates/js/translated/company.js:626 templates/js/translated/part.js:593
 msgid "No parameters found"
-msgstr ""
+msgstr "无指定参数"
 
 #: templates/js/translated/company.js:663 templates/js/translated/part.js:635
 msgid "Edit parameter"
-msgstr ""
+msgstr "编辑参数"
 
 #: templates/js/translated/company.js:664 templates/js/translated/part.js:636
 msgid "Delete parameter"
-msgstr ""
+msgstr "删除参数"
 
 #: templates/js/translated/company.js:683 templates/js/translated/part.js:653
 msgid "Edit Parameter"
-msgstr ""
+msgstr "编辑参数"
 
 #: templates/js/translated/company.js:694 templates/js/translated/part.js:665
 msgid "Delete Parameter"
-msgstr ""
+msgstr "删除参数"
 
 #: templates/js/translated/company.js:731
 msgid "No supplier parts found"
-msgstr ""
+msgstr "未找到供应商商品"
 
 #: templates/js/translated/filters.js:178
 #: templates/js/translated/filters.js:402
@@ -7128,7 +7128,7 @@ msgstr ""
 
 #: templates/js/translated/filters.js:204
 msgid "Select filter"
-msgstr ""
+msgstr "选择筛选项"
 
 #: templates/js/translated/filters.js:279
 msgid "Reload data"
@@ -7236,7 +7236,7 @@ msgstr ""
 #: templates/js/translated/modals.js:76 templates/js/translated/modals.js:120
 #: templates/js/translated/modals.js:610
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: templates/js/translated/modals.js:77 templates/js/translated/modals.js:119
 #: templates/js/translated/modals.js:677 templates/js/translated/modals.js:981
@@ -7294,7 +7294,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:40
 msgid "Company ID"
-msgstr ""
+msgstr "公司ID"
 
 #: templates/js/translated/model_renderers.js:82
 msgid "Location ID"
@@ -7634,7 +7634,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:691
 msgid "In production"
-msgstr ""
+msgstr "正在生产"
 
 #: templates/js/translated/stock.js:695
 msgid "Installed in Stock Item"
@@ -7646,7 +7646,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:865
 msgid "Stock item is in production"
-msgstr ""
+msgstr "库存品正在生产"
 
 #: templates/js/translated/stock.js:870
 msgid "Stock item assigned to sales order"
@@ -7884,11 +7884,11 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:171
 msgid "In Production"
-msgstr ""
+msgstr "正在生产"
 
 #: templates/js/translated/table_filters.js:172
 msgid "Show items which are in production"
-msgstr ""
+msgstr "显示正在生产的项目"
 
 #: templates/js/translated/table_filters.js:176
 msgid "Include Variants"
@@ -7933,7 +7933,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:263
 msgid "Build status"
-msgstr ""
+msgstr "生产状态"
 
 #: templates/js/translated/table_filters.js:282
 #: templates/js/translated/table_filters.js:299
@@ -8027,11 +8027,11 @@ msgstr ""
 
 #: templates/navbar.html:39
 msgid "Buy"
-msgstr ""
+msgstr "采购"
 
 #: templates/navbar.html:51
 msgid "Sell"
-msgstr ""
+msgstr "销售"
 
 #: templates/navbar.html:87 users/models.py:39
 msgid "Admin"
@@ -8065,7 +8065,7 @@ msgstr ""
 
 #: templates/registration/login.html:64
 msgid "Enter username"
-msgstr ""
+msgstr "输入用户名"
 
 #: templates/registration/login.html:70
 msgid "Password"
@@ -8073,7 +8073,7 @@ msgstr ""
 
 #: templates/registration/login.html:83
 msgid "Username / password combination is incorrect"
-msgstr ""
+msgstr "用户名/密码校验错误"
 
 #: templates/registration/login.html:95
 #: templates/registration/password_reset_form.html:51
@@ -8099,7 +8099,7 @@ msgstr ""
 
 #: templates/registration/password_reset_done.html:51
 msgid "We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly."
-msgstr ""
+msgstr "如果您输入的电子邮件已有帐户，我们已经通过电子邮件向您发送了密码设置说明。您很快就会收到邮件。"
 
 #: templates/registration/password_reset_done.html:54
 msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
@@ -8227,15 +8227,15 @@ msgstr ""
 
 #: users/admin.py:64
 msgid "Users"
-msgstr ""
+msgstr "用户"
 
 #: users/admin.py:65
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "选择分配给该组的用户"
 
 #: users/admin.py:187
 msgid "The following users are members of multiple groups:"
-msgstr ""
+msgstr "以下用户是多个群组的成员："
 
 #: users/admin.py:210
 msgid "Personal info"
