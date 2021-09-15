@@ -9,6 +9,9 @@ import logging
 import plugins.action as action
 from plugins.action.action import ActionPlugin
 
+import plugins.integration as integration
+from plugins.integration.integration import IntegrationPlugin
+
 
 logger = logging.getLogger("inventree")
 
@@ -78,3 +81,10 @@ def load_action_plugins():
     Return a list of all registered action plugins
     """
     return load_plugins('action', action, ActionPlugin)
+
+
+def load_integration_plugins():
+    """
+    Return a list of all registered integration plugins
+    """
+    return load_plugins('integration', integration, IntegrationPlugin)

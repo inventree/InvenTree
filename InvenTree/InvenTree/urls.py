@@ -48,6 +48,8 @@ from common.views import SettingEdit, UserSettingEdit
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
 
+from plugins import plugins as inventree_plugins
+
 from users.api import user_urls
 
 admin.site.site_header = "InvenTree Admin"
@@ -125,6 +127,15 @@ translated_javascript_urls = [
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
 ]
 
+# Integration plugin urls
+integration_plugins = inventree_plugins.load_integration_plugins()
+interation_urls = []
+for plugin in integration_plugins:
+    # initialize
+    plugin = plugin()
+    if plugin.has_urls:
+        interation_urls.append(plugin.urlpatterns)
+
 urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^manufacturer-part/', include(manufacturer_part_urls)),
@@ -166,6 +177,9 @@ urlpatterns = [
 
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+
+    # plugins
+    url(r'^plugin/', include(interation_urls)),
 
     url(r'^markdownx/', include('markdownx.urls')),
 ]
