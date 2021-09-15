@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-15 09:58\n"
+"PO-Revision-Date: 2021-09-15 10:57\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -76,83 +76,83 @@ msgstr ""
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:430
 #: stock/views.py:1363
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Quantità inserita non valida"
 
 #: InvenTree/helpers.py:411
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Numero seriale vuoto"
 
 #: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Gruppo non valido: {g}"
 
 #: InvenTree/helpers.py:469
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "Seriale duplicato: {g}"
 
 #: InvenTree/helpers.py:477
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Nessun numero di serie trovato"
 
 #: InvenTree/helpers.py:481
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Il numero dei numeri seriali univoci ({s}) deve essere uguale alla quantità ({q})"
 
 #: InvenTree/models.py:66 stock/models.py:1826
 msgid "Attachment"
-msgstr ""
+msgstr "Allegato"
 
 #: InvenTree/models.py:67
 msgid "Select file to attach"
-msgstr ""
+msgstr "Seleziona file da allegare"
 
 #: InvenTree/models.py:69 templates/js/translated/attachment.js:87
 msgid "Comment"
-msgstr ""
+msgstr "Commento"
 
 #: InvenTree/models.py:69
 msgid "File comment"
-msgstr ""
+msgstr "Commento del file"
 
 #: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:993
 #: common/models.py:994 part/models.py:2051
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1690
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: InvenTree/models.py:79
 msgid "upload date"
-msgstr ""
+msgstr "data caricamento"
 
 #: InvenTree/models.py:99
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Il nome del file non deve essere vuoto"
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Directory allegati non valida"
 
 #: InvenTree/models.py:132
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Il nome del file contiene caratteri non validi '{c}'"
 
 #: InvenTree/models.py:135
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Nome file estensione mancante"
 
 #: InvenTree/models.py:142
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Esiste già un allegato con questo nome di file"
 
 #: InvenTree/models.py:149
 msgid "Error renaming file"
-msgstr ""
+msgstr "Errore nella rinominazione del file"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
