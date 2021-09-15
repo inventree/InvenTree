@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 01:43\n"
+"PO-Revision-Date: 2021-09-15 09:58\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Endpoint API non trovato"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
@@ -42,11 +42,11 @@ msgstr "Conferma"
 
 #: InvenTree/forms.py:127
 msgid "Confirm delete"
-msgstr ""
+msgstr "Conferma eliminazione"
 
 #: InvenTree/forms.py:128
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Conferma eliminazione elementi"
 
 #: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
