@@ -51,19 +51,30 @@ def get_plugins(pkg, baseclass):
     return plugins
 
 
-def load_action_plugins():
-    """
-    Return a list of all registered action plugins
+def load_plugins(name:str, module, cls):
+    """general function to load a plugin class
+
+    :param name: name of the plugin for logs
+    :type name: str
+    :param module: module from which the plugins should be loaded
+    :return: class of the to-be-loaded plugin
     """
 
-    logger.debug("Loading action plugins")
+    logger.debug(f"Loading {name} plugins")
 
-    plugins = get_plugins(action, ActionPlugin)
+    plugins = get_plugins(module, cls)
 
     if len(plugins) > 0:
-        logger.info("Discovered {n} action plugins:".format(n=len(plugins)))
+        logger.info(f"Discovered {len(plugins)} {name} plugins:")
 
         for ap in plugins:
             logger.debug(" - {ap}".format(ap=ap.PLUGIN_NAME))
 
     return plugins
+
+
+def load_action_plugins():
+    """
+    Return a list of all registered action plugins
+    """
+    return load_plugins('action', action, ActionPlugin)
