@@ -25,7 +25,14 @@
         {% plugin_list as pl_list %}
         {% for plugin_key, plugin in pl_list.items %}
         <tr>
-            <td>{{plugin_key}} - {{ plugin.plugin_name}}</td>
+            <td>{{plugin_key}} - {{ plugin.plugin_name}}
+                {% if plugin.has_urls %}
+                    <span class='badge'>{% trans 'Has urls' %}</span>
+                {% endif %}
+                {% if plugin.has_settings %}
+                    <span class='badge'>{% trans 'Has settings' %}</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
