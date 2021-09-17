@@ -122,6 +122,12 @@
         <strong>{% trans "Plugin Settings" %}</strong>
     </li>
 
+    <li class='list-group-item' title='{% trans "Plugin" %}'>
+        <a href='#' class='nav-toggle' id='select-plugin'>
+            <span class='fas fa-plug'></span> {% trans "Plugin" %}
+        </a>
+    </li>
+
     {% plugin_list as pl_list %}
     {% for plugin_key, plugin in pl_list.items %}
         {% if plugin.has_settings %}
