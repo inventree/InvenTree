@@ -588,6 +588,21 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(new_part.supplier_parts.count(), 1)
         self.assertEqual(new_part.manufacturer_parts.count(), 1)
         
+    def test_strange_chars(self):
+        """
+        Test that non-standard ASCII chars are accepted
+        """
+
+        url = reverse('api-part-list')
+
+        data = {
+            "name": "KaltgerÃ¤testecker",
+            "description": "Gerät",
+            "category": 2
+        }
+
+        response = self.post(url, data, expected_code=201)
+
 
 class PartDetailTests(InvenTreeAPITestCase):
     """
