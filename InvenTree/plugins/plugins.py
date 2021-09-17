@@ -54,7 +54,7 @@ def get_plugins(pkg, baseclass):
     return plugins
 
 
-def load_plugins(name:str, module, cls):
+def load_plugins(name: str, module, cls):
     """general function to load a plugin class
 
     :param name: name of the plugin for logs
