@@ -827,6 +827,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        **settings.INTEGRATION_PLUGIN_SETTINGS
     }
 
     class Meta:

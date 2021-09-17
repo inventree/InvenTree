@@ -20,6 +20,7 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
         plugin.InvenTreePlugin.__init__(self)
 
         self.urls = self.setup_urls()
+        self.settings = self.setup_settings()
 
     def setup_urls(self):
         """
@@ -45,3 +46,23 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
         """
         return bool(self.urls)
 
+    def setup_settings(self):
+        """
+        setup settings for this plugin
+        """
+        if self.SETTINGS:
+            return self.SETTINGS
+        return None
+
+    @property
+    def has_settings(self):
+        """
+        does this plugin use custom settings
+        """
+        return bool(self.settings)
+
+    @property
+    def settingspatterns(self):
+        if self.has_settings:
+            return {f'PLUGIN_{self.plugin_name().upper()}_{key}': value for key, value in self.settings.items()}
+        return None

@@ -26,6 +26,8 @@ import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 
+from plugins import plugins as inventree_plugins
+
 
 def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
@@ -646,3 +648,17 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert alert-block alert-danger',
     messages.INFO: 'alert alert-block alert-info',
 }
+
+# Plugins
+INTEGRATION_PLUGINS = inventree_plugins.load_integration_plugins()
+
+INTEGRATION_PLUGIN_SETTINGS = {}
+INTEGRATION_PLUGIN_SETTING = {}
+INTEGRATION_PLUGIN_LIST = {}
+
+for plugin in INTEGRATION_PLUGINS:
+    plugin = plugin()
+    if plugin.has_settings:
+        INTEGRATION_PLUGIN_LIST[plugin.plugin_name()] = plugin
+        INTEGRATION_PLUGIN_SETTING[plugin.plugin_name()] = plugin.settingspatterns
+        INTEGRATION_PLUGIN_SETTINGS.update(plugin.settingspatterns)
