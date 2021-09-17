@@ -27,10 +27,10 @@
         <tr>
             <td>{{plugin_key}} - {{ plugin.plugin_name}}
                 {% if plugin.has_urls %}
-                    <span class='badge'>{% trans 'Has urls' %}</span>
+                    <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has urls' %}</a></span>
                 {% endif %}
                 {% if plugin.has_settings %}
-                    <span class='badge'>{% trans 'Has settings' %}</span>
+                    <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has settings' %}</a></span>
                 {% endif %}
             </td>
         </tr>
