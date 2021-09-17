@@ -595,13 +595,19 @@ class PartAPITest(InvenTreeAPITestCase):
 
         url = reverse('api-part-list')
 
+        name = "KaltgerÃ¤testecker"
+        description = "Gerät"
+
         data = {
-            "name": "KaltgerÃ¤testecker",
-            "description": "Gerät",
+            "name": name,
+            "description": description,
             "category": 2
         }
 
         response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['name'], name)
+        self.assertEqual(response.data['description'], description)
 
 
 class PartDetailTests(InvenTreeAPITestCase):
