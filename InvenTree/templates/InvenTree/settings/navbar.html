@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load plugin_extras %}
 
 <ul class='list-group'>
 
@@ -115,6 +116,22 @@
             <span class='fas fa-truck'></span> {% trans "Sales Orders" %}
         </a>
     </li>
+
+
+    <li class='list-group-item'>
+        <strong>{% trans "Plugin Settings" %}</strong>
+    </li>
+
+    {% plugin_list as pl_list %}
+    {% for plugin_key, plugin in pl_list.items %}
+        {% if plugin.has_settings %}
+            <li class='list-group-item' title='{{ plugin.plugin_name }}'>
+                <a href='#' class='nav-toggle' id='select-plugin-{{plugin_key}}'>
+                    {{ plugin.plugin_name}}
+                </a>
+            </li>
+        {% endif %}
+    {% endfor %}
 
     {% endif %}
 
