@@ -16,12 +16,19 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
     """
 
     def __init__(self):
-        """
-        """
-        plugin.InvenTreePlugin.__init__(self)
+        self.add_mixin('base')
+        super().__init__()
 
         self.urls = self.setup_urls()
         self.settings = self.setup_settings()
+
+    def add_mixin(self, key: str):
+        if not hasattr(self, 'mixins'):
+            self.mixins = {}
+        self.mixins[key] = True
+
+    def module(self, key):
+        return key in self.mixins
 
     def setup_urls(self):
         """
