@@ -3,6 +3,7 @@
 import logging
 
 from django.conf.urls import url, include
+from django.conf import settings
 import plugins.plugin as plugin
 
 
@@ -29,6 +30,10 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
         if self.urlpatterns:
             return self.urlpatterns
         return None
+
+    @property
+    def base_url(self):
+        return f'{settings.PLUGIN_URL}/{self.plugin_name()}/'
 
     @property
     def urlpatterns(self):
