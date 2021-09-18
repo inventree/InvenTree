@@ -25,12 +25,15 @@
     <tbody>
         {% plugin_list as pl_list %}
         {% for plugin_key, plugin in pl_list.items %}
+        {% mixin_enabled plugin 'urls' as urls %}
+        {% mixin_enabled plugin 'settings' as settings %}
+
         <tr>
             <td>{{plugin_key}} - {{ plugin.plugin_name}}
-                {% if plugin.has_urls %}
+                {% if urls %}
                     <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has urls' %}</a></span>
                 {% endif %}
-                {% if plugin.has_settings %}
+                {% if settings %}
                     <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has settings' %}</a></span>
                 {% endif %}
             </td>

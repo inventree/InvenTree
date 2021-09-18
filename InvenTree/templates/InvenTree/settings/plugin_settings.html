@@ -7,10 +7,14 @@
 
 
 {% block heading %}
-{% blocktrans with name=plugin.plugin_name %}Plugin Settings for {{name}}{% endblocktrans %}
+{% blocktrans with name=plugin.plugin_name %}Plugin details for {{name}}{% endblocktrans %}
 {% endblock %}
 
 {% block content %}
+
+{% mixin_enabled plugin 'settings' as settings %}
+{% if settings %}
+<h4>{% trans "Settings" %}</h4>
 {% plugin_settings plugin_key as plugin_settings %}
 
 <table class='table table-striped table-condensed'>
@@ -21,8 +25,10 @@
         {% endfor %}
     </tbody>
 </table>
+{% endif %}
 
-{% if plugin.has_urls %}
+{% mixin_enabled plugin 'urls' as urls %}
+{% if urls %}
 <h4>{% trans "URLs" %}</h4>
     {% define plugin.base_url as base %}
     <p>{% blocktrans %}The Base-URL for this plugin is <a href="/{{ base }}" target="_blank"><strong>{{ base }}</strong></a>.{% endblocktrans %}</p>
