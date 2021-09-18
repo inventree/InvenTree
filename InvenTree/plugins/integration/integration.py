@@ -10,6 +10,36 @@ import plugins.plugin as plugin
 logger = logging.getLogger("inventree")
 
 
+class SettingsMixin:
+    """Mixin that enables settings for the plugin"""
+    def __init__(self):
+        super().__init__()
+
+        self.add_mixin('settings')
+        self.settings = self.setup_settings()
+
+    def setup_settings(self):
+        """
+        setup settings for this plugin
+        """
+        if self.SETTINGS:
+            return self.SETTINGS
+        return None
+
+    @property
+    def has_settings(self):
+        """
+        does this plugin use custom settings
+        """
+        return bool(self.settings)
+
+    @property
+    def settingspatterns(self):
+        if self.has_settings:
+            return {f'PLUGIN_{self.plugin_name().upper()}_{key}': value for key, value in self.settings.items()}
+        return None
+
+
 class IntegrationPlugin(plugin.InvenTreePlugin):
     """
     The IntegrationPlugin class is used to integrate with 3rd party software
@@ -20,7 +50,6 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
         super().__init__()
 
         self.urls = self.setup_urls()
-        self.settings = self.setup_settings()
 
     def add_mixin(self, key: str):
         if not hasattr(self, 'mixins'):

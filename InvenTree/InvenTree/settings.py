@@ -660,7 +660,7 @@ INTEGRATION_PLUGIN_LIST = {}
 
 for plugin in INTEGRATION_PLUGINS:
     plugin = plugin()
-    if plugin.has_settings:
-        INTEGRATION_PLUGIN_LIST[plugin.plugin_name()] = plugin
+    INTEGRATION_PLUGIN_LIST[plugin.plugin_name()] = plugin
+    if plugin.module('settings') and plugin.has_settings:
         INTEGRATION_PLUGIN_SETTING[plugin.plugin_name()] = plugin.settingspatterns
         INTEGRATION_PLUGIN_SETTINGS.update(plugin.settingspatterns)
