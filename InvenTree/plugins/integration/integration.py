@@ -15,7 +15,7 @@ class SettingsMixin:
     def __init__(self):
         super().__init__()
 
-        self.add_mixin('settings')
+        self.add_mixin('settings', 'has_settings')
         self.settings = self.setup_settings()
 
     def setup_settings(self):
@@ -45,15 +45,15 @@ class UrlsMixin:
     def __init__(self):
         super().__init__()
 
-        self.add_mixin('urls')
+        self.add_mixin('urls', 'has_urls')
         self.urls = self.setup_urls()
 
     def setup_urls(self):
         """
         setup url endpoints for this plugin
         """
-        if self.urlpatterns:
-            return self.urlpatterns
+        if hasattr(self, 'URLS'):
+            return self.URLS
         return None
 
     @property
@@ -86,10 +86,18 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
         self.add_mixin('base')
         super().__init__()
 
-    def add_mixin(self, key: str):
+    def add_mixin(self, key: str, fnc_enabled=None):
         if not hasattr(self, 'mixins'):
             self.mixins = {}
         self.mixins[key] = True
+        if fnc_enabled:
+            self.mixins[key] = fnc_enabled
 
     def module(self, key):
         return key in self.mixins
+
+    def module_enabled(self, key):
+        if self.module(key):
+            fnc_name = self.mixins.get(key)
+            return getattr(self, fnc_name, True)
+        return False
