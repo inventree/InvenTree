@@ -40,6 +40,43 @@ class SettingsMixin:
         return None
 
 
+class UrlsMixin:
+    """Mixin that enables urls for the plugin"""
+    def __init__(self):
+        super().__init__()
+
+        self.add_mixin('urls')
+        self.urls = self.setup_urls()
+
+    def setup_urls(self):
+        """
+        setup url endpoints for this plugin
+        """
+        if self.urlpatterns:
+            return self.urlpatterns
+        return None
+
+    @property
+    def base_url(self):
+        return f'{settings.PLUGIN_URL}/{self.plugin_name()}/'
+
+    @property
+    def urlpatterns(self):
+        """
+        retruns the urlpatterns for this plugin
+        """
+        if self.has_urls:
+            return url(f'^{self.plugin_name()}/', include(self.urls), name=self.plugin_name())
+        return None
+
+    @property
+    def has_urls(self):
+        """
+        does this plugin use custom urls
+        """
+        return bool(self.urls)
+
+
 class IntegrationPlugin(plugin.InvenTreePlugin):
     """
     The IntegrationPlugin class is used to integrate with 3rd party software
@@ -48,8 +85,6 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
     def __init__(self):
         self.add_mixin('base')
         super().__init__()
-
-        self.urls = self.setup_urls()
 
     def add_mixin(self, key: str):
         if not hasattr(self, 'mixins'):
