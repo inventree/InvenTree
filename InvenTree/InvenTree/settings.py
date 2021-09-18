@@ -650,6 +650,8 @@ MESSAGE_TAGS = {
 }
 
 # Plugins
+PLUGIN_URL = 'plugin'
+
 INTEGRATION_PLUGINS = inventree_plugins.load_integration_plugins()
 
 INTEGRATION_PLUGIN_SETTINGS = {}
