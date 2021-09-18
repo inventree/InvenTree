@@ -4,12 +4,14 @@ import logging
 
 from django.conf.urls import url, include
 from django.conf import settings
+
 import plugins.plugin as plugin
 
 
 logger = logging.getLogger("inventree")
 
 
+# region mixins
 class SettingsMixin:
     """Mixin that enables settings for the plugin"""
     def __init__(self):
@@ -71,6 +73,7 @@ class UrlsMixin:
         does this plugin use custom urls
         """
         return bool(self.urls)
+# endregion
 
 
 class IntegrationPlugin(plugin.InvenTreePlugin):
