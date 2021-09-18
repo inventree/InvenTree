@@ -24,8 +24,8 @@
 
 {% if plugin.has_urls %}
 <h4>{% trans "URLs" %}</h4>
-
-    <p>{% blocktrans with base=plugin.base_url %}The Base-URL for this plugin is <strong>{{ base }}</strong>.{% endblocktrans %}</p>
+    {% define plugin.base_url as base %}
+    <p>{% blocktrans %}The Base-URL for this plugin is <a href="/{{ base }}"><strong>{{ base }}</strong></a>.{% endblocktrans %}</p>
 {% endif %}
 
 {% endblock %}
