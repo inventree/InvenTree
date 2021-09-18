@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from shutil import copyfile
 import os
 import json
 import sys
@@ -142,6 +141,7 @@ def clean_settings(c):
     """
 
     manage(c, "clean_settings")
+
 
 @task(post=[rebuild])
 def migrate(c):
@@ -298,7 +298,7 @@ def export_records(c, filename='data.json'):
     # Get an absolute path to the file
     if not os.path.isabs(filename):
         filename = os.path.join(localDir(), filename)
-        filename = os.path.abspath(filename) 
+        filename = os.path.abspath(filename)
 
     print(f"Exporting database records to file '{filename}'")
 

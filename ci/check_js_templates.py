@@ -28,6 +28,7 @@ print("=================================")
 print("Checking static javascript files:")
 print("=================================")
 
+
 def check_invalid_tag(data):
 
     pattern = r"{%(\w+)"
@@ -44,6 +45,7 @@ def check_invalid_tag(data):
             print(f" - Error on line {idx+1}: %{{{result[0]}")
 
     return err_count
+
 
 def check_prohibited_tags(data):
 
@@ -78,7 +80,7 @@ def check_prohibited_tags(data):
                 has_trans = True
 
     if not has_trans:
-        print(f" > file is missing 'trans' tags")
+        print(" > file is missing 'trans' tags")
         err_count += 1
 
     return err_count
