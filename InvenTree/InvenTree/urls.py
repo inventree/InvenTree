@@ -133,7 +133,7 @@ interation_urls = []
 for plugin in integration_plugins:
     # initialize
     plugin = plugin()
-    if plugin.module_enabled('urls'):
+    if plugin.mixin_enabled('urls'):
         interation_urls.append(plugin.urlpatterns)
 
 urlpatterns = [

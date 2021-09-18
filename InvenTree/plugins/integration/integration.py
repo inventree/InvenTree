@@ -86,15 +86,15 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
         super().__init__()
 
     def add_mixin(self, key: str, fnc_enabled=True):
-        if not hasattr(self, 'mixins'):
-            self.mixins = {}
-        self.mixins[key] = fnc_enabled
+        if not hasattr(self, '_mixins'):
+            self._mixins = {}
+        self._mixins[key] = fnc_enabled
 
-    def module(self, key):
-        return key in self.mixins
+    def mixin(self, key):
+        return key in self._mixins
 
-    def module_enabled(self, key):
-        if self.module(key):
-            fnc_name = self.mixins.get(key)
+    def mixin_enabled(self, key):
+        if self.mixin(key):
+            fnc_name = self._mixins.get(key)
             return getattr(self, fnc_name, True)
         return False
