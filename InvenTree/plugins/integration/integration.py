@@ -18,14 +18,37 @@ class MixinBase:
         if not hasattr(self, '_mixins'):
             self._mixins = {}
         self._mixins[key] = fnc_enabled
+        self.setup_mixin(key, cls=cls)
 
+    def setup_mixin(self, key, cls=None):
+        if not hasattr(self, '_mixinreg'):
+            self._mixinreg = {}
+
+        # get human name
+        human_name = getattr(cls.Meta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'Meta') else key
+
+        # register
+        self._mixinreg[key] = {
+            'key': key,
+            'human_name': human_name,
+        }
+
+    @property
+    def registered_mixins(self):
+        mxins =  getattr(self, '_mixinreg', None)
+        if mxins:
+            mxins = [a for a in mxins.values()]
+        return mxins
 
 # region mixins
 class SettingsMixin:
     """Mixin that enables settings for the plugin"""
+    class Meta:
+        MIXIN_NAME = 'Settings'
+
     def __init__(self):
         super().__init__()
-        self.add_mixin('settings', 'has_settings')
+        self.add_mixin('settings', 'has_settings', __class__)
         self.settings = self.setup_settings()
 
     def setup_settings(self):
@@ -50,9 +73,12 @@ class SettingsMixin:
 
 class UrlsMixin:
     """Mixin that enables urls for the plugin"""
+    class Meta:
+        MIXIN_NAME = 'URLs'
+
     def __init__(self):
         super().__init__()
-        self.add_mixin('urls', 'has_urls')
+        self.add_mixin('urls', 'has_urls', __class__)
         self.urls = self.setup_urls()
 
     def setup_urls(self):
@@ -84,9 +110,12 @@ class UrlsMixin:
 
 class NavigationMixin:
     """Mixin that enables adding navigation links with the plugin"""
+    class Meta:
+        MIXIN_NAME = 'Navigation Links'
+
     def __init__(self):
         super().__init__()
-        self.add_mixin('navigation', 'has_naviation')
+        self.add_mixin('navigation', 'has_naviation', __class__)
         self.navigation = self.setup_navigation()
 
     def setup_navigation(self):
