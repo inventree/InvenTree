@@ -35,14 +35,14 @@ class MixinBase:
 
     @property
     def registered_mixins(self, with_base: bool=False):
-        mxins =  getattr(self, '_mixinreg', None)
-        if mxins:
+        mixins =  getattr(self, '_mixinreg', None)
+        if mixins:
             # filter out base
-            if not with_base and 'base' in mxins:
-                del mxins['base']
+            if not with_base and 'base' in mixins:
+                del mixins['base']
             # only return dict
-            mxins = [a for a in mxins.values()]
-        return mxins
+            mixins = [a for a in mixins.values()]
+        return mixins
 
 # region mixins
 class SettingsMixin:
