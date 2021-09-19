@@ -130,7 +130,7 @@
 
     {% plugin_list as pl_list %}
     {% for plugin_key, plugin in pl_list.items %}
-        {% if plugin.has_settings %}
+        {% if plugin.registered_mixins %}
             <li class='list-group-item' title='{{ plugin.plugin_name }}'>
                 <a href='#' class='nav-toggle' id='select-plugin-{{plugin_key}}'>
                     {{ plugin.plugin_name}}
