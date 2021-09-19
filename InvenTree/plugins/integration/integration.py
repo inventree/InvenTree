@@ -64,7 +64,7 @@ class UrlsMixin:
         retruns the urlpatterns for this plugin
         """
         if self.has_urls:
-            return url(f'^{self.plugin_name()}/', include(self.urls), name=self.plugin_name())
+            return url(f'^{self.plugin_name()}/', include((self.urls, self.plugin_name())), name=self.plugin_name())
         return None
 
     @property

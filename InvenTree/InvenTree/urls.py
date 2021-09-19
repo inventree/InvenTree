@@ -179,7 +179,7 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     # plugins
-    url(f'^{settings.PLUGIN_URL}/', include(interation_urls)),
+    url(f'^{settings.PLUGIN_URL}/', include((interation_urls, 'plugin'))),
 
     url(r'^markdownx/', include('markdownx.urls')),
 ]

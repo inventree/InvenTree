@@ -35,7 +35,7 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
     }
 
     NAVIGATION= [
-        {'name': 'SampleIntegration', 'link': 'SampleIntegrationPlugin:hi'},
+        {'name': 'SampleIntegration', 'link': 'plugin:SampleIntegrationPlugin:hi'},
     ]
 
 
