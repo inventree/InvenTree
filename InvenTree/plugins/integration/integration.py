@@ -86,7 +86,12 @@ class NavigationMixin:
         """
         setup navigation links for this plugin
         """
-        return getattr(self, 'NAVIGATION', None)
+        nav_links = getattr(self, 'NAVIGATION', None)
+        if nav_links:
+            for link in nav_links:
+                if False in [a in link for a in ('link', 'name', )]:
+                    raise NotImplementedError('Wrong Link definition', link)
+        return nav_links
 
     @property
     def has_naviation(self):
