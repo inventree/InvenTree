@@ -11,6 +11,15 @@ import plugins.plugin as plugin
 logger = logging.getLogger("inventree")
 
 
+class MixinBase:
+    """general base for mixins"""
+
+    def add_mixin(self, key: str, fnc_enabled=True, cls=None):
+        if not hasattr(self, '_mixins'):
+            self._mixins = {}
+        self._mixins[key] = fnc_enabled
+
+
 # region mixins
 class SettingsMixin:
     """Mixin that enables settings for the plugin"""
@@ -101,18 +110,13 @@ class NavigationMixin:
 # endregion
 
 
-class IntegrationPlugin(plugin.InvenTreePlugin):
+class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
     The IntegrationPlugin class is used to integrate with 3rd party software
     """
 
     def __init__(self):
         self.add_mixin('base')
-
-    def add_mixin(self, key: str, fnc_enabled=True):
-        if not hasattr(self, '_mixins'):
-            self._mixins = {}
-        self._mixins[key] = fnc_enabled
 
     def mixin(self, key):
         return key in self._mixins
