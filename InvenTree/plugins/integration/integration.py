@@ -16,7 +16,6 @@ class SettingsMixin:
     """Mixin that enables settings for the plugin"""
     def __init__(self):
         super().__init__()
-
         self.add_mixin('settings', 'has_settings')
         self.settings = self.setup_settings()
 
@@ -44,7 +43,6 @@ class UrlsMixin:
     """Mixin that enables urls for the plugin"""
     def __init__(self):
         super().__init__()
-
         self.add_mixin('urls', 'has_urls')
         self.urls = self.setup_urls()
 
@@ -88,6 +86,7 @@ class NavigationMixin:
         """
         nav_links = getattr(self, 'NAVIGATION', None)
         if nav_links:
+            # check if needed values are configured
             for link in nav_links:
                 if False in [a in link for a in ('link', 'name', )]:
                     raise NotImplementedError('Wrong Link definition', link)
@@ -109,7 +108,6 @@ class IntegrationPlugin(plugin.InvenTreePlugin):
 
     def __init__(self):
         self.add_mixin('base')
-        super().__init__()
 
     def add_mixin(self, key: str, fnc_enabled=True):
         if not hasattr(self, '_mixins'):
