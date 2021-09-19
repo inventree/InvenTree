@@ -1,7 +1,4 @@
-from plugins.integration.integration import *
-
-from django.http import HttpResponse
-from django.utils.translation import ugettext_lazy as _
+from plugins.integration.integration import IntegrationPlugin, UrlsMixin
 
 
 class NoIntegrationPlugin(IntegrationPlugin):

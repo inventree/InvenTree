@@ -1,7 +1,8 @@
-from plugins.integration.integration import *
+from plugins.integration.integration import SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPlugin
 
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
+from django.conf.urls import url, include
 
 
 class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPlugin):
@@ -34,7 +35,7 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
         },
     }
 
-    NAVIGATION= [
+    NAVIGATION = [
         {'name': 'SampleIntegration', 'link': 'plugin:SampleIntegrationPlugin:hi'},
     ]
 
