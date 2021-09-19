@@ -73,6 +73,27 @@ class UrlsMixin:
         does this plugin use custom urls
         """
         return bool(self.urls)
+
+
+class NavigationMixin:
+    """Mixin that enables adding navigation links with the plugin"""
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('navigation', 'has_naviation')
+        self.navigation = self.setup_navigation()
+
+    def setup_navigation(self):
+        """
+        setup navigation links for this plugin
+        """
+        return getattr(self, 'NAVIGATION', None)
+
+    @property
+    def has_naviation(self):
+        """
+        does this plugin define navigation elements
+        """
+        return bool(self.navigation)
 # endregion
 
 

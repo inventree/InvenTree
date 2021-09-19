@@ -1,5 +1,6 @@
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
@@ -57,6 +58,23 @@
           </ul>
         </li>
         {% endif %}
+
+        {% plugin_list as pl_list %}
+        {% for plugin_key, plugin in pl_list.items %}
+          {% mixin_enabled plugin 'navigation' as navigation %}
+          {% if navigation %}
+
+          <li class='nav navbar-nav'>
+            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='{{plugin.icon}} icon-header'></span>{{plugin.plugin_name}}</a>
+            <ul class='dropdown-menu'>
+             {% for nav_item in plugin.navigation %}
+                <li><a href="{% url nav_item.name %}"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+             {% endfor %}
+            </ul>
+          </li>
+          {% endif %}
+        {% endfor %}
+
       </ul>
       <ul class="nav navbar-nav navbar-right">
           {% include "search_form.html" %}

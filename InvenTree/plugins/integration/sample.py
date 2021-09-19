@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
 
-class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, IntegrationPlugin):
+class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPlugin):
     """
     An full integration plugin
     """
@@ -33,6 +33,10 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, IntegrationPlugin):
             'validator': bool,
         },
     }
+
+    NAVIGATION= [
+        {'name': 'SampleIntegration', 'link': 'SampleIntegrationPlugin:hi'},
+    ]
 
 
 class OtherIntegrationPlugin(UrlsMixin, IntegrationPlugin):
