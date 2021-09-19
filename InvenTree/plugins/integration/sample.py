@@ -4,12 +4,12 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
 
-class SimpleIntegrationPlugin(SettingsMixin, UrlsMixin, IntegrationPlugin):
+class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, IntegrationPlugin):
     """
-    An basic integration plugin
+    An full integration plugin
     """
 
-    PLUGIN_NAME = "SimpleIntegrationPlugin"
+    PLUGIN_NAME = "SampleIntegrationPlugin"
 
     def view_test(self, request):
         return HttpResponse(f'Hi there {request.user.username} this works')
