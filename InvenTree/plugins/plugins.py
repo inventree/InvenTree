@@ -88,3 +88,14 @@ def load_integration_plugins():
     Return a list of all registered integration plugins
     """
     return load_plugins('integration', integration, IntegrationPlugin)
+
+
+def load_barcode_plugins():
+    """
+    Return a list of all registered barcode plugins
+    """
+    from barcodes import plugins as BarcodePlugins
+    from barcodes.barcode import BarcodePlugin
+
+    return load_plugins('barcode', BarcodePlugins, BarcodePlugin)
+
