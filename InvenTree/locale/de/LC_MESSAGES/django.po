@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-21 14:31\n"
+"PO-Revision-Date: 2021-09-21 15:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1953,7 +1953,7 @@ msgstr "Präfix für Bestellungs-Referenz"
 
 #: common/models.py:794
 msgid "Enable build"
-msgstr ""
+msgstr "Bauaufträge aktivieren"
 
 #: common/models.py:795
 msgid "Enable build functionality in InvenTree interface"
@@ -1993,7 +1993,7 @@ msgstr ""
 
 #: common/models.py:824
 msgid "Enable PO"
-msgstr ""
+msgstr "Bestellungen aktivieren"
 
 #: common/models.py:825
 msgid "Enable PO functionality in InvenTree interface"
@@ -3274,7 +3274,7 @@ msgstr ""
 
 #: order/serializers.py:234
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Barcode-Hash"
 
 #: order/serializers.py:235
 msgid "Unique identifier field"
