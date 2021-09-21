@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
+import subprocess
+import inspect
 
 from django.conf.urls import url, include
 from django.conf import settings
@@ -144,6 +147,17 @@ class NavigationMixin:
 # endregion
 
 
+def get_git_log(path):
+    path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
+    command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%ad%n%f'", '--follow', '--', path]
+    try:
+        output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR), stderr=subprocess.STDOUT), 'utf-8').split('\n')
+    except subprocess.CalledProcessError as _e:
+        print(_e)
+        output = 5 * ['']
+    return {'commit': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
+
+
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
     The IntegrationPlugin class is used to integrate with 3rd party software
@@ -151,6 +165,7 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
 
     def __init__(self):
         self.add_mixin('base')
+        self.commit = self.get_plugin_commit()
 
     def mixin(self, key):
         return key in self._mixins
@@ -160,3 +175,7 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
             fnc_name = self._mixins.get(key)
             return getattr(self, fnc_name, True)
         return False
+
+    def get_plugin_commit(self):
+        path = inspect.getfile(self.__class__)
+        return get_git_log(path)

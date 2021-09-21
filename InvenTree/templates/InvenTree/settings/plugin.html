@@ -19,6 +19,7 @@
         <tr>
             <th>{% trans "Name" %}</th>
             <th>{% trans "Author" %}</th>
+            <th>{% trans "Date" %}</th>
         </tr>
     </thead>
     
@@ -46,6 +47,7 @@
                 {% endif %}
             </td>
             <td># TODO</td>
+            <td>{{plugin.commit.date}}</td>
         </tr>
         {% endfor %}
     </tbody>
