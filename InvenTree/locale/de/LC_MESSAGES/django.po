@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 01:43\n"
+"PO-Revision-Date: 2021-09-21 14:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1985,7 +1985,7 @@ msgstr ""
 
 #: common/models.py:818
 msgid "Enable SO"
-msgstr ""
+msgstr "Aufträge aktivieren"
 
 #: common/models.py:819
 msgid "Enable SO functionality in InvenTree interface"
