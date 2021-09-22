@@ -149,12 +149,12 @@ class NavigationMixin:
 
 def get_git_log(path):
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
-    command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%ad%n%f'", '--follow', '--', path]
+    command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
     try:
         output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1].split('\n')
     except subprocess.CalledProcessError:
-        output = 5 * ['']
-    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
+        output = 7 * ['']
+    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
 
 
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):

@@ -37,6 +37,14 @@
                 <td><span class='fas fa-envelope'></span></td>
                 <td>{% trans "Commit Message" %}</td><td>{{ plugin.commit.message }}{% include "clip.html" %}</td>
             </tr>
+            <tr>
+                <td><span class='fas fa-check'></span></td>
+                <td>{% trans "Commit verified" %}</td><td>{{ plugin.commit.verified }}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-key'></span></td>
+                <td>{% trans "Commit Sign Key" %}</td><td>{{ plugin.commit.key }}{% include "clip.html" %}</td>
+            </tr>
         </table>
     </div>
     <div class="col-md-6">
