@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-21 23:35+0000\n"
-"PO-Revision-Date: 2021-09-22 00:34\n"
+"PO-Revision-Date: 2021-09-22 15:50\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3013,7 +3013,7 @@ msgstr ""
 
 #: order/api.py:302
 msgid "Destination location must be specified"
-msgstr ""
+msgstr "Ziel-Lagerort muss angegeben werden"
 
 #: order/forms.py:30 order/templates/order/order_base.html:47
 msgid "Place order"
@@ -6573,7 +6573,7 @@ msgstr "InvenTree-Version"
 
 #: templates/about.html:27
 msgid "Development Version"
-msgstr ""
+msgstr "Entwicklungsversion"
 
 #: templates/about.html:30
 msgid "Up to Date"
