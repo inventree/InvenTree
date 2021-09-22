@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-21 23:35+0000\n"
-"PO-Revision-Date: 2021-09-22 15:50\n"
+"PO-Revision-Date: 2021-09-22 16:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3282,7 +3282,7 @@ msgstr ""
 
 #: order/serializers.py:250
 msgid "Barcode is already in use"
-msgstr ""
+msgstr "Barcode ist bereits in Verwendung"
 
 #: order/serializers.py:289
 msgid "Line items must be provided"
@@ -5634,7 +5634,7 @@ msgstr "Preis für eine Einheit bei Einkauf"
 
 #: stock/models.py:599
 msgid "Scheduled for deletion"
-msgstr ""
+msgstr "Zur Löschung vorgesehen"
 
 #: stock/models.py:600
 msgid "This StockItem will be deleted by the background worker"
@@ -7695,7 +7695,7 @@ msgstr "Inventur"
 
 #: templates/js/translated/stock.js:1029
 msgid "Supplier part not specified"
-msgstr ""
+msgstr "Zuliefererteil nicht angegeben"
 
 #: templates/js/translated/stock.js:1067
 msgid "No stock items matching query"
