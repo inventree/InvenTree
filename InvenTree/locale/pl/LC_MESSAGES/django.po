@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 01:00+0000\n"
-"PO-Revision-Date: 2021-09-14 01:43\n"
+"POT-Creation-Date: 2021-09-21 23:35+0000\n"
+"PO-Revision-Date: 2021-09-22 00:34\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -481,7 +481,7 @@ msgstr "Ustaw hasło"
 msgid "Password fields must match"
 msgstr "Hasła muszą być zgodne"
 
-#: InvenTree/views.py:910 templates/navbar.html:105
+#: InvenTree/views.py:910 templates/navbar.html:97
 msgid "System Information"
 msgstr "Informacja systemowa"
 
@@ -6391,7 +6391,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:46
 #: templates/InvenTree/settings/navbar.html:48
-#: templates/InvenTree/settings/settings.html:8 templates/navbar.html:94
+#: templates/InvenTree/settings/settings.html:8 templates/navbar.html:90
 msgid "Settings"
 msgstr ""
 
@@ -8033,19 +8033,19 @@ msgstr ""
 msgid "Sell"
 msgstr ""
 
-#: templates/navbar.html:87 users/models.py:39
+#: templates/navbar.html:83 users/models.py:39
 msgid "Admin"
 msgstr ""
 
-#: templates/navbar.html:89
+#: templates/navbar.html:85
 msgid "Logout"
 msgstr ""
 
-#: templates/navbar.html:91 templates/registration/login.html:89
+#: templates/navbar.html:87 templates/registration/login.html:89
 msgid "Login"
 msgstr ""
 
-#: templates/navbar.html:114
+#: templates/navbar.html:106
 msgid "About InvenTree"
 msgstr ""
 
