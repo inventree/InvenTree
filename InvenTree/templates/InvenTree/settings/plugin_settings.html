@@ -37,12 +37,17 @@
                 <td><span class='fas fa-envelope'></span></td>
                 <td>{% trans "Commit Message" %}</td><td>{{ plugin.commit.message }}{% include "clip.html" %}</td>
             </tr>
+            {% if plugin.sign_state == 0 %}
+            {% define 'text-success' as sign_color %}
+            {% else %}
+            {% define 'text-danger' as sign_color %}
+            {% endif %}
             <tr>
-                <td><span class='fas fa-check'></span></td>
+                <td><span class='{{sign_color}} fas fa-check'></span></td>
                 <td>{% trans "Commit verified" %}</td><td>{{ plugin.commit.verified }}</td>
             </tr>
             <tr>
-                <td><span class='fas fa-key'></span></td>
+                <td><span class='{{sign_color}} fas fa-key'></span></td>
                 <td>{% trans "Commit Sign Key" %}</td><td>{{ plugin.commit.key }}{% include "clip.html" %}</td>
             </tr>
         </table>

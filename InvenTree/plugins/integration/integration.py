@@ -165,6 +165,7 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     def __init__(self):
         self.add_mixin('base')
         self.commit = self.get_plugin_commit()
+        self.sign_state = 0
 
     def mixin(self, key):
         return key in self._mixins
