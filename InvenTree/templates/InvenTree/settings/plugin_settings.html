@@ -12,31 +12,37 @@
 
 {% block content %}
 
-
-<table class='table table-striped table-condensed'>
-    <col width='25'>
-    <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Plugin Version" %}</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-code-branch'></span></td>
-        <td>{% trans "Commit Hash" %}</td><td>{{ plugin.commit.commit }}{% include "clip.html" %}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Commit Date" %}</td><td>{{ plugin.commit.date }}{% include "clip.html" %}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-user'></span></td>
-        <td>{% trans "Commit Author" %}</td><td>{{ plugin.commit.author }} - {{ plugin.commit.mail }}{% include "clip.html" %}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-mail'></span></td>
-        <td>{% trans "Commit Message" %}</td><td>{{ plugin.commit.message }}{% include "clip.html" %}</td>
-    </tr>
-</table>
+<div class="row">
+    <div class="col-md-6">
+        <table class='table table-striped table-condensed'>
+            <col width='25'>
+            <tr>
+                <td><span class='fas fa-hashtag'></span></td>
+                <td>{% trans "Plugin Version" %}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-code-branch'></span></td>
+                <td>{% trans "Commit Hash" %}</td><td>{{ plugin.commit.commit }}{% include "clip.html" %}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Commit Date" %}</td><td>{{ plugin.commit.date }}{% include "clip.html" %}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-user'></span></td>
+                <td>{% trans "Commit Author" %}</td><td>{{ plugin.commit.author }} - {{ plugin.commit.mail }}{% include "clip.html" %}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-mail'></span></td>
+                <td>{% trans "Commit Message" %}</td><td>{{ plugin.commit.message }}{% include "clip.html" %}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <p>{% trans 'This information is pulled from the last git commit for this plugin. It might not reflect official version numbers.' %}</p>
+    </div>
+</div>
 
 {% mixin_enabled plugin 'settings' as settings %}
 {% if settings %}
