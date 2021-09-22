@@ -155,7 +155,7 @@ def get_git_log(path):
     except subprocess.CalledProcessError as _e:
         print(_e)
         output = 5 * ['']
-    return {'commit': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
+    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
 
 
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
