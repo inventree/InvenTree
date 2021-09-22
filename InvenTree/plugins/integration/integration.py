@@ -164,8 +164,10 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
 
     def __init__(self):
         self.add_mixin('base')
+
         self.commit = self.get_plugin_commit()
         self.sign_state = 0
+        self.set_sign_values()
 
     def mixin(self, key):
         return key in self._mixins
@@ -179,3 +181,13 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     def get_plugin_commit(self):
         path = inspect.getfile(self.__class__)
         return get_git_log(path)
+
+    def set_sign_values(self):
+        if self.sign_state == 0:
+            self.sign_color = 'success'
+
+        elif self.sign_state == 1:
+            self.sign_color = 'warning'
+
+        else:
+            self.sign_color = 'danger'
