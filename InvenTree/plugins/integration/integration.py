@@ -151,7 +151,7 @@ def get_git_log(path):
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
     command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%ad%n%f'", '--follow', '--', path]
     try:
-        output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8').split('\n')
+        output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1].split('\n')
     except subprocess.CalledProcessError:
         output = 5 * ['']
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
