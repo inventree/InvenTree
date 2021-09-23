@@ -156,27 +156,28 @@ def get_git_log(path):
         output = 7 * ['']
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
 
+
 class GitStatus:
-    class definition:
+    class Definition:
         key: str = 'N'
         status: int = 2
         msg_sign: str = ''
         msg_key: str = ''
 
-        def __init__(self, key: str='N', status: int = 2, msg_sign: str = '', msg_key: str = '') -> None:
+        def __init__(self, key: str = 'N', status: int = 2, msg_sign: str = '', msg_key: str = '') -> None:
             self.key = key
             self.status = status
             self.msg_sign = msg_sign
             self.msg_key = msg_key
 
-    N = definition(key='N', status=2, msg_sign='no signature',)
-    G = definition(key='G', status=0, msg_sign='valid signature',)
-    B = definition(key='B', status=2, msg_sign='bad signature',)
-    U = definition(key='U', status=1, msg_sign='good signature, unknown validity',)
-    X = definition(key='X', status=1, msg_sign='good signature, expired',)
-    Y = definition(key='Y', status=1, msg_sign='good signature, expired key',)
-    R = definition(key='R', status=2, msg_sign='good signature, revoked key',)
-    E = definition(key='E', status=1, msg_sign='cannot be checked',)
+    N = Definition(key='N', status=2, msg_sign='no signature',)
+    G = Definition(key='G', status=0, msg_sign='valid signature',)
+    B = Definition(key='B', status=2, msg_sign='bad signature',)
+    U = Definition(key='U', status=1, msg_sign='good signature, unknown validity',)
+    X = Definition(key='X', status=1, msg_sign='good signature, expired',)
+    Y = Definition(key='Y', status=1, msg_sign='good signature, expired key',)
+    R = Definition(key='R', status=2, msg_sign='good signature, revoked key',)
+    E = Definition(key='E', status=1, msg_sign='cannot be checked',)
 
 
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
