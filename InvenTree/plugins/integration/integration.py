@@ -159,17 +159,25 @@ def get_git_log(path):
 class GitStatus:
     class definition:
         key: str = 'N'
-        status: int = 0
+        status: int = 2
         msg_sign: str = ''
         msg_key: str = ''
 
-        def __init__(self, key: str='N', status: int = 0, msg_sign: str = '', msg_key: str = '') -> None:
+        def __init__(self, key: str='N', status: int = 2, msg_sign: str = '', msg_key: str = '') -> None:
             self.key = key
             self.status = status
             self.msg_sign = msg_sign
             self.msg_key = msg_key
 
-    E = definition(key='N', status=1, msg_sign='no signature',)
+    N = definition(key='N', status=2, msg_sign='no signature',)
+    G = definition(key='G', status=0, msg_sign='valid signature',)
+    B = definition(key='B', status=2, msg_sign='bad signature',)
+    U = definition(key='U', status=1, msg_sign='good signature, unknown validity',)
+    X = definition(key='X', status=1, msg_sign='good signature, expired',)
+    Y = definition(key='Y', status=1, msg_sign='good signature, expired key',)
+    R = definition(key='R', status=2, msg_sign='good signature, revoked key',)
+    E = definition(key='E', status=1, msg_sign='cannot be checked',)
+
 
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
@@ -198,7 +206,7 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
         # fetch git log
         commit = self.get_plugin_commit()
         # resolve state
-        sign_state = getattr(GitStatus, commit['verified'], GitStatus.E)
+        sign_state = getattr(GitStatus, commit['verified'], GitStatus.N)
 
         # set variables
         self.commit = commit
