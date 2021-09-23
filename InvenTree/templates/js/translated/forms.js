@@ -1,6 +1,34 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+/* globals
+    attachToggle,
+    createNewModal,
+    inventreeFormDataUpload,
+    inventreeGet,
+    inventreePut,
+    modalEnable,
+    modalShowSubmitButton,
+    renderBuild,
+    renderCompany,
+    renderManufacturerPart,
+    renderOwner,
+    renderPart,
+    renderPartCategory,
+    renderPartParameterTemplate,
+    renderStockItem,
+    renderStockLocation,
+    renderSupplierPart,
+    renderUser,
+    showAlertDialog,
+    showAlertOrCache,
+    showApiError,
+*/
+
+/* exported
+    setFormGroupVisibility
+*/
+
 /**
  *
  * This file contains code for rendering (and managing) HTML forms
@@ -81,7 +109,7 @@ function canDelete(OPTIONS) {
  * Get the API endpoint options at the provided URL,
  * using a HTTP options request.
  */
-function getApiEndpointOptions(url, callback, options) {
+function getApiEndpointOptions(url, callback) {
 
     // Return the ajax request object
     $.ajax({
@@ -93,7 +121,7 @@ function getApiEndpointOptions(url, callback, options) {
             json: 'application/json',
         },
         success: callback,
-        error: function(request, status, error) {
+        error: function() {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
         }
@@ -172,7 +200,7 @@ function constructChangeForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function(request, status, error) {
+        error: function() {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
         }
@@ -211,7 +239,7 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function(request, status, error) {
+        error: function() {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
         }
@@ -258,6 +286,8 @@ function constructForm(url, options) {
         constructFormBody({}, options);
     }
 
+    options.fields = options.fields || {};
+
     // Save the URL 
     options.url = url;
 
@@ -284,58 +314,58 @@ function constructForm(url, options) {
          */
 
         switch (options.method) {
-            case 'POST':
-                if (canCreate(OPTIONS)) {
-                    constructCreateForm(OPTIONS.actions.POST, options);
-                } else {
-                    // User does not have permission to POST to the endpoint
-                    showAlertDialog(
-                        '{% trans "Action Prohibited" %}',
-                        '{% trans "Create operation not allowed" %}'
-                    );
-                    console.log(`'POST action unavailable at ${url}`);
-                }
-                break;
-            case 'PUT':
-            case 'PATCH':
-                if (canChange(OPTIONS)) {
-                    constructChangeForm(OPTIONS.actions.PUT, options);
-                } else {
-                    // User does not have permission to PUT/PATCH to the endpoint
-                    showAlertDialog(
-                        '{% trans "Action Prohibited" %}',
-                        '{% trans "Update operation not allowed" %}'
-                    );
-                    console.log(`${options.method} action unavailable at ${url}`);
-                }
-                break;
-            case 'DELETE':
-                if (canDelete(OPTIONS)) {
-                    constructDeleteForm(OPTIONS.actions.DELETE, options);
-                } else {
-                    // User does not have permission to DELETE to the endpoint
-                    showAlertDialog(
-                        '{% trans "Action Prohibited" %}',
-                        '{% trans "Delete operation not allowed" %}'
-                    );
-                    console.log(`DELETE action unavailable at ${url}`);
-                }
-                break;
-            case 'GET':
-                if (canView(OPTIONS)) {
-                    // TODO?
-                } else {
-                    // User does not have permission to GET to the endpoint
-                    showAlertDialog(
-                        '{% trans "Action Prohibited" %}',
-                        '{% trans "View operation not allowed" %}'
-                    );
-                    console.log(`GET action unavailable at ${url}`);
-                }
-                break;
-            default:
-                console.log(`constructForm() called with invalid method '${options.method}'`);
-                break;
+        case 'POST':
+            if (canCreate(OPTIONS)) {
+                constructCreateForm(OPTIONS.actions.POST, options);
+            } else {
+                // User does not have permission to POST to the endpoint
+                showAlertDialog(
+                    '{% trans "Action Prohibited" %}',
+                    '{% trans "Create operation not allowed" %}'
+                );
+                console.log(`'POST action unavailable at ${url}`);
+            }
+            break;
+        case 'PUT':
+        case 'PATCH':
+            if (canChange(OPTIONS)) {
+                constructChangeForm(OPTIONS.actions.PUT, options);
+            } else {
+                // User does not have permission to PUT/PATCH to the endpoint
+                showAlertDialog(
+                    '{% trans "Action Prohibited" %}',
+                    '{% trans "Update operation not allowed" %}'
+                );
+                console.log(`${options.method} action unavailable at ${url}`);
+            }
+            break;
+        case 'DELETE':
+            if (canDelete(OPTIONS)) {
+                constructDeleteForm(OPTIONS.actions.DELETE, options);
+            } else {
+                // User does not have permission to DELETE to the endpoint
+                showAlertDialog(
+                    '{% trans "Action Prohibited" %}',
+                    '{% trans "Delete operation not allowed" %}'
+                );
+                console.log(`DELETE action unavailable at ${url}`);
+            }
+            break;
+        case 'GET':
+            if (canView(OPTIONS)) {
+                // TODO?
+            } else {
+                // User does not have permission to GET to the endpoint
+                showAlertDialog(
+                    '{% trans "Action Prohibited" %}',
+                    '{% trans "View operation not allowed" %}'
+                );
+                console.log(`GET action unavailable at ${url}`);
+            }
+            break;
+        default:
+            console.log(`constructForm() called with invalid method '${options.method}'`);
+            break;
         }
     });
 }
@@ -374,7 +404,7 @@ function constructFormBody(fields, options) {
     }
 
     // Provide each field object with its own name
-    for(field in fields) {
+    for (field in fields) {
         fields[field].name = field;
         
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
@@ -427,19 +457,19 @@ function constructFormBody(fields, options) {
 
     for (var idx = 0; idx < field_names.length; idx++) {
 
-        var name = field_names[idx];
+        var field_name = field_names[idx];
 
-        var field = fields[name];
+        var field = fields[field_name];
 
         switch (field.type) {
-            // Skip field types which are simply not supported
-            case 'nested object':
-                continue;
-            default:
-                break;
+        // Skip field types which are simply not supported
+        case 'nested object':
+            continue;
+        default:
+            break;
         }
         
-        html += constructField(name, field, options);
+        html += constructField(field_name, field, options);
     }
 
     if (options.current_group) {
@@ -516,6 +546,11 @@ function constructFormBody(fields, options) {
     });
 
     initializeGroups(fields, options);
+
+    if (options.afterRender) {
+        // Custom callback function after form rendering
+        options.afterRender(fields, options);
+    }
 
     // Scroll to the top
     $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
@@ -640,19 +675,19 @@ function submitFormData(fields, options) {
         data,
         {
             method: options.method,
-            success: function(response, status) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             },
-            error: function(xhr, status, thrownError) {
+            error: function(xhr) {
                 
                 switch (xhr.status) {
-                    case 400:   // Bad request
-                        handleFormErrors(xhr.responseJSON, fields, options);
-                        break;
-                    default:
-                        $(options.modal).modal('hide');
-                        showApiError(xhr);
-                        break;
+                case 400:
+                    handleFormErrors(xhr.responseJSON, fields, options);
+                    break;
+                default:
+                    $(options.modal).modal('hide');
+                    showApiError(xhr);
+                    break;
                 }
             }
         }
@@ -675,7 +710,9 @@ function updateFieldValues(fields, options) {
 
         var field = fields[name] || null;
 
-        if (field == null) { continue; }
+        if (field == null) {
+            continue;
+        }
 
         var value = field.value;
 
@@ -683,7 +720,9 @@ function updateFieldValues(fields, options) {
             value = field.default;
         }
 
-        if (value == null) { continue; }
+        if (value == null) {
+            continue;
+        }
 
         updateFieldValue(name, value, field, options);
     }
@@ -694,22 +733,22 @@ function updateFieldValue(name, value, field, options) {
     var el = $(options.modal).find(`#id_${name}`);
 
     switch (field.type) {
-        case 'boolean':
-            el.prop('checked', value);
-            break;
-        case 'related field':
-            // Clear?
-            if (value == null && !field.required) {
-                el.val(null).trigger('change');
-            }
-            // TODO - Specify an actual value!
-            break;
-        case 'file upload':
-        case 'image upload':
-            break;
-        default:
-            el.val(value);
-            break;
+    case 'boolean':
+        el.prop('checked', value);
+        break;
+    case 'related field':
+        // Clear?
+        if (value == null && !field.required) {
+            el.val(null).trigger('change');
+        }
+        // TODO - Specify an actual value!
+        break;
+    case 'file upload':
+    case 'image upload':
+        break;
+    default:
+        el.val(value);
+        break;
     }
 }
 
@@ -734,21 +773,21 @@ function getFormFieldValue(name, field, options) {
     var value = null;
 
     switch (field.type) {
-        case 'boolean':
-            value = el.is(":checked");
-            break;
-        case 'date':
-        case 'datetime':
-            value = el.val();
+    case 'boolean':
+        value = el.is(':checked');
+        break;
+    case 'date':
+    case 'datetime':
+        value = el.val();
 
-            // Ensure empty values are sent as nulls
-            if (!value || value.length == 0) {
-                value = null;
-            }
-            break;
-        default:
-            value = el.val();
-            break;
+        // Ensure empty values are sent as nulls
+        if (!value || value.length == 0) {
+            value = null;
+        }
+        break;
+    default:
+        value = el.val();
+        break;
     }
 
     return value;
@@ -776,19 +815,19 @@ function handleFormSuccess(response, options) {
 
     // Display any messages
     if (response && response.success) {
-        showAlertOrCache("alert-success", response.success, cache);
+        showAlertOrCache('alert-success', response.success, cache);
     }
     
     if (response && response.info) {
-        showAlertOrCache("alert-info", response.info, cache);
+        showAlertOrCache('alert-info', response.info, cache);
     }
 
     if (response && response.warning) {
-        showAlertOrCache("alert-warning", response.warning, cache);
+        showAlertOrCache('alert-warning', response.warning, cache);
     }
 
     if (response && response.danger) {
-        showAlertOrCache("alert-danger", response.danger, cache);
+        showAlertOrCache('alert-danger', response.danger, cache);
     }
 
     if (options.onSuccess) {
@@ -872,7 +911,7 @@ function handleFormErrors(errors, fields, options) {
 
     var first_error_field = null;
 
-    for (field_name in errors) {
+    for (var field_name in errors) {
 
         // Add the 'has-error' class
         $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
@@ -886,16 +925,16 @@ function handleFormErrors(errors, fields, options) {
         }
 
         // Add an entry for each returned error message
-        for (var idx = field_errors.length-1; idx >= 0; idx--) {
+        for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-            var error_text = field_errors[idx];
+            var error_text = field_errors[ii];
 
-            var html = `
-            <span id='error_${idx+1}_id_${field_name}' class='help-block form-error-message'>
+            var error_html = `
+            <span id='error_${ii+1}_id_${field_name}' class='help-block form-error-message'>
                 <strong>${error_text}</strong>
             </span>`;
 
-            field_dom.append(html);
+            field_dom.append(error_html);
         }
     }
 
@@ -1009,9 +1048,9 @@ function initializeGroups(fields, options) {
         var group_options = options.groups[group];
 
         if (group_options.collapsed) {
-            $(modal).find(`#form-panel-content-${group}`).collapse("hide");
+            $(modal).find(`#form-panel-content-${group}`).collapse('hide');
         } else {
-            $(modal).find(`#form-panel-content-${group}`).collapse("show");
+            $(modal).find(`#form-panel-content-${group}`).collapse('show');
         }
 
         if (group_options.hidden) {
@@ -1052,12 +1091,14 @@ function initializeRelatedFields(fields, options) {
         if (!field || field.hidden) continue;
 
         switch (field.type) {
-            case 'related field':
-                initializeRelatedField(field, fields, options);
-                break;
-            case 'choice':
-                initializeChoiceField(field, fields, options);
-                break;
+        case 'related field':
+            initializeRelatedField(field, fields, options);
+            break;
+        case 'choice':
+            initializeChoiceField(field, fields, options);
+            break;
+        default:
+            break;
         }
     }
 }
@@ -1096,14 +1137,14 @@ function addSecondaryModal(field, fields, options) {
         if (secondary.fields instanceof Function) {
 
             // Extract form values at time of button press
-            var data = extractFormData(fields, options)
+            var data = extractFormData(fields, options);
 
             secondary.fields = secondary.fields(data);
         }
 
         // If no onSuccess function is defined, provide a default one
         if (!secondary.onSuccess) {
-            secondary.onSuccess = function(data, opts) {
+            secondary.onSuccess = function(data) {
 
                 // Force refresh from the API, to get full detail
                 inventreeGet(`${url}${data.pk}/`, {}, {
@@ -1169,6 +1210,8 @@ function initializeRelatedField(field, fields, options) {
             cache: true,
             data: function(params) {
 
+                var offset = 0;
+
                 if (!params.page) {
                     offset = 0;
                 } else {
@@ -1222,7 +1265,7 @@ function initializeRelatedField(field, fields, options) {
                 return results;
             },
         },
-        templateResult: function(item, container) {
+        templateResult: function(item) {
 
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
@@ -1247,7 +1290,7 @@ function initializeRelatedField(field, fields, options) {
                 return `${name} - ${item.id}`;
             }
         },
-        templateSelection: function(item, container) {
+        templateSelection: function(item) {
 
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
@@ -1259,7 +1302,6 @@ function initializeRelatedField(field, fields, options) {
 
             if (!data.pk) {
                 return field.placeholder || '';
-                return $(searching());
             }
 
             // Custom formatting for selected item
@@ -1362,41 +1404,41 @@ function renderModelData(name, model, data, parameters, options) {
 
     // Find a custom renderer 
     switch (model) {
-        case 'company':
-            renderer = renderCompany;
-            break;
-        case 'stockitem':
-            renderer = renderStockItem;
-            break;
-        case 'stocklocation':
-            renderer = renderStockLocation;
-            break;
-        case 'part':
-            renderer = renderPart;
-            break;
-        case 'partcategory':
-            renderer = renderPartCategory;
-            break;
-        case 'partparametertemplate':
-            renderer = renderPartParameterTemplate;
-            break;
-        case 'manufacturerpart':
-            renderer = renderManufacturerPart;
-            break;
-        case 'supplierpart':
-            renderer = renderSupplierPart;
-            break;
-        case 'build':
-            renderer = renderBuild;
-            break;
-        case 'owner':
-            renderer = renderOwner;
-            break;
-        case 'user':
-            renderer = renderUser;
-            break;
-        default:
-            break;
+    case 'company':
+        renderer = renderCompany;
+        break;
+    case 'stockitem':
+        renderer = renderStockItem;
+        break;
+    case 'stocklocation':
+        renderer = renderStockLocation;
+        break;
+    case 'part':
+        renderer = renderPart;
+        break;
+    case 'partcategory':
+        renderer = renderPartCategory;
+        break;
+    case 'partparametertemplate':
+        renderer = renderPartParameterTemplate;
+        break;
+    case 'manufacturerpart':
+        renderer = renderManufacturerPart;
+        break;
+    case 'supplierpart':
+        renderer = renderSupplierPart;
+        break;
+    case 'build':
+        renderer = renderBuild;
+        break;
+    case 'owner':
+        renderer = renderOwner;
+        break;
+    case 'user':
+        renderer = renderUser;
+        break;
+    default:
+        break;
     }
     
     if (renderer != null) {
@@ -1507,7 +1549,9 @@ function constructField(name, parameters, options) {
     html += `<div id='div_${field_name}' class='${form_classes}'>`;
 
     // Add a label
-    html += constructLabel(name, parameters);
+    if (!options.hideLabels) {
+        html += constructLabel(name, parameters);
+    }
 
     html += `<div class='controls'>`;
 
@@ -1517,18 +1561,18 @@ function constructField(name, parameters, options) {
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
         switch (parameters.type) {
-            case 'string':
-            case 'url':
-            case 'email':
-            case 'integer':
-            case 'float':
-            case 'decimal':
-            case 'related field':
-            case 'date':
-                extra = true;
-                break;
-            default:
-                break;
+        case 'string':
+        case 'url':
+        case 'email':
+        case 'integer':
+        case 'float':
+        case 'decimal':
+        case 'related field':
+        case 'date':
+            extra = true;
+            break;
+        default:
+            break;
         }
     }
     
@@ -1551,10 +1595,10 @@ function constructField(name, parameters, options) {
             </span>`;
         }
 
-        html += `</div>`;   // input-group
+        html += `</div>`; // input-group
     }
 
-    if (parameters.help_text) {
+    if (parameters.help_text && !options.hideLabels) {
         html += constructHelpText(name, parameters, options);
     }
 
@@ -1562,8 +1606,8 @@ function constructField(name, parameters, options) {
     html += `<div id='errors-${name}'></div>`;
 
 
-    html += `</div>`;   // controls
-    html += `</div>`;   // form-group
+    html += `</div>`; // controls
+    html += `</div>`; // form-group
     
     if (parameters.after) {
         html += parameters.after;
@@ -1621,39 +1665,39 @@ function constructInput(name, parameters, options) {
     var func = null;
 
     switch (parameters.type) {
-        case 'boolean':
-            func = constructCheckboxInput;
-            break;
-        case 'string':
-        case 'url':
-        case 'email':
-            func = constructTextInput;
-            break;
-        case 'integer':
-        case 'float':
-        case 'decimal':
-            func = constructNumberInput;
-            break;
-        case 'choice':
-            func = constructChoiceInput;
-            break;
-        case 'related field':
-            func = constructRelatedFieldInput;
-            break;
-        case 'image upload':
-        case 'file upload':
-            func = constructFileUploadInput;
-            break;
-        case 'date':
-            func = constructDateInput;
-            break;
-        case 'candy':
-            func = constructCandyInput;
-            break;
-        default:
-            // Unsupported field type!
-            break;
-        }
+    case 'boolean':
+        func = constructCheckboxInput;
+        break;
+    case 'string':
+    case 'url':
+    case 'email':
+        func = constructTextInput;
+        break;
+    case 'integer':
+    case 'float':
+    case 'decimal':
+        func = constructNumberInput;
+        break;
+    case 'choice':
+        func = constructChoiceInput;
+        break;
+    case 'related field':
+        func = constructRelatedFieldInput;
+        break;
+    case 'image upload':
+    case 'file upload':
+        func = constructFileUploadInput;
+        break;
+    case 'date':
+        func = constructDateInput;
+        break;
+    case 'candy':
+        func = constructCandyInput;
+        break;
+    default:
+        // Unsupported field type!
+        break;
+    }
         
     if (func != null) {
         html = func(name, parameters, options);
@@ -1739,7 +1783,7 @@ function constructInputOptions(name, classes, type, parameters) {
 
 
 // Construct a "hidden" input
-function constructHiddenInput(name, parameters, options) {
+function constructHiddenInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1751,7 +1795,7 @@ function constructHiddenInput(name, parameters, options) {
 
 
 // Construct a "checkbox" input
-function constructCheckboxInput(name, parameters, options) {
+function constructCheckboxInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1763,24 +1807,24 @@ function constructCheckboxInput(name, parameters, options) {
 
 
 // Construct a "text" input
-function constructTextInput(name, parameters, options) {
+function constructTextInput(name, parameters) {
 
     var classes = '';
     var type = '';
 
     switch (parameters.type) {
-        default:
-            classes = 'textinput textInput form-control';
-            type = 'text';
-            break;
-        case 'url':
-            classes = 'urlinput form-control';
-            type = 'url';
-            break;
-        case 'email':
-            classes = 'emailinput form-control';
-            type = 'email';
-            break;
+    default:
+        classes = 'textinput textInput form-control';
+        type = 'text';
+        break;
+    case 'url':
+        classes = 'urlinput form-control';
+        type = 'url';
+        break;
+    case 'email':
+        classes = 'emailinput form-control';
+        type = 'email';
+        break;
     }
 
     return constructInputOptions(
@@ -1793,7 +1837,7 @@ function constructTextInput(name, parameters, options) {
 
 
 // Construct a "number" field
-function constructNumberInput(name, parameters, options) {
+function constructNumberInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1805,7 +1849,7 @@ function constructNumberInput(name, parameters, options) {
 
 
 // Construct a "choice" input
-function constructChoiceInput(name, parameters, options) {
+function constructChoiceInput(name, parameters) {
 
     var html = `<select id='id_${name}' class='select form-control' name='${name}'>`;
 
@@ -1838,7 +1882,7 @@ function constructChoiceInput(name, parameters, options) {
  * be converted into a select2 input.
  * This will then be served custom data from the API (as required)...
  */
-function constructRelatedFieldInput(name, parameters, options) {
+function constructRelatedFieldInput(name) {
 
     var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
 
@@ -1851,7 +1895,7 @@ function constructRelatedFieldInput(name, parameters, options) {
 /*
  * Construct a field for file upload
  */
-function constructFileUploadInput(name, parameters, options) {
+function constructFileUploadInput(name, parameters) {
 
     var cls = 'clearablefileinput';
 
@@ -1871,7 +1915,7 @@ function constructFileUploadInput(name, parameters, options) {
 /*
  * Construct a field for a date input
  */
-function constructDateInput(name, parameters, options) {
+function constructDateInput(name, parameters) {
 
     return constructInputOptions(
         name,
@@ -1886,7 +1930,7 @@ function constructDateInput(name, parameters, options) {
  * Construct a "candy" field input
  * No actual field data!
  */
-function constructCandyInput(name, parameters, options) {
+function constructCandyInput(name, parameters) {
 
     return parameters.html;
 
@@ -1901,7 +1945,7 @@ function constructCandyInput(name, parameters, options) {
  * - parameters: Field parameters returned by the OPTIONS method
  *  
  */
-function constructHelpText(name, parameters, options) {
+function constructHelpText(name, parameters) {
     
     var style = '';
 

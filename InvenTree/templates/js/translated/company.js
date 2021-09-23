@@ -1,6 +1,33 @@
 {% load i18n %}
 
+/* globals
+    constructForm,
+    imageHoverIcon,
+    inventreeDelete,
+    loadTableFilters,
+    makeIconButton,
+    renderLink,
+    setupFilterList,
+    showQuestionDialog,
+*/
+   
+/* exported
+    createCompany,
+    createManufacturerPart,
+    createSupplierPart,
+    deleteManufacturerParts,
+    editCompany,
+    loadCompanyTable,
+    loadManufacturerPartTable,
+    loadManufacturerPartParameterTable,
+    loadSupplierPartTable,
+*/
 
+
+/**
+ * Construct a set of form fields for creating / editing a ManufacturerPart
+ * @returns 
+ */
 function manufacturerPartFields() {
 
     return {
@@ -17,6 +44,10 @@ function manufacturerPartFields() {
 }
 
 
+/**
+ * Launches a form to create a new ManufacturerPart
+ * @param {object} options 
+ */
 function createManufacturerPart(options={}) {
 
     var fields = manufacturerPartFields();
@@ -32,14 +63,14 @@ function createManufacturerPart(options={}) {
 
     fields.manufacturer.secondary = {
         title: '{% trans "Add Manufacturer" %}',
-        fields: function(data) {
+        fields: function() {
             var company_fields = companyFormFields();
 
             company_fields.is_manufacturer.value = true;
             
             return company_fields;
         }
-    }
+    };
 
     constructForm('{% url "api-manufacturer-part-list" %}', {
         fields: fields,
@@ -50,6 +81,11 @@ function createManufacturerPart(options={}) {
 }
 
 
+/**
+ * Launches a form to edit a ManufacturerPart
+ * @param {integer} part - ID of a ManufacturerPart
+ * @param {object} options 
+ */
 function editManufacturerPart(part, options={}) {
 
     var url = `/api/company/part/manufacturer/${part}/`;
@@ -126,7 +162,7 @@ function createSupplierPart(options={}) {
     // Add a secondary modal for the supplier
     fields.supplier.secondary = {
         title: '{% trans "Add Supplier" %}',
-        fields: function(data) {
+        fields: function() {
             var company_fields = companyFormFields();
 
             company_fields.is_supplier.value = true;
@@ -185,7 +221,7 @@ function deleteSupplierPart(part, options={}) {
 
 
 // Returns a default form-set for creating / editing a Company object
-function companyFormFields(options={}) {
+function companyFormFields() {
 
     return {
         name: {},
@@ -228,7 +264,7 @@ function editCompany(pk, options={}) {
             title: '{% trans "Edit Company" %}',
         }
     );
-};
+}
 
 /*
  * Launches a form to create a new company.
@@ -265,13 +301,13 @@ function loadCompanyTable(table, url, options={}) {
     // Query parameters
     var params = options.params || {};
 
-    var filters = loadTableFilters("company");
+    var filters = loadTableFilters('company');
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("company", $(table));
+    setupFilterList('company', $(table));
 
     var columns = [
         {
@@ -285,7 +321,7 @@ function loadCompanyTable(table, url, options={}) {
             title: '{% trans "Company" %}',
             sortable: true,
             switchable: false,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
                 var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
                 if (row.is_customer) {
@@ -310,7 +346,7 @@ function loadCompanyTable(table, url, options={}) {
         {
             field: 'website',
             title: '{% trans "Website" %}',
-            formatter: function(value, row, index, field) {
+            formatter: function(value) {
                 if (value) {
                     return renderLink(value, value);
                 }
@@ -345,7 +381,9 @@ function loadCompanyTable(table, url, options={}) {
         queryParams: filters,
         groupBy: false,
         sidePagination: 'server',
-        formatNoMatches: function() { return "{% trans "No company information found" %}"; },
+        formatNoMatches: function() {
+            return '{% trans "No company information found" %}';
+        },
         showColumns: true,
         name: options.pagetype || 'company',
         columns: columns,
@@ -366,18 +404,18 @@ function deleteManufacturerParts(selections, options={}) {
             <p>{% trans "The following manufacturer parts will be deleted" %}:</p>
             <ul>`;
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
+    selections.forEach(function(item) {
+        parts.push(item.pk);
 
-            text += `
-            <li>
-                <p>${item.MPN} - ${item.part_detail.full_name}</p>
-            </li>`;
-        });
-                
         text += `
-            </ul>
-        </div>`;
+        <li>
+            <p>${item.MPN} - ${item.part_detail.full_name}</p>
+        </li>`;
+    });
+            
+    text += `
+        </ul>
+    </div>`;
 
     showQuestionDialog(
         '{% trans "Delete Manufacturer Parts" %}',
@@ -401,7 +439,7 @@ function deleteManufacturerParts(selections, options={}) {
                     if (options.onSuccess) {
                         options.onSuccess();
                     }
-                })
+                });
             }
         }
     );
@@ -418,13 +456,13 @@ function loadManufacturerPartTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters("manufacturer-part");
+    var filters = loadTableFilters('manufacturer-part');
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("manufacturer-part", $(table));
+    setupFilterList('manufacturer-part', $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -433,7 +471,9 @@ function loadManufacturerPartTable(table, url, options) {
         queryParams: filters,
         name: 'manufacturerparts',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No manufacturer parts found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No manufacturer parts found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -445,7 +485,7 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var url = `/part/${row.part}/`;
 
@@ -470,7 +510,7 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: true,
                 field: 'manufacturer',
                 title: '{% trans "Manufacturer" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value && row.manufacturer_detail) {
                         var name = row.manufacturer_detail.name;
                         var url = `/company/${value}/`;
@@ -478,7 +518,7 @@ function loadManufacturerPartTable(table, url, options) {
 
                         return html;
                     } else {
-                        return "-";
+                        return '-';
                     }
                 }
             },
@@ -486,14 +526,14 @@ function loadManufacturerPartTable(table, url, options) {
                 sortable: true,
                 field: 'MPN',
                 title: '{% trans "MPN" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return renderLink(value, `/manufacturer-part/${row.pk}/`);
                 }
             },
             {
                 field: 'link',
                 title: '{% trans "Link" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
                     } else {
@@ -536,8 +576,9 @@ function loadManufacturerPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
+                );
             });
 
             $(table).find('.button-manufacturer-part-delete').click(function() {
@@ -548,9 +589,10 @@ function loadManufacturerPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
-            })
+                );
+            });
         }
     });
 }
@@ -564,7 +606,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters("manufacturer-part-parameters");
+    var filters = loadTableFilters('manufacturer-part-parameters');
 
     // Overwrite explicit parameters
     for (var key in params) {
@@ -580,7 +622,9 @@ function loadManufacturerPartParameterTable(table, url, options) {
         queryParams: filters,
         name: 'manufacturerpartparameters',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No parameters found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No parameters found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -668,13 +712,13 @@ function loadSupplierPartTable(table, url, options) {
     var params = options.params || {};
 
     // Load filters
-    var filters = loadTableFilters("supplier-part");
+    var filters = loadTableFilters('supplier-part');
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("supplier-part", $(table));
+    setupFilterList('supplier-part', $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -683,7 +727,9 @@ function loadSupplierPartTable(table, url, options) {
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
-        formatNoMatches: function() { return '{% trans "No supplier parts found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No supplier parts found" %}';
+        },
         columns: [
             {
                 checkbox: true,
@@ -695,7 +741,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
 
                     var url = `/part/${row.part}/`;
 
@@ -720,7 +766,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'supplier',
                 title: '{% trans "Supplier" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value) {
                         var name = row.supplier_detail.name;
                         var url = `/company/${value}/`; 
@@ -728,7 +774,7 @@ function loadSupplierPartTable(table, url, options) {
 
                         return html;
                     } else {
-                        return "-";
+                        return '-';
                     }
                 },
             },
@@ -736,7 +782,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'SKU',
                 title: '{% trans "Supplier Part" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     return renderLink(value, `/supplier-part/${row.pk}/`);
                 }
             },
@@ -746,7 +792,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'manufacturer_detail.name',
                 title: '{% trans "Manufacturer" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value && row.manufacturer_detail) {
                         var name = value;
                         var url = `/company/${row.manufacturer_detail.pk}/`;
@@ -754,7 +800,7 @@ function loadSupplierPartTable(table, url, options) {
 
                         return html;
                     } else {
-                        return "-";
+                        return '-';
                     }
                 }
             },
@@ -764,18 +810,18 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'manufacturer_part_detail.MPN',
                 title: '{% trans "MPN" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value, row) {
                     if (value && row.manufacturer_part) {
                         return renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`);
                     } else {
-                        return "-";
+                        return '-';
                     }
                 }
             },
             {
                 field: 'link',
                 title: '{% trans "Link" %}',
-                formatter: function(value, row, index, field) {
+                formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
                     } else {
@@ -827,8 +873,9 @@ function loadSupplierPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
+                );
             });
 
             $(table).find('.button-supplier-part-delete').click(function() {
@@ -839,9 +886,10 @@ function loadSupplierPartTable(table, url, options) {
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
+                        }
                     }
-                });
-            })
+                );
+            });
         }
     });
 }

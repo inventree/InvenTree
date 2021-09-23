@@ -22,12 +22,38 @@
                                 <td>{% trans "InvenTree Version" %}</td>
                                 <td>
                                     <a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a>{% include "clip.html" %}
+                                    {% inventree_is_development as dev %}
+                                    {% if dev %}
+                                    <span class='label label-blue float-right'>{% trans "Development Version" %}</span>
+                                    {% else %}
                                     {% if up_to_date %}
                                     <span class='label label-green float-right'>{% trans "Up to Date" %}</span>
                                     {% else %}
                                     <span class='label label-red float-right'>{% trans "Update Available" %}</span>
                                     {% endif %}
+                                    {% endif %}
                                 </td>
+                            </tr>
+                            {% if dev %}
+                            {% inventree_commit_hash as hash %}
+                            {% if hash %}
+                            <tr>
+                                <td><span class='fas fa-code-branch'></span></td>
+                                <td>{% trans "Commit Hash" %}</td><td>{{ hash }}{% include "clip.html" %}</td>
+                            </tr>
+                            {% endif %}
+                            {% inventree_commit_date as commit_date %}
+                            {% if commit_date %}
+                            <tr>
+                                <td><span class='fas fa-calendar-alt'></span></td>
+                                <td>{% trans "Commit Date" %}</td><td>{{ commit_date }}{% include "clip.html" %}</td>
+                            </tr>
+                            {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td><span class='fas fa-book'></span></td>
+                                <td>{% trans "InvenTree Documentation" %}</td>
+                                <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
                             </tr>
                             <tr>
                                 <td><span class='fas fa-code'></span></td>
@@ -43,25 +69,6 @@
                                 <td><span class='fas fa-hashtag'></span></td>
                                 <td>{% trans "Django Version" %}</td>
                                 <td><a href="https://www.djangoproject.com/">{% django_version %}</a>{% include "clip.html" %}</td>
-                            </tr>
-                            {% inventree_commit_hash as hash %}
-                            {% if hash %}
-                            <tr>
-                                <td><span class='fas fa-code-branch'></span></td>
-                                <td>{% trans "Commit Hash" %}</td><td>{{ hash }}{% include "clip.html" %}</td>
-                            </tr>
-                            {% endif %}
-                            {% inventree_commit_date as commit_date %}
-                            {% if commit_date %}
-                            <tr>
-                                <td><span class='fas fa-calendar-alt'></span></td>
-                                <td>{% trans "Commit Date" %}</td><td>{{ commit_date }}{% include "clip.html" %}</td>
-                            </tr>
-                            {% endif %}
-                            <tr>
-                                <td><span class='fas fa-book'></span></td>
-                                <td>{% trans "InvenTree Documentation" %}</td>
-                                <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
                             </tr>
                             <tr>
                                 <td><span class='fab fa-github'></span></td>
@@ -87,7 +94,7 @@
                                 <td>
                                     <span style="display: none;" id="about-copy-text">{% include "version.html" %}</span>
                                     <span class="float-right">
-                                    <button class="btn clip-btn-version" type="button" data-toggle='tooltip' title='{% trans "copy to clipboard" %}'><i class="fas fa-copy"></i> {% trans "copy version information" %}</button>
+                                        <button class="btn clip-btn-version" type="button" data-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em> {% trans "copy version information" %}</button>
                                     </span>
                                 </td>
                             </tr>

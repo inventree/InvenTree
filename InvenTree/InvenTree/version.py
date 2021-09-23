@@ -8,12 +8,15 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.5.0 pre"
+INVENTREE_SW_VERSION = "0.5.0 dev"
 
-INVENTREE_API_VERSION = 11
+INVENTREE_API_VERSION = 12
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v12 -> 2021-09-07
+    - Adds API endpoint to receive stock items against a PurchaseOrder
 
 v11 -> 2021-08-26
     - Adds "units" field to PartBriefSerializer
@@ -67,7 +70,7 @@ def inventreeInstanceTitle():
 
 def inventreeVersion():
     """ Returns the InvenTree version string """
-    return INVENTREE_SW_VERSION
+    return INVENTREE_SW_VERSION.lower().strip()
 
 
 def inventreeVersionTuple(version=None):
@@ -79,6 +82,33 @@ def inventreeVersionTuple(version=None):
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", str(version))
 
     return [int(g) for g in match.groups()]
+
+
+def isInvenTreeDevelopmentVersion():
+    """
+    Return True if current InvenTree version is a "development" version
+    """
+
+    print("is dev?", inventreeVersion())
+
+    return inventreeVersion().endswith('dev')
+
+
+def inventreeDocsVersion():
+    """
+    Return the version string matching the latest documentation.
+    
+    Development -> "latest"
+    Release -> "major.minor"
+    
+    """
+
+    if isInvenTreeDevelopmentVersion():
+        return "latest"
+    else:
+        major, minor, patch = inventreeVersionTuple()
+
+        return f"{major}.{minor}"
 
 
 def isInvenTreeUpToDate():

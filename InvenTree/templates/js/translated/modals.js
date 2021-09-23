@@ -1,5 +1,22 @@
 {% load i18n %}
 
+/* globals
+    inventreeGet,
+    showAlertOrCache,
+*/
+
+/* exported
+    attachSecondaryModal,
+    clearField,
+    clearFieldOptions,
+    closeModal,
+    enableField,
+    getFieldValue,
+    reloadFieldOptions,
+    showModalImage,
+    removeRowFromModalForm,
+    showQuestionDialog,
+*/
 
 /*
  * Create and display a new modal dialog
@@ -77,7 +94,7 @@ function createNewModal(options={}) {
     });
 
     // Automatically remove the modal when it is deleted!
-    $(modal_name).on('hidden.bs.modal', function(e) {
+    $(modal_name).on('hidden.bs.modal', function() {
         $(modal_name).remove();
     });
 
@@ -86,7 +103,7 @@ function createNewModal(options={}) {
         if (event.keyCode == 13) {
             event.preventDefault();
             // Simulate a click on the 'Submit' button
-            $(modal_name).find("#modal-form-submit").click();
+            $(modal_name).find('#modal-form-submit').click();
             
             return false;
         }
@@ -253,8 +270,8 @@ function reloadFieldOptions(fieldName, options) {
             // Update the target field with the new options
             setFieldOptions(fieldName, opts);
         },
-        error: function(response) {
-            console.log("Error GETting field options");
+        error: function() {
+            console.log('Error GETting field options');
         }
     });
 }
@@ -273,7 +290,7 @@ function enableField(fieldName, enabled, options={}) {
 
     var field = getFieldByName(modal, fieldName);
 
-    field.prop("disabled", !enabled);
+    field.prop('disabled', !enabled);
 }
 
 function clearField(fieldName, options={}) {
@@ -344,7 +361,7 @@ function attachToggle(modal) {
      * and also larger toggle style buttons are easier to press!
      */
 
-    $(modal).find("input[type='checkbox']").each(function(x) {
+    $(modal).find(`input[type='checkbox']`).each(function() {
         $(this).bootstrapToggle({
             size: 'small',
             onstyle: 'success',
@@ -359,7 +376,7 @@ function attachSelect(modal) {
      * Provides search filtering for dropdown items
      */
 
-     $(modal + ' .select').select2({
+    $(modal + ' .select').select2({
         dropdownParent: $(modal),
         // dropdownAutoWidth parameter is required to work properly with modal forms
         dropdownAutoWidth: false,
@@ -377,7 +394,7 @@ function loadingMessageContent() {
      */
 
     // TODO - This can be made a lot better
-    return "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}";
+    return `<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}`;
 }
 
 
@@ -392,36 +409,36 @@ function afterForm(response, options) {
      * - Reload the page
      */
 
-     // Should we show alerts immediately or cache them?
+    // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
                 options.redirect ||
                 options.reload;
 
     // Display any messages
     if (response.success) {
-        showAlertOrCache("alert-success", response.success, cache);
+        showAlertOrCache('alert-success', response.success, cache);
     }
+
     if (response.info) {
-        showAlertOrCache("alert-info", response.info, cache);
+        showAlertOrCache('alert-info', response.info, cache);
     }
+    
     if (response.warning) {
-        showAlertOrCache("alert-warning", response.warning, cache);
+        showAlertOrCache('alert-warning', response.warning, cache);
     }
+    
     if (response.danger) {
-        showAlertOrCache("alert-danger", response.danger, cache);
+        showAlertOrCache('alert-danger', response.danger, cache);
     }
 
     // Was a callback provided?
     if (options.success) {
         options.success(response);
-    }
-    else if (options.follow && response.url) {
+    } else if (options.follow && response.url) {
         window.location.href = response.url;
-    }
-    else if (options.redirect) {
+    } else if (options.redirect) {
         window.location.href = options.redirect;
-    }
-    else if (options.reload) {
+    } else if (options.reload) {
         location.reload();
     }
 }
@@ -554,7 +571,7 @@ function renderErrorMessage(xhr) {
 }
 
 
-function showAlertDialog(title, content, options={}) {
+function showAlertDialog(title, content) {
     /* Display a modal dialog message box.
      * 
      * title - Title text 
@@ -595,7 +612,7 @@ function showQuestionDialog(title, content, options={}) {
 
     modalSetContent(modal, content);
 
-    $(modal).on('click', "#modal-form-submit", function() {
+    $(modal).on('click', '#modal-form-submit', function() {
         $(modal).modal('hide');
 
         if (options.accept) {
@@ -636,7 +653,7 @@ function openModal(options) {
             event.preventDefault();
 
             // Simulate a click on the 'Submit' button
-            $(modal).find("#modal-form-submit").click();
+            $(modal).find('#modal-form-submit').click();
 
             return false;
         }
@@ -698,17 +715,17 @@ function insertNewItemButton(modal, options) {
      * Inserts a button at the end of this lael element.
      */
 
-    var html = "<span style='float: right;'>";
+    var html = `<span style='float: right;'>`;
 
-    html += "<div type='button' class='btn btn-primary btn-secondary'";
+    html += `<div type='button' class='btn btn-primary btn-secondary'`;
 
     if (options.title) {
-        html += " title='" + options.title + "'";
+        html += ` title='${ options.title}'`;
     }
 
-    html += " id='btn-new-" + options.field + "'>" + options.label + "</div>";
+    html += ` id='btn-new-${options.field}'>${options.label}</div>`;
 
-    html += "</span>";
+    html += '</span>';
 
     $(modal).find('label[for="id_'+ options.field + '"]').append(html);
 }
@@ -733,7 +750,7 @@ function attachSecondaryModal(modal, options) {
     var data = options.data || {};
 
     // Add a callback to the button
-    $(modal).find("#btn-new-" + options.field).on('click', function() {
+    $(modal).find('#btn-new-' + options.field).on('click', function() {
 
         // Launch the secondary modal
         launchModalForm(
@@ -762,26 +779,39 @@ function attachSecondaryModal(modal, options) {
 }
 
 
+// eslint-disable-next-line no-unused-vars
 function attachSecondaries(modal, secondaries) {
     /* Attach a provided list of secondary modals */
 
     // 2021-07-18 - Secondary modals will be disabled for now, until they are re-implemented in the "API forms" architecture
-    return;
 
-    for (var i = 0; i < secondaries.length; i++) {
-        attachSecondaryModal(modal, secondaries[i]);
-    }
+    // for (var i = 0; i < secondaries.length; i++) {
+    //     attachSecondaryModal(modal, secondaries[i]);
+    // }
 }
 
 function insertActionButton(modal, options) {
-    /* Insert a custom submition button */
+    /* Insert a custom submission button */
 
-    var html = "<span style='float: right;'>";
-    html += "<button name='" + options.name + "' type='submit' class='btn btn-default modal-form-button'";
-    html += " value='" + options.name + "'>" + options.title + "</button>";
-    html += "</span>";
+    var element = $(modal).find('#modal-footer-buttons');
 
-    $(modal).find('#modal-footer-buttons').append(html);
+    // check if button already present
+    var already_present = false;
+    for (var child=element[0].firstElementChild; child; child=child.nextElementSibling) {
+        if (item.firstElementChild.name == options.name) {
+            already_present = true;
+        }
+    }
+
+    if (already_present == false) {
+        var html = `
+        <span style='float: right;'>
+            <button name='${options.name}' type='submit' class='btn btn-default modal-form-button' value='${options.name}'>
+                ${options.title}
+            </button>
+        </span>`;
+        element.append(html);
+    }
 }
 
 function attachButtons(modal, buttons) {
@@ -802,8 +832,8 @@ function attachFieldCallback(modal, callback) {
      * - action: A function to perform
      */
 
-     // Find the field input in the form
-     var field = getFieldByName(modal, callback.field);
+    // Find the field input in the form
+    var field = getFieldByName(modal, callback.field);
 
     field.change(function() {
 
@@ -838,8 +868,6 @@ function handleModalForm(url, options) {
 
     var form = $(modal).find('.js-modal-form');
 
-    var _form = $(modal).find(".js-modal-form");
-
     form.ajaxForm({
         url: url,
         dataType: 'json',
@@ -860,7 +888,7 @@ function handleModalForm(url, options) {
                 modalEnable(modal, false);
             },
             // POST was successful
-            success: function(response, status, xhr, f) {
+            success: function(response) {
                 // Re-enable the modal
                 modalEnable(modal, true);
                 if ('form_valid' in response) {
@@ -868,9 +896,8 @@ function handleModalForm(url, options) {
                     if (response.form_valid) {
                         $(modal).modal('hide');
                         afterForm(response, options);
-                    }
-                    // Form was returned, invalid!
-                    else {
+                    } else {
+                        // Form was returned, invalid!
 
                         // Disable error message with option or response
                         if (!options.hideErrorMessage && !response.hideErrorMessage) {
@@ -901,26 +928,24 @@ function handleModalForm(url, options) {
                             if (response.buttons) {
                                 attachButtons(modal, response.buttons);
                             }
-                        }
-                        else {
+                        } else {
                             $(modal).modal('hide');
                             showAlertDialog('{% trans "Invalid response from server" %}', '{% trans "Form data missing from server response" %}');
                         }
                     }
-                }
-                else {
+                } else {
                     $(modal).modal('hide');
                     afterForm(response, options);
                 }
             },
-            error: function(xhr, ajaxOptions, thrownError) {
+            error: function(xhr) {
                 // There was an error submitting form data via POST
 
                 $(modal).modal('hide'); 
                 showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
             },
-            complete: function(xhr) {
-                //TODO
+            complete: function() {
+                // TODO
             }
         });
     });
@@ -960,11 +985,11 @@ function launchModalForm(url, options = {}) {
     $(modal).find('#modal-footer-buttons').html('');
 
     // Form the ajax request to retrieve the django form data
-    ajax_data = {
+    var ajax_data = {
         url: url,
         type: 'get',
         dataType: 'json',
-        beforeSend: function () {
+        beforeSend: function() {
             openModal({
                 modal: modal,
                 submit_text: submit_text,
@@ -1017,7 +1042,7 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Invalid server response" %}', '{% trans "JSON response missing form data" %}');
             }
         },
-        error: function (xhr, ajaxOptions, thrownError) {
+        error: function(xhr) {
 
             $(modal).modal('hide');
 
@@ -1056,8 +1081,8 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
             }
 
-            console.log("Modal form error: " + xhr.status);
-            console.log("Message: " + xhr.responseText);
+            console.log('Modal form error: ' + xhr.status);
+            console.log('Message: ' + xhr.responseText);
         }
     };
 

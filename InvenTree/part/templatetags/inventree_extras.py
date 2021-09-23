@@ -137,6 +137,21 @@ def inventree_version(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_is_development(*args, **kwargs):
+    return version.isInvenTreeDevelopmentVersion()
+
+
+@register.simple_tag()
+def inventree_is_release(*args, **kwargs):
+    return not version.isInvenTreeDevelopmentVersion()
+
+
+@register.simple_tag()
+def inventree_docs_version(*args, **kwargs):
+    return version.inventreeDocsVersion()
+
+
+@register.simple_tag()
 def inventree_api_version(*args, **kwargs):
     """ Return InvenTree API version """
     return version.inventreeApiVersion()
@@ -169,7 +184,10 @@ def inventree_github_url(*args, **kwargs):
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
     """ Return URL for InvenTree documenation site """
-    return "https://inventree.readthedocs.io/"
+
+    tag = version.inventreeDocsVersion()
+
+    return f"https://inventree.readthedocs.io/en/{tag}"
 
 
 @register.simple_tag()

@@ -1,21 +1,23 @@
-# Publish docker images to dockerhub
+# Build and push latest docker image on push to master branch
 
-name: Docker Publish
+name: Docker Build
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - 'master'
 
 jobs:
-  publish_image:
-    name: Push InvenTree web server image to dockerhub
+
+  docker:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out repo
+      - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Check Release tag
+      - name: Check version number
         run: |
-          python3 ci/check_version_number.py ${{ github.event.release.tag_name }}
+          python3 ci/check_version_number.py --dev
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -32,7 +34,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           target: production
-          build-args:
-            tag: ${{ github.event.release.tag_name }}
           repository: inventree/inventree
-          tags: inventree/inventree:${{ github.event.release.tag_name }}
+          tags: inventree/inventree:latest
+      - name: Image Digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
