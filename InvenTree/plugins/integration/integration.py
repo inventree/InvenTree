@@ -156,6 +156,20 @@ def get_git_log(path):
         output = 7 * ['']
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
 
+class GitStatus:
+    class definition:
+        key: str = 'N'
+        status: int = 0
+        msg_sign: str = ''
+        msg_key: str = ''
+
+        def __init__(self, key: str='N', status: int = 0, msg_sign: str = '', msg_key: str = '') -> None:
+            self.key = key
+            self.status = status
+            self.msg_sign = msg_sign
+            self.msg_key = msg_key
+
+    E = definition(key='N', status=1, msg_sign='no signature',)
 
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
