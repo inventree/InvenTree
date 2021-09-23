@@ -768,7 +768,7 @@ function partGridTile(part) {
     var html = `
     
     <div class='col-sm-3 card'>
-        <div class='panel panel-default panel-inventree'>
+        <div class='panel panel-default panel-inventree product-card-panel'>
             <div class='panel-heading'>
                 <a href='/part/${part.pk}/'>
                     <b>${part.full_name}</b>
@@ -1007,7 +1007,7 @@ function loadPartTable(table, url, options={}) {
                 
                 // Force a new row every 4 columns, to prevent visual issues
                 if ((index > 0) && (index % 4 == 0) && (index < data.length)) {
-                    html += `</div><div class='row'>`;
+                    html += `</div><div class='row full-height'>`;
                 }
 
                 html += partGridTile(row);
@@ -1252,7 +1252,43 @@ function loadPartTestTemplateTable(table, options) {
                     }
                 }
             }
-        ]
+        ],
+        onPostBody: function() {
+
+            table.find('.button-test-edit').click(function() {
+                var pk = $(this).attr('pk');
+            
+                var url = `/api/part/test-template/${pk}/`;
+            
+                constructForm(url, {
+                    fields: {
+                        test_name: {},
+                        description: {},
+                        required: {},
+                        requires_value: {},
+                        requires_attachment: {},
+                    },
+                    title: '{% trans "Edit Test Result Template" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    },
+                });
+            });
+
+            table.find('.button-test-delete').click(function() {
+                var pk = $(this).attr('pk');
+            
+                var url = `/api/part/test-template/${pk}/`;
+            
+                constructForm(url, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Test Result Template" %}',
+                    onSuccess: function() {
+                        table.bootstrapTable('refresh');
+                    },
+                });
+            });
+        }
     });
 }
 
