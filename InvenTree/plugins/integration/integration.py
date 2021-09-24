@@ -200,6 +200,7 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
 
     def __init__(self):
+        super().__init__()
         self.add_mixin('base')
 
         self.set_sign_values()
