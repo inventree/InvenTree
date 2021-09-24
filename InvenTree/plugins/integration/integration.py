@@ -18,18 +18,17 @@ logger = logging.getLogger("inventree")
 class MixinBase:
     """general base for mixins"""
 
+    def __init__(self) -> None:
+        self._mixinreg = {}
+        self._mixins = {}
+
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
         """add a mixin to the plugins registry"""
-        if not hasattr(self, '_mixins'):
-            self._mixins = {}
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
     def setup_mixin(self, key, cls=None):
         """define mixin details for the current mixin -> provides meta details for all active mixins"""
-        if not hasattr(self, '_mixinreg'):
-            self._mixinreg = {}
-
         # get human name
         human_name = getattr(cls.Meta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'Meta') else key
 
