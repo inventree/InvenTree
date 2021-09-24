@@ -3,7 +3,7 @@
 
 class InvenTreePlugin():
     """
-    Base class for a Barcode plugin
+    Base class for a plugin
     """
 
     # Override the plugin name for each concrete plugin instance
