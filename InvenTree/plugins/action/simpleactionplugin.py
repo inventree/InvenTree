@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""sample implementation for ActionPlugin"""
 from plugins.action.action import ActionPlugin
 
 

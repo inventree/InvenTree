@@ -1,3 +1,4 @@
+"""sample implementations for IntegrationPlugin"""
 from plugins.integration.integration import SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPlugin
 
 from django.http import HttpResponse
@@ -13,6 +14,7 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
     PLUGIN_NAME = "SampleIntegrationPlugin"
 
     def view_test(self, request):
+        """very basic view"""
         return HttpResponse(f'Hi there {request.user.username} this works')
 
     def setup_urls(self):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""general functions for plugin handeling"""
 
 import inspect
 import importlib
@@ -17,17 +18,17 @@ logger = logging.getLogger("inventree")
 
 
 def iter_namespace(pkg):
-
+    """get all modules in a package"""
     return pkgutil.iter_modules(pkg.__path__, pkg.__name__ + ".")
 
 
 def get_modules(pkg):
-    # Return all modules in a given package
+    """get all modules in a package"""
     return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
 
 
 def get_classes(module):
-    # Return all classes in a given module
+    """get all classes in a given module"""
     return inspect.getmembers(module, inspect.isclass)
 
 

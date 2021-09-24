@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base Class for InvenTree plugins"""
 
 
 class InvenTreePlugin():
@@ -10,6 +11,7 @@ class InvenTreePlugin():
     PLUGIN_NAME = ''
 
     def plugin_name(self):
+        """get plugin name"""
         return self.PLUGIN_NAME
 
     def __init__(self):

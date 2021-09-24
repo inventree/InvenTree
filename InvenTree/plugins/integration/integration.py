@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""class for IntegrationPlugin and Mixins for it"""
 
 import logging
 import os
@@ -18,12 +19,14 @@ class MixinBase:
     """general base for mixins"""
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
+        """add a mixin to the plugins registry"""
         if not hasattr(self, '_mixins'):
             self._mixins = {}
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
     def setup_mixin(self, key, cls=None):
+        """define mixin details for the current mixin -> provides meta details for all active mixins"""
         if not hasattr(self, '_mixinreg'):
             self._mixinreg = {}
 
@@ -38,6 +41,7 @@ class MixinBase:
 
     @property
     def registered_mixins(self, with_base: bool = False):
+        """get all registered mixins for the plugin"""
         mixins = getattr(self, '_mixinreg', None)
         if mixins:
             # filter out base
@@ -52,6 +56,7 @@ class MixinBase:
 class SettingsMixin:
     """Mixin that enables settings for the plugin"""
     class Meta:
+        """meta options for this mixin"""
         MIXIN_NAME = 'Settings'
 
     def __init__(self):
@@ -74,6 +79,9 @@ class SettingsMixin:
 
     @property
     def settingspatterns(self):
+        """
+        get patterns for InvenTreeSetting defintion
+        """
         if self.has_settings:
             return {f'PLUGIN_{self.plugin_name().upper()}_{key}': value for key, value in self.settings.items()}
         return None
@@ -82,6 +90,7 @@ class SettingsMixin:
 class UrlsMixin:
     """Mixin that enables urls for the plugin"""
     class Meta:
+        """meta options for this mixin"""
         MIXIN_NAME = 'URLs'
 
     def __init__(self):
@@ -97,12 +106,15 @@ class UrlsMixin:
 
     @property
     def base_url(self):
+        """
+        returns base url for this plugin
+        """
         return f'{settings.PLUGIN_URL}/{self.plugin_name()}/'
 
     @property
     def urlpatterns(self):
         """
-        retruns the urlpatterns for this plugin
+        returns the urlpatterns for this plugin
         """
         if self.has_urls:
             return url(f'^{self.plugin_name()}/', include((self.urls, self.plugin_name())), name=self.plugin_name())
@@ -119,6 +131,7 @@ class UrlsMixin:
 class NavigationMixin:
     """Mixin that enables adding navigation links with the plugin"""
     class Meta:
+        """meta options for this mixin"""
         MIXIN_NAME = 'Navigation Links'
 
     def __init__(self):
@@ -148,6 +161,7 @@ class NavigationMixin:
 
 
 def get_git_log(path):
+    """get dict with info of the last commit to file named in path"""
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
     command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
     try:
@@ -158,7 +172,9 @@ def get_git_log(path):
 
 
 class GitStatus:
+    """class for resolving git gpg singing state"""
     class Definition:
+        """definition of a git gpg sing state"""
         key: str = 'N'
         status: int = 2
         msg: str = ''
@@ -189,19 +205,23 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
         self.set_sign_values()
 
     def mixin(self, key):
+        """check if mixin is registered"""
         return key in self._mixins
 
     def mixin_enabled(self, key):
+        """check if mixin is enabled and ready"""
         if self.mixin(key):
             fnc_name = self._mixins.get(key)
             return getattr(self, fnc_name, True)
         return False
 
     def get_plugin_commit(self):
+        """get last git commit for plugin"""
         path = inspect.getfile(self.__class__)
         return get_git_log(path)
 
     def set_sign_values(self):
+        """add the last commit of the plugins class file into plugins context"""
         # fetch git log
         commit = self.get_plugin_commit()
         # resolve state

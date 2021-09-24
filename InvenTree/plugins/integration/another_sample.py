@@ -1,3 +1,4 @@
+"""sample implementation for IntegrationPlugin"""
 from plugins.integration.integration import IntegrationPlugin, UrlsMixin
 
 
