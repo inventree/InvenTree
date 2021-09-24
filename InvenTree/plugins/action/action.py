@@ -43,7 +43,6 @@ class ActionPlugin(plugin.InvenTreePlugin):
         """
         Override this method to perform the action!
         """
-        pass
 
     def get_result(self):
         """
