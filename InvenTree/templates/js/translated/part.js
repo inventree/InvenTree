@@ -94,7 +94,12 @@ function partFields(options={}) {
         },
         default_location: {
         },
-        default_supplier: {},
+        default_supplier: {
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+            }
+        },
         default_expiry: {
             icon: 'fa-calendar-alt',
         },
@@ -314,6 +319,9 @@ function editPart(pk) {
     var fields = partFields({
         edit: true
     });
+
+    // Filter supplied parts by the Part ID
+    fields.default_supplier.filters.part = pk;
 
     var groups = partGroups({});
 
