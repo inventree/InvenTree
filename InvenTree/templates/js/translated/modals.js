@@ -793,14 +793,25 @@ function attachSecondaries(modal, secondaries) {
 function insertActionButton(modal, options) {
     /* Insert a custom submission button */
 
-    var html = `
-    <span style='float: right;'>
-        <button name='${options.name}' type='submit' class='btn btn-default modal-form-button' value='${options.name}'>
-            ${options.title}
-        </button>
-    </span>`;
+    var element = $(modal).find('#modal-footer-buttons');
 
-    $(modal).find('#modal-footer-buttons').append(html);
+    // check if button already present
+    var already_present = false;
+    for (var child=element[0].firstElementChild; child; child=child.nextElementSibling) {
+        if (item.firstElementChild.name == options.name) {
+            already_present = true;
+        }
+    }
+
+    if (already_present == false) {
+        var html = `
+        <span style='float: right;'>
+            <button name='${options.name}' type='submit' class='btn btn-default modal-form-button' value='${options.name}'>
+                ${options.title}
+            </button>
+        </span>`;
+        element.append(html);
+    }
 }
 
 function attachButtons(modal, buttons) {
