@@ -47,7 +47,7 @@ class MixinBase:
             if not with_base and 'base' in mixins:
                 del mixins['base']
             # only return dict
-            mixins = [a for a in mixins.values()]
+            mixins = mixins.values()
         return mixins
 
 
