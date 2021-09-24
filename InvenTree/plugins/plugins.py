@@ -71,8 +71,8 @@ def load_plugins(name: str, module, cls):
     if len(plugins) > 0:
         logger.info("Discovered %i %s plugins:", len(plugins), name)
 
-        for ap in plugins:
-            logger.debug(" - %s", ap.PLUGIN_NAME)
+        for plugin in plugins:
+            logger.debug(" - %s", plugin.PLUGIN_NAME)
 
     return plugins
 
