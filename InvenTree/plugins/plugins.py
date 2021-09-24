@@ -64,15 +64,15 @@ def load_plugins(name: str, module, cls):
     :return: class of the to-be-loaded plugin
     """
 
-    logger.debug(f"Loading {name} plugins")
+    logger.debug("Loading %s plugins", name)
 
     plugins = get_plugins(module, cls)
 
     if len(plugins) > 0:
-        logger.info(f"Discovered {len(plugins)} {name} plugins:")
+        logger.info("Discovered %i %s plugins:", len(plugins), name)
 
         for ap in plugins:
-            logger.debug(" - {ap}".format(ap=ap.PLUGIN_NAME))
+            logger.debug(" - %s", ap.PLUGIN_NAME)
 
     return plugins
 
