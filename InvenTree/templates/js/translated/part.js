@@ -346,6 +346,9 @@ function duplicatePart(pk, options={}) {
                 duplicate: pk,
             });
 
+            // Remove "default_supplier" field
+            delete fields['default_supplier'];
+
             // If we are making a "variant" part
             if (options.variant) {
 
