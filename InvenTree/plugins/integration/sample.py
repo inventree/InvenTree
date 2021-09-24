@@ -18,14 +18,14 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
         return HttpResponse(f'Hi there {request.user.username} this works')
 
     def setup_urls(self):
-        he = [
+        he_urls = [
             url(r'^he/', self.view_test, name='he'),
             url(r'^ha/', self.view_test, name='ha'),
         ]
 
         return [
             url(r'^hi/', self.view_test, name='hi'),
-            url(r'^ho/', include(he), name='ho'),
+            url(r'^ho/', include(he_urls), name='ho'),
         ]
 
     SETTINGS = {
