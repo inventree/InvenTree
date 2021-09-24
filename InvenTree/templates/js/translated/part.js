@@ -94,7 +94,12 @@ function partFields(options={}) {
         },
         default_location: {
         },
-        default_supplier: {},
+        default_supplier: {
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+            }
+        },
         default_expiry: {
             icon: 'fa-calendar-alt',
         },
@@ -315,6 +320,9 @@ function editPart(pk) {
         edit: true
     });
 
+    // Filter supplied parts by the Part ID
+    fields.default_supplier.filters.part = pk;
+
     var groups = partGroups({});
 
     constructForm(url, {
@@ -337,6 +345,9 @@ function duplicatePart(pk, options={}) {
             var fields = partFields({
                 duplicate: pk,
             });
+
+            // Remove "default_supplier" field
+            delete fields['default_supplier'];
 
             // If we are making a "variant" part
             if (options.variant) {
