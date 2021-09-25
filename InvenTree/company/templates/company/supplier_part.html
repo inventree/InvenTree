@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
+{% load markdownify %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Supplier Part" %}
@@ -171,6 +172,27 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-note2'>
+    <div class='panel-heading'>
+        <h4>{% trans "Supplier Notes" %}</h4>
+        <button type='button' class='btn btn-default btn-glyph' id='edit-part-notes' title='{% trans "Edit supplier part notes" %}'>
+            <span class='fas fa-edit icon-green'/>
+        </button>
+    </div>
+    <div class='panel-content'>
+ <!--       
+        {% if part.note %}
+ -->
+        <div>
+            <h4>{% trans "Supplier Note1" %}</h4>
+            {{ part.note  | markdownify}}
+        </div>
+ <!--       
+        {% endif %}
+ -->
+    </div>
+</div>
+
 {% endblock %}
 
 {% block js_ready %}
@@ -322,6 +344,15 @@ $('#order-part, #order-part2').click(function() {
 $('#edit-part').click(function () {
 
     editSupplierPart({{ part.pk }}, {
+        onSuccess: function() {
+            location.reload();
+        }
+    });
+});
+
+$('#edit-part-notes').click(function () {
+
+    editSupplierPartNotes({{ part.pk }}, {
         onSuccess: function() {
             location.reload();
         }

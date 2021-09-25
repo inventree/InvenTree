@@ -174,6 +174,21 @@ function editSupplierPart(part, options={}) {
     });
 }
 
+function editSupplierPartNotes(part, options={}) {
+    var fields = {
+        note: {
+        icon: 'fa-pencil-alt',
+        multiline: true,
+        } 
+    }
+
+    constructForm(`/api/company/part/${part}/`, {
+        fields: fields,
+        title: '{% trans "Edit Supplier Part Notes" %}',
+        onSuccess: options.onSuccess
+    })
+}
+
 
 function deleteSupplierPart(part, options={}) {
 
