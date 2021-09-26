@@ -15,6 +15,7 @@ import plugins.plugin as plugin
 logger = logging.getLogger("inventree")
 
 
+# region mixins
 class MixinBase:
     """general base for mixins"""
 
@@ -51,7 +52,6 @@ class MixinBase:
         return mixins
 
 
-# region mixins
 class SettingsMixin:
     """Mixin that enables settings for the plugin"""
     class Meta:
@@ -159,6 +159,7 @@ class NavigationMixin:
 # endregion
 
 
+# region git-helpers
 def get_git_log(path):
     """get dict with info of the last commit to file named in path"""
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
@@ -195,7 +196,7 @@ class GitStatus:
     Y = Definition(key='Y', status=1, msg='good signature, expired key',)
     R = Definition(key='R', status=2, msg='good signature, revoked key',)
     E = Definition(key='E', status=1, msg='cannot be checked',)
-
+# endregion
 
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
