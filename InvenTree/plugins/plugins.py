@@ -7,11 +7,11 @@ import pkgutil
 import logging
 
 # Action plugins
-import plugins.action as action
-from plugins.action.action import ActionPlugin
+import plugins.samples.action as action
+from plugins.action import ActionPlugin
 
-import plugins.integration as integration
-from plugins.integration.integration import IntegrationPlugin
+import plugins.samples.integration as integration
+from plugins.integration import IntegrationPlugin
 
 
 logger = logging.getLogger("inventree")
