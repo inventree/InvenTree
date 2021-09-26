@@ -198,6 +198,7 @@ class GitStatus:
     E = Definition(key='E', status=1, msg='cannot be checked',)
 # endregion
 
+
 class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     """
     The IntegrationPlugin class is used to integrate with 3rd party software
