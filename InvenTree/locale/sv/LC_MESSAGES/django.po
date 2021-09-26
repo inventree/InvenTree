@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-24 02:36+0000\n"
-"PO-Revision-Date: 2021-09-24 02:39\n"
+"PO-Revision-Date: 2021-09-26 08:43\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -19,54 +19,54 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API-slutpunkt hittades inte"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Ingen åtgärd specificerad"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Ingen matchande åtgärd hittades"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Ange datum"
 
 #: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:169 build/forms.py:185 build/forms.py:227
 #: order/forms.py:30 order/forms.py:41 order/forms.py:52 order/forms.py:63
 #: order/forms.py:74 part/forms.py:108 templates/js/translated/forms.js:564
 msgid "Confirm"
-msgstr ""
+msgstr "Bekräfta"
 
 #: InvenTree/forms.py:127
 msgid "Confirm delete"
-msgstr ""
+msgstr "Bekräfta borttagning"
 
 #: InvenTree/forms.py:128
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Bekräfta borttagning av artikel"
 
 #: InvenTree/forms.py:160 templates/registration/login.html:76
 msgid "Enter password"
-msgstr ""
+msgstr "Ange lösenord"
 
 #: InvenTree/forms.py:161
 msgid "Enter new password"
-msgstr ""
+msgstr "Ange nytt lösenord"
 
 #: InvenTree/forms.py:168
 msgid "Confirm password"
-msgstr ""
+msgstr "Bekräfta lösenord"
 
 #: InvenTree/forms.py:169
 msgid "Confirm new password"
-msgstr ""
+msgstr "Bekräfta nytt lösenord"
 
 #: InvenTree/forms.py:201
 msgid "Select Category"
-msgstr ""
+msgstr "Välj Kategori"
 
 #: InvenTree/helpers.py:401
 #, python-brace-format
@@ -76,17 +76,17 @@ msgstr ""
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:430
 #: stock/views.py:1363
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Ogiltigt antal angivet"
 
 #: InvenTree/helpers.py:411
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Tom serienummersträng"
 
 #: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Ogiltig grupp: {g}"
 
 #: InvenTree/helpers.py:469
 #, python-brace-format
@@ -95,7 +95,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:477
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Inga serienummer hittades"
 
 #: InvenTree/helpers.py:481
 #, python-brace-format
