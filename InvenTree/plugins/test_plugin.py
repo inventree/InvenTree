@@ -1,9 +1,14 @@
 """ Unit tests for plugins """
 
 from django.test import TestCase
+from django.conf import settings
 
 import plugins.plugin
+import plugins.integration
+from plugins.samples.integration.sample import SampleIntegrationPlugin
+from plugins.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 from plugins.plugins import load_integration_plugins  # , load_action_plugins, load_barcode_plugins
+import part.templatetags.plugin_extras as plugin_tags
 
 
 class InvenTreePluginTests(TestCase):
@@ -40,3 +45,30 @@ class PluginIntegrationTests(TestCase):
         self.assertEqual(plugin_names_integration, ['NoIntegrationPlugin', 'WrongIntegrationPlugin', 'SampleIntegrationPlugin'])
         # self.assertEqual(plugin_names_action, '')
         # self.assertEqual(plugin_names_barcode, '')
+
+
+class PluginTagTests(TestCase):
+    """ Tests for the plugin extras """
+
+    def setUp(self):
+        self.sample = SampleIntegrationPlugin()
+        self.no = NoIntegrationPlugin()
+        self.wrong = WrongIntegrationPlugin()
+
+    def test_tag_plugin_list(self):
+        """test that all plugins are listed"""
+        self.assertEqual(plugin_tags.plugin_list(), settings.INTEGRATION_PLUGIN_LIST)
+
+    def test_tag_plugin_settings(self):
+        """check all plugins are listed"""
+        self.assertEqual(plugin_tags.plugin_settings(self.sample), settings.INTEGRATION_PLUGIN_SETTING.get(self.sample))
+
+    def test_tag_mixin_enabled(self):
+        """check that mixin enabled functions work"""
+        key = 'urls'
+        # mixin enabled
+        self.assertEqual(plugin_tags.mixin_enabled(self.sample, key), True)
+        # mixin not enabled
+        self.assertEqual(plugin_tags.mixin_enabled(self.wrong, key), False)
+        # mxixn not existing
+        self.assertEqual(plugin_tags.mixin_enabled(self.no, key), False)
