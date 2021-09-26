@@ -52,8 +52,8 @@ class PluginTagTests(TestCase):
 
     def setUp(self):
         self.sample = SampleIntegrationPlugin()
-        self.no = NoIntegrationPlugin()
-        self.wrong = WrongIntegrationPlugin()
+        self.plugin_no = NoIntegrationPlugin()
+        self.plugin_wrong = WrongIntegrationPlugin()
 
     def test_tag_plugin_list(self):
         """test that all plugins are listed"""
@@ -69,6 +69,6 @@ class PluginTagTests(TestCase):
         # mixin enabled
         self.assertEqual(plugin_tags.mixin_enabled(self.sample, key), True)
         # mixin not enabled
-        self.assertEqual(plugin_tags.mixin_enabled(self.wrong, key), False)
+        self.assertEqual(plugin_tags.mixin_enabled(self.plugin_wrong, key), False)
         # mxixn not existing
-        self.assertEqual(plugin_tags.mixin_enabled(self.no, key), False)
+        self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
