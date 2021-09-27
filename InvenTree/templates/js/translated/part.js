@@ -539,7 +539,7 @@ function loadPartVariantTable(table, partId, options={}) {
             field: 'in_stock',
             title: '{% trans "Stock" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/part/${row.pk}/?display=stock`);
+                return renderLink(value, `/part/${row.pk}/?display=part-stock`);
             }
         }
     ];
