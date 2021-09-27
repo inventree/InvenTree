@@ -177,6 +177,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'order',
             'part',
             'part_detail',
+            'supplier_part',
             'supplier_part_detail',
             'received',
             'purchase_price',

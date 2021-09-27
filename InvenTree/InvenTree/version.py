@@ -10,10 +10,13 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.0 dev"
 
-INVENTREE_API_VERSION = 12
+INVENTREE_API_VERSION = 13
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v13 -> 2021-09-28
+    - Adds "supplier_part" ID value to the "PurchaseOrderLineItem" serializer
 
 v12 -> 2021-09-07
     - Adds API endpoint to receive stock items against a PurchaseOrder
