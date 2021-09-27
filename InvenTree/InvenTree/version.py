@@ -88,9 +88,6 @@ def isInvenTreeDevelopmentVersion():
     """
     Return True if current InvenTree version is a "development" version
     """
-
-    print("is dev?", inventreeVersion())
-
     return inventreeVersion().endswith('dev')
 
 
