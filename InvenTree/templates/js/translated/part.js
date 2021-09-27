@@ -945,7 +945,7 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Stock" %}',
         searchable: false,
         formatter: function(value, row) {            
-            var link = 'stock';
+            var link = '?display=part-stock';
 
             if (value) {
                 // There IS stock available for this part
@@ -958,17 +958,17 @@ function loadPartTable(table, url, options={}) {
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
                 value = `0<span class='label label-right label-primary'>{% trans "On Order" %}: ${row.on_order}</span>`;
-                link = 'orders';
+                link = '?display=purchase-orders';
             } else if (row.building) {
                 // There is no stock available, but stock is being built
                 value = `0<span class='label label-right label-info'>{% trans "Building" %}: ${row.building}</span>`;
-                link = 'builds';
+                link = '?display=build-orders';
             } else {
                 // There is no stock available
                 value = `0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
             }
 
-            return renderLink(value, `/part/${row.pk}/${link}/`);
+            return renderLink(value, `/part/${row.pk}/${link}`);
         }
     };
 
