@@ -4,8 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.conf.urls import url, include
 
-from plugins.integration import IntegrationPlugin, MixinBase, SettingsMixin, UrlsMixin, NavigationMixin
-import part.templatetags.plugin_extras as plugin_tags
+from plugins.integration import IntegrationPlugin, SettingsMixin, UrlsMixin, NavigationMixin  # MixinBase
 
 
 class BaseMixinDefinition:
@@ -26,9 +25,9 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
     TEST_SETTINGS = {'setting1': [1, 2, 3]}
 
     def setUp(self):
-        class cls(SettingsMixin, IntegrationPlugin):
+        class SettingsCls(SettingsMixin, IntegrationPlugin):
             SETTINGS = self.TEST_SETTINGS
-        self.mixin = cls()
+        self.mixin = SettingsCls()
 
     def test_function(self):
         # settings variable
@@ -44,11 +43,11 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_urls'
 
     def setUp(self):
-        class cls(UrlsMixin, IntegrationPlugin):
+        class UrlsCls(UrlsMixin, IntegrationPlugin):
             def test(self):
                 return 'ccc'
-            URLS = [url('test', test, name='test'),]
-        self.mixin = cls()
+            URLS = [url('test', test, name='test'), ]
+        self.mixin = UrlsCls()
 
     def test_function(self):
         plg_name = self.mixin.plugin_name()
@@ -68,17 +67,17 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_naviation'
 
     def setUp(self):
-        class cls(NavigationMixin, IntegrationPlugin):
+        class NavigationCls(NavigationMixin, IntegrationPlugin):
             NAVIGATION = [
-                {'name': 'aa', 'link': 'plugin:test:test_view'},
+                {'name': 'aa', 'link': 'plugin:test:test_view'}, 
             ]
-        self.mixin = cls()
+        self.mixin = NavigationCls()
 
     def test_function(self):
         # check right configuration
         self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'},])
         # check wrong links fails
         with self.assertRaises(NotImplementedError):
-            class cls(NavigationMixin, IntegrationPlugin):
+            class NavigationCls(NavigationMixin, IntegrationPlugin):
                 NAVIGATION = ['aa', 'aa']
-            cls()
+            NavigationCls()
