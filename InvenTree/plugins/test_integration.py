@@ -69,13 +69,13 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
     def setUp(self):
         class NavigationCls(NavigationMixin, IntegrationPlugin):
             NAVIGATION = [
-                {'name': 'aa', 'link': 'plugin:test:test_view'}, 
+                {'name': 'aa', 'link': 'plugin:test:test_view'},
             ]
         self.mixin = NavigationCls()
 
     def test_function(self):
         # check right configuration
-        self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'},])
+        self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}, ])
         # check wrong links fails
         with self.assertRaises(NotImplementedError):
             class NavigationCls(NavigationMixin, IntegrationPlugin):
