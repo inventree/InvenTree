@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from plugins.samples.action.simpleactionplugin import SimpleActionPlugin
 
 
-class ActionPluginTests(TestCase):
+class SimpleActionPluginTests(TestCase):
     """ Tests for SampleIntegrationPlugin """
 
     def setUp(self):

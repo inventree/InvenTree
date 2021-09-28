@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 
-class ActionPluginTests(TestCase):
+class SampleIntegrationPluginTests(TestCase):
     """ Tests for SampleIntegrationPlugin """
 
     def setUp(self):
