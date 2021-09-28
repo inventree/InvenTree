@@ -626,8 +626,6 @@ class StockItemDeletionTest(StockAPITestCase):
 
             self.assertFalse(item.scheduled_for_deletion)
 
-            url = reverse('api-stock-detail', kwargs={'pk': pk})
-
             # Request deletion via the API
             self.delete(
                 reverse('api-stock-detail', kwargs={'pk': pk}),
@@ -647,6 +645,7 @@ class StockItemDeletionTest(StockAPITestCase):
             StockItem.objects.filter(scheduled_for_deletion=True).count(),
             0
         )
+
 
 class StockTestResultTest(StockAPITestCase):
 
