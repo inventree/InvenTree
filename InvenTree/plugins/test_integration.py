@@ -28,13 +28,22 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         class SettingsCls(SettingsMixin, IntegrationPlugin):
             SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
+        class NoSettingsCls(SettingsMixin, IntegrationPlugin):
+            pass
+        self.mixin_nothing = NoSettingsCls()
 
     def test_function(self):
         # settings variable
         self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
+
         # settings pattern
         target_pattern = {f'PLUGIN_{self.mixin.plugin_name().upper()}_{key}': value for key, value in self.mixin.settings.items()}
         self.assertEqual(self.mixin.settingspatterns, target_pattern)
+
+        # no settings
+        self.assertIsNone(self.mixin_nothing.settings)
+        self.assertIsNone(self.mixin_nothing.settingspatterns)
+
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
@@ -48,6 +57,9 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
                 return 'ccc'
             URLS = [url('test', test, name='test'), ]
         self.mixin = UrlsCls()
+        class NoUrlsCls(UrlsMixin, IntegrationPlugin):
+            pass
+        self.mixin_nothing = NoUrlsCls()
 
     def test_function(self):
         plg_name = self.mixin.plugin_name()
@@ -59,6 +71,13 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         # urlpattern
         target_pattern = url(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
         self.assertEqual(self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict)
+
+        # resolve the view
+        self.assertEqual(self.mixin.urlpatterns, 'ccc')
+
+        # no url
+        self.assertIsNone(self.mixin_nothing.urls)
+        self.assertIsNone(self.mixin_nothing.urlpatterns)
 
 
 class NavigationMixinTest(BaseMixinDefinition, TestCase):
