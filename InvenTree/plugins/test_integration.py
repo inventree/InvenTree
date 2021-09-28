@@ -28,6 +28,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         class SettingsCls(SettingsMixin, IntegrationPlugin):
             SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
+
         class NoSettingsCls(SettingsMixin, IntegrationPlugin):
             pass
         self.mixin_nothing = NoSettingsCls()
@@ -45,7 +46,6 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertIsNone(self.mixin_nothing.settingspatterns)
 
 
-
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_HUMAN_NAME = 'URLs'
     MIXIN_NAME = 'urls'
@@ -57,6 +57,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
                 return 'ccc'
             URLS = [url('testpath', test, name='test'), ]
         self.mixin = UrlsCls()
+
         class NoUrlsCls(UrlsMixin, IntegrationPlugin):
             pass
         self.mixin_nothing = NoUrlsCls()
