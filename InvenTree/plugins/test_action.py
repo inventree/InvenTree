@@ -53,7 +53,7 @@ class ActionPluginTests(TestCase):
         # overriden functions
         self.assertEqual(self.action_plugin.perform_action(), self.ACTION_RETURN + 'action')
         self.assertEqual(self.action_plugin.get_result(), self.ACTION_RETURN + 'result')
-        self.assertIsNone(self.action_plugin.get_info(), self.ACTION_RETURN + 'info')
+        self.assertEqual(self.action_plugin.get_info(), self.ACTION_RETURN + 'info')
         self.assertEqual(self.action_plugin.get_response(), {
             "action": 'abc123',
             "result": self.ACTION_RETURN + 'result',
