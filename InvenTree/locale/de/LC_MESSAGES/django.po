@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 02:36+0000\n"
-"PO-Revision-Date: 2021-09-24 02:39\n"
+"POT-Creation-Date: 2021-09-28 00:58+0000\n"
+"PO-Revision-Date: 2021-09-28 01:13\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -102,7 +102,7 @@ msgstr "Keine Seriennummern gefunden"
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
 
-#: InvenTree/models.py:66 stock/models.py:1826
+#: InvenTree/models.py:66 stock/models.py:1823
 msgid "Attachment"
 msgstr "Anhang"
 
@@ -873,7 +873,7 @@ msgstr "Link zu einer externen URL"
 #: part/templates/part/navbar.html:123
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:138 stock/forms.py:250 stock/forms.py:282 stock/models.py:579
-#: stock/models.py:1726 stock/models.py:1832
+#: stock/models.py:1723 stock/models.py:1829
 #: stock/templates/stock/navbar.html:57 templates/js/translated/barcode.js:59
 #: templates/js/translated/bom.js:385 templates/js/translated/company.js:839
 #: templates/js/translated/order.js:604 templates/js/translated/stock.js:338
@@ -2400,7 +2400,7 @@ msgstr "Parametername"
 
 #: company/models.py:421
 #: report/templates/report/inventree_test_report_base.html:90
-#: stock/models.py:1819 templates/InvenTree/settings/header.html:8
+#: stock/models.py:1816 templates/InvenTree/settings/header.html:8
 #: templates/js/translated/company.js:642 templates/js/translated/part.js:623
 #: templates/js/translated/stock.js:576
 msgid "Value"
@@ -5392,12 +5392,12 @@ msgid "Test Results"
 msgstr "Testergebnisse"
 
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:1807
+#: stock/models.py:1804
 msgid "Test"
 msgstr "Test"
 
 #: report/templates/report/inventree_test_report_base.html:89
-#: stock/models.py:1813
+#: stock/models.py:1810
 msgid "Result"
 msgstr "Ergebnis"
 
@@ -5414,44 +5414,44 @@ msgstr "bestanden"
 msgid "Fail"
 msgstr "fehlgeschlagen"
 
-#: stock/api.py:146
+#: stock/api.py:157
 msgid "Request must contain list of stock items"
 msgstr ""
 
-#: stock/api.py:154
+#: stock/api.py:165
 msgid "Improperly formatted data"
 msgstr "Falsch formatierte Daten"
 
-#: stock/api.py:162
+#: stock/api.py:173
 msgid "Each entry must contain a valid integer primary-key"
 msgstr ""
 
-#: stock/api.py:168
+#: stock/api.py:179
 msgid "Primary key does not match valid stock item"
 msgstr ""
 
-#: stock/api.py:178
+#: stock/api.py:189
 msgid "Invalid quantity value"
 msgstr "Ungültige Menge"
 
-#: stock/api.py:183
+#: stock/api.py:194
 msgid "Quantity must not be less than zero"
 msgstr "Menge muss größer als Null sein"
 
-#: stock/api.py:211
+#: stock/api.py:222
 #, python-brace-format
 msgid "Updated stock for {n} items"
 msgstr "Bestand für {n} Objekte geändert"
 
-#: stock/api.py:247 stock/api.py:280
+#: stock/api.py:258 stock/api.py:291
 msgid "Specified quantity exceeds stock quantity"
 msgstr "Die angegebene Menge überschreitet die Lagermenge"
 
-#: stock/api.py:270
+#: stock/api.py:281
 msgid "Valid location must be specified"
 msgstr "Gültiger Standort muss angegeben werden"
 
-#: stock/api.py:290
+#: stock/api.py:301
 #, python-brace-format
 msgid "Moved {n} parts to {loc}"
 msgstr "{n} Teile nach {loc} bewegt"
@@ -5670,35 +5670,35 @@ msgstr "Seriennummern {exists} existieren bereits"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "BestandsObjekt kann nicht bewegt werden, da kein Bestand vorhanden ist"
 
-#: stock/models.py:1727
+#: stock/models.py:1724
 msgid "Entry notes"
 msgstr "Eintrags-Notizen"
 
-#: stock/models.py:1784
+#: stock/models.py:1781
 msgid "Value must be provided for this test"
 msgstr "Wert muss für diesen Test angegeben werden"
 
-#: stock/models.py:1790
+#: stock/models.py:1787
 msgid "Attachment must be uploaded for this test"
 msgstr "Anhang muss für diesen Test hochgeladen werden"
 
-#: stock/models.py:1808
+#: stock/models.py:1805
 msgid "Test name"
 msgstr "Name des Tests"
 
-#: stock/models.py:1814 templates/js/translated/table_filters.js:244
+#: stock/models.py:1811 templates/js/translated/table_filters.js:244
 msgid "Test result"
 msgstr "Testergebnis"
 
-#: stock/models.py:1820
+#: stock/models.py:1817
 msgid "Test output value"
 msgstr "Test Ausgabe Wert"
 
-#: stock/models.py:1827
+#: stock/models.py:1824
 msgid "Test result attachment"
 msgstr "Test Ergebnis Anhang"
 
-#: stock/models.py:1833
+#: stock/models.py:1830
 msgid "Test notes"
 msgstr "Test Notizen"
 
