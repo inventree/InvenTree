@@ -34,9 +34,9 @@ class ActionPluginTests(TestCase):
 
     def test_action_name(self):
         """check the name definition possibilities"""
-        self.assertEqual(self.plugin.plugin_name(), '')
-        self.assertEqual(self.action_plugin.plugin_name(), 'abc123')
-        self.assertEqual(self.action_name.plugin_name(), 'Aplugin')
+        self.assertEqual(self.plugin.action_name(), '')
+        self.assertEqual(self.action_plugin.action_name(), 'abc123')
+        self.assertEqual(self.action_name.action_name(), 'Aplugin')
 
     def test_function(self):
         """check functions"""
@@ -51,10 +51,10 @@ class ActionPluginTests(TestCase):
         })
 
         # overriden functions
-        self.assertEqual(self.plugin.perform_action(), self.ACTION_RETURN + 'action')
-        self.assertEqual(self.plugin.get_result(), self.ACTION_RETURN + 'result')
-        self.assertIsNone(self.plugin.get_info(), self.ACTION_RETURN + 'info')
-        self.assertEqual(self.plugin.get_response(), {
+        self.assertEqual(self.action_plugin.perform_action(), self.ACTION_RETURN + 'action')
+        self.assertEqual(self.action_plugin.get_result(), self.ACTION_RETURN + 'result')
+        self.assertIsNone(self.action_plugin.get_info(), self.ACTION_RETURN + 'info')
+        self.assertEqual(self.action_plugin.get_response(), {
             "action": 'abc123',
             "result": self.ACTION_RETURN + 'result',
             "info": self.ACTION_RETURN + 'info',
