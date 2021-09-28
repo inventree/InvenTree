@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.conf.urls import url, include
 
-from plugins.integration import IntegrationPlugin, SettingsMixin, UrlsMixin, NavigationMixin  # MixinBase
+from plugins.integration import IntegrationPlugin, SettingsMixin, UrlsMixin, NavigationMixin 
 
 
 class BaseMixinDefinition:
@@ -13,8 +13,6 @@ class BaseMixinDefinition:
         self.assertEqual(self.mixin.registered_mixins[0]['key'], self.MIXIN_NAME)
         # human name
         self.assertEqual(self.mixin.registered_mixins[0]['human_name'], self.MIXIN_HUMAN_NAME)
-        # mixin check
-        #  self.assertEqual(self.mixin.plugin_name(), self.MIXIN_ENABLE_CHECK)
 
 
 class SettingsMixinTest(BaseMixinDefinition, TestCase):
