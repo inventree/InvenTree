@@ -53,9 +53,9 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         class UrlsCls(UrlsMixin, IntegrationPlugin):
-            def test(self):
+            def test():
                 return 'ccc'
-            URLS = [url('test', test, name='test'), ]
+            URLS = [url('testpath', test, name='test'), ]
         self.mixin = UrlsCls()
         class NoUrlsCls(UrlsMixin, IntegrationPlugin):
             pass
@@ -73,7 +73,8 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict)
 
         # resolve the view
-        self.assertEqual(self.mixin.urlpatterns, 'ccc')
+        self.assertEqual(self.mixin.urlpatterns.resolve('/testpath').func(), 'ccc')
+        self.assertEqual(self.mixin.urlpatterns.reverse('test'), 'testpath')
 
         # no url
         self.assertIsNone(self.mixin_nothing.urls)
