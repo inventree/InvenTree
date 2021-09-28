@@ -1650,9 +1650,6 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
         child.parent = instance.parent
         child.save()
 
-    # Rebuild the MPTT tree
-    StockItem.objects.rebuild()
-
 
 class StockItemAttachment(InvenTreeAttachment):
     """
