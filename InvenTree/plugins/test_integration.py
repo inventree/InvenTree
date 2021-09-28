@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.conf.urls import url, include
 
-from plugins.integration import IntegrationPlugin, SettingsMixin, UrlsMixin, NavigationMixin 
+from plugins.integration import IntegrationPlugin, SettingsMixin, UrlsMixin, NavigationMixin
 
 
 class BaseMixinDefinition:
