@@ -16,14 +16,14 @@ class ActionPluginTests(TestCase):
             """a action plugin"""
             ACTION_NAME = 'abc123'
 
-            def perform_action():
-                return self.ACTION_RETURN + 'action'
+            def perform_action(self):
+                return ActionPluginTests.ACTION_RETURN + 'action'
 
-            def get_result():
-                return self.ACTION_RETURN + 'result'
+            def get_result(self):
+                return ActionPluginTests.ACTION_RETURN + 'result'
 
-            def get_info():
-                return self.ACTION_RETURN + 'info'
+            def get_info(self):
+                return ActionPluginTests.ACTION_RETURN + 'info'
 
         self.action_plugin = TestActionPlugin('user')
 
