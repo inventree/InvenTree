@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-27 23:30+0000\n"
+"POT-Creation-Date: 2021-09-28 00:58+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -102,7 +102,7 @@ msgstr "Seri numarası bulunamadı"
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Benzersiz seri numaralarının sayısı ({s}) girilen miktarla eşleşmeli ({q})"
 
-#: InvenTree/models.py:66 stock/models.py:1826
+#: InvenTree/models.py:66 stock/models.py:1823
 msgid "Attachment"
 msgstr "Ek"
 
@@ -873,7 +873,7 @@ msgstr "Harici URL'ye bağlantı"
 #: part/templates/part/navbar.html:123
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:138 stock/forms.py:250 stock/forms.py:282 stock/models.py:579
-#: stock/models.py:1726 stock/models.py:1832
+#: stock/models.py:1723 stock/models.py:1829
 #: stock/templates/stock/navbar.html:57 templates/js/translated/barcode.js:59
 #: templates/js/translated/bom.js:385 templates/js/translated/company.js:839
 #: templates/js/translated/order.js:604 templates/js/translated/stock.js:338
@@ -2400,7 +2400,7 @@ msgstr "Parametre adı"
 
 #: company/models.py:421
 #: report/templates/report/inventree_test_report_base.html:90
-#: stock/models.py:1819 templates/InvenTree/settings/header.html:8
+#: stock/models.py:1816 templates/InvenTree/settings/header.html:8
 #: templates/js/translated/company.js:642 templates/js/translated/part.js:623
 #: templates/js/translated/stock.js:576
 msgid "Value"
@@ -5392,12 +5392,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:88
-#: stock/models.py:1807
+#: stock/models.py:1804
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:89
-#: stock/models.py:1813
+#: stock/models.py:1810
 msgid "Result"
 msgstr ""
 
@@ -5414,44 +5414,44 @@ msgstr ""
 msgid "Fail"
 msgstr ""
 
-#: stock/api.py:146
+#: stock/api.py:157
 msgid "Request must contain list of stock items"
 msgstr ""
 
-#: stock/api.py:154
+#: stock/api.py:165
 msgid "Improperly formatted data"
 msgstr ""
 
-#: stock/api.py:162
+#: stock/api.py:173
 msgid "Each entry must contain a valid integer primary-key"
 msgstr ""
 
-#: stock/api.py:168
+#: stock/api.py:179
 msgid "Primary key does not match valid stock item"
 msgstr ""
 
-#: stock/api.py:178
+#: stock/api.py:189
 msgid "Invalid quantity value"
 msgstr ""
 
-#: stock/api.py:183
+#: stock/api.py:194
 msgid "Quantity must not be less than zero"
 msgstr ""
 
-#: stock/api.py:211
+#: stock/api.py:222
 #, python-brace-format
 msgid "Updated stock for {n} items"
 msgstr "{n} öge için stok güncellendi"
 
-#: stock/api.py:247 stock/api.py:280
+#: stock/api.py:258 stock/api.py:291
 msgid "Specified quantity exceeds stock quantity"
 msgstr ""
 
-#: stock/api.py:270
+#: stock/api.py:281
 msgid "Valid location must be specified"
 msgstr ""
 
-#: stock/api.py:290
+#: stock/api.py:301
 #, python-brace-format
 msgid "Moved {n} parts to {loc}"
 msgstr ""
@@ -5670,35 +5670,35 @@ msgstr "Seri numaraları zaten mevcut: {exists}"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Stok kalemi stokta olmadığı için taşınamaz"
 
-#: stock/models.py:1727
+#: stock/models.py:1724
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:1784
+#: stock/models.py:1781
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:1790
+#: stock/models.py:1787
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:1808
+#: stock/models.py:1805
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:1814 templates/js/translated/table_filters.js:244
+#: stock/models.py:1811 templates/js/translated/table_filters.js:244
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:1820
+#: stock/models.py:1817
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:1827
+#: stock/models.py:1824
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:1833
+#: stock/models.py:1830
 msgid "Test notes"
 msgstr ""
 
