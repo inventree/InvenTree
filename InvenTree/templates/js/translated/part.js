@@ -94,7 +94,12 @@ function partFields(options={}) {
         },
         default_location: {
         },
-        default_supplier: {},
+        default_supplier: {
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+            }
+        },
         default_expiry: {
             icon: 'fa-calendar-alt',
         },
@@ -315,6 +320,9 @@ function editPart(pk) {
         edit: true
     });
 
+    // Filter supplied parts by the Part ID
+    fields.default_supplier.filters.part = pk;
+
     var groups = partGroups({});
 
     constructForm(url, {
@@ -337,6 +345,9 @@ function duplicatePart(pk, options={}) {
             var fields = partFields({
                 duplicate: pk,
             });
+
+            // Remove "default_supplier" field
+            delete fields['default_supplier'];
 
             // If we are making a "variant" part
             if (options.variant) {
@@ -528,7 +539,7 @@ function loadPartVariantTable(table, partId, options={}) {
             field: 'in_stock',
             title: '{% trans "Stock" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/part/${row.pk}/?display=stock`);
+                return renderLink(value, `/part/${row.pk}/?display=part-stock`);
             }
         }
     ];
@@ -934,7 +945,7 @@ function loadPartTable(table, url, options={}) {
         title: '{% trans "Stock" %}',
         searchable: false,
         formatter: function(value, row) {            
-            var link = 'stock';
+            var link = '?display=part-stock';
 
             if (value) {
                 // There IS stock available for this part
@@ -947,17 +958,17 @@ function loadPartTable(table, url, options={}) {
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
                 value = `0<span class='label label-right label-primary'>{% trans "On Order" %}: ${row.on_order}</span>`;
-                link = 'orders';
+                link = '?display=purchase-orders';
             } else if (row.building) {
                 // There is no stock available, but stock is being built
                 value = `0<span class='label label-right label-info'>{% trans "Building" %}: ${row.building}</span>`;
-                link = 'builds';
+                link = '?display=build-orders';
             } else {
                 // There is no stock available
                 value = `0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
             }
 
-            return renderLink(value, `/part/${row.pk}/${link}/`);
+            return renderLink(value, `/part/${row.pk}/${link}`);
         }
     };
 

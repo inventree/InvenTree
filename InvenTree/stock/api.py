@@ -109,6 +109,17 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return super().update(request, *args, **kwargs)
 
+    def perform_destroy(self, instance):
+        """
+        Instead of "deleting" the StockItem
+        (which may take a long time)
+        we instead schedule it for deletion at a later date.
+        
+        The background worker will delete these in the future
+        """
+
+        instance.mark_for_deletion()
+
 
 class StockAdjust(APIView):
     """
