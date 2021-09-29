@@ -116,7 +116,7 @@ function inventreeDocReady() {
                 success: function(data) {
                     var transformed = $.map(data.results, function(el) {
                         return {
-                            label: el.name,
+                            label: el.full_name,
                             id: el.pk,
                             thumbnail: el.thumbnail
                         };
