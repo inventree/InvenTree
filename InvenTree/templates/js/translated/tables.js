@@ -181,6 +181,15 @@ function convertQueryParameters(params, filters) {
     if ('sortable' in params) {
         delete params['sortable'];
     }
+
+    // If "original_search" parameter is provided, add it to the "search"
+    if ('original_search' in params) {
+        var search = params['search'] || '';
+
+        params['search'] = search + ' ' + params['original_search'];
+
+        delete params['original_search'];
+    }
     
     return params;
 }
