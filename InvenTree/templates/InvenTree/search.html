@@ -126,24 +126,10 @@
 
     addItem('category', '{% trans "Part Categories" %}', 'fa-sitemap');
 
-    $("#table-category").inventreeTable({
-        url: "{% url 'api-part-category-list' %}",
-        queryParams: {
+    loadPartCategoryTable($("#table-category"), {
+        params: {
             original_search: "{{ query }}",
-        },
-        columns: [
-            {
-                field: 'name',
-                title: '{% trans "Name" %}',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, '/part/category/' + row.pk + '/');
-                },
-            },
-            {
-                field: 'description',
-                title: '{% trans "Description" %}',
-            },
-        ],
+        }
     });
 
     addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
