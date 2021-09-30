@@ -508,7 +508,8 @@
         launchModalForm(
             "{% url 'part-delete' part.id %}",
             {
-                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
+                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %},
+                no_post: {% if part.active %}true{% else %}false{% endif %},
             }
         );
     });
