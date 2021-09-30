@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-30 12:16+0000\n"
-"PO-Revision-Date: 2021-09-30 15:50\n"
+"PO-Revision-Date: 2021-09-30 16:53\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -287,7 +287,7 @@ msgstr "Server di posta non configurato"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Controlli di sistema InvenTree falliti"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
@@ -296,7 +296,7 @@ msgstr "In attesa"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "Inviato"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
@@ -328,107 +328,107 @@ msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "Attenzione necessaria"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "Danneggiato"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr ""
+msgstr "Distrutto"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Respinto"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Voce di tracciamento stock preesistente"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Elemento stock creato"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Elemento stock modificato"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Numero di serie assegnato"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Stock contato"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stock aggiunto manualmente"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stock rimosso manualmente"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Posizione cambiata"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Installato nell'assemblaggio"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Rimosso dall'assemblaggio"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Componente installato"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Elemento componente rimosso"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Diviso dall'elemento genitore"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Dividi elemento figlio"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/table_filters.js:186
 msgid "Sent to customer"
-msgstr ""
+msgstr "Inviato al cliente"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Restituito dal cliente"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "Genera l'output dell'ordine creato"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Build order output completato"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Ricevuto contro l'ordine di acquisto"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
-msgstr ""
+msgstr "Produzione"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Non è un codice valuta valido"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Carattere non valido nel nome del file"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
