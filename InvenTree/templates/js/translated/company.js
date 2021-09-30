@@ -361,7 +361,7 @@ function loadCompanyTable(table, url, options={}) {
             field: 'parts_supplied',
             title: '{% trans "Parts Supplied" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/company/${row.pk}/parts/`);
+                return renderLink(value, `/company/${row.pk}/?display=supplier-parts`);
             }
         });
     } else if (options.pagetype == 'manufacturers') {
@@ -370,7 +370,7 @@ function loadCompanyTable(table, url, options={}) {
             field: 'parts_manufactured',
             title: '{% trans "Parts Manufactured" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/company/${row.pk}/parts/`);
+                return renderLink(value, `/company/${row.pk}/?display=manufacturer-parts`);
             }
         });
     }
@@ -469,6 +469,7 @@ function loadManufacturerPartTable(table, url, options) {
         method: 'get',
         original: params,
         queryParams: filters,
+        sidePagination: 'server',
         name: 'manufacturerparts',
         groupBy: false,
         formatNoMatches: function() {
@@ -724,6 +725,7 @@ function loadSupplierPartTable(table, url, options) {
         url: url,
         method: 'get',
         original: params,
+        sidePagination: 'server',
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
