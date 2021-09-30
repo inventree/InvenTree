@@ -469,6 +469,7 @@ function loadManufacturerPartTable(table, url, options) {
         method: 'get',
         original: params,
         queryParams: filters,
+        sidePagination: 'server',
         name: 'manufacturerparts',
         groupBy: false,
         formatNoMatches: function() {
