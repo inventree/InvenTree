@@ -361,7 +361,7 @@ function loadCompanyTable(table, url, options={}) {
             field: 'parts_supplied',
             title: '{% trans "Parts Supplied" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/company/${row.pk}/parts/`);
+                return renderLink(value, `/company/${row.pk}/?display=supplier-parts`);
             }
         });
     } else if (options.pagetype == 'manufacturers') {
@@ -370,7 +370,7 @@ function loadCompanyTable(table, url, options={}) {
             field: 'parts_manufactured',
             title: '{% trans "Parts Manufactured" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/company/${row.pk}/parts/`);
+                return renderLink(value, `/company/${row.pk}/?display=manufacturer-parts`);
             }
         });
     }
