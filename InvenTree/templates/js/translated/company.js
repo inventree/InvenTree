@@ -724,6 +724,7 @@ function loadSupplierPartTable(table, url, options) {
         url: url,
         method: 'get',
         original: params,
+        sidePagination: 'server',
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
