@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 12:16+0000\n"
-"PO-Revision-Date: 2021-09-30 12:23\n"
+"POT-Creation-Date: 2021-09-30 22:48+0000\n"
+"PO-Revision-Date: 2021-09-30 22:51\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -4956,8 +4956,8 @@ msgid "Building"
 msgstr ""
 
 #: part/templates/part/part_base.html:223
-#: part/templates/part/part_base.html:524
-#: part/templates/part/part_base.html:550
+#: part/templates/part/part_base.html:525
+#: part/templates/part/part_base.html:551
 msgid "Show Part Details"
 msgstr ""
 
@@ -4973,8 +4973,8 @@ msgstr ""
 msgid "No matching images found"
 msgstr ""
 
-#: part/templates/part/part_base.html:519
-#: part/templates/part/part_base.html:544
+#: part/templates/part/part_base.html:520
+#: part/templates/part/part_base.html:545
 msgid "Hide Part Details"
 msgstr ""
 
@@ -5039,32 +5039,39 @@ msgstr ""
 msgid "Select from existing images"
 msgstr ""
 
-#: part/templates/part/partial_delete.html:7
+#: part/templates/part/partial_delete.html:9
+#, python-format
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+"    <br>Disable the \"Active\" part attribute and re-try.\n"
+"    "
+msgstr ""
+
+#: part/templates/part/partial_delete.html:17
 #, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
 msgstr ""
 
-#: part/templates/part/partial_delete.html:12
+#: part/templates/part/partial_delete.html:22
 #, python-format
 msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
 msgstr ""
 
-#: part/templates/part/partial_delete.html:22
+#: part/templates/part/partial_delete.html:32
 #, python-format
 msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
 msgstr ""
 
-#: part/templates/part/partial_delete.html:33
+#: part/templates/part/partial_delete.html:43
 #, python-format
 msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
 msgstr ""
 
-#: part/templates/part/partial_delete.html:44
+#: part/templates/part/partial_delete.html:54
 #, python-format
 msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
 msgstr ""
 
-#: part/templates/part/partial_delete.html:55
+#: part/templates/part/partial_delete.html:65
 #, python-format
 msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this part will permanently remove this tracking information."
 msgstr ""
