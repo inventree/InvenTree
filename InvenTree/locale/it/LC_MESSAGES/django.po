@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-30 12:16+0000\n"
-"PO-Revision-Date: 2021-09-30 12:23\n"
+"PO-Revision-Date: 2021-09-30 15:50\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -71,7 +71,7 @@ msgstr "Selezione una categoria"
 #: InvenTree/helpers.py:401
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "Seriale Duplicato: {n}"
 
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:430
 #: stock/views.py:1363
@@ -156,7 +156,7 @@ msgstr "Errore nella rinominazione del file"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
-msgstr ""
+msgstr "Scelta non valida"
 
 #: InvenTree/models.py:200 InvenTree/models.py:201 company/models.py:414
 #: label/models.py:112 part/models.py:658 part/models.py:2212
@@ -165,7 +165,7 @@ msgstr ""
 #: templates/js/translated/part.js:614 templates/js/translated/part.js:1141
 #: templates/js/translated/stock.js:1483
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: InvenTree/models.py:207 build/models.py:187
 #: build/templates/build/detail.html:24 company/models.py:353
@@ -187,23 +187,23 @@ msgstr ""
 #: templates/js/translated/part.js:1221 templates/js/translated/stock.js:840
 #: templates/js/translated/stock.js:1495 templates/js/translated/stock.js:1540
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: InvenTree/models.py:208
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descrizione (opzionale)"
 
 #: InvenTree/models.py:216
 msgid "parent"
-msgstr ""
+msgstr "genitore"
 
 #: InvenTree/serializers.py:55 part/models.py:2454
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Deve essere un numero valido"
 
 #: InvenTree/serializers.py:244
 msgid "Filename"
-msgstr ""
+msgstr "Nome del file"
 
 #: InvenTree/settings.py:523
 msgid "German"
@@ -279,11 +279,11 @@ msgstr "Cinese"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Controllo in background non riuscito"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Server di posta non configurato"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
