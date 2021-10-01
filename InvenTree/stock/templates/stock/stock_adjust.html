@@ -24,7 +24,7 @@
       {% for item in stock_items %}
       <tr id='stock-row-{{ item.id }}' class='error'>
           <td>{% include "hover_image.html" with image=item.part.image hover=True %}
-            {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
+            {{ item.part.full_name }} <small><em>{{ item.part.description }}</em></small></td> 
           <td>{{ item.location.pathstring }}</td> 
           <td>{% decimal item.quantity %}</td>
           <td>

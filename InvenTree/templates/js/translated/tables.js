@@ -1,29 +1,39 @@
 {% load i18n %}
 
+/* global
+    inventreeLoad,
+    inventreeSave,
+*/
 
+/* exported
+    customGroupSorter,
+    reloadtable,
+    renderLink,
+    reloadTableFilters,
+*/
+
+/**
+ * Reload a named table
+ * @param table 
+ */
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
 }
 
 
-function editButton(url, text='Edit') {
-    return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
-}
-
-
-function deleteButton(url, text='Delete') {
-    return "<button class='btn btn-danger delete-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
-}
-
-
+/**
+ * Render a URL for display
+ * @param {String} text 
+ * @param {String} url 
+ * @param {object} options 
+ * @returns link text
+ */
 function renderLink(text, url, options={}) {
     if (url === null || url === undefined || url === '') {
         return text;
     }
 
     var max_length = options.max_length || -1;
-
-    var remove_http = options.remove_http || false;
 
     // Shorten the displayed length if required
     if ((max_length > 0) && (text.length > max_length)) {
@@ -59,12 +69,17 @@ function linkButtonsToSelection(table, buttons) {
     enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
 
     // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function(row) {
+    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
         enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
     });
 }
 
 
+/**
+ * Returns true if the input looks like a valid number
+ * @param {String} n 
+ * @returns 
+ */
 function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
@@ -88,8 +103,8 @@ function reloadTableFilters(table, filters) {
     // Construct a new list of filters to use for the query
     var params = {};
 
-    for (var key in filters) {
-        params[key] = filters[key];
+    for (var k in filters) {
+        params[k] = filters[k];
     }
 
     // Original query params will override
@@ -136,7 +151,6 @@ function convertQueryParameters(params, filters) {
         var ordering = params['sort'] || null;
 
         if (ordering) {
-
             if (order == 'desc') {
                 ordering = `-${ordering}`;
             }
@@ -166,6 +180,15 @@ function convertQueryParameters(params, filters) {
 
     if ('sortable' in params) {
         delete params['sortable'];
+    }
+
+    // If "original_search" parameter is provided, add it to the "search"
+    if ('original_search' in params) {
+        var search = params['search'] || '';
+
+        params['search'] = search + ' ' + params['original_search'];
+
+        delete params['original_search'];
     }
     
     return params;
@@ -220,7 +243,7 @@ $.fn.inventreeTable = function(options) {
     };
 
     // Callback when a column is changed
-    options.onColumnSwitch = function(field, checked) {
+    options.onColumnSwitch = function() {
 
         var columns = table.bootstrapTable('getVisibleColumns');
 
@@ -239,7 +262,7 @@ $.fn.inventreeTable = function(options) {
 
     // If a set of visible columns has been saved, load!
     if (visibleColumns) {
-        var columns = visibleColumns.split(",");
+        var columns = visibleColumns.split(',');
 
         // Which columns are currently visible?
         var visible = table.bootstrapTable('getVisibleColumns');
@@ -253,7 +276,7 @@ $.fn.inventreeTable = function(options) {
                 }
             });
         } else {
-            console.log('Could not get list of visible columns!');
+            console.log(`Could not get list of visible columns for column '${tableName}'`);
         }
     }
 
@@ -261,7 +284,8 @@ $.fn.inventreeTable = function(options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
-}
+};
+
 
 function customGroupSorter(sortName, sortOrder, sortData) {
 
@@ -334,40 +358,40 @@ function customGroupSorter(sortName, sortOrder, sortData) {
 }
 
 // Expose default bootstrap table string literals to translation layer
-(function ($) {
+(function($) {
     'use strict';
 
     $.fn.bootstrapTable.locales['en-US-custom'] = {
-        formatLoadingMessage: function () {
+        formatLoadingMessage: function() {
             return '{% trans "Loading data" %}';
         },
-        formatRecordsPerPage: function (pageNumber) {
+        formatRecordsPerPage: function(pageNumber) {
             return `${pageNumber} {% trans "rows per page" %}`;
         },
-        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+        formatShowingRows: function(pageFrom, pageTo, totalRows) {
             return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
         },
-        formatSearch: function () {
+        formatSearch: function() {
             return '{% trans "Search" %}';
         },
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '{% trans "No matching results" %}';
         },
-        formatPaginationSwitch: function () {
+        formatPaginationSwitch: function() {
             return '{% trans "Hide/Show pagination" %}';
         },
-        formatRefresh: function () {
+        formatRefresh: function() {
             return '{% trans "Refresh" %}';
         },
-        formatToggle: function () {
+        formatToggle: function() {
             return '{% trans "Toggle" %}';
         },
-        formatColumns: function () {
+        formatColumns: function() {
             return '{% trans "Columns" %}';
         },
-        formatAllRows: function () {
+        formatAllRows: function() {
             return '{% trans "All" %}';
-        }
+        },
     };
 
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);

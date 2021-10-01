@@ -1,17 +1,20 @@
 {% load inventree_extras %}
-// InvenTree settings
+
+/* exported
+    user_settings,
+    global_settings,
+*/
 
 {% user_settings request.user as USER_SETTINGS %}
-{% global_settings as GLOBAL_SETTINGS %}
-
-var user_settings = {
-    {% for setting in USER_SETTINGS %}
-    {{ setting.key }}: {{ setting.value }},
+const user_settings = {
+    {% for key, value in USER_SETTINGS.items %}
+    {{ key }}: {% primitive_to_javascript value %},
     {% endfor %}
 };
 
-var global_settings = {
-    {% for setting in GLOBAL_SETTINGS %}
-    {{ setting.key }}: {{ setting.value }},
+{% global_settings as GLOBAL_SETTINGS %}
+const global_settings = {
+    {% for key, value in GLOBAL_SETTINGS.items %}
+    {{ key }}: {% primitive_to_javascript value %},
     {% endfor %}
 };

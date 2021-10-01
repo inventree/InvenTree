@@ -640,6 +640,11 @@
   z-index: 9999;
 }
 
+.modal-error {
+    border: 2px #FCC solid;
+    background-color: #f5f0f0;
+}
+
 .modal-header {
     border-bottom: 1px solid #ddd;
 }
@@ -729,6 +734,13 @@
   overflow-y: auto;
   padding: 10px;
 }
+
+.form-panel {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
 
 .modal input {
     width: 100%;
@@ -1037,10 +1049,19 @@ a.anchor {
     height: 30px;
 }
 
+/* Force minimum width of number input fields to show at least ~5 digits */
+input[type='number']{
+    min-width: 80px;
+}
+
 .search-menu {
     padding-top: 2rem;
 }
 
 .search-menu .ui-menu-item {
     margin-top: 0.5rem;
+}
+
+.product-card-panel{
+    height: 100%;
 }

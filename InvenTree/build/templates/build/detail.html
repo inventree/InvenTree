@@ -40,7 +40,7 @@
                         {% if build.take_from %}
                         <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>{% include "clip.html"%}
                         {% else %}
-                        <i>{% trans "Stock can be taken from any available location." %}</i>
+                        <em>{% trans "Stock can be taken from any available location." %}</em>
                         {% endif %}
                     </td>
                 </tr>
@@ -53,7 +53,7 @@
                             {{ build.destination }}
                         </a>{% include "clip.html"%}
                         {% else %}
-                        <i>{% trans "Destination location not specified" %}</i>
+                        <em>{% trans "Destination location not specified" %}</em>
                         {% endif %}
                     </td>
                 </tr>
@@ -127,7 +127,7 @@
                             {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
                         </td>
                         {% else %}
-                        <td><i>{% trans "No target date set" %}</i></td>
+                        <td><em>{% trans "No target date set" %}</em></td>
                         {% endif %}
                     </tr>
                     <tr>
@@ -136,7 +136,7 @@
                         {% if build.completion_date %}
                         <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
                         {% else %}
-                        <td><i>{% trans "Build not complete" %}</i></td>
+                        <td><em>{% trans "Build not complete" %}</em></td>
                         {% endif %}
                     </tr>
                 </table>
@@ -222,7 +222,7 @@
         </div>
         {% else %}
         <div class='alert alert-block alert-info'>
-            <b>{% trans "Create a new build output" %}</b><br>
+            <strong>{% trans "Create a new build output" %}</strong><br>
             {% trans "No incomplete build outputs remain." %}<br>
             {% trans "Create a new build output using the button above" %}
         </div>
@@ -369,6 +369,7 @@ loadAttachmentTable(
 
             constructForm(url, {
                 fields: {
+                    filename: {},
                     comment: {},
                 },
                 onSuccess: reloadAttachmentTable,

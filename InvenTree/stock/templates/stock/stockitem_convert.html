@@ -4,13 +4,13 @@
 {% block pre_form_content %}
 
 <div class='alert alert-block alert-info'>
-    <b>{% trans "Convert Stock Item" %}</b><br>
-    {% blocktrans with part=item.part %}This stock item is current an instance of <i>{{part}}</i>{% endblocktrans %}<br>
+    <strong>{% trans "Convert Stock Item" %}</strong><br>
+    {% blocktrans with part=item.part %}This stock item is current an instance of <em>{{part}}</em>{% endblocktrans %}<br>
     {% trans "It can be converted to one of the part variants listed below." %}
 </div>
 
 <div class='alert alert-block alert-warning'>
-    <b>{% trans "Warning" %}</b>
+    <strong>{% trans "Warning" %}</strong>
     {% trans "This action cannot be easily undone" %}
 </div>
 

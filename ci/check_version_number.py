@@ -27,12 +27,61 @@ if __name__ == '__main__':
         version = results[0]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('tag', help='Version tag', action='store')
+    parser.add_argument('-t', '--tag', help='Compare against specified version tag', action='store')
+    parser.add_argument('-r', '--release', help='Check that this is a release version', action='store_true')
+    parser.add_argument('-d', '--dev', help='Check that this is a development version', action='store_true')
+    parser.add_argument('-b', '--branch', help='Check against a particular branch', action='store')
 
     args = parser.parse_args()
 
-    if not args.tag == version:
-        print(f"Release tag '{args.tag}' does not match INVENTREE_SW_VERSION '{version}'")
-        sys.exit(1)
+    if args.branch:
+        """
+        Version number requirement depends on format of branch
+
+        'master': development branch
+        'stable': release branch
+        """
+
+        print(f"Checking version number for branch '{args.branch}'")
+
+        if args.branch == 'master':
+            print("- This is a development branch")
+            args.dev = True
+        elif args.branch == 'stable':
+            print("- This is a stable release branch")
+            args.release = True
+
+    if args.dev:
+        """
+        Check that the current verrsion number matches the "development" format
+        e.g. "0.5 dev"
+        """
+
+        pattern = "^\d+(\.\d+)+ dev$"
+
+        result = re.match(pattern, version)
+
+        if result is None:
+            print(f"Version number '{version}' does not match required pattern for development branch")
+            sys.exit(1)
+
+    elif args.release:
+        """
+        Check that the current version number matches the "release" format
+        e.g. "0.5.1"
+        """
+
+        pattern = "^\d+(\.\d+)+$"
+
+        result = re.match(pattern, version)
+
+        if result is None:
+            print(f"Version number '{version}' does not match required pattern for stable branch")
+            sys.exit(1)
+
+    if args.tag:
+        if not args.tag == version:
+            print(f"Release tag '{args.tag}' does not match INVENTREE_SW_VERSION '{version}'")
+            sys.exit(1)
 
 sys.exit(0)

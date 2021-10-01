@@ -65,7 +65,7 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
+    result = c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
@@ -80,14 +80,6 @@ def install(c):
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
 
-    # If a config.yaml file does not exist, copy from the template!
-    CONFIG_FILE = os.path.join(localDir(), 'InvenTree', 'config.yaml')
-    CONFIG_TEMPLATE_FILE = os.path.join(localDir(), 'InvenTree', 'config_template.yaml')
-
-    if not os.path.exists(CONFIG_FILE):
-        print("Config file 'config.yaml' does not exist - copying from template.")
-        copyfile(CONFIG_TEMPLATE_FILE, CONFIG_FILE)
-
 
 @task
 def shell(c):
@@ -97,13 +89,6 @@ def shell(c):
 
     manage(c, 'shell', pty=True)
 
-@task
-def worker(c):
-    """
-    Run the InvenTree background worker process
-    """
-
-    manage(c, 'qcluster', pty=True)
 
 @task
 def superuser(c):
@@ -113,6 +98,7 @@ def superuser(c):
 
     manage(c, 'createsuperuser', pty=True)
 
+
 @task
 def check(c):
     """
@@ -121,13 +107,24 @@ def check(c):
 
     manage(c, "check")
 
+
 @task
 def wait(c):
     """
     Wait until the database connection is ready
     """
 
-    manage(c, "wait_for_db")
+    return manage(c, "wait_for_db")
+
+
+@task(pre=[wait])
+def worker(c):
+    """
+    Run the InvenTree background worker process
+    """
+
+    manage(c, 'qcluster', pty=True)
+
 
 @task
 def rebuild(c):
@@ -137,6 +134,7 @@ def rebuild(c):
 
     manage(c, "rebuild_models")
 
+
 @task
 def clean_settings(c):
     """
@@ -145,7 +143,7 @@ def clean_settings(c):
 
     manage(c, "clean_settings")
 
-@task
+@task(post=[rebuild])
 def migrate(c):
     """
     Performs database migrations.
@@ -156,7 +154,7 @@ def migrate(c):
     print("========================================")
 
     manage(c, "makemigrations")
-    manage(c, "migrate")
+    manage(c, "migrate --noinput")
     manage(c, "migrate --run-syncdb")
     manage(c, "check")
 
@@ -175,23 +173,18 @@ def static(c):
     manage(c, "collectstatic --no-input")
 
 
-@task(pre=[install, migrate, static, clean_settings])
-def update(c):
+@task
+def translate_stats(c):
     """
-    Update InvenTree installation.
-
-    This command should be invoked after source code has been updated,
-    e.g. downloading new code from GitHub.
-
-    The following tasks are performed, in order:
-
-    - install
-    - migrate
-    - static
+    Collect translation stats.
+    The file generated from this is needed for the UI.
     """
-    pass
 
-@task(post=[static])
+    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
+    c.run(f'python3 {path}')
+
+
+@task(post=[translate_stats, static])
 def translate(c):
     """
     Regenerate translation files.
@@ -204,9 +197,25 @@ def translate(c):
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
 
-    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
 
-    c.run(f'python {path}')
+@task(pre=[install, migrate, translate_stats, static, clean_settings])
+def update(c):
+    """
+    Update InvenTree installation.
+
+    This command should be invoked after source code has been updated,
+    e.g. downloading new code from GitHub.
+
+    The following tasks are performed, in order:
+
+    - install
+    - migrate
+    - translate_stats
+    - static
+    - clean_settings
+    """
+    pass
+
 
 @task
 def style(c):
@@ -216,6 +225,7 @@ def style(c):
 
     print("Running PEP style checks...")
     c.run('flake8 InvenTree')
+
 
 @task
 def test(c, database=None):
@@ -227,6 +237,7 @@ def test(c, database=None):
 
     # Run coverage tests
     manage(c, 'test', pty=True)
+
 
 @task
 def coverage(c):
@@ -446,3 +457,12 @@ def server(c, address="127.0.0.1:8000"):
     """
 
     manage(c, "runserver {address}".format(address=address), pty=True)
+
+
+@task
+def render_js_files(c):
+    """
+    Render templated javascript files (used for static testing).
+    """
+
+    manage(c, "test InvenTree.ci_render_js")

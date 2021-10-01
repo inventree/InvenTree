@@ -28,9 +28,9 @@ InvenTree is [available via Docker](https://hub.docker.com/r/inventree/inventree
 
 InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality. 
 
-[**Download InvenTree from the Android Play Store**](https://play.google.com/store/apps/details?id=inventree.inventree_app)
+- [**Download InvenTree from the Android Play Store**](https://play.google.com/store/apps/details?id=inventree.inventree_app)
 
-*Currently the mobile app is only availble for Android*
+- [**Download InvenTree from the Apple App Store**](https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone)
 
 # Translation
 

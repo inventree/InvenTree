@@ -20,7 +20,7 @@ the top level 'Stock' location.
 
 <ul class='list-group'>
     {% for loc in location.children.all %}
-    <li class='list-group-item'><b>{{ loc.name }}</b> - <i>{{ loc.description}}</i></li>
+    <li class='list-group-item'><strong>{{ loc.name }}</strong> - <em>{{ loc.description}}</em></li>
     {% endfor %}
 </ul>
 {% endif %}
@@ -36,7 +36,7 @@ If this location is deleted, these items will be moved to the top level 'Stock' 
 
 <ul class='list-group'>
     {% for item in location.stock_items.all %}
-    <li class='list-group-item'><b>{{ item.part.full_name }}</b> - <i>{{ item.part.description }}</i><span class='badge'>{% decimal item.quantity %}</span></li>
+    <li class='list-group-item'><strong>{{ item.part.full_name }}</strong> - <em>{{ item.part.description }}</em><span class='badge'>{% decimal item.quantity %}</span></li>
     {% endfor %}
 </ul>
 {% endif %}

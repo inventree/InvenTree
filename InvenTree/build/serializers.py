@@ -10,7 +10,8 @@ from django.db.models import BooleanField
 
 from rest_framework import serializers
 
-from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializerField, UserSerializerBrief
+from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
 
 from stock.serializers import StockItemSerializerBrief
 from stock.serializers import LocationSerializer
@@ -158,7 +159,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class BuildAttachmentSerializer(InvenTreeModelSerializer):
+class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for a BuildAttachment
     """
@@ -172,6 +173,7 @@ class BuildAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'build',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]

@@ -5,7 +5,7 @@
 
 {% block form %}
 
-{% blocktrans with desc=order.description %}Receive outstanding parts for <b>{{order}}</b> - <i>{{desc}}</i>{% endblocktrans %}
+{% blocktrans with desc=order.description %}Receive outstanding parts for <strong>{{order}}</strong> - <em>{{desc}}</em>{% endblocktrans %}
 
 <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
     {% csrf_token %}

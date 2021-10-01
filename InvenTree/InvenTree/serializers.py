@@ -10,6 +10,8 @@ import os
 
 from decimal import Decimal
 
+from collections import OrderedDict
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -46,10 +48,12 @@ class InvenTreeMoneySerializer(MoneyField):
             amount = None
 
         try:
-            if amount is not None:
+            if amount is not None and amount is not empty:
                 amount = Decimal(amount)
         except:
-            raise ValidationError(_("Must be a valid number"))
+            raise ValidationError({
+                self.field_name: _("Must be a valid number")
+            })
 
         currency = data.get(get_currency_field_name(self.field_name), self.default_currency)
 
@@ -92,9 +96,14 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         # If instance is None, we are creating a new instance
         if instance is None and data is not empty:
-            
-            # Required to side-step immutability of a QueryDict
-            data = data.copy()
+
+            if data is None:
+                data = OrderedDict()
+            else:
+                new_data = OrderedDict()
+                new_data.update(data)
+
+                data = new_data
 
             # Add missing fields which have default values
             ModelClass = self.Meta.model
@@ -167,6 +176,18 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         return self.instance
 
+    def update(self, instance, validated_data):
+        """
+        Catch any django ValidationError, and re-throw as a DRF ValidationError
+        """
+
+        try:
+            instance = super().update(instance, validated_data)
+        except (ValidationError, DjangoValidationError) as exc:
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+        return instance
+
     def run_validation(self, data=empty):
         """
         Perform serializer validation.
@@ -188,7 +209,10 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
             # Update instance fields
             for attr, value in data.items():
-                setattr(instance, attr, value)
+                try:
+                    setattr(instance, attr, value)
+                except (ValidationError, DjangoValidationError) as exc:
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
 
         # Run a 'full_clean' on the model.
         # Note that by default, DRF does *not* perform full model validation!
@@ -206,6 +230,22 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             raise ValidationError(data)
 
         return data
+
+
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='basename',
+        allow_blank=False,
+    )
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):

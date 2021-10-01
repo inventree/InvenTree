@@ -18,7 +18,7 @@
     <div class='panel-content'>
         {% if part.is_template %}
         <div class='alert alert-info alert-block'>
-            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <i>{{full_name}}</i>{% endblocktrans %}
+            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <em>{{full_name}}</em>{% endblocktrans %}
         </div>
         {% endif %}
         {% include "stock_table.html" %}
@@ -74,7 +74,7 @@
         <div id='so-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
                 {% if 0 %}
-                <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "New sales order" %}'>{% trans "New Order" %}</button>
+                <button class='btn btn-success' type='button' id='part-order2' title='{% trans "New sales order" %}'>{% trans "New Order" %}</button>
                 {% endif %}
                 <div class='filter-list' id='filter-list-salesorder'>
                     <!-- An empty div in which the filter list will be constructed -->
@@ -185,7 +185,7 @@
         <div id='related-button-bar'>
             <div class='button-toolbar container-fluid' style='float: left;'>
                 {% if roles.part.change %}
-                <button class='btn btn-primary' type='button' id='add-related-part' title='{% trans "Add Related" %}'>{% trans "Add Related" %}</button>
+                <button class='btn btn-success' type='button' id='add-related-part' title='{% trans "Add Related" %}'>{% trans "Add Related" %}</button>
                 <div class='filter-list' id='filter-list-related'>
                     <!-- An empty div in which the filter list will be constructed -->
                 </div>
@@ -289,7 +289,7 @@
                     <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
                 </button>
                 <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
+                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
                     </ul>
@@ -312,7 +312,7 @@
                         <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
                     </button>
                     <div id='opt-dropdown' class="btn-group">
-                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
+                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'>{% trans "Delete" %}</a></li>
                         </ul>
@@ -667,6 +667,8 @@
     });
 
     onPanelLoad("test-templates", function() {
+
+        // Load test template table
         loadPartTestTemplateTable(
             $("#test-template-table"),
             {
@@ -677,11 +679,8 @@
             }
         ); 
 
+        // Callback for "add test template" button
         $("#add-test-template").click(function() {
-    
-            function reloadTestTemplateTable() {
-                $("#test-template-table").bootstrapTable("refresh");
-            }
 
             constructForm('{% url "api-part-test-template-list" %}', {
                 method: 'POST',
@@ -697,39 +696,10 @@
                     }
                 },
                 title: '{% trans "Add Test Result Template" %}',
-                onSuccess: reloadTestTemplateTable
+                onSuccess: function() {
+                    $("#test-template-table").bootstrapTable("refresh");
+                }
             });
-
-            $("#test-template-table").on('click', '.button-test-edit', function() {
-                var pk = $(this).attr('pk');
-            
-                var url = `/api/part/test-template/${pk}/`;
-            
-                constructForm(url, {
-                    fields: {
-                        test_name: {},
-                        description: {},
-                        required: {},
-                        requires_value: {},
-                        requires_attachment: {},
-                    },
-                    title: '{% trans "Edit Test Result Template" %}',
-                    onSuccess: reloadTestTemplateTable,
-                });
-            });
-
-            $("#test-template-table").on('click', '.button-test-delete', function() {
-                var pk = $(this).attr('pk');
-            
-                var url = `/api/part/test-template/${pk}/`;
-            
-                constructForm(url, {
-                    method: 'DELETE',
-                    title: '{% trans "Delete Test Result Template" %}',
-                    onSuccess: reloadTestTemplateTable,
-                });
-            });
-
         });
     });
 
@@ -868,6 +838,7 @@
     
                     constructForm(url, {
                         fields: {
+                            filename: {},
                             comment: {},
                         },
                         title: '{% trans "Edit Attachment" %}',

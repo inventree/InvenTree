@@ -3,6 +3,12 @@
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
+{% settings_value 'BUILD_FUNCTION_ENABLE' as enable_build %}
+{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
+{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
+{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
+{% settings_value 'SO_FUNCTION_ENABLE' as enable_so %}
+{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
 
 <nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">
@@ -22,28 +28,32 @@
         {% if roles.part.view %}
         <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
         {% endif %}
-        {% if roles.stock.view %}
+        {% if roles.stock.view and enable_stock %}
         <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
         {% endif %}
-        {% if roles.build.view %}
+        {% if roles.build.view and enable_build %}
         <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
         {% endif %}
-        {% if roles.purchase_order.view %}
+        {% if roles.purchase_order.view and enable_buy %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
           <ul class='dropdown-menu'>
             <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
             <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
+            {% if enable_po %}
             <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
+            {% endif %}
           </ul>
         </li>
         {% endif %}
-        {% if roles.sales_order.view %}
+        {% if roles.sales_order.view and enable_sell %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
           <ul class='dropdown-menu'>
             <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
+            {% if enable_so %}
             <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+            {% endif %}
           </ul>
         </li>
         {% endif %}
@@ -61,16 +71,12 @@
             <a class='dropdown-toggle' data-toggle='dropdown' href="#">
               {% if user.is_staff %}
               {% if not system_healthy %}
-                {% if not django_q_running %}
                 <span class='fas fa-exclamation-triangle icon-red'></span>
-                {% else %}
-                <span class='fas fa-exclamation-triangle icon-orange'></span>
-                {% endif %}
               {% elif not up_to_date %}
               <span class='fas fa-info-circle icon-green'></span>
               {% endif %}
               {% endif %}
-              <span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
+              <span class="fas fa-user"></span> <strong>{{ user.get_username }}</strong></a>
             <ul class='dropdown-menu'>
                 {% if user.is_authenticated %}
                 {% if user.is_staff %}
@@ -86,11 +92,7 @@
                   {% if system_healthy or not user.is_staff %}
                   <span class='fas fa-server'></span>
                   {% else %}
-                    {% if not django_q_running %}
-                    <span class='fas fa-server icon-red'></span>
-                    {% else %}
-                    <span class='fas fa-server icon-orange'></span>
-                    {% endif %}
+                  <span class='fas fa-server icon-red'></span>
                   {% endif %}
                   </span> {% trans "System Information" %}
                 </a></li>

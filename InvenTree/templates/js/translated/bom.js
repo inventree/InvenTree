@@ -1,5 +1,25 @@
 {% load i18n %}
 
+/* globals
+    constructForm,
+    imageHoverIcon,
+    inventreeGet,
+    inventreePut,
+    launchModalForm,
+    loadTableFilters,
+    makePartIcons,
+    renderLink,
+    setupFilterList,
+    yesNoLabel,
+*/
+
+/* exported
+    newPartFromBomWizard,
+    loadBomTable,
+    removeRowFromBomWizard,
+    removeColFromBomWizard,
+*/
+
 /* BOM management functions.
  * Requires follwing files to be loaded first:
  * - api.js
@@ -28,7 +48,7 @@ function bomItemFields() {
 }
 
 
-function reloadBomTable(table, options) {
+function reloadBomTable(table) {
 
     table.bootstrapTable('refresh');
 }
@@ -126,7 +146,7 @@ function loadBomTable(table, options) {
     var params = {
         part: options.parent_id,
         ordering: 'name',
-    }
+    };
 
     if (options.part_detail) {
         params.part_detail = true;
@@ -157,7 +177,7 @@ function loadBomTable(table, options) {
             checkbox: true,
             visible: true,
             switchable: false,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
                 // Disable checkbox if the row is defined for a *different* part!
                 if (row.part != options.parent_id) {
                     return {
@@ -182,7 +202,7 @@ function loadBomTable(table, options) {
             field: 'sub_part',
             title: '{% trans "Part" %}',
             sortable: true,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
                 var url = `/part/${row.sub_part}/`;
                 var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
@@ -225,7 +245,7 @@ function loadBomTable(table, options) {
         title: '{% trans "Quantity" %}',
         searchable: false,
         sortable: true,
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             var text = value;
 
             // The 'value' is a text string with (potentially) multiple trailing zeros
@@ -244,15 +264,14 @@ function loadBomTable(table, options) {
         },
     });
 
-    cols.push(
-    {
+    cols.push({
         field: 'sub_part_detail.stock',
         title: '{% trans "Available" %}',
         searchable: false,
         sortable: true,
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
 
-            var url = `/part/${row.sub_part_detail.pk}/stock/`;
+            var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
             var text = value;
 
             if (value == null || value <= 0) {
@@ -263,32 +282,29 @@ function loadBomTable(table, options) {
         }
     });
     
-    cols.push(
-    {
+    cols.push({
         field: 'purchase_price_range',
         title: '{% trans "Purchase Price Range" %}',
         searchable: false,
         sortable: true,
     });
 
-    cols.push(
-    {
+    cols.push({
         field: 'purchase_price_avg',
         title: '{% trans "Purchase Price Average" %}',
         searchable: false,
         sortable: true,
     });
 
-    cols.push(
-    {
+    cols.push({
         field: 'price_range',
         title: '{% trans "Supplier Cost" %}',
         sortable: true,
-        formatter: function(value, row, index, field) {
+        formatter: function(value) {
             if (value) {
                 return value;
             } else {
-                return "<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>";
+                return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
             }
         }
     });
@@ -308,13 +324,13 @@ function loadBomTable(table, options) {
         formatter: function(value) {
             return yesNoLabel(value);
         }
-    })
+    });
 
     cols.push({
         field: 'inherited',
         title: '{% trans "Inherited" %}',
         searchable: false,
-        formatter: function(value, row, index, field) {
+        formatter: function(value, row) {
             // This BOM item *is* inheritable, but is defined for this BOM
             if (!row.inherited) {
                 return yesNoLabel(false);
@@ -332,9 +348,9 @@ function loadBomTable(table, options) {
 
     cols.push(
         {
-            'field': 'can_build',
-            'title': '{% trans "Can Build" %}',
-            formatter: function(value, row, index, field) {
+            field: 'can_build',
+            title: '{% trans "Can Build" %}',
+            formatter: function(value, row) {
                 var can_build = 0;
 
                 if (row.quantity > 0) {
@@ -360,7 +376,7 @@ function loadBomTable(table, options) {
             },
             sortable: true,
         }
-    )
+    );
 
     // Part notes
     cols.push(
@@ -379,7 +395,7 @@ function loadBomTable(table, options) {
             switchable: false,
             field: 'pk',
             visible: true,
-            formatter: function(value, row, index, field) {
+            formatter: function(value, row) {
 
                 if (row.part == options.parent_id) {
 
@@ -391,7 +407,7 @@ function loadBomTable(table, options) {
 
                     var bDelt = `<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
 
-                    var html = "<div class='btn-group' role='group'>";
+                    var html = `<div class='btn-group' role='group'>`;
 
                     html += bEdit;
                     html += bDelt;
@@ -402,7 +418,7 @@ function loadBomTable(table, options) {
                         html += bValid;
                     }
 
-                    html += "</div>";
+                    html += `</div>`;
 
                     return html;
                 } else {
@@ -434,7 +450,7 @@ function loadBomTable(table, options) {
                         response[idx].parentId = bom_pk;
 
                         if (response[idx].sub_part_detail.assembly) {
-                            requestSubItems(response[idx].pk, response[idx].sub_part)
+                            requestSubItems(response[idx].pk, response[idx].sub_part);
                         }
                     }
 
@@ -446,7 +462,7 @@ function loadBomTable(table, options) {
                     console.log('Error requesting BOM for part=' + part_pk);
                 }
             }
-        )
+        );
     }
 
     table.inventreeTable({
@@ -459,7 +475,7 @@ function loadBomTable(table, options) {
         name: 'bom',
         sortable: true,
         search: true,
-        rowStyle: function(row, index) {
+        rowStyle: function(row) {
 
             var classes = [];
 
@@ -532,7 +548,6 @@ function loadBomTable(table, options) {
         table.on('click', '.bom-delete-button', function() {
 
             var pk = $(this).attr('pk');
-            var url = `/part/bom/${pk}/delete/`;
 
             constructForm(`/api/bom/${pk}/`, {
                 method: 'DELETE',
@@ -546,7 +561,6 @@ function loadBomTable(table, options) {
         table.on('click', '.bom-edit-button', function() {
 
             var pk = $(this).attr('pk');
-            var url = `/part/bom/${pk}/edit/`;
 
             var fields = bomItemFields();
 

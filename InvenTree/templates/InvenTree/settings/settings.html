@@ -185,8 +185,6 @@ $('#cat-param-table').inventreeTable({
 
 function loadTemplateTable(pk) {
 
-    console.log('refresh:', pk);
-
     // Enable the buttons
     $('#new-cat-param').removeAttr('disabled');
 
@@ -210,7 +208,11 @@ $("#new-cat-param").click(function() {
 
     launchModalForm(`/part/category/${pk}/parameters/new/`, {
         success: function() {
-            $("#cat-param-table").bootstrapTable('refresh');
+            $("#cat-param-table").bootstrapTable('refresh', {
+                query: {
+                    category: pk,
+                }
+            });
         },
     });
 });

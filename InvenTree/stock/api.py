@@ -43,6 +43,7 @@ from .serializers import StockItemTestResultSerializer
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
+from InvenTree.filters import InvenTreeOrderingFilter
 
 from decimal import Decimal, InvalidOperation
 
@@ -107,6 +108,17 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         # user = request.user
 
         return super().update(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        """
+        Instead of "deleting" the StockItem
+        (which may take a long time)
+        we instead schedule it for deletion at a later date.
+        
+        The background worker will delete these in the future
+        """
+
+        instance.mark_for_deletion()
 
 
 class StockAdjust(APIView):
@@ -652,6 +664,9 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
+        # Do not expose StockItem objects which are scheduled for deletion
+        queryset = queryset.filter(scheduled_for_deletion=False)
+
         return queryset
 
     def filter_queryset(self, queryset):
@@ -882,10 +897,16 @@ class StockList(generics.ListCreateAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
+    ordering_field_aliases = {
+        'SKU': 'supplier_part__SKU',
+    }
+
     ordering_fields = [
+        'batch',
+        'location',
         'part__name',
         'part__IPN',
         'updated',
@@ -893,10 +914,13 @@ class StockList(generics.ListCreateAPIView):
         'expiry_date',
         'quantity',
         'status',
+        'SKU',
     ]
 
     ordering = [
-        'part__name'
+        'part__name',
+        'quantity',
+        'location',
     ]
 
     search_fields = [

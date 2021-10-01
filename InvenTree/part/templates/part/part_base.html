@@ -10,6 +10,11 @@
 
 {% block content %}
 
+{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
+{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
+{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
+{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
+
 <div class="panel panel-default panel-inventree">
     <!-- Default panel contents -->
     <div class="panel-heading"><h3>{{ part.full_name }}</h3></div>
@@ -80,10 +85,12 @@
                     </div>
                     {% endif %}
                     {% if part.active %}
+                    {% if enable_buy or enable_sell  %}
                     <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
                         <span id='part-price-icon' class='fas fa-dollar-sign'/>
                     </button>
-                    {% if roles.stock.change %}
+                    {% endif %}
+                    {% if roles.stock.change and enable_stock %}
                     <div class='btn-group'>
                         <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
                             <span class='fas fa-boxes'></span> <span class='caret'></span>
@@ -104,8 +111,8 @@
                         </ul>
                     </div>
                     {% endif %}
-                    {% if part.purchaseable %}
-                    {% if roles.purchase_order.add %}
+                    {% if part.purchaseable and roles.purchase_order.add %}
+                    {% if enable_buy and enable_po %}
                     <button type='button' class='btn btn-default' id='part-order' title='{% trans "Order part" %}'>
                         <span id='part-order-icon' class='fas fa-shopping-cart'/>
                     </button>
@@ -123,7 +130,7 @@
                             {% if roles.part.change %}
                             <li><a href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
                             {% endif %}
-                            {% if not part.active and roles.part.delete %}
+                            {% if roles.part.delete %}
                             <li><a href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
                             {% endif %}
                         </ul>
@@ -496,12 +503,13 @@
     });
     {% endif %}
 
-    {% if not part.active and roles.part.delete %}
+    {% if roles.part.delete %}
     $("#part-delete").click(function() {
         launchModalForm(
             "{% url 'part-delete' part.id %}",
             {
-                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
+                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %},
+                no_post: {% if part.active %}true{% else %}false{% endif %},
             }
         );
     });

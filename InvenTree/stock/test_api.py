@@ -5,6 +5,8 @@ Unit testing for the Stock API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from datetime import datetime, timedelta
 
 from django.urls import reverse
@@ -16,6 +18,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from common.models import InvenTreeSetting
 
 from .models import StockItem, StockLocation
+from .tasks import delete_old_stock_items
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -35,6 +38,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock_location.change',
         'stock_location.add',
+        'stock.delete',
     ]
 
     def setUp(self):
@@ -428,6 +432,67 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
+    def test_purchase_price(self):
+        """
+        Test that we can correctly read and adjust purchase price information via the API
+        """
+
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        data = self.get(url, expected_code=200).data
+
+        # Check fixture values
+        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
+
+        # Update just the amount
+        data = self.patch(
+            url,
+            {
+                'purchase_price': 456
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price_currency'], 'AUD')
+
+        # Update the currency
+        data = self.patch(
+            url,
+            {
+                'purchase_price_currency': 'NZD',
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price_currency'], 'NZD')
+
+        # Clear the price field
+        data = self.patch(
+            url,
+            {
+                'purchase_price': None,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price'], None)
+        self.assertEqual(data['purchase_price_string'], '-')
+
+        # Invalid currency code
+        data = self.patch(
+            url,
+            {
+                'purchase_price_currency': 'xyz',
+            },
+            expected_code=400
+        )
+
+        data = self.get(url).data
+        self.assertEqual(data['purchase_price_currency'], 'NZD')
+
 
 class StocktakeTest(StockAPITestCase):
     """
@@ -528,6 +593,60 @@ class StocktakeTest(StockAPITestCase):
         self.assertContains(response, 'Valid location must be specified', status_code=status.HTTP_400_BAD_REQUEST)
 
 
+class StockItemDeletionTest(StockAPITestCase):
+    """
+    Tests for stock item deletion via the API
+    """
+
+    def test_delete(self):
+
+        # Check there are no stock items scheduled for deletion
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            0
+        )
+
+        # Create and then delete a bunch of stock items
+        for idx in range(10):
+
+            # Create new StockItem via the API
+            response = self.post(
+                reverse('api-stock-list'),
+                {
+                    'part': 1,
+                    'location': 1,
+                    'quantity': idx,
+                },
+                expected_code=201
+            )
+
+            pk = response.data['pk']
+
+            item = StockItem.objects.get(pk=pk)
+
+            self.assertFalse(item.scheduled_for_deletion)
+
+            # Request deletion via the API
+            self.delete(
+                reverse('api-stock-detail', kwargs={'pk': pk}),
+                expected_code=204
+            )
+
+        # There should be 100x StockItem objects marked for deletion
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            10
+        )
+
+        # Perform the actual delete (will take some time)
+        delete_old_stock_items()
+
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            0
+        )
+
+
 class StockTestResultTest(StockAPITestCase):
 
     def get_url(self):
@@ -605,3 +724,37 @@ class StockTestResultTest(StockAPITestCase):
         test = response.data[0]
         self.assertEqual(test['value'], '150kPa')
         self.assertEqual(test['user'], self.user.pk)
+
+    def test_post_bitmap(self):
+        """
+        2021-08-25
+
+        For some (unknown) reason, prior to fix https://github.com/inventree/InvenTree/pull/2018
+        uploading a bitmap image would result in a failure.
+
+        This test has been added to ensure that there is no regression.
+
+        As a bonus this also tests the file-upload component
+        """
+
+        here = os.path.dirname(__file__)
+
+        image_file = os.path.join(here, 'fixtures', 'test_image.bmp')
+
+        with open(image_file, 'rb') as bitmap:
+
+            data = {
+                'stock_item': 105,
+                'test': 'Checked Steam Valve',
+                'result': False,
+                'value': '150kPa',
+                'notes': 'I guess there was just too much pressure?',
+                "attachment": bitmap,
+            }
+
+            response = self.client.post(self.get_url(), data)
+
+            self.assertEqual(response.status_code, 201)
+
+            # Check that an attachment has been uploaded
+            self.assertIsNotNone(response.data['attachment'])

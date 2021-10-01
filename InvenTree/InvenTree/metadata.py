@@ -98,10 +98,12 @@ class InvenTreeMetadata(SimpleMetadata):
 
         serializer_info = super().get_serializer_info(serializer)
 
-        try:
-            ModelClass = serializer.Meta.model
+        model_class = None
 
-            model_fields = model_meta.get_field_info(ModelClass)
+        try:
+            model_class = serializer.Meta.model
+
+            model_fields = model_meta.get_field_info(model_class)
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
@@ -146,11 +148,23 @@ class InvenTreeMetadata(SimpleMetadata):
         if hasattr(serializer, 'instance'):
             instance = serializer.instance
         
-        if instance is None:
-            try:
-                instance = self.view.get_object()
-            except:
-                pass
+        if instance is None and model_class is not None:
+            # Attempt to find the instance based on kwargs lookup
+            kwargs = getattr(self.view, 'kwargs', None)
+
+            if kwargs:
+                pk = None
+
+                for field in ['pk', 'id', 'PK', 'ID']:
+                    if field in kwargs:
+                        pk = kwargs[field]
+                        break
+
+                if pk is not None:
+                    try:
+                        instance = model_class.objects.get(pk=pk)
+                    except (ValueError, model_class.DoesNotExist):
+                        pass
 
         if instance is not None:
             """

@@ -5,13 +5,18 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
+from django.db import transaction
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 
+
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
@@ -27,6 +32,7 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
 from .models import SalesOrderAttachment
 from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
 from .serializers import SalesOrderAllocationSerializer
+from .serializers import POReceiveSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -144,7 +150,7 @@ class POList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
@@ -204,6 +210,111 @@ class PODetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
+class POReceive(generics.CreateAPIView):
+    """
+    API endpoint to receive stock items against a purchase order.
+
+    - The purchase order is specified in the URL.
+    - Items to receive are specified as a list called "items" with the following options:
+        - supplier_part: pk value of the supplier part
+        - quantity: quantity to receive
+        - status: stock item status
+        - location: destination for stock item (optional)
+    - A global location can also be specified
+    """
+
+    queryset = PurchaseOrderLineItem.objects.none()
+
+    serializer_class = POReceiveSerializer
+
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+
+        # Pass the purchase order through to the serializer for validation
+        context['order'] = self.get_order()
+
+        return context
+
+    def get_order(self):
+        """
+        Returns the PurchaseOrder associated with this API endpoint
+        """
+
+        pk = self.kwargs.get('pk', None)
+
+        if pk is None:
+            return None
+        else:
+            order = PurchaseOrder.objects.get(pk=self.kwargs['pk'])
+            return order
+
+    def create(self, request, *args, **kwargs):
+
+        # Which purchase order are we receiving against?
+        self.order = self.get_order()
+
+        # Validate the serialized data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Receive the line items
+        self.receive_items(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @transaction.atomic
+    def receive_items(self, serializer):
+        """
+        Receive the items
+
+        At this point, much of the heavy lifting has been done for us by DRF serializers!
+
+        We have a list of "items", each a dict which contains:
+        - line_item: A PurchaseOrderLineItem matching this order
+        - location: A destination location
+        - quantity: A validated numerical quantity
+        - status: The status code for the received item
+        """
+
+        data = serializer.validated_data
+
+        location = data['location']
+
+        items = data['items']
+
+        # Check if the location is not specified for any particular item
+        for item in items:
+
+            line = item['line_item']
+
+            if not item.get('location', None):
+                # If a global location is specified, use that
+                item['location'] = location
+
+            if not item['location']:
+                # The line item specifies a location?
+                item['location'] = line.get_destination()
+
+            if not item['location']:
+                raise ValidationError({
+                    'location': _("Destination location must be specified"),
+                })
+
+        # Now we can actually receive the items
+        for item in items:
+
+            self.order.receive_line_item(
+                item['line_item'],
+                item['location'],
+                item['quantity'],
+                self.request.user,
+                status=item['status'],
+                barcode=item.get('barcode', ''),
+            )
+
+
 class POLineItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of POLineItem objects
 
@@ -213,6 +324,14 @@ class POLineItemList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = POLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
 
@@ -226,18 +345,26 @@ class POLineItemList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter
+        InvenTreeOrderingFilter
     ]
 
+    ordering_field_aliases = {
+        'MPN': 'part__manufacturer_part__MPN',
+        'SKU': 'part__SKU',
+        'part_name': 'part__part__name',
+    }
+
     ordering_fields = [
-        'part__part__name',
-        'part__MPN',
-        'part__SKU',
-        'reference',
+        'MPN',
+        'part_name',
+        'purchase_price',
         'quantity',
         'received',
+        'reference',
+        'SKU',
+        'total_price',
     ]
 
     search_fields = [
@@ -262,6 +389,14 @@ class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        queryset = POLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
 
 class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
@@ -272,7 +407,7 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = SOAttachmentSerializer
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     filter_fields = [
@@ -396,7 +531,7 @@ class SOList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
@@ -495,7 +630,7 @@ class SOLineItemList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter
     ]
@@ -580,7 +715,7 @@ class SOAllocationList(generics.ListCreateAPIView):
         return queryset
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     # Default filterable fields
@@ -598,7 +733,7 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     serializer_class = POAttachmentSerializer
 
     filter_backends = [
-        DjangoFilterBackend,
+        rest_filters.DjangoFilterBackend,
     ]
 
     filter_fields = [
@@ -616,13 +751,25 @@ class POAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin)
 
 
 order_api_urls = [
+
     # API endpoints for purchase orders
-    url(r'po/attachment/', include([
-        url(r'^(?P<pk>\d+)/$', POAttachmentDetail.as_view(), name='api-po-attachment-detail'),
-        url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
+    url(r'^po/', include([
+
+        # Purchase order attachments
+        url(r'attachment/', include([
+            url(r'^(?P<pk>\d+)/$', POAttachmentDetail.as_view(), name='api-po-attachment-detail'),
+            url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
+        ])),
+
+        # Individual purchase order detail URLs
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^receive/', POReceive.as_view(), name='api-po-receive'),
+            url(r'.*$', PODetail.as_view(), name='api-po-detail'),
+        ])),
+
+        # Purchase order list
+        url(r'^.*$', POList.as_view(), name='api-po-list'),
     ])),
-    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
-    url(r'^po/.*$', POList.as_view(), name='api-po-list'),
 
     # API endpoints for purchase order line items
     url(r'^po-line/(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),

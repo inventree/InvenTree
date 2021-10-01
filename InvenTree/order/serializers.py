@@ -7,18 +7,27 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
+from django.db import models
 from django.db.models import Case, When, Value
-from django.db.models import BooleanField
+from django.db.models import BooleanField, ExpressionWrapper, F
 
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+
 from sql_util.utils import SubqueryCount
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
+from InvenTree.status_codes import StockStatus
+
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+
 from part.serializers import PartBriefSerializer
+
+import stock.models
 from stock.serializers import LocationBriefSerializer, StockItemSerializer, LocationSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
@@ -108,6 +117,23 @@ class POSerializer(InvenTreeModelSerializer):
 
 class POLineItemSerializer(InvenTreeModelSerializer):
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to this queryset:
+
+        - Total price = purchase_price * quantity
+        """
+
+        queryset = queryset.annotate(
+            total_price=ExpressionWrapper(
+                F('purchase_price') * F('quantity'),
+                output_field=models.DecimalField()
+            )
+        )
+
+        return queryset
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -118,9 +144,10 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             self.fields.pop('part_detail')
             self.fields.pop('supplier_part_detail')
 
-    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
+
+    total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
@@ -157,10 +184,136 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_string',
             'destination',
             'destination_detail',
+            'total_price',
         ]
 
 
-class POAttachmentSerializer(InvenTreeModelSerializer):
+class POLineItemReceiveSerializer(serializers.Serializer):
+    """
+    A serializer for receiving a single purchase order line item against a purchase order
+    """
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=PurchaseOrderLineItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Line Item'),
+    )
+
+    def validate_line_item(self, item):
+
+        if item.order != self.context['order']:
+            raise ValidationError(_('Line item does not match purchase order'))
+
+        return item
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+    )
+
+    status = serializers.ChoiceField(
+        choices=list(StockStatus.items()),
+        default=StockStatus.OK,
+        label=_('Status'),
+    )
+
+    barcode = serializers.CharField(
+        label=_('Barcode Hash'),
+        help_text=_('Unique identifier field'),
+        default='',
+        required=False,
+    )
+
+    def validate_barcode(self, barcode):
+        """
+        Cannot check in a LineItem with a barcode that is already assigned
+        """
+
+        # Ignore empty barcode values
+        if not barcode or barcode.strip() == '':
+            return
+
+        if stock.models.StockItem.objects.filter(uid=barcode).exists():
+            raise ValidationError(_('Barcode is already in use'))
+
+        return barcode
+
+    class Meta:
+        fields = [
+            'barcode',
+            'line_item',
+            'location',
+            'quantity',
+            'status',
+        ]
+
+
+class POReceiveSerializer(serializers.Serializer):
+    """
+    Serializer for receiving items against a purchase order
+    """
+
+    items = POLineItemReceiveSerializer(many=True)
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    def is_valid(self, raise_exception=False):
+
+        super().is_valid(raise_exception)
+
+        # Custom validation
+        data = self.validated_data
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            self._errors['items'] = _('Line items must be provided')
+        else:
+            # Ensure barcodes are unique
+            unique_barcodes = set()
+
+            for item in items:
+                barcode = item.get('barcode', '')
+
+                if barcode:
+                    if barcode in unique_barcodes:
+                        self._errors['items'] = _('Supplied barcode values must be unique')
+                        break
+                    else:
+                        unique_barcodes.add(barcode)
+
+        if self._errors and raise_exception:
+            raise ValidationError(self.errors)
+
+        return not bool(self._errors)
+
+    class Meta:
+        fields = [
+            'items',
+            'location',
+        ]
+
+
+class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the PurchaseOrderAttachment model
     """
@@ -174,6 +327,7 @@ class POAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'order',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]
@@ -381,7 +535,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SOAttachmentSerializer(InvenTreeModelSerializer):
+class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """
@@ -395,6 +549,7 @@ class SOAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'order',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]

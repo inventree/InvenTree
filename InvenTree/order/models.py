@@ -411,6 +411,11 @@ class PurchaseOrder(Order):
         """
 
         notes = kwargs.get('notes', '')
+        barcode = kwargs.get('barcode', '')
+
+        # Prevent null values for barcode
+        if barcode is None:
+            barcode = ''
 
         if not self.status == PurchaseOrderStatus.PLACED:
             raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
@@ -433,7 +438,8 @@ class PurchaseOrder(Order):
                 quantity=quantity,
                 purchase_order=self,
                 status=status,
-                purchase_price=purchase_price,
+                purchase_price=line.purchase_price,
+                uid=barcode
             )
 
             stock.save(add_note=False)
@@ -729,7 +735,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = (
-            ('order', 'part')
+            ('order', 'part', 'quantity', 'purchase_price')
         )
 
     def __str__(self):
@@ -767,7 +773,13 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_("Supplier part"),
     )
 
-    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received'), help_text=_('Number of items received'))
+    received = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=0,
+        verbose_name=_('Received'),
+        help_text=_('Number of items received')
+    )
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
@@ -778,7 +790,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     destination = TreeForeignKey(
-        'stock.StockLocation', on_delete=models.DO_NOTHING,
+        'stock.StockLocation', on_delete=models.SET_NULL,
         verbose_name=_('Destination'),
         related_name='po_lines',
         blank=True, null=True,

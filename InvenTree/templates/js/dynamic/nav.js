@@ -1,3 +1,10 @@
+/* globals
+*/
+
+/* exported
+    attachNavCallbacks,
+    onPanelLoad,
+*/
 
 /*
 * Attach callbacks to navigation bar elements.
@@ -55,7 +62,7 @@ function activatePanel(panelName, options={}) {
         // Iterate through the available 'select' elements until one matches
         panelName = null;
 
-        $('.nav-toggle').each(function(item) {
+        $('.nav-toggle').each(function() {
             var panel_name = $(this).attr('id').replace('select-', '');
 
             if ($(`#panel-${panel_name}`).length && (panelName == null)) {
@@ -83,9 +90,9 @@ function activatePanel(panelName, options={}) {
     $('.list-group-item').removeClass('active');
 
     // Find the associated selector
-    var select = `#select-${panelName}`;
+    var selectElement = `#select-${panelName}`;
 
-    $(select).parent('.list-group-item').addClass('active');
+    $(selectElement).parent('.list-group-item').addClass('active');
 }
 
 
@@ -96,7 +103,7 @@ function onPanelLoad(panel, callback) {
 
     var panelId = `#panel-${panel}`;
 
-    $(panelId).on('fadeInStarted', function(e) {
+    $(panelId).on('fadeInStarted', function() {
 
         // Trigger the callback
         callback();

@@ -129,6 +129,7 @@ class PartAPITest(InvenTreeAPITestCase):
         'location',
         'bom',
         'test_templates',
+        'company',
     ]
 
     roles = [
@@ -464,6 +465,149 @@ class PartAPITest(InvenTreeAPITestCase):
 
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
+
+    def test_initial_stock(self):
+        """
+        Tests for initial stock quantity creation
+        """
+
+        url = reverse('api-part-list')
+
+        # Track how many parts exist at the start of this test
+        n = Part.objects.count()
+
+        # Set up required part data
+        data = {
+            'category': 1,
+            'name': "My lil' test part",
+            'description': 'A part with which to test',
+        }
+
+        # Signal that we want to add initial stock
+        data['initial_stock'] = True
+
+        # Post without a quantity
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('initial_stock_quantity', response.data)
+
+        # Post with an invalid quantity
+        data['initial_stock_quantity'] = "ax"
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('initial_stock_quantity', response.data)
+
+        # Post with a negative quantity
+        data['initial_stock_quantity'] = -1
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('Must be greater than zero', response.data['initial_stock_quantity'])
+
+        # Post with a valid quantity
+        data['initial_stock_quantity'] = 12345
+
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('initial_stock_location', response.data)
+
+        # Check that the number of parts has not increased (due to form failures)
+        self.assertEqual(Part.objects.count(), n)
+
+        # Now, set a location
+        data['initial_stock_location'] = 1
+
+        response = self.post(url, data, expected_code=201)
+
+        # Check that the part has been created
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        pk = response.data['pk']
+
+        new_part = Part.objects.get(pk=pk)
+
+        self.assertEqual(new_part.total_stock, 12345)
+
+    def test_initial_supplier_data(self):
+        """
+        Tests for initial creation of supplier / manufacturer data
+        """
+
+        url = reverse('api-part-list')
+
+        n = Part.objects.count()
+
+        # Set up initial part data
+        data = {
+            'category': 1,
+            'name': 'Buy Buy Buy',
+            'description': 'A purchaseable part',
+            'purchaseable': True,
+        }
+
+        # Signal that we wish to create initial supplier data
+        data['add_supplier_info'] = True
+
+        # Specify MPN but not manufacturer
+        data['MPN'] = 'MPN-123'
+
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('manufacturer', response.data)
+
+        # Specify manufacturer but not MPN
+        del data['MPN']
+        data['manufacturer'] = 1
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('MPN', response.data)
+
+        # Specify SKU but not supplier
+        del data['manufacturer']
+        data['SKU'] = 'SKU-123'
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('supplier', response.data)
+
+        # Specify supplier but not SKU
+        del data['SKU']
+        data['supplier'] = 1
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('SKU', response.data)
+
+        # Check that no new parts have been created
+        self.assertEqual(Part.objects.count(), n)
+
+        # Now, fully specify the details
+        data['SKU'] = 'SKU-123'
+        data['supplier'] = 3
+        data['MPN'] = 'MPN-123'
+        data['manufacturer'] = 6
+
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        pk = response.data['pk']
+
+        new_part = Part.objects.get(pk=pk)
+
+        # Check that there is a new manufacturer part *and* a new supplier part
+        self.assertEqual(new_part.supplier_parts.count(), 1)
+        self.assertEqual(new_part.manufacturer_parts.count(), 1)
+        
+    def test_strange_chars(self):
+        """
+        Test that non-standard ASCII chars are accepted
+        """
+
+        url = reverse('api-part-list')
+
+        name = "KaltgerÃ¤testecker"
+        description = "Gerät"
+
+        data = {
+            "name": name,
+            "description": description,
+            "category": 2
+        }
+
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['name'], name)
+        self.assertEqual(response.data['description'], description)
 
 
 class PartDetailTests(InvenTreeAPITestCase):

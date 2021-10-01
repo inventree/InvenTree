@@ -1,6 +1,7 @@
 """
 JSON serializers for Part app
 """
+
 import imghdr
 from decimal import Decimal
 
@@ -16,7 +17,9 @@ from djmoney.contrib.django_rest_framework import MoneyField
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
+                                   InvenTreeAttachmentSerializer,
                                    InvenTreeMoneySerializer)
+
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
@@ -51,7 +54,7 @@ class CategorySerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartAttachmentSerializer(InvenTreeModelSerializer):
+class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for the PartAttachment class
     """
@@ -65,6 +68,7 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]
@@ -202,6 +206,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'stock',
             'trackable',
             'virtual',
+            'units',
         ]
 
 

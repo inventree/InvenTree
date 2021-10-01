@@ -21,7 +21,7 @@
 {% if query %}
 {% else %}
 <div id='empty-search-query'>
-    <h4><i>{% trans "Enter a search query" %}</i></h4>
+    <h4><em>{% trans "Enter a search query" %}</em></h4>
 </div>
 {% endif %}
 
@@ -47,7 +47,7 @@
     function addItemTitle(title) {
         // Add header block to the results list
         $('#search-item-list').append(
-            `<li class='list-group-item'><b>${title}</b></li>`
+            `<li class='list-group-item'><strong>${title}</strong></li>`
         );
     }
 
@@ -117,7 +117,7 @@
         "{% url 'api-part-list' %}",
         {
             params: {
-                search: "{{ query }}",
+                original_search: "{{ query }}",
             },
             checkbox: false,
             disableFilters: true,
@@ -126,24 +126,10 @@
 
     addItem('category', '{% trans "Part Categories" %}', 'fa-sitemap');
 
-    $("#table-category").inventreeTable({
-        url: "{% url 'api-part-category-list' %}",
-        queryParams: {
-            search: "{{ query }}",
-        },
-        columns: [
-            {
-                field: 'name',
-                title: '{% trans "Name" %}',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, '/part/category/' + row.pk + '/');
-                },
-            },
-            {
-                field: 'description',
-                title: '{% trans "Description" %}',
-            },
-        ],
+    loadPartCategoryTable($("#table-category"), {
+        params: {
+            original_search: "{{ query }}",
+        }
     });
 
     addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
@@ -153,7 +139,7 @@
         "{% url 'api-manufacturer-part-list' %}",
         {
             params: {
-                search: "{{ query }}",
+                original_search: "{{ query }}",
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -168,7 +154,7 @@
         "{% url 'api-supplier-part-list' %}",
         {
             params: {
-                search: "{{ query }}",
+                original_search: "{{ query }}",
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -186,7 +172,7 @@
 
     loadBuildTable('#table-build-order', {
         params: {
-            search: '{{ query }}',
+            original_search: '{{ query }}',
         }
     });
 
@@ -197,105 +183,23 @@
 
     addItem('stock', '{% trans "Stock Items" %}', 'fa-boxes');
 
-    $('#table-stock').inventreeTable({
+    loadStockTable($('#table-stock'), {
+        filterKey: 'stocksearch',
         url: "{% url 'api-stock-list' %}",
-        queryParams: {
-            search: "{{ query }}",
+        params: {
+            original_search: "{{ query }}",
             part_detail: true,
-            location_detail: true,
-        },
-        columns: [
-            {
-                field: 'part',
-                title: "{% trans "Part" %}",
-                sortable: true,
-                formatter: function(value, row) {
-                    var url = `/stock/item/${row.pk}/`;
-                    var thumb = row.part_detail.thumbnail;
-                    var name = row.part_detail.full_name;
-
-                    html = imageHoverIcon(thumb) + renderLink(name, url);
-
-                    return html;
-                }
-            },
-            {
-                field: 'part_description',
-                title: '{% trans "Description" %}',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return row.part_detail.description;
-                }
-            },
-            {
-                field: 'quantity',
-                title: '{% trans "Stock" %}',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-
-                    var val = parseFloat(value);
-
-                    // If there is a single unit with a serial number, use the serial number
-                    if (row.serial && row.quantity == 1) {
-                        val = '# ' + row.serial;
-                    } else {
-                        val = +val.toFixed(5);
-                    }
-
-                    var html = renderLink(val, `/stock/item/${row.pk}/`);
-
-                    return html;
-                }
-            },
-            {
-                field: 'status',
-                title: '{% trans "Status" %}',
-                sortable: 'true',
-                formatter: function(value, row, index, field) {
-                    return stockStatusDisplay(value);
-                },
-            },
-            {
-                field: 'location_detail.pathstring',
-                title: '{% trans "Location" %}',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, `/stock/location/${row.location}/`);
-                    }
-                    else {
-                        if (row.customer) {
-                            var text = "{% trans "Shipped to customer" %}";
-                            return renderLink(text, `/company/${row.customer}/assigned-stock/`);
-                        } else {
-                            return '<i>{% trans "No stock location set" %}</i>';
-                        }
-                    }
-                }
-            },
-        ]
+            location_detail: true
+        }
     });
 
     addItem('location', '{% trans "Stock Locations" %}', 'fa-map-marker-alt');
 
-    $("#table-location").inventreeTable({
-        url: "{% url 'api-location-list' %}",
-        queryParams: {
-            search: "{{ query }}",
+    loadStockLocationTable($("#table-location"), {
+        filterKey: 'locationsearch',
+        params: {
+            original_search: "{{ query }}",
         },
-        columns: [
-            {
-                field: 'name',
-                title: '{% trans "Name" %}',
-                formatter: function(value, row, index, field) {
-                    return renderLink(row.pathstring, '/stock/location/' + row.pk + '/');
-                },
-            },
-            {
-                field: 'description',
-                title: '{% trans "Description" %}',
-            },
-        ],
     });
 
     {% endif %}
@@ -307,7 +211,7 @@
 
     loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
         params: {
-            search: "{{ query }}",
+            original_search: "{{ query }}",
             is_manufacturer: "true",
         }
     });
@@ -317,7 +221,7 @@
 
     loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
         params: {
-            search: "{{ query }}",
+            original_search: "{{ query }}",
             is_supplier: "true",
         }
     });
@@ -326,7 +230,7 @@
 
     loadPurchaseOrderTable('#table-purchase-order', {
         params: {
-            search: '{{ query }}',
+            original_search: '{{ query }}',
         }
     });
 
@@ -337,7 +241,7 @@
 
     loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
         params: {
-            search: "{{ query }}",
+            original_search: "{{ query }}",
             is_customer: "true",
         }
     });
@@ -346,7 +250,7 @@
 
     loadSalesOrderTable('#table-sales-orders', {
         params: {
-            search: '{{ query }}',
+            original_search: '{{ query }}',
         }
     });
 

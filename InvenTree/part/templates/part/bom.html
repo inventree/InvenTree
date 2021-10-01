@@ -11,13 +11,13 @@
 <div class='alert alert-block alert-info'>
 {% else %}
 <div class='alert alert-block alert-danger'>
-    {% blocktrans with part=part.full_name %}The BOM for <i>{{ part }}</i> has changed, and must be validated.<br>{% endblocktrans %}
+    {% blocktrans with part=part.full_name %}The BOM for <em>{{ part }}</em> has changed, and must be validated.<br>{% endblocktrans %}
 {% endif %}
-    {% blocktrans with part=part.full_name checker=part.bom_checked_by check_date=part.bom_checked_date %}The BOM for <i>{{ part }}</i> was last checked by {{ checker }} on {{ check_date }}{% endblocktrans %}
+    {% blocktrans with part=part.full_name checker=part.bom_checked_by check_date=part.bom_checked_date %}The BOM for <em>{{ part }}</em> was last checked by {{ checker }} on {{ check_date }}{% endblocktrans %}
 </div>
 {% else %}
 <div class='alert alert-danger alert-block'>
-    <b>{% blocktrans with part=part.full_name %}The BOM for <i>{{ part }}</i> has not been validated.{% endblocktrans %}</b>
+    <strong>{% blocktrans with part=part.full_name %}The BOM for <em>{{ part }}</em> has not been validated.{% endblocktrans %}</strong>
 </div>
 {% endif %}
 

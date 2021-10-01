@@ -68,8 +68,8 @@ content: "{% trans 'Stock Item Test Report' %}";
             {{ part.full_name }}
         </h2>
         <p>{{ part.description }}</p>
-        <p><i>{{ stock_item.location }}</i></p>
-        <p><i>Stock Item ID: {{ stock_item.pk }}</i></p>
+        <p><em>{{ stock_item.location }}</em></p>
+        <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
     </div>
     <div class='img-right'>
         <img class='part-img' src="{% part_image part %}">

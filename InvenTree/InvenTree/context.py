@@ -36,9 +36,14 @@ def health_status(request):
         'email_configured': InvenTree.status.is_email_configured(),
     }
 
+    # The following keys are required to denote system health
+    health_keys = [
+        'django_q_running',
+    ]
+
     all_healthy = True
 
-    for k in status.keys():
+    for k in health_keys:
         if status[k] is not True:
             all_healthy = False
 

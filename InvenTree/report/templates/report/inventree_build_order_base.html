@@ -128,7 +128,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
                     {% if build.target_date %}
                     {{ build.target_date }}
                     {% else %}
-                    <i>Not specified</i>
+                    <em>Not specified</em>
                     {% endif %}
                 </td>
             </tr>
@@ -138,7 +138,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
                     {% if build.sales_order %}
                     {% internal_link build.sales_order.get_absolute_url build.sales_order %}
                     {% else %}
-                    <i>Not specified</i>
+                    <em>Not specified</em>
                     {% endif %}
                 </td>
             </tr>

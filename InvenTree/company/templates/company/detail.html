@@ -24,19 +24,17 @@
                         </button>
                     {% endif %}
                     <div class='btn-group'>
-                        <div class="dropdown" style="float: right;">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                {% if roles.purchase_order.add %}
-                                <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
-                                {% endif %}
-                                {% if roles.purchase_order.delete %}
-                                <li><a href='#' id='multi-part-delete' title='{% trans "Delete parts" %}'>{% trans "Delete Parts" %}</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>  
+                        <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-toggle="dropdown">{% trans "Options" %}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% if roles.purchase_order.add %}
+                            <li><a href='#' id='multi-supplier-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                            {% endif %}
+                            {% if roles.purchase_order.delete %}
+                            <li><a href='#' id='multi-supplier-part-delete' title='{% trans "Delete parts" %}'>{% trans "Delete Parts" %}</a></li>
+                            {% endif %}
+                        </ul>
                     </div>
                 </div>
                 <div class='filter-list' id='filter-list-supplier-part'>
@@ -59,27 +57,25 @@
         {% if roles.purchase_order.change %}
         <div id='manufacturer-part-button-toolbar'>
             <div class='button-toolbar container-fluid'>
-                <div class='btn-group role='group'>
+                <div class='btn-group' role='group'>
                     {% if roles.purchase_order.add %}
-                        <button class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
+                        <button type="button" class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
                             <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
                         </button>
                     {% endif %}
-                    <div class='btn-group'>
-                        <div class="dropdown" style="float: right;">
-                            <button class="btn btn-primary dropdown-toggle" id='table-options', type="button" data-toggle="dropdown">{% trans "Options" %}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                {% if roles.purchase_order.add %}
-                                <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
-                                {% endif %}
-                                {% if roles.purchase_order.delete %}
-                                <li><a href='#' id='multi-part-delete' title='{% trans "Delete parts" %}'>{% trans "Delete Parts" %}</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>  
-                    </div>
+                    <div class='btn-group' role='group'>
+                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-toggle="dropdown">{% trans "Options" %}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% if roles.purchase_order.add %}
+                            <li><a href='#' id='multi-manufacturer-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                            {% endif %}
+                            {% if roles.purchase_order.delete %}
+                            <li><a href='#' id='multi-manufacturer-part-delete' title='{% trans "Delete parts" %}'>{% trans "Delete Parts" %}</a></li>
+                            {% endif %}
+                        </ul>
+                    </div> 
                 </div>
                 <div class='filter-list' id='filter-list-supplier-part'>
                     <!-- Empty div (will be filled out with available BOM filters) -->
@@ -87,7 +83,7 @@
             </div>
         </div>
         {% endif %}
-        <table class='table table-striped table-condensed' id='part-table' data-toolbar='#manufacturer-part-button-toolbar'>
+        <table class='table table-striped table-condensed' id='manufacturer-part-table' data-toolbar='#manufacturer-part-button-toolbar'>
         </table>
     </div>
 </div>
@@ -109,7 +105,7 @@
         {% if roles.purchase_order.add %}
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <button class='btn btn-primary' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>
+                <button class='btn btn-success' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}</button>
                 <div class='filter-list' id='filter-list-purchaseorder'>
                     <!-- Empty div -->
@@ -131,7 +127,7 @@
         {% if roles.sales_order.add %}
         <div id='so-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <button class='btn btn-primary' type='button' id='new-sales-order' title='{% trans "Create new sales order" %}'>
+                <button class='btn btn-success' type='button' id='new-sales-order' title='{% trans "Create new sales order" %}'>
                     <div class='fas fa-plus-circle'></div> {% trans "New Sales Order" %}
                 </button>
                 <div class='filter-list' id='filter-list-salesorder'>
@@ -274,6 +270,10 @@
 
     {% if company.is_manufacturer %}
 
+    function reloadManufacturerPartTable() {
+        $('#manufacturer-part-table').bootstrapTable('refresh');
+    }
+
     $("#manufacturer-part-create").click(function () {
 
         createManufacturerPart({
@@ -285,7 +285,7 @@
     });
 
     loadManufacturerPartTable(
-        "#part-table",
+        "#manufacturer-part-table",
         "{% url 'api-manufacturer-part-list' %}",
         {
             params: {
@@ -296,20 +296,20 @@
         }
     );
 
-    linkButtonsToSelection($("#manufacturer-table"), ['#table-options']);
+    linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-table-options']);
 
-    $("#multi-part-delete").click(function() {
-        var selections = $("#part-table").bootstrapTable("getSelections");
+    $("#multi-manufacturer-part-delete").click(function() {
+        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
 
         deleteManufacturerParts(selections, {
             onSuccess: function() { 
-                $("#part-table").bootstrapTable("refresh");
+                $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });
     });
 
-    $("#multi-part-order").click(function() {
-        var selections = $("#part-table").bootstrapTable("getSelections");
+    $("#multi-manufacturer-part-order").click(function() {
+        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
 
         var parts = [];
 
@@ -353,9 +353,9 @@
         }
     );
 
-    {% endif %}
+    linkButtonsToSelection($("#supplier-part-table"), ['#supplier-table-options']);
 
-    $("#multi-part-delete").click(function() {
+    $("#multi-supplier-part-delete").click(function() {
         var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
         var requests = [];
@@ -379,8 +379,8 @@
         );
     });
 
-    $("#multi-part-order").click(function() {
-        var selections = $("#part-table").bootstrapTable("getSelections");
+    $("#multi-supplier-part-order").click(function() {
+        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
         var parts = [];
 
@@ -394,6 +394,8 @@
             },
         });
     });
+
+    {% endif %}
 
     attachNavCallbacks({
         name: 'company',

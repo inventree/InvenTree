@@ -1,7 +1,8 @@
-invoke>=1.4.0                   # Invoke build tool
-wheel>=0.34.2                   # Wheel
-Django==3.2.4                     # Django package
-pillow==8.2.0                   # Image manipulation
+# Django framework
+Django==3.2.5                   # Django package
+gunicorn>=20.1.0                # Gunicorn web server
+
+pillow==8.3.2                   # Image manipulation
 djangorestframework==3.12.4     # DRF framework
 django-cors-headers==3.2.0      # CORS headers extension for DRF
 django-filter==2.4.0            # Extended filtering options
@@ -33,7 +34,6 @@ django-test-migrations==1.1.0   # Unit testing for database migrations
 python-barcode[images]==0.13.1  # Barcode generator
 qrcode[pil]==6.1                # QR code generator
 django-q==1.3.4                 # Background task scheduling
-gunicorn>=20.0.4                # Gunicorn web server
 django-formtools==2.3           # Form wizard tools
 
 inventree                       # Install the latest version of the InvenTree API python library

@@ -6,6 +6,7 @@ over and above the built-in Django tags.
 
 import os
 import sys
+from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as djangosettings
@@ -136,6 +137,21 @@ def inventree_version(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_is_development(*args, **kwargs):
+    return version.isInvenTreeDevelopmentVersion()
+
+
+@register.simple_tag()
+def inventree_is_release(*args, **kwargs):
+    return not version.isInvenTreeDevelopmentVersion()
+
+
+@register.simple_tag()
+def inventree_docs_version(*args, **kwargs):
+    return version.inventreeDocsVersion()
+
+
+@register.simple_tag()
 def inventree_api_version(*args, **kwargs):
     """ Return InvenTree API version """
     return version.inventreeApiVersion()
@@ -168,7 +184,10 @@ def inventree_github_url(*args, **kwargs):
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
     """ Return URL for InvenTree documenation site """
-    return "https://inventree.readthedocs.io/"
+
+    tag = version.inventreeDocsVersion()
+
+    return f"https://inventree.readthedocs.io/en/{tag}"
 
 
 @register.simple_tag()
@@ -260,6 +279,26 @@ def get_available_themes(*args, **kwargs):
         })
 
     return themes
+
+
+@register.simple_tag()
+def primitive_to_javascript(primitive):
+    """
+    Convert a python primitive to a javascript primitive.
+
+    e.g. True -> true
+         'hello' -> '"hello"'
+    """
+
+    if type(primitive) is bool:
+        return str(primitive).lower()
+
+    elif type(primitive) in [int, float]:
+        return primitive
+
+    else:
+        # Wrap with quotes
+        return format_html("'{}'", primitive)
 
 
 @register.filter

@@ -1,8 +1,18 @@
 {% load i18n %}
 
+/* globals
+    makeIconButton,
+    renderLink,
+*/
+
+/* exported
+    loadAttachmentTable,
+    reloadAttachmentTable,
+*/
+
 function reloadAttachmentTable() {
 
-    $('#attachment-table').bootstrapTable("refresh");
+    $('#attachment-table').bootstrapTable('refresh');
 }
 
 
@@ -13,7 +23,9 @@ function loadAttachmentTable(url, options) {
     $(table).inventreeTable({
         url: url,
         name: options.name || 'attachments',
-        formatNoMatches: function() { return '{% trans "No attachments found" %}'},
+        formatNoMatches: function() {
+            return '{% trans "No attachments found" %}';
+        },
         sortable: true,
         search: false,
         queryParams: options.filters || {},
@@ -40,11 +52,34 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'attachment',
                 title: '{% trans "File" %}',
-                formatter: function(value, row) {
+                formatter: function(value) {
+
+                    var icon = 'fa-file-alt';
+
+                    var fn = value.toLowerCase();
+
+                    if (fn.endsWith('.pdf')) {
+                        icon = 'fa-file-pdf';
+                    } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
+                        icon = 'fa-file-excel';
+                    } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
+                        icon = 'fa-file-word';
+                    } else {
+                        var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
+
+                        images.forEach(function(suffix) {
+                            if (fn.endsWith(suffix)) {
+                                icon = 'fa-file-image';
+                            }
+                        });
+                    }
 
                     var split = value.split('/');
+                    var filename = split[split.length - 1];
 
-                    return renderLink(split[split.length - 1], value);
+                    var html = `<span class='fas ${icon}'></span> ${filename}`;
+
+                    return renderLink(html, value);
                 }
             },
             {

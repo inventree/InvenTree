@@ -1,26 +1,44 @@
 {% load inventree_extras %}
 
+/* globals
+    ClipboardJS,
+    inventreeFormDataUpload,
+    launchModalForm,
+    user_settings,
+*/
+
+/* exported
+    attachClipboard,
+    enableDragAndDrop,
+    inventreeDocReady,
+    inventreeLoad,
+    inventreeSave,
+*/
+
 function attachClipboard(selector, containerselector, textElement) {
     // set container
-    if (containerselector){
+    if (containerselector) {
         containerselector = document.getElementById(containerselector);
     } else {
         containerselector = document.body;
     }
 
+    var text = null;
+
     // set text-function
-    if (textElement){
+    if (textElement) {
         text = function() {
             return document.getElementById(textElement).textContent;
-        }
+        };
     } else {
         text = function(trigger) {
             var content = trigger.parentElement.parentElement.textContent;
             return content.trim();
-        }
+        };
     }
 
     // create Clipboard
+    // eslint-disable-next-line no-unused-vars
     var cis = new ClipboardJS(selector, {
         text: text,
         container: containerselector
@@ -33,15 +51,15 @@ function inventreeDocReady() {
      * This will be called for every page that extends "base.html"
      */
 
-    window.addEventListener("dragover",function(e){
+    window.addEventListener('dragover', function(e) {
         e = e || event;
         e.preventDefault();
-      },false);
+    }, false);
 
-    window.addEventListener("drop",function(e){
+    window.addEventListener('drop', function(e) {
         e = e || event;
         e.preventDefault();
-      },false);
+    }, false);
 
     /* Add drag-n-drop functionality to any element
      * marked with the class 'dropzone'
@@ -51,12 +69,13 @@ function inventreeDocReady() {
         // TODO - Only indicate that a drop event will occur if a file is being dragged
         var transfer = event.originalEvent.dataTransfer;
 
+        // eslint-disable-next-line no-constant-condition
         if (true || isFileTransfer(transfer)) {
             $(this).addClass('dragover');
         }
     });
 
-    $('.dropzone').on('dragleave drop', function(event) {
+    $('.dropzone').on('dragleave drop', function() {
         $(this).removeClass('dragover');
     });
 
@@ -74,19 +93,19 @@ function inventreeDocReady() {
 
     // Callback to launch the 'Database Stats' window
     $('#launch-stats').click(function() {
-        launchModalForm("/stats/", {
+        launchModalForm('/stats/', {
             no_post: true,
         });
     });
 
     // Initialize clipboard-buttons
     attachClipboard('.clip-btn');
-    attachClipboard('.clip-btn', 'modal-about');  // modals
-    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');  // version-text
+    attachClipboard('.clip-btn', 'modal-about');
+    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');
 
     // Add autocomplete to the search-bar
-    $("#search-bar" ).autocomplete({
-        source: function (request, response) {
+    $('#search-bar').autocomplete({
+        source: function(request, response) {
             $.ajax({
                 url: '/api/part/',
                 data: {
@@ -94,33 +113,43 @@ function inventreeDocReady() {
                     limit: user_settings.SEARCH_PREVIEW_RESULTS,
                     offset: 0
                 },
-                success: function (data) {
-                    var transformed = $.map(data.results, function (el) {
+                success: function(data) {
+                    var transformed = $.map(data.results, function(el) {
                         return {
-                            label: el.name,
+                            label: el.full_name,
                             id: el.pk,
                             thumbnail: el.thumbnail
                         };
                     });
                     response(transformed);
                 },
-                error: function () {
+                error: function() {
                     response([]);
                 }
             });
         },
-        create: function () {
-            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
-                return $('<li>')
-                    .append('<span>' + imageHoverIcon(item.thumbnail) + item.label + '</span>')
-                    .appendTo(ul);
+        create: function() {
+            $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
+
+                var html = `<a href='/part/${item.id}/'><span>`;
+
+                html += `<img class='hover-img-thumb' src='`;
+                html += item.thumbnail || `/static/img/blank_image.png`;
+                html += `'> `;
+                html += item.label;
+
+                html += '</span></a>';
+
+                return $('<li>').append(html).appendTo(ul);
             };
         },
         select: function( event, ui ) {
             window.location = '/part/' + ui.item.id + '/';
         },
         minLength: 2,
-        classes: {'ui-autocomplete': 'dropdown-menu search-menu'},
+        classes: {
+            'ui-autocomplete': 'dropdown-menu search-menu',
+        },
     });
 }
 
@@ -129,124 +158,6 @@ function isFileTransfer(transfer) {
      */
 
     return transfer.files.length > 0;
-}
-
-
-function isOnlineTransfer(transfer) {
-    /* Determine if a drag-and-drop transfer is from another website.
-     * e.g. dragged from another browser window
-     */
-
-    return transfer.items.length > 0;
-}
-
-
-function getImageUrlFromTransfer(transfer) {
-    /* Extract external image URL from a drag-and-dropped image
-     */
-
-    var url = transfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1];
-
-    console.log('Image URL: ' + url);
-
-    return url;
-}
-
-function makeIconBadge(icon, title) {
-    // Construct an 'icon badge' which floats to the right of an object
-
-    var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
-
-    return html;
-}
-
-function makeIconButton(icon, cls, pk, title, options={}) {
-    // Construct an 'icon button' using the fontawesome set
-
-    var classes = `btn btn-default btn-glyph ${cls}`;
-
-    var id = `${cls}-${pk}`;
-
-    var html = '';
-
-    var extraProps = '';
-
-    if (options.disabled) {
-        extraProps += "disabled='true' ";
-    }
-
-    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
-    html += `<span class='fas ${icon}'></span>`;
-    html += `</button>`;
-
-    return html;
-}
-
-function makeProgressBar(value, maximum, opts={}) {
-    /*
-     * Render a progessbar!
-     * 
-     * @param value is the current value of the progress bar
-     * @param maximum is the maximum value of the progress bar
-     */
-
-    var options = opts || {};
-
-    value = parseFloat(value);
-
-    var percent = 100;
-
-    // Prevent div-by-zero or null value
-    if (maximum && maximum > 0) {
-        maximum = parseFloat(maximum);
-        percent = parseInt(value / maximum * 100);
-    }
-
-    if (percent > 100) {
-        percent = 100;
-    }
-
-    var extraclass = '';
-
-    if (value > maximum) {
-        extraclass='progress-bar-over';
-    } else if (value < maximum) {
-        extraclass = 'progress-bar-under';
-    }
-
-    var style = options.style || '';
-
-    var text = '';
-
-    if (style == 'percent') {
-        // Display e.g. "50%"
-
-        text = `${percent}%`;
-    } else if (style == 'max') {
-        // Display just the maximum value
-        text = `${maximum}`;
-    } else if (style == 'value') {
-        // Display just the current value
-        text = `${value}`;
-    } else if (style == 'blank') {
-        // No display!
-        text = '';
-    } else {
-        /* Default style
-        * Display e.g. "5 / 10"
-        */
-
-        text = `${value} / ${maximum}`;
-    }
-
-    var id = options.id || 'progress-bar';
-
-    return `
-    <div id='${id}' class='progress'>
-        <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
-        <div class='progress-value'>${text}</div>
-    </div>
-    `;
 }
 
 
@@ -264,7 +175,7 @@ function enableDragAndDrop(element, url, options) {
             method - HTTP method
     */
 
-    data = options.data || {};
+    var data = options.data || {};
 
     $(element).on('drop', function(event) {
 
@@ -307,40 +218,28 @@ function enableDragAndDrop(element, url, options) {
     });
 }
 
-function imageHoverIcon(url) {
-    /* Render a small thumbnail icon for an image.
-     * On mouseover, display a full-size version of the image
-     */
 
-    if (!url) {
-        url = '/static/img/blank_image.png';
-    }
-
-    var html = `
-        <a class='hover-icon'>
-            <img class='hover-img-thumb' src='` + url + `'>
-            <img class='hover-img-large' src='` + url + `'>
-        </a>
-        `;
-
-    return html;
-}
-
+/**
+ * Save a key:value pair to local storage
+ * @param {String} name - settting key 
+ * @param {String} value - setting value
+ */
 function inventreeSave(name, value) {
-    /*
-     * Save a key:value pair to local storage
-     */
 
-    var key = "inventree-" + name;
+    var key = `inventree-${name}`;
     localStorage.setItem(key, value);
 }
 
-function inventreeLoad(name, defaultValue) {
-    /* 
-     * Retrieve a key:value pair from local storage
-     */
 
-    var key = "inventree-" + name;
+/**
+ * Retrieve a key:value pair from local storage
+ * @param {*} name - setting key
+ * @param {*} defaultValue - default value (returned if no matching key:value pair is found)
+ * @returns 
+ */
+function inventreeLoad(name, defaultValue) {
+
+    var key = `inventree-${name}`;
 
     var value = localStorage.getItem(key);
 
@@ -349,28 +248,4 @@ function inventreeLoad(name, defaultValue) {
     } else {
         return value;
     }
-}
-
-function inventreeLoadInt(name) {
-    /*
-     * Retrieve a value from local storage, and attempt to cast to integer
-     */
-
-    var data = inventreeLoad(name);
-
-    return parseInt(data, 10);
-}
-
-function inventreeLoadFloat(name) {
-
-    var data = inventreeLoad(name);
-
-    return parseFloat(data);
-}
-
-function inventreeDel(name) {
-
-    var key = 'inventree-' + name;
-
-    localStorage.removeItem(key);
 }

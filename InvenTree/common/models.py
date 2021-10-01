@@ -20,12 +20,16 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import format_html
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
 import InvenTree.fields
+
+import logging
+
+
+logger = logging.getLogger('inventree')
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -49,55 +53,37 @@ class BaseInvenTreeSetting(models.Model):
         are assigned their default values
         """
 
-        keys = set()
-        settings = []
-
         results = cls.objects.all()
 
         if user is not None:
             results = results.filter(user=user)
 
         # Query the database
+        settings = {}
+
         for setting in results:
             if setting.key:
-                settings.append({
-                    "key": setting.key.upper(),
-                    "value": setting.value
-                })
-
-                keys.add(setting.key.upper())
+                settings[setting.key.upper()] = setting.value
 
         # Specify any "default" values which are not in the database
         for key in cls.GLOBAL_SETTINGS.keys():
 
-            if key.upper() not in keys:
+            if key.upper() not in settings:
 
-                settings.append({
-                    "key": key.upper(),
-                    "value": cls.get_setting_default(key)
-                })
-        
-        # Enforce javascript formatting
-        for idx, setting in enumerate(settings):
+                settings[key.upper()] = cls.get_setting_default(key)
 
-            key = setting['key']
-            value = setting['value']
-
+        for key, value in settings.items():
             validator = cls.get_setting_validator(key)
 
-            # Convert to javascript compatible booleans
             if cls.validator_is_bool(validator):
-                value = str(value).lower()
-
-            # Numerical values remain the same
+                value = InvenTree.helpers.str2bool(value)
             elif cls.validator_is_int(validator):
-                pass
+                try:
+                    value = int(value)
+                except ValueError:
+                    value = cls.get_setting_default(key)
 
-            # Wrap strings with quotes
-            else:
-                value = format_html("'{}'", value)
-
-            setting["value"] = value
+            settings[key] = value
 
         return settings
 
@@ -802,6 +788,44 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Prefix value for purchase order reference'),
             'default': 'PO',
         },
+
+        # enable/diable ui elements
+        'BUILD_FUNCTION_ENABLE': {
+            'name': _('Enable build'),
+            'description': _('Enable build functionality in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'BUY_FUNCTION_ENABLE': {
+            'name': _('Enable buy'),
+            'description': _('Enable buy functionality in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'SELL_FUNCTION_ENABLE': {
+            'name': _('Enable sell'),
+            'description': _('Enable sell functionality in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'STOCK_FUNCTION_ENABLE': {
+            'name': _('Enable stock'),
+            'description': _('Enable stock functionality in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'SO_FUNCTION_ENABLE': {
+            'name': _('Enable SO'),
+            'description': _('Enable SO functionality in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
+        'PO_FUNCTION_ENABLE': {
+            'name': _('Enable PO'),
+            'description': _('Enable PO functionality in InvenTree interface'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:
@@ -1021,7 +1045,7 @@ class PriceBreak(models.Model):
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
-            print(f"WARNING: No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            logger.warning(f"No currency conversion rate available for {self.price_currency} -> {currency_code}")
             return self.price.amount
 
         return converted.amount

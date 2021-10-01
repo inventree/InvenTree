@@ -4,6 +4,8 @@ JSON serializers for Stock app
 
 from rest_framework import serializers
 
+from django.utils.translation import ugettext_lazy as _
+
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
 from .models import StockItemAttachment
@@ -22,10 +24,12 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 
 import common.models
+from common.settings import currency_code_default, currency_code_mappings
+
 from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
-from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
+from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer, InvenTreeMoneySerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializer, InvenTreeAttachmentSerializerField
 
 
 class LocationBriefSerializer(InvenTreeModelSerializer):
@@ -139,16 +143,27 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
-    purchase_price = serializers.SerializerMethodField()
+    purchase_price = InvenTreeMoneySerializer(
+        label=_('Purchase Price'),
+        max_digits=19, decimal_places=4,
+        allow_null=True
+    )
+
+    purchase_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        default=currency_code_default,
+        label=_('Currency'),
+    )
+
+    purchase_price_string = serializers.SerializerMethodField()
+
+    def get_purchase_price_string(self, obj):
+
+        return str(obj.purchase_price) if obj.purchase_price else '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
 
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
-
-    def get_purchase_price(self, obj):
-        """ Return purchase_price (Money field) as string (includes currency) """
-
-        return str(obj.purchase_price) if obj.purchase_price else '-'
 
     def __init__(self, *args, **kwargs):
 
@@ -208,9 +223,12 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'uid',
             'updated',
             'purchase_price',
+            'purchase_price_currency',
+            'purchase_price_string',
         ]
 
-        """ These fields are read-only in this context.
+        """
+        These fields are read-only in this context.
         They can be updated by accessing the appropriate API endpoints
         """
         read_only_fields = [
@@ -253,7 +271,7 @@ class LocationSerializer(InvenTreeModelSerializer):
         ]
 
 
-class StockItemAttachmentSerializer(InvenTreeModelSerializer):
+class StockItemAttachmentSerializer(InvenTreeAttachmentSerializer):
     """ Serializer for StockItemAttachment model """
 
     def __init__(self, *args, **kwargs):
@@ -277,6 +295,7 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'stock_item',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
             'user',
