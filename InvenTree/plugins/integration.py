@@ -85,6 +85,13 @@ class SettingsMixin:
             return {f'PLUGIN_{self.plugin_name().upper()}_{key}': value for key, value in self.settings.items()}
         return None
 
+    def get_setting(self, key):
+        """
+        get plugin setting by key
+        """
+        from common.models import InvenTreeSetting
+        return InvenTreeSetting.get_setting(f'PLUGIN_{self.PLUGIN_NAME.upper()}_{key}')
+
 
 class UrlsMixin:
     """Mixin that enables urls for the plugin"""
