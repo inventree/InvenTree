@@ -34,8 +34,8 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           target: production
-          build-args:
-            branch: stable
+          build-args: |
+            branch=stable
           repository: inventree/inventree
           tags: inventree/inventree:stable
       - name: Image Digest

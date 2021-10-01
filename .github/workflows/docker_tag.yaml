@@ -32,7 +32,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           target: production
-          build-args:
-            tag: ${{ github.event.release.tag_name }}
+          build-args: |
+            tag=${{ github.event.release.tag_name }}
           repository: inventree/inventree
           tags: inventree/inventree:${{ github.event.release.tag_name }}
