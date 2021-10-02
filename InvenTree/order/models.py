@@ -418,9 +418,9 @@ class PurchaseOrder(Order):
             barcode = ''
 
         if not self.status == PurchaseOrderStatus.PLACED:
-            raise ValidationError({
-                "status": _("Lines can only be received against an order marked as 'Placed'")
-            })
+            raise ValidationError(
+                "Lines can only be received against an order marked as 'PLACED'"
+            )
 
         try:
             if not (quantity % 1 == 0):

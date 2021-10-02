@@ -401,25 +401,45 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(line_1.received, 0)
         self.assertEqual(line_2.received, 50)
 
+        valid_data = {
+            'items': [
+                {
+                    'line_item': 1,
+                    'quantity': 50,
+                    'barcode': 'MY-UNIQUE-BARCODE-123',
+                },
+                {
+                    'line_item': 2,
+                    'quantity': 200,
+                    'location': 2,  # Explicit location
+                    'barcode': 'MY-UNIQUE-BARCODE-456',
+                }
+            ],
+            'location': 1,  # Default location
+        }
+
+        # Before posting "valid" data, we will mark the purchase order as "pending"
+        # In this case we do expect an error!
+        order = PurchaseOrder.objects.get(pk=1)
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+
+        response = self.post(
+            self.url,
+            valid_data,
+            expected_code=400
+        )
+
+        self.assertIn('can only be received against', str(response.data))
+
+        # Now, set the PO back to "PLACED" so the items can be received
+        order.status = PurchaseOrderStatus.PLACED
+        order.save()
+
         # Receive two separate line items against this order
         self.post(
             self.url,
-            {
-                'items': [
-                    {
-                        'line_item': 1,
-                        'quantity': 50,
-                        'barcode': 'MY-UNIQUE-BARCODE-123',
-                    },
-                    {
-                        'line_item': 2,
-                        'quantity': 200,
-                        'location': 2,  # Explicit location
-                        'barcode': 'MY-UNIQUE-BARCODE-456',
-                    }
-                ],
-                'location': 1,  # Default location
-            },
+            valid_data,
             expected_code=201,
         )
 
