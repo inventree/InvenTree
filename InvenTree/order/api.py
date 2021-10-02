@@ -8,11 +8,13 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 from django.db import transaction
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
+from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 
@@ -243,11 +245,12 @@ class POReceive(generics.CreateAPIView):
 
         pk = self.kwargs.get('pk', None)
 
-        if pk is None:
-            return None
-        else:
-            order = PurchaseOrder.objects.get(pk=self.kwargs['pk'])
-            return order
+        try:
+            order = PurchaseOrder.objects.get(pk=pk)
+        except (PurchaseOrder.DoesNotExist, ValueError):
+            raise ValidationError(_("Matching purchase order does not exist"))
+        
+        return order
 
     def create(self, request, *args, **kwargs):
 
@@ -259,9 +262,14 @@ class POReceive(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         # Receive the line items
-        self.receive_items(serializer)
+        try:
+            self.receive_items(serializer)
+        except DjangoValidationError as exc:
+            # Re-throw a django error as a DRF error
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
 
         headers = self.get_success_headers(serializer.data)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @transaction.atomic

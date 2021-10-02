@@ -418,16 +418,24 @@ class PurchaseOrder(Order):
             barcode = ''
 
         if not self.status == PurchaseOrderStatus.PLACED:
-            raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
+            raise ValidationError({
+                "status": _("Lines can only be received against an order marked as 'Placed'")
+            })
 
         try:
             if not (quantity % 1 == 0):
-                raise ValidationError({"quantity": _("Quantity must be an integer")})
+                raise ValidationError({
+                    "quantity": _("Quantity must be an integer")
+                })
             if quantity < 0:
-                raise ValidationError({"quantity": _("Quantity must be a positive number")})
+                raise ValidationError({
+                    "quantity": _("Quantity must be a positive number")
+                })
             quantity = int(quantity)
         except (ValueError, TypeError):
-            raise ValidationError({"quantity": _("Invalid quantity provided")})
+            raise ValidationError({
+                "quantity": _("Invalid quantity provided")
+            })
 
         # Create a new stock item
         if line.part and quantity > 0:
