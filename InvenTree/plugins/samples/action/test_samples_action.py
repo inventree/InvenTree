@@ -12,11 +12,10 @@ class SimpleActionPluginTests(TestCase):
     def setUp(self):
         # Create a user for auth
         user = get_user_model()
-        user.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.test_user = user.objects.create_user('testuser', 'test@testing.com', 'password')
 
         self.client.login(username='testuser', password='password')
-
-        self.plugin = SimpleActionPlugin()
+        self.plugin = SimpleActionPlugin(user=self.test_user)
 
     def test_name(self):
         """check plugn names """
@@ -26,13 +25,16 @@ class SimpleActionPluginTests(TestCase):
     def test_function(self):
         """check if functions work """
         # test functions
-        respone = self.client.get('/action/sample/')
+        respone = self.client.post('/api/action/', data={'action': "simple", 'data': {'foo': "bar",}})
         self.assertEqual(respone.status_code, 200)
-        self.assertEqual(respone.content, {
-            "action": 'simple',
-            "result": True,
-            "info": {
-                "user": "testuser",
-                "hello": "world",
-            },
-        })
+        self.assertJSONEqual(
+            str(respone.content, encoding='utf8'),
+            {
+                "action": 'simple',
+                "result": True,
+                "info": {
+                    "user": "testuser",
+                    "hello": "world",
+                },
+            }
+        )
