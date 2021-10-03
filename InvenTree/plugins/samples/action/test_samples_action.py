@@ -25,7 +25,7 @@ class SimpleActionPluginTests(TestCase):
     def test_function(self):
         """check if functions work """
         # test functions
-        response = self.client.post('/api/action/', data={'action': "simple", 'data': {'foo': "bar",}})
+        response = self.client.post('/api/action/', data={'action': "simple", 'data': {'foo': "bar", }})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             str(response.content, encoding='utf8'),
