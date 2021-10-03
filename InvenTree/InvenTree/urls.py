@@ -128,11 +128,9 @@ translated_javascript_urls = [
 ]
 
 # Integration plugin urls
-integration_plugins = inventree_plugins.load_integration_plugins()
+integration_plugins = settings.INTEGRATION_PLUGINS
 interation_urls = []
 for plugin in integration_plugins:
-    # initialize
-    plugin = plugin()
     if plugin.mixin_enabled('urls'):
         interation_urls.append(plugin.urlpatterns)
 

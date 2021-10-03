@@ -652,14 +652,15 @@ MESSAGE_TAGS = {
 # Plugins
 PLUGIN_URL = 'plugin'
 
-INTEGRATION_PLUGINS = inventree_plugins.load_integration_plugins()
+INTEGRATION_PLUGINS = []
+for plugin in inventree_plugins.load_integration_plugins():
+    INTEGRATION_PLUGINS.append(plugin())
 
 INTEGRATION_PLUGIN_SETTINGS = {}
 INTEGRATION_PLUGIN_SETTING = {}
 INTEGRATION_PLUGIN_LIST = {}
 
 for plugin in INTEGRATION_PLUGINS:
-    plugin = plugin()
     INTEGRATION_PLUGIN_LIST[plugin.plugin_name()] = plugin
     if plugin.mixin_enabled('settings'):
         INTEGRATION_PLUGIN_SETTING[plugin.plugin_name()] = plugin.settingspatterns
