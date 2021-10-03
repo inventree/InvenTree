@@ -18,4 +18,4 @@ class SampleIntegrationPluginTests(TestCase):
         """check the function of the custom  sample plugin """
         respone = self.client.get('/plugin/SampleIntegrationPlugin/ho/he/')
         self.assertEqual(respone.status_code, 200)
-        self.assertEqual(respone.content, b'Hi there testuser this work')
+        self.assertEqual(respone.content, b'Hi there testuser this works')

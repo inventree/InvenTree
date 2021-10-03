@@ -16,7 +16,7 @@ class SimpleActionPluginTests(TestCase):
 
         self.client.login(username='testuser', password='password')
 
-        self.plugin = SimpleActionPlugin
+        self.plugin = SimpleActionPlugin()
 
     def test_name(self):
         """check plugn names """
