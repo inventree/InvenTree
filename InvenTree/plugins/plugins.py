@@ -11,7 +11,7 @@ import plugins.samples.action as action
 from plugins.action import ActionPlugin
 
 import plugins.samples.integration as integration
-from plugins.integration import IntegrationPlugin
+from plugins.integration import IntegrationPluginBase
 
 
 logger = logging.getLogger("inventree")
@@ -88,7 +88,7 @@ def load_integration_plugins():
     """
     Return a list of all registered integration plugins
     """
-    return load_plugins('integration', integration, IntegrationPlugin)
+    return load_plugins('integration', integration, IntegrationPluginBase)
 
 
 def load_barcode_plugins():

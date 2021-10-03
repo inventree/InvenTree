@@ -1,8 +1,8 @@
 """sample implementation for IntegrationPlugin"""
-from plugins.integration import IntegrationPlugin, UrlsMixin
+from plugins.integration import IntegrationPluginBase, UrlsMixin
 
 
-class NoIntegrationPlugin(IntegrationPlugin):
+class NoIntegrationPlugin(IntegrationPluginBase):
     """
     An basic integration plugin
     """
@@ -10,7 +10,7 @@ class NoIntegrationPlugin(IntegrationPlugin):
     PLUGIN_NAME = "NoIntegrationPlugin"
 
 
-class WrongIntegrationPlugin(UrlsMixin, IntegrationPlugin):
+class WrongIntegrationPlugin(UrlsMixin, IntegrationPluginBase):
     """
     An basic integration plugin
     """

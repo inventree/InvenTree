@@ -1,12 +1,12 @@
 """sample implementations for IntegrationPlugin"""
-from plugins.integration import SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPlugin
+from plugins.integration import SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase
 
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 
 
-class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPlugin):
+class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase):
     """
     An full integration plugin
     """

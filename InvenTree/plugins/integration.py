@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""class for IntegrationPlugin and Mixins for it"""
+"""class for IntegrationPluginBase and Mixins for it"""
 
 import logging
 import os
@@ -225,9 +225,9 @@ class GitStatus:
 # endregion
 
 
-class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
+class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     """
-    The IntegrationPlugin class is used to integrate with 3rd party software
+    The IntegrationPluginBase class is used to integrate with 3rd party software
     """
 
     def __init__(self):
