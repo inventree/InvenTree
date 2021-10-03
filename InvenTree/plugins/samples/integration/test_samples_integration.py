@@ -16,6 +16,6 @@ class SampleIntegrationPluginTests(TestCase):
 
     def test_view(self):
         """check the function of the custom  sample plugin """
-        respone = self.client.get('/plugin/SampleIntegrationPlugin/ho/he/')
-        self.assertEqual(respone.status_code, 200)
-        self.assertEqual(respone.content, b'Hi there testuser this works')
+        response = self.client.get('/plugin/SampleIntegrationPlugin/ho/he/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b'Hi there testuser this works')
