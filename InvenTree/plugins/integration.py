@@ -163,6 +163,25 @@ class NavigationMixin:
         does this plugin define navigation elements
         """
         return bool(self.navigation)
+
+
+class AppMixin:
+    """Mixin that enables full django app functions for a plugin"""
+    class Meta:
+        """meta options for this mixin"""
+        MIXIN_NAME = 'App registration'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('app', 'has_app', __class__)
+
+    @property
+    def has_app(self):
+        """
+        this plugin is always an app with this plugin
+        """
+        return True
+
 # endregion
 
 

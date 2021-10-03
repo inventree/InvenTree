@@ -18,6 +18,7 @@ import random
 import string
 import shutil
 import sys
+import pathlib
 from datetime import datetime
 
 import moneyed
@@ -675,3 +676,7 @@ for plugin in inventree_plugins.load_integration_plugins():
 
         INTEGRATION_PLUGIN_SETTING[plugin_name] = plugin_setting
         INTEGRATION_PLUGIN_SETTINGS.update(plugin_setting)
+
+    if plugin.mixin_enabled('app'):
+        plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(BASE_DIR).parts)
+        INSTALLED_APPS += [plugin_path]
