@@ -214,6 +214,8 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
     def __init__(self):
         super().__init__()
         self.add_mixin('base')
+        self.def_path = inspect.getfile(self.__class__)
+        self.path = os.path.dirname(self.def_path)
 
         self.set_sign_values()
 
@@ -230,8 +232,7 @@ class IntegrationPlugin(MixinBase, plugin.InvenTreePlugin):
 
     def get_plugin_commit(self):
         """get last git commit for plugin"""
-        path = inspect.getfile(self.__class__)
-        return get_git_log(path)
+        return get_git_log(self.def_path)
 
     def set_sign_values(self):
         """add the last commit of the plugins class file into plugins context"""

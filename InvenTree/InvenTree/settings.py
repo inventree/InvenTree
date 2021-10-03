@@ -320,7 +320,6 @@ TEMPLATES = [
             os.path.join(MEDIA_ROOT, 'report'),
             os.path.join(MEDIA_ROOT, 'label'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -332,6 +331,13 @@ TEMPLATES = [
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
+            ],
+            'loaders': [(
+                'django.template.loaders.cached.Loader', [
+                    'django.template.loaders.app_directories.Loader',
+                    'django.template.loaders.filesystem.Loader',
+                    'plugins.loader.PluginTemplateLoader',
+                ])
             ],
         },
     },
