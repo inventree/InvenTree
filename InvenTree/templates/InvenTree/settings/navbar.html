@@ -131,9 +131,9 @@
     {% plugin_list as pl_list %}
     {% for plugin_key, plugin in pl_list.items %}
         {% if plugin.registered_mixins %}
-            <li class='list-group-item' title='{{ plugin.plugin_name }}'>
+            <li class='list-group-item' title='{{ plugin.human_name }}'>
                 <a href='#' class='text-{{plugin.sign_color}} nav-toggle' id='select-plugin-{{plugin_key}}'>
-                    {{ plugin.plugin_name}}
+                    {{ plugin.human_name }}
                 </a>
             </li>
         {% endif %}
