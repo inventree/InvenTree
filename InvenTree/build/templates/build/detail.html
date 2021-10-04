@@ -317,6 +317,9 @@ var buildInfo = {
     quantity: {{ build.quantity }},
     completed: {{ build.completed }},
     part: {{ build.part.pk }},
+    {% if build.take_from %}
+    source_location: {{ build.take_from.pk }},
+    {% endif %}
 };
 
 {% for item in build.incomplete_outputs %}
@@ -412,13 +415,6 @@ $('#edit-notes').click(function() {
     });
 });
 
-var buildInfo = {
-    pk: {{ build.pk }},
-    quantity: {{ build.quantity }},
-    completed: {{ build.completed }},
-    part: {{ build.part.pk }},
-};
-
 {% if build.has_untracked_bom_items %}
 // Load allocation table for un-tracked parts
 loadBuildOutputAllocationTable(buildInfo, null);
@@ -453,6 +449,9 @@ $("#btn-auto-allocate").on('click', function() {
             {{ build.part.pk }},
             incomplete_bom_items,
             {
+                {% if build.take_from %}
+                source_location: {{ build.take_from.pk }},
+                {% endif %}
                 success: function(data) {
                     $('#allocation-table-untracked').bootstrapTable('refresh');
                 }
@@ -479,6 +478,9 @@ $('#allocate-selected-items').click(function() {
         {{ build.part.pk }},
         bom_items,
         {
+            {% if build.take_from %}
+            source_location: {{ build.take_from.pk }},
+            {% endif %}
             success: function(data) {
                 $('#allocation-table-untracked').bootstrapTable('refresh');
             }

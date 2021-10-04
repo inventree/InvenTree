@@ -728,9 +728,16 @@ function updateFieldValues(fields, options) {
     }
 }
 
-
+/*
+ * Update the value of a named field
+ */
 function updateFieldValue(name, value, field, options) {
     var el = $(options.modal).find(`#id_${name}`);
+
+    if (!el) {
+        console.log(`WARNING: updateFieldValue could not find field '${name}'`);
+        return;
+    }
 
     switch (field.type) {
     case 'boolean':
@@ -1105,7 +1112,14 @@ function addClearCallbacks(fields, options) {
 
 function addClearCallback(name, field, options) {
 
-    $(options.modal).find(`#clear_${name}`).click(function() {
+    var el = $(options.modal).find(`#clear_${name}`);
+    
+    if (!el) {
+        console.log(`WARNING: addClearCallback could not find field '${name}'`);
+        return;
+    }
+
+    el.click(function() {
         updateFieldValue(name, null, field, options);
     });
 }
@@ -1332,6 +1346,11 @@ function initializeRelatedField(field, fields, options) {
                 query.search = params.term;
                 query.offset = offset;
                 query.limit = pageSize;
+                
+                // Allow custom run-time filter augmentation
+                if ("adjustFilters" in field) {
+                    query = field.adjustFilters(query);
+                }
 
                 return query;
             },
@@ -1453,7 +1472,6 @@ function initializeRelatedField(field, fields, options) {
                 }
             }
         });
-
     }
 }
 

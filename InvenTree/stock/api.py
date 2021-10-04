@@ -821,7 +821,7 @@ class StockList(generics.ListCreateAPIView):
         if loc_id is not None:
 
             # Filter by 'null' location (i.e. top-level items)
-            if isNull(loc_id):
+            if isNull(loc_id) and not cascade:
                 queryset = queryset.filter(location=None)
             else:
                 try:

@@ -172,6 +172,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
             partId,
             bom_items,
             {
+                source_location: buildInfo.source_location,
                 output: outputId,
                 success: reloadTable,
             }
@@ -407,6 +408,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     row,
                 ],
                 {
+                    source_location: buildInfo.source_location,
                     success: function(data) {
                         $(table).bootstrapTable('refresh');
                     },
@@ -824,7 +826,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
  * - bom_items: A list of BomItem objects to be allocated
  * 
  * options:
- *  - outputId: ID / PK of the associated build output (or null for untracked items)
+ *  - output: ID / PK of the associated build output (or null for untracked items)
+ *  - source_location: ID / PK of the top-level StockLocation to take parts from (or null)
  */
 function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
@@ -836,6 +839,8 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         sub_part_detail: true,
         sub_part_trackable: output_id != null
     };
+
+    var source_location = options.source_location;
 
     function renderBomItemRow(bom_item, quantity) {
 
@@ -936,8 +941,22 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         return;
     }
 
+    var html = ``;
+
+    // Render a "take from" input
+    html += constructField(
+        'take_from',
+        {
+            type: 'related field',
+            label: '{% trans "Source Location" %}',
+            help_text: '{% trans "Select source location (leave blank to take from all locations)" %}',
+            required: false,
+        },
+        {},
+    );
+
     // Create table of parts
-    var html = `
+    html += `
     <table class='table table-striped table-condensed' id='stock-allocation-table'>
         <thead>
             <tr>
@@ -964,7 +983,26 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         title: '{% trans "Allocate Stock Items to Build Order" %}',
         afterRender: function(fields, options) {
 
-            // Initialize select2 fields
+            var take_from_field = {
+                name: 'take_from',
+                model: 'stocklocation',
+                api_url: '{% url "api-location-list" %}',
+                required: false,
+                type: 'related field',
+                value: source_location,
+                noResults: function(query) {
+                    return '{% trans "No matching stock locations" %}';
+                },
+            };
+
+            // Initialize "take from" field
+            initializeRelatedField(
+                take_from_field,
+                null,
+                options,
+            );
+
+            // Initialize stock item fields
             bom_items.forEach(function(bom_item) {
                 initializeRelatedField(
                     {
@@ -981,6 +1019,21 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         render_part_detail: false,
                         render_location_detail: true,
                         auto_fill: true,
+                        adjustFilters: function(filters) {
+                            // Restrict query to the selected location
+                            var location = getFormFieldValue(
+                                'take_from',
+                                {},
+                                {
+                                    modal: options.modal,
+                                }
+                            );
+
+                            filters.location = location;
+                            filters.cascade = true;
+                            
+                            return filters;
+                        },
                         noResults: function(query) {
                             return '{% trans "No matching stock items" %}';
                         }
@@ -989,6 +1042,13 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                     options,
                 );
             });
+
+            // Add callback to "clear" button for take_from field
+            addClearCallback(
+                "take_from",
+                take_from_field,
+                options,
+            );
 
             // Add button callbacks
             $(options.modal).find('.button-row-remove').click(function() {
