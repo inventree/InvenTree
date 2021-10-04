@@ -255,6 +255,14 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             name = self.plugin_name()
         return slugify(name)
 
+    @property
+    def human_name(self):
+        """human readable name for labels etc."""
+        name = getattr(self, 'PLUGIN_TITLE', None)
+        if not name:
+            name = self.plugin_name()
+        return name
+
     def mixin(self, key):
         """check if mixin is registered"""
         return key in self._mixins

@@ -65,7 +65,7 @@
           {% if navigation %}
 
           <li class='nav navbar-nav'>
-            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='{{plugin.icon}} icon-header'></span>{{plugin.plugin_name}}</a>
+            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='{{plugin.icon}} icon-header'></span>{{plugin.human_name}}</a>
             <ul class='dropdown-menu'>
              {% for nav_item in plugin.navigation %}
                 <li><a href="{% url nav_item.link %}"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>

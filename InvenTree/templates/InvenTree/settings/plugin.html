@@ -30,7 +30,7 @@
         {% mixin_enabled plugin 'settings' as settings %}
 
         <tr>
-            <td>{{plugin_key}} - {{ plugin.plugin_name}}
+            <td>{{plugin_key}} - {{ plugin.human_name }}
                 {% if urls %}
                     <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has urls' %}</a></span>
                 {% endif %}
@@ -42,7 +42,7 @@
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                     <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>
-                        {% blocktrans with name=mixin.human_name%}has {{name}}{% endblocktrans %}</a></span>
+                        {% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</a></span>
                 {% endfor %}
                 {% endif %}
             </td>
