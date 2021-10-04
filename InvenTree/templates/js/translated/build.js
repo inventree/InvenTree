@@ -103,6 +103,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
      */
 
     var buildId = buildInfo.pk;
+    var partId = buildInfo.part;
 
     var outputId = 'untracked';
 
@@ -121,11 +122,10 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
     var html = `<div class='btn-group float-right' role='group'>`;
 
-    // "Auto" allocation only works for untracked stock items
-    if (!output && lines > 0) {
+    if (lines > 0) {
         html += makeIconButton(
-            'fa-magic icon-blue', 'button-output-auto', outputId,
-            '{% trans "Auto-allocate stock items to this output" %}',
+            'fa-sign-in-alt icon-blue', 'button-output-auto', outputId,
+            '{% trans "Allocate stock items to this build output" %}',
         );
     }
 
@@ -136,7 +136,6 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
             '{% trans "Unallocate stock from build output" %}',
         );
     }
-
 
     if (output) {
 
@@ -164,7 +163,21 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
     // Add callbacks for the buttons
     $(panel).find(`#button-output-auto-${outputId}`).click(function() {
+
+        var bom_items = $(panel).find(`#allocation-table-${outputId}`).bootstrapTable('getData');
+
         // Launch modal dialog to perform auto-allocation
+        allocateStockToBuild(
+            buildId,
+            partId,
+            bom_items,
+            {
+                output: outputId,
+                success: reloadTable,
+            }
+        );
+
+        return;
         launchModalForm(`/build/${buildId}/auto-allocate/`,
             {
                 data: {
@@ -406,6 +419,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     success: function(data) {
                         $(table).bootstrapTable('refresh');
                     },
+                    output: output == null ? null : output.pk,
                 }
             );
         });
@@ -1023,7 +1037,8 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                     data.items.push({
                         bom_item: item.pk,
                         stock_item: stock_item,
-                        quantity: quantity
+                        quantity: quantity,
+                        output: output_id,
                     });
 
                     item_pk_values.push(item.pk);
