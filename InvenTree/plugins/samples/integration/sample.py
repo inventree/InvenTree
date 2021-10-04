@@ -15,6 +15,8 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
     PLUGIN_SLUG = "sample"
     PLUGIN_TITLE = "Sample Plugin"
 
+    NAVIGATION_TAB_NAME = "Sample Nav"
+
     def view_test(self, request):
         """very basic view"""
         return HttpResponse(f'Hi there {request.user.username} this works')
