@@ -77,43 +77,12 @@
 
 {% mixin_enabled plugin 'settings' as settings %}
 {% if settings %}
-<h4>{% trans "Settings" %}</h4>
-{% plugin_settings plugin_key as plugin_settings %}
-
-<table class='table table-striped table-condensed'>
-    {% include "InvenTree/settings/header.html" %}
-    <tbody>
-        {% for setting in plugin_settings %}
-            {% include "InvenTree/settings/setting.html" with key=setting%}
-        {% endfor %}
-    </tbody>
-</table>
+    {% include 'InvenTree/settings/mixins/settings.html' %}
 {% endif %}
 
 {% mixin_enabled plugin 'urls' as urls %}
 {% if urls %}
-<h4>{% trans "URLs" %}</h4>
-    {% define plugin.base_url as base %}
-    <p>{% blocktrans %}The Base-URL for this plugin is <a href="/{{ base }}" target="_blank"><strong>{{ base }}</strong></a>.{% endblocktrans %}</p>
-
-    <table class='table table-striped table-condensed'>
-        <thead>
-            <tr>
-                <th>{% trans "Name" %}</th>
-                <th>{% trans "URL" %}</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for key, entry in plugin.urlpatterns.reverse_dict.items %}{% if key %}
-            <tr>
-                <td>{{key}}</td>
-                <td>{{entry.1}}</td>
-                <td><a class="btn btn-primary btn-small" href="/{{ base }}{{entry.1}}" target="_blank">{% trans 'open in new tab' %}</a></td>
-            </tr>
-            {% endif %}{% endfor %}
-        </tbody>
-    </table>
+    {% include 'InvenTree/settings/mixins/urls.html' %}
 {% endif %}
 
 {% endblock %}
