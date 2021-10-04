@@ -4,6 +4,7 @@ Build database model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import decimal
 
 import os
 from datetime import datetime
@@ -1185,13 +1186,13 @@ class BuildItem(models.Model):
 
     def save(self, *args, **kwargs):
 
-        self.validate_unique()
         self.clean()
 
         super().save()
 
     def clean(self):
-        """ Check validity of the BuildItem model.
+        """
+        Check validity of this BuildItem instance.
         The following checks are performed:
 
         - StockItem.part must be in the BOM of the Part object referenced by Build
@@ -1202,8 +1203,6 @@ class BuildItem(models.Model):
 
         super().clean()
 
-        errors = {}
-
         try:
 
             # If the 'part' is trackable, then the 'install_into' field must be set!
@@ -1212,28 +1211,38 @@ class BuildItem(models.Model):
 
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
-                errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})").format(
-                    n=normalize(self.quantity),
-                    q=normalize(self.stock_item.quantity)
-                )]
+
+                q = normalize(self.quantity)
+                a = normalize(self.stock_item.quantity)
+
+                raise ValidationError({
+                    'quantity': _(f'Allocated quantity ({q}) must not execed available stock quantity ({a})')
+                })
 
             # Allocated quantity cannot cause the stock item to be over-allocated
-            if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
-                errors['quantity'] = _('StockItem is over-allocated')
+            available = decimal.Decimal(self.stock_item.quantity)
+            allocated = decimal.Decimal(self.stock_item.allocation_count())
+            quantity = decimal.Decimal(self.quantity)
+
+            if available - allocated + quantity < quantity:
+                raise ValidationError({
+                    'quantity': _('Stock item is over-allocated')
+                })
 
             # Allocated quantity must be positive
             if self.quantity <= 0:
-                errors['quantity'] = _('Allocation quantity must be greater than zero')
+                raise ValidationError({
+                    'quantity': _('Allocation quantity must be greater than zero'),
+                })
 
             # Quantity must be 1 for serialized stock
             if self.stock_item.serialized and not self.quantity == 1:
-                errors['quantity'] = _('Quantity must be 1 for serialized stock')
+                raise ValidationError({
+                    'quantity': _('Quantity must be 1 for serialized stock')
+                })
 
         except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass
-
-        if len(errors) > 0:
-            raise ValidationError(errors)
 
         """
         Attempt to find the "BomItem" which links this BuildItem to the build.
@@ -1247,7 +1256,7 @@ class BuildItem(models.Model):
             """
             A BomItem object has already been assigned. This is valid if:
 
-            a) It points to the same "part" as the referened build
+            a) It points to the same "part" as the referenced build
             b) Either:
                 i) The sub_part points to the same part as the referenced StockItem
                 ii) The BomItem allows variants and the part referenced by the StockItem
@@ -1287,7 +1296,7 @@ class BuildItem(models.Model):
         if not bom_item_valid:
 
             raise ValidationError({
-                'stock_item': _("Selected stock item not found in BOM for part '{p}'").format(p=self.build.part.full_name)
+                'stock_item': _("Selected stock item not found in BOM")
             })
 
     @transaction.atomic

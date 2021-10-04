@@ -20,12 +20,6 @@ build_detail_urls = [
 ]
 
 build_urls = [
-    url(r'item/', include([
-        url(r'^(?P<pk>\d+)/', include([
-            url('^edit/', views.BuildItemEdit.as_view(), name='build-item-edit'),
-            url('^delete/', views.BuildItemDelete.as_view(), name='build-item-delete'),
-        ])),
-    ])),
 
     url(r'^(?P<pk>\d+)/', include(build_detail_urls)),
 

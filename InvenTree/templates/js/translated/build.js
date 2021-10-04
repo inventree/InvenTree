@@ -596,11 +596,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
                             }
 
-                            {% if build.status == BuildStatus.COMPLETE %}
-                            url = `/stock/item/${row.pk}/`;
-                            {% else %}
-                            url = `/stock/item/${row.stock_item}/`;
-                            {% endif %}
+                            var pk = row.stock_item || row.pk;
+
+                            url = `/stock/item/${pk}/`;
 
                             return renderLink(text, url);
                         }
@@ -647,15 +645,23 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             // Assign button callbacks to the newly created allocation buttons
             subTable.find('.button-allocation-edit').click(function() {
                 var pk = $(this).attr('pk');
-                launchModalForm(`/build/item/${pk}/edit/`, {
-                    success: reloadTable,
+
+                constructForm(`/api/build/item/${pk}/`, {
+                    fields: {
+                        quantity: {},
+                    },
+                    title: '{% trans "Edit Allocation" %}',
+                    onSuccess: reloadTable,
                 });
             });
 
             subTable.find('.button-allocation-delete').click(function() {
                 var pk = $(this).attr('pk');
-                launchModalForm(`/build/item/${pk}/delete/`, {
-                    success: reloadTable,
+
+                constructForm(`/api/build/item/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Remove Allocation" %}',
+                    onSuccess: reloadTable,
                 });
             });
         },

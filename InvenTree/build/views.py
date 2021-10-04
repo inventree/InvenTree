@@ -628,21 +628,6 @@ class BuildDelete(AjaxDeleteView):
     ajax_form_title = _('Delete Build Order')
 
 
-class BuildItemDelete(AjaxDeleteView):
-    """ View to 'unallocate' a BuildItem.
-    Really we are deleting the BuildItem object from the database.
-    """
-
-    model = BuildItem
-    ajax_template_name = 'build/delete_build_item.html'
-    ajax_form_title = _('Unallocate Stock')
-    context_object_name = 'item'
-
-    def get_data(self):
-        return {
-            'danger': _('Removed parts from build allocation')
-        }
-
 
 class BuildItemCreate(AjaxCreateView):
     """
@@ -859,35 +844,3 @@ class BuildItemCreate(AjaxCreateView):
             initials['quantity'] = quantity
 
         return initials
-
-
-class BuildItemEdit(AjaxUpdateView):
-    """ View to edit a BuildItem object """
-
-    model = BuildItem
-    ajax_template_name = 'build/edit_build_item.html'
-    form_class = forms.EditBuildItemForm
-    ajax_form_title = _('Edit Stock Allocation')
-
-    def get_data(self):
-        return {
-            'info': _('Updated Build Item'),
-        }
-
-    def get_form(self):
-        """
-        Create form for editing a BuildItem.
-
-        - Limit the StockItem options to items that match the part
-        """
-
-        form = super(BuildItemEdit, self).get_form()
-
-        # Hide fields which we do not wish the user to edit
-        for field in ['build', 'stock_item']:
-            if form[field].value():
-                form.fields[field].widget = HiddenInput()
-
-        form.fields['install_into'].widget = HiddenInput()
-
-        return form
