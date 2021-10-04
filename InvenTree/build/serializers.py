@@ -154,6 +154,13 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         required=True
     )
 
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
     output = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.filter(is_building=True),
         many=False,
