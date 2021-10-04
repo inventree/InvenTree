@@ -256,21 +256,12 @@ class BuildAllocationSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        print("creating new allocation items!")
 
         data = self.validated_data
 
-        print("data:")
-        print(data)
-
         items = data.get('items', [])
 
-        print("items:")
-        print(items)
-
         build = self.context['build']
-
-        created_items = []
 
         with transaction.atomic():
             for item in items:
@@ -287,10 +278,6 @@ class BuildAllocationSerializer(serializers.Serializer):
                     quantity=quantity,
                     install_into=output
                 )
-
-                created_items.append(build_item)
-
-        return created_items
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):

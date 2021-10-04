@@ -98,7 +98,7 @@ class BuildList(generics.ListCreateAPIView):
         as some of the fields don't natively play nicely with DRF
         """
 
-        queryset = super().get_queryset().prefetch_related('part')
+        queryset = super().get_queryset().select_related('part')
 
         queryset = BuildSerializer.annotate_queryset(queryset)
 
@@ -229,6 +229,15 @@ class BuildAllocate(generics.CreateAPIView):
         return context
 
 
+class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a BuildItem object
+    """
+
+    queryset = BuildItem.objects.all()
+    serializer_class = BuildItemSerializer
+
+
 class BuildItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BuildItem objects
 
@@ -258,9 +267,9 @@ class BuildItemList(generics.ListCreateAPIView):
 
         query = BuildItem.objects.all()
 
-        query = query.select_related('stock_item')
-        query = query.prefetch_related('stock_item__part')
-        query = query.prefetch_related('stock_item__part__category')
+        query = query.select_related('stock_item__location')
+        query = query.select_related('stock_item__part')
+        query = query.select_related('stock_item__part__category')
 
         return query
 
@@ -330,12 +339,13 @@ build_api_urls = [
     # Attachments
     url(r'^attachment/', include([
         url(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        url('^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+        url(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build Items
     url(r'^item/', include([
-        url('^.*$', BuildItemList.as_view(), name='api-build-item-list')
+        url(r'^(?P<pk>\d+)/', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        url(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
