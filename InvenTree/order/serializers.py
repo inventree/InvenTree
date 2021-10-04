@@ -276,7 +276,7 @@ class POReceiveSerializer(serializers.Serializer):
         help_text=_('Select destination location for received items'),
     )
 
-    def validate(self, data):   
+    def validate(self, data):
 
         super().validate(data)
 

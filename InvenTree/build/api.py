@@ -7,13 +7,10 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from django.db import transaction
 from django.conf.urls import url, include
-from django.core.exceptions import ValidationError as DjangoValidationError
 
-from rest_framework import filters, generics, serializers, status
+from rest_framework import filters, generics
 from rest_framework.serializers import ValidationError
-from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -195,7 +192,7 @@ class BuildAllocate(generics.CreateAPIView):
     - Items to allocate are specified as a list called "items" with the following options:
         - bom_item: pk value of a given BomItem object (must match the part associated with this build)
         - stock_item: pk value of a given StockItem object
-        - quantity: quantity to allocate 
+        - quantity: quantity to allocate
         - output: StockItem (build order output) to allocate stock against (optional)
     """
 

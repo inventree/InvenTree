@@ -76,7 +76,6 @@ class BuildAllocationTest(BuildAPITest):
         # No items yet allocated to this build
         self.assertEqual(self.build.allocated_stock.count(), 0)
 
-
     def test_get(self):
         """
         A GET request to the endpoint should return an error
@@ -120,7 +119,7 @@ class BuildAllocationTest(BuildAPITest):
     def test_missing(self):
         """
         Test with missing data
-        """    
+        """
 
         # Missing quantity
         data = self.post(
@@ -200,7 +199,7 @@ class BuildAllocationTest(BuildAPITest):
         This should result in creation of a new BuildItem object
         """
 
-        data = self.post(
+        self.post(
             self.url,
             {
                 "items": [
@@ -212,7 +211,7 @@ class BuildAllocationTest(BuildAPITest):
                 ]
             },
             expected_code=201
-        ).data
+        )
 
         # A new BuildItem should have been created
         self.assertEqual(self.n + 1, BuildItem.objects.count())

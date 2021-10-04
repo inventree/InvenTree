@@ -567,7 +567,6 @@ class BuildDelete(AjaxDeleteView):
     ajax_form_title = _('Delete Build Order')
 
 
-
 class BuildItemCreate(AjaxCreateView):
     """
     View for allocating a StockItem to a build output.

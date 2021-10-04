@@ -23,7 +23,7 @@ import InvenTree.helpers
 from stock.models import StockItem
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
-from part.models import Part, BomItem
+from part.models import BomItem
 from part.serializers import PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -197,7 +197,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         quantity = data['quantity']
         output = data.get('output', None)
 
-        build = self.context['build']
+        # build = self.context['build']
 
         # TODO: Check that the "stock item" is valid for the referenced "sub_part"
         # Note: Because of allow_variants options, it may not be a direct match!
@@ -224,7 +224,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
             
             raise ValidationError({
                 'output': _('Build output cannot be specified for allocation of untracked parts')
-            }) 
+            })
 
         return data
 
@@ -271,7 +271,7 @@ class BuildAllocationSerializer(serializers.Serializer):
                 output = item.get('output', None)
 
                 # Create a new BuildItem to allocate stock
-                build_item = BuildItem.objects.create(
+                BuildItem.objects.create(
                     build=build,
                     bom_item=bom_item,
                     stock_item=stock_item,

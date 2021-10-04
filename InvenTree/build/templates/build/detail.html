@@ -418,10 +418,14 @@ function reloadTable() {
 
 {% if build.active %}
 $("#btn-auto-allocate").on('click', function() {
-    launchModalForm(
-        "{% url 'build-auto-allocate' build.id %}",
+
+    allocateStockToBuild(
+        {{ build.pk }},
+        {{ build.part.pk }},
         {
-            success: reloadTable,
+            success: function(data) {
+                $('#allocation-table-untracked').bootstrapTable('refresh');
+            }
         }
     );
 });
