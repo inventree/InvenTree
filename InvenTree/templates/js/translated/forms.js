@@ -1168,7 +1168,7 @@ function addSecondaryModal(field, fields, options) {
 
 
 /*
- * Initializea single related-field
+ * Initialize a single related-field
  * 
  * argument:
  * - modal: DOM identifier for the modal window

@@ -49,9 +49,18 @@ function renderStockItem(name, data, parameters, options) {
 
     var image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
 
-    var html = `<img src='${image}' class='select2-thumbnail'>`;
+    var html = '';
+    
+    var render_part_detail = true;
 
-    html += ` <span>${data.part_detail.full_name || data.part_detail.name}</span>`;
+    if ("render_part_detail" in parameters) {
+        render_part_detail = parameters["render_part_detail"];
+    }
+
+    if (render_part_detail) {
+        html += `<img src='${image}' class='select2-thumbnail'>`;
+        html += ` <span>${data.part_detail.full_name || data.part_detail.name}</span>`;
+    }
 
     if (data.serial && data.quantity == 1) {
         html += ` - <i>{% trans "Serial Number" %}: ${data.serial}`;
@@ -59,8 +68,18 @@ function renderStockItem(name, data, parameters, options) {
         html += ` - <i>{% trans "Quantity" %}: ${data.quantity}`;
     }
 
-    if (data.part_detail.description) {
+    if (render_part_detail && data.part_detail.description) {
         html += `<p><small>${data.part_detail.description}</small></p>`;
+    }
+
+    var render_location_detail = false;
+
+    if ("render_location_detail" in parameters) {
+        render_location_detail = parameters["render_location_detail"];
+    }
+
+    if (render_location_detail && data.location_detail) {
+        html += `<p><small>${data.location_detail.pathstring}</small></p>`;
     }
 
     return html;
