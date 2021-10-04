@@ -237,6 +237,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     """
     The IntegrationPluginBase class is used to integrate with 3rd party software
     """
+    PLUGIN_SLUG = None
 
     def __init__(self):
         super().__init__()
@@ -249,7 +250,9 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     @property
     def slug(self):
         """slug for the plugin"""
-        name = getattr(self, 'PLUGIN_SLUG', self.plugin_name())
+        name = getattr(self, 'PLUGIN_SLUG', None)
+        if not name:
+            name = self.plugin_name()
         return slugify(name)
 
     def mixin(self, key):
