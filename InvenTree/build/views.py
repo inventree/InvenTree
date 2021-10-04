@@ -77,67 +77,6 @@ class BuildCancel(AjaxUpdateView):
         }
 
 
-class BuildAutoAllocate(AjaxUpdateView):
-    """ View to auto-allocate parts for a build.
-    Follows a simple set of rules to automatically allocate StockItem objects.
-
-    Ref: build.models.Build.getAutoAllocations()
-    """
-
-    model = Build
-    form_class = forms.AutoAllocateForm
-    context_object_name = 'build'
-    ajax_form_title = _('Allocate Stock')
-    ajax_template_name = 'build/auto_allocate.html'
-
-    def get_initial(self):
-        """
-        Initial values for the form.
-        """
-
-        initials = super().get_initial()
-
-        return initials
-
-    def get_context_data(self, *args, **kwargs):
-        """
-        Get the context data for form rendering.
-        """
-
-        context = {}
-
-        build = self.get_object()
-
-        context['allocations'] = build.getAutoAllocations()
-
-        context['build'] = build
-
-        return context
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        return form
-
-    def validate(self, build, form, **kwargs):
-
-        pass
-
-    def save(self, build, form, **kwargs):
-        """
-        Once the form has been validated,
-        perform auto-allocations
-        """
-
-        build.autoAllocate()
-
-    def get_data(self):
-        return {
-            'success': _('Allocated stock to build output'),
-        }
-
-
 class BuildOutputCreate(AjaxUpdateView):
     """
     Create a new build output (StockItem) for a given build.
