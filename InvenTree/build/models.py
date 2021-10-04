@@ -1190,28 +1190,6 @@ class BuildItem(models.Model):
 
         super().save()
 
-    def validate_unique(self, exclude=None):
-        """
-        Test that this BuildItem object is "unique".
-        Essentially we do not want a stock_item being allocated to a Build multiple times.
-        """
-
-        super().validate_unique(exclude)
-
-        items = BuildItem.objects.exclude(id=self.id).filter(
-            build=self.build,
-            stock_item=self.stock_item,
-            install_into=self.install_into
-        )
-
-        if items.exists():
-            msg = _("BuildItem must be unique for build, stock_item and install_into")
-            raise ValidationError({
-                'build': msg,
-                'stock_item': msg,
-                'install_into': msg
-            })
-
     def clean(self):
         """ Check validity of the BuildItem model.
         The following checks are performed:

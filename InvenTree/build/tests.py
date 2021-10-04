@@ -252,34 +252,6 @@ class TestBuildViews(TestCase):
 
         self.assertIn(build.title, content)
 
-    def test_build_item_create(self):
-        """ Test the BuildItem creation view (ajax form) """
-
-        url = reverse('build-item-create')
-
-        # Try without a part specified
-        response = self.client.get(url, {'build': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Try with an invalid build ID
-        response = self.client.get(url, {'build': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Try with a valid part specified
-        response = self.client.get(url, {'build': 1, 'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Try with an invalid part specified
-        response = self.client.get(url, {'build': 1, 'part': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_build_item_edit(self):
-        """ Test the BuildItem edit view (ajax form) """
-
-        # TODO
-        # url = reverse('build-item-edit')
-        pass
-
     def test_build_output_complete(self):
         """
         Test the build output completion form

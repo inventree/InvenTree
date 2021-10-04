@@ -218,67 +218,15 @@ class BuildAllocate(generics.CreateAPIView):
         return build
 
     def get_serializer_context(self):
+        """
+        Provide the Build object to the serializer context
+        """
 
         context = super().get_serializer_context()
 
         context['build'] = self.get_build()
 
         return context
-
-    def create(self, request, *args, **kwargs):
-
-        # Which build are we receiving against?
-        build = self.get_build()
-
-        # Validate the serialized data
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        # Allocate the stock items
-        try:
-            self.allocate_items(build, serializer)
-        except DjangoValidationError as exc:
-            # Re-throw a django error as a DRF error
-            raise ValidationError(detail=serializers.as_serializer_error(exc))
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @transaction.atomic
-    def allocate_items(self, build, serializer):
-        """
-        Allocate the provided stock items to this order.
-
-        At this point, most of the heavy lifting has been done for us by the DRF serializer.
-
-        We have a list of "items" each a dict containing:
-
-        - bom_item: A validated BomItem object which matches this build
-        - stock_item: A validated StockItem object which matches the bom_item
-        - quantity: A validated numerical quantity which does not exceed the available stock
-        - output: A validated StockItem object to assign stock against (optional)
-
-        """
-
-        data = serializer.validated_data
-
-        items = data.get('items', [])
-
-        for item in items:
-
-            bom_item = item['bom_item']
-            stock_item = item['stock_item']
-            quantity = item['quantity']
-            output = item.get('output', None)
-
-            # Create a new BuildItem to allocate stock
-            build_item = BuildItem.objects.create(
-                build=build,
-                stock_item=stock_item,
-                quantity=quantity,
-                install_into=output
-            )
 
 
 class BuildItemList(generics.ListCreateAPIView):

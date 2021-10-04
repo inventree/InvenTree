@@ -276,35 +276,30 @@ class POReceiveSerializer(serializers.Serializer):
         help_text=_('Select destination location for received items'),
     )
 
-    def is_valid(self, raise_exception=False):
+    def validate(self, data):   
 
-        super().is_valid(raise_exception)
-
-        # Custom validation
-        data = self.validated_data
+        super().validate(data)
 
         items = data.get('items', [])
 
         if len(items) == 0:
-            self._errors['items'] = _('Line items must be provided')
-        else:
-            # Ensure barcodes are unique
-            unique_barcodes = set()
+            raise ValidationError({
+                'items': _('Line items must be provided')
+            })
 
-            for item in items:
-                barcode = item.get('barcode', '')
+        # Ensure barcodes are unique
+        unique_barcodes = set()
 
-                if barcode:
-                    if barcode in unique_barcodes:
-                        self._errors['items'] = _('Supplied barcode values must be unique')
-                        break
-                    else:
-                        unique_barcodes.add(barcode)
+        for item in items:
+            barcode = item.get('barcode', '')
 
-        if self._errors and raise_exception:
-            raise ValidationError(self.errors)
+            if barcode:
+                if barcode in unique_barcodes:
+                    raise ValidationError(_('Supplied barcode values must be unique'))
+                else:
+                    unique_barcodes.add(barcode)
 
-        return not bool(self._errors)
+        return data
 
     class Meta:
         fields = [

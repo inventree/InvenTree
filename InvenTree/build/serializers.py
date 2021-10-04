@@ -5,6 +5,8 @@ JSON serializers for Build API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db import transaction
+
 from django.utils.translation import ugettext_lazy as _
 
 from django.db.models import Case, When, Value
@@ -15,6 +17,8 @@ from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
+
+import InvenTree.helpers
 
 from stock.models import StockItem
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
@@ -147,6 +151,13 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         label=_('Stock Item'),
     )
 
+    def validate_stock_item(self, stock_item):
+
+        if not stock_item.in_stock:
+            raise ValidationError(_("Item must be in stock"))
+        
+        return stock_item
+
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
@@ -177,36 +188,45 @@ class BuildAllocationItemSerializer(serializers.Serializer):
             'output',
         ]
 
-    def is_valid(self, raise_exception=False):
+    def validate(self, data):
 
-        if super().is_valid(raise_exception):
+        super().validate(data)
 
-            data = self.validated_data
+        bom_item = data['bom_item']
+        stock_item = data['stock_item']
+        quantity = data['quantity']
+        output = data.get('output', None)
 
-            bom_item = data['bom_item']
-            stock_item = data['stock_item']
-            quantity = data['quantity']
-            output = data.get('output', None)
+        build = self.context['build']
 
-            build = self.context['build']
+        # TODO: Check that the "stock item" is valid for the referenced "sub_part"
+        # Note: Because of allow_variants options, it may not be a direct match!
 
-            # TODO: Check that the "stock item" is valid for the referenced "sub_part"
-            # Note: Because of allow_variants options, it may not be a direct match!
+        # Check that the quantity does not exceed the available amount from the stock item
+        q = stock_item.unallocated_quantity()
 
-            # TODO: Check that the quantity does not exceed the available amount from the stock item
+        if quantity > q:
 
-            # Output *must* be set for trackable parts
-            if output is None and bom_item.sub_part.trackable:
-                self._errors['output'] = _('Build output must be specified for allocation of tracked parts')
+            q = InvenTree.helpers.clean_decimal(q)
 
-            # Output *cannot* be set for un-tracked parts
-            if output is not None and not bom_item.sub_part.trackable:
-                self._errors['output'] = _('Build output cannot be specified for allocation of untracked parts')
+            raise ValidationError({
+                'quantity': _(f"Available quantity ({q}) exceeded")
+            })
+
+        # Output *must* be set for trackable parts
+        if output is None and bom_item.sub_part.trackable:
+            raise ValidationError({
+                'output': _('Build output must be specified for allocation of tracked parts')
+            })
+
+        # Output *cannot* be set for un-tracked parts
+        if output is not None and not bom_item.sub_part.trackable:
             
-            if self._errors and raise_exception:
-                raise ValidationError(self.errors)
+            raise ValidationError({
+                'output': _('Build output cannot be specified for allocation of untracked parts')
+            }) 
 
-        return not bool(self._errors)
+        return data
 
 
 class BuildAllocationSerializer(serializers.Serializer):
@@ -221,24 +241,56 @@ class BuildAllocationSerializer(serializers.Serializer):
             'items',
         ]
 
-    def is_valid(self, raise_exception=False):
+    def validate(self, data):
         """
         Validation
         """
-
-        super().is_valid(raise_exception)
-
-        data = self.validated_data
+        
+        super().validate(data)
 
         items = data.get('items', [])
 
         if len(items) == 0:
-            self._errors['items'] = _('Allocation items must be provided')
+            raise ValidationError(_('Allocation items must be provided'))
         
-        if self._errors and raise_exception:
-            raise ValidationError(self.errors)
+        return data
 
-        return not bool(self._errors)
+    def save(self):
+        print("creating new allocation items!")
+
+        data = self.validated_data
+
+        print("data:")
+        print(data)
+
+        items = data.get('items', [])
+
+        print("items:")
+        print(items)
+
+        build = self.context['build']
+
+        created_items = []
+
+        with transaction.atomic():
+            for item in items:
+                bom_item = item['bom_item']
+                stock_item = item['stock_item']
+                quantity = item['quantity']
+                output = item.get('output', None)
+
+                # Create a new BuildItem to allocate stock
+                build_item = BuildItem.objects.create(
+                    build=build,
+                    bom_item=bom_item,
+                    stock_item=stock_item,
+                    quantity=quantity,
+                    install_into=output
+                )
+
+                created_items.append(build_item)
+
+        return created_items
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):

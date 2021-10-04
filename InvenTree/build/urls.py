@@ -25,7 +25,6 @@ build_urls = [
             url('^edit/', views.BuildItemEdit.as_view(), name='build-item-edit'),
             url('^delete/', views.BuildItemDelete.as_view(), name='build-item-delete'),
         ])),
-        url('^new/', views.BuildItemCreate.as_view(), name='build-item-create'),
     ])),
 
     url(r'^(?P<pk>\d+)/', include(build_detail_urls)),
