@@ -383,7 +383,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 partId,
                 {
                     success: function(data) {
-                        console.log("here we go I guess");
+                        // TODO: Reload table
                     },
                     parts: [
                         parseInt(pk),
@@ -959,13 +959,17 @@ function allocateStockToBuild(build_id, part_id, options={}) {
                                     filters: {
                                         part: bom_item.sub_part,
                                         in_stock: true,
-                                        part_detail: true,
+                                        part_detail: false,
                                         location_detail: true,
                                     },
                                     model: 'stockitem',
+                                    required: true,
                                     render_part_detail: false,
                                     render_location_detail: true,
-                                    // TODO: Auto-assign value?
+                                    auto_fill: true,
+                                    noResults: function(query) {
+                                        return '{% trans "No matching stock items" %}';
+                                    }
                                 },
                                 null,
                                 options,

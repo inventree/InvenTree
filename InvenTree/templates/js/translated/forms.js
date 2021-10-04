@@ -1280,7 +1280,7 @@ function initializeRelatedField(field, fields, options) {
 
     if (!field.api_url) {
         // TODO: Provide manual api_url option?
-        console.log(`Related field '${name}' missing 'api_url' parameter.`);
+        console.log(`WARNING: Related field '${name}' missing 'api_url' parameter.`);
         return;
     }
 
@@ -1301,6 +1301,15 @@ function initializeRelatedField(field, fields, options) {
         placeholder: '',
         dropdownParent: $(options.modal),
         dropdownAutoWidth: false,
+        language: {
+            noResults: function(query) {
+                if (field.noResults) {
+                    return field.noResults(query);
+                } else {
+                    return '{% trans "No results found" %}';
+                }
+            }
+        },
         ajax: {
             url: field.api_url,
             dataType: 'json',
@@ -1415,8 +1424,10 @@ function initializeRelatedField(field, fields, options) {
         }
     });
 
+    
     // If a 'value' is already defined, grab the model info from the server
     if (field.value) {
+        
         var pk = field.value;
         var url = `${field.api_url}/${pk}/`.replace('//', '/');
 
@@ -1425,6 +1436,25 @@ function initializeRelatedField(field, fields, options) {
                 setRelatedFieldData(name, data, options);
             }
         });
+    } else if (field.auto_fill) {
+        // Attempt to auto-fill the field
+
+        var filters = field.filters || {};
+
+        // Enforce pagination, limit to a single return (for fast query)
+        filters.limit = 1;
+        filters.offset = 0;
+
+        inventreeGet(field.api_url, field.filters || {}, {
+            success: function(data) {
+
+                // Only a single result is available, given the provided filters
+                if (data.count == 1) {
+                    setRelatedFieldData(name, data.results[0], options);
+                }
+            }
+        });
+
     }
 }
 

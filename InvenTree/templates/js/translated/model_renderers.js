@@ -47,7 +47,11 @@ function renderCompany(name, data, parameters, options) {
 // eslint-disable-next-line no-unused-vars
 function renderStockItem(name, data, parameters, options) {
 
-    var image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
+    var image = blankImage();
+    
+    if (data.part_detail) {
+        image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
+    }
 
     var html = '';
     
