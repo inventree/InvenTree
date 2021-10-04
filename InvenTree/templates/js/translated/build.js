@@ -378,16 +378,24 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             // Primary key of the 'sub_part'
             var pk = $(this).attr('pk');
 
+            // Extract BomItem information from this row
+            var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            if (!row) {
+                console.log("WARNING: getRowByUniqueId returned null");
+                return;
+            }
+
             allocateStockToBuild(
                 buildId,
                 partId,
+                [
+                    row,
+                ],
                 {
                     success: function(data) {
                         // TODO: Reload table
                     },
-                    parts: [
-                        parseInt(pk),
-                    ]
                 }
             );
         });
@@ -798,18 +806,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
  * arguments:
  * - buildId: ID / PK value for the build
  * - partId: ID / PK value for the part being built
+ * - bom_items: A list of BomItem objects to be allocated
  * 
  * options:
  *  - outputId: ID / PK of the associated build output (or null for untracked items)
- *  - parts: List of ID values for filtering against specific sub parts
  */
-function allocateStockToBuild(build_id, part_id, options={}) {
+function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
     // ID of the associated "build output" (or null)
     var output_id = options.output || null;
-
-    // Extract list of BOM items (or empty list)
-    var sub_part_ids = options.parts || [];
 
     var query_params = {
         part: part_id,
@@ -884,179 +889,156 @@ function allocateStockToBuild(build_id, part_id, options={}) {
         return html;
     }
 
-    inventreeGet(
-        '{% url "api-bom-list" %}',
-        query_params,
-        {
-            success: function(response) {
+    var table_entries = "";
 
-                // List of BOM item objects we are interested in
-                var bom_items = [];
+    for (var idx = 0; idx < bom_items.length; idx++) {
+        var bom_item = bom_items[idx];
 
-                var table_entries = "";
+        table_entries += renderBomItemRow(bom_item);
+    }
 
-                for (var idx = 0; idx < response.length; idx++) {
-                    var item = response[idx];
+    if (bom_items.length == 0) {
 
-                    var sub_part_id = item.sub_part;
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
+        );
 
-                    // Check if we are interested in this item
-                    if (sub_part_ids.length > 0 && !sub_part_ids.includes(sub_part_id)) {
-                        continue;
+        return;
+    }
+
+    // Create table of parts
+    var html = `
+    <table class='table table-striped table-condensed' id='stock-allocation-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
+                <th>{% trans "Allocated" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+              
+
+    constructForm(`/api/build/${build_id}/allocate/`, {
+        method: 'POST',
+        fields: {},
+        preFormContent: html,
+        confirm: true,
+        confirmMessage: '{% trans "Confirm stock allocation" %}',
+        title: '{% trans "Allocate Stock Items to Build Order" %}',
+        afterRender: function(fields, options) {
+
+            // Initialize select2 fields
+            bom_items.forEach(function(bom_item) {
+                initializeRelatedField(
+                    {
+                        name: `items_stock_item_${bom_item.pk}`,
+                        api_url: '{% url "api-stock-list" %}',
+                        filters: {
+                            part: bom_item.sub_part,
+                            in_stock: true,
+                            part_detail: false,
+                            location_detail: true,
+                        },
+                        model: 'stockitem',
+                        required: true,
+                        render_part_detail: false,
+                        render_location_detail: true,
+                        auto_fill: true,
+                        noResults: function(query) {
+                            return '{% trans "No matching stock items" %}';
+                        }
+                    },
+                    null,
+                    options,
+                );
+            });
+
+            // Add button callbacks
+            $(options.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(options.modal).find(`#allocation_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, options) {
+
+            // Extract elements from the form
+            var data = {
+                items: []
+            };
+
+            var item_pk_values = [];
+
+            bom_items.forEach(function(item) {
+
+                var quantity = getFormFieldValue(
+                    `items_quantity_${item.pk}`,
+                    {},
+                    {
+                        modal: options.modal,
+                    },
+                );
+
+                var stock_item = getFormFieldValue(
+                    `items_stock_item_${item.pk}`,
+                    {},
+                    {
+                        modal: options.modal,
                     }
+                );
 
-                    // TODO: Ignore items which are already fully allocated
+                if (quantity != null) {
+                    data.items.push({
+                        bom_item: item.pk,
+                        stock_item: stock_item,
+                        quantity: quantity
+                    });
 
-                    bom_items.push(item);
-
-                    // Add HTML
-                    table_entries += renderBomItemRow(item);
+                    item_pk_values.push(item.pk);
                 }
+            });
 
-                if (bom_items.length == 0) {
+            // Provide nested values
+            options.nested = {
+                "items": item_pk_values
+            };
 
-                    showAlertDialog(
-                        '{% trans "Select Parts" %}',
-                        '{% trans "You must select at least one part to allocate" %}',
-                    );
-
-                    return;
-                }
-
-                // Create table of parts
-                var html = `
-                <table class='table table-striped table-condensed' id='stock-allocation-table'>
-                    <thead>
-                        <tr>
-                            <th>{% trans "Part" %}</th>
-                            <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
-                            <th>{% trans "Allocated" %}</th>
-                            <th>{% trans "Quantity" %}</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${table_entries}
-                    </tbody>
-                </table>
-                `;
-
-                constructForm(`/api/build/${build_id}/allocate/`, {
+            inventreePut(
+                options.url,
+                data,
+                {
                     method: 'POST',
-                    fields: {},
-                    preFormContent: html,
-                    confirm: true,
-                    confirmMessage: '{% trans "Confirm stock allocation" %}',
-                    title: '{% trans "Allocate Stock Items to Build Order" %}',
-                    afterRender: function(fields, options) {
+                    success: function(response) {
+                        // Hide the modal
+                        $(options.modal).modal('hide');
 
-                        // Initialize select2 fields
-                        bom_items.forEach(function(bom_item) {
-                            initializeRelatedField(
-                                {
-                                    name: `items_stock_item_${bom_item.pk}`,
-                                    api_url: '{% url "api-stock-list" %}',
-                                    filters: {
-                                        part: bom_item.sub_part,
-                                        in_stock: true,
-                                        part_detail: false,
-                                        location_detail: true,
-                                    },
-                                    model: 'stockitem',
-                                    required: true,
-                                    render_part_detail: false,
-                                    render_location_detail: true,
-                                    auto_fill: true,
-                                    noResults: function(query) {
-                                        return '{% trans "No matching stock items" %}';
-                                    }
-                                },
-                                null,
-                                options,
-                            );
-                        });
-
-                        // Add button callbacks
-                        $(options.modal).find('.button-row-remove').click(function() {
-                            var pk = $(this).attr('pk');
-
-                            $(options.modal).find(`#allocation_row_${pk}`).remove();
-                        });
+                        if (options.success) {
+                            options.success(response);
+                        }
                     },
-                    onSubmit: function(fields, options) {
-
-                        // Extract elements from the form
-                        var data = {
-                            items: []
-                        };
-
-                        var item_pk_values = [];
-
-                        bom_items.forEach(function(item) {
-
-                            var quantity = getFormFieldValue(
-                                `items_quantity_${item.pk}`,
-                                {},
-                                {
-                                    modal: options.modal,
-                                },
-                            );
-
-                            var stock_item = getFormFieldValue(
-                                `items_stock_item_${item.pk}`,
-                                {},
-                                {
-                                    modal: options.modal,
-                                }
-                            );
-
-                            if (quantity != null) {
-                                data.items.push({
-                                    bom_item: item.pk,
-                                    stock_item: stock_item,
-                                    quantity: quantity
-                                });
-
-                                item_pk_values.push(item.pk);
-                            }
-                        });
-
-                        // Provide nested values
-                        options.nested = {
-                            "items": item_pk_values
-                        };
-
-                        inventreePut(
-                            options.url,
-                            data,
-                            {
-                                method: 'POST',
-                                success: function(response) {
-                                    // Hide the modal
-                                    $(options.modal).modal('hide');
-
-                                    if (options.success) {
-                                        options.success(response);
-                                    }
-                                },
-                                error: function(xhr) {
-                                    switch (xhr.status) {
-                                        case 400:
-                                            handleFormErrors(xhr.responseJSON, fields, options);
-                                            break;
-                                        default:
-                                            $(options.modal).modal('hide');
-                                            showApiError(xhr);
-                                            break;
-                                    }
-                                }
-                            }
-                        );
-                    },
-                });
-            }
-        }
-    );
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                            case 400:
+                                handleFormErrors(xhr.responseJSON, fields, options);
+                                break;
+                            default:
+                                $(options.modal).modal('hide');
+                                showApiError(xhr);
+                                break;
+                        }
+                    }
+                }
+            );
+        },
+    });
 }
 
 

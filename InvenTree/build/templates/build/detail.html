@@ -191,7 +191,19 @@
         </div>
         {% endif %}
         {% endif %}
-        <table class='table table-striped table-condensed' id='allocation-table-untracked'></table>
+        <div id='unallocated-toolbar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
+                <div class='btn-group'>
+                    <button id='allocate-selected-items' class='btn btn-success' title='{% trans "Allocate selected items" %}'>
+                        <span class='fas fa-sign-in-alt'></span>
+                    </button>
+                    <div class='filter-list' id='filter-list-build-items'>
+                        <!-- Empty div for table filters-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='allocation-table-untracked' data-toolbar='#unallocated-toolbar'></table>
         {% else %}
         <div class='alert alert-block alert-info'>
             {% trans "This Build Order does not have any associated untracked BOM items" %}
@@ -419,9 +431,12 @@ function reloadTable() {
 {% if build.active %}
 $("#btn-auto-allocate").on('click', function() {
 
+    var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
+
     allocateStockToBuild(
         {{ build.pk }},
         {{ build.part.pk }},
+        bom_items,
         {
             success: function(data) {
                 $('#allocation-table-untracked').bootstrapTable('refresh');
@@ -435,6 +450,22 @@ $('#btn-unallocate').on('click', function() {
         "{% url 'build-unallocate' build.id %}",
         {
             success: reloadTable,
+        }
+    );
+});
+
+$('#allocate-selected-items').click(function() {
+
+    var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
+
+    allocateStockToBuild(
+        {{ build.pk }},
+        {{ build.part.pk }},
+        bom_items,
+        {
+            success: function(data) {
+                $('#allocation-table-untracked').bootstrapTable('refresh');
+            }
         }
     );
 });
