@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.conf.urls import url, include
 
-from plugins.integration import IntegrationPluginBase, SettingsMixin, UrlsMixin, NavigationMixin
+from plugins.integration import AppMixin, IntegrationPluginBase, SettingsMixin, UrlsMixin, NavigationMixin
 
 
 class BaseMixinDefinition:
@@ -84,6 +84,11 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_HUMAN_NAME = 'App registration'
     MIXIN_NAME = 'app'
     MIXIN_ENABLE_CHECK = 'has_app'
+
+    def setUp(self):
+        class TestCls(AppMixin, IntegrationPluginBase):
+            pass
+        self.mixin = TestCls()
 
     def test_function(self):
         # test that this plugin is in settings
