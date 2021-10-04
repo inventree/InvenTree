@@ -257,6 +257,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     PLUGIN_SLUG = None
 
     AUTHOR = None
+    PUBLISH_DATE = None
 
     def __init__(self):
         super().__init__()
@@ -291,6 +292,16 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             name = self.commit.get('author')
         if not name:
             name = _('No author found')
+        return name
+
+    @property
+    def pub_date(self):
+        """returns publishing date of plugin - either from plugin settings or git"""
+        name = getattr(self, 'PUBLISH_DATE', None)
+        if not name:
+            name = self.commit.get('date')
+        if not name:
+            name = _('No date found')
         return name
 
     # mixins
