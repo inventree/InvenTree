@@ -155,8 +155,6 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin_name.human_name, 'a titel')
 
         # pub_date
-        self.assertEqual(self.plugin.pub_date, 'No date found')
-        self.assertEqual(self.plugin_simple.pub_date, 'No date found')
         self.assertEqual(self.plugin_name.pub_date, "1111.11.11")
 
         # version
