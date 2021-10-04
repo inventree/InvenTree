@@ -110,3 +110,51 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
             class NavigationCls(NavigationMixin, IntegrationPluginBase):
                 NAVIGATION = ['aa', 'aa']
             NavigationCls()
+
+
+class IntegrationPluginBaseTests(TestCase):
+    """ Tests for IntegrationPluginBase """
+
+    def setUp(self):
+        self.plugin = IntegrationPluginBase()
+
+        class SimpeIntegrationPluginBase(IntegrationPluginBase):
+            PLUGIN_NAME = 'SimplePlugin'
+
+        self.plugin_simple = SimpeIntegrationPluginBase()
+
+        class NameIntegrationPluginBase(IntegrationPluginBase):
+            PLUGIN_NAME = 'Aplugin'
+            PLUGIN_SLUG = 'a'
+            PLUGIN_TITLE = 'a titel'
+            PUBLISH_DATE = "1111.11.11"
+            VERSION = '1.2.3a'
+
+        self.plugin_name = NameIntegrationPluginBase()
+
+    def test_action_name(self):
+        """check the name definition possibilities"""
+        # plugin_name
+        self.assertEqual(self.plugin.plugin_name(), '')
+        self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
+        self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
+
+        # slug
+        self.assertEqual(self.plugin.slug, '')
+        self.assertEqual(self.plugin_simple.slug, 'simpleplugin')
+        self.assertEqual(self.plugin_name.slug, 'a')
+
+        # human_name
+        self.assertEqual(self.plugin.human_name, '')
+        self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
+        self.assertEqual(self.plugin_name.human_name, 'a titel')
+
+        # pub_date
+        self.assertEqual(self.plugin.pub_date, 'No date found')
+        self.assertEqual(self.plugin_simple.pub_date, 'No date found')
+        self.assertEqual(self.plugin_name.pub_date, "1111.11.11")
+
+        # version
+        self.assertEqual(self.plugin.version, None)
+        self.assertEqual(self.plugin_simple.version, None)
+        self.assertEqual(self.plugin_name.version, '1.2.3a')
