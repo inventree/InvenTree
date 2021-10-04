@@ -694,8 +694,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         },
         columns: [
             {
-                field: 'pk',
-                visible: false,
+                visible: true,
+                switchable: false,
+                checkbox: true,
             },
             {
                 field: 'sub_part_detail.full_name',
@@ -815,6 +816,60 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     // Initialize the action buttons
     makeBuildOutputActionButtons(output, buildInfo, 0);
 }
+
+
+
+/**
+ * Allocate stock items to a build
+ * 
+ * arguments:
+ * - buildId: ID / PK value for the build
+ * - partId: ID / PK value for the part being built
+ * 
+ * options:
+ *  - outputId: ID / PK of the associated build output (or null for untracked items)
+ *  - parts: List of ID values for filtering against specific sub parts
+ */
+function allocateStockToBuild(buildId, partId, options={}) {
+
+    // ID of the associated "build output" (or null)
+    var outputId = options.output || null;
+
+    // Extract list of BOM items (or empty list)
+    var subPartIds = options.parts || [];
+
+    var bomItemQueryParams = {
+        part: partId,
+        sub_part_detail: true,
+        sub_part_trackable: outputId != null
+    };
+
+    inventreeGet(
+        '{% url "api-bom-list" %}',
+        bomItemQueryParams,
+        {
+            success: function(response) {
+
+                // List of BOM item objects we are interested in
+                var bomItems = [];
+
+                for (var idx = 0; idx < response.length; idx++) {
+                    var item = response[idx];
+
+                    var subPartId = item.sub_part;
+
+                    // Check if we are interested in this item
+                    if (subPartIds.length > 0 && !subPartIds.includes(subPartId)) {
+                        continue;
+                    }
+
+                    bomItems.push(item);
+                }
+            }
+        }
+    );
+}
+
 
 
 function loadBuildTable(table, options) {
