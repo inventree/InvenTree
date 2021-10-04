@@ -20,6 +20,7 @@
 */
 
 /* exported
+    allocateStockToBuild,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -844,6 +845,52 @@ function allocateStockToBuild(buildId, partId, options={}) {
         sub_part_trackable: outputId != null
     };
 
+    function renderBomItemRow(bom_item, quantity) {
+
+        var pk = bom_item.pk;
+        var sub_part = bom_item.sub_part_detail;
+
+        var thumb = thumbnailImage(bom_item.sub_part_detail.thumbnail);
+
+        var delete_button = `<div class='btn-group float-right' role='group'>`;
+
+        delete_button += makeIconButton(
+            'fa-times icon-red',
+            'button-part-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        delete_button += `</div>`;
+
+        var quantity_input = constructNumberInput(pk, {
+            value: quantity || 0,
+            min_value: 0,
+            title: '{% trans "Specify stock allocation quantity" %}',
+        });
+
+        var stock_input = constructRelatedFieldInput(`stock_query_${pk}`);
+
+        var html = `
+        <tr id='part_row_${pk}' class='part-allocation-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${sub_part.full_name}
+            </td>
+            <td id='stock_item_${pk}'>
+                ${stock_input}
+            </td>
+            <td id='quantity_${pk}'>
+                ${quantity_input}
+            </td>
+            <td id='buttons_${pk}'>
+                ${delete_button}
+            </td>
+        </tr>
+        `;
+
+        return html;
+    }
+
     inventreeGet(
         '{% url "api-bom-list" %}',
         bomItemQueryParams,
@@ -851,7 +898,9 @@ function allocateStockToBuild(buildId, partId, options={}) {
             success: function(response) {
 
                 // List of BOM item objects we are interested in
-                var bomItems = [];
+                var bom_items = [];
+
+                var table_entries = "";
 
                 for (var idx = 0; idx < response.length; idx++) {
                     var item = response[idx];
@@ -863,8 +912,78 @@ function allocateStockToBuild(buildId, partId, options={}) {
                         continue;
                     }
 
-                    bomItems.push(item);
+                    // TODO: Ignore items which are already fully allocated
+
+                    bom_items.push(item);
+
+                    // Add HTML
+                    table_entries += renderBomItemRow(item);
                 }
+
+                if (bom_items.length == 0) {
+
+                    showAlertDialog(
+                        '{% trans "Select Parts" %}',
+                        '{% trans "You must select at least one part to allocate" %}',
+                    );
+
+                    return;
+                }
+
+                var modal = createNewModal({
+                    title: '{% trans "Allocate Stock to Build" %}',
+                });
+            
+                var html = `
+                <table class='table table-striped table-condensed' id='stock-allocation-table'>
+                    <thead>
+                        <tr>
+                            <th>{% trans "Part" %}</th>
+                            <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
+                            <th>{% trans "Quantity" %}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${table_entries}
+                    </tbody>
+                </table>
+                `;
+
+                constructFormBody({}, {
+                    preFormContent: html,
+                    fields: {},
+                    confirm: true,
+                    confirmMessage: '{% trans "Confirm Stock Allocation" %}',
+                    modal: modal,
+                    afterRender: function(fields, options) {
+                        
+                        bom_items.forEach(function(bom_item) {
+                            initializeRelatedField(
+                                {
+                                    name: `stock_query_${bom_item.pk}`,
+                                    api_url: '{% url "api-stock-list" %}',
+                                    filters: {
+                                        part: bom_item.sub_part,
+                                        in_stock: true,
+                                        part_detail: true,
+                                        location_detail: true,
+                                    },
+                                    model: 'stockitem',
+                                    render_part_detail: false,
+                                    render_location_detail: true,
+                                    // TODO: Auto-assign value?
+                                },
+                                null,
+                                options,
+                            );
+                        });
+
+                    },
+                    onSubmit: function(fields) {
+                        // TODO
+                    }
+                });
             }
         }
     );
