@@ -4,6 +4,7 @@ Part database model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import decimal
 
 import os
 import logging
@@ -1530,10 +1531,13 @@ class Part(MPTTModel):
         for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
-                print("Warning: Item contains itself in BOM")
+                logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
                 continue
 
-            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
+            q = decimal.Decimal(quantity)
+            i = decimal.Decimal(item.quantity)
+
+            prices = item.sub_part.get_price_range(q * i, internal=internal, purchase=purchase)
 
             if prices is None:
                 continue
