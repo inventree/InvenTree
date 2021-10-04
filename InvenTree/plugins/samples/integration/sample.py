@@ -13,6 +13,7 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
 
     PLUGIN_NAME = "SampleIntegrationPlugin"
     PLUGIN_SLUG = "sample"
+    PLUGIN_TITLE = "Sample Plugin"
 
     def view_test(self, request):
         """very basic view"""
