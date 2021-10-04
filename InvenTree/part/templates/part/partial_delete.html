@@ -3,6 +3,16 @@
 
 {% block pre_form_content %}
 
+{% if part.active %}
+
+<div class='alert alert-block alert-danger'>
+    {% blocktrans with full_name=part.full_name %}Part '<strong>{{full_name}}</strong>' cannot be deleted as it is still marked as <strong>active</strong>.
+    <br>Disable the "Active" part attribute and re-try.
+    {% endblocktrans %}
+</div>
+
+{% else %}
+
 <div class='alert alert-block alert-danger'>
     {% blocktrans with full_name=part.full_name %}Are you sure you want to delete part '<strong>{{full_name}}</strong>'?{% endblocktrans %}
 </div>
@@ -55,4 +65,12 @@
 <p>{% blocktrans with count=part.serials.all|length full_name=part.full_name  %}There are {{count}} unique parts tracked for '{{full_name}}'. Deleting this part will permanently remove this tracking information.{% endblocktrans %}</p>
 {% endif %}
 
+{% endif %}
+
+{% endblock %}
+
+{% block form %}
+{% if not part.active %}
+{{ block.super }}
+{% endif %}
 {% endblock %}
