@@ -24,39 +24,7 @@ class PartConfig(AppConfig):
         """
 
         if canAppAccessDatabase():
-            self.generate_part_thumbnails()
             self.update_trackable_status()
-
-    def generate_part_thumbnails(self):
-        """
-        Generate thumbnail images for any Part that does not have one.
-        This function exists mainly for legacy support,
-        as any *new* image uploaded will have a thumbnail generated automatically.
-        """
-
-        from .models import Part
-
-        logger.debug("InvenTree: Checking Part image thumbnails")
-
-        try:
-            # Only check parts which have images
-            for part in Part.objects.exclude(image=None):
-                if part.image:
-                    url = part.image.thumbnail.name
-                    loc = os.path.join(settings.MEDIA_ROOT, url)
-
-                    if not os.path.exists(loc):
-                        logger.info("InvenTree: Generating thumbnail for Part '{p}'".format(p=part.name))
-                        try:
-                            part.image.render_variations(replace=False)
-                        except FileNotFoundError:
-                            logger.warning(f"Image file '{part.image}' missing")
-                            pass
-                        except UnidentifiedImageError:
-                            logger.warning(f"Image file '{part.image}' is invalid")
-        except (OperationalError, ProgrammingError):
-            # Exception if the database has not been migrated yet
-            pass
 
     def update_trackable_status(self):
         """
