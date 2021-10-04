@@ -87,7 +87,7 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         # test that this plugin is in settings
-        self.assertIn('plugin.sample', settings.INSTALLED_APPS)
+        self.assertIn('plugins.samples.integration', settings.INSTALLED_APPS)
 
 
 class NavigationMixinTest(BaseMixinDefinition, TestCase):
