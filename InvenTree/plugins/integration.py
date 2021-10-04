@@ -145,6 +145,7 @@ class UrlsMixin:
 class NavigationMixin:
     """Mixin that enables adding navigation links with the plugin"""
     NAVIGATION_TAB_NAME = None
+    NAVIGATION_TAB_ICON = "fas fa-question"
 
     class Meta:
         """meta options for this mixin"""
@@ -181,6 +182,11 @@ class NavigationMixin:
         if not name:
             name = self.human_name
         return name
+
+    @property
+    def navigation_icon(self):
+        """icon for navigation tab"""
+        return getattr(self, 'NAVIGATION_TAB_ICON', "fas fa-question")
 
 
 class AppMixin:
