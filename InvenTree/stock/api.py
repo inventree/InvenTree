@@ -2,11 +2,18 @@
 JSON API for the Stock app
 """
 
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from decimal import Decimal, InvalidOperation
+from datetime import datetime, timedelta
+
+from django.utils.translation import ugettext_lazy as _
+
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
@@ -22,7 +29,7 @@ from .models import StockItemTracking
 from .models import StockItemAttachment
 from .models import StockItemTestResult
 
-from part.models import Part, PartCategory
+from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 
 from company.models import Company, SupplierPart
@@ -44,10 +51,6 @@ from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
-
-from decimal import Decimal, InvalidOperation
-
-from datetime import datetime, timedelta
 
 
 class StockCategoryTree(TreeSerializer):
@@ -670,13 +673,13 @@ class StockList(generics.ListCreateAPIView):
         return queryset
 
     def filter_queryset(self, queryset):
+        """
+        Custom filtering for the StockItem queryset
+        """
 
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        # Perform basic filtering:
-        # Note: We do not let DRF filter here, it be slow AF
 
         supplier_part = params.get('supplier_part', None)
 
@@ -842,6 +845,18 @@ class StockList(generics.ListCreateAPIView):
 
             except (ValueError, PartCategory.DoesNotExist):
                 raise ValidationError({"category": "Invalid category id specified"})
+
+        # Does the client wish to filter by BomItem
+        bom_item_id = params.get('bom_item', None)
+
+        if bom_item_id is not None:
+            try:
+                bom_item = BomItem.objects.get(pk=bom_item_id)
+
+                queryset = queryset.filter(bom_item.get_stock_filter())
+
+            except (ValueError, BomItem.DoesNotExist):
+                pass
 
         # Filter by StockItem status
         status = params.get('status', None)

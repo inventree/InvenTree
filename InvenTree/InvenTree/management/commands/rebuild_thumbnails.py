@@ -23,7 +23,7 @@ logger = logging.getLogger("inventree-thumbnails")
 class Command(BaseCommand):
     """
     Rebuild all thumbnail images
-    """ 
+    """
 
     def rebuild_thumbnail(self, model):
         """

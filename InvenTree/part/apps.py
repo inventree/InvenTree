@@ -1,13 +1,9 @@
 from __future__ import unicode_literals
 
-import os
 import logging
 
 from django.db.utils import OperationalError, ProgrammingError
 from django.apps import AppConfig
-from django.conf import settings
-
-from PIL import UnidentifiedImageError
 
 from InvenTree.ready import canAppAccessDatabase
 
@@ -40,7 +36,7 @@ class PartConfig(AppConfig):
             items = BomItem.objects.filter(part__trackable=False, sub_part__trackable=True)
 
             for item in items:
-                print(f"Marking part '{item.part.name}' as trackable")
+                logger.info(f"Marking part '{item.part.name}' as trackable")
                 item.part.trackable = True
                 item.part.clean()
                 item.part.save()

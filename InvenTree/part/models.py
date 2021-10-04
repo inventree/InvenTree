@@ -2329,6 +2329,23 @@ class BomItem(models.Model):
     def get_api_url():
         return reverse('api-bom-list')
 
+    def get_stock_filter(self):
+        """
+        Return a queryset filter for selecting StockItems which match this BomItem
+
+        - If allow_variants is True, allow all part variants
+
+        """
+
+        # Target part
+        part = self.sub_part
+
+        if self.allow_variants:
+            variants = part.get_descendants(include_self=True)
+            return Q(part__in=[v.pk for v in variants])
+        else:
+            return Q(part=part)
+
     def save(self, *args, **kwargs):
 
         self.clean()

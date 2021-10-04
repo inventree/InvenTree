@@ -9,8 +9,9 @@ import decimal
 import os
 from datetime import datetime
 
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from django.urls import reverse
@@ -1055,8 +1056,10 @@ class BuildItem(models.Model):
 
     Attributes:
         build: Link to a Build object
+        bom_item: Link to a BomItem object (may or may not point to the same part as the build)
         stock_item: Link to a StockItem object
         quantity: Number of units allocated
+        install_into: Destination stock item (or None)
     """
 
     @staticmethod

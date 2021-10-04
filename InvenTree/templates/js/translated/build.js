@@ -345,18 +345,26 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function requiredQuantity(row) {
         // Return the requied quantity for a given row
 
+        var quantity = 0;
+
         if (output) {
             // "Tracked" parts are calculated against individual build outputs
-            return row.quantity * output.quantity;
+            quantity = row.quantity * output.quantity;
         } else {
             // "Untracked" parts are specified against the build itself
-            return row.quantity * buildInfo.quantity;
+            quantity = row.quantity * buildInfo.quantity;
         }
+
+        // Store the required quantity in the row data
+        row.required = quantity;
+
+        return quantity;
     }
 
     function sumAllocations(row) {
         // Calculat total allocations for a given row
         if (!row.allocations) {
+            row.allocated = 0;
             return 0;
         }
 
@@ -365,6 +373,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         row.allocations.forEach(function(item) {
             quantity += item.quantity;
         });
+
+        row.allocated = quantity;
 
         return quantity;
     }
@@ -394,7 +404,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 ],
                 {
                     success: function(data) {
-                        // TODO: Reload table
+                        $(table).bootstrapTable('refresh');
                     },
                 }
             );
@@ -854,6 +864,11 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             }
         );
 
+        var allocated_display = makeProgressBar(
+            bom_item.allocated,
+            bom_item.required,
+        );
+
         var stock_input = constructField(
             `items_stock_item_${pk}`,
             {
@@ -872,10 +887,11 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             <td id='part_${pk}'>
                 ${thumb} ${sub_part.full_name}
             </td>
+            <td id='allocated_${pk}'>
+                ${allocated_display}
+            </td>
             <td id='stock_item_${pk}'>
                 ${stock_input}
-            </td>
-            <td id='allocated_${pk}'>
             </td>
             <td id='quantity_${pk}'>
                 ${quantity_input}
@@ -894,7 +910,15 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     for (var idx = 0; idx < bom_items.length; idx++) {
         var bom_item = bom_items[idx];
 
-        table_entries += renderBomItemRow(bom_item);
+        var required = bom_item.required || 0;
+        var allocated = bom_item.allocated || 0;
+        var remaining = required - allocated;
+
+        if (remaining < 0) {
+            remaining = 0;
+        }
+
+        table_entries += renderBomItemRow(bom_item, remaining);
     }
 
     if (bom_items.length == 0) {
@@ -913,8 +937,8 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         <thead>
             <tr>
                 <th>{% trans "Part" %}</th>
-                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
                 <th>{% trans "Allocated" %}</th>
+                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
                 <th>{% trans "Quantity" %}</th>
                 <th></th>
             </tr>
@@ -942,7 +966,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         name: `items_stock_item_${bom_item.pk}`,
                         api_url: '{% url "api-stock-list" %}',
                         filters: {
-                            part: bom_item.sub_part,
+                            bom_item: bom_item.pk,
                             in_stock: true,
                             part_detail: false,
                             location_detail: true,
@@ -968,7 +992,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                 $(options.modal).find(`#allocation_row_${pk}`).remove();
             });
         },
-        onSubmit: function(fields, options) {
+        onSubmit: function(fields, opts) {
 
             // Extract elements from the form
             var data = {
@@ -983,7 +1007,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                     `items_quantity_${item.pk}`,
                     {},
                     {
-                        modal: options.modal,
+                        modal: opts.modal,
                     },
                 );
 
@@ -991,7 +1015,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                     `items_stock_item_${item.pk}`,
                     {},
                     {
-                        modal: options.modal,
+                        modal: opts.modal,
                     }
                 );
 
@@ -1007,18 +1031,18 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             });
 
             // Provide nested values
-            options.nested = {
+            opts.nested = {
                 "items": item_pk_values
             };
 
             inventreePut(
-                options.url,
+                opts.url,
                 data,
                 {
                     method: 'POST',
                     success: function(response) {
                         // Hide the modal
-                        $(options.modal).modal('hide');
+                        $(opts.modal).modal('hide');
 
                         if (options.success) {
                             options.success(response);
@@ -1027,10 +1051,10 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                     error: function(xhr) {
                         switch (xhr.status) {
                             case 400:
-                                handleFormErrors(xhr.responseJSON, fields, options);
+                                handleFormErrors(xhr.responseJSON, fields, opts);
                                 break;
                             default:
-                                $(options.modal).modal('hide');
+                                $(opts.modal).modal('hide');
                                 showApiError(xhr);
                                 break;
                         }
