@@ -256,6 +256,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     The IntegrationPluginBase class is used to integrate with 3rd party software
     """
     PLUGIN_SLUG = None
+    PLUGIN_TITLE = None
 
     AUTHOR = None
     PUBLISH_DATE = None
