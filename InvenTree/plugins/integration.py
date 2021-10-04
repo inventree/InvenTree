@@ -8,6 +8,7 @@ import inspect
 
 from django.conf.urls import url, include
 from django.conf import settings
+from django.utils.text import slugify
 
 import plugins.plugin as plugin
 
@@ -82,7 +83,7 @@ class SettingsMixin:
         get patterns for InvenTreeSetting defintion
         """
         if self.has_settings:
-            return {f'PLUGIN_{self.plugin_name().upper()}_{key}': value for key, value in self.settings.items()}
+            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.settings.items()}
         return None
 
     def get_setting(self, key):
@@ -90,7 +91,7 @@ class SettingsMixin:
         get plugin setting by key
         """
         from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(f'PLUGIN_{self.PLUGIN_NAME.upper()}_{key}')
+        return InvenTreeSetting.get_setting(f'PLUGIN_{self.slug.upper()}_{key}')
 
 
 class UrlsMixin:
@@ -115,7 +116,14 @@ class UrlsMixin:
         """
         returns base url for this plugin
         """
-        return f'{settings.PLUGIN_URL}/{self.plugin_name()}/'
+        return f'{settings.PLUGIN_URL}/{self.slug}/'
+
+    @property
+    def internal_name(self):
+        """
+        returns the internal url pattern name
+        """
+        return f'plugin:{self.slug}:'
 
     @property
     def urlpatterns(self):
@@ -123,7 +131,7 @@ class UrlsMixin:
         returns the urlpatterns for this plugin
         """
         if self.has_urls:
-            return url(f'^{self.plugin_name()}/', include((self.urls, self.plugin_name())), name=self.plugin_name())
+            return url(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
         return None
 
     @property
@@ -237,6 +245,12 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         self.path = os.path.dirname(self.def_path)
 
         self.set_sign_values()
+
+    @property
+    def slug(self):
+        """slug for the plugin"""
+        name = getattr(self, 'PLUGIN_SLUG', self.plugin_name())
+        return slugify(name)
 
     def mixin(self, key):
         """check if mixin is registered"""

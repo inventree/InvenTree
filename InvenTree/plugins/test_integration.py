@@ -36,7 +36,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
 
         # settings pattern
-        target_pattern = {f'PLUGIN_{self.mixin.plugin_name().upper()}_{key}': value for key, value in self.mixin.settings.items()}
+        target_pattern = {f'PLUGIN_{self.mixin.slug.upper()}_{key}': value for key, value in self.mixin.settings.items()}
         self.assertEqual(self.mixin.settingspatterns, target_pattern)
 
         # no settings

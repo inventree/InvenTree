@@ -12,6 +12,7 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
     """
 
     PLUGIN_NAME = "SampleIntegrationPlugin"
+    PLUGIN_SLUG= "sample"
 
     def view_test(self, request):
         """very basic view"""
@@ -38,5 +39,5 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
     }
 
     NAVIGATION = [
-        {'name': 'SampleIntegration', 'link': 'plugin:SampleIntegrationPlugin:hi'},
+        {'name': 'SampleIntegration', 'link': 'plugin:sample:hi'},
     ]

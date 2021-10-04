@@ -667,14 +667,13 @@ INTEGRATION_PLUGIN_LIST = {}
 
 for plugin in inventree_plugins.load_integration_plugins():
     plugin = plugin()
-    plugin_name = plugin.plugin_name()
 
     INTEGRATION_PLUGINS.append(plugin)
-    INTEGRATION_PLUGIN_LIST[plugin_name] = plugin
+    INTEGRATION_PLUGIN_LIST[plugin.slug] = plugin
     if plugin.mixin_enabled('settings'):
         plugin_setting = plugin.settingspatterns
 
-        INTEGRATION_PLUGIN_SETTING[plugin_name] = plugin_setting
+        INTEGRATION_PLUGIN_SETTING[plugin.slug] = plugin_setting
         INTEGRATION_PLUGIN_SETTINGS.update(plugin_setting)
 
     if plugin.mixin_enabled('app'):
