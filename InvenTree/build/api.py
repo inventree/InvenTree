@@ -5,10 +5,15 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url, include
+from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import filters
-from rest_framework import generics
+from django.db import transaction
+from django.conf.urls import url, include
+from django.core.exceptions import ValidationError as DjangoValidationError
+
+from rest_framework import filters, generics, serializers, status
+from rest_framework.serializers import ValidationError
+from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -19,6 +24,7 @@ from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
 from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
+from .serializers import BuildAllocationSerializer
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -181,6 +187,100 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
     serializer_class = BuildSerializer
 
 
+class BuildAllocate(generics.CreateAPIView):
+    """
+    API endpoint to allocate stock items to a build order
+
+    - The BuildOrder object is specified by the URL
+    - Items to allocate are specified as a list called "items" with the following options:
+        - bom_item: pk value of a given BomItem object (must match the part associated with this build)
+        - stock_item: pk value of a given StockItem object
+        - quantity: quantity to allocate 
+        - output: StockItem (build order output) to allocate stock against (optional)
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = BuildAllocationSerializer
+
+    def get_build(self):
+        """
+        Returns the BuildOrder associated with this API endpoint
+        """
+
+        pk = self.kwargs.get('pk', None)
+
+        try:
+            build = Build.objects.get(pk=pk)
+        except (Build.DoesNotExist, ValueError):
+            raise ValidationError(_("Matching build order does not exist"))
+
+        return build
+
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+
+        context['build'] = self.get_build()
+
+        return context
+
+    def create(self, request, *args, **kwargs):
+
+        # Which build are we receiving against?
+        build = self.get_build()
+
+        # Validate the serialized data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Allocate the stock items
+        try:
+            self.allocate_items(build, serializer)
+        except DjangoValidationError as exc:
+            # Re-throw a django error as a DRF error
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @transaction.atomic
+    def allocate_items(self, build, serializer):
+        """
+        Allocate the provided stock items to this order.
+
+        At this point, most of the heavy lifting has been done for us by the DRF serializer.
+
+        We have a list of "items" each a dict containing:
+
+        - bom_item: A validated BomItem object which matches this build
+        - stock_item: A validated StockItem object which matches the bom_item
+        - quantity: A validated numerical quantity which does not exceed the available stock
+        - output: A validated StockItem object to assign stock against (optional)
+
+        """
+
+        data = serializer.validated_data
+
+        items = data.get('items', [])
+
+        for item in items:
+
+            bom_item = item['bom_item']
+            stock_item = item['stock_item']
+            quantity = item['quantity']
+            output = item.get('output', None)
+
+            # Create a new BuildItem to allocate stock
+            build_item = BuildItem.objects.create(
+                build=build,
+                stock_item=stock_item,
+                quantity=quantity,
+                install_into=output
+            )
+
+
 class BuildItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BuildItem objects
 
@@ -291,7 +391,10 @@ build_api_urls = [
     ])),
 
     # Build Detail
-    url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
+    ])),
 
     # Build List
     url(r'^.*$', BuildList.as_view(), name='api-build-list'),
