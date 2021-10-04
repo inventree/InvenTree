@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from django.urls import reverse
 
 from part.models import Part
-from build.models import Build
+from build.models import Build, BuildItem
 
 from InvenTree.status_codes import BuildStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -35,6 +35,88 @@ class BuildAPITest(InvenTreeAPITestCase):
 
         super().setUp()
 
+
+class BuildAllocationTest(BuildAPITest):
+    """
+    Unit tests for allocation of stock items against a build order.
+
+    For this test, we will be using Build ID=1;
+
+    - This points to Part 100 (see fixture data in part.yaml)
+    - This Part already has a BOM with 4 items (see fixture data in bom.yaml)
+    - There are no BomItem objects yet created for this build
+
+    """
+
+    def setUp(self):
+
+        super().setUp()
+
+        self.assignRole('build.add')
+        self.assignRole('build.change')
+
+        self.url = reverse('api-build-allocate', kwargs={'pk': 1})
+
+        self.build = Build.objects.get(pk=1)
+
+        # Record number of build items which exist at the start of each test
+        self.n = BuildItem.objects.count()
+
+    def test_build_data(self):
+        """
+        Check that our assumptions about the particular BuildOrder are correct
+        """
+
+        self.assertEqual(self.build.part.pk, 100)
+
+        # There should be 4x BOM items we can use
+        self.assertEqual(self.build.part.bom_items.count(), 4)
+
+        # No items yet allocated to this build
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+
+
+    def test_get(self):
+        """
+        A GET request to the endpoint should return an error
+        """
+
+        self.get(self.url, expected_code=405)
+
+    def test_options(self):
+        """
+        An OPTIONS request to the endpoint should return information about the endpoint
+        """
+
+        response = self.options(self.url, expected_code=200)
+
+        self.assertIn("API endpoint to allocate stock items to a build order", str(response.data))
+
+    def test_empty(self):
+        """
+        Test without any POST data
+        """
+
+        # Initially test with an empty data set
+        data = self.post(self.url, {}, expected_code=400).data
+
+        self.assertIn('This field is required', str(data['items']))
+
+        # Now test but with an empty items list
+        data = self.post(
+            self.url,
+            {
+                "items": []
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('Allocation items must be provided', str(data['items']))
+
+        # No new BuildItem objects have been created during this test
+        self.assertEqual(self.n, BuildItem.objects.count())
+
+    
 
 class BuildListTest(BuildAPITest):
     """
