@@ -132,7 +132,7 @@ class IntegrationPluginBaseTests(TestCase):
             PLUGIN_NAME = 'Aplugin'
             PLUGIN_SLUG = 'a'
             PLUGIN_TITLE = 'a titel'
-            PUBLISH_DATE = "1111.11.11"
+            PUBLISH_DATE = "1111-11-11"
             VERSION = '1.2.3a'
 
         self.plugin_name = NameIntegrationPluginBase()
