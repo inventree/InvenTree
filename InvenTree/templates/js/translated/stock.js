@@ -1019,7 +1019,7 @@ function loadStockTable(table, options) {
                 return '-';
             }
 
-            var link = `/supplier-part/${row.supplier_part}/?display=stock`;
+            var link = `/supplier-part/${row.supplier_part}/?display=part-stock`;
 
             var text = '';
 

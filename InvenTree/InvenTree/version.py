@@ -8,7 +8,7 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.5.0 dev"
+INVENTREE_SW_VERSION = "0.6.0 dev"
 
 INVENTREE_API_VERSION = 12
 
@@ -88,9 +88,6 @@ def isInvenTreeDevelopmentVersion():
     """
     Return True if current InvenTree version is a "development" version
     """
-
-    print("is dev?", inventreeVersion())
-
     return inventreeVersion().endswith('dev')
 
 
