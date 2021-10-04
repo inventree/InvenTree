@@ -15,7 +15,7 @@ from InvenTree.fields import DatePickerFormField
 
 from InvenTree.status_codes import StockStatus
 
-from .models import Build, BuildItem
+from .models import Build
 
 from stock.models import StockLocation, StockItem
 
@@ -243,23 +243,4 @@ class CancelBuildForm(HelperForm):
         model = Build
         fields = [
             'confirm_cancel'
-        ]
-
-
-class EditBuildItemForm(HelperForm):
-    """
-    Form for creating (or editing) a BuildItem object.
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'), help_text=_('Select quantity of stock to allocate'))
-
-    part_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
-
-    class Meta:
-        model = BuildItem
-        fields = [
-            'build',
-            'stock_item',
-            'quantity',
-            'install_into',
         ]

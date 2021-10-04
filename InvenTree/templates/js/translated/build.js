@@ -176,15 +176,6 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
                 success: reloadTable,
             }
         );
-
-        return;
-        launchModalForm(`/build/${buildId}/auto-allocate/`,
-            {
-                data: {
-                },
-                success: reloadTable,
-            }
-        );
     });
 
     $(panel).find(`#button-output-complete-${outputId}`).click(function() {
