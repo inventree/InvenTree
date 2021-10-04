@@ -18,6 +18,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from common.models import InvenTreeSetting
 
 from .models import StockItem, StockLocation
+from .tasks import delete_old_stock_items
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -37,6 +38,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock_location.change',
         'stock_location.add',
+        'stock.delete',
     ]
 
     def setUp(self):
@@ -589,6 +591,60 @@ class StocktakeTest(StockAPITestCase):
 
         response = self.post(url, data)
         self.assertContains(response, 'Valid location must be specified', status_code=status.HTTP_400_BAD_REQUEST)
+
+
+class StockItemDeletionTest(StockAPITestCase):
+    """
+    Tests for stock item deletion via the API
+    """
+
+    def test_delete(self):
+
+        # Check there are no stock items scheduled for deletion
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            0
+        )
+
+        # Create and then delete a bunch of stock items
+        for idx in range(10):
+
+            # Create new StockItem via the API
+            response = self.post(
+                reverse('api-stock-list'),
+                {
+                    'part': 1,
+                    'location': 1,
+                    'quantity': idx,
+                },
+                expected_code=201
+            )
+
+            pk = response.data['pk']
+
+            item = StockItem.objects.get(pk=pk)
+
+            self.assertFalse(item.scheduled_for_deletion)
+
+            # Request deletion via the API
+            self.delete(
+                reverse('api-stock-detail', kwargs={'pk': pk}),
+                expected_code=204
+            )
+
+        # There should be 100x StockItem objects marked for deletion
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            10
+        )
+
+        # Perform the actual delete (will take some time)
+        delete_old_stock_items()
+
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            0
+        )
 
 
 class StockTestResultTest(StockAPITestCase):
