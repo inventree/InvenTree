@@ -64,7 +64,7 @@
             <tr>
                 <td><span class='text-{{plugin.sign_color}} fas fa-check'></span></td>
                 <td>{% trans "Commit Sign Status" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{{ plugin.commit.verified }}: {{ plugin.sign_state.msg }}</td>
+                <td class="bg-{{plugin.sign_color}}">{% if plugin.commit.verified %}{{ plugin.commit.verified }}: {% endif%}{{ plugin.sign_state.msg }}</td>
             </tr>
             <tr>
                 <td><span class='text-{{plugin.sign_color}} fas fa-key'></span></td>
