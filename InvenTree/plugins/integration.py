@@ -9,6 +9,7 @@ import inspect
 from django.conf.urls import url, include
 from django.conf import settings
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
 import plugins.plugin as plugin
 
@@ -255,6 +256,8 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     """
     PLUGIN_SLUG = None
 
+    AUTHOR = None
+
     def __init__(self):
         super().__init__()
         self.add_mixin('base')
@@ -278,6 +281,16 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         name = getattr(self, 'PLUGIN_TITLE', None)
         if not name:
             name = self.plugin_name()
+        return name
+
+    @property
+    def author(self):
+        """returns author of plugin - either from plugin settings or git"""
+        name = getattr(self, 'AUTHOR', None)
+        if not name:
+            name = self.commit.get('author')
+        if not name:
+            name = _('No author found')
         return name
 
     # mixins
