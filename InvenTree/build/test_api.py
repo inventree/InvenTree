@@ -23,6 +23,7 @@ class BuildAPITest(InvenTreeAPITestCase):
         'location',
         'bom',
         'build',
+        'stock',
     ]
 
     # Required roles to access Build API endpoints
@@ -116,7 +117,112 @@ class BuildAllocationTest(BuildAPITest):
         # No new BuildItem objects have been created during this test
         self.assertEqual(self.n, BuildItem.objects.count())
 
-    
+    def test_missing(self):
+        """
+        Test with missing data
+        """    
+
+        # Missing quantity
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "bom_item": 1,  # M2x4 LPHS
+                        "stock_item": 2,  # 5,000 screws available
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('This field is required', str(data["items"][0]["quantity"]))
+
+        # Missing bom_item
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "stock_item": 2,
+                        "quantity": 5000,
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn("This field is required", str(data["items"][0]["bom_item"]))
+
+        # Missing stock_item
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "bom_item": 1,
+                        "quantity": 5000,
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn("This field is required", str(data["items"][0]["stock_item"]))
+
+        # No new BuildItem objects have been created during this test
+        self.assertEqual(self.n, BuildItem.objects.count())
+
+    def test_invalid_bom_item(self):
+        """
+        Test by passing an invalid BOM item
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "bom_item": 5,
+                        "stock_item": 11,
+                        "quantity": 500,
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('must point to the same part', str(data))
+
+    def test_valid_data(self):
+        """
+        Test with valid data.
+        This should result in creation of a new BuildItem object
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "bom_item": 1,
+                        "stock_item": 2,
+                        "quantity": 5000,
+                    }
+                ]
+            },
+            expected_code=201
+        ).data
+
+        # A new BuildItem should have been created
+        self.assertEqual(self.n + 1, BuildItem.objects.count())
+
+        allocation = BuildItem.objects.last()
+
+        self.assertEqual(allocation.quantity, 5000)
+        self.assertEqual(allocation.bom_item.pk, 1)
+        self.assertEqual(allocation.stock_item.pk, 2)
+
 
 class BuildListTest(BuildAPITest):
     """
