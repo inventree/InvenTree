@@ -31,19 +31,13 @@
         {% mixin_enabled plugin 'settings' as settings %}
 
         <tr>
-            <td>{{plugin_key}} - {{ plugin.human_name }}
-                {% if urls %}
-                    <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has urls' %}</a></span>
-                {% endif %}
-                {% if settings %}
-                    <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>{% trans 'Has settings' %}</a></span>
-                {% endif %}
-
+            <td>{{ plugin.human_name }}<span class="text-muted"> - {{plugin_key}}</span>
                 {% define plugin.registered_mixins as mixin_list %}
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
-                    <span class='badge'><a class='nav-toggle text-success' id='select-plugin-{{plugin_key}}'>
-                        {% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</a></span>
+                <a class='nav-toggle' id='select-plugin-{{plugin_key}}'>
+                    <span class='badge badge-badge-secondary'>{% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</span>
+                </a>
                 {% endfor %}
                 {% endif %}
             </td>
