@@ -263,6 +263,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
 
         self.set_sign_values()
 
+    # properties
     @property
     def slug(self):
         """slug for the plugin"""
@@ -279,6 +280,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             name = self.plugin_name()
         return name
 
+    # mixins
     def mixin(self, key):
         """check if mixin is registered"""
         return key in self._mixins
@@ -290,6 +292,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             return getattr(self, fnc_name, True)
         return False
 
+    # git
     def get_plugin_commit(self):
         """get last git commit for plugin"""
         return get_git_log(self.def_path)
