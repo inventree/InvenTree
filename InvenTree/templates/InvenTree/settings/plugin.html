@@ -20,6 +20,7 @@
             <th>{% trans "Name" %}</th>
             <th>{% trans "Author" %}</th>
             <th>{% trans "Date" %}</th>
+            <th>{% trans "Version" %}</th>
         </tr>
     </thead>
     
@@ -48,6 +49,7 @@
             </td>
             <td>{{ plugin.author }}</td>
             <td>{{ plugin.pub_date }}</td>
+            <td>{{ plugin.version }}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -258,6 +258,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
 
     AUTHOR = None
     PUBLISH_DATE = None
+    VERSION = None
 
     def __init__(self):
         super().__init__()
@@ -302,6 +303,12 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             name = self.commit.get('date')
         if not name:
             name = _('No date found')
+        return name
+
+    @property
+    def version(self):
+        """returns version of plugin"""
+        name = getattr(self, 'VERSION', None)
         return name
 
     # mixins
