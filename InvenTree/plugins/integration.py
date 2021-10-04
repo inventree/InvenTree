@@ -5,6 +5,7 @@ import logging
 import os
 import subprocess
 import inspect
+from datetime import datetime
 
 from django.conf.urls import url, include
 from django.conf import settings
@@ -301,6 +302,8 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         name = getattr(self, 'PUBLISH_DATE', None)
         if not name:
             name = self.commit.get('date')
+        else:
+            name = datetime.fromisoformat(name)
         if not name:
             name = _('No date found')
         return name
@@ -338,6 +341,10 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         # set variables
         self.commit = commit
         self.sign_state = sign_state
+
+        # process date
+        if self.commit['date']:
+            self.commit['date'] = datetime.fromisoformat(self.commit['date'])
 
         if sign_state.status == 0:
             self.sign_color = 'success'
