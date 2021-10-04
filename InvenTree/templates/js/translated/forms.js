@@ -1884,7 +1884,7 @@ function constructChoiceInput(name, parameters) {
  */
 function constructRelatedFieldInput(name) {
 
-    var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
+    var html = `<select id='id_${name}' class='select form-control' name='${name}' style='width: 100%;'></select>`;
 
     // Don't load any options - they will be filled via an AJAX request
 
