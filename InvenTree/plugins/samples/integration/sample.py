@@ -16,6 +16,7 @@ class SampleIntegrationPlugin(SettingsMixin, UrlsMixin, NavigationMixin, Integra
     PLUGIN_TITLE = "Sample Plugin"
 
     NAVIGATION_TAB_NAME = "Sample Nav"
+    NAVIGATION_TAB_ICON = 'fas fa-plus'
 
     def view_test(self, request):
         """very basic view"""
