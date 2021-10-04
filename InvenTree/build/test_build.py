@@ -269,25 +269,6 @@ class BuildTest(TestCase):
 
         self.assertTrue(self.build.areUntrackedPartsFullyAllocated())
 
-    def test_auto_allocate(self):
-        """
-        Test auto-allocation functionality against the build outputs.
-
-        Note: auto-allocations only work for un-tracked stock!
-        """
-
-        allocations = self.build.getAutoAllocations()
-
-        self.assertEqual(len(allocations), 1)
-
-        self.build.autoAllocate()
-        self.assertEqual(BuildItem.objects.count(), 1)
-
-        # Check that one un-tracked part has been fully allocated to the build
-        self.assertTrue(self.build.isPartFullyAllocated(self.sub_part_2, None))
-
-        self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_1, None))
-
     def test_cancel(self):
         """
         Test cancellation of the build

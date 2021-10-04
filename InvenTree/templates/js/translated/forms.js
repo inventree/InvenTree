@@ -1424,7 +1424,6 @@ function initializeRelatedField(field, fields, options) {
         }
     });
 
-    
     // If a 'value' is already defined, grab the model info from the server
     if (field.value) {
         
