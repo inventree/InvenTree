@@ -566,12 +566,10 @@ function loadPurchaseOrderTable(table, options) {
         filters[key] = options.params[key];
     }
 
-    options.url = options.url || '{% url "api-po-list" %}';
-
     setupFilterList('purchaseorder', $(table));
 
     $(table).inventreeTable({
-        url: options.url,
+        url: '{% url "api-po-list" %}',
         queryParams: filters,
         name: 'purchaseorder',
         groupBy: false,
@@ -667,12 +665,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
     options.params = options.params || {};
 
+    options.params['order'] = options.order;
+    options.params['part_detail'] = true;
+
     var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
-
+    
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
     setupFilterList('purchaseorderlineitem', $(table), target);
@@ -751,10 +752,8 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
         formatNoMatches: function() {
             return '{% trans "No line items found" %}';
         },
-        queryParams: {
-            order: options.order,
-            part_detail: true
-        },
+        queryParams: filters,
+        original: options.params,
         url: '{% url "api-po-line-list" %}',
         showFooter: true,
         uniqueId: 'pk',
