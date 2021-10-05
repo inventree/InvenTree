@@ -222,6 +222,7 @@ class BuildAllocate(generics.CreateAPIView):
         context = super().get_serializer_context()
 
         context['build'] = self.get_build()
+        context['request'] = self.request
 
         return context
 

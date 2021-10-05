@@ -111,7 +111,7 @@ class BuildAllocationTest(BuildAPITest):
             expected_code=400
         ).data
 
-        self.assertIn('Allocation items must be provided', str(data['items']))
+        self.assertIn('Allocation items must be provided', str(data))
 
         # No new BuildItem objects have been created during this test
         self.assertEqual(self.n, BuildItem.objects.count())

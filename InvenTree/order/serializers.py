@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField, ExpressionWrapper, F
@@ -305,6 +306,7 @@ class POReceiveSerializer(serializers.Serializer):
 
         data = self.validated_data
 
+        request = self.context['request']
         order = self.context['order']
 
         items = data['items']
@@ -331,15 +333,19 @@ class POReceiveSerializer(serializers.Serializer):
         # Now we can actually receive the items into stock
         with transaction.atomic():
             for item in items:
-                order.receive_line_item(
-                    item['line_item'],
-                    item['location'],
-                    item['quantity'],
-                    self.request.user,
-                    status=item['status'],
-                    barcode=item.get('barcode', ''),
-                )
 
+                try:
+                    order.receive_line_item(
+                        item['line_item'],
+                        item['location'],
+                        item['quantity'],
+                        request.user,
+                        status=item['status'],
+                        barcode=item.get('barcode', ''),
+                    )
+                except (ValidationError, DjangoValidationError) as exc:
+                    # Catch model errors and re-throw as DRF errors
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
 
     class Meta:
         fields = [

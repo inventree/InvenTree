@@ -6,7 +6,7 @@ JSON serializers for Build API
 from __future__ import unicode_literals
 
 from django.db import transaction
-
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from django.db.models import Case, When, Value
@@ -270,14 +270,18 @@ class BuildAllocationSerializer(serializers.Serializer):
                 quantity = item['quantity']
                 output = item.get('output', None)
 
-                # Create a new BuildItem to allocate stock
-                BuildItem.objects.create(
-                    build=build,
-                    bom_item=bom_item,
-                    stock_item=stock_item,
-                    quantity=quantity,
-                    install_into=output
-                )
+                try:
+                    # Create a new BuildItem to allocate stock
+                    BuildItem.objects.create(
+                        build=build,
+                        bom_item=bom_item,
+                        stock_item=stock_item,
+                        quantity=quantity,
+                        install_into=output
+                    )
+                except (ValidationError, DjangoValidationError) as exc:
+                    # Catch model errors and re-throw as DRF errors
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):
