@@ -120,7 +120,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         instance.mark_for_deletion()
 
 
-class StockAdjust(APIView):
+class StockAdjustView(generics.CreateAPIView):
     """
     A generic class for handling stocktake actions.
 
@@ -134,174 +134,50 @@ class StockAdjust(APIView):
 
     queryset = StockItem.objects.none()
 
-    def get_items(self, request):
-        """
-        Return a list of items posted to the endpoint.
-        Will raise validation errors if the items are not
-        correctly formatted.
-        """
+    def get_serializer_context(self):
+            
+            context = super().get_serializer_context()
 
-        _items = []
+            context['request'] = self.request
 
-        if 'item' in request.data:
-            _items = [request.data['item']]
-        elif 'items' in request.data:
-            _items = request.data['items']
-        else:
-            _items = []
-
-        if len(_items) == 0:
-            raise ValidationError(_('Request must contain list of stock items'))
-
-        # List of validated items
-        self.items = []
-
-        for entry in _items:
-
-            if not type(entry) == dict:
-                raise ValidationError(_('Improperly formatted data'))
-
-            # Look for a 'pk' value (use 'id' as a backup)
-            pk = entry.get('pk', entry.get('id', None))
-
-            try:
-                pk = int(pk)
-            except (ValueError, TypeError):
-                raise ValidationError(_('Each entry must contain a valid integer primary-key'))
-
-            try:
-                item = StockItem.objects.get(pk=pk)
-            except (StockItem.DoesNotExist):
-                raise ValidationError({
-                    pk: [_('Primary key does not match valid stock item')]
-                })
-
-            if self.allow_missing_quantity and 'quantity' not in entry:
-                entry['quantity'] = item.quantity
-
-            try:
-                quantity = Decimal(str(entry.get('quantity', None)))
-            except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({
-                    pk: [_('Invalid quantity value')]
-                })
-
-            if quantity < 0:
-                raise ValidationError({
-                    pk: [_('Quantity must not be less than zero')]
-                })
-
-            self.items.append({
-                'item': item,
-                'quantity': quantity
-            })
-
-        # Extract 'notes' field
-        self.notes = str(request.data.get('notes', ''))
+            return context
 
 
-class StockCount(generics.CreateAPIView):
+class StockCount(StockAdjustView):
     """
     Endpoint for counting stock (performing a stocktake).
     """
 
-    queryset = StockItem.objects.none()
-
     serializer_class = StockSerializers.StockCountSerializer
 
-    def get_serializer_context(self):
-        
-        context = super().get_serializer_context()
 
-        context['request'] = self.request
-
-        return context
-
-
-class StockAdd(StockAdjust):
+class StockAdd(StockAdjustView):
     """
     Endpoint for adding a quantity of stock to an existing StockItem
     """
 
-    def post(self, request, *args, **kwargs):
-
-        self.get_items(request)
-
-        n = 0
-
-        for item in self.items:
-            if item['item'].add_stock(item['quantity'], request.user, notes=self.notes):
-                n += 1
-
-        return Response({"success": "Added stock for {n} items".format(n=n)})
+    serializer_class = StockSerializers.StockAddSerializer
 
 
-class StockRemove(StockAdjust):
+class StockRemove(StockAdjustView):
     """
     Endpoint for removing a quantity of stock from an existing StockItem.
     """
 
-    def post(self, request, *args, **kwargs):
-
-        self.get_items(request)
-
-        n = 0
-
-        for item in self.items:
-
-            if item['quantity'] > item['item'].quantity:
-                raise ValidationError({
-                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
-                })
-
-            if item['item'].take_stock(item['quantity'], request.user, notes=self.notes):
-                n += 1
-
-        return Response({"success": "Removed stock for {n} items".format(n=n)})
+    serializer_class = StockSerializers.StockRemoveSerializer
 
 
-class StockTransfer(StockAdjust):
+class StockTransfer(StockAdjustView):
     """
     API endpoint for performing stock movements
     """
 
-    allow_missing_quantity = True
-
-    def post(self, request, *args, **kwargs):
-
-        data = request.data
-
-        try:
-            location = StockLocation.objects.get(pk=data.get('location', None))
-        except (ValueError, StockLocation.DoesNotExist):
-            raise ValidationError({'location': [_('Valid location must be specified')]})
-
-        n = 0
-
-        self.get_items(request)
-
-        for item in self.items:
-
-            if item['quantity'] > item['item'].quantity:
-                raise ValidationError({
-                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
-                })
-
-            # If quantity is not specified, move the entire stock
-            if item['quantity'] in [0, None]:
-                item['quantity'] = item['item'].quantity
-
-            if item['item'].move(location, self.notes, request.user, quantity=item['quantity']):
-                n += 1
-
-        return Response({'success': _('Moved {n} parts to {loc}').format(
-            n=n,
-            loc=str(location),
-        )})
+    serializer_class = StockSerializers.StockTransferSerializer
 
 
 class StockLocationList(generics.ListCreateAPIView):
-    """ API endpoint for list view of StockLocation objects:
+    """
+    API endpoint for list view of StockLocation objects:
 
     - GET: Return list of StockLocation objects
     - POST: Create a new StockLocation

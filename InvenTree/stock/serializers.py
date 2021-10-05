@@ -420,7 +420,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
         many=False,
         allow_null=False,
         required=True,
-        label=_('StockItem primary key value')
+        label='stock_item',
+        help_text=_('StockItem primary key value')
     )
 
     quantity = serializers.DecimalField(
@@ -446,7 +447,9 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        allow_blank=False,
+        allow_blank=True,
+        label=_("Notes"),
+        help_text=_("Stock transaction notes"),
     )
 
     def validate(self, data):
@@ -467,9 +470,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
     """
 
     def save(self):
-        """
-        Perform the database transactions to count the stock
-        """
+
         request = self.context['request']
 
         data = self.validated_data
@@ -486,4 +487,106 @@ class StockCountSerializer(StockAdjustmentSerializer):
                     quantity,
                     request.user,
                     notes=notes
+                )
+
+
+class StockAddSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for adding stock to stock item(s)
+    """
+
+    def save(self):
+
+        request = self.context['request']
+
+        data = self.validated_data
+        notes = data['notes']
+
+        with transaction.atomic():
+            for item in data['items']:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.add_stock(
+                    quantity,
+                    request.user,
+                    notes=notes
+                )
+
+
+class StockRemoveSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for removing stock from stock item(s)
+    """
+
+    def save(self):
+        
+        request = self.context['request']
+
+        data = self.validated_data
+        notes = data['notes']
+
+        with transaction.atomic():
+            for item in data['items']:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.take_stock(
+                    quantity,
+                    request.user,
+                    notes=notes
+                )
+
+class StockTransferSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for transferring (moving) stock item(s)
+    """
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    class Meta:
+        fields = [
+            'items',
+            'notes',
+            'location',
+        ]
+
+    def validate(self, data):
+
+        super().validate(data)
+
+        # TODO: Any specific validation of location field?
+
+        return data
+
+    def save(self):
+
+        request = self.context['request']
+
+        data = self.validated_data
+        
+        items = data['items']
+        notes = data['notes']
+        location = data['location']
+
+        with transaction.atomic():
+            for item in items:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.move(
+                    location,
+                    notes,
+                    request.user,
+                    quantity=item['quantity']
                 )
