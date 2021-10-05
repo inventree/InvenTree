@@ -466,7 +466,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
 class StockCountSerializer(StockAdjustmentSerializer):
     """
-    Serializer for counting stock items 
+    Serializer for counting stock items
     """
 
     def save(self):
@@ -539,6 +539,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
                     notes=notes
                 )
 
+
 class StockTransferSerializer(StockAdjustmentSerializer):
     """
     Serializer for transferring (moving) stock item(s)
@@ -588,5 +589,5 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                     location,
                     notes,
                     request.user,
-                    quantity=item['quantity']
+                    quantity=quantity
                 )

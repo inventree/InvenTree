@@ -5,7 +5,6 @@ JSON API for the Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 
 from django.utils.translation import ugettext_lazy as _
@@ -17,7 +16,6 @@ from django.db.models import Q
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, filters, permissions
 
@@ -136,11 +134,11 @@ class StockAdjustView(generics.CreateAPIView):
 
     def get_serializer_context(self):
             
-            context = super().get_serializer_context()
+        context = super().get_serializer_context()
 
-            context['request'] = self.request
+        context['request'] = self.request
 
-            return context
+        return context
 
 
 class StockCount(StockAdjustView):
