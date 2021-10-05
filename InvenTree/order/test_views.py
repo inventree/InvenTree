@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 
 from InvenTree.status_codes import PurchaseOrderStatus
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrder
 
 import json
 
