@@ -64,6 +64,7 @@ class StockItemSerializerBrief(InvenTreeModelSerializer):
             'location',
             'location_name',
             'quantity',
+            'serial',
         ]
 
 
