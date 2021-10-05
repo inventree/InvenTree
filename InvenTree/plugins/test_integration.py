@@ -4,6 +4,8 @@ from django.test import TestCase
 from django.conf import settings
 from django.conf.urls import url, include
 
+from datetime import datetime
+
 from plugins.integration import AppMixin, IntegrationPluginBase, SettingsMixin, UrlsMixin, NavigationMixin
 
 
@@ -155,7 +157,7 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin_name.human_name, 'a titel')
 
         # pub_date
-        self.assertEqual(self.plugin_name.pub_date, "1111.11.11")
+        self.assertEqual(self.plugin_name.pub_date, datetime(1111, 11, 11, 0, 0))
 
         # version
         self.assertEqual(self.plugin.version, None)
