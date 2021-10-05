@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-04 23:41+0000\n"
-"PO-Revision-Date: 2021-10-04 23:43\n"
+"POT-Creation-Date: 2021-10-05 01:33+0000\n"
+"PO-Revision-Date: 2021-10-05 01:41\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -615,7 +615,7 @@ msgid "Mark build as complete"
 msgstr ""
 
 #: build/forms.py:210 build/templates/build/auto_allocate.html:18
-#: order/serializers.py:216 order/serializers.py:275 stock/forms.py:280
+#: order/serializers.py:216 order/serializers.py:276 stock/forms.py:280
 #: stock/templates/stock/item_base.html:299
 #: stock/templates/stock/stock_adjust.html:17
 #: templates/js/translated/barcode.js:385
@@ -3264,7 +3264,7 @@ msgstr ""
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:217 order/serializers.py:276
+#: order/serializers.py:217 order/serializers.py:277
 msgid "Select destination location for received items"
 msgstr ""
 
@@ -3276,19 +3276,19 @@ msgstr ""
 msgid "Unique identifier field"
 msgstr ""
 
-#: order/serializers.py:250
+#: order/serializers.py:251
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:289
+#: order/serializers.py:290
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:299
+#: order/serializers.py:300
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:514
+#: order/serializers.py:515
 msgid "Sale price currency"
 msgstr ""
 
