@@ -514,7 +514,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                         }
                     }
                 }
-            )
+            );
         }
     });
 }
