@@ -4,7 +4,6 @@
 /* globals
     buildStatusDisplay,
     constructForm,
-    getFieldByName,
     global_settings,
     imageHoverIcon,
     inventreeGet,
@@ -397,7 +396,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
             if (!row) {
-                console.log("WARNING: getRowByUniqueId returned null");
+                console.log('WARNING: getRowByUniqueId returned null');
                 return;
             }
 
@@ -834,12 +833,6 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     // ID of the associated "build output" (or null)
     var output_id = options.output || null;
 
-    var query_params = {
-        part: part_id,
-        sub_part_detail: true,
-        sub_part_trackable: output_id != null
-    };
-
     var source_location = options.source_location;
 
     function renderBomItemRow(bom_item, quantity) {
@@ -915,7 +908,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         return html;
     }
 
-    var table_entries = "";
+    var table_entries = '';
 
     for (var idx = 0; idx < bom_items.length; idx++) {
         var bom_item = bom_items[idx];
@@ -1045,7 +1038,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
             // Add callback to "clear" button for take_from field
             addClearCallback(
-                "take_from",
+                'take_from',
                 take_from_field,
                 options,
             );
@@ -1098,7 +1091,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
             // Provide nested values
             opts.nested = {
-                "items": item_pk_values
+                'items': item_pk_values
             };
 
             inventreePut(
@@ -1116,13 +1109,13 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                     },
                     error: function(xhr) {
                         switch (xhr.status) {
-                            case 400:
-                                handleFormErrors(xhr.responseJSON, fields, opts);
-                                break;
-                            default:
-                                $(opts.modal).modal('hide');
-                                showApiError(xhr);
-                                break;
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr);
+                            break;
                         }
                     }
                 }

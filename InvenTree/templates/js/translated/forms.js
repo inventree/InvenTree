@@ -905,7 +905,7 @@ function handleNestedErrors(errors, field_name, options) {
         return;
     }
 
-    var nest_list = nest_list = options["nested"][field_name];
+    var nest_list = nest_list = options['nested'][field_name];
     
     // Nest list must be provided!
     if (!nest_list) {
@@ -996,7 +996,7 @@ function handleFormErrors(errors, fields, options) {
 
             var field = fields[field_name];
 
-            if ((field.type == "field") && ("child" in field)) {
+            if ((field.type == 'field') && ('child' in field)) {
                 // This is a "nested" field
                 handleNestedErrors(errors, field_name, options);
             } else {
@@ -1348,7 +1348,7 @@ function initializeRelatedField(field, fields, options) {
                 query.limit = pageSize;
                 
                 // Allow custom run-time filter augmentation
-                if ("adjustFilters" in field) {
+                if ('adjustFilters' in field) {
                     query = field.adjustFilters(query);
                 }
 
