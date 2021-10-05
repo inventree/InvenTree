@@ -10,10 +10,14 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
-INVENTREE_API_VERSION = 13
+INVENTREE_API_VERSION = 14
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v14 -> 2021-20-05
+    - Stock adjustment actions API is improved, using native DRF serializer support
+    - However adjustment actions now only support 'pk' as a lookup field
 
 v13 -> 2021-10-05
     - Adds API endpoint to allocate stock items against a BuildOrder
