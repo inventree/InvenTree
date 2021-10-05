@@ -475,7 +475,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
 
         data = self.validated_data
         items = data['items']
-        notes = data['notes']
+        notes = data.get('notes', '')
 
         with transaction.atomic():
             for item in items:
@@ -500,7 +500,7 @@ class StockAddSerializer(StockAdjustmentSerializer):
         request = self.context['request']
 
         data = self.validated_data
-        notes = data['notes']
+        notes = data.get('notes', '')
 
         with transaction.atomic():
             for item in data['items']:
@@ -525,7 +525,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
         request = self.context['request']
 
         data = self.validated_data
-        notes = data['notes']
+        notes = data.get('notes', '')
 
         with transaction.atomic():
             for item in data['items']:
@@ -575,7 +575,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         data = self.validated_data
         
         items = data['items']
-        notes = data['notes']
+        notes = data.get('notes', '')
         location = data['location']
 
         with transaction.atomic():
