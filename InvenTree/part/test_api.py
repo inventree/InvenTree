@@ -277,7 +277,7 @@ class PartAPITest(InvenTreeAPITestCase):
         """ There should be 4 BomItem objects in the database """
         url = reverse('api-bom-list')
         response = self.client.get(url, format='json')
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 5)
 
     def test_get_bom_detail(self):
         # Get the detail for a single BomItem

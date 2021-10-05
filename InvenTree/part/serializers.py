@@ -193,6 +193,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'default_location',
             'name',
             'revision',
             'full_name',
