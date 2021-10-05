@@ -225,6 +225,13 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         required=True,
     )
 
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
     status = serializers.ChoiceField(
         choices=list(StockStatus.items()),
         default=StockStatus.OK,
@@ -246,7 +253,7 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         # Ignore empty barcode values
         if not barcode or barcode.strip() == '':
-            return
+            return None
 
         if stock.models.StockItem.objects.filter(uid=barcode).exists():
             raise ValidationError(_('Barcode is already in use'))
@@ -284,34 +291,10 @@ class POReceiveSerializer(serializers.Serializer):
 
         items = data.get('items', [])
 
-        if len(items) == 0:
-            raise ValidationError({
-                'items': _('Line items must be provided')
-            })
-
-        # Ensure barcodes are unique
-        unique_barcodes = set()
-
-        for item in items:
-            barcode = item.get('barcode', '')
-
-            if barcode:
-                if barcode in unique_barcodes:
-                    raise ValidationError(_('Supplied barcode values must be unique'))
-                else:
-                    unique_barcodes.add(barcode)
-
-        return data
-
-    def save(self):
-
-        data = self.validated_data
-
-        request = self.context['request']
-        order = self.context['order']
-
-        items = data['items']
         location = data.get('location', None)
+
+        if len(items) == 0:
+            raise ValidationError(_('Line items must be provided'))
 
         # Check if the location is not specified for any particular item
         for item in items:
@@ -331,14 +314,44 @@ class POReceiveSerializer(serializers.Serializer):
                     'location': _("Destination location must be specified"),
                 })
 
+        # Ensure barcodes are unique
+        unique_barcodes = set()
+
+        for item in items:
+            barcode = item.get('barcode', '')
+
+            if barcode:
+                if barcode in unique_barcodes:
+                    raise ValidationError(_('Supplied barcode values must be unique'))
+                else:
+                    unique_barcodes.add(barcode)
+
+        return data
+
+    def save(self):
+        """
+        Perform the actual database transaction to receive purchase order items
+        """
+
+        data = self.validated_data
+
+        request = self.context['request']
+        order = self.context['order']
+
+        items = data['items']
+        location = data.get('location', None)
+
         # Now we can actually receive the items into stock
         with transaction.atomic():
             for item in items:
 
+                # Select location
+                loc = item.get('location', None) or item['line_item'].get_destination() or location
+
                 try:
                     order.receive_line_item(
                         item['line_item'],
-                        item['location'],
+                        loc,
                         item['quantity'],
                         request.user,
                         status=item['status'],

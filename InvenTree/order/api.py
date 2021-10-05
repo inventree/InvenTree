@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
+from django.db.models import Q, F
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
@@ -251,6 +252,39 @@ class POReceive(generics.CreateAPIView):
         return order
 
 
+class POLineItemFilter(rest_filters.FilterSet):
+    """
+    Custom filters for the POLineItemList endpoint
+    """
+
+    class Meta:
+        model = PurchaseOrderLineItem
+        fields = [
+            'order',
+            'part'
+        ]
+
+    completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
+
+    def filter_completed(self, queryset, name, value):
+        """
+        Filter by lines which are "completed" (or "not" completed)
+
+        A line is completed when received >= quantity
+        """
+
+        value = str2bool(value)
+
+        q = Q(received__gte=F('quantity'))
+
+        if value:
+            queryset = queryset.filter(q)
+        else:
+            queryset = queryset.exclude(q)
+
+        return queryset
+
+
 class POLineItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of POLineItem objects
 
@@ -260,6 +294,7 @@ class POLineItemList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
+    filterset_class = POLineItemFilter
 
     def get_queryset(self, *args, **kwargs):
 
