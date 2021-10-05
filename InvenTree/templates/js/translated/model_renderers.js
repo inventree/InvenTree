@@ -37,7 +37,7 @@ function renderCompany(name, data, parameters, options) {
 
     html += `<span><b>${data.name}</b></span> - <i>${data.description}</i>`;
 
-    html += `<span class='float-right'>{% trans "Company ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Company ID" %}: ${data.pk}</small></span>`;
 
     return html;
 }
@@ -47,20 +47,57 @@ function renderCompany(name, data, parameters, options) {
 // eslint-disable-next-line no-unused-vars
 function renderStockItem(name, data, parameters, options) {
 
-    var image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
-
-    var html = `<img src='${image}' class='select2-thumbnail'>`;
-
-    html += ` <span>${data.part_detail.full_name || data.part_detail.name}</span>`;
-
-    if (data.serial && data.quantity == 1) {
-        html += ` - <i>{% trans "Serial Number" %}: ${data.serial}`;
-    } else {
-        html += ` - <i>{% trans "Quantity" %}: ${data.quantity}`;
+    var image = blankImage();
+    
+    if (data.part_detail) {
+        image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
     }
 
-    if (data.part_detail.description) {
+    var html = '';
+    
+    var render_part_detail = true;
+
+    if ('render_part_detail' in parameters) {
+        render_part_detail = parameters['render_part_detail'];
+    }
+
+    if (render_part_detail) {
+        html += `<img src='${image}' class='select2-thumbnail'>`;
+        html += ` <span>${data.part_detail.full_name || data.part_detail.name}</span>`;
+    }
+
+    html += '<span>';
+
+    if (data.serial && data.quantity == 1) {
+        html += `{% trans "Serial Number" %}: ${data.serial}`;
+    } else {
+        html += `{% trans "Quantity" %}: ${data.quantity}`;
+    }
+
+    html += '</span>';
+
+    if (render_part_detail && data.part_detail.description) {
         html += `<p><small>${data.part_detail.description}</small></p>`;
+    }
+
+    var render_stock_id = true;
+
+    if ('render_stock_id' in parameters) {
+        render_stock_id = parameters['render_stock_id'];
+    }
+
+    if (render_stock_id) {
+        html += `<span class='float-right'><small>{% trans "Stock ID" %}: ${data.pk}</small></span>`;
+    }
+
+    var render_location_detail = false;
+
+    if ('render_location_detail' in parameters) {
+        render_location_detail = parameters['render_location_detail'];
+    }
+
+    if (render_location_detail && data.location_detail) {
+        html += `<span> - ${data.location_detail.name}</span>`;
     }
 
     return html;
@@ -79,7 +116,7 @@ function renderStockLocation(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'>{% trans "Location ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Location ID" %}: ${data.pk}</small></span>`;
 
     return html;
 }
@@ -96,7 +133,7 @@ function renderBuild(name, data, parameters, options) {
     var html = select2Thumbnail(image);
 
     html += `<span><b>${data.reference}</b></span> - ${data.quantity} x ${data.part_detail.full_name}`;
-    html += `<span class='float-right'>{% trans "Build ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Build ID" %}: ${data.pk}</span></span>`;
 
     html += `<p><i>${data.title}</i></p>`;
 
@@ -116,7 +153,7 @@ function renderPart(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'>{% trans "Part ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Part ID" %}: ${data.pk}</small></span>`;
 
     return html;
 }
@@ -168,7 +205,7 @@ function renderPartCategory(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'>{% trans "Category ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Category ID" %}: ${data.pk}</small></span>`;
 
     return html;
 }
@@ -205,7 +242,7 @@ function renderManufacturerPart(name, data, parameters, options) {
     html += ` <span><b>${data.manufacturer_detail.name}</b> - ${data.MPN}</span>`;
     html += ` - <i>${data.part_detail.full_name}</i>`;
 
-    html += `<span class='float-right'>{% trans "Manufacturer Part ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Manufacturer Part ID" %}: ${data.pk}</small></span>`;
 
     return html;
 }
@@ -234,7 +271,7 @@ function renderSupplierPart(name, data, parameters, options) {
     html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
     html += ` - <i>${data.part_detail.full_name}</i>`;
 
-    html += `<span class='float-right'>{% trans "Supplier Part ID" %}: ${data.pk}</span>`;
+    html += `<span class='float-right'><small>{% trans "Supplier Part ID" %}: ${data.pk}</small></span>`;
 
 
     return html;

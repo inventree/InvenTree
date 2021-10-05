@@ -7,14 +7,11 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
-from django.db import transaction
-from django.core.exceptions import ValidationError as DjangoValidationError
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
-from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 
@@ -235,6 +232,7 @@ class POReceive(generics.CreateAPIView):
 
         # Pass the purchase order through to the serializer for validation
         context['order'] = self.get_order()
+        context['request'] = self.request
 
         return context
 
@@ -251,76 +249,6 @@ class POReceive(generics.CreateAPIView):
             raise ValidationError(_("Matching purchase order does not exist"))
         
         return order
-
-    def create(self, request, *args, **kwargs):
-
-        # Which purchase order are we receiving against?
-        self.order = self.get_order()
-
-        # Validate the serialized data
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        # Receive the line items
-        try:
-            self.receive_items(serializer)
-        except DjangoValidationError as exc:
-            # Re-throw a django error as a DRF error
-            raise ValidationError(detail=serializers.as_serializer_error(exc))
-
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @transaction.atomic
-    def receive_items(self, serializer):
-        """
-        Receive the items
-
-        At this point, much of the heavy lifting has been done for us by DRF serializers!
-
-        We have a list of "items", each a dict which contains:
-        - line_item: A PurchaseOrderLineItem matching this order
-        - location: A destination location
-        - quantity: A validated numerical quantity
-        - status: The status code for the received item
-        """
-
-        data = serializer.validated_data
-
-        location = data['location']
-
-        items = data['items']
-
-        # Check if the location is not specified for any particular item
-        for item in items:
-
-            line = item['line_item']
-
-            if not item.get('location', None):
-                # If a global location is specified, use that
-                item['location'] = location
-
-            if not item['location']:
-                # The line item specifies a location?
-                item['location'] = line.get_destination()
-
-            if not item['location']:
-                raise ValidationError({
-                    'location': _("Destination location must be specified"),
-                })
-
-        # Now we can actually receive the items
-        for item in items:
-
-            self.order.receive_line_item(
-                item['line_item'],
-                item['location'],
-                item['quantity'],
-                self.request.user,
-                status=item['status'],
-                barcode=item.get('barcode', ''),
-            )
 
 
 class POLineItemList(generics.ListCreateAPIView):

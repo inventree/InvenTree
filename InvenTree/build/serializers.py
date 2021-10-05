@@ -5,16 +5,25 @@ JSON serializers for Build API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db import transaction
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.utils.translation import ugettext_lazy as _
+
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField
 
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
 
-from stock.serializers import StockItemSerializerBrief
-from stock.serializers import LocationSerializer
+import InvenTree.helpers
+
+from stock.models import StockItem
+from stock.serializers import StockItemSerializerBrief, LocationSerializer
+
+from part.models import BomItem
 from part.serializers import PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
@@ -22,7 +31,9 @@ from .models import Build, BuildItem, BuildOrderAttachment
 
 
 class BuildSerializer(InvenTreeModelSerializer):
-    """ Serializes a Build object """
+    """
+    Serializes a Build object
+    """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -107,6 +118,170 @@ class BuildSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
         ]
+
+
+class BuildAllocationItemSerializer(serializers.Serializer):
+    """
+    A serializer for allocating a single stock item against a build order
+    """
+
+    bom_item = serializers.PrimaryKeyRelatedField(
+        queryset=BomItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('BOM Item'),
+    )
+
+    def validate_bom_item(self, bom_item):
+        
+        build = self.context['build']
+
+        # BomItem must point to the same 'part' as the parent build
+        if build.part != bom_item.part:
+            raise ValidationError(_("bom_item.part must point to the same part as the build order"))
+
+        return bom_item
+
+    stock_item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_stock_item(self, stock_item):
+
+        if not stock_item.in_stock:
+            raise ValidationError(_("Item must be in stock"))
+        
+        return stock_item
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True
+    )
+
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
+    output = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.filter(is_building=True),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Build Output'),
+    )
+
+    class Meta:
+        fields = [
+            'bom_item',
+            'stock_item',
+            'quantity',
+            'output',
+        ]
+
+    def validate(self, data):
+
+        super().validate(data)
+
+        bom_item = data['bom_item']
+        stock_item = data['stock_item']
+        quantity = data['quantity']
+        output = data.get('output', None)
+
+        # build = self.context['build']
+
+        # TODO: Check that the "stock item" is valid for the referenced "sub_part"
+        # Note: Because of allow_variants options, it may not be a direct match!
+
+        # Check that the quantity does not exceed the available amount from the stock item
+        q = stock_item.unallocated_quantity()
+
+        if quantity > q:
+
+            q = InvenTree.helpers.clean_decimal(q)
+
+            raise ValidationError({
+                'quantity': _(f"Available quantity ({q}) exceeded")
+            })
+
+        # Output *must* be set for trackable parts
+        if output is None and bom_item.sub_part.trackable:
+            raise ValidationError({
+                'output': _('Build output must be specified for allocation of tracked parts')
+            })
+
+        # Output *cannot* be set for un-tracked parts
+        if output is not None and not bom_item.sub_part.trackable:
+            
+            raise ValidationError({
+                'output': _('Build output cannot be specified for allocation of untracked parts')
+            })
+
+        return data
+
+
+class BuildAllocationSerializer(serializers.Serializer):
+    """
+    DRF serializer for allocation stock items against a build order
+    """
+
+    items = BuildAllocationItemSerializer(many=True)
+
+    class Meta:
+        fields = [
+            'items',
+        ]
+
+    def validate(self, data):
+        """
+        Validation
+        """
+        
+        super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_('Allocation items must be provided'))
+        
+        return data
+
+    def save(self):
+
+        data = self.validated_data
+
+        items = data.get('items', [])
+
+        build = self.context['build']
+
+        with transaction.atomic():
+            for item in items:
+                bom_item = item['bom_item']
+                stock_item = item['stock_item']
+                quantity = item['quantity']
+                output = item.get('output', None)
+
+                try:
+                    # Create a new BuildItem to allocate stock
+                    BuildItem.objects.create(
+                        build=build,
+                        bom_item=bom_item,
+                        stock_item=stock_item,
+                        quantity=quantity,
+                        install_into=output
+                    )
+                except (ValidationError, DjangoValidationError) as exc:
+                    # Catch model errors and re-throw as DRF errors
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):

@@ -728,9 +728,16 @@ function updateFieldValues(fields, options) {
     }
 }
 
-
+/*
+ * Update the value of a named field
+ */
 function updateFieldValue(name, value, field, options) {
     var el = $(options.modal).find(`#id_${name}`);
+
+    if (!el) {
+        console.log(`WARNING: updateFieldValue could not find field '${name}'`);
+        return;
+    }
 
     switch (field.type) {
     case 'boolean':
@@ -864,6 +871,78 @@ function clearFormErrors(options) {
     $(options.modal).find('#non-field-errors').html('');
 }
 
+/*
+ * Display form error messages as returned from the server,
+ * specifically for errors returned in an array.
+ *
+ * We need to know the unique ID of each item in the array,
+ * and the array length must equal the length of the array returned from the server
+ * 
+ * arguments:
+ * - response: The JSON error response from the server
+ * - parent: The name of the parent field e.g. "items"
+ * - options: The global options struct
+ * 
+ * options:
+ * - nested: A map of nested ID values for the "parent" field
+ *           e.g.
+ *           {
+ *               "items": [
+ *                  1,
+ *                  2,
+ *                  12
+ *               ]
+ *           }
+ * 
+ */
+
+function handleNestedErrors(errors, field_name, options) {
+
+    var error_list = errors[field_name];
+
+    // Ignore null or empty list
+    if (!error_list) {
+        return;
+    }
+
+    var nest_list = nest_list = options['nested'][field_name];
+    
+    // Nest list must be provided!
+    if (!nest_list) {
+        console.log(`WARNING: handleNestedErrors missing nesting options for field '${fieldName}'`);
+        return;
+    }
+
+    for (var idx = 0; idx < error_list.length; idx++) {
+        
+        var error_item = error_list[idx];
+        
+        if (idx >= nest_list.length) {
+            console.log(`WARNING: handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            break;
+        }
+
+        // Extract the particular ID of the nested item
+        var nest_id = nest_list[idx];
+        
+        // Here, error_item is a map of field names to error messages
+        for (sub_field_name in error_item) {
+            var errors = error_item[sub_field_name];
+
+            // Find the target (nested) field
+            var target = `${field_name}_${sub_field_name}_${nest_id}`;
+
+            for (var ii = errors.length-1; ii >= 0; ii--) {
+
+                var error_text = errors[ii];
+
+                addFieldErrorMessage(target, error_text, ii, options);
+            }
+        }
+    }
+}
+
+
 
 /*
  * Display form error messages as returned from the server.
@@ -913,28 +992,30 @@ function handleFormErrors(errors, fields, options) {
 
     for (var field_name in errors) {
 
-        // Add the 'has-error' class
-        $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+        if (field_name in fields) {
 
-        var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
+            var field = fields[field_name];
 
-        var field_errors = errors[field_name];
+            if ((field.type == 'field') && ('child' in field)) {
+                // This is a "nested" field
+                handleNestedErrors(errors, field_name, options);
+            } else {
+                // This is a "simple" field
 
-        if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
-            first_error_field = field_name;
-        }
+                var field_errors = errors[field_name];
 
-        // Add an entry for each returned error message
-        for (var ii = field_errors.length-1; ii >= 0; ii--) {
+                if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+                    first_error_field = field_name;
+                }
 
-            var error_text = field_errors[ii];
+                // Add an entry for each returned error message
+                for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-            var error_html = `
-            <span id='error_${ii+1}_id_${field_name}' class='help-block form-error-message'>
-                <strong>${error_text}</strong>
-            </span>`;
+                    var error_text = field_errors[ii];
 
-            field_dom.append(error_html);
+                    addFieldErrorMessage(field_name, error_text, ii, options);
+                }
+            }
         }
     }
 
@@ -949,6 +1030,30 @@ function handleFormErrors(errors, fields, options) {
     }
 
     $(options.modal).find('.modal-content').addClass('modal-error');
+}
+
+
+/*
+ * Add a rendered error message to the provided field
+ */
+function addFieldErrorMessage(field_name, error_text, error_idx, options) {
+
+    // Add the 'has-error' class
+    $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+
+    var field_dom = $(options.modal).find(`#errors-${field_name}`);
+
+    if (field_dom) {
+
+        var error_html = `
+        <span id='error_${error_idx}_id_${field_name}' class='help-block form-error-message'>
+            <strong>${error_text}</strong>
+        </span>`;
+
+        field_dom.append(error_html);
+    } else {
+        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}`);
+    }
 }
 
 
@@ -1007,7 +1112,14 @@ function addClearCallbacks(fields, options) {
 
 function addClearCallback(name, field, options) {
 
-    $(options.modal).find(`#clear_${name}`).click(function() {
+    var el = $(options.modal).find(`#clear_${name}`);
+    
+    if (!el) {
+        console.log(`WARNING: addClearCallback could not find field '${name}'`);
+        return;
+    }
+
+    el.click(function() {
         updateFieldValue(name, null, field, options);
     });
 }
@@ -1168,7 +1280,7 @@ function addSecondaryModal(field, fields, options) {
 
 
 /*
- * Initializea single related-field
+ * Initialize a single related-field
  * 
  * argument:
  * - modal: DOM identifier for the modal window
@@ -1182,7 +1294,7 @@ function initializeRelatedField(field, fields, options) {
 
     if (!field.api_url) {
         // TODO: Provide manual api_url option?
-        console.log(`Related field '${name}' missing 'api_url' parameter.`);
+        console.log(`WARNING: Related field '${name}' missing 'api_url' parameter.`);
         return;
     }
 
@@ -1203,6 +1315,15 @@ function initializeRelatedField(field, fields, options) {
         placeholder: '',
         dropdownParent: $(options.modal),
         dropdownAutoWidth: false,
+        language: {
+            noResults: function(query) {
+                if (field.noResults) {
+                    return field.noResults(query);
+                } else {
+                    return '{% trans "No results found" %}';
+                }
+            }
+        },
         ajax: {
             url: field.api_url,
             dataType: 'json',
@@ -1225,6 +1346,11 @@ function initializeRelatedField(field, fields, options) {
                 query.search = params.term;
                 query.offset = offset;
                 query.limit = pageSize;
+                
+                // Allow custom run-time filter augmentation
+                if ('adjustFilters' in field) {
+                    query = field.adjustFilters(query);
+                }
 
                 return query;
             },
@@ -1319,12 +1445,31 @@ function initializeRelatedField(field, fields, options) {
 
     // If a 'value' is already defined, grab the model info from the server
     if (field.value) {
+        
         var pk = field.value;
         var url = `${field.api_url}/${pk}/`.replace('//', '/');
 
         inventreeGet(url, field.filters || {}, {
             success: function(data) {
                 setRelatedFieldData(name, data, options);
+            }
+        });
+    } else if (field.auto_fill) {
+        // Attempt to auto-fill the field
+
+        var filters = field.filters || {};
+
+        // Enforce pagination, limit to a single return (for fast query)
+        filters.limit = 1;
+        filters.offset = 0;
+
+        inventreeGet(field.api_url, field.filters || {}, {
+            success: function(data) {
+
+                // Only a single result is available, given the provided filters
+                if (data.count == 1) {
+                    setRelatedFieldData(name, data.results[0], options);
+                }
             }
         });
     }
@@ -1884,7 +2029,7 @@ function constructChoiceInput(name, parameters) {
  */
 function constructRelatedFieldInput(name) {
 
-    var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
+    var html = `<select id='id_${name}' class='select form-control' name='${name}' style='width: 100%;'></select>`;
 
     // Don't load any options - they will be filled via an AJAX request
 

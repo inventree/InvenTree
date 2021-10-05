@@ -120,7 +120,13 @@ class BomItemTest(TestCase):
 
     def test_pricing(self):
         self.bob.get_price(1)
-        self.assertEqual(self.bob.get_bom_price_range(1, internal=True), (Decimal(84.5), Decimal(89.5)))
+        self.assertEqual(
+            self.bob.get_bom_price_range(1, internal=True),
+            (Decimal(29.5), Decimal(89.5))
+        )
         # remove internal price for R_2K2_0805
         self.r1.internal_price_breaks.delete()
-        self.assertEqual(self.bob.get_bom_price_range(1, internal=True), (Decimal(82.5), Decimal(87.5)))
+        self.assertEqual(
+            self.bob.get_bom_price_range(1, internal=True),
+            (Decimal(27.5), Decimal(87.5))
+        )

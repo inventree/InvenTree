@@ -4,7 +4,6 @@
 /* globals
     buildStatusDisplay,
     constructForm,
-    getFieldByName,
     global_settings,
     imageHoverIcon,
     inventreeGet,
@@ -20,6 +19,7 @@
 */
 
 /* exported
+    allocateStockToBuild,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -102,6 +102,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
      */
 
     var buildId = buildInfo.pk;
+    var partId = buildInfo.part;
 
     var outputId = 'untracked';
 
@@ -120,11 +121,10 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
     var html = `<div class='btn-group float-right' role='group'>`;
 
-    // "Auto" allocation only works for untracked stock items
-    if (!output && lines > 0) {
+    if (lines > 0) {
         html += makeIconButton(
-            'fa-magic icon-blue', 'button-output-auto', outputId,
-            '{% trans "Auto-allocate stock items to this output" %}',
+            'fa-sign-in-alt icon-blue', 'button-output-auto', outputId,
+            '{% trans "Allocate stock items to this build output" %}',
         );
     }
 
@@ -135,7 +135,6 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
             '{% trans "Unallocate stock from build output" %}',
         );
     }
-
 
     if (output) {
 
@@ -163,11 +162,17 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
     // Add callbacks for the buttons
     $(panel).find(`#button-output-auto-${outputId}`).click(function() {
+
+        var bom_items = $(panel).find(`#allocation-table-${outputId}`).bootstrapTable('getData');
+
         // Launch modal dialog to perform auto-allocation
-        launchModalForm(`/build/${buildId}/auto-allocate/`,
+        allocateStockToBuild(
+            buildId,
+            partId,
+            bom_items,
             {
-                data: {
-                },
+                source_location: buildInfo.source_location,
+                output: outputId,
                 success: reloadTable,
             }
         );
@@ -344,18 +349,26 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function requiredQuantity(row) {
         // Return the requied quantity for a given row
 
+        var quantity = 0;
+
         if (output) {
             // "Tracked" parts are calculated against individual build outputs
-            return row.quantity * output.quantity;
+            quantity = row.quantity * output.quantity;
         } else {
             // "Untracked" parts are specified against the build itself
-            return row.quantity * buildInfo.quantity;
+            quantity = row.quantity * buildInfo.quantity;
         }
+
+        // Store the required quantity in the row data
+        row.required = quantity;
+
+        return quantity;
     }
 
     function sumAllocations(row) {
         // Calculat total allocations for a given row
         if (!row.allocations) {
+            row.allocated = 0;
             return 0;
         }
 
@@ -364,6 +377,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         row.allocations.forEach(function(item) {
             quantity += item.quantity;
         });
+
+        row.allocated = quantity;
 
         return quantity;
     }
@@ -377,52 +392,28 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             // Primary key of the 'sub_part'
             var pk = $(this).attr('pk');
 
-            // Launch form to allocate new stock against this output
-            launchModalForm('{% url "build-item-create" %}', {
-                success: reloadTable,
-                data: {
-                    part: pk,
-                    build: buildId,
-                    install_into: outputId,
-                },
-                secondary: [
-                    {
-                        field: 'stock_item',
-                        label: '{% trans "New Stock Item" %}',
-                        title: '{% trans "Create new Stock Item" %}',
-                        url: '{% url "stock-item-create" %}',
-                        data: {
-                            part: pk,
-                        },
-                    },
+            // Extract BomItem information from this row
+            var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            if (!row) {
+                console.log('WARNING: getRowByUniqueId returned null');
+                return;
+            }
+
+            allocateStockToBuild(
+                buildId,
+                partId,
+                [
+                    row,
                 ],
-                callback: [
-                    {
-                        field: 'stock_item',
-                        action: function(value) {
-                            inventreeGet(
-                                `/api/stock/${value}/`, {},
-                                {
-                                    success: function(response) {
-
-                                        // How many items are actually available for the given stock item?
-                                        var available = response.quantity - response.allocated;
-
-                                        var field = getFieldByName('#modal-form', 'quantity');
-
-                                        // Allocation quantity initial value
-                                        var initial = field.attr('value');
-
-                                        if (available < initial) {
-                                            field.val(available);
-                                        }
-                                    }
-                                }
-                            );
-                        }
-                    }
-                ]
-            });
+                {
+                    source_location: buildInfo.source_location,
+                    success: function(data) {
+                        $(table).bootstrapTable('refresh');
+                    },
+                    output: output == null ? null : output.pk,
+                }
+            );
         });
 
         // Callback for 'buy' button
@@ -636,11 +627,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
                             }
 
-                            {% if build.status == BuildStatus.COMPLETE %}
-                            url = `/stock/item/${row.pk}/`;
-                            {% else %}
-                            url = `/stock/item/${row.stock_item}/`;
-                            {% endif %}
+                            var pk = row.stock_item || row.pk;
+
+                            url = `/stock/item/${pk}/`;
 
                             return renderLink(text, url);
                         }
@@ -687,22 +676,31 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             // Assign button callbacks to the newly created allocation buttons
             subTable.find('.button-allocation-edit').click(function() {
                 var pk = $(this).attr('pk');
-                launchModalForm(`/build/item/${pk}/edit/`, {
-                    success: reloadTable,
+
+                constructForm(`/api/build/item/${pk}/`, {
+                    fields: {
+                        quantity: {},
+                    },
+                    title: '{% trans "Edit Allocation" %}',
+                    onSuccess: reloadTable,
                 });
             });
 
             subTable.find('.button-allocation-delete').click(function() {
                 var pk = $(this).attr('pk');
-                launchModalForm(`/build/item/${pk}/delete/`, {
-                    success: reloadTable,
+
+                constructForm(`/api/build/item/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Remove Allocation" %}',
+                    onSuccess: reloadTable,
                 });
             });
         },
         columns: [
             {
-                field: 'pk',
-                visible: false,
+                visible: true,
+                switchable: false,
+                checkbox: true,
             },
             {
                 field: 'sub_part_detail.full_name',
@@ -822,6 +820,317 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     // Initialize the action buttons
     makeBuildOutputActionButtons(output, buildInfo, 0);
 }
+
+
+
+/**
+ * Allocate stock items to a build
+ * 
+ * arguments:
+ * - buildId: ID / PK value for the build
+ * - partId: ID / PK value for the part being built
+ * - bom_items: A list of BomItem objects to be allocated
+ * 
+ * options:
+ *  - output: ID / PK of the associated build output (or null for untracked items)
+ *  - source_location: ID / PK of the top-level StockLocation to take parts from (or null)
+ */
+function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
+
+    // ID of the associated "build output" (or null)
+    var output_id = options.output || null;
+
+    var source_location = options.source_location;
+
+    function renderBomItemRow(bom_item, quantity) {
+
+        var pk = bom_item.pk;
+        var sub_part = bom_item.sub_part_detail;
+
+        var thumb = thumbnailImage(bom_item.sub_part_detail.thumbnail);
+
+        var delete_button = `<div class='btn-group float-right' role='group'>`;
+
+        delete_button += makeIconButton(
+            'fa-times icon-red',
+            'button-row-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        delete_button += `</div>`;
+
+        var quantity_input = constructField(
+            `items_quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity || 0,
+                title: '{% trans "Specify stock allocation quantity" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var allocated_display = makeProgressBar(
+            bom_item.allocated,
+            bom_item.required,
+        );
+
+        var stock_input = constructField(
+            `items_stock_item_${pk}`,
+            {
+                type: 'related field',
+                required: 'true',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        // var stock_input = constructRelatedFieldInput(`items_stock_item_${pk}`);
+
+        var html = `
+        <tr id='allocation_row_${pk}' class='part-allocation-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${sub_part.full_name}
+            </td>
+            <td id='allocated_${pk}'>
+                ${allocated_display}
+            </td>
+            <td id='stock_item_${pk}'>
+                ${stock_input}
+            </td>
+            <td id='quantity_${pk}'>
+                ${quantity_input}
+            </td>
+            <td id='buttons_${pk}'>
+                ${delete_button}
+            </td>
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var table_entries = '';
+
+    for (var idx = 0; idx < bom_items.length; idx++) {
+        var bom_item = bom_items[idx];
+
+        var required = bom_item.required || 0;
+        var allocated = bom_item.allocated || 0;
+        var remaining = required - allocated;
+
+        if (remaining < 0) {
+            remaining = 0;
+        }
+
+        table_entries += renderBomItemRow(bom_item, remaining);
+    }
+
+    if (bom_items.length == 0) {
+
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
+        );
+
+        return;
+    }
+
+    var html = ``;
+
+    // Render a "take from" input
+    html += constructField(
+        'take_from',
+        {
+            type: 'related field',
+            label: '{% trans "Source Location" %}',
+            help_text: '{% trans "Select source location (leave blank to take from all locations)" %}',
+            required: false,
+        },
+        {},
+    );
+
+    // Create table of parts
+    html += `
+    <table class='table table-striped table-condensed' id='stock-allocation-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Allocated" %}</th>
+                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+              
+
+    constructForm(`/api/build/${build_id}/allocate/`, {
+        method: 'POST',
+        fields: {},
+        preFormContent: html,
+        confirm: true,
+        confirmMessage: '{% trans "Confirm stock allocation" %}',
+        title: '{% trans "Allocate Stock Items to Build Order" %}',
+        afterRender: function(fields, options) {
+
+            var take_from_field = {
+                name: 'take_from',
+                model: 'stocklocation',
+                api_url: '{% url "api-location-list" %}',
+                required: false,
+                type: 'related field',
+                value: source_location,
+                noResults: function(query) {
+                    return '{% trans "No matching stock locations" %}';
+                },
+            };
+
+            // Initialize "take from" field
+            initializeRelatedField(
+                take_from_field,
+                null,
+                options,
+            );
+
+            // Initialize stock item fields
+            bom_items.forEach(function(bom_item) {
+                initializeRelatedField(
+                    {
+                        name: `items_stock_item_${bom_item.pk}`,
+                        api_url: '{% url "api-stock-list" %}',
+                        filters: {
+                            bom_item: bom_item.pk,
+                            in_stock: true,
+                            part_detail: false,
+                            location_detail: true,
+                        },
+                        model: 'stockitem',
+                        required: true,
+                        render_part_detail: false,
+                        render_location_detail: true,
+                        auto_fill: true,
+                        adjustFilters: function(filters) {
+                            // Restrict query to the selected location
+                            var location = getFormFieldValue(
+                                'take_from',
+                                {},
+                                {
+                                    modal: options.modal,
+                                }
+                            );
+
+                            filters.location = location;
+                            filters.cascade = true;
+                            
+                            return filters;
+                        },
+                        noResults: function(query) {
+                            return '{% trans "No matching stock items" %}';
+                        }
+                    },
+                    null,
+                    options,
+                );
+            });
+
+            // Add callback to "clear" button for take_from field
+            addClearCallback(
+                'take_from',
+                take_from_field,
+                options,
+            );
+
+            // Add button callbacks
+            $(options.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(options.modal).find(`#allocation_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+
+            // Extract elements from the form
+            var data = {
+                items: []
+            };
+
+            var item_pk_values = [];
+
+            bom_items.forEach(function(item) {
+
+                var quantity = getFormFieldValue(
+                    `items_quantity_${item.pk}`,
+                    {},
+                    {
+                        modal: opts.modal,
+                    },
+                );
+
+                var stock_item = getFormFieldValue(
+                    `items_stock_item_${item.pk}`,
+                    {},
+                    {
+                        modal: opts.modal,
+                    }
+                );
+
+                if (quantity != null) {
+                    data.items.push({
+                        bom_item: item.pk,
+                        stock_item: stock_item,
+                        quantity: quantity,
+                        output: output_id,
+                    });
+
+                    item_pk_values.push(item.pk);
+                }
+            });
+
+            // Provide nested values
+            opts.nested = {
+                'items': item_pk_values
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        // Hide the modal
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr);
+                            break;
+                        }
+                    }
+                }
+            );
+        },
+    });
+}
+
 
 
 function loadBuildTable(table, options) {

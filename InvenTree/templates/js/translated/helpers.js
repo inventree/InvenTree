@@ -65,7 +65,7 @@ function imageHoverIcon(url) {
 function thumbnailImage(url) {
 
     if (!url) {
-        url = '/static/img/blank_img.png';
+        url = blankImage();
     }
 
     // TODO: Support insertion of custom classes
