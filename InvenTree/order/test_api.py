@@ -251,7 +251,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             expected_code=400
         ).data
 
-        self.assertIn('Line items must be provided', str(data['items']))
+        self.assertIn('Line items must be provided', str(data))
 
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
