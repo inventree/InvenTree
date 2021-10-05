@@ -249,6 +249,14 @@ function newPurchaseOrderFromOrderWizard(e) {
  */
 function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
+    if (line_items.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Line Items" %}',
+            '{% trans "At least one line item must be selected" %}',
+        );
+        return;
+    }
+
     function renderLineItem(line_item, opts={}) {
 
         var pk = line_item.pk;
@@ -343,9 +351,9 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 <th>{% trans "Order Code" %}</th>
                 <th>{% trans "On Order" %}</th>
                 <th>{% trans "Received" %}</th>
-                <th style='min-width: 100px;'>{% trans "Receive" %}</th>
+                <th style='min-width: 50px;'>{% trans "Receive" %}</th>
                 <th>{% trans "Status" %}</th>
-                <th style='min-width: 250px;'>{% trans "Destination" %}</th>
+                <th style='min-width: 350px;'>{% trans "Destination" %}</th>
                 <th></th>
             </tr>
         </thead>
@@ -365,7 +373,39 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         confirmMessage: '{% trans "Confirm receipt of items" %}',
         title: '{% trans "Receive Purchase Order Items" %}',
         afterRender: function(fields, opts) {
-            // TODO
+            // Initialize the "destination" field for each item
+            line_items.forEach(function(item) {
+
+                var pk = item.pk;
+
+                var name = `items_location_${pk}`;
+
+                var field_details = {
+                    name: name,
+                    api_url: '{% url "api-location-list" %}',
+                    filters: {
+
+                    },
+                    type: 'related field',
+                    model: 'stocklocation',
+                    required: false,
+                    auto_fill: false,
+                    value: item.destination,
+                    render_description: false,
+                };
+
+                initializeRelatedField(
+                    field_details,
+                    null,
+                    opts,
+                );
+
+                addClearCallback(
+                    name,
+                    field_details,
+                    opts
+                );
+            });
         },
         onSubmit: function(fields, opts) {
             // TODO
