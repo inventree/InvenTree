@@ -973,7 +973,6 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     </table>
     `;
               
-
     constructForm(`/api/build/${build_id}/allocate/`, {
         method: 'POST',
         fields: {},

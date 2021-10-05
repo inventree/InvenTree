@@ -49,7 +49,7 @@ src="{% static 'img/blank_image.png' %}"
         </button>
         {% elif order.status == PurchaseOrderStatus.PLACED %}
         <button type='button' class='btn btn-default' id='receive-order' title='{% trans "Receive items" %}'>
-            <span class='fas fa-clipboard-check'></span>
+            <span class='fas fa-sign-in-alt'></span>
         </button>
         <button type='button' class='btn btn-default' id='complete-order' title='{% trans "Mark order as complete" %}'>
             <span class='fas fa-check-circle'></span>
@@ -188,6 +188,27 @@ $("#edit-order").click(function() {
 });
 
 $("#receive-order").click(function() {
+
+    // Auto select items which have not been fully allocated
+    var items = $("#po-line-table").bootstrapTable('getData');
+
+    var items_to_receive = [];
+
+    items.forEach(function(item) {
+        if (item.received < item.quantity) {
+            items_to_receive.push(item);
+        }
+    });
+
+    receivePurchaseOrderItems(
+        {{ order.id }},
+        items_to_receive,
+        {
+        }
+    );
+
+    return;
+
     launchModalForm("{% url 'po-receive' order.id %}", {
         reload: true,
         secondary: [

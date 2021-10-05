@@ -12,6 +12,7 @@
     loadTableFilters,
     makeIconBadge,
     purchaseOrderStatusDisplay,
+    receivePurchaseOrderItems,
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
@@ -233,6 +234,145 @@ function newPurchaseOrderFromOrderWizard(e) {
         }
     }); 
 }
+
+
+/**
+ * Receive stock items against a PurchaseOrder
+ * Uses the POReceive API endpoint
+ * 
+ * arguments:
+ * - order_id, ID / PK for the PurchaseOrder instance
+ * - line_items: A list of PurchaseOrderLineItems objects to be allocated
+ * 
+ * options:
+ *  - 
+ */
+function receivePurchaseOrderItems(order_id, line_items, options={}) {
+
+    function renderLineItem(line_item, opts={}) {
+
+        var pk = line_item.pk;
+
+        // Part thumbnail + description
+        var thumb = thumbnailImage(line_item.part_detail.thumbnail);
+
+        // Quantity to Receive
+        var quantity_input = constructField(
+            `items_quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: opts.quantity || 0,
+                title: '{% trans "Quantity to receive" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var destination_input = constructField(
+            `items_location_${pk}`,
+            {
+                type: 'related field',
+                label: '{% trans "Location" %}',
+                required: false,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        // Button to remove the row
+        var delete_button = `<div class='btn-group float-right' role='group'>`;
+
+        delete_button += makeIconButton(
+            'fa-times icon-red',
+            'button-row-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        delete_button += '</div>';
+
+        var html = `
+        <tr id='receive_row_${pk}' class='stock-receive-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${line_item.part_detail.full_name}
+            </td>
+            <td id='sku_${pk}'>
+                ${line_item.supplier_part_detail.SKU}
+            </td>
+            <td id='on_order_${pk}'>
+                ${line_item.quantity}
+            </td>
+            <td id='received_${pk}'>
+                ${line_item.received}
+            </td>
+            <td id='quantity_${pk}'>
+                ${quantity_input}
+            </td>
+            <td id='status_${pk}'>
+                STATUS
+            </td>
+            <td id='desination_${pk}'>
+                ${destination_input}
+            </td>
+            <td id='actions_${pk}'>
+                ${delete_button}
+            </td>
+        </tr>`;
+
+        return html;
+    }
+
+    var table_entries = '';
+
+    line_items.forEach(function(item) {
+        table_entries += renderLineItem(item);
+    });
+
+    var html = ``;
+
+    // Add table
+    html += `
+    <table class='table table-striped table-condensed' id='order-receive-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Order Code" %}</th>
+                <th>{% trans "On Order" %}</th>
+                <th>{% trans "Received" %}</th>
+                <th style='min-width: 100px;'>{% trans "Receive" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th style='min-width: 250px;'>{% trans "Destination" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+
+    constructForm(`/api/order/po/${order_id}/receive/`, {
+        method: 'POST',
+        fields: {
+            location: {},
+        },
+        preFormContent: html,
+        confirm: true,
+        confirmMessage: '{% trans "Confirm receipt of items" %}',
+        title: '{% trans "Receive Purchase Order Items" %}',
+        afterRender: function(fields, opts) {
+            // TODO
+        },
+        onSubmit: function(fields, opts) {
+            // TODO
+        }
+    });
+}
+
 
 function editPurchaseOrderLineItem(e) {
 
@@ -618,7 +758,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     }
 
                     if (options.allow_receive && row.received < row.quantity) {
-                        html += makeIconButton('fa-clipboard-check', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
                     }
         
                     html += `</div>`;
