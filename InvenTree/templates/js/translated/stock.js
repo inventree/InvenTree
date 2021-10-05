@@ -4,15 +4,12 @@
 
 /* globals
     attachSelect,
-    attachToggle,
-    blankImage,
     enableField,
     clearField,
     clearFieldOptions,
     closeModal,
+    constructField,
     constructFormBody,
-    constructNumberInput,
-    createNewModal,
     getFormFieldValue,
     global_settings,
     handleFormErrors,
@@ -326,7 +323,7 @@ function adjustStock(action, items, options={}) {
     var extraFields = {};
 
     if (specifyLocation) {
-        extraFields.location =  {};
+        extraFields.location = {};
     }
 
     if (action != 'delete') {
