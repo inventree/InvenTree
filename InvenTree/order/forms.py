@@ -80,22 +80,6 @@ class ShipSalesOrderForm(HelperForm):
         ]
 
 
-class ReceivePurchaseOrderForm(HelperForm):
-
-    location = TreeNodeChoiceField(
-        queryset=StockLocation.objects.all(),
-        required=False,
-        label=_("Destination"),
-        help_text=_("Set all received parts listed above to this location (if left blank, use \"Destination\" column value in above table)"),
-    )
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            "location",
-        ]
-
-
 class AllocateSerialsToSalesOrderForm(forms.Form):
     """
     Form for assigning stock to a sales order,

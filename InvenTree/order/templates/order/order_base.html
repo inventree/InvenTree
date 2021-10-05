@@ -204,22 +204,11 @@ $("#receive-order").click(function() {
         {{ order.id }},
         items_to_receive,
         {
+            success: function() {
+                $("#po-line-table").bootstrapTable('refresh');
+            }
         }
     );
-
-    return;
-
-    launchModalForm("{% url 'po-receive' order.id %}", {
-        reload: true,
-        secondary: [
-            {
-                field: 'location',
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-                url: "{% url 'stock-location-create' %}",
-            },
-        ]
-    });
 });
 
 $("#complete-order").click(function() {

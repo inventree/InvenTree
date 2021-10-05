@@ -225,6 +225,13 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         required=True,
     )
 
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
     status = serializers.ChoiceField(
         choices=list(StockStatus.items()),
         default=StockStatus.OK,
@@ -246,7 +253,7 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         # Ignore empty barcode values
         if not barcode or barcode.strip() == '':
-            return
+            return None
 
         if stock.models.StockItem.objects.filter(uid=barcode).exists():
             raise ValidationError(_('Barcode is already in use'))
@@ -284,10 +291,28 @@ class POReceiveSerializer(serializers.Serializer):
 
         items = data.get('items', [])
 
+        location = data.get('location', None)
+
         if len(items) == 0:
-            raise ValidationError({
-                'items': _('Line items must be provided')
-            })
+            raise ValidationError(_('Line items must be provided'))
+
+        # Check if the location is not specified for any particular item
+        for item in items:
+
+            line = item['line_item']
+
+            if not item.get('location', None):
+                # If a global location is specified, use that
+                item['location'] = location
+
+            if not item['location']:
+                # The line item specifies a location?
+                item['location'] = line.get_destination()
+
+            if not item['location']:
+                raise ValidationError({
+                    'location': _("Destination location must be specified"),
+                })
 
         # Ensure barcodes are unique
         unique_barcodes = set()
@@ -312,24 +337,6 @@ class POReceiveSerializer(serializers.Serializer):
 
         items = data['items']
         location = data.get('location', None)
-
-        # Check if the location is not specified for any particular item
-        for item in items:
-
-            line = item['line_item']
-
-            if not item.get('location', None):
-                # If a global location is specified, use that
-                item['location'] = location
-
-            if not item['location']:
-                # The line item specifies a location?
-                item['location'] = line.get_destination()
-
-            if not item['location']:
-                raise ValidationError({
-                    'location': _("Destination location must be specified"),
-                })
 
         # Now we can actually receive the items into stock
         with transaction.atomic():

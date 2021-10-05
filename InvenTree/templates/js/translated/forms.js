@@ -1515,6 +1515,7 @@ function initializeChoiceField(field, fields, options) {
     select.select2({
         dropdownAutoWidth: false,
         dropdownParent: $(options.modal),
+        width: '100%',
     });
 }
 
