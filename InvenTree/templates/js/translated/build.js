@@ -614,8 +614,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                             var url = '';
 
-                            if (row.serial && row.quantity == 1) {
-                                text = `{% trans "Serial Number" %}: ${row.serial}`;
+
+                            var serial = row.serial;
+
+                            if (row.stock_item_detail) {
+                                serial = row.stock_item_detail.serial;
+                            }
+
+                            if (serial && row.quantity == 1) {
+                                text = `{% trans "Serial Number" %}: ${serial}`;
                             } else {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
                             }

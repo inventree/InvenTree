@@ -236,6 +236,7 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         help_text=_('Unique identifier field'),
         default='',
         required=False,
+        allow_blank=True,
     )
 
     def validate_barcode(self, barcode):
