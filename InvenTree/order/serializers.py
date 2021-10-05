@@ -329,6 +329,9 @@ class POReceiveSerializer(serializers.Serializer):
         return data
 
     def save(self):
+        """
+        Perform the actual database transaction to receive purchase order items
+        """
 
         data = self.validated_data
 
@@ -342,10 +345,13 @@ class POReceiveSerializer(serializers.Serializer):
         with transaction.atomic():
             for item in items:
 
+                # Select location
+                loc = item.get('location', None) or item['line_item'].get_destination() or location
+
                 try:
                     order.receive_line_item(
                         item['line_item'],
-                        item['location'],
+                        loc,
                         item['quantity'],
                         request.user,
                         status=item['status'],

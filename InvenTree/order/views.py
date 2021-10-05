@@ -26,7 +26,7 @@ from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
-from stock.models import StockItem, StockLocation
+from stock.models import StockItem
 from part.models import Part
 
 from common.models import InvenTreeSetting
@@ -42,7 +42,7 @@ from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
-from InvenTree.status_codes import PurchaseOrderStatus, StockStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 
 
 logger = logging.getLogger("inventree")

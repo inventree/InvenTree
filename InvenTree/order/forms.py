@@ -8,8 +8,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from mptt.fields import TreeNodeChoiceField
-
 from InvenTree.forms import HelperForm
 from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
 
@@ -19,7 +17,6 @@ from common.forms import MatchItemForm
 
 import part.models
 
-from stock.models import StockLocation
 from .models import PurchaseOrder
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
