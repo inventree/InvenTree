@@ -665,6 +665,18 @@ function loadPurchaseOrderTable(table, options) {
  */
 function loadPurchaseOrderLineItemTable(table, options={}) {
 
+    options.params = options.params || {};
+
+    var filters = loadTableFilters('purchaseorderlineitem');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    var target = options.filter_target || '#filter-list-purchase-order-lines';
+
+    setupFilterList('purchaseorderlineitem', $(table), target);
+
     function setupCallbacks() {
         if (options.allow_edit) {
             $(table).find('.button-line-edit').click(function() {
