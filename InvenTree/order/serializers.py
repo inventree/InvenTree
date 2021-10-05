@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField, ExpressionWrapper, F
 
@@ -300,6 +300,46 @@ class POReceiveSerializer(serializers.Serializer):
                     unique_barcodes.add(barcode)
 
         return data
+
+    def save(self):
+
+        data = self.validated_data
+
+        order = self.context['order']
+
+        items = data['items']
+        location = data.get('location', None)
+
+        # Check if the location is not specified for any particular item
+        for item in items:
+
+            line = item['line_item']
+
+            if not item.get('location', None):
+                # If a global location is specified, use that
+                item['location'] = location
+
+            if not item['location']:
+                # The line item specifies a location?
+                item['location'] = line.get_destination()
+
+            if not item['location']:
+                raise ValidationError({
+                    'location': _("Destination location must be specified"),
+                })
+
+        # Now we can actually receive the items into stock
+        with transaction.atomic():
+            for item in items:
+                order.receive_line_item(
+                    item['line_item'],
+                    item['location'],
+                    item['quantity'],
+                    self.request.user,
+                    status=item['status'],
+                    barcode=item.get('barcode', ''),
+                )
+
 
     class Meta:
         fields = [

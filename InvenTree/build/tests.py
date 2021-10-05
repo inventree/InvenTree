@@ -172,7 +172,7 @@ class TestBuildAPI(APITestCase):
 
         # Filter by 'part' status
         response = self.client.get(url, {'part': 25}, format='json')
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 1)
 
         # Filter by an invalid part
         response = self.client.get(url, {'part': 99999}, format='json')
