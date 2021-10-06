@@ -1153,7 +1153,36 @@ function showAllocationSubTable(index, row, element, options) {
     // Is the parent SalesOrder pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
+    // Function to reload the allocation table
+    function reloadTable() {
+        table.bootstrapTable('refresh');
+    }
+
+    function setupCallbacks() {
+        // Add callbacks for 'edit' buttons
+        table.find('.button-allocation-edit').click(function() {
+
+            var pk = $(this).attr('pk');
+
+            // TODO: Migrate to API forms
+            launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
+                success: reloadTable,
+            });
+        });
+
+        // Add callbacks for 'delete' buttons
+        table.find(".button-allocation-delete").click(function() {
+            var pk = $(this).attr('pk');
+            
+            // TODO: Migrate to API forms
+            launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
+                success: reloadTable, 
+            });
+        });
+    }
+
     table.bootstrapTable({
+        onPostBody: setupCallbacks,
         data: row.allocations,
         showHeader: false,
         columns: [
@@ -1213,27 +1242,6 @@ function showAllocationSubTable(index, row, element, options) {
             },
         },
         ],
-    });
-
-    // Add callbacks for 'edit' buttons
-    table.find(".button-allocation-edit").click(function() {
-
-        var pk = $(this).attr('pk');
-
-        // TODO: Migrate to API forms
-        launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
-            success: reloadTable,
-        });
-    });
-
-    // Add callbacks for 'delete' buttons
-    table.find(".button-allocation-delete").click(function() {
-        var pk = $(this).attr('pk');
-        
-        // TODO: Migrate to API forms
-        launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
-            success: reloadTable, 
-        });
     });
 }
 
