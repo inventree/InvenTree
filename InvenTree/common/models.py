@@ -648,7 +648,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        # TODO: Remove this setting in future, new API forms make this not useful
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),
