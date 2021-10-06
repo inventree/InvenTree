@@ -1455,13 +1455,21 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return formatter.format(total);
             }
         },
-        {
-            field: 'stock',
-            title: '{% trans "In Stock" %}',
-            formatter: function(value, row) {
-                return row.part_detail.stock;
+    ];
+
+    if (pending) {
+        columns.push(
+            {
+                field: 'stock',
+                title: '{% trans "In Stock" %}',
+                formatter: function(value, row) {
+                    return row.part_detail.stock;
+                },
             },
-        },
+        );
+    }
+
+    columns.push(
         {
             field: 'allocated',
             title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
@@ -1492,7 +1500,9 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'notes',
             title: '{% trans "Notes" %}',
         },
-        // TODO: Re-introduce the "PO" field, once it is fixed
+    );
+
+    // TODO: Re-introduce the "PO" field, once it is fixed
         /*
         {
             field: 'po',
@@ -1514,7 +1524,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
             }
         },
         */
-    ];
 
     if (pending) {
         columns.push({
@@ -1553,9 +1562,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return html;
             }
         });
-    } else {
-        // Remove the "in stock" column
-        delete columns['stock'];
     }
 
     function reloadTable() {
