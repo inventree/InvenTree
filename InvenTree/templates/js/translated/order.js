@@ -580,14 +580,12 @@ function loadPurchaseOrderTable(table, options) {
             return '{% trans "No purchase orders found" %}';
         },
         columns: [
-            /*
             {
                 title: '',
                 visible: true,
                 checkbox: true,
                 switchable: false,
             },
-            */
             {
                 field: 'reference',
                 title: '{% trans "Purchase Order" %}',
@@ -1160,7 +1158,6 @@ function showAllocationSubTable(index, row, element, options) {
         showHeader: false,
         columns: [
         {
-            width: '50%',
             field: 'allocated',
             title: '{% trans "Quantity" %}',
             formatter: function(value, row, index, field) {
@@ -1179,12 +1176,24 @@ function showAllocationSubTable(index, row, element, options) {
             field: 'location',
             title: '{% trans "Location" %}',
             formatter: function(value, row, index, field) {
-                return renderLink(row.location_path, `/stock/location/${row.location}/`);
+
+                // Location specified
+                if (row.location) {
+                    return renderLink(
+                        row.location_detail.pathstring || '{% trans "Location" %}',
+                        `/stock/location/${row.location}/`
+                    );
+                } else {
+                    return `<i>{% trans "Stock location not specified" %}`;
+                }
             },
         },
+        // TODO: ?? What is 'po' field all about?
+        /*
         {
             field: 'po'
         },
+        */
         {
             field: 'buttons',
             title: '{% trans "Actions" %}',
@@ -1332,16 +1341,19 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     // Table columns to display
     var columns = [
+        /*
         {
             checkbox: true,
             visible: true,
             switchable: false,
         },
+        */
         {
             sortable: true,
             sortName: 'part__name',
             field: 'part',
             title: '{% trans "Part" %}',
+            switchable: false,
             formatter: function(value, row, index, field) {
                 if (row.part) {
                     return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
@@ -1356,7 +1368,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
         {
             sortable: true,
             field: 'reference',
-            title: '{% trans "Reference" %}'
+            title: '{% trans "Reference" %}',
+            switchable: false,
         },
         {
             sortable: true,
@@ -1369,6 +1382,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                   return sum + i
                 }, 0)
             },
+            switchable: false,
         },
         {
             sortable: true,
@@ -1402,11 +1416,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
             title: '{% trans "In Stock" %}',
             formatter: function(value, row) {
                 return row.part_detail.stock;
-            }
+            },
         },
         {
             field: 'allocated',
             title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
+            switchable: false,
             formatter: function(value, row, index, field) {
 
                 var quantity = pending ? row.allocated : row.fulfilled;
@@ -1433,6 +1448,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'notes',
             title: '{% trans "Notes" %}',
         },
+        // TODO: Re-introduce the "PO" field, once it is fixed
+        /*
         {
             field: 'po',
             title: '{% trans "PO" %}',
@@ -1452,6 +1469,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return `<div>` + po_name + `</div>`;
             }
         },
+        */
     ];
 
     if (pending) {
@@ -1633,23 +1651,23 @@ function loadSalesOrderLineItemTable(table, options={}) {
         url: options.url,
         showFooter: true,
         uniqueId: 'pk',
-        // detailView: show_detail,
-        // detailViewByClick: show_detail,
-        // detailFilter: function(index, row) {
-        //     if (pending) {
-        //         // Order is pending
-        //         return row.allocated > 0;
-        //     } else {
-        //         return row.fulfilled > 0;
-        //     }
-        // },
-        // detailFormatter: function(index, row, element) {
-        //     if (pending) {
-        //         return showAllocationSubTable(index, row, element, options);
-        //     } else {
-        //         return showFulfilledSubTable(index, row, element, options);
-        //     }
-        // },
+        detailView: show_detail,
+        detailViewByClick: show_detail,
+        detailFilter: function(index, row) {
+            if (pending) {
+                // Order is pending
+                return row.allocated > 0;
+            } else {
+                return row.fulfilled > 0;
+            }
+        },
+        detailFormatter: function(index, row, element) {
+            if (pending) {
+                return showAllocationSubTable(index, row, element, options);
+            } else {
+                return showFulfilledSubTable(index, row, element, options);
+            }
+        },
         columns: columns,
     });
 }
