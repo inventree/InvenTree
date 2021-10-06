@@ -1146,8 +1146,6 @@ function showAllocationSubTable(index, row, element, options) {
 
     element.html(html);
 
-    var lineItem = row;
-
     var table = $(`#allocation-table-${row.pk}`);
 
     // Is the parent SalesOrder pending?
@@ -1171,7 +1169,7 @@ function showAllocationSubTable(index, row, element, options) {
         });
 
         // Add callbacks for 'delete' buttons
-        table.find(".button-allocation-delete").click(function() {
+        table.find('.button-allocation-delete').click(function() {
             var pk = $(this).attr('pk');
             
             // TODO: Migrate to API forms
@@ -1186,61 +1184,61 @@ function showAllocationSubTable(index, row, element, options) {
         data: row.allocations,
         showHeader: false,
         columns: [
-        {
-            field: 'allocated',
-            title: '{% trans "Quantity" %}',
-            formatter: function(value, row, index, field) {
-                var text = '';
+            {
+                field: 'allocated',
+                title: '{% trans "Quantity" %}',
+                formatter: function(value, row, index, field) {
+                    var text = '';
 
-                if (row.serial != null && row.quantity == 1) {
-                    text = `{% trans "Serial Number" %}: ${row.serial}`;
-                } else {
-                    text = `{% trans "Quantity" %}: ${row.quantity}`;
-                }
+                    if (row.serial != null && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    }
 
-                return renderLink(text, `/stock/item/${row.item}/`);
+                    return renderLink(text, `/stock/item/${row.item}/`);
+                },
             },
-        },
-        {
-            field: 'location',
-            title: '{% trans "Location" %}',
-            formatter: function(value, row, index, field) {
+            {
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row, index, field) {
 
-                // Location specified
-                if (row.location) {
-                    return renderLink(
-                        row.location_detail.pathstring || '{% trans "Location" %}',
-                        `/stock/location/${row.location}/`
-                    );
-                } else {
-                    return `<i>{% trans "Stock location not specified" %}`;
-                }
+                    // Location specified
+                    if (row.location) {
+                        return renderLink(
+                            row.location_detail.pathstring || '{% trans "Location" %}',
+                            `/stock/location/${row.location}/`
+                        );
+                    } else {
+                        return `<i>{% trans "Stock location not specified" %}`;
+                    }
+                },
             },
-        },
-        // TODO: ?? What is 'po' field all about?
-        /*
-        {
-            field: 'po'
-        },
-        */
-        {
-            field: 'buttons',
-            title: '{% trans "Actions" %}',
-            formatter: function(value, row, index, field) {
-
-                var html = `<div class='btn-group float-right' role='group'>`;
-                var pk = row.pk;
-
-                if (pending) {
-                    html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
-                }
-
-                html += "</div>";
-
-                return html;
+            // TODO: ?? What is 'po' field all about?
+            /*
+            {
+                field: 'po'
             },
-        },
+            */
+            {
+                field: 'buttons',
+                title: '{% trans "Actions" %}',
+                formatter: function(value, row, index, field) {
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+                    var pk = row.pk;
+
+                    if (pending) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                    }
+
+                    html += "</div>";
+
+                    return html;
+                },
+            },
         ],
     });
 }
@@ -1265,10 +1263,8 @@ function showFulfilledSubTable(index, row, element, options) {
 
     element.html(html);
 
-    var lineItem = row;
-
     $(`#${id}`).bootstrapTable({
-        url: "{% url 'api-stock-list' %}",
+        url: '{% url "api-stock-list" %}',
         queryParams: {
             part: row.part,
             sales_order: options.order,
@@ -1292,9 +1288,11 @@ function showFulfilledSubTable(index, row, element, options) {
                     return renderLink(text, `/stock/item/${row.pk}/`);
                 },
             },
+            /*
             {
                 field: 'po'
             },
+            */
         ],
     });
 }
@@ -1313,12 +1311,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log("ERROR: function called without order ID");
+        console.log('ERROR: function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log("ERROR: function called without order status");
+        console.log('ERROR: function called without order status');
         return;
     }
 
@@ -1405,18 +1403,33 @@ function loadSalesOrderLineItemTable(table, options={}) {
             title: '{% trans "Total price" %}',
             formatter: function(value, row) {
                 var total = row.sale_price * row.quantity;
-                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.sale_price_currency});
-                return formatter.format(total)
+                var formatter = new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency',
+                        currency: row.sale_price_currency
+                    }
+                );
+                return formatter.format(total);
             },
             footerFormatter: function(data) {
                 var total = data.map(function (row) {
-                  return +row['sale_price']*row['quantity']
+                    return +row['sale_price'] * row['quantity'];
                 }).reduce(function (sum, i) {
-                  return sum + i
-                }, 0)
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency)  || 'USD';
-                var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: currency});
-                return formatter.format(total)
+                    return sum + i;
+                }, 0);
+
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
+                
+                var formatter = new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency', 
+                        currency: currency
+                    }
+                );
+                
+                return formatter.format(total);
               }
         },
         {
@@ -1618,9 +1631,11 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-buy').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm("{% url 'order-parts' %}", {
+            launchModalForm('{% url "order-parts" %}', {
                 data: {
-                    parts: [pk],
+                    parts: [
+                        pk
+                    ],
                 },
             });
         });
@@ -1632,15 +1647,19 @@ function loadSalesOrderLineItemTable(table, options={}) {
             var row = $(table).bootstrapTable('getData')[idx];
 
             launchModalForm(
-                "{% url 'line-pricing' %}",
+                '{% url "line-pricing" %}',
                 {
                     submit_text: '{% trans "Calculate price" %}',
                     data: {
                         line_item: pk,
                         quantity: row.quantity,
                     },
-                    buttons: [{name: 'update_price',
-                        title: '{% trans "Update Unit Price" %}'},],
+                    buttons: [
+                        {
+                            name: 'update_price',
+                            title: '{% trans "Update Unit Price" %}'
+                        },
+                    ],
                     success: reloadTable,
                 }
             );
