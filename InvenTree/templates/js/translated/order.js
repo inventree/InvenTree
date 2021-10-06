@@ -1153,11 +1153,6 @@ function showAllocationSubTable(index, row, element, options) {
     // Is the parent SalesOrder pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
-    // Function to reload the allocation table
-    function reloadTable() {
-        table.bootstrapTable('refresh');
-    }
-
     function setupCallbacks() {
         // Add callbacks for 'edit' buttons
         table.find('.button-allocation-edit').click(function() {
@@ -1501,29 +1496,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
             title: '{% trans "Notes" %}',
         },
     );
-
-    // TODO: Re-introduce the "PO" field, once it is fixed
-        /*
-        {
-            field: 'po',
-            title: '{% trans "PO" %}',
-            formatter: function(value, row, index, field) {
-                var po_name = "";
-                if (row.allocated) {
-                    row.allocations.forEach(function(allocation) {
-                        if (allocation.po != po_name) {
-                            if (po_name) {
-                                po_name = "-";
-                            } else {
-                                po_name = allocation.po
-                            }
-                        }
-                    })
-                }
-                return `<div>` + po_name + `</div>`;
-            }
-        },
-        */
 
     if (pending) {
         columns.push({
