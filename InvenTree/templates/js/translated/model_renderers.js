@@ -162,7 +162,7 @@ function renderPart(name, data, parameters, options) {
     var stock = '';
 
     // Display available part quantity
-    if (global_settings.PART_SHOW_QUANTITY_IN_FORMS) {
+    if (user_settings.PART_SHOW_QUANTITY_IN_FORMS) {
         if (data.in_stock == 0) {
             stock = `<span class='label-form label-red'>{% trans "No Stock" %}</span>`;
         } else {
