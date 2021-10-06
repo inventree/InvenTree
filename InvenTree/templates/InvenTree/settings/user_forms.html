@@ -1,0 +1,22 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}user-forms{% endblock %}
+
+{% block heading %}
+{% trans "Form Settings" %}
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+    <table class='table table-striped table-condensed'>
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="PART_SHOW_QUANTITY_IN_FORMS" icon="fa-hashtag" user_setting=True %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

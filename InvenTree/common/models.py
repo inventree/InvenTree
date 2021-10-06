@@ -648,14 +648,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        # TODO: Remove this setting in future, new API forms make this not useful
-        'PART_SHOW_QUANTITY_IN_FORMS': {
-            'name': _('Show Quantity in Forms'),
-            'description': _('Display available part quantity in some forms'),
-            'default': True,
-            'validator': bool,
-        },
-
         'PART_SHOW_IMPORT': {
             'name': _('Show Import in Views'),
             'description': _('Display the import wizard in some part views'),
@@ -969,6 +961,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Number of results to show in search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
+        },
+
+        'PART_SHOW_QUANTITY_IN_FORMS': {
+            'name': _('Show Quantity in Forms'),
+            'description': _('Display available part quantity in some forms'),
+            'default': True,
+            'validator': bool,
         },
     }
 
