@@ -216,6 +216,26 @@ function renderOwner(name, data, parameters, options) {
 }
 
 
+// Renderer for "SalesOrder" model
+// eslint-disable-next-line no-unused-vars
+function renderSalesOrder(name, data, parameters, options) {
+    var html = `<span>${data.reference}</span>`;
+
+    if (data.description) {
+        html += ` - <i>${data.description}</i>`;
+    }
+
+    html += `
+    <span class='float-right'>
+        <small>
+            {% trans "Order ID" %}: ${data.pk}
+            </small>
+    </span>`;
+
+    return html;
+}
+
+
 // Renderer for "PartCategory" model
 // eslint-disable-next-line no-unused-vars
 function renderPartCategory(name, data, parameters, options) {

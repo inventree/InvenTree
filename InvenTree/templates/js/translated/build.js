@@ -43,7 +43,6 @@ function buildFormFields() {
             }
         },
         sales_order: {
-            hidden: true,
         },
         batch: {},
         target_date: {},
