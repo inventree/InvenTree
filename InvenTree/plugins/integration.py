@@ -261,6 +261,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     AUTHOR = None
     PUBLISH_DATE = None
     VERSION = None
+    WEBSITE = None
 
     def __init__(self):
         super().__init__()
@@ -313,6 +314,12 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     def version(self):
         """returns version of plugin"""
         name = getattr(self, 'VERSION', None)
+        return name
+
+    @property
+    def website(self):
+        """returns website of plugin"""
+        name = getattr(self, 'WEBSITE', None)
         return name
 
     # mixins

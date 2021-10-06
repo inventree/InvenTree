@@ -40,6 +40,10 @@
                 </a>
                 {% endfor %}
                 {% endif %}
+
+                {% if plugin.website %}
+                <a href="{{ plugin.website }}"><i class="fas fa-globe"></i></a>
+                {% endif %}
             </td>
             <td>{{ plugin.author }}</td>
             <td>{{ plugin.pub_date }}</td>

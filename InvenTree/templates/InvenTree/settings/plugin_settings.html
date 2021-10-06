@@ -37,6 +37,13 @@
                 <td>{% trans "Version" %}</td>
                 <td>{{ plugin.version }}{% include "clip.html" %}</td>
             </tr>
+            {% if plugin.website %}
+            <tr>
+                <td><span class='fas fa-globe'></span></td>
+                <td>{% trans "Website" %}</td>
+                <td>{{ plugin.website }}{% include "clip.html" %}</td>
+            </tr>
+            {% endif %}
         </table>
 
         <p>{% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}</p>

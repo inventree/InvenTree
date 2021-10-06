@@ -136,6 +136,7 @@ class IntegrationPluginBaseTests(TestCase):
             PLUGIN_TITLE = 'a titel'
             PUBLISH_DATE = "1111-11-11"
             VERSION = '1.2.3a'
+            WEBSITE = 'http://aa.bb/cc'
 
         self.plugin_name = NameIntegrationPluginBase()
 
@@ -163,3 +164,8 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin.version, None)
         self.assertEqual(self.plugin_simple.version, None)
         self.assertEqual(self.plugin_name.version, '1.2.3a')
+
+        # website
+        self.assertEqual(self.plugin.website, None)
+        self.assertEqual(self.plugin_simple.website, None)
+        self.assertEqual(self.plugin_name.website, 'http://aa.bb/cc')
