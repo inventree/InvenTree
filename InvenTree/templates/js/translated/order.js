@@ -1631,7 +1631,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         location_detail: true,
                         in_stock: true,
                         part: line_item.part,
-                        // TODO: Exclude items already allocated to this sales order
+                        exclude_so_allocation: options.order,
                     } 
                 },
                 quantity: {
