@@ -33,6 +33,7 @@
         <tr>
             <td>{{ plugin.human_name }}<span class="text-muted"> - {{plugin_key}}</span>
                 {% define plugin.registered_mixins as mixin_list %}
+
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                 <a class='nav-toggle' id='select-plugin-{{plugin_key}}'>
