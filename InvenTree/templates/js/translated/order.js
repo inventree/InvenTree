@@ -1431,7 +1431,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 );
                 
                 return formatter.format(total);
-              }
+            }
         },
         {
             field: 'stock',
