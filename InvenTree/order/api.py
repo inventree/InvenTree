@@ -631,6 +631,15 @@ class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SOLineItemSerializer
 
 
+class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detali view of a SalesOrderAllocation object
+    """
+
+    queryset = SalesOrderAllocation.objects.all()
+    serializer_class = SalesOrderAllocationSerializer
+
+
 class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
