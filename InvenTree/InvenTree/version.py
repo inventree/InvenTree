@@ -104,7 +104,7 @@ def inventreeDocsVersion():
     Return the version string matching the latest documentation.
     
     Development -> "latest"
-    Release -> "major.minor"
+    Release -> "major.minor.sub" e.g. "0.5.2"
     
     """
 
@@ -113,7 +113,7 @@ def inventreeDocsVersion():
     else:
         major, minor, patch = inventreeVersionTuple()
 
-        return f"{major}.{minor}"
+        return f"{major}.{minor}.{patch}"
 
 
 def isInvenTreeUpToDate():
