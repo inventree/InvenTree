@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 09:54+0000\n"
+"POT-Creation-Date: 2021-10-06 10:04+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
@@ -2506,8 +2506,8 @@ msgstr ""
 msgid "Customer"
 msgstr ""
 
-#: company/templates/company/company_base.html:193
-#: part/templates/part/part_base.html:418
+#: company/templates/company/company_base.html:199
+#: part/templates/part/part_base.html:424
 msgid "Upload Image"
 msgstr ""
 
@@ -4744,8 +4744,8 @@ msgid "Building"
 msgstr ""
 
 #: part/templates/part/part_base.html:223
-#: part/templates/part/part_base.html:525
-#: part/templates/part/part_base.html:551
+#: part/templates/part/part_base.html:531
+#: part/templates/part/part_base.html:557
 msgid "Show Part Details"
 msgstr ""
 
@@ -4753,16 +4753,16 @@ msgstr ""
 msgid "Latest Serial Number"
 msgstr ""
 
-#: part/templates/part/part_base.html:396 part/templates/part/prices.html:144
+#: part/templates/part/part_base.html:402 part/templates/part/prices.html:144
 msgid "Calculate"
 msgstr ""
 
-#: part/templates/part/part_base.html:439
+#: part/templates/part/part_base.html:445
 msgid "No matching images found"
 msgstr ""
 
-#: part/templates/part/part_base.html:520
-#: part/templates/part/part_base.html:545
+#: part/templates/part/part_base.html:526
+#: part/templates/part/part_base.html:551
 msgid "Hide Part Details"
 msgstr ""
 
