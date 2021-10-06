@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 10:04+0000\n"
-"PO-Revision-Date: 2021-10-06 10:23\n"
+"POT-Creation-Date: 2021-10-06 11:41+0000\n"
+"PO-Revision-Date: 2021-10-06 11:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -118,8 +118,8 @@ msgstr "Kommentar"
 msgid "File comment"
 msgstr "Datei-Kommentar"
 
-#: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:993
-#: common/models.py:994 part/models.py:2055
+#: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:992
+#: common/models.py:993 part/models.py:2055
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1686
 msgid "User"
@@ -551,7 +551,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: build/forms.py:48 build/forms.py:90 build/models.py:1281
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:34 common/models.py:1025
+#: build/templates/build/detail.html:34 common/models.py:1024
 #: company/forms.py:42 company/templates/company/supplier_part.html:226
 #: order/forms.py:101 order/forms.py:123 order/models.py:720
 #: order/models.py:982 order/templates/order/order_wizard/match_parts.html:30
@@ -681,8 +681,8 @@ msgstr "Bauauftrag"
 #: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:50
 #: part/templates/part/navbar.html:53 templates/InvenTree/index.html:229
 #: templates/InvenTree/search.html:171
-#: templates/InvenTree/settings/navbar.html:101
-#: templates/InvenTree/settings/navbar.html:103 users/models.py:44
+#: templates/InvenTree/settings/navbar.html:107
+#: templates/InvenTree/settings/navbar.html:109 users/models.py:44
 msgid "Build Orders"
 msgstr "Bauaufträge"
 
@@ -1541,7 +1541,7 @@ msgstr "{name.title()} Datei"
 msgid "Select {name} file to upload"
 msgstr "{name} Datei zum Hochladen auswählen"
 
-#: common/models.py:308 common/models.py:839 common/models.py:986
+#: common/models.py:308 common/models.py:831 common/models.py:985
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
@@ -1743,392 +1743,392 @@ msgstr "Virtuell"
 msgid "Parts are virtual by default"
 msgstr "Teile sind grundsätzlich virtuell"
 
-#: common/models.py:653
-msgid "Show Quantity in Forms"
-msgstr "zeige Bestand in Eingabemasken"
-
-#: common/models.py:654
-msgid "Display available part quantity in some forms"
-msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
-
-#: common/models.py:660
+#: common/models.py:652
 msgid "Show Import in Views"
 msgstr "Import in Ansichten anzeigen"
 
-#: common/models.py:661
+#: common/models.py:653
 msgid "Display the import wizard in some part views"
 msgstr "Importassistent in einigen Teil-Ansichten anzeigen"
 
-#: common/models.py:667
+#: common/models.py:659
 msgid "Show Price in Forms"
 msgstr "Preis in Formularen anzeigen"
 
-#: common/models.py:668
+#: common/models.py:660
 msgid "Display part price in some forms"
 msgstr "Teilpreis in einigen Formularen anzeigen"
 
-#: common/models.py:674
+#: common/models.py:666
 msgid "Show related parts"
 msgstr "Verwandte Teile anzeigen"
 
-#: common/models.py:675
+#: common/models.py:667
 msgid "Display related parts for a part"
 msgstr "Verwandte Teile eines Teils anzeigen"
 
-#: common/models.py:681
+#: common/models.py:673
 msgid "Create initial stock"
 msgstr "Ausgangsbestand erstellen"
 
-#: common/models.py:682
+#: common/models.py:674
 msgid "Create initial stock on part creation"
 msgstr "Ausgangsbestand beim Erstellen von Teilen erstellen"
 
-#: common/models.py:688
+#: common/models.py:680
 msgid "Internal Prices"
 msgstr "Interne Preise"
 
-#: common/models.py:689
+#: common/models.py:681
 msgid "Enable internal prices for parts"
 msgstr "Interne Preise für Teile aktivieren"
 
-#: common/models.py:695
+#: common/models.py:687
 msgid "Internal Price as BOM-Price"
 msgstr "Interner Preis als Stückliste-Preis"
 
-#: common/models.py:696
+#: common/models.py:688
 msgid "Use the internal price (if set) in BOM-price calculations"
 msgstr "Interner Preis (falls vorhanden) in Stücklisten-Preisberechnungen verwenden"
 
-#: common/models.py:702 templates/stats.html:25
+#: common/models.py:694 templates/stats.html:25
 msgid "Debug Mode"
 msgstr "Entwickler-Modus"
 
-#: common/models.py:703
+#: common/models.py:695
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "Berichte im Entwickler-Modus generieren (als HTML)"
 
-#: common/models.py:709
+#: common/models.py:701
 msgid "Page Size"
 msgstr "Seitengröße"
 
-#: common/models.py:710
+#: common/models.py:702
 msgid "Default page size for PDF reports"
 msgstr "Standardseitenformat für PDF-Bericht"
 
-#: common/models.py:720
+#: common/models.py:712
 msgid "Test Reports"
 msgstr "Test-Berichte"
 
-#: common/models.py:721
+#: common/models.py:713
 msgid "Enable generation of test reports"
 msgstr "Erstellung von Test-Berichten aktivieren"
 
-#: common/models.py:727
+#: common/models.py:719
 msgid "Stock Expiry"
 msgstr "Bestands-Ablauf"
 
-#: common/models.py:728
+#: common/models.py:720
 msgid "Enable stock expiry functionality"
 msgstr "Ablaufen von Bestand ermöglichen"
 
-#: common/models.py:734
+#: common/models.py:726
 msgid "Sell Expired Stock"
 msgstr "Abgelaufenen Bestand verkaufen"
 
-#: common/models.py:735
+#: common/models.py:727
 msgid "Allow sale of expired stock"
 msgstr "Verkauf von abgelaufenem Bestand erlaubt"
 
-#: common/models.py:741
+#: common/models.py:733
 msgid "Stock Stale Time"
 msgstr "Bestands-Stehzeit"
 
-#: common/models.py:742
+#: common/models.py:734
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "Anzahl an Tagen, an denen Bestand als abgestanden markiert wird, bevor sie ablaufen"
 
-#: common/models.py:744
+#: common/models.py:736
 msgid "days"
 msgstr "Tage"
 
-#: common/models.py:749
+#: common/models.py:741
 msgid "Build Expired Stock"
 msgstr "Abgelaufenen Bestand verbauen"
 
-#: common/models.py:750
+#: common/models.py:742
 msgid "Allow building with expired stock"
 msgstr "Verbauen von abgelaufenen Bestand erlaubt"
 
-#: common/models.py:756
+#: common/models.py:748
 msgid "Stock Ownership Control"
 msgstr "Bestands-Eigentümerkontrolle"
 
-#: common/models.py:757
+#: common/models.py:749
 msgid "Enable ownership control over stock locations and items"
 msgstr "Eigentümerkontrolle für Lagerorte und Teile aktivieren"
 
-#: common/models.py:763
+#: common/models.py:755
 msgid "Group by Part"
 msgstr "Gruppieren nach Teil"
 
-#: common/models.py:764
+#: common/models.py:756
 msgid "Group stock items by part reference in table views"
 msgstr "Bestand in Tabellen anhand von Teil-Referenz gruppieren"
 
-#: common/models.py:770
+#: common/models.py:762
 msgid "Build Order Reference Prefix"
 msgstr "Bauauftrag-Referenz Präfix"
 
-#: common/models.py:771
+#: common/models.py:763
 msgid "Prefix value for build order reference"
 msgstr "Präfix für Bauauftrag-Referenz"
 
-#: common/models.py:776
+#: common/models.py:768
 msgid "Build Order Reference Regex"
 msgstr "Bauauftrag-Referenz RegEx"
 
-#: common/models.py:777
+#: common/models.py:769
 msgid "Regular expression pattern for matching build order reference"
 msgstr "RegEx Muster für die Zuordnung von Bauauftrag-Referenzen"
 
-#: common/models.py:781
+#: common/models.py:773
 msgid "Sales Order Reference Prefix"
 msgstr "Auftrags-Referenz Präfix"
 
-#: common/models.py:782
+#: common/models.py:774
 msgid "Prefix value for sales order reference"
 msgstr "Präfix für Auftrags-Referenz"
 
-#: common/models.py:787
+#: common/models.py:779
 msgid "Purchase Order Reference Prefix"
 msgstr "Bestellungs-Referenz Präfix"
 
-#: common/models.py:788
+#: common/models.py:780
 msgid "Prefix value for purchase order reference"
 msgstr "Präfix für Bestellungs-Referenz"
 
-#: common/models.py:794
+#: common/models.py:786
 msgid "Enable build"
 msgstr "Bauaufträge aktivieren"
 
-#: common/models.py:795
+#: common/models.py:787
 msgid "Enable build functionality in InvenTree interface"
 msgstr ""
 
-#: common/models.py:800
+#: common/models.py:792
 msgid "Enable buy"
 msgstr ""
 
-#: common/models.py:801
+#: common/models.py:793
 msgid "Enable buy functionality in InvenTree interface"
 msgstr ""
 
-#: common/models.py:806
+#: common/models.py:798
 msgid "Enable sell"
 msgstr ""
 
-#: common/models.py:807
+#: common/models.py:799
 msgid "Enable sell functionality in InvenTree interface"
 msgstr ""
 
-#: common/models.py:812
+#: common/models.py:804
 msgid "Enable stock"
 msgstr ""
 
-#: common/models.py:813
+#: common/models.py:805
 msgid "Enable stock functionality in InvenTree interface"
 msgstr ""
 
-#: common/models.py:818
+#: common/models.py:810
 msgid "Enable SO"
 msgstr "Aufträge aktivieren"
 
-#: common/models.py:819
+#: common/models.py:811
 msgid "Enable SO functionality in InvenTree interface"
 msgstr ""
 
-#: common/models.py:824
+#: common/models.py:816
 msgid "Enable PO"
 msgstr "Bestellungen aktivieren"
 
-#: common/models.py:825
+#: common/models.py:817
 msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
-#: common/models.py:850
+#: common/models.py:842
 msgid "Show starred parts"
 msgstr "Markierte Teile anzeigen"
 
-#: common/models.py:851
+#: common/models.py:843
 msgid "Show starred parts on the homepage"
 msgstr "Zeige markierte Teile auf der Startseite"
 
-#: common/models.py:856
+#: common/models.py:848
 msgid "Show latest parts"
 msgstr "Neueste Teile anzeigen"
 
-#: common/models.py:857
+#: common/models.py:849
 msgid "Show latest parts on the homepage"
 msgstr "Zeige neueste Teile auf der Startseite"
 
-#: common/models.py:862
+#: common/models.py:854
 msgid "Recent Part Count"
 msgstr "Aktuelle Teile-Stände"
 
-#: common/models.py:863
+#: common/models.py:855
 msgid "Number of recent parts to display on index page"
 msgstr "Anzahl der neusten Teile auf der Startseite"
 
-#: common/models.py:869
+#: common/models.py:861
 msgid "Show unvalidated BOMs"
 msgstr "Nicht validierte Stücklisten anzeigen"
 
-#: common/models.py:870
+#: common/models.py:862
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:875
+#: common/models.py:867
 msgid "Show recent stock changes"
 msgstr "Neueste Lagerbestand Änderungen anzeigen"
 
-#: common/models.py:876
+#: common/models.py:868
 msgid "Show recently changed stock items on the homepage"
 msgstr "Zeige zuletzt geänderte Lagerbestände auf der Startseite"
 
-#: common/models.py:881
+#: common/models.py:873
 msgid "Recent Stock Count"
 msgstr "aktueller Bestand"
 
-#: common/models.py:882
+#: common/models.py:874
 msgid "Number of recent stock items to display on index page"
 msgstr "Anzahl des geänderten Bestands auf der Startseite"
 
-#: common/models.py:887
+#: common/models.py:879
 msgid "Show low stock"
 msgstr "Niedrigen Bestand anzeigen"
 
-#: common/models.py:888
+#: common/models.py:880
 msgid "Show low stock items on the homepage"
 msgstr "Zeige geringen Lagerbestand auf der Startseite"
 
-#: common/models.py:893
+#: common/models.py:885
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:894
+#: common/models.py:886
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:899
+#: common/models.py:891
 msgid "Show needed stock"
 msgstr "Benötigten Bestand anzeigen"
 
-#: common/models.py:900
+#: common/models.py:892
 msgid "Show stock items needed for builds on the homepage"
 msgstr "Zeige Bestand für Bauaufträge auf der Startseite"
 
-#: common/models.py:905
+#: common/models.py:897
 msgid "Show expired stock"
 msgstr "Abgelaufenen Bestand anzeigen"
 
-#: common/models.py:906
+#: common/models.py:898
 msgid "Show expired stock items on the homepage"
 msgstr "Zeige Abgelaufene Lagerbestände auf der Startseite"
 
-#: common/models.py:911
+#: common/models.py:903
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:912
+#: common/models.py:904
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:917
+#: common/models.py:909
 msgid "Show pending builds"
 msgstr "Ausstehende Bauaufträge anzeigen"
 
-#: common/models.py:918
+#: common/models.py:910
 msgid "Show pending builds on the homepage"
 msgstr "Zeige ausstehende Bauaufträge auf der Startseite"
 
-#: common/models.py:923
+#: common/models.py:915
 msgid "Show overdue builds"
 msgstr "Zeige überfällige Bauaufträge"
 
-#: common/models.py:924
+#: common/models.py:916
 msgid "Show overdue builds on the homepage"
 msgstr "Zeige überfällige Bauaufträge auf der Startseite"
 
-#: common/models.py:929
+#: common/models.py:921
 msgid "Show outstanding POs"
 msgstr "Ausstehende POs anzeigen"
 
-#: common/models.py:930
+#: common/models.py:922
 msgid "Show outstanding POs on the homepage"
 msgstr "Ausstehende POs auf der Startseite anzeigen"
 
-#: common/models.py:935
+#: common/models.py:927
 msgid "Show overdue POs"
 msgstr "Überfällige POs anzeigen"
 
-#: common/models.py:936
+#: common/models.py:928
 msgid "Show overdue POs on the homepage"
 msgstr "Überfällige POs auf der Startseite anzeigen"
 
-#: common/models.py:941
+#: common/models.py:933
 msgid "Show outstanding SOs"
 msgstr "Ausstehende SOs anzeigen"
 
-#: common/models.py:942
+#: common/models.py:934
 msgid "Show outstanding SOs on the homepage"
 msgstr "Ausstehende SOs auf der Startseite anzeigen"
 
-#: common/models.py:947
+#: common/models.py:939
 msgid "Show overdue SOs"
 msgstr "Überfällige SOs anzeigen"
 
-#: common/models.py:948
+#: common/models.py:940
 msgid "Show overdue SOs on the homepage"
 msgstr "Überfällige SOs auf der Startseite anzeigen"
 
-#: common/models.py:954
+#: common/models.py:946
 msgid "Inline label display"
 msgstr ""
 
-#: common/models.py:955
+#: common/models.py:947
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:961
+#: common/models.py:953
 msgid "Inline report display"
 msgstr "Berichte inline anzeigen"
 
-#: common/models.py:962
+#: common/models.py:954
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "PDF-Berichte im Browser anzeigen, anstatt als Datei herunterzuladen"
 
-#: common/models.py:968
+#: common/models.py:960
 msgid "Search Preview Results"
 msgstr "Anzahl Suchergebnisse"
 
-#: common/models.py:969
+#: common/models.py:961
 msgid "Number of results to show in search preview window"
 msgstr "Anzahl der Ergebnisse, die in der Vorschau angezeigt werden sollen"
 
-#: common/models.py:1026 company/forms.py:43
+#: common/models.py:967
+msgid "Show Quantity in Forms"
+msgstr "zeige Bestand in Eingabemasken"
+
+#: common/models.py:968
+msgid "Display available part quantity in some forms"
+msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
+
+#: common/models.py:1025 company/forms.py:43
 msgid "Price break quantity"
 msgstr "Preisstaffelungs Anzahl"
 
-#: common/models.py:1033 company/templates/company/supplier_part.html:231
+#: common/models.py:1032 company/templates/company/supplier_part.html:231
 #: templates/js/translated/part.js:1369
 msgid "Price"
 msgstr "Preis"
 
-#: common/models.py:1034
+#: common/models.py:1033
 msgid "Unit price at specified quantity"
 msgstr "Stückpreis für die angegebene Anzahl"
 
-#: common/models.py:1127
+#: common/models.py:1126
 msgid "Default"
 msgstr "Standard"
 
@@ -2577,8 +2577,8 @@ msgstr "Zulieferer-Bestand"
 #: part/templates/part/detail.html:50 part/templates/part/navbar.html:82
 #: part/templates/part/navbar.html:85 templates/InvenTree/index.html:260
 #: templates/InvenTree/search.html:229
-#: templates/InvenTree/settings/navbar.html:107
-#: templates/InvenTree/settings/navbar.html:109 templates/navbar.html:44
+#: templates/InvenTree/settings/navbar.html:113
+#: templates/InvenTree/settings/navbar.html:115 templates/navbar.html:44
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "Bestellungen"
@@ -2601,8 +2601,8 @@ msgstr "Neue Bestellung"
 #: part/templates/part/detail.html:71 part/templates/part/navbar.html:91
 #: part/templates/part/navbar.html:94 templates/InvenTree/index.html:291
 #: templates/InvenTree/search.html:249
-#: templates/InvenTree/settings/navbar.html:113
-#: templates/InvenTree/settings/navbar.html:115 templates/navbar.html:55
+#: templates/InvenTree/settings/navbar.html:119
+#: templates/InvenTree/settings/navbar.html:121 templates/navbar.html:55
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "Aufträge"
@@ -2705,7 +2705,7 @@ msgstr "Parameter"
 #: company/templates/company/manufacturer_part.html:133
 #: part/templates/part/detail.html:162
 #: templates/InvenTree/settings/category.html:26
-#: templates/InvenTree/settings/part.html:63
+#: templates/InvenTree/settings/part.html:62
 msgid "New Parameter"
 msgstr "Neuer Parameter"
 
@@ -2737,8 +2737,8 @@ msgstr "Herstellerteil-Bestand"
 #: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:36
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:150 templates/InvenTree/search.html:182
-#: templates/InvenTree/settings/navbar.html:95
-#: templates/InvenTree/settings/navbar.html:97
+#: templates/InvenTree/settings/navbar.html:101
+#: templates/InvenTree/settings/navbar.html:103
 #: templates/js/translated/part.js:540 templates/js/translated/part.js:769
 #: templates/js/translated/part.js:945 templates/js/translated/stock.js:199
 #: templates/js/translated/stock.js:846 templates/navbar.html:32
@@ -3695,8 +3695,8 @@ msgstr "{part} Stückpreis auf {price} und Menge auf {qty} aktualisiert"
 #: part/templates/part/category_navbar.html:21
 #: part/templates/part/category_navbar.html:24
 #: templates/InvenTree/index.html:102 templates/InvenTree/search.html:114
-#: templates/InvenTree/settings/navbar.html:83
-#: templates/InvenTree/settings/navbar.html:85
+#: templates/InvenTree/settings/navbar.html:89
+#: templates/InvenTree/settings/navbar.html:91
 #: templates/js/translated/part.js:1165 templates/navbar.html:29
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
@@ -3910,7 +3910,7 @@ msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 
 #: part/models.py:696 part/models.py:2299
 #: part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:167
+#: templates/InvenTree/settings/settings.html:168
 #: templates/js/translated/part.js:927
 msgid "Category"
 msgstr "Kategorie"
@@ -4100,7 +4100,7 @@ msgid "Parameter Units"
 msgstr "Einheit des Parameters"
 
 #: part/models.py:2256 part/models.py:2305 part/models.py:2306
-#: templates/InvenTree/settings/settings.html:162
+#: templates/InvenTree/settings/settings.html:163
 msgid "Parameter Template"
 msgstr "Parameter Vorlage"
 
@@ -4112,7 +4112,7 @@ msgstr "Wert"
 msgid "Parameter Value"
 msgstr "Parameter Wert"
 
-#: part/models.py:2310 templates/InvenTree/settings/settings.html:171
+#: part/models.py:2310 templates/InvenTree/settings/settings.html:172
 msgid "Default Value"
 msgstr "Standard-Wert"
 
@@ -4713,7 +4713,9 @@ msgstr "Teil löschen"
 msgid "This part is a variant of %(link)s"
 msgstr "Dieses Teil ist eine Variante von %(link)s"
 
-#: part/templates/part/part_base.html:161 templates/js/translated/order.js:1459
+#: part/templates/part/part_base.html:161
+#: templates/js/translated/model_renderers.js:169
+#: templates/js/translated/order.js:1459
 #: templates/js/translated/table_filters.js:166
 msgid "In Stock"
 msgstr "Auf Lager"
@@ -4937,6 +4939,7 @@ msgid "Set category for the following parts"
 msgstr "Kategorie für Teile setzen"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:278
+#: templates/js/translated/model_renderers.js:167
 #: templates/js/translated/part.js:766 templates/js/translated/part.js:968
 msgid "No Stock"
 msgstr "Kein Bestand"
@@ -6156,38 +6159,43 @@ msgstr "Labels"
 msgid "Reports"
 msgstr "Berichte"
 
-#: templates/InvenTree/settings/navbar.html:46
-#: templates/InvenTree/settings/navbar.html:48
+#: templates/InvenTree/settings/navbar.html:45
+#: templates/InvenTree/settings/navbar.html:47
+msgid "Forms"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:52
+#: templates/InvenTree/settings/navbar.html:54
 #: templates/InvenTree/settings/settings.html:8 templates/navbar.html:90
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: templates/InvenTree/settings/navbar.html:56
+#: templates/InvenTree/settings/navbar.html:62
 msgid "InvenTree Settings"
 msgstr "InvenTree-Einstellungen"
 
-#: templates/InvenTree/settings/navbar.html:59
-#: templates/InvenTree/settings/navbar.html:61 templates/stats.html:9
+#: templates/InvenTree/settings/navbar.html:65
+#: templates/InvenTree/settings/navbar.html:67 templates/stats.html:9
 msgid "Server"
 msgstr "Server"
 
-#: templates/InvenTree/settings/navbar.html:65
-#: templates/InvenTree/settings/navbar.html:67
+#: templates/InvenTree/settings/navbar.html:71
+#: templates/InvenTree/settings/navbar.html:73
 msgid "Barcodes"
 msgstr "Barcodes"
 
-#: templates/InvenTree/settings/navbar.html:71
-#: templates/InvenTree/settings/navbar.html:73
+#: templates/InvenTree/settings/navbar.html:77
+#: templates/InvenTree/settings/navbar.html:79
 msgid "Currencies"
 msgstr "Währungen"
 
-#: templates/InvenTree/settings/navbar.html:77
-#: templates/InvenTree/settings/navbar.html:79
+#: templates/InvenTree/settings/navbar.html:83
+#: templates/InvenTree/settings/navbar.html:85
 msgid "Reporting"
 msgstr "Berichte"
 
-#: templates/InvenTree/settings/navbar.html:89
-#: templates/InvenTree/settings/navbar.html:91
+#: templates/InvenTree/settings/navbar.html:95
+#: templates/InvenTree/settings/navbar.html:97
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -6199,15 +6207,15 @@ msgstr "Teil-Einstellungen"
 msgid "Part Options"
 msgstr "Teil-Optionen"
 
-#: templates/InvenTree/settings/part.html:43
+#: templates/InvenTree/settings/part.html:42
 msgid "Part Import"
 msgstr "Teileimport"
 
-#: templates/InvenTree/settings/part.html:46
+#: templates/InvenTree/settings/part.html:45
 msgid "Import Part"
 msgstr "Teil importieren"
 
-#: templates/InvenTree/settings/part.html:59
+#: templates/InvenTree/settings/part.html:58
 msgid "Part Parameter Templates"
 msgstr "Teil-Parametervorlage"
 
@@ -6228,21 +6236,21 @@ msgstr "Kein Wert angegeben"
 msgid "Edit setting"
 msgstr "Einstellungen ändern"
 
-#: templates/InvenTree/settings/settings.html:152
+#: templates/InvenTree/settings/settings.html:153
 msgid "No category parameter templates found"
 msgstr "Keine Kategorie-Parametervorlagen gefunden"
 
-#: templates/InvenTree/settings/settings.html:174
-#: templates/InvenTree/settings/settings.html:273
+#: templates/InvenTree/settings/settings.html:175
+#: templates/InvenTree/settings/settings.html:274
 msgid "Edit Template"
 msgstr "Vorlage bearbeiten"
 
-#: templates/InvenTree/settings/settings.html:175
-#: templates/InvenTree/settings/settings.html:274
+#: templates/InvenTree/settings/settings.html:176
+#: templates/InvenTree/settings/settings.html:275
 msgid "Delete Template"
 msgstr "Vorlage löschen"
 
-#: templates/InvenTree/settings/settings.html:253
+#: templates/InvenTree/settings/settings.html:254
 msgid "No part parameter templates found"
 msgstr "Keine Teilparametervorlagen gefunden"
 
@@ -6317,6 +6325,10 @@ msgstr "Hilf bei der Übersetzung!"
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
 msgstr "Die Übersetzung von InvenTree wird <a href=\"%(link)s\">von Nutzern mit Crowdin</a> betrieben. Wir ermutigen zur und freuen uns über jeden Mithilfe!"
+
+#: templates/InvenTree/settings/user_forms.html:9
+msgid "Form Settings"
+msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7145,19 +7157,19 @@ msgstr "Standort-ID"
 msgid "Build ID"
 msgstr "Bauauftrag-ID"
 
-#: templates/js/translated/model_renderers.js:162
+#: templates/js/translated/model_renderers.js:177
 msgid "Part ID"
 msgstr "Teil-ID"
 
-#: templates/js/translated/model_renderers.js:214
+#: templates/js/translated/model_renderers.js:231
 msgid "Category ID"
 msgstr "Kategorie-ID"
 
-#: templates/js/translated/model_renderers.js:251
+#: templates/js/translated/model_renderers.js:268
 msgid "Manufacturer Part ID"
 msgstr "Herstellerteil-ID"
 
-#: templates/js/translated/model_renderers.js:280
+#: templates/js/translated/model_renderers.js:297
 msgid "Supplier Part ID"
 msgstr "Zuliefererteil-ID"
 
