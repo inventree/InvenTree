@@ -31,3 +31,10 @@
     part: 100
     sub_part: 50
     quantity: 3
+
+- model: part.bomitem
+  pk: 5
+  fields:
+    part: 1
+    sub_part: 5
+    quantity: 3

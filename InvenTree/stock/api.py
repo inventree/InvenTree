@@ -2,15 +2,20 @@
 JSON API for the Stock app
 """
 
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from datetime import datetime, timedelta
+
+from django.utils.translation import ugettext_lazy as _
+
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, filters, permissions
 
@@ -22,7 +27,7 @@ from .models import StockItemTracking
 from .models import StockItemAttachment
 from .models import StockItemTestResult
 
-from part.models import Part, PartCategory
+from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 
 from company.models import Company, SupplierPart
@@ -34,20 +39,12 @@ from order.serializers import POSerializer
 import common.settings
 import common.models
 
-from .serializers import StockItemSerializer
-from .serializers import LocationSerializer, LocationBriefSerializer
-from .serializers import StockTrackingSerializer
-from .serializers import StockItemAttachmentSerializer
-from .serializers import StockItemTestResultSerializer
+import stock.serializers as StockSerializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
-
-from decimal import Decimal, InvalidOperation
-
-from datetime import datetime, timedelta
 
 
 class StockCategoryTree(TreeSerializer):
@@ -80,12 +77,12 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
     queryset = StockItem.objects.all()
-    serializer_class = StockItemSerializer
+    serializer_class = StockSerializers.StockItemSerializer
 
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = StockItemSerializer.annotate_queryset(queryset)
+        queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -121,7 +118,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         instance.mark_for_deletion()
 
 
-class StockAdjust(APIView):
+class StockAdjustView(generics.CreateAPIView):
     """
     A generic class for handling stocktake actions.
 
@@ -135,184 +132,57 @@ class StockAdjust(APIView):
 
     queryset = StockItem.objects.none()
 
-    allow_missing_quantity = False
+    def get_serializer_context(self):
+            
+        context = super().get_serializer_context()
 
-    def get_items(self, request):
-        """
-        Return a list of items posted to the endpoint.
-        Will raise validation errors if the items are not
-        correctly formatted.
-        """
+        context['request'] = self.request
 
-        _items = []
-
-        if 'item' in request.data:
-            _items = [request.data['item']]
-        elif 'items' in request.data:
-            _items = request.data['items']
-        else:
-            _items = []
-
-        if len(_items) == 0:
-            raise ValidationError(_('Request must contain list of stock items'))
-
-        # List of validated items
-        self.items = []
-
-        for entry in _items:
-
-            if not type(entry) == dict:
-                raise ValidationError(_('Improperly formatted data'))
-
-            # Look for a 'pk' value (use 'id' as a backup)
-            pk = entry.get('pk', entry.get('id', None))
-
-            try:
-                pk = int(pk)
-            except (ValueError, TypeError):
-                raise ValidationError(_('Each entry must contain a valid integer primary-key'))
-
-            try:
-                item = StockItem.objects.get(pk=pk)
-            except (StockItem.DoesNotExist):
-                raise ValidationError({
-                    pk: [_('Primary key does not match valid stock item')]
-                })
-
-            if self.allow_missing_quantity and 'quantity' not in entry:
-                entry['quantity'] = item.quantity
-
-            try:
-                quantity = Decimal(str(entry.get('quantity', None)))
-            except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({
-                    pk: [_('Invalid quantity value')]
-                })
-
-            if quantity < 0:
-                raise ValidationError({
-                    pk: [_('Quantity must not be less than zero')]
-                })
-
-            self.items.append({
-                'item': item,
-                'quantity': quantity
-            })
-
-        # Extract 'notes' field
-        self.notes = str(request.data.get('notes', ''))
+        return context
 
 
-class StockCount(StockAdjust):
+class StockCount(StockAdjustView):
     """
     Endpoint for counting stock (performing a stocktake).
     """
 
-    def post(self, request, *args, **kwargs):
-
-        self.get_items(request)
-
-        n = 0
-
-        for item in self.items:
-
-            if item['item'].stocktake(item['quantity'], request.user, notes=self.notes):
-                n += 1
-
-        return Response({'success': _('Updated stock for {n} items').format(n=n)})
+    serializer_class = StockSerializers.StockCountSerializer
 
 
-class StockAdd(StockAdjust):
+class StockAdd(StockAdjustView):
     """
     Endpoint for adding a quantity of stock to an existing StockItem
     """
 
-    def post(self, request, *args, **kwargs):
-
-        self.get_items(request)
-
-        n = 0
-
-        for item in self.items:
-            if item['item'].add_stock(item['quantity'], request.user, notes=self.notes):
-                n += 1
-
-        return Response({"success": "Added stock for {n} items".format(n=n)})
+    serializer_class = StockSerializers.StockAddSerializer
 
 
-class StockRemove(StockAdjust):
+class StockRemove(StockAdjustView):
     """
     Endpoint for removing a quantity of stock from an existing StockItem.
     """
 
-    def post(self, request, *args, **kwargs):
-
-        self.get_items(request)
-
-        n = 0
-
-        for item in self.items:
-
-            if item['quantity'] > item['item'].quantity:
-                raise ValidationError({
-                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
-                })
-
-            if item['item'].take_stock(item['quantity'], request.user, notes=self.notes):
-                n += 1
-
-        return Response({"success": "Removed stock for {n} items".format(n=n)})
+    serializer_class = StockSerializers.StockRemoveSerializer
 
 
-class StockTransfer(StockAdjust):
+class StockTransfer(StockAdjustView):
     """
     API endpoint for performing stock movements
     """
 
-    allow_missing_quantity = True
-
-    def post(self, request, *args, **kwargs):
-
-        data = request.data
-
-        try:
-            location = StockLocation.objects.get(pk=data.get('location', None))
-        except (ValueError, StockLocation.DoesNotExist):
-            raise ValidationError({'location': [_('Valid location must be specified')]})
-
-        n = 0
-
-        self.get_items(request)
-
-        for item in self.items:
-
-            if item['quantity'] > item['item'].quantity:
-                raise ValidationError({
-                    item['item'].pk: [_('Specified quantity exceeds stock quantity')]
-                })
-
-            # If quantity is not specified, move the entire stock
-            if item['quantity'] in [0, None]:
-                item['quantity'] = item['item'].quantity
-
-            if item['item'].move(location, self.notes, request.user, quantity=item['quantity']):
-                n += 1
-
-        return Response({'success': _('Moved {n} parts to {loc}').format(
-            n=n,
-            loc=str(location),
-        )})
+    serializer_class = StockSerializers.StockTransferSerializer
 
 
 class StockLocationList(generics.ListCreateAPIView):
-    """ API endpoint for list view of StockLocation objects:
+    """
+    API endpoint for list view of StockLocation objects:
 
     - GET: Return list of StockLocation objects
     - POST: Create a new StockLocation
     """
 
     queryset = StockLocation.objects.all()
-    serializer_class = LocationSerializer
+    serializer_class = StockSerializers.LocationSerializer
 
     def filter_queryset(self, queryset):
         """
@@ -514,7 +384,7 @@ class StockList(generics.ListCreateAPIView):
     - POST: Create a new StockItem
     """
 
-    serializer_class = StockItemSerializer
+    serializer_class = StockSerializers.StockItemSerializer
     queryset = StockItem.objects.all()
     filterset_class = StockFilter
 
@@ -636,7 +506,7 @@ class StockList(generics.ListCreateAPIView):
 
             # Serialize each StockLocation object
             for location in locations:
-                location_map[location.pk] = LocationBriefSerializer(location).data
+                location_map[location.pk] = StockSerializers.LocationBriefSerializer(location).data
 
             # Now update each StockItem with the related StockLocation data
             for stock_item in data:
@@ -662,7 +532,7 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = StockItemSerializer.annotate_queryset(queryset)
+        queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
 
         # Do not expose StockItem objects which are scheduled for deletion
         queryset = queryset.filter(scheduled_for_deletion=False)
@@ -670,13 +540,13 @@ class StockList(generics.ListCreateAPIView):
         return queryset
 
     def filter_queryset(self, queryset):
+        """
+        Custom filtering for the StockItem queryset
+        """
 
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        # Perform basic filtering:
-        # Note: We do not let DRF filter here, it be slow AF
 
         supplier_part = params.get('supplier_part', None)
 
@@ -818,7 +688,7 @@ class StockList(generics.ListCreateAPIView):
         if loc_id is not None:
 
             # Filter by 'null' location (i.e. top-level items)
-            if isNull(loc_id):
+            if isNull(loc_id) and not cascade:
                 queryset = queryset.filter(location=None)
             else:
                 try:
@@ -842,6 +712,18 @@ class StockList(generics.ListCreateAPIView):
 
             except (ValueError, PartCategory.DoesNotExist):
                 raise ValidationError({"category": "Invalid category id specified"})
+
+        # Does the client wish to filter by BomItem
+        bom_item_id = params.get('bom_item', None)
+
+        if bom_item_id is not None:
+            try:
+                bom_item = BomItem.objects.get(pk=bom_item_id)
+
+                queryset = queryset.filter(bom_item.get_stock_filter())
+
+            except (ValueError, BomItem.DoesNotExist):
+                pass
 
         # Filter by StockItem status
         status = params.get('status', None)
@@ -939,7 +821,7 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
 
     queryset = StockItemAttachment.objects.all()
-    serializer_class = StockItemAttachmentSerializer
+    serializer_class = StockSerializers.StockItemAttachmentSerializer
 
     filter_backends = [
         DjangoFilterBackend,
@@ -958,7 +840,7 @@ class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMix
     """
 
     queryset = StockItemAttachment.objects.all()
-    serializer_class = StockItemAttachmentSerializer
+    serializer_class = StockSerializers.StockItemAttachmentSerializer
 
 
 class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -967,7 +849,7 @@ class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
     queryset = StockItemTestResult.objects.all()
-    serializer_class = StockItemTestResultSerializer
+    serializer_class = StockSerializers.StockItemTestResultSerializer
 
 
 class StockItemTestResultList(generics.ListCreateAPIView):
@@ -976,7 +858,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     """
 
     queryset = StockItemTestResult.objects.all()
-    serializer_class = StockItemTestResultSerializer
+    serializer_class = StockSerializers.StockItemTestResultSerializer
 
     filter_backends = [
         DjangoFilterBackend,
@@ -1024,7 +906,7 @@ class StockTrackingDetail(generics.RetrieveAPIView):
     """
 
     queryset = StockItemTracking.objects.all()
-    serializer_class = StockTrackingSerializer
+    serializer_class = StockSerializers.StockTrackingSerializer
 
 
 class StockTrackingList(generics.ListAPIView):
@@ -1037,7 +919,7 @@ class StockTrackingList(generics.ListAPIView):
     """
 
     queryset = StockItemTracking.objects.all()
-    serializer_class = StockTrackingSerializer
+    serializer_class = StockSerializers.StockTrackingSerializer
 
     def get_serializer(self, *args, **kwargs):
         try:
@@ -1073,7 +955,7 @@ class StockTrackingList(generics.ListAPIView):
             if 'location' in deltas:
                 try:
                     location = StockLocation.objects.get(pk=deltas['location'])
-                    serializer = LocationSerializer(location)
+                    serializer = StockSerializers.LocationSerializer(location)
                     deltas['location_detail'] = serializer.data
                 except:
                     pass
@@ -1082,7 +964,7 @@ class StockTrackingList(generics.ListAPIView):
             if 'stockitem' in deltas:
                 try:
                     stockitem = StockItem.objects.get(pk=deltas['stockitem'])
-                    serializer = StockItemSerializer(stockitem)
+                    serializer = StockSerializers.StockItemSerializer(stockitem)
                     deltas['stockitem_detail'] = serializer.data
                 except:
                     pass
@@ -1164,7 +1046,7 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
     queryset = StockLocation.objects.all()
-    serializer_class = LocationSerializer
+    serializer_class = StockSerializers.LocationSerializer
 
 
 stock_api_urls = [

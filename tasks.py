@@ -127,13 +127,20 @@ def worker(c):
 
 
 @task
-def rebuild(c):
+def rebuild_models(c):
     """
     Rebuild database models with MPTT structures
     """
 
-    manage(c, "rebuild_models")
+    manage(c, "rebuild_models", pty=True)
 
+@task
+def rebuild_thumbnails(c):
+    """
+    Rebuild missing image thumbnails
+    """
+
+    manage(c, "rebuild_thumbnails", pty=True)
 
 @task
 def clean_settings(c):
@@ -143,7 +150,7 @@ def clean_settings(c):
 
     manage(c, "clean_settings")
 
-@task(post=[rebuild])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """
     Performs database migrations.
@@ -341,7 +348,7 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'}, post=[rebuild])
+@task(help={'filename': 'Input filename'}, post=[rebuild_models, rebuild_thumbnails])
 def import_records(c, filename='data.json'):
     """
     Import database records from a file
@@ -399,7 +406,7 @@ def delete_data(c, force=False):
         manage(c, 'flush')
 
 
-@task(post=[rebuild])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def import_fixtures(c):
     """
     Import fixture data into the database.

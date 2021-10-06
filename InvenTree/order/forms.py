@@ -8,8 +8,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from mptt.fields import TreeNodeChoiceField
-
 from InvenTree.forms import HelperForm
 from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
 
@@ -19,7 +17,6 @@ from common.forms import MatchItemForm
 
 import part.models
 
-from stock.models import StockLocation
 from .models import PurchaseOrder
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
@@ -77,22 +74,6 @@ class ShipSalesOrderForm(HelperForm):
         model = SalesOrder
         fields = [
             'confirm',
-        ]
-
-
-class ReceivePurchaseOrderForm(HelperForm):
-
-    location = TreeNodeChoiceField(
-        queryset=StockLocation.objects.all(),
-        required=False,
-        label=_("Destination"),
-        help_text=_("Set all received parts listed above to this location (if left blank, use \"Destination\" column value in above table)"),
-    )
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            "location",
         ]
 
 
