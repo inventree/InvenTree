@@ -532,6 +532,7 @@ function editPurchaseOrderLineItem(e) {
 
     var url = $(src).attr('url');
 
+    // TODO: Migrate this to the API forms
     launchModalForm(url, {
         reload: true,
     });
@@ -547,7 +548,8 @@ function removePurchaseOrderLineItem(e) {
     var src = e.target || e.srcElement;
 
     var url = $(src).attr('url');
-
+    
+    // TODO: Migrate this to the API forms
     launchModalForm(url, {
         reload: true,
     });
@@ -1162,20 +1164,38 @@ function showAllocationSubTable(index, row, element, options) {
 
             var pk = $(this).attr('pk');
 
-            // TODO: Migrate to API forms
-            launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
-                success: reloadTable,
-            });
+            // Edit the sales order alloction
+            constructForm(
+                `/api/order/so-allocation/${pk}/`,
+                {
+                    fields: {
+                        quantity: {},
+                    },
+                    title: '{% trans "Edit Stock Allocation" %}',
+                    onSuccess: function() {
+                        // Refresh the parent table
+                        $(options.table).bootstrapTable('refresh');
+                    },
+                },
+            );
         });
 
         // Add callbacks for 'delete' buttons
         table.find('.button-allocation-delete').click(function() {
             var pk = $(this).attr('pk');
             
-            // TODO: Migrate to API forms
-            launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
-                success: reloadTable, 
-            });
+            constructForm(
+                `/api/order/so-allocation/${pk}/`,
+                {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Stock Allocation" %}',
+                    onSuccess: function() {
+                        // Refresh the parent table
+                        $(options.table).bootstrapTable('refresh');
+                    }
+                }
+            );
         });
     }
 
@@ -1307,6 +1327,8 @@ function showFulfilledSubTable(index, row, element, options) {
  *      - status: {integer} : status code for the order
  */
 function loadSalesOrderLineItemTable(table, options={}) {
+
+    options.table = table;
 
     options.params = options.params || {};
 
