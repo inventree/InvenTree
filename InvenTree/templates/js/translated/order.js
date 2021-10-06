@@ -580,12 +580,14 @@ function loadPurchaseOrderTable(table, options) {
             return '{% trans "No purchase orders found" %}';
         },
         columns: [
+            /*
             {
                 title: '',
                 visible: true,
                 checkbox: true,
                 switchable: false,
             },
+            */
             {
                 field: 'reference',
                 title: '{% trans "Purchase Order" %}',
@@ -1576,15 +1578,13 @@ function loadSalesOrderLineItemTable(table, options={}) {
             if (row.allocated < row.quantity) {
                 quantity = row.quantity - row.allocated;
             }
-    
-            // TODO: Migrate this to the API forms
-            launchModalForm(`/build/new/`, {
-                follow: true,
-                data: {
-                    part: pk,
-                    sales_order: options.order,
-                    quantity: quantity,
-                },
+
+            // Create a new build order
+            newBuildOrder({
+                part: pk,
+                sales_order: options.order,
+                quantity: quantity,
+                success: reloadTable
             });
         });
 
