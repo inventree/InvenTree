@@ -24,6 +24,7 @@
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
+    loadSalesOrderLineItemTable,
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
@@ -1124,5 +1125,577 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 sortable: true,
             }
         ]
+    });
+}
+
+
+/**
+ * Display an "allocations" sub table, showing stock items allocated againt a sales order
+ * @param {*} index 
+ * @param {*} row 
+ * @param {*} element 
+ */
+function showAllocationSubTable(index, row, element, options) {
+    
+    // Construct a sub-table element
+    var html = `
+    <div class='sub-table'>
+        <table class='table table-striped table-condensed' id='allocation-table-${row.pk}'>
+        </table>
+    </div>`;
+
+    element.html(html);
+
+    var table = $(`#allocation-table-${row.pk}`);
+
+    // Is the parent SalesOrder pending?
+    var pending = options.status == {{ SalesOrderStatus.PENDING }};
+
+    // Function to reload the allocation table
+    function reloadTable() {
+        table.bootstrapTable('refresh');
+    }
+
+    function setupCallbacks() {
+        // Add callbacks for 'edit' buttons
+        table.find('.button-allocation-edit').click(function() {
+
+            var pk = $(this).attr('pk');
+
+            // TODO: Migrate to API forms
+            launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
+                success: reloadTable,
+            });
+        });
+
+        // Add callbacks for 'delete' buttons
+        table.find('.button-allocation-delete').click(function() {
+            var pk = $(this).attr('pk');
+            
+            // TODO: Migrate to API forms
+            launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
+                success: reloadTable, 
+            });
+        });
+    }
+
+    table.bootstrapTable({
+        onPostBody: setupCallbacks,
+        data: row.allocations,
+        showHeader: false,
+        columns: [
+            {
+                field: 'allocated',
+                title: '{% trans "Quantity" %}',
+                formatter: function(value, row, index, field) {
+                    var text = '';
+
+                    if (row.serial != null && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    }
+
+                    return renderLink(text, `/stock/item/${row.item}/`);
+                },
+            },
+            {
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row, index, field) {
+
+                    // Location specified
+                    if (row.location) {
+                        return renderLink(
+                            row.location_detail.pathstring || '{% trans "Location" %}',
+                            `/stock/location/${row.location}/`
+                        );
+                    } else {
+                        return `<i>{% trans "Stock location not specified" %}`;
+                    }
+                },
+            },
+            // TODO: ?? What is 'po' field all about?
+            /*
+            {
+                field: 'po'
+            },
+            */
+            {
+                field: 'buttons',
+                title: '{% trans "Actions" %}',
+                formatter: function(value, row, index, field) {
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+                    var pk = row.pk;
+
+                    if (pending) {
+                        html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                    }
+
+                    html += '</div>';
+
+                    return html;
+                },
+            },
+        ],
+    });
+}
+
+/**
+ * Display a "fulfilled" sub table, showing stock items fulfilled against a purchase order
+ */
+function showFulfilledSubTable(index, row, element, options) {
+    // Construct a table showing stock items which have been fulfilled against this line item
+
+    if (!options.order) {
+        return 'ERROR: Order ID not supplied';
+    }
+
+    var id = `fulfilled-table-${row.pk}`;
+    
+    var html = `
+    <div class='sub-table'>
+        <table class='table table-striped table-condensed' id='${id}'>
+        </table>
+    </div>`;
+
+    element.html(html);
+
+    $(`#${id}`).bootstrapTable({
+        url: '{% url "api-stock-list" %}',
+        queryParams: {
+            part: row.part,
+            sales_order: options.order,
+        },
+        showHeader: false,
+        columns: [
+            {
+                field: 'pk',
+                visible: false,
+            },
+            {
+                field: 'stock',
+                formatter: function(value, row) {
+                    var text = '';
+                    if (row.serial && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    }
+
+                    return renderLink(text, `/stock/item/${row.pk}/`);
+                },
+            },
+            /*
+            {
+                field: 'po'
+            },
+            */
+        ],
+    });
+}
+
+
+/**
+ * Load a table displaying line items for a particular SalesOrder
+ * 
+ * @param {String} table : HTML ID tag e.g. '#table'
+ * @param {Object} options : object which contains:
+ *      - order {integer} : pk of the SalesOrder
+ *      - status: {integer} : status code for the order
+ */
+function loadSalesOrderLineItemTable(table, options={}) {
+
+    options.params = options.params || {};
+
+    if (!options.order) {
+        console.log('ERROR: function called without order ID');
+        return;
+    }
+
+    if (!options.status) {
+        console.log('ERROR: function called without order status');
+        return;
+    }
+
+    options.params.order = options.order;
+    options.params.part_detail = true;
+    options.params.allocations = true;
+    
+    var filters = loadTableFilters('salesorderlineitem');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    options.url = options.url || '{% url "api-so-line-list" %}';
+
+    var filter_target = options.filter_target || '#filter-list-sales-order-lines';
+
+    setupFilterList('salesorderlineitems', $(table), filter_target);
+
+    // Is the order pending?
+    var pending = options.status == {{ SalesOrderStatus.PENDING }};
+
+    // Has the order shipped?
+    var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
+
+    // Show detail view if the PurchaseOrder is PENDING or SHIPPED
+    var show_detail = pending || shipped;
+
+    // Table columns to display
+    var columns = [
+        /*
+        {
+            checkbox: true,
+            visible: true,
+            switchable: false,
+        },
+        */
+        {
+            sortable: true,
+            sortName: 'part__name',
+            field: 'part',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            formatter: function(value, row, index, field) {
+                if (row.part) {
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
+                } else {
+                    return '-';
+                }
+            },
+            footerFormatter: function() {
+                return '{% trans "Total" %}';
+            },
+        },
+        {
+            sortable: true,
+            field: 'reference',
+            title: '{% trans "Reference" %}',
+            switchable: false,
+        },
+        {
+            sortable: true,
+            field: 'quantity',
+            title: '{% trans "Quantity" %}',
+            footerFormatter: function(data) {
+                return data.map(function(row) {
+                    return +row['quantity'];
+                }).reduce(function(sum, i) {
+                    return sum + i;
+                }, 0);
+            },
+            switchable: false,
+        },
+        {
+            sortable: true,
+            field: 'sale_price',
+            title: '{% trans "Unit Price" %}',
+            formatter: function(value, row) {
+                return row.sale_price_string || row.sale_price;
+            }
+        },
+        {
+            sortable: true,
+            title: '{% trans "Total price" %}',
+            formatter: function(value, row) {
+                var total = row.sale_price * row.quantity;
+                var formatter = new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency',
+                        currency: row.sale_price_currency
+                    }
+                );
+
+                return formatter.format(total);
+            },
+            footerFormatter: function(data) {
+                var total = data.map(function(row) {
+                    return +row['sale_price'] * row['quantity'];
+                }).reduce(function(sum, i) {
+                    return sum + i;
+                }, 0);
+
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
+                
+                var formatter = new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency', 
+                        currency: currency
+                    }
+                );
+                
+                return formatter.format(total);
+            }
+        },
+        {
+            field: 'stock',
+            title: '{% trans "In Stock" %}',
+            formatter: function(value, row) {
+                return row.part_detail.stock;
+            },
+        },
+        {
+            field: 'allocated',
+            title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
+            switchable: false,
+            formatter: function(value, row, index, field) {
+
+                var quantity = pending ? row.allocated : row.fulfilled;
+                return makeProgressBar(quantity, row.quantity, {
+                    id: `order-line-progress-${row.pk}`,
+                });
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+
+                var A = pending ? rowA.allocated : rowA.fulfilled;
+                var B = pending ? rowB.allocated : rowB.fulfilled;
+
+                if (A == 0 && B == 0) {
+                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                }
+
+                var progressA = parseFloat(A) / rowA.quantity;
+                var progressB = parseFloat(B) / rowB.quantity;
+
+                return (progressA < progressB) ? 1 : -1;
+            }
+        },
+        {
+            field: 'notes',
+            title: '{% trans "Notes" %}',
+        },
+        // TODO: Re-introduce the "PO" field, once it is fixed
+        /*
+        {
+            field: 'po',
+            title: '{% trans "PO" %}',
+            formatter: function(value, row, index, field) {
+                var po_name = "";
+                if (row.allocated) {
+                    row.allocations.forEach(function(allocation) {
+                        if (allocation.po != po_name) {
+                            if (po_name) {
+                                po_name = "-";
+                            } else {
+                                po_name = allocation.po
+                            }
+                        }
+                    })
+                }
+                return `<div>` + po_name + `</div>`;
+            }
+        },
+        */
+    ];
+
+    if (pending) {
+        columns.push({
+            field: 'buttons',
+            formatter: function(value, row, index, field) {
+
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                var pk = row.pk;
+
+                if (row.part) {
+                    var part = row.part_detail;
+
+                    if (part.trackable) {
+                        html += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
+                    }
+
+                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
+
+                    if (part.purchaseable) {
+                        html += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
+                    }
+
+                    if (part.assembly) {
+                        html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
+                    }
+
+                    html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
+                }
+
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line item " %}');
+
+                html += `</div>`;
+
+                return html;
+            }
+        });
+    } else {
+        // Remove the "in stock" column
+        delete columns['stock'];
+    }
+
+    function reloadTable() {
+        $(table).bootstrapTable('refresh');
+    }
+
+    // Configure callback functions once the table is loaded
+    function setupCallbacks() {
+
+        // Callback for editing line items
+        $(table).find('.button-edit').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/order/so-line/${pk}/`, {
+                fields: {
+                    quantity: {},
+                    reference: {},
+                    sale_price: {},
+                    sale_price_currency: {},
+                    notes: {},
+                },
+                title: '{% trans "Edit Line Item" %}',
+                onSuccess: reloadTable,
+            });
+        });
+
+        // Callback for deleting line items
+        $(table).find('.button-delete').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/order/so-line/${pk}/`, {
+                method: 'DELETE',
+                title: '{% trans "Delete Line Item" %}',
+                onSuccess: reloadTable,
+            });
+        });
+
+        // Callback for allocating stock items by serial number
+        $(table).find('.button-add-by-sn').click(function() {
+            var pk = $(this).attr('pk');
+
+            // TODO: Migrate this form to the API forms
+            inventreeGet(`/api/order/so-line/${pk}/`, {},
+                {
+                    success: function(response) {
+                        launchModalForm('{% url "so-assign-serials" %}', {
+                            success: reloadTable,
+                            data: {
+                                line: pk,
+                                part: response.part, 
+                            }
+                        });
+                    }
+                }
+            );
+        });
+
+        // Callback for allocation stock items to the order
+        $(table).find('.button-add').click(function() {
+            var pk = $(this).attr('pk');
+
+            // TODO: Migrate this form to the API forms
+            launchModalForm(`/order/sales-order/allocation/new/`, {
+                success: reloadTable,
+                data: {
+                    line: pk,
+                },
+            });
+        });
+
+        // Callback for creating a new build
+        $(table).find('.button-build').click(function() {
+            var pk = $(this).attr('pk');
+
+            // Extract the row data from the table!
+            var idx = $(this).closest('tr').attr('data-index');
+    
+            var row = $(table).bootstrapTable('getData')[idx];
+    
+            var quantity = 1;
+    
+            if (row.allocated < row.quantity) {
+                quantity = row.quantity - row.allocated;
+            }
+
+            // Create a new build order
+            newBuildOrder({
+                part: pk,
+                sales_order: options.order,
+                quantity: quantity,
+                success: reloadTable
+            });
+        });
+
+        // Callback for purchasing parts
+        $(table).find('.button-buy').click(function() {
+            var pk = $(this).attr('pk');
+
+            launchModalForm('{% url "order-parts" %}', {
+                data: {
+                    parts: [
+                        pk
+                    ],
+                },
+            });
+        });
+
+        // Callback for displaying price
+        $(table).find('.button-price').click(function() {
+            var pk = $(this).attr('pk');
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            launchModalForm(
+                '{% url "line-pricing" %}',
+                {
+                    submit_text: '{% trans "Calculate price" %}',
+                    data: {
+                        line_item: pk,
+                        quantity: row.quantity,
+                    },
+                    buttons: [
+                        {
+                            name: 'update_price',
+                            title: '{% trans "Update Unit Price" %}'
+                        },
+                    ],
+                    success: reloadTable,
+                }
+            );
+        });
+    }
+
+    $(table).inventreeTable({
+        onPostBody: setupCallbacks,
+        name: 'salesorderlineitems',
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No matching line items" %}';
+        },
+        queryParams: filters,
+        original: options.params,
+        url: options.url,
+        showFooter: true,
+        uniqueId: 'pk',
+        detailView: show_detail,
+        detailViewByClick: show_detail,
+        detailFilter: function(index, row) {
+            if (pending) {
+                // Order is pending
+                return row.allocated > 0;
+            } else {
+                return row.fulfilled > 0;
+            }
+        },
+        detailFormatter: function(index, row, element) {
+            if (pending) {
+                return showAllocationSubTable(index, row, element, options);
+            } else {
+                return showFulfilledSubTable(index, row, element, options);
+            }
+        },
+        columns: columns,
     });
 }
