@@ -1616,13 +1616,41 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-add').click(function() {
             var pk = $(this).attr('pk');
 
-            // TODO: Migrate this form to the API forms
-            launchModalForm(`/order/sales-order/allocation/new/`, {
-                success: reloadTable,
-                data: {
-                    line: pk,
+            var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            var fields = {
+                // SalesOrderLineItem reference
+                line: {
+                    hidden: true,
+                    value: pk,
                 },
-            });
+                item: {
+                    filters: {
+                        part_detail: true,
+                        location_detail: true,
+                        in_stock: true,
+                        part: line_item.part,
+                        // TODO: Exclude items already allocated to this sales order
+                    } 
+                },
+                quantity: {
+                },
+            };
+
+            // Exclude expired stock?
+            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
+                fields.item.filters.expired = false;
+            }
+
+            constructForm(
+                `/api/order/so-allocation/`,
+                {
+                    method: 'POST',
+                    fields: fields,
+                    title: '{% trans "Allocate Stock Item" %}',
+                    onSuccess: reloadTable,
+                }
+            );
         });
 
         // Callback for creating a new build
