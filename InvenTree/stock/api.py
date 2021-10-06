@@ -34,6 +34,7 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 
 from order.models import PurchaseOrder
+from order.models import SalesOrder, SalesOrderAllocation
 from order.serializers import POSerializer
 
 import common.settings
@@ -644,6 +645,31 @@ class StockList(generics.ListCreateAPIView):
             else:
                 # Filter StockItem without build allocations or sales order allocations
                 queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
+
+        # Exclude StockItems which are already allocated to a particular SalesOrder
+        exclude_so_allocation = params.get('exclude_so_allocation', None)
+
+        if exclude_so_allocation is not None:
+
+            try:
+                order = SalesOrder.objects.get(pk=exclude_so_allocation)
+
+                # Grab all the active SalesOrderAllocations for this order
+                allocations = SalesOrderAllocation.objects.filter(
+                    line__pk__in=[
+                        line.pk for line in order.lines.all()
+                    ]
+                )
+
+                # Exclude any stock item which is already allocated to the sales order
+                queryset = queryset.exclude(
+                    pk__in=[
+                        a.item.pk for a in allocations
+                    ]
+                )
+
+            except (ValueError, SalesOrder.DoesNotExist):
+                pass
 
         # Does the client wish to filter by the Part ID?
         part_id = params.get('part', None)

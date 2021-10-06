@@ -43,12 +43,7 @@ sales_order_detail_urls = [
 sales_order_urls = [
     # URLs for sales order allocations
     url(r'^allocation/', include([
-        url(r'^new/', views.SalesOrderAllocationCreate.as_view(), name='so-allocation-create'),
         url(r'^assign-serials/', views.SalesOrderAssignSerials.as_view(), name='so-assign-serials'),
-        url(r'(?P<pk>\d+)/', include([
-            url(r'^edit/', views.SalesOrderAllocationEdit.as_view(), name='so-allocation-edit'),
-            url(r'^delete/', views.SalesOrderAllocationDelete.as_view(), name='so-allocation-delete'),
-        ])),
     ])),
 
     # Display detail view for a single SalesOrder

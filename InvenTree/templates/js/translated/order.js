@@ -532,6 +532,7 @@ function editPurchaseOrderLineItem(e) {
 
     var url = $(src).attr('url');
 
+    // TODO: Migrate this to the API forms
     launchModalForm(url, {
         reload: true,
     });
@@ -547,7 +548,8 @@ function removePurchaseOrderLineItem(e) {
     var src = e.target || e.srcElement;
 
     var url = $(src).attr('url');
-
+    
+    // TODO: Migrate this to the API forms
     launchModalForm(url, {
         reload: true,
     });
@@ -1151,31 +1153,44 @@ function showAllocationSubTable(index, row, element, options) {
     // Is the parent SalesOrder pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
-    // Function to reload the allocation table
-    function reloadTable() {
-        table.bootstrapTable('refresh');
-    }
-
     function setupCallbacks() {
         // Add callbacks for 'edit' buttons
         table.find('.button-allocation-edit').click(function() {
 
             var pk = $(this).attr('pk');
 
-            // TODO: Migrate to API forms
-            launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
-                success: reloadTable,
-            });
+            // Edit the sales order alloction
+            constructForm(
+                `/api/order/so-allocation/${pk}/`,
+                {
+                    fields: {
+                        quantity: {},
+                    },
+                    title: '{% trans "Edit Stock Allocation" %}',
+                    onSuccess: function() {
+                        // Refresh the parent table
+                        $(options.table).bootstrapTable('refresh');
+                    },
+                },
+            );
         });
 
         // Add callbacks for 'delete' buttons
         table.find('.button-allocation-delete').click(function() {
             var pk = $(this).attr('pk');
             
-            // TODO: Migrate to API forms
-            launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
-                success: reloadTable, 
-            });
+            constructForm(
+                `/api/order/so-allocation/${pk}/`,
+                {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Stock Allocation" %}',
+                    onSuccess: function() {
+                        // Refresh the parent table
+                        $(options.table).bootstrapTable('refresh');
+                    }
+                }
+            );
         });
     }
 
@@ -1308,6 +1323,8 @@ function showFulfilledSubTable(index, row, element, options) {
  */
 function loadSalesOrderLineItemTable(table, options={}) {
 
+    options.table = table;
+
     options.params = options.params || {};
 
     if (!options.order) {
@@ -1433,13 +1450,21 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return formatter.format(total);
             }
         },
-        {
-            field: 'stock',
-            title: '{% trans "In Stock" %}',
-            formatter: function(value, row) {
-                return row.part_detail.stock;
+    ];
+
+    if (pending) {
+        columns.push(
+            {
+                field: 'stock',
+                title: '{% trans "In Stock" %}',
+                formatter: function(value, row) {
+                    return row.part_detail.stock;
+                },
             },
-        },
+        );
+    }
+
+    columns.push(
         {
             field: 'allocated',
             title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
@@ -1470,29 +1495,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'notes',
             title: '{% trans "Notes" %}',
         },
-        // TODO: Re-introduce the "PO" field, once it is fixed
-        /*
-        {
-            field: 'po',
-            title: '{% trans "PO" %}',
-            formatter: function(value, row, index, field) {
-                var po_name = "";
-                if (row.allocated) {
-                    row.allocations.forEach(function(allocation) {
-                        if (allocation.po != po_name) {
-                            if (po_name) {
-                                po_name = "-";
-                            } else {
-                                po_name = allocation.po
-                            }
-                        }
-                    })
-                }
-                return `<div>` + po_name + `</div>`;
-            }
-        },
-        */
-    ];
+    );
 
     if (pending) {
         columns.push({
@@ -1531,9 +1534,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return html;
             }
         });
-    } else {
-        // Remove the "in stock" column
-        delete columns['stock'];
     }
 
     function reloadTable() {
@@ -1595,13 +1595,41 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-add').click(function() {
             var pk = $(this).attr('pk');
 
-            // TODO: Migrate this form to the API forms
-            launchModalForm(`/order/sales-order/allocation/new/`, {
-                success: reloadTable,
-                data: {
-                    line: pk,
+            var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            var fields = {
+                // SalesOrderLineItem reference
+                line: {
+                    hidden: true,
+                    value: pk,
                 },
-            });
+                item: {
+                    filters: {
+                        part_detail: true,
+                        location_detail: true,
+                        in_stock: true,
+                        part: line_item.part,
+                        exclude_so_allocation: options.order,
+                    } 
+                },
+                quantity: {
+                },
+            };
+
+            // Exclude expired stock?
+            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
+                fields.item.filters.expired = false;
+            }
+
+            constructForm(
+                `/api/order/so-allocation/`,
+                {
+                    method: 'POST',
+                    fields: fields,
+                    title: '{% trans "Allocate Stock Item" %}',
+                    onSuccess: reloadTable,
+                }
+            );
         });
 
         // Callback for creating a new build

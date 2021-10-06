@@ -115,23 +115,6 @@ class AllocateSerialsToSalesOrderForm(forms.Form):
         ]
 
 
-class CreateSalesOrderAllocationForm(HelperForm):
-    """
-    Form for creating a SalesOrderAllocation item.
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderAllocation
-
-        fields = [
-            'line',
-            'item',
-            'quantity',
-        ]
-
-
 class EditSalesOrderAllocationForm(HelperForm):
     """
     Form for editing a SalesOrderAllocation item

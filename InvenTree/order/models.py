@@ -840,7 +840,13 @@ class SalesOrderLineItem(OrderLineItem):
     def get_api_url():
         return reverse('api-so-line-list')
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+    order = models.ForeignKey(
+        SalesOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Sales Order')
+    )
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
 
@@ -954,7 +960,11 @@ class SalesOrderAllocation(models.Model):
         if len(errors) > 0:
             raise ValidationError(errors)
 
-    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, verbose_name=_('Line'), related_name='allocations')
+    line = models.ForeignKey(
+        SalesOrderLineItem,
+        on_delete=models.CASCADE,
+        verbose_name=_('Line'),
+        related_name='allocations')
 
     item = models.ForeignKey(
         'stock.StockItem',
