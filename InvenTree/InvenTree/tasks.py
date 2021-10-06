@@ -156,7 +156,34 @@ def delete_successful_tasks():
         started__lte=threshold
     )
 
-    results.delete()
+    if results.count() > 0:
+        logger.info(f"Deleting {results.count()} successful task records")
+        results.delete()
+
+
+def delete_old_error_logs():
+    """
+    Delete old error logs from the server
+    """
+
+    try:
+        from error_report.models import Error
+
+        # Delete any error logs more than 30 days old
+        threshold = timezone.now() - timedelta(days=30)
+
+        errors = Error.objects.filter(
+            when__lte=threshold,
+        )
+
+        if errors.count() > 0:
+            logger.info(f"Deleting {errors.count()} old error logs")
+            errors.delete()
+
+    except AppRegistryNotReady:
+        # Apps not yet loaded
+        logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
+        return
 
 
 def check_for_updates():
@@ -215,7 +242,7 @@ def delete_expired_sessions():
         # Delete any sessions that expired more than a day ago
         expired = Session.objects.filter(expire_date__lt=timezone.now() - timedelta(days=1))
 
-        if True or expired.count() > 0:
+        if expired.count() > 0:
             logger.info(f"Deleting {expired.count()} expired sessions.")
             expired.delete()
 
@@ -247,15 +274,15 @@ def update_exchange_rates():
         pass
     except:
         # Some other error
-        print("Database not ready")
+        logger.warning("update_exchange_rates: Database not ready")
         return
 
     backend = InvenTreeExchange()
-    print(f"Updating exchange rates from {backend.url}")
+    logger.info(f"Updating exchange rates from {backend.url}")
 
     base = currency_code_default()
 
-    print(f"Using base currency '{base}'")
+    logger.info(f"Using base currency '{base}'")
 
     backend.update_rates(base_currency=base)
 
