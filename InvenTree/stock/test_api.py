@@ -513,31 +513,34 @@ class StocktakeTest(StockAPITestCase):
 
             # POST with a valid action
             response = self.post(url, data)
-            self.assertContains(response, "must contain list", status_code=status.HTTP_400_BAD_REQUEST)
+
+            self.assertIn("This field is required", str(response.data["items"]))
 
             data['items'] = [{
                 'no': 'aa'
             }]
 
             # POST without a PK
-            response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid integer primary-key', status_code=status.HTTP_400_BAD_REQUEST)
+            response = self.post(url, data, expected_code=400)
+
+            self.assertIn('This field is required', str(response.data))
 
             # POST with an invalid PK
             data['items'] = [{
                 'pk': 10
             }]
 
-            response = self.post(url, data)
-            self.assertContains(response, 'does not match valid stock item', status_code=status.HTTP_400_BAD_REQUEST)
+            response = self.post(url, data, expected_code=400)
+
+            self.assertContains(response, 'object does not exist', status_code=status.HTTP_400_BAD_REQUEST)
 
             # POST with missing quantity value
             data['items'] = [{
                 'pk': 1234
             }]
 
-            response = self.post(url, data)
-            self.assertContains(response, 'Invalid quantity value', status_code=status.HTTP_400_BAD_REQUEST)
+            response = self.post(url, data, expected_code=400)
+            self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
 
             # POST with an invalid quantity value
             data['items'] = [{
@@ -546,7 +549,7 @@ class StocktakeTest(StockAPITestCase):
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'Invalid quantity value', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'A valid number is required', status_code=status.HTTP_400_BAD_REQUEST)
 
             data['items'] = [{
                 'pk': 1234,
@@ -554,18 +557,7 @@ class StocktakeTest(StockAPITestCase):
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'must not be less than zero', status_code=status.HTTP_400_BAD_REQUEST)
-
-            # Test with a single item
-            data = {
-                'item': {
-                    'pk': 1234,
-                    'quantity': '10',
-                }
-            }
-
-            response = self.post(url, data)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertContains(response, 'Ensure this value is greater than or equal to 0', status_code=status.HTTP_400_BAD_REQUEST)
 
     def test_transfer(self):
         """
@@ -573,24 +565,27 @@ class StocktakeTest(StockAPITestCase):
         """
 
         data = {
-            'item': {
-                'pk': 1234,
-                'quantity': 10,
-            },
+            'items': [
+                {
+                    'pk': 1234,
+                    'quantity': 10,
+                }
+            ],
             'location': 1,
             'notes': "Moving to a new location"
         }
 
         url = reverse('api-stock-transfer')
 
-        response = self.post(url, data)
-        self.assertContains(response, "Moved 1 parts to", status_code=status.HTTP_200_OK)
+        # This should succeed
+        response = self.post(url, data, expected_code=201)
 
         # Now try one which will fail due to a bad location
         data['location'] = 'not a location'
 
-        response = self.post(url, data)
-        self.assertContains(response, 'Valid location must be specified', status_code=status.HTTP_400_BAD_REQUEST)
+        response = self.post(url, data, expected_code=400)
+
+        self.assertContains(response, 'Incorrect type. Expected pk value', status_code=status.HTTP_400_BAD_REQUEST)
 
 
 class StockItemDeletionTest(StockAPITestCase):

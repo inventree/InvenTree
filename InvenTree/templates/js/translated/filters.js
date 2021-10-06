@@ -273,6 +273,11 @@ function setupFilterList(tableKey, table, target) {
 
     var element = $(target);
 
+    if (!element) {
+        console.log(`WARNING: setupFilterList could not find target '${target}'`);
+        return;
+    }
+
     // One blank slate, please
     element.empty();
 

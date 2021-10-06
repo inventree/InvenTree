@@ -12,6 +12,7 @@
     loadTableFilters,
     makeIconBadge,
     purchaseOrderStatusDisplay,
+    receivePurchaseOrderItems,
     renderLink,
     salesOrderStatusDisplay,
     setupFilterList,
@@ -234,6 +235,291 @@ function newPurchaseOrderFromOrderWizard(e) {
     }); 
 }
 
+
+/**
+ * Receive stock items against a PurchaseOrder
+ * Uses the POReceive API endpoint
+ * 
+ * arguments:
+ * - order_id, ID / PK for the PurchaseOrder instance
+ * - line_items: A list of PurchaseOrderLineItems objects to be allocated
+ * 
+ * options:
+ *  - 
+ */
+function receivePurchaseOrderItems(order_id, line_items, options={}) {
+
+    if (line_items.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Line Items" %}',
+            '{% trans "At least one line item must be selected" %}',
+        );
+        return;
+    }
+
+    function renderLineItem(line_item, opts={}) {
+
+        var pk = line_item.pk;
+
+        // Part thumbnail + description
+        var thumb = thumbnailImage(line_item.part_detail.thumbnail);
+
+        var quantity = (line_item.quantity || 0) - (line_item.received || 0);
+        
+        if (quantity < 0) {
+            quantity = 0;
+        }
+
+        // Quantity to Receive
+        var quantity_input = constructField(
+            `items_quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity,
+                title: '{% trans "Quantity to receive" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        // Construct list of StockItem status codes
+        var choices = [];
+
+        for (var key in stockCodes) {
+            choices.push({
+                value: key,
+                display_name: stockCodes[key].value,
+            });
+        }
+
+        var destination_input = constructField(
+            `items_location_${pk}`,
+            {
+                type: 'related field',
+                label: '{% trans "Location" %}',
+                required: false,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var status_input = constructField(
+            `items_status_${pk}`,
+            {
+                type: 'choice',
+                label: '{% trans "Stock Status" %}',
+                required: true,
+                choices: choices,
+                value: 10, // OK
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        // Button to remove the row
+        var delete_button = `<div class='btn-group float-right' role='group'>`;
+
+        delete_button += makeIconButton(
+            'fa-times icon-red',
+            'button-row-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        delete_button += '</div>';
+
+        var html = `
+        <tr id='receive_row_${pk}' class='stock-receive-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${line_item.part_detail.full_name}
+            </td>
+            <td id='sku_${pk}'>
+                ${line_item.supplier_part_detail.SKU}
+            </td>
+            <td id='on_order_${pk}'>
+                ${line_item.quantity}
+            </td>
+            <td id='received_${pk}'>
+                ${line_item.received}
+            </td>
+            <td id='quantity_${pk}'>
+                ${quantity_input}
+            </td>
+            <td id='status_${pk}'>
+                ${status_input}
+            </td>
+            <td id='desination_${pk}'>
+                ${destination_input}
+            </td>
+            <td id='actions_${pk}'>
+                ${delete_button}
+            </td>
+        </tr>`;
+
+        return html;
+    }
+
+    var table_entries = '';
+
+    line_items.forEach(function(item) {
+        table_entries += renderLineItem(item);
+    });
+
+    var html = ``;
+
+    // Add table
+    html += `
+    <table class='table table-striped table-condensed' id='order-receive-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Order Code" %}</th>
+                <th>{% trans "Ordered" %}</th>
+                <th>{% trans "Received" %}</th>
+                <th style='min-width: 50px;'>{% trans "Receive" %}</th>
+                <th style='min-width: 150px;'>{% trans "Status" %}</th>
+                <th style='min-width: 300px;'>{% trans "Destination" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+
+    constructForm(`/api/order/po/${order_id}/receive/`, {
+        method: 'POST',
+        fields: {
+            location: {},
+        },
+        preFormContent: html,
+        confirm: true,
+        confirmMessage: '{% trans "Confirm receipt of items" %}',
+        title: '{% trans "Receive Purchase Order Items" %}',
+        afterRender: function(fields, opts) {
+            // Initialize the "destination" field for each item
+            line_items.forEach(function(item) {
+
+                var pk = item.pk;
+
+                var name = `items_location_${pk}`;
+
+                var field_details = {
+                    name: name,
+                    api_url: '{% url "api-location-list" %}',
+                    filters: {
+
+                    },
+                    type: 'related field',
+                    model: 'stocklocation',
+                    required: false,
+                    auto_fill: false,
+                    value: item.destination || item.part_detail.default_location,
+                    render_description: false,
+                };
+
+                initializeRelatedField(
+                    field_details,
+                    null,
+                    opts,
+                );
+
+                addClearCallback(
+                    name,
+                    field_details,
+                    opts
+                );
+
+                initializeChoiceField(
+                    {
+                        name: `items_status_${pk}`,
+                    },
+                    null,
+                    opts
+                );
+            });
+
+            // Add callbacks to remove rows
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(opts.modal).find(`#receive_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            // Extract data elements from the form
+            var data = {
+                items: [],
+                location: getFormFieldValue('location', {}, opts),
+            };
+
+            var item_pk_values = [];
+
+            line_items.forEach(function(item) {
+
+                var pk = item.pk;
+
+                var quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
+
+                var status = getFormFieldValue(`items_status_${pk}`, {}, opts);
+
+                var location = getFormFieldValue(`items_location_${pk}`, {}, opts);
+
+                if (quantity != null) {
+                    data.items.push({
+                        line_item: pk,
+                        quantity: quantity,
+                        status: status,
+                        location: location,
+                    });
+
+                    item_pk_values.push(pk);
+                }
+
+            });
+
+            // Provide list of nested values
+            opts.nested = {
+                'items': item_pk_values,
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        // Hide the modal
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    });
+}
+
+
 function editPurchaseOrderLineItem(e) {
 
     /* Edit a purchase order line item in a modal form.
@@ -280,12 +566,10 @@ function loadPurchaseOrderTable(table, options) {
         filters[key] = options.params[key];
     }
 
-    options.url = options.url || '{% url "api-po-list" %}';
-
     setupFilterList('purchaseorder', $(table));
 
     $(table).inventreeTable({
-        url: options.url,
+        url: '{% url "api-po-list" %}',
         queryParams: filters,
         name: 'purchaseorder',
         groupBy: false,
@@ -379,6 +663,21 @@ function loadPurchaseOrderTable(table, options) {
  */
 function loadPurchaseOrderLineItemTable(table, options={}) {
 
+    options.params = options.params || {};
+
+    options.params['order'] = options.order;
+    options.params['part_detail'] = true;
+
+    var filters = loadTableFilters('purchaseorderlineitem');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+    
+    var target = options.filter_target || '#filter-list-purchase-order-lines';
+
+    setupFilterList('purchaseorderlineitem', $(table), target);
+
     function setupCallbacks() {
         if (options.allow_edit) {
             $(table).find('.button-line-edit').click(function() {
@@ -424,22 +723,24 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             $(table).find('.button-line-receive').click(function() {
                 var pk = $(this).attr('pk');
 
-                launchModalForm(`/order/purchase-order/${options.order}/receive/`, {
-                    success: function() {
-                        $(table).bootstrapTable('refresh');
-                    },
-                    data: {
-                        line: pk,
-                    },
-                    secondary: [
-                        {
-                            field: 'location',
-                            label: '{% trans "New Location" %}',
-                            title: '{% trans "Create new stock location" %}',
-                            url: '{% url "stock-location-create" %}',
-                        },
-                    ]
-                });
+                var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                if (!line_item) {
+                    console.log('WARNING: getRowByUniqueId returned null');
+                    return;
+                }
+
+                receivePurchaseOrderItems(
+                    options.order,
+                    [
+                        line_item,
+                    ],
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
             });
         }
     }
@@ -451,17 +752,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
         formatNoMatches: function() {
             return '{% trans "No line items found" %}';
         },
-        queryParams: {
-            order: options.order,
-            part_detail: true
-        },
+        queryParams: filters,
+        original: options.params,
         url: '{% url "api-po-line-list" %}',
         showFooter: true,
+        uniqueId: 'pk',
         columns: [
             {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
+                checkbox: true,
+                visible: true,
                 switchable: false,
             },
             {
@@ -618,7 +917,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     }
 
                     if (options.allow_receive && row.received < row.quantity) {
-                        html += makeIconButton('fa-clipboard-check', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
                     }
         
                     html += `</div>`;

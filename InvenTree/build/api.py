@@ -5,10 +5,12 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
+
 from django.conf.urls import url, include
 
-from rest_framework import filters
-from rest_framework import generics
+from rest_framework import filters, generics
+from rest_framework.serializers import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -19,6 +21,7 @@ from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
 from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
+from .serializers import BuildAllocationSerializer
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -92,7 +95,7 @@ class BuildList(generics.ListCreateAPIView):
         as some of the fields don't natively play nicely with DRF
         """
 
-        queryset = super().get_queryset().prefetch_related('part')
+        queryset = super().get_queryset().select_related('part')
 
         queryset = BuildSerializer.annotate_queryset(queryset)
 
@@ -181,6 +184,58 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
     serializer_class = BuildSerializer
 
 
+class BuildAllocate(generics.CreateAPIView):
+    """
+    API endpoint to allocate stock items to a build order
+
+    - The BuildOrder object is specified by the URL
+    - Items to allocate are specified as a list called "items" with the following options:
+        - bom_item: pk value of a given BomItem object (must match the part associated with this build)
+        - stock_item: pk value of a given StockItem object
+        - quantity: quantity to allocate
+        - output: StockItem (build order output) to allocate stock against (optional)
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = BuildAllocationSerializer
+
+    def get_build(self):
+        """
+        Returns the BuildOrder associated with this API endpoint
+        """
+
+        pk = self.kwargs.get('pk', None)
+
+        try:
+            build = Build.objects.get(pk=pk)
+        except (Build.DoesNotExist, ValueError):
+            raise ValidationError(_("Matching build order does not exist"))
+
+        return build
+
+    def get_serializer_context(self):
+        """
+        Provide the Build object to the serializer context
+        """
+
+        context = super().get_serializer_context()
+
+        context['build'] = self.get_build()
+        context['request'] = self.request
+
+        return context
+
+
+class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a BuildItem object
+    """
+
+    queryset = BuildItem.objects.all()
+    serializer_class = BuildItemSerializer
+
+
 class BuildItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BuildItem objects
 
@@ -210,9 +265,9 @@ class BuildItemList(generics.ListCreateAPIView):
 
         query = BuildItem.objects.all()
 
-        query = query.select_related('stock_item')
-        query = query.prefetch_related('stock_item__part')
-        query = query.prefetch_related('stock_item__part__category')
+        query = query.select_related('stock_item__location')
+        query = query.select_related('stock_item__part')
+        query = query.select_related('stock_item__part__category')
 
         return query
 
@@ -282,16 +337,20 @@ build_api_urls = [
     # Attachments
     url(r'^attachment/', include([
         url(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        url('^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+        url(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build Items
     url(r'^item/', include([
-        url('^.*$', BuildItemList.as_view(), name='api-build-item-list')
+        url(r'^(?P<pk>\d+)/', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        url(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
-    url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
+    ])),
 
     # Build List
     url(r'^.*$', BuildList.as_view(), name='api-build-list'),

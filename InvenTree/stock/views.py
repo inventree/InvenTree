@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
 from django.views.generic.edit import FormMixin
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
@@ -143,29 +143,6 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
                 return HttpResponseRedirect(reverse('stock-index'))
 
         return super().get(request, *args, **kwargs)
-
-
-class StockItemNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for editing the 'notes' field of a StockItem object """
-
-    context_object_name = 'item'
-    template_name = 'stock/item_notes.html'
-    model = StockItem
-
-    role_required = 'stock.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        return reverse('stock-item-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        return ctx
 
 
 class StockLocationEdit(AjaxUpdateView):
