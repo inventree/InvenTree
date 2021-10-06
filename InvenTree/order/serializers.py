@@ -495,7 +495,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-    allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
     quantity = serializers.FloatField()
 
