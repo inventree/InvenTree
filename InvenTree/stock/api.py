@@ -6,8 +6,6 @@ JSON API for the Stock app
 from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
-from django.db.models import query
-from django.db.models.query import QuerySet
 
 from django.utils.translation import ugettext_lazy as _
 
