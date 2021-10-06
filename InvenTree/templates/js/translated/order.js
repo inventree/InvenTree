@@ -1234,7 +1234,7 @@ function showAllocationSubTable(index, row, element, options) {
                         html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
 
-                    html += "</div>";
+                    html += '</div>';
 
                     return html;
                 },
@@ -1367,8 +1367,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     return '-';
                 }
             },
-            footerFormatter:  function() {
-                return '{% trans "Total" %}'
+            footerFormatter: function() {
+                return '{% trans "Total" %}';
             },
         },
         {
@@ -1382,11 +1382,11 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'quantity',
             title: '{% trans "Quantity" %}',
             footerFormatter: function(data) {
-                return data.map(function (row) {
-                  return +row['quantity']
-                }).reduce(function (sum, i) {
-                  return sum + i
-                }, 0)
+                return data.map(function(row) {
+                    return +row['quantity'];
+                }).reduce(function(sum, i) {
+                    return sum + i;
+                }, 0);
             },
             switchable: false,
         },
@@ -1410,12 +1410,13 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         currency: row.sale_price_currency
                     }
                 );
+
                 return formatter.format(total);
             },
             footerFormatter: function(data) {
-                var total = data.map(function (row) {
+                var total = data.map(function(row) {
                     return +row['sale_price'] * row['quantity'];
-                }).reduce(function (sum, i) {
+                }).reduce(function(sum, i) {
                     return sum + i;
                 }, 0);
 
