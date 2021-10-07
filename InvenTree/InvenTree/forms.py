@@ -256,8 +256,8 @@ class CustomResetPasswordForm(ResetPasswordForm):
     """
     Override to use dynamic settings
     """
-    def save(self):
-        email_address = super().save()
+    def save(self, request):
+        email_address = super().save(request)
         return email_address
 
 
