@@ -189,12 +189,15 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             # Process manufacturer part
             for manufacturer_idx, manufacturer_part in enumerate(manufacturer_parts):
 
-                if manufacturer_part:
+                if manufacturer_part and manufacturer_part.manufacturer:
                     manufacturer_name = manufacturer_part.manufacturer.name
                 else:
                     manufacturer_name = ''
 
-                manufacturer_mpn = manufacturer_part.MPN
+                if manufacturer_part:
+                    manufacturer_mpn = manufacturer_part.MPN
+                else:
+                    manufacturer_mpn = ''
 
                 # Generate column names for this manufacturer
                 k_man = manufacturer_headers[0] + "_" + str(manufacturer_idx)
@@ -210,12 +213,15 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
                 # Process supplier parts
                 for supplier_idx, supplier_part in enumerate(manufacturer_part.supplier_parts.all()):
 
-                    if supplier_part.supplier:
+                    if supplier_part.supplier and supplier_part.supplier:
                         supplier_name = supplier_part.supplier.name
                     else:
                         supplier_name = ''
 
-                    supplier_sku = supplier_part.SKU
+                    if supplier_part:
+                        supplier_sku = supplier_part.SKU
+                    else:
+                        supplier_sku = ''
 
                     # Generate column names for this supplier
                     k_sup = str(supplier_headers[0]) + "_" + str(manufacturer_idx) + "_" + str(supplier_idx)
