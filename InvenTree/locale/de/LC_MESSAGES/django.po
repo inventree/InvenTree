@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-07 02:55+0000\n"
-"PO-Revision-Date: 2021-10-07 16:43\n"
+"PO-Revision-Date: 2021-10-07 17:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -524,7 +524,7 @@ msgstr "Barcode zugeordnet zu BestandsObjekt"
 
 #: build/api.py:213
 msgid "Matching build order does not exist"
-msgstr ""
+msgstr "Es existiert kein passender Build-Auftrag"
 
 #: build/forms.py:37
 msgid "Build Order reference"
@@ -959,7 +959,7 @@ msgstr ""
 
 #: build/serializers.py:157
 msgid "Item must be in stock"
-msgstr ""
+msgstr "Teil muss auf Lager sein"
 
 #: build/serializers.py:171 order/models.py:313 order/serializers.py:231
 #: stock/models.py:351 stock/models.py:1072
@@ -968,7 +968,7 @@ msgstr "Anzahl muss größer Null sein"
 
 #: build/serializers.py:180
 msgid "Build Output"
-msgstr ""
+msgstr "Endprodukt"
 
 #: build/serializers.py:213
 #, python-brace-format
@@ -1365,7 +1365,7 @@ msgstr "Anhang löschen"
 
 #: build/templates/build/detail.html:443
 msgid "Allocation Complete"
-msgstr ""
+msgstr "Zuordnung abgeschlossen"
 
 #: build/templates/build/detail.html:444
 msgid "All untracked stock items have been allocated"
@@ -1905,27 +1905,27 @@ msgstr "Bauaufträge aktivieren"
 
 #: common/models.py:787
 msgid "Enable build functionality in InvenTree interface"
-msgstr ""
+msgstr "Bau-Funktionalität in InvenTree aktivieren"
 
 #: common/models.py:792
 msgid "Enable buy"
-msgstr ""
+msgstr "Kaufen aktivieren"
 
 #: common/models.py:793
 msgid "Enable buy functionality in InvenTree interface"
-msgstr ""
+msgstr "Kauf-Funktionalität in InvenTree aktivieren"
 
 #: common/models.py:798
 msgid "Enable sell"
-msgstr ""
+msgstr "Verkauf aktivieren"
 
 #: common/models.py:799
 msgid "Enable sell functionality in InvenTree interface"
-msgstr ""
+msgstr "Verkaufs-Funktionalität in InvenTree aktivieren"
 
 #: common/models.py:804
 msgid "Enable stock"
-msgstr ""
+msgstr "Lagerbestand aktivieren"
 
 #: common/models.py:805
 msgid "Enable stock functionality in InvenTree interface"
@@ -2005,7 +2005,7 @@ msgstr "Zeige geringen Lagerbestand auf der Startseite"
 
 #: common/models.py:885
 msgid "Show depleted stock"
-msgstr ""
+msgstr "Lerren Bestand anzeigen"
 
 #: common/models.py:886
 msgid "Show depleted stock items on the homepage"
@@ -2029,7 +2029,7 @@ msgstr "Zeige Abgelaufene Lagerbestände auf der Startseite"
 
 #: common/models.py:903
 msgid "Show stale stock"
-msgstr ""
+msgstr "Alten Bestand anzeigen"
 
 #: common/models.py:904
 msgid "Show stale stock items on the homepage"
@@ -2085,11 +2085,11 @@ msgstr "Überfällige SOs auf der Startseite anzeigen"
 
 #: common/models.py:946
 msgid "Inline label display"
-msgstr ""
+msgstr "Label inline anzeigen"
 
 #: common/models.py:947
 msgid "Display PDF labels in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "PDF-Labels im Browser anzeigen, anstatt als Datei herunterzuladen"
 
 #: common/models.py:953
 msgid "Inline report display"
@@ -3209,15 +3209,15 @@ msgstr "Kaufpreiswährung"
 
 #: order/serializers.py:202
 msgid "Line Item"
-msgstr ""
+msgstr "Position"
 
 #: order/serializers.py:208
 msgid "Line item does not match purchase order"
-msgstr ""
+msgstr "Position stimmt nicht mit Kaufauftrag überein"
 
 #: order/serializers.py:218 order/serializers.py:285
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Zielort für empfangene Teile auswählen"
 
 #: order/serializers.py:242
 msgid "Barcode Hash"
@@ -3225,7 +3225,7 @@ msgstr "Barcode-Hash"
 
 #: order/serializers.py:243
 msgid "Unique identifier field"
-msgstr ""
+msgstr "Einzigartiger Identifikator"
 
 #: order/serializers.py:259
 msgid "Barcode is already in use"
@@ -3233,7 +3233,7 @@ msgstr "Barcode ist bereits in Verwendung"
 
 #: order/serializers.py:297
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Positionen müssen angegeben werden"
 
 #: order/serializers.py:314
 msgid "Destination location must be specified"
@@ -3492,7 +3492,7 @@ msgstr "Position hinzufügen"
 
 #: order/templates/order/purchase_order_detail.html:30
 msgid "Receive selected items"
-msgstr ""
+msgstr "Ausgewählte Positionen erhalten"
 
 #: order/templates/order/purchase_order_detail.html:31
 msgid "Receive Items"
@@ -5393,7 +5393,7 @@ msgstr "Zur Löschung vorgesehen"
 
 #: stock/models.py:600
 msgid "This StockItem will be deleted by the background worker"
-msgstr ""
+msgstr "Dieser Lagerbestand wird vom Hintergrund-Prozess gelöscht"
 
 #: stock/models.py:1063
 msgid "Part is not set as trackable"
@@ -5467,11 +5467,11 @@ msgstr "Bestandsbewegungsnotizen"
 
 #: stock/serializers.py:462
 msgid "A list of stock items must be provided"
-msgstr ""
+msgstr "Eine Liste der Lagerbestände muss angegeben werden"
 
 #: stock/serializers.py:554
 msgid "Destination stock location"
-msgstr ""
+msgstr "Ziel-Lagerbestand"
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
@@ -6757,7 +6757,7 @@ msgstr "Endprodukt entfernen"
 
 #: templates/js/translated/build.js:265
 msgid "No build order allocations found"
-msgstr ""
+msgstr "Keine Allokationen für Bauauftrag gefunden"
 
 #: templates/js/translated/build.js:303 templates/js/translated/order.js:1159
 msgid "Location not specified"
@@ -6810,15 +6810,15 @@ msgstr "Lagerbestand zuweisen"
 
 #: templates/js/translated/build.js:880
 msgid "Specify stock allocation quantity"
-msgstr ""
+msgstr "Anzahl für Bestandszuordnung eingeben"
 
 #: templates/js/translated/build.js:949
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "Sie müssen mindestens ein Teil auswählen"
 
 #: templates/js/translated/build.js:963
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Wählen Sie den Quellort aus (leer lassen um von allen Standorten zu nehmen)"
 
 #: templates/js/translated/build.js:992
 msgid "Confirm stock allocation"
@@ -6826,15 +6826,15 @@ msgstr "Bestandszuordnung bestätigen"
 
 #: templates/js/translated/build.js:993
 msgid "Allocate Stock Items to Build Order"
-msgstr ""
+msgstr "Lagerbestand für Bauauftrag zuweisen"
 
 #: templates/js/translated/build.js:1004
 msgid "No matching stock locations"
-msgstr ""
+msgstr "Keine passenden Lagerstandorte"
 
 #: templates/js/translated/build.js:1048
 msgid "No matching stock items"
-msgstr ""
+msgstr "Keine passenden Lagerbestände"
 
 #: templates/js/translated/build.js:1172
 msgid "No builds matching query"
@@ -7228,11 +7228,11 @@ msgstr "Empfangen"
 
 #: templates/js/translated/order.js:448
 msgid "Confirm receipt of items"
-msgstr ""
+msgstr "Empfang der Teile bestätigen"
 
 #: templates/js/translated/order.js:449
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Bestellpositionen erhalten"
 
 #: templates/js/translated/order.js:626
 msgid "No purchase orders found"
@@ -7289,11 +7289,11 @@ msgstr "Ungültiger Kunde"
 
 #: templates/js/translated/order.js:1120
 msgid "No sales order allocations found"
-msgstr ""
+msgstr "Keine Allokationen für Verkaufsaufträge gefunden"
 
 #: templates/js/translated/order.js:1213
 msgid "Edit Stock Allocation"
-msgstr ""
+msgstr "Bestandszuordnung bearbeiten"
 
 #: templates/js/translated/order.js:1231
 msgid "Delete Stock Allocation"
@@ -7381,7 +7381,7 @@ msgstr "Kategorieparameter kopieren"
 
 #: templates/js/translated/part.js:192
 msgid "Copy parameter templates from selected part category"
-msgstr ""
+msgstr "Parametervorlagen aus der ausgewählten Bauteilkategorie kopieren"
 
 #: templates/js/translated/part.js:200
 msgid "Add Supplier Data"
@@ -7389,7 +7389,7 @@ msgstr "Zuliefererdaten hinzufügen"
 
 #: templates/js/translated/part.js:201
 msgid "Create initial supplier data for this part"
-msgstr ""
+msgstr "Erstelle ersten Lieferanten für dieses Teil"
 
 #: templates/js/translated/part.js:257
 msgid "Copy Image"
@@ -7521,7 +7521,7 @@ msgstr "Einschließlich Unterstandorte"
 
 #: templates/js/translated/stock.js:105
 msgid "Include stock items in sublocations"
-msgstr ""
+msgstr "Bestand in untergeordneten Lagerorten einschließen"
 
 #: templates/js/translated/stock.js:147
 msgid "Transfer Stock"
