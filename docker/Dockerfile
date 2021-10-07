@@ -68,8 +68,7 @@ RUN apk add --no-cache git make bash \
     # PostgreSQL support
     postgresql postgresql-contrib postgresql-dev libpq \
     # MySQL/MariaDB support
-    mariadb-connector-c mariadb-dev mariadb-client \
-    some-made-up-package
+    mariadb-connector-c mariadb-dev mariadb-client
 
 # Install required base-level python packages
 COPY requirements.txt requirements.txt
