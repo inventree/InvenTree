@@ -9,6 +9,7 @@
 {% settings_value 'LOGIN_ENABLE_REG' as enable_reg %}
 {% settings_value 'LOGIN_ENABLE_PWD_FORGOT' as enable_pwd_forgot %}
 {% settings_value 'LOGIN_ENABLE_SSO' as enable_sso %}
+{% mail_configured as mail_conf %}
 
 <h1>{% trans "Sign In" %}</h1>
 
@@ -33,7 +34,7 @@ for a account and sign in below:{% endblocktrans %}</p>
 
   <div class="btn-toolbar">
     <button class="btn btn-primary col-md-8" type="submit">{% trans "Sign In" %}</button>
-    {% if enable_pwd_forgot %}
+    {% if mail_conf and enable_pwd_forgot %}
     <a class="btn btn-primary" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
     {% endif %}
 </div>
