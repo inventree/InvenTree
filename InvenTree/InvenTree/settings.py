@@ -682,3 +682,4 @@ ACCOUNT_FORMS = {
 }
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'

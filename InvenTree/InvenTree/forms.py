@@ -14,6 +14,7 @@ from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
 from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from part.models import PartCategory
@@ -251,7 +252,23 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
-class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+class RegistratonMixin:
+    """
+    Mixin to check if registration should be enabled
+    """
+    def is_open_for_signup(self, request):
+        if InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+            return super().is_open_for_signup(request)
+        return False
+
+
+class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
+    """
+    Override of adapter to use dynamic settings
+    """
+
+
+class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
     """
     Override of adapter to use dynamic settings
     """
