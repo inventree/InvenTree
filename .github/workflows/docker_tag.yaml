@@ -1,4 +1,5 @@
-# Publish docker images to dockerhub
+# Publish docker images to dockerhub on a tagged release
+# Docker build will be uploaded to dockerhub with the 'invetree:<tag>' tag
 
 name: Docker Publish
 
