@@ -266,6 +266,11 @@ class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
     """
     Override of adapter to use dynamic settings
     """
+    def send_mail(self, template_prefix, email, context):
+        """only send mail if backend configured"""
+        if InvenTreeSetting.get_setting('EMAIL_HOST', None):
+            return super().send_mail(template_prefix, email, context)
+        return False
 
 
 class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
