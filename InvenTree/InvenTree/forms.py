@@ -13,7 +13,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
-from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.forms import SignupForm, ResetPasswordForm, set_form_field_order
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
@@ -250,6 +250,15 @@ class CustomSignupForm(SignupForm):
                 self.add_error("email2", _("You must type the same email each time."))
 
         return cleaned_data
+
+
+class CustomResetPasswordForm(ResetPasswordForm):
+    """
+    Override to use dynamic settings
+    """
+    def save(self):
+        email_address = super().save()
+        return email_address
 
 
 class RegistratonMixin:
