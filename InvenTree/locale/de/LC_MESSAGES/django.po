@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-07 02:55+0000\n"
-"PO-Revision-Date: 2021-10-07 03:02\n"
+"PO-Revision-Date: 2021-10-07 16:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -973,7 +973,7 @@ msgstr ""
 #: build/serializers.py:213
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Verfügbare Menge ({q}) überschritten"
 
 #: build/serializers.py:219
 msgid "Build output must be specified for allocation of tracked parts"
@@ -3496,7 +3496,7 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:31
 msgid "Receive Items"
-msgstr ""
+msgstr "Teile empfangen"
 
 #: order/templates/order/purchase_order_detail.html:67
 #: order/templates/order/sales_order_detail.html:54
@@ -6163,7 +6163,7 @@ msgstr "Berichte"
 #: templates/InvenTree/settings/navbar.html:45
 #: templates/InvenTree/settings/navbar.html:47
 msgid "Forms"
-msgstr ""
+msgstr "Formulare"
 
 #: templates/InvenTree/settings/navbar.html:52
 #: templates/InvenTree/settings/navbar.html:54
@@ -6329,7 +6329,7 @@ msgstr "Die Übersetzung von InvenTree wird <a href=\"%(link)s\">von Nutzern mit
 
 #: templates/InvenTree/settings/user_forms.html:9
 msgid "Form Settings"
-msgstr ""
+msgstr "Formulareinstellungen"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -6775,11 +6775,11 @@ msgstr "Bestands-Zuordnung löschen"
 
 #: templates/js/translated/build.js:695
 msgid "Edit Allocation"
-msgstr ""
+msgstr "Zuordnung bearbeiten"
 
 #: templates/js/translated/build.js:705
 msgid "Remove Allocation"
-msgstr ""
+msgstr "Zuordnung entfernen"
 
 #: templates/js/translated/build.js:718
 msgid "Required Part"
@@ -7020,7 +7020,7 @@ msgstr "Fehler in Formular"
 
 #: templates/js/translated/forms.js:1323
 msgid "No results found"
-msgstr ""
+msgstr "Keine Ergebnisse gefunden"
 
 #: templates/js/translated/forms.js:1525
 msgid "Searching"
@@ -7148,7 +7148,7 @@ msgstr "Firmen-ID"
 
 #: templates/js/translated/model_renderers.js:90
 msgid "Stock ID"
-msgstr ""
+msgstr "Bestands-ID"
 
 #: templates/js/translated/model_renderers.js:125
 msgid "Location ID"
@@ -7164,7 +7164,7 @@ msgstr "Teil-ID"
 
 #: templates/js/translated/model_renderers.js:231
 msgid "Order ID"
-msgstr ""
+msgstr "Bestell-ID"
 
 #: templates/js/translated/model_renderers.js:251
 msgid "Category ID"
@@ -7188,7 +7188,7 @@ msgstr "Auftrag anlegen"
 
 #: templates/js/translated/order.js:207
 msgid "Export Order"
-msgstr ""
+msgstr "Bestellung exportieren"
 
 #: templates/js/translated/order.js:210 templates/js/translated/stock.js:96
 msgid "Format"
@@ -7200,15 +7200,15 @@ msgstr "Dateiformat auswählen"
 
 #: templates/js/translated/order.js:299
 msgid "Select Line Items"
-msgstr ""
+msgstr "Positionen auswählen"
 
 #: templates/js/translated/order.js:300
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Mindestens eine Position muss ausgewählt werden"
 
 #: templates/js/translated/order.js:325
 msgid "Quantity to receive"
-msgstr ""
+msgstr "Zu erhaltende Menge"
 
 #: templates/js/translated/order.js:359 templates/js/translated/stock.js:1343
 msgid "Stock Status"
@@ -7220,7 +7220,7 @@ msgstr "Bestellnummer"
 
 #: templates/js/translated/order.js:427
 msgid "Ordered"
-msgstr ""
+msgstr "Bestellt"
 
 #: templates/js/translated/order.js:429
 msgid "Receive"
@@ -7297,11 +7297,11 @@ msgstr ""
 
 #: templates/js/translated/order.js:1231
 msgid "Delete Stock Allocation"
-msgstr ""
+msgstr "Bestands-Zuordnung löschen"
 
 #: templates/js/translated/order.js:1273
 msgid "Stock location not specified"
-msgstr ""
+msgstr "Lagerstandort nicht angegeben"
 
 #: templates/js/translated/order.js:1514
 msgid "Fulfilled"
@@ -7325,7 +7325,7 @@ msgstr "Position löschen "
 
 #: templates/js/translated/order.js:1673
 msgid "Allocate Stock Item"
-msgstr ""
+msgstr "Lagerbestand zuweisen"
 
 #: templates/js/translated/order.js:1733
 msgid "Update Unit Price"
