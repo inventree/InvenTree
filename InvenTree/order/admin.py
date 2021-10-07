@@ -77,6 +77,14 @@ class POLineItemResource(ModelResource):
 class SOLineItemResource(ModelResource):
     """ Class for managing import / export of SOLineItem data """
 
+    part_name = Field(attribute='part__name', readonly=True)
+
+    IPN = Field(attribute='part__IPN', readonly=True)
+
+    description = Field(attribute='part__description', readonly=True)
+
+    fulfilled = Field(attribute='fulfilled_quantity', readonly=True)
+
     class Meta:
         model = SalesOrderLineItem
         skip_unchanged = True

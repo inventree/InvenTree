@@ -21,6 +21,7 @@
 /* exported
     createSalesOrder,
     editPurchaseOrderLineItem,
+    exportOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
@@ -183,6 +184,49 @@ function newSupplierPartFromOrderWizard(e) {
                     }
                 }
             );
+        }
+    });
+}
+
+/**
+ * Export an order (PurchaseOrder or SalesOrder)
+ * 
+ * - Display a simple form which presents the user with export options
+ * 
+ */
+function exportOrder(redirect_url, options={}) {
+
+    var format = options.format;
+
+    // If default format is not provided, lookup
+    if (!format) {
+        format = inventreeLoad('order-export-format', 'csv');
+    }
+
+    constructFormBody({}, {
+        title: '{% trans "Export Order" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: format,
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, opts) {
+
+            var format = getFormFieldValue('format', fields['format'], opts);
+
+            // Save the format for next time
+            inventreeSave('order-export-format', format);
+
+            // Hide the modal
+            $(opts.modal).modal('hide');
+
+            // Download the file!
+            location.href = `${redirect_url}?format=${format}`;
         }
     });
 }

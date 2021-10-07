@@ -23,7 +23,7 @@ from decimal import Decimal, InvalidOperation
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
-from .admin import POLineItemResource
+from .admin import POLineItemResource, SOLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
 from stock.models import StockItem
@@ -436,6 +436,33 @@ class PurchaseOrderUpload(FileManagementFormView):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
+class SalesOrderExport(AjaxView):
+    """
+    Export a sales order
+
+    - File format can optionally be passed as a query parameter e.g. ?format=CSV
+    - Default file format is CSV
+    """
+
+    model = SalesOrder
+
+    role_required = 'sales_order.view'
+
+    def get(self, request, *args, **kwargs):
+        
+        order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
+
+        export_format = request.GET.get('format', 'csv')
+
+        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+
+        dataset = SOLineItemResource().export(queryset=order.lines.all())
+
+        filedata = dataset.export(format=export_format)
+
+        return DownloadFile(filedata, filename)
+
+
 class PurchaseOrderExport(AjaxView):
     """ File download for a purchase order
 
@@ -450,7 +477,7 @@ class PurchaseOrderExport(AjaxView):
 
     def get(self, request, *args, **kwargs):
 
-        order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+        order = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
 
