@@ -12,6 +12,8 @@
 {% endblock %}
 
 {% block content %}
+{% mail_configured as mail_conf %}
+
 <div class='btn-group' style='float: right;'>
     <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
         <span class='fas fa-user-cog'></span> {% trans "Edit" %}
@@ -67,7 +69,7 @@
 
         <div class="buttonHolder">
             <button class="btn btn-primary secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
-            <button class="btn btn-primary secondaryAction" type="submit" name="action_send" >{% trans 'Re-send Verification' %}</button>
+            <button class="btn btn-primary secondaryAction" type="submit" name="action_send" {% if not mail_conf %}disabled{% endif %}>{% trans 'Re-send Verification' %}</button>
             <button class="btn btn-primary primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
         </div>
 
