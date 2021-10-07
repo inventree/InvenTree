@@ -252,15 +252,6 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
-class CustomResetPasswordForm(ResetPasswordForm):
-    """
-    Override to use dynamic settings
-    """
-    def save(self, request):
-        email_address = super().save(request)
-        return email_address
-
-
 class RegistratonMixin:
     """
     Mixin to check if registration should be enabled
