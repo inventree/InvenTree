@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-07 00:01+0000\n"
-"PO-Revision-Date: 2021-10-07 00:24\n"
+"POT-Creation-Date: 2021-10-07 01:15+0000\n"
+"PO-Revision-Date: 2021-10-07 01:22\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -2312,7 +2312,7 @@ msgstr ""
 #: company/models.py:335 company/templates/company/company_base.html:116
 #: company/templates/company/manufacturer_part.html:89
 #: company/templates/company/supplier_part.html:98 part/bom.py:170
-#: part/bom.py:241 stock/templates/stock/item_base.html:366
+#: part/bom.py:247 stock/templates/stock/item_base.html:366
 #: templates/js/translated/company.js:332
 #: templates/js/translated/company.js:513
 #: templates/js/translated/company.js:796 templates/js/translated/part.js:227
@@ -2325,7 +2325,7 @@ msgstr ""
 
 #: company/models.py:342 company/templates/company/manufacturer_part.html:93
 #: company/templates/company/supplier_part.html:106 part/bom.py:171
-#: part/bom.py:242 templates/js/translated/company.js:529
+#: part/bom.py:248 templates/js/translated/company.js:529
 #: templates/js/translated/company.js:814 templates/js/translated/order.js:807
 #: templates/js/translated/part.js:238
 msgid "MPN"
@@ -2383,7 +2383,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:88 order/models.py:260
 #: order/templates/order/order_base.html:92
 #: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
-#: part/bom.py:286 stock/templates/stock/item_base.html:383
+#: part/bom.py:292 stock/templates/stock/item_base.html:383
 #: templates/js/translated/company.js:336
 #: templates/js/translated/company.js:770 templates/js/translated/order.js:615
 #: templates/js/translated/part.js:208
@@ -2395,7 +2395,7 @@ msgid "Select supplier"
 msgstr ""
 
 #: company/models.py:551 company/templates/company/supplier_part.html:92
-#: part/bom.py:176 part/bom.py:287 templates/js/translated/order.js:794
+#: part/bom.py:176 part/bom.py:293 templates/js/translated/order.js:794
 #: templates/js/translated/part.js:219
 msgid "SKU"
 msgstr ""
