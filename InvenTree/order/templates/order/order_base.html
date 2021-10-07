@@ -224,7 +224,7 @@ $("#cancel-order").click(function() {
 });
 
 $("#export-order").click(function() {
-    location.href = "{% url 'po-export' order.id %}";
+    location.href = '{% url "po-export" order.id %}';
 });
 
 
