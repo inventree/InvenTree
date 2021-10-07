@@ -202,7 +202,7 @@ $('#print-order-report').click(function() {
 });
 
 $('#export-order').click(function() {
-    location.href = '{% url "so-export" order.id %}';
+    exportOrder('{% url "so-export" order.id %}');
 });
 
 {% endblock %}
