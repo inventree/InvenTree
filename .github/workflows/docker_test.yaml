@@ -15,10 +15,6 @@ on:
       - 'master'
       - 'stable'
 
-  pull_request:
-    branches-ignore:
-      - l10*
-
 jobs:
 
   docker:
