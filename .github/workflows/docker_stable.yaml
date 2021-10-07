@@ -1,4 +1,5 @@
-# Build and push latest docker image on push to master branch
+# Build and push docker image on push to 'stable' branch
+# Docker build will be uploaded to dockerhub with the 'inventree:stable' tag
 
 name: Docker Build
 

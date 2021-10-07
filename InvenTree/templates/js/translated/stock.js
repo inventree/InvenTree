@@ -98,24 +98,7 @@ function exportStock(params={}) {
                 required: true,
                 type: 'choice',
                 value: 'csv',
-                choices: [
-                    {
-                        value: 'csv',
-                        display_name: 'CSV',
-                    },
-                    {
-                        value: 'tsv',
-                        display_name: 'TSV',
-                    },
-                    {
-                        value: 'xls',
-                        display_name: 'XLS',
-                    },
-                    {
-                        value: 'xlsx',
-                        display_name: 'XLSX',
-                    },
-                ],
+                choices: exportFormatOptions(),
             },
             sublocations: {
                 label: '{% trans "Include Sublocations" %}',

@@ -23,13 +23,12 @@ from decimal import Decimal, InvalidOperation
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
-from .admin import POLineItemResource
+from .admin import POLineItemResource, SOLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
 from stock.models import StockItem
 from part.models import Part
 
-from common.models import InvenTreeSetting
 from common.forms import UploadFileForm, MatchFieldForm
 from common.views import FileManagementFormView
 from common.files import FileManager
@@ -37,7 +36,7 @@ from common.files import FileManager
 from . import forms as order_forms
 from part.views import PartPricing
 
-from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxView, AjaxUpdateView
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
@@ -437,6 +436,33 @@ class PurchaseOrderUpload(FileManagementFormView):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
+class SalesOrderExport(AjaxView):
+    """
+    Export a sales order
+
+    - File format can optionally be passed as a query parameter e.g. ?format=CSV
+    - Default file format is CSV
+    """
+
+    model = SalesOrder
+
+    role_required = 'sales_order.view'
+
+    def get(self, request, *args, **kwargs):
+        
+        order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
+
+        export_format = request.GET.get('format', 'csv')
+
+        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+
+        dataset = SOLineItemResource().export(queryset=order.lines.all())
+
+        filedata = dataset.export(format=export_format)
+
+        return DownloadFile(filedata, filename)
+
+
 class PurchaseOrderExport(AjaxView):
     """ File download for a purchase order
 
@@ -451,7 +477,7 @@ class PurchaseOrderExport(AjaxView):
 
     def get(self, request, *args, **kwargs):
 
-        order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+        order = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
 
@@ -974,105 +1000,6 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             self.get_form(),
             context=self.get_context_data(),
         )
-
-
-class SalesOrderAllocationCreate(AjaxCreateView):
-    """ View for creating a new SalesOrderAllocation """
-
-    model = SalesOrderAllocation
-    form_class = order_forms.CreateSalesOrderAllocationForm
-    ajax_form_title = _('Allocate Stock to Order')
-
-    def get_initial(self):
-        initials = super().get_initial().copy()
-
-        line_id = self.request.GET.get('line', None)
-
-        if line_id is not None:
-            line = SalesOrderLineItem.objects.get(pk=line_id)
-
-            initials['line'] = line
-
-            # Search for matching stock items, pre-fill if there is only one
-            items = StockItem.objects.filter(part=line.part)
-
-            quantity = line.quantity - line.allocated_quantity()
-
-            if quantity < 0:
-                quantity = 0
-
-            if items.count() == 1:
-                item = items.first()
-                initials['item'] = item
-
-                # Reduce the quantity IF there is not enough stock
-                qmax = item.quantity - item.allocation_count()
-
-                if qmax < quantity:
-                    quantity = qmax
-
-            initials['quantity'] = quantity
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        line_id = form['line'].value()
-
-        # If a line item has been specified, reduce the queryset for the stockitem accordingly
-        try:
-            line = SalesOrderLineItem.objects.get(pk=line_id)
-
-            # Construct a queryset for allowable stock items
-            queryset = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
-
-            # Ensure the part reference matches
-            queryset = queryset.filter(part=line.part)
-
-            # Exclude StockItem which are already allocated to this order
-            allocated = [allocation.item.pk for allocation in line.allocations.all()]
-
-            queryset = queryset.exclude(pk__in=allocated)
-
-            # Exclude stock items which have expired
-            if not InvenTreeSetting.get_setting('STOCK_ALLOW_EXPIRED_SALE'):
-                queryset = queryset.exclude(StockItem.EXPIRED_FILTER)
-
-            form.fields['item'].queryset = queryset
-
-            # Hide the 'line' field
-            form.fields['line'].widget = HiddenInput()
-
-        except (ValueError, SalesOrderLineItem.DoesNotExist):
-            pass
-
-        return form
-
-
-class SalesOrderAllocationEdit(AjaxUpdateView):
-
-    model = SalesOrderAllocation
-    form_class = order_forms.EditSalesOrderAllocationForm
-    ajax_form_title = _('Edit Allocation Quantity')
-
-    def get_form(self):
-        form = super().get_form()
-
-        # Prevent the user from editing particular fields
-        form.fields.pop('item')
-        form.fields.pop('line')
-
-        return form
-
-
-class SalesOrderAllocationDelete(AjaxDeleteView):
-
-    model = SalesOrderAllocation
-    ajax_form_title = _("Remove allocation")
-    context_object_name = 'allocation'
-    ajax_template_name = "order/so_allocation_delete.html"
 
 
 class LineItemPricing(PartPricing):

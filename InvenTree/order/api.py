@@ -631,6 +631,15 @@ class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SOLineItemSerializer
 
 
+class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detali view of a SalesOrderAllocation object
+    """
+
+    queryset = SalesOrderAllocation.objects.all()
+    serializer_class = SalesOrderAllocationSerializer
+
+
 class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
@@ -743,8 +752,10 @@ order_api_urls = [
     ])),
 
     # API endpoints for purchase order line items
-    url(r'^po-line/(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
-    url(r'^po-line/$', POLineItemList.as_view(), name='api-po-line-list'),
+    url(r'^po-line/', include([
+        url(r'^(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
+        url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
+    ])),
 
     # API endpoints for sales ordesr
     url(r'^so/', include([
@@ -764,9 +775,8 @@ order_api_urls = [
     ])),
 
     # API endpoints for sales order allocations
-    url(r'^so-allocation', include([
-
-        # List all sales order allocations
+    url(r'^so-allocation/', include([
+        url(r'^(?P<pk>\d+)/$', SOAllocationDetail.as_view(), name='api-so-allocation-detail'),
         url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
     ])),
 ]

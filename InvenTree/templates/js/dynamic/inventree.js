@@ -10,6 +10,7 @@
 /* exported
     attachClipboard,
     enableDragAndDrop,
+    exportFormatOptions,
     inventreeDocReady,
     inventreeLoad,
     inventreeSave,
@@ -43,6 +44,31 @@ function attachClipboard(selector, containerselector, textElement) {
         text: text,
         container: containerselector
     });
+}
+
+
+/**
+ * Return a standard list of export format options * 
+ */
+function exportFormatOptions() {
+    return [
+        {
+            value: 'csv',
+            display_name: 'CSV',
+        },
+        {
+            value: 'tsv',
+            display_name: 'TSV',
+        },
+        {
+            value: 'xls',
+            display_name: 'XLS',
+        },
+        {
+            value: 'xlsx',
+            display_name: 'XLSX',
+        },
+    ];
 }
 
 

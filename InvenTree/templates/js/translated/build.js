@@ -42,6 +42,8 @@ function buildFormFields() {
                 part_detail: true,
             }
         },
+        sales_order: {
+        },
         batch: {},
         target_date: {},
         take_from: {},
@@ -76,23 +78,32 @@ function newBuildOrder(options={}) {
 
     var fields = buildFormFields();
 
+    // Specify the target part
     if (options.part) {
         fields.part.value = options.part;
     }
 
+    // Specify the desired quantity
     if (options.quantity) {
         fields.quantity.value = options.quantity;
     }
 
+    // Specify the parent build order
     if (options.parent) {
         fields.parent.value = options.parent;
+    }
+
+    // Specify a parent sales order
+    if (options.sales_order) {
+        fields.sales_order.value = options.sales_order;
     }
 
     constructForm(`/api/build/`, {
         fields: fields,
         follow: true,
         method: 'POST',
-        title: '{% trans "Create Build Order" %}'
+        title: '{% trans "Create Build Order" %}',
+        onSuccess: options.onSuccess,
     });
 }
 
