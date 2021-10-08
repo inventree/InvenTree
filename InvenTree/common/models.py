@@ -662,6 +662,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        # 2021-10-08
+        # This setting exists as an interim solution for https://github.com/inventree/InvenTree/issues/2042
+        # The BOM API can be extremely slow when calculating pricing information "on the fly"
+        # A future solution will solve this properly,
+        # but as an interim step we provide a global to enable / disable BOM pricing
+        'PART_SHOW_PRICE_IN_BOM': {
+            'name': _('Show Price in BOM'),
+            'description': _('Include pricing information in BOM tables'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_SHOW_RELATED': {
             'name': _('Show related parts'),
             'description': _('Display related parts for a part'),
