@@ -1153,7 +1153,6 @@ class BomList(generics.ListCreateAPIView):
             queryset = self.annotate_pricing(queryset)
 
         return queryset
-
     
     def annotate_pricing(self, queryset):
         """
