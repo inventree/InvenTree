@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """sample implementation for ActionPlugin"""
-from plugins.action import ActionPlugin
+from plugin.action import ActionPlugin
 
 
 class SimpleActionPlugin(ActionPlugin):

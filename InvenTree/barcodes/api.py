@@ -13,7 +13,7 @@ from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
 from barcodes.barcode import hash_barcode
-from plugins.plugins import load_barcode_plugins
+from plugin.plugins import load_barcode_plugins
 
 
 class BarcodeScan(APIView):

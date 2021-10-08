@@ -3,7 +3,7 @@
 
 import logging
 
-import plugins.plugin as plugin
+import plugin.plugin as plugin
 
 
 logger = logging.getLogger("inventree")

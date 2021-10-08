@@ -6,7 +6,7 @@ from django.conf.urls import url, include
 
 from datetime import datetime
 
-from plugins.integration import AppMixin, IntegrationPluginBase, SettingsMixin, UrlsMixin, NavigationMixin
+from plugin.integration import AppMixin, IntegrationPluginBase, SettingsMixin, UrlsMixin, NavigationMixin
 
 
 class BaseMixinDefinition:

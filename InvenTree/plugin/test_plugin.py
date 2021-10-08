@@ -3,11 +3,11 @@
 from django.test import TestCase
 from django.conf import settings
 
-import plugins.plugin
-import plugins.integration
-from plugins.samples.integration.sample import SampleIntegrationPlugin
-from plugins.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
-from plugins.plugins import load_integration_plugins  # , load_action_plugins, load_barcode_plugins
+import plugin.plugin
+import plugin.integration
+from plugin.samples.integration.sample import SampleIntegrationPlugin
+from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
+from plugin.plugins import load_integration_plugins  # , load_action_plugins, load_barcode_plugins
 import part.templatetags.plugin_extras as plugin_tags
 
 

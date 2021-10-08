@@ -7,11 +7,11 @@ import pkgutil
 import logging
 
 # Action plugins
-import plugins.samples.action as action
-from plugins.action import ActionPlugin
+import plugin.builtin.action as action
+from plugin.action import ActionPlugin
 
-import plugins.samples.integration as integration
-from plugins.integration import IntegrationPluginBase
+import plugin.samples.integration as integration
+from plugin.integration import IntegrationPluginBase
 
 
 logger = logging.getLogger("inventree")
@@ -55,7 +55,7 @@ def get_plugins(pkg, baseclass):
     return plugins
 
 
-def load_plugins(name: str, module, cls):
+def load_plugins(name: str, cls, module=None):
     """general function to load a plugin class
 
     :param name: name of the plugin for logs
@@ -81,14 +81,14 @@ def load_action_plugins():
     """
     Return a list of all registered action plugins
     """
-    return load_plugins('action', action, ActionPlugin)
+    return load_plugins('action', ActionPlugin, module=action)
 
 
 def load_integration_plugins():
     """
     Return a list of all registered integration plugins
     """
-    return load_plugins('integration', integration, IntegrationPluginBase)
+    return load_plugins('integration', IntegrationPluginBase, module=integration)
 
 
 def load_barcode_plugins():
@@ -98,4 +98,4 @@ def load_barcode_plugins():
     from barcodes import plugins as BarcodePlugins
     from barcodes.barcode import BarcodePlugin
 
-    return load_plugins('barcode', BarcodePlugins, BarcodePlugin)
+    return load_plugins('barcode', BarcodePlugins, module=BarcodePlugin)

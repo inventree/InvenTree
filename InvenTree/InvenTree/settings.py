@@ -27,7 +27,7 @@ import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 
-from plugins import plugins as inventree_plugins
+from plugin import plugins as inventree_plugins
 
 
 def _is_true(x):
@@ -337,7 +337,7 @@ TEMPLATES = [
                 'django.template.loaders.cached.Loader', [
                     'django.template.loaders.app_directories.Loader',
                     'django.template.loaders.filesystem.Loader',
-                    'plugins.loader.PluginTemplateLoader',
+                    'plugin.loader.PluginTemplateLoader',
                 ])
             ],
         },

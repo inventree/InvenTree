@@ -21,7 +21,7 @@ from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
 
-from plugins import plugins as inventree_plugins
+from plugin import plugins as inventree_plugins
 
 
 logger = logging.getLogger("inventree")

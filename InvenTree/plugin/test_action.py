@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from plugins.action import ActionPlugin
+from plugin.action import ActionPlugin
 
 
 class ActionPluginTests(TestCase):

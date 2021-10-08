@@ -3,7 +3,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from plugins.samples.action.simpleactionplugin import SimpleActionPlugin
+from plugin.builtin.action.simpleactionplugin import SimpleActionPlugin
 
 
 class SimpleActionPluginTests(TestCase):

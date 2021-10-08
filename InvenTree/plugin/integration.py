@@ -12,7 +12,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
-import plugins.plugin as plugin
+import plugin.plugin as plugin
 
 
 logger = logging.getLogger("inventree")
