@@ -242,6 +242,14 @@
     border-color: var(--label-red);
 }
 
+.label-form {
+    margin: 2px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+}
+
 .label-red {
     background: var(--label-red);
 }

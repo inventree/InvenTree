@@ -158,6 +158,12 @@
     function reloadImage(data) {
         if (data.image) {
             $('#company-image').attr('src', data.image);
+
+            // Reset the "modal image" view
+            $('#company-image').click(function() {
+                showModalImage(data.image);
+            });
+
         } else {
             location.reload();
         }

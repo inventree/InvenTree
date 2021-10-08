@@ -274,7 +274,16 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
-    // Filters for the "Order" table
+    // Filters for PurchaseOrderLineItem table
+    if (tableKey == 'purchaseorderlineitem') {
+        return {
+            completed: {
+                type: 'bool',
+                title: '{% trans "Completed" %}',
+            },
+        };
+    }
+    // Filters for the PurchaseOrder table
     if (tableKey == 'purchaseorder') {
 
         return {

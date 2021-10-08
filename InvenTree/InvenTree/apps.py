@@ -63,6 +63,12 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
+        # Delete old error messages
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.delete_old_error_logs',
+            schedule_type=Schedule.DAILY,
+        )
+
         # Delete "old" stock items
         InvenTree.tasks.schedule_task(
             'stock.tasks.delete_old_stock_items',

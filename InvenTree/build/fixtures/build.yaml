@@ -3,7 +3,7 @@
 - model: build.build
   pk: 1
   fields:
-    part: 25
+    part: 100  # Build against part 100 "Bob"
     batch: 'B1'
     reference: "0001"
     title: 'Building 7 parts'

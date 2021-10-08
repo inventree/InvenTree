@@ -4,12 +4,14 @@ Build database model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import decimal
 
 import os
 from datetime import datetime
 
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from django.urls import reverse
@@ -584,86 +586,6 @@ class Build(MPTTModel):
         self.status = BuildStatus.CANCELLED
         self.save()
 
-    def getAutoAllocations(self):
-        """
-        Return a list of StockItem objects which will be allocated
-        using the 'AutoAllocate' function.
-
-        For each item in the BOM for the attached Part,
-        the following tests must *all* evaluate to True,
-        for the part to be auto-allocated:
-
-        - The sub_item in the BOM line must *not* be trackable
-        - There is only a single stock item available (which has not already been allocated to this build)
-        - The stock item has an availability greater than zero
-
-        Returns:
-            A list object containing the StockItem objects to be allocated (and the quantities).
-            Each item in the list is a dict as follows:
-            {
-                'stock_item': stock_item,
-                'quantity': stock_quantity,
-            }
-        """
-
-        allocations = []
-
-        """
-        Iterate through each item in the BOM
-        """
-
-        for bom_item in self.bom_items:
-
-            part = bom_item.sub_part
-
-            # If the part is "trackable" it cannot be auto-allocated
-            if part.trackable:
-                continue
-
-            # Skip any parts which are already fully allocated
-            if self.isPartFullyAllocated(part, None):
-                continue
-
-            # How many parts are required to complete the output?
-            required = self.unallocatedQuantity(part, None)
-
-            # Grab a list of stock items which are available
-            stock_items = self.availableStockItems(part, None)
-
-            # Ensure that the available stock items are in the correct location
-            if self.take_from is not None:
-                # Filter for stock that is located downstream of the designated location
-                stock_items = stock_items.filter(location__in=[loc for loc in self.take_from.getUniqueChildren()])
-
-            # Only one StockItem to choose from? Default to that one!
-            if stock_items.count() == 1:
-                stock_item = stock_items[0]
-
-                # Double check that we have not already allocated this stock-item against this build
-                build_items = BuildItem.objects.filter(
-                    build=self,
-                    stock_item=stock_item,
-                )
-
-                if len(build_items) > 0:
-                    continue
-
-                # How many items are actually available?
-                if stock_item.quantity > 0:
-
-                    # Only take as many as are available
-                    if stock_item.quantity < required:
-                        required = stock_item.quantity
-
-                    allocation = {
-                        'stock_item': stock_item,
-                        'quantity': required,
-                    }
-
-                    allocations.append(allocation)
-
-        return allocations
-
     @transaction.atomic
     def unallocateOutput(self, output, part=None):
         """
@@ -802,37 +724,6 @@ class Build(MPTTModel):
 
         # Remove the build output from the database
         output.delete()
-
-    @transaction.atomic
-    def autoAllocate(self):
-        """
-        Run auto-allocation routine to allocate StockItems to this Build.
-
-        Args:
-            output: If specified, only auto-allocate against the given built output
-
-        Returns a list of dict objects with keys like:
-
-            {
-                'stock_item': item,
-                'quantity': quantity,
-            }
-
-        See: getAutoAllocations()
-        """
-
-        allocations = self.getAutoAllocations()
-
-        for item in allocations:
-            # Create a new allocation
-            build_item = BuildItem(
-                build=self,
-                stock_item=item['stock_item'],
-                quantity=item['quantity'],
-                install_into=None
-            )
-
-            build_item.save()
 
     @transaction.atomic
     def subtractUntrackedStock(self, user):
@@ -1165,8 +1056,10 @@ class BuildItem(models.Model):
 
     Attributes:
         build: Link to a Build object
+        bom_item: Link to a BomItem object (may or may not point to the same part as the build)
         stock_item: Link to a StockItem object
         quantity: Number of units allocated
+        install_into: Destination stock item (or None)
     """
 
     @staticmethod
@@ -1185,35 +1078,13 @@ class BuildItem(models.Model):
 
     def save(self, *args, **kwargs):
 
-        self.validate_unique()
         self.clean()
 
         super().save()
 
-    def validate_unique(self, exclude=None):
-        """
-        Test that this BuildItem object is "unique".
-        Essentially we do not want a stock_item being allocated to a Build multiple times.
-        """
-
-        super().validate_unique(exclude)
-
-        items = BuildItem.objects.exclude(id=self.id).filter(
-            build=self.build,
-            stock_item=self.stock_item,
-            install_into=self.install_into
-        )
-
-        if items.exists():
-            msg = _("BuildItem must be unique for build, stock_item and install_into")
-            raise ValidationError({
-                'build': msg,
-                'stock_item': msg,
-                'install_into': msg
-            })
-
     def clean(self):
-        """ Check validity of the BuildItem model.
+        """
+        Check validity of this BuildItem instance.
         The following checks are performed:
 
         - StockItem.part must be in the BOM of the Part object referenced by Build
@@ -1224,8 +1095,6 @@ class BuildItem(models.Model):
 
         super().clean()
 
-        errors = {}
-
         try:
 
             # If the 'part' is trackable, then the 'install_into' field must be set!
@@ -1234,28 +1103,38 @@ class BuildItem(models.Model):
 
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
-                errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})").format(
-                    n=normalize(self.quantity),
-                    q=normalize(self.stock_item.quantity)
-                )]
+
+                q = normalize(self.quantity)
+                a = normalize(self.stock_item.quantity)
+
+                raise ValidationError({
+                    'quantity': _(f'Allocated quantity ({q}) must not execed available stock quantity ({a})')
+                })
 
             # Allocated quantity cannot cause the stock item to be over-allocated
-            if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
-                errors['quantity'] = _('StockItem is over-allocated')
+            available = decimal.Decimal(self.stock_item.quantity)
+            allocated = decimal.Decimal(self.stock_item.allocation_count())
+            quantity = decimal.Decimal(self.quantity)
+
+            if available - allocated + quantity < quantity:
+                raise ValidationError({
+                    'quantity': _('Stock item is over-allocated')
+                })
 
             # Allocated quantity must be positive
             if self.quantity <= 0:
-                errors['quantity'] = _('Allocation quantity must be greater than zero')
+                raise ValidationError({
+                    'quantity': _('Allocation quantity must be greater than zero'),
+                })
 
             # Quantity must be 1 for serialized stock
             if self.stock_item.serialized and not self.quantity == 1:
-                errors['quantity'] = _('Quantity must be 1 for serialized stock')
+                raise ValidationError({
+                    'quantity': _('Quantity must be 1 for serialized stock')
+                })
 
         except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass
-
-        if len(errors) > 0:
-            raise ValidationError(errors)
 
         """
         Attempt to find the "BomItem" which links this BuildItem to the build.
@@ -1269,7 +1148,7 @@ class BuildItem(models.Model):
             """
             A BomItem object has already been assigned. This is valid if:
 
-            a) It points to the same "part" as the referened build
+            a) It points to the same "part" as the referenced build
             b) Either:
                 i) The sub_part points to the same part as the referenced StockItem
                 ii) The BomItem allows variants and the part referenced by the StockItem
@@ -1309,7 +1188,7 @@ class BuildItem(models.Model):
         if not bom_item_valid:
 
             raise ValidationError({
-                'stock_item': _("Selected stock item not found in BOM for part '{p}'").format(p=self.build.part.full_name)
+                'stock_item': _("Selected stock item not found in BOM")
             })
 
     @transaction.atomic
