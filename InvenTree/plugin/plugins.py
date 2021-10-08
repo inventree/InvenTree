@@ -10,7 +10,8 @@ import logging
 import plugin.builtin.action as action
 from plugin.action import ActionPlugin
 
-import plugin.samples.integration as integration
+# Integration
+import plugin.builtin.integration as integration
 from plugin.integration import IntegrationPluginBase
 
 
