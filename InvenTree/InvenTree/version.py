@@ -10,12 +10,16 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
-INVENTREE_API_VERSION = 14
+INVENTREE_API_VERSION = 15
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v14 -> 2021-20-05
+v15 -> 2021-10-06
+    - Adds detail endpoint for SalesOrderAllocation model
+    - Allows use of the API forms interface for adjusting SalesOrderAllocation objects
+
+v14 -> 2021-10-05
     - Stock adjustment actions API is improved, using native DRF serializer support
     - However adjustment actions now only support 'pk' as a lookup field
 
@@ -104,7 +108,7 @@ def inventreeDocsVersion():
     Return the version string matching the latest documentation.
     
     Development -> "latest"
-    Release -> "major.minor"
+    Release -> "major.minor.sub" e.g. "0.5.2"
     
     """
 
@@ -113,7 +117,7 @@ def inventreeDocsVersion():
     else:
         major, minor, patch = inventreeVersionTuple()
 
-        return f"{major}.{minor}"
+        return f"{major}.{minor}.{patch}"
 
 
 def isInvenTreeUpToDate():

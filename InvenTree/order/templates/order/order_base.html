@@ -39,6 +39,9 @@ src="{% static 'img/blank_image.png' %}"
         <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
             <span class='fas fa-print'></span> 
         </button>
+        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
+            <span class='fas fa-file-download'></span>
+        </button>
         {% if roles.purchase_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
             <span class='fas fa-edit icon-green'></span>
@@ -61,9 +64,6 @@ src="{% static 'img/blank_image.png' %}"
         </button>
         {% endif %}
         {% endif %}
-        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
-            <span class='fas fa-file-download'></span>
-        </button>
     </div>
 </div>
 {% endblock %}
@@ -224,7 +224,7 @@ $("#cancel-order").click(function() {
 });
 
 $("#export-order").click(function() {
-    location.href = "{% url 'po-export' order.id %}";
+    exportOrder('{% url "po-export" order.id %}');
 });
 
 

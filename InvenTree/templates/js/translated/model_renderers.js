@@ -159,7 +159,24 @@ function renderPart(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'><small>{% trans "Part ID" %}: ${data.pk}</small></span>`;
+    var stock = '';
+
+    // Display available part quantity
+    if (user_settings.PART_SHOW_QUANTITY_IN_FORMS) {
+        if (data.in_stock == 0) {
+            stock = `<span class='label-form label-red'>{% trans "No Stock" %}</span>`;
+        } else {
+            stock = `<span class='label-form label-green'>{% trans "In Stock" %}: ${data.in_stock}</span>`;
+        }
+    }
+
+    html += `
+    <span class='float-right'>
+        <small>
+            ${stock}
+            {% trans "Part ID" %}: ${data.pk}
+            </small>
+    </span>`;
 
     return html;
 }
@@ -194,6 +211,26 @@ function renderOwner(name, data, parameters, options) {
     default:
         break;
     }
+
+    return html;
+}
+
+
+// Renderer for "SalesOrder" model
+// eslint-disable-next-line no-unused-vars
+function renderSalesOrder(name, data, parameters, options) {
+    var html = `<span>${data.reference}</span>`;
+
+    if (data.description) {
+        html += ` - <i>${data.description}</i>`;
+    }
+
+    html += `
+    <span class='float-right'>
+        <small>
+            {% trans "Order ID" %}: ${data.pk}
+            </small>
+    </span>`;
 
     return html;
 }

@@ -649,14 +649,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        # TODO: Remove this setting in future, new API forms make this not useful
-        'PART_SHOW_QUANTITY_IN_FORMS': {
-            'name': _('Show Quantity in Forms'),
-            'description': _('Display available part quantity in some forms'),
-            'default': True,
-            'validator': bool,
-        },
-
         'PART_SHOW_IMPORT': {
             'name': _('Show Import in Views'),
             'description': _('Display the import wizard in some part views'),
@@ -667,6 +659,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PART_SHOW_PRICE_IN_FORMS': {
             'name': _('Show Price in Forms'),
             'description': _('Display part price in some forms'),
+            'default': True,
+            'validator': bool,
+        },
+
+        # 2021-10-08
+        # This setting exists as an interim solution for https://github.com/inventree/InvenTree/issues/2042
+        # The BOM API can be extremely slow when calculating pricing information "on the fly"
+        # A future solution will solve this properly,
+        # but as an interim step we provide a global to enable / disable BOM pricing
+        'PART_SHOW_PRICE_IN_BOM': {
+            'name': _('Show Price in BOM'),
+            'description': _('Include pricing information in BOM tables'),
             'default': True,
             'validator': bool,
         },
@@ -970,6 +974,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Number of results to show in search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
+        },
+
+        'PART_SHOW_QUANTITY_IN_FORMS': {
+            'name': _('Show Quantity in Forms'),
+            'description': _('Display available part quantity in some forms'),
+            'default': True,
+            'validator': bool,
         },
     }
 

@@ -328,6 +328,12 @@
         // If image / thumbnail data present, live update
         if (data.image) {
             $('#part-image').attr('src', data.image);
+
+            // Reset the "modal image" view
+            $('#part-thumb').click(function() {
+                showModalImage(data.image);
+            });
+
         } else {
             // Otherwise, reload the page
             location.reload();

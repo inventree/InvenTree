@@ -478,7 +478,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
     serial = serializers.CharField(source='get_serial', read_only=True)
-    quantity = serializers.FloatField(read_only=True)
+    quantity = serializers.FloatField(read_only=False)
     location = serializers.PrimaryKeyRelatedField(source='item.location', many=False, read_only=True)
 
     # Extra detail fields
@@ -549,7 +549,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-    allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
     quantity = serializers.FloatField()
 

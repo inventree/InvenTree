@@ -50,6 +50,9 @@ src="{% static 'img/blank_image.png' %}"
         <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
             <span class='fas fa-print'></span> 
         </button>
+        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
+            <span class='fas fa-file-download'></span>
+        </button>
         {% if roles.sales_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
             <span class='fas fa-edit icon-green'></span>
@@ -63,9 +66,11 @@ src="{% static 'img/blank_image.png' %}"
         </button>
         {% endif %}
         {% endif %}
+        <!--
         <button type='button' disabled='' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
             <span class='fas fa-clipboard-list'></span>
         </button>
+        -->
     </div>
 </div>
 {% endblock %}
@@ -194,6 +199,10 @@ $("#ship-order").click(function() {
 
 $('#print-order-report').click(function() {
     printSalesOrderReports([{{ order.pk }}]);
+});
+
+$('#export-order').click(function() {
+    exportOrder('{% url "so-export" order.id %}');
 });
 
 {% endblock %}
