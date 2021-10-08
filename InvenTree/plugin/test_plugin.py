@@ -14,9 +14,9 @@ import part.templatetags.plugin_extras as plugin_tags
 class InvenTreePluginTests(TestCase):
     """ Tests for InvenTreePlugin """
     def setUp(self):
-        self.plugin = plugins.plugin.InvenTreePlugin()
+        self.plugin = plugin.plugin.InvenTreePlugin()
 
-        class NamedPlugin(plugins.plugin.InvenTreePlugin):
+        class NamedPlugin(plugin.plugin.InvenTreePlugin):
             """a named plugin"""
             PLUGIN_NAME = 'abc123'
 
