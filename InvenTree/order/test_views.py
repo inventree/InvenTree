@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 
 from InvenTree.status_codes import PurchaseOrderStatus
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrder
 
 import json
 
@@ -103,86 +103,3 @@ class POTests(OrderViewTestCase):
         # Test that the order was actually placed
         order = PurchaseOrder.objects.get(pk=1)
         self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
-
-
-class TestPOReceive(OrderViewTestCase):
-    """ Tests for receiving a purchase order """
-
-    def setUp(self):
-        super().setUp()
-
-        self.po = PurchaseOrder.objects.get(pk=1)
-        self.po.status = PurchaseOrderStatus.PLACED
-        self.po.save()
-        self.url = reverse('po-receive', args=(1,))
-
-    def post(self, data, validate=None):
-
-        response = self.client.post(self.url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        if validate is not None:
-
-            data = json.loads(response.content)
-
-            if validate:
-                self.assertTrue(data['form_valid'])
-            else:
-                self.assertFalse(data['form_valid'])
-
-        return response
-
-    def test_get_dialog(self):
-
-        data = {
-        }
-
-        self.client.get(self.url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-    def test_receive_lines(self):
-
-        post_data = {
-        }
-
-        self.post(post_data, validate=False)
-
-        # Try with an invalid location
-        post_data['location'] = 12345
-
-        self.post(post_data, validate=False)
-
-        # Try with a valid location
-        post_data['location'] = 1
-
-        # Should fail due to invalid quantity
-        self.post(post_data, validate=False)
-
-        # Try to receive against an invalid line
-        post_data['line-800'] = 100
-
-        # Remove an invalid quantity of items
-        post_data['line-1'] = '7x5q'
-
-        self.post(post_data, validate=False)
-
-        # Receive negative number
-        post_data['line-1'] = -100
-
-        self.post(post_data, validate=False)
-
-        # Receive 75 items
-        post_data['line-1'] = 75
-
-        self.post(post_data, validate=True)
-
-        line = PurchaseOrderLineItem.objects.get(pk=1)
-
-        self.assertEqual(line.received, 75)
-
-        # Receive 30 more items
-        post_data['line-1'] = 30
-
-        self.post(post_data, validate=True)
-
-        line = PurchaseOrderLineItem.objects.get(pk=1)
-
-        self.assertEqual(line.received, 105)

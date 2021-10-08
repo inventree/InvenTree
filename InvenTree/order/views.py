@@ -23,13 +23,12 @@ from decimal import Decimal, InvalidOperation
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
-from .admin import POLineItemResource
+from .admin import POLineItemResource, SOLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
-from stock.models import StockItem, StockLocation
+from stock.models import StockItem
 from part.models import Part
 
-from common.models import InvenTreeSetting
 from common.forms import UploadFileForm, MatchFieldForm
 from common.views import FileManagementFormView
 from common.files import FileManager
@@ -37,12 +36,12 @@ from common.files import FileManager
 from . import forms as order_forms
 from part.views import PartPricing
 
-from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxView, AjaxUpdateView
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
-from InvenTree.status_codes import PurchaseOrderStatus, StockStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 
 
 logger = logging.getLogger("inventree")
@@ -437,6 +436,33 @@ class PurchaseOrderUpload(FileManagementFormView):
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
+class SalesOrderExport(AjaxView):
+    """
+    Export a sales order
+
+    - File format can optionally be passed as a query parameter e.g. ?format=CSV
+    - Default file format is CSV
+    """
+
+    model = SalesOrder
+
+    role_required = 'sales_order.view'
+
+    def get(self, request, *args, **kwargs):
+        
+        order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
+
+        export_format = request.GET.get('format', 'csv')
+
+        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+
+        dataset = SOLineItemResource().export(queryset=order.lines.all())
+
+        filedata = dataset.export(format=export_format)
+
+        return DownloadFile(filedata, filename)
+
+
 class PurchaseOrderExport(AjaxView):
     """ File download for a purchase order
 
@@ -451,7 +477,7 @@ class PurchaseOrderExport(AjaxView):
 
     def get(self, request, *args, **kwargs):
 
-        order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+        order = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
 
@@ -466,202 +492,6 @@ class PurchaseOrderExport(AjaxView):
         filedata = dataset.export(format=export_format)
 
         return DownloadFile(filedata, filename)
-
-
-class PurchaseOrderReceive(AjaxUpdateView):
-    """ View for receiving parts which are outstanding against a PurchaseOrder.
-
-    Any parts which are outstanding are listed.
-    If all parts are marked as received, the order is closed out.
-
-    """
-
-    form_class = order_forms.ReceivePurchaseOrderForm
-    ajax_form_title = _("Receive Parts")
-    ajax_template_name = "order/receive_parts.html"
-
-    # Specify role as we do not specify a Model against this view
-    role_required = 'purchase_order.change'
-
-    # Where the parts will be going (selected in POST request)
-    destination = None
-
-    def get_context_data(self):
-
-        ctx = {
-            'order': self.order,
-            'lines': self.lines,
-            'stock_locations': StockLocation.objects.all(),
-        }
-
-        return ctx
-
-    def get_lines(self):
-        """
-        Extract particular line items from the request,
-        or default to *all* pending line items if none are provided
-        """
-
-        lines = None
-
-        if 'line' in self.request.GET:
-            line_id = self.request.GET.get('line')
-
-            try:
-                lines = PurchaseOrderLineItem.objects.filter(pk=line_id)
-            except (PurchaseOrderLineItem.DoesNotExist, ValueError):
-                pass
-
-        # TODO - Option to pass multiple lines?
-
-        # No lines specified - default selection
-        if lines is None:
-            lines = self.order.pending_line_items()
-
-        return lines
-
-    def get(self, request, *args, **kwargs):
-        """ Respond to a GET request. Determines which parts are outstanding,
-        and presents a list of these parts to the user.
-        """
-
-        self.request = request
-        self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
-
-        self.lines = self.get_lines()
-
-        for line in self.lines:
-            # Pre-fill the remaining quantity
-            line.receive_quantity = line.remaining()
-
-        return self.renderJsonResponse(request, form=self.get_form())
-
-    def post(self, request, *args, **kwargs):
-        """ Respond to a POST request. Data checking and error handling.
-        If the request is valid, new StockItem objects will be made
-        for each received item.
-        """
-
-        self.request = request
-        self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
-        errors = False
-
-        self.lines = []
-        self.destination = None
-
-        msg = _("Items received")
-
-        # Extract the destination for received parts
-        if 'location' in request.POST:
-            pk = request.POST['location']
-            try:
-                self.destination = StockLocation.objects.get(id=pk)
-            except (StockLocation.DoesNotExist, ValueError):
-                pass
-
-        # Extract information on all submitted line items
-        for item in request.POST:
-            if item.startswith('line-'):
-                pk = item.replace('line-', '')
-
-                try:
-                    line = PurchaseOrderLineItem.objects.get(id=pk)
-                except (PurchaseOrderLineItem.DoesNotExist, ValueError):
-                    continue
-
-                # Check that the StockStatus was set
-                status_key = 'status-{pk}'.format(pk=pk)
-                status = request.POST.get(status_key, StockStatus.OK)
-
-                try:
-                    status = int(status)
-                except ValueError:
-                    status = StockStatus.OK
-
-                if status in StockStatus.RECEIVING_CODES:
-                    line.status_code = status
-                else:
-                    line.status_code = StockStatus.OK
-
-                # Check the destination field
-                line.destination = None
-                if self.destination:
-                    # If global destination is set, overwrite line value
-                    line.destination = self.destination
-                else:
-                    destination_key = f'destination-{pk}'
-                    destination = request.POST.get(destination_key, None)
-
-                    if destination:
-                        try:
-                            line.destination = StockLocation.objects.get(pk=destination)
-                        except (StockLocation.DoesNotExist, ValueError):
-                            pass
-
-                # Check that line matches the order
-                if not line.order == self.order:
-                    # TODO - Display a non-field error?
-                    continue
-
-                # Ignore a part that doesn't map to a SupplierPart
-                try:
-                    if line.part is None:
-                        continue
-                except SupplierPart.DoesNotExist:
-                    continue
-
-                receive = self.request.POST[item]
-
-                try:
-                    receive = Decimal(receive)
-                except InvalidOperation:
-                    # In the case on an invalid input, reset to default
-                    receive = line.remaining()
-                    msg = _("Error converting quantity to number")
-                    errors = True
-
-                if receive < 0:
-                    receive = 0
-                    errors = True
-                    msg = _("Receive quantity less than zero")
-
-                line.receive_quantity = receive
-                self.lines.append(line)
-
-        if len(self.lines) == 0:
-            msg = _("No lines specified")
-            errors = True
-
-        # No errors? Receive the submitted parts!
-        if errors is False:
-            self.receive_parts()
-
-        data = {
-            'form_valid': errors is False,
-            'success': msg,
-        }
-
-        return self.renderJsonResponse(request, data=data, form=self.get_form())
-
-    @transaction.atomic
-    def receive_parts(self):
-        """ Called once the form has been validated.
-        Create new stockitems against received parts.
-        """
-
-        for line in self.lines:
-
-            if not line.part:
-                continue
-
-            self.order.receive_line_item(
-                line,
-                line.destination,
-                line.receive_quantity,
-                self.request.user,
-                status=line.status_code,
-                purchase_price=line.purchase_price,
-            )
 
 
 class OrderParts(AjaxView):
@@ -1170,105 +1000,6 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             self.get_form(),
             context=self.get_context_data(),
         )
-
-
-class SalesOrderAllocationCreate(AjaxCreateView):
-    """ View for creating a new SalesOrderAllocation """
-
-    model = SalesOrderAllocation
-    form_class = order_forms.CreateSalesOrderAllocationForm
-    ajax_form_title = _('Allocate Stock to Order')
-
-    def get_initial(self):
-        initials = super().get_initial().copy()
-
-        line_id = self.request.GET.get('line', None)
-
-        if line_id is not None:
-            line = SalesOrderLineItem.objects.get(pk=line_id)
-
-            initials['line'] = line
-
-            # Search for matching stock items, pre-fill if there is only one
-            items = StockItem.objects.filter(part=line.part)
-
-            quantity = line.quantity - line.allocated_quantity()
-
-            if quantity < 0:
-                quantity = 0
-
-            if items.count() == 1:
-                item = items.first()
-                initials['item'] = item
-
-                # Reduce the quantity IF there is not enough stock
-                qmax = item.quantity - item.allocation_count()
-
-                if qmax < quantity:
-                    quantity = qmax
-
-            initials['quantity'] = quantity
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        line_id = form['line'].value()
-
-        # If a line item has been specified, reduce the queryset for the stockitem accordingly
-        try:
-            line = SalesOrderLineItem.objects.get(pk=line_id)
-
-            # Construct a queryset for allowable stock items
-            queryset = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
-
-            # Ensure the part reference matches
-            queryset = queryset.filter(part=line.part)
-
-            # Exclude StockItem which are already allocated to this order
-            allocated = [allocation.item.pk for allocation in line.allocations.all()]
-
-            queryset = queryset.exclude(pk__in=allocated)
-
-            # Exclude stock items which have expired
-            if not InvenTreeSetting.get_setting('STOCK_ALLOW_EXPIRED_SALE'):
-                queryset = queryset.exclude(StockItem.EXPIRED_FILTER)
-
-            form.fields['item'].queryset = queryset
-
-            # Hide the 'line' field
-            form.fields['line'].widget = HiddenInput()
-
-        except (ValueError, SalesOrderLineItem.DoesNotExist):
-            pass
-
-        return form
-
-
-class SalesOrderAllocationEdit(AjaxUpdateView):
-
-    model = SalesOrderAllocation
-    form_class = order_forms.EditSalesOrderAllocationForm
-    ajax_form_title = _('Edit Allocation Quantity')
-
-    def get_form(self):
-        form = super().get_form()
-
-        # Prevent the user from editing particular fields
-        form.fields.pop('item')
-        form.fields.pop('line')
-
-        return form
-
-
-class SalesOrderAllocationDelete(AjaxDeleteView):
-
-    model = SalesOrderAllocation
-    ajax_form_title = _("Remove allocation")
-    context_object_name = 'allocation'
-    ajax_template_name = "order/so_allocation_delete.html"
 
 
 class LineItemPricing(PartPricing):

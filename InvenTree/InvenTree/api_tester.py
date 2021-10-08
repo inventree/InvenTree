@@ -141,3 +141,15 @@ class InvenTreeAPITestCase(APITestCase):
             self.assertEqual(response.status_code, expected_code)
 
         return response
+
+    def options(self, url, expected_code=None):
+        """
+        Issue an OPTIONS request
+        """
+
+        response = self.client.options(url, format='json')
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
+
+        return response

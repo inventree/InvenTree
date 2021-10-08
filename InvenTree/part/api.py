@@ -1100,6 +1100,12 @@ class BomList(generics.ListCreateAPIView):
         except AttributeError:
             pass
 
+        try:
+            # Include or exclude pricing information in the serialized data
+            kwargs['include_pricing'] = str2bool(self.request.GET.get('include_pricing', True))
+        except AttributeError:
+            pass
+
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
 
@@ -1140,6 +1146,18 @@ class BomList(generics.ListCreateAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
+
+        include_pricing = str2bool(params.get('include_pricing', True))
+
+        if include_pricing:
+            queryset = self.annotate_pricing(queryset)
+
+        return queryset
+    
+    def annotate_pricing(self, queryset):
+        """
+        Add part pricing information to the queryset
+        """
 
         # Annotate with purchase prices
         queryset = queryset.annotate(

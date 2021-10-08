@@ -94,6 +94,7 @@ class Company(models.Model):
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
+        verbose_name_plural = "Companies"
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),

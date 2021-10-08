@@ -4,15 +4,12 @@
 
 /* globals
     attachSelect,
-    attachToggle,
-    blankImage,
     enableField,
     clearField,
     clearFieldOptions,
     closeModal,
+    constructField,
     constructFormBody,
-    constructNumberInput,
-    createNewModal,
     getFormFieldValue,
     global_settings,
     handleFormErrors,
@@ -101,24 +98,7 @@ function exportStock(params={}) {
                 required: true,
                 type: 'choice',
                 value: 'csv',
-                choices: [
-                    {
-                        value: 'csv',
-                        display_name: 'CSV',
-                    },
-                    {
-                        value: 'tsv',
-                        display_name: 'TSV',
-                    },
-                    {
-                        value: 'xls',
-                        display_name: 'XLS',
-                    },
-                    {
-                        value: 'xlsx',
-                        display_name: 'XLSX',
-                    },
-                ],
+                choices: exportFormatOptions(),
             },
             sublocations: {
                 label: '{% trans "Include Sublocations" %}',
@@ -247,7 +227,7 @@ function adjustStock(action, items, options={}) {
             break;
         }
 
-        var image = item.part_detail.thumbnail || item.part_detail.image || blankImage();
+        var thumb = thumbnailImage(item.part_detail.thumbnail || item.part_detail.image);
 
         var status = stockStatusDisplay(item.status, {
             classes: 'float-right'
@@ -268,14 +248,18 @@ function adjustStock(action, items, options={}) {
         var actionInput = '';
 
         if (actionTitle != null) {
-            actionInput = constructNumberInput(
-                item.pk,
+            actionInput = constructField(
+                `items_quantity_${pk}`,
                 {
-                    value: value,
+                    type: 'decimal',
                     min_value: minValue,
                     max_value: maxValue,
-                    read_only: readonly,
+                    value: value,
                     title: readonly ? '{% trans "Quantity cannot be adjusted for serialized stock" %}' : '{% trans "Specify stock quantity" %}',
+                    required: true,
+                },
+                {
+                    hideLabels: true,
                 }
             );
         }
@@ -293,7 +277,7 @@ function adjustStock(action, items, options={}) {
 
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
-            <td id='part_${pk}'><img src='${image}' class='hover-img-thumb'> ${item.part_detail.full_name}</td>
+            <td id='part_${pk}'>${thumb} ${item.part_detail.full_name}</td>
             <td id='stock_${pk}'>${quantity}${status}</td>
             <td id='location_${pk}'>${location}</td>
             <td id='action_${pk}'>
@@ -319,50 +303,89 @@ function adjustStock(action, items, options={}) {
 
     html += `</tbody></table>`;
 
-    var modal = createNewModal({
-        title: formTitle,
-    });
+    var extraFields = {};
 
-    // Extra fields
-    var extraFields = {
-        location: {
-            label: '{% trans "Location" %}',
-            help_text: '{% trans "Select destination stock location" %}',
-            type: 'related field',
-            required: true,
-            api_url: `/api/stock/location/`,
-            model: 'stocklocation',
-            name: 'location',
-        },
-        notes: {
-            label: '{% trans "Notes" %}',
-            help_text: '{% trans "Stock transaction notes" %}',
-            type: 'string',
-            name: 'notes',
-        }
-    };
-
-    if (!specifyLocation) {
-        delete extraFields.location;
+    if (specifyLocation) {
+        extraFields.location = {};
     }
 
-    constructFormBody({}, {
-        preFormContent: html,
+    if (action != 'delete') {
+        extraFields.notes = {};
+    }
+
+    constructForm(url, {
+        method: 'POST',
         fields: extraFields,
+        preFormContent: html,
         confirm: true,
         confirmMessage: '{% trans "Confirm stock adjustment" %}',
-        modal: modal,
-        onSubmit: function(fields) {
+        title: formTitle,
+        afterRender: function(fields, opts) {
+            // Add button callbacks to remove rows
+            $(opts.modal).find('.button-stock-item-remove').click(function() {
+                var pk = $(this).attr('pk');
 
-            // "Delete" action gets handled differently
+                $(opts.modal).find(`#stock_item_${pk}`).remove();
+            });
+
+            // Initialize "location" field
+            if (specifyLocation) {
+                initializeRelatedField(
+                    {
+                        name: 'location',
+                        type: 'related field',
+                        model: 'stocklocation',
+                        required: true,
+                    },
+                    null,
+                    opts
+                );
+            }
+        },
+        onSubmit: function(fields, opts) {
+          
+            // Extract data elements from the form
+            var data = {
+                items: [],
+            };
+
+            if (action != 'delete') {
+                data.notes = getFormFieldValue('notes', {}, opts);
+            }
+
+            if (specifyLocation) {
+                data.location = getFormFieldValue('location', {}, opts);
+            }
+
+            var item_pk_values = [];
+
+            items.forEach(function(item) {
+                var pk = item.pk;
+
+                // Does the row exist in the form?
+                var row = $(opts.modal).find(`#stock_item_${pk}`);
+
+                if (row) {
+
+                    item_pk_values.push(pk);
+                    
+                    var quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
+
+                    data.items.push({
+                        pk: pk,
+                        quantity: quantity,
+                    });
+                }
+            });
+
+            // Delete action is handled differently
             if (action == 'delete') {
-
                 var requests = [];
 
-                items.forEach(function(item) {
+                item_pk_values.forEach(function(pk) {
                     requests.push(
                         inventreeDelete(
-                            `/api/stock/${item.pk}/`,
+                            `/api/stock/${pk}/`,
                         )
                     );
                 });
@@ -370,72 +393,40 @@ function adjustStock(action, items, options={}) {
                 // Wait for *all* the requests to complete
                 $.when.apply($, requests).done(function() {
                     // Destroy the modal window
-                    $(modal).modal('hide');
+                    $(opts.modal).modal('hide');
 
-                    if (options.onSuccess) {
-                        options.onSuccess();
+                    if (options.success) {
+                        options.success();
                     }
                 });
 
                 return;
             }
 
-            // Data to transmit
-            var data = {
-                items: [],
+            opts.nested = {
+                'items': item_pk_values,
             };
-
-            // Add values for each selected stock item
-            items.forEach(function(item) {
-
-                var q = getFormFieldValue(item.pk, {}, {modal: modal});
-
-                if (q != null) {
-                    data.items.push({pk: item.pk, quantity: q});
-                }
-            });
-
-            // Add in extra field data
-            for (var field_name in extraFields) {
-                data[field_name] = getFormFieldValue(
-                    field_name,
-                    fields[field_name],
-                    {
-                        modal: modal,
-                    }
-                );
-            }
 
             inventreePut(
                 url,
                 data,
                 {
                     method: 'POST',
-                    success: function() {
+                    success: function(response) {
+                        // Hide the modal
+                        $(opts.modal).modal('hide');
 
-                        // Destroy the modal window
-                        $(modal).modal('hide');
-
-                        if (options.onSuccess) {
-                            options.onSuccess();
+                        if (options.success) {
+                            options.success(response);
                         }
                     },
                     error: function(xhr) {
                         switch (xhr.status) {
                         case 400:
-
-                            // Handle errors for standard fields
-                            handleFormErrors(
-                                xhr.responseJSON,
-                                extraFields,
-                                {
-                                    modal: modal,
-                                }
-                            );
-
+                            handleFormErrors(xhr.responseJSON, fields, opts);
                             break;
                         default:
-                            $(modal).modal('hide');
+                            $(opts.modal).modal('hide');
                             showApiError(xhr);
                             break;
                         }
@@ -444,18 +435,6 @@ function adjustStock(action, items, options={}) {
             );
         }
     });
-
-    // Attach callbacks for the action buttons
-    $(modal).find('.button-stock-item-remove').click(function() {
-        var pk = $(this).attr('pk');
-
-        $(modal).find(`#stock_item_${pk}`).remove();
-    });
-
-    attachToggle(modal);
-
-    $(modal + ' .select2-container').addClass('select-full-width');
-    $(modal + ' .select2-container').css('width', '100%');
 }
 
 
@@ -1258,7 +1237,7 @@ function loadStockTable(table, options) {
         var items = $(table).bootstrapTable('getSelections');
 
         adjustStock(action, items, {
-            onSuccess: function() {
+            success: function() {
                 $(table).bootstrapTable('refresh');
             }
         });

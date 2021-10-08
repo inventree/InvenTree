@@ -4,6 +4,7 @@ Part database model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import decimal
 
 import os
 import logging
@@ -1546,13 +1547,16 @@ class Part(MPTTModel):
         for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
-                print("Warning: Item contains itself in BOM")
+                logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
                 continue
 
+            q = decimal.Decimal(quantity)
+            i = decimal.Decimal(item.quantity)
+
             if note:
-                *prices, add_note = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase, note=True)
+                *prices, add_note = item.sub_part.get_price_range(q * i, internal=internal, purchase=purchase, note=True)
             else:
-                prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
+                prices = item.sub_part.get_price_range(q * i, internal=internal, purchase=purchase)
                 add_note = False
 
             if prices is None or prices[0] is None:
@@ -2363,6 +2367,23 @@ class BomItem(models.Model):
     @staticmethod
     def get_api_url():
         return reverse('api-bom-list')
+
+    def get_stock_filter(self):
+        """
+        Return a queryset filter for selecting StockItems which match this BomItem
+
+        - If allow_variants is True, allow all part variants
+
+        """
+
+        # Target part
+        part = self.sub_part
+
+        if self.allow_variants:
+            variants = part.get_descendants(include_self=True)
+            return Q(part__in=[v.pk for v in variants])
+        else:
+            return Q(part=part)
 
     def save(self, *args, **kwargs):
 

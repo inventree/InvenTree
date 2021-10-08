@@ -7,14 +7,12 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
-from django.db import transaction
-from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import Q, F
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
-from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 
@@ -235,6 +233,7 @@ class POReceive(generics.CreateAPIView):
 
         # Pass the purchase order through to the serializer for validation
         context['order'] = self.get_order()
+        context['request'] = self.request
 
         return context
 
@@ -252,75 +251,38 @@ class POReceive(generics.CreateAPIView):
         
         return order
 
-    def create(self, request, *args, **kwargs):
 
-        # Which purchase order are we receiving against?
-        self.order = self.get_order()
+class POLineItemFilter(rest_filters.FilterSet):
+    """
+    Custom filters for the POLineItemList endpoint
+    """
 
-        # Validate the serialized data
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    class Meta:
+        model = PurchaseOrderLineItem
+        fields = [
+            'order',
+            'part'
+        ]
 
-        # Receive the line items
-        try:
-            self.receive_items(serializer)
-        except DjangoValidationError as exc:
-            # Re-throw a django error as a DRF error
-            raise ValidationError(detail=serializers.as_serializer_error(exc))
+    completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @transaction.atomic
-    def receive_items(self, serializer):
+    def filter_completed(self, queryset, name, value):
         """
-        Receive the items
+        Filter by lines which are "completed" (or "not" completed)
 
-        At this point, much of the heavy lifting has been done for us by DRF serializers!
-
-        We have a list of "items", each a dict which contains:
-        - line_item: A PurchaseOrderLineItem matching this order
-        - location: A destination location
-        - quantity: A validated numerical quantity
-        - status: The status code for the received item
+        A line is completed when received >= quantity
         """
 
-        data = serializer.validated_data
+        value = str2bool(value)
 
-        location = data['location']
+        q = Q(received__gte=F('quantity'))
 
-        items = data['items']
+        if value:
+            queryset = queryset.filter(q)
+        else:
+            queryset = queryset.exclude(q)
 
-        # Check if the location is not specified for any particular item
-        for item in items:
-
-            line = item['line_item']
-
-            if not item.get('location', None):
-                # If a global location is specified, use that
-                item['location'] = location
-
-            if not item['location']:
-                # The line item specifies a location?
-                item['location'] = line.get_destination()
-
-            if not item['location']:
-                raise ValidationError({
-                    'location': _("Destination location must be specified"),
-                })
-
-        # Now we can actually receive the items
-        for item in items:
-
-            self.order.receive_line_item(
-                item['line_item'],
-                item['location'],
-                item['quantity'],
-                self.request.user,
-                status=item['status'],
-                barcode=item.get('barcode', ''),
-            )
+        return queryset
 
 
 class POLineItemList(generics.ListCreateAPIView):
@@ -332,6 +294,7 @@ class POLineItemList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
+    filterset_class = POLineItemFilter
 
     def get_queryset(self, *args, **kwargs):
 
@@ -668,6 +631,15 @@ class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SOLineItemSerializer
 
 
+class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detali view of a SalesOrderAllocation object
+    """
+
+    queryset = SalesOrderAllocation.objects.all()
+    serializer_class = SalesOrderAllocationSerializer
+
+
 class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
@@ -780,8 +752,10 @@ order_api_urls = [
     ])),
 
     # API endpoints for purchase order line items
-    url(r'^po-line/(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
-    url(r'^po-line/$', POLineItemList.as_view(), name='api-po-line-list'),
+    url(r'^po-line/', include([
+        url(r'^(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
+        url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
+    ])),
 
     # API endpoints for sales ordesr
     url(r'^so/', include([
@@ -801,9 +775,8 @@ order_api_urls = [
     ])),
 
     # API endpoints for sales order allocations
-    url(r'^so-allocation', include([
-
-        # List all sales order allocations
+    url(r'^so-allocation/', include([
+        url(r'^(?P<pk>\d+)/$', SOAllocationDetail.as_view(), name='api-so-allocation-detail'),
         url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
     ])),
 ]

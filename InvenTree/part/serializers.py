@@ -193,6 +193,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'default_location',
             'name',
             'revision',
             'full_name',
@@ -418,6 +419,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', False)
+        include_pricing = kwargs.pop('include_pricing', False)
 
         super(BomItemSerializer, self).__init__(*args, **kwargs)
 
@@ -426,6 +428,14 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         if sub_part_detail is not True:
             self.fields.pop('sub_part_detail')
+
+        if not include_pricing:
+            # Remove all pricing related fields
+            self.fields.pop('price_range')
+            self.fields.pop('purchase_price_min')
+            self.fields.pop('purchase_price_max')
+            self.fields.pop('purchase_price_avg')
+            self.fields.pop('purchase_price_range')
 
     @staticmethod
     def setup_eager_loading(queryset):

@@ -561,7 +561,7 @@ function itemAdjust(action) {
         {
             success: function(item) {
                 adjustStock(action, [item], {
-                    onSuccess: function() {
+                    success: function() {
                         location.reload();
                     }
                 });
