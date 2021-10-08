@@ -98,4 +98,4 @@ def load_barcode_plugins():
     from barcodes import plugins as BarcodePlugins
     from barcodes.barcode import BarcodePlugin
 
-    return load_plugins('barcode', BarcodePlugins, module=BarcodePlugin)
+    return load_plugins('barcode', BarcodePlugin, module=BarcodePlugins)
