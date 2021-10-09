@@ -22,7 +22,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
 
-    TEST_SETTINGS = {'setting1': [1, 2, 3]}
+    TEST_SETTINGS = {'setting1': {'default': '123',}}
 
     def setUp(self):
         class SettingsCls(SettingsMixin, IntegrationPluginBase):
@@ -44,6 +44,15 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         # no settings
         self.assertIsNone(self.mixin_nothing.settings)
         self.assertIsNone(self.mixin_nothing.settingspatterns)
+
+        # calling settings
+        # not existing
+        self.assertEqual(self.mixin.get_setting('ABCD'), '')
+        self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
+        # right setting
+        self.assertEqual(self.mixin.get_setting('setting1'), '123')
+        # no setting
+        self.assertEqual(self.mixin_nothing.get_setting(), '')
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
@@ -81,6 +90,9 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.assertIsNone(self.mixin_nothing.urls)
         self.assertIsNone(self.mixin_nothing.urlpatterns)
 
+        # internal name
+        self.assertEqual(self.mixin.internal_name,  f'plugin:{self.mixin.slug}:')
+
 
 class AppMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_HUMAN_NAME = 'App registration'
@@ -107,7 +119,12 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
             NAVIGATION = [
                 {'name': 'aa', 'link': 'plugin:test:test_view'},
             ]
+            NAVIGATION_TAB_NAME = 'abcd1'
         self.mixin = NavigationCls()
+
+        class NothingNavigationCls(NavigationMixin, IntegrationPluginBase):
+            pass
+        self.nothing_mixin = NothingNavigationCls()
 
     def test_function(self):
         # check right configuration
@@ -117,6 +134,10 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
             class NavigationCls(NavigationMixin, IntegrationPluginBase):
                 NAVIGATION = ['aa', 'aa']
             NavigationCls()
+
+        # navigation name
+        self.assertEqual(self.mixin.navigation_name, 'abcd1')
+        self.assertEqual(self.nothing_mixin.navigation_name, '')
 
 
 class IntegrationPluginBaseTests(TestCase):
@@ -135,6 +156,7 @@ class IntegrationPluginBaseTests(TestCase):
             PLUGIN_SLUG = 'a'
             PLUGIN_TITLE = 'a titel'
             PUBLISH_DATE = "1111-11-11"
+            AUTHOR = 'AA BB'
             VERSION = '1.2.3a'
             WEBSITE = 'http://aa.bb/cc'
 
@@ -156,6 +178,9 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin.human_name, '')
         self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
         self.assertEqual(self.plugin_name.human_name, 'a titel')
+
+        # author
+        self.assertEqual(self.plugin_name.author, 'AA BB')
 
         # pub_date
         self.assertEqual(self.plugin_name.pub_date, datetime(1111, 11, 11, 0, 0))
