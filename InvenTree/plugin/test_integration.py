@@ -58,7 +58,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.mixin.set_setting('SETTING1', '12345', self.test_user)
         self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
         # no setting
-        self.assertEqual(self.mixin_nothing.get_setting(), '')
+        self.assertEqual(self.mixin_nothing.get_setting(''), '')
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
