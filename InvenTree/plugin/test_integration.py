@@ -22,7 +22,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
 
-    TEST_SETTINGS = {'setting1': {'default': '123', }}
+    TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
         class SettingsCls(SettingsMixin, IntegrationPluginBase):
@@ -50,7 +50,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.get_setting('ABCD'), '')
         self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
         # right setting
-        self.assertEqual(self.mixin.get_setting('setting1'), '123')
+        self.assertEqual(self.mixin.get_setting('SETTING1'), '123')
         # no setting
         self.assertEqual(self.mixin_nothing.get_setting(), '')
 
