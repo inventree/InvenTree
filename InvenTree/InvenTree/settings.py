@@ -667,7 +667,7 @@ PLUGIN_DIRS = [
 ]
 
 # load samples if in debug mode
-if DEBUG:
+if DEBUG or TESTING:
     PLUGIN_DIRS.append('plugin.samples')
 
 # collect all plugins from paths
