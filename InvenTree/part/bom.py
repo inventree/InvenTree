@@ -3,14 +3,9 @@ Functionality for Bill of Material (BOM) management.
 Primarily BOM upload tools.
 """
 
-from rapidfuzz import fuzz
-import tablib
-import os
-
 from collections import OrderedDict
 
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 from InvenTree.helpers import DownloadFile, GetExportFormats
 
@@ -145,11 +140,16 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             stock_data = []
             # Get part default location
             try:
-                stock_data.append(bom_item.sub_part.get_default_location().name)
+                loc = bom_item.sub_part.get_default_location()
+
+                if loc is not None:
+                    stock_data.append(str(loc.name))
+                else:
+                    stock_data.append('')
             except AttributeError:
                 stock_data.append('')
             # Get part current stock
-            stock_data.append(bom_item.sub_part.available_stock)
+            stock_data.append(str(bom_item.sub_part.available_stock))
 
             for s_idx, header in enumerate(stock_headers):
                 try:
@@ -189,12 +189,15 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             # Process manufacturer part
             for manufacturer_idx, manufacturer_part in enumerate(manufacturer_parts):
 
-                if manufacturer_part:
+                if manufacturer_part and manufacturer_part.manufacturer:
                     manufacturer_name = manufacturer_part.manufacturer.name
                 else:
                     manufacturer_name = ''
 
-                manufacturer_mpn = manufacturer_part.MPN
+                if manufacturer_part:
+                    manufacturer_mpn = manufacturer_part.MPN
+                else:
+                    manufacturer_mpn = ''
 
                 # Generate column names for this manufacturer
                 k_man = manufacturer_headers[0] + "_" + str(manufacturer_idx)
@@ -210,12 +213,15 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
                 # Process supplier parts
                 for supplier_idx, supplier_part in enumerate(manufacturer_part.supplier_parts.all()):
 
-                    if supplier_part.supplier:
+                    if supplier_part.supplier and supplier_part.supplier:
                         supplier_name = supplier_part.supplier.name
                     else:
                         supplier_name = ''
 
-                    supplier_sku = supplier_part.SKU
+                    if supplier_part:
+                        supplier_sku = supplier_part.SKU
+                    else:
+                        supplier_sku = ''
 
                     # Generate column names for this supplier
                     k_sup = str(supplier_headers[0]) + "_" + str(manufacturer_idx) + "_" + str(supplier_idx)
@@ -323,177 +329,6 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
     data = dataset.export(fmt)
 
-    filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
+    filename = f"{part.full_name}_BOM.{fmt}"
 
     return DownloadFile(data, filename)
-
-
-class BomUploadManager:
-    """ Class for managing an uploaded BOM file """
-
-    # Fields which are absolutely necessary for valid upload
-    REQUIRED_HEADERS = [
-        'Quantity'
-    ]
-
-    # Fields which are used for part matching (only one of them is needed)
-    PART_MATCH_HEADERS = [
-        'Part_Name',
-        'Part_IPN',
-        'Part_ID',
-    ]
-
-    # Fields which would be helpful but are not required
-    OPTIONAL_HEADERS = [
-        'Reference',
-        'Note',
-        'Overage',
-    ]
-
-    EDITABLE_HEADERS = [
-        'Reference',
-        'Note',
-        'Overage'
-    ]
-
-    HEADERS = REQUIRED_HEADERS + PART_MATCH_HEADERS + OPTIONAL_HEADERS
-
-    def __init__(self, bom_file):
-        """ Initialize the BomUpload class with a user-uploaded file object """
-
-        self.process(bom_file)
-
-    def process(self, bom_file):
-        """ Process a BOM file """
-
-        self.data = None
-
-        ext = os.path.splitext(bom_file.name)[-1].lower()
-
-        if ext in ['.csv', '.tsv', ]:
-            # These file formats need string decoding
-            raw_data = bom_file.read().decode('utf-8')
-        elif ext in ['.xls', '.xlsx']:
-            raw_data = bom_file.read()
-        else:
-            raise ValidationError({'bom_file': _('Unsupported file format: {f}').format(f=ext)})
-
-        try:
-            self.data = tablib.Dataset().load(raw_data)
-        except tablib.UnsupportedFormat:
-            raise ValidationError({'bom_file': _('Error reading BOM file (invalid data)')})
-        except tablib.core.InvalidDimensions:
-            raise ValidationError({'bom_file': _('Error reading BOM file (incorrect row size)')})
-
-    def guess_header(self, header, threshold=80):
-        """ Try to match a header (from the file) to a list of known headers
-
-        Args:
-            header - Header name to look for
-            threshold - Match threshold for fuzzy search
-        """
-
-        # Try for an exact match
-        for h in self.HEADERS:
-            if h == header:
-                return h
-
-        # Try for a case-insensitive match
-        for h in self.HEADERS:
-            if h.lower() == header.lower():
-                return h
-
-        # Try for a case-insensitive match with space replacement
-        for h in self.HEADERS:
-            if h.lower() == header.lower().replace(' ', '_'):
-                return h
-
-        # Finally, look for a close match using fuzzy matching
-        matches = []
-
-        for h in self.HEADERS:
-            ratio = fuzz.partial_ratio(header, h)
-            if ratio > threshold:
-                matches.append({'header': h, 'match': ratio})
-
-        if len(matches) > 0:
-            matches = sorted(matches, key=lambda item: item['match'], reverse=True)
-            return matches[0]['header']
-
-        return None
-
-    def columns(self):
-        """ Return a list of headers for the thingy """
-        headers = []
-
-        for header in self.data.headers:
-            headers.append({
-                'name': header,
-                'guess': self.guess_header(header)
-            })
-
-        return headers
-
-    def col_count(self):
-        if self.data is None:
-            return 0
-
-        return len(self.data.headers)
-
-    def row_count(self):
-        """ Return the number of rows in the file. """
-
-        if self.data is None:
-            return 0
-
-        return len(self.data)
-
-    def rows(self):
-        """ Return a list of all rows """
-        rows = []
-
-        for i in range(self.row_count()):
-
-            data = [item for item in self.get_row_data(i)]
-
-            # Is the row completely empty? Skip!
-            empty = True
-
-            for idx, item in enumerate(data):
-                if len(str(item).strip()) > 0:
-                    empty = False
-
-                try:
-                    # Excel import casts number-looking-items into floats, which is annoying
-                    if item == int(item) and not str(item) == str(int(item)):
-                        data[idx] = int(item)
-                except ValueError:
-                    pass
-
-            # Skip empty rows
-            if empty:
-                continue
-
-            row = {
-                'data': data,
-                'index': i
-            }
-
-            rows.append(row)
-
-        return rows
-
-    def get_row_data(self, index):
-        """ Retrieve row data at a particular index """
-        if self.data is None or index >= len(self.data):
-            return None
-
-        return self.data[index]
-
-    def get_row_dict(self, index):
-        """ Retrieve a dict object representing the data row at a particular offset """
-
-        if self.data is None or index >= len(self.data):
-            return None
-
-        return self.data.dict[index]

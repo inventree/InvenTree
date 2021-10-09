@@ -1,69 +1,108 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
 
 {% load i18n %}
+{% load inventree_extras %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='user' %}
+{% block label %}account{% endblock %}
+
+{% block heading %}
+{% trans "Account Settings" %}
 {% endblock %}
 
-{% block subtitle %}
-{% trans "User Settings" %}
-{% endblock %}
-
-{% block settings %}
-
-<div class='container'>
-    <h4>{% trans "User Information" %}</h4>
-    <div class='btn-group' style='float: right;'>
-        <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
-            <span class='fas fa-user-cog'></span> {% trans "Edit" %}
-        </div>
-        <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-            <span class='fas fa-key'></span> {% trans "Set Password" %}
-        </div>
+{% block content %}
+<div class='btn-group' style='float: right;'>
+    <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
+        <span class='fas fa-user-cog'></span> {% trans "Edit" %}
     </div>
-
-    <table class='table table-striped table-condensed'>
-        <tr>
-            <td>{% trans "Username" %}</td>
-            <td>{{ user.username }}</td>
-        </tr>
-        <tr>
-            <td>{% trans "First Name" %}</td>
-            <td>{{ user.first_name }}</td>
-        </tr>
-        <tr>
-            <td>{% trans "Last Name" %}</td>
-            <td>{{ user.last_name }}</td>
-        </tr>
-        <tr>
-            <td>{% trans "Email Address" %}</td>
-            <td>{{ user.email }}</td>
-        </tr>
-    </table>
+    <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+        <span class='fas fa-key'></span> {% trans "Set Password" %}
+    </div>
 </div>
 
-{% endblock %}
+<table class='table table-striped table-condensed'>
+    <tr>
+        <td>{% trans "Username" %}</td>
+        <td>{{ user.username }}</td>
+    </tr>
+    <tr>
+        <td>{% trans "First Name" %}</td>
+        <td>{{ user.first_name }}</td>
+    </tr>
+    <tr>
+        <td>{% trans "Last Name" %}</td>
+        <td>{{ user.last_name }}</td>
+    </tr>
+    <tr>
+        <td>{% trans "Email Address" %}</td>
+        <td>{{ user.email }}</td>
+    </tr>
+</table>
 
-{% block js_ready %}
-{{ block.super }}
+<div class='panel-heading'>
+    <h4>{% trans "Theme Settings" %}</h4>
+</div>
 
-    $("#edit-user").on('click', function() {
-        launchModalForm(
-            "{% url 'edit-user' %}",
-            {
-                reload: true,
-            }
-        );
-    });
+<div class='row'>
 
-    $("#edit-password").on('click', function() {
-        launchModalForm(
-            "{% url 'set-password' %}",
-            {
-                reload: true,
-            }
-        );
-    });
+    <form action='{% url "settings-appearance" %}' method='post'>
+        {% csrf_token %}
+        <input name='next' type='hidden' value='{% url "settings" %}'>
+        <div class="col-sm-6" style="width: 200px;">
+            <div id="div_id_themes" class="form-group">
+                <div class="controls ">
+                    <select name='theme' class='select form-control'>
+                        {% get_available_themes as themes %}
+                        {% for theme in themes %}
+                        <option value='{{ theme.key }}'>{{ theme.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" style="width: auto;">
+            <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn btn-primary">
+        </div>
+    </form>
+
+</div>
+
+<div class='panel-heading'>
+    <h4>{% trans "Language Settings" %}</h4>
+</div>
+
+<div class="row">
+    <div class="col">
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{% url 'settings' %}">
+            <div class="col-sm-6" style="width: 200px;"><div id="div_id_language" class="form-group"><div class="controls ">
+                <select name="language" class="select form-control">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        {% define language.code as lang_code %}
+                        {% define locale_stats|keyvalue:lang_code as lang_translated %}
+                        <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ lang_code }}) 
+                            {% if lang_translated %}
+                                {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
+                            {% else %}
+                                {% trans 'No translations available' %}
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div></div></div>
+            <div class="col-sm-6" style="width: auto;">
+                <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-6">
+        <h4>{% trans "Help the translation efforts!" %}</h4>
+        <p>{% blocktrans with link="https://crowdin.com/project/inventree" %}Native language translation of the InvenTree web application is <a href="{{link}}">community contributed via crowdin</a>. Contributions are welcomed and encouraged.{% endblocktrans %}</p>
+    </div>
+</div>
 
 {% endblock %}

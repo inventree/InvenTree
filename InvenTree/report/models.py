@@ -356,8 +356,10 @@ class TestReport(ReportTemplateBase):
             'stock_item': stock_item,
             'serial': stock_item.serial,
             'part': stock_item.part,
+            'parameters': stock_item.part.parameters_map(),
             'results': stock_item.testResultMap(include_installed=self.include_installed),
-            'result_list': stock_item.testResultList(include_installed=self.include_installed)
+            'result_list': stock_item.testResultList(include_installed=self.include_installed),
+            'installed_items': stock_item.get_installed_items(cascade=True),
         }
 
 

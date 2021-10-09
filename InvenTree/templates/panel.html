@@ -1,0 +1,13 @@
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-{% block label %}name{% endblock %}'>
+    {% block panel_heading %}
+    <div class='panel-heading'>
+        <h4>{% block heading %}HEADING{% endblock %}</h4>
+    </div>
+    {% endblock %}
+    {% block panel_content %}
+    <div class='panel-content'>
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% endblock %}
+</div>

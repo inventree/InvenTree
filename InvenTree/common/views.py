@@ -45,10 +45,27 @@ class SettingEdit(AjaxUpdateView):
 
         ctx['key'] = setting.key
         ctx['value'] = setting.value
-        ctx['name'] = models.InvenTreeSetting.get_setting_name(setting.key)
-        ctx['description'] = models.InvenTreeSetting.get_setting_description(setting.key)
+        ctx['name'] = self.model.get_setting_name(setting.key)
+        ctx['description'] = self.model.get_setting_description(setting.key)
 
         return ctx
+
+    def get_data(self):
+        """
+        Custom data to return to the client after POST success
+        """
+
+        data = {}
+
+        setting = self.get_object()
+
+        data['pk'] = setting.pk
+        data['key'] = setting.key
+        data['value'] = setting.value
+        data['is_bool'] = setting.is_bool()
+        data['is_int'] = setting.is_int()
+
+        return data
 
     def get_form(self):
         """
@@ -69,12 +86,12 @@ class SettingEdit(AjaxUpdateView):
             self.object.value = str2bool(setting.value)
             form.fields['value'].value = str2bool(setting.value)
 
-        name = models.InvenTreeSetting.get_setting_name(setting.key)
+        name = self.model.get_setting_name(setting.key)
 
         if name:
             form.fields['value'].label = name
 
-        description = models.InvenTreeSetting.get_setting_description(setting.key)
+        description = self.model.get_setting_description(setting.key)
 
         if description:
             form.fields['value'].help_text = description
@@ -109,6 +126,18 @@ class SettingEdit(AjaxUpdateView):
 
             if not str2bool(value, test=True) and not str2bool(value, test=False):
                 form.add_error('value', _('Supplied value must be a boolean'))
+
+
+class UserSettingEdit(SettingEdit):
+    """
+    View for editing an InvenTree key:value user  settings object,
+    (or creating it if the key does not already exist)
+    """
+
+    model = models.InvenTreeUserSetting
+    ajax_form_title = _('Change User Setting')
+    form_class = forms.SettingEditForm
+    ajax_template_name = "common/edit_setting.html"
 
 
 class MultiStepFormView(SessionWizardView):

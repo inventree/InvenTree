@@ -6,6 +6,8 @@ Provides a JSON API for the Company app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
+
 from rest_framework import filters
 from rest_framework import generics
 
@@ -84,6 +86,23 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
+class ManufacturerPartFilter(rest_filters.FilterSet):
+    """
+    Custom API filters for the ManufacturerPart list endpoint.
+    """
+
+    class Meta:
+        model = ManufacturerPart
+        fields = [
+            'manufacturer',
+            'MPN',
+            'part',
+        ]
+
+    # Filter by 'active' status of linked part
+    active = rest_filters.BooleanFilter(field_name='part__active')
+
+
 class ManufacturerPartList(generics.ListCreateAPIView):
     """ API endpoint for list view of ManufacturerPart object
 
@@ -98,6 +117,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
     )
 
     serializer_class = ManufacturerPartSerializer
+    filterset_class = ManufacturerPartFilter
 
     def get_serializer(self, *args, **kwargs):
 
@@ -115,43 +135,10 @@ class ManufacturerPartList(generics.ListCreateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    def filter_queryset(self, queryset):
-        """
-        Custom filtering for the queryset.
-        """
-
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by manufacturer
-        manufacturer = params.get('manufacturer', None)
-
-        if manufacturer is not None:
-            queryset = queryset.filter(manufacturer=manufacturer)
-
-        # Filter by parent part?
-        part = params.get('part', None)
-
-        if part is not None:
-            queryset = queryset.filter(part=part)
-
-        # Filter by 'active' status of the part?
-        active = params.get('active', None)
-
-        if active is not None:
-            active = str2bool(active)
-            queryset = queryset.filter(part__active=active)
-
-        return queryset
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
     ]
 
     search_fields = [
@@ -263,11 +250,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all().prefetch_related(
-        'part',
-        'supplier',
-        'manufacturer_part__manufacturer',
-    )
+    queryset = SupplierPart.objects.all()
 
     def get_queryset(self):
 

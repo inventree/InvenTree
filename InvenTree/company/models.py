@@ -10,8 +10,8 @@ import os
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+
 from django.db import models
-from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
@@ -94,6 +94,7 @@ class Company(models.Model):
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
+        verbose_name_plural = "Companies"
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),
@@ -430,6 +431,22 @@ class ManufacturerPartParameter(models.Model):
     )
 
 
+class SupplierPartManager(models.Manager):
+    """ Define custom SupplierPart objects manager
+
+        The main purpose of this manager is to improve database hit as the
+        SupplierPart model involves A LOT of foreign keys lookups
+    """
+
+    def get_queryset(self):
+        # Always prefetch related models
+        return super().get_queryset().prefetch_related(
+            'part',
+            'supplier',
+            'manufacturer_part__manufacturer',
+        )
+
+
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a SKU (Supplier Part Number)
@@ -450,6 +467,8 @@ class SupplierPart(models.Model):
         packaging: packaging that the part is supplied in, e.g. "Reel"
     """
 
+    objects = SupplierPartManager()
+
     @staticmethod
     def get_api_url():
         return reverse('api-supplier-part-list')
@@ -457,62 +476,59 @@ class SupplierPart(models.Model):
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
-    def save(self, *args, **kwargs):
-        """ Overriding save method to process the linked ManufacturerPart
-        """
-
-        if 'manufacturer' in kwargs:
-            manufacturer_id = kwargs.pop('manufacturer')
-
-            try:
-                manufacturer = Company.objects.get(pk=int(manufacturer_id))
-            except (ValueError, Company.DoesNotExist):
-                manufacturer = None
-        else:
-            manufacturer = None
-        if 'MPN' in kwargs:
-            MPN = kwargs.pop('MPN')
-        else:
-            MPN = None
-
-        if manufacturer or MPN:
-            if not self.manufacturer_part:
-                # Create ManufacturerPart
-                manufacturer_part = ManufacturerPart.create(part=self.part,
-                                                            manufacturer=manufacturer,
-                                                            mpn=MPN,
-                                                            description=self.description)
-                self.manufacturer_part = manufacturer_part
-            else:
-                # Update ManufacturerPart (if ID exists)
-                try:
-                    manufacturer_part_id = self.manufacturer_part.id
-                except AttributeError:
-                    manufacturer_part_id = None
-
-                if manufacturer_part_id:
-                    try:
-                        (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
-                                                                                                 manufacturer=manufacturer,
-                                                                                                 MPN=MPN)
-                    except IntegrityError:
-                        manufacturer_part = None
-                        raise ValidationError(f'ManufacturerPart linked to {self.part} from manufacturer {manufacturer.name}'
-                                              f'with part number {MPN} already exists!')
-
-                if manufacturer_part:
-                    self.manufacturer_part = manufacturer_part
-
-        self.clean()
-        self.validate_unique()
-
-        super().save(*args, **kwargs)
+    def api_instance_filters(self):
+        
+        return {
+            'manufacturer_part': {
+                'part': self.part.pk
+            }
+        }
 
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
+
+    def clean(self):
+
+        super().clean()
+
+        # Ensure that the linked manufacturer_part points to the same part!
+        if self.manufacturer_part and self.part:
+
+            if not self.manufacturer_part.part == self.part:
+                raise ValidationError({
+                    'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
+                })
+
+    def save(self, *args, **kwargs):
+        """ Overriding save method to connect an existing ManufacturerPart """
+
+        manufacturer_part = None
+
+        if all(key in kwargs for key in ('manufacturer', 'MPN')):
+            manufacturer_name = kwargs.pop('manufacturer')
+            MPN = kwargs.pop('MPN')
+
+            # Retrieve manufacturer part
+            try:
+                manufacturer_part = ManufacturerPart.objects.get(manufacturer__name=manufacturer_name, MPN=MPN)
+            except (ValueError, Company.DoesNotExist):
+                # ManufacturerPart does not exist
+                pass
+
+        if manufacturer_part:
+            if not self.manufacturer_part:
+                # Connect ManufacturerPart to SupplierPart
+                self.manufacturer_part = manufacturer_part
+            else:
+                raise ValidationError(f'SupplierPart {self.__str__} is already linked to {self.manufacturer_part}')
+
+        self.clean()
+        self.validate_unique()
+
+        super().save(*args, **kwargs)
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',

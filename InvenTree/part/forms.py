@@ -11,13 +11,13 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
-from InvenTree.helpers import GetExportFormats
+from InvenTree.helpers import GetExportFormats, clean_decimal
 from InvenTree.fields import RoundingDecimalFormField
 
 import common.models
+from common.forms import MatchItemForm
 
 from .models import Part, PartCategory, PartRelated
-from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -52,16 +52,6 @@ class PartImageDownloadForm(HelperForm):
         model = Part
         fields = [
             'url',
-        ]
-
-
-class PartImageForm(HelperForm):
-    """ Form for uploading a Part image """
-
-    class Meta:
-        model = Part
-        fields = [
-            'image',
         ]
 
 
@@ -143,16 +133,28 @@ class BomValidateForm(HelperForm):
         ]
 
 
-class BomUploadSelectFile(HelperForm):
-    """ Form for importing a BOM. Provides a file input box for upload """
+class BomMatchItemForm(MatchItemForm):
+    """ Override MatchItemForm fields """
 
-    bom_file = forms.FileField(label=_('BOM file'), required=True, help_text=_("Select BOM file to upload"))
+    def get_special_field(self, col_guess, row, file_manager):
+        """ Set special fields """
 
-    class Meta:
-        model = Part
-        fields = [
-            'bom_file',
-        ]
+        # set quantity field
+        if 'quantity' in col_guess.lower():
+            return forms.CharField(
+                required=False,
+                widget=forms.NumberInput(attrs={
+                    'name': 'quantity' + str(row['index']),
+                    'class': 'numberinput',
+                    'type': 'number',
+                    'min': '0',
+                    'step': 'any',
+                    'value': clean_decimal(row.get('quantity', '')),
+                })
+            )
+
+        # return default
+        return super().get_special_field(col_guess, row, file_manager)
 
 
 class CreatePartRelatedForm(HelperForm):
@@ -173,76 +175,6 @@ class SetPartCategoryForm(forms.Form):
     """ Form for setting the category of multiple Part objects """
 
     part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
-
-
-class EditPartForm(HelperForm):
-    """
-    Form for editing a Part object.
-    """
-
-    field_prefix = {
-        'keywords': 'fa-key',
-        'link': 'fa-link',
-        'IPN': 'fa-hashtag',
-        'default_expiry': 'fa-stopwatch',
-    }
-
-    bom_copy = forms.BooleanField(required=False,
-                                  initial=True,
-                                  help_text=_("Duplicate all BOM data for this part"),
-                                  label=_('Copy BOM'),
-                                  widget=forms.HiddenInput())
-
-    parameters_copy = forms.BooleanField(required=False,
-                                         initial=True,
-                                         help_text=_("Duplicate all parameter data for this part"),
-                                         label=_('Copy Parameters'),
-                                         widget=forms.HiddenInput())
-
-    confirm_creation = forms.BooleanField(required=False,
-                                          initial=False,
-                                          help_text=_('Confirm part creation'),
-                                          widget=forms.HiddenInput())
-
-    selected_category_templates = forms.BooleanField(required=False,
-                                                     initial=False,
-                                                     label=_('Include category parameter templates'),
-                                                     widget=forms.HiddenInput())
-
-    parent_category_templates = forms.BooleanField(required=False,
-                                                   initial=False,
-                                                   label=_('Include parent categories parameter templates'),
-                                                   widget=forms.HiddenInput())
-
-    class Meta:
-        model = Part
-        fields = [
-            'confirm_creation',
-            'category',
-            'selected_category_templates',
-            'parent_category_templates',
-            'name',
-            'IPN',
-            'description',
-            'revision',
-            'bom_copy',
-            'parameters_copy',
-            'keywords',
-            'variant_of',
-            'link',
-            'default_location',
-            'default_supplier',
-            'default_expiry',
-            'units',
-            'minimum_stock',
-            'component',
-            'assembly',
-            'is_template',
-            'trackable',
-            'purchaseable',
-            'salable',
-            'virtual',
-        ]
 
 
 class EditPartParameterTemplateForm(HelperForm):
@@ -306,33 +238,6 @@ class EditCategoryParameterTemplateForm(HelperForm):
             'add_to_same_level_categories',
             'add_to_all_categories',
         ]
-
-
-class EditBomItemForm(HelperForm):
-    """ Form for editing a BomItem object """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    sub_part = PartModelChoiceField(queryset=Part.objects.all(), label=_('Sub part'))
-
-    class Meta:
-        model = BomItem
-        fields = [
-            'part',
-            'sub_part',
-            'quantity',
-            'reference',
-            'overage',
-            'note',
-            'allow_variants',
-            'inherited',
-            'optional',
-        ]
-
-        # Prevent editing of the part associated with this BomItem
-        widgets = {
-            'part': forms.HiddenInput()
-        }
 
 
 class PartPriceForm(forms.Form):

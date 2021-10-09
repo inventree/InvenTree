@@ -111,8 +111,8 @@ src="{% static 'img/blank_image.png' %}"
             <li><a href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
             {% endif %}
             {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
-            <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build"% }</a>
-                {% endif %}
+            <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build" %}</a>
+            {% endif %}
         </ul>
     </div>
     {% endif %}
@@ -126,7 +126,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Part" %}</td>
-        <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
+        <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a></td>
     </tr>
     <tr>
         <td></td>
@@ -196,10 +196,7 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-edit").click(function () {
-        launchModalForm("{% url 'build-edit' build.id %}",
-                        {
-                            reload: true
-                        });
+        editBuildOrder({{ build.pk }});
     });
 
     $("#build-cancel").click(function() {
@@ -240,5 +237,11 @@ src="{% static 'img/blank_image.png' %}"
             }
         );
     });
+
+    attachNavCallbacks({
+        name: 'buildorder',
+        default: 'details'
+    });
+    
 
 {% endblock %}

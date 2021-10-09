@@ -1,32 +1,27 @@
-{% extends "part/part_base.html" %}
-{% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
-{% block menubar %}
-{% include 'part/navbar.html' with tab='bom' %}
-{% endblock %}
-
-{% block heading %}
-{% trans "Bill of Materials" %}
-{% endblock %}
-
-{% block details %}
+{% if roles.part.change != True and editing_enabled %}
+    <div class='alert alert-danger alert-block'>
+        {% trans "You do not have permission to edit the BOM." %}
+    </div>
+{% else %}
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
 <div class='alert alert-block alert-info'>
 {% else %}
 <div class='alert alert-block alert-danger'>
-    {% blocktrans with part=part.full_name %}The BOM for <i>{{ part }}</i> has changed, and must be validated.<br>{% endblocktrans %}
+    {% blocktrans with part=part.full_name %}The BOM for <em>{{ part }}</em> has changed, and must be validated.<br>{% endblocktrans %}
 {% endif %}
-    {% blocktrans with part=part.full_name checker=part.bom_checked_by check_date=part.bom_checked_date %}The BOM for <i>{{ part }}</i> was last checked by {{ checker }} on {{ check_date }}{% endblocktrans %}
+    {% blocktrans with part=part.full_name checker=part.bom_checked_by check_date=part.bom_checked_date %}The BOM for <em>{{ part }}</em> was last checked by {{ checker }} on {{ check_date }}{% endblocktrans %}
 </div>
 {% else %}
 <div class='alert alert-danger alert-block'>
-    <b>{% blocktrans with part=part.full_name %}The BOM for <i>{{ part }}</i> has not been validated.{% endblocktrans %}</b>
+    <strong>{% blocktrans with part=part.full_name %}The BOM for <em>{{ part }}</em> has not been validated.{% endblocktrans %}</strong>
 </div>
 {% endif %}
 
-<div id='button-toolbar'>
+<div id='bom-button-toolbar'>
     <div class="btn-group" role="group" aria-label="...">
         {% if editing_enabled %}
         <button class='btn btn-default' type='button' title='{% trans "Remove selected BOM items" %}' id='bom-item-delete'>
@@ -70,130 +65,6 @@
     </div>
 </div>
 
-<table class='table table-bom table-condensed' data-toolbar="#button-toolbar" id='bom-table'>
+<table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>
 </table>
-
-{% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
-
-    // Load the BOM table data
-    loadBomTable($("#bom-table"), {
-        editable: {{ editing_enabled }},
-        bom_url: "{% url 'api-bom-list' %}",
-        part_url: "{% url 'api-part-list' %}",
-        parent_id: {{ part.id }} ,
-        sub_part_detail: true,
-    });
-
-    linkButtonsToSelection($("#bom-table"),
-        [
-            "#bom-item-delete",
-        ]
-    );
-
-    {% if editing_enabled %}
-    $("#editing-finished").click(function() {
-        location.href = "{% url 'part-bom' part.id %}";
-    });
-
-    $('#bom-item-delete').click(function() {
-
-        // Get a list of the selected BOM items
-        var rows = $("#bom-table").bootstrapTable('getSelections');
-
-        // TODO - In the future, display (in the dialog) which items are going to be deleted
-
-        showQuestionDialog(
-            '{% trans "Delete selected BOM items?" %}',
-            '{% trans "All selected BOM items will be deleted" %}',
-            {
-                accept: function() {
-
-                    // Keep track of each DELETE request
-                    var requests = [];
-
-                    rows.forEach(function(row) {
-                        requests.push(
-                            inventreeDelete(
-                                `/api/bom/${row.pk}/`,
-                            )
-                        );
-                    });
-
-                    // Wait for *all* the requests to complete
-                    $.when.apply($, requests).then(function() {
-                        location.reload();
-                    });
-                }
-            }
-        );
-    });
-
-    $('#bom-upload').click(function() {
-        location.href = "{% url 'upload-bom' part.id %}";
-    });
-
-    $('#bom-duplicate').click(function() {
-        launchModalForm(
-            "{% url 'duplicate-bom' part.id %}",
-            {
-                success: function() {
-                    $('#bom-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
-    $("#bom-item-new").click(function () {
-        launchModalForm(
-            "{% url 'bom-item-create' %}?parent={{ part.id }}",
-            {
-                success: function() {
-                    $("#bom-table").bootstrapTable('refresh');
-                },
-                secondary: [
-                    {
-                        field: 'sub_part',
-                        label: '{% trans "New Part" %}',
-                        title: '{% trans "Create New Part" %}',
-                        url: "{% url 'part-create' %}",
-                    },
-                ]
-            }
-        );
-    });
-
-    {% else %}
-
-    $("#validate-bom").click(function() {
-        launchModalForm(
-            "{% url 'bom-validate' part.id %}",
-            {
-                reload: true,
-            }
-        );
-    });
-
-    $("#edit-bom").click(function () {
-        location.href = "{% url 'part-bom' part.id %}?edit=1";
-    });
-
-    $("#download-bom").click(function () {
-        launchModalForm("{% url 'bom-export' part.id %}",
-            {
-                success: function(response) {
-                    location.href = response.url;
-                },
-            }
-        );
-    });
-
-    {% endif %}
-
-    $("#print-bom-report").click(function() {
-        printBomReports([{{ part.pk }}]);
-    });
-
-{% endblock %}
+{% endif %}

@@ -7,18 +7,28 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import models, transaction
 from django.db.models import Case, When, Value
-from django.db.models import BooleanField
+from django.db.models import BooleanField, ExpressionWrapper, F
 
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+
 from sql_util.utils import SubqueryCount
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
+from InvenTree.status_codes import StockStatus
+
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+
 from part.serializers import PartBriefSerializer
+
+import stock.models
 from stock.serializers import LocationBriefSerializer, StockItemSerializer, LocationSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
@@ -108,6 +118,23 @@ class POSerializer(InvenTreeModelSerializer):
 
 class POLineItemSerializer(InvenTreeModelSerializer):
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to this queryset:
+
+        - Total price = purchase_price * quantity
+        """
+
+        queryset = queryset.annotate(
+            total_price=ExpressionWrapper(
+                F('purchase_price') * F('quantity'),
+                output_field=models.DecimalField()
+            )
+        )
+
+        return queryset
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -118,9 +145,10 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             self.fields.pop('part_detail')
             self.fields.pop('supplier_part_detail')
 
-    # TODO: Once https://github.com/inventree/InvenTree/issues/1687 is fixed, remove default values
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
+
+    total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
@@ -132,7 +160,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
 
-    destination = LocationBriefSerializer(source='get_destination', read_only=True)
+    destination_detail = LocationBriefSerializer(source='get_destination', read_only=True)
 
     purchase_price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
@@ -156,10 +184,191 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_currency',
             'purchase_price_string',
             'destination',
+            'destination_detail',
+            'total_price',
         ]
 
 
-class POAttachmentSerializer(InvenTreeModelSerializer):
+class POLineItemReceiveSerializer(serializers.Serializer):
+    """
+    A serializer for receiving a single purchase order line item against a purchase order
+    """
+
+    line_item = serializers.PrimaryKeyRelatedField(
+        queryset=PurchaseOrderLineItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Line Item'),
+    )
+
+    def validate_line_item(self, item):
+
+        if item.order != self.context['order']:
+            raise ValidationError(_('Line item does not match purchase order'))
+
+        return item
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+    )
+
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
+    status = serializers.ChoiceField(
+        choices=list(StockStatus.items()),
+        default=StockStatus.OK,
+        label=_('Status'),
+    )
+
+    barcode = serializers.CharField(
+        label=_('Barcode Hash'),
+        help_text=_('Unique identifier field'),
+        default='',
+        required=False,
+        allow_blank=True,
+    )
+
+    def validate_barcode(self, barcode):
+        """
+        Cannot check in a LineItem with a barcode that is already assigned
+        """
+
+        # Ignore empty barcode values
+        if not barcode or barcode.strip() == '':
+            return None
+
+        if stock.models.StockItem.objects.filter(uid=barcode).exists():
+            raise ValidationError(_('Barcode is already in use'))
+
+        return barcode
+
+    class Meta:
+        fields = [
+            'barcode',
+            'line_item',
+            'location',
+            'quantity',
+            'status',
+        ]
+
+
+class POReceiveSerializer(serializers.Serializer):
+    """
+    Serializer for receiving items against a purchase order
+    """
+
+    items = POLineItemReceiveSerializer(many=True)
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=stock.models.StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select destination location for received items'),
+    )
+
+    def validate(self, data):
+
+        super().validate(data)
+
+        items = data.get('items', [])
+
+        location = data.get('location', None)
+
+        if len(items) == 0:
+            raise ValidationError(_('Line items must be provided'))
+
+        # Check if the location is not specified for any particular item
+        for item in items:
+
+            line = item['line_item']
+
+            if not item.get('location', None):
+                # If a global location is specified, use that
+                item['location'] = location
+
+            if not item['location']:
+                # The line item specifies a location?
+                item['location'] = line.get_destination()
+
+            if not item['location']:
+                raise ValidationError({
+                    'location': _("Destination location must be specified"),
+                })
+
+        # Ensure barcodes are unique
+        unique_barcodes = set()
+
+        for item in items:
+            barcode = item.get('barcode', '')
+
+            if barcode:
+                if barcode in unique_barcodes:
+                    raise ValidationError(_('Supplied barcode values must be unique'))
+                else:
+                    unique_barcodes.add(barcode)
+
+        return data
+
+    def save(self):
+        """
+        Perform the actual database transaction to receive purchase order items
+        """
+
+        data = self.validated_data
+
+        request = self.context['request']
+        order = self.context['order']
+
+        items = data['items']
+        location = data.get('location', None)
+
+        # Now we can actually receive the items into stock
+        with transaction.atomic():
+            for item in items:
+
+                # Select location
+                loc = item.get('location', None) or item['line_item'].get_destination() or location
+
+                try:
+                    order.receive_line_item(
+                        item['line_item'],
+                        loc,
+                        item['quantity'],
+                        request.user,
+                        status=item['status'],
+                        barcode=item.get('barcode', ''),
+                    )
+                except (ValidationError, DjangoValidationError) as exc:
+                    # Catch model errors and re-throw as DRF errors
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+    class Meta:
+        fields = [
+            'items',
+            'location',
+        ]
+
+
+class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the PurchaseOrderAttachment model
     """
@@ -173,6 +382,7 @@ class POAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'order',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]
@@ -268,7 +478,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
     serial = serializers.CharField(source='get_serial', read_only=True)
-    quantity = serializers.FloatField(read_only=True)
+    quantity = serializers.FloatField(read_only=False)
     location = serializers.PrimaryKeyRelatedField(source='item.location', many=False, read_only=True)
 
     # Extra detail fields
@@ -339,7 +549,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-    allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
     quantity = serializers.FloatField()
 
@@ -380,7 +590,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SOAttachmentSerializer(InvenTreeModelSerializer):
+class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """
@@ -394,6 +604,7 @@ class SOAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'order',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]

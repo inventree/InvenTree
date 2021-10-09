@@ -13,16 +13,11 @@ purchase_order_detail_urls = [
 
     url(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
     url(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
-    url(r'^receive/', views.PurchaseOrderReceive.as_view(), name='po-receive'),
     url(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
 
     url(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
     url(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
 
-    url(r'^notes/', views.PurchaseOrderNotes.as_view(), name='po-notes'),
-
-    url(r'^received/', views.PurchaseOrderDetail.as_view(template_name='order/po_received_items.html'), name='po-received'),
-    url(r'^attachments/', views.PurchaseOrderDetail.as_view(template_name='order/po_attachments.html'), name='po-attachments'),
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='po-detail'),
 ]
 
@@ -41,10 +36,7 @@ purchase_order_urls = [
 sales_order_detail_urls = [
     url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
     url(r'^ship/', views.SalesOrderShip.as_view(), name='so-ship'),
-
-    url(r'^builds/', views.SalesOrderDetail.as_view(template_name='order/so_builds.html'), name='so-builds'),
-    url(r'^attachments/', views.SalesOrderDetail.as_view(template_name='order/so_attachments.html'), name='so-attachments'),
-    url(r'^notes/', views.SalesOrderNotes.as_view(), name='so-notes'),
+    url(r'^export/', views.SalesOrderExport.as_view(), name='so-export'),
 
     url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
 ]
@@ -52,12 +44,7 @@ sales_order_detail_urls = [
 sales_order_urls = [
     # URLs for sales order allocations
     url(r'^allocation/', include([
-        url(r'^new/', views.SalesOrderAllocationCreate.as_view(), name='so-allocation-create'),
         url(r'^assign-serials/', views.SalesOrderAssignSerials.as_view(), name='so-assign-serials'),
-        url(r'(?P<pk>\d+)/', include([
-            url(r'^edit/', views.SalesOrderAllocationEdit.as_view(), name='so-allocation-edit'),
-            url(r'^delete/', views.SalesOrderAllocationDelete.as_view(), name='so-allocation-delete'),
-        ])),
     ])),
 
     # Display detail view for a single SalesOrder

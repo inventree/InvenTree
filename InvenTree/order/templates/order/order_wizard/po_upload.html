@@ -1,54 +1,74 @@
-{% extends "order/order_base.html" %}
+{% extends "order/purchase_order_detail.html" %}
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
 
 {% block menubar %}
-{% include 'order/po_navbar.html' with tab='upload' %}
+<ul class='list-group'>
+    <li class='list-group-item'>
+        <a href='#' id='po-menu-toggle'>
+            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
+        </a>
+    </li>
+    <li class='list-group-item' title='{% trans "Return To Order" %}'>
+        <a href='{% url "po-detail" order.id %}' id='select-upload-file' class='nav-toggle'>
+            <span class='fas fa-undo side-icon'></span>
+            {% trans "Return To Order" %}
+        </a>
+    </li>
+</ul>
 {% endblock %}
 
-{% block heading %}
-{% trans "Upload File for Purchase Order" %}
-{{ wizard.form.media }}
+{% block page_content %}
+
+<div class='panel panel-default panel-inventree' id='panel-upload-file'>
+    <div class='panel-heading'>
+        {% block heading %}
+        <h4>{% trans "Upload File for Purchase Order" %}</h4>
+        {{ wizard.form.media }}
+        {% endblock %}
+    </div>
+    <div class='panel-content'>
+        {% block details %}
+        {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
+
+        <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
+        {% if description %}- {{ description }}{% endif %}</p>
+
+        {% block form_alert %}
+        {% endblock form_alert %}
+
+        <form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+
+        {% block form_buttons_top %}
+        {% endblock form_buttons_top %}
+
+        <table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
+        {{ wizard.management_form }}
+        {% block form_content %}
+        {% crispy wizard.form %}
+        {% endblock form_content %}
+        </table>
+
+        {% block form_buttons_bottom %}
+        {% if wizard.steps.prev %}
+        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+        {% endif %}
+        <button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
+        </form>
+        {% endblock form_buttons_bottom %}
+
+        {% else %}
+        <div class='alert alert-danger alert-block' role='alert'>
+            {% trans "Order is already processed. Files cannot be uploaded." %}
+        </div>
+        {% endif %}
+        {% endblock details %}
+    </div>
+
 {% endblock %}
-
-{% block details %}
-{% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
-
-<p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
-{% if description %}- {{ description }}{% endif %}</p>
-
-{% block form_alert %}
-{% endblock form_alert %}
-
-<form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
-{% csrf_token %}
-{% load crispy_forms_tags %}
-
-{% block form_buttons_top %}
-{% endblock form_buttons_top %}
-
-<table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
-{{ wizard.management_form }}
-{% block form_content %}
-{% crispy wizard.form %}
-{% endblock form_content %}
-</table>
-
-{% block form_buttons_bottom %}
-{% if wizard.steps.prev %}
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
-{% endif %}
-<button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
-</form>
-{% endblock form_buttons_bottom %}
-
-{% else %}
-<div class='alert alert-danger alert-block' role='alert'>
-    {% trans "Order is already processed. Files cannot be uploaded." %}
-</div>
-{% endif %}
-{% endblock details %}
 
 {% block js_ready %}
 {{ block.super }}

@@ -1,13 +1,25 @@
-{% extends "part/category.html" %}
+{% extends "part/part_app_base.html" %}
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
 
 {% block menubar %}
-{% include 'part/category_navbar.html' with tab='import' %}
+<ul class='list-group'>
+    <li class='list-group-item'>
+        <a href='#' id='part-menu-toggle'>
+            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
+        </a>
+    </li>
+    <li class='list-group-item' title='{% trans "Return To Parts" %}'>
+        <a href='{% url "part-index" %}' id='select-upload-file' class='nav-toggle'>
+            <span class='fas fa-undo side-icon'></span>
+            {% trans "Return To Parts" %}
+        </a>
+    </li>
+</ul>
 {% endblock %}
 
-{% block category_content %}
+{% block content %}
     <div class='panel panel-default panel-inventree'>
         <div class='panel-heading'>
             <h4>
@@ -57,5 +69,10 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+enableNavbar({
+    label: 'part',
+    toggleId: '#part-menu-toggle',
+});
 
 {% endblock %}

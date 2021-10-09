@@ -3,7 +3,7 @@
 <form class="navbar-form navbar-left" action="{% url 'search' %}" method='post'>
     {% csrf_token %}
     <div class="form-group">
-        <input type="text" name='search' class="form-control" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
+        <input type="text" name='search' class="form-control" id="search-bar" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
     </div>
     <button type="submit" id='search-submit' class="btn btn-default" title='{% trans "Search" %}'>
         <span class='fas fa-search'></span>

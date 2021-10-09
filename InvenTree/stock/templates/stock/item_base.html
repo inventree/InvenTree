@@ -127,9 +127,11 @@
                 <li><a href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
                 {% endif %}
                 {% if item.belongs_to %}
-                <li>
-                    <a href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a>
-                </li>
+                <li><a href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
+                {% else %}
+                {% if item.part.get_used_in %}
+                <li><a href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+                {% endif %}
                 {% endif %}
             </ul>
         </div>
@@ -180,7 +182,7 @@
 
         {% if item.build %}
         <a href="{% url 'build-detail' item.build.id %}">
-            <b>{{ item.build }}</b>
+            <strong>{{ item.build }}</strong>
         </a>
         {% endif %}
 
@@ -235,7 +237,7 @@
         <td>{% trans "Base Part" %}</td>
         <td>
             {% if roles.part.view %}
-            <a href="{% url 'part-stock' item.part.id %}">
+            <a href="{% url 'part-detail' item.part.id %}">
             {% endif %}
             {{ item.part.full_name }}
             {% if roles.part.view %}
@@ -253,7 +255,7 @@
                 <small>{{ previous.serial }}</small>  ‹
             </a>
         {% endif %}
-        <span class="btn" href=""><strong>{{ item.serial }}</strong></span>
+        {{ item.serial }}
         {% if next %}
             <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
                 ›  <small>{{ next.serial }}</small>
@@ -272,7 +274,7 @@
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail-assigned-stock' item.customer.id %}">{{ item.customer.name }}</a></td>
+        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
     </tr>
     {% endif %}
     {% if item.belongs_to %}
@@ -298,7 +300,7 @@
         {% if item.location %}
         <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
         {% else %}
-        <td><i>{% trans "No location set" %}</i></td>
+        <td><em>{% trans "No location set" %}</em></td>
         {% endif %}
     </tr>
     {% endif %}
@@ -365,7 +367,7 @@
         {% if item.supplier_part.manufacturer_part.manufacturer %}
             <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
         {% else %}
-            <td><i>{% trans "No manufacturer set" %}</i></td>
+            <td><em>{% trans "No manufacturer set" %}</em></td>
         {% endif %}
 
     </tr>
@@ -412,7 +414,7 @@
         {% if item.stocktake_date %}
         <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
         {% else %}
-        <td><i>{% trans "No stocktake performed" %}</i></td>
+        <td><em>{% trans "No stocktake performed" %}</em></td>
         {% endif %}
     </tr>
     <tr>
@@ -428,6 +430,7 @@
     </tr>
     {% endif %}
 </table>
+
 {% endblock %}
 
 {% block js_ready %}
@@ -460,13 +463,27 @@ $("#stock-serialize").click(function() {
     );
 });
 
+$('#stock-install-in').click(function() {
+
+    launchModalForm(
+        "{% url 'stock-item-install' item.pk %}",
+        {
+            data: {
+                'part': {{ item.part.pk }},
+                'install_in': true,
+            },
+            reload: true,
+        }
+    );
+});
+
 $('#stock-uninstall').click(function() {
 
     launchModalForm(
         "{% url 'stock-item-uninstall' %}",
         {
             data: {
-                'items[]': [{{ item.pk}}],
+                'items[]': [{{ item.pk }}],
             },
             reload: true,
         }
@@ -534,14 +551,21 @@ $("#barcode-scan-into-location").click(function() {
 });
 
 function itemAdjust(action) {
-    launchModalForm("/stock/adjust/", 
+
+    inventreeGet(
+        '{% url "api-stock-detail" item.pk %}',
         {
-            data: {
-                action: action,
-                item: {{ item.id }},
-            },
-            reload: true,
-            follow: true,
+            part_detail: true,
+            location_detail: true,
+        },
+        {
+            success: function(item) {
+                adjustStock(action, [item], {
+                    success: function() {
+                        location.reload();
+                    }
+                });
+            }
         }
     );
 }
@@ -554,7 +578,7 @@ $("#stock-delete").click(function () {
     launchModalForm(
         "{% url 'stock-item-delete' item.id %}",
         {
-            redirect: "{% url 'part-stock' item.part.id %}"
+            redirect: "{% url 'part-detail' item.part.id %}"
         }
     );
 });
@@ -602,5 +626,10 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
+
+attachNavCallbacks({
+    name: 'stockitem',
+    default: 'history'
+});
 
 {% endblock %}

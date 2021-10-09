@@ -242,6 +242,14 @@
     border-color: var(--label-red);
 }
 
+.label-form {
+    margin: 2px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+}
+
 .label-red {
     background: var(--label-red);
 }
@@ -640,6 +648,11 @@
   z-index: 9999;
 }
 
+.modal-error {
+    border: 2px #FCC solid;
+    background-color: #f5f0f0;
+}
+
 .modal-header {
     border-bottom: 1px solid #ddd;
 }
@@ -730,6 +743,13 @@
   padding: 10px;
 }
 
+.form-panel {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+
 .modal input {
     width: 100%;
 }
@@ -781,8 +801,8 @@ input[type="submit"] {
 }
 
 .sidenav .list-group-item.active {
-    background-color: #ddd;
-    border-color: #ccc;
+    background-color: #c6d4ea;
+    border: 2px #aab solid;
 }
 
 /* The side navigation menu */
@@ -837,6 +857,12 @@ input[type="submit"] {
     pointer-events: none; /* Prevent this div from blocking links underneath */
 }
 
+.notes {
+    border-radius: 5px;
+    background-color: #fafafa;
+    padding: 5px;
+}
+
 .alert {
     display: none;
     border-radius: 5px;
@@ -851,6 +877,11 @@ input[type="submit"] {
 .btn {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.btn-small {
+    padding: 3px;
+    padding-left: 5px;
 }
 
 .btn-remove {
@@ -899,6 +930,10 @@ input[type="submit"] {
 .panel-inventree {
     padding: 10px;
     box-shadow: 1px 1px #DDD;
+}
+
+.panel-hidden {
+    display: none;
 }
 
 .float-right {
@@ -1022,3 +1057,19 @@ a.anchor {
     height: 30px;
 }
 
+/* Force minimum width of number input fields to show at least ~5 digits */
+input[type='number']{
+    min-width: 80px;
+}
+
+.search-menu {
+    padding-top: 2rem;
+}
+
+.search-menu .ui-menu-item {
+    margin-top: 0.5rem;
+}
+
+.product-card-panel{
+    height: 100%;
+}

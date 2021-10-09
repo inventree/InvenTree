@@ -39,6 +39,9 @@ src="{% static 'img/blank_image.png' %}"
         <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
             <span class='fas fa-print'></span> 
         </button>
+        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
+            <span class='fas fa-file-download'></span>
+        </button>
         {% if roles.purchase_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
             <span class='fas fa-edit icon-green'></span>
@@ -49,7 +52,7 @@ src="{% static 'img/blank_image.png' %}"
         </button>
         {% elif order.status == PurchaseOrderStatus.PLACED %}
         <button type='button' class='btn btn-default' id='receive-order' title='{% trans "Receive items" %}'>
-            <span class='fas fa-clipboard-check'></span>
+            <span class='fas fa-sign-in-alt'></span>
         </button>
         <button type='button' class='btn btn-default' id='complete-order' title='{% trans "Mark order as complete" %}'>
             <span class='fas fa-check-circle'></span>
@@ -61,9 +64,6 @@ src="{% static 'img/blank_image.png' %}"
         </button>
         {% endif %}
         {% endif %}
-        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
-            <span class='fas fa-file-download'></span>
-        </button>
     </div>
 </div>
 {% endblock %}
@@ -145,10 +145,6 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-enableNavbar({
-    label: 'po',
-    toggleId: '#po-menu-toggle',
-});
 
 {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
@@ -168,12 +164,13 @@ $("#edit-order").click(function() {
     constructForm('{% url "api-po-detail" order.pk %}', {
         fields: {
             reference: {
-                prefix: "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}",
+                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
             },
             {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
             supplier: {
             },
             {% endif %}
+            supplier_reference: {},
             description: {},
             target_date: {
                 icon: 'fa-calendar-alt',
@@ -191,17 +188,27 @@ $("#edit-order").click(function() {
 });
 
 $("#receive-order").click(function() {
-    launchModalForm("{% url 'po-receive' order.id %}", {
-        reload: true,
-        secondary: [
-            {
-                field: 'location',
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-                url: "{% url 'stock-location-create' %}",
-            },
-        ]
+
+    // Auto select items which have not been fully allocated
+    var items = $("#po-line-table").bootstrapTable('getData');
+
+    var items_to_receive = [];
+
+    items.forEach(function(item) {
+        if (item.received < item.quantity) {
+            items_to_receive.push(item);
+        }
     });
+
+    receivePurchaseOrderItems(
+        {{ order.id }},
+        items_to_receive,
+        {
+            success: function() {
+                $("#po-line-table").bootstrapTable('refresh');
+            }
+        }
+    );
 });
 
 $("#complete-order").click(function() {
@@ -217,7 +224,7 @@ $("#cancel-order").click(function() {
 });
 
 $("#export-order").click(function() {
-    location.href = "{% url 'po-export' order.id %}";
+    exportOrder('{% url "po-export" order.id %}');
 });
 
 

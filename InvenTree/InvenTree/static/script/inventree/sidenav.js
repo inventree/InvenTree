@@ -35,8 +35,8 @@ function loadTree(url, tree, options={}) {
                     showTags: true,
                 });
 
-                if (sessionStorage.getItem(key)) {
-                    var saved_exp = sessionStorage.getItem(key).split(",");
+                if (localStorage.getItem(key)) {
+                    var saved_exp = localStorage.getItem(key).split(",");
 
                     // Automatically expand the desired notes
                     for (var q = 0; q < saved_exp.length; q++) {
@@ -57,7 +57,7 @@ function loadTree(url, tree, options={}) {
                     }
 
                     // Save the expanded nodes
-                    sessionStorage.setItem(key, exp);
+                    localStorage.setItem(key, exp);
                 });
             }
         },
@@ -106,17 +106,17 @@ function initNavTree(options) {
                             width: '0px'
                         }, 50);
 
-                        sessionStorage.setItem(stateLabel, 'closed');
+                        localStorage.setItem(stateLabel, 'closed');
                     } else {
-                        sessionStorage.setItem(stateLabel, 'open');
-                        sessionStorage.setItem(widthLabel, `${width}px`);
+                        localStorage.setItem(stateLabel, 'open');
+                        localStorage.setItem(widthLabel, `${width}px`);
                     }
                 }
             });
         }
 
-        var state = sessionStorage.getItem(stateLabel);
-        var width = sessionStorage.getItem(widthLabel) || '300px';
+        var state = localStorage.getItem(stateLabel);
+        var width = localStorage.getItem(widthLabel) || '300px';
 
         if (state && state == 'open') {
 
@@ -131,21 +131,21 @@ function initNavTree(options) {
         
         $(toggleId).click(function() {
 
-            var state = sessionStorage.getItem(stateLabel) || 'closed';
-            var width = sessionStorage.getItem(widthLabel) || '300px';
+            var state = localStorage.getItem(stateLabel) || 'closed';
+            var width = localStorage.getItem(widthLabel) || '300px';
 
             if (state == 'open') {
                 $(treeId).animate({
                     width: '0px'
                 }, 50);
 
-                sessionStorage.setItem(stateLabel, 'closed');
+                localStorage.setItem(stateLabel, 'closed');
             } else {
                 $(treeId).animate({
                     width: width,
                 }, 50);
 
-                sessionStorage.setItem(stateLabel, 'open');
+                localStorage.setItem(stateLabel, 'open');
             }
         });
     }
@@ -198,17 +198,18 @@ function enableNavbar(options) {
                             width: '45px'
                         }, 50);
 
-                        sessionStorage.setItem(stateLabel, 'closed');
+                        localStorage.setItem(stateLabel, 'closed');
                     } else {
-                        sessionStorage.setItem(widthLabel, `${width}px`);
-                        sessionStorage.setItem(stateLabel, 'open');
+                        localStorage.setItem(widthLabel, `${width}px`);
+                        localStorage.setItem(stateLabel, 'open');
                     }
                 }
             });
         }
 
-        var state = sessionStorage.getItem(stateLabel);
-        var width = sessionStorage.getItem(widthLabel) || '250px';
+        var state = localStorage.getItem(stateLabel);
+
+        var width = localStorage.getItem(widthLabel) || '250px';
         
         if (state && state == 'open') {
 
@@ -224,8 +225,8 @@ function enableNavbar(options) {
 
         $(toggleId).click(function() {
 
-            var state = sessionStorage.getItem(stateLabel) || 'closed';
-            var width = sessionStorage.getItem(widthLabel) || '250px';
+            var state = localStorage.getItem(stateLabel) || 'closed';
+            var width = localStorage.getItem(widthLabel) || '250px';
 
             if (state == 'open') {
                 $(navId).animate({
@@ -233,7 +234,7 @@ function enableNavbar(options) {
                     minWidth: '45px',
                 }, 50);
 
-                sessionStorage.setItem(stateLabel, 'closed');
+                localStorage.setItem(stateLabel, 'closed');
 
             } else {
 
@@ -241,7 +242,7 @@ function enableNavbar(options) {
                     'width': width
                 }, 50);
 
-                sessionStorage.setItem(stateLabel, 'open');
+                localStorage.setItem(stateLabel, 'open');
             }
         });
     }

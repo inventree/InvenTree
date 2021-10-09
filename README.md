@@ -20,28 +20,18 @@ However, powerful business logic works in the background to ensure that stock tr
 # Docker
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
-![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker_build.yaml/badge.svg)
 
 InvenTree is [available via Docker](https://hub.docker.com/r/inventree/inventree). Read the [docker guide](https://inventree.readthedocs.io/en/latest/start/docker/) for full details.
 
-# Companion App
+# Mobile App
 
 InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality. 
 
-[**Download InvenTree from the Android Play Store**](https://play.google.com/store/apps/details?id=inventree.inventree_app)
+- [**Download InvenTree from the Android Play Store**](https://play.google.com/store/apps/details?id=inventree.inventree_app)
 
-*Currently the mobile app is only availble for Android*
+- [**Download InvenTree from the Apple App Store**](https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone)
 
 # Translation
-
-![de translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de&style=flat&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![es-ES translation](https://img.shields.io/badge/dynamic/json?color=blue&label=es-ES&style=flat&query=%24.progress.1.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![fr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=fr&style=flat&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![it translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it&style=flat&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![pl translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pl&style=flat&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![ru translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru&style=flat&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![tr translation](https://img.shields.io/badge/dynamic/json?color=blue&label=tr&style=flat&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
-![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=flat&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-14720186-452300.json)
 
 Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
 

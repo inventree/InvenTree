@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block menubar %}
-{% include "stock/location_navbar.html" with tab="stock" %}
+{% include "stock/location_navbar.html" %}
 {% endblock %}
 
 {% block content %}
@@ -59,11 +59,23 @@
         {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
         {% if roles.stock.change %}
         <div class='btn-group'>
-            <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
+            <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                <span class='fas fa-boxes'></span> <span class='caret'></span>
+            </button>
             <ul class='dropdown-menu' role='menu'>
-                <li><a href='#' id='location-count'><span class='fas fa-clipboard-list'></span>
-                    {% trans "Count stock" %}</a></li>
-                </ul>
+                <li>
+                    <a href='#' id='location-count'>
+                        <span class='fas fa-clipboard-list'></span>
+                        {% trans "Count stock" %}
+                    </a>
+                </li>
+                <li>
+                    <a href='#' id='location-move'>
+                        <span class='fas fa-exchange-alt'></span>
+                        {% trans "Transfer stock" %}
+                    </a>
+                </li>
+            </ul>
             </div>
             {% endif %}
             {% if roles.stock_location.change %}
@@ -131,11 +143,37 @@
 
 {% block location_content %}
 
-<div class='panel panel-default panel-inventree'>
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-stock'>
     <div class='panel-heading'>
         <h4>{% trans "Stock Items" %}</h4>
     </div>
     {% include "stock_table.html" %}
+</div>
+
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-sublocations'>
+    <div class='panel-heading'>
+        <h4>{% trans "Sublocations" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='sublocation-button-toolbar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
+                <!-- Printing actions menu -->
+                <div class='btn-group'>
+                    <button id='location-print-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown" title='{% trans "Printing Actions" %}'>
+                        <span class='fas fa-print'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu'>
+                        <li><a href='#' id='multi-location-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
+                    </ul>
+                </div>
+                <div class='filter-list' id='filter-list-location'>
+                    <!-- An empty div in which the filter list will be constructed -->
+                </div>
+            </div>
+        </div>
+    
+        <table class='table table-striped table-condensed' data-toolbar='#sublocation-button-toolbar' id='sublocation-table'></table>
+    </div>
 </div>
 
 {% endblock %}
@@ -152,6 +190,36 @@
         toggleId: '#location-menu-toggle'
     });
 
+    loadStockLocationTable($('#sublocation-table'), {
+        params: {
+            {% if location %}
+            parent: {{ location.pk }},
+            {% else %}
+            parent: 'null',
+            {% endif %}
+        }
+    });
+    
+    linkButtonsToSelection(
+        $('#sublocation-table'),
+        [
+            '#location-print-options',
+        ]
+    );
+    
+    $('#multi-location-print-label').click(function() {
+    
+        var selections = $('#sublocation-table').bootstrapTable('getSelections');
+    
+        var locations = [];
+    
+        selections.forEach(function(loc) {
+            locations.push(loc.pk);
+        });
+    
+        printStockLocationLabels(locations);
+    });
+
     {% if location %}
     $("#barcode-check-in").click(function() {
         barcodeCheckIn({{ location.id }});
@@ -159,20 +227,11 @@
     {% endif %}
 
     $("#stock-export").click(function() {
-        launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: '{% trans "Export" %}',
-            success: function(response) {
-                var url = "{% url 'stock-export' %}";
 
-                url += "?format=" + response.format;
-                url += "&cascade=" + response.cascade;
-
-                {% if location %}
-                url += "&location={{ location.id }}";
-                {% endif %}
-
-                location.href = url;
-            }
+        exportStock({
+            {% if location %}
+            location: {{ location.pk }}
+            {% endif %}
         });
     });
 
@@ -215,14 +274,34 @@
     });
 
     {% if location %}
-    $("#location-count").click(function() {
-        launchModalForm("/stock/adjust/", {
-            data: {
-                action: "count",
+
+    function adjustLocationStock(action) {
+        inventreeGet(
+            '{% url "api-stock-list" %}',
+            {
                 location: {{ location.id }},
-                reload: true,
+                in_stock: true,
+                part_detail: true,
+                location_detail: true,
+            },
+            {
+                success: function(items) {
+                    adjustStock(action, items, {
+                        success: function() {
+                            location.reload();
+                        }
+                    });
+                }
             }
-        });
+        );
+    }
+
+    $("#location-count").click(function() {
+        adjustLocationStock('count');
+    });
+
+    $("#location-move").click(function() {
+        adjustLocationStock('move');
     });
 
     $('#print-label').click(function() {
@@ -269,4 +348,10 @@
         },
         url: "{% url 'api-stock-list' %}",
     });
+
+    attachNavCallbacks({
+        name: 'stocklocation',
+        default: 'stock'
+    });
+
 {% endblock %}

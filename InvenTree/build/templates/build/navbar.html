@@ -9,46 +9,45 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Build Order Details" %}'>
-        <a href='{% url "build-detail" build.id %}'>
+    <li class='list-group-item' title='{% trans "Build Order Details" %}'>
+        <a href='#' id='select-details' class='nav-toggle'>
             <span class='fas fa-info-circle sidebar-icon'></span>
             {% trans "Details" %}
         </a>
     </li>
 
     {% if build.active %}
-
-    <li class='list-group-item {% if tab == "allocate" %}active{% endif %}' title='{% trans "Allocate Stock" %}'>
-        <a href='{% url "build-allocate" build.id %}'>
+    <li class='list-group-item' title='{% trans "Allocate Stock" %}'>
+        <a href='#' id='select-allocate' class='nav-toggle'>
             <span class='fas fa-tools sidebar-icon'></span>
             {% trans "Allocate Stock" %}
         </a>
     </li>
     {% endif %}
 
-    <li class='list-group-item {% if tab == "output" %}active{% endif %}' title='{% trans "Build Outputs" %}'>
-        <a href='{% url "build-output" build.id %}'>
+    <li class='list-group-item' title='{% trans "Build Outputs" %}'>
+        <a href='#' id='select-outputs' class='nav-toggle'>
             <span class='fas fa-box sidebar-icon'></span>
             {% trans "Build Outputs" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "children" %}active{% endif %}' title='{% trans "Child Build Orders" %}'>
-        <a href='{% url "build-children" build.id %}'>
+    <li class='list-group-item' title='{% trans "Child Build Orders" %}'>
+        <a href='#' id='select-children' class='nav-toggle'>
             <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Child Builds" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Attachments" %}'>
-        <a href='{% url "build-attachments" build.id %}'>
+    <li class='list-group-item' title='{% trans "Attachments" %}'>
+        <a href='#' id='select-attachments' class='nav-toggle'>
             <span class='fas fa-paperclip sidebar-icon'></span>
             {% trans "Attachments" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Build Order Notes" %}'>
-        <a href='{% url "build-notes" build.id %}'>
+    <li class='list-group-item' title='{% trans "Build Order Notes" %}'>
+        <a href='#' id='select-notes' class='nav-toggle'>
             <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>

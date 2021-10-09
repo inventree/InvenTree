@@ -8,7 +8,7 @@
     {% authorized_owners location.owner as owners %}
 {% endif %}
 
-<div id='button-toolbar'>
+<div id='{{ prefix }}button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
             <button class='btn btn-default' id='stock-export' title='{% trans "Export Stock Information" %}'>
@@ -16,7 +16,7 @@
             </button>
 
             {% if owner_control.value == "True" and user in owners or user.is_superuser or owner_control.value == "False" %}
-            {% if not read_only and roles.stock.add %}
+            {% if not read_only and not prevent_new_stock and roles.stock.add %}
             <button class="btn btn-success" id='item-create' title='{% trans "New Stock Item" %}'>
                 <span class='fas fa-plus-circle'></span>
             </button>
@@ -74,5 +74,5 @@
     </div>
 </div>
 
-<table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='stock-table'>
+<table class='table table-striped table-condensed' data-toolbar='#{{ prefix }}button-toolbar' id='{{ prefix }}stock-table'>
 </table>

@@ -11,30 +11,22 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "subcategories" %}active{% endif %}' title='{% trans "Subcategories" %}'>
-        {% if category %}
-        <a href='{% url "category-subcategory" category.id %}'>
-        {% else %}
-        <a href='{% url "category-index-subcategory" %}'>
-        {% endif %}
+    <li class='list-group-item' title='{% trans "Subcategories" %}'>
+        <a href='#' id='select-subcategories' class='nav-toggle'>
             <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Subcategories" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "parts" %}active{% endif %}' title='{% trans "Parts" %}'>
-        {% if category %}
-        <a href='{% url "category-detail" category.id %}'>
-        {% else %}
-        <a href='{% url "part-index" %}'>
-        {% endif %}
+    <li class='list-group-item' title='{% trans "Parts" %}'>
+        <a href='#' id='select-parts' class='nav-toggle'>
             <span class='fas fa-shapes sidebar-icon'></span>
             {% trans "Parts" %}
         </a>
     </li>
 
     {% if show_import and user.is_staff and roles.part.add %}
-    <li class='list-group-item {% if tab == "import" %}active{% endif %}' title='{% trans "Import Parts" %}'>
+    <li class='list-group-item' title='{% trans "Import Parts" %}'>
         <a href='{% url "part-import" %}'>
             <span class='fas fa-file-upload sidebar-icon'></span>
             {% trans "Import Parts" %}
@@ -43,8 +35,8 @@
     {% endif %}
 
     {% if category %}
-    <li class='list-group-item {% if tab == "parameters" %}active{% endif %}' title='{% trans "Parameters" %}'>
-        <a href='{% url "category-parametric" category.id %}'>
+    <li class='list-group-item' title='{% trans "Parameters" %}'>
+        <a href='#' id='select-parameters' class='nav-toggle'>
             <span class='fas fa-tasks sidebar-icon'></span>
             {% trans "Parameters" %}
         </a>

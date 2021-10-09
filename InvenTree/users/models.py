@@ -141,6 +141,7 @@ class RuleSet(models.Model):
         # Models which currently do not require permissions
         'common_colortheme',
         'common_inventreesetting',
+        'common_inventreeusersetting',
         'company_contact',
         'users_owner',
 

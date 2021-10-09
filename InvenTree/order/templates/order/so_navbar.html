@@ -9,29 +9,29 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Sales Order Details" %}'>
-        <a href='{% url "so-detail" order.id %}'>
-            <span class='fas fa-info-circle sidebar-icon'></span>
-            {% trans "Details" %}
+    <li class='list-group-item' title='{% trans "Sales Order Line Items" %}'>
+        <a href='#' id='select-order-items' class='nav-toggle'>
+            <span class='fas fa-list-ol sidebar-icon'></span>
+            {% trans "Order Items" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "builds" %}active{% endif %}' title='{% trans "Build Orders" %}'>
-        <a href='{% url "so-builds" order.id %}'>
+    <li class='list-group-item' title='{% trans "Build Orders" %}'>
+        <a href='#' id='select-order-builds' class='nav-toggle'>
             <span class='fas fa-tools sidebar-icon'></span>
             {% trans "Build Orders" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Sales Order Attachments" %}'>
-        <a href='{% url "so-attachments" order.id %}'>
+    <li class='list-group-item' title='{% trans "Sales Order Attachments" %}'>
+        <a href='#' id='select-order-attachments' class='nav-toggle'>
             <span class='fas fa-paperclip sidebar-icon'></span>
             {% trans "Attachments" %}
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Notes" %}'>
-        <a href='{% url "so-notes" order.id %}'>
+    <li class='list-group-item' title='{% trans "Notes" %}'>
+        <a href='#' id='select-order-notes' class='nav-toggle'>
             <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>

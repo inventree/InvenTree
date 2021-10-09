@@ -4,6 +4,7 @@ Part database model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import decimal
 
 import os
 import logging
@@ -27,13 +28,16 @@ from markdownx.models import MarkdownxField
 from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey, MPTTModel
+from mptt.exceptions import InvalidMove
+from mptt.managers import TreeManager
 
 from stdimage.models import StdImageField
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
-from rapidfuzz import fuzz
 import hashlib
+from djmoney.contrib.exchange.models import convert_money
+from common.settings import currency_code_default
 
 from InvenTree import helpers
 from InvenTree import validators
@@ -233,55 +237,22 @@ def rename_part_image(instance, filename):
     return os.path.join(base, fname)
 
 
-def match_part_names(match, threshold=80, reverse=True, compare_length=False):
-    """ Return a list of parts whose name matches the search term using fuzzy search.
+class PartManager(TreeManager):
+    """
+    Defines a custom object manager for the Part model.
 
-    Args:
-        match: Term to match against
-        threshold: Match percentage that must be exceeded (default = 65)
-        reverse: Ordering for search results (default = True - highest match is first)
-        compare_length: Include string length checks
-
-    Returns:
-        A sorted dict where each element contains the following key:value pairs:
-            - 'part' : The matched part
-            - 'ratio' : The matched ratio
+    The main purpose of this manager is to reduce the number of database hits,
+    as the Part model has a large number of ForeignKey fields!
     """
 
-    match = str(match).strip().lower()
+    def get_queryset(self):
 
-    if len(match) == 0:
-        return []
-
-    parts = Part.objects.all()
-
-    matches = []
-
-    for part in parts:
-        compare = str(part.name).strip().lower()
-
-        if len(compare) == 0:
-            continue
-
-        ratio = fuzz.partial_token_sort_ratio(compare, match)
-
-        if compare_length:
-            # Also employ primitive length comparison
-            # TODO - Improve this somewhat...
-            l_min = min(len(match), len(compare))
-            l_max = max(len(match), len(compare))
-
-            ratio *= (l_min / l_max)
-
-        if ratio >= threshold:
-            matches.append({
-                'part': part,
-                'ratio': round(ratio, 1)
-            })
-
-    matches = sorted(matches, key=lambda item: item['ratio'], reverse=reverse)
-
-    return matches
+        return super().get_queryset().prefetch_related(
+            'category',
+            'category__parent',
+            'stock_items',
+            'builds',
+        )
 
 
 @cleanup.ignore
@@ -321,6 +292,8 @@ class Part(MPTTModel):
         responsible: User who is responsible for this part (optional)
     """
 
+    objects = PartManager()
+
     class Meta:
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
@@ -337,6 +310,17 @@ class Part(MPTTModel):
     def get_api_url():
 
         return reverse('api-part-list')
+
+    def api_instance_filters(self):
+        """
+        Return API query filters for limiting field results against this instance
+        """
+
+        return {
+            'variant_of': {
+                'exclude_tree': self.pk,
+            }
+        }
 
     def get_context_data(self, request, **kwargs):
         """
@@ -376,7 +360,7 @@ class Part(MPTTModel):
         """
 
         # Get category templates settings
-        add_category_templates = kwargs.pop('add_category_templates', None)
+        add_category_templates = kwargs.pop('add_category_templates', False)
 
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
@@ -393,45 +377,40 @@ class Part(MPTTModel):
 
         self.full_clean()
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except InvalidMove:
+            raise ValidationError({
+                'variant_of': _('Invalid choice for parent part'),
+            })
 
         if add_category_templates:
             # Get part category
             category = self.category
 
-            if category and add_category_templates:
-                # Store templates added to part
+            if category is not None:
+
                 template_list = []
 
-                # Create part parameters for selected category
-                category_templates = add_category_templates['main']
-                if category_templates:
+                parent_categories = category.get_ancestors(include_self=True)
+
+                for category in parent_categories:
                     for template in category.get_parameter_templates():
-                        parameter = PartParameter.create(part=self,
-                                                         template=template.parameter_template,
-                                                         data=template.default_value,
-                                                         save=True)
-                        if parameter:
+                        # Check that template wasn't already added
+                        if template.parameter_template not in template_list:
+
                             template_list.append(template.parameter_template)
 
-                # Create part parameters for parent category
-                category_templates = add_category_templates['parent']
-                if category_templates:
-                    # Get parent categories
-                    parent_categories = category.get_ancestors()
-
-                    for category in parent_categories:
-                        for template in category.get_parameter_templates():
-                            # Check that template wasn't already added
-                            if template.parameter_template not in template_list:
-                                try:
-                                    PartParameter.create(part=self,
-                                                         template=template.parameter_template,
-                                                         data=template.default_value,
-                                                         save=True)
-                                except IntegrityError:
-                                    # PartParameter already exists
-                                    pass
+                            try:
+                                PartParameter.create(
+                                    part=self,
+                                    template=template.parameter_template,
+                                    data=template.default_value,
+                                    save=True
+                                )
+                            except IntegrityError:
+                                # PartParameter already exists
+                                pass
 
     def __str__(self):
         return f"{self.full_name} - {self.description}"
@@ -1473,16 +1452,16 @@ class Part(MPTTModel):
         return self.supplier_parts.count()
 
     @property
-    def has_pricing_info(self):
+    def has_pricing_info(self, internal=False):
         """ Return true if there is pricing information for this part """
-        return self.get_price_range() is not None
+        return self.get_price_range(internal=internal) is not None
 
     @property
     def has_complete_bom_pricing(self):
         """ Return true if there is pricing information for each item in the BOM. """
-
+        use_internal = common.models.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         for item in self.get_bom_items().all().select_related('sub_part'):
-            if not item.sub_part.has_pricing_info:
+            if not item.sub_part.has_pricing_info(use_internal):
                 return False
 
         return True
@@ -1538,7 +1517,7 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_bom_price_range(self, quantity=1, internal=False):
+    def get_bom_price_range(self, quantity=1, internal=False, purchase=False):
         """ Return the price range of the BOM for this part.
         Adds the minimum price for all components in the BOM.
 
@@ -1552,10 +1531,13 @@ class Part(MPTTModel):
         for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
-                print("Warning: Item contains itself in BOM")
+                logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
                 continue
 
-            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal)
+            q = decimal.Decimal(quantity)
+            i = decimal.Decimal(item.quantity)
+
+            prices = item.sub_part.get_price_range(q * i, internal=internal, purchase=purchase)
 
             if prices is None:
                 continue
@@ -1579,22 +1561,29 @@ class Part(MPTTModel):
 
         return (min_price, max_price)
 
-    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False):
+    def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False):
 
         """ Return the price range for this part. This price can be either:
 
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
         - Internal price (if set for the part)
+        - Purchase price (if set for the part)
 
         Returns:
-            Minimum of the supplier, BOM or internal price. If no pricing available, returns None
+            Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
         """
 
         # only get internal price if set and should be used
         if internal and self.has_internal_price_breaks:
             internal_price = self.get_internal_price(quantity)
             return internal_price, internal_price
+
+        # only get purchase price if set and should be used
+        if purchase:
+            purchase_price = self.get_purchase_price(quantity)
+            if purchase_price:
+                return purchase_price
 
         buy_price_range = self.get_supplier_price_range(quantity) if buy else None
         bom_price_range = self.get_bom_price_range(quantity, internal=internal) if bom else None
@@ -1664,6 +1653,13 @@ class Part(MPTTModel):
     @property
     def internal_unit_pricing(self):
         return self.get_internal_price(1)
+
+    def get_purchase_price(self, quantity):
+        currency = currency_code_default()
+        prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        if prices:
+            return min(prices) * quantity, max(prices) * quantity
+        return None
 
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
@@ -1865,6 +1861,23 @@ class Part(MPTTModel):
         """ Return all parameters for this part, ordered by name """
 
         return self.parameters.order_by('template__name')
+
+    def parameters_map(self):
+        """
+        Return a map (dict) of parameter values assocaited with this Part instance,
+        of the form:
+        {
+            "name_1": "value_1",
+            "name_2": "value_2",
+        }
+        """
+
+        params = {}
+
+        for parameter in self.parameters.all():
+            params[parameter.template.name] = parameter.data
+
+        return params
 
     @property
     def has_variants(self):
@@ -2150,6 +2163,16 @@ class PartTestTemplate(models.Model):
     )
 
 
+def validate_template_name(name):
+    """
+    Prevent illegal characters in "name" field for PartParameterTemplate
+    """
+
+    for c in "!@#$%^&*()<>{}[].,?/\|~`_+-=\'\"":
+        if c in str(name):
+            raise ValidationError(_(f"Illegal character in template name ({c})"))
+
+
 class PartParameterTemplate(models.Model):
     """
     A PartParameterTemplate provides a template for key:value pairs for extra
@@ -2164,7 +2187,7 @@ class PartParameterTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-param-template-list')
+        return reverse('api-part-parameter-template-list')
 
     def __str__(self):
         s = str(self.name)
@@ -2188,7 +2211,15 @@ class PartParameterTemplate(models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
-    name = models.CharField(max_length=100, verbose_name=_('Name'), help_text=_('Parameter Name'), unique=True)
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Parameter Name'),
+        unique=True,
+        validators=[
+            validate_template_name,
+        ]
+    )
 
     units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
 
@@ -2205,7 +2236,7 @@ class PartParameter(models.Model):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-param-list')
+        return reverse('api-part-parameter-list')
 
     def __str__(self):
         # String representation of a PartParameter (used in the admin interface)
@@ -2301,6 +2332,23 @@ class BomItem(models.Model):
     @staticmethod
     def get_api_url():
         return reverse('api-bom-list')
+
+    def get_stock_filter(self):
+        """
+        Return a queryset filter for selecting StockItems which match this BomItem
+
+        - If allow_variants is True, allow all part variants
+
+        """
+
+        # Target part
+        part = self.sub_part
+
+        if self.allow_variants:
+            variants = part.get_descendants(include_self=True)
+            return Q(part__in=[v.pk for v in variants])
+        else:
+            return Q(part=part)
 
     def save(self, *args, **kwargs):
 
@@ -2417,6 +2465,15 @@ class BomItem(models.Model):
 
         - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
+
+        super().clean()
+
+        try:
+            self.quantity = Decimal(self.quantity)
+        except InvalidOperation:
+            raise ValidationError({
+                'quantity': _('Must be a valid number')
+            })
 
         try:
             # Check for circular BOM references

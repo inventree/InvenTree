@@ -9,34 +9,26 @@
             <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
         </a>
     </li>
-    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Purchase Order Details" %}'>
-        <a href='{% url "po-detail" order.id %}'>
-            <span class='fas fa-info-circle side-icon'></span>
-            {% trans "Details" %}
+    <li class='list-group-item' title='{% trans "Purchase Order Line Items" %}'>
+        <a href='#' id='select-order-items' class='nav-toggle'>
+            <span class='fas fa-list-ol side-icon'></span>
+            {% trans "Order Items" %}
         </a>
     </li>
-    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
-    <li class='list-group-item {% if tab == "upload" %}active{% endif %}' title='{% trans "Upload File" %}'>
-        <a href='{% url "po-upload" order.id %}'>
-            <span class='fas fa-file-upload side-icon'></span>
-            {% trans "Upload File" %}
-        </a>
-    </li>
-    {% endif %}
-    <li class='list-group-item {% if tab == "received" %}active{% endif %}' title='{% trans "Received Stock Items" %}'>
-        <a href='{% url "po-received" order.id %}'>
+    <li class='list-group-item' title='{% trans "Received Stock Items" %}'>
+        <a href='#' id='select-received-items' class='nav-toggle'>
             <span class='fas fa-sign-in-alt side-icon'></span>
             {% trans "Received Items" %}
         </a>
     </li>
-    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Purchase Order Attachments" %}'>
-        <a href='{% url "po-attachments" order.id %}'>
+    <li class='list-group-item' title='{% trans "Purchase Order Attachments" %}'>
+        <a href='#' id='select-order-attachments' class='nav-toggle'>
             <span class='fas fa-paperclip side-icon'></span>
             {% trans "Attachments" %}
         </a>
     </li>
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Notes" %}'>
-        <a href='{% url "po-notes" order.id %}'>
+    <li class='list-group-item' title='{% trans "Notes" %}'>
+        <a href='#' id='select-order-notes' class='nav-toggle'>
             <span class='fas fa-clipboard side-icon'></span>
             {% trans "Notes" %}
         </a>

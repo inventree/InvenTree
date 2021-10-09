@@ -7,11 +7,15 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import json
 
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -27,10 +31,8 @@ from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
 
-import InvenTree.tasks
-
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .forms import ColorThemeSelectForm, SettingCategorySelectForm
+from .forms import SettingCategorySelectForm
 from .helpers import str2bool
 
 from rest_framework import views
@@ -779,13 +781,34 @@ class SettingsView(TemplateView):
     """ View for configuring User settings
     """
 
-    template_name = "InvenTree/settings.html"
+    template_name = "InvenTree/settings/settings.html"
 
     def get_context_data(self, **kwargs):
 
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+
+        ctx["base_currency"] = currency_code_default()
+        ctx["currencies"] = currency_codes
+
+        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+
+        ctx["categories"] = PartCategory.objects.all().order_by('tree_id', 'lft', 'name')
+
+        # When were the rates last updated?
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            ctx["rates_updated"] = backend.last_update
+        except:
+            ctx["rates_updated"] = None
+
+        # load locale stats
+        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        try:
+            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
+        except:
+            ctx["locale_stats"] = {}
 
         return ctx
 
@@ -802,45 +825,19 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        # Will block for a little bit
-        InvenTree.tasks.update_exchange_rates()
+        from InvenTree.tasks import offload_task
 
-        return self.get(request, *args, **kwargs)
+        # Define associated task from InvenTree.tasks list of methods
+        taskname = 'InvenTree.tasks.update_exchange_rates'
 
+        # Run it
+        offload_task(taskname, force_sync=True)
 
-class CurrencySettingsView(TemplateView):
-    """
-    View for configuring currency settings
-    """
-
-    template_name = "InvenTree/settings/currencies.html"
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs).copy()
-
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-        ctx["base_currency"] = currency_code_default()
-        ctx["currencies"] = currency_codes
-
-        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
-
-        # When were the rates last updated?
-        try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
-        except:
-            ctx["rates_updated"] = None
-
-        return ctx
+        return redirect(reverse_lazy('settings'))
 
 
-class AppearanceSelectView(FormView):
+class AppearanceSelectView(RedirectView):
     """ View for selecting a color theme """
-
-    form_class = ColorThemeSelectForm
-    success_url = reverse_lazy('settings-appearance')
-    template_name = "InvenTree/settings/appearance.html"
 
     def get_user_theme(self):
         """ Get current user color theme """
@@ -851,40 +848,10 @@ class AppearanceSelectView(FormView):
 
         return user_theme
 
-    def get_initial(self):
-        """ Select current user color theme as initial choice """
-
-        initial = super(AppearanceSelectView, self).get_initial()
-
-        user_theme = self.get_user_theme()
-        if user_theme:
-            initial['name'] = user_theme.name
-        return initial
-
-    def get(self, request, *args, **kwargs):
-        """ Check if current color theme exists, else display alert box """
-
-        context = {}
-
-        form = self.get_form()
-        context['form'] = form
-
-        user_theme = self.get_user_theme()
-        if user_theme:
-            # Check color theme is a valid choice
-            if not ColorTheme.is_valid_choice(user_theme):
-                user_color_theme_name = user_theme.name
-                if not user_color_theme_name:
-                    user_color_theme_name = 'default'
-
-                context['invalid_color_theme'] = user_color_theme_name
-
-        return self.render_to_response(context)
-
     def post(self, request, *args, **kwargs):
         """ Save user color theme selection """
 
-        form = self.get_form()
+        theme = request.POST.get('theme', None)
 
         # Get current user theme
         user_theme = self.get_user_theme()
@@ -894,20 +861,10 @@ class AppearanceSelectView(FormView):
             user_theme = ColorTheme()
             user_theme.user = request.user
 
-        if form.is_valid():
-            theme_selected = form.cleaned_data['name']
+        user_theme.name = theme
+        user_theme.save()
 
-            # Set color theme to form selection
-            user_theme.name = theme_selected
-            user_theme.save()
-
-            return self.form_valid(form)
-        else:
-            # Set color theme to default
-            user_theme.name = ColorTheme.default_color_theme[0]
-            user_theme.save()
-
-            return self.form_invalid(form)
+        return redirect(reverse_lazy('settings'))
 
 
 class SettingCategorySelectView(FormView):

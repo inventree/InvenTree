@@ -3,15 +3,31 @@
 
 {% block pre_form_content %}
 
+{% if install_item %}
 <p>
-    {% trans "Install another StockItem into this item." %}
+    {% trans "Install another Stock Item into this item." %}
 </p>
 <p>
     {% trans "Stock items can only be installed if they meet the following criteria" %}:
 
     <ul>
-        <li>{% trans "The StockItem links to a Part which is in the BOM for this StockItem" %}</li>
-        <li>{% trans "The StockItem is currently in stock" %}</li>
+        <li>{% trans "The Stock Item links to a Part which is in the BOM for this Stock Item" %}</li>
+        <li>{% trans "The Stock Item is currently in stock" %}</li>
+        <li>{% trans "The Stock Item is serialized and does not belong to another item" %}</li>
     </ul>
 </p>
+{% elif install_in %}
+<p>
+    {% trans "Install this Stock Item in another stock item." %}
+</p>
+<p>
+    {% trans "Stock items can only be installed if they meet the following criteria" %}:
+
+    <ul>
+        <li>{% trans "The part associated to this Stock Item belongs to another part's BOM" %}</li>
+        <li>{% trans "This Stock Item is serialized and does not belong to another item" %}</li>
+    </ul>
+</p>
+{% endif %}
+
 {% endblock %}

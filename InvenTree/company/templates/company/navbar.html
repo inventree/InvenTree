@@ -2,6 +2,10 @@
 {% load static %}
 {% load inventree_extras %}
 
+{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
+{% settings_value 'SO_FUNCTION_ENABLE' as enable_so %}
+{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
+    
 <ul class='list-group'>
     <li class='list-group-item'>
         <a href='#' id='company-menu-toggle'>
@@ -9,25 +13,18 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Company Details" %}'>
-        <a href='{% url "company-detail" company.id %}'>
-            <span class='fas fa-info-circle sidebar-icon'></span>
-            {% trans "Details" %}
-        </a>
-    </li>
-
     {% if company.is_manufacturer %}
-    <li class='list-group-item {% if tab == "manufacturer_parts" %}active{% endif %}' title='{% trans "Manufactured Parts" %}'>
-        <a href='{% url "company-detail-manufacturer-parts" company.id %}'>
+    <li class='list-group-item' title='{% trans "Manufactured Parts" %}'>
+        <a href='#' id='select-manufacturer-parts' class='nav-toggle'>
             <span class='fas fa-industry sidebar-icon'></span>
             {% trans "Manufactured Parts" %}
         </a>
     </li>
     {% endif %}
 
-    {% if company.is_supplier or company.is_manufacturer %}
-    <li class='list-group-item {% if tab == "supplier_parts" %}active{% endif %}' title='{% trans "Supplied Parts" %}'>
-        <a href='{% url "company-detail-supplier-parts" company.id %}'>
+    {% if company.is_supplier %}
+    <li class='list-group-item' title='{% trans "Supplied Parts" %}'>
+        <a href='#' id='select-supplier-parts' class='nav-toggle'>
             <span class='fas fa-building sidebar-icon'></span>
             {% trans "Supplied Parts" %}
         </a>
@@ -35,40 +32,42 @@
     {% endif %}
 
     {% if company.is_manufacturer or company.is_supplier %}
-    <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Stock Items" %}'>
-        <a href='{% url "company-detail-stock" company.id %}'>
+    {% if enable_stock %}
+    <li class='list-group-item' title='{% trans "Stock Items" %}'>
+        <a href='#' id='select-company-stock' class='nav-toggle'>
             <span class='fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
     {% endif %}
+    {% endif %}
 
-    {% if company.is_supplier %}
-    <li class='list-group-item {% if tab == "po" %}active{% endif %}' title='{% trans "Sales Orders" %}'>
-        <a href='{% url "company-detail-purchase-orders" company.id %}'>
+    {% if company.is_supplier and enable_po %}
+    <li class='list-group-item' title='{% trans "Purchase Orders" %}'>
+        <a href='#' id='select-purchase-orders' class='nav-toggle'>
             <span class='fas fa-shopping-cart sidebar-icon'></span>
             {% trans "Purchase Orders" %}
         </a>
     </li>
     {% endif %}
 
-    {% if company.is_customer %}
-    <li class='list-group-item {% if tab == "so" %}active{% endif %}' title='{% trans "Sales Orders" %}'>
-        <a href='{% url "company-detail-sales-orders" company.id %}'>
+    {% if company.is_customer and enable_so %}
+    <li class='list-group-item' title='{% trans "Sales Orders" %}'>
+        <a href='#' id='select-sales-orders' class='nav-toggle'>
             <span class='fas fa-truck sidebar-icon'></span>
             {% trans "Sales Orders" %}
         </a>
     </li>
-    <li class='list-group-item {% if tab == "assigned" %}active{% endif %}' title='{% trans "Assigned Stock" %}'>
-        <a href='{% url "company-detail-assigned-stock" company.id %}'>
+    <li class='list-group-item' title='{% trans "Assigned Stock" %}'>
+        <a href='#' id='select-assigned-stock' class='nav-toggle'>
             <span class='fas fa-sign-out-alt sidebar-icon'></span>
             {% trans "Assigned Stock" %}
         </a>
     </li>
     {% endif %}
 
-    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' titl='{% trans "Notes" %}'>
-        <a href='{% url "company-notes" company.id %}'>
+    <li class='list-group-item' title='{% trans "Notes" %}'>
+        <a href='#' id='select-company-notes' class='nav-toggle'>
             <span class='fas fa-clipboard sidebar-icon'></span>
             {% trans "Notes" %}
         </a>

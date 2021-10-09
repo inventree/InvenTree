@@ -8,23 +8,15 @@
         </a>
     </li>
 
-    <li class='list-group-item {% if tab == "sublocations" %}active{% endif %}' title='{% trans "Sublocations" %}'>
-        {% if location %}
-        <a href='{% url "stock-location-sublocation" location.id %}'>
-        {% else %}
-        <a href='{% url "stock-sublocations" %}'>
-        {% endif %}
+    <li class='list-group-item' title='{% trans "Sublocations" %}'>
+        <a href='#' id='select-sublocations' class='nav-toggle'>
             <span class='fas fa-sitemap sidebar-icon'></span>
             {% trans "Sublocations" %}
         </a>
     </li>
 
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Stock Items" %}'>
-        {% if location %}
-        <a href='{% url "stock-location-detail" location.id %}'>
-        {% else %}
-        <a href='{% url "stock-index" %}'>
-        {% endif %}
+        <a href='#' id='select-stock' class='nav-toggle'>
             <span class='fas fa-boxes sidebar-icon'></span>
             {% trans "Stock Items" %}
         </a>

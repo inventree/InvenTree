@@ -56,6 +56,10 @@ content: "{% trans 'Stock Item Test Report' %}";
 
 {% endblock %}
 
+{% block pre_page_content %}
+
+{% endblock %}
+
 {% block page_content %}
 
 <div class='container'>
@@ -64,8 +68,8 @@ content: "{% trans 'Stock Item Test Report' %}";
             {{ part.full_name }}
         </h2>
         <p>{{ part.description }}</p>
-        <p><i>{{ stock_item.location }}</i></p>
-        <p><i>Stock Item ID: {{ stock_item.pk }}</i></p>
+        <p><em>{{ stock_item.location }}</em></p>
+        <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
     </div>
     <div class='img-right'>
         <img class='part-img' src="{% part_image part %}">
@@ -80,6 +84,7 @@ content: "{% trans 'Stock Item Test Report' %}";
     </div>
 </div>
 
+{% if resul_list|length > 0 %}
 <h3>{% trans "Test Results" %}</h3>
 
 <table class='table test-table'>
@@ -112,5 +117,37 @@ content: "{% trans 'Stock Item Test Report' %}";
     </tbody>
 
 </table>
+{% endif %}
+
+{% if installed_items|length > 0 %}
+<h3>{% trans "Installed Items" %}</h3>
+
+<table class='table test-table'>
+    <thead>
+    </thead>
+    <tbody>
+    {% for sub_item in installed_items %}
+        <tr>
+            <td>
+                <img src='{% part_image sub_item.part %}' class='part-img' style='max-width: 24px; max-height: 24px;'>
+                {{ sub_item.part.full_name }}
+            </td>
+            <td>
+                {% if sub_item.serialized %}
+                {% trans "Serial" %}: {{ sub_item.serial }}
+                {% else %}
+                {% trans "Quantity" %}: {% decimal sub_item.quantity %}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}
+
+{% block post_page_content %}
 
 {% endblock %}

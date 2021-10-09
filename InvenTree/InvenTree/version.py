@@ -8,29 +8,60 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.2.5 pre"
+INVENTREE_SW_VERSION = "0.6.0 dev"
 
-INVENTREE_API_VERSION = 7
+INVENTREE_API_VERSION = 15
 
 """
-Increment thi API version number whenever there is a significant change to the API that any clients need to know about
+Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v7 -> 2021-07-03
+v15 -> 2021-10-06
+    - Adds detail endpoint for SalesOrderAllocation model
+    - Allows use of the API forms interface for adjusting SalesOrderAllocation objects
+
+v14 -> 2021-10-05
+    - Stock adjustment actions API is improved, using native DRF serializer support
+    - However adjustment actions now only support 'pk' as a lookup field
+
+v13 -> 2021-10-05
+    - Adds API endpoint to allocate stock items against a BuildOrder
+    - Updates StockItem API with improved filtering against BomItem data
+
+v12 -> 2021-09-07
+    - Adds API endpoint to receive stock items against a PurchaseOrder
+
+v11 -> 2021-08-26
+    - Adds "units" field to PartBriefSerializer
+    - This allows units to be introspected from the "part_detail" field in the StockItem serializer
+
+v10 -> 2021-08-23
+    - Adds "purchase_price_currency" to StockItem serializer
+    - Adds "purchase_price_string" to StockItem serializer
+    - Purchase price is now writable for StockItem serializer
+
+v9  -> 2021-08-09
+    - Adds "price_string" to part pricing serializers
+
+v8  -> 2021-07-19
+    - Refactors the API interface for SupplierPart and ManufacturerPart models
+    - ManufacturerPart objects can no longer be created via the SupplierPart API endpoint
+
+v7  -> 2021-07-03
     - Introduced the concept of "API forms" in https://github.com/inventree/InvenTree/pull/1716
     - API OPTIONS endpoints provide comprehensive field metedata
     - Multiple new API endpoints added for database models
 
-v6 -> 2021-06-23
+v6  -> 2021-06-23
     - Part and Company images can now be directly uploaded via the REST API
 
-v5 -> 2021-06-21
+v5  -> 2021-06-21
     - Adds API interface for manufacturer part parameters
 
-v4 -> 2021-06-01
+v4  -> 2021-06-01
     - BOM items can now accept "variant stock" to be assigned against them
     - Many slight API tweaks were needed to get this to work properly!
 
-v3 -> 2021-05-22:
+v3  -> 2021-05-22:
     - The updated StockItem "history tracking" now uses a different interface
 
 """
@@ -51,7 +82,7 @@ def inventreeInstanceTitle():
 
 def inventreeVersion():
     """ Returns the InvenTree version string """
-    return INVENTREE_SW_VERSION
+    return INVENTREE_SW_VERSION.lower().strip()
 
 
 def inventreeVersionTuple(version=None):
@@ -63,6 +94,30 @@ def inventreeVersionTuple(version=None):
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", str(version))
 
     return [int(g) for g in match.groups()]
+
+
+def isInvenTreeDevelopmentVersion():
+    """
+    Return True if current InvenTree version is a "development" version
+    """
+    return inventreeVersion().endswith('dev')
+
+
+def inventreeDocsVersion():
+    """
+    Return the version string matching the latest documentation.
+    
+    Development -> "latest"
+    Release -> "major.minor.sub" e.g. "0.5.2"
+    
+    """
+
+    if isInvenTreeDevelopmentVersion():
+        return "latest"
+    else:
+        major, minor, patch = inventreeVersionTuple()
+
+        return f"{major}.{minor}.{patch}"
 
 
 def isInvenTreeUpToDate():

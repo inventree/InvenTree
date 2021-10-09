@@ -17,7 +17,7 @@
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
             {% if roles.sales_order.add %}
-            <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
+            <button class='btn btn-success' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
                 <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}
             </button>
             {% endif %}
@@ -67,7 +67,7 @@
             {
                 success: function(response) {
 
-                    var prefix = '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}';
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
                     for (var idx = 0; idx < response.length; idx++) {
                         var order = response[idx];

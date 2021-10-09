@@ -9,11 +9,11 @@
 
 <table class='table table-striped table-condensed table-price-two'>
     <tr>
-        <td><b>{% trans 'Part' %}</b></td>
+        <td><strong>{% trans 'Part' %}</strong></td>
         <td>{{ part  }}</td>
     </tr>
     <tr>
-        <td><b>{% trans 'Quantity' %}</b></td>
+        <td><strong>{% trans 'Quantity' %}</strong></td>
         <td>{{ quantity }}</td>
     </tr>
 </table>
@@ -23,13 +23,13 @@
     <table class='table table-striped table-condensed table-price-three'>
     {% if min_total_buy_price %}
     <tr>
-        <td><b>{% trans 'Unit Cost' %}</b></td>
+        <td><strong>{% trans 'Unit Cost' %}</strong></td>
         <td>Min: {% include "price.html" with price=min_unit_buy_price %}</td>
         <td>Max: {% include "price.html" with price=max_unit_buy_price %}</td>
     </tr>
     {% if quantity > 1 %}
     <tr>
-        <td><b>{% trans 'Total Cost' %}</b></td>
+        <td><strong>{% trans 'Total Cost' %}</strong></td>
         <td>Min: {% include "price.html" with price=min_total_buy_price %}</td>
         <td>Max: {% include "price.html" with price=max_total_buy_price %}</td>
     </tr>
@@ -37,7 +37,7 @@
     {% else %}
     <tr>
         <td colspan='3'>
-            <span class='warning-msg'><i>{% trans 'No supplier pricing available' %}</i></span>
+            <span class='warning-msg'><em>{% trans 'No supplier pricing available' %}</em></span>
         </td>
     </tr>
     {% endif %}
@@ -49,28 +49,43 @@
     <table class='table table-striped table-condensed table-price-three'>
     {% if min_total_bom_price %}
     <tr>
-        <td><b>{% trans 'Unit Cost' %}</b></td>
+        <td><strong>{% trans 'Unit Cost' %}</strong></td>
         <td>Min: {% include "price.html" with price=min_unit_bom_price %}</td>
         <td>Max: {% include "price.html" with price=max_unit_bom_price %}</td>
     </tr>
     {% if quantity > 1 %}
     <tr>
-        <td><b>{% trans 'Total Cost' %}</b></td>
+        <td><strong>{% trans 'Total Cost' %}</strong></td>
         <td>Min: {% include "price.html" with price=min_total_bom_price %}</td>
         <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
     </tr>
     {% endif %}
+    {% if min_total_bom_purchase_price %}
+    <tr>
+        <td><strong>{% trans 'Unit Purchase Price' %}</strong></td>
+        <td>Min: {% include "price.html" with price=min_unit_bom_purchase_price %}</td>
+        <td>Max: {% include "price.html" with price=max_unit_bom_purchase_price %}</td>
+    </tr>
+    {% if quantity > 1 %}
+    <tr>
+        <td><strong>{% trans 'Total Purchase Price' %}</strong></td>
+        <td>Min: {% include "price.html" with price=min_total_bom_purchase_price %}</td>
+        <td>Max: {% include "price.html" with price=max_total_bom_purchase_price %}</td>
+    </tr>
+    {% endif %}
+    {% endif %}
+
     {% if part.has_complete_bom_pricing == False %}
     <tr>
         <td colspan='3'>
-            <span class='warning-msg'><i>{% trans 'Note: BOM pricing is incomplete for this part' %}</i></span>
+            <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
         </td>
     </tr>
     {% endif %}
     {% else %}
     <tr>
         <td colspan='3'>
-            <span class='warning-msg'><i>{% trans 'No BOM pricing available' %}</i></span>
+            <span class='warning-msg'><em>{% trans 'No BOM pricing available' %}</em></span>
         </td>
     </tr>
     {% endif %}
@@ -82,11 +97,11 @@
     <h4>{% trans 'Internal Price' %}</h4>
     <table class='table table-striped table-condensed table-price-two'>
         <tr>
-            <td><b>{% trans 'Unit Cost' %}</b></td>
+            <td><strong>{% trans 'Unit Cost' %}</strong></td>
             <td>{% include "price.html" with price=unit_internal_part_price %}</td>
         </tr>
         <tr>
-            <td><b>{% trans 'Total Cost' %}</b></td>
+            <td><strong>{% trans 'Total Cost' %}</strong></td>
             <td>{% include "price.html" with price=total_internal_part_price %}</td>
         </tr>
     </table>
@@ -97,11 +112,11 @@
     <h4>{% trans 'Sale Price' %}</h4>
     <table class='table table-striped table-condensed table-price-two'>
         <tr>
-            <td><b>{% trans 'Unit Cost' %}</b></td>
+            <td><strong>{% trans 'Unit Cost' %}</strong></td>
             <td>{% include "price.html" with price=unit_part_price %}</td>
         </tr>
         <tr>
-            <td><b>{% trans 'Total Cost' %}</b></td>
+            <td><strong>{% trans 'Total Cost' %}</strong></td>
             <td>{% include "price.html" with price=total_part_price %}</td>
         </tr>
     </table>

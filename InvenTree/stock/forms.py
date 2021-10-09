@@ -8,12 +8,10 @@ from __future__ import unicode_literals
 from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
 from mptt.fields import TreeNodeChoiceField
 
-from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
@@ -226,33 +224,6 @@ class TestReportFormatForm(HelperForm):
     template = forms.ChoiceField(label=_('Template'), help_text=_('Select test report template'))
 
 
-class ExportOptionsForm(HelperForm):
-    """ Form for selecting stock export options """
-
-    file_format = forms.ChoiceField(label=_('File Format'), help_text=_('Select output file format'))
-
-    include_sublocations = forms.BooleanField(required=False, initial=True, label=_('Include sublocations'), help_text=_("Include stock items in sub locations"))
-
-    class Meta:
-        model = StockLocation
-        fields = [
-            'file_format',
-            'include_sublocations',
-        ]
-
-    def get_format_choices(self):
-        """ File format choices """
-
-        choices = [(x, x.upper()) for x in GetExportFormats()]
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['file_format'].choices = self.get_format_choices()
-
-
 class InstallStockForm(HelperForm):
     """
     Form for manually installing a stock item into another stock item
@@ -269,14 +240,9 @@ class InstallStockForm(HelperForm):
         help_text=_('Stock item to install')
     )
 
-    quantity_to_install = RoundingDecimalFormField(
-        max_digits=10, decimal_places=5,
-        initial=1,
-        label=_('Quantity'),
-        help_text=_('Stock quantity to assign'),
-        validators=[
-            MinValueValidator(0.001)
-        ]
+    to_install = forms.BooleanField(
+        widget=forms.HiddenInput(),
+        required=False,
     )
 
     notes = forms.CharField(
@@ -289,7 +255,7 @@ class InstallStockForm(HelperForm):
         fields = [
             'part',
             'stock_item',
-            'quantity_to_install',
+            # 'quantity_to_install',
             'notes',
         ]
 
@@ -325,50 +291,6 @@ class UninstallStockForm(forms.ModelForm):
             'location',
             'note',
             'confirm',
-        ]
-
-
-class AdjustStockForm(forms.ModelForm):
-    """ Form for performing simple stock adjustments.
-
-    - Add stock
-    - Remove stock
-    - Count stock
-    - Move stock
-
-    This form is used for managing stock adjuments for single or multiple stock items.
-    """
-
-    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination stock location'))
-
-    note = forms.CharField(label=_('Notes'), required=True, help_text=_('Add note (required)'))
-
-    # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
-
-    confirm = forms.BooleanField(required=False, initial=False, label=_('Confirm stock adjustment'), help_text=_('Confirm movement of stock items'))
-
-    set_loc = forms.BooleanField(required=False, initial=False, label=_('Set Default Location'), help_text=_('Set the destination as the default location for selected parts'))
-
-    class Meta:
-        model = StockItem
-
-        fields = [
-            'destination',
-            'note',
-            # 'transaction',
-            'confirm',
-        ]
-
-
-class EditStockItemStatusForm(HelperForm):
-    """
-    Simple form for editing StockItem status field
-    """
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'status',
         ]
 
 

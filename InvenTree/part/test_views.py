@@ -155,53 +155,6 @@ class PartDetailTest(PartViewTestCase):
         self.assertIn('streaming_content', dir(response))
 
 
-class PartTests(PartViewTestCase):
-    """ Tests for Part forms """
-
-    def test_part_edit(self):
-
-        response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        keys = response.context.keys()
-        data = str(response.content)
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertIn('part', keys)
-        self.assertIn('csrf_token', keys)
-
-        self.assertIn('html_form', data)
-        self.assertIn('"title":', data)
-
-    def test_part_create(self):
-        """ Launch form to create a new part """
-        response = self.client.get(reverse('part-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # And again, with an invalid category
-        response = self.client.get(reverse('part-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # And again, with no category
-        response = self.client.get(reverse('part-create'), {'name': 'Test part'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_part_duplicate(self):
-        """ Launch form to duplicate part """
-
-        # First try with an invalid part
-        response = self.client.get(reverse('part-duplicate', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(reverse('part-duplicate', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_make_variant(self):
-
-        response = self.client.get(reverse('make-part-variant', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-
 class PartRelatedTests(PartViewTestCase):
 
     def test_valid_create(self):
@@ -258,19 +211,6 @@ class PartQRTest(PartViewTestCase):
 class CategoryTest(PartViewTestCase):
     """ Tests for PartCategory related views """
 
-    def test_create(self):
-        """ Test view for creating a new category """
-        response = self.client.get(reverse('category-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_invalid_parent(self):
-        """ test creation of a new category with an invalid parent """
-        response = self.client.get(reverse('category-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        # Form should still return OK
-        self.assertEqual(response.status_code, 200)
-
     def test_set_category(self):
         """ Test that the "SetCategory" view works """
 
@@ -286,23 +226,4 @@ class CategoryTest(PartViewTestCase):
         }
 
         response = self.client.post(url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-
-class BomItemTests(PartViewTestCase):
-    """ Tests for BomItem related views """
-
-    def test_create_valid_parent(self):
-        """ Create a BomItem for a valid part """
-        response = self.client.get(reverse('bom-item-create'), {'parent': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_no_parent(self):
-        """ Create a BomItem without a parent """
-        response = self.client.get(reverse('bom-item-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_invalid_parent(self):
-        """ Create a BomItem with an invalid parent """
-        response = self.client.get(reverse('bom-item-create'), {'parent': 99999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)

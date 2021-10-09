@@ -45,7 +45,6 @@
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
 <link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
-<link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
 <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
 <link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
@@ -147,29 +146,34 @@
 <script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
 
 <!-- general InvenTree -->
-<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
-<!-- translated -->
+<!-- dynamic javascript templates -->
+<script type='text/javascript' src="{% url 'inventree.js' %}"></script>
+<script type='text/javascript' src="{% url 'calendar.js' %}"></script>
+<script type='text/javascript' src="{% url 'nav.js' %}"></script>
+<script type='text/javascript' src="{% url 'settings.js' %}"></script>
+
+<!-- translated javascript templates-->
 <script type='text/javascript' src="{% i18n_static 'api.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'attachment.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'barcode.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'bom.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'company.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'modals.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'forms.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'helpers.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'label.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'modals.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'model_renderers.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'build.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'calendar.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
-<script type='text/javascript' src="{% i18n_static 'filters.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>

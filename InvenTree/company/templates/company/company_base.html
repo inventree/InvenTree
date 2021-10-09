@@ -71,6 +71,17 @@
     <td><a href="{{ company.website }}">{{ company.website }}</a>{% include "clip.html"%}</td>
 </tr>
 {% endif %}
+<tr>
+    <td><span class='fas fa-dollar-sign'></span></td>
+    <td>{% trans "Currency" %}</td>
+    <td>
+        {% if company.currency %}
+        {{ company.currency }}
+        {% else %}
+        <em>{% trans "Uses default currency" %}</em>
+        {% endif %}
+    </td>
+</tr>
 {% if company.address %}
 <tr>
     <td><span class='fas fa-map-marked-alt'></span></td>
@@ -99,6 +110,22 @@
     <td>{{ company.contact }}{% include "clip.html"%}</td>
 </tr>
 {% endif %}
+
+<tr>
+    <td><span class='fas fa-industry'></span></td>
+    <td>{%trans "Manufacturer" %}</td>
+    <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
+</tr>
+<tr>
+    <td><span class='fas fa-building'></span></td>
+    <td>{% trans "Supplier" %}</td>
+    <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+</tr>
+<tr>
+    <td><span class='fas fa-user-tie'></span></td>
+    <td>{% trans "Customer" %}</td>
+    <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+</tr>
 </table>
 {% endblock %}
 
@@ -131,6 +158,12 @@
     function reloadImage(data) {
         if (data.image) {
             $('#company-image').attr('src', data.image);
+
+            // Reset the "modal image" view
+            $('#company-image').click(function() {
+                showModalImage(data.image);
+            });
+
         } else {
             location.reload();
         }
@@ -171,17 +204,16 @@
         );
     });
 
-    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+    if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
 
-    {% if allow_download %}
-    $('#company-image-url').click(function() {
-        launchModalForm(
-            '{% url "company-image-download" company.id %}',
-            {
-                reload: true,
-            }
-        )
-    });
-    {% endif %}
+        $('#company-image-url').click(function() {
+            launchModalForm(
+                '{% url "company-image-download" company.id %}',
+                {
+                    reload: true,
+                }
+            )
+        });
+    }
 
 {% endblock %}

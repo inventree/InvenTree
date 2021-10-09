@@ -1,34 +1,44 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% setting_object key as setting %}
+{% if user_setting %}
+    {% setting_object key user=request.user as setting %}
+{% else %}
+    {% setting_object key as setting %}
+{% endif %}
+
 <tr>
     <td>
         {% if icon %}
         <span class='fas {{ icon }}'></span>
         {% endif %}
     </td>
-    <td><b>{% trans setting.name %}</b></td>
+    <td><strong>{% trans setting.name %}</strong></td>
     <td>
         {% if setting.is_bool %}
         <div>
-            <input fieldname='{{ setting.key }}' class='slidey' type='checkbox' data-offstyle='warning' data-onstyle='success' data-size='small' data-toggle='toggle' disabled autocomplete='off' {% if setting.as_bool %}checked=''{% endif %}>
+            <input fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
         </div>
         {% else %}
-        {% if setting.value %}
-        <i><b>
-            {{ setting.value }}</b> {{ setting.units }}
-        </i>
-        {% else %}
-        <i>{% trans "No value set" %}</i>
-        {% endif %}
+        <div id='setting-{{ setting.pk }}'>
+            <strong>
+            <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
+                {% if setting.value %}
+                {{ setting.value }}
+                {% else %}
+                <em>{% trans "No value set" %}</em>
+                {% endif %}
+            </span>
+            </strong>
+            {{ setting.units }}
+        </div>
         {% endif %}
     <td>
         {% trans setting.description %}
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ key }}' title='{% trans "Edit setting" %}'>
+            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>

@@ -43,8 +43,10 @@ def get_next_po_number():
 
     attempts = set([order.reference])
 
+    reference = order.reference
+
     while 1:
-        reference = increment(order.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion
@@ -70,8 +72,10 @@ def get_next_so_number():
 
     attempts = set([order.reference])
 
+    reference = order.reference
+
     while 1:
-        reference = increment(order.reference)
+        reference = increment(reference)
 
         if reference in attempts:
             # Escape infinite recursion
@@ -407,18 +411,31 @@ class PurchaseOrder(Order):
         """
 
         notes = kwargs.get('notes', '')
+        barcode = kwargs.get('barcode', '')
+
+        # Prevent null values for barcode
+        if barcode is None:
+            barcode = ''
 
         if not self.status == PurchaseOrderStatus.PLACED:
-            raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
+            raise ValidationError(
+                "Lines can only be received against an order marked as 'PLACED'"
+            )
 
         try:
             if not (quantity % 1 == 0):
-                raise ValidationError({"quantity": _("Quantity must be an integer")})
+                raise ValidationError({
+                    "quantity": _("Quantity must be an integer")
+                })
             if quantity < 0:
-                raise ValidationError({"quantity": _("Quantity must be a positive number")})
+                raise ValidationError({
+                    "quantity": _("Quantity must be a positive number")
+                })
             quantity = int(quantity)
         except (ValueError, TypeError):
-            raise ValidationError({"quantity": _("Invalid quantity provided")})
+            raise ValidationError({
+                "quantity": _("Invalid quantity provided")
+            })
 
         # Create a new stock item
         if line.part and quantity > 0:
@@ -429,7 +446,8 @@ class PurchaseOrder(Order):
                 quantity=quantity,
                 purchase_order=self,
                 status=status,
-                purchase_price=purchase_price,
+                purchase_price=line.purchase_price,
+                uid=barcode
             )
 
             stock.save(add_note=False)
@@ -725,7 +743,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = (
-            ('order', 'part')
+            ('order', 'part', 'quantity', 'purchase_price')
         )
 
     def __str__(self):
@@ -743,8 +761,15 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     def get_base_part(self):
-        """ Return the base-part for the line item """
-        return self.part.part
+        """
+        Return the base part.Part object for the line item
+        
+        Note: Returns None if the SupplierPart is not set!
+        """
+        if self.part is None:
+            return None
+        else:
+            return self.part.part
 
     # TODO - Function callback for when the SupplierPart is deleted?
 
@@ -756,7 +781,13 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_("Supplier part"),
     )
 
-    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received'), help_text=_('Number of items received'))
+    received = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        default=0,
+        verbose_name=_('Received'),
+        help_text=_('Number of items received')
+    )
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,
@@ -767,7 +798,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     destination = TreeForeignKey(
-        'stock.StockLocation', on_delete=models.DO_NOTHING,
+        'stock.StockLocation', on_delete=models.SET_NULL,
         verbose_name=_('Destination'),
         related_name='po_lines',
         blank=True, null=True,
@@ -809,7 +840,13 @@ class SalesOrderLineItem(OrderLineItem):
     def get_api_url():
         return reverse('api-so-line-list')
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+    order = models.ForeignKey(
+        SalesOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Order'),
+        help_text=_('Sales Order')
+    )
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
 
@@ -923,7 +960,11 @@ class SalesOrderAllocation(models.Model):
         if len(errors) > 0:
             raise ValidationError(errors)
 
-    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, verbose_name=_('Line'), related_name='allocations')
+    line = models.ForeignKey(
+        SalesOrderLineItem,
+        on_delete=models.CASCADE,
+        verbose_name=_('Line'),
+        related_name='allocations')
 
     item = models.ForeignKey(
         'stock.StockItem',

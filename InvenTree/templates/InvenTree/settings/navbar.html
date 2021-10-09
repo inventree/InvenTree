@@ -1,0 +1,127 @@
+{% load i18n %}
+
+<ul class='list-group'>
+
+    <li class='list-group-item'>
+        <a href='#' id='item-menu-toggle'>
+            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
+        </a>
+    </li>
+
+    <li class='list-group-item'>
+        <strong>{% trans "User Settings" %}</strong>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Account" %}'>
+        <a href='#' class='nav-toggle' id='select-account'>
+            <span class='fas fa-user'></span> {% trans "Account" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Home Page" %}'>
+        <a href='#' class='nav-toggle' id='select-user-home'>
+            <span class='fas fa-home'></span> {% trans "Home Page" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Search" %}'>
+        <a href='#' class='nav-toggle' id='select-user-search'>
+            <span class='fas fa-search'></span> {% trans "Search" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Labels" %}'>
+        <a href='#' class='nav-toggle' id='select-user-labels'>
+            <span class='fas fa-tag'></span> {% trans "Labels" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Reports" %}'>
+        <a href='#' class='nav-toggle' id='select-user-reports'>
+            <span class='fas fa-file-pdf'></span> {% trans "Reports" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Forms" %}'>
+        <a href='#' class='nav-toggle' id='select-user-forms'>
+            <span class='fas fa-table'></span>{% trans "Forms" %}
+        </a>
+    </li>
+
+    <!--
+        <li class='list-group-item' title='{% trans "Settings" %}'>
+            <a href='#' class='nav-toggle' id='select-user-settings'>
+                <span class='fas fa-cog'></span> {% trans "Settings" %}
+            </a>
+        </li>
+    -->
+
+    {% if user.is_staff %}
+
+    <li class='list-group-item'>
+        <strong>{% trans "InvenTree Settings" %}</strong>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Server" %}'>
+        <a href='#' class='nav-toggle' id='select-server'>
+            <span class='fas fa-server'></span> {% trans "Server" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Barcodes" %}'>
+        <a href='#' class='nav-toggle' id='select-barcodes'>
+            <span class='fas fa-qrcode'></span> {% trans "Barcodes" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Currencies" %}'>
+        <a href='#' class='nav-toggle' id='select-currencies'>
+            <span class='fas fa-dollar-sign'></span> {% trans "Currencies" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Reporting" %}'>
+        <a href='#' class='nav-toggle' id='select-reporting'>
+            <span class='fas fa-file-pdf'></span> {% trans "Reporting" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Parts" %}'>
+        <a href='#' class='nav-toggle' id='select-parts'>
+            <span class='fas fa-shapes'></span> {% trans "Parts" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Categories" %}'>
+        <a href='#' class='nav-toggle' id='select-category'>
+            <span class='fas fa-shapes'></span> {% trans "Categories" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Stock" %}'>
+        <a href='#' class='nav-toggle' id='select-stock'>
+            <span class='fas fa-boxes'></span> {% trans "Stock" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Build Orders" %}'>
+        <a href='#' class='nav-toggle' id='select-build-order'>
+            <span class='fas fa-tools'></span> {% trans "Build Orders" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Purchase Orders" %}'>
+        <a href='#' class='nav-toggle' id='select-purchase-order'>
+            <span class='fas fa-shopping-cart'></span> {% trans "Purchase Orders" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Sales Orders" %}'>
+        <a href='#' class='nav-toggle' id='select-sales-order'>
+            <span class='fas fa-truck'></span> {% trans "Sales Orders" %}
+        </a>
+    </li>
+
+    {% endif %}
+
+</ul>

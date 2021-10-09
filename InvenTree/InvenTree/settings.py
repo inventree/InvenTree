@@ -12,6 +12,7 @@ database setup in this file.
 """
 
 import logging
+
 import os
 import random
 import string
@@ -168,6 +169,30 @@ else:
         logger.exception(f"Couldn't load keyfile {key_file}")
         sys.exit(-1)
 
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_STATIC_ROOT',
+        CONFIG.get('static_root', None)
+    )
+)
+
+if STATIC_ROOT is None:
+    print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
+    sys.exit(1)
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_MEDIA_ROOT',
+        CONFIG.get('media_root', None)
+    )
+)
+
+if MEDIA_ROOT is None:
+    print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
+    sys.exit(1)
+
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -188,22 +213,12 @@ if cors_opt:
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
-# The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', '/home/inventree/data/static')
-    )
-)
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
-]
+STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js')
-STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
+STATICFILES_I18_TRG = os.path.join(BASE_DIR, 'InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
 
@@ -217,19 +232,11 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', '/home/inventree/data/media')
-    )
-)
-
 if DEBUG:
     logger.info("InvenTree running in DEBUG mode")
 
-logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
 # Application definition
 
@@ -319,6 +326,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Custom InvenTree context processors
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
@@ -347,10 +355,22 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
+background_workers = os.environ.get('INVENTREE_BACKGROUND_WORKERS', None)
+
+if background_workers is not None:
+    try:
+        background_workers = int(background_workers)
+    except ValueError:
+        background_workers = None
+
+if background_workers is None:
+    # Sensible default?
+    background_workers = 4
+
 # django-q configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
-    'workers': 4,
+    'workers': background_workers,
     'timeout': 90,
     'retry': 120,
     'queue_limit': 50,
@@ -400,7 +420,7 @@ Configure the database backend based on the user-specified values.
 - The following code lets the user "mix and match" database configuration
 """
 
-logger.info("Configuring database backend:")
+logger.debug("Configuring database backend:")
 
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
@@ -454,11 +474,9 @@ if db_engine in ['sqlite3', 'postgresql', 'mysql']:
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
-print("InvenTree Database Configuration")
-print("================================")
-print(f"ENGINE: {db_engine}")
-print(f"NAME: {db_name}")
-print(f"HOST: {db_host}")
+logger.info(f"DB_ENGINE: {db_engine}")
+logger.info(f"DB_NAME: {db_name}")
+logger.info(f"DB_HOST: {db_host}")
 
 DATABASES['default'] = db_config
 
@@ -502,11 +520,24 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
-    ('en', _('English')),
-    ('fr', _('French')),
     ('de', _('German')),
+    ('el', _('Greek')),
+    ('en', _('English')),
+    ('es', _('Spanish')),
+    ('fr', _('French')),
+    ('he', _('Hebrew')),
+    ('it', _('Italian')),
+    ('ja', _('Japanese')),
+    ('ko', _('Korean')),
+    ('nl', _('Dutch')),
+    ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('ru', _('Russian')),
+    ('sv', _('Swedish')),
+    ('th', _('Thai')),
     ('tr', _('Turkish')),
+    ('vi', _('Vietnamese')),
+    ('zh-cn', _('Chinese')),
 ]
 
 # Currencies available for use

@@ -19,7 +19,7 @@ class ReportConfig(AppConfig):
         This function is called whenever the report app is loaded
         """
 
-        if canAppAccessDatabase():
+        if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
 

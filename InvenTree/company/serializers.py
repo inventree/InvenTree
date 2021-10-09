@@ -96,7 +96,9 @@ class CompanySerializer(InvenTreeModelSerializer):
 
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
-    """ Serializer for ManufacturerPart object """
+    """
+    Serializer for ManufacturerPart object
+    """
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -106,8 +108,8 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
 
-        part_detail = kwargs.pop('part_detail', False)
-        manufacturer_detail = kwargs.pop('manufacturer_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
 
         super(ManufacturerPartSerializer, self).__init__(*args, **kwargs)
@@ -202,28 +204,31 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
-    manufacturer = serializers.PrimaryKeyRelatedField(source='manufacturer_part.manufacturer', read_only=True)
+    manufacturer = serializers.CharField(read_only=True)
 
-    MPN = serializers.StringRelatedField(source='manufacturer_part.MPN')
+    MPN = serializers.CharField(read_only=True)
 
-    manufacturer_part = ManufacturerPartSerializer(read_only=True)
+    manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
     class Meta:
         model = SupplierPart
         fields = [
+            'description',
+            'link',
+            'manufacturer',
+            'manufacturer_detail',
+            'manufacturer_part',
+            'manufacturer_part_detail',
+            'MPN',
+            'note',
             'pk',
+            'packaging',
             'part',
             'part_detail',
             'pretty_name',
+            'SKU',
             'supplier',
             'supplier_detail',
-            'SKU',
-            'manufacturer',
-            'MPN',
-            'manufacturer_detail',
-            'manufacturer_part',
-            'description',
-            'link',
         ]
 
     def create(self, validated_data):
@@ -233,12 +238,12 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         supplier_part = super().create(validated_data)
 
         # Get ManufacturerPart raw data (unvalidated)
-        manufacturer_id = self.initial_data.get('manufacturer', None)
+        manufacturer = self.initial_data.get('manufacturer', None)
         MPN = self.initial_data.get('MPN', None)
 
-        if manufacturer_id and MPN:
+        if manufacturer and MPN:
             kwargs = {
-                'manufacturer': manufacturer_id,
+                'manufacturer': manufacturer,
                 'MPN': MPN,
             }
             supplier_part.save(**kwargs)
