@@ -19,6 +19,7 @@ import string
 import shutil
 import sys
 import pathlib
+import importlib
 from datetime import datetime
 
 import moneyed
@@ -28,6 +29,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 
 from plugin import plugins as inventree_plugins
+from plugin.integration import IntegrationPluginBase
 
 
 def _is_true(x):
@@ -659,6 +661,23 @@ MESSAGE_TAGS = {
 # Plugins
 PLUGIN_URL = 'plugin'
 
+PLUGIN_DIRS = [
+    'plugin.builtin',
+    'plugins',
+]
+
+# load samples if in debug mode
+if DEBUG:
+    PLUGIN_DIRS.append('plugin.samples')
+
+# collect all plugins from paths
+PLUGINS = []
+for plugin in PLUGIN_DIRS:
+    modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
+    if modules:
+        [PLUGINS.append(item) for item in modules]
+
+# collect integration plugins
 INTEGRATION_PLUGINS = []
 
 INTEGRATION_PLUGIN_SETTINGS = {}

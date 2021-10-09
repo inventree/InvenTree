@@ -6,12 +6,14 @@ import importlib
 import pkgutil
 import logging
 
+from django.conf import settings
+from django.core.exceptions import AppRegistryNotReady
+
 # Action plugins
 import plugin.builtin.action as action
 from plugin.action import ActionPlugin
 
 # Integration
-import plugin.builtin.integration as integration
 from plugin.integration import IntegrationPluginBase
 
 
@@ -23,9 +25,23 @@ def iter_namespace(pkg):
     return pkgutil.iter_modules(pkg.__path__, pkg.__name__ + ".")
 
 
-def get_modules(pkg):
+def get_modules(pkg, recursive):
     """get all modules in a package"""
-    return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
+    if not recursive:
+        return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
+    
+    context = {}
+    for loader, name, ispkg in pkgutil.walk_packages(pkg.__path__):
+        try:
+            module = loader.find_module(name).load_module(name)
+            pkg_names = getattr(module, '__all__', None)
+            for k, v in vars(module).items():
+                if not k.startswith('_') and (pkg_names is None or k in pkg_names):
+                    context[k] = v
+            context[name] = module
+        except AppRegistryNotReady:
+            pass
+    return [v for k, v in context.items()]
 
 
 def get_classes(module):
@@ -33,7 +49,7 @@ def get_classes(module):
     return inspect.getmembers(module, inspect.isclass)
 
 
-def get_plugins(pkg, baseclass):
+def get_plugins(pkg, baseclass, recursive):
     """
     Return a list of all modules under a given package.
 
@@ -43,7 +59,7 @@ def get_plugins(pkg, baseclass):
 
     plugins = []
 
-    modules = get_modules(pkg)
+    modules = get_modules(pkg, recursive)
 
     # Iterate through each module in the package
     for mod in modules:
@@ -67,7 +83,7 @@ def load_plugins(name: str, cls, module=None):
 
     logger.debug("Loading %s plugins", name)
 
-    plugins = get_plugins(module, cls)
+    plugins = get_plugins(module, cls) if module else settings.PLUGINS
 
     if len(plugins) > 0:
         logger.info("Discovered %i %s plugins:", len(plugins), name)
@@ -89,7 +105,7 @@ def load_integration_plugins():
     """
     Return a list of all registered integration plugins
     """
-    return load_plugins('integration', IntegrationPluginBase, module=integration)
+    return load_plugins('integration', IntegrationPluginBase)
 
 
 def load_barcode_plugins():
