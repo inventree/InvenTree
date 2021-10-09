@@ -22,7 +22,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
 
-    TEST_SETTINGS = {'setting1': {'default': '123',}}
+    TEST_SETTINGS = {'setting1': {'default': '123', }}
 
     def setUp(self):
         class SettingsCls(SettingsMixin, IntegrationPluginBase):
@@ -91,7 +91,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.assertIsNone(self.mixin_nothing.urlpatterns)
 
         # internal name
-        self.assertEqual(self.mixin.internal_name,  f'plugin:{self.mixin.slug}:')
+        self.assertEqual(self.mixin.internal_name, f'plugin:{self.mixin.slug}:')
 
 
 class AppMixinTest(BaseMixinDefinition, TestCase):
