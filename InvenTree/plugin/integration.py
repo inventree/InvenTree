@@ -88,12 +88,23 @@ class SettingsMixin:
             return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.settings.items()}
         return None
 
+    def _setting_name(self, key):
+        """get global name of setting"""
+        return f'PLUGIN_{self.slug.upper()}_{key}'
+
     def get_setting(self, key):
         """
         get plugin setting by key
         """
         from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(f'PLUGIN_{self.slug.upper()}_{key}')
+        return InvenTreeSetting.get_setting(self._setting_name(key))
+
+    def set_setting(self, key, value, user):
+        """
+        set plugin setting by key
+        """
+        from common.models import InvenTreeSetting
+        return InvenTreeSetting.set_setting(self._setting_name(key), value, user)
 
 
 class UrlsMixin:

@@ -3,6 +3,7 @@
 from django.test import TestCase
 from django.conf import settings
 from django.conf.urls import url, include
+from django.contrib.auth import get_user_model
 
 from datetime import datetime
 
@@ -33,6 +34,9 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
             pass
         self.mixin_nothing = NoSettingsCls()
 
+        user = get_user_model()
+        self.test_user = user.objects.create_user('testuser', 'test@testing.com', 'password')
+
     def test_function(self):
         # settings variable
         self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
@@ -50,7 +54,8 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.get_setting('ABCD'), '')
         self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
         # right setting
-        self.assertEqual(self.mixin.get_setting('SETTING1'), '123')
+        self.assertEqual(self.mixin.set_setting('SETTING1'), '12345', self.test_user)
+        self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
         # no setting
         self.assertEqual(self.mixin_nothing.get_setting(), '')
 
