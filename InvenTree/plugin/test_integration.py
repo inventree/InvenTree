@@ -36,6 +36,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
 
         user = get_user_model()
         self.test_user = user.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.test_user.is_staff = True
 
     def test_function(self):
         # settings variable
@@ -54,7 +55,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.get_setting('ABCD'), '')
         self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
         # right setting
-        self.assertEqual(self.mixin.set_setting('SETTING1'), '12345', self.test_user)
+        self.mixin.set_setting('SETTING1', '12345', self.test_user)
         self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
         # no setting
         self.assertEqual(self.mixin_nothing.get_setting(), '')
