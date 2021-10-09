@@ -25,7 +25,7 @@ def iter_namespace(pkg):
     return pkgutil.iter_modules(pkg.__path__, pkg.__name__ + ".")
 
 
-def get_modules(pkg, recursive):
+def get_modules(pkg, recursive: bool = False):
     """get all modules in a package"""
     if not recursive:
         return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
@@ -49,7 +49,7 @@ def get_classes(module):
     return inspect.getmembers(module, inspect.isclass)
 
 
-def get_plugins(pkg, baseclass, recursive):
+def get_plugins(pkg, baseclass, recursive: bool = False):
     """
     Return a list of all modules under a given package.
 
