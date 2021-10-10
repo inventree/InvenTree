@@ -35,6 +35,18 @@ function bomItemFields() {
             hidden: true,
         },
         sub_part: {
+            secondary: {
+                title: '{% trans "New Part" %}',
+                fields: function() {
+                    var fields = partFields();
+
+                    // Set to a "component" part
+                    fields.component.value = true;
+
+                    return fields;
+                },
+                groups: partGroups(),
+            }
         },
         quantity: {},
         reference: {},
