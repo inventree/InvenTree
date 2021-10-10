@@ -576,6 +576,7 @@ function loadBomTable(table, options) {
             constructForm(`/api/bom/${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit BOM Item" %}',
+                focus: 'sub_part',
                 onSuccess: function() {
                     reloadBomTable(table);
                 }
