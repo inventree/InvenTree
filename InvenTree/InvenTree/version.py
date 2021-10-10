@@ -10,6 +10,12 @@ import common.models
 
 INVENTREE_SW_VERSION = "0.5.1"
 
+# InvenTree documentation version
+# For 'dev' branch this must read "latest"
+# For 'stable' branch this should match INVENTREE_SW_VERSION
+INVENTREE_DOCS_VERSION = "0.5"
+
+# InvenTree API version
 INVENTREE_API_VERSION = 12
 
 """
@@ -100,12 +106,7 @@ def inventreeDocsVersion():
     
     """
 
-    if isInvenTreeDevelopmentVersion():
-        return "latest"
-    else:
-        major, minor, patch = inventreeVersionTuple()
-
-        return f"{major}.{minor}.{patch}"
+    return INVENTREE_DOCS_VERSION
 
 
 def isInvenTreeUpToDate():
