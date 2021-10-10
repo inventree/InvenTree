@@ -552,6 +552,7 @@
                 fields: fields,
                 method: 'POST',
                 title: '{% trans "Create BOM Item" %}',
+                focus: 'sub_part',
                 onSuccess: function() {
                     $('#bom-table').bootstrapTable('refresh');
                 }
