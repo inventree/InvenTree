@@ -115,9 +115,8 @@ if __name__ == '__main__':
     # Check that the documentation URL is available
     url = f"https://inventree.readthedocs.io/en/{docs_version}"
 
-    print(f"Checking documentation url: {url}")
-
     response = requests.get(url)
+    print(f"Checking documentation url: {url} - Response {response.status_code}")
 
     if response.status_code != 200:
         print(f"ERROR: Received status code {response.status_code}")
