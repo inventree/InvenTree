@@ -18,7 +18,6 @@ if __name__ == '__main__':
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
     version = None
-    docs_version = None
 
     with open(version_file, 'r') as f:
 
@@ -33,17 +32,7 @@ if __name__ == '__main__':
 
         version = results[0]
 
-        # Extract the documentation version
-        results = re.findall(r'INVENTREE_DOCS_VERSION = "(.*)"', text)
-
-        if not len(results) == 1:
-            print(f"Could not find INVENTREE_DOCS_VERSION in '{version_file}'")
-            sys.exit(1)
-
-        docs_version = results[0]
-
     print(f"InvenTree Version: '{version}'")
-    print(f"Documentation Version: '{docs_version}'")
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--tag', help='Compare against specified version tag', action='store')
@@ -86,11 +75,6 @@ if __name__ == '__main__':
             print(f"Version number '{version}' does not match required pattern for development branch")
             sys.exit(1)
 
-        # The docs version must be 'latest'
-        if docs_version != 'latest':
-            print(f"Documentation version must be 'latest' for development branch")
-            sys.exit(1)
-
     elif args.release:
         """
         Check that the current version number matches the "release" format
@@ -111,15 +95,5 @@ if __name__ == '__main__':
         if not args.tag == version:
             print(f"Release tag '{args.tag}' does not match INVENTREE_SW_VERSION '{version}'")
             sys.exit(1)
-
-    # Check that the documentation URL is available
-    url = f"https://inventree.readthedocs.io/en/{docs_version}"
-
-    response = requests.get(url)
-    print(f"Checking documentation url: {url} - Response {response.status_code}")
-
-    if response.status_code != 200:
-        print(f"ERROR: Received status code {response.status_code}")
-        sys.exit(1)
 
 sys.exit(0)
