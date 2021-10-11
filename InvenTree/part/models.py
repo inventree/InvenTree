@@ -8,6 +8,7 @@ import decimal
 
 import os
 import logging
+import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -555,7 +556,9 @@ class Part(MPTTModel):
 
     @property
     def full_name(self):
-        """ Format a 'full name' for this Part.
+        """ Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in part.settings file
+
+        As a failsafe option, the following is done
 
         - IPN (if not null)
         - Part name
@@ -564,17 +567,45 @@ class Part(MPTTModel):
         Elements are joined by the | character
         """
 
-        elements = []
+        full_name = part_settings.PART_NAME_FORMAT
+        field_parser_regex_pattern = re.compile('{.*?}')
+        field_regex_pattern = re.compile('(?<=part\\.)[A-z]*')
 
-        if self.IPN:
-            elements.append(self.IPN)
+        try:
 
-        elements.append(self.name)
+            for field_parser in field_parser_regex_pattern.findall(part_settings.PART_NAME_FORMAT):
 
-        if self.revision:
-            elements.append(self.revision)
+                # Each parser should contain a single field
+                field_name = field_regex_pattern.findall(field_parser)[0]
+                field_value = getattr(self, field_name)
 
-        return ' | '.join(elements)
+                if field_value:
+                    # replace the part.$field with field's value and remove the braces
+                    parsed_value = field_parser.replace(f'part.{field_name}', field_value)[1:-1]
+                    full_name = full_name.replace(field_parser, parsed_value)
+
+                else:
+                    # remove the field parser in full name
+                    full_name = full_name.replace(field_parser, '')
+
+            return full_name
+
+        except AttributeError as attr_err:
+
+            logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
+
+            # Fallback to default format
+            elements = []
+
+            if self.IPN:
+                elements.append(self.IPN)
+
+            elements.append(self.name)
+
+            if self.revision:
+                elements.append(self.revision)
+
+            return ' | '.join(elements)
 
     def set_category(self, category):
 
