@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 00:25+0000\n"
+"POT-Creation-Date: 2021-10-11 00:43+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -118,8 +118,8 @@ msgstr "注释"
 msgid "File comment"
 msgstr "文件注释"
 
-#: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:1004
-#: common/models.py:1005 part/models.py:2055
+#: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:1011
+#: common/models.py:1012 part/models.py:2055
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1669
 msgid "User"
@@ -551,7 +551,7 @@ msgstr "生产完成的目标日期。生产将在此日期之后逾期。"
 #: build/forms.py:48 build/forms.py:90 build/models.py:1281
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:34 common/models.py:1036
+#: build/templates/build/detail.html:34 common/models.py:1043
 #: company/forms.py:42 company/templates/company/supplier_part.html:226
 #: order/forms.py:101 order/forms.py:123 order/models.py:720
 #: order/models.py:982 order/templates/order/order_wizard/match_parts.html:30
@@ -1551,7 +1551,7 @@ msgstr ""
 msgid "Select {name} file to upload"
 msgstr ""
 
-#: common/models.py:308 common/models.py:843 common/models.py:997
+#: common/models.py:308 common/models.py:843 common/models.py:1004
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
@@ -2133,20 +2133,28 @@ msgstr ""
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:1037 company/forms.py:43
+#: common/models.py:986
+msgid "Escape Key Closes Forms"
+msgstr ""
+
+#: common/models.py:987
+msgid "Use the escape key to close modal forms"
+msgstr ""
+
+#: common/models.py:1044 company/forms.py:43
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1044 company/templates/company/supplier_part.html:231
+#: common/models.py:1051 company/templates/company/supplier_part.html:231
 #: templates/js/translated/part.js:1369
 msgid "Price"
 msgstr ""
 
-#: common/models.py:1045
+#: common/models.py:1052
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1138
+#: common/models.py:1145
 msgid "Default"
 msgstr ""
 
