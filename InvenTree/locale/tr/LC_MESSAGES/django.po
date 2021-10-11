@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 07:56+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-10-11 06:21+0000\n"
+"PO-Revision-Date: 2021-10-11 06:29\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -74,10 +74,8 @@ msgid "E-mail (again)"
 msgstr ""
 
 #: InvenTree/forms.py:230
-#, fuzzy
-#| msgid "Email Address"
 msgid "E-mail address confirmation"
-msgstr "E-Posta Adresi"
+msgstr ""
 
 #: InvenTree/forms.py:250
 msgid "You must type the same email each time."
@@ -906,10 +904,9 @@ msgid "Build item must specify a build output, as master part is marked as track
 msgstr "Ana parça izlenebilir olarak işaretlendiğinden, yapım işi çıktısı için bir yapım işi ögesi belirtmelidir"
 
 #: build/models.py:1111
-#, fuzzy, python-brace-format
-#| msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
+#, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr "Tahsis edilecek miktar ({n}) mevcut miktarı ({q}) geçmemeli"
+msgstr ""
 
 #: build/models.py:1121
 msgid "Stock item is over-allocated"
@@ -924,10 +921,8 @@ msgid "Quantity must be 1 for serialized stock"
 msgstr "Seri numaralı stok için miktar bir olmalı"
 
 #: build/models.py:1191
-#, fuzzy
-#| msgid "Selected stock item not found in BOM for part '{p}'"
 msgid "Selected stock item not found in BOM"
-msgstr "{p} parçasının malzeme listesindeki seçili stok kalemi bulunamadı"
+msgstr ""
 
 #: build/models.py:1251 stock/templates/stock/item_base.html:331
 #: templates/InvenTree/search.html:169 templates/js/translated/build.js:1195
@@ -976,10 +971,8 @@ msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
 #: build/serializers.py:157
-#, fuzzy
-#| msgid "Item must be currently in stock"
 msgid "Item must be in stock"
-msgstr "Öge stokta bulunmalı"
+msgstr ""
 
 #: build/serializers.py:171 order/models.py:313 order/serializers.py:231
 #: stock/models.py:351 stock/models.py:1072
@@ -987,10 +980,8 @@ msgid "Quantity must be greater than zero"
 msgstr ""
 
 #: build/serializers.py:180
-#, fuzzy
-#| msgid "Build Outputs"
 msgid "Build Output"
-msgstr "Yapım İşi Çıktıları"
+msgstr ""
 
 #: build/serializers.py:213
 #, python-brace-format
@@ -998,20 +989,16 @@ msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
 #: build/serializers.py:219
-#, fuzzy
-#| msgid "Build output must be specified"
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr "Yapım işi çıktısı belirtilmeli"
+msgstr ""
 
 #: build/serializers.py:226
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
 #: build/serializers.py:254
-#, fuzzy
-#| msgid "Allocation quantity must be greater than zero"
 msgid "Allocation items must be provided"
-msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
+msgstr ""
 
 #: build/templates/build/allocation_card.html:21
 #: build/templates/build/complete_output.html:46
@@ -1294,10 +1281,8 @@ msgid "Untracked stock has not been fully allocated for this Build Order"
 msgstr "Takip edilmeyen stok yapım işi emri için tamamen tahsis edilemedi"
 
 #: build/templates/build/detail.html:197
-#, fuzzy
-#| msgid "Allocate serial numbers"
 msgid "Allocate selected items"
-msgstr "Seri numaralarını tahsis et"
+msgstr ""
 
 #: build/templates/build/detail.html:209
 msgid "This Build Order does not have any associated untracked BOM items"
@@ -1392,16 +1377,12 @@ msgid "Delete Attachment"
 msgstr "Eki Sil"
 
 #: build/templates/build/detail.html:443
-#, fuzzy
-#| msgid "Stock allocation is incomplete"
 msgid "Allocation Complete"
-msgstr "Stok tahsisi tamamlanmamış"
+msgstr ""
 
 #: build/templates/build/detail.html:444
-#, fuzzy
-#| msgid "tracked parts have not been fully allocated"
 msgid "All untracked stock items have been allocated"
-msgstr "takip edilebilir parçalar tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/templates/build/edit_build_item.html:7
 msgid "Alter the quantity of stock allocated to the build output"
@@ -1792,10 +1773,8 @@ msgid "Display part price in some forms"
 msgstr ""
 
 #: common/models.py:671
-#, fuzzy
-#| msgid "Show Price in Forms"
 msgid "Show Price in BOM"
-msgstr "Formlarda Fiyat Göster"
+msgstr ""
 
 #: common/models.py:672
 msgid "Include pricing information in BOM tables"
@@ -1990,40 +1969,32 @@ msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:836
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot"
-msgstr "Şifrenizi girin"
+msgstr ""
 
 #: common/models.py:837
 msgid "Enable password forgot function on the login-pages"
 msgstr ""
 
 #: common/models.py:842
-#, fuzzy
-#| msgid "Label description"
 msgid "Enable registration"
-msgstr "Etiket tanımı"
+msgstr ""
 
 #: common/models.py:843
 msgid "Enable self-registration for users on the login-pages"
 msgstr ""
 
 #: common/models.py:848
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable SSO"
-msgstr "Etkin"
+msgstr ""
 
 #: common/models.py:849
 msgid "Enable SSO on the login-pages"
 msgstr ""
 
 #: common/models.py:854
-#, fuzzy
-#| msgid "Required"
 msgid "E-Mail required"
-msgstr "Gerekli"
+msgstr ""
 
 #: common/models.py:855
 msgid "Require user to supply mail on signup"
@@ -2046,10 +2017,8 @@ msgid "On signup ask users twice for their mail"
 msgstr ""
 
 #: common/models.py:872
-#, fuzzy
-#| msgid "Set Password"
 msgid "Password twice"
-msgstr "Şifre Belirle"
+msgstr ""
 
 #: common/models.py:873
 msgid "On signup ask users twice for their password"
@@ -3607,16 +3576,12 @@ msgid "Add Line Item"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:30
-#, fuzzy
-#| msgid "Allocate serial numbers"
 msgid "Receive selected items"
-msgstr "Seri numaralarını tahsis et"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:31
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Receive Items"
-msgstr "Ögeyi Sil"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:67
 #: order/templates/order/sales_order_detail.html:54
@@ -4952,8 +4917,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5585,16 +5549,12 @@ msgid "Stock transaction notes"
 msgstr ""
 
 #: stock/serializers.py:462
-#, fuzzy
-#| msgid "Allocation quantity must be greater than zero"
 msgid "A list of stock items must be provided"
-msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
+msgstr ""
 
 #: stock/serializers.py:554
-#, fuzzy
-#| msgid "Destination Location"
 msgid "Destination stock location"
-msgstr "Hedef Konum"
+msgstr ""
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
@@ -6252,10 +6212,8 @@ msgid "Setting"
 msgstr ""
 
 #: templates/InvenTree/settings/login.html:9
-#, fuzzy
-#| msgid "Theme Settings"
 msgid "Login Settings"
-msgstr "Tema Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/login.html:22 templates/account/signup.html:5
 msgid "Signup"
@@ -6462,32 +6420,24 @@ msgid "Remove"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:80
-#, fuzzy
-#| msgid "Warning"
 msgid "Warning:"
-msgstr "Uyarı"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:81
 msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:88
-#, fuzzy
-#| msgid "Email Address"
 msgid "Add E-mail Address"
-msgstr "E-Posta Adresi"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:93
-#, fuzzy
-#| msgid "Email"
 msgid "Add E-mail"
-msgstr "E-posta"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:100
-#, fuzzy
-#| msgid "Stock counted"
 msgid "Social Accounts"
-msgstr "Stok sayıldı"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:105
 msgid "You can sign in to your account using any of the following third party accounts:"
@@ -6540,10 +6490,8 @@ msgid "Do you really want to remove the selected e-mail address?"
 msgstr ""
 
 #: templates/InvenTree/settings/user_forms.html:9
-#, fuzzy
-#| msgid "Theme Settings"
 msgid "Form Settings"
-msgstr "Tema Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -6634,10 +6582,8 @@ msgstr "Kapat"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
-#, fuzzy
-#| msgid "Email Address"
 msgid "Confirm E-mail Address"
-msgstr "E-Posta Adresi"
+msgstr ""
 
 #: templates/account/email_confirm.html:16
 #, python-format
@@ -6656,24 +6602,20 @@ msgstr ""
 
 #: templates/account/login.html:19
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:23
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
 #: templates/account/login.html:38
-#, fuzzy
-#| msgid "Set Password"
 msgid "Forgot Password?"
-msgstr "Şifre Belirle"
+msgstr ""
 
 #: templates/account/login.html:45
 msgid "or use SSO"
@@ -6685,27 +6627,21 @@ msgid "Sign Out"
 msgstr ""
 
 #: templates/account/logout.html:10
-#, fuzzy
-#| msgid "Are you sure you want to delete category"
 msgid "Are you sure you want to sign out?"
-msgstr "Bu kategoriyi silmek istediğinize emin misiniz"
+msgstr ""
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
-#, fuzzy
-#| msgid "Set Password"
 msgid "Password Reset"
-msgstr "Şifre Belirle"
+msgstr ""
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it."
 msgstr ""
 
 #: templates/account/password_reset.html:23
-#, fuzzy
-#| msgid "Set Password"
 msgid "Reset My Password"
-msgstr "Şifre Belirle"
+msgstr ""
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
@@ -6721,10 +6657,8 @@ msgid "The password reset link was invalid, possibly because it has already been
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:17
-#, fuzzy
-#| msgid "Enter password"
 msgid "change password"
-msgstr "Şifrenizi girin"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:20
 msgid "Your password is now changed."
@@ -7065,10 +6999,8 @@ msgid "Create Build Order"
 msgstr ""
 
 #: templates/js/translated/build.js:138
-#, fuzzy
-#| msgid "Allocate stock to build output"
 msgid "Allocate stock items to this build output"
-msgstr "Yapım işi çıktısına stok tahsis edildi"
+msgstr ""
 
 #: templates/js/translated/build.js:146
 msgid "Unallocate stock from build output"
@@ -7101,16 +7033,12 @@ msgid "Delete stock allocation"
 msgstr "Stok tahsisini sil"
 
 #: templates/js/translated/build.js:695
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Allocation"
-msgstr "Konumu düzenle"
+msgstr ""
 
 #: templates/js/translated/build.js:705
-#, fuzzy
-#| msgid "Remove allocation"
 msgid "Remove Allocation"
-msgstr "Tahsisi Sil"
+msgstr ""
 
 #: templates/js/translated/build.js:718
 msgid "Required Part"
@@ -7140,44 +7068,32 @@ msgid "Allocate stock"
 msgstr ""
 
 #: templates/js/translated/build.js:880
-#, fuzzy
-#| msgid "Enter stock allocation quantity"
 msgid "Specify stock allocation quantity"
-msgstr "Stok tahsis miktarını girin"
+msgstr ""
 
 #: templates/js/translated/build.js:949
-#, fuzzy
-#| msgid "Select quantity of stock to allocate"
 msgid "You must select at least one part to allocate"
-msgstr "Tahsis edilecek stok miktarını seçiniz"
+msgstr ""
 
 #: templates/js/translated/build.js:963
-#, fuzzy
-#| msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgid "Select source location (leave blank to take from all locations)"
-msgstr "Bu yapım işi için stok alınacak konumu seçin (her hangi bir stok konumundan alınması için boş bırakın)"
+msgstr ""
 
 #: templates/js/translated/build.js:992
 msgid "Confirm stock allocation"
 msgstr "Stok tahsisini onayla"
 
 #: templates/js/translated/build.js:993
-#, fuzzy
-#| msgid "Allocate Stock to Build"
 msgid "Allocate Stock Items to Build Order"
-msgstr "Yapım İşi için Stok Tahsis Et"
+msgstr ""
 
 #: templates/js/translated/build.js:1004
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "No matching stock locations"
-msgstr "Eşleşen stok kalemi bulunamadı"
+msgstr ""
 
 #: templates/js/translated/build.js:1048
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "No matching stock items"
-msgstr "Eşleşen stok kalemi bulunamadı"
+msgstr ""
 
 #: templates/js/translated/build.js:1172
 msgid "No builds matching query"
@@ -7362,10 +7278,8 @@ msgid "Form errors exist"
 msgstr ""
 
 #: templates/js/translated/forms.js:1323
-#, fuzzy
-#| msgid "No variants found"
 msgid "No results found"
-msgstr "Çeşit bulunamadı"
+msgstr ""
 
 #: templates/js/translated/forms.js:1525
 msgid "Searching"
@@ -7492,10 +7406,8 @@ msgid "Company ID"
 msgstr ""
 
 #: templates/js/translated/model_renderers.js:90
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock ID"
-msgstr "Stok Kalemi"
+msgstr ""
 
 #: templates/js/translated/model_renderers.js:125
 msgid "Location ID"
@@ -7510,10 +7422,8 @@ msgid "Part ID"
 msgstr ""
 
 #: templates/js/translated/model_renderers.js:231
-#, fuzzy
-#| msgid "Order part"
 msgid "Order ID"
-msgstr "Parça siparişi"
+msgstr ""
 
 #: templates/js/translated/model_renderers.js:251
 msgid "Category ID"
@@ -7536,10 +7446,8 @@ msgid "Create Sales Order"
 msgstr ""
 
 #: templates/js/translated/order.js:207
-#, fuzzy
-#| msgid "Export order to file"
 msgid "Export Order"
-msgstr "Emiri dosya çıkar"
+msgstr ""
 
 #: templates/js/translated/order.js:210 templates/js/translated/stock.js:96
 msgid "Format"
@@ -7550,16 +7458,12 @@ msgid "Select file format"
 msgstr ""
 
 #: templates/js/translated/order.js:299
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Select Line Items"
-msgstr "Ögeyi Sil"
+msgstr ""
 
 #: templates/js/translated/order.js:300
-#, fuzzy
-#| msgid "Stock item must be selected"
 msgid "At least one line item must be selected"
-msgstr "Stok kalemi seçilmeli"
+msgstr ""
 
 #: templates/js/translated/order.js:325
 msgid "Quantity to receive"
@@ -7574,26 +7478,20 @@ msgid "Order Code"
 msgstr ""
 
 #: templates/js/translated/order.js:427
-#, fuzzy
-#| msgid "Order notes"
 msgid "Ordered"
-msgstr "Sipariş notları"
+msgstr ""
 
 #: templates/js/translated/order.js:429
 msgid "Receive"
 msgstr ""
 
 #: templates/js/translated/order.js:448
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm receipt of items"
-msgstr "Silmeyi Onayla"
+msgstr ""
 
 #: templates/js/translated/order.js:449
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Receive Purchase Order Items"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: templates/js/translated/order.js:626
 msgid "No purchase orders found"
@@ -7654,19 +7552,15 @@ msgstr ""
 
 #: templates/js/translated/order.js:1213
 msgid "Edit Stock Allocation"
-msgstr "Stok Tahsisini Düzenle"
+msgstr ""
 
 #: templates/js/translated/order.js:1231
-#, fuzzy
-#| msgid "Delete stock allocation"
 msgid "Delete Stock Allocation"
-msgstr "Stok tahsisini sil"
+msgstr ""
 
 #: templates/js/translated/order.js:1273
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Stock location not specified"
-msgstr "Hedef konumu belirtilmedi"
+msgstr ""
 
 #: templates/js/translated/order.js:1514
 msgid "Fulfilled"
@@ -7689,10 +7583,8 @@ msgid "Delete line item "
 msgstr ""
 
 #: templates/js/translated/order.js:1673
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Allocate Stock Item"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: templates/js/translated/order.js:1733
 msgid "Update Unit Price"
@@ -8559,56 +8451,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "This action will unallocate the following stock from the Sales Order"
-#~ msgstr "Bu işlem Sipariş Emrinden belirtilen stok kalemleri tahsis edemedi"
-
-#~ msgid "Edit Allocation Quantity"
-#~ msgstr "Tahsis Miktarını Düzenle"
-
-#~ msgid "Remove allocation"
-#~ msgstr "Tahsisi Sil"
-
-#~ msgid "ID"
-#~ msgstr "ID"
-
-#~ msgid "Updated stock for {n} items"
-#~ msgstr "{n} öge için stok güncellendi"
-
-#~ msgid "BuildItem must be unique for build, stock_item and install_into"
-#~ msgstr "Yapım işi ögesi; yapım işi, stok kalemi ve kurulacak yer için benzersiz olmalıdır"
-
-#~ msgid "Automatically Allocate Stock"
-#~ msgstr "Stoku Otomatik Olarak Tahsis Et"
-
-#~ msgid "The following stock items will be allocated to the specified build output"
-#~ msgstr "Aşağıdaki stok kalemleri, belirtilen yapım işi çıktısı için tahsis edilecek"
-
-#~ msgid "No stock items found that can be automatically allocated to this build"
-#~ msgstr "Bu yapım işi için otomatik tahsis edilecek stok kalemleri bulunamadı"
-
-#~ msgid "Stock items will have to be manually allocated"
-#~ msgstr "Stok kalemleri manuel olarak tahsis edilecek"
-
-#~ msgid "Select a stock item to allocate to the selected build output"
-#~ msgstr "Seçili yapım işi emri için tahsis edilecek bir stok kalemi seçiniz"
-
-#~ msgid "No stock available for %(part)s"
-#~ msgstr "%(part)s için mevcut stok yok"
-
-#~ msgid "Are you sure you want to unallocate this stock?"
-#~ msgstr "Bu stokun tahsisinin iptal etmek istediğinizden emin misiniz?"
-
-#~ msgid "The selected stock will be unallocated from the build output"
-#~ msgstr "Bu yapım işi için seçili stok tahsisi iptal edilecek"
-
-#~ msgid "Auto Allocate"
-#~ msgstr "Otomatik Tahsis Et"
-
-#~ msgid "Allocated stock to build output"
-#~ msgstr "Yapım işi çıktısına stok tahsis edildi"
-
-#~ msgid "Removed parts from build allocation"
-#~ msgstr "Yapım işinden tahsis edilen parçalar çıkarıldı"
-
-#~ msgid "Updated Build Item"
-#~ msgstr "Yapım İşi Ögesini Güncelle"

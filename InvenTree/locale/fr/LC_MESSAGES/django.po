@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 07:56+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-10-11 06:21+0000\n"
+"PO-Revision-Date: 2021-10-11 06:28\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -921,10 +921,8 @@ msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
 #: build/models.py:1191
-#, fuzzy
-#| msgid "Selected stock item not found in BOM for part '{p}'"
 msgid "Selected stock item not found in BOM"
-msgstr "L'article en stock sélectionné n'a pas été trouvé dans la BOM pour la pièce '{p}'"
+msgstr ""
 
 #: build/models.py:1251 stock/templates/stock/item_base.html:331
 #: templates/InvenTree/search.html:169 templates/js/translated/build.js:1195
@@ -1379,10 +1377,8 @@ msgid "Delete Attachment"
 msgstr ""
 
 #: build/templates/build/detail.html:443
-#, fuzzy
-#| msgid "Location of completed parts"
 msgid "Allocation Complete"
-msgstr "Emplacement des pièces terminées"
+msgstr ""
 
 #: build/templates/build/detail.html:444
 msgid "All untracked stock items have been allocated"
@@ -1973,10 +1969,8 @@ msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:836
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot"
-msgstr "Entrer le mot de passe"
+msgstr ""
 
 #: common/models.py:837
 msgid "Enable password forgot function on the login-pages"
@@ -3586,10 +3580,8 @@ msgid "Receive selected items"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:31
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Receive Items"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:67
 #: order/templates/order/sales_order_detail.html:54
@@ -4925,8 +4917,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5562,10 +5553,8 @@ msgid "A list of stock items must be provided"
 msgstr ""
 
 #: stock/serializers.py:554
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Destination stock location"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
@@ -6447,10 +6436,8 @@ msgid "Add E-mail"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:100
-#, fuzzy
-#| msgid "Stock counted"
 msgid "Social Accounts"
-msgstr "Stock comptabilisé"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:105
 msgid "You can sign in to your account using any of the following third party accounts:"
@@ -6615,24 +6602,20 @@ msgstr ""
 
 #: templates/account/login.html:19
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:23
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
 #: templates/account/login.html:38
-#, fuzzy
-#| msgid "Confirm password"
 msgid "Forgot Password?"
-msgstr "Confirmez le mot de passe"
+msgstr ""
 
 #: templates/account/login.html:45
 msgid "or use SSO"
@@ -6674,10 +6657,8 @@ msgid "The password reset link was invalid, possibly because it has already been
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:17
-#, fuzzy
-#| msgid "Enter password"
 msgid "change password"
-msgstr "Entrer le mot de passe"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:20
 msgid "Your password is now changed."
@@ -7052,10 +7033,8 @@ msgid "Delete stock allocation"
 msgstr ""
 
 #: templates/js/translated/build.js:695
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "Edit Allocation"
-msgstr "Modifier les informations utilisateur"
+msgstr ""
 
 #: templates/js/translated/build.js:705
 msgid "Remove Allocation"
@@ -7089,10 +7068,8 @@ msgid "Allocate stock"
 msgstr ""
 
 #: templates/js/translated/build.js:880
-#, fuzzy
-#| msgid "Legacy stock tracking entry"
 msgid "Specify stock allocation quantity"
-msgstr "Ancienne entrée de suivi de stock"
+msgstr ""
 
 #: templates/js/translated/build.js:949
 msgid "You must select at least one part to allocate"
@@ -7111,16 +7088,12 @@ msgid "Allocate Stock Items to Build Order"
 msgstr ""
 
 #: templates/js/translated/build.js:1004
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching stock locations"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/translated/build.js:1048
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching stock items"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/translated/build.js:1172
 msgid "No builds matching query"
@@ -7305,10 +7278,8 @@ msgid "Form errors exist"
 msgstr ""
 
 #: templates/js/translated/forms.js:1323
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No results found"
-msgstr "Aucun numéro de série trouvé"
+msgstr ""
 
 #: templates/js/translated/forms.js:1525
 msgid "Searching"
@@ -7451,10 +7422,8 @@ msgid "Part ID"
 msgstr ""
 
 #: templates/js/translated/model_renderers.js:231
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Order ID"
-msgstr "Commander des pièces"
+msgstr ""
 
 #: templates/js/translated/model_renderers.js:251
 msgid "Category ID"
@@ -7489,10 +7458,8 @@ msgid "Select file format"
 msgstr ""
 
 #: templates/js/translated/order.js:299
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Select Line Items"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: templates/js/translated/order.js:300
 msgid "At least one line item must be selected"
@@ -7519,16 +7486,12 @@ msgid "Receive"
 msgstr ""
 
 #: templates/js/translated/order.js:448
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm receipt of items"
-msgstr "Confirmer la suppression"
+msgstr ""
 
 #: templates/js/translated/order.js:449
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Receive Purchase Order Items"
-msgstr "Reçu contre bon de commande"
+msgstr ""
 
 #: templates/js/translated/order.js:626
 msgid "No purchase orders found"
@@ -7588,22 +7551,16 @@ msgid "No sales order allocations found"
 msgstr ""
 
 #: templates/js/translated/order.js:1213
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "Edit Stock Allocation"
-msgstr "Modifier les informations utilisateur"
+msgstr ""
 
 #: templates/js/translated/order.js:1231
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Delete Stock Allocation"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: templates/js/translated/order.js:1273
-#, fuzzy
-#| msgid "No action specified"
 msgid "Stock location not specified"
-msgstr "Aucune action spécifiée"
+msgstr ""
 
 #: templates/js/translated/order.js:1514
 msgid "Fulfilled"
@@ -7626,10 +7583,8 @@ msgid "Delete line item "
 msgstr ""
 
 #: templates/js/translated/order.js:1673
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Allocate Stock Item"
-msgstr "Article de stock modifié"
+msgstr ""
 
 #: templates/js/translated/order.js:1733
 msgid "Update Unit Price"
@@ -8495,3 +8450,4 @@ msgstr ""
 #: users/models.py:199
 msgid "Permission to delete items"
 msgstr ""
+

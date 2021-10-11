@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 07:56+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-10-11 06:21+0000\n"
+"PO-Revision-Date: 2021-10-11 06:29\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Endpoint API non trovato"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
@@ -43,11 +43,11 @@ msgstr "Conferma"
 
 #: InvenTree/forms.py:132
 msgid "Confirm delete"
-msgstr ""
+msgstr "Conferma eliminazione"
 
 #: InvenTree/forms.py:133
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Conferma eliminazione elementi"
 
 #: InvenTree/forms.py:164
 msgid "Enter password"
@@ -84,92 +84,92 @@ msgstr ""
 #: InvenTree/helpers.py:401
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "Seriale Duplicato: {n}"
 
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:437
 #: stock/views.py:1340
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Quantità inserita non valida"
 
 #: InvenTree/helpers.py:411
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Numero seriale vuoto"
 
 #: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Gruppo non valido: {g}"
 
 #: InvenTree/helpers.py:469
 #, python-brace-format
 msgid "Duplicate serial: {g}"
-msgstr ""
+msgstr "Seriale duplicato: {g}"
 
 #: InvenTree/helpers.py:477
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Nessun numero di serie trovato"
 
 #: InvenTree/helpers.py:481
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Il numero dei numeri seriali univoci ({s}) deve essere uguale alla quantità ({q})"
 
 #: InvenTree/models.py:66 stock/models.py:1823
 msgid "Attachment"
-msgstr ""
+msgstr "Allegato"
 
 #: InvenTree/models.py:67
 msgid "Select file to attach"
-msgstr ""
+msgstr "Seleziona file da allegare"
 
 #: InvenTree/models.py:69 templates/js/translated/attachment.js:87
 msgid "Comment"
-msgstr ""
+msgstr "Commento"
 
 #: InvenTree/models.py:69
 msgid "File comment"
-msgstr ""
+msgstr "Commento del file"
 
 #: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:1055
 #: common/models.py:1056 part/models.py:2055
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1669
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: InvenTree/models.py:79
 msgid "upload date"
-msgstr ""
+msgstr "data caricamento"
 
 #: InvenTree/models.py:99
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Il nome del file non deve essere vuoto"
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Directory allegati non valida"
 
 #: InvenTree/models.py:132
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Il nome del file contiene caratteri non validi '{c}'"
 
 #: InvenTree/models.py:135
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Nome file estensione mancante"
 
 #: InvenTree/models.py:142
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Esiste già un allegato con questo nome di file"
 
 #: InvenTree/models.py:149
 msgid "Error renaming file"
-msgstr ""
+msgstr "Errore nella rinominazione del file"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
-msgstr ""
+msgstr "Scelta non valida"
 
 #: InvenTree/models.py:200 InvenTree/models.py:201 company/models.py:415
 #: label/models.py:112 part/models.py:659 part/models.py:2216
@@ -178,7 +178,7 @@ msgstr ""
 #: templates/js/translated/part.js:614 templates/js/translated/part.js:1141
 #: templates/js/translated/stock.js:1462
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: InvenTree/models.py:207 build/models.py:189
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -200,23 +200,23 @@ msgstr ""
 #: templates/js/translated/part.js:1221 templates/js/translated/stock.js:819
 #: templates/js/translated/stock.js:1474 templates/js/translated/stock.js:1519
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: InvenTree/models.py:208
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descrizione (opzionale)"
 
 #: InvenTree/models.py:216
 msgid "parent"
-msgstr ""
+msgstr "genitore"
 
 #: InvenTree/serializers.py:55 part/models.py:2475
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Deve essere un numero valido"
 
 #: InvenTree/serializers.py:244
 msgid "Filename"
-msgstr ""
+msgstr "Nome del file"
 
 #: InvenTree/settings.py:529
 msgid "German"
@@ -292,15 +292,15 @@ msgstr "Cinese"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Controllo in background non riuscito"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Server di posta non configurato"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Controlli di sistema InvenTree falliti"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
@@ -309,7 +309,7 @@ msgstr "In attesa"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "Inviato"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
@@ -341,107 +341,107 @@ msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
-msgstr ""
+msgstr "Attenzione necessaria"
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "Danneggiato"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr ""
+msgstr "Distrutto"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Respinto"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Voce di tracciamento stock preesistente"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Elemento stock creato"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Elemento stock modificato"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Numero di serie assegnato"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Stock contato"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stock aggiunto manualmente"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stock rimosso manualmente"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Posizione cambiata"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Installato nell'assemblaggio"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Rimosso dall'assemblaggio"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Componente installato"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Elemento componente rimosso"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Diviso dall'elemento genitore"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Dividi elemento figlio"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/table_filters.js:186
 msgid "Sent to customer"
-msgstr ""
+msgstr "Inviato al cliente"
 
 #: InvenTree/status_codes.py:295
 msgid "Returned from customer"
-msgstr ""
+msgstr "Restituito dal cliente"
 
 #: InvenTree/status_codes.py:297
 msgid "Build order output created"
-msgstr ""
+msgstr "Genera l'output dell'ordine creato"
 
 #: InvenTree/status_codes.py:298
 msgid "Build order output completed"
-msgstr ""
+msgstr "Build order output completato"
 
 #: InvenTree/status_codes.py:300
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Ricevuto contro l'ordine di acquisto"
 
 #: InvenTree/status_codes.py:315
 msgid "Production"
-msgstr ""
+msgstr "Produzione"
 
 #: InvenTree/validators.py:22
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Non è un codice valuta valido"
 
 #: InvenTree/validators.py:50
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Carattere non valido nel nome del file"
 
 #: InvenTree/validators.py:63
 #, python-brace-format
@@ -1969,10 +1969,8 @@ msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
 #: common/models.py:836
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot"
-msgstr "Inserire la password"
+msgstr ""
 
 #: common/models.py:837
 msgid "Enable password forgot function on the login-pages"
@@ -4919,8 +4917,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5556,10 +5553,8 @@ msgid "A list of stock items must be provided"
 msgstr ""
 
 #: stock/serializers.py:554
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Destination stock location"
-msgstr "Nessuna azione corrispondente trovata"
+msgstr ""
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
@@ -6607,24 +6602,20 @@ msgstr ""
 
 #: templates/account/login.html:19
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:23
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
 #: templates/account/login.html:38
-#, fuzzy
-#| msgid "Confirm password"
 msgid "Forgot Password?"
-msgstr "Conferma la password"
+msgstr ""
 
 #: templates/account/login.html:45
 msgid "or use SSO"
@@ -6666,10 +6657,8 @@ msgid "The password reset link was invalid, possibly because it has already been
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:17
-#, fuzzy
-#| msgid "Enter password"
 msgid "change password"
-msgstr "Inserire la password"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:20
 msgid "Your password is now changed."
@@ -7099,16 +7088,12 @@ msgid "Allocate Stock Items to Build Order"
 msgstr ""
 
 #: templates/js/translated/build.js:1004
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching stock locations"
-msgstr "Nessuna azione corrispondente trovata"
+msgstr ""
 
 #: templates/js/translated/build.js:1048
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching stock items"
-msgstr "Nessuna azione corrispondente trovata"
+msgstr ""
 
 #: templates/js/translated/build.js:1172
 msgid "No builds matching query"
@@ -7566,22 +7551,16 @@ msgid "No sales order allocations found"
 msgstr ""
 
 #: templates/js/translated/order.js:1213
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Edit Stock Allocation"
-msgstr "Nessuna azione corrispondente trovata"
+msgstr ""
 
 #: templates/js/translated/order.js:1231
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Delete Stock Allocation"
-msgstr "Nessuna azione corrispondente trovata"
+msgstr ""
 
 #: templates/js/translated/order.js:1273
-#, fuzzy
-#| msgid "No action specified"
 msgid "Stock location not specified"
-msgstr "Nessuna azione specificata"
+msgstr ""
 
 #: templates/js/translated/order.js:1514
 msgid "Fulfilled"
@@ -8471,3 +8450,4 @@ msgstr ""
 #: users/models.py:199
 msgid "Permission to delete items"
 msgstr ""
+

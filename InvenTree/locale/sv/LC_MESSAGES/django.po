@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 07:56+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-10-11 06:21+0000\n"
+"PO-Revision-Date: 2021-10-11 06:28\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -19,19 +19,19 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API-slutpunkt hittades inte"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Ingen åtgärd specificerad"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Ingen matchande åtgärd hittades"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Ange datum"
 
 #: InvenTree/forms.py:116 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:173 build/forms.py:215 order/forms.py:27
@@ -39,35 +39,35 @@ msgstr ""
 #: part/forms.py:108 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:564
 msgid "Confirm"
-msgstr ""
+msgstr "Bekräfta"
 
 #: InvenTree/forms.py:132
 msgid "Confirm delete"
-msgstr ""
+msgstr "Bekräfta borttagning"
 
 #: InvenTree/forms.py:133
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Bekräfta borttagning av artikel"
 
 #: InvenTree/forms.py:164
 msgid "Enter password"
-msgstr ""
+msgstr "Ange lösenord"
 
 #: InvenTree/forms.py:165
 msgid "Enter new password"
-msgstr ""
+msgstr "Ange nytt lösenord"
 
 #: InvenTree/forms.py:172
 msgid "Confirm password"
-msgstr ""
+msgstr "Bekräfta lösenord"
 
 #: InvenTree/forms.py:173
 msgid "Confirm new password"
-msgstr ""
+msgstr "Bekräfta nytt lösenord"
 
 #: InvenTree/forms.py:205
 msgid "Select Category"
-msgstr ""
+msgstr "Välj Kategori"
 
 #: InvenTree/forms.py:226
 msgid "E-mail (again)"
@@ -89,17 +89,17 @@ msgstr ""
 #: InvenTree/helpers.py:408 order/models.py:315 order/models.py:437
 #: stock/views.py:1340
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Ogiltigt antal angivet"
 
 #: InvenTree/helpers.py:411
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Tom serienummersträng"
 
 #: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
 #: InvenTree/helpers.py:464
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Ogiltig grupp: {g}"
 
 #: InvenTree/helpers.py:469
 #, python-brace-format
@@ -108,7 +108,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:477
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Inga serienummer hittades"
 
 #: InvenTree/helpers.py:481
 #, python-brace-format
@@ -117,59 +117,59 @@ msgstr ""
 
 #: InvenTree/models.py:66 stock/models.py:1823
 msgid "Attachment"
-msgstr ""
+msgstr "Bilaga"
 
 #: InvenTree/models.py:67
 msgid "Select file to attach"
-msgstr ""
+msgstr "Välj fil att bifoga"
 
 #: InvenTree/models.py:69 templates/js/translated/attachment.js:87
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: InvenTree/models.py:69
 msgid "File comment"
-msgstr ""
+msgstr "Fil kommentar"
 
 #: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:1055
 #: common/models.py:1056 part/models.py:2055
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1669
 msgid "User"
-msgstr ""
+msgstr "Användare"
 
 #: InvenTree/models.py:79
 msgid "upload date"
-msgstr ""
+msgstr "uppladdningsdatum"
 
 #: InvenTree/models.py:99
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Filnamnet får inte vara tomt"
 
 #: InvenTree/models.py:122
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Ogiltig katalog för bilaga"
 
 #: InvenTree/models.py:132
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Filnamnet innehåller ogiltiga tecken '{c}'"
 
 #: InvenTree/models.py:135
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Filnamn saknar ändelse"
 
 #: InvenTree/models.py:142
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Det finns redan en bilaga med detta filnamn"
 
 #: InvenTree/models.py:149
 msgid "Error renaming file"
-msgstr ""
+msgstr "Fel vid namnbyte av fil"
 
 #: InvenTree/models.py:184
 msgid "Invalid choice"
-msgstr ""
+msgstr "Ogiltigt val"
 
 #: InvenTree/models.py:200 InvenTree/models.py:201 company/models.py:415
 #: label/models.py:112 part/models.py:659 part/models.py:2216
@@ -178,7 +178,7 @@ msgstr ""
 #: templates/js/translated/part.js:614 templates/js/translated/part.js:1141
 #: templates/js/translated/stock.js:1462
 msgid "Name"
-msgstr ""
+msgstr "Namn"
 
 #: InvenTree/models.py:207 build/models.py:189
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -200,144 +200,144 @@ msgstr ""
 #: templates/js/translated/part.js:1221 templates/js/translated/stock.js:819
 #: templates/js/translated/stock.js:1474 templates/js/translated/stock.js:1519
 msgid "Description"
-msgstr ""
+msgstr "Beskrivning"
 
 #: InvenTree/models.py:208
 msgid "Description (optional)"
-msgstr ""
+msgstr "Beskrivning (valfritt)"
 
 #: InvenTree/models.py:216
 msgid "parent"
-msgstr ""
+msgstr "överordnad"
 
 #: InvenTree/serializers.py:55 part/models.py:2475
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Måste vara ett giltigt nummer"
 
 #: InvenTree/serializers.py:244
 msgid "Filename"
-msgstr ""
+msgstr "Filnamn"
 
 #: InvenTree/settings.py:529
 msgid "German"
-msgstr ""
+msgstr "Tyska"
 
 #: InvenTree/settings.py:530
 msgid "Greek"
-msgstr ""
+msgstr "Grekiska"
 
 #: InvenTree/settings.py:531
 msgid "English"
-msgstr ""
+msgstr "Engelska"
 
 #: InvenTree/settings.py:532
 msgid "Spanish"
-msgstr ""
+msgstr "Spanska"
 
 #: InvenTree/settings.py:533
 msgid "French"
-msgstr ""
+msgstr "Franska"
 
 #: InvenTree/settings.py:534
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreiska"
 
 #: InvenTree/settings.py:535
 msgid "Italian"
-msgstr ""
+msgstr "Italienska"
 
 #: InvenTree/settings.py:536
 msgid "Japanese"
-msgstr ""
+msgstr "Japanska"
 
 #: InvenTree/settings.py:537
 msgid "Korean"
-msgstr ""
+msgstr "Koreanska"
 
 #: InvenTree/settings.py:538
 msgid "Dutch"
-msgstr ""
+msgstr "Nederländska"
 
 #: InvenTree/settings.py:539
 msgid "Norwegian"
-msgstr ""
+msgstr "Norska"
 
 #: InvenTree/settings.py:540
 msgid "Polish"
-msgstr ""
+msgstr "Polska"
 
 #: InvenTree/settings.py:541
 msgid "Russian"
-msgstr ""
+msgstr "Ryska"
 
 #: InvenTree/settings.py:542
 msgid "Swedish"
-msgstr ""
+msgstr "Svenska"
 
 #: InvenTree/settings.py:543
 msgid "Thai"
-msgstr ""
+msgstr "Thailändska"
 
 #: InvenTree/settings.py:544
 msgid "Turkish"
-msgstr ""
+msgstr "Turkiska"
 
 #: InvenTree/settings.py:545
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamesiska"
 
 #: InvenTree/settings.py:546
 msgid "Chinese"
-msgstr ""
+msgstr "Kinesiska"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Kontroll av bakgrundsarbetare misslyckades"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Backend för e-post är inte konfigurerad"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "InvenTree systemhälsokontroll misslyckades"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:314
 msgid "Pending"
-msgstr ""
+msgstr "Väntar"
 
 #: InvenTree/status_codes.py:105
 msgid "Placed"
-msgstr ""
+msgstr "Placerad"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:317
 msgid "Complete"
-msgstr ""
+msgstr "Slutför"
 
 #: InvenTree/status_codes.py:107 InvenTree/status_codes.py:147
 #: InvenTree/status_codes.py:316
 msgid "Cancelled"
-msgstr ""
+msgstr "Avbruten"
 
 #: InvenTree/status_codes.py:108 InvenTree/status_codes.py:148
 #: InvenTree/status_codes.py:190
 msgid "Lost"
-msgstr ""
+msgstr "Förlorad"
 
 #: InvenTree/status_codes.py:109 InvenTree/status_codes.py:149
 #: InvenTree/status_codes.py:192
 msgid "Returned"
-msgstr ""
+msgstr "Återlämnad"
 
 #: InvenTree/status_codes.py:146
 #: order/templates/order/sales_order_base.html:131
 msgid "Shipped"
-msgstr ""
+msgstr "Skickad"
 
 #: InvenTree/status_codes.py:186
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:187
 msgid "Attention needed"
@@ -345,15 +345,15 @@ msgstr ""
 
 #: InvenTree/status_codes.py:188
 msgid "Damaged"
-msgstr ""
+msgstr "Skadad"
 
 #: InvenTree/status_codes.py:189
 msgid "Destroyed"
-msgstr ""
+msgstr "Förstörd"
 
 #: InvenTree/status_codes.py:191
 msgid "Rejected"
-msgstr ""
+msgstr "Avvisad"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -4917,8 +4917,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6603,16 +6602,14 @@ msgstr ""
 
 #: templates/account/login.html:19
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:23
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8453,3 +8450,4 @@ msgstr ""
 #: users/models.py:199
 msgid "Permission to delete items"
 msgstr ""
+
