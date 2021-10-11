@@ -249,6 +249,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -279,6 +280,10 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+
+    'allauth',                              # Base app for SSO
+    'allauth.account',                      # Extend user with accounts
+    'allauth.socialaccount',                # Use 'social' providers
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -298,7 +303,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
 # If the debug toolbar is enabled, add the modules
@@ -646,3 +652,34 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert alert-block alert-danger',
     messages.INFO: 'alert alert-block alert-info',
 }
+
+SITE_ID = 1
+
+# Load the allauth social backends
+SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+for app in SOCIAL_BACKENDS:
+    INSTALLED_APPS.append(app)
+
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+
+# settings for allauth
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
+
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
+
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+# override forms / adapters
+ACCOUNT_FORMS = {
+    'login': 'allauth.account.forms.LoginForm',
+    'signup': 'InvenTree.forms.CustomSignupForm',
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+}
+
+SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'

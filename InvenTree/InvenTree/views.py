@@ -17,13 +17,19 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.conf import settings
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from allauth.account.forms import AddEmailForm
+from allauth.socialaccount.forms import DisconnectForm
+from allauth.account.models import EmailAddress
+from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.socialaccount.views import ConnectionsView
+
 from common.settings import currency_code_default, currency_codes
 
 from part.models import Part, PartCategory
@@ -810,7 +816,45 @@ class SettingsView(TemplateView):
         except:
             ctx["locale_stats"] = {}
 
+        # Forms and context for allauth
+        ctx['add_email_form'] = AddEmailForm
+        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
+
+        # Form and context for allauth social-accounts
+        ctx["request"] = self.request
+        ctx['social_form'] = DisconnectForm(request=self.request)
+
         return ctx
+
+
+class AllauthOverrides(LoginRequiredMixin):
+    """
+    Override allauths views to always redirect to success_url
+    """
+    def get(self, request, *args, **kwargs):
+        # always redirect to settings
+        return HttpResponseRedirect(self.success_url)
+
+
+class CustomEmailView(AllauthOverrides, EmailView):
+    """
+    Override of allauths EmailView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+
+class CustomConnectionsView(AllauthOverrides, ConnectionsView):
+    """
+    Override of allauths ConnectionsView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+
+class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
+    """
+    Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("account_login")
 
 
 class CurrencyRefreshView(RedirectView):

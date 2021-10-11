@@ -177,6 +177,11 @@ function inventreeDocReady() {
             'ui-autocomplete': 'dropdown-menu search-menu',
         },
     });
+
+    // Generate brand-icons
+    $('.brand-icon').each(function(i, obj) {
+        loadBrandIcon($(this), $(this).attr('brand_name'));
+    });
 }
 
 function isFileTransfer(transfer) {
@@ -273,5 +278,15 @@ function inventreeLoad(name, defaultValue) {
         return defaultValue;
     } else {
         return value;
+    }
+}
+
+function loadBrandIcon(element, name) {
+    // check if icon exists
+    var icon = window.FontAwesome.icon({prefix: 'fab', iconName: name});
+
+    if (icon) {
+        // add icon to button
+        element.addClass('fab fa-' + name);
     }
 }

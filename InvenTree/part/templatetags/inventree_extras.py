@@ -351,6 +351,12 @@ def object_link(url_name, pk, ref):
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
 
 
+@register.simple_tag()
+def mail_configured():
+    """ Return if mail is configured """
+    return bool(settings.EMAIL_HOST)
+
+
 class I18nStaticNode(StaticNode):
     """
     custom StaticNode
