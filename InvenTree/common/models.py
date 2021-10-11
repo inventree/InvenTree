@@ -981,6 +981,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        'FORMS_CLOSE_USING_ESCAPE': {
+            'name': _('Escape Key Closes Forms'),
+            'description': _('Use the escape key to close modal forms'),
+            'default': False,
+            'validator': bool,
+        }
     }
 
     class Meta:
