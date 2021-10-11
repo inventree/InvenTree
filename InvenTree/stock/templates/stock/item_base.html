@@ -583,16 +583,6 @@ $("#stock-delete").click(function () {
     );
 });
 
-{% if item.in_stock %}
-
-$("#stock-assign-to-customer").click(function() {
-    launchModalForm("{% url 'stock-item-assign' item.id %}",
-        {
-            reload: true,
-        }
-    );
-});
-
 {% if item.part.can_convert %}
 $("#stock-convert").click(function() {
     launchModalForm("{% url 'stock-item-convert' item.id %}",
@@ -602,6 +592,16 @@ $("#stock-convert").click(function() {
     );
 });
 {% endif %}
+
+
+{% if item.in_stock %}
+$("#stock-assign-to-customer").click(function() {
+    launchModalForm("{% url 'stock-item-assign' item.id %}",
+        {
+            reload: true,
+        }
+    );
+});
 
 $("#stock-move").click(function() {
     itemAdjust("move");
