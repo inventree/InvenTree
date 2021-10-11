@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 01:01+0000\n"
+"POT-Creation-Date: 2021-10-11 06:21+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -33,40 +33,53 @@ msgstr "Geen overeenkomende actie gevonden"
 msgid "Enter date"
 msgstr "Voer datum in"
 
-#: InvenTree/forms.py:111 build/forms.py:102 build/forms.py:123
+#: InvenTree/forms.py:116 build/forms.py:102 build/forms.py:123
 #: build/forms.py:145 build/forms.py:173 build/forms.py:215 order/forms.py:27
 #: order/forms.py:38 order/forms.py:49 order/forms.py:60 order/forms.py:71
-#: part/forms.py:108 templates/js/translated/forms.js:564
+#: part/forms.py:108 templates/account/email_confirm.html:20
+#: templates/js/translated/forms.js:564
 msgid "Confirm"
 msgstr "Bevestigen"
 
-#: InvenTree/forms.py:127
+#: InvenTree/forms.py:132
 msgid "Confirm delete"
 msgstr "Bevestigen verwijdering"
 
-#: InvenTree/forms.py:128
+#: InvenTree/forms.py:133
 msgid "Confirm item deletion"
 msgstr "Bevestig item verwijdering"
 
-#: InvenTree/forms.py:160 templates/registration/login.html:76
+#: InvenTree/forms.py:164
 msgid "Enter password"
 msgstr "Voer wachtwoord in"
 
-#: InvenTree/forms.py:161
+#: InvenTree/forms.py:165
 msgid "Enter new password"
 msgstr "Voer een nieuw wachtwoord in"
 
-#: InvenTree/forms.py:168
+#: InvenTree/forms.py:172
 msgid "Confirm password"
 msgstr "Wachtwoord bevestigen"
 
-#: InvenTree/forms.py:169
+#: InvenTree/forms.py:173
 msgid "Confirm new password"
 msgstr "Nieuw wachtwoord bevestigen"
 
-#: InvenTree/forms.py:201
+#: InvenTree/forms.py:205
 msgid "Select Category"
 msgstr "Categorie selecteren"
+
+#: InvenTree/forms.py:226
+msgid "E-mail (again)"
+msgstr ""
+
+#: InvenTree/forms.py:230
+msgid "E-mail address confirmation"
+msgstr ""
+
+#: InvenTree/forms.py:250
+msgid "You must type the same email each time."
+msgstr ""
 
 #: InvenTree/helpers.py:401
 #, python-brace-format
@@ -118,8 +131,8 @@ msgstr "Opmerking"
 msgid "File comment"
 msgstr "Bijlage opmerking"
 
-#: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:1011
-#: common/models.py:1012 part/models.py:2055
+#: InvenTree/models.py:75 InvenTree/models.py:76 common/models.py:1055
+#: common/models.py:1056 part/models.py:2055
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1669
 msgid "User"
@@ -205,75 +218,75 @@ msgstr "Moet een geldig nummer zijn"
 msgid "Filename"
 msgstr "Bestandsnaam"
 
-#: InvenTree/settings.py:523
+#: InvenTree/settings.py:529
 msgid "German"
 msgstr "Duits"
 
-#: InvenTree/settings.py:524
+#: InvenTree/settings.py:530
 msgid "Greek"
 msgstr "Grieks"
 
-#: InvenTree/settings.py:525
+#: InvenTree/settings.py:531
 msgid "English"
 msgstr "Engels"
 
-#: InvenTree/settings.py:526
+#: InvenTree/settings.py:532
 msgid "Spanish"
 msgstr "Spaans"
 
-#: InvenTree/settings.py:527
+#: InvenTree/settings.py:533
 msgid "French"
 msgstr "Frans"
 
-#: InvenTree/settings.py:528
+#: InvenTree/settings.py:534
 msgid "Hebrew"
 msgstr "Hebreeuws"
 
-#: InvenTree/settings.py:529
+#: InvenTree/settings.py:535
 msgid "Italian"
 msgstr "Italiaans"
 
-#: InvenTree/settings.py:530
+#: InvenTree/settings.py:536
 msgid "Japanese"
 msgstr "Japans"
 
-#: InvenTree/settings.py:531
+#: InvenTree/settings.py:537
 msgid "Korean"
 msgstr "Koreaans"
 
-#: InvenTree/settings.py:532
+#: InvenTree/settings.py:538
 msgid "Dutch"
 msgstr "Nederlands"
 
-#: InvenTree/settings.py:533
+#: InvenTree/settings.py:539
 msgid "Norwegian"
 msgstr "Noors"
 
-#: InvenTree/settings.py:534
+#: InvenTree/settings.py:540
 msgid "Polish"
 msgstr "Pools"
 
-#: InvenTree/settings.py:535
+#: InvenTree/settings.py:541
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/settings.py:536
+#: InvenTree/settings.py:542
 msgid "Swedish"
 msgstr "Zweeds"
 
-#: InvenTree/settings.py:537
+#: InvenTree/settings.py:543
 msgid "Thai"
 msgstr "Thais"
 
-#: InvenTree/settings.py:538
+#: InvenTree/settings.py:544
 msgid "Turkish"
 msgstr "Turks"
 
-#: InvenTree/settings.py:539
+#: InvenTree/settings.py:545
 msgid "Vietnamese"
 msgstr "Vietnamees"
 
-#: InvenTree/settings.py:540
+#: InvenTree/settings.py:546
 msgid "Chinese"
 msgstr "Chinees"
 
@@ -458,27 +471,27 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:610
+#: InvenTree/views.py:616
 msgid "Delete Item"
 msgstr "Verwijder item"
 
-#: InvenTree/views.py:659
+#: InvenTree/views.py:665
 msgid "Check box to confirm item deletion"
 msgstr "Selectievakje aanvinken om de verwijdering van items te bevestigen"
 
-#: InvenTree/views.py:674 templates/InvenTree/settings/user.html:14
+#: InvenTree/views.py:680 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr "Gebruikersgegevens bewerken"
 
-#: InvenTree/views.py:685 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:691 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr "Wachtwoord instellen"
 
-#: InvenTree/views.py:704
+#: InvenTree/views.py:710
 msgid "Password fields must match"
 msgstr "Wachtwoordvelden komen niet overeen"
 
-#: InvenTree/views.py:910 templates/navbar.html:97
+#: InvenTree/views.py:954 templates/navbar.html:97
 msgid "System Information"
 msgstr "Systeeminformatie"
 
@@ -551,7 +564,7 @@ msgstr ""
 #: build/forms.py:48 build/forms.py:90 build/models.py:1281
 #: build/templates/build/allocation_card.html:23
 #: build/templates/build/build_base.html:133
-#: build/templates/build/detail.html:34 common/models.py:1043
+#: build/templates/build/detail.html:34 common/models.py:1087
 #: company/forms.py:42 company/templates/company/supplier_part.html:226
 #: order/forms.py:101 order/forms.py:123 order/models.py:720
 #: order/models.py:982 order/templates/order/order_wizard/match_parts.html:30
@@ -681,8 +694,8 @@ msgstr "Bouwopdracht"
 #: order/templates/order/so_navbar.html:22 part/templates/part/navbar.html:50
 #: part/templates/part/navbar.html:53 templates/InvenTree/index.html:229
 #: templates/InvenTree/search.html:171
-#: templates/InvenTree/settings/navbar.html:107
-#: templates/InvenTree/settings/navbar.html:109 users/models.py:44
+#: templates/InvenTree/settings/navbar.html:113
+#: templates/InvenTree/settings/navbar.html:115 users/models.py:44
 msgid "Build Orders"
 msgstr "Bouwopdrachten"
 
@@ -1551,7 +1564,7 @@ msgstr ""
 msgid "Select {name} file to upload"
 msgstr ""
 
-#: common/models.py:308 common/models.py:843 common/models.py:1004
+#: common/models.py:308 common/models.py:887 common/models.py:1048
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Instellingssleutel (moet uniek zijn - hoofdletter ongevoelig"
 
@@ -1965,196 +1978,256 @@ msgstr ""
 msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
+#: common/models.py:836
+#, fuzzy
+#| msgid "Enter password"
+msgid "Enable password forgot"
+msgstr "Voer wachtwoord in"
+
+#: common/models.py:837
+msgid "Enable password forgot function on the login-pages"
+msgstr ""
+
+#: common/models.py:842
+msgid "Enable registration"
+msgstr ""
+
+#: common/models.py:843
+msgid "Enable self-registration for users on the login-pages"
+msgstr ""
+
+#: common/models.py:848
+msgid "Enable SSO"
+msgstr ""
+
+#: common/models.py:849
+msgid "Enable SSO on the login-pages"
+msgstr ""
+
 #: common/models.py:854
-msgid "Show starred parts"
+msgid "E-Mail required"
 msgstr ""
 
 #: common/models.py:855
-msgid "Show starred parts on the homepage"
+msgid "Require user to supply mail on signup"
 msgstr ""
 
 #: common/models.py:860
-msgid "Show latest parts"
+msgid "Auto-fill SSO users"
 msgstr ""
 
 #: common/models.py:861
-msgid "Show latest parts on the homepage"
+msgid "Automatically fill out user-details from SSO account-data"
 msgstr ""
 
 #: common/models.py:866
-msgid "Recent Part Count"
+msgid "Mail twice"
 msgstr ""
 
 #: common/models.py:867
-msgid "Number of recent parts to display on index page"
+msgid "On signup ask users twice for their mail"
 msgstr ""
+
+#: common/models.py:872
+#, fuzzy
+#| msgid "Set Password"
+msgid "Password twice"
+msgstr "Wachtwoord instellen"
 
 #: common/models.py:873
-msgid "Show unvalidated BOMs"
-msgstr ""
-
-#: common/models.py:874
-msgid "Show BOMs that await validation on the homepage"
-msgstr ""
-
-#: common/models.py:879
-msgid "Show recent stock changes"
-msgstr ""
-
-#: common/models.py:880
-msgid "Show recently changed stock items on the homepage"
-msgstr ""
-
-#: common/models.py:885
-msgid "Recent Stock Count"
-msgstr ""
-
-#: common/models.py:886
-msgid "Number of recent stock items to display on index page"
-msgstr ""
-
-#: common/models.py:891
-msgid "Show low stock"
-msgstr ""
-
-#: common/models.py:892
-msgid "Show low stock items on the homepage"
-msgstr ""
-
-#: common/models.py:897
-msgid "Show depleted stock"
+msgid "On signup ask users twice for their password"
 msgstr ""
 
 #: common/models.py:898
-msgid "Show depleted stock items on the homepage"
+msgid "Show starred parts"
 msgstr ""
 
-#: common/models.py:903
-msgid "Show needed stock"
+#: common/models.py:899
+msgid "Show starred parts on the homepage"
 msgstr ""
 
 #: common/models.py:904
-msgid "Show stock items needed for builds on the homepage"
+msgid "Show latest parts"
 msgstr ""
 
-#: common/models.py:909
-msgid "Show expired stock"
+#: common/models.py:905
+msgid "Show latest parts on the homepage"
 msgstr ""
 
 #: common/models.py:910
+msgid "Recent Part Count"
+msgstr ""
+
+#: common/models.py:911
+msgid "Number of recent parts to display on index page"
+msgstr ""
+
+#: common/models.py:917
+msgid "Show unvalidated BOMs"
+msgstr ""
+
+#: common/models.py:918
+msgid "Show BOMs that await validation on the homepage"
+msgstr ""
+
+#: common/models.py:923
+msgid "Show recent stock changes"
+msgstr ""
+
+#: common/models.py:924
+msgid "Show recently changed stock items on the homepage"
+msgstr ""
+
+#: common/models.py:929
+msgid "Recent Stock Count"
+msgstr ""
+
+#: common/models.py:930
+msgid "Number of recent stock items to display on index page"
+msgstr ""
+
+#: common/models.py:935
+msgid "Show low stock"
+msgstr ""
+
+#: common/models.py:936
+msgid "Show low stock items on the homepage"
+msgstr ""
+
+#: common/models.py:941
+msgid "Show depleted stock"
+msgstr ""
+
+#: common/models.py:942
+msgid "Show depleted stock items on the homepage"
+msgstr ""
+
+#: common/models.py:947
+msgid "Show needed stock"
+msgstr ""
+
+#: common/models.py:948
+msgid "Show stock items needed for builds on the homepage"
+msgstr ""
+
+#: common/models.py:953
+msgid "Show expired stock"
+msgstr ""
+
+#: common/models.py:954
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:915
+#: common/models.py:959
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:916
+#: common/models.py:960
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:921
+#: common/models.py:965
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:922
+#: common/models.py:966
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:927
+#: common/models.py:971
 msgid "Show overdue builds"
 msgstr ""
 
-#: common/models.py:928
+#: common/models.py:972
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
-#: common/models.py:933
+#: common/models.py:977
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:934
+#: common/models.py:978
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:939
+#: common/models.py:983
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:940
+#: common/models.py:984
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:945
+#: common/models.py:989
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:946
+#: common/models.py:990
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:951
+#: common/models.py:995
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:952
+#: common/models.py:996
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:958
+#: common/models.py:1002
 msgid "Inline label display"
 msgstr ""
 
-#: common/models.py:959
+#: common/models.py:1003
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:965
+#: common/models.py:1009
 msgid "Inline report display"
 msgstr ""
 
-#: common/models.py:966
+#: common/models.py:1010
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:972
+#: common/models.py:1016
 msgid "Search Preview Results"
 msgstr ""
 
-#: common/models.py:973
+#: common/models.py:1017
 msgid "Number of results to show in search preview window"
 msgstr ""
 
-#: common/models.py:979
+#: common/models.py:1023
 msgid "Show Quantity in Forms"
 msgstr ""
 
-#: common/models.py:980
+#: common/models.py:1024
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:986
+#: common/models.py:1030
 msgid "Escape Key Closes Forms"
 msgstr ""
 
-#: common/models.py:987
+#: common/models.py:1031
 msgid "Use the escape key to close modal forms"
 msgstr ""
 
-#: common/models.py:1044 company/forms.py:43
+#: common/models.py:1088 company/forms.py:43
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1051 company/templates/company/supplier_part.html:231
+#: common/models.py:1095 company/templates/company/supplier_part.html:231
 #: templates/js/translated/part.js:1369
 msgid "Price"
 msgstr ""
 
-#: common/models.py:1052
+#: common/models.py:1096
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1145
+#: common/models.py:1189
 msgid "Default"
 msgstr ""
 
@@ -2603,8 +2676,8 @@ msgstr ""
 #: part/templates/part/detail.html:50 part/templates/part/navbar.html:82
 #: part/templates/part/navbar.html:85 templates/InvenTree/index.html:260
 #: templates/InvenTree/search.html:229
-#: templates/InvenTree/settings/navbar.html:113
-#: templates/InvenTree/settings/navbar.html:115 templates/navbar.html:44
+#: templates/InvenTree/settings/navbar.html:119
+#: templates/InvenTree/settings/navbar.html:121 templates/navbar.html:44
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2627,8 +2700,8 @@ msgstr ""
 #: part/templates/part/detail.html:71 part/templates/part/navbar.html:91
 #: part/templates/part/navbar.html:94 templates/InvenTree/index.html:291
 #: templates/InvenTree/search.html:249
-#: templates/InvenTree/settings/navbar.html:119
-#: templates/InvenTree/settings/navbar.html:121 templates/navbar.html:55
+#: templates/InvenTree/settings/navbar.html:125
+#: templates/InvenTree/settings/navbar.html:127 templates/navbar.html:55
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -2714,7 +2787,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:239
 #: part/templates/part/detail.html:214 part/templates/part/detail.html:294
 #: part/templates/part/detail.html:317 templates/js/translated/company.js:424
-#: templates/js/translated/helpers.js:31 users/models.py:194
+#: templates/js/translated/helpers.js:31 users/models.py:199
 msgid "Delete"
 msgstr ""
 
@@ -2763,8 +2836,8 @@ msgstr ""
 #: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:36
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/index.html:150 templates/InvenTree/search.html:182
-#: templates/InvenTree/settings/navbar.html:101
-#: templates/InvenTree/settings/navbar.html:103
+#: templates/InvenTree/settings/navbar.html:107
+#: templates/InvenTree/settings/navbar.html:109
 #: templates/js/translated/part.js:540 templates/js/translated/part.js:769
 #: templates/js/translated/part.js:945 templates/js/translated/stock.js:182
 #: templates/js/translated/stock.js:829 templates/navbar.html:32
@@ -3726,8 +3799,8 @@ msgstr ""
 #: part/templates/part/category_navbar.html:21
 #: part/templates/part/category_navbar.html:24
 #: templates/InvenTree/index.html:102 templates/InvenTree/search.html:114
-#: templates/InvenTree/settings/navbar.html:89
-#: templates/InvenTree/settings/navbar.html:91
+#: templates/InvenTree/settings/navbar.html:95
+#: templates/InvenTree/settings/navbar.html:97
 #: templates/js/translated/part.js:1165 templates/navbar.html:29
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
@@ -3941,7 +4014,7 @@ msgstr ""
 
 #: part/models.py:696 part/models.py:2299
 #: part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:168
+#: templates/InvenTree/settings/settings.html:169
 #: templates/js/translated/part.js:927
 msgid "Category"
 msgstr ""
@@ -4131,7 +4204,7 @@ msgid "Parameter Units"
 msgstr ""
 
 #: part/models.py:2256 part/models.py:2305 part/models.py:2306
-#: templates/InvenTree/settings/settings.html:163
+#: templates/InvenTree/settings/settings.html:164
 msgid "Parameter Template"
 msgstr ""
 
@@ -4143,7 +4216,7 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2310 templates/InvenTree/settings/settings.html:172
+#: part/models.py:2310 templates/InvenTree/settings/settings.html:173
 msgid "Default Value"
 msgstr ""
 
@@ -6159,6 +6232,14 @@ msgstr ""
 msgid "Setting"
 msgstr ""
 
+#: templates/InvenTree/settings/login.html:9
+msgid "Login Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/login.html:22 templates/account/signup.html:5
+msgid "Signup"
+msgstr ""
+
 #: templates/InvenTree/settings/navbar.html:12
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
@@ -6212,22 +6293,27 @@ msgid "Server"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:71
-#: templates/InvenTree/settings/navbar.html:73
-msgid "Barcodes"
+#: templates/InvenTree/settings/navbar.html:73 templates/navbar.html:87
+msgid "Login"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:77
 #: templates/InvenTree/settings/navbar.html:79
-msgid "Currencies"
+msgid "Barcodes"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:83
 #: templates/InvenTree/settings/navbar.html:85
+msgid "Currencies"
+msgstr ""
+
+#: templates/InvenTree/settings/navbar.html:89
+#: templates/InvenTree/settings/navbar.html:91
 msgid "Reporting"
 msgstr ""
 
-#: templates/InvenTree/settings/navbar.html:95
-#: templates/InvenTree/settings/navbar.html:97
+#: templates/InvenTree/settings/navbar.html:101
+#: templates/InvenTree/settings/navbar.html:103
 msgid "Categories"
 msgstr ""
 
@@ -6268,21 +6354,21 @@ msgstr ""
 msgid "Edit setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:153
+#: templates/InvenTree/settings/settings.html:154
 msgid "No category parameter templates found"
-msgstr ""
-
-#: templates/InvenTree/settings/settings.html:175
-#: templates/InvenTree/settings/settings.html:274
-msgid "Edit Template"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:176
 #: templates/InvenTree/settings/settings.html:275
+msgid "Edit Template"
+msgstr ""
+
+#: templates/InvenTree/settings/settings.html:177
+#: templates/InvenTree/settings/settings.html:276
 msgid "Delete Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:254
+#: templates/InvenTree/settings/settings.html:255
 msgid "No part parameter templates found"
 msgstr ""
 
@@ -6294,68 +6380,136 @@ msgstr ""
 msgid "Stock Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:9
+#: templates/InvenTree/settings/user.html:11
 msgid "Account Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:15
+#: templates/InvenTree/settings/user.html:19
 #: templates/js/translated/helpers.js:26
 msgid "Edit"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:17
+#: templates/InvenTree/settings/user.html:21
+#: templates/account/password_reset_from_key.html:4
+#: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:24
-#: templates/registration/login.html:58
+#: templates/InvenTree/settings/user.html:28
 msgid "Username"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:28
+#: templates/InvenTree/settings/user.html:32
 msgid "First Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:32
+#: templates/InvenTree/settings/user.html:36
 msgid "Last Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:36
-msgid "Email Address"
+#: templates/InvenTree/settings/user.html:42
+msgid "E-Mail"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:42
-msgid "Theme Settings"
+#: templates/InvenTree/settings/user.html:47
+msgid "The following e-mail addresses are associated with your account:"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:61
+msgid "Verified"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:63
+msgid "Unverified"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:65
+msgid "Primary"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:71
+msgid "Make Primary"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:72
+msgid "Re-send Verification"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:73
+#: templates/InvenTree/settings/user.html:130
+msgid "Remove"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:80
+msgid "Warning:"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:81
+msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:88
+msgid "Add E-mail Address"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:93
+msgid "Add E-mail"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:100
+#, fuzzy
+#| msgid "Stock counted"
+msgid "Social Accounts"
+msgstr "Voorraad geteld"
+
+#: templates/InvenTree/settings/user.html:105
+msgid "You can sign in to your account using any of the following third party accounts:"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:138
+msgid "You currently have no social network accounts connected to this account."
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:142
+msgid "Add a 3rd Party Account"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:153
+msgid "Theme Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:174
 msgid "Set Theme"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:70
+#: templates/InvenTree/settings/user.html:181
 msgid "Language Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:89
+#: templates/InvenTree/settings/user.html:200
 #, python-format
 msgid "%(lang_translated)s%% translated"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:91
+#: templates/InvenTree/settings/user.html:202
 msgid "No translations available"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:98
+#: templates/InvenTree/settings/user.html:209
 msgid "Set Language"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:103
+#: templates/InvenTree/settings/user.html:214
 msgid "Help the translation efforts!"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:104
+#: templates/InvenTree/settings/user.html:215
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:223
+msgid "Do you really want to remove the selected e-mail address?"
 msgstr ""
 
 #: templates/InvenTree/settings/user_forms.html:9
@@ -6447,6 +6601,115 @@ msgstr ""
 #: templates/js/translated/modals.js:982 templates/modals.html:29
 #: templates/modals.html:54
 msgid "Close"
+msgstr ""
+
+#: templates/account/email_confirm.html:6
+#: templates/account/email_confirm.html:10
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: templates/account/email_confirm.html:16
+#, python-format
+msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail address for user %(user_display)s."
+msgstr ""
+
+#: templates/account/email_confirm.html:27
+#, python-format
+msgid "This e-mail confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+
+#: templates/account/login.html:5 templates/account/login.html:14
+#: templates/account/login.html:36
+msgid "Sign In"
+msgstr ""
+
+#: templates/account/login.html:19
+#, python-format
+msgid ""
+"Please sign in with one\n"
+"of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
+"for a account and sign in below:"
+msgstr ""
+
+#: templates/account/login.html:23
+#, python-format
+msgid ""
+"If you have not created an account yet, then please\n"
+"<a href=\"%(signup_url)s\">sign up</a> first."
+msgstr ""
+
+#: templates/account/login.html:38
+#, fuzzy
+#| msgid "Set Password"
+msgid "Forgot Password?"
+msgstr "Wachtwoord instellen"
+
+#: templates/account/login.html:45
+msgid "or use SSO"
+msgstr ""
+
+#: templates/account/logout.html:5 templates/account/logout.html:8
+#: templates/account/logout.html:17
+msgid "Sign Out"
+msgstr ""
+
+#: templates/account/logout.html:10
+#, fuzzy
+#| msgid "Are you sure you wish to cancel this build?"
+msgid "Are you sure you want to sign out?"
+msgstr "Weet je zeker dat je de bouw wilt annuleren?"
+
+#: templates/account/password_reset.html:5
+#: templates/account/password_reset.html:12
+#, fuzzy
+#| msgid "Set Password"
+msgid "Password Reset"
+msgstr "Wachtwoord instellen"
+
+#: templates/account/password_reset.html:18
+msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it."
+msgstr ""
+
+#: templates/account/password_reset.html:23
+#, fuzzy
+#| msgid "Set Password"
+msgid "Reset My Password"
+msgstr "Wachtwoord instellen"
+
+#: templates/account/password_reset.html:27 templates/account/signup.html:36
+msgid "This function is currently disabled. Please contact an administrator."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:7
+msgid "Bad Token"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:11
+#, python-format
+msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:17
+#, fuzzy
+#| msgid "Enter password"
+msgid "change password"
+msgstr "Voer wachtwoord in"
+
+#: templates/account/password_reset_from_key.html:20
+msgid "Your password is now changed."
+msgstr ""
+
+#: templates/account/signup.html:11 templates/account/signup.html:22
+msgid "Sign Up"
+msgstr ""
+
+#: templates/account/signup.html:13
+#, python-format
+msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+
+#: templates/account/signup.html:27
+msgid "Or use a SSO-provider for signup"
 msgstr ""
 
 #: templates/image_download.html:8
@@ -7618,7 +7881,7 @@ msgstr ""
 msgid "Add Stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:165 users/models.py:190
+#: templates/js/translated/stock.js:165 users/models.py:195
 msgid "Add"
 msgstr ""
 
@@ -8075,10 +8338,6 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: templates/navbar.html:87 templates/registration/login.html:89
-msgid "Login"
-msgstr ""
-
 #: templates/navbar.html:106
 msgid "About InvenTree"
 msgstr ""
@@ -8087,68 +8346,12 @@ msgstr ""
 msgid "QR data not provided"
 msgstr ""
 
-#: templates/registration/logged_out.html:50
-msgid "You have been logged out"
+#: templates/registration/logged_out.html:6
+msgid "You were logged out successfully."
 msgstr ""
 
-#: templates/registration/logged_out.html:51
-#: templates/registration/password_reset_complete.html:51
-#: templates/registration/password_reset_done.html:58
-msgid "Return to login screen"
-msgstr ""
-
-#: templates/registration/login.html:64
-msgid "Enter username"
-msgstr ""
-
-#: templates/registration/login.html:70
-msgid "Password"
-msgstr ""
-
-#: templates/registration/login.html:83
-msgid "Username / password combination is incorrect"
-msgstr ""
-
-#: templates/registration/login.html:95
-#: templates/registration/password_reset_form.html:51
-msgid "Forgotten your password?"
-msgstr ""
-
-#: templates/registration/login.html:95
-msgid "Click here to reset"
-msgstr ""
-
-#: templates/registration/password_reset_complete.html:50
-msgid "Password reset complete"
-msgstr ""
-
-#: templates/registration/password_reset_confirm.html:52
-#: templates/registration/password_reset_confirm.html:56
-msgid "Change password"
-msgstr ""
-
-#: templates/registration/password_reset_confirm.html:60
-msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset."
-msgstr ""
-
-#: templates/registration/password_reset_done.html:51
-msgid "We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly."
-msgstr ""
-
-#: templates/registration/password_reset_done.html:54
-msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
-msgstr ""
-
-#: templates/registration/password_reset_form.html:52
-msgid "Enter your email address below."
-msgstr ""
-
-#: templates/registration/password_reset_form.html:53
-msgid "An email will be sent with password reset instructions."
-msgstr ""
-
-#: templates/registration/password_reset_form.html:58
-msgid "Send email"
+#: templates/registration/logged_out.html:8
+msgid "Log in again"
 msgstr ""
 
 #: templates/stats.html:13
@@ -8287,35 +8490,35 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:177
+#: users/models.py:182
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:185
+#: users/models.py:190
 msgid "Group"
 msgstr ""
 
-#: users/models.py:188
+#: users/models.py:193
 msgid "View"
 msgstr ""
 
-#: users/models.py:188
+#: users/models.py:193
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:190
+#: users/models.py:195
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:192
+#: users/models.py:197
 msgid "Change"
 msgstr ""
 
-#: users/models.py:192
+#: users/models.py:197
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:194
+#: users/models.py:199
 msgid "Permission to delete items"
 msgstr ""
 
