@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-10 23:55+0000\n"
+"POT-Creation-Date: 2021-10-11 00:00+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -177,7 +177,7 @@ msgstr "Name"
 #: report/models.py:551 report/models.py:590
 #: report/templates/report/inventree_build_order_base.html:118
 #: templates/InvenTree/settings/header.html:9
-#: templates/js/translated/bom.js:237 templates/js/translated/build.js:1217
+#: templates/js/translated/bom.js:249 templates/js/translated/build.js:1217
 #: templates/js/translated/build.js:1505 templates/js/translated/company.js:344
 #: templates/js/translated/company.js:547
 #: templates/js/translated/company.js:836 templates/js/translated/order.js:672
@@ -568,7 +568,7 @@ msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 #: report/templates/report/inventree_test_report_base.html:77
 #: stock/forms.py:140 stock/templates/stock/item_base.html:269
 #: stock/templates/stock/stock_adjust.html:18
-#: templates/js/translated/barcode.js:386 templates/js/translated/bom.js:252
+#: templates/js/translated/barcode.js:386 templates/js/translated/bom.js:264
 #: templates/js/translated/build.js:314 templates/js/translated/build.js:638
 #: templates/js/translated/build.js:977 templates/js/translated/build.js:1515
 #: templates/js/translated/model_renderers.js:74
@@ -697,7 +697,7 @@ msgstr "Bauauftragsreferenz"
 #: part/templates/part/bom_upload/match_parts.html:30
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
-#: templates/js/translated/bom.js:244 templates/js/translated/build.js:734
+#: templates/js/translated/bom.js:256 templates/js/translated/build.js:734
 #: templates/js/translated/build.js:1509 templates/js/translated/order.js:863
 #: templates/js/translated/order.js:1438
 msgid "Reference"
@@ -730,7 +730,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:112 templates/js/translated/barcode.js:384
-#: templates/js/translated/bom.js:210 templates/js/translated/build.js:611
+#: templates/js/translated/bom.js:222 templates/js/translated/build.js:611
 #: templates/js/translated/build.js:974 templates/js/translated/build.js:1222
 #: templates/js/translated/build.js:1482 templates/js/translated/company.js:488
 #: templates/js/translated/company.js:745 templates/js/translated/order.js:425
@@ -866,7 +866,7 @@ msgstr "Link zu einer externen URL"
 #: stock/forms.py:138 stock/forms.py:250 stock/forms.py:282 stock/models.py:579
 #: stock/models.py:1723 stock/models.py:1829 stock/serializers.py:451
 #: stock/templates/stock/navbar.html:57 templates/js/translated/barcode.js:59
-#: templates/js/translated/bom.js:394 templates/js/translated/company.js:841
+#: templates/js/translated/bom.js:406 templates/js/translated/company.js:841
 #: templates/js/translated/order.js:950 templates/js/translated/order.js:1540
 #: templates/js/translated/stock.js:559 templates/js/translated/stock.js:1040
 msgid "Notes"
@@ -4174,8 +4174,8 @@ msgstr "Teil für die Nutzung in der Stückliste auswählen"
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:2379 templates/js/translated/bom.js:263
-#: templates/js/translated/bom.js:323
+#: part/models.py:2379 templates/js/translated/bom.js:275
+#: templates/js/translated/bom.js:335
 msgid "Optional"
 msgstr "Optional"
 
@@ -4207,8 +4207,8 @@ msgstr "Prüfsumme"
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:2395 templates/js/translated/bom.js:340
-#: templates/js/translated/bom.js:347
+#: part/models.py:2395 templates/js/translated/bom.js:352
+#: templates/js/translated/bom.js:359
 #: templates/js/translated/table_filters.js:68
 msgid "Inherited"
 msgstr "Geerbt"
@@ -4217,7 +4217,7 @@ msgstr "Geerbt"
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
-#: part/models.py:2401 templates/js/translated/bom.js:332
+#: part/models.py:2401 templates/js/translated/bom.js:344
 msgid "Allow Variants"
 msgstr "Varianten zulassen"
 
@@ -4396,7 +4396,7 @@ msgstr "Exportieren"
 msgid "Create new part"
 msgstr "Neues Teil anlegen"
 
-#: part/templates/part/category.html:131
+#: part/templates/part/category.html:131 templates/js/translated/bom.js:39
 msgid "New Part"
 msgstr "Neues Teil"
 
@@ -4774,7 +4774,7 @@ msgstr "Benötigt für Aufträge"
 msgid "Allocated to Orders"
 msgstr "Zu Bauaufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:203 templates/js/translated/bom.js:361
+#: part/templates/part/part_base.html:203 templates/js/translated/bom.js:373
 msgid "Can Build"
 msgstr "Herstellbar"
 
@@ -4829,7 +4829,7 @@ msgid "Total Cost"
 msgstr "Gesamtkosten"
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
-#: templates/js/translated/bom.js:315
+#: templates/js/translated/bom.js:327
 msgid "No supplier pricing available"
 msgstr "Keine Zulieferer-Preise verfügbar"
 
@@ -4933,7 +4933,7 @@ msgstr "Verkaufspreis anzeigen"
 msgid "Calculation parameters"
 msgstr "Berechnungsparameter"
 
-#: part/templates/part/prices.html:155 templates/js/translated/bom.js:309
+#: part/templates/part/prices.html:155 templates/js/translated/bom.js:321
 msgid "Supplier Cost"
 msgstr "Zuliefererkosten"
 
@@ -4975,7 +4975,7 @@ msgstr "Keine Verkaufsgeschichte für diesen Teil verfügbar."
 msgid "Set category for the following parts"
 msgstr "Kategorie für Teile setzen"
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:285
+#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:297
 #: templates/js/translated/model_renderers.js:167
 #: templates/js/translated/part.js:766 templates/js/translated/part.js:968
 msgid "No Stock"
@@ -6730,49 +6730,49 @@ msgstr "In Lagerorten buchen"
 msgid "Barcode does not match a valid location"
 msgstr "Barcode entspricht keinem Lagerort"
 
-#: templates/js/translated/bom.js:222 templates/js/translated/build.js:1495
+#: templates/js/translated/bom.js:234 templates/js/translated/build.js:1495
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
-#: templates/js/translated/bom.js:276 templates/js/translated/build.js:744
+#: templates/js/translated/bom.js:288 templates/js/translated/build.js:744
 #: templates/js/translated/build.js:1345 templates/js/translated/build.js:1522
 msgid "Available"
 msgstr "Verfügbar"
 
-#: templates/js/translated/bom.js:295
+#: templates/js/translated/bom.js:307
 msgid "Purchase Price Range"
 msgstr "Kaufpreisspanne"
 
-#: templates/js/translated/bom.js:302
+#: templates/js/translated/bom.js:314
 msgid "Purchase Price Average"
 msgstr "Durchschnittlicher Kaufpreis"
 
-#: templates/js/translated/bom.js:351 templates/js/translated/bom.js:437
+#: templates/js/translated/bom.js:363 templates/js/translated/bom.js:449
 msgid "View BOM"
 msgstr "Stückliste anzeigen"
 
-#: templates/js/translated/bom.js:403 templates/js/translated/build.js:798
+#: templates/js/translated/bom.js:415 templates/js/translated/build.js:798
 #: templates/js/translated/build.js:1545 templates/js/translated/order.js:1285
 msgid "Actions"
 msgstr "Aktionen"
 
-#: templates/js/translated/bom.js:411
+#: templates/js/translated/bom.js:423
 msgid "Validate BOM Item"
 msgstr "Stücklisten-Position kontrollieren"
 
-#: templates/js/translated/bom.js:413
+#: templates/js/translated/bom.js:425
 msgid "This line has been validated"
 msgstr "Diese Position wurde kontrolliert"
 
-#: templates/js/translated/bom.js:415 templates/js/translated/bom.js:578
+#: templates/js/translated/bom.js:427 templates/js/translated/bom.js:590
 msgid "Edit BOM Item"
 msgstr "Stücklisten-Position bearbeiten"
 
-#: templates/js/translated/bom.js:417 templates/js/translated/bom.js:563
+#: templates/js/translated/bom.js:429 templates/js/translated/bom.js:575
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: templates/js/translated/bom.js:508 templates/js/translated/build.js:485
+#: templates/js/translated/bom.js:520 templates/js/translated/build.js:485
 #: templates/js/translated/build.js:1593
 msgid "No BOM items found"
 msgstr "Keine Stücklisten-Position(en) gefunden"
