@@ -8,8 +8,9 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.5.0"
+INVENTREE_SW_VERSION = "0.5.1"
 
+# InvenTree API version
 INVENTREE_API_VERSION = 12
 
 """
@@ -96,16 +97,14 @@ def inventreeDocsVersion():
     Return the version string matching the latest documentation.
     
     Development -> "latest"
-    Release -> "major.minor"
+    Release -> "major.minor.sub" e.g. "0.5.2"
     
     """
 
     if isInvenTreeDevelopmentVersion():
         return "latest"
     else:
-        major, minor, patch = inventreeVersionTuple()
-
-        return f"{major}.{minor}"
+        return INVENTREE_SW_VERSION
 
 
 def isInvenTreeUpToDate():

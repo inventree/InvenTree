@@ -42,6 +42,9 @@ function buildFormFields() {
                 part_detail: true,
             }
         },
+        sales_order: {
+            hidden: true,
+        },
         batch: {},
         target_date: {},
         take_from: {},
@@ -76,23 +79,32 @@ function newBuildOrder(options={}) {
 
     var fields = buildFormFields();
 
+    // Specify the target part
     if (options.part) {
         fields.part.value = options.part;
     }
 
+    // Specify the desired quantity
     if (options.quantity) {
         fields.quantity.value = options.quantity;
     }
 
+    // Specify the parent build order
     if (options.parent) {
         fields.parent.value = options.parent;
+    }
+
+    // Specify a parent sales order
+    if (options.sales_order) {
+        fields.sales_order.value = options.sales_order;
     }
 
     constructForm(`/api/build/`, {
         fields: fields,
         follow: true,
         method: 'POST',
-        title: '{% trans "Create Build Order" %}'
+        title: '{% trans "Create Build Order" %}',
+        onSuccess: options.onSuccess,
     });
 }
 
@@ -623,8 +635,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                             var url = '';
 
-                            if (row.serial && row.quantity == 1) {
-                                text = `{% trans "Serial Number" %}: ${row.serial}`;
+
+                            var serial = row.serial;
+
+                            if (row.stock_item_detail) {
+                                serial = row.stock_item_detail.serial;
+                            }
+
+                            if (serial && row.quantity == 1) {
+                                text = `{% trans "Serial Number" %}: ${serial}`;
                             } else {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
                             }
