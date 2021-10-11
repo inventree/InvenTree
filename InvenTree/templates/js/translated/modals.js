@@ -681,7 +681,7 @@ function openModal(options) {
 
     $(modal).modal({
         backdrop: 'static',
-        keyboard: false,
+        keyboard: user_settings.FORMS_CLOSE_USING_ESCAPE,
     });
 
     // Disable the form
