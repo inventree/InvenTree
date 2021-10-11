@@ -13,7 +13,12 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 
+from allauth.account.forms import SignupForm, set_form_field_order
+from allauth.account.adapter import DefaultAccountAdapter
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+
 from part.models import PartCategory
+from common.models import InvenTreeSetting
 
 
 class HelperForm(forms.ModelForm):
@@ -144,7 +149,6 @@ class EditUserForm(HelperForm):
             'username',
             'first_name',
             'last_name',
-            'email'
         ]
 
 
@@ -204,3 +208,76 @@ class SettingCategorySelectForm(forms.ModelForm):
                 css_class='row',
             ),
         )
+
+
+# override allauth
+class CustomSignupForm(SignupForm):
+    """
+    Override to use dynamic settings
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
+
+        super().__init__(*args, **kwargs)
+
+        # check for two mail fields
+        if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
+            self.fields["email2"] = forms.EmailField(
+                label=_("E-mail (again)"),
+                widget=forms.TextInput(
+                    attrs={
+                        "type": "email",
+                        "placeholder": _("E-mail address confirmation"),
+                    }
+                ),
+            )
+
+        # check for two password fields
+        if not InvenTreeSetting.get_setting('LOGIN_SIGNUP_PWD_TWICE'):
+            self.fields.pop("password2")
+
+        # reorder fields
+        set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # check for two mail fields
+        if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
+            email = cleaned_data.get("email")
+            email2 = cleaned_data.get("email2")
+            if (email and email2) and email != email2:
+                self.add_error("email2", _("You must type the same email each time."))
+
+        return cleaned_data
+
+
+class RegistratonMixin:
+    """
+    Mixin to check if registration should be enabled
+    """
+    def is_open_for_signup(self, request):
+        if InvenTreeSetting.get_setting('EMAIL_HOST', None) and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+            return super().is_open_for_signup(request)
+        return False
+
+
+class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
+    """
+    Override of adapter to use dynamic settings
+    """
+    def send_mail(self, template_prefix, email, context):
+        """only send mail if backend configured"""
+        if InvenTreeSetting.get_setting('EMAIL_HOST', None):
+            return super().send_mail(template_prefix, email, context)
+        return False
+
+
+class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
+    """
+    Override of adapter to use dynamic settings
+    """
+    def is_auto_signup_allowed(self, request, sociallogin):
+        if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
+            return super().is_auto_signup_allowed(request, sociallogin)
+        return False

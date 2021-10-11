@@ -1,0 +1,31 @@
+{% extends "panel.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}login{% endblock %}
+
+
+{% block heading %}
+{% trans "Login Settings" %}
+{% endblock %}
+
+{% block content %}
+
+<table class='table table-striped table-condensed'>
+    {% include "InvenTree/settings/header.html" %}
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_ENABLE_REG" icon="fa-info-circle" %}
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_ENABLE_SSO" icon="fa-info-circle" %}
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_ENABLE_PWD_FORGOT" icon="fa-info-circle" %}
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_MAIL_REQUIRED" icon="fa-info-circle" %}
+        <tr>
+            <td>{% trans 'Signup' %}</td>
+            <td colspan='4'></td>
+        </tr>
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_SIGNUP_MAIL_TWICE" icon="fa-info-circle" %}
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_SIGNUP_PWD_TWICE" icon="fa-info-circle" %}
+        {% include "InvenTree/settings/setting.html" with key="LOGIN_SIGNUP_SSO_AUTO" icon="fa-info-circle" %}
+    </tbody>
+</table>
+
+{% endblock %}
