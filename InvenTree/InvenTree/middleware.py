@@ -64,15 +64,15 @@ class AuthRequiredMiddleware(object):
             # No authorization was found for the request
             if not authorized:
                 # A logout request will redirect the user to the login screen
-                if request.path_info == reverse_lazy('logout'):
-                    return HttpResponseRedirect(reverse_lazy('login'))
+                if request.path_info == reverse_lazy('account_logout'):
+                    return HttpResponseRedirect(reverse_lazy('account_login'))
 
                 path = request.path_info
 
                 # List of URL endpoints we *do not* want to redirect to
                 urls = [
-                    reverse_lazy('login'),
-                    reverse_lazy('logout'),
+                    reverse_lazy('account_login'),
+                    reverse_lazy('account_logout'),
                     reverse_lazy('admin:login'),
                     reverse_lazy('admin:logout'),
                 ]
@@ -80,7 +80,7 @@ class AuthRequiredMiddleware(object):
                 if path not in urls and not path.startswith('/api/'):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('%s?next=%s' % (reverse_lazy('login'), request.path))
+                    return redirect('%s?next=%s' % (reverse_lazy('account_login'), request.path))
 
         response = self.get_response(request)
 

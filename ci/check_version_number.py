@@ -9,6 +9,7 @@ import sys
 import re
 import os
 import argparse
+import requests
 
 if __name__ == '__main__':
 
@@ -16,15 +17,22 @@ if __name__ == '__main__':
 
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
+    version = None
+
     with open(version_file, 'r') as f:
 
-        results = re.findall(r'INVENTREE_SW_VERSION = "(.*)"', f.read())
+        text = f.read()
+
+        # Extract the InvenTree software version
+        results = re.findall(r'INVENTREE_SW_VERSION = "(.*)"', text)
 
         if not len(results) == 1:
             print(f"Could not find INVENTREE_SW_VERSION in {version_file}")
             sys.exit(1)
 
         version = results[0]
+
+    print(f"InvenTree Version: '{version}'")
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--tag', help='Compare against specified version tag', action='store')
@@ -57,6 +65,8 @@ if __name__ == '__main__':
         e.g. "0.5 dev"
         """
 
+        print(f"Checking development branch")
+
         pattern = "^\d+(\.\d+)+ dev$"
 
         result = re.match(pattern, version)
@@ -70,6 +80,8 @@ if __name__ == '__main__':
         Check that the current version number matches the "release" format
         e.g. "0.5.1"
         """
+
+        print(f"Checking release branch")
 
         pattern = "^\d+(\.\d+)+$"
 
