@@ -4,12 +4,6 @@
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
-{% settings_value 'BUILD_FUNCTION_ENABLE' as enable_build %}
-{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
-{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
-{% settings_value 'SO_FUNCTION_ENABLE' as enable_so %}
-{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
-{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
 
 <ul class='list-group'>
     <li class='list-group-item'>
@@ -31,14 +25,12 @@
         </a>
     </li>
     {% endif %}
-    {% if enable_stock %}
     <li class='list-group-item' title='{% trans "Stock Items" %}'>
         <a href='#' id='select-part-stock' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-boxes sidebar-icon'></span>
             {% trans "Stock" %}
         </a>
     </li>
-    {% endif %}
     {% if part.assembly %}
     <li class='list-group-item' title='{% trans "Bill of Materials" %}'>
         <a href='#' id='select-bom' class='nav-toggle'>
@@ -46,7 +38,7 @@
             {% trans "Bill of Materials" %}
         </a>
     </li>
-    {% if roles.build.view and enable_build %}
+    {% if roles.build.view %}
     <li class='list-group-item ' title='{% trans "Build Orders" %}'>
         <a href='#' id='select-build-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-tools sidebar-icon'></span>
@@ -63,22 +55,19 @@
         </a>
     </li>
     {% endif %}
-    {% if enable_buy or enable_sell %}
     <li class='list-group-item' title='{% trans "Pricing Information" %}'>
         <a href='#' id='select-pricing' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-dollar-sign sidebar-icon'></span>
             {% trans "Prices" %}
         </a>
     </li>
-    {% endif %}
-    {% if part.purchaseable and roles.purchase_order.view and enable_buy %}
+    {% if part.purchaseable and roles.purchase_order.view %}
     <li class='list-group-item' title='{% trans "Suppliers" %}'>
         <a href='#' id='select-suppliers' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-building sidebar-icon'></span>
             {% trans "Suppliers" %}
         </a>
     </li>
-    {% if enable_po %}
     <li class='list-group-item' title='{% trans "Purchase Orders" %}'>
         <a href='#' id='select-purchase-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-shopping-cart sidebar-icon'></span>
@@ -86,8 +75,7 @@
         </a>
     </li>
     {% endif %}
-    {% endif %}
-    {% if part.salable and roles.sales_order.view and enable_sell and enable_so %}
+    {% if part.salable and roles.sales_order.view %}
     <li class='list-group-item' title='{% trans "Sales Orders" %}'>
         <a href='#' id='select-sales-orders' class='nav-toggle'>
             <span class='menu-tab-icon fas fa-truck sidebar-icon'></span>

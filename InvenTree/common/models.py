@@ -789,43 +789,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'PO',
         },
 
-        # enable/diable ui elements
-        'BUILD_FUNCTION_ENABLE': {
-            'name': _('Enable build'),
-            'description': _('Enable build functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'BUY_FUNCTION_ENABLE': {
-            'name': _('Enable buy'),
-            'description': _('Enable buy functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'SELL_FUNCTION_ENABLE': {
-            'name': _('Enable sell'),
-            'description': _('Enable sell functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'STOCK_FUNCTION_ENABLE': {
-            'name': _('Enable stock'),
-            'description': _('Enable stock functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'SO_FUNCTION_ENABLE': {
-            'name': _('Enable SO'),
-            'description': _('Enable SO functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'PO_FUNCTION_ENABLE': {
-            'name': _('Enable PO'),
-            'description': _('Enable PO functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
     }
 
     class Meta:
