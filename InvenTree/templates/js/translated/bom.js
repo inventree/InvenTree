@@ -35,6 +35,18 @@ function bomItemFields() {
             hidden: true,
         },
         sub_part: {
+            secondary: {
+                title: '{% trans "New Part" %}',
+                fields: function() {
+                    var fields = partFields();
+
+                    // Set to a "component" part
+                    fields.component.value = true;
+
+                    return fields;
+                },
+                groups: partGroups(),
+            }
         },
         quantity: {},
         reference: {},
@@ -576,6 +588,7 @@ function loadBomTable(table, options) {
             constructForm(`/api/bom/${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit BOM Item" %}',
+                focus: 'sub_part',
                 onSuccess: function() {
                     reloadBomTable(table);
                 }

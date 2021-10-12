@@ -8,8 +8,10 @@ import re
 
 import common.models
 
+# InvenTree software version
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
+# InvenTree API version
 INVENTREE_API_VERSION = 15
 
 """
@@ -115,9 +117,7 @@ def inventreeDocsVersion():
     if isInvenTreeDevelopmentVersion():
         return "latest"
     else:
-        major, minor, patch = inventreeVersionTuple()
-
-        return f"{major}.{minor}.{patch}"
+        return INVENTREE_SW_VERSION
 
 
 def isInvenTreeUpToDate():
