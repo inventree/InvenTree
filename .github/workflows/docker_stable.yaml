@@ -37,7 +37,6 @@ jobs:
           target: production
           build-args:
             branch: stable
-          repository: inventree/inventree
           tags: inventree/inventree:stable
       - name: Image Digest
         run: echo ${{ steps.docker_build.outputs.digest }}

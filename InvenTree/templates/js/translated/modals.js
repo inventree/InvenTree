@@ -43,7 +43,7 @@ function createNewModal(options={}) {
     });
 
     var html = `
-    <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}'>
+    <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}' tabindex='-1'>
         <div class='modal-dialog'>
             <div class='modal-content'>
                 <div class="modal-header">
@@ -111,7 +111,7 @@ function createNewModal(options={}) {
 
     $(modal_name).modal({
         backdrop: 'static',
-        keyboard: false,
+        keyboard: user_settings.FORMS_CLOSE_USING_ESCAPE,
     });
 
     // Set labels based on supplied options
@@ -681,7 +681,7 @@ function openModal(options) {
 
     $(modal).modal({
         backdrop: 'static',
-        keyboard: false,
+        keyboard: user_settings.FORMS_CLOSE_USING_ESCAPE,
     });
 
     // Disable the form

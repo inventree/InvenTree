@@ -301,7 +301,9 @@ def send_email(subject, body, recipients, from_email=None):
 
     offload_task(
         'django.core.mail.send_mail',
-        subject, body,
+        subject,
+        body,
         from_email,
         recipients,
+        fail_silently=False,
     )

@@ -100,9 +100,9 @@
                 {% if user.is_staff %}
                 <li><a href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
                 {% endif %}
-                <li><a href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
+                <li><a href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
                 {% else %}
-                <li><a href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
+                <li><a href="{% url 'account_login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
                 {% endif %}
                 <hr>
                 <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>

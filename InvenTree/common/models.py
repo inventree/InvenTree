@@ -831,7 +831,49 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-
+        # login / SSO
+        'LOGIN_ENABLE_PWD_FORGOT': {
+            'name': _('Enable password forgot'),
+            'description': _('Enable password forgot function on the login-pages'),
+            'default': True,
+            'validator': bool,
+        },
+        'LOGIN_ENABLE_REG': {
+            'name': _('Enable registration'),
+            'description': _('Enable self-registration for users on the login-pages'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_ENABLE_SSO': {
+            'name': _('Enable SSO'),
+            'description': _('Enable SSO on the login-pages'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_MAIL_REQUIRED': {
+            'name': _('E-Mail required'),
+            'description': _('Require user to supply mail on signup'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_SIGNUP_SSO_AUTO': {
+            'name': _('Auto-fill SSO users'),
+            'description': _('Automatically fill out user-details from SSO account-data'),
+            'default': True,
+            'validator': bool,
+        },
+        'LOGIN_SIGNUP_MAIL_TWICE': {
+            'name': _('Mail twice'),
+            'description': _('On signup ask users twice for their mail'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_SIGNUP_PWD_TWICE': {
+            'name': _('Password twice'),
+            'description': _('On signup ask users twice for their password'),
+            'default': True,
+            'validator': bool,
+        },
         **settings.INTEGRATION_PLUGIN_SETTINGS
     }
 
@@ -984,6 +1026,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
+        'FORMS_CLOSE_USING_ESCAPE': {
+            'name': _('Escape Key Closes Forms'),
+            'description': _('Use the escape key to close modal forms'),
+            'default': False,
+            'validator': bool,
+        }
     }
 
     class Meta:

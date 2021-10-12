@@ -67,7 +67,12 @@ class RuleSet(models.Model):
             'report_billofmaterialsreport',
             'report_purchaseorderreport',
             'report_salesorderreport',
-
+            'account_emailaddress',
+            'account_emailconfirmation',
+            'sites_site',
+            'socialaccount_socialaccount',
+            'socialaccount_socialapp',
+            'socialaccount_socialtoken',
         ],
         'part_category': [
             'part_partcategory',
@@ -213,7 +218,10 @@ class RuleSet(models.Model):
                     return True
 
         # Print message instead of throwing an error
-        logger.info(f"User '{user.name}' failed permission check for {table}.{permission}")
+        name = getattr(user, 'name', user.pk)
+
+        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+
         return False
 
     @staticmethod

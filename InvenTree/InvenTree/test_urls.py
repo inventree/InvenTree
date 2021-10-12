@@ -111,6 +111,10 @@ class URLTest(TestCase):
         if url.startswith("admin:"):
             return
 
+        # TODO can this be more elegant?
+        if url.startswith("account_"):
+            return
+
         if pk:
             # We will assume that there is at least one item in the database
             reverse(url, kwargs={"pk": 1})
