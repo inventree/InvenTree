@@ -24,6 +24,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from jinja2 import Template
+
 from markdownx.models import MarkdownxField
 
 from django_cleanup import cleanup
@@ -39,6 +41,7 @@ from datetime import datetime
 import hashlib
 from djmoney.contrib.exchange.models import convert_money
 from common.settings import currency_code_default
+from common.models import InvenTreeSetting
 
 from InvenTree import helpers
 from InvenTree import validators
@@ -556,7 +559,7 @@ class Part(MPTTModel):
 
     @property
     def full_name(self):
-        """ Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in part.settings file
+        """ Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings
 
         As a failsafe option, the following is done
 
@@ -567,26 +570,13 @@ class Part(MPTTModel):
         Elements are joined by the | character
         """
 
-        full_name = part_settings.PART_NAME_FORMAT
-        field_parser_regex_pattern = re.compile('{.*?}')
-        field_regex_pattern = re.compile('(?<=part\\.)[A-z]*')
+        # Add default_if_none to every jinja template variable
+        full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
 
         try:
-
-            for field_parser in field_parser_regex_pattern.findall(part_settings.PART_NAME_FORMAT):
-
-                # Each parser should contain a single field
-                field_name = field_regex_pattern.findall(field_parser)[0]
-                field_value = getattr(self, field_name)
-
-                if field_value:
-                    # replace the part.$field with field's value and remove the braces
-                    parsed_value = field_parser.replace(f'part.{field_name}', field_value)[1:-1]
-                    full_name = full_name.replace(field_parser, parsed_value)
-
-                else:
-                    # remove the field parser in full name
-                    full_name = full_name.replace(field_parser, '')
+            context = {'part': self}
+            template_string = Template(full_name_pattern)
+            full_name = template_string.render(context)
 
             return full_name
 

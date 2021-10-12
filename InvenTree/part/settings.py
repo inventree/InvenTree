@@ -62,13 +62,3 @@ def part_trackable_default():
     """
 
     return InvenTreeSetting.get_setting('PART_TRACKABLE')
-
-
-# CONSTANTS
-
-# Every brace pair is a field parser within which a field name of part has to be defined in the format part.$field_name
-# When full name is constructed, It would be replaced by its value from the database and if the value is None,
-# the entire field_parser i.e {.*} would be replaced with ''.
-# Other characters inside and between the brace pairs would be copied as is.
-PART_NAME_FORMAT = '{part.IPN | }{part.name}{ | part.revision}'
-
