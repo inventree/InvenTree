@@ -9,6 +9,9 @@ ARG tag=""
 
 ENV PYTHONUNBUFFERED 1
 
+# Ref: https://github.com/pyca/cryptography/issues/5776
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
+
 # InvenTree key settings
 
 # The INVENTREE_HOME directory is where the InvenTree source repository will be located
@@ -70,7 +73,7 @@ RUN apk add --no-cache git make bash \
     # MySQL/MariaDB support
     mariadb-connector-c mariadb-dev mariadb-client \
     # Required for python cryptography support
-    rust cargo
+    openssl-dev musl-dev libffi-dev rust cargo
 
 # Install required base-level python packages
 COPY requirements.txt requirements.txt
