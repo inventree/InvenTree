@@ -136,3 +136,25 @@ class SettingsViewTest(TestCase):
         for value in [False, 'False']:
             self.post(url, {'value': value}, valid=True)
             self.assertFalse(InvenTreeSetting.get_setting('PART_COMPONENT'))
+
+    def test_part_name_format(self):
+        """
+        Try posting some valid and invalid name formats for PART_NAME_FORMAT
+        """
+        setting = InvenTreeSetting.get_setting_object('PART_NAME_FORMAT')
+
+        # test default value
+        self.assertEqual(setting.value, "{{ part.IPN if part.IPN }} {{ '|' if part.IPN }} {{ part.name }} "
+                                        "{{ '|' if part.revision }} {{ part.revision }}")
+
+        url = self.get_url(setting.pk)
+
+        # Try posting an invalid part name  format
+        invalid_values = ['{{asset.IPN}}', '{{part}}', '{{"|"}}']
+        for invalid_value in invalid_values:
+            self.post(url, {'value': invalid_value}, valid=False)
+
+        # try posting valid value
+        new_format = "{{ part.name if part.name }} {{ ' with revision ' if part.revision }} {{ part.revision }}"
+        self.post(url, {'value': new_format}, valid=True)
+
