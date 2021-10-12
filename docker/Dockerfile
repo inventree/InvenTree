@@ -54,6 +54,8 @@ LABEL org.label-schema.schema-version="1.0" \
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 
+RUN apk -U upgrade
+
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
