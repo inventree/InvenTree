@@ -157,4 +157,3 @@ class SettingsViewTest(TestCase):
         # try posting valid value
         new_format = "{{ part.name if part.name }} {{ ' with revision ' if part.revision }} {{ part.revision }}"
         self.post(url, {'value': new_format}, valid=True)
-
