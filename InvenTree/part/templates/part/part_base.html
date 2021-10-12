@@ -10,11 +10,6 @@
 
 {% block content %}
 
-{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
-{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
-{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
-{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
-
 <div class="panel panel-default panel-inventree">
     <!-- Default panel contents -->
     <div class="panel-heading"><h3>{{ part.full_name }}</h3></div>
@@ -85,12 +80,10 @@
                     </div>
                     {% endif %}
                     {% if part.active %}
-                    {% if enable_buy or enable_sell  %}
                     <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
                         <span id='part-price-icon' class='fas fa-dollar-sign'/>
                     </button>
-                    {% endif %}
-                    {% if roles.stock.change and enable_stock %}
+                    {% if roles.stock.change %}
                     <div class='btn-group'>
                         <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
                             <span class='fas fa-boxes'></span> <span class='caret'></span>
@@ -112,11 +105,9 @@
                     </div>
                     {% endif %}
                     {% if part.purchaseable and roles.purchase_order.add %}
-                    {% if enable_buy and enable_po %}
                     <button type='button' class='btn btn-default' id='part-order' title='{% trans "Order part" %}'>
                         <span id='part-order-icon' class='fas fa-shopping-cart'/>
                     </button>
-                    {% endif %}
                     {% endif %}
                     {% endif %}
                     <!-- Part actions -->
