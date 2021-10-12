@@ -2613,6 +2613,36 @@ class BomItem(models.Model):
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
 
 
+class BomItemSubstitute(models.Model):
+    """
+    A BomItemSubstitute provides a specification for alternative parts,
+    which can be used in a bill of materials.
+
+    Attributes:
+        bom_item: Link to the parent BomItem instance
+        part: The part which can be used as a substitute
+    """
+
+    bom_item = models.ForeignKey(
+        BomItem,
+        on_delete=models.CASCADE,
+        related_name='substitutes',
+        verbose_name=_('BOM Item'),
+        help_text=_('Parent BOM item'),
+    )
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='substitute_items',
+        verbose_name=_('Part'),
+        help_text=_('Substitute part'),
+        limit_choices_to={
+            'component': True,
+        }
+    )
+
+
 class PartRelated(models.Model):
     """ Store and handle related parts (eg. mating connector, crimps, etc.) """
 
