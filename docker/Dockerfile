@@ -75,6 +75,9 @@ RUN apk add --no-cache git make bash \
     # Required for python cryptography support
     openssl-dev musl-dev libffi-dev rust cargo
 
+# Update pip
+RUN pip install --upgrade pip
+
 # Install required base-level python packages
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -U -r requirements.txt
@@ -133,4 +136,3 @@ ENTRYPOINT ["/bin/bash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
-
