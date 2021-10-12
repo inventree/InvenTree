@@ -72,7 +72,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Remove any HTTP methods that the user does not have permission for
                 for method, permission in rolemap.items():
-                    if method in actions and not check(user, table, permission):
+
+                    result = check(user, table, permission)
+
+                    if method in actions and not result:
                         del actions[method]
 
                 # Add a 'DELETE' action if we are allowed to delete
