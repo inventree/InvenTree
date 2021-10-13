@@ -1025,7 +1025,7 @@ class BomItemTest(InvenTreeAPITestCase):
                 )
 
             # Keep track of running total
-            n_items += jj
+            n_items += ii
 
             # Now, there should be more stock items available!
             response = self.get(
