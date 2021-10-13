@@ -462,12 +462,9 @@ $("#btn-auto-allocate").on('click', function() {
 });
 
 $('#btn-unallocate').on('click', function() {
-    launchModalForm(
-        "{% url 'build-unallocate' build.id %}",
-        {
-            success: reloadTable,
-        }
-    );
+    unallocateStock({{ build.id }}, {
+        table: '#allocation-table-untracked',
+    });
 });
 
 $('#allocate-selected-items').click(function() {

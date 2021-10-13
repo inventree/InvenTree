@@ -587,9 +587,13 @@ class Build(MPTTModel):
         self.save()
 
     @transaction.atomic
-    def unallocateOutput(self, output, part=None):
+    def unallocateStock(self, bom_item=None, output=None):
         """
-        Unallocate all stock which are allocated against the provided "output" (StockItem)
+        Unallocate stock from this Build
+
+        arguments:
+            - bom_item: Specify a particular BomItem to unallocate stock against
+            - output: Specify a particular StockItem (output) to unallocate stock against
         """
 
         allocations = BuildItem.objects.filter(
@@ -597,34 +601,8 @@ class Build(MPTTModel):
             install_into=output
         )
 
-        if part:
-            allocations = allocations.filter(stock_item__part=part)
-
-        allocations.delete()
-
-    @transaction.atomic
-    def unallocateUntracked(self, part=None):
-        """
-        Unallocate all "untracked" stock
-        """
-
-        allocations = BuildItem.objects.filter(
-            build=self,
-            install_into=None
-        )
-
-        if part:
-            allocations = allocations.filter(stock_item__part=part)
-
-        allocations.delete()
-
-    @transaction.atomic
-    def unallocateAll(self):
-        """
-        Deletes all stock allocations for this build.
-        """
-
-        allocations = BuildItem.objects.filter(build=self)
+        if bom_item:
+            allocations = allocations.filter(bom_item=bom_item)
 
         allocations.delete()
 
