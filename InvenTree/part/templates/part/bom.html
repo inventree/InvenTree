@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% if roles.part.change != True and editing_enabled %}
+{% if not roles.part.change %}
     <div class='alert alert-danger alert-block'>
         {% trans "You do not have permission to edit the BOM." %}
     </div>
@@ -23,7 +23,7 @@
 
 <div id='bom-button-toolbar'>
     <div class="btn-group" role="group" aria-label="...">
-        {% if editing_enabled %}
+        {% if roles.part.change %}
         <button class='btn btn-default' type='button' title='{% trans "Remove selected BOM items" %}' id='bom-item-delete'>
             <span class='fas fa-trash-alt icon-red'></span>
         </button>
@@ -35,16 +35,8 @@
             <span class='fas fa-clone'></span>
         </button>
         {% endif %}
-        <button class='btn btn-default' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+        <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
             <span class='fas fa-plus-circle'></span>
-        </button>
-        <button class='btn btn-success' type='button' title='{% trans "Finish Editing" %}' id='editing-finished'>
-            <span class='fas fa-check-circle'></span>
-        </button>
-        {% elif part.active %}
-        {% if roles.part.change %}
-        <button class='btn btn-primary' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'>
-            <span class='fas fa-edit'></span>
         </button>
         {% if part.is_bom_valid == False %}
         <button class='btn btn-success' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'>
@@ -67,4 +59,3 @@
 
 <table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>
 </table>
-{% endif %}
