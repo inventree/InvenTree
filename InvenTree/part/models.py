@@ -2623,6 +2623,10 @@ class BomItemSubstitute(models.Model):
         part: The part which can be used as a substitute
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-bom-substitute-list')
+
     bom_item = models.ForeignKey(
         BomItem,
         on_delete=models.CASCADE,
