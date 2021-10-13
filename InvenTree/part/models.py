@@ -2623,6 +2623,26 @@ class BomItemSubstitute(models.Model):
         part: The part which can be used as a substitute
     """
 
+    class Meta:
+        verbose_name = _("BOM Item Substitute")
+
+        # Prevent duplication of substitute parts
+        unique_together = ('part', 'bom_item')
+
+    def validate_unique(self, exclude=None):
+        """
+        Ensure that this BomItemSubstitute is "unique":
+
+        - It cannot point to the same "part" as the "sub_part" of the parent "bom_item"
+        """
+
+        super().validate_unique(exclude=exclude)
+
+        if self.part == self.bom_item.sub_part:
+            raise ValidationError({
+                "part": _("Substitute part cannot be the same as the master part"),
+            })
+
     @staticmethod
     def get_api_url():
         return reverse('api-bom-substitute-list')

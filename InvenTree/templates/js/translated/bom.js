@@ -213,11 +213,16 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
     constructForm('{% url "api-bom-substitute-list" %}', {
         method: 'POST',
         fields: {
+            bom_item: {
+                hidden: true,
+                value: bom_item_id,
+            },
             part: {
                 required: false,
             },
         },
         preFormContent: html,
+        cancelText: '{% trans "Close" %}',
         submitText: '{% trans "Add Substitute" %}',
         title: '{% trans "Edit BOM Item Substitutes" %}',
         afterRender: function(fields, opts) {
@@ -243,8 +248,22 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 });
             });
         },
-        onSubmit: function(fields, opts) {
-            // TODO
+        preventClose: true,
+        onSuccess: function(response, opts) {
+
+            // Clear the form
+            var field = {
+                type: 'related field',
+            };
+
+            updateFieldValue('part', null, field, opts);
+
+            // Add the new substitute to the table
+            var row = renderSubstituteRow(response);
+            $(opts.modal).find('#substitute-table > tbody:last-child').append(row);
+
+            // Re-enable the "submit" button
+            $(opts.modal).find('#modal-form-submit').prop('disabled', false);
         }
     });
 
