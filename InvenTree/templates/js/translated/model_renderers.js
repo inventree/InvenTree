@@ -159,21 +159,25 @@ function renderPart(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    var stock = '';
+    var extra = '';
 
     // Display available part quantity
     if (user_settings.PART_SHOW_QUANTITY_IN_FORMS) {
         if (data.in_stock == 0) {
-            stock = `<span class='label-form label-red'>{% trans "No Stock" %}</span>`;
+            extra += `<span class='label-form label-red'>{% trans "No Stock" %}</span>`;
         } else {
-            stock = `<span class='label-form label-green'>{% trans "In Stock" %}: ${data.in_stock}</span>`;
+            extra += `<span class='label-form label-green'>{% trans "Stock" %}: ${data.in_stock}</span>`;
         }
+    }
+
+    if (!data.active) {
+        extra += `<span class='label-form label-red'>{% trans "Inactive" %}</span>`;
     }
 
     html += `
     <span class='float-right'>
         <small>
-            ${stock}
+            ${extra}
             {% trans "Part ID" %}: ${data.pk}
             </small>
     </span>`;

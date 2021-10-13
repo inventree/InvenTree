@@ -143,6 +143,93 @@ function newPartFromBomWizard(e) {
 }
 
 
+/*
+ * Launch a modal dialog displaying the "substitute parts" for a particular BomItem
+ *
+ * If editable, allows substitutes to be added and deleted
+ */
+function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
+
+    function renderSubstituteRow(substitute) {
+
+        var pk = substitute.pk;
+
+        var thumb = thumbnailImage(substitute.part_detail.thumbnail || substitute.part_detail.image);
+
+        var buttons = '';
+
+        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove substitute part" %}');
+
+        // Render a single row
+        var html = `
+        <tr id='substitute-${pk}' class='substitute-row'>
+            <td id='part-${pk}'>${thumb} ${substitute.part_detail.full_name}</td>
+            <td id='description-${pk}'><em>${substitute.part_detail.description}</em></td>
+            <td>${buttons}</td>
+        </tr>
+        `;
+
+        return html;
+    }
+
+    // Construct a table to render the rows
+    var rows = '';
+
+    substitutes.forEach(function(sub) {
+        rows += renderSubstituteRow(sub);
+    });
+
+    var html = ``;
+
+    if (substitutes.length > 0) {
+        html += `
+        <table class='table table-striped table-condensed' id='substitute-table'>
+            <thead>
+                <tr>
+                    <th>{% trans "Part" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th><!-- Actions --></th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+        `;
+    } else {
+        html += `
+        <div class='alert alert-block alert-info'>
+            <em>{% trans "There are no substitue parts specified for this BOM line item" %}</em>
+        </div>
+        `;
+    }
+
+    html += `
+    <div class='alert alert-success alert-block'>
+        {% trans "Select and add a new variant item using the input below" %}
+    </div>
+    `;
+
+    constructForm('{% url "api-bom-substitute-list" %}', {
+        method: 'POST',
+        fields: {
+            part: {
+                required: false,
+            },
+        },
+        preFormContent: html,
+        title: '{% trans "Edit BOM Item Substitutes" %}',
+        afterRender: function(fields, opts) {
+            // TODO
+        },
+        onSubmit: function(fields, opts) {
+            // TODO
+        }
+    });
+
+}
+
+
 function loadBomTable(table, options) {
     /* Load a BOM table with some configurable options.
      * 
@@ -311,10 +398,10 @@ function loadBomTable(table, options) {
         searchable: false,
         sortable: true,
         formatter: function(value, row) {
-            if (row.substitutes) {
+            if (row.substitutes && row.substitutes.length > 0) {
                 return row.substitutes.length;
             } else {
-                return '-';
+                return `-`;
             }
         }
     });
@@ -438,24 +525,27 @@ function loadBomTable(table, options) {
 
                 if (row.part == options.parent_id) {
 
-                    var bValidate = `<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-check-circle icon-blue'/></button>`;
+                    var bValidate = makeIconButton('fa-check-circle icon-green', 'bom-validate-button', row.pk, '{% trans "Validate BOM Item" %}');
 
                     var bValid = `<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>`;
 
-                    var bEdit = `<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-edit'></span></button>`;
+                    var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% trans "Edit substitute parts" %}');
 
-                    var bDelt = `<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
+                    var bEdit = makeIconButton('fa-edit icon-blue', 'bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
 
-                    var html = `<div class='btn-group' role='group'>`;
+                    var bDelt = makeIconButton('fa-trash-alt icon-red', 'bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
 
-                    html += bEdit;
-                    html += bDelt;
+                    var html = `<div class='btn-group float-right' role='group' style='min-width: 100px;'>`;
 
                     if (!row.validated) {
                         html += bValidate;
                     } else {
                         html += bValid;
                     }
+
+                    html += bEdit;
+                    html += bSubs;
+                    html += bDelt;
 
                     html += `</div>`;
 
@@ -508,6 +598,7 @@ function loadBomTable(table, options) {
         treeEnable: !options.editable,
         rootParentId: parent_id,
         idField: 'pk',
+        uniqueId: 'pk',
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
@@ -584,19 +675,27 @@ function loadBomTable(table, options) {
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {
 
+        // Callback for "delete" button
         table.on('click', '.bom-delete-button', function() {
 
             var pk = $(this).attr('pk');
 
+            var html = `
+            <div class='alert alert-block alert-danger'>
+            {% trans "Are you sure you want to delete this BOM item?" %}
+            </div>`;
+
             constructForm(`/api/bom/${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete BOM Item" %}',
+                preFormContent: html,
                 onSuccess: function() {
                     reloadBomTable(table);
                 }
             }); 
         });
 
+        // Callback for "edit" button
         table.on('click', '.bom-edit-button', function() {
 
             var pk = $(this).attr('pk');
@@ -613,6 +712,7 @@ function loadBomTable(table, options) {
             });
         });
 
+        // Callback for "validate" button
         table.on('click', '.bom-validate-button', function() {
 
             var pk = $(this).attr('pk');
@@ -628,6 +728,22 @@ function loadBomTable(table, options) {
                     success: function() {
                         reloadBomTable(table);
                     }
+                }
+            );
+        });
+
+        // Callback for "substitutes" button
+        table.on('click', '.bom-substitutes-button', function() {
+            var pk = $(this).attr('pk');
+
+            var row = table.bootstrapTable('getRowByUniqueId', pk);
+            var subs = row.substitutes || [];
+
+            bomSubstitutesDialog(
+                pk,
+                subs,
+                {
+
                 }
             );
         });
