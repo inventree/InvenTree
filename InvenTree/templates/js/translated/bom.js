@@ -150,6 +150,13 @@ function newPartFromBomWizard(e) {
  */
 function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
+    // Reload data for the parent table
+    function reloadParentTable() {
+        if (options.table) {
+            options.table.bootstrapTable('refresh');
+        }
+    }
+
     function renderSubstituteRow(substitute) {
 
         var pk = substitute.pk;
@@ -244,6 +251,8 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                     confirm: true,
                     onSuccess: function() {
                         $(opts.modal).find(`#substitute-row-${pk}`).remove();
+
+                        reloadParentTable();
                     }
                 });
             });
@@ -264,6 +273,9 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
             // Re-enable the "submit" button
             $(opts.modal).find('#modal-form-submit').prop('disabled', false);
+            
+            // Reload the parent BOM table
+            reloadParentTable();
         }
     });
 
@@ -783,7 +795,7 @@ function loadBomTable(table, options) {
                 pk,
                 subs,
                 {
-
+                    table: table,
                 }
             );
         });
