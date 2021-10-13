@@ -726,8 +726,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'PART_NAME_FORMAT': {
             'name': _('Part Name Display Format'),
             'description': _('Format to display the part name'),
-            'default': "{{ part.IPN if part.IPN }} {{ '|' if part.IPN }} {{ part.name }} {{ '|' if part.revision }}"
-                       " {{ part.revision }}",
+            'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
+                       "{{ part.revision if part.revision }}",
             'validator': validate_part_name_format
         },
 

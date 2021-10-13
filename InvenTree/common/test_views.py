@@ -144,8 +144,8 @@ class SettingsViewTest(TestCase):
         setting = InvenTreeSetting.get_setting_object('PART_NAME_FORMAT')
 
         # test default value
-        self.assertEqual(setting.value, "{{ part.IPN if part.IPN }} {{ '|' if part.IPN }} {{ part.name }} "
-                                        "{{ '|' if part.revision }} {{ part.revision }}")
+        self.assertEqual(setting.value, "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}"
+                                        "{{ ' | ' if part.revision }}{{ part.revision if part.revision }}")
 
         url = self.get_url(setting.pk)
 
