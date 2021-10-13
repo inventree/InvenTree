@@ -35,6 +35,7 @@ python-barcode[images]==0.13.1  # Barcode generator
 qrcode[pil]==6.1                # QR code generator
 django-q==1.3.4                 # Background task scheduling
 django-formtools==2.3           # Form wizard tools
+cryptography==3.4.8             # Cryptography support
 django-allauth==0.45.0          # SSO for external providers via OpenID
 
 inventree                       # Install the latest version of the InvenTree API python library
