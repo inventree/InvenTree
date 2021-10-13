@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import PIL
 
@@ -11,7 +12,8 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
 
 from part.models import Part, PartCategory
-from stock.models import StockItem
+from part.models import BomItem, BomItemSubstitute
+from stock.models import StockItem, StockLocation
 from company.models import Company
 from common.models import InvenTreeSetting
 
@@ -272,53 +274,6 @@ class PartAPITest(InvenTreeAPITestCase):
         # Now there should be 5 total parts
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
-
-    def test_get_bom_list(self):
-        """ There should be 4 BomItem objects in the database """
-        url = reverse('api-bom-list')
-        response = self.client.get(url, format='json')
-        self.assertEqual(len(response.data), 5)
-
-    def test_get_bom_detail(self):
-        # Get the detail for a single BomItem
-        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(int(float(response.data['quantity'])), 25)
-
-        # Increase the quantity
-        data = response.data
-        data['quantity'] = 57
-        data['note'] = 'Added a note'
-
-        response = self.client.patch(url, data, format='json')
-
-        # Check that the quantity was increased and a note added
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(int(float(response.data['quantity'])), 57)
-        self.assertEqual(response.data['note'], 'Added a note')
-
-    def test_add_bom_item(self):
-        url = reverse('api-bom-list')
-
-        data = {
-            'part': 100,
-            'sub_part': 4,
-            'quantity': 777,
-        }
-
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # Now try to create a BomItem which points to a non-assembly part (should fail)
-        data['part'] = 3
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        # TODO - Now try to create a BomItem which references itself
-        data['part'] = 2
-        data['sub_part'] = 2
-        response = self.client.post(url, data, format='json')
 
     def test_test_templates(self):
 
@@ -924,6 +879,249 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         self.assertEqual(data['in_stock'], 1100)
         self.assertEqual(data['stock_item_count'], 105)
+
+
+class BomItemTest(InvenTreeAPITestCase):
+    """
+    Unit tests for the BomItem API
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock',
+        'bom',
+        'company',
+    ]
+
+    roles = [
+        'part.add',
+        'part.change',
+        'part.delete',
+    ]
+
+    def setUp(self):
+        super().setUp()
+
+    def test_bom_list(self):
+        """
+        Tests for the BomItem list endpoint
+        """
+
+        # How many BOM items currently exist in the database?
+        n = BomItem.objects.count()
+        
+        url = reverse('api-bom-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), n)
+
+        # Now, filter by part
+        response = self.get(
+            url,
+            data={
+                'part': 100,
+            },
+            expected_code=200
+        )
+
+        print("results:", len(response.data))
+
+    def test_get_bom_detail(self):
+        """
+        Get the detail view for a single BomItem object
+        """
+
+        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(int(float(response.data['quantity'])), 25)
+
+        # Increase the quantity
+        data = response.data
+        data['quantity'] = 57
+        data['note'] = 'Added a note'
+
+        response = self.patch(url, data, expected_code=200)
+
+        self.assertEqual(int(float(response.data['quantity'])), 57)
+        self.assertEqual(response.data['note'], 'Added a note')
+
+    def test_add_bom_item(self):
+        """
+        Test that we can create a new BomItem via the API
+        """
+
+        url = reverse('api-bom-list')
+
+        data = {
+            'part': 100,
+            'sub_part': 4,
+            'quantity': 777,
+        }
+
+        self.post(url, data, expected_code=201)
+        
+        # Now try to create a BomItem which references itself
+        data['part'] = 100
+        data['sub_part'] = 100
+        self.client.post(url, data, expected_code=400)
+
+    def test_variants(self):
+        """
+        Tests for BomItem use with variants
+        """
+
+        stock_url = reverse('api-stock-list')
+
+        # BOM item we are interested in
+        bom_item = BomItem.objects.get(pk=1)
+
+        bom_item.allow_variants = True
+        bom_item.save()
+
+        # sub part that the BOM item points to
+        sub_part = bom_item.sub_part
+
+        sub_part.is_template = True
+        sub_part.save()
+
+        # How many stock items are initially available for this part?
+        response = self.get(
+            stock_url,
+            {
+                'bom_item': bom_item.pk,
+            },
+            expected_code=200
+        )
+
+        n_items = len(response.data)
+        self.assertEqual(n_items, 2)
+
+        loc = StockLocation.objects.get(pk=1)
+
+        # Now we will create some variant parts and stock
+        for ii in range(5):
+            
+            # Create a variant part!
+            variant = Part.objects.create(
+                name=f"Variant_{ii}",
+                description="A variant part",
+                component=True,
+                variant_of=sub_part
+            )
+
+            variant.save()
+
+            Part.objects.rebuild()
+
+            # Create some stock items for this new part
+            for jj in range(ii):
+                StockItem.objects.create(
+                    part=variant,
+                    location=loc,
+                    quantity=100
+                )
+
+            # Keep track of running total
+            n_items += jj
+
+            # Now, there should be more stock items available!
+            response = self.get(
+                stock_url,
+                {
+                    'bom_item': bom_item.pk,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), n_items)
+
+        # Now, disallow variant parts in the BomItem
+        bom_item.allow_variants = False
+        bom_item.save()
+
+        # There should now only be 2 stock items available again
+        response = self.get(
+            stock_url,
+            {
+                'bom_item': bom_item.pk,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 2)
+
+    def test_substitutes(self):
+        """
+        Tests for BomItem substitutes
+        """
+
+        url = reverse('api-bom-substitute-list')
+        stock_url = reverse('api-stock-list')
+
+        # Initially we have no substitute parts
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        # BOM item we are interested in
+        bom_item = BomItem.objects.get(pk=1)
+
+        # Filter stock items which can be assigned against this stock item
+        response = self.get(
+            stock_url,
+            {
+                "bom_item": bom_item.pk,
+            },
+            expected_code=200
+        )
+
+        n_items = len(response.data)
+
+        loc = StockLocation.objects.get(pk=1)
+
+        # Let's make some!
+        for ii in range(5):
+            sub_part = Part.objects.create(
+                name=f"Substitute {ii}",
+                description="A substitute part",
+                component=True,
+                is_template=False,
+                assembly=False
+            )
+
+            # Create a new StockItem for this Part
+            StockItem.objects.create(
+                part=sub_part,
+                quantity=1000,
+                location=loc,
+            )
+
+            # Now, create an "alternative" for the BOM Item
+            BomItemSubstitute.objects.create(
+                bom_item=bom_item,
+                part=sub_part
+            )
+
+            # We should be able to filter the API list to just return this new part
+            response = self.get(url, data={'part': sub_part.pk}, expected_code=200)
+            self.assertEqual(len(response.data), 1)
+
+            # We should also have more stock available to allocate against this BOM item!
+            response = self.get(
+                stock_url,
+                {
+                    "bom_item": bom_item.pk,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), n_items + ii + 1)
+
+        # There should now be 5 substitute parts available in the database
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 5)
 
 
 class PartParameterTest(InvenTreeAPITestCase):

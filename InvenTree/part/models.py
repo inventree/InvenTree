@@ -2337,18 +2337,29 @@ class BomItem(models.Model):
         """
         Return a queryset filter for selecting StockItems which match this BomItem
 
+        - Allow stock from all directly specified substitute parts
         - If allow_variants is True, allow all part variants
 
         """
 
-        # Target part
-        part = self.sub_part
+        # List of parts we allow
+        part_ids = set()
 
+        part_ids.add(self.sub_part.pk)
+
+        # Variant parts (if allowed)
         if self.allow_variants:
-            variants = part.get_descendants(include_self=True)
-            return Q(part__in=[v.pk for v in variants])
-        else:
-            return Q(part=part)
+            variants = self.sub_part.get_descendants(include_self=False)
+
+            for v in variants:
+                part_ids.add(v.pk)
+
+        # Direct substitute parts
+        for sub in self.substitutes.all():
+            part_ids.add(sub.part.pk)
+
+        # Return a list of Part ID values which can be filtered against
+        return Q(part__in=[pk for pk in part_ids])
 
     def save(self, *args, **kwargs):
 
