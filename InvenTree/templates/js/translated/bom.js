@@ -300,6 +300,20 @@ function loadBomTable(table, options) {
             return renderLink(text, url);
         }
     });
+
+    cols.push({
+        field: 'substitutes',
+        title: '{% trans "Substitutes" %}',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row) {
+            if (row.substitutes) {
+                return row.substitutes.length;
+            } else {
+                return '-';
+            }
+        }
+    });
     
     if (show_pricing) {
         cols.push({
