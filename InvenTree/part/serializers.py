@@ -389,13 +389,17 @@ class PartStarSerializer(InvenTreeModelSerializer):
 
 
 class BomItemSerializer(InvenTreeModelSerializer):
-    """ Serializer for BomItem object """
+    """
+    Serializer for BomItem object
+    """
 
     price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
+
+    substitutes = PartBriefSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -515,6 +519,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'reference',
             'sub_part',
             'sub_part_detail',
+            'substitutes',
             'price_range',
             'validated',
         ]
