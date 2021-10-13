@@ -1078,11 +1078,23 @@ class BomList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
-        if request.is_ajax():
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -1147,7 +1159,9 @@ class BomList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
-        include_pricing = str2bool(params.get('include_pricing', True))
+        pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
+
+        include_pricing = str2bool(params.get('include_pricing', pricing_default))
 
         if include_pricing:
             queryset = self.annotate_pricing(queryset)
