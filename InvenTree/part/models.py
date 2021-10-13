@@ -569,7 +569,6 @@ class Part(MPTTModel):
         Elements are joined by the | character
         """
 
-        # Add default_if_none to every jinja template variable
         full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
 
         try:
