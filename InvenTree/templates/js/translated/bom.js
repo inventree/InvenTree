@@ -192,36 +192,50 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
         rows += renderSubstituteRow(sub);
     });
 
-    var html = ``;
-
-    if (substitutes.length > 0) {
-        html += `
-        <table class='table table-striped table-condensed' id='substitute-table'>
-            <thead>
-                <tr>
-                    <th>{% trans "Part" %}</th>
-                    <th>{% trans "Description" %}</th>
-                    <th><!-- Actions --></th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-        `;
-    } else {
-        html += `
-        <div class='alert alert-block alert-info'>
-            <em>{% trans "There are no substitue parts specified for this BOM line item" %}</em>
-        </div>
-        `;
-    }
+    var html = `
+    <table class='table table-striped table-condensed' id='substitute-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th><!-- Actions --></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rows}
+        </tbody>
+    </table>
+    `;
 
     html += `
     <div class='alert alert-success alert-block'>
         {% trans "Select and add a new variant item using the input below" %}
     </div>
     `;
+
+    // Add a callback to remove a row from the table
+    function addRemoveCallback(modal, element) {
+        $(modal).find(element).click(function() {
+            var pk = $(this).attr('pk');
+
+            var pre = `
+            <div class='alert alert-block alert-warning'>
+            {% trans "Are you sure you wish to remove this substitute part link?" %}
+            </div>
+            `;
+
+            constructForm(`/api/bom/substitute/${pk}/`, {
+                method: 'DELETE',
+                title: '{% trans "Remove Substitute Part" %}',
+                preFormContent: pre,
+                confirm: true,
+                onSuccess: function() {
+                    $(modal).find(`#substitute-row-${pk}`).remove();
+                    reloadParentTable();
+                }
+            });
+        });
+    }
 
     constructForm('{% url "api-bom-substitute-list" %}', {
         method: 'POST',
@@ -239,29 +253,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
         submitText: '{% trans "Add Substitute" %}',
         title: '{% trans "Edit BOM Item Substitutes" %}',
         afterRender: function(fields, opts) {
-
-            // Add a callback to remove individual rows
-            $(opts.modal).find('.button-row-remove').click(function() {
-                var pk = $(this).attr('pk');
-
-                var pre = `
-                <div class='alert alert-block alert-warning'>
-                {% trans "Are you sure you wish to remove this substitute part link?" %}
-                </div>
-                `;
-
-                constructForm(`/api/bom/substitute/${pk}/`, {
-                    method: 'DELETE',
-                    title: '{% trans "Remove Substitute Part" %}',
-                    preFormContent: pre,
-                    confirm: true,
-                    onSuccess: function() {
-                        $(opts.modal).find(`#substitute-row-${pk}`).remove();
-
-                        reloadParentTable();
-                    }
-                });
-            });
+            addRemoveCallback(opts.modal, '.button-row-remove');
         },
         preventClose: true,
         onSuccess: function(response, opts) {
@@ -276,6 +268,9 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             // Add the new substitute to the table
             var row = renderSubstituteRow(response);
             $(opts.modal).find('#substitute-table > tbody:last-child').append(row);
+
+            // Add a callback to the new button
+            addRemoveCallback(opts.modal, `#button-row-remove-${response.pk}`);
 
             // Re-enable the "submit" button
             $(opts.modal).find('#modal-form-submit').prop('disabled', false);
