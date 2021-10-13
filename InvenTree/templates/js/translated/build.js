@@ -738,7 +738,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     html += makePartIcons(row.sub_part_detail);
 
                     if (row.substitutes && row.substitutes.length > 0) {
-                        html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
+                        html += makeIconBadge('fa-exchange-alt', '{% trans "Substitute parts available" %}');
+                    }
+
+                    if (row.allow_variants) {
+                        html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
                     }
 
                     return html;

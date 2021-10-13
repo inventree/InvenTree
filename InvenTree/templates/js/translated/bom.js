@@ -378,6 +378,10 @@ function loadBomTable(table, options) {
                     html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
                 }
 
+                if (row.allow_variants) {
+                    html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                }
+
                 // Display an extra icon if this part is an assembly
                 if (sub_part.assembly) {
                     var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
