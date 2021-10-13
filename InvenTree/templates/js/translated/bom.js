@@ -162,7 +162,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
         // Render a single row
         var html = `
-        <tr id='substitute-${pk}' class='substitute-row'>
+        <tr id='substitute-row-${pk}' class='substitute-row'>
             <td id='part-${pk}'>${thumb} ${substitute.part_detail.full_name}</td>
             <td id='description-${pk}'><em>${substitute.part_detail.description}</em></td>
             <td>${buttons}</td>
@@ -218,9 +218,30 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             },
         },
         preFormContent: html,
+        submitText: '{% trans "Add Substitute" %}',
         title: '{% trans "Edit BOM Item Substitutes" %}',
         afterRender: function(fields, opts) {
-            // TODO
+
+            // Add a callback to remove individual rows
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                var pre = `
+                <div class='alert alert-block alert-warning'>
+                {% trans "Are you sure you wish to remove this substitute part link?" %}
+                </div>
+                `;
+
+                constructForm(`/api/bom/substitute/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Remove Substitute Part" %}',
+                    preFormContent: pre,
+                    confirm: true,
+                    onSuccess: function() {
+                        $(opts.modal).find(`#substitute-row-${pk}`).remove();
+                    }
+                });
+            });
         },
         onSubmit: function(fields, opts) {
             // TODO
