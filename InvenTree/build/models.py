@@ -1153,16 +1153,12 @@ class BuildItem(models.Model):
                 i) The sub_part points to the same part as the referenced StockItem
                 ii) The BomItem allows variants and the part referenced by the StockItem
                     is a variant of the sub_part referenced by the BomItem
+                iii) The Part referenced by the StockItem is a valid substitute for the BomItem
             """
 
             if self.build and self.build.part == self.bom_item.part:
 
-                # Check that the sub_part points to the stock_item (either directly or via a variant)
-                if self.bom_item.sub_part == self.stock_item.part:
-                    bom_item_valid = True
-
-                elif self.bom_item.allow_variants and self.stock_item.part in self.bom_item.sub_part.get_descendants(include_self=False):
-                    bom_item_valid = True
+                bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not bom_item_valid:

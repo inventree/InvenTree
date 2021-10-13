@@ -2333,6 +2333,38 @@ class BomItem(models.Model):
     def get_api_url():
         return reverse('api-bom-list')
 
+    def get_valid_parts_for_allocation(self):
+        """
+        Return a list of valid parts which can be allocated against this BomItem:
+
+        - Include the referenced sub_part
+        - Include any directly specvified substitute parts
+        - If allow_variants is True, allow all variants of sub_part
+        """
+
+        # Set of parts we will allow
+        parts = set()
+
+        parts.add(self.sub_part)
+
+        # Variant parts (if allowed)
+        if self.allow_variants:
+            for variant in self.sub_part.get_descendants(include_self=False):
+                parts.add(variant)
+
+        # Substitute parts
+        for sub in self.substitutes.all():
+            parts.add(sub.part)
+
+        return parts
+
+    def is_stock_item_valid(self, stock_item):
+        """
+        Check if the provided StockItem object is "valid" for assignment against this BomItem
+        """
+
+        return stock_item.part in self.get_valid_parts_for_allocation()
+
     def get_stock_filter(self):
         """
         Return a queryset filter for selecting StockItems which match this BomItem
@@ -2342,24 +2374,7 @@ class BomItem(models.Model):
 
         """
 
-        # List of parts we allow
-        part_ids = set()
-
-        part_ids.add(self.sub_part.pk)
-
-        # Variant parts (if allowed)
-        if self.allow_variants:
-            variants = self.sub_part.get_descendants(include_self=False)
-
-            for v in variants:
-                part_ids.add(v.pk)
-
-        # Direct substitute parts
-        for sub in self.substitutes.all():
-            part_ids.add(sub.part.pk)
-
-        # Return a list of Part ID values which can be filtered against
-        return Q(part__in=[pk for pk in part_ids])
+        return Q(part__in=[part.pk for part in self.get_valid_parts_for_allocation()])
 
     def save(self, *args, **kwargs):
 

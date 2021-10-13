@@ -348,6 +348,17 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         table = `#allocation-table-${outputId}`;
     }
 
+    // Filters
+    var filters = loadTableFilters('builditems');
+
+    var params = options.params || {};
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('builditems', $(table), options.filterTarget || null);
+
     // If an "output" is specified, then only "trackable" parts are allocated
     // Otherwise, only "untrackable" parts are allowed
     var trackable = ! !output;
@@ -726,6 +737,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     html += makePartIcons(row.sub_part_detail);
 
+                    if (row.substitutes && row.substitutes.length > 0) {
+                        html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
+                    }
+
                     return html;
                 }
             },
@@ -1021,12 +1036,12 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         filters: {
                             bom_item: bom_item.pk,
                             in_stock: true,
-                            part_detail: false,
+                            part_detail: true,
                             location_detail: true,
                         },
                         model: 'stockitem',
                         required: true,
-                        render_part_detail: false,
+                        render_part_detail: true,
                         render_location_detail: true,
                         auto_fill: true,
                         adjustFilters: function(filters) {
