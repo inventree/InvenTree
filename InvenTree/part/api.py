@@ -1281,7 +1281,6 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
-
 class BomItemSubstituteList(generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of BomItemSubstitute objects

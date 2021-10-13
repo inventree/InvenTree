@@ -2629,6 +2629,12 @@ class BomItemSubstitute(models.Model):
         # Prevent duplication of substitute parts
         unique_together = ('part', 'bom_item')
 
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
     def validate_unique(self, exclude=None):
         """
         Ensure that this BomItemSubstitute is "unique":

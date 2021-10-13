@@ -161,7 +161,9 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
         var pk = substitute.pk;
 
-        var thumb = thumbnailImage(substitute.part_detail.thumbnail || substitute.part_detail.image);
+        var part = substitute.part_detail;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
 
         var buttons = '';
 
@@ -170,8 +172,12 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
         // Render a single row
         var html = `
         <tr id='substitute-row-${pk}' class='substitute-row'>
-            <td id='part-${pk}'>${thumb} ${substitute.part_detail.full_name}</td>
-            <td id='description-${pk}'><em>${substitute.part_detail.description}</em></td>
+            <td id='part-${pk}'>
+                <a href='/part/${part.pk}/'>
+                    ${thumb} ${part.full_name}
+                </a>
+            </td>
+            <td id='description-${pk}'><em>${part.description}</em></td>
             <td>${buttons}</td>
         </tr>
         `;
