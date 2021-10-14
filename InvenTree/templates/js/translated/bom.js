@@ -157,6 +157,19 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
         }
     }
 
+    // Extract a list of all existing "substitute" id values
+    function getSubstituteIdValues(modal) {
+
+        var id_values = [];
+
+        $(modal).find('.substitute-row').each(function(el) {
+            var part = $(this).attr('part');
+            id_values.push(part);
+        });
+
+        return id_values;
+    }
+
     function renderSubstituteRow(substitute) {
 
         var pk = substitute.pk;
@@ -171,7 +184,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
         // Render a single row
         var html = `
-        <tr id='substitute-row-${pk}' class='substitute-row'>
+        <tr id='substitute-row-${pk}' class='substitute-row' part='${substitute.part}'>
             <td id='part-${pk}'>
                 <a href='/part/${part.pk}/'>
                     ${thumb} ${part.full_name}
@@ -246,6 +259,16 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             },
             part: {
                 required: false,
+                adjustFilters: function(query, opts) {
+
+                    var subs = getSubstituteIdValues(opts.modal);
+
+                    if (subs.length > 0) {
+                        query.exclude_id = subs;
+                    }
+
+                    return query;
+                }
             },
         },
         preFormContent: html,
