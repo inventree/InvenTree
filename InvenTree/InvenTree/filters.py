@@ -34,18 +34,47 @@ class InvenTreeOrderingFilter(OrderingFilter):
             Ordering fields should be mapped to separate fields
             """
 
-            for idx, field in enumerate(ordering):
+            ordering_initial = ordering
+            ordering = []
 
-                reverse = False
+            for field in ordering_initial:
+                
+                reverse = field.startswith('-')
 
-                if field.startswith('-'):
+                if reverse:
                     field = field[1:]
-                    reverse = True
 
+                # Are aliases defined for this field?
                 if field in aliases:
-                    ordering[idx] = aliases[field]
+                    alias = aliases[field]
+                else:
+                    alias = field
 
+                """
+                Potentially, a single field could be "aliased" to multiple field,
+                
+                (For example to enforce a particular ordering sequence)
+
+                e.g. to filter first by the integer value...
+
+                ordering_field_aliases = {
+                    "reference": ["integer_ref", "reference"]
+                }
+
+                """
+
+                if type(alias) is str:
+                    alias = [alias]
+                elif type(alias) in [list, tuple]:
+                    pass
+                else:
+                    # Unsupported alias type
+                    continue
+
+                for a in alias:
                     if reverse:
-                        ordering[idx] = '-' + ordering[idx]
+                        a = '-' + a
+
+                    ordering.append(a)
 
         return ordering

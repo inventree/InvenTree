@@ -1349,7 +1349,7 @@ function initializeRelatedField(field, fields, options) {
                 
                 // Allow custom run-time filter augmentation
                 if ('adjustFilters' in field) {
-                    query = field.adjustFilters(query);
+                    query = field.adjustFilters(query, options);
                 }
 
                 return query;
