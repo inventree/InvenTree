@@ -283,21 +283,24 @@ function setupFilterList(tableKey, table, target) {
 
     element.append(`<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-default filter-tag'><span class='fas fa-redo-alt'></span></button>`);
 
-    // If there are available filters, add them in!
-    if (filters.length > 0) {
-        element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
+    // If there are no filters defined for this table, exit now
+    if (jQuery.isEmptyObject(getAvailableTableFilters(tableKey))) {
+        return;
+    }
 
-        if (Object.keys(filters).length > 0) {
-            element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-trash-alt'></span></button>`);
-        }
+    // If there are filters currently "in use", add them in!
+    element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
 
-        for (var key in filters) {
-            var value = getFilterOptionValue(tableKey, key, filters[key]);
-            var title = getFilterTitle(tableKey, key);
-            var description = getFilterDescription(tableKey, key);
+    if (Object.keys(filters).length > 0) {
+        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-backspace icon-red'></span></button>`);
+    }
 
-            element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
-        }
+    for (var key in filters) {
+        var value = getFilterOptionValue(tableKey, key, filters[key]);
+        var title = getFilterTitle(tableKey, key);
+        var description = getFilterDescription(tableKey, key);
+
+        element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
 
     // Callback for reloading the table
