@@ -319,11 +319,11 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.isFullyAllocated(self.output_1))
         self.assertTrue(self.build.isFullyAllocated(self.output_2))
 
-        self.build.completeBuildOutput(self.output_1, None)
+        self.build.complete_build_output(self.output_1, None)
 
         self.assertFalse(self.build.can_complete)
 
-        self.build.completeBuildOutput(self.output_2, None)
+        self.build.complete_build_output(self.output_2, None)
 
         self.assertTrue(self.build.can_complete)
 

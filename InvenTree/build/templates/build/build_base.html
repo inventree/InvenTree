@@ -96,11 +96,6 @@ src="{% static 'img/blank_image.png' %}"
     </div>
     <!-- Build actions -->
     {% if roles.build.change %}
-    {% if build.active %}
-    <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
-        <span class='fas fa-paper-plane'></span>
-    </button>
-    {% endif %}
     <div class='btn-group'>
         <button id='build-options' title='{% trans "Build actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
             <span class='fas fa-tools'></span> <span class='caret'></span>
@@ -115,6 +110,11 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </ul>
     </div>
+    {% if build.active %}
+    <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
+        <span class='fas fa-check-circle'></span>
+    </button>
+    {% endif %}
     {% endif %}
 </div>
 {% endblock %}

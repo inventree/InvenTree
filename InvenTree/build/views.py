@@ -434,7 +434,7 @@ class BuildOutputComplete(AjaxUpdateView):
             stock_status = StockStatus.OK
 
         # Complete the build output
-        build.completeBuildOutput(
+        build.complete_build_output(
             output,
             self.request.user,
             location=location,

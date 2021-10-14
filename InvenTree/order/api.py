@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 from django.db.models import Q, F
+from django.shortcuts import get_object_or_404
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
@@ -232,24 +233,10 @@ class POReceive(generics.CreateAPIView):
         context = super().get_serializer_context()
 
         # Pass the purchase order through to the serializer for validation
-        context['order'] = self.get_order()
+        context['order'] = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
         context['request'] = self.request
 
         return context
-
-    def get_order(self):
-        """
-        Returns the PurchaseOrder associated with this API endpoint
-        """
-
-        pk = self.kwargs.get('pk', None)
-
-        try:
-            order = PurchaseOrder.objects.get(pk=pk)
-        except (PurchaseOrder.DoesNotExist, ValueError):
-            raise ValidationError(_("Matching purchase order does not exist"))
-        
-        return order
 
 
 class POLineItemFilter(rest_filters.FilterSet):

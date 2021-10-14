@@ -151,7 +151,7 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
         // Add a button to "complete" the particular build output
         html += makeIconButton(
-            'fa-check icon-green', 'button-output-complete', outputId,
+            'fa-check-circle icon-green', 'button-output-complete', outputId,
             '{% trans "Complete build output" %}',
             {
                 // disabled: true
