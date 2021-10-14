@@ -28,7 +28,7 @@ from mptt.exceptions import InvalidMove
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.validators import validate_build_order_reference
-from InvenTree.models import InvenTreeAttachment
+from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 import common.models
 
@@ -69,7 +69,7 @@ def get_next_build_number():
     return reference
 
 
-class Build(MPTTModel):
+class Build(MPTTModel, ReferenceIndexingMixin):
     """ A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -107,6 +107,8 @@ class Build(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
+
+        self.rebuild_reference_field()
 
         try:
             super().save(*args, **kwargs)
