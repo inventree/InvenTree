@@ -218,26 +218,21 @@
         <h4>{% trans "Incomplete Build Outputs" %}</h4>
     </div>
     <div class='panel-content'>
-        <div class='btn-group' role='group'>
-            {% if build.active %}
+        {% if build.active %}
+        <div class='btn-group' role='group' id='build-output-toolbar'>
             <button class='btn btn-primary' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
                 <span class='fas fa-plus-circle'></span> {% trans "Create New Output" %}
             </button>
-            {% endif %}
+
         </div>
 
-        {% if build.incomplete_outputs %}
         <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
             {% for item in build.incomplete_outputs %}
             {% include "build/allocation_card.html" with item=item tracked_items=build.has_tracked_bom_items %}
             {% endfor %}
         </div>
-        {% else %}
-        <div class='alert alert-block alert-info'>
-            <strong>{% trans "Create a new build output" %}</strong><br>
-            {% trans "No incomplete build outputs remain." %}<br>
-            {% trans "Create a new build output using the button above" %}
-        </div>
+        
+        <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
         {% endif %}
     </div>
     {% endif %}
@@ -321,7 +316,21 @@ var buildInfo = {
     {% if build.take_from %}
     source_location: {{ build.take_from.pk }},
     {% endif %}
+    {% if build.has_tracked_bom_items %}
+    tracked_parts: true,
+    {% else %}
+    tracked_parts: false,
+    {% endif %}
 };
+
+{% if build.active %}
+loadBuildOutputTable(
+    buildInfo,
+    {
+
+    }
+);
+{% endif %}
 
 {% for item in build.incomplete_outputs %}
 // Get the build output as a javascript object

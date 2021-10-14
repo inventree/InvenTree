@@ -108,9 +108,63 @@ function newBuildOrder(options={}) {
 }
 
 
+/*
+ * Construct a set of output buttons for a particular build output
+ */
+function makeBuildOutputButtons(output_id, build_info, options={}) {
+ 
+    var html = `<div class='btn-group float-right' role='group'>`;
+
+    // Tracked parts? Must be individually allocated
+    if (build_info.tracked_parts) {
+
+        // Add a button to allocate stock against this build output
+        html += makeIconButton(
+            'fa-sign-in-alt icon-blue',
+            'button-output-allocate',
+            output_id,
+            '{% trans "Allocate stock items to this build output" %}',
+        );
+
+        // Add a button to unallocate stock from this build output
+        html += makeIconButton(
+            'fa-minus-circle icon-red',
+            'build-output-unallocate',
+            output_id,
+            '{% trans "Unallocate stock from build output" %}',
+        );
+    }
+
+    // Add a button to "complete" this build output
+    html += makeIconButton(
+        'fa-check-circle icon-green',
+        'build-output-complete',
+        output_id,
+        '{% trans "Complete build output" %}',
+    )
+
+    // Add a button to "delete" this build output
+    html += makeIconButton(
+        'fa-trash-alt icon-red',
+        'button-output-delete',
+        output_id,
+        '{% trans "Delete build output" %}',
+    );
+
+    html += `</div>`;
+
+    return html;
+
+}
+
+
+// TODO "delete me"
+
 function makeBuildOutputActionButtons(output, buildInfo, lines) {
     /* Generate action buttons for a build output.
      */
+
+    var todo = "delete this function ok";
 
     var buildId = buildInfo.pk;
     var partId = buildInfo.part;
@@ -357,17 +411,110 @@ function loadBuildOrderAllocationTable(table, options={}) {
 }
 
 
+/*
+ * Display a "build output" table for a particular build.
+ *
+ * This displays a list of "active" (i.e. "in production") build outputs for a given build
+ * 
+ */
+function loadBuildOutputTable(build_info, options={}) {
+
+    var table = options.table || '#build-output-table';
+
+    var params = options.params || {};
+
+    // Mandatory query filters
+    params.part_detail = true;
+    params.is_building = true;
+    params.build = build_info.pk;
+
+    var filters = {};
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    // TODO: Initialize filter list
+
+    $(table).inventreeTable({
+        url: '{% url "api-stock-list" %}',
+        queryParams: filters,
+        original: params,
+        showColumns: true,
+        name: 'build-outputs',
+        sortable: true,
+        search: true,
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No active build outputs found" %}';
+        },
+        onPostBody: function() {
+            // TODO
+        },
+        columns: [
+            {
+                field: 'part',
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    var thumb = row.part_detail.thumbnail;
+
+                    return imageHoverIcon(thumb) + row.part_detail.full_name + makePartIcons(row.part_detail);
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+                formatter: function(value, row) {
+
+                    var url = `/stock/item/${row.pk}/`;
+
+                    var text = '';
+
+                    if (row.serial && row.quantity == 1) {
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    }
+
+                    return renderLink(text, url);
+                }
+            },
+            {
+                field: 'allocated',
+                title: '{% trans "Allocated" %}',
+                formatter: function(value, row) {
+                    return "TODO";
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                formatter: function(value, row) {
+                    return makeBuildOutputButtons(
+                        row.pk,
+                        build_info,
+                    );
+                }
+            }
+        ]
+    }); 
+}
+
+
+/*
+ * Display the "allocation table" for a particular build output.
+ * 
+ * This displays a table of required allocations for a particular build output
+ * 
+ * Args:
+ * - buildId: The PK of the Build object
+ * - partId: The PK of the Part object
+ * - output: The StockItem object which is the "output" of the build
+ * - options:
+ * -- table: The #id of the table (will be auto-calculated if not provided)
+ */
 function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
-    /*
-     * Load the "allocation table" for a particular build output.
-     * 
-     * Args:
-     * - buildId: The PK of the Build object
-     * - partId: The PK of the Part object
-     * - output: The StockItem object which is the "output" of the build
-     * - options:
-     * -- table: The #id of the table (will be auto-calculated if not provided)
-     */
+    
 
     var buildId = buildInfo.pk;
     var partId = buildInfo.part;

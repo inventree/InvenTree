@@ -5,12 +5,10 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.conf.urls import url, include
 
 from rest_framework import filters, generics
-from rest_framework.serializers import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters

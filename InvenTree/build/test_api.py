@@ -153,7 +153,7 @@ class BuildCompleteTest(BuildAPITest):
         self.assertEqual(self.build.completed, 0)
 
         # We shall complete 4 of these outputs
-        outputs = self.build.incomplete_outputs[0:4] 
+        outputs = self.build.incomplete_outputs[0:4]
 
         self.post(
             self.url,

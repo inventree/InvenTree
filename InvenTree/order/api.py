@@ -5,7 +5,6 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 from django.db.models import Q, F
 from django.shortcuts import get_object_or_404
@@ -14,7 +13,6 @@ from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 
 from InvenTree.filters import InvenTreeOrderingFilter
