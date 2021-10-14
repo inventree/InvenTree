@@ -31,7 +31,6 @@ def build_refs(apps, schema_editor):
         order.save()
 
     print(f" - Updated {n} PurchaseOrder objects")
-
     print("\n - Rebuilding reference field for SalesOrder model...")
 
     SalesOrder = apps.get_model('order', 'salesorder')
@@ -54,7 +53,6 @@ def build_refs(apps, schema_editor):
         order.save()
 
     print(f" - Updated {n} SalesOrder objects")
-
     print(f" - COMPLETE! -")
 
 

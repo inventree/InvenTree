@@ -534,6 +534,12 @@ class SalesOrder(Order):
 
         return queryset
 
+    def save(self, *args, **kwargs):
+
+        self.rebuild_reference_field()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
 
         prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
