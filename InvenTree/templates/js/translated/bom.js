@@ -263,6 +263,12 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
                     var subs = getSubstituteIdValues(opts.modal);
 
+                    // Also exclude the "master" part (if provided)
+                    if (options.sub_part) {
+                        subs.push(options.sub_part);
+                        console.log("sub_part:", options.sub_part);
+                    }
+
                     if (subs.length > 0) {
                         query.exclude_id = subs;
                     }
@@ -824,6 +830,7 @@ function loadBomTable(table, options) {
                 subs,
                 {
                     table: table,
+                    sub_part: row.sub_part,
                 }
             );
         });
