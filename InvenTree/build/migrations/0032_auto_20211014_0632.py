@@ -10,11 +10,7 @@ def build_refs(apps, schema_editor):
     Rebuild the integer "reference fields" for existing Build objects
     """
 
-    print("\n - Rebuilding reference field for BuildOrder model...")
-
     BuildOrder = apps.get_model('build', 'build')
-
-    n = BuildOrder.objects.count()
 
     for build in BuildOrder.objects.all():
 
@@ -30,9 +26,6 @@ def build_refs(apps, schema_editor):
 
         build.reference_int = ref
         build.save()
-
-    print(f" - Updated {n} BuildOrder objects")
-    print(f" - COMPLETE! -")
 
 def unbuild_refs(apps, schema_editor):
     """

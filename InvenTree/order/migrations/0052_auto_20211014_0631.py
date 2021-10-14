@@ -9,11 +9,7 @@ def build_refs(apps, schema_editor):
     Rebuild the integer "reference fields" for existing Build objects
     """
 
-    print("\n - Rebuilding reference field for PurchaseOrder model...")
-
     PurchaseOrder = apps.get_model('order', 'purchaseorder')
-
-    n = PurchaseOrder.objects.count()
 
     for order in PurchaseOrder.objects.all():
 
@@ -30,12 +26,7 @@ def build_refs(apps, schema_editor):
         order.reference_int = ref
         order.save()
 
-    print(f" - Updated {n} PurchaseOrder objects")
-    print("\n - Rebuilding reference field for SalesOrder model...")
-
     SalesOrder = apps.get_model('order', 'salesorder')
-
-    n = SalesOrder.objects.count()
 
     for order in SalesOrder.objects.all():
 
@@ -51,9 +42,6 @@ def build_refs(apps, schema_editor):
 
         order.reference_int = ref
         order.save()
-
-    print(f" - Updated {n} SalesOrder objects")
-    print(f" - COMPLETE! -")
 
 
 def unbuild_refs(apps, schema_editor):
