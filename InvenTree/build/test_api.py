@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from part.models import Part
 from build.models import Build, BuildItem
+from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -35,6 +36,148 @@ class BuildAPITest(InvenTreeAPITestCase):
     def setUp(self):
 
         super().setUp()
+
+
+class BuildCompleteTest(BuildAPITest):
+    """
+    Unit testing for the build complete API endpoint
+    """
+
+    def setUp(self):
+
+        super().setUp()
+
+        self.build = Build.objects.get(pk=1)
+
+        self.url = reverse('api-build-complete', kwargs={'pk': self.build.pk})
+
+    def test_invalid(self):
+        """
+        Test with invalid data
+        """
+
+        # Test with an invalid build ID
+        self.post(
+            reverse('api-build-complete', kwargs={'pk': 99999}),
+            {},
+            expected_code=404
+        )
+
+        data = self.post(self.url, {}, expected_code=400).data
+
+        self.assertIn("This field is required", str(data['outputs']))
+        self.assertIn("This field is required", str(data['location']))
+
+        # Test with an invalid location
+        data = self.post(
+            self.url,
+            {
+                "outputs": [],
+                "location": 999999,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn(
+            "Invalid pk",
+            str(data["location"])
+        )
+
+        data = self.post(
+            self.url,
+            {
+                "outputs": [],
+                "location": 1,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn("A list of build outputs must be provided", str(data))
+
+        stock_item = StockItem.objects.create(
+            part=self.build.part,
+            quantity=100,
+        )
+
+        post_data = {
+            "outputs": [
+                {
+                    "output": stock_item.pk,
+                },
+            ],
+            "location": 1,
+        }
+
+        # Post with a stock item that does not match the build
+        data = self.post(
+            self.url,
+            post_data,
+            expected_code=400
+        ).data
+
+        self.assertIn(
+            "Build output does not match the parent build",
+            str(data["outputs"][0])
+        )
+
+        # Now, ensure that the stock item *does* match the build
+        stock_item.build = self.build
+        stock_item.save()
+
+        data = self.post(
+            self.url,
+            post_data,
+            expected_code=400,
+        ).data
+
+        self.assertIn(
+            "This build output has already been completed",
+            str(data["outputs"][0]["output"])
+        )
+
+    def test_complete(self):
+        """
+        Test build order completion
+        """
+
+        # We start without any outputs assigned against the build
+        self.assertEqual(self.build.incomplete_outputs.count(), 0)
+
+        # Create some more build outputs
+        for ii in range(10):
+            self.build.create_build_output(10)
+
+        # Check that we are in a known state
+        self.assertEqual(self.build.incomplete_outputs.count(), 10)
+        self.assertEqual(self.build.incomplete_count, 100)
+        self.assertEqual(self.build.completed, 0)
+
+        # We shall complete 4 of these outputs
+        outputs = self.build.incomplete_outputs[0:4] 
+
+        self.post(
+            self.url,
+            {
+                "outputs": [{"output": output.pk} for output in outputs],
+                "location": 1,
+                "status": 50,  # Item requires attention
+            },
+            expected_code=201
+        )
+
+        # There now should be 6 incomplete build outputs remaining
+        self.assertEqual(self.build.incomplete_outputs.count(), 6)
+
+        # And there should be 4 completed outputs
+        outputs = self.build.complete_outputs
+        self.assertEqual(outputs.count(), 4)
+
+        for output in outputs:
+            self.assertFalse(output.is_building)
+            self.assertEqual(output.build, self.build)
+
+        self.build.refresh_from_db()
+        self.assertEqual(self.build.completed, 40)
 
 
 class BuildAllocationTest(BuildAPITest):
