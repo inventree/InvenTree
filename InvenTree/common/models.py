@@ -11,7 +11,7 @@ import decimal
 import math
 
 from django.db import models, transaction
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
@@ -844,6 +844,15 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
+        },
+        'SIGNUP_GROUP': {
+            'name': _('Group on signup'),
+            'description': _('Group new user are asigned on registration'),
+            'default': '',
+            'choices': [
+                ('', _('No group')),
+                *[(str(a.id), str(a)) for a in Group.objects.all()]
+            ],
         },
     }
 

@@ -4,10 +4,11 @@ Helper forms which subclass Django forms to provide additional functionality
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -20,6 +21,7 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from part.models import PartCategory
 from common.models import InvenTreeSetting
 
+logger = logging.getLogger('inventree')
 
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
@@ -261,6 +263,18 @@ class RegistratonMixin:
             return super().is_open_for_signup(request)
         return False
 
+    def save_user(self, request, user, form, commit=True):
+        user = super().save_user(request, user, form, commit=commit)
+        start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
+        if start_group:
+            try:
+                group = Group.objects.get(id=start_group)
+                user.groups.add(group)
+            except Group.DoesNotExist:
+                logger.error('The setting `SIGNUP_GROUP` contains an non existant group', start_group)
+        user.save()
+        return user
+
 
 class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
     """
@@ -268,7 +282,7 @@ class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
     """
     def send_mail(self, template_prefix, email, context):
         """only send mail if backend configured"""
-        if InvenTreeSetting.get_setting('EMAIL_HOST', None):
+        if settings.EMAIL_HOST:
             return super().send_mail(template_prefix, email, context)
         return False
 
