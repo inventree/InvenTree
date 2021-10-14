@@ -10,8 +10,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from django.db.models import Case, When, Value
-from django.db.models import BooleanField, IntegerField
-from django.db.models.functions import Cast
+from django.db.models import BooleanField
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -70,11 +69,6 @@ class BuildSerializer(InvenTreeModelSerializer):
                 ),
                 default=Value(False, output_field=BooleanField())
             )
-        )
-
-        # Annotate with an "integer" version of the reference field, to be used for natural sorting
-        queryset = queryset.annotate(
-            integer_ref=Cast('reference', output_field=IntegerField())
         )
 
         return queryset

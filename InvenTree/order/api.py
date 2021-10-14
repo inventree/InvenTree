@@ -156,7 +156,7 @@ class POList(generics.ListCreateAPIView):
     ]
 
     ordering_field_aliases = {
-        'reference': ['integer_ref', 'reference'],
+        'reference': ['reference_int', 'reference'],
     }
 
     filter_fields = [
@@ -512,7 +512,7 @@ class SOList(generics.ListCreateAPIView):
     ]
 
     ordering_field_aliases = {
-        'reference': ['integer_ref', 'reference'],
+        'reference': ['reference_int', 'reference'],
     }
 
     filter_fields = [

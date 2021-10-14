@@ -85,7 +85,7 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     ordering_field_aliases = {
-        'reference': ['integer_ref', 'reference'],
+        'reference': ['reference_int', 'reference'],
     }
 
     search_fields = [
