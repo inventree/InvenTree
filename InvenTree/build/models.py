@@ -698,7 +698,7 @@ class Build(MPTTModel):
             raise ValidationError(_("Build output does not match Build Order"))
 
         # Unallocate all build items against the output
-        self.unallocateOutput(output)
+        self.unallocateStock(output=output)
 
         # Remove the build output from the database
         output.delete()

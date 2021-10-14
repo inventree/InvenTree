@@ -250,7 +250,7 @@ class BuildTest(TestCase):
 
         self.assertEqual(len(unallocated), 1)
 
-        self.build.unallocateUntracked()
+        self.build.unallocateStock()
 
         unallocated = self.build.unallocatedParts(None)
 
