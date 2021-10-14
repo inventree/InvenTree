@@ -129,7 +129,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         // Add a button to unallocate stock from this build output
         html += makeIconButton(
             'fa-minus-circle icon-red',
-            'build-output-unallocate',
+            'button-output-unallocate',
             output_id,
             '{% trans "Unallocate stock from build output" %}',
         );
@@ -138,7 +138,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
     // Add a button to "complete" this build output
     html += makeIconButton(
         'fa-check-circle icon-green',
-        'build-output-complete',
+        'button-output-complete',
         output_id,
         '{% trans "Complete build output" %}',
     )
@@ -436,6 +436,58 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // TODO: Initialize filter list
 
+    function setupBuildOutputButtonCallbacks() {
+        
+        // Callback for the "allocate" button
+        $(table).find('.button-output-allocate').click(function() {
+            var pk = $(this).attr('pk');
+
+            // TODO
+            var todo = "Work out which stock items we need to allocate and launch the form";
+            /*
+            allocateStockToBuild(
+                build_info.pk,
+                build_info.part,
+
+            )*/
+        });
+
+        // Callack for the "unallocate" button
+        $(table).find('.button-output-unallocate').click(function() {
+            var pk = $(this).attr('pk');
+
+            unallocateStock(build_info.pk, {
+                output: pk,
+                table: table
+            });
+        });
+
+        // Callback for the "complete" button
+        $(table).find('.button-output-complete').click(function() {
+            var pk = $(this).attr('pk');
+
+            var todo = "write function to complete build output(s)";
+        });
+
+        // Callback for the "delete" button
+        $(table).find('.button-output-delete').click(function() {
+            var pk = $(this).attr('pk');
+
+            // TODO: Move this to the API
+            launchModalForm(
+                `/build/${build_info.pk}/delete-output/`,
+                {
+                    data: {
+                        output: pk
+                    },
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                }
+            );
+        });
+    }
+
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: filters,
@@ -449,7 +501,8 @@ function loadBuildOutputTable(build_info, options={}) {
             return '{% trans "No active build outputs found" %}';
         },
         onPostBody: function() {
-            // TODO
+            // Add callbacks for the buttons
+            setupBuildOutputButtonCallbacks();
         },
         columns: [
             {
