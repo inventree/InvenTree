@@ -166,7 +166,7 @@ def validate_part_name_format(self):
     """
 
     jinja_template_regex = re.compile('{{.*?}}')
-    field_name_regex = re.compile('(?<=part\\.)[A-z]*')
+    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
     for jinja_template in jinja_template_regex.findall(str(self)):
         # make sure at least one and only one field is present inside the parser
         field_names = field_name_regex.findall(jinja_template)
