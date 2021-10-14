@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 import os
 import decimal
 import math
-import re
 
 from django.db import models, transaction
 from django.contrib.auth.models import User
