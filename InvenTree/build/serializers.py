@@ -120,6 +120,61 @@ class BuildSerializer(InvenTreeModelSerializer):
         ]
 
 
+class BuildUnallocationSerializer(serializers.Serializer):
+    """
+    DRF serializer for unallocating stock from a BuildOrder
+
+    Allocated stock can be unallocated with a number of filters:
+
+    - output: Filter against a particular build output (blank = untracked stock)
+    - bom_item: Filter against a particular BOM line item
+
+    """
+
+    bom_item = serializers.PrimaryKeyRelatedField(
+        queryset=BomItem.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('BOM Item'),
+    )
+
+    output = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.filter(
+            is_building=True,
+        ),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_("Build output"),
+    )
+
+    def validate_output(self, stock_item):
+
+        # Stock item must point to the same build order!
+        build = self.context['build']
+
+        if stock_item and stock_item.build != build:
+            raise ValidationError(_("Build output must point to the same build"))
+
+        return stock_item
+
+    def save(self):
+        """
+        'Save' the serializer data.
+        This performs the actual unallocation against the build order
+        """
+
+        build = self.context['build']
+
+        data = self.validated_data
+
+        build.unallocateStock(
+            bom_item=data['bom_item'],
+            output=data['output']
+        )
+
+
 class BuildAllocationItemSerializer(serializers.Serializer):
     """
     A serializer for allocating a single stock item against a build order

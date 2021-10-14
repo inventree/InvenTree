@@ -455,6 +455,10 @@
     -webkit-opacity: 10%;
 }
 
+.table-condensed {
+    font-size: 90%;
+}
+
 /* grid display for part images */
 
 .table-img-grid tr {

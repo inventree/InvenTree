@@ -23,7 +23,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
-from .models import (BomItem, Part, PartAttachment, PartCategory,
+from .models import (BomItem, BomItemSubstitute,
+                     Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -388,14 +389,35 @@ class PartStarSerializer(InvenTreeModelSerializer):
         ]
 
 
+class BomItemSubstituteSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the BomItemSubstitute class
+    """
+
+    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
+
+    class Meta:
+        model = BomItemSubstitute
+        fields = [
+            'pk',
+            'bom_item',
+            'part',
+            'part_detail',
+        ]
+
+
 class BomItemSerializer(InvenTreeModelSerializer):
-    """ Serializer for BomItem object """
+    """
+    Serializer for BomItem object
+    """
 
     price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
+
+    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -515,6 +537,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'reference',
             'sub_part',
             'sub_part_detail',
+            'substitutes',
             'price_range',
             'validated',
         ]

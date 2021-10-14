@@ -208,15 +208,10 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
 
         var pk = $(this).attr('pk');
 
-        launchModalForm(
-            `/build/${buildId}/unallocate/`,
-            {
-                success: reloadTable,
-                data: {
-                    output: pk,
-                }
-            }
-        );
+        unallocateStock(buildId, {
+            output: pk,
+            table: table,
+        });
     });
 
     $(panel).find(`#button-output-delete-${outputId}`).click(function() {
@@ -233,6 +228,49 @@ function makeBuildOutputActionButtons(output, buildInfo, lines) {
             }
         );
     });
+}
+
+
+/*
+ * Unallocate stock against a particular build order
+ * 
+ * Options:
+ * - output: pk value for a stock item "build output"
+ * - bom_item: pk value for a particular BOMItem (build item)
+ */
+function unallocateStock(build_id, options={}) {
+
+    var url = `/api/build/${build_id}/unallocate/`;
+
+    var html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans "Are you sure you wish to unallocate stock items from this build?" %}
+    </dvi>
+    `;
+
+    constructForm(url, {
+        method: 'POST',
+        confirm: true,
+        preFormContent: html,
+        fields: {
+            output: {
+                hidden: true,
+                value: options.output,
+            },
+            bom_item: {
+                hidden: true,
+                value: options.bom_item,
+            },
+        },
+        title: '{% trans "Unallocate Stock Items" %}',
+        onSuccess: function(response, opts) {
+            if (options.table) {
+                // Reload the parent table
+                $(options.table).bootstrapTable('refresh');
+            }
+        }
+    });
+
 }
 
 
@@ -348,6 +386,17 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         table = `#allocation-table-${outputId}`;
     }
 
+    // Filters
+    var filters = loadTableFilters('builditems');
+
+    var params = options.params || {};
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('builditems', $(table), options.filterTarget || null);
+
     // If an "output" is specified, then only "trackable" parts are allocated
     // Otherwise, only "untrackable" parts are allowed
     var trackable = ! !output;
@@ -458,17 +507,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
         // Callback for 'unallocate' button
         $(table).find('.button-unallocate').click(function() {
-            var pk = $(this).attr('pk');
 
-            launchModalForm(`/build/${buildId}/unallocate/`,
-                {
-                    success: reloadTable,
-                    data: {
-                        output: outputId,
-                        part: pk,
-                    }
-                }
-            );
+            // Extract row data from the table
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            unallocateStock(buildId, {
+                bom_item: row.pk,
+                output: outputId == 'untracked' ? null : outputId,
+                table: table,
+            });
         });
     }
 
@@ -725,6 +773,14 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var html = imageHoverIcon(thumb) + renderLink(name, url);
 
                     html += makePartIcons(row.sub_part_detail);
+
+                    if (row.substitutes && row.substitutes.length > 0) {
+                        html += makeIconBadge('fa-exchange-alt', '{% trans "Substitute parts available" %}');
+                    }
+
+                    if (row.allow_variants) {
+                        html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                    }
 
                     return html;
                 }
@@ -1021,12 +1077,12 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         filters: {
                             bom_item: bom_item.pk,
                             in_stock: true,
-                            part_detail: false,
+                            part_detail: true,
                             location_detail: true,
                         },
                         model: 'stockitem',
                         required: true,
-                        render_part_detail: false,
+                        render_part_detail: true,
                         render_location_detail: true,
                         auto_fill: true,
                         adjustFilters: function(filters) {

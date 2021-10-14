@@ -197,7 +197,7 @@
                     <button id='allocate-selected-items' class='btn btn-success' title='{% trans "Allocate selected items" %}'>
                         <span class='fas fa-sign-in-alt'></span>
                     </button>
-                    <div class='filter-list' id='filter-list-build-items'>
+                    <div class='filter-list' id='filter-list-builditems'>
                         <!-- Empty div for table filters-->
                     </div>
                 </div>
@@ -462,12 +462,9 @@ $("#btn-auto-allocate").on('click', function() {
 });
 
 $('#btn-unallocate').on('click', function() {
-    launchModalForm(
-        "{% url 'build-unallocate' build.id %}",
-        {
-            success: reloadTable,
-        }
-    );
+    unallocateStock({{ build.id }}, {
+        table: '#allocation-table-untracked',
+    });
 });
 
 $('#allocate-selected-items').click(function() {
