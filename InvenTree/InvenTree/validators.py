@@ -5,6 +5,7 @@ Custom field validators for InvenTree
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import FieldDoesNotExist
 
 from moneyed import CURRENCIES
 
@@ -156,3 +157,33 @@ def validate_overage(value):
     raise ValidationError(
         _("Overage must be an integer value or a percentage")
     )
+
+
+def validate_part_name_format(self):
+    """
+    Validate part name format.
+    Make sure that each template container has a field of Part Model
+    """
+
+    jinja_template_regex = re.compile('{{.*?}}')
+    field_name_regex = re.compile('(?<=part\\.)[A-z]*')
+    for jinja_template in jinja_template_regex.findall(str(self)):
+        # make sure at least one and only one field is present inside the parser
+        field_names = field_name_regex.findall(jinja_template)
+        if len(field_names) < 1:
+            raise ValidationError({
+                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
+            })
+
+        # Make sure that the field_name exists in Part model
+        from part.models import Part
+
+        for field_name in field_names:
+            try:
+                Part._meta.get_field(field_name)
+            except FieldDoesNotExist:
+                raise ValidationError({
+                    'value': f'{field_name} does not exist in Part Model'
+                })
+
+    return True

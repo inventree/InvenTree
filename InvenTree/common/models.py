@@ -488,26 +488,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
-    def validate_part_name_format(self):
-        """
-        Validate part name format.
-        Make sure that each template container has a field of Part Model
-        """
-
-        jinja_template_regex = re.compile('{{.*?}}')
-        field_name_regex = re.compile('(?<=part\\.)[A-z]*')
-        for jinja_template in jinja_template_regex.findall(str(self)):
-            # make sure at least one and only one field is present inside the parser
-            field_name = field_name_regex.findall(jinja_template)
-            if len(field_name) < 1:
-                raise ValidationError({
-                    'value': 'At least one field must be present inside a jinja template container i.e {{}}'
-                })
-
-            # TODO: Make sure that the field_name exists in Part model
-
-        return True
-
     """
     Dict of all global settings values:
 
@@ -728,7 +708,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Format to display the part name'),
             'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
                        "{{ part.revision if part.revision }}",
-            'validator': validate_part_name_format
+            'validator': InvenTree.fields.validate_part_name_format
         },
 
         'REPORT_DEBUG_MODE': {

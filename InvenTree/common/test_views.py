@@ -150,7 +150,7 @@ class SettingsViewTest(TestCase):
         url = self.get_url(setting.pk)
 
         # Try posting an invalid part name  format
-        invalid_values = ['{{asset.IPN}}', '{{part}}', '{{"|"}}']
+        invalid_values = ['{{asset.IPN}}', '{{part}}', '{{"|"}}', '{{part.falcon}}']
         for invalid_value in invalid_values:
             self.post(url, {'value': invalid_value}, valid=False)
 
