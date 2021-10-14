@@ -23,6 +23,7 @@ from common.models import InvenTreeSetting
 
 logger = logging.getLogger('inventree')
 
+
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
 
