@@ -428,6 +428,15 @@ function loadBuildOutputTable(build_info, options={}) {
     params.is_building = true;
     params.build = build_info.pk;
 
+    // Construct a list of "tracked" BOM items
+    var tracked_bom_items = [];
+
+    build_info.bom_items.forEach(function(bom_item) {
+        if (bom_item.sub_part_detail.trackable) {
+            tracked_bom_items.push(bom_item);
+        };
+    });
+
     var filters = {};
 
     for (var key in params) {
@@ -488,6 +497,83 @@ function loadBuildOutputTable(build_info, options={}) {
         });
     }
 
+    /*
+     * Construct a "sub table" showing the required BOM items
+     */
+    function constructBuildOutputSubTable(index, row, element) {
+        var sub_table_id = `output-sub-table-${row.pk}`;
+
+        var html = `
+        <div class='sub-table'>
+            <table class='table table-striped table-condensed' id='${sub_table_id}'></table>
+        </div>
+        `;
+
+        element.html(html);
+
+        var todo = "refactor the following fields, they are shared with the 'untracked' allocation table!";
+
+        $(`#${sub_table_id}`).bootstrapTable({
+            data: tracked_bom_items,
+            showHeader: true,
+            columns: [
+                {
+                    field: 'part',
+                    title: '{% trans "Required Part" %}',
+                    formatter: function(value, row) {
+                        var part = row.sub_part_detail;
+
+                        var url = `/part/${part.pk}/`;
+                        var thumb = part.thumbnail || row.image;
+                        var name = part.full_name;
+
+                        var html = imageHoverIcon(thumb) + renderLink(name, url) + makePartIcons(part);
+
+                        if (row.substitutes && row.substitutes.length > 0) {
+                            html += makeIconBadge('fa-exchange-alt', '{% trans "Substitute parts available" %}');
+                        }
+    
+                        if (row.allow_variants) {
+                            html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                        }
+
+                        return html;
+                    }
+                },
+                {
+                    field: 'reference',
+                    title: '{% trans "Reference" %}',
+                    sortable: true,
+                },
+                {
+                    field: 'quantity',
+                    title: '{% trans "Quantity Per Item" %}',
+                    sortable: true,
+                },
+                {
+                    field: 'allocated',
+                    title: '{% trans "Allocated" %}',
+                    formatter: function(value, row) {
+                        return "todo";
+                    }
+                },
+                {
+                    field: 'actions',
+                    title: '',
+                    formatter: function(value, row) {
+                        var html = `<div class='btn-group float-right' role='group'>`;
+
+                        html += "todo";
+
+                        html += `</div>`;
+                        
+                        return html;
+                    }
+                }
+            ]
+        });
+    }
+
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: filters,
@@ -497,6 +583,14 @@ function loadBuildOutputTable(build_info, options={}) {
         sortable: true,
         search: true,
         sidePagination: 'server',
+        detailView: build_info.tracked_parts || false,
+        detailViewByClick: true,
+        detailFilter: function(index, row) {
+            return true;
+        },
+        detailFormatter: function(index, row, element) {
+            constructBuildOutputSubTable(index, row, element);
+        },
         formatNoMatches: function() {
             return '{% trans "No active build outputs found" %}';
         },

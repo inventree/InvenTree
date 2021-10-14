@@ -308,40 +308,55 @@ loadStockTable($("#build-stock-table"), {
     url: "{% url 'api-stock-list' %}",    
 });
 
-var buildInfo = {
-    pk: {{ build.pk }},
-    quantity: {{ build.quantity }},
-    completed: {{ build.completed }},
-    part: {{ build.part.pk }},
-    {% if build.take_from %}
-    source_location: {{ build.take_from.pk }},
-    {% endif %}
-    {% if build.has_tracked_bom_items %}
-    tracked_parts: true,
-    {% else %}
-    tracked_parts: false,
-    {% endif %}
-};
 
-{% if build.active %}
-loadBuildOutputTable(
-    buildInfo,
+// Get the list of BOM items required for this build
+inventreeGet(
+    '{% url "api-bom-list" %}',
     {
-
-    }
-);
-{% endif %}
-
-{% for item in build.incomplete_outputs %}
-// Get the build output as a javascript object
-inventreeGet('{% url 'api-stock-detail' item.pk %}', {},
+        part: {{ build.part.pk }},
+        sub_part_detail: true,
+    },
     {
         success: function(response) {
-            loadBuildOutputAllocationTable(buildInfo, response);
+
+            var build_info = {
+                pk: {{ build.pk }},
+                part: {{ build.part.pk }},
+                quantity: {{ build.quantity }},
+                bom_items: response,
+                {% if build.take_from %}
+                source_location: {{ build.take_from.pk }},
+                {% endif %}
+                {% if build.has_tracked_bom_items %}
+                tracked_parts: true,
+                {% else %}
+                tracked_parts: false,
+                {% endif %}
+            };
+
+            {% if build.active %}
+            loadBuildOutputTable(build_info);
+            {% endif %}
+
+            {% for item in build.incomplete_outputs %}
+            // Get the build output as a javascript object
+            inventreeGet('{% url 'api-stock-detail' item.pk %}', {},
+                {
+                    success: function(response) {
+                        loadBuildOutputAllocationTable(build_info, response);
+                    }
+                }
+            );
+            {% endfor %}
+        
+            {% if build.has_untracked_bom_items %}
+            // Load allocation table for un-tracked parts
+            loadBuildOutputAllocationTable(build_info, null);
+            {% endif %}
+
         }
     }
 );
-{% endfor %}
 
 loadBuildTable($('#sub-build-table'), {
     url: '{% url "api-build-list" %}',
@@ -350,6 +365,7 @@ loadBuildTable($('#sub-build-table'), {
         ancestor: {{ build.pk }},
     }
 });
+
 
 enableDragAndDrop(
     '#attachment-dropzone',
@@ -424,11 +440,6 @@ $('#edit-notes').click(function() {
         reload: true,
     });
 });
-
-{% if build.has_untracked_bom_items %}
-// Load allocation table for un-tracked parts
-loadBuildOutputAllocationTable(buildInfo, null);
-{% endif %}
 
 function reloadTable() {
     $('#allocation-table-untracked').bootstrapTable('refresh');
