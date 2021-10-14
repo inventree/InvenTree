@@ -475,8 +475,11 @@ class BaseInvenTreeSetting(models.Model):
 
         return value
 
-def group_options():
+
+def settings_group_options():
+    """build up group tuple for settings based on gour choices"""
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
+
 
 class InvenTreeSetting(BaseInvenTreeSetting):
     """
@@ -848,7 +851,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Group on signup'),
             'description': _('Group new user are asigned on registration'),
             'default': '',
-            'choices': group_options
+            'choices': settings_group_options
         },
     }
 
