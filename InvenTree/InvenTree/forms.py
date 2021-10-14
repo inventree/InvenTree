@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -257,7 +258,7 @@ class RegistratonMixin:
     Mixin to check if registration should be enabled
     """
     def is_open_for_signup(self, request):
-        if InvenTreeSetting.get_setting('EMAIL_HOST', None) and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
+        if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
             return super().is_open_for_signup(request)
         return False
 
@@ -268,7 +269,7 @@ class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
     """
     def send_mail(self, template_prefix, email, context):
         """only send mail if backend configured"""
-        if InvenTreeSetting.get_setting('EMAIL_HOST', None):
+        if settings.EMAIL_HOST:
             return super().send_mail(template_prefix, email, context)
         return False
 
