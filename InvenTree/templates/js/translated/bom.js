@@ -266,7 +266,6 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                     // Also exclude the "master" part (if provided)
                     if (options.sub_part) {
                         subs.push(options.sub_part);
-                        console.log("sub_part:", options.sub_part);
                     }
 
                     if (subs.length > 0) {
