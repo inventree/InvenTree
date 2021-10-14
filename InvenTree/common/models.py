@@ -25,6 +25,7 @@ from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
 import InvenTree.fields
+import InvenTree.validators
 
 import logging
 
@@ -700,6 +701,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Use the internal price (if set) in BOM-price calculations'),
             'default': False,
             'validator': bool
+        },
+
+        'PART_NAME_FORMAT': {
+            'name': _('Part Name Display Format'),
+            'description': _('Format to display the part name'),
+            'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
+                       "{{ part.revision if part.revision }}",
+            'validator': InvenTree.validators.validate_part_name_format
         },
 
         'REPORT_DEBUG_MODE': {

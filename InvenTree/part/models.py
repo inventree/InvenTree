@@ -23,6 +23,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from jinja2 import Template
+
 from markdownx.models import MarkdownxField
 
 from django_cleanup import cleanup
@@ -38,6 +40,7 @@ from datetime import datetime
 import hashlib
 from djmoney.contrib.exchange.models import convert_money
 from common.settings import currency_code_default
+from common.models import InvenTreeSetting
 
 from InvenTree import helpers
 from InvenTree import validators
@@ -555,7 +558,9 @@ class Part(MPTTModel):
 
     @property
     def full_name(self):
-        """ Format a 'full name' for this Part.
+        """ Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings
+
+        As a failsafe option, the following is done
 
         - IPN (if not null)
         - Part name
@@ -564,17 +569,31 @@ class Part(MPTTModel):
         Elements are joined by the | character
         """
 
-        elements = []
+        full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
 
-        if self.IPN:
-            elements.append(self.IPN)
+        try:
+            context = {'part': self}
+            template_string = Template(full_name_pattern)
+            full_name = template_string.render(context)
 
-        elements.append(self.name)
+            return full_name
 
-        if self.revision:
-            elements.append(self.revision)
+        except AttributeError as attr_err:
 
-        return ' | '.join(elements)
+            logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
+
+            # Fallback to default format
+            elements = []
+
+            if self.IPN:
+                elements.append(self.IPN)
+
+            elements.append(self.name)
+
+            if self.revision:
+                elements.append(self.revision)
+
+            return ' | '.join(elements)
 
     def set_category(self, category):
 
