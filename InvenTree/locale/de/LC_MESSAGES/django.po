@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-14 08:34+0000\n"
-"PO-Revision-Date: 2021-10-14 09:18\n"
+"PO-Revision-Date: 2021-10-14 16:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -78,7 +78,7 @@ msgstr ""
 
 #: InvenTree/forms.py:250
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "E-Mail Adressen müssen übereinstimmen."
 
 #: InvenTree/helpers.py:401
 #, python-brace-format
@@ -6563,7 +6563,7 @@ msgstr "Schliessen"
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
 msgid "Confirm E-mail Address"
-msgstr ""
+msgstr "E-Mail Adresse bestätigen"
 
 #: templates/account/email_confirm.html:16
 #, python-format
