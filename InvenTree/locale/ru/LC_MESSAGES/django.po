@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-14 08:34+0000\n"
+"POT-Creation-Date: 2021-10-14 20:08+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -33,50 +33,50 @@ msgstr "Соответствующее действие не найдено"
 msgid "Enter date"
 msgstr "Введите дату"
 
-#: InvenTree/forms.py:116 build/forms.py:102 build/forms.py:123
+#: InvenTree/forms.py:117 build/forms.py:102 build/forms.py:123
 #: build/forms.py:147 build/forms.py:189 order/forms.py:27 order/forms.py:38
 #: order/forms.py:49 order/forms.py:60 order/forms.py:71 part/forms.py:108
 #: templates/account/email_confirm.html:20 templates/js/translated/forms.js:564
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: InvenTree/forms.py:132
+#: InvenTree/forms.py:133
 msgid "Confirm delete"
 msgstr "Подтвердите удаление"
 
-#: InvenTree/forms.py:133
+#: InvenTree/forms.py:134
 msgid "Confirm item deletion"
 msgstr "Подтвердите удаление элемента"
 
-#: InvenTree/forms.py:164
+#: InvenTree/forms.py:165
 msgid "Enter password"
 msgstr "Введите пароль"
 
-#: InvenTree/forms.py:165
+#: InvenTree/forms.py:166
 msgid "Enter new password"
 msgstr "Введите новый пароль"
 
-#: InvenTree/forms.py:172
+#: InvenTree/forms.py:173
 msgid "Confirm password"
 msgstr "Подтвердить пароль"
 
-#: InvenTree/forms.py:173
+#: InvenTree/forms.py:174
 msgid "Confirm new password"
 msgstr "Подтвердите новый пароль"
 
-#: InvenTree/forms.py:205
+#: InvenTree/forms.py:206
 msgid "Select Category"
 msgstr "Выбрать категорию"
 
-#: InvenTree/forms.py:226
+#: InvenTree/forms.py:227
 msgid "E-mail (again)"
 msgstr ""
 
-#: InvenTree/forms.py:230
+#: InvenTree/forms.py:231
 msgid "E-mail address confirmation"
 msgstr ""
 
-#: InvenTree/forms.py:250
+#: InvenTree/forms.py:251
 msgid "You must type the same email each time."
 msgstr ""
 
