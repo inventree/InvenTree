@@ -72,7 +72,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             )
         )
 
-        # Annotate with a "integer" version of the reference field, to be used for natural sorting
+        # Annotate with an "integer" version of the reference field, to be used for natural sorting
         queryset = queryset.annotate(
             integer_ref=Cast('reference', output_field=IntegerField())
         )

@@ -34,8 +34,6 @@ class InvenTreeOrderingFilter(OrderingFilter):
             Ordering fields should be mapped to separate fields
             """
 
-            idx = 0
-
             ordering_initial = ordering
             ordering = []
 

@@ -4,6 +4,7 @@ JSON serializers for the Order API
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.db.models.fields import IntegerField
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,6 +12,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField, ExpressionWrapper, F
+from django.db.models.functions import Cast
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -71,6 +73,11 @@ class POSerializer(InvenTreeModelSerializer):
                 ),
                 default=Value(False, output_field=BooleanField())
             )
+        )
+
+        # Annotate with an "integer" version of the reference field, to be used for natural sorting
+        queryset = queryset.annotate(
+            integer_ref=Cast('reference', output_field=IntegerField())
         )
 
         return queryset
@@ -426,6 +433,11 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
                 ),
                 default=Value(False, output_field=BooleanField())
             )
+        )
+
+        # Annotate with an "integer" version of the reference field, to be used for natural sorting
+        queryset = queryset.annotate(
+            integer_ref=Cast('reference', output_field=IntegerField())
         )
 
         return queryset
