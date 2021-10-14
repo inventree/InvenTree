@@ -282,7 +282,7 @@ class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
     """
     def send_mail(self, template_prefix, email, context):
         """only send mail if backend configured"""
-        if settings.EMAIL_HOST:
+        if InvenTreeSetting.get_setting('EMAIL_HOST', None):
             return super().send_mail(template_prefix, email, context)
         return False
 
