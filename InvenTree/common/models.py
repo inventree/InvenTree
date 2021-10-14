@@ -182,12 +182,9 @@ class BaseInvenTreeSetting(models.Model):
         else:
             choices = None
 
-        """
-        TODO:
-        if type(choices) is function:
+        if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
             return choices()
-        """
 
         return choices
 
@@ -478,6 +475,8 @@ class BaseInvenTreeSetting(models.Model):
 
         return value
 
+def group_options():
+    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 class InvenTreeSetting(BaseInvenTreeSetting):
     """
@@ -849,10 +848,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Group on signup'),
             'description': _('Group new user are asigned on registration'),
             'default': '',
-            'choices': [
-                ('', _('No group')),
-                *[(str(a.id), str(a)) for a in Group.objects.all()]
-            ],
+            'choices': group_options
         },
     }
 
