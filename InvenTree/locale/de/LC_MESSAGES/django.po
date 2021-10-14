@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-14 08:34+0000\n"
-"PO-Revision-Date: 2021-10-14 16:18\n"
+"PO-Revision-Date: 2021-10-14 17:29\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -70,7 +70,7 @@ msgstr "Kategorie auswählen"
 
 #: InvenTree/forms.py:226
 msgid "E-mail (again)"
-msgstr ""
+msgstr "E-Mail (nochmal)"
 
 #: InvenTree/forms.py:230
 msgid "E-mail address confirmation"
@@ -1772,7 +1772,7 @@ msgstr "Teilpreis in einigen Formularen anzeigen"
 
 #: common/models.py:672
 msgid "Show Price in BOM"
-msgstr ""
+msgstr "Preis in Stückliste anzeigen"
 
 #: common/models.py:673
 msgid "Include pricing information in BOM tables"
@@ -1936,7 +1936,7 @@ msgstr ""
 
 #: common/models.py:813
 msgid "Enable registration"
-msgstr ""
+msgstr "Anmeldung erlauben"
 
 #: common/models.py:814
 msgid "Enable self-registration for users on the login-pages"
@@ -1944,15 +1944,15 @@ msgstr ""
 
 #: common/models.py:819
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO aktivieren"
 
 #: common/models.py:820
 msgid "Enable SSO on the login-pages"
-msgstr ""
+msgstr "SSO auf der Login-Seite aktivieren"
 
 #: common/models.py:825
 msgid "E-Mail required"
-msgstr ""
+msgstr "E-Mail benötigt"
 
 #: common/models.py:826
 msgid "Require user to supply mail on signup"
@@ -4297,7 +4297,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:33
 msgid "Export BOM"
-msgstr ""
+msgstr "Stückliste exportieren"
 
 #: part/templates/part/bom.html:34
 msgid "Print BOM Report"
@@ -4309,7 +4309,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:44
 msgid "Upload BOM"
-msgstr ""
+msgstr "Stückliste hochladen"
 
 #: part/templates/part/bom.html:46 templates/js/translated/part.js:265
 msgid "Copy BOM"
@@ -4329,7 +4329,7 @@ msgstr "Neue Stücklisten-Position"
 
 #: part/templates/part/bom.html:55
 msgid "Add BOM Item"
-msgstr ""
+msgstr "Stücklisten-Position hinzufügen"
 
 #: part/templates/part/bom_duplicate.html:13
 msgid "This part already has a Bill of Materials"
@@ -5811,7 +5811,7 @@ msgstr ""
 
 #: stock/templates/stock/item_install.html:15
 msgid "The Stock Item is currently in stock"
-msgstr ""
+msgstr "Dieses BestandsObjekt ist aktuell vorhanden"
 
 #: stock/templates/stock/item_install.html:16
 msgid "The Stock Item is serialized and does not belong to another item"
@@ -6368,7 +6368,7 @@ msgstr "Nachname"
 
 #: templates/InvenTree/settings/user.html:42
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Mail"
 
 #: templates/InvenTree/settings/user.html:47
 msgid "The following e-mail addresses are associated with your account:"
@@ -6376,11 +6376,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:61
 msgid "Verified"
-msgstr ""
+msgstr "Verifiziert"
 
 #: templates/InvenTree/settings/user.html:63
 msgid "Unverified"
-msgstr ""
+msgstr "Nicht verifiziert"
 
 #: templates/InvenTree/settings/user.html:65
 msgid "Primary"
@@ -6392,16 +6392,16 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:72
 msgid "Re-send Verification"
-msgstr ""
+msgstr "Verifikation erneut senden"
 
 #: templates/InvenTree/settings/user.html:73
 #: templates/InvenTree/settings/user.html:130
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: templates/InvenTree/settings/user.html:80
 msgid "Warning:"
-msgstr ""
+msgstr "Warnung:"
 
 #: templates/InvenTree/settings/user.html:81
 msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
@@ -6409,11 +6409,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:88
 msgid "Add E-mail Address"
-msgstr ""
+msgstr "E-Mail-Adresse hinzufügen"
 
 #: templates/InvenTree/settings/user.html:93
 msgid "Add E-mail"
-msgstr ""
+msgstr "E-Mail-Adresse hinzufügen"
 
 #: templates/InvenTree/settings/user.html:100
 msgid "Social Accounts"
@@ -6467,7 +6467,7 @@ msgstr "Die Übersetzung von InvenTree wird <a href=\"%(link)s\">von Nutzern mit
 
 #: templates/InvenTree/settings/user.html:223
 msgid "Do you really want to remove the selected e-mail address?"
-msgstr ""
+msgstr "Möchten Sie die ausgewählte E-Mail-Adresse wirklich entfernen?"
 
 #: templates/InvenTree/settings/user_forms.html:9
 msgid "Form Settings"
@@ -6578,7 +6578,7 @@ msgstr ""
 #: templates/account/login.html:5 templates/account/login.html:14
 #: templates/account/login.html:36
 msgid "Sign In"
-msgstr ""
+msgstr "Einloggen"
 
 #: templates/account/login.html:19
 #, python-format
@@ -6595,7 +6595,7 @@ msgstr ""
 
 #: templates/account/login.html:38
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Passwort vergessen?"
 
 #: templates/account/login.html:45
 msgid "or use SSO"
@@ -6604,7 +6604,7 @@ msgstr ""
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:17
 msgid "Sign Out"
-msgstr ""
+msgstr "Ausloggen"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
@@ -6613,15 +6613,15 @@ msgstr ""
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it."
-msgstr ""
+msgstr "Passwort vergessen? Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen eine E-Mail mit der Sie das Passwort zurücksetzen können."
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
-msgstr ""
+msgstr "Mein Passwort zurücksetzen"
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
@@ -6646,7 +6646,7 @@ msgstr ""
 
 #: templates/account/signup.html:11 templates/account/signup.html:22
 msgid "Sign Up"
-msgstr ""
+msgstr "Anmelden"
 
 #: templates/account/signup.html:13
 #, python-format
@@ -8309,11 +8309,11 @@ msgstr "QR Daten nicht angegeben"
 
 #: templates/registration/logged_out.html:6
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Sie wurden erfolgreich ausgeloggt."
 
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
-msgstr ""
+msgstr "Erneut einloggen"
 
 #: templates/stats.html:13
 msgid "Instance Name"
