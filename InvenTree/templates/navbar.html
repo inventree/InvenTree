@@ -4,6 +4,7 @@
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
+{% settings_value 'ENABLE_PLUGINS_NAVIGATION' as plugin_nav %}
 
 <nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">
@@ -49,6 +50,7 @@
         </li>
         {% endif %}
 
+        {% if plugin_nav %}
         {% plugin_list as pl_list %}
         {% for plugin_key, plugin in pl_list.items %}
           {% mixin_enabled plugin 'navigation' as navigation %}
@@ -64,6 +66,7 @@
           </li>
           {% endif %}
         {% endfor %}
+        {% endif %}
 
       </ul>
       <ul class="nav navbar-nav navbar-right">

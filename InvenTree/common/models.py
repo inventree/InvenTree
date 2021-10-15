@@ -855,6 +855,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'choices': settings_group_options
         },
 
+        'ENABLE_PLUGINS_NAVIGATION': {
+            'name': _('Enable navigation integration'),
+            'description': _('Enable plugins to integrate into navigation'),
+            'default': False,
+            'validator': bool,
+        },
         **settings.INTEGRATION_PLUGIN_SETTINGS,
     }
 
