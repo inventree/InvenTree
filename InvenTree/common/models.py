@@ -822,7 +822,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'LOGIN_MAIL_REQUIRED': {
-            'name': _('E-Mail required'),
+            'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
             'default': False,
             'validator': bool,

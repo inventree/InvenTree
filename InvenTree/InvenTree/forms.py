@@ -224,11 +224,11 @@ class CustomSignupForm(SignupForm):
         # check for two mail fields
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
             self.fields["email2"] = forms.EmailField(
-                label=_("E-mail (again)"),
+                label=_("Email (again)"),
                 widget=forms.TextInput(
                     attrs={
                         "type": "email",
-                        "placeholder": _("E-mail address confirmation"),
+                        "placeholder": _("Email address confirmation"),
                     }
                 ),
             )
