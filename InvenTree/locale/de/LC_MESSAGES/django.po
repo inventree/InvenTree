@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-15 04:35+0000\n"
-"PO-Revision-Date: 2021-10-15 10:50\n"
+"PO-Revision-Date: 2021-10-15 22:36\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1578,7 +1578,7 @@ msgstr "Schlüsseltext muss eindeutig sein"
 
 #: common/models.py:481
 msgid "No group"
-msgstr ""
+msgstr "Keine Gruppe"
 
 #: common/models.py:512
 msgid "InvenTree Instance Name"
