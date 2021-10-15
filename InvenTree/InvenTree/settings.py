@@ -454,11 +454,9 @@ logger.info(f"DB_HOST: {db_host}")
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
 Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
+"""
 
-Various database options can be specified in config.yaml if required:
-
-""" 
-
+# 'OPTIONS' or 'options' can be specified in config.yaml
 db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
@@ -467,7 +465,15 @@ if 'postgres' in db_engine:
 
     # Connection timeout
     if 'connect_timeout' not in db_options:
-        db_options['connect_timeout'] = int(os.getenv('INVENTREE_DB_TIMEOUT'), 2)
+        db_options['connect_timeout'] = int(os.getenv('INVENTREE_DB_TIMEOUT', 2))
+
+    # Postgres's default isolation level is Read Committed which is
+    # normally fine, but most developers think the database server is
+    # actually going to do Serializable type checks on the queries to
+    # protect against simultaneous changes.
+    if 'isolation_level' not in db_options:
+        serializable = _is_true(os.getenv("PG_ISOLATION_SERIALIZABLE", "true"))
+        db_options['isolation_level'] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
 
 # Specific options for MySql / MariaDB backend
 if 'mysql' in db_engine:
