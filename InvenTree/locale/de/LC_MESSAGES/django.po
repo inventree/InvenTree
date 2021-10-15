@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-15 04:35+0000\n"
-"PO-Revision-Date: 2021-10-15 04:41\n"
+"PO-Revision-Date: 2021-10-15 10:50\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -70,11 +70,11 @@ msgstr "Kategorie auswählen"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
-msgstr ""
+msgstr "E-Mail (nochmal)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Betsätigung der E-Mail Adresse"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
@@ -903,7 +903,7 @@ msgstr "Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete
 #: build/models.py:1091
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr ""
+msgstr "Zugewiesene Menge ({q}) darf nicht verfügbare Menge ({a}) übersteigen"
 
 #: build/models.py:1101
 msgid "Stock item is over-allocated"
@@ -919,7 +919,7 @@ msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 
 #: build/models.py:1167
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Ausgewähltes Bestands-Objekt nicht in Stückliste für Teil '{p}' gefunden"
 
 #: build/models.py:1227 stock/templates/stock/item_base.html:333
 #: templates/InvenTree/search.html:169 templates/js/translated/build.js:1251
@@ -966,7 +966,7 @@ msgstr "Stücklisten-Position"
 
 #: build/serializers.py:149
 msgid "Build output"
-msgstr ""
+msgstr "Endprodukt"
 
 #: build/serializers.py:158
 msgid "Build output must point to the same build"
@@ -4306,7 +4306,7 @@ msgstr "Die Stückliste für <em>%(part)s</em> wurde noch nicht kontrolliert."
 
 #: part/templates/part/bom.html:29
 msgid "Export actions"
-msgstr ""
+msgstr "Export-Aktionen"
 
 #: part/templates/part/bom.html:33
 msgid "Export BOM"
@@ -4318,7 +4318,7 @@ msgstr "Stücklisten-Bericht drucken"
 
 #: part/templates/part/bom.html:40
 msgid "BOM actions"
-msgstr ""
+msgstr "BOM-Aktionen"
 
 #: part/templates/part/bom.html:44
 msgid "Upload BOM"
@@ -4334,7 +4334,7 @@ msgstr "Stückliste überprüfen"
 
 #: part/templates/part/bom.html:51
 msgid "Delete Items"
-msgstr ""
+msgstr "Einträge löschen"
 
 #: part/templates/part/bom.html:54
 msgid "New BOM Item"
@@ -5535,7 +5535,7 @@ msgstr "Test Notizen"
 
 #: stock/serializers.py:424
 msgid "StockItem primary key value"
-msgstr ""
+msgstr "Primärschlüssel Lagerelement"
 
 #: stock/serializers.py:452
 msgid "Stock transaction notes"
@@ -6572,7 +6572,7 @@ msgstr "Schliessen"
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
 msgid "Confirm Email Address"
-msgstr ""
+msgstr "E-Mail-Adresse bestätigen"
 
 #: templates/account/email_confirm.html:16
 #, python-format
