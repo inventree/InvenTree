@@ -12,7 +12,7 @@ import math
 import uuid
 
 from django.db import models, transaction
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
@@ -26,6 +26,7 @@ from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
 import InvenTree.fields
+import InvenTree.validators
 
 import logging
 
@@ -182,12 +183,9 @@ class BaseInvenTreeSetting(models.Model):
         else:
             choices = None
 
-        """
-        TODO:
-        if type(choices) is function:
+        if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
             return choices()
-        """
 
         return choices
 
@@ -479,6 +477,11 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
 
+def settings_group_options():
+    """build up group tuple for settings based on gour choices"""
+    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """
     An InvenTreeSetting object is a key:value pair used for storing
@@ -703,6 +706,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool
         },
 
+        'PART_NAME_FORMAT': {
+            'name': _('Part Name Display Format'),
+            'description': _('Format to display the part name'),
+            'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
+                       "{{ part.revision if part.revision }}",
+            'validator': InvenTree.validators.validate_part_name_format
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
@@ -794,43 +805,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'PO',
         },
 
-        # enable/diable ui elements
-        'BUILD_FUNCTION_ENABLE': {
-            'name': _('Enable build'),
-            'description': _('Enable build functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'BUY_FUNCTION_ENABLE': {
-            'name': _('Enable buy'),
-            'description': _('Enable buy functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'SELL_FUNCTION_ENABLE': {
-            'name': _('Enable sell'),
-            'description': _('Enable sell functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'STOCK_FUNCTION_ENABLE': {
-            'name': _('Enable stock'),
-            'description': _('Enable stock functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'SO_FUNCTION_ENABLE': {
-            'name': _('Enable SO'),
-            'description': _('Enable SO functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'PO_FUNCTION_ENABLE': {
-            'name': _('Enable PO'),
-            'description': _('Enable PO functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),
@@ -851,7 +825,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'LOGIN_MAIL_REQUIRED': {
-            'name': _('E-Mail required'),
+            'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
             'default': False,
             'validator': bool,
@@ -874,7 +848,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-        **settings.INTEGRATION_PLUGIN_SETTINGS
+        'SIGNUP_GROUP': {
+            'name': _('Group on signup'),
+            'description': _('Group new user are asigned on registration'),
+            'default': '',
+            'choices': settings_group_options
+        },
+
+        **settings.INTEGRATION_PLUGIN_SETTINGS,
     }
 
     class Meta:

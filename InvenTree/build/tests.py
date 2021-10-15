@@ -323,22 +323,3 @@ class TestBuildViews(TestCase):
 
         b = Build.objects.get(pk=1)
         self.assertEqual(b.status, 30)  # Build status is now CANCELLED
-
-    def test_build_unallocate(self):
-        """ Test the build unallocation view (ajax form) """
-
-        url = reverse('build-unallocate', args=(1,))
-
-        # Test without confirmation
-        response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # Test with confirmation
-        response = self.client.post(url, {'confirm': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertTrue(data['form_valid'])

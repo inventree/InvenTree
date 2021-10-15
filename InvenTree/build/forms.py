@@ -137,32 +137,6 @@ class BuildOutputDeleteForm(HelperForm):
         ]
 
 
-class UnallocateBuildForm(HelperForm):
-    """
-    Form for auto-de-allocation of stock from a build
-    """
-
-    confirm = forms.BooleanField(required=False, label=_('Confirm'), help_text=_('Confirm unallocation of stock'))
-
-    output_id = forms.IntegerField(
-        required=False,
-        widget=forms.HiddenInput()
-    )
-
-    part_id = forms.IntegerField(
-        required=False,
-        widget=forms.HiddenInput(),
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'confirm',
-            'output_id',
-            'part_id',
-        ]
-
-
 class CompleteBuildForm(HelperForm):
     """
     Form for marking a build as complete
