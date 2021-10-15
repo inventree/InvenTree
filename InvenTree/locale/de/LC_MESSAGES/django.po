@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-15 04:35+0000\n"
-"PO-Revision-Date: 2021-10-15 22:36\n"
+"PO-Revision-Date: 2021-10-15 23:37\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6210,7 +6210,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
-msgstr ""
+msgstr "Anmelden"
 
 #: templates/InvenTree/settings/navbar.html:12
 #: templates/InvenTree/settings/user_settings.html:9
@@ -6617,7 +6617,7 @@ msgstr "Ausloggen"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "Möchtest Sie sich wirklich abmelden?"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -6651,7 +6651,7 @@ msgstr ""
 
 #: templates/account/password_reset_from_key.html:20
 msgid "Your password is now changed."
-msgstr ""
+msgstr "Ihr Passwort wurde geändert."
 
 #: templates/account/signup.html:11 templates/account/signup.html:22
 msgid "Sign Up"
