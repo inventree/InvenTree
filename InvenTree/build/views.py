@@ -10,14 +10,13 @@ from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
-from part.models import Part
 from .models import Build
 from . import forms
 from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, extract_serial_numbers, isNull
+from InvenTree.helpers import str2bool, extract_serial_numbers
 from InvenTree.status_codes import BuildStatus, StockStatus
 
 
@@ -244,88 +243,6 @@ class BuildOutputDelete(AjaxUpdateView):
         return {
             'danger': _('Build output deleted'),
         }
-
-
-class BuildUnallocate(AjaxUpdateView):
-    """ View to un-allocate all parts from a build.
-
-    Provides a simple confirmation dialog with a BooleanField checkbox.
-    """
-
-    model = Build
-    form_class = forms.UnallocateBuildForm
-    ajax_form_title = _("Unallocate Stock")
-    ajax_template_name = "build/unallocate.html"
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        # Pointing to a particular build output?
-        output = self.get_param('output')
-
-        if output:
-            initials['output_id'] = output
-
-        # Pointing to a particular part?
-        part = self.get_param('part')
-
-        if part:
-            initials['part_id'] = part
-
-        return initials
-
-    def post(self, request, *args, **kwargs):
-
-        build = self.get_object()
-        form = self.get_form()
-
-        confirm = request.POST.get('confirm', False)
-
-        output_id = request.POST.get('output_id', None)
-
-        if output_id:
-
-            # If a "null" output is provided, we are trying to unallocate "untracked" stock
-            if isNull(output_id):
-                output = None
-            else:
-                try:
-                    output = StockItem.objects.get(pk=output_id)
-                except (ValueError, StockItem.DoesNotExist):
-                    output = None
-
-        part_id = request.POST.get('part_id', None)
-
-        try:
-            part = Part.objects.get(pk=part_id)
-        except (ValueError, Part.DoesNotExist):
-            part = None
-
-        valid = False
-
-        if confirm is False:
-            form.add_error('confirm', _('Confirm unallocation of build stock'))
-            form.add_error(None, _('Check the confirmation box'))
-        else:
-
-            valid = True
-
-            # Unallocate the entire build
-            if not output_id:
-                build.unallocateAll()
-            # Unallocate a single output
-            elif output:
-                build.unallocateOutput(output, part=part)
-            # Unallocate "untracked" parts
-            else:
-                build.unallocateUntracked(part=part)
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class BuildComplete(AjaxUpdateView):

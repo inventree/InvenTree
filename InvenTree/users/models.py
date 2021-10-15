@@ -81,6 +81,7 @@ class RuleSet(models.Model):
         'part': [
             'part_part',
             'part_bomitem',
+            'part_bomitemsubstitute',
             'part_partattachment',
             'part_partsellpricebreak',
             'part_partinternalpricebreak',
@@ -110,6 +111,7 @@ class RuleSet(models.Model):
             'part_part',
             'part_partcategory',
             'part_bomitem',
+            'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
             'build_buildorderattachment',

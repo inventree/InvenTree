@@ -404,19 +404,12 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
-        """ Provide extra context data to template
-
-        - If '?editing=True', set 'editing_enabled' context variable
+        """
+        Provide extra context data to template
         """
         context = super().get_context_data(**kwargs)
 
         part = self.get_object()
-
-        if str2bool(self.request.GET.get('edit', '')):
-            # Allow BOM editing if the part is active
-            context['editing_enabled'] = 1 if part.active else 0
-        else:
-            context['editing_enabled'] = 0
 
         ctx = part.get_context_data(self.request)
         context.update(**ctx)

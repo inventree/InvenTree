@@ -28,7 +28,7 @@ from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
-from InvenTree.models import InvenTreeAttachment
+from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 
 def get_next_po_number():
@@ -89,7 +89,7 @@ def get_next_so_number():
     return reference
 
 
-class Order(models.Model):
+class Order(ReferenceIndexingMixin):
     """ Abstract model for an order.
 
     Instances of this class:
@@ -147,6 +147,9 @@ class Order(models.Model):
         return new_ref
 
     def save(self, *args, **kwargs):
+
+        self.rebuild_reference_field()
+
         if not self.creation_date:
             self.creation_date = datetime.now().date()
 
@@ -530,6 +533,12 @@ class SalesOrder(Order):
         queryset = queryset.filter(completed | pending)
 
         return queryset
+
+    def save(self, *args, **kwargs):
+
+        self.rebuild_reference_field()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
 

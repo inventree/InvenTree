@@ -592,7 +592,7 @@ function loadPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterLsit("#part-parameters", $(table));
+    // setupFilterList("#part-parameters", $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -876,23 +876,7 @@ function loadPartTable(table, url, options={}) {
         switchable: false,
         formatter: function(value, row) {
 
-            var name = '';
-
-            if (row.IPN) {
-                name += row.IPN;
-                name += ' | ';
-            }
-
-            name += value;
-
-            if (row.revision) {
-                name += ' | ';
-                name += row.revision;
-            }
-
-            if (row.is_template) {
-                name = '<i>' + name + '</i>';
-            }
+            var name = row.full_name;
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
 

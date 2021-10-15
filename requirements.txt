@@ -1,40 +1,39 @@
-# Django framework
+# Please keep this list sorted
 Django==3.2.5                   # Django package
-gunicorn>=20.1.0                # Gunicorn web server
-
-pillow==8.3.2                   # Image manipulation
-djangorestframework==3.12.4     # DRF framework
-django-cors-headers==3.2.0      # CORS headers extension for DRF
-django-filter==2.4.0            # Extended filtering options
-django-mptt==0.11.0             # Modified Preorder Tree Traversal
-django-sql-utils==0.5.0         # Advanced query annotation / aggregation
-django-markdownx==3.0.1         # Markdown form fields
-django-markdownify==0.8.0       # Markdown rendering
+certifi                         # Certifi is (most likely) installed through one of the requirements above
 coreapi==2.3.0                  # API documentation
-pygments==2.7.4                 # Syntax highlighting
-django-crispy-forms==1.11.2     # Form helpers
-django-import-export==2.5.0     # Data import / export for admin interface
-tablib[xls,xlsx,yaml]           # Support for XLS and XLSX formats
-django-cleanup==5.1.0           # Manage deletion of old / unused uploaded files
-flake8==3.8.3                   # PEP checking
-pep8-naming==0.11.1             # PEP naming convention extension
 coverage==5.3                   # Unit test coverage
 coveralls==2.1.2                # Coveralls linking (for Travis)
-rapidfuzz==0.7.6                # Fuzzy string matching
-django-stdimage==5.1.1          # Advanced ImageField management
-weasyprint==52.5                # PDF generation library (Note: in the future need to update to 53)
-django-weasyprint==1.0.1        # django weasyprint integration
-django-debug-toolbar==2.2       # Debug / profiling toolbar
+cryptography==3.4.8             # Cryptography support
 django-admin-shell==0.1.2       # Python shell for the admin interface
-py-moneyed==0.8.0               # Specific version requirement for py-moneyed
-django-money==1.1               # Django app for currency management
-certifi                         # Certifi is (most likely) installed through one of the requirements above
+django-allauth==0.45.0          # SSO for external providers via OpenID
+django-cleanup==5.1.0           # Manage deletion of old / unused uploaded files
+django-cors-headers==3.2.0      # CORS headers extension for DRF
+django-crispy-forms==1.11.2     # Form helpers
+django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-error-report==0.2.0      # Error report viewer for the admin interface
-django-test-migrations==1.1.0   # Unit testing for database migrations 
+django-filter==2.4.0            # Extended filtering options
+django-formtools==2.3           # Form wizard tools
+django-import-export==2.5.0     # Data import / export for admin interface
+django-markdownify==0.8.0       # Markdown rendering
+django-markdownx==3.0.1         # Markdown form fields
+django-money==1.1               # Django app for currency management
+django-mptt==0.11.0             # Modified Preorder Tree Traversal
+django-q==1.3.4                 # Background task scheduling
+django-sql-utils==0.5.0         # Advanced query annotation / aggregation
+django-stdimage==5.1.1          # Advanced ImageField management
+django-test-migrations==1.1.0   # Unit testing for database migrations
+django-weasyprint==1.0.1        # django weasyprint integration
+djangorestframework==3.12.4     # DRF framework
+flake8==3.8.3                   # PEP checking
+gunicorn>=20.1.0                # Gunicorn web server
+inventree                       # Install the latest version of the InvenTree API python library
+pep8-naming==0.11.1             # PEP naming convention extension
+pillow==8.3.2                   # Image manipulation
+py-moneyed==0.8.0               # Specific version requirement for py-moneyed
+pygments==2.7.4                 # Syntax highlighting
 python-barcode[images]==0.13.1  # Barcode generator
 qrcode[pil]==6.1                # QR code generator
-django-q==1.3.4                 # Background task scheduling
-django-formtools==2.3           # Form wizard tools
-django-allauth==0.45.0          # SSO for external providers via OpenID
-
-inventree                       # Install the latest version of the InvenTree API python library
+rapidfuzz==0.7.6                # Fuzzy string matching
+tablib[xls,xlsx,yaml]           # Support for XLS and XLSX formats
+weasyprint==52.5                # PDF generation library (Note: in the future need to update to 53)
