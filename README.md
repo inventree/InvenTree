@@ -20,6 +20,7 @@ However, powerful business logic works in the background to ensure that stock tr
 # Docker
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
+![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker_latest.yaml/badge.svg)
 
 InvenTree is [available via Docker](https://hub.docker.com/r/inventree/inventree). Read the [docker guide](https://inventree.readthedocs.io/en/latest/start/docker/) for full details.
 

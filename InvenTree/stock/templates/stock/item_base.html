@@ -72,7 +72,9 @@
     {% if barcodes %}
     <!-- Barcode actions menu -->
     <div class='btn-group'>
-        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+            <span class='fas fa-qrcode'></span> <span class='caret'></span>
+        </button>
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
             {% if roles.stock.change %}

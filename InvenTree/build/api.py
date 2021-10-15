@@ -17,11 +17,12 @@ from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentMixin
 from InvenTree.helpers import str2bool, isNull
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
 from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
-from .serializers import BuildAllocationSerializer
+from .serializers import BuildAllocationSerializer, BuildUnallocationSerializer
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -68,7 +69,7 @@ class BuildList(generics.ListCreateAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     ordering_fields = [
@@ -82,6 +83,10 @@ class BuildList(generics.ListCreateAPIView):
         'issued_by',
         'responsible',
     ]
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+    }
 
     search_fields = [
         'reference',
@@ -182,6 +187,42 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
 
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
+
+
+class BuildUnallocate(generics.CreateAPIView):
+    """
+    API endpoint for unallocating stock items from a build order
+
+    - The BuildOrder object is specified by the URL
+    - "output" (StockItem) can optionally be specified
+    - "bom_item" can optionally be specified
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = BuildUnallocationSerializer
+
+    def get_build(self):
+        """
+        Returns the BuildOrder associated with this API endpoint
+        """
+
+        pk = self.kwargs.get('pk', None)
+
+        try:
+            build = Build.objects.get(pk=pk)
+        except (ValueError, Build.DoesNotExist):
+            raise ValidationError(_("Matching build order does not exist"))
+
+        return build
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+        ctx['build'] = self.get_build()
+        ctx['request'] = self.request
+
+        return ctx
 
 
 class BuildAllocate(generics.CreateAPIView):
@@ -349,6 +390,7 @@ build_api_urls = [
     # Build Detail
     url(r'^(?P<pk>\d+)/', include([
         url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        url(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
         url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),
 

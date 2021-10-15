@@ -87,16 +87,6 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.context['part'].pk, pk)
         self.assertEqual(response.context['category'], part.category)
 
-        self.assertFalse(response.context['editing_enabled'])
-
-    def test_editable(self):
-
-        pk = 1
-        response = self.client.get(reverse('part-detail', args=(pk,)), {'edit': True})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.context['editing_enabled'])
-
     def test_part_detail_from_ipn(self):
         """
         Test that we can retrieve a part detail page from part IPN:

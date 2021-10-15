@@ -39,12 +39,12 @@
 </table>
 
 <div class='panel-heading'>
-    <h4>{% trans "E-Mail" %}</h4>
+    <h4>{% trans "Email" %}</h4>
 </div>
 
 <div>
     {% if user.emailaddress_set.all %}
-    <p>{% trans 'The following e-mail addresses are associated with your account:' %}</p>
+    <p>{% trans 'The following email addresses are associated with your account:' %}</p>
 
     <form action="{% url 'account_email' %}" class="email_list" method="post">
     {% csrf_token %}
@@ -78,19 +78,19 @@
 
     {% else %}
     <p><strong>{% trans 'Warning:'%}</strong>
-        {% trans "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
+        {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}
     </p>
 
     {% endif %}
 
     {% if can_add_email %}
         <br>
-        <h4>{% trans "Add E-mail Address" %}</h4>
+        <h4>{% trans "Add Email Address" %}</h4>
 
         <form method="post" action="{% url 'account_email' %}" class="add_email">
             {% csrf_token %}
             {{ add_email_form|crispy }}
-            <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add E-mail" %}</button>
+            <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add Email" %}</button>
         </form>
     {% endif %}
     <br>
@@ -220,7 +220,7 @@
 
 {% block js_ready %}
 (function() {
-  var message = "{% trans 'Do you really want to remove the selected e-mail address?' %}";
+  var message = "{% trans 'Do you really want to remove the selected email address?' %}";
   var actions = document.getElementsByName('action_remove');
   if (actions.length) {
     actions[0].addEventListener("click", function(e) {
