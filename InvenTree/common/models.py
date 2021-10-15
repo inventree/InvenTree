@@ -11,7 +11,7 @@ import decimal
 import math
 
 from django.db import models, transaction
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
@@ -182,12 +182,9 @@ class BaseInvenTreeSetting(models.Model):
         else:
             choices = None
 
-        """
-        TODO:
-        if type(choices) is function:
+        if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
             return choices()
-        """
 
         return choices
 
@@ -477,6 +474,11 @@ class BaseInvenTreeSetting(models.Model):
             value = self.default_value()
 
         return value
+
+
+def settings_group_options():
+    """build up group tuple for settings based on gour choices"""
+    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
 class InvenTreeSetting(BaseInvenTreeSetting):
@@ -844,6 +846,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
+        },
+        'SIGNUP_GROUP': {
+            'name': _('Group on signup'),
+            'description': _('Group new user are asigned on registration'),
+            'default': '',
+            'choices': settings_group_options
         },
     }
 

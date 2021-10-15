@@ -4,10 +4,11 @@ Helper forms which subclass Django forms to provide additional functionality
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 
 from crispy_forms.helper import FormHelper
@@ -20,6 +21,8 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 from part.models import PartCategory
 from common.models import InvenTreeSetting
+
+logger = logging.getLogger('inventree')
 
 
 class HelperForm(forms.ModelForm):
@@ -261,6 +264,18 @@ class RegistratonMixin:
         if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
             return super().is_open_for_signup(request)
         return False
+
+    def save_user(self, request, user, form, commit=True):
+        user = super().save_user(request, user, form, commit=commit)
+        start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
+        if start_group:
+            try:
+                group = Group.objects.get(id=start_group)
+                user.groups.add(group)
+            except Group.DoesNotExist:
+                logger.error('The setting `SIGNUP_GROUP` contains an non existant group', start_group)
+        user.save()
+        return user
 
 
 class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
