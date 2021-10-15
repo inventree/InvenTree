@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-14 23:46+0000\n"
+"POT-Creation-Date: 2021-10-15 01:50+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -69,13 +69,13 @@ msgid "Select Category"
 msgstr "Wybierz kategorię"
 
 #: InvenTree/forms.py:227
-msgid "E-mail (again)"
+msgid "Email (again)"
 msgstr ""
 
 #: InvenTree/forms.py:231
 #, fuzzy
 #| msgid "Email Address"
-msgid "E-mail address confirmation"
+msgid "Email address confirmation"
 msgstr "Adres e-mail"
 
 #: InvenTree/forms.py:251
@@ -1974,7 +1974,7 @@ msgstr ""
 #: common/models.py:825
 #, fuzzy
 #| msgid "Required"
-msgid "E-Mail required"
+msgid "Email required"
 msgstr "Wymagane"
 
 #: common/models.py:826
@@ -2304,6 +2304,7 @@ msgid "Contact phone number"
 msgstr "Numer telefonu kontaktowego"
 
 #: company/models.py:125 company/templates/company/company_base.html:102
+#: templates/InvenTree/settings/user.html:42
 msgid "Email"
 msgstr "Adres E-Mail"
 
@@ -6416,12 +6417,8 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:42
-msgid "E-Mail"
-msgstr ""
-
 #: templates/InvenTree/settings/user.html:47
-msgid "The following e-mail addresses are associated with your account:"
+msgid "The following email addresses are associated with your account:"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:61
@@ -6458,19 +6455,19 @@ msgid "Warning:"
 msgstr "Ostrzeżenie"
 
 #: templates/InvenTree/settings/user.html:81
-msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
+msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:88
 #, fuzzy
 #| msgid "Email Address"
-msgid "Add E-mail Address"
+msgid "Add Email Address"
 msgstr "Adres e-mail"
 
 #: templates/InvenTree/settings/user.html:93
 #, fuzzy
 #| msgid "Email"
-msgid "Add E-mail"
+msgid "Add Email"
 msgstr "Adres E-Mail"
 
 #: templates/InvenTree/settings/user.html:100
@@ -6526,7 +6523,7 @@ msgid "Native language translation of the InvenTree web application is <a href=\
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:223
-msgid "Do you really want to remove the selected e-mail address?"
+msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
 #: templates/InvenTree/settings/user_forms.html:9
@@ -6624,17 +6621,17 @@ msgstr ""
 #: templates/account/email_confirm.html:10
 #, fuzzy
 #| msgid "Email Address"
-msgid "Confirm E-mail Address"
+msgid "Confirm Email Address"
 msgstr "Adres e-mail"
 
 #: templates/account/email_confirm.html:16
 #, python-format
-msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail address for user %(user_display)s."
+msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
 #: templates/account/email_confirm.html:27
 #, python-format
-msgid "This e-mail confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
 
 #: templates/account/login.html:5 templates/account/login.html:14
@@ -6686,7 +6683,7 @@ msgid "Password Reset"
 msgstr "Ustaw hasło"
 
 #: templates/account/password_reset.html:18
-msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it."
+msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
 msgstr ""
 
 #: templates/account/password_reset.html:23
