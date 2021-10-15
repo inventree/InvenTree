@@ -43,6 +43,7 @@ from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
 from common.views import SettingEdit, UserSettingEdit
+from common.models import InvenTreeSetting
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
@@ -125,11 +126,12 @@ translated_javascript_urls = [
 ]
 
 # Integration plugin urls
-integration_plugins = settings.INTEGRATION_PLUGINS
 interation_urls = []
-for plugin in integration_plugins:
-    if plugin.mixin_enabled('urls'):
-        interation_urls.append(plugin.urlpatterns)
+if InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
+    integration_plugins = settings.INTEGRATION_PLUGINS
+    for plugin in integration_plugins:
+        if plugin.mixin_enabled('urls'):
+            interation_urls.append(plugin.urlpatterns)
 
 urlpatterns = [
     url(r'^part/', include(part_urls)),

@@ -854,7 +854,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
             'choices': settings_group_options
         },
-
+        'ENABLE_PLUGINS_URL': {
+            'name': _('Enable URL integration'),
+            'description': _('Enable plugins to add URL routes'),
+            'default': False,
+            'validator': bool,
+        },
         'ENABLE_PLUGINS_NAVIGATION': {
             'name': _('Enable navigation integration'),
             'description': _('Enable plugins to integrate into navigation'),
