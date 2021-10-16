@@ -290,3 +290,8 @@ function loadBrandIcon(element, name) {
         element.addClass('fab fa-' + name);
     }
 }
+
+// Convenience function to determine if an element exists
+$.fn.exists = function() {
+    return this.length !== 0;
+}

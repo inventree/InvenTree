@@ -324,6 +324,143 @@ function unallocateStock(build_id, options={}) {
             }
         }
     });
+}
+
+
+/**
+ * Launch a modal form to complete selected build outputs
+ */
+function completeBuildOutputs(build_id, outputs, options={}) {
+    
+    if (outputs.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Build Outputs" %}',
+            '{% trans "At least one build output must be selected" %}',
+        );
+        return;
+    }
+
+    // Render a single build output (StockItem)
+    function renderBuildOutput(output, opts={}) {
+        var pk = output.pk;
+
+        var quantity = '';
+
+        if (output.quantity == 1 && output.serial) {
+            quantity = `{% trans "Serial Number" %}: ${output.serial}`;
+        } else {
+            quantity = `{% trans "Quantity" %}: ${output.quantity}`;
+        }
+
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove row" %}');
+
+        buttons += '</div>';
+
+        var html = `
+        <tr id='output_row_${pk}'>
+            <td>${quantity}</td>
+            <td>${buttons}</td>
+        </tr>`;
+
+        return html;
+    }
+
+    // Construct table entries
+    var table_entries = '';
+
+    outputs.forEach(function(output) {
+        table_entries += renderBuildOutput(output);
+    });
+
+    var html = `
+    <table class='table table-striped table-condensed' id='build-complete-table'>
+        <thead>
+            <th>{% trans "Output" %}</th>
+            <th><!-- Actions --></th>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>`;
+
+    constructForm(`/api/build/${build_id}/complete/`, {
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            status: {},
+            location: {},
+        },
+        confirm: true,
+        title: '{% trans "Complete Build Outputs" %}',
+        afterRender: function(fields, opts) {
+            // Setup callbacks to remove outputs
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(opts.modal).find(`#output_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            
+            // Extract data elements from the form
+            var data = {
+                outputs: [],
+                status: getFormFieldValue('status', {}, opts),
+                location: getFormFieldValue('location', {}, opts),
+            };
+
+            var output_pk_values = [];
+
+            outputs.forEach(function(output) {
+                var pk = output.pk;
+
+                var row = $(opts.modal).find(`#output_row_${pk}`);
+
+                if (row.exists()) {
+                    data.outputs.push({
+                        output: pk,
+                    });
+                    output_pk_values.push(pk);
+                } else {
+                    console.log(`Could not find row for ${pk}`);
+                }
+            });
+
+            // Provide list of nested values
+            opts.nested = {
+                'outputs': output_pk_values,
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        // Hide the modal
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr);
+                            break;
+                        }
+                    }
+                }
+            )
+        }
+    });
 
 }
 
@@ -453,6 +590,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
             // TODO
             var todo = "Work out which stock items we need to allocate and launch the form";
+
             /*
             allocateStockToBuild(
                 build_info.pk,
@@ -475,7 +613,19 @@ function loadBuildOutputTable(build_info, options={}) {
         $(table).find('.button-output-complete').click(function() {
             var pk = $(this).attr('pk');
 
-            var todo = "write function to complete build output(s)";
+            var output = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            completeBuildOutputs(
+                build_info.pk,
+                [
+                    output,
+                ],
+                {
+                    success: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                }
+            );
         });
 
         // Callback for the "delete" button
@@ -554,6 +704,8 @@ function loadBuildOutputTable(build_info, options={}) {
                     field: 'allocated',
                     title: '{% trans "Allocated" %}',
                     formatter: function(value, row) {
+
+                        // Render a "progress" row
                         return "todo";
                     }
                 },
@@ -579,6 +731,7 @@ function loadBuildOutputTable(build_info, options={}) {
         queryParams: filters,
         original: params,
         showColumns: true,
+        uniqueId: 'pk',
         name: 'build-outputs',
         sortable: true,
         search: true,
