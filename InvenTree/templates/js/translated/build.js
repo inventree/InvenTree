@@ -583,6 +583,7 @@ function loadBuildOutputTable(build_info, options={}) {
         sortable: true,
         search: true,
         sidePagination: 'server',
+        detailViewAlign: 'right',
         detailView: build_info.tracked_parts || false,
         detailViewByClick: true,
         detailFilter: function(index, row) {
