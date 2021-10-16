@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-15 04:35+0000\n"
-"PO-Revision-Date: 2021-10-15 04:41\n"
+"PO-Revision-Date: 2021-10-16 12:47\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -74,11 +74,11 @@ msgstr ""
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Conferma indirizzo email"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "È necessario digitare la stessa e-mail ogni volta."
 
 #: InvenTree/helpers.py:401
 #, python-brace-format
@@ -446,7 +446,7 @@ msgstr "Carattere non valido nel nome del file"
 #: InvenTree/validators.py:64
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN deve corrispondere al modello regex {pat}"
 
 #: InvenTree/validators.py:78 InvenTree/validators.py:92
 #: InvenTree/validators.py:106
@@ -457,67 +457,67 @@ msgstr ""
 #: InvenTree/validators.py:114
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Carattere illegale nel nome ({x})"
 
 #: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Il sovra-valore non può essere negativo"
 
 #: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "L'eccesso non deve superare il 100%"
 
 #: InvenTree/validators.py:158
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "Il superamento deve essere un valore intero o una percentuale"
 
 #: InvenTree/views.py:616
 msgid "Delete Item"
-msgstr ""
+msgstr "Cancella elemento"
 
 #: InvenTree/views.py:665
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Spunta la casella per confermare l'eliminazione dell'elemento"
 
 #: InvenTree/views.py:680 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
-msgstr ""
+msgstr "Modifica informazioni utente"
 
 #: InvenTree/views.py:691 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
-msgstr ""
+msgstr "Imposta Password"
 
 #: InvenTree/views.py:710
 msgid "Password fields must match"
-msgstr ""
+msgstr "Le password devono coincidere"
 
 #: InvenTree/views.py:954 templates/navbar.html:87
 msgid "System Information"
-msgstr ""
+msgstr "Informazioni sistema"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "È necessario fornire il parametro barcode_data"
 
 #: barcodes/api.py:126
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Nessuna corrispondenza trovata per i dati del codice a barre"
 
 #: barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Corrispondenza trovata per i dati del codice a barre"
 
 #: barcodes/api.py:153
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "È necessario fornire il parametro stockitem"
 
 #: barcodes/api.py:160
 msgid "No matching stock item found"
-msgstr ""
+msgstr "Nessun elemento corrispondente trovato"
 
 #: barcodes/api.py:190
 msgid "Barcode already matches StockItem object"
-msgstr ""
+msgstr "Il codice a barre corrisponde già all'oggetto StockItem"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
