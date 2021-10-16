@@ -12,6 +12,9 @@
 
 {% block content %}
 
+<div class="alert alert-danger" role="alert">
+    {% trans "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under usage." %}
+</div>
 
 <table class='table table-striped table-condensed'>
     {% include "InvenTree/settings/header.html" %}
