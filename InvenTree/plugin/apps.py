@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 import pathlib
 from typing import OrderedDict
-from allauth.socialaccount import app_settings
 
 from django.apps import AppConfig, apps
 from django.conf import settings

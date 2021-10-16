@@ -18,7 +18,6 @@ import random
 import string
 import shutil
 import sys
-import pathlib
 import importlib
 from datetime import datetime
 
