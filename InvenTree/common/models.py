@@ -866,7 +866,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        **settings.INTEGRATION_PLUGIN_SETTINGS,
+        'ENABLE_PLUGINS_SETTING': {
+            'name': _('Enable setting integration'),
+            'description': _('Enable plugins to integrate into inventree settings'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:

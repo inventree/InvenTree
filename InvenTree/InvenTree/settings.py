@@ -266,6 +266,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'plugin.apps.PluginConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
@@ -764,11 +765,6 @@ for plugin in inventree_plugins.load_integration_plugins():
 
     INTEGRATION_PLUGINS.append(plugin)
     INTEGRATION_PLUGIN_LIST[plugin.slug] = plugin
-    if plugin.mixin_enabled('settings'):
-        plugin_setting = plugin.settingspatterns
-
-        INTEGRATION_PLUGIN_SETTING[plugin.slug] = plugin_setting
-        INTEGRATION_PLUGIN_SETTINGS.update(plugin_setting)
 
     if plugin.mixin_enabled('app'):
         plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(BASE_DIR).parts)
