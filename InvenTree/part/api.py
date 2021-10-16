@@ -814,6 +814,27 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Exclude specific part ID values?
+        exclude_id = []
+
+        for key in ['exclude_id', 'exclude_id[]']:
+            if key in params:
+                exclude_id += params.getlist(key, [])
+
+        if exclude_id:
+
+            id_values = []
+
+            for val in exclude_id:
+                try:
+                    # pk values must be integer castable
+                    val = int(val)
+                    id_values.append(val)
+                except ValueError:
+                    pass
+            
+            queryset = queryset.exclude(pk__in=id_values)
+
         # Exclude part variant tree?
         exclude_tree = params.get('exclude_tree', None)
 

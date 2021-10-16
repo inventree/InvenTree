@@ -15,6 +15,7 @@ from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentMixin
 from InvenTree.helpers import str2bool, isNull
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
@@ -66,7 +67,7 @@ class BuildList(generics.ListCreateAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     ordering_fields = [
@@ -80,6 +81,10 @@ class BuildList(generics.ListCreateAPIView):
         'issued_by',
         'responsible',
     ]
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+    }
 
     search_fields = [
         'reference',

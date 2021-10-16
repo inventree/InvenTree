@@ -151,8 +151,12 @@ class POList(generics.ListCreateAPIView):
     filter_backends = [
         rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+    }
 
     filter_fields = [
         'supplier',
@@ -489,8 +493,12 @@ class SOList(generics.ListCreateAPIView):
     filter_backends = [
         rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+    }
 
     filter_fields = [
         'customer',

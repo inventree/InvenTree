@@ -20,6 +20,10 @@ class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
 
+    exclude = [
+        'reference_int',
+    ]
+
     list_display = (
         'reference',
         'supplier',
@@ -40,6 +44,10 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAdmin(ImportExportModelAdmin):
+
+    exclude = [
+        'reference_int',
+    ]
 
     list_display = (
         'reference',
