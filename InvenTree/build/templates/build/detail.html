@@ -213,19 +213,31 @@
 </div>
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-outputs'>
-    {% if not build.is_complete %}
     <div class='panel-heading'>
         <h4>{% trans "Incomplete Build Outputs" %}</h4>
     </div>
     <div class='panel-content'>
-        {% if build.active %}
-        <div class='btn-group' role='group' id='build-output-toolbar'>
-            <button class='btn btn-primary' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "Create New Output" %}
-            </button>
-
+        <div id='build-output-toolbar'>
+            <div class='button-toolbar container-fluid'>
+                {% if build.active %}
+                <div class='btn-group'>
+                    <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
+                        <span class='fas fa-plus-circle'></span>
+                    </button>
+                    <!-- Build output actions -->
+                    <div class='btn-group'>
+                        <button id='output-options' class='btn btn-primary dropdown-toiggle' type='button' data-toggle='dropdown' title='{% trans "Output Actions" %}'>
+                            <span class='fas fa-tools'></span> <span class='caret'></span>
+                        </button>
+                        <ul class='dropdown-menu'>
+                            <li><a href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-
+            
         <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
             {% for item in build.incomplete_outputs %}
             {% include "build/allocation_card.html" with item=item tracked_items=build.has_tracked_bom_items %}
@@ -233,10 +245,10 @@
         </div>
         
         <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
-        {% endif %}
     </div>
-    {% endif %}
+</div>
 
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-completed'>
     <div class='panel-heading'>
         <h4>
             {% trans "Completed Build Outputs" %}
@@ -336,6 +348,28 @@ inventreeGet(
 
             {% if build.active %}
             loadBuildOutputTable(build_info);
+            linkButtonsToSelection(
+                '#build-output-table',
+                [
+                    '#output-options',
+                    '#multi-output-complete',
+                ]
+            );
+
+            $('#multi-output-complete').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                completeBuildOutputs(
+                    build_info.pk,
+                    outputs,
+                    {
+                        success: function() {
+                            $('#build-output-table').bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+
             {% endif %}
 
             {% for item in build.incomplete_outputs %}

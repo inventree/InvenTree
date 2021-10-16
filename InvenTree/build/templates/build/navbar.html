@@ -25,10 +25,19 @@
     </li>
     {% endif %}
 
-    <li class='list-group-item' title='{% trans "Build Outputs" %}'>
+    {% if not build.is_complete %}
+    <li class='list-group-item' title='{% trans "In Progress Items" %}'>
         <a href='#' id='select-outputs' class='nav-toggle'>
-            <span class='fas fa-box sidebar-icon'></span>
-            {% trans "Build Outputs" %}
+            <span class='fas fa-tasks sidebar-icon'></span>
+            {% trans "In Progress Items" %}
+        </a>
+    </li>
+    {% endif %}
+
+    <li class='list-group-item' title='{% trans "Completed Items" %}'>
+        <a href='#' id='select-completed' class='nav-toggle'>
+            <span class='fas fa-boxes sidebar-icon'></span>
+            {% trans "Completed Items" %}
         </a>
     </li>
 

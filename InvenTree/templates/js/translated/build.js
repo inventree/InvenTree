@@ -423,8 +423,6 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                         output: pk,
                     });
                     output_pk_values.push(pk);
-                } else {
-                    console.log(`Could not find row for ${pk}`);
                 }
             });
 
@@ -753,6 +751,12 @@ function loadBuildOutputTable(build_info, options={}) {
             setupBuildOutputButtonCallbacks();
         },
         columns: [
+            {
+                title: '',
+                visible: true,
+                checkbox: true,
+                switchable: false,
+            },
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
