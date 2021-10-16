@@ -872,6 +872,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'ENABLE_PLUGINS_APP': {
+            'name': _('Enable app integration'),
+            'description': _('Enable plugins to add apps'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:

@@ -759,13 +759,9 @@ INTEGRATION_PLUGINS = []
 INTEGRATION_PLUGIN_SETTINGS = {}
 INTEGRATION_PLUGIN_SETTING = {}
 INTEGRATION_PLUGIN_LIST = {}
+INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet
 
 for plugin in inventree_plugins.load_integration_plugins():
     plugin = plugin()
-
     INTEGRATION_PLUGINS.append(plugin)
     INTEGRATION_PLUGIN_LIST[plugin.slug] = plugin
-
-    if plugin.mixin_enabled('app'):
-        plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(BASE_DIR).parts)
-        INSTALLED_APPS += [plugin_path]
