@@ -374,7 +374,13 @@ inventreeGet(
         
             {% if build.active and build.has_untracked_bom_items %}
             // Load allocation table for un-tracked parts
-            loadBuildOutputAllocationTable(build_info, null);
+            loadBuildOutputAllocationTable(
+                build_info,
+                null,
+                {
+                    search: true,
+                }
+            );
             {% endif %}
         }
     }

@@ -574,13 +574,29 @@ function loadBuildOutputTable(build_info, options={}) {
 
             // TODO
             var todo = "Work out which stock items we need to allocate and launch the form";
+            
+            // Find the "allocation" sub-table associated with this output
+            var subtable = $(`#output-sub-table-${pk}`);
 
-            /*
-            allocateStockToBuild(
-                build_info.pk,
-                build_info.part,
+            if (subtable.exists()) {
+                var rows = subtable.bootstrapTable('getSelections');
 
-            )*/
+                // None selected? Use all!
+                if (rows.length == 0) {
+                    rows = subtable.bootstrapTable('getData');
+                }
+
+                allocateStockToBuild(
+                    build_info.pk,
+                    build_info.part,
+                    rows,
+                    {
+                        output: pk,
+                    }
+                );
+            } else {
+                console.log(`WARNING: Could not locate sub-table for output ${pk}`);
+            }
         });
 
         // Callack for the "unallocate" button
@@ -665,7 +681,6 @@ function loadBuildOutputTable(build_info, options={}) {
         search: false,
         sidePagination: 'server',
         detailView: has_tracked_items,
-        detailViewByClick: true,
         detailFilter: function(index, row) {
             return true;
         },
@@ -1025,7 +1040,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         },
         sortable: true,
         showColumns: false,
-        detailViewByClick: true,
         detailView: true,
         detailFilter: function(index, row) {
             return row.allocations != null;
