@@ -188,18 +188,6 @@ class EditPartParameterTemplateForm(HelperForm):
         ]
 
 
-class EditPartParameterForm(HelperForm):
-    """ Form for editing a PartParameter object """
-
-    class Meta:
-        model = PartParameter
-        fields = [
-            'part',
-            'template',
-            'data'
-        ]
-
-
 class EditCategoryForm(HelperForm):
     """ Form for editing a PartCategory object """
 
