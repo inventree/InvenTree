@@ -33,8 +33,9 @@ class PluginConfig(AppConfig):
             for slug, plugin in plugins:
                 if plugin.mixin_enabled('app'):
                     plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
-                    settings.INSTALLED_APPS += [plugin_path]
-                    apps_changed = True
+                    if plugin_path not in  settings.INSTALLED_APPS:
+                        settings.INSTALLED_APPS += [plugin_path]
+                        apps_changed = True
 
             # if apps were changed reload
             # TODO this is a bit jankey to be honest
