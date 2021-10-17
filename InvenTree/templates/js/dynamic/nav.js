@@ -3,7 +3,7 @@
 
 /* exported
     attachNavCallbacks,
-    enableNavBar,
+    enableNavbar,
     initNavTree,
     loadTree,
     onPanelLoad,
