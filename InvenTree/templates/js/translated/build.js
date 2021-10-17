@@ -24,6 +24,7 @@
     loadAllocationTable,
     loadBuildOrderAllocationTable,
     loadBuildOutputAllocationTable,
+    loadBuildOutputTable,
     loadBuildTable,
 */
 
@@ -123,6 +124,9 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
             'button-output-allocate',
             output_id,
             '{% trans "Allocate stock items to this build output" %}',
+            {
+                disabled: true,
+            }
         );
 
         // Add a button to unallocate stock from this build output
@@ -154,118 +158,6 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
 
     return html;
 
-}
-
-
-// TODO "delete me"
-
-function makeBuildOutputActionButtons(output, buildInfo, lines) {
-    /* Generate action buttons for a build output.
-     */
-
-    var todo = "delete this function ok";
-
-    var buildId = buildInfo.pk;
-    var partId = buildInfo.part;
-
-    var outputId = 'untracked';
-
-    if (output) {
-        outputId = output.pk;
-    }
-
-    var panel = `#allocation-panel-${outputId}`;
-
-    function reloadTable() {
-        $(panel).find(`#allocation-table-${outputId}`).bootstrapTable('refresh');
-    }
-
-    // Find the div where the buttons will be displayed
-    var buildActions = $(panel).find(`#output-actions-${outputId}`);
-
-    var html = `<div class='btn-group float-right' role='group'>`;
-
-    if (lines > 0) {
-        html += makeIconButton(
-            'fa-sign-in-alt icon-blue', 'button-output-auto', outputId,
-            '{% trans "Allocate stock items to this build output" %}',
-        );
-    }
-
-    if (lines > 0) {
-        // Add a button to "cancel" the particular build output (unallocate)
-        html += makeIconButton(
-            'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
-            '{% trans "Unallocate stock from build output" %}',
-        );
-    }
-
-    if (output) {
-
-        // Add a button to "complete" the particular build output
-        html += makeIconButton(
-            'fa-check-circle icon-green', 'button-output-complete', outputId,
-            '{% trans "Complete build output" %}',
-            {
-                // disabled: true
-            }
-        );
-
-        // Add a button to "delete" the particular build output
-        html += makeIconButton(
-            'fa-trash-alt icon-red', 'button-output-delete', outputId,
-            '{% trans "Delete build output" %}',
-        );
-
-        // TODO - Add a button to "destroy" the particular build output (mark as damaged, scrap)
-    }
-
-    html += '</div>';
-
-    buildActions.html(html);
-
-    // Add callbacks for the buttons
-    $(panel).find(`#button-output-auto-${outputId}`).click(function() {
-
-        var bom_items = $(panel).find(`#allocation-table-${outputId}`).bootstrapTable('getData');
-
-        // Launch modal dialog to perform auto-allocation
-        allocateStockToBuild(
-            buildId,
-            partId,
-            bom_items,
-            {
-                source_location: buildInfo.source_location,
-                output: outputId,
-                success: reloadTable,
-            }
-        );
-    });
-
-    $(panel).find(`#button-output-unallocate-${outputId}`).click(function() {
-
-        var pk = $(this).attr('pk');
-
-        unallocateStock(buildId, {
-            output: pk,
-            table: table,
-        });
-    });
-
-    $(panel).find(`#button-output-delete-${outputId}`).click(function() {
-
-        var pk = $(this).attr('pk');
-
-        launchModalForm(
-            `/build/${buildId}/delete-output/`,
-            {
-                reload: true,
-                data: {
-                    output: pk
-                }
-            }
-        );
-    });
 }
 
 
@@ -572,9 +464,6 @@ function loadBuildOutputTable(build_info, options={}) {
         $(table).find('.button-output-allocate').click(function() {
             var pk = $(this).attr('pk');
 
-            // TODO
-            var todo = "Work out which stock items we need to allocate and launch the form";
-            
             // Find the "allocation" sub-table associated with this output
             var subtable = $(`#output-sub-table-${pk}`);
 
@@ -666,6 +555,7 @@ function loadBuildOutputTable(build_info, options={}) {
             row,
             {
                 table: `#${sub_table_id}`,
+                parent_table: table,
             }
         );
     }
@@ -695,7 +585,6 @@ function loadBuildOutputTable(build_info, options={}) {
             setupBuildOutputButtonCallbacks();
 
             $(table).bootstrapTable('expandAllRows');
-            // $(table).bootstrapTable('collapseAllRows');
         },
         columns: [
             {
@@ -751,7 +640,17 @@ function loadBuildOutputTable(build_info, options={}) {
                 }
             }
         ]
-    }); 
+    });
+
+    // Enable the "allocate" button when the sub-table is exanded
+    $(table).on('expand-row.bs.table', function(detail, index, row) {
+        $(`#button-output-allocate-${row.pk}`).prop('disabled', false);
+    });
+    
+    // Disable the "allocate" button when the sub-table is collapsed
+    $(table).on('collapse-row.bs.table', function(detail, index, row) {
+        $(`#button-output-allocate-${row.pk}`).prop('disabled', true);
+    });
 }
 
 
@@ -936,7 +835,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         name: 'build-allocation',
         uniqueId: 'sub_part',
         search: options.search || false,
-        onPostBody: setupCallbacks,
+        onPostBody: function(data) {
+            // Setup button callbacks
+            setupCallbacks();
+        },
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for this build output
 
@@ -1031,9 +933,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         } else {
                             console.log(`WARNING: Could not find progress bar for output ${outputId}`);
                         }
-
-                        // Update the available actions for this build output
-                        makeBuildOutputActionButtons(output, buildInfo, totalLines);
                     }
                 }
             );
@@ -1288,9 +1187,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             },
         ]
     });
-
-    // Initialize the action buttons
-    makeBuildOutputActionButtons(output, buildInfo, 0);
 }
 
 
