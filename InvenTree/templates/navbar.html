@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
-{% settings_value 'ENABLE_PLUGINS_NAVIGATION' as plugin_nav %}
+{% navigation_enabled as plugin_nav %}
 
 <nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">

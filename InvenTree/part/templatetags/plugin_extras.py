@@ -5,6 +5,8 @@
 from django.conf import settings as djangosettings
 from django import template
 
+from common.models import InvenTreeSetting
+
 
 register = template.Library()
 
@@ -25,3 +27,10 @@ def plugin_settings(plugin, *args, **kwargs):
 def mixin_enabled(plugin, key, *args, **kwargs):
     """ Return if the mixin is existant and configured in the plugin """
     return plugin.mixin_enabled(key)
+
+@register.simple_tag()
+def navigation_enabled(*args, **kwargs):
+    """Return if plugin navigation is enabled"""
+    if djangosettings.TESTING:
+        return True
+    return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')
