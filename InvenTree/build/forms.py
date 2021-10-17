@@ -155,59 +155,6 @@ class CompleteBuildForm(HelperForm):
         ]
 
 
-class CompleteBuildOutputForm(HelperForm):
-    """
-    Form for completing a single build output
-    """
-
-    field_prefix = {
-        'serial_numbers': 'fa-hashtag',
-    }
-
-    field_placeholder = {
-    }
-
-    location = forms.ModelChoiceField(
-        queryset=StockLocation.objects.all(),
-        label=_('Location'),
-        help_text=_('Location of completed parts'),
-    )
-
-    stock_status = forms.ChoiceField(
-        label=_('Status'),
-        help_text=_('Build output stock status'),
-        initial=StockStatus.OK,
-        choices=StockStatus.items(),
-    )
-
-    confirm_incomplete = forms.BooleanField(
-        required=False,
-        label=_('Confirm incomplete'),
-        help_text=_("Confirm completion with incomplete stock allocation")
-    )
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Confirm build completion'))
-
-    output = forms.ModelChoiceField(
-        queryset=StockItem.objects.all(),  # Queryset is narrowed in the view
-        widget=forms.HiddenInput(),
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'location',
-            'output',
-            'stock_status',
-            'confirm',
-            'confirm_incomplete',
-        ]
-
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
-
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 
