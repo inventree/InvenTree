@@ -755,7 +755,6 @@ for plugin in PLUGIN_DIRS:
 # collect integration plugins
 INTEGRATION_PLUGINS = []
 
-INTEGRATION_PLUGIN_SETTINGS = {}
 INTEGRATION_PLUGIN_SETTING = {}
 INTEGRATION_PLUGIN_LIST = {}
 INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet

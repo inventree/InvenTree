@@ -19,7 +19,6 @@ class PluginConfig(AppConfig):
                 if plugin.mixin_enabled('settings'):
                     plugin_setting = plugin.settingspatterns
                     settings.INTEGRATION_PLUGIN_SETTING[slug] = plugin_setting
-                    settings.INTEGRATION_PLUGIN_SETTINGS.update(plugin_setting)
                     InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
 
         # if plugin apps are enabled
