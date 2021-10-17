@@ -753,10 +753,10 @@ for plugin in PLUGIN_DIRS:
         [PLUGINS.append(item) for item in modules]
 
 # collect integration plugins
+INTEGRATION_PLUGINS = {}
 INTEGRATION_PLUGIN_SETTING = {}
-INTEGRATION_PLUGIN_LIST = {}
 INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet
 
 for plugin in inventree_plugins.load_integration_plugins():
     plugin = plugin()
-    INTEGRATION_PLUGIN_LIST[plugin.slug] = plugin
+    INTEGRATION_PLUGINS[plugin.slug] = plugin

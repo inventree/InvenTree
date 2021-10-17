@@ -12,7 +12,7 @@ class PluginTemplateLoader(FilesystemLoader):
     def get_dirs(self):
         dirname = 'templates'
         template_dirs = []
-        for plugin in settings.INTEGRATION_PLUGIN_LIST.values():
+        for plugin in settings.INTEGRATION_PLUGINS.values():
             new_path = Path(plugin.path) / dirname
             if Path(new_path).is_dir():
                 template_dirs.append(new_path)

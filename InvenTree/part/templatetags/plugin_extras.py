@@ -12,7 +12,7 @@ register = template.Library()
 @register.simple_tag()
 def plugin_list(*args, **kwargs):
     """ Return a list of all installed integration plugins """
-    return djangosettings.INTEGRATION_PLUGIN_LIST
+    return djangosettings.INTEGRATION_PLUGINS
 
 
 @register.simple_tag()

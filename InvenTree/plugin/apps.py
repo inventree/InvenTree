@@ -12,13 +12,16 @@ class PluginConfig(AppConfig):
 
     def ready(self):
         from common.models import InvenTreeSetting
+        plugins = settings.INTEGRATION_PLUGINS.items()
 
         # if plugin settings are enabled enhance the settings
         if InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
-            for slug, plugin in settings.INTEGRATION_PLUGIN_LIST.items():
+            for slug, plugin in plugins:
                 if plugin.mixin_enabled('settings'):
                     plugin_setting = plugin.settingspatterns
                     settings.INTEGRATION_PLUGIN_SETTING[slug] = plugin_setting
+
+                    # Add to settings dir
                     InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
 
         # if plugin apps are enabled
@@ -27,7 +30,7 @@ class PluginConfig(AppConfig):
             apps_changed = False
 
             # add them to the INSTALLED_APPS
-            for slug, plugin in settings.INTEGRATION_PLUGIN_LIST.items():
+            for slug, plugin in plugins:
                 if plugin.mixin_enabled('app'):
                     plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
                     settings.INSTALLED_APPS += [plugin_path]

@@ -57,7 +57,7 @@ class PluginTagTests(TestCase):
 
     def test_tag_plugin_list(self):
         """test that all plugins are listed"""
-        self.assertEqual(plugin_tags.plugin_list(), settings.INTEGRATION_PLUGIN_LIST)
+        self.assertEqual(plugin_tags.plugin_list(), settings.INTEGRATION_PLUGINS)
 
     def test_tag_plugin_settings(self):
         """check all plugins are listed"""
