@@ -10,62 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 
 from InvenTree.forms import HelperForm
-from InvenTree.fields import RoundingDecimalFormField
-from InvenTree.fields import DatePickerFormField
-
-from InvenTree.status_codes import StockStatus
 
 from .models import Build
-
-from stock.models import StockLocation, StockItem
-
-
-class EditBuildForm(HelperForm):
-    """ Form for editing a Build object.
-    """
-
-    field_prefix = {
-        'reference': 'BO',
-        'link': 'fa-link',
-        'batch': 'fa-layer-group',
-        'serial-numbers': 'fa-hashtag',
-        'location': 'fa-map-marker-alt',
-        'target_date': 'fa-calendar-alt',
-    }
-
-    field_placeholder = {
-        'reference': _('Build Order reference'),
-        'target_date': _('Order target date'),
-    }
-
-    target_date = DatePickerFormField(
-        label=_('Target Date'),
-        help_text=_('Target date for build completion. Build will be overdue after this date.')
-    )
-
-    quantity = RoundingDecimalFormField(
-        max_digits=10, decimal_places=5,
-        label=_('Quantity'),
-        help_text=_('Number of items to build')
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'reference',
-            'title',
-            'part',
-            'quantity',
-            'batch',
-            'target_date',
-            'take_from',
-            'destination',
-            'parent',
-            'sales_order',
-            'link',
-            'issued_by',
-            'responsible',
-        ]
 
 
 class BuildOutputCreateForm(HelperForm):
@@ -153,59 +99,6 @@ class CompleteBuildForm(HelperForm):
         fields = [
             'confirm',
         ]
-
-
-class CompleteBuildOutputForm(HelperForm):
-    """
-    Form for completing a single build output
-    """
-
-    field_prefix = {
-        'serial_numbers': 'fa-hashtag',
-    }
-
-    field_placeholder = {
-    }
-
-    location = forms.ModelChoiceField(
-        queryset=StockLocation.objects.all(),
-        label=_('Location'),
-        help_text=_('Location of completed parts'),
-    )
-
-    stock_status = forms.ChoiceField(
-        label=_('Status'),
-        help_text=_('Build output stock status'),
-        initial=StockStatus.OK,
-        choices=StockStatus.items(),
-    )
-
-    confirm_incomplete = forms.BooleanField(
-        required=False,
-        label=_('Confirm incomplete'),
-        help_text=_("Confirm completion with incomplete stock allocation")
-    )
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Confirm build completion'))
-
-    output = forms.ModelChoiceField(
-        queryset=StockItem.objects.all(),  # Queryset is narrowed in the view
-        widget=forms.HiddenInput(),
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'location',
-            'output',
-            'stock_status',
-            'confirm',
-            'confirm_incomplete',
-        ]
-
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
 
 
 class CancelBuildForm(HelperForm):

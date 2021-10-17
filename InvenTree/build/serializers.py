@@ -18,9 +18,10 @@ from rest_framework.serializers import ValidationError
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
 
+from InvenTree.status_codes import StockStatus
 import InvenTree.helpers
 
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 from part.models import BomItem
@@ -118,6 +119,124 @@ class BuildSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
         ]
+
+
+class BuildOutputSerializer(serializers.Serializer):
+    """
+    Serializer for a "BuildOutput"
+
+    Note that a "BuildOutput" is really just a StockItem which is "in production"!
+    """
+
+    output = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Build Output'),
+    )
+
+    def validate_output(self, output):
+
+        build = self.context['build']
+
+        # The stock item must point to the build
+        if output.build != build:
+            raise ValidationError(_("Build output does not match the parent build"))
+
+        # The part must match!
+        if output.part != build.part:
+            raise ValidationError(_("Output part does not match BuildOrder part"))
+
+        # The build output must be "in production"
+        if not output.is_building:
+            raise ValidationError(_("This build output has already been completed"))
+
+        # The build output must have all tracked parts allocated
+        if not build.isFullyAllocated(output):
+            raise ValidationError(_("This build output is not fully allocated"))
+
+        return output
+
+    class Meta:
+        fields = [
+            'output',
+        ]
+
+
+class BuildCompleteSerializer(serializers.Serializer):
+    """
+    DRF serializer for completing one or more build outputs
+    """
+
+    class Meta:
+        fields = [
+            'outputs',
+            'location',
+            'status',
+            'notes',
+        ]
+
+    outputs = BuildOutputSerializer(
+        many=True,
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        required=True,
+        many=False,
+        label=_("Location"),
+        help_text=_("Location for completed build outputs"),
+    )
+
+    status = serializers.ChoiceField(
+        choices=list(StockStatus.items()),
+        default=StockStatus.OK,
+        label=_("Status"),
+    )
+
+    notes = serializers.CharField(
+        label=_("Notes"),
+        required=False,
+        allow_blank=True,
+    )
+
+    def validate(self, data):
+
+        super().validate(data)
+
+        outputs = data.get('outputs', [])
+
+        if len(outputs) == 0:
+            raise ValidationError(_("A list of build outputs must be provided"))
+
+        return data
+
+    def save(self):
+        """
+        "save" the serializer to complete the build outputs
+        """
+
+        build = self.context['build']
+        request = self.context['request']
+
+        data = self.validated_data
+
+        outputs = data.get('outputs', [])
+
+        # Mark the specified build outputs as "complete"
+        with transaction.atomic():
+            for item in outputs:
+
+                output = item['output']
+
+                build.complete_build_output(
+                    output,
+                    request.user,
+                    status=data['status'],
+                    notes=data.get('notes', '')
+                )
 
 
 class BuildUnallocationSerializer(serializers.Serializer):

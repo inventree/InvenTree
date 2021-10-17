@@ -91,16 +91,11 @@ src="{% static 'img/blank_image.png' %}"
             <span class='fas fa-print'></span> <span class='caret'></span>
         </button>
         <ul class='dropdown-menu' role='menu'>
-            <li><a href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print Build Order" %}</a></li>
+            <li><a href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print build order report" %}</a></li>
         </ul>
     </div>
     <!-- Build actions -->
     {% if roles.build.change %}
-    {% if build.active %}
-    <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
-        <span class='fas fa-paper-plane'></span>
-    </button>
-    {% endif %}
     <div class='btn-group'>
         <button id='build-options' title='{% trans "Build actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
             <span class='fas fa-tools'></span> <span class='caret'></span>
@@ -115,6 +110,11 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </ul>
     </div>
+    {% if build.active %}
+    <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
+        <span class='fas fa-check-circle'></span>
+    </button>
+    {% endif %}
     {% endif %}
 </div>
 {% endblock %}
@@ -153,8 +153,8 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% endif %}
     <tr>
-        <td><span class='fas fa-spinner'></span></td>
-        <td>{% trans "Progress" %}</td>
+        <td><span class='fas fa-check-circle'></span></td>
+        <td>{% trans "Completed" %}</td>
         <td> {{ build.completed }} / {{ build.quantity }}</td>
     </tr>
     {% if build.parent %}

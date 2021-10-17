@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from .models import Build
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus
 
 
 class BuildTestSimple(TestCase):
@@ -251,53 +251,6 @@ class TestBuildViews(TestCase):
         content = str(response.content)
 
         self.assertIn(build.title, content)
-
-    def test_build_output_complete(self):
-        """
-        Test the build output completion form
-        """
-
-        # Firstly, check that the build cannot be completed!
-        self.assertFalse(self.build.can_complete)
-
-        url = reverse('build-output-complete', args=(1,))
-
-        # Test without confirmation
-        response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # Test with confirmation, valid location
-        response = self.client.post(
-            url,
-            {
-                'confirm': 1,
-                'confirm_incomplete': 1,
-                'location': 1,
-                'output': self.output.pk,
-                'stock_status': StockStatus.DAMAGED
-            },
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-
-        self.assertTrue(data['form_valid'])
-
-        # Now the build should be able to be completed
-        self.build.refresh_from_db()
-        self.assertTrue(self.build.can_complete)
-
-        # Test with confirmation, invalid location
-        response = self.client.post(url, {'confirm': 1, 'location': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
 
     def test_build_cancel(self):
         """ Test the build cancellation form """

@@ -63,10 +63,17 @@
                     <td>{% build_status_label build.status %}</td>
                 </tr>
                 <tr>
-                    <td><span class='fas fa-spinner'></span></td>
-                    <td>{% trans "Progress" %}</td>
+                    <td><span class='fas fa-check-circle'></span></td>
+                    <td>{% trans "Completed" %}</td>
                     <td>{{ build.completed }} / {{ build.quantity }}</td>
                 </tr>
+                {% if True or build.active and build.has_untracked_bom_items %}
+                <tr>
+                    <td><span class='fas fa-list'></span></td>
+                    <td>{% trans "Allocated Parts" %}</td>
+                    <td id='output-progress-untracked'><span class='fas fa-spinner fa-spin'></span></td>
+                </tr>
+                {% endif %}
                 {% if build.batch %}
                 <tr>
                     <td><span class='fas fa-layer-group'></span></td>
@@ -213,35 +220,35 @@
 </div>
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-outputs'>
-    {% if not build.is_complete %}
     <div class='panel-heading'>
         <h4>{% trans "Incomplete Build Outputs" %}</h4>
     </div>
     <div class='panel-content'>
-        <div class='btn-group' role='group'>
-            {% if build.active %}
-            <button class='btn btn-primary' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "Create New Output" %}
-            </button>
-            {% endif %}
+        <div id='build-output-toolbar'>
+            <div class='button-toolbar container-fluid'>
+                {% if build.active %}
+                <div class='btn-group'>
+                    <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
+                        <span class='fas fa-plus-circle'></span>
+                    </button>
+                    <!-- Build output actions -->
+                    <div class='btn-group'>
+                        <button id='output-options' class='btn btn-primary dropdown-toiggle' type='button' data-toggle='dropdown' title='{% trans "Output Actions" %}'>
+                            <span class='fas fa-tools'></span> <span class='caret'></span>
+                        </button>
+                        <ul class='dropdown-menu'>
+                            <li><a href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-
-        {% if build.incomplete_outputs %}
-        <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
-            {% for item in build.incomplete_outputs %}
-            {% include "build/allocation_card.html" with item=item tracked_items=build.has_tracked_bom_items %}
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class='alert alert-block alert-info'>
-            <strong>{% trans "Create a new build output" %}</strong><br>
-            {% trans "No incomplete build outputs remain." %}<br>
-            {% trans "Create a new build output using the button above" %}
-        </div>
-        {% endif %}
+        <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
     </div>
-    {% endif %}
+</div>
 
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-completed'>
     <div class='panel-heading'>
         <h4>
             {% trans "Completed Build Outputs" %}
@@ -313,26 +320,75 @@ loadStockTable($("#build-stock-table"), {
     url: "{% url 'api-stock-list' %}",    
 });
 
-var buildInfo = {
-    pk: {{ build.pk }},
-    quantity: {{ build.quantity }},
-    completed: {{ build.completed }},
-    part: {{ build.part.pk }},
-    {% if build.take_from %}
-    source_location: {{ build.take_from.pk }},
-    {% endif %}
-};
 
-{% for item in build.incomplete_outputs %}
-// Get the build output as a javascript object
-inventreeGet('{% url 'api-stock-detail' item.pk %}', {},
+// Get the list of BOM items required for this build
+inventreeGet(
+    '{% url "api-bom-list" %}',
+    {
+        part: {{ build.part.pk }},
+        sub_part_detail: true,
+    },
     {
         success: function(response) {
-            loadBuildOutputAllocationTable(buildInfo, response);
+
+            var build_info = {
+                pk: {{ build.pk }},
+                part: {{ build.part.pk }},
+                quantity: {{ build.quantity }},
+                bom_items: response,
+                {% if build.take_from %}
+                source_location: {{ build.take_from.pk }},
+                {% endif %}
+                {% if build.has_tracked_bom_items %}
+                tracked_parts: true,
+                {% else %}
+                tracked_parts: false,
+                {% endif %}
+            };
+
+            {% if build.active %}
+            loadBuildOutputTable(build_info);
+            linkButtonsToSelection(
+                '#build-output-table',
+                [
+                    '#output-options',
+                    '#multi-output-complete',
+                ]
+            );
+
+            $('#multi-output-complete').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                completeBuildOutputs(
+                    build_info.pk,
+                    outputs,
+                    {
+                        success: function() {
+                            // Reload the "in progress" table
+                            $('#build-output-table').bootstrapTable('refresh');
+
+                            // Reload the "completed" table
+                            $('#build-stock-table').bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+
+            {% endif %}
+        
+            {% if build.active and build.has_untracked_bom_items %}
+            // Load allocation table for un-tracked parts
+            loadBuildOutputAllocationTable(
+                build_info,
+                null,
+                {
+                    search: true,
+                }
+            );
+            {% endif %}
         }
     }
 );
-{% endfor %}
 
 loadBuildTable($('#sub-build-table'), {
     url: '{% url "api-build-list" %}',
@@ -341,6 +397,7 @@ loadBuildTable($('#sub-build-table'), {
         ancestor: {{ build.pk }},
     }
 });
+
 
 enableDragAndDrop(
     '#attachment-dropzone',
@@ -415,11 +472,6 @@ $('#edit-notes').click(function() {
         reload: true,
     });
 });
-
-{% if build.has_untracked_bom_items %}
-// Load allocation table for un-tracked parts
-loadBuildOutputAllocationTable(buildInfo, null);
-{% endif %}
 
 function reloadTable() {
     $('#allocation-table-untracked').bootstrapTable('refresh');
