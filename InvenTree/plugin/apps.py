@@ -15,7 +15,7 @@ class PluginConfig(AppConfig):
         plugins = settings.INTEGRATION_PLUGINS.items()
 
         # if plugin settings are enabled enhance the settings
-        if InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
+        if settings.TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
             for slug, plugin in plugins:
                 if plugin.mixin_enabled('settings'):
                     plugin_setting = plugin.settingspatterns
@@ -25,7 +25,7 @@ class PluginConfig(AppConfig):
                     InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
 
         # if plugin apps are enabled
-        if (not settings.INTEGRATION_APPS_LOADED) and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
+        if settings.TESTING or ((not settings.INTEGRATION_APPS_LOADED) and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
             settings.INTEGRATION_APPS_LOADED = True  # ensure this section will not run again
             apps_changed = False
 
