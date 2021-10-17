@@ -60,7 +60,7 @@ class BuildCompleteTest(BuildAPITest):
         self.post(
             reverse('api-build-complete', kwargs={'pk': 99999}),
             {},
-            expected_code=404
+            expected_code=400
         )
 
         data = self.post(self.url, {}, expected_code=400).data
