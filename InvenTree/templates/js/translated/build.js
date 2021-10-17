@@ -144,7 +144,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         'button-output-complete',
         output_id,
         '{% trans "Complete build output" %}',
-    )
+    );
 
     // Add a button to "delete" this build output
     html += makeIconButton(
@@ -344,7 +344,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                         }
                     }
                 }
-            )
+            );
         }
     });
 }

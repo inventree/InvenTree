@@ -3,6 +3,9 @@
 
 /* exported
     attachNavCallbacks,
+    enableNavBar,
+    initNavTree,
+    loadTree,
     onPanelLoad,
 */
 
@@ -132,7 +135,7 @@ function loadTree(url, tree, options={}) {
         data = options.data;
     }
 
-    var key = "inventree-sidenav-items-";
+    var key = 'inventree-sidenav-items-';
 
     if (options.name) {
         key += options.name;
@@ -143,7 +146,7 @@ function loadTree(url, tree, options={}) {
         type: 'get',
         dataType: 'json',
         data: data,
-        success: function (response) {
+        success: function(response) {
             if (response.tree) {
                 $(tree).treeview({
                     data: response.tree,
@@ -152,7 +155,7 @@ function loadTree(url, tree, options={}) {
                 });
 
                 if (localStorage.getItem(key)) {
-                    var saved_exp = localStorage.getItem(key).split(",");
+                    var saved_exp = localStorage.getItem(key).split(',');
 
                     // Automatically expand the desired notes
                     for (var q = 0; q < saved_exp.length; q++) {
@@ -177,8 +180,8 @@ function loadTree(url, tree, options={}) {
                 });
             }
         },
-        error: function (xhr, ajaxOptions, thrownError) {
-            //TODO
+        error: function(xhr, ajaxOptions, thrownError) {
+            // TODO
         }
     });
 }
@@ -292,9 +295,9 @@ function enableNavbar(options) {
 
     // Extract the saved width for this element
     $(navId).animate({
-        width: '45px',
+        'width': '45px',
         'min-width': '45px',
-        display: 'block',
+        'display': 'block',
     }, 50, function() {
 
         // Make the navbar resizable

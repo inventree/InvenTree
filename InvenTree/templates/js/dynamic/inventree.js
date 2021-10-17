@@ -294,4 +294,4 @@ function loadBrandIcon(element, name) {
 // Convenience function to determine if an element exists
 $.fn.exists = function() {
     return this.length !== 0;
-}
+};
