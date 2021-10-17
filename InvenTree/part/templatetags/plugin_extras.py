@@ -28,6 +28,7 @@ def mixin_enabled(plugin, key, *args, **kwargs):
     """ Return if the mixin is existant and configured in the plugin """
     return plugin.mixin_enabled(key)
 
+
 @register.simple_tag()
 def navigation_enabled(*args, **kwargs):
     """Return if plugin navigation is enabled"""
