@@ -364,7 +364,11 @@ inventreeGet(
                     outputs,
                     {
                         success: function() {
+                            // Reload the "in progress" table
                             $('#build-output-table').bootstrapTable('refresh');
+
+                            // Reload the "completed" table
+                            $('#build-stock-table').bootstrapTable('refresh');
                         }
                     }
                 );

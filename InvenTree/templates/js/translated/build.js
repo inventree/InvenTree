@@ -220,12 +220,12 @@ function completeBuildOutputs(build_id, outputs, options={}) {
     function renderBuildOutput(output, opts={}) {
         var pk = output.pk;
 
-        var quantity = '';
+        var output_html = imageHoverIcon(output.part_detail.thumbnail);
 
         if (output.quantity == 1 && output.serial) {
-            quantity = `{% trans "Serial Number" %}: ${output.serial}`;
+            output_html += `{% trans "Serial Number" %}: ${output.serial}`;
         } else {
-            quantity = `{% trans "Quantity" %}: ${output.quantity}`;
+            output_html += `{% trans "Quantity" %}: ${output.quantity}`;
         }
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
@@ -234,9 +234,21 @@ function completeBuildOutputs(build_id, outputs, options={}) {
 
         buttons += '</div>';
 
+        var field = constructField(
+            `outputs_output_${pk}`,
+            {
+                type: 'raw',
+                html: output_html,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
         var html = `
         <tr id='output_row_${pk}'>
-            <td>${quantity}</td>
+            <td>${field}</td>
+            <td>${output.part_detail.full_name}</td>
             <td>${buttons}</td>
         </tr>`;
 
@@ -253,7 +265,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
     var html = `
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
-            <th>{% trans "Output" %}</th>
+            <th colspan='2'>{% trans "Output" %}</th>
             <th><!-- Actions --></th>
         </thead>
         <tbody>
@@ -481,6 +493,9 @@ function loadBuildOutputTable(build_info, options={}) {
                     rows,
                     {
                         output: pk,
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
                     }
                 );
             } else {
@@ -1296,10 +1311,13 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             remaining = 0;
         }
 
-        table_entries += renderBomItemRow(bom_item, remaining);
+        // We only care about entries which are not yet fully allocated
+        if (remaining > 0) {
+            table_entries += renderBomItemRow(bom_item, remaining);
+        }
     }
 
-    if (bom_items.length == 0) {
+    if (table_entries.length == 0) {
 
         showAlertDialog(
             '{% trans "Select Parts" %}',
