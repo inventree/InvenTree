@@ -5,7 +5,6 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import get_object_or_404
 from django.conf.urls import url, include
 
 from rest_framework import filters, generics
@@ -203,7 +202,12 @@ class BuildUnallocate(generics.CreateAPIView):
     def get_serializer_context(self):
 
         ctx = super().get_serializer_context()
-        ctx['build'] = get_object_or_404(Build, pk=self.kwargs.get('pk', None))
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
         ctx['request'] = self.request
 
         return ctx
@@ -222,7 +226,11 @@ class BuildComplete(generics.CreateAPIView):
         ctx = super().get_serializer_context()
 
         ctx['request'] = self.request
-        ctx['build'] = get_object_or_404(Build, pk=self.kwargs.get('pk', None))
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
         
         return ctx
 
@@ -250,7 +258,11 @@ class BuildAllocate(generics.CreateAPIView):
 
         context = super().get_serializer_context()
 
-        context['build'] = get_object_or_404(Build, pk=self.kwargs.get('pk', None))
+        try:
+            context['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
         context['request'] = self.request
 
         return context

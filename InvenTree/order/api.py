@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url, include
 from django.db.models import Q, F
-from django.shortcuts import get_object_or_404
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
@@ -235,7 +234,11 @@ class POReceive(generics.CreateAPIView):
         context = super().get_serializer_context()
 
         # Pass the purchase order through to the serializer for validation
-        context['order'] = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
+        try:
+            context['order'] = PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
         context['request'] = self.request
 
         return context
