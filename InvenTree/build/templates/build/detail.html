@@ -63,10 +63,17 @@
                     <td>{% build_status_label build.status %}</td>
                 </tr>
                 <tr>
-                    <td><span class='fas fa-spinner'></span></td>
-                    <td>{% trans "Progress" %}</td>
+                    <td><span class='fas fa-check-circle'></span></td>
+                    <td>{% trans "Completed" %}</td>
                     <td>{{ build.completed }} / {{ build.quantity }}</td>
                 </tr>
+                {% if True or build.active and build.has_untracked_bom_items %}
+                <tr>
+                    <td><span class='fas fa-list'></span></td>
+                    <td>{% trans "Allocated Parts" %}</td>
+                    <td id='output-progress-untracked'><span class='fas fa-spinner fa-spin'></span></td>
+                </tr>
+                {% endif %}
                 {% if build.batch %}
                 <tr>
                     <td><span class='fas fa-layer-group'></span></td>
@@ -237,13 +244,6 @@
                 </div>
             </div>
         </div>
-            
-        <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
-            {% for item in build.incomplete_outputs %}
-            {% include "build/allocation_card.html" with item=item tracked_items=build.has_tracked_bom_items %}
-            {% endfor %}
-        </div>
-        
         <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
     </div>
 </div>
@@ -371,23 +371,11 @@ inventreeGet(
             });
 
             {% endif %}
-
-            {% for item in build.incomplete_outputs %}
-            // Get the build output as a javascript object
-            inventreeGet('{% url 'api-stock-detail' item.pk %}', {},
-                {
-                    success: function(response) {
-                        loadBuildOutputAllocationTable(build_info, response);
-                    }
-                }
-            );
-            {% endfor %}
         
-            {% if build.has_untracked_bom_items %}
+            {% if build.active and build.has_untracked_bom_items %}
             // Load allocation table for un-tracked parts
             loadBuildOutputAllocationTable(build_info, null);
             {% endif %}
-
         }
     }
 );

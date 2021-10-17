@@ -153,8 +153,8 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% endif %}
     <tr>
-        <td><span class='fas fa-spinner'></span></td>
-        <td>{% trans "Progress" %}</td>
+        <td><span class='fas fa-check-circle'></span></td>
+        <td>{% trans "Completed" %}</td>
         <td> {{ build.completed }} / {{ build.quantity }}</td>
     </tr>
     {% if build.parent %}
