@@ -12,16 +12,17 @@ from django.forms import HiddenInput
 
 from .models import Build
 from . import forms
-from stock.models import StockLocation, StockItem
+from stock.models import StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.helpers import str2bool, extract_serial_numbers
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
-    """ View for displaying list of Builds
+    """
+    View for displaying list of Builds
     """
     model = Build
     template_name = 'build/index.html'
@@ -279,7 +280,9 @@ class BuildComplete(AjaxUpdateView):
 
 
 class BuildDetail(InvenTreeRoleMixin, DetailView):
-    """ Detail view of a single Build object. """
+    """
+    Detail view of a single Build object.
+    """
 
     model = Build
     template_name = 'build/detail.html'
@@ -307,7 +310,9 @@ class BuildDetail(InvenTreeRoleMixin, DetailView):
 
 
 class BuildDelete(AjaxDeleteView):
-    """ View to delete a build """
+    """
+    View to delete a build
+    """
 
     model = Build
     ajax_template_name = 'build/delete_build.html'
