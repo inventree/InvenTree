@@ -736,10 +736,10 @@ MARKDOWNIFY_BLEACH = False
 # Plugins
 PLUGIN_URL = 'plugin'
 
-PLUGIN_DIRS = [
-    'plugin.builtin',
-    'plugins',
-]
+PLUGIN_DIRS = ['plugin.builtin', ]
+
+if not TESTING:
+    PLUGIN_DIRS.append('plugins')
 
 # load samples if in debug mode
 if DEBUG or TESTING:
