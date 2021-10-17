@@ -56,7 +56,6 @@ jobs:
           invoke install
       - name: Run Tests
         run: |
-          invoke migrate
           invoke test
       - name: Data Import Export
         run: |
