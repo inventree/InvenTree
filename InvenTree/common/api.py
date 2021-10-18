@@ -17,6 +17,7 @@ from rest_framework.exceptions import NotAcceptable, NotFound
 from django_q.tasks import async_task
 
 from .models import WebhookEndpoint, WebhookMessage
+from InvenTree.helpers import inheritors
 
 
 class CsrfExemptMixin(object):
@@ -69,10 +70,18 @@ class WebhookView(CsrfExemptMixin, APIView):
         message.worked_on = process_result
         message.save()
 
+    def _escalate_object(self, obj):
+        classes = inheritors(obj.__class__)
+        for cls in classes:
+            mdl_name = cls._meta.model_name
+            if hasattr(obj, mdl_name):
+                return getattr(obj, mdl_name)
+        return obj
+
     def _get_webhook(self, endpoint, request, *args, **kwargs):
         try:
             webhook = self.model_class.objects.get(endpoint_id=endpoint)
-            self.webhook = webhook
+            self.webhook = self._escalate_object(webhook)
             self.webhook.init(request, *args, **kwargs)
             return self.webhook.process_webhook()
         except self.model_class.DoesNotExist:
