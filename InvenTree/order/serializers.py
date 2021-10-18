@@ -235,6 +235,7 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         help_text=_('Unique identifier field'),
         default='',
         required=False,
+        allow_null=True,
         allow_blank=True,
     )
 
