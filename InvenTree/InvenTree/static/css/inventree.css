@@ -933,7 +933,8 @@ input[type="submit"] {
 
 .panel-inventree {
     padding: 10px;
-    box-shadow: 1px 1px #DDD;
+    box-shadow: 2px 2px #DDD;
+    border-color: #ccc;
 }
 
 .panel-hidden {
@@ -1083,4 +1084,5 @@ input[type='number']{
 .product-card-panel{
     height: 100%;
     border: 1px solid #ccc;
+    box-shadow: 2px 2px #DDD;
 }
