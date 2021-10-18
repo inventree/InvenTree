@@ -109,7 +109,7 @@ class WebhookMessageTests(TestCase):
 
         assert response.status_code == HTTPStatus.FORBIDDEN
         assert (
-            json.loads(response.content)['detail'] == WebhookView.MESSAGE_TOKEN_ERROR
+            json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR
         )
 
     def test_bad_token(self):
@@ -120,7 +120,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
-        assert (json.loads(response.content)['detail'] == WebhookView.MESSAGE_TOKEN_ERROR)
+        assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
 
     def test_bad_url(self):
         response = self.client.post(
@@ -155,7 +155,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert json.loads(response.content)['message'] == WebhookView.MESSAGE_OK
+        assert json.loads(response.content)['message'] == WebhookView.model_class.MESSAGE_OK
 
     def test_bad_hmac(self):
         # delete token
@@ -170,7 +170,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
-        assert (json.loads(response.content)['detail'] == WebhookView.MESSAGE_TOKEN_ERROR)
+        assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
 
     def test_success_hmac(self):
         # delete token
@@ -186,7 +186,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert json.loads(response.content)['message'] == WebhookView.MESSAGE_OK
+        assert json.loads(response.content)['message'] == WebhookView.model_class.MESSAGE_OK
 
     def test_success(self):
         response = self.client.post(
@@ -197,6 +197,6 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert json.loads(response.content)['message'] == WebhookView.MESSAGE_OK
+        assert json.loads(response.content)['message'] == WebhookView.model_class.MESSAGE_OK
         message = WebhookMessage.objects.get()
         assert message.body == {"this": "is a message"}

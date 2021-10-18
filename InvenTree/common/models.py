@@ -10,6 +10,10 @@ import os
 import decimal
 import math
 import uuid
+import hmac
+import hashlib
+import base64
+from secrets import compare_digest
 
 from django.db import models, transaction
 from django.contrib.auth.models import User, Group
@@ -19,6 +23,8 @@ from django.conf import settings
 from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
+
+from rest_framework.exceptions import PermissionDenied
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
@@ -1248,6 +1254,12 @@ class ColorTheme(models.Model):
         return False
 
 
+class VerificationMethod:
+    NONE = 0
+    TOKEN = 1
+    HMAC = 2
+
+
 class WebhookEndpoint(models.Model):
     """ Defines a Webhook entdpoint
 
@@ -1259,6 +1271,13 @@ class WebhookEndpoint(models.Model):
         token: Token for sending a webhook,
         secret: Shared secret for HMAC verification,
     """
+
+    # Token
+    TOKEN_NAME = "Token"
+    VERIFICATION_METHOD = VerificationMethod.NONE
+
+    MESSAGE_OK = "Message was received."
+    MESSAGE_TOKEN_ERROR = "Incorrect token in header."
 
     endpoint_id = models.CharField(
         max_length=255,
@@ -1303,6 +1322,61 @@ class WebhookEndpoint(models.Model):
         verbose_name=_('Secret'),
         help_text=_('Shared secret for HMAC'),
     )
+
+    # To be overridden
+
+    def init(self, request, *args, **kwargs):
+        self.verify = self.VERIFICATION_METHOD
+
+    def process_webhook(self):
+        if self.token:
+            self.token = self.token
+            self.verify = VerificationMethod.TOKEN
+            # TODO make a object-setting
+        if self.secret:
+            self.secret = self.secret
+            self.verify = VerificationMethod.HMAC
+            # TODO make a object-setting
+        return True
+
+    def validate_token(self, payload, headers, request):
+        token = headers.get(self.TOKEN_NAME, "")
+
+        # no token
+        if self.verify == VerificationMethod.NONE:
+            pass
+
+        # static token
+        elif self.verify == VerificationMethod.TOKEN:
+            if not compare_digest(token, self.token):
+                raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
+
+        # hmac token
+        elif self.verify == VerificationMethod.HMAC:
+            digest = hmac.new(self.secret.encode('utf-8'), request.body, hashlib.sha256).digest()
+            computed_hmac = base64.b64encode(digest)
+            if not hmac.compare_digest(computed_hmac, token.encode('utf-8')):
+                raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
+
+        return True
+
+    def save_data(self, payload, headers=None, request=None):
+        return WebhookMessage.objects.create(
+            # host=request.host,
+            # TODO fix
+            header=headers,
+            body=payload,
+            endpoint=self,
+        )
+
+    def process_payload(self, message, payload=None, headers=None):
+        return True
+
+    def get_result(self, payload, headers=None, request=None):
+        context = {}
+        context['data'] = {'message': self.MESSAGE_OK}
+        context['status'] = 200
+        return context
 
 
 class WebhookMessage(models.Model):
