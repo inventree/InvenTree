@@ -35,6 +35,7 @@
     loadSellPricingChart,
     loadSimplePartTable,
     loadStockPricingChart,
+    partStockLabel,
     toggleStar,
 */
 
@@ -406,6 +407,18 @@ function toggleStar(options) {
             );
         }
     });
+}
+
+
+function partStockLabel(part, options={}) {
+
+    var label_class = options.label_class || 'label-form';
+
+    if (part.in_stock) {
+        return `<span class='label ${label_class} label-green'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+    } else {
+        return `<span class='label ${label_class} label-red'>{% trans "No Stock" %}</span>`;
+    }
 }
 
 

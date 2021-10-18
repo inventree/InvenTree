@@ -1,4 +1,3 @@
-{% load i18n %}
 {% load inventree_extras %}
 
 /* globals
@@ -141,6 +140,7 @@ function inventreeDocReady() {
                     offset: 0
                 },
                 success: function(data) {
+
                     var transformed = $.map(data.results, function(el) {
                         return {
                             label: el.full_name,
@@ -168,11 +168,12 @@ function inventreeDocReady() {
 
                 html += '</span>';
                 
-                if (item.data.in_stock > 0) {
-                    html += `<span class='label label-right label-success'>{% trans "Stock" %}: ${item.data.in_stock}</span>`;
-                } else {
-                    html += `<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
-                }
+                html += partStockLabel(
+                    item.data,
+                    {
+                        label_class: 'label-right',
+                    }
+                );
                 
                 html += '</a>';
 

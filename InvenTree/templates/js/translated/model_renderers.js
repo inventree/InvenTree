@@ -168,11 +168,7 @@ function renderPart(name, data, parameters, options) {
 
     // Display available part quantity
     if (user_settings.PART_SHOW_QUANTITY_IN_FORMS) {
-        if (data.in_stock == 0) {
-            extra += `<span class='label-form label-red'>{% trans "No Stock" %}</span>`;
-        } else {
-            extra += `<span class='label-form label-green'>{% trans "Stock" %}: ${data.in_stock}</span>`;
-        }
+        extra += partStockLabel(data);
     }
 
     if (!data.active) {
