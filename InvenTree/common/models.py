@@ -1373,10 +1373,8 @@ class WebhookEndpoint(models.Model):
         return True
 
     def get_result(self, payload, headers=None, request=None):
-        context = {}
-        context['data'] = {'message': self.MESSAGE_OK}
-        context['status'] = 200
-        return context
+        data = {'message': self.MESSAGE_OK}
+        return data
 
 
 class WebhookMessage(models.Model):

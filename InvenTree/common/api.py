@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 
 import json
 
+from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.exceptions import NotAcceptable, NotFound
 from django_q.tasks import async_task
 
@@ -60,8 +60,8 @@ class WebhookView(CsrfExemptMixin, APIView):
             message.save()
 
         # return results
-        return_kwargs = self.webhook.get_result(payload, headers, request)
-        return Response(**return_kwargs)
+        data = self.webhook.get_result(payload, headers, request)
+        return JsonResponse(data)
 
     def _process_payload(self, message_id):
         message = WebhookMessage.objects.get(message_id=message_id)
