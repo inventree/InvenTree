@@ -998,6 +998,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(1)]
         },
 
+        'SEARCH_SHOW_STOCK_LEVELS': {
+            'name': _('Search Show Stock'),
+            'description': _('Display stock levels in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),
