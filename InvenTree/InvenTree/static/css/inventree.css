@@ -1074,6 +1074,13 @@ input[type='number']{
     margin-top: 0.5rem;
 }
 
+.product-card {
+    width: 20%;
+    padding: 5px;
+    min-height: 25px;
+}
+
 .product-card-panel{
     height: 100%;
+    border: 1px solid #ccc;
 }
