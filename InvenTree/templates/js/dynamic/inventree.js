@@ -168,13 +168,15 @@ function inventreeDocReady() {
 
                 html += '</span>';
                 
-                html += partStockLabel(
-                    item.data,
-                    {
-                        label_class: 'label-right',
-                    }
-                );
-                
+                if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
+                    html += partStockLabel(
+                        item.data,
+                        {
+                            label_class: 'label-right',
+                        }
+                    );
+                }
+
                 html += '</a>';
 
                 return $('<li>').append(html).appendTo(ul);
