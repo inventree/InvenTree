@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load inventree_extras %}
 
 /* globals
@@ -144,7 +145,8 @@ function inventreeDocReady() {
                         return {
                             label: el.full_name,
                             id: el.pk,
-                            thumbnail: el.thumbnail
+                            thumbnail: el.thumbnail,
+                            data: el,
                         };
                     });
                     response(transformed);
@@ -164,7 +166,15 @@ function inventreeDocReady() {
                 html += `'> `;
                 html += item.label;
 
-                html += '</span></a>';
+                html += '</span>';
+                
+                if (item.data.in_stock > 0) {
+                    html += `<span class='label label-right label-success'>{% trans "Stock" %}: ${item.data.in_stock}</span>`;
+                } else {
+                    html += `<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
+                }
+                
+                html += '</a>';
 
                 return $('<li>').append(html).appendTo(ul);
             };
