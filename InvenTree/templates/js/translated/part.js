@@ -778,7 +778,7 @@ function partGridTile(part) {
 
     var html = `
     
-    <div class='col-sm-3 card'>
+    <div class='product-card card'>
         <div class='panel panel-default panel-inventree product-card-panel'>
             <div class='panel-heading'>
                 <a href='/part/${part.pk}/'>
@@ -1000,8 +1000,8 @@ function loadPartTable(table, url, options={}) {
 
             data.forEach(function(row, index) {
                 
-                // Force a new row every 4 columns, to prevent visual issues
-                if ((index > 0) && (index % 4 == 0) && (index < data.length)) {
+                // Force a new row every 5 columns
+                if ((index > 0) && (index % 5 == 0) && (index < data.length)) {
                     html += `</div><div class='row full-height'>`;
                 }
 
