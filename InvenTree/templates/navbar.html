@@ -3,12 +3,6 @@
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
-{% settings_value 'BUILD_FUNCTION_ENABLE' as enable_build %}
-{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
-{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
-{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
-{% settings_value 'SO_FUNCTION_ENABLE' as enable_so %}
-{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
 
 <nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">
@@ -28,32 +22,28 @@
         {% if roles.part.view %}
         <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
         {% endif %}
-        {% if roles.stock.view and enable_stock %}
+        {% if roles.stock.view %}
         <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
         {% endif %}
-        {% if roles.build.view and enable_build %}
+        {% if roles.build.view %}
         <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
         {% endif %}
-        {% if roles.purchase_order.view and enable_buy %}
+        {% if roles.purchase_order.view %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
           <ul class='dropdown-menu'>
             <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
             <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
-            {% if enable_po %}
             <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
-            {% endif %}
           </ul>
         </li>
         {% endif %}
-        {% if roles.sales_order.view and enable_sell %}
+        {% if roles.sales_order.view %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
           <ul class='dropdown-menu'>
             <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
-            {% if enable_so %}
             <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
-            {% endif %}
           </ul>
         </li>
         {% endif %}
