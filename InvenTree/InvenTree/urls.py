@@ -127,15 +127,9 @@ translated_javascript_urls = [
 
 # Integration plugin urls
 interation_urls = []
-plugin_url_enabled = False
-try:
-    plugin_url_enabled = InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL')
-except Exception as _e:
-    print(_e)
-if settings.TESTING or plugin_url_enabled:
-    for plugin in settings.INTEGRATION_PLUGINS.values():
-        if plugin.mixin_enabled('urls'):
-            interation_urls.append(plugin.urlpatterns)
+for plugin in settings.INTEGRATION_PLUGINS.values():
+    if plugin.mixin_enabled('urls'):
+        interation_urls.append(plugin.urlpatterns)
 
 urlpatterns = [
     url(r'^part/', include(part_urls)),
