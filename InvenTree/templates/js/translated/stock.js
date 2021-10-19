@@ -68,6 +68,95 @@ function locationFields() {
 }
 
 
+function stockItemFields(options={}) {
+    var fields = {
+        part: {},
+        supplier_part: {
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+            },
+            adjustFilters: function(query, opts) {
+                var part = getFormFieldValue('part', {}, opts);
+
+                if (part) {
+                    query.part = part;
+                }
+
+                return query;
+            }
+        },
+        serial: {},
+        status: {},
+        expiry_date: {},
+        batch: {},
+        purchase_price: {},
+        purchase_price_currency: {},
+        packaging: {},
+        link: {},
+        delete_on_deplete: {},
+        // owner: {},
+    };
+
+    // Remove stock expiry fields if feature is not enabled
+    if (!global_settings.STOCK_ENABLE_EXPIRY) {
+        delete fields['expiry_date'];
+    }
+
+    return fields;
+}
+
+
+function stockItemGroups(options={}) {
+    return {
+
+    };
+}
+
+
+/*
+ * Launch a modal form to edit a given StockItem
+ */
+function editStockItem(pk, options={}) {
+
+    var url = `/api/stock/${pk}/`;
+
+    var fields = stockItemFields(options);
+
+    // Prevent editing of the "part"
+    fields.part.hidden = true;
+
+    var groups = stockItemGroups(options);
+
+    constructForm(url, {
+        fields: fields,
+        groups: groups,
+        title: '{% trans "Edit Stock Item" %}',
+        params: {
+            part_detail: true,
+            supplier_part_detail: true,
+        },
+        processResults: function(data, fields, options) {
+            // Callback when StockItem data is received from server
+
+            if (data.part_detail.trackable) {
+                delete options.fields.delete_on_deplete;
+            } else {
+                // Remove serial number field if part is not trackable
+                delete options.fields.serial;
+            }
+
+            // Remove pricing fields if part is not purchaseable
+            if (!data.part_detail.purchaseable) {
+                delete options.fields.supplier_part;
+                delete options.fields.purchase_price;
+                delete options.fields.purchase_price_currency;
+            }
+        }
+    });
+}
+
+
 /* Stock API functions
  * Requires api.js to be loaded first
  */

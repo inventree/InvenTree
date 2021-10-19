@@ -150,6 +150,7 @@
                 <li><a href='#' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'><span class='fas fa-copy'></span> {% trans "Duplicate stock item" %}</a></li>
                 {% endif %}
                 <li><a href='#' id='stock-edit' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
+                <li><a href='#' id='stock-edit-2' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
                 {% if user.is_staff or roles.stock.delete %}
                     {% if item.can_delete %}
                     <li><a href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
@@ -518,6 +519,10 @@ $("#stock-edit").click(function () {
             submit_text: '{% trans "Save" %}',
         }
     );
+});
+
+$('#stock-edit-2').click(function() {
+    editStockItem({{ item.pk }});
 });
 
 $('#stock-edit-status').click(function () {

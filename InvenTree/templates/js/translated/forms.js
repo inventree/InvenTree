@@ -179,6 +179,7 @@ function constructChangeForm(fields, options) {
     // Request existing data from the API endpoint
     $.ajax({
         url: options.url,
+        data: options.params || {},
         type: 'GET',
         contentType: 'application/json',
         dataType: 'json',
@@ -192,6 +193,17 @@ function constructChangeForm(fields, options) {
 
                 if (field in fields) {
                     fields[field].value = data[field];
+                }
+            }
+            
+            // An optional function can be provided to process the returned results,
+            // before they are rendered to the form
+            if (options.processResults) {
+                var processed = options.processResults(data, fields, options);
+                
+                // If the processResults function returns data, it will be stored
+                if (processed) {
+                    data = processed;
                 }
             }
 

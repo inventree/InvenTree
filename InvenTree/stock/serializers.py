@@ -134,7 +134,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
 
-    quantity = serializers.FloatField()
+    # quantity = serializers.FloatField()
 
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
@@ -142,20 +142,22 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     stale = serializers.BooleanField(required=False, read_only=True)
 
-    serial = serializers.CharField(required=False)
+    # serial = serializers.CharField(required=False)
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
     purchase_price = InvenTreeMoneySerializer(
         label=_('Purchase Price'),
         max_digits=19, decimal_places=4,
-        allow_null=True
+        allow_null=True,
+        help_text=_('Purchase price of this stock item'),
     )
 
     purchase_price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
         default=currency_code_default,
         label=_('Currency'),
+        help_text=_('Purchase currency of this stock item'),
     )
 
     purchase_price_string = serializers.SerializerMethodField()
@@ -197,6 +199,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'belongs_to',
             'build',
             'customer',
+            'delete_on_deplete',
             'expired',
             'expiry_date',
             'in_stock',
