@@ -31,6 +31,7 @@ from report.api import report_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.db.utils import OperationalError, ProgrammingError
 
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
@@ -127,15 +128,14 @@ translated_javascript_urls = [
 
 # Integration plugin urls
 interation_urls = []
-plugin_url_enabled = False
 try:
-    plugin_url_enabled = InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL')
-except Exception as _e:
-    print(_e)
-if settings.TESTING or plugin_url_enabled:
-    for plugin in settings.INTEGRATION_PLUGINS.values():
-        if plugin.mixin_enabled('urls'):
-            interation_urls.append(plugin.urlpatterns)
+    if settings.TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
+        for plugin in settings.INTEGRATION_PLUGINS.values():
+            if plugin.mixin_enabled('urls'):
+                interation_urls.append(plugin.urlpatterns)
+except (OperationalError, ProgrammingError):
+    # Exception if the database has not been migrated yet
+    pass
 
 urlpatterns = [
     url(r'^part/', include(part_urls)),
