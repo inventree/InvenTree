@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-18 22:09+0000\n"
+"POT-Creation-Date: 2021-10-19 01:19+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -6315,8 +6315,10 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: templates/InvenTree/settings/navbar.html:62
-msgid "InvenTree Settings"
-msgstr "InvenTree-Einstellungen"
+#, fuzzy
+#| msgid "Label Settings"
+msgid "Global Settings"
+msgstr "Labeleinstellungen"
 
 #: templates/InvenTree/settings/navbar.html:65
 #: templates/InvenTree/settings/navbar.html:67 templates/stats.html:9
@@ -8670,6 +8672,9 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:201
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "InvenTree Settings"
+#~ msgstr "InvenTree-Einstellungen"
 
 #, fuzzy
 #~| msgid "Purchase order no longer exists"

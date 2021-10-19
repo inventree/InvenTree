@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-18 22:09+0000\n"
+"POT-Creation-Date: 2021-10-19 01:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6205,7 +6205,7 @@ msgid "Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:62
-msgid "InvenTree Settings"
+msgid "Global Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/navbar.html:65
