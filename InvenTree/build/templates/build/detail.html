@@ -67,7 +67,7 @@
                     <td>{% trans "Completed" %}</td>
                     <td>{{ build.completed }} / {{ build.quantity }}</td>
                 </tr>
-                {% if True or build.active and build.has_untracked_bom_items %}
+                {% if build.active and build.has_untracked_bom_items %}
                 <tr>
                     <td><span class='fas fa-list'></span></td>
                     <td>{% trans "Allocated Parts" %}</td>
@@ -240,8 +240,8 @@
                             <li><a href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}</a></li>
                         </ul>
                     </div>
-                    {% endif %}
                 </div>
+                {% endif %}
             </div>
         </div>
         <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
