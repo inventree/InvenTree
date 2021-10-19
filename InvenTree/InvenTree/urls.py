@@ -43,7 +43,6 @@ from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
 from common.views import SettingEdit, UserSettingEdit
-from common.models import InvenTreeSetting
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
