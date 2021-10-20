@@ -1404,6 +1404,24 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         render_part_detail: true,
                         render_location_detail: true,
                         auto_fill: true,
+                        onSelect: function(data, field, opts) {
+                            // Adjust the 'quantity' field based on availability
+
+                            if (!('quantity' in data)) {
+                                return;
+                            }
+
+                            // Quantity remaining to be allocated
+                            var remaining = Math.max((bom_item.required || 0) - (bom_item.allocated || 0), 0);
+
+                            // Calculate the available quantity
+                            var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
+
+                            // Maximum amount that we need
+                            var desired = Math.min(available, remaining);
+
+                            updateFieldValue(`items_quantity_${bom_item.pk}`, desired, {}, opts);
+                        },
                         adjustFilters: function(filters) {
                             // Restrict query to the selected location
                             var location = getFormFieldValue(

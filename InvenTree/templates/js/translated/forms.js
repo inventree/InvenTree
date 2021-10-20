@@ -1426,6 +1426,11 @@ function initializeRelatedField(field, fields, options) {
                 data = item.element.instance;
             }
 
+            // Run optional callback function
+            if (field.onSelect && data) {
+                field.onSelect(data, field, options);
+            }
+
             if (!data.pk) {
                 return field.placeholder || '';
             }
