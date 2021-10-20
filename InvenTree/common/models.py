@@ -11,6 +11,7 @@ import decimal
 import math
 import uuid
 import hmac
+import json
 import hashlib
 import base64
 from secrets import compare_digest
@@ -1362,9 +1363,8 @@ class WebhookEndpoint(models.Model):
 
     def save_data(self, payload, headers=None, request=None):
         return WebhookMessage.objects.create(
-            # host=request.host,
-            # TODO fix
-            header=headers,
+            host=request.get_host(),
+            header=json.dumps({key: val for key, val in headers.items()}),
             body=payload,
             endpoint=self,
         )
