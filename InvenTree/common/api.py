@@ -57,7 +57,7 @@ class WebhookView(CsrfExemptMixin, APIView):
         if self.run_async:
             async_task(self._process_payload, message.id)
         else:
-            self.process_result(
+            self._process_result(
                 self.webhook.process_payload(message, payload, headers),
                 message,
             )
@@ -68,12 +68,12 @@ class WebhookView(CsrfExemptMixin, APIView):
 
     def _process_payload(self, message_id):
         message = WebhookMessage.objects.get(message_id=message_id)
-        self.process_result(
+        self._process_result(
             self.webhook.process_payload(message, message.body, message.header),
             message,
         )
 
-    def process_result(self, result, message):
+    def _process_result(self, result, message):
         if result:
             message.worked_on = result
             message.save()
