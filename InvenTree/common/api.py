@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import json
 
-from django.http.response import JsonResponse
+from django.http.response import HttpResponse
 from django.utils.decorators import method_decorator
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
@@ -64,7 +64,7 @@ class WebhookView(CsrfExemptMixin, APIView):
 
         # return results
         data = self.webhook.get_result(payload, headers, request)
-        return JsonResponse(data)
+        return HttpResponse(data)
 
     def _process_payload(self, message_id):
         message = WebhookMessage.objects.get(message_id=message_id)
