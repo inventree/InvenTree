@@ -94,13 +94,18 @@ function stockItemFields(options={}) {
         purchase_price_currency: {},
         packaging: {},
         link: {},
+        owner: {},
         delete_on_deplete: {},
-        // owner: {},
     };
 
     // Remove stock expiry fields if feature is not enabled
     if (!global_settings.STOCK_ENABLE_EXPIRY) {
         delete fields['expiry_date'];
+    }
+
+    // Remove ownership field if feature is not enanbled
+    if (!global_settings.STOCK_OWNERSHIP_CONTROL) {
+        delete fields['owner'];
     }
 
     return fields;

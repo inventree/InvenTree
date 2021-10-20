@@ -58,15 +58,15 @@ class StockItemSerializerBrief(InvenTreeModelSerializer):
     class Meta:
         model = StockItem
         fields = [
-            'pk',
-            'uid',
             'part',
             'part_name',
-            'supplier_part',
+            'pk',
             'location',
             'location_name',
             'quantity',
             'serial',
+            'supplier_part',
+            'uid',
         ]
 
 
@@ -208,6 +208,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'location',
             'location_detail',
             'notes',
+            'owner',
             'packaging',
             'part',
             'part_detail',
