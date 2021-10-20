@@ -1666,7 +1666,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     onSelect: function(data, field, opts) {
                         // Quantity available from this stock item
 
-                        if (!("quantity" in data)) {
+                        if (!('quantity' in data)) {
                             return;
                         }
 

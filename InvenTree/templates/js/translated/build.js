@@ -1407,7 +1407,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         onSelect: function(data, field, opts) {
                             // Adjust the 'quantity' field based on availability
 
-                            if (!("quantity" in data)) {
+                            if (!('quantity' in data)) {
                                 return;
                             }
 
