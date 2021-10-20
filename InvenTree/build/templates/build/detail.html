@@ -523,6 +523,10 @@ $('#allocate-selected-items').click(function() {
 
     var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
 
+    if (bom_items.length == 0) {
+        bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
+    }
+
     allocateStockToBuild(
         {{ build.pk }},
         {{ build.part.pk }},
