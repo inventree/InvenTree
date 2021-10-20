@@ -155,7 +155,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert response.content == WebhookView.model_class.MESSAGE_OK
+        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
 
     def test_bad_hmac(self):
         # delete token
@@ -186,7 +186,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert json.loads(response.content)['message'] == WebhookView.model_class.MESSAGE_OK
+        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
 
     def test_success(self):
         response = self.client.post(
@@ -197,6 +197,6 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert json.loads(response.content)['message'] == WebhookView.model_class.MESSAGE_OK
+        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
         message = WebhookMessage.objects.get()
         assert message.body == {"this": "is a message"}
