@@ -1426,6 +1426,11 @@ function initializeRelatedField(field, fields, options) {
                 data = item.element.instance;
             }
 
+            // Run optional callback function
+            if (field.onSelect && data) {
+                field.onSelect(data, field, options);
+            }
+
             if (!data.pk) {
                 return field.placeholder || '';
             }
@@ -1843,6 +1848,8 @@ function constructInput(name, parameters, options) {
     case 'candy':
         func = constructCandyInput;
         break;
+    case 'raw':
+        func = constructRawInput;
     default:
         // Unsupported field type!
         break;
@@ -2080,6 +2087,17 @@ function constructDateInput(name, parameters) {
  * No actual field data!
  */
 function constructCandyInput(name, parameters) {
+
+    return parameters.html;
+
+}
+
+
+/*
+ * Construct a "raw" field input
+ * No actual field data!
+ */
+function constructRawInput(name, parameters) {
 
     return parameters.html;
 

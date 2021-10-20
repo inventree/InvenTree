@@ -260,9 +260,9 @@ class RegistratonMixin:
     """
     Mixin to check if registration should be enabled
     """
-    def is_open_for_signup(self, request):
+    def is_open_for_signup(self, request, *args, **kwargs):
         if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
-            return super().is_open_for_signup(request)
+            return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
     def save_user(self, request, user, form, commit=True):

@@ -26,12 +26,14 @@
 {% endif %}
 
 <div class='col-sm-3' id='item-panel'>
-    <ul class='list-group' id='search-item-list'>
-    </ul>
+    <div class='panel panel-default panel-inventree'>
+        <ul class='list-group' id='search-item-list'>
+        </ul>
+    </div>
 </div>
 <div class='col-sm-9' id='details-panel'>
     <ul class='list-group' id='search-result-list'>
-        <li class='list-group-item'>
+        <li class='list-group-item panel panel-default panel-inventree'>
             <div class='container'>
                 <img class='index-bg' src='{% static "img/inventree.png" %}'>
             </div>
@@ -67,7 +69,7 @@
 
         // Add a results table
         $('#search-result-list').append(
-            `<li class='list-group-item' id='search-result-${label}'>
+            `<li class='list-group-item panel panel-default panel-inventree' id='search-result-${label}'>
                 <h4>${title}</h4>
                 <table class='table table-condensed table-striped' id='table-${label}'></table>
             </li>`
