@@ -57,8 +57,10 @@ class WebhookView(CsrfExemptMixin, APIView):
         if self.run_async:
             async_task(self._process_payload, message.id)
         else:
-            message.worked_on = self.webhook.process_payload(message, payload, headers)
-            message.save()
+            self.process_result(
+                self.webhook.process_payload(message, payload, headers),
+                message,
+            )
 
         # return results
         data = self.webhook.get_result(payload, headers, request)
@@ -66,9 +68,17 @@ class WebhookView(CsrfExemptMixin, APIView):
 
     def _process_payload(self, message_id):
         message = WebhookMessage.objects.get(message_id=message_id)
-        process_result = self.webhook.process_payload(message, message.body, message.header)
-        message.worked_on = process_result
-        message.save()
+        self.process_result(
+            self.webhook.process_payload(message, message.body, message.header),
+            message,
+        )
+
+    def process_result(self, result, message):
+        if result:
+            message.worked_on = result
+            message.save()
+        else:
+            message.delete()
 
     def _escalate_object(self, obj):
         classes = inheritors(obj.__class__)
