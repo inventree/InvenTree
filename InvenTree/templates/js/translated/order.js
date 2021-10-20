@@ -1641,6 +1641,13 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
             var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
+            // Quantity remaining to be allocated
+            var remaining = (line_item.quantity || 0) - (line_item.allocated || 0);
+
+            if (remaining < 0) {
+                remaining = 0;
+            }
+
             var fields = {
                 // SalesOrderLineItem reference
                 line: {
@@ -1657,6 +1664,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     } 
                 },
                 quantity: {
+                    value: remaining,
                 },
             };
 
