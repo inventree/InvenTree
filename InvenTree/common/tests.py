@@ -155,7 +155,7 @@ class WebhookMessageTests(TestCase):
         )
 
         assert response.status_code == HTTPStatus.OK
-        assert json.loads(response.content)['message'] == WebhookView.model_class.MESSAGE_OK
+        assert response.content == WebhookView.model_class.MESSAGE_OK
 
     def test_bad_hmac(self):
         # delete token
