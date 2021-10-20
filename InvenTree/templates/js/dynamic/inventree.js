@@ -140,11 +140,13 @@ function inventreeDocReady() {
                     offset: 0
                 },
                 success: function(data) {
+
                     var transformed = $.map(data.results, function(el) {
                         return {
                             label: el.full_name,
                             id: el.pk,
-                            thumbnail: el.thumbnail
+                            thumbnail: el.thumbnail,
+                            data: el,
                         };
                     });
                     response(transformed);
@@ -164,7 +166,18 @@ function inventreeDocReady() {
                 html += `'> `;
                 html += item.label;
 
-                html += '</span></a>';
+                html += '</span>';
+                
+                if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
+                    html += partStockLabel(
+                        item.data,
+                        {
+                            label_class: 'label-right',
+                        }
+                    );
+                }
+
+                html += '</a>';
 
                 return $('<li>').append(html).appendTo(ul);
             };
@@ -290,3 +303,8 @@ function loadBrandIcon(element, name) {
         element.addClass('fab fa-' + name);
     }
 }
+
+// Convenience function to determine if an element exists
+$.fn.exists = function() {
+    return this.length !== 0;
+};

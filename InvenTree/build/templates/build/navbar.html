@@ -19,16 +19,25 @@
     {% if build.active %}
     <li class='list-group-item' title='{% trans "Allocate Stock" %}'>
         <a href='#' id='select-allocate' class='nav-toggle'>
-            <span class='fas fa-tools sidebar-icon'></span>
+            <span class='fas fa-tasks sidebar-icon'></span>
             {% trans "Allocate Stock" %}
         </a>
     </li>
     {% endif %}
 
-    <li class='list-group-item' title='{% trans "Build Outputs" %}'>
+    {% if not build.is_complete %}
+    <li class='list-group-item' title='{% trans "Pending Outputs" %}'>
         <a href='#' id='select-outputs' class='nav-toggle'>
-            <span class='fas fa-box sidebar-icon'></span>
-            {% trans "Build Outputs" %}
+            <span class='fas fa-tools sidebar-icon'></span>
+            {% trans "Pending Outputs" %}
+        </a>
+    </li>
+    {% endif %}
+
+    <li class='list-group-item' title='{% trans "Completed Outputs" %}'>
+        <a href='#' id='select-completed' class='nav-toggle'>
+            <span class='fas fa-boxes sidebar-icon'></span>
+            {% trans "Completed Outputs" %}
         </a>
     </li>
 

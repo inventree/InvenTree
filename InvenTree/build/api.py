@@ -5,12 +5,9 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
-
 from django.conf.urls import url, include
 
 from rest_framework import filters, generics
-from rest_framework.serializers import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -21,7 +18,7 @@ from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
-from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
+from .serializers import BuildAttachmentSerializer, BuildCompleteSerializer, BuildSerializer, BuildItemSerializer
 from .serializers import BuildAllocationSerializer, BuildUnallocationSerializer
 
 
@@ -201,27 +198,40 @@ class BuildUnallocate(generics.CreateAPIView):
     queryset = Build.objects.none()
 
     serializer_class = BuildUnallocationSerializer
-
-    def get_build(self):
-        """
-        Returns the BuildOrder associated with this API endpoint
-        """
-
-        pk = self.kwargs.get('pk', None)
-
-        try:
-            build = Build.objects.get(pk=pk)
-        except (ValueError, Build.DoesNotExist):
-            raise ValidationError(_("Matching build order does not exist"))
-
-        return build
-
+    
     def get_serializer_context(self):
 
         ctx = super().get_serializer_context()
-        ctx['build'] = self.get_build()
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
         ctx['request'] = self.request
 
+        return ctx
+
+
+class BuildComplete(generics.CreateAPIView):
+    """
+    API endpoint for completing build outputs
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = BuildCompleteSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+        
         return ctx
 
 
@@ -241,20 +251,6 @@ class BuildAllocate(generics.CreateAPIView):
 
     serializer_class = BuildAllocationSerializer
 
-    def get_build(self):
-        """
-        Returns the BuildOrder associated with this API endpoint
-        """
-
-        pk = self.kwargs.get('pk', None)
-
-        try:
-            build = Build.objects.get(pk=pk)
-        except (Build.DoesNotExist, ValueError):
-            raise ValidationError(_("Matching build order does not exist"))
-
-        return build
-
     def get_serializer_context(self):
         """
         Provide the Build object to the serializer context
@@ -262,7 +258,11 @@ class BuildAllocate(generics.CreateAPIView):
 
         context = super().get_serializer_context()
 
-        context['build'] = self.get_build()
+        try:
+            context['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
         context['request'] = self.request
 
         return context
@@ -390,6 +390,7 @@ build_api_urls = [
     # Build Detail
     url(r'^(?P<pk>\d+)/', include([
         url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        url(r'^complete/', BuildComplete.as_view(), name='api-build-complete'),
         url(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
         url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),
