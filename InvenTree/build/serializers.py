@@ -310,13 +310,12 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     def validate_bom_item(self, bom_item):
         
         # TODO: Fix this validation - allow for variants and substitutes!
-        """
+
         build = self.context['build']
 
         # BomItem must point to the same 'part' as the parent build
         if build.part != bom_item.part:
             raise ValidationError(_("bom_item.part must point to the same part as the build order"))
-        """
 
         return bom_item
 
