@@ -5,7 +5,6 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 from django.db.models import Q, F
 
@@ -13,7 +12,6 @@ from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 
 from InvenTree.filters import InvenTreeOrderingFilter
@@ -236,24 +234,14 @@ class POReceive(generics.CreateAPIView):
         context = super().get_serializer_context()
 
         # Pass the purchase order through to the serializer for validation
-        context['order'] = self.get_order()
+        try:
+            context['order'] = PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
         context['request'] = self.request
 
         return context
-
-    def get_order(self):
-        """
-        Returns the PurchaseOrder associated with this API endpoint
-        """
-
-        pk = self.kwargs.get('pk', None)
-
-        try:
-            order = PurchaseOrder.objects.get(pk=pk)
-        except (PurchaseOrder.DoesNotExist, ValueError):
-            raise ValidationError(_("Matching purchase order does not exist"))
-        
-        return order
 
 
 class POLineItemFilter(rest_filters.FilterSet):

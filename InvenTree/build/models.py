@@ -724,7 +724,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         items.all().delete()
 
     @transaction.atomic
-    def completeBuildOutput(self, output, user, **kwargs):
+    def complete_build_output(self, output, user, **kwargs):
         """
         Complete a particular build output
 
@@ -741,10 +741,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         allocated_items = output.items_to_install.all()
 
         for build_item in allocated_items:
-
-            # TODO: This is VERY SLOW as each deletion from the database takes ~1 second to complete
-            # TODO: Use the background worker process to handle this task!
-
             # Complete the allocation of stock for that item
             build_item.complete_allocation(user)
 
@@ -770,6 +766,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         # Increase the completed quantity for this build
         self.completed += output.quantity
+
         self.save()
 
     def requiredQuantity(self, part, output):
