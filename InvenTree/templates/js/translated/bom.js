@@ -148,6 +148,13 @@ function loadBomTable(table, options) {
         ordering: 'name',
     };
 
+    // Do we show part pricing in the BOM table?
+    var show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
+
+    if (!show_pricing) {
+        params.include_pricing = false;
+    }
+
     if (options.part_detail) {
         params.part_detail = true;
     }
@@ -282,32 +289,34 @@ function loadBomTable(table, options) {
         }
     });
     
-    cols.push({
-        field: 'purchase_price_range',
-        title: '{% trans "Purchase Price Range" %}',
-        searchable: false,
-        sortable: true,
-    });
+    if (show_pricing) {
+        cols.push({
+            field: 'purchase_price_range',
+            title: '{% trans "Purchase Price Range" %}',
+            searchable: false,
+            sortable: true,
+        });
 
-    cols.push({
-        field: 'purchase_price_avg',
-        title: '{% trans "Purchase Price Average" %}',
-        searchable: false,
-        sortable: true,
-    });
+        cols.push({
+            field: 'purchase_price_avg',
+            title: '{% trans "Purchase Price Average" %}',
+            searchable: false,
+            sortable: true,
+        });
 
-    cols.push({
-        field: 'price_range',
-        title: '{% trans "Supplier Cost" %}',
-        sortable: true,
-        formatter: function(value) {
-            if (value) {
-                return value;
-            } else {
-                return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+        cols.push({
+            field: 'price_range',
+            title: '{% trans "Supplier Cost" %}',
+            sortable: true,
+            formatter: function(value) {
+                if (value) {
+                    return value;
+                } else {
+                    return `<span class='warning-msg'>{% trans 'No supplier pricing available' %}</span>`;
+                }
             }
-        }
-    });
+        });
+    }
 
     cols.push({
         field: 'optional',
