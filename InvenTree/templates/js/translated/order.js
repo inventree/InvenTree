@@ -1661,7 +1661,23 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         in_stock: true,
                         part: line_item.part,
                         exclude_so_allocation: options.order,
-                    } 
+                    },
+                    auto_fill: true,
+                    onSelect: function(data, field, opts) {
+                        // Quantity available from this stock item
+
+                        if (!("quantity" in data)) {
+                            return;
+                        }
+
+                        // Calculate the available quantity
+                        var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
+
+                        // Maximum amount that we need
+                        var desired = Math.min(available, remaining);
+
+                        updateFieldValue('quantity', desired, {}, opts);
+                    }
                 },
                 quantity: {
                     value: remaining,
@@ -1760,7 +1776,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         showFooter: true,
         uniqueId: 'pk',
         detailView: show_detail,
-        detailViewByClick: show_detail,
+        detailViewByClick: false,
         detailFilter: function(index, row) {
             if (pending) {
                 // Order is pending
