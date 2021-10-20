@@ -63,7 +63,7 @@ class WebhookView(CsrfExemptMixin, APIView):
             )
 
         # return results
-        data = self.webhook.get_result(payload, headers, request)
+        data = self.webhook.get_return(payload, headers, request)
         return HttpResponse(data)
 
     def _process_payload(self, message_id):

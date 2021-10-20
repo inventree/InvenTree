@@ -1372,9 +1372,8 @@ class WebhookEndpoint(models.Model):
     def process_payload(self, message, payload=None, headers=None):
         return True
 
-    def get_result(self, payload, headers=None, request=None):
-        data = {'message': self.MESSAGE_OK}
-        return data
+    def get_return(self, payload, headers=None, request=None):
+        return self.MESSAGE_OK
 
 
 class WebhookMessage(models.Model):
