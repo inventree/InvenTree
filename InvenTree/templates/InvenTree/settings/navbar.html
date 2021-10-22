@@ -9,12 +9,12 @@
     </li>
 
     <li class='list-group-item'>
-        <strong>{% trans "User Settings" %}</strong>
+        <span class='fas fa-user'></span> <strong>{% trans "User Settings" %}</strong>
     </li>
 
     <li class='list-group-item' title='{% trans "Account" %}'>
         <a href='#' class='nav-toggle' id='select-account'>
-            <span class='fas fa-user'></span> {% trans "Account" %}
+            <span class='fas fa-user-cog'></span> {% trans "Account" %}
         </a>
     </li>
 
@@ -59,12 +59,18 @@
     {% if user.is_staff %}
 
     <li class='list-group-item'>
-        <strong>{% trans "InvenTree Settings" %}</strong>
+        <span class='fas fa-cogs'></span> <strong>{% trans "Global Settings" %}</strong>
     </li>
 
     <li class='list-group-item' title='{% trans "Server" %}'>
         <a href='#' class='nav-toggle' id='select-server'>
             <span class='fas fa-server'></span> {% trans "Server" %}
+        </a>
+    </li>
+
+    <li class='list-group-item' title='{% trans "Login" %}'>
+        <a href='#' class='nav-toggle' id='select-login'>
+            <span class='fas fa-fingerprint'></span> {% trans "Login" %}
         </a>
     </li>
 

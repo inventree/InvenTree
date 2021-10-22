@@ -36,31 +36,39 @@ src="{% static 'img/blank_image.png' %}"
 <p>{{ order.description }}{% include "clip.html"%}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons' role='group'>
-        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
-            <span class='fas fa-print'></span> 
-        </button>
-        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
-            <span class='fas fa-file-download'></span>
-        </button>
+        <!-- Printing options -->
+        <div class='btn-group'>
+            <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                <span class='fas fa-print'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print purchase order report" %}</a></li>
+                <li><a href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
+            </ul>
+        </div>
         {% if roles.purchase_order.change %}
-        <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
-            <span class='fas fa-edit icon-green'></span>
-        </button>
+        <!-- order actions -->
+        <div class='btn-group'>
+            <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                <span class='fas fa-tools'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+                {% if order.can_cancel %}
+                <li><a href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+                {% endif %}
+            </ul>
+        </div>
         {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
         <button type='button' class='btn btn-default' id='place-order' title='{% trans "Place order" %}'>
-            <span class='fas fa-paper-plane icon-blue'></span>
+            <span class='fas fa-shopping-cart icon-blue'></span>
         </button>
         {% elif order.status == PurchaseOrderStatus.PLACED %}
         <button type='button' class='btn btn-default' id='receive-order' title='{% trans "Receive items" %}'>
-            <span class='fas fa-sign-in-alt'></span>
+            <span class='fas fa-sign-in-alt icon-blue'></span>
         </button>
         <button type='button' class='btn btn-default' id='complete-order' title='{% trans "Mark order as complete" %}'>
-            <span class='fas fa-check-circle'></span>
-        </button>
-        {% endif %}
-        {% if order.can_cancel %}
-        <button type='button' class='btn btn-default' id='cancel-order' title='{% trans "Cancel order" %}'>
-            <span class='fas fa-times-circle icon-red'></span>
+            <span class='fas fa-check-circle icon-green'></span>
         </button>
         {% endif %}
         {% endif %}

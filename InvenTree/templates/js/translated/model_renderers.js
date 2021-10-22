@@ -52,8 +52,6 @@ function renderStockItem(name, data, parameters, options) {
     if (data.part_detail) {
         image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
     }
-
-    var html = '';
     
     var render_part_detail = true;
 
@@ -61,23 +59,10 @@ function renderStockItem(name, data, parameters, options) {
         render_part_detail = parameters['render_part_detail'];
     }
 
+    var part_detail = '';
+
     if (render_part_detail) {
-        html += `<img src='${image}' class='select2-thumbnail'>`;
-        html += ` <span>${data.part_detail.full_name || data.part_detail.name}</span>`;
-    }
-
-    html += '<span>';
-
-    if (data.serial && data.quantity == 1) {
-        html += `{% trans "Serial Number" %}: ${data.serial}`;
-    } else {
-        html += `{% trans "Quantity" %}: ${data.quantity}`;
-    }
-
-    html += '</span>';
-
-    if (render_part_detail && data.part_detail.description) {
-        html += `<p><small>${data.part_detail.description}</small></p>`;
+        part_detail = `<img src='${image}' class='select2-thumbnail'><span>${data.part_detail.full_name}</span> - `;
     }
 
     var render_stock_id = true;
@@ -86,8 +71,10 @@ function renderStockItem(name, data, parameters, options) {
         render_stock_id = parameters['render_stock_id'];
     }
 
+    var stock_id = '';
+    
     if (render_stock_id) {
-        html += `<span class='float-right'><small>{% trans "Stock ID" %}: ${data.pk}</small></span>`;
+        stock_id = `<span class='float-right'><small>{% trans "Stock ID" %}: ${data.pk}</small></span>`;
     }
 
     var render_location_detail = false;
@@ -96,9 +83,27 @@ function renderStockItem(name, data, parameters, options) {
         render_location_detail = parameters['render_location_detail'];
     }
 
+    var location_detail = '';
+
     if (render_location_detail && data.location_detail) {
-        html += `<span> - ${data.location_detail.name}</span>`;
+        location_detail = ` - (<em>${data.location_detail.name}</em>)`;
     }
+
+    var stock_detail = '';
+
+    if (data.serial && data.quantity == 1) {
+        stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
+    } else if (data.quantity == 0) {
+        stock_detail = `<span class='label-form label-red'>{% trans "No Stock"% }</span>`;
+    } else {
+        stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+    }
+
+    var html = `
+    <span>
+        ${part_detail}${stock_detail}${location_detail}${stock_id}
+    </span>
+    `;
 
     return html;
 }
@@ -159,21 +164,21 @@ function renderPart(name, data, parameters, options) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    var stock = '';
+    var extra = '';
 
     // Display available part quantity
     if (user_settings.PART_SHOW_QUANTITY_IN_FORMS) {
-        if (data.in_stock == 0) {
-            stock = `<span class='label-form label-red'>{% trans "No Stock" %}</span>`;
-        } else {
-            stock = `<span class='label-form label-green'>{% trans "In Stock" %}: ${data.in_stock}</span>`;
-        }
+        extra += partStockLabel(data);
+    }
+
+    if (!data.active) {
+        extra += `<span class='label-form label-red'>{% trans "Inactive" %}</span>`;
     }
 
     html += `
     <span class='float-right'>
         <small>
-            ${stock}
+            ${extra}
             {% trans "Part ID" %}: ${data.pk}
             </small>
     </span>`;

@@ -249,6 +249,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -279,6 +280,10 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+
+    'allauth',                              # Base app for SSO
+    'allauth.account',                      # Extend user with accounts
+    'allauth.socialaccount',                # Use 'social' providers
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -298,7 +303,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
 # If the debug toolbar is enabled, add the modules
@@ -379,39 +385,6 @@ Q_CLUSTER = {
     'sync': False,
 }
 
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
-
-# Markdownify configuration
-# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
-
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'b',
-    'blockquote',
-    'em',
-    'h1', 'h2', 'h3',
-    'i',
-    'img',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul'
-]
-
-MARKDOWNIFY_WHITELIST_ATTRS = [
-    'href',
-    'src',
-    'alt',
-]
-
-MARKDOWNIFY_BLEACH = False
-
-DATABASES = {}
-
 """
 Configure the database backend based on the user-specified values.
 
@@ -478,7 +451,47 @@ logger.info(f"DB_ENGINE: {db_engine}")
 logger.info(f"DB_NAME: {db_name}")
 logger.info(f"DB_HOST: {db_host}")
 
-DATABASES['default'] = db_config
+"""
+In addition to base-level database configuration, we may wish to specify specific options to the database backend
+Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
+"""
+
+# 'OPTIONS' or 'options' can be specified in config.yaml
+db_options = db_config.get('OPTIONS', db_config.get('options', {}))
+
+# Specific options for postgres backend
+if 'postgres' in db_engine:
+    from psycopg2.extensions import ISOLATION_LEVEL_READ_COMMITTED, ISOLATION_LEVEL_SERIALIZABLE
+
+    # Connection timeout
+    if 'connect_timeout' not in db_options:
+        db_options['connect_timeout'] = int(os.getenv('INVENTREE_DB_TIMEOUT', 2))
+
+    # Postgres's default isolation level is Read Committed which is
+    # normally fine, but most developers think the database server is
+    # actually going to do Serializable type checks on the queries to
+    # protect against simultaneous changes.
+    if 'isolation_level' not in db_options:
+        serializable = _is_true(os.getenv("PG_ISOLATION_SERIALIZABLE", "true"))
+        db_options['isolation_level'] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
+
+# Specific options for MySql / MariaDB backend
+if 'mysql' in db_engine:
+    # TODO
+    pass
+
+# Specific options for sqlite backend
+if 'sqlite' in db_engine:
+    # TODO
+    pass
+
+# Provide OPTIONS dict back to the database configuration dict
+db_config['OPTIONS'] = db_options
+
+DATABASES = {
+    'default': db_config
+}
+
 
 CACHES = {
     'default': {
@@ -646,3 +659,65 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert alert-block alert-danger',
     messages.INFO: 'alert alert-block alert-info',
 }
+
+SITE_ID = 1
+
+# Load the allauth social backends
+SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+for app in SOCIAL_BACKENDS:
+    INSTALLED_APPS.append(app)
+
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+
+# settings for allauth
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
+
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
+
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+# override forms / adapters
+ACCOUNT_FORMS = {
+    'login': 'allauth.account.forms.LoginForm',
+    'signup': 'InvenTree.forms.CustomSignupForm',
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+}
+
+SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+
+# Markdownx configuration
+# Ref: https://neutronx.github.io/django-markdownx/customization/
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
+
+# Markdownify configuration
+# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
+
+MARKDOWNIFY_WHITELIST_TAGS = [
+    'a',
+    'abbr',
+    'b',
+    'blockquote',
+    'em',
+    'h1', 'h2', 'h3',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul'
+]
+
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+]
+
+MARKDOWNIFY_BLEACH = False

@@ -87,8 +87,10 @@ function select2Thumbnail(image) {
 }
 
 
+/*
+ * Construct an 'icon badge' which floats to the right of an object
+ */
 function makeIconBadge(icon, title) {
-    // Construct an 'icon badge' which floats to the right of an object
 
     var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
 
@@ -96,8 +98,10 @@ function makeIconBadge(icon, title) {
 }
 
 
+/*
+ * Construct an 'icon button' using the fontawesome set
+ */
 function makeIconButton(icon, cls, pk, title, options={}) {
-    // Construct an 'icon button' using the fontawesome set
 
     var classes = `btn btn-default btn-glyph ${cls}`;
 

@@ -283,10 +283,16 @@ function setupFilterList(tableKey, table, target) {
 
     element.append(`<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-default filter-tag'><span class='fas fa-redo-alt'></span></button>`);
 
+    // If there are no filters defined for this table, exit now
+    if (jQuery.isEmptyObject(getAvailableTableFilters(tableKey))) {
+        return;
+    }
+
+    // If there are filters currently "in use", add them in!
     element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
 
     if (Object.keys(filters).length > 0) {
-        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-trash-alt'></span></button>`);
+        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-backspace icon-red'></span></button>`);
     }
 
     for (var key in filters) {

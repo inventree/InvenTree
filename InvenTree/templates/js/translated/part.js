@@ -35,6 +35,7 @@
     loadSellPricingChart,
     loadSimplePartTable,
     loadStockPricingChart,
+    partStockLabel,
     toggleStar,
 */
 
@@ -409,6 +410,18 @@ function toggleStar(options) {
 }
 
 
+function partStockLabel(part, options={}) {
+
+    var label_class = options.label_class || 'label-form';
+
+    if (part.in_stock) {
+        return `<span class='label ${label_class} label-green'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+    } else {
+        return `<span class='label ${label_class} label-red'>{% trans "No Stock" %}</span>`;
+    }
+}
+
+
 function makePartIcons(part) {
     /* Render a set of icons for the given part.
      */
@@ -592,7 +605,7 @@ function loadPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterLsit("#part-parameters", $(table));
+    // setupFilterList("#part-parameters", $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -778,7 +791,7 @@ function partGridTile(part) {
 
     var html = `
     
-    <div class='col-sm-3 card'>
+    <div class='product-card card'>
         <div class='panel panel-default panel-inventree product-card-panel'>
             <div class='panel-heading'>
                 <a href='/part/${part.pk}/'>
@@ -876,23 +889,7 @@ function loadPartTable(table, url, options={}) {
         switchable: false,
         formatter: function(value, row) {
 
-            var name = '';
-
-            if (row.IPN) {
-                name += row.IPN;
-                name += ' | ';
-            }
-
-            name += value;
-
-            if (row.revision) {
-                name += ' | ';
-                name += row.revision;
-            }
-
-            if (row.is_template) {
-                name = '<i>' + name + '</i>';
-            }
+            var name = row.full_name;
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
 
@@ -1016,8 +1013,8 @@ function loadPartTable(table, url, options={}) {
 
             data.forEach(function(row, index) {
                 
-                // Force a new row every 4 columns, to prevent visual issues
-                if ((index > 0) && (index % 4 == 0) && (index < data.length)) {
+                // Force a new row every 5 columns
+                if ((index > 0) && (index % 5 == 0) && (index < data.length)) {
                     html += `</div><div class='row full-height'>`;
                 }
 

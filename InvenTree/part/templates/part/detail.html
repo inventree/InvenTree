@@ -473,7 +473,11 @@
     onPanelLoad("bom", function() {
         // Load the BOM table data
         loadBomTable($("#bom-table"), {
-            editable: {{ editing_enabled }},
+            {% if roles.part.change %}
+            editable: true,
+            {% else %}
+            editable: false,
+            {% endif %}
             bom_url: "{% url 'api-bom-list' %}",
             part_url: "{% url 'api-part-list' %}",
             parent_id: {{ part.id }} ,
@@ -485,11 +489,6 @@
                 "#bom-item-delete",
             ]
         );
-
-        {% if editing_enabled %}
-        $("#editing-finished").click(function() {
-            location.href = "{% url 'part-detail' part.id %}?display=bom";
-        });
 
         $('#bom-item-delete').click(function() {
 
@@ -552,13 +551,12 @@
                 fields: fields,
                 method: 'POST',
                 title: '{% trans "Create BOM Item" %}',
+                focus: 'sub_part',
                 onSuccess: function() {
                     $('#bom-table').bootstrapTable('refresh');
                 }
             });
         });
-
-        {% else %}
 
         $("#validate-bom").click(function() {
             launchModalForm(
@@ -567,10 +565,6 @@
                     reload: true,
                 }
             );
-        });
-
-        $("#edit-bom").click(function () {
-            location.href = "{% url 'part-detail' part.id %}?display=bom&edit=1";
         });
 
         $("#download-bom").click(function () {
@@ -582,8 +576,6 @@
                 }
             );
         });
-
-        {% endif %}
 
         $("#print-bom-report").click(function() {
             printBomReports([{{ part.pk }}]);
@@ -628,10 +620,9 @@
         });
     });
 
-
     // Load the BOM table data in the pricing view
     loadBomTable($("#bom-pricing-table"), {
-        editable: {{ editing_enabled }},
+        editable: false,
         bom_url: "{% url 'api-bom-list' %}",
         part_url: "{% url 'api-part-list' %}",
         parent_id: {{ part.id }} ,

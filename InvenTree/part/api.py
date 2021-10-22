@@ -27,7 +27,8 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartCategory
+from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -813,6 +814,27 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Exclude specific part ID values?
+        exclude_id = []
+
+        for key in ['exclude_id', 'exclude_id[]']:
+            if key in params:
+                exclude_id += params.getlist(key, [])
+
+        if exclude_id:
+
+            id_values = []
+
+            for val in exclude_id:
+                try:
+                    # pk values must be integer castable
+                    val = int(val)
+                    id_values.append(val)
+                except ValueError:
+                    pass
+            
+            queryset = queryset.exclude(pk__in=id_values)
+
         # Exclude part variant tree?
         exclude_tree = params.get('exclude_tree', None)
 
@@ -1078,11 +1100,23 @@ class BomList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
-        if request.is_ajax():
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -1102,7 +1136,7 @@ class BomList(generics.ListCreateAPIView):
 
         try:
             # Include or exclude pricing information in the serialized data
-            kwargs['include_pricing'] = str2bool(self.request.GET.get('include_pricing', True))
+            kwargs['include_pricing'] = self.include_pricing()
         except AttributeError:
             pass
 
@@ -1147,13 +1181,19 @@ class BomList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
-        include_pricing = str2bool(params.get('include_pricing', True))
-
-        if include_pricing:
+        if self.include_pricing():
             queryset = self.annotate_pricing(queryset)
 
         return queryset
     
+    def include_pricing(self):
+        """
+        Determine if pricing information should be included in the response
+        """
+        pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
+
+        return str2bool(self.request.query_params.get('include_pricing', pricing_default))
+
     def annotate_pricing(self, queryset):
         """
         Add part pricing information to the queryset
@@ -1262,6 +1302,35 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
+class BomItemSubstituteList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of BomItemSubstitute objects
+    """
+
+    serializer_class = part_serializers.BomItemSubstituteSerializer
+    queryset = BomItemSubstitute.objects.all()
+    
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'part',
+        'bom_item',
+    ]
+
+
+class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a single BomItemSubstitute object
+    """
+
+    queryset = BomItemSubstitute.objects.all()
+    serializer_class = part_serializers.BomItemSubstituteSerializer
+
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
@@ -1314,6 +1383,16 @@ part_api_urls = [
 ]
 
 bom_api_urls = [
+
+    url(r'^substitute/', include([
+
+        # Detail view
+        url(r'^(?P<pk>\d+)/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+
+        # Catch all
+        url(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
+    ])),
+
     # BOM Item Detail
     url(r'^(?P<pk>\d+)/', include([
         url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),

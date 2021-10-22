@@ -1,11 +1,12 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% if roles.part.change != True and editing_enabled %}
+{% if not roles.part.change %}
     <div class='alert alert-danger alert-block'>
         {% trans "You do not have permission to edit the BOM." %}
     </div>
-{% else %}
+{% endif %}
+
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
 <div class='alert alert-block alert-info'>
@@ -23,42 +24,38 @@
 
 <div id='bom-button-toolbar'>
     <div class="btn-group" role="group" aria-label="...">
-        {% if editing_enabled %}
-        <button class='btn btn-default' type='button' title='{% trans "Remove selected BOM items" %}' id='bom-item-delete'>
-            <span class='fas fa-trash-alt icon-red'></span>
-        </button>
-        <button class='btn btn-primary' type='button' title='{% trans "Import BOM data" %}' id='bom-upload'>
-            <span class='fas fa-file-upload'></span>
-        </button>
-        {% if part.variant_of %}
-        <button class='btn btn-default' type='button' title='{% trans "Copy BOM from parent part" %}' id='bom-duplicate'>
-            <span class='fas fa-clone'></span>
-        </button>
-        {% endif %}
-        <button class='btn btn-default' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
-            <span class='fas fa-plus-circle'></span>
-        </button>
-        <button class='btn btn-success' type='button' title='{% trans "Finish Editing" %}' id='editing-finished'>
-            <span class='fas fa-check-circle'></span>
-        </button>
-        {% elif part.active %}
+        <!-- Export menu -->
+        <div class='btn-group'>
+            <button id='export-options' title='{% trans "Export actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                <span class='fas fa-download'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='download-bom'><span class='fas fa-file-download'></span> {% trans "Export BOM" %}</a></li>
+                <li><a href='#' id='print-bom-report'><span class='fas fa-file-pdf'></span> {% trans "Print BOM Report" %}</a></li>
+            </ul>
+        </div>
         {% if roles.part.change %}
-        <button class='btn btn-primary' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'>
-            <span class='fas fa-edit'></span>
-        </button>
-        {% if part.is_bom_valid == False %}
-        <button class='btn btn-success' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'>
-            <span class='fas fa-clipboard-check'></span>
+        <!-- Action menu -->
+        <div class='btn-group'>
+            <button id='bom-actions' title='{% trans "BOM actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                <span class='fas fa-wrench'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='bom-upload'><span class='fas fa-file-upload'></span> {% trans "Upload BOM" %}</a></li>
+                {% if part.variant_of %}
+                <li><a href='#' id='bom-duplicate'><span class='fas fa-clone'></span> {% trans "Copy BOM" %}</a></li>
+                {% endif %}
+                {% if not part.is_bom_valid %}
+                <li><a href='#' id='validate-bom'><span class='fas fa-clipboard-check icon-green'></span> {% trans "Validate BOM" %}</a></li>
+                {% endif %}
+                <li><a href='#' id='bom-item-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Items" %}</a></li>
+            </ul>
+        </div>
+        <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+            <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
         </button>
         {% endif %}
-        {% endif %}
-        {% endif %}
-        <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default' id='download-bom' type='button'>
-            <span class='fas fa-file-download'></span>
-        </button>
-        <button title='{% trans "Print BOM Report" %}' class='btn btn-default' id='print-bom-report' type='button'>
-            <span class='fas fa-file-pdf'></span>
-        </button>
+   
         <div class='filter-list' id='filter-list-bom'>
             <!-- Empty div (will be filled out with avilable BOM filters) -->
         </div>
@@ -67,4 +64,3 @@
 
 <table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>
 </table>
-{% endif %}

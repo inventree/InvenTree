@@ -11,7 +11,7 @@ import decimal
 import math
 
 from django.db import models, transaction
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
@@ -25,6 +25,7 @@ from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
 import InvenTree.fields
+import InvenTree.validators
 
 import logging
 
@@ -181,12 +182,9 @@ class BaseInvenTreeSetting(models.Model):
         else:
             choices = None
 
-        """
-        TODO:
-        if type(choices) is function:
+        if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
             return choices()
-        """
 
         return choices
 
@@ -478,6 +476,11 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
 
+def settings_group_options():
+    """build up group tuple for settings based on gour choices"""
+    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """
     An InvenTreeSetting object is a key:value pair used for storing
@@ -702,6 +705,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool
         },
 
+        'PART_NAME_FORMAT': {
+            'name': _('Part Name Display Format'),
+            'description': _('Format to display the part name'),
+            'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
+                       "{{ part.revision if part.revision }}",
+            'validator': InvenTree.validators.validate_part_name_format
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
@@ -793,42 +804,54 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'PO',
         },
 
-        # enable/diable ui elements
-        'BUILD_FUNCTION_ENABLE': {
-            'name': _('Enable build'),
-            'description': _('Enable build functionality in InvenTree interface'),
+        # login / SSO
+        'LOGIN_ENABLE_PWD_FORGOT': {
+            'name': _('Enable password forgot'),
+            'description': _('Enable password forgot function on the login-pages'),
             'default': True,
             'validator': bool,
         },
-        'BUY_FUNCTION_ENABLE': {
-            'name': _('Enable buy'),
-            'description': _('Enable buy functionality in InvenTree interface'),
+        'LOGIN_ENABLE_REG': {
+            'name': _('Enable registration'),
+            'description': _('Enable self-registration for users on the login-pages'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_ENABLE_SSO': {
+            'name': _('Enable SSO'),
+            'description': _('Enable SSO on the login-pages'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_MAIL_REQUIRED': {
+            'name': _('Email required'),
+            'description': _('Require user to supply mail on signup'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_SIGNUP_SSO_AUTO': {
+            'name': _('Auto-fill SSO users'),
+            'description': _('Automatically fill out user-details from SSO account-data'),
             'default': True,
             'validator': bool,
         },
-        'SELL_FUNCTION_ENABLE': {
-            'name': _('Enable sell'),
-            'description': _('Enable sell functionality in InvenTree interface'),
+        'LOGIN_SIGNUP_MAIL_TWICE': {
+            'name': _('Mail twice'),
+            'description': _('On signup ask users twice for their mail'),
+            'default': False,
+            'validator': bool,
+        },
+        'LOGIN_SIGNUP_PWD_TWICE': {
+            'name': _('Password twice'),
+            'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
         },
-        'STOCK_FUNCTION_ENABLE': {
-            'name': _('Enable stock'),
-            'description': _('Enable stock functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'SO_FUNCTION_ENABLE': {
-            'name': _('Enable SO'),
-            'description': _('Enable SO functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
-        },
-        'PO_FUNCTION_ENABLE': {
-            'name': _('Enable PO'),
-            'description': _('Enable PO functionality in InvenTree interface'),
-            'default': True,
-            'validator': bool,
+        'SIGNUP_GROUP': {
+            'name': _('Group on signup'),
+            'description': _('Group new user are asigned on registration'),
+            'default': '',
+            'choices': settings_group_options
         },
     }
 
@@ -975,12 +998,26 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(1)]
         },
 
+        'SEARCH_SHOW_STOCK_LEVELS': {
+            'name': _('Search Show Stock'),
+            'description': _('Display stock levels in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),
             'default': True,
             'validator': bool,
         },
+
+        'FORMS_CLOSE_USING_ESCAPE': {
+            'name': _('Escape Key Closes Forms'),
+            'description': _('Use the escape key to close modal forms'),
+            'default': False,
+            'validator': bool,
+        }
     }
 
     class Meta:

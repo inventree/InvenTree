@@ -9,7 +9,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from InvenTree.forms import HelperForm
-from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
+from InvenTree.fields import InvenTreeMoneyField
 
 from InvenTree.helpers import clean_decimal
 
@@ -19,7 +19,6 @@ import part.models
 
 from .models import PurchaseOrder
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -81,6 +80,8 @@ class AllocateSerialsToSalesOrderForm(forms.Form):
     """
     Form for assigning stock to a sales order,
     by serial number lookup
+
+    TODO: Refactor this form / view to use the new API forms interface
     """
 
     line = forms.ModelChoiceField(
@@ -113,22 +114,6 @@ class AllocateSerialsToSalesOrderForm(forms.Form):
             'serials',
             'quantity',
         ]
-
-
-class EditSalesOrderAllocationForm(HelperForm):
-    """
-    Form for editing a SalesOrderAllocation item
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderAllocation
-
-        fields = [
-            'line',
-            'item',
-            'quantity']
 
 
 class OrderMatchItemForm(MatchItemForm):

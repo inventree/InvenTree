@@ -56,10 +56,10 @@ function enableButtons(elements, enabled) {
 }
 
 
+/* Link a bootstrap-table object to one or more buttons.
+ * The buttons will only be enabled if there is at least one row selected
+ */
 function linkButtonsToSelection(table, buttons) {
-    /* Link a bootstrap-table object to one or more buttons.
-     * The buttons will only be enabled if there is at least one row selected
-     */
 
     if (typeof table === 'string') {
         table = $(table);

@@ -9,6 +9,9 @@ ARG tag=""
 
 ENV PYTHONUNBUFFERED 1
 
+# Ref: https://github.com/pyca/cryptography/issues/5776
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
+
 # InvenTree key settings
 
 # The INVENTREE_HOME directory is where the InvenTree source repository will be located
@@ -51,6 +54,8 @@ LABEL org.label-schema.schema-version="1.0" \
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 
+RUN apk -U upgrade
+
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
@@ -68,7 +73,12 @@ RUN apk add --no-cache git make bash \
     # PostgreSQL support
     postgresql postgresql-contrib postgresql-dev libpq \
     # MySQL/MariaDB support
-    mariadb-connector-c mariadb-dev mariadb-client
+    mariadb-connector-c mariadb-dev mariadb-client \
+    # Required for python cryptography support
+    openssl-dev musl-dev libffi-dev rust cargo
+
+# Update pip
+RUN pip install --upgrade pip
 
 # Install required base-level python packages
 COPY requirements.txt requirements.txt
@@ -128,4 +138,3 @@ ENTRYPOINT ["/bin/bash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
-

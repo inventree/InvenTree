@@ -1349,7 +1349,7 @@ function initializeRelatedField(field, fields, options) {
                 
                 // Allow custom run-time filter augmentation
                 if ('adjustFilters' in field) {
-                    query = field.adjustFilters(query);
+                    query = field.adjustFilters(query, options);
                 }
 
                 return query;
@@ -1424,6 +1424,11 @@ function initializeRelatedField(field, fields, options) {
             
             if (item.element && item.element.instance) {
                 data = item.element.instance;
+            }
+
+            // Run optional callback function
+            if (field.onSelect && data) {
+                field.onSelect(data, field, options);
             }
 
             if (!data.pk) {
@@ -1843,6 +1848,8 @@ function constructInput(name, parameters, options) {
     case 'candy':
         func = constructCandyInput;
         break;
+    case 'raw':
+        func = constructRawInput;
     default:
         // Unsupported field type!
         break;
@@ -2080,6 +2087,17 @@ function constructDateInput(name, parameters) {
  * No actual field data!
  */
 function constructCandyInput(name, parameters) {
+
+    return parameters.html;
+
+}
+
+
+/*
+ * Construct a "raw" field input
+ * No actual field data!
+ */
+function constructRawInput(name, parameters) {
 
     return parameters.html;
 

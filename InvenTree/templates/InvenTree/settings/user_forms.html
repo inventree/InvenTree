@@ -14,6 +14,7 @@
 <div class='row'>
     <table class='table table-striped table-condensed'>
         <tbody>
+            {% include "InvenTree/settings/setting.html" with key="FORMS_CLOSE_USING_ESCAPE" icon="fa-window-close" user_setting=True %}
             {% include "InvenTree/settings/setting.html" with key="PART_SHOW_QUANTITY_IN_FORMS" icon="fa-hashtag" user_setting=True %}
         </tbody>
     </table>
