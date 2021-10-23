@@ -245,6 +245,7 @@ class PartImport(FileManagementFormView):
             'Category',
             'default_location',
             'default_supplier',
+            'variant_of',
         ]
 
         OPTIONAL_HEADERS = [
@@ -256,6 +257,16 @@ class PartImport(FileManagementFormView):
             'minimum_stock',
             'Units',
             'Notes',
+            'Active',
+            'base_cost',
+            'Multiple',
+            'assembly',
+            'component',
+            'is_template',
+            'purchaseable',
+            'salable',
+            'trackable',
+            'virtual',
         ]
 
     name = 'part'
@@ -284,6 +295,17 @@ class PartImport(FileManagementFormView):
         'category': 'category',
         'default_location': 'default_location',
         'default_supplier': 'default_supplier',
+        'variant_of': 'variant_of',
+        'active': 'active',
+        'base_cost': 'base_cost',
+        'multiple': 'multiple',
+        'assembly': 'assembly',
+        'component': 'component',
+        'is_template': 'is_template',
+        'purchaseable': 'purchaseable',
+        'salable': 'salable',
+        'trackable': 'trackable',
+        'virtual': 'virtual',
     }
     file_manager_class = PartFileManager
 
@@ -299,6 +321,8 @@ class PartImport(FileManagementFormView):
         self.matches['default_location'] = ['name__contains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
         self.matches['default_supplier'] = ['SKU__contains']
+        self.allowed_items['variant_of'] = Part.objects.all()
+        self.matches['variant_of'] = ['name__contains']
 
         # setup
         self.file_manager.setup()
