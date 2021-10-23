@@ -47,6 +47,7 @@ from stock.models import StockLocation
 import common.settings as inventree_settings
 
 from . import forms as part_forms
+from . import settings as part_settings
 from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
 from order.models import PurchaseOrderLineItem
 
@@ -389,16 +390,16 @@ class PartImport(FileManagementFormView):
                 default_location=optional_matches['default_location'],
                 default_supplier=optional_matches['default_supplier'],
                 variant_of=optional_matches['variant_of'],
-                active=str2bool(part_data.get('active', None)),
+                active=str2bool(part_data.get('active', True)),
                 base_cost=part_data.get('base_cost', None),
                 multiple=part_data.get('multiple', None),
-                assembly=str2bool(part_data.get('assembly', None)),
-                component=str2bool(part_data.get('component', None)),
-                is_template=str2bool(part_data.get('is_template', None)),
-                purchaseable=str2bool(part_data.get('purchaseable', None)),
-                salable=str2bool(part_data.get('salable', None)),
-                trackable=str2bool(part_data.get('trackable', None)),
-                virtual=str2bool(part_data.get('virtual', None)),
+                assembly=str2bool(part_data.get('assembly', part_settings.part_assembly_default())),
+                component=str2bool(part_data.get('component', part_settings.part_component_default())),
+                is_template=str2bool(part_data.get('is_template', part_settings.part_template_default())),
+                purchaseable=str2bool(part_data.get('purchaseable', part_settings.part_purchaseable_default())),
+                salable=str2bool(part_data.get('salable', part_settings.part_salable_default())),
+                trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
+                virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
             )
             try:
                 new_part.save()
