@@ -260,13 +260,13 @@ class PartImport(FileManagementFormView):
             'Active',
             'base_cost',
             'Multiple',
-            'assembly',
-            'component',
+            'Assembly',
+            'Component',
             'is_template',
-            'purchaseable',
-            'salable',
-            'trackable',
-            'virtual',
+            'Purchaseable',
+            'Salable',
+            'Trackable',
+            'Virtual',
         ]
 
     name = 'part'
