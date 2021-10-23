@@ -388,6 +388,17 @@ class PartImport(FileManagementFormView):
                 category=optional_matches['Category'],
                 default_location=optional_matches['default_location'],
                 default_supplier=optional_matches['default_supplier'],
+                variant_of=optional_matches['variant_of'],
+                active=optional_matches['active'],
+                base_cost=optional_matches['base_cost'],
+                multiple=optional_matches['multiple'],
+                assembly=optional_matches['assembly'],
+                component=optional_matches['component'],
+                is_template=optional_matches['is_template'],
+                purchaseable=optional_matches['purchaseable'],
+                salable=optional_matches['salable'],
+                trackable=optional_matches['trackable'],
+                virtual=optional_matches['virtual'],
             )
             try:
                 new_part.save()
