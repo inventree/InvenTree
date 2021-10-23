@@ -42,7 +42,7 @@ from common.files import FileManager
 from common.views import FileManagementFormView, FileManagementAjaxView
 from common.forms import UploadFileForm, MatchFieldForm
 
-from stock.models import StockLocation
+from stock.models import StockItem, StockLocation
 
 import common.settings as inventree_settings
 
@@ -268,6 +268,7 @@ class PartImport(FileManagementFormView):
             'Salable',
             'Trackable',
             'Virtual',
+            'Stock',
         ]
 
     name = 'part'
@@ -307,6 +308,7 @@ class PartImport(FileManagementFormView):
         'salable': 'salable',
         'trackable': 'trackable',
         'virtual': 'virtual',
+        'stock': 'stock',
     }
     file_manager_class = PartFileManager
 
@@ -403,6 +405,15 @@ class PartImport(FileManagementFormView):
             )
             try:
                 new_part.save()
+
+                # add stock item if set
+                if part_data.get('stock', None):
+                    stock = StockItem(
+                        part=new_part,
+                        location=new_part.default_location,
+                        quantity=int(part_data.get('stock', 1)),
+                    )
+                    stock.save()
                 import_done += 1
             except ValidationError as _e:
                 import_error.append(', '.join(set(_e.messages)))
