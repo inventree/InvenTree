@@ -13,6 +13,8 @@ import math
 from django.db import models, transaction
 from django.contrib.auth.models import User, Group
 from django.db.utils import IntegrityError, OperationalError
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from django.conf import settings
 
 from djmoney.settings import CURRENCY_CHOICES
@@ -1130,6 +1132,19 @@ class PriceCache(models.Model):
         verbose_name=_('Price'),
         help_text=_('Unit price at specified quantity'),
     )
+
+
+@receiver(post_save, sender='company.SupplierPriceBreak')
+@receiver(post_save, sender='part.PartSellPriceBreak')
+@receiver(post_save, sender='part.PartInternalPriceBreak')
+@receiver(pre_save, sender='part.Part')
+def delete_price_cache(sender, instance, **kwargs):
+    """clean out all cached prices if price breaks or part base_costs change"""
+    if sender._meta.object_name in ('SupplierPriceBreak', 'PartSellPriceBreak', 'PartInternalPriceBreak'):
+        instance.part.cached_prices.all().delete()
+    # this mus be a part change
+    elif instance.id and sender.objects.get(id=instance.id).base_cost != instance.base_cost:
+        instance.cached_prices.all().delete()
 
 
 def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name: str = 'price_breaks'):
