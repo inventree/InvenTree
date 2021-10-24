@@ -1111,7 +1111,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()
     else:
-        price_breaks = []
+        return None
 
     # No price break information available?
     if len(price_breaks) == 0:
