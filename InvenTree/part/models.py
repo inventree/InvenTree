@@ -1515,7 +1515,8 @@ class Part(MPTTModel):
         min_price = None
         max_price = None
 
-        for supplier in self.supplier_parts.all():
+        suppliers = self.supplier_parts.all().prefetch_related('cached_prices')
+        for supplier in suppliers:
 
             price = supplier.get_price(quantity)
 
