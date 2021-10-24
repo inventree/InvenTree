@@ -864,6 +864,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             },
             {
                 sortable: true,
+                switchable: false,
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 footerFormatter: function(data) {
@@ -879,7 +880,14 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'purchase_price',
                 title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
-                    return row.purchase_price_string || row.purchase_price;
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency
+                        }
+                    );
+                    return formatter.format(row.purchase_price);
                 }
             },
             {
@@ -887,9 +895,14 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: true,
                 title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
-                    var total = row.purchase_price * row.quantity;
-                    var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
-                    return formatter.format(total);
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency
+                        }
+                    );
+                    return formatter.format(row.purchase_price * row.quantity);
                 },
                 footerFormatter: function(data) {
                     var total = data.map(function(row) {
