@@ -1106,8 +1106,6 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     - If MOQ (minimum order quantity) is required, bump quantity
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
-    from common.settings import currency_code_default
-
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()
     else:
@@ -1116,6 +1114,29 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     # No price break information available?
     if len(price_breaks) == 0:
         return None
+
+    # TODO implement MOQ #1631
+
+    return calculate_price(instance, quantity, price_breaks, multiples, currency)
+
+
+def calculate_price(instance, quantity, price_breaks, multiples=True, currency=None):
+    """ Calculate a price based on a price break
+
+    :param instance: part for which the price should be calculated
+    :type instance: Part
+    :param quantity: quantity the price is based on
+    :type quantity: int
+    :param price_breaks: price break model from which the price will be calculated
+    :type price_breaks: PriceBreak
+    :param multiples: are multiples setteings enforced for this price, defaults to True
+    :type multiples: bool, optional
+    :param currency: currency for price, defaults to None
+    :type currency: currency reference, optional
+    :return: price
+    :rtype: normalized price
+    """
+    from common.settings import currency_code_default
 
     # Check if quantity is fraction and disable multiples
     multiples = (quantity % 1 == 0)
