@@ -1099,6 +1099,39 @@ class PriceBreak(models.Model):
         return converted.amount
 
 
+class PriceCache(models.Model):
+    """
+    Cache for calculated prices calculations
+    """
+    class Meta:
+        abstract = True
+        unique_together = ('part', 'quantity', 'price_break', 'currency_code', )
+
+    quantity = InvenTree.fields.RoundingDecimalField(
+        max_digits=15,
+        decimal_places=5,
+        verbose_name=_('Quantity'),
+    )
+
+    price_break = models.CharField(
+        max_length=255,
+        verbose_name=_('Price Break'),
+    )
+
+    currency_code = models.CharField(
+        max_length=255,
+        verbose_name=_('Currency'),
+    )
+
+    price = models.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        null=True,
+        verbose_name=_('Price'),
+        help_text=_('Unit price at specified quantity'),
+    )
+
+
 def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name: str = 'price_breaks'):
     """ Calculate the price based on quantity price breaks.
 
@@ -1119,6 +1152,12 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
     if multiples:
         quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
 
+    # Check if a chached price is available
+    cached_price = instance.cached_prices.filter(quantity=quantity, price_break=break_name, currency_code=currency)
+    if cached_price.exists():
+        return cached_price.first().price
+
+    # Get price break
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()
     else:
@@ -1130,7 +1169,16 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
     # TODO implement MOQ #1631
 
-    return calculate_price(instance, quantity, price_breaks, currency)
+    # Get price and cache it
+    price = calculate_price(instance, quantity, price_breaks, currency)
+    instance.cached_prices.create(
+        quantity=quantity,
+        price_break=break_name,
+        currency_code=currency,
+        price=price,
+    )
+
+    return price
 
 
 def calculate_price(instance, quantity, price_breaks, currency):

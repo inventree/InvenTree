@@ -712,3 +712,9 @@ class SupplierPriceBreak(common.models.PriceBreak):
 
     def __str__(self):
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'
+
+
+class SupplierPriceCache(common.models.PriceCache):
+    """ Internal cache for prices """
+
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='cached_prices', verbose_name=_('Part'),)
