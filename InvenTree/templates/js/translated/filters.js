@@ -283,6 +283,11 @@ function setupFilterList(tableKey, table, target) {
 
     element.append(`<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-default filter-tag'><span class='fas fa-redo-alt'></span></button>`);
 
+    // Callback for reloading the table
+    element.find(`#reload-${tableKey}`).click(function() {
+        $(table).bootstrapTable('refresh');
+    });
+
     // If there are no filters defined for this table, exit now
     if (jQuery.isEmptyObject(getAvailableTableFilters(tableKey))) {
         return;
@@ -302,11 +307,6 @@ function setupFilterList(tableKey, table, target) {
 
         element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
-
-    // Callback for reloading the table
-    element.find(`#reload-${tableKey}`).click(function() {
-        $(table).bootstrapTable('refresh');
-    });
 
     // Add a callback for adding a new filter
     element.find(`#${add}`).click(function clicked() {
