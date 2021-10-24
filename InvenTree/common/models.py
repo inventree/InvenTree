@@ -1112,6 +1112,13 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
         # Default currency selection
         currency = currency_code_default()
 
+    # Check if quantity is fraction and disable multiples
+    multiples = (quantity % 1 == 0)
+
+    # Order multiples
+    if multiples:
+        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
+
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()
     else:
@@ -1123,10 +1130,10 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
     # TODO implement MOQ #1631
 
-    return calculate_price(instance, quantity, price_breaks, currency, multiples)
+    return calculate_price(instance, quantity, price_breaks, currency)
 
 
-def calculate_price(instance, quantity, price_breaks, currency, multiples=True):
+def calculate_price(instance, quantity, price_breaks, currency):
     """ Calculate a price based on a price break
 
     :param instance: part for which the price should be calculated
@@ -1135,20 +1142,11 @@ def calculate_price(instance, quantity, price_breaks, currency, multiples=True):
     :type quantity: int
     :param price_breaks: price break model from which the price will be calculated
     :type price_breaks: PriceBreak
-    :param multiples: are multiples setteings enforced for this price, defaults to True
-    :type multiples: bool, optional
     :param currency: currency for price, defaults to None
     :type currency: currency reference, optional
     :return: price
     :rtype: normalized price
     """
-    # Check if quantity is fraction and disable multiples
-    multiples = (quantity % 1 == 0)
-
-    # Order multiples
-    if multiples:
-        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
-
     pb_found = False
     pb_quantity = -1
     pb_cost = 0.0
