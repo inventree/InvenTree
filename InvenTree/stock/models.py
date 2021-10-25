@@ -13,23 +13,25 @@ from django.core.exceptions import ValidationError, FieldError
 from django.urls import reverse
 
 from django.db import models, transaction
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Min, Max, Avg
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
+from djmoney.money import Money
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 from InvenTree import helpers
 
 import common.models
+from common.settings import currency_code_default
 import report.models
 import label.models
 
@@ -41,6 +43,7 @@ from users.models import Owner
 
 from company import models as CompanyModels
 from part import models as PartModels
+from part.models import BomItem
 
 
 class StockLocation(InvenTreeTree):
@@ -1649,6 +1652,23 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+@receiver(post_save, sender=StockItem)
+def changed_stockitem(sender, instance, **kwargs):
+    # TODO make this async
+    bomitems = BomItem.objects.filter(sub_part__stock_items__id=instance.id)
+    queryset = bomitems.annotate(
+        new_purchase_price_min=Min('sub_part__stock_items__purchase_price'),
+        new_purchase_price_max=Max('sub_part__stock_items__purchase_price'),
+        new_purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
+    )
+    currency = currency_code_default()
+    for item in queryset:
+        item.purchase_price_min = Money(item.new_purchase_price_min, currency)
+        item.purchase_price_max = Money(item.new_purchase_price_max, currency)
+        item.purchase_price_avg = Money(item.new_purchase_price_avg, currency)
+        item.save()
 
 
 class StockItemAttachment(InvenTreeAttachment):
