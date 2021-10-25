@@ -36,6 +36,13 @@ class InvenTreeMoneySerializer(MoneyField):
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
     """
 
+    def __init__(self, *args, **kwargs):
+
+        kwargs["max_digits"] = kwargs.get("max_digits", 19)
+        kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
+
+        super().__init__(*args, **kwargs)
+
     def get_value(self, data):
         """
         Test that the returned amount is a valid Decimal
@@ -52,7 +59,7 @@ class InvenTreeMoneySerializer(MoneyField):
                 amount = Decimal(amount)
         except:
             raise ValidationError({
-                self.field_name: _("Must be a valid number")
+                self.field_name: [_("Must be a valid number")],
             })
 
         currency = data.get(get_currency_field_name(self.field_name), self.default_currency)
