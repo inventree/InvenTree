@@ -903,6 +903,68 @@ class SalesOrderLineItem(OrderLineItem):
         return self.allocated_quantity() > self.quantity
 
 
+class SalesOrderShipment(models.Model):
+    """
+    The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
+
+    - Points to a single SalesOrder object
+    - Multiple SalesOrderAllocation objects point to a particular SalesOrderShipment
+    - When a given SalesOrderShipment is "shipped", stock items are removed from stock
+
+    Attributes:
+        order: SalesOrder reference
+        status: Status of this shipment (see SalesOrderStatus)
+        shipment_date: Date this shipment was "shipped" (or null)
+        checked_by: User reference field indicating who checked this order
+        reference: Custom reference text for this shipment (e.g. consignment number?)
+        notes: Custom notes field for this shipment
+    """
+
+    order = models.ForeignKey(
+        SalesOrder,
+        on_delete=models.CASCADE,
+        blank=False, null=False,
+        related_name='shipments',
+        verbose_name=_('Order'),
+        help_text=_('Sales Order'),
+    )
+
+    status = models.PositiveIntegerField(
+        default=SalesOrderStatus.PENDING,
+        choices=SalesOrderStatus.items(),
+        verbose_name=_('Status'),
+        help_text=_('Shipment status'),
+    )
+
+    shipment_date = models.DateField(
+        null=True, blank=True,
+        verbose_name=_('Shipment Date'),
+        help_text=_('Date of shipment'),
+    )
+
+    checked_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Checked By'),
+        help_text=_('User who checked this shipment'),
+        related_name='+',
+    )
+
+    reference = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=('Reference'),
+        help_text=_('Shipment reference'),
+    )
+
+    notes = MarkdownxField(
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_('Shipment notes'),
+    )
+
+
 class SalesOrderAllocation(models.Model):
     """
     This model is used to 'allocate' stock items to a SalesOrder.
