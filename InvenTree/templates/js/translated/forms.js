@@ -645,7 +645,7 @@ function submitFormData(fields, options) {
                 if (!validateFormField(name, options)) {
                     data_valid = false;
     
-                    data_errors[name] = ['{% trans "Enter a valid input" %}'];
+                    data_errors[name] = ['{% trans "Enter a valid number" %}'];
                 }
                 break;
             default:
@@ -798,10 +798,26 @@ function getFormFieldElement(name, options) {
 }
 
 
+/*
+ * Check that a "numerical" input field has a valid number in it.
+ * An invalid number is expunged at the client side by the getFormFieldValue() function,
+ * which means that an empty string '' is sent to the server if the number is not valud.
+ * This can result in confusing error messages displayed under the form field.
+ * 
+ * So, we can invalid numbers and display errors *before* the form is submitted!
+ */
 function validateFormField(name, options) {
 
     if (getFormFieldElement(name, options)) {
-        return document.getElementById(`id_${name}`).validity.valid;
+
+        var el = document.getElementById(`id_${name}`);
+
+        if (el.validity.valueMissing) {
+            // Accept empty strings (server will validate)
+            return true;
+        } else {
+            return el.validity.valid;
+        }
     } else {
         return false;
     }
