@@ -27,10 +27,12 @@ class TestForwardMigrations(MigratorTestCase):
         supplier = Company.objects.create(
             name='Supplier A',
             description='A great supplier!',
-            is_supplier=True
+            is_supplier=True,
+            is_customer=True,
         )
 
         PurchaseOrder = self.old_state.apps.get_model('order', 'purchaseorder')
+        SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
 
         # Create some orders
         for ii in range(10):
@@ -45,19 +47,32 @@ class TestForwardMigrations(MigratorTestCase):
             with self.assertRaises(AttributeError):
                 print(order.reference_int)
 
+            sales_order = SalesOrder.objects.create(
+                customer=supplier,
+                reference=f"{ii}-xyz",
+                description="A test sales order",
+            )
+
+            # Initially, the 'reference_int' field is unavailable
+            with self.assertRaises(AttributeError):
+                print(sales_order.reference_int)
+
     def test_ref_field(self):
         """
         Test that the 'reference_int' field has been created and is filled out correctly
         """
 
         PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
+        SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
 
         for ii in range(10):
 
-            order = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
+            po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
+            so = SalesOrder.objects.get(reference=f"{ii}-xyz")
 
             # The integer reference field must have been correctly updated
-        self.assertEqual(order.reference_int, ii)
+            self.assertEqual(po.reference_int, ii)
+            self.assertEqual(so.reference_int, ii)
 
 
 class TestShipmentMigration(MigratorTestCase):
@@ -93,6 +108,10 @@ class TestShipmentMigration(MigratorTestCase):
 
         order.save()
 
+        # The "shipment" model does not exist yet
+        with self.assertRaises(LookupError):
+            self.old_state.apps.get_model('order', 'salesordershipment')
+    
     def test_shipment_creation(self):
         """
         Check that a SalesOrderShipment has been created
