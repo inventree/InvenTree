@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-24 20:15+0000\n"
+"POT-Creation-Date: 2021-10-25 21:42+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
@@ -209,11 +209,11 @@ msgstr ""
 msgid "parent"
 msgstr ""
 
-#: InvenTree/serializers.py:55 part/models.py:2520
+#: InvenTree/serializers.py:62 part/models.py:2520
 msgid "Must be a valid number"
 msgstr ""
 
-#: InvenTree/serializers.py:244
+#: InvenTree/serializers.py:251
 msgid "Filename"
 msgstr ""
 
@@ -799,7 +799,7 @@ msgstr ""
 #: part/templates/part/navbar.html:111
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:154 stock/forms.py:204 stock/forms.py:238 stock/models.py:579
-#: stock/models.py:1723 stock/models.py:1829 stock/serializers.py:451
+#: stock/models.py:1723 stock/models.py:1829 stock/serializers.py:450
 #: stock/templates/stock/navbar.html:57 templates/js/translated/barcode.js:59
 #: templates/js/translated/bom.js:596 templates/js/translated/company.js:841
 #: templates/js/translated/order.js:962 templates/js/translated/order.js:1560
@@ -905,8 +905,8 @@ msgstr ""
 msgid "This build output is not fully allocated"
 msgstr ""
 
-#: build/serializers.py:189 order/serializers.py:217 order/serializers.py:284
-#: stock/forms.py:236 stock/serializers.py:553
+#: build/serializers.py:189 order/serializers.py:216 order/serializers.py:283
+#: stock/forms.py:236 stock/serializers.py:552
 #: stock/templates/stock/item_base.html:301
 #: templates/js/translated/barcode.js:385
 #: templates/js/translated/barcode.js:555 templates/js/translated/build.js:413
@@ -924,7 +924,7 @@ msgstr ""
 
 #: build/serializers.py:196 build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:62 order/models.py:572
-#: order/serializers.py:238 stock/templates/stock/item_base.html:424
+#: order/serializers.py:237 stock/templates/stock/item_base.html:424
 #: templates/js/translated/barcode.js:141 templates/js/translated/build.js:1645
 #: templates/js/translated/order.js:430 templates/js/translated/order.js:676
 #: templates/js/translated/order.js:1073 templates/js/translated/stock.js:896
@@ -957,7 +957,7 @@ msgstr ""
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:347 order/models.py:316 order/serializers.py:231
+#: build/serializers.py:347 order/models.py:316 order/serializers.py:230
 #: stock/models.py:351 stock/models.py:1072
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -2118,7 +2118,8 @@ msgstr ""
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1081 company/templates/company/supplier_part.html:231
+#: common/models.py:1081 company/serializers.py:263
+#: company/templates/company/supplier_part.html:231
 #: templates/js/translated/part.js:1366
 msgid "Price"
 msgstr ""
@@ -2291,8 +2292,8 @@ msgstr ""
 msgid "Does this company manufacture parts?"
 msgstr ""
 
-#: company/models.py:152 company/serializers.py:264
-#: company/templates/company/company_base.html:76 stock/serializers.py:158
+#: company/models.py:152 company/serializers.py:269
+#: company/templates/company/company_base.html:76 stock/serializers.py:157
 msgid "Currency"
 msgstr ""
 
@@ -2448,11 +2449,11 @@ msgstr ""
 msgid "Order multiple"
 msgstr ""
 
-#: company/serializers.py:68
+#: company/serializers.py:69
 msgid "Default currency used for this supplier"
 msgstr ""
 
-#: company/serializers.py:69
+#: company/serializers.py:70
 msgid "Currency Code"
 msgstr ""
 
@@ -3200,47 +3201,47 @@ msgstr ""
 msgid "Enter stock allocation quantity"
 msgstr ""
 
-#: order/serializers.py:167
+#: order/serializers.py:166
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:202
+#: order/serializers.py:201
 msgid "Line Item"
 msgstr ""
 
-#: order/serializers.py:208
+#: order/serializers.py:207
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:218 order/serializers.py:285
+#: order/serializers.py:217 order/serializers.py:284
 msgid "Select destination location for received items"
 msgstr ""
 
-#: order/serializers.py:242
+#: order/serializers.py:241
 msgid "Barcode Hash"
 msgstr ""
 
-#: order/serializers.py:243
+#: order/serializers.py:242
 msgid "Unique identifier field"
 msgstr ""
 
-#: order/serializers.py:259
+#: order/serializers.py:258
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:297
+#: order/serializers.py:296
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:314
+#: order/serializers.py:313
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:325
+#: order/serializers.py:324
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:569
+#: order/serializers.py:566
 msgid "Sale price currency"
 msgstr ""
 
@@ -5485,19 +5486,19 @@ msgstr ""
 msgid "Test notes"
 msgstr ""
 
-#: stock/serializers.py:424
+#: stock/serializers.py:423
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:452
+#: stock/serializers.py:451
 msgid "Stock transaction notes"
 msgstr ""
 
-#: stock/serializers.py:462
+#: stock/serializers.py:461
 msgid "A list of stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:554
+#: stock/serializers.py:553
 msgid "Destination stock location"
 msgstr ""
 
@@ -7284,20 +7285,24 @@ msgstr ""
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:968 templates/modals.html:21
+#: templates/js/translated/forms.js:648
+msgid "Enter a valid number"
+msgstr ""
+
+#: templates/js/translated/forms.js:1033 templates/modals.html:21
 #: templates/modals.html:47
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1323
+#: templates/js/translated/forms.js:1390
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:1530
+#: templates/js/translated/forms.js:1595
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:1747
+#: templates/js/translated/forms.js:1812
 msgid "Clear input"
 msgstr ""
 
