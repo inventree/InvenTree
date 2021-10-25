@@ -1992,16 +1992,16 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     switch (parameters.type) {
-        case 'boolean':
-            opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
-            break;
-        case 'integer':
-        case 'float':
-        case 'decimal':
-            opts.push(`step='any'`);
-            break;
-        default:
-            break;
+    case 'boolean':
+        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
+        break;
+    case 'integer':
+    case 'float':
+    case 'decimal':
+        opts.push(`step='any'`);
+        break;
+    default:
+        break;
     }
 
     if (parameters.multiline) {
