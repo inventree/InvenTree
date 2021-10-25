@@ -41,6 +41,9 @@ def add_shipment(apps, schema_editor):
             order=order,
         )
 
+        if order.status == SalesOrderStatus.SHIPPED:
+            shipment.shipment_date = order.shipment_date
+
         shipment.save()
 
         # Iterate through each allocation associated with this order

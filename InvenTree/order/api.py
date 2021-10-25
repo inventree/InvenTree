@@ -810,7 +810,7 @@ order_api_urls = [
         ])),
 
         url(r'^shipment/', include([
-            url(r'^(?P<pk>\d)+/', include([
+            url(r'^(?P<pk>\d+)/', include([
                 url(r'^.*$', SOShipmentDetail.as_view(), name='api-so-shipment-detail'),
             ])),
             url(r'^.*$', SOShipmentList.as_view(), name='api-so-shipment-list'),

@@ -33,6 +33,32 @@
     </div>
 </div>
 
+<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-shipments'>
+    {% if order.is_pending %}
+    <div class='panel-heading'>
+        <h4>{% trans "Pending Shipments" %}</h4>
+    </div>
+    <div class='panel-content'>
+        {% if roles.sales_order.change %}
+        <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group'>
+                <button type='button' class='btn btn-success' id='new-shipment'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Shipment" %}
+                </button>
+            </div>
+        </div>
+        {% endif %}
+        <table class='table table-striped table-condensed' id='pending-shipments-table' data-toolbar='#pending-shipment-toolbar'></table>
+    </div>
+    {% endif %}
+    <div class='panel-heading'>
+        <h4>{% trans "Completed Shipments" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <table class='table table-striped table-condensed' id='completed-shipments-table'></table>
+    </div>
+</div>
+
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-order-builds'>
     <div class='panel-heading'>
         <h4>{% trans "Build Orders" %}</h4>
@@ -78,6 +104,23 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    // Callback when the "shipments" panel is first loaded
+    onPanelLoad('order-shipments', function() {
+
+        {% if order.is_pending %}
+        loadSalesOrderShipmentTable('#pending-shipments-table', {
+            order: {{ order.pk }},
+            shipped: false,
+        });
+        {% endif %}
+
+        loadSalesOrderShipmentTable('#completed-shipments-table', {
+            order: {{ order.pk }},
+            shipped: true,
+        });
+
+    });
 
     $('#edit-notes').click(function() {
         constructForm('{% url "api-so-detail" order.pk %}', {

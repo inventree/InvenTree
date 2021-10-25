@@ -26,6 +26,7 @@
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
     loadSalesOrderLineItemTable,
+    loadSalesOrderShipmentTable,
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
@@ -1100,6 +1101,117 @@ function loadSalesOrderTable(table, options) {
 }
 
 
+/*
+ * Load a table displaying Shipment information against a particular order
+ */
+function loadSalesOrderShipmentTable(table, options={}) {
+
+    options.table = table;
+
+    options.params = options.params || {};
+
+    // Filter by order
+    options.params.order = options.order;
+
+    // Filter by "shipped" status
+    options.params.shipped = options.shipped || false;
+
+    var filters = loadTableFilters('salesordershipment');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    var todo = "Setup filter list for this table";
+
+    function makeShipmentActions(row) {
+        // Construct "actions" for the given shipment row
+        var pk = row.pk;
+
+        var html = `<div class='btn-group float-right' role='group'>`;
+
+        html += makeIconButton('fa-edit icon-blue', 'button-shipment-edit', pk, '{% trans "Edit shipment" %}');
+
+        html += `</div>`;
+
+        return html;
+
+    }
+
+    function setupShipmentCallbacks() {
+        // Setup action button callbacks
+
+        $(table).find('.button-shipment-edit').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/order/so/shipment/${pk}/`, {
+                fields: {
+                    reference: {},
+                },
+                title: '{% trans "Edit Shipment" %}',
+                onSuccess: function() {
+                    $(table).bootstrapTable('refresh');
+                }
+            });
+        });
+    }
+
+    $(table).inventreeTable({
+        url: '{% url "api-so-shipment-list" %}',
+        queryParams: filters,
+        original: options.params,
+        name: options.name || 'salesordershipment',
+        search: false,
+        paginationVAlign: 'bottom',
+        showColumns: true,
+        detailView: true,
+        detailViewByClick: false,
+        detailFilter: function(index, row) {
+            return row.allocations.length > 0;
+        },
+        detailFormatter: function(index, row, element) {
+            return showAllocationSubTable(index, row, element, options);
+        },
+        onPostBody: setupShipmentCallbacks,
+        formatNoMatches: function() {
+            return '{% trans "No matching shipments found" %}';
+        },
+        columns: [
+            {
+                visible: false,
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+                switchable: false,
+            },
+            {
+                field: 'shipment_date',
+                title: '{% trans "Shipment Date" %}',
+                visible: options.shipped,
+                switchable: false,
+            },
+            {
+                field: 'notes',
+                title: '{% trans "Notes" %}',
+                visible: false,
+                // TODO: Implement 'notes' field
+            },
+            {
+                title: '',
+                switchable: false,
+                formatter: function(value, row) {
+                    return makeShipmentActions(row);
+                }
+            }
+        ],
+    });
+}
+
+
+
 function loadSalesOrderAllocationTable(table, options={}) {
     /**
      * Load a table with SalesOrderAllocation items
@@ -1123,7 +1235,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
     $(table).inventreeTable({
         url: '{% url "api-so-allocation-list" %}',
         queryParams: filters,
-        name: 'salesorderallocation',
+        name: options.name || 'salesorderallocation',
         groupBy: false,
         search: false,
         paginationVAlign: 'bottom',
@@ -1198,16 +1310,14 @@ function showAllocationSubTable(index, row, element, options) {
     // Construct a sub-table element
     var html = `
     <div class='sub-table'>
-        <table class='table table-striped table-condensed' id='allocation-table-${row.pk}'>
-        </table>
+        <table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table>
     </div>`;
 
     element.html(html);
 
     var table = $(`#allocation-table-${row.pk}`);
 
-    // Is the parent SalesOrder pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
+    var shipped = options.shipped;
 
     function setupCallbacks() {
         // Add callbacks for 'edit' buttons
@@ -1300,7 +1410,7 @@ function showAllocationSubTable(index, row, element, options) {
                     var html = `<div class='btn-group float-right' role='group'>`;
                     var pk = row.pk;
 
-                    if (pending) {
+                    if (!shipped) {
                         html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
