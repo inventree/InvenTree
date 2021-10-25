@@ -1681,6 +1681,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         location_detail: true,
                         in_stock: true,
                         part: line_item.part,
+                        include_variants: false,
                         exclude_so_allocation: options.order,
                     },
                     auto_fill: true,

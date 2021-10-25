@@ -18,7 +18,6 @@ class Migration(migrations.Migration):
             name='SalesOrderShipment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.PositiveIntegerField(choices=[(10, 'Pending'), (20, 'Shipped'), (40, 'Cancelled'), (50, 'Lost'), (60, 'Returned')], default=10, help_text='Shipment status', verbose_name='Status')),
                 ('shipment_date', models.DateField(blank=True, help_text='Date of shipment', null=True, verbose_name='Shipment Date')),
                 ('reference', models.CharField(blank=True, help_text='Shipment reference', max_length=100, verbose_name='Reference')),
                 ('notes', markdownx.models.MarkdownxField(blank=True, help_text='Shipment notes', verbose_name='Notes')),

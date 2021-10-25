@@ -929,13 +929,6 @@ class SalesOrderShipment(models.Model):
         help_text=_('Sales Order'),
     )
 
-    status = models.PositiveIntegerField(
-        default=SalesOrderStatus.PENDING,
-        choices=SalesOrderStatus.items(),
-        verbose_name=_('Status'),
-        help_text=_('Shipment status'),
-    )
-
     shipment_date = models.DateField(
         null=True, blank=True,
         verbose_name=_('Shipment Date'),
