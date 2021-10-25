@@ -10,7 +10,7 @@ from import_export.fields import Field
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
+from .models import SalesOrderShipment, SalesOrderAllocation
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
@@ -124,6 +124,15 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
     )
 
 
+class SalesOrderShipmentAdmin(ImportExportModelAdmin):
+
+    list_display = [
+        'order',
+        'shipment_date',
+        'reference',
+    ]
+
+
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 
     list_display = (
@@ -139,4 +148,5 @@ admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
 admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
 
+admin.site.register(SalesOrderShipment, SalesOrderShipmentAdmin)
 admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)
