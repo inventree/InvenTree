@@ -1198,14 +1198,6 @@ class BomList(generics.ListCreateAPIView):
         """
         Add part pricing information to the queryset
         """
-
-        # Annotate with purchase prices
-        queryset = queryset.annotate(
-            purchase_price_min=Min('sub_part__stock_items__purchase_price'),
-            purchase_price_max=Max('sub_part__stock_items__purchase_price'),
-            purchase_price_avg=Avg('sub_part__stock_items__purchase_price'),
-        )
-
         # Get values for currencies
         currencies = queryset.annotate(
             purchase_price=F('sub_part__stock_items__purchase_price'),

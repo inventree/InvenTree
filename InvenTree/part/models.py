@@ -45,7 +45,7 @@ from common.models import InvenTreeSetting
 from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField, InvenTreeModelMoneyField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
@@ -2663,6 +2663,32 @@ class BomItem(models.Model):
         pmax = decimal2money(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+    purchase_price_min = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Purchase Price Min'),
+        help_text=_('Minimum purchase price as cache'),
+    )
+    purchase_price_max = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Purchase Price Max'),
+        help_text=_('Maximum purchase price as cache'),
+    )
+    purchase_price_avg = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Purchase Price Avg'),
+        help_text=_('Average purchase price as cache'),
+    )
 
 
 class BomItemSubstitute(models.Model):
