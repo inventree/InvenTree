@@ -132,9 +132,10 @@ class RuleSet(models.Model):
         'sales_order': [
             'company_company',
             'order_salesorder',
+            'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
-            'order_salesorderallocation',
+            'order_salesordershipment',
         ]
     }
 

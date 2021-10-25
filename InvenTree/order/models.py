@@ -973,6 +973,7 @@ class SalesOrderAllocation(models.Model):
 
     Attributes:
         line: SalesOrderLineItem reference
+        shipment: SalesOrderShipment reference
         item: StockItem reference
         quantity: Quantity to take from the StockItem
 
@@ -1028,6 +1029,11 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and not self.quantity == 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
+
+
+        # TODO: Ensure that the "shipment" points to the same "order"!
+
+
         if len(errors) > 0:
             raise ValidationError(errors)
 
@@ -1036,6 +1042,14 @@ class SalesOrderAllocation(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('Line'),
         related_name='allocations')
+
+    shipment = models.ForeignKey(
+        SalesOrderShipment,
+        on_delete=models.CASCADE,
+        null=True, blank=True,
+        verbose_name=_('Shipment'),
+        help_text=_('Sales order shipment reference'),
+    )
 
     item = models.ForeignKey(
         'stock.StockItem',
