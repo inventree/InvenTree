@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='salesorderallocation',
             name='shipment',
-            field=models.ForeignKey(help_text='Sales order shipment reference', on_delete=django.db.models.deletion.CASCADE, to='order.salesordershipment', verbose_name='Shipment'),
+            field=models.ForeignKey(help_text='Sales order shipment reference', on_delete=django.db.models.deletion.CASCADE, related_name='allocations', to='order.salesordershipment', verbose_name='Shipment'),
         ),
     ]

@@ -1039,6 +1039,7 @@ class SalesOrderAllocation(models.Model):
     shipment = models.ForeignKey(
         SalesOrderShipment,
         on_delete=models.CASCADE,
+        related_name='allocations',
         verbose_name=_('Shipment'),
         help_text=_('Sales order shipment reference'),
     )

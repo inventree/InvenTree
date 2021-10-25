@@ -34,7 +34,7 @@ from stock.serializers import LocationBriefSerializer, StockItemSerializer, Loca
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
+from .models import SalesOrderShipment, SalesOrderAllocation
 
 from common.settings import currency_code_mappings
 
@@ -587,6 +587,27 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
+        ]
+
+
+class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the SalesOrderShipment class
+    """
+
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
+
+    class Meta:
+        model = SalesOrderShipment
+
+        fields = [
+            'pk',
+            'order',
+            'allocations',
+            'shipment_date',
+            'checked_by',
+            'reference',
+            'notes',
         ]
 
 

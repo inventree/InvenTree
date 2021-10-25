@@ -26,10 +26,11 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment
 from .serializers import POSerializer, POLineItemSerializer, POAttachmentSerializer
 
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderShipment, SalesOrderAllocation
 from .models import SalesOrderAttachment
+
 from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
-from .serializers import SalesOrderAllocationSerializer
+from .serializers import SalesOrderShipmentSerializer, SalesOrderAllocationSerializer
 from .serializers import POReceiveSerializer
 
 
@@ -700,6 +701,54 @@ class SOAllocationList(generics.ListCreateAPIView):
     ]
 
 
+class SOShipmentFilter(rest_filters.FilterSet):
+    """
+    Custom filterset for the SOShipmentList endpoint
+    """
+
+    shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
+
+    def filter_shipped(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.exclude(shipment_date=None)
+        else:
+            queryset = queryset.filter(shipment_date=None)
+
+        return queryset
+
+    class Meta:
+        model = SalesOrderShipment
+        fields = [
+            'order',
+        ]
+
+
+class SOShipmentList(generics.ListCreateAPIView):
+    """
+    API list endpoint for SalesOrderShipment model
+    """
+
+    queryset = SalesOrderShipment.objects.all()
+    serializer_class = SalesOrderShipmentSerializer
+    filterset_class = SOShipmentFilter
+
+    filter_backends = [
+        rest_filters.DjangoFilterBackend,
+    ]
+
+
+class SOShipmentDetail(generics.RetrieveUpdateAPIView):
+    """
+    API detail endpooint for SalesOrderShipment model
+    """
+
+    queryset = SalesOrderShipment.objects.all()
+    serializer_class = SalesOrderShipmentSerializer
+
+
 class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
@@ -758,6 +807,13 @@ order_api_urls = [
         url(r'attachment/', include([
             url(r'^(?P<pk>\d+)/$', SOAttachmentDetail.as_view(), name='api-so-attachment-detail'),
             url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
+        ])),
+
+        url(r'^shipment/', include([
+            url(r'^(?P<pk>\d)+/', include([
+                url(r'^.*$', SOShipmentDetail.as_view(), name='api-so-shipment-detail'),
+            ])),
+            url(r'^.*$', SOShipmentList.as_view(), name='api-so-shipment-list'),
         ])),
 
         url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
