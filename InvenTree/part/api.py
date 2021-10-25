@@ -1236,15 +1236,16 @@ class BomList(generics.ListCreateAPIView):
         # Convert prices to default currency (using backend conversion rates)
         for bom_item in queryset:
             # Find associated currency (select first found)
-            purchase_price_currency = None
-            for currency_item in currencies:
-                if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk and currency_item['purchase_price']:
-                    purchase_price_currency = currency_item['purchase_price_currency']
-                    break
+            # TODO remove section
+            # purchase_price_currency = None
+            # for currency_item in currencies:
+            #     if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk and currency_item['purchase_price']:
+            #         purchase_price_currency = currency_item['purchase_price_currency']
+            #         break
             # Convert prices
-            bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min, purchase_price_currency)
-            bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max, purchase_price_currency)
-            bom_item.purchase_price_avg = convert_price(bom_item.purchase_price_avg, purchase_price_currency)
+            bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min.amount, bom_item.purchase_price_min.currency) if bom_item.purchase_price_min else None
+            bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max.amount, bom_item.purchase_price_max.currency) if bom_item.purchase_price_max else None
+            bom_item.purchase_price_avg = convert_price(bom_item.purchase_price_avg.amount, bom_item.purchase_price_avg.currency) if bom_item.purchase_price_avg else None
 
         return queryset
 
