@@ -621,6 +621,10 @@ function submitFormData(fields, options) {
 
     var has_files = false;
 
+    var data_valid = true;
+
+    var data_errors = {};
+
     // Extract values for each field
     for (var idx = 0; idx < options.field_names.length; idx++) {
 
@@ -632,6 +636,21 @@ function submitFormData(fields, options) {
         if (field && field.type == 'candy') continue;
 
         if (field) {
+
+            switch (field.type) {
+            // Ensure numerical fields are "valid"
+            case 'integer':
+            case 'float':
+            case 'decimal':
+                if (!validateFormField(name, options)) {
+                    data_valid = false;
+    
+                    data_errors[name] = ['{% trans "Enter a valid input" %}'];
+                }
+                break;
+            default:
+                break;
+            }
 
             var value = getFormFieldValue(name, field, options);
 
@@ -660,6 +679,11 @@ function submitFormData(fields, options) {
         } else {
             console.log(`WARNING: Could not find field matching '${name}'`);
         }
+    }
+
+    if (!data_valid) {
+        handleFormErrors(data_errors, fields, options);
+        return;
     }
 
     var upload_func = inventreePut;
@@ -732,7 +756,8 @@ function updateFieldValues(fields, options) {
  * Update the value of a named field
  */
 function updateFieldValue(name, value, field, options) {
-    var el = $(options.modal).find(`#id_${name}`);
+
+    var el = getFormFieldElement(name, options);
 
     if (!el) {
         console.log(`WARNING: updateFieldValue could not find field '${name}'`);
@@ -760,6 +785,30 @@ function updateFieldValue(name, value, field, options) {
 }
 
 
+// Find the named field element in the modal DOM
+function getFormFieldElement(name, options) {
+
+    var el = $(options.modal).find(`#id_${name}`);
+
+    if (!el.exists) {
+        console.log(`ERROR: Could not find form element for field '${name}'`);
+    }
+
+    return el;
+}
+
+
+function validateFormField(name, options) {
+
+    if (getFormFieldElement(name, options)) {
+        return document.getElementById(`id_${name}`).validity.valid;
+    } else {
+        return false;
+    }
+
+}
+
+
 /*
  * Extract and field value before sending back to the server
  *
@@ -771,7 +820,7 @@ function updateFieldValue(name, value, field, options) {
 function getFormFieldValue(name, field, options) {
 
     // Find the HTML element
-    var el = $(options.modal).find(`#id_${name}`);
+    var el = getFormFieldElement(name, options);
 
     if (!el) {
         return null;
@@ -1086,7 +1135,9 @@ function addFieldCallbacks(fields, options) {
 
 function addFieldCallback(name, field, options) {
 
-    $(options.modal).find(`#id_${name}`).change(function() {
+    var el = getFormFieldElement(name, options);
+
+    el.change(function() {
 
         var value = getFormFieldValue(name, field, options);
 
@@ -1299,7 +1350,7 @@ function initializeRelatedField(field, fields, options) {
     }
 
     // Find the select element and attach a select2 to it
-    var select = $(options.modal).find(`#id_${name}`);
+    var select = getFormFieldElement(name, options);
 
     // Add a button to launch a 'secondary' modal
     if (field.secondary != null) {
@@ -1492,7 +1543,7 @@ function initializeRelatedField(field, fields, options) {
  */
 function setRelatedFieldData(name, data, options) {
 
-    var select = $(options.modal).find(`#id_${name}`);
+    var select = getFormFieldElement(name, options);
 
     var option = new Option(name, data.pk, true, true);
 
@@ -1513,9 +1564,7 @@ function setRelatedFieldData(name, data, options) {
 
 function initializeChoiceField(field, fields, options) {
 
-    var name = field.name;
-
-    var select = $(options.modal).find(`#id_${name}`);
+    var select = getFormFieldElement(field.name, options);
 
     select.select2({
         dropdownAutoWidth: false,
@@ -1926,8 +1975,17 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`placeholder='${parameters.placeholder}'`);
     }
 
-    if (parameters.type == 'boolean') {
-        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
+    switch (parameters.type) {
+        case 'boolean':
+            opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
+            break;
+        case 'integer':
+        case 'float':
+        case 'decimal':
+            opts.push(`step='any'`);
+            break;
+        default:
+            break;
     }
 
     if (parameters.multiline) {

@@ -154,7 +154,6 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
     purchase_price = InvenTreeMoneySerializer(
-        max_digits=19, decimal_places=4,
         allow_null=True
     )
 
@@ -557,8 +556,6 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
     
     sale_price = InvenTreeMoneySerializer(
-        max_digits=19,
-        decimal_places=4,
         allow_null=True
     )
 
