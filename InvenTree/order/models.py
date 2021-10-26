@@ -37,7 +37,7 @@ def get_next_po_number():
     """
 
     if PurchaseOrder.objects.count() == 0:
-        return
+        return "001"
 
     order = PurchaseOrder.objects.exclude(reference=None).last()
 
@@ -66,7 +66,7 @@ def get_next_so_number():
     """
 
     if SalesOrder.objects.count() == 0:
-        return
+        return "001"
 
     order = SalesOrder.objects.exclude(reference=None).last()
 
@@ -106,45 +106,6 @@ class Order(ReferenceIndexingMixin):
         complete_date: Date the order was completed
         responsible: User (or group) responsible for managing the order
     """
-
-    @classmethod
-    def getNextOrderNumber(cls):
-        """
-        Try to predict the next order-number
-        """
-
-        if cls.objects.count() == 0:
-            return None
-
-        # We will assume that the latest pk has the highest PO number
-        order = cls.objects.last()
-        ref = order.reference
-
-        if not ref:
-            return None
-
-        tries = set()
-
-        tries.add(ref)
-
-        while 1:
-            new_ref = increment(ref)
-
-            print("Reference:", new_ref)
-
-            if new_ref in tries:
-                # We are in a looping situation - simply return the original one
-                return ref
-
-            # Check that the new ref does not exist in the database
-            if cls.objects.filter(reference=new_ref).exists():
-                tries.add(new_ref)
-                new_ref = increment(new_ref)
-
-            else:
-                break
-
-        return new_ref
 
     def save(self, *args, **kwargs):
 
@@ -903,6 +864,35 @@ class SalesOrderLineItem(OrderLineItem):
         return self.allocated_quantity() > self.quantity
 
 
+def get_next_shipment_number():
+    """
+    Returns the next available SalesOrderShipment reference number"
+    """
+
+    if SalesOrderShipment.objects.count() == 0:
+        return "001"
+
+    shipment = SalesOrderShipment.objects.exclude(reference=None).last()
+
+    attempts = set([shipment.reference])
+
+    reference = shipment.reference
+
+    while 1:
+        reference = increment(reference)
+
+        if reference in attempts:
+            # Escape infinite recursion
+            return reference
+
+        if SalesOrderShipment.objects.filter(reference=reference).exists():
+            attempts.add(reference)
+        else:
+            break
+
+    return reference
+
+
 class SalesOrderShipment(models.Model):
     """
     The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
@@ -946,9 +936,11 @@ class SalesOrderShipment(models.Model):
 
     reference = models.CharField(
         max_length=100,
-        blank=True,
+        blank=False,
+        unique=True,
         verbose_name=('Reference'),
         help_text=_('Shipment reference'),
+        default=get_next_shipment_number,
     )
 
     notes = MarkdownxField(
