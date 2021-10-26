@@ -1221,6 +1221,10 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 switchable: false,
             },
             {
+                field: 'status',
+                title: '{% trans "Status" %}',
+            },
+            {
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
                 visible: options.shipped,
