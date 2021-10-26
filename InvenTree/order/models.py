@@ -567,6 +567,16 @@ class SalesOrder(Order):
     def is_pending(self):
         return self.status == SalesOrderStatus.PENDING
 
+    @property
+    def stock_allocations(self):
+        """
+        Return a queryset containing all allocations for this order
+        """
+
+        return SalesOrderAllocation.objects.filter(
+            line__in=[line.pk for line in self.lines.all()]
+        )
+
     def is_fully_allocated(self):
         """ Return True if all line items are fully allocated """
 
@@ -910,6 +920,10 @@ class SalesOrderShipment(models.Model):
         notes: Custom notes field for this shipment
     """
 
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-shipment-list')
+
     order = models.ForeignKey(
         SalesOrder,
         on_delete=models.CASCADE,
@@ -1014,10 +1028,9 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and not self.quantity == 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
-
-
-        # TODO: Ensure that the "shipment" points to the same "order"!
-
+        if self.line.order != self.shipment.order:
+            errors['line'] = _('Sales order does not match shipment')
+            errors['shipment'] = _('Shipment does not match sales order')
 
         if len(errors) > 0:
             raise ValidationError(errors)
@@ -1026,7 +1039,8 @@ class SalesOrderAllocation(models.Model):
         SalesOrderLineItem,
         on_delete=models.CASCADE,
         verbose_name=_('Line'),
-        related_name='allocations')
+        related_name='allocations'
+    )
 
     shipment = models.ForeignKey(
         SalesOrderShipment,

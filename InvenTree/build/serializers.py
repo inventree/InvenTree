@@ -422,7 +422,7 @@ class BuildAllocationSerializer(serializers.Serializer):
         Validation
         """
         
-        super().validate(data)
+        data = super().validate(data)
 
         items = data.get('items', [])
 

@@ -13,25 +13,17 @@ from rest_framework import generics
 from rest_framework import filters, status
 from rest_framework.response import Response
 
+from company.models import SupplierPart
 
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
+import order.models as models
+import order.serializers as serializers
+
 from part.models import Part
-from company.models import SupplierPart
-
-from .models import PurchaseOrder, PurchaseOrderLineItem
-from .models import PurchaseOrderAttachment
-from .serializers import POSerializer, POLineItemSerializer, POAttachmentSerializer
-
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderShipment, SalesOrderAllocation
-from .models import SalesOrderAttachment
-
-from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
-from .serializers import SalesOrderShipmentSerializer, SalesOrderAllocationSerializer
-from .serializers import POReceiveSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -41,8 +33,8 @@ class POList(generics.ListCreateAPIView):
     - POST: Create a new PurchaseOrder object
     """
 
-    queryset = PurchaseOrder.objects.all()
-    serializer_class = POSerializer
+    queryset = models.PurchaseOrder.objects.all()
+    serializer_class = serializers.POSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -79,7 +71,7 @@ class POList(generics.ListCreateAPIView):
             'lines',
         )
 
-        queryset = POSerializer.annotate_queryset(queryset)
+        queryset = serializers.POSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -108,9 +100,9 @@ class POList(generics.ListCreateAPIView):
             overdue = str2bool(overdue)
 
             if overdue:
-                queryset = queryset.filter(PurchaseOrder.OVERDUE_FILTER)
+                queryset = queryset.filter(models.PurchaseOrder.OVERDUE_FILTER)
             else:
-                queryset = queryset.exclude(PurchaseOrder.OVERDUE_FILTER)
+                queryset = queryset.exclude(models.PurchaseOrder.OVERDUE_FILTER)
 
         # Special filtering for 'status' field
         status = params.get('status', None)
@@ -144,7 +136,7 @@ class POList(generics.ListCreateAPIView):
         max_date = params.get('max_date', None)
 
         if min_date is not None and max_date is not None:
-            queryset = PurchaseOrder.filterByDate(queryset, min_date, max_date)
+            queryset = models.PurchaseOrder.filterByDate(queryset, min_date, max_date)
 
         return queryset
 
@@ -184,8 +176,8 @@ class POList(generics.ListCreateAPIView):
 class PODetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a PurchaseOrder object """
 
-    queryset = PurchaseOrder.objects.all()
-    serializer_class = POSerializer
+    queryset = models.PurchaseOrder.objects.all()
+    serializer_class = serializers.POSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -208,7 +200,7 @@ class PODetail(generics.RetrieveUpdateDestroyAPIView):
             'lines',
         )
 
-        queryset = POSerializer.annotate_queryset(queryset)
+        queryset = serializers.POSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -226,9 +218,9 @@ class POReceive(generics.CreateAPIView):
     - A global location can also be specified
     """
 
-    queryset = PurchaseOrderLineItem.objects.none()
+    queryset = models.PurchaseOrderLineItem.objects.none()
 
-    serializer_class = POReceiveSerializer
+    serializer_class = serializers.POReceiveSerializer
 
     def get_serializer_context(self):
 
@@ -236,7 +228,7 @@ class POReceive(generics.CreateAPIView):
 
         # Pass the purchase order through to the serializer for validation
         try:
-            context['order'] = PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+            context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
         except:
             pass
 
@@ -251,7 +243,7 @@ class POLineItemFilter(rest_filters.FilterSet):
     """
 
     class Meta:
-        model = PurchaseOrderLineItem
+        model = models.PurchaseOrderLineItem
         fields = [
             'order',
             'part'
@@ -285,15 +277,15 @@ class POLineItemList(generics.ListCreateAPIView):
     - POST: Create a new PurchaseOrderLineItem object
     """
 
-    queryset = PurchaseOrderLineItem.objects.all()
-    serializer_class = POLineItemSerializer
+    queryset = models.PurchaseOrderLineItem.objects.all()
+    serializer_class = serializers.POLineItemSerializer
     filterset_class = POLineItemFilter
 
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = POLineItemSerializer.annotate_queryset(queryset)
+        queryset = serializers.POLineItemSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -350,14 +342,14 @@ class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     Detail API endpoint for PurchaseOrderLineItem object
     """
 
-    queryset = PurchaseOrderLineItem.objects.all()
-    serializer_class = POLineItemSerializer
+    queryset = models.PurchaseOrderLineItem.objects.all()
+    serializer_class = serializers.POLineItemSerializer
 
     def get_queryset(self):
 
         queryset = super().get_queryset()
 
-        queryset = POLineItemSerializer.annotate_queryset(queryset)
+        queryset = serializers.POLineItemSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -367,8 +359,8 @@ class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     API endpoint for listing (and creating) a SalesOrderAttachment (file upload)
     """
 
-    queryset = SalesOrderAttachment.objects.all()
-    serializer_class = SOAttachmentSerializer
+    queryset = models.SalesOrderAttachment.objects.all()
+    serializer_class = serializers.SOAttachmentSerializer
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
@@ -384,8 +376,8 @@ class SOAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin)
     Detail endpoint for SalesOrderAttachment
     """
 
-    queryset = SalesOrderAttachment.objects.all()
-    serializer_class = SOAttachmentSerializer
+    queryset = models.SalesOrderAttachment.objects.all()
+    serializer_class = serializers.SOAttachmentSerializer
 
 
 class SOList(generics.ListCreateAPIView):
@@ -396,8 +388,8 @@ class SOList(generics.ListCreateAPIView):
     - POST: Create a new SalesOrder
     """
 
-    queryset = SalesOrder.objects.all()
-    serializer_class = SalesOrderSerializer
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -434,7 +426,7 @@ class SOList(generics.ListCreateAPIView):
             'lines'
         )
 
-        queryset = SalesOrderSerializer.annotate_queryset(queryset)
+        queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -454,9 +446,9 @@ class SOList(generics.ListCreateAPIView):
             outstanding = str2bool(outstanding)
 
             if outstanding:
-                queryset = queryset.filter(status__in=SalesOrderStatus.OPEN)
+                queryset = queryset.filter(status__in=models.SalesOrderStatus.OPEN)
             else:
-                queryset = queryset.exclude(status__in=SalesOrderStatus.OPEN)
+                queryset = queryset.exclude(status__in=models.SalesOrderStatus.OPEN)
 
         # Filter by 'overdue' status
         overdue = params.get('overdue', None)
@@ -465,9 +457,9 @@ class SOList(generics.ListCreateAPIView):
             overdue = str2bool(overdue)
 
             if overdue:
-                queryset = queryset.filter(SalesOrder.OVERDUE_FILTER)
+                queryset = queryset.filter(models.SalesOrder.OVERDUE_FILTER)
             else:
-                queryset = queryset.exclude(SalesOrder.OVERDUE_FILTER)
+                queryset = queryset.exclude(models.SalesOrder.OVERDUE_FILTER)
 
         status = params.get('status', None)
 
@@ -490,7 +482,7 @@ class SOList(generics.ListCreateAPIView):
         max_date = params.get('max_date', None)
 
         if min_date is not None and max_date is not None:
-            queryset = SalesOrder.filterByDate(queryset, min_date, max_date)
+            queryset = models.SalesOrder.filterByDate(queryset, min_date, max_date)
 
         return queryset
 
@@ -534,8 +526,8 @@ class SODetail(generics.RetrieveUpdateDestroyAPIView):
     API endpoint for detail view of a SalesOrder object.
     """
 
-    queryset = SalesOrder.objects.all()
-    serializer_class = SalesOrderSerializer
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -554,7 +546,7 @@ class SODetail(generics.RetrieveUpdateDestroyAPIView):
 
         queryset = queryset.prefetch_related('customer', 'lines')
 
-        queryset = SalesOrderSerializer.annotate_queryset(queryset)
+        queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -564,8 +556,8 @@ class SOLineItemList(generics.ListCreateAPIView):
     API endpoint for accessing a list of SalesOrderLineItem objects.
     """
 
-    queryset = SalesOrderLineItem.objects.all()
-    serializer_class = SOLineItemSerializer
+    queryset = models.SalesOrderLineItem.objects.all()
+    serializer_class = serializers.SOLineItemSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -624,8 +616,34 @@ class SOLineItemList(generics.ListCreateAPIView):
 class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a SalesOrderLineItem object """
 
-    queryset = SalesOrderLineItem.objects.all()
-    serializer_class = SOLineItemSerializer
+    queryset = models.SalesOrderLineItem.objects.all()
+    serializer_class = serializers.SOLineItemSerializer
+
+
+class SalesOrderAllocate(generics.CreateAPIView):
+    """
+    API endpoint to allocate stock items against a SalesOrder
+
+    - The SalesOrder is specified in the URL
+    - See the SOShipmentAllocationSerializer class
+    """
+
+    queryset = models.SalesOrder.objects.none()
+    serializer_class = serializers.SOShipmentAllocationSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        # Pass through the SalesOrder object to the serializer
+        try:
+            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        ctx['request'] = self.request
+
+        return ctx
 
 
 class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -633,17 +651,17 @@ class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
     API endpoint for detali view of a SalesOrderAllocation object
     """
 
-    queryset = SalesOrderAllocation.objects.all()
-    serializer_class = SalesOrderAllocationSerializer
+    queryset = models.SalesOrderAllocation.objects.all()
+    serializer_class = serializers.SalesOrderAllocationSerializer
 
 
-class SOAllocationList(generics.ListCreateAPIView):
+class SOAllocationList(generics.ListAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
     """
 
-    queryset = SalesOrderAllocation.objects.all()
-    serializer_class = SalesOrderAllocationSerializer
+    queryset = models.SalesOrderAllocation.objects.all()
+    serializer_class = serializers.SalesOrderAllocationSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -720,7 +738,7 @@ class SOShipmentFilter(rest_filters.FilterSet):
         return queryset
 
     class Meta:
-        model = SalesOrderShipment
+        model = models.SalesOrderShipment
         fields = [
             'order',
         ]
@@ -731,8 +749,8 @@ class SOShipmentList(generics.ListCreateAPIView):
     API list endpoint for SalesOrderShipment model
     """
 
-    queryset = SalesOrderShipment.objects.all()
-    serializer_class = SalesOrderShipmentSerializer
+    queryset = models.SalesOrderShipment.objects.all()
+    serializer_class = serializers.SalesOrderShipmentSerializer
     filterset_class = SOShipmentFilter
 
     filter_backends = [
@@ -745,8 +763,8 @@ class SOShipmentDetail(generics.RetrieveUpdateAPIView):
     API detail endpooint for SalesOrderShipment model
     """
 
-    queryset = SalesOrderShipment.objects.all()
-    serializer_class = SalesOrderShipmentSerializer
+    queryset = models.SalesOrderShipment.objects.all()
+    serializer_class = serializers.SalesOrderShipmentSerializer
 
 
 class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
@@ -754,8 +772,8 @@ class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
     """
 
-    queryset = PurchaseOrderAttachment.objects.all()
-    serializer_class = POAttachmentSerializer
+    queryset = models.PurchaseOrderAttachment.objects.all()
+    serializer_class = serializers.POAttachmentSerializer
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
@@ -771,8 +789,8 @@ class POAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin)
     Detail endpoint for a PurchaseOrderAttachment
     """
 
-    queryset = PurchaseOrderAttachment.objects.all()
-    serializer_class = POAttachmentSerializer
+    queryset = models.PurchaseOrderAttachment.objects.all()
+    serializer_class = serializers.POAttachmentSerializer
 
 
 order_api_urls = [
@@ -816,7 +834,13 @@ order_api_urls = [
             url(r'^.*$', SOShipmentList.as_view(), name='api-so-shipment-list'),
         ])),
 
-        url(r'^(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
+        # Sales order detail view
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
+            url(r'^.*$', SODetail.as_view(), name='api-so-detail'),
+        ])),
+
+        # Sales order list view
         url(r'^.*$', SOList.as_view(), name='api-so-list'),
     ])),
 
