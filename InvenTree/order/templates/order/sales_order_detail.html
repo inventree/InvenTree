@@ -113,6 +113,16 @@
             order: {{ order.pk }},
             shipped: false,
         });
+
+        $('#new-shipment').click(function() {
+            createSalesOrderShipment({
+                order: {{ order.pk }},
+                onSuccess: function(data) {
+                    $('#pending-shipments-table').bootstrapTable('refresh');
+                }
+            });
+        });
+
         {% endif %}
 
         loadSalesOrderShipmentTable('#completed-shipments-table', {

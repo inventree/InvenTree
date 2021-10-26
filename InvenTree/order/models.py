@@ -913,7 +913,6 @@ class SalesOrderShipment(models.Model):
 
     Attributes:
         order: SalesOrder reference
-        status: Status of this shipment (see SalesOrderStatus)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)

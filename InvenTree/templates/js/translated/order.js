@@ -35,6 +35,38 @@
     removePurchaseOrderLineItem,
 */
 
+
+function salesOrderShipmentFields(options={}) {
+    var fields = {
+        order: {},
+        reference: {},
+    };
+
+    // If order is specified, hide the order field
+    if (options.order) {
+        fields.order.value = options.order;
+        fields.order.hidden = true;
+    }
+
+    return fields;
+}
+
+
+// Open a dialog to create a new sales order shipment
+function createSalesOrderShipment(options={}) {
+    constructForm('{% url "api-so-shipment-list" %}', {
+        method: 'POST',
+        fields: salesOrderShipmentFields(options),
+        title: '{% trans "Create New Shipment" %}',
+        onSuccess: function(data) {
+            if (options.onSuccess) {
+                options.onSuccess(data);
+            }
+        }
+    });
+}
+
+
 // Create a new SalesOrder
 function createSalesOrder(options={}) {
 
@@ -1351,6 +1383,14 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                 },
                 value: options.shipment || null,
                 auto_fill: true,
+                secondary: {
+                    title: '{% trans "New Shipment" %}',
+                    fields: function() {
+                        return salesOrderShipmentFields({
+                            order: order_id
+                        });
+                    }
+                }
             }
         },
         preFormContent: html,
