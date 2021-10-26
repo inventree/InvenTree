@@ -9,6 +9,17 @@
 {% inventree_title %} | {% trans "Build Order" %} - {{ build }}
 {% endblock %}
 
+{% block pre_content %}
+<div class='navigation'>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class='breadcrumb-item'><a href='{% url "build-index" %}'>{% trans "Build Orders" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href='{% url "build-detail" build.id %}'>{{ build }}</a></li>
+      </ol>
+    </nav>
+    </div>
+{% endblock %}
+
 {% block below_thumbnail %}
 
 <div class='info-messages'>
