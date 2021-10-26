@@ -2,7 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    attachToggle,
     createNewModal,
     inventreeFormDataUpload,
     inventreeGet,
@@ -519,8 +518,6 @@ function constructFormBody(fields, options) {
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
 
-    attachToggle(modal);
-
     $(modal + ' .select2-container').addClass('select-full-width');
     $(modal + ' .select2-container').css('width', '100%');
 
@@ -563,13 +560,13 @@ function insertConfirmButton(options) {
 
     var message = options.confirmMessage || '{% trans "Confirm" %}';
 
-    var confirm = `
-    <span style='float: left;'>
-        ${message}
-        <input id='modal-confirm' name='confirm' type='checkbox'>
-    </span>`;
+    var html = `
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modal-confirm">
+        <label class="form-check-label" for="modal-confirm">${message}</label>
+    </div>`;
 
-    $(options.modal).find('#modal-footer-buttons').append(confirm);
+    $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
     $(options.modal).find('#modal-form-submit').prop('disabled', true);
@@ -2029,7 +2026,7 @@ function constructCheckboxInput(name, parameters) {
 
     return constructInputOptions(
         name,
-        'checkboxinput',
+        'form-check-input',
         'checkbox',
         parameters
     );

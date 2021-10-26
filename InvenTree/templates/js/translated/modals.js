@@ -355,22 +355,6 @@ function partialMatcher(params, data) {
 }
 
 
-function attachToggle(modal) {
-    /* Attach 'bootstrap-toggle' functionality to any checkbox in the modal.
-     * This is simple for visual improvement, 
-     * and also larger toggle style buttons are easier to press!
-     */
-
-    $(modal).find(`input[type='checkbox']`).each(function() {
-        $(this).bootstrapToggle({
-            size: 'small',
-            onstyle: 'success',
-            offstyle: 'warning',
-        });
-    });
-}
-
-
 function attachSelect(modal) {
     /* Attach 'select2' functionality to any drop-down list in the modal. 
      * Provides search filtering for dropdown items
@@ -698,7 +682,6 @@ function injectModalForm(modal, form_html) {
      */
     $(modal).find('.modal-form-content').html(form_html);
     attachSelect(modal);
-    attachToggle(modal);
 }
 
 
