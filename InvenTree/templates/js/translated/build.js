@@ -1216,7 +1216,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
  * 
  * options:
  *  - output: ID / PK of the associated build output (or null for untracked items)
- *  - source_location: ID / PK of the top-level StockLocation to take parts from (or null)
+ *  - source_location: ID / PK of the top-level StockLocation to source stock from (or null)
  */
 function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
@@ -1329,7 +1329,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
     var html = ``;
 
-    // Render a "take from" input
+    // Render a "source location" input
     html += constructField(
         'take_from',
         {
@@ -1384,6 +1384,13 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             initializeRelatedField(
                 take_from_field,
                 null,
+                options,
+            );
+
+            // Add callback to "clear" button for take_from field
+            addClearCallback(
+                'take_from',
+                take_from_field,
                 options,
             );
 
@@ -1446,14 +1453,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                 );
             });
 
-            // Add callback to "clear" button for take_from field
-            addClearCallback(
-                'take_from',
-                take_from_field,
-                options,
-            );
-
-            // Add button callbacks
+            // Add remove-row button callbacks
             $(options.modal).find('.button-row-remove').click(function() {
                 var pk = $(this).attr('pk');
 

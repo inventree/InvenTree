@@ -596,12 +596,15 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
 
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
+    order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
+
     class Meta:
         model = order.models.SalesOrderShipment
 
         fields = [
             'pk',
             'order',
+            'order_detail',
             'allocations',
             'shipment_date',
             'checked_by',

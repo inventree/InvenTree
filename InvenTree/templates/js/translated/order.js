@@ -19,6 +19,7 @@
 */
 
 /* exported
+    allocateStockToSalesOrder,
     createSalesOrder,
     editPurchaseOrderLineItem,
     exportOrder,
@@ -1211,6 +1212,306 @@ function loadSalesOrderShipmentTable(table, options={}) {
 }
 
 
+/**
+ * Allocate stock items against a SalesOrder
+ * 
+ * arguments:
+ * - order_id: The ID / PK value for the SalesOrder
+ * - lines: A list of SalesOrderLineItem objects to be allocated
+ * 
+ * options:
+ *  - source_location: ID / PK of the top-level StockLocation to source stock from (or null)
+ */
+function allocateStockToSalesOrder(order_id, line_items, options={}) {
+    
+    function renderLineItemRow(line_item, quantity) {
+        // Function to render a single line_item row
+
+        var pk = line_item.pk;
+        
+        var part = line_item.part_detail;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+
+        var delete_button = `<div class='btn-group float-right' role='group'>`;
+
+        delete_button += makeIconButton(
+            'fa-times icon-red',
+            'button-row-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        delete_button += '</div>';
+
+        var quantity_input = constructField(
+            `items_quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity || 0,
+                title: '{% trans "Specify stock allocation quantity" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var stock_input = constructField(
+            `items_stock_item_${pk}`,
+            {
+                type: 'related field',
+                required: 'true',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var html = `
+        <tr id='allocation_row_${pk}' class='line-allocation-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${part.full_name}
+            </td>
+            <td id='stock_item_${pk}'>
+                ${stock_input}
+            </td>
+            <td id='quantity_${pk}'>
+                ${quantity_input}
+            </td>
+            <td id='buttons_${pk}>
+                ${delete_button}
+            </td>
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var table_entries = '';
+
+    for (var idx = 0; idx < line_items.length; idx++ ){
+        var line_item = line_items[idx];
+
+        var todo = "auto-calculate remaining quantity";
+
+        var remaining = 0;
+
+        table_entries += renderLineItemRow(line_item, remaining);
+    }
+
+    if (table_entries.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
+        );
+        
+        return;
+    }
+
+    var html = '';
+
+    // Render a "source location" input field
+    html += constructField(
+        'take_from',
+        {
+            type: 'related field',
+            label: '{% trans "Source Location" %}',
+            help_text: '{% trans "Select source location (leave blank to take from all locations)" %}',
+            required: false,
+        },
+        {},
+    );
+
+    // Create table of line items
+    html += `
+    <table class='table table-striped table-condensed' id='stock-allocation-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th></th>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>`;
+
+    constructForm(`/api/order/so/${order_id}/allocate/`, {
+        method: 'POST',
+        fields: {
+            shipment: {
+                filters: {
+                    order: order_id,
+                    shipped: false,
+                },
+                value: options.shipment || null,
+                auto_fill: true,
+            }
+        },
+        preFormContent: html,
+        confirm: true,
+        confirmMessage: '{% trans "Confirm stock allocation" %}',
+        title: '{% trans "Allocate Stock Items to Sales Order" %}',
+        afterRender: function(fields, opts) {
+
+            // Initialize source location field
+            var take_from_field = {
+                name: 'take_from',
+                model: 'stocklocation',
+                api_url: '{% url "api-location-list" %}',
+                required: false,
+                type: 'related field',
+                value: options.source_location || null,
+                noResults: function(query) {
+                    return '{% trans "No matching stock locations" %}';
+                },
+            };
+
+            initializeRelatedField(
+                take_from_field,
+                null,
+                opts
+            );
+
+            // Add callback to "clear" button for take_from field
+            addClearCallback(
+                'take_from',
+                take_from_field,
+                opts,
+            );
+
+            // Initialize fields for each line item
+            line_items.forEach(function(line_item) {
+                var pk = line_item.pk;
+
+                initializeRelatedField(
+                    {
+                        name: `items_stock_item_${pk}`,
+                        api_url: '{% url "api-stock-list" %}',
+                        filters: {
+                            part: line_item.part,
+                            in_stock: true,
+                            part_detail: true,
+                            location_detail: true,
+                        },
+                        model: 'stockitem',
+                        required: true,
+                        render_part_detail: true,
+                        render_location_detail: true,
+                        auto_fill: true,
+                        onSelect: function(data, field, opts) {
+                            // Adjust the 'quantity' field based on availability
+
+                            var todo = "actually do this";
+                        },
+                        adjustFilters: function(filters) {
+                            // Restrict query to the selected location
+                            var location = getFormFieldValue(
+                                'take_from',
+                                {},
+                                {
+                                    modal: opts.modal,
+                                }
+                            );
+
+                            filters.location = location;
+                            filters.cascade = true;
+
+                            return filters;
+                        },
+                        noResults: function(query) {
+                            return '{% trans "No matching stock items" %}';
+                        }
+                    },
+                    null,
+                    opts
+                );
+            });
+
+            // Add remove-row button callbacks
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(opts.modal).find(`#allocation_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            // Extract data elements from the form
+            var data = {
+                items: [],
+                shipment: getFormFieldValue(
+                    'shipment',
+                    {},
+                    opts
+                )
+            };
+
+            var item_pk_values = [];
+
+            line_items.forEach(function(item) {
+
+                var pk = item.pk;
+
+                var quantity = getFormFieldValue(
+                    `items_quantity_${pk}`,
+                    {},
+                    opts
+                );
+
+                var stock_item = getFormFieldValue(
+                    `items_stock_item_${pk}`,
+                    {},
+                    opts
+                );
+
+                if (quantity != null) {
+                    data.items.push({
+                        line_item: pk,
+                        stock_item: stock_item,
+                        quantity: quantity,
+                    });
+
+                    item_pk_values.push(pk);
+                }
+            });
+
+            // Provide nested values
+            opts.nested = {
+                'items': item_pk_values
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr);
+                            break;
+                        }
+                    }
+                }
+            );
+        },
+    });
+}
+
 
 function loadSalesOrderAllocationTable(table, options={}) {
     /**
@@ -1771,6 +2072,20 @@ function loadSalesOrderLineItemTable(table, options={}) {
             var pk = $(this).attr('pk');
 
             var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            allocateStockToSalesOrder(
+                options.order,
+                [
+                    line_item
+                ],
+                {
+                    success: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                }
+            );
+            
+            return;
 
             // Quantity remaining to be allocated
             var remaining = (line_item.quantity || 0) - (line_item.allocated || 0);

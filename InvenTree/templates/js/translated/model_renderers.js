@@ -241,6 +241,23 @@ function renderSalesOrder(name, data, parameters, options) {
 }
 
 
+// Renderer for "SalesOrderShipment" model
+// eslint-disable-next-line no-unused-vars
+function renderSalesOrderShipment(name, data, parameters, options) {
+
+    var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
+
+    var html = `
+    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
+    <span class='float-right'>
+        <small>{% trans "Shipment ID" %}: ${data.pk}</small>
+    </span>
+    `;
+
+    return html;
+}
+
+
 // Renderer for "PartCategory" model
 // eslint-disable-next-line no-unused-vars
 function renderPartCategory(name, data, parameters, options) {
