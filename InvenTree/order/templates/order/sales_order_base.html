@@ -9,6 +9,17 @@
 {% inventree_title %} | {% trans "Sales Order" %}
 {% endblock %}
 
+{% block pre_content %}
+<div class='navigation'>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class='breadcrumb-item'><a href='{% url "so-index" %}'>{% trans "Sales Orders" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href='{% url "so-detail" order.id %}'>{{ order }}</a></li>
+      </ol>
+    </nav>
+    </div>
+{% endblock %}
+
 {% block below_thumbnail %}
 <div class='info-messages'>
     {% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}

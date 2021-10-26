@@ -9,6 +9,17 @@
 {% inventree_title %} | {% trans "Purchase Order" %}
 {% endblock %}
 
+{% block pre_content %}
+<div class='navigation'>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class='breadcrumb-item'><a href='{% url "po-index" %}'>{% trans "Purchase Orders" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href='{% url "po-detail" order.id %}'>{{ order }}</a></li>
+      </ol>
+    </nav>
+    </div>
+{% endblock %}
+
 {% block thumbnail %}
 <img class='part-thumb'
 {% if order.supplier.image %}
