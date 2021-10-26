@@ -1296,6 +1296,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
         var todo = "auto-calculate remaining quantity";
 
+        var todo = "see how it is done for the build order allocation system!";
+
         var remaining = 0;
 
         table_entries += renderLineItemRow(line_item, remaining);
@@ -1405,7 +1407,22 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                         onSelect: function(data, field, opts) {
                             // Adjust the 'quantity' field based on availability
 
-                            var todo = "actually do this";
+                            if (!('quantity' in data)) {
+                                return;
+                            }
+
+                            // Calculate the available quantity
+                            var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
+
+                            // Remaining quantity to be allocated?
+                            var todo = "fix this calculation!";
+                            var remaining = opts.quantity || available;
+
+                            // Maximum amount that we need
+                            var desired = Math.min(available, remaining);
+
+                            updateFieldValue(`items_quantity_${pk}`, desired, {}, opts);
+
                         },
                         adjustFilters: function(filters) {
                             // Restrict query to the selected location
@@ -1419,6 +1436,11 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
                             filters.location = location;
                             filters.cascade = true;
+
+                            // Exclude expired stock?
+                            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
+                                fields.item.filters.expired = false;
+                            }
 
                             return filters;
                         },
@@ -2082,67 +2104,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     success: function() {
                         $(table).bootstrapTable('refresh');
                     }
-                }
-            );
-            
-            return;
-
-            // Quantity remaining to be allocated
-            var remaining = (line_item.quantity || 0) - (line_item.allocated || 0);
-
-            if (remaining < 0) {
-                remaining = 0;
-            }
-
-            var fields = {
-                // SalesOrderLineItem reference
-                line: {
-                    hidden: true,
-                    value: pk,
-                },
-                item: {
-                    filters: {
-                        part_detail: true,
-                        location_detail: true,
-                        in_stock: true,
-                        part: line_item.part,
-                        include_variants: false,
-                        exclude_so_allocation: options.order,
-                    },
-                    auto_fill: true,
-                    onSelect: function(data, field, opts) {
-                        // Quantity available from this stock item
-
-                        if (!('quantity' in data)) {
-                            return;
-                        }
-
-                        // Calculate the available quantity
-                        var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
-
-                        // Maximum amount that we need
-                        var desired = Math.min(available, remaining);
-
-                        updateFieldValue('quantity', desired, {}, opts);
-                    }
-                },
-                quantity: {
-                    value: remaining,
-                },
-            };
-
-            // Exclude expired stock?
-            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
-                fields.item.filters.expired = false;
-            }
-
-            constructForm(
-                `/api/order/so-allocation/`,
-                {
-                    method: 'POST',
-                    fields: fields,
-                    title: '{% trans "Allocate Stock Item" %}',
-                    onSuccess: reloadTable,
                 }
             );
         });
