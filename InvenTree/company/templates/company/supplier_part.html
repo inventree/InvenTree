@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
@@ -11,6 +11,14 @@
 {% include "company/supplier_part_navbar.html" %}
 {% endblock %}
 
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "supplier-index" %}'>{% trans "Suppliers" %}</a></li>
+{% if part.supplier %}
+<li class='breadcrumb-item'><a href='{% url "company-detail" part.supplier.id %}'>{{ part.supplier.name }}</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "supplier-part-detail" part.id %}'>{{ part.SKU }}</a></li>
+{% endblock %}
+
 {% block thumbnail %}
 <img class='part-thumb'
 {% if part.part.image %}
@@ -20,32 +28,32 @@ src="{% static 'img/blank_image.png' %}"
 {% endif %}/>
 {% endblock %}
 
-{% block page_data %}
-<h3>{% trans "Supplier Part" %}</h3>
-<hr>
+{% block details %}
 <h4>
-    {{ part.part.full_name }}
+    {% trans "Supplier Part" %}: {{ part.SKU }}
     {% if user.is_staff and perms.company.change_company %}
     <a href="{% url 'admin:company_supplierpart_change' part.pk %}">
         <span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span>
     </a>
     {% endif %}
 </h4>
-<p>{{ part.supplier.name }} - {{ part.SKU }}</p>
+<p>
+    {{ part.part.full_name }}
+</p>
 
 {% if roles.purchase_order.change %}
 <div class='btn-row'>
-    <div class='btn-group action-buttons' role='group'>
+    <div class='btn-group' role='group'>
         {% if roles.purchase_order.add %}
-        <button type='button' class='btn btn-default' id='order-part' title='{% trans "Order part" %}'>
+        <button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
             <span class='fas fa-shopping-cart'></span>
         </button>
         {% endif %}
-        <button type='button' class='btn btn-default' id='edit-part' title='{% trans "Edit supplier part" %}'>
+        <button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit supplier part" %}'>
             <span class='fas fa-edit icon-green'/>
         </button>
         {% if roles.purchase_order.delete %}
-        <button type='button' class='btn btn-default' id='delete-part' title='{% trans "Delete supplier part" %}'>
+        <button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete supplier part" %}'>
             <span class='fas fa-trash-alt icon-red'/>
         </button>
         {% endif %}
@@ -55,9 +63,8 @@ src="{% static 'img/blank_image.png' %}"
 
 {% endblock %}
 
-{% block page_details %}
+{% block details_right %}
 
-<h4>{% trans "Supplier Part Details" %}</h4>
 <table class="table table-striped table-condensed">
     <col width='25'>
         <tr>
