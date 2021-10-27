@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-25 21:42+0000\n"
-"PO-Revision-Date: 2021-10-27 20:48\n"
+"PO-Revision-Date: 2021-10-27 22:03\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1892,43 +1892,43 @@ msgstr "SSO auf der Login-Seite aktivieren"
 
 #: common/models.py:827
 msgid "Email required"
-msgstr ""
+msgstr "Email-Adresse erforderlich"
 
 #: common/models.py:828
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Benutzer müssen bei der Registrierung eine E-Mail angeben"
 
 #: common/models.py:833
 msgid "Auto-fill SSO users"
-msgstr ""
+msgstr "SSO-Benutzer automatisch ausfüllen"
 
 #: common/models.py:834
 msgid "Automatically fill out user-details from SSO account-data"
-msgstr ""
+msgstr "Benutzer-Details automatisch aus SSO-Konto ausfüllen"
 
 #: common/models.py:839
 msgid "Mail twice"
-msgstr ""
+msgstr "E-Mail zweimal"
 
 #: common/models.py:840
 msgid "On signup ask users twice for their mail"
-msgstr ""
+msgstr "Bei der Registrierung den Benutzer zweimal nach der E-Mail-Adresse fragen"
 
 #: common/models.py:845
 msgid "Password twice"
-msgstr ""
+msgstr "Passwort zweimal"
 
 #: common/models.py:846
 msgid "On signup ask users twice for their password"
-msgstr ""
+msgstr "Bei der Registrierung den Benutzer zweimal nach dem Passwort fragen"
 
 #: common/models.py:851
 msgid "Group on signup"
-msgstr ""
+msgstr "Gruppe bei Registrierung"
 
 #: common/models.py:852
 msgid "Group new user are asigned on registration"
-msgstr ""
+msgstr "Gruppe der neue Benutzer bei der Registrierung zugewiesen werden"
 
 #: common/models.py:877
 msgid "Show starred parts"
@@ -2092,11 +2092,11 @@ msgstr "Anzahl der Ergebnisse, die in der Vorschau angezeigt werden sollen"
 
 #: common/models.py:1002
 msgid "Search Show Stock"
-msgstr ""
+msgstr "Suche Bestand anzeigen"
 
 #: common/models.py:1003
 msgid "Display stock levels in search preview window"
-msgstr ""
+msgstr "Lagerbestand in Suchvorschau anzeigen"
 
 #: common/models.py:1009
 msgid "Show Quantity in Forms"
@@ -2108,11 +2108,11 @@ msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
 
 #: common/models.py:1016
 msgid "Escape Key Closes Forms"
-msgstr ""
+msgstr "Esc-Taste schließt Formulare"
 
 #: common/models.py:1017
 msgid "Use the escape key to close modal forms"
-msgstr ""
+msgstr "Benutze die Esc-Taste, um Formulare zu schließen"
 
 #: common/models.py:1074 company/forms.py:43
 msgid "Price break quantity"
@@ -6156,7 +6156,7 @@ msgstr "Einstellungen"
 
 #: templates/InvenTree/settings/login.html:9
 msgid "Login Settings"
-msgstr ""
+msgstr "Anmeldeeinstellungen"
 
 #: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
@@ -6207,7 +6207,7 @@ msgstr "Einstellungen"
 
 #: templates/InvenTree/settings/navbar.html:62
 msgid "Global Settings"
-msgstr ""
+msgstr "Allgemeine Einstellungen"
 
 #: templates/InvenTree/settings/navbar.html:65
 #: templates/InvenTree/settings/navbar.html:67 templates/stats.html:9
@@ -6331,7 +6331,7 @@ msgstr "Nachname"
 
 #: templates/InvenTree/settings/user.html:47
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Die folgenden E-Mail-Adressen sind mit deinem Konto verknüpft:"
 
 #: templates/InvenTree/settings/user.html:61
 msgid "Verified"
@@ -6343,11 +6343,11 @@ msgstr "Nicht verifiziert"
 
 #: templates/InvenTree/settings/user.html:65
 msgid "Primary"
-msgstr ""
+msgstr "Primär"
 
 #: templates/InvenTree/settings/user.html:71
 msgid "Make Primary"
-msgstr ""
+msgstr "Als Primär Festlegen"
 
 #: templates/InvenTree/settings/user.html:72
 msgid "Re-send Verification"
@@ -6364,31 +6364,31 @@ msgstr "Warnung:"
 
 #: templates/InvenTree/settings/user.html:81
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
-msgstr ""
+msgstr "Sie haben derzeit keine E-Mail-Adressen eingerichtet. Sie sollten wirklich eine hinzufügen, damit Sie Benachrichtigungen erhalten, ihr Konto Zurücksetzen können usw."
 
 #: templates/InvenTree/settings/user.html:88
 msgid "Add Email Address"
-msgstr ""
+msgstr "E-Mail-Adresse hinzufügen"
 
 #: templates/InvenTree/settings/user.html:93
 msgid "Add Email"
-msgstr ""
+msgstr "E-Mail-Adresse hinzufügen"
 
 #: templates/InvenTree/settings/user.html:100
 msgid "Social Accounts"
-msgstr ""
+msgstr "Soziale Konten"
 
 #: templates/InvenTree/settings/user.html:105
 msgid "You can sign in to your account using any of the following third party accounts:"
-msgstr ""
+msgstr "Sie können sich mit einem der folgenden Drittanbieterkonten bei Ihrem Konto anmelden:"
 
 #: templates/InvenTree/settings/user.html:138
 msgid "You currently have no social network accounts connected to this account."
-msgstr ""
+msgstr "Du hast zurzeit keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: templates/InvenTree/settings/user.html:142
 msgid "Add a 3rd Party Account"
-msgstr ""
+msgstr "Drittanbieter-Konto hinzufügen"
 
 #: templates/InvenTree/settings/user.html:153
 msgid "Theme Settings"
@@ -6426,7 +6426,7 @@ msgstr "Die Übersetzung von InvenTree wird <a href=\"%(link)s\">von Nutzern mit
 
 #: templates/InvenTree/settings/user.html:223
 msgid "Do you really want to remove the selected email address?"
-msgstr ""
+msgstr "Möchten Sie die ausgewählte E-Mail-Adresse wirklich entfernen?"
 
 #: templates/InvenTree/settings/user_forms.html:9
 msgid "Form Settings"
@@ -6527,12 +6527,12 @@ msgstr "E-Mail-Adresse bestätigen"
 #: templates/account/email_confirm.html:16
 #, python-format
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
-msgstr ""
+msgstr "Bitte bestätigen Sie, dass <a href=\"mailto:%(email)s\">%(email)s</a> eine E-Mail Adresse für den Benutzer %(user_display)s ist."
 
 #: templates/account/email_confirm.html:27
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
-msgstr ""
+msgstr "Dieser E-Mail Bestätigungslink ist abgelaufen oder ungültig. Bitte <a href=\"%(email_url)s\">fordern Sie eine neue E-Mail Bestätigung an</a>."
 
 #: templates/account/login.html:5 templates/account/login.html:14
 #: templates/account/login.html:36
@@ -6544,13 +6544,13 @@ msgstr "Einloggen"
 msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
+msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:23
 #, python-format
 msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
+msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
 #: templates/account/login.html:38
 msgid "Forgot Password?"
@@ -6558,7 +6558,7 @@ msgstr "Passwort vergessen?"
 
 #: templates/account/login.html:45
 msgid "or use SSO"
-msgstr ""
+msgstr "oder SSO verwenden"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:17
@@ -6576,7 +6576,7 @@ msgstr "Passwort zurücksetzen"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
-msgstr ""
+msgstr "Passwort vergessen? Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen eine E-Mail mit der Sie das Passwort zurücksetzen können."
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
@@ -6584,20 +6584,20 @@ msgstr "Mein Passwort zurücksetzen"
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "Diese Funktion ist derzeit deaktiviert. Bitte kontaktieren Sie einen Administrator."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Ungültiger Schlüssel"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr ""
+msgstr "Der Link zum Zurücksetzen des Kennworts war ungültig, da er bereits verwendet wurde.  Bitte fordern Sie eine <a href=\"%(passwd_reset_url)s\">neue Passwortwiederherstellung</a> an."
 
 #: templates/account/password_reset_from_key.html:17
 msgid "change password"
-msgstr ""
+msgstr "Passwort ändern"
 
 #: templates/account/password_reset_from_key.html:20
 msgid "Your password is now changed."
@@ -6610,11 +6610,11 @@ msgstr "Anmelden"
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
+msgstr "Haben Sie bereits ein Konto? Dann melden Sie sich bitte <a href=\"%(login_url)s\">an</a>."
 
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
-msgstr ""
+msgstr "Oder verwenden Sie einen SSO-Anbieter für die Anmeldung"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -7286,7 +7286,7 @@ msgstr "Anzeigevorgang nicht erlaubt"
 
 #: templates/js/translated/forms.js:648
 msgid "Enter a valid number"
-msgstr ""
+msgstr "Gib eine gültige Nummer ein"
 
 #: templates/js/translated/forms.js:1033 templates/modals.html:21
 #: templates/modals.html:47
@@ -7540,7 +7540,7 @@ msgstr "Stück-Preis"
 
 #: templates/js/translated/order.js:896 templates/js/translated/order.js:1485
 msgid "Total Price"
-msgstr ""
+msgstr "Gesamtpreis"
 
 #: templates/js/translated/order.js:974 templates/js/translated/order.js:1594
 msgid "Edit line item"
