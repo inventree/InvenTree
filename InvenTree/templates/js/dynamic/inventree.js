@@ -111,7 +111,7 @@ function inventreeDocReady() {
 
         modal.modal({
             backdrop: 'static',
-            keyboard: 'false',
+            keyboard: true,
         });
 
         modal.modal('show');
