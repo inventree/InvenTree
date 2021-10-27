@@ -284,6 +284,12 @@ INSTALLED_APPS = [
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
     'allauth.socialaccount',                # Use 'social' providers
+
+    'django_otp',                           # OTP is needed for MFA - base package
+    'django_otp.plugins.otp_totp',          # Time based OTP
+    'django_otp.plugins.otp_static',        # Backup codes
+
+    'allauth_2fa',                          # MFA flow for allauth
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -294,6 +300,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',                      # MFA support
+    'allauth_2fa.middleware.AllauthTwoFactorMiddleware',        # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware'
@@ -689,7 +697,8 @@ ACCOUNT_FORMS = {
 }
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
-ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+# ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'  # TODO monkey-patch adapter
+ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
 
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/

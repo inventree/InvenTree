@@ -167,7 +167,8 @@ urlpatterns = [
     url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
-    url(r'^accounts/', include('allauth.urls')),  # included urlpatterns
+    url(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
+    url(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
 
 # Server running in "DEBUG" mode?
