@@ -539,7 +539,7 @@ function renderErrorMessage(xhr) {
                 </div>
             </div>
             <div class='panel-collapse collapse' id='collapse-error-info'>
-                <div class='panel-body'>`;
+                <div class='panel-content'>`;
 
     html += xhr.responseText;
 
