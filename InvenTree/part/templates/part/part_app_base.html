@@ -17,14 +17,12 @@
 <div id='part-tree'></div>
 {% endblock %}
 
-{% block pre_content %}
-
+{% block breadcrumbs %}
 {% if part %}
 {% include "part/cat_link.html" with category=part.category %}
 {% else %}
 {% include 'part/cat_link.html' with category=category %}
 {% endif %}
-
 {% endblock %}
 
 {% block js_ready %}

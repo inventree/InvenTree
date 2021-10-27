@@ -2024,6 +2024,8 @@ function constructHiddenInput(name, parameters) {
 // Construct a "checkbox" input
 function constructCheckboxInput(name, parameters) {
 
+    var todo = "refactor this with the new bootstrap slide-toggle thingy";
+
     return constructInputOptions(
         name,
         'form-check-input',

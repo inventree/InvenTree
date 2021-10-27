@@ -32,27 +32,25 @@
             <h3>{% trans "Part Categories" %}</h3>
             <p>{% trans "All parts" %}</p>
             {% endif %}
-            <p>
-                <div class='btn-group action-buttons'>
-                    {% if roles.part_category.add %}
-                    <button class='btn btn-default' id='cat-create' title='{% trans "Create new part category" %}'>
-                        <span class='fas fa-plus-circle icon-green'/>
-                    </button>
-                    {% endif %}
-                    {% if category %}
-                    {% if roles.part_category.change %}
-                    <button class='btn btn-default' id='cat-edit' title='{% trans "Edit part category" %}'>
-                        <span class='fas fa-edit icon-blue'/>
-                    </button>
-                    {% endif %}
-                    {% if roles.part_category.delete %}
-                    <button class='btn btn-default' id='cat-delete' title='{% trans "Delete part category" %}'>
-                        <span class='fas fa-trash-alt icon-red'/>
-                    </button>
-                    {% endif %}
-                    {% endif %}
-                </div>
-            </p>
+            <div class='btn-group' role='group'>
+                {% if roles.part_category.add %}
+                <button class='btn btn-outline-secondary' id='cat-create' title='{% trans "Create new part category" %}'>
+                    <span class='fas fa-plus-circle icon-green'/>
+                </button>
+                {% endif %}
+                {% if category %}
+                {% if roles.part_category.change %}
+                <button class='btn btn-outline-secondary' id='cat-edit' title='{% trans "Edit part category" %}'>
+                    <span class='fas fa-edit icon-blue'/>
+                </button>
+                {% endif %}
+                {% if roles.part_category.delete %}
+                <button class='btn btn-outline-secondary' id='cat-delete' title='{% trans "Delete part category" %}'>
+                    <span class='fas fa-trash-alt icon-red'/>
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
         </div>
         <div class='col-sm-6'>
             {% if category %}

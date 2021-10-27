@@ -1,16 +1,10 @@
 {% load i18n %}
 
-<div class="navigation">
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li><a href='#' title='Toggle Stock Tree' id='toggle-stock-tree'><strong><span class='fas fa-stream'></span></strong></a></li>  
-    <li class="breadcrumb-item{% if location is None %} active" aria-current="page{% endif %}"><a href="/stock/">{% trans "Stock" %}</a></li>
+<li><a href='#' title='Toggle Stock Tree' id='toggle-stock-tree'><strong><span class='fas fa-stream'></span></strong></a></li>  
+<li class="breadcrumb-item{% if location is None %} active" aria-current="page{% endif %}"><a href="/stock/">{% trans "Stock" %}</a></li>
 {% if location %}
 {% for path_item in location.parentpath %}
-    <li class='breadcrumb-item'><a href="{% url 'stock-location-detail' path_item.id %}">{{ path_item.name }}</a></li>
+<li class='breadcrumb-item'><a href="{% url 'stock-location-detail' path_item.id %}">{{ path_item.name }}</a></li>
 {% endfor %}
-    <li class='breadcrumb-item active' aria-current='page'><a href="{% url 'stock-location-detail' location.id %}">{{ location.name }}</a></li>
+<li class='breadcrumb-item active' aria-current='page'><a href="{% url 'stock-location-detail' location.id %}">{{ location.name }}</a></li>
 {% endif %}
-  </ol>
- </nav>
-</div>
