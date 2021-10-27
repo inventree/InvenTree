@@ -12,28 +12,37 @@
 {% block header_panel %}
 <div class='panel panel-default panel-inventree'>
 
-    {% block header_pre_content %}
-    {% endblock %}
+    <div class='panel-heading'>
+        {% block detail_heading %}
+        !!! heading goes here !!!
+        {% endblock %}
+    </div>
 
-    <div class='row'>
-        <div class='col-sm-6'>
-            <div class='media-left'>
-                {% block thumbnail %}
-                <!-- Image goes here -->
+    <div class='panel-content'>
+
+        {% block header_pre_content %}
+        {% endblock %}
+
+        <div class='row'>
+            <div class='col-sm-6'>
+                <div class='media-left'>
+                    {% block thumbnail %}
+                    <!-- Image goes here -->
+                    {% endblock %}
+                </div>
+                <div class='media-body'>
+                    {% block page_data %}
+                    <!-- Data next to image goes here -->
+                    {% endblock %}
+                </div>
+                {% block below_thumbnail %}
                 {% endblock %}
             </div>
-            <div class='media-body'>
-                {% block page_data %}
-                <!-- Data next to image goes here -->
+            <div class='col-sm-6'>
+                {% block page_details %}
+                <!-- Right column data goes here -->
                 {% endblock %}
             </div>
-            {% block below_thumbnail %}
-            {% endblock %}
-        </div>
-        <div class='col-sm-6'>
-            {% block page_details %}
-            <!-- Right column data goes here -->
-            {% endblock %}
         </div>
     </div>
 

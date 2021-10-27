@@ -1728,7 +1728,7 @@ function constructField(name, parameters, options) {
                 <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
             if (group_options.collapsible) {
                 html += `
-                <div data-toggle='collapse' data-target='#form-panel-content-${group}'>
+                <div data-bs-toggle='collapse' data-target='#form-panel-content-${group}'>
                     <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
                 `;
             } else {

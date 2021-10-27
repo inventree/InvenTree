@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 
 {% load static %}
 {% load i18n %}
@@ -9,130 +9,71 @@
 {% inventree_title %} | {% trans "Build Order" %} - {{ build }}
 {% endblock %}
 
-{% block pre_content %}
-<div class='navigation'>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class='breadcrumb-item'><a href='{% url "build-index" %}'>{% trans "Build Orders" %}</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a href='{% url "build-detail" build.id %}'>{{ build }}</a></li>
-      </ol>
-    </nav>
-    </div>
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "build-index" %}'>{% trans "Build Orders" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "build-detail" build.id %}'>{{ build }}</a></li>
 {% endblock %}
 
-{% block below_thumbnail %}
-
-<div class='info-messages'>
-    {% if build.sales_order %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
-        {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
-    </div>
-    {% endif %}
-
-    {% if build.parent %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'build-detail' build.parent.id build.parent as link %}
-        {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
-    </div>
-    {% endif %}
-
-    {% if build.active %}
-    {% if build.can_complete %}
-    <div class='alert alert-block alert-success'>
-        {% trans "Build Order is ready to mark as completed" %}
-    </div>
-    {% endif %}
-    {% if build.incomplete_count > 0 %}
-    <div class='alert alert-block alert-danger'>
-        {% trans "Build Order cannot be completed as outstanding outputs remain" %}
-    </div>
-    {% endif %}
-    {% if build.completed < build.quantity %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "Required build quantity has not yet been completed" %}
-    </div>
-    {% endif %}
-    {% if not build.areUntrackedPartsFullyAllocated %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "Stock has not been fully allocated to this Build Order" %}
-    </div>
-    {% endif %}
-    {% endif %}
-</div>
-{% endblock %}
-
-{% block header_pre_content %}
-
-{% endblock %}
-
-{% block header_post_content %}
-
-{% endblock %}
-
-{% block thumbnail %}
-<img class="part-thumb"
-{% if build.part.image %}
-src="{{ build.part.image.url }}"
-{% else %}
-src="{% static 'img/blank_image.png' %}"
-{% endif %}/>
-{% endblock %}
-
-{% block page_data %}
-<h3>
-    {% trans "Build Order" %} {{ build }}
+{% block heading %}
+<h4>
+    {% trans "Build Order" %}
     {% if user.is_staff and roles.build.change %}
     <a  href="{% url 'admin:build_build_change' build.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
     {% endif %}
-</h3>
-<h3>
-    {% build_status_label build.status large=True %}
-    {% if build.is_overdue %}
-    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
-    {% endif %}
-</h3>
-<hr>
-<p>{{ build.title }}</p>
-
-<div class='btn-group action-buttons' role='group'>
-    <!-- Printing options -->
-    <div class='btn-group'>
-        <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
-            <span class='fas fa-print'></span> <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu' role='menu'>
-            <li><a href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print build order report" %}</a></li>
-        </ul>
-    </div>
-    <!-- Build actions -->
-    {% if roles.build.change %}
-    <div class='btn-group'>
-        <button id='build-options' title='{% trans "Build actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
-            <span class='fas fa-tools'></span> <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu' role='menu'>
-            <li><a href='#' id='build-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit Build" %}</a></li>
-            {% if build.is_active %}
-            <li><a href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
-            {% endif %}
-            {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
-            <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build" %}</a>
-            {% endif %}
-        </ul>
-    </div>
-    {% if build.active %}
-    <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
-        <span class='fas fa-check-circle'></span>
-    </button>
-    {% endif %}
-    {% endif %}
-</div>
+</h4>
 {% endblock %}
 
-{% block page_details %}
+{% block details_left %}
 
-<h4>{% trans "Build Details" %}</h4>
+<div class='media-left'>
+    <img class="part-thumb"
+    {% if build.part.image %}
+    src="{{ build.part.image.url }}"
+    {% else %}
+    src="{% static 'img/blank_image.png' %}"
+    {% endif %}/>
+</div>
+
+<div class='media-body'>
+    <div class='btn-group' role='group'>
+        <!-- Printing options -->
+        <div class='btn-group'>
+            <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                <span class='fas fa-print'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a class='dropdown-item' href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print build order report" %}</a></li>
+            </ul>
+        </div>
+        <!-- Build actions -->
+        {% if roles.build.change %}
+        <div class='btn-group'>
+            <button id='build-options' title='{% trans "Build actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                <span class='fas fa-tools'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a class='dropdown-item' href='#' id='build-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit Build" %}</a></li>
+                {% if build.is_active %}
+                <li><a class='dropdown-item' href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
+                {% endif %}
+                {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
+                <li><a class='dropdown-item' href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build" %}</a>
+                {% endif %}
+            </ul>
+        </div>
+        {% if build.active %}
+        <button id='build-complete' title='{% trans "Complete Build" %}' class='btn btn-success'>
+            <span class='fas fa-check-circle'></span>
+        </button>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block details_right %}
 <table class='table table-striped table-condensed'>
     <tr>
         <td><span class='fas fa-shapes'></span></td>
@@ -197,6 +138,57 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% endif %}
 </table>
+<div class='info-messages'>
+    {% if build.sales_order %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
+        {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
+    </div>
+    {% endif %}
+
+    {% if build.parent %}
+    <div class='alert alert-block alert-info'>
+        {% object_link 'build-detail' build.parent.id build.parent as link %}
+        {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
+    </div>
+    {% endif %}
+
+    {% if build.active %}
+    {% if build.can_complete %}
+    <div class='alert alert-block alert-success'>
+        {% trans "Build Order is ready to mark as completed" %}
+    </div>
+    {% endif %}
+    {% if build.incomplete_count > 0 %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "Build Order cannot be completed as outstanding outputs remain" %}
+    </div>
+    {% endif %}
+    {% if build.completed < build.quantity %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Required build quantity has not yet been completed" %}
+    </div>
+    {% endif %}
+    {% if not build.areUntrackedPartsFullyAllocated %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Stock has not been fully allocated to this Build Order" %}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block page_data %}
+<h3>
+    {% build_status_label build.status large=True %}
+    {% if build.is_overdue %}
+    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
+    {% endif %}
+</h3>
+<hr>
+<p>{{ build.title }}</p>
+
+
 {% endblock %}
 
 {% block js_ready %}

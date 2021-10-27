@@ -535,7 +535,7 @@ function renderErrorMessage(xhr) {
         <div class='panel panel-default'>
             <div class='panel panel-heading'>
                 <div class='panel-title'>
-                    <a data-toggle='collapse' href="#collapse-error-info">{% trans "Show Error Information" %}</a>
+                    <a data-bs-toggle='collapse' href="#collapse-error-info">{% trans "Show Error Information" %}</a>
                 </div>
             </div>
             <div class='panel-collapse collapse' id='collapse-error-info'>

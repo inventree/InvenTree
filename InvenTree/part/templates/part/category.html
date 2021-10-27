@@ -135,18 +135,18 @@
                 </button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
-                    <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
                     {% endif %}
-                    <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
-                    <li><a href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
-                    <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
             </div>
             <!-- Buttons to toggle between grid and table view -->
             <button id='view-list' class='btn btn-outline-secondary' type='button' title='{% trans "View list display" %}'>
                 <span class='fas fa-th-list'></span>
             </button>
-            <button id='view-grid' class='btn btn-default' type='button' title='{% trans "View grid display" %}'>
+            <button id='view-grid' class='btn btn-outline-secondary' type='button' title='{% trans "View grid display" %}'>
                 <span class='fas fa-th'></span>
             </button>
             <div class='filter-list' id='filter-list-parts'>

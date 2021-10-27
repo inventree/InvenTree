@@ -72,7 +72,7 @@
                     {% if barcodes %}
                     <!-- Barcode actions menu -->
                     <div class='btn-group'>
-                        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+                        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
                         <ul class='dropdown-menu'>
                             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
                             <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
@@ -85,7 +85,7 @@
                     </button>
                     {% if roles.stock.change %}
                     <div class='btn-group'>
-                        <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+                        <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-bs-toggle='dropdown'>
                             <span class='fas fa-boxes'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
@@ -113,7 +113,7 @@
                     <!-- Part actions -->
                     {% if roles.part.add or roles.part.change or roles.part.delete %}
                     <div class='btn-group'>
-                        <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
+                        <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-default dropdown-toggle' type='button' data-bs-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
                         <ul class='dropdown-menu'>
                             {% if roles.part.add %}
                             <li><a href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
@@ -131,7 +131,7 @@
 
                 <p>
                     <!-- Details show/hide button -->
-                    <button id="toggle-part-details" class="btn btn-primary" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
+                    <button id="toggle-part-details" class="btn btn-primary" data-bs-toggle="collapse" data-target="#collapsible-part-details" value="show">
                     <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
                     </button>
                 </p>
