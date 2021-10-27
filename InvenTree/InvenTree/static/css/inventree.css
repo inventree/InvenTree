@@ -564,8 +564,6 @@
     margin: 2px;
     padding: 3px;
     object-fit: contain;
-    border: 1px solid #ddd;
-    border-radius: 3px;
 }
 
 .part-thumb-container:hover .part-thumb-overlay {
@@ -972,6 +970,10 @@ input[type="submit"] {
 
 .panel-hidden {
     display: none;
+}
+
+.panel-inventree .card {
+    padding: 10px;
 }
 
 .float-right {
