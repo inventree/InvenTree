@@ -120,17 +120,19 @@
         <h4>{% trans "Parts" %}</h4>
     </div>
     <div id='part-button-toolbar'>
-        <div class='btn-group'>
-            <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>
+        <div class='btn-group' role='group'>
+            <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
                 <span class='fas fa-file-download'></span> {% trans "Export" %}
             </button>
             {% if roles.part.add %}
-            <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
+            <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
                 <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
             </button>
             {% endif %}
-            <div class='btn-group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %} <span class='caret'></span></button>
+            <div class='btn-group' role='group'>
+                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
+                    {% trans "Options" %}
+                </button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
                     <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
@@ -141,7 +143,7 @@
                 </ul>
             </div>
             <!-- Buttons to toggle between grid and table view -->
-            <button id='view-list' class='btn btn-default' type='button' title='{% trans "View list display" %}'>
+            <button id='view-list' class='btn btn-outline-secondary' type='button' title='{% trans "View list display" %}'>
                 <span class='fas fa-th-list'></span>
             </button>
             <button id='view-grid' class='btn btn-default' type='button' title='{% trans "View grid display" %}'>

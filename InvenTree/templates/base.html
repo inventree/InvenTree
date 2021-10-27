@@ -71,15 +71,16 @@
     
 <div class='inventree-body'>
     
+    {% block breadcrumb_list %}
     <div class='container-fluid'>
         <nav aria-label='breadcrumb'>
             <ol class='breadcrumb'>
                 {% block breadcrumbs %}
-                <li class='breadcrumb-item active'>Breadcrumbs Go Here!</li>
                 {% endblock %}
             </ol>
         </nav>
     </div>
+    {% endblock %}
 
 <div class='containter-fluid inventree-pre-content'>    
     {% block pre_content %}
