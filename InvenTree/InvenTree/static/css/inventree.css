@@ -535,6 +535,11 @@
     background-color: #1A1;
 }
 
+.part-properties > span {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 .part-thumb {
     width: 200px;
     height: 200px;
