@@ -792,7 +792,7 @@ function partGridTile(part) {
     var html = `
     
     <div class='product-card card'>
-        <div class='panel panel-inventree product-card-panel'>
+        <div class='panel product-card-panel'>
             <div class='panel-heading'>
                 <a href='/part/${part.pk}/'>
                     <b>${part.full_name}</b>

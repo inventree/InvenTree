@@ -1,8 +1,9 @@
 :root {
     --primary-color: #335d88;
-    --secondary-color: #b69c80;
+    --secondary-color: #dcdcda;
     --highlight-color: #f5efe8;
-    --basic-color: #333;
+
+    --border-color: #ccc;
 
     --label-red: #e35a57;
     --label-blue: #4194bd;
@@ -130,6 +131,7 @@
 
 .navbar {
     border-bottom: 1px solid #ccc;
+    background-color: var(--secondary-color);
 }
 
 .navbar-brand {
@@ -652,10 +654,13 @@
 }
 
 .modal-header {
-    border-bottom: 1px solid #ccc;
-    background-color: #dcdcdc;
-    color: #555;
-    padding: 10px;
+    padding: 3px;
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 25px;
+    color: var(--bs-body-color);
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .modal-footer {
@@ -929,25 +934,24 @@ input[type="submit"] {
     padding: 10px;
 }
 
-.panel-group .panel {
+.panel-group {
     border-radius: 2px;
 }
 
 .panel-heading {
-    padding: 5px 10px;
+    padding: 3px;
+    padding-top: 5px;
     padding-left: 15px;
-    padding-top: 10px;
-    color: #333;
-    background-color: #dcdcdc;
-    border-bottom: 1px solid #ccc;
+    color: var(--bs-body-color);
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.panel-inventree {
+.panel {
     box-shadow: 2px 2px #DDD;
     margin-bottom: 20px;
     background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 5px;
 }
 
 .panel-hidden {
