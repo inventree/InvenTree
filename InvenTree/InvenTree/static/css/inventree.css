@@ -229,16 +229,26 @@
 
 /* Extra label styles */
 
+.label {
+    display: inline;
+    font-size: 75%;
+    line-height: 1;
+    padding-left: 4px;
+    padding-right: 4px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 5px;
+}
+
 .label-large {
     margin: 3px;
-    font-size: 100%;
+    font-size: 90%;
     border: 3px solid;
     border-radius: 15px;
     background: none;
-    padding-right: 10px;
-    padding-left: 10px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 3px;
+    border-radius: 10px;
 }
 
 .label-large-red {
@@ -254,18 +264,7 @@
     border-radius: 5px;
 }
 
-.label {
-    display: inline;
-    font-size: 75%;
-    line-height: 1;
-    padding-left: 4px;
-    padding-right: 4px;
-    color: white;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .25em;
-}
+
 
 .label-red {
     background: var(--label-red);

@@ -11,6 +11,88 @@
 
 {% block page_content %}
 
+<div class='panel panel-inventree panel-hidden' id='panel-part-details'>
+    <div class='panel-heading'>
+        <h4>{% trans "Part Details" %}</h4>
+    </div>
+    <div class='panel-content'>
+        
+        <!-- Details Table -->
+        <table class="table table-striped">
+            <col width='25'>
+            {% if part.IPN %}
+            <tr>
+                <td><span class='fas fa-tag'></span></td>
+                <td>{% trans "IPN" %}</td>
+                <td>{{ part.IPN }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><span class='fas fa-shapes'></span></td>
+                <td>{% trans "Name" %}</td>
+                <td>{{ part.name }}{% include "clip.html"%}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-info-circle'></span></td>
+                <td>{% trans "Description" %}</td>
+                <td>{{ part.description }}{% include "clip.html"%}</td>
+            </tr>
+            {% if part.revision %}
+            <tr>
+                <td><span class='fas fa-code-branch'></span></td>
+                <td>{% trans "Revision" %}</td>
+                <td>{{ part.revision }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.keywords %}
+            <tr>
+                <td><span class='fas fa-key'></span></td>
+                <td>{% trans "Keywords" %}</td>
+                <td>{{ part.keywords }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.link %}
+            <tr>
+                <td><span class='fas fa-link'></span></td>
+                <td>{% trans "External Link" %}</td>
+                <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Creation Date" %}</td>
+                <td>
+                    {{ part.creation_date }}
+                    {% if part.creation_user %}
+                    <span class='badge'>{{ part.creation_user }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% if part.trackable and part.getLatestSerialNumber %}
+            <tr>
+                <td><span class='fas fa-hashtag'></span></td>
+                <td>{% trans "Latest Serial Number" %}</td>
+                <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.default_location %}
+            <tr>
+                <td><span class='fas fa-search-location'></span></td>
+                <td>{% trans "Default Location" %}</td>
+                <td>{{ part.default_location }}</td>
+            </tr>
+            {% endif %}
+            {% if part.default_supplier %}
+            <tr>
+                <td><span class='fas fa-building'></span></td>
+                <td>{% trans "Default Supplier" %}</td>
+                <td>{{ part.default_supplier }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+
 <div class='panel panel-inventree panel-hidden' id='panel-part-stock'>
     <div class='panel-heading'>
         <h4>{% trans "Part Stock" %}</h4>
