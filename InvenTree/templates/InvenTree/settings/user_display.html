@@ -1,0 +1,22 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}user-display{% endblock %}
+
+{% block heading %}
+{% trans "Display Settings" %}
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+    <table class='table table-striped table-condensed'>
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="STICKY_HEADER" icon="fa-bars" user_setting=True %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

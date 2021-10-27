@@ -16,8 +16,8 @@
     <td><strong>{% trans setting.name %}</strong></td>
     <td>
         {% if setting.is_bool %}
-        <div>
-            <input fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
+        <div class='form-check form-switch'>
+            <input class='form-check-input' fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
