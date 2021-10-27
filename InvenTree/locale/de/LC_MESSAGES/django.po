@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-25 21:42+0000\n"
-"PO-Revision-Date: 2021-10-25 22:04\n"
+"PO-Revision-Date: 2021-10-27 20:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -74,7 +74,7 @@ msgstr "E-Mail (nochmal)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr "Betsätigung der E-Mail Adresse"
+msgstr "Bestätigung der E-Mail Adresse"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
@@ -4267,7 +4267,7 @@ msgstr "Stücklisten-Bericht drucken"
 
 #: part/templates/part/bom.html:40
 msgid "BOM actions"
-msgstr "BOM-Aktionen"
+msgstr "Stücklisten-Aktionen"
 
 #: part/templates/part/bom.html:44
 msgid "Upload BOM"
