@@ -775,6 +775,14 @@
     padding: 5px;
 }
 
+.form-group {
+    padding-bottom: 15px;
+}
+
+
+.form-field-error {
+    color: #A94442;
+}
 
 .modal input {
     width: 100%;
@@ -793,6 +801,7 @@ input[type="submit"] {
 /* Force a control-label div to be 100% width */
 .modal .control-label {
     width: 100%;
+    font-weight: 700;
     margin-top: 5px;
 }
 
@@ -1084,10 +1093,6 @@ a.anchor {
 
 .form-clear {
     padding: 6px 6px;
-}
-
-.form-control {
-    height: 30px;
 }
 
 /* Force minimum width of number input fields to show at least ~5 digits */

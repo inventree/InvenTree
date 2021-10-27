@@ -927,7 +927,7 @@ function clearFormErrors(options) {
     $(options.modal).find('.form-error-message').remove();
 
     // Remove the "has error" class
-    $(options.modal).find('.has-error').removeClass('has-error');
+    $(options.modal).find('.form-field-error').removeClass('form-field-error');
 
     // Hide the 'non field errors'
     $(options.modal).find('#non-field-errors').html('');
@@ -1100,8 +1100,8 @@ function handleFormErrors(errors, fields, options) {
  */
 function addFieldErrorMessage(field_name, error_text, error_idx, options) {
 
-    // Add the 'has-error' class
-    $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+    // Add the 'form-field-error' class
+    $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
 
     var field_dom = $(options.modal).find(`#errors-${field_name}`);
 
@@ -1754,7 +1754,7 @@ function constructField(name, parameters, options) {
     var form_classes = 'form-group';
 
     if (parameters.errors) {
-        form_classes += ' has-error';
+        form_classes += ' form-field-error';
     }
     
     // Optional content to render before the field
@@ -1796,7 +1796,7 @@ function constructField(name, parameters, options) {
         html += `<div class='input-group'>`;
     
         if (parameters.prefix) {
-            html += `<span class='input-group-addon'>${parameters.prefix}</span>`;
+            html += `<span class='input-group-text'>${parameters.prefix}</span>`;
         }
     }
 
@@ -1806,7 +1806,7 @@ function constructField(name, parameters, options) {
 
         if (!parameters.required) {
             html += `
-            <span class='input-group-addon form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
+            <span class='input-group-text form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
             </span>`;
         }
