@@ -211,7 +211,7 @@
                             <a href='/part/{{ part.id }}/'>{{ part }}</a>
                             <div class='btn-group' style='float: right;'>
                                 {% if roles.part.change %}
-                                <button title='{% trans "Delete" %}' class='btn btn-default btn-glyph delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
+                                <button title='{% trans "Delete" %}' class='btn btn-default delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
                                 {% endif %}
                             </div>
                         </td>

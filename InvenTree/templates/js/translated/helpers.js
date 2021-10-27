@@ -103,7 +103,7 @@ function makeIconBadge(icon, title) {
  */
 function makeIconButton(icon, cls, pk, title, options={}) {
 
-    var classes = `btn btn-default btn-glyph ${cls}`;
+    var classes = `btn btn-default ${cls}`;
 
     var id = `${cls}-${pk}`;
 

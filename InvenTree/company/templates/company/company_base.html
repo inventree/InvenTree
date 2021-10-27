@@ -20,10 +20,10 @@
             {% endif %}/>
             <div class='btn-row part-thumb-overlay'>
                 <div class='btn-group'>
-                    <button type='button' class='btn btn-outline-secondary btn-glyph' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
+                    <button type='button' class='btn btn-outline-secondary' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
                     {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
                     {% if allow_download %}
-                    <button type='button' class='btn btn-outline-secondary btn-glyph' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
+                    <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
                     {% endif %}
                 </div>
             </div>

@@ -1684,8 +1684,8 @@ function loadStockTrackingTable(table, options) {
         formatter: function(value, row, index, field) {
             // Manually created entries can be edited or deleted
             if (false && !row.system) {
-                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
-                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
+                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-default' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
+                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-default' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
 
                 return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
             } else {

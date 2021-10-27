@@ -37,15 +37,15 @@ src="{% static 'img/blank_image.png' %}"
 <div class='btn-row'>
     <div class='btn-group action-buttons' role='group'>
         {% if roles.purchase_order.add %}
-        <button type='button' class='btn btn-default btn-glyph' id='order-part' title='{% trans "Order part" %}'>
+        <button type='button' class='btn btn-default' id='order-part' title='{% trans "Order part" %}'>
             <span class='fas fa-shopping-cart'></span>
         </button>
         {% endif %}
-        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit supplier part" %}'>
+        <button type='button' class='btn btn-default' id='edit-part' title='{% trans "Edit supplier part" %}'>
             <span class='fas fa-edit icon-green'/>
         </button>
         {% if roles.purchase_order.delete %}
-        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='{% trans "Delete supplier part" %}'>
+        <button type='button' class='btn btn-default' id='delete-part' title='{% trans "Delete supplier part" %}'>
             <span class='fas fa-trash-alt icon-red'/>
         </button>
         {% endif %}

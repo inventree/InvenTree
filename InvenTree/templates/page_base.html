@@ -11,7 +11,16 @@
             <div class='col-sm-6' id='detail-panel-left'>
                 <div class='card'>
                     {% block details_left %}
-                    block details_left
+                    <div class='row g-0'>
+                        <div class='col-md-4'>
+                            {% block thumbnail %}
+                            {% endblock %}
+                        </div>
+                        <div class='col-md-8'>
+                            {% block details %}
+                            {% endblock %}
+                        </div>
+                    </div>
                     {% endblock %}
                 </div>
             </div>
