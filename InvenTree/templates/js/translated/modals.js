@@ -47,14 +47,12 @@ function createNewModal(options={}) {
         <div class='modal-dialog'>
             <div class='modal-content'>
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label='{% trans "Close" %}'>
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h3 id='modal-title'>
+                    <h3 id='modal-title' class='modal-title'>
                         <!-- Form title to be injected here -->
                     </h3>
+                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% trans "Close" %}'></button>
                 </div>
-                <div class='modal-form-content-wrapper'>
+                <div class='modal-body modal-form-content-wrapper'>
                     <div id='non-field-errors'>
                         <!-- Form error messages go here -->
                     </div>
@@ -73,7 +71,7 @@ function createNewModal(options={}) {
                     <div id='modal-footer-buttons'>
                         <!-- Extra buttons can be inserted here -->
                     </div>
-                    <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Cancel" %}</button>
+                    <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>
             </div>

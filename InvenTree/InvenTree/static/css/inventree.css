@@ -676,7 +676,10 @@
 }
 
 .modal-header {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
+    background-color: #dcdcdc;
+    color: #555;
+    padding: 10px;
 }
 
 .modal-footer {
@@ -798,8 +801,8 @@ input[type="submit"] {
     padding-bottom: 3px;
 }
 
-.modal .btn-secondary {
-    background-color: #5e7d87;
+.modal .btn-form-secondary {
+    margin-bottom: 10px;
 }
 
 .inventree-navs {

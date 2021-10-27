@@ -1296,7 +1296,7 @@ function addSecondaryModal(field, fields, options) {
 
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
+        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
             ${secondary.label || secondary.title}
         </div>
     </span>`;
