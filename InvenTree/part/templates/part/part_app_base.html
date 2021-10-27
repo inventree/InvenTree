@@ -19,7 +19,7 @@
 
 {% block breadcrumbs %}
 {% if part %}
-{% include "part/cat_link.html" with category=part.category %}
+{% include "part/cat_link.html" with category=part.category part=part %}
 {% else %}
 {% include 'part/cat_link.html' with category=category %}
 {% endif %}

@@ -6,5 +6,8 @@
 {% for path_item in category.parentpath %}
 <li class="breadcrumb-item"><a href="{% url 'category-detail' path_item.id %}">{{ path_item.name }}</a></li>
 {% endfor %}
-<li class="breadcrumb-item active" aria-current="page"><a href="{% url 'category-detail' category.id %}">{{ category.name }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'category-detail' category.id %}">{{ category.name }}</a></li>
+{% endif %}
+{% if part %}
+<li class="breadcrumb-item" aria-current="page"><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></li>
 {% endif %}

@@ -512,22 +512,6 @@
     width: 30%;
 }
 
-/* !pricing table widths */
-
-.action-button {
-    font-size: 125%;
-}
-
-.action-buttons .btn {
-    font-size: 175%;
-    align-content: center;
-    vertical-align: middle;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 3px;
-    padding-bottom: 2px;
-}
-
 .panel-heading .badge {
     float: right;
 }
