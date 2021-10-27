@@ -29,10 +29,14 @@
                         </button>
                         <ul class="dropdown-menu">
                             {% if roles.purchase_order.add %}
-                            <li><a href='#' id='multi-supplier-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-supplier-part-order' title='{% trans "Order parts" %}'>
+                                <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
+                            </a></li>
                             {% endif %}
                             {% if roles.purchase_order.delete %}
-                            <li><a href='#' id='multi-supplier-part-delete' title='{% trans "Delete parts" %}'>{% trans "Delete Parts" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-supplier-part-delete' title='{% trans "Delete parts" %}'>
+                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Parts" %}
+                            </a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -69,10 +73,14 @@
                         </button>
                         <ul class="dropdown-menu">
                             {% if roles.purchase_order.add %}
-                            <li><a href='#' id='multi-manufacturer-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-manufacturer-part-order' title='{% trans "Order parts" %}'>
+                                <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
+                            </a></li>
                             {% endif %}
                             {% if roles.purchase_order.delete %}
-                            <li><a href='#' id='multi-manufacturer-part-delete' title='{% trans "Delete parts" %}'>{% trans "Delete Parts" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-manufacturer-part-delete' title='{% trans "Delete parts" %}'>
+                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Parts" %}
+                            </a></li>
                             {% endif %}
                         </ul>
                     </div> 
@@ -166,7 +174,7 @@
             </div>
             <div class='col-sm-6'>
                 <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-default'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-outline-secondary'>
                         <span class='fas fa-edit'>      
                         </span>
                     </button>
