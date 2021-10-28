@@ -17,8 +17,6 @@ function activatePanel(label, panel_name, options={}) {
     $('.panel-visible').hide();
     $('.panel-visible').removeClass('panel-visible');
 
-    console.log('active panel:', label, panel_name);
-
     // Find the target panel
     var panel = `#panel-${panel_name}`;
     var select = `#select-${panel_name}`;

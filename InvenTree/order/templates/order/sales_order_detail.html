@@ -6,8 +6,8 @@
 {% load static %}
 {% load markdownify %}
 
-{% block menubar %}
-{% include "order/so_navbar.html"  %}
+{% block sidebar %}
+{% include "order/so_sidebar.html"  %}
 {% endblock %}
 
 {% block page_content %}
@@ -191,9 +191,6 @@
         }
     );
 
-    attachNavCallbacks({
-        name: 'sales-order',
-        default: 'order-items'
-    });
-
+    enableSidebar('salesorder');
+    
 {% endblock %}

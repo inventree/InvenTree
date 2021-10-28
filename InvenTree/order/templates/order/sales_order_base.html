@@ -161,11 +161,6 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-enableNavbar({
-    label: 'so',
-    toggleId: '#so-menu-toggle',
-});
-
 $("#edit-order").click(function() {
 
     constructForm('{% url "api-so-detail" order.pk %}', {
