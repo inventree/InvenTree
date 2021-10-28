@@ -1815,7 +1815,11 @@ function constructField(name, parameters, options) {
     }
 
     if (parameters.help_text && !options.hideLabels) {
-        html += constructHelpText(name, parameters, options);
+
+        // Boolean values are handled differently!
+        if (parameters.type != 'boolean') {
+            html += constructHelpText(name, parameters, options);
+        }
     }
 
     // Div for error messages
@@ -1990,7 +1994,6 @@ function constructInputOptions(name, classes, type, parameters) {
 
     switch (parameters.type) {
     case 'boolean':
-        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
         break;
     case 'integer':
     case 'float':
@@ -2003,6 +2006,15 @@ function constructInputOptions(name, classes, type, parameters) {
 
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
+    } else if (parameters.type == 'boolean') {
+        return `
+        <div class='form-check form-switch'>
+            <input ${opts.join(' ')}>
+            <label class='form-check-label' for=''>
+                <em><small>${parameters.help_text}</small></em>
+            </label>
+        </div>
+        `;
     } else {
         return `<input ${opts.join(' ')}>`;
     }
@@ -2187,13 +2199,7 @@ function constructRawInput(name, parameters) {
  */
 function constructHelpText(name, parameters) {
     
-    var style = '';
-
-    if (parameters.type == 'boolean') {
-        style = `style='display: inline-block; margin-left: 25px' `;
-    }
-
-    var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
+    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
 }

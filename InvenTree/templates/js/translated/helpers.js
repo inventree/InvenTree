@@ -92,7 +92,7 @@ function select2Thumbnail(image) {
  */
 function makeIconBadge(icon, title) {
 
-    var html = `<span class='fas ${icon} float-right' title='${title}'></span>`;
+    var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
 
     return html;
 }
