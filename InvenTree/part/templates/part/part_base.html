@@ -216,13 +216,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableSidebar(
-        'part',
-        {
-            default: 'part-details',
-        }
-    );
-
     {% if part.image %}
     $('#part-thumb').click(function() {
         showModalImage('{{ part.image.url }}');

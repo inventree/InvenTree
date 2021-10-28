@@ -6,8 +6,8 @@
 {% load l10n %}
 {% load markdownify %}
 
-{% block menubar %}
-{% include "stock/navbar.html" %}
+{% block sidebar %}
+{% include "stock/stock_sidebar.html" %}
 {% endblock %}
 
 {% block page_content %}
@@ -396,5 +396,7 @@
         },
         url: "{% url 'api-stock-tracking-list' %}", 
     });
+
+    enableSidebar('stockitem');
 
 {% endblock %}

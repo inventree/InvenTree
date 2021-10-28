@@ -8,10 +8,6 @@
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
-{% block sidenav %}
-<div id='stock-tree'></div>
-{% endblock %}
-
 {% block breadcrumbs %}
 {% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
@@ -430,11 +426,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-enableNavbar({
-    label: 'item',
-    toggleId: '#item-menu-toggle',
-});
-
 loadTree("{% url 'api-stock-tree' %}",
     "#stock-tree",
     {
@@ -620,10 +611,5 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
-
-attachNavCallbacks({
-    name: 'stockitem',
-    default: 'history'
-});
 
 {% endblock %}

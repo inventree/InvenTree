@@ -9,41 +9,6 @@
 */
 
 /*
-* Attach callbacks to navigation bar elements.
-*
-* Searches for elements with the class 'nav-toggle'.
-* A callback is added to each element,
-* to display the matching panel.
-*
-* The 'id' of the .nav-toggle element should be of the form "select-<x>",
-* and point to a matching "panel-<x>"
-*/
-function attachNavCallbacksX(options={}) {
-
-    $('.nav-toggle').click(function() {
-        var el = $(this);
-
-        // Find the matching "panel" element
-        var panelName = el.attr('id').replace('select-', '');
-
-        activatePanel(panelName, options);
-    });
-
-    var panelClass = options.name || 'unknown';
-
-    /* Look for a default panel to initialize
-     * First preference = URL parameter e.g. ?display=part-stock
-     * Second preference = localStorage
-     * Third preference = default
-     */
-    var defaultPanel = $.urlParam('display') || localStorage.getItem(`inventree-selected-panel-${panelClass}`) || options.default;
-
-    if (defaultPanel) {
-        activatePanel(defaultPanel);
-    }
-}
-
-/*
  * Activate (display) the selected panel
  */
 function activatePanel(label, panel_name, options={}) {
@@ -51,6 +16,8 @@ function activatePanel(label, panel_name, options={}) {
     // First, cause any other panels to "fade out"
     $('.panel-visible').hide();
     $('.panel-visible').removeClass('panel-visible');
+
+    console.log('active panel:', label, panel_name);
 
     // Find the target panel
     var panel = `#panel-${panel_name}`;
