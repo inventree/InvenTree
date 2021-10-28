@@ -2,6 +2,12 @@
 tasks:
  - name: Setup django and start server
    command: |
+      export INVENTREE_DB_ENGINE='sqlite3'
+      export  INVENTREE_DB_NAME='/workspace/data/database.sqlite3'
+      export  INVENTREE_MEDIA_ROOT='/workspace/data/media'
+      export INVENTREE_STATIC_ROOT='/workspace/data/static'
+      export PIP_USER='no'
+
       python3 -m venv venv
       source venv/bin/activate
       pip install invoke
