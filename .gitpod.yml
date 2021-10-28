@@ -1,0 +1,20 @@
+# List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
+tasks:
+  - init: |
+      export PIP_USER=no
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install invoke
+      inv update
+      echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'test@test.com', 'inventree')" | python InvenTree/manage.py shell
+      inv server
+    env:
+      INVENTREE_DB_ENGINE: 'sqlite3'
+      INVENTREE_DB_NAME: '/workspace/data/database.sqlite3'
+      INVENTREE_MEDIA_ROOT: '/workspace/data/media'
+      INVENTREE_STATIC_ROOT: '/workspace/data/static'
+
+# List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
+ports:
+  - port: 8000
+    onOpen: open-preview
