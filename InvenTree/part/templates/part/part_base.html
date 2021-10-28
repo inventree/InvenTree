@@ -51,7 +51,7 @@
         <!-- Part active -->
         {% if not part.active %}
         &ensp;
-        <div class='label label-large label-large-red'>
+        <div class='badge rounded-pill bg-danger'>
             <span class='fas fa-skull-crossbones' title='{% trans "Part is virtual (not a physical part)" %}'></span>
             {% trans 'Inactive' %}
         </div>
@@ -59,7 +59,7 @@
         <!-- Part virtual -->
         {% if part.virtual and part.active %}
         &ensp;
-        <div class='label label-large label-large-yellow'>
+        <div class='badge rounded-pill bg-warning'>
             <span class='fas fa-ghost' title='{% trans "Part is virtual (not a physical part)" %}'></span>
             {% trans 'Virtual' %}
         </div>

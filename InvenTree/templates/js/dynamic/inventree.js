@@ -169,12 +169,7 @@ function inventreeDocReady() {
                 html += '</span>';
                 
                 if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
-                    html += partStockLabel(
-                        item.data,
-                        {
-                            label_class: 'label-right',
-                        }
-                    );
+                    html += partStockLabel(item.data);
                 }
 
                 html += '</a>';

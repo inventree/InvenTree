@@ -48,7 +48,7 @@
 </h4>
 <h4>
     {% if item.is_expired %}
-    <span class='label label-large label-large-red'>{% trans "Expired" %}</span>
+    <span class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
     {% else %}
     {% if roles.stock.change %}
     <a href='#' id='stock-edit-status'>
@@ -58,7 +58,7 @@
     </a>
     {% endif %}
     {% if item.is_stale %}
-    <span class='label label-large label-large-yellow'>{% trans "Stale" %}</span>
+    <span class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
     {% endif %}
     {% endif %}
 </h4>
@@ -390,9 +390,9 @@
         <td>
             {{ item.expiry_date }}
             {% if item.is_expired %}
-            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='label label-red'>{% trans "Expired" %}</span>
+            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
             {% elif item.is_stale %}
-            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='label label-yellow'>{% trans "Stale" %}</span>
+            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
             {% endif %}
         </td>
     </tr>

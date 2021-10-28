@@ -92,7 +92,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {{ build.target_date }}
             {% if build.is_overdue %}
-            <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='label label-red'>{% trans "Overdue" %}</span>
+            <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
@@ -175,7 +175,7 @@ src="{% static 'img/blank_image.png' %}"
 <h3>
     {% build_status_label build.status large=True %}
     {% if build.is_overdue %}
-    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
+    <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}
 </h3>
 <hr>

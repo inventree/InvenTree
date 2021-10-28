@@ -450,17 +450,17 @@ function removeStockRow(e) {
 }
 
 
-function passFailBadge(result, align='float-right') {
+function passFailBadge(result) {
 
     if (result) {
-        return `<span class='label label-green ${align}'>{% trans "PASS" %}</span>`;
+        return `<span class='badge rounded-pill bg-success'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='label label-red ${align}'>{% trans "FAIL" %}</span>`;
+        return `<span class='badge rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
     }
 }
 
-function noResultBadge(align='float-right') {
-    return `<span class='label label-blue ${align}'>{% trans "NO RESULT" %}</span>`;
+function noResultBadge() {
+    return `<span class='badge rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
 function formatDate(row) {
@@ -472,7 +472,7 @@ function formatDate(row) {
     }
 
     if (row.attachment) {
-        html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
     }
 
     return html;
@@ -878,7 +878,7 @@ function loadStockTable(table, options) {
             }
 
             if (row.quantity <= 0) {
-                html += `<span class='label label-right label-danger'>{% trans "Depleted" %}</span>`;
+                html += `<span class='badge rounded-pill bg-danger'>{% trans "Depleted" %}</span>`;
             }
 
             return html;

@@ -410,14 +410,12 @@ function toggleStar(options) {
 }
 
 
-function partStockLabel(part, options={}) {
-
-    var label_class = options.label_class || 'label-form';
+function partStockLabel(part) {
 
     if (part.in_stock) {
-        return `<span class='label ${label_class} label-green'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+        return `<span class='badge rounded-pill bg-success'>{% trans "Stock" %}: ${part.in_stock}</span>`;
     } else {
-        return `<span class='label ${label_class} label-red'>{% trans "No Stock" %}</span>`;
+        return `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     }
 }
 
@@ -453,7 +451,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
     }
 
     return html;
@@ -530,7 +528,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 if (!row.active) {
-                    html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+                    html += `<span class='badge rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
                 }
 
                 return html;
@@ -769,14 +767,10 @@ function partGridTile(part) {
     // Rows for table view
     var rows = '';
 
-    if (part.IPN) {
-        rows += `<tr><td><b>{% trans "IPN" %}</b></td><td>${part.IPN}</td></tr>`;
-    }
-
     var stock = `${part.in_stock}`;
 
     if (!part.in_stock) {
-        stock = `<span class='label label-red'>{% trans "No Stock" %}</label>`;
+        stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
@@ -949,20 +943,20 @@ function loadPartTable(table, url, options={}) {
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
                 if (row.minimum_stock && row.minimum_stock > value) {
-                    value += `<span class='label label-right label-warning'>{% trans "Low stock" %}</span>`;
+                    value += `<span class='badge rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
                 }
 
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
-                value = `0<span class='label label-right label-primary'>{% trans "On Order" %}: ${row.on_order}</span>`;
+                value = `0<span class='badge rounded-pill bg-info'>{% trans "On Order" %}: ${row.on_order}</span>`;
                 link = '?display=purchase-orders';
             } else if (row.building) {
                 // There is no stock available, but stock is being built
-                value = `0<span class='label label-right label-info'>{% trans "Building" %}: ${row.building}</span>`;
+                value = `0<span class='badge rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
                 link = '?display=build-orders';
             } else {
                 // There is no stock available
-                value = `0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
+                value = `0<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
             }
 
             return renderLink(value, `/part/${row.pk}/${link}`);

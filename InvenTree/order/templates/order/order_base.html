@@ -34,7 +34,7 @@ src="{% static 'img/blank_image.png' %}"
 <h4>
     {% purchase_order_status_label order.status large=True %}
     {% if order.is_overdue %}
-    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
+    <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}
 </h4>
 <p>{{ order.description }}{% include "clip.html"%}</p>
@@ -92,7 +92,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {% purchase_order_status_label order.status %}
             {% if order.is_overdue %}
-            <span class='label label-red'>{% trans "Overdue" %}</span>
+            <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>

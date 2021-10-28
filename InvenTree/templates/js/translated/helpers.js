@@ -16,9 +16,9 @@
 
 function yesNoLabel(value) {
     if (value) {
-        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+        return `<span class='badge rounded-pill bg-success'>{% trans "YES" %}</span>`;
     } else {
-        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+        return `<span class='badge rounded-pill bg-warning'>{% trans "NO" %}</span>`;
     }
 }
 
@@ -92,7 +92,7 @@ function select2Thumbnail(image) {
  */
 function makeIconBadge(icon, title) {
 
-    var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
+    var html = `<span class='fas ${icon} float-right' title='${title}'></span>`;
 
     return html;
 }

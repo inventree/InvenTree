@@ -24,12 +24,12 @@
                                     <a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a>{% include "clip.html" %}
                                     {% inventree_is_development as dev %}
                                     {% if dev %}
-                                    <span class='label label-blue float-right'>{% trans "Development Version" %}</span>
+                                    <span class='badge rounded-pill bg-primary'>{% trans "Development Version" %}</span>
                                     {% else %}
                                     {% if up_to_date %}
-                                    <span class='label label-green float-right'>{% trans "Up to Date" %}</span>
+                                    <span class='badge rounded-pill bg-success'>{% trans "Up to Date" %}</span>
                                     {% else %}
-                                    <span class='label label-red float-right'>{% trans "Update Available" %}</span>
+                                    <span class='badge rounded-pill bg-info'>{% trans "Update Available" %}</span>
                                     {% endif %}
                                     {% endif %}
                                 </td>

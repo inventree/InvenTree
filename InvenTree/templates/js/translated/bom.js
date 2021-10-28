@@ -407,7 +407,7 @@ function loadBomTable(table, options) {
 
                 // Display an extra icon if this part is an assembly
                 if (sub_part.assembly) {
-                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
+                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream float-right'></span>`;
 
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
@@ -470,7 +470,7 @@ function loadBomTable(table, options) {
             var text = value;
 
             if (value == null || value <= 0) {
-                text = `<span class='label label-warning'>{% trans "No Stock" %}</span>`;
+                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
             }
 
             return renderLink(text, url);
