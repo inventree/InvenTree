@@ -707,7 +707,6 @@ TOKEN_ISSUER_NAME="PROJECT_NAME"
 U2F_APPID="https://localhost"
 FIDO_SERVER_ID=u"localehost"
 FIDO_SERVER_NAME=u"PROJECT_NAME"
-FIDO_LOGIN_URL='BASE_URL'
 
 
 # Markdownx configuration
