@@ -3,8 +3,8 @@
 {% load i18n %}
 {% load markdownify %}
 
-{% block menubar %}
-{% include 'company/navbar.html' with tab='details' %}
+{% block sidebar %}
+{% include 'company/sidebar.html' %}
 {% endblock %}
 
 {% block page_content %}
@@ -405,9 +405,6 @@
 
     {% endif %}
 
-    attachNavCallbacks({
-        name: 'company',
-        default: 'company-stock'
-    });
+    enableSidebar('company');
 
 {% endblock %}

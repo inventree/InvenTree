@@ -130,11 +130,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableNavbar({
-        label: 'company',
-        toggleId: '#company-menu-toggle'
-    });
-
     $('#company-edit').click(function() {
         editCompany({{ company.id }});
     });
