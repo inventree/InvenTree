@@ -304,7 +304,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'allauth_2fa.middleware.AllauthTwoFactorMiddleware',        # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
+    'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
 ])
 
 # Error reporting middleware

@@ -1,12 +1,17 @@
 from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, Resolver404
 from django.db import connection
 from django.shortcuts import redirect
+from django.conf.urls import include, url
 import logging
 import time
 import operator
 
 from rest_framework.authtoken.models import Token
+from allauth_2fa.middleware import BaseRequire2FAMiddleware
+
+from InvenTree.urls import frontendpatterns
+
 
 logger = logging.getLogger("inventree")
 
@@ -146,3 +151,16 @@ class QueryCountMiddleware(object):
                     print(x[0], ':', x[1])
 
         return response
+
+
+url_matcher = url('', include(frontendpatterns))
+
+class Check2FAMiddleware(BaseRequire2FAMiddleware):
+    def require_2fa(self, request):
+        # Superusers are require to have 2FA.
+        try:
+            if url_matcher.resolve(request.path[1:]):
+                return True
+        except Resolver404:
+            pass
+        return False

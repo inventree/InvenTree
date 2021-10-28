@@ -29,6 +29,7 @@ from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.views import ConnectionsView
+from allauth_2fa.views import TwoFactorAuthenticate
 
 from common.settings import currency_code_default, currency_codes
 
@@ -856,6 +857,14 @@ class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     """
     success_url = reverse_lazy("account_login")
 
+
+class CustomTwoFactorAuthenticate(TwoFactorAuthenticate):
+    def dispatch(self, request, *args, **kwargs):
+        if 'allauth_2fa_user_id' not in request.session and 'otp_token' not in request.POST:
+            return redirect('account_login')
+        if hasattr(request.user, 'id'):
+            request.session['allauth_2fa_user_id'] = request.user.id
+        return super(FormView, self).dispatch(request, *args, **kwargs)
 
 class CurrencyRefreshView(RedirectView):
     """
