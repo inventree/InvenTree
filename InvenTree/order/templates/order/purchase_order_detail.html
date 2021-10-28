@@ -6,8 +6,8 @@
 {% load static %}
 {% load markdownify %}
 
-{% block menubar %}
-{% include 'order/po_navbar.html' %}
+{% block sidebar %}
+{% include 'order/po_sidebar.html' %}
 {% endblock %}
 
 {% block page_content %}
@@ -88,11 +88,6 @@
 {% block js_ready %}
 
 {{ block.super }}
-
-    enableNavbar({
-        label: 'po',
-        toggleId: '#po-menu-toggle',
-    });
 
     $('#edit-notes').click(function() {
         constructForm('{% url "api-po-detail" order.pk %}', {
@@ -249,9 +244,6 @@ loadPurchaseOrderLineItemTable('#po-line-table', {
     {% endif %}
 });
 
-attachNavCallbacks({
-    name: 'purchase-order',
-    default: 'order-items'
-});
+enableSidebar('purchaseorder');
 
 {% endblock %}
