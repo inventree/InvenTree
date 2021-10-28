@@ -36,6 +36,10 @@
         <td>{% trans "Last Name" %}</td>
         <td>{{ user.last_name }}</td>
     </tr>
+    <tr>
+        <td>{% trans 'MFA' %}</td>
+        <td><a href="{% url 'mfa_home' %}">{% trans 'open security page for details' %}</a></td>
+    </tr>
 </table>
 
 <div class='panel-heading'>

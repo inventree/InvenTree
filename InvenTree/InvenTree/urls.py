@@ -34,6 +34,8 @@ from django.conf.urls.static import static
 
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
+import mfa
+import mfa.TrustedDevice
 
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
@@ -167,6 +169,8 @@ urlpatterns = [
     url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
+    url(r'^accounts/mfa/', include('mfa.urls')),
+    url(r'^accounts/devices/add$', mfa.TrustedDevice.add, name="mfa_add_new_trusted_device"),
     url(r'^accounts/', include('allauth.urls')),  # included urlpatterns
 ]
 
