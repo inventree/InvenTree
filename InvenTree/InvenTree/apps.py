@@ -3,6 +3,7 @@
 import logging
 
 from django.apps import AppConfig
+from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 
 from InvenTree.ready import isInTestMode, canAppAccessDatabase
@@ -22,6 +23,8 @@ class InvenTreeConfig(AppConfig):
 
             if not isInTestMode():
                 self.update_exchange_rates()
+
+            self.update_mfa_settings()
 
     def start_background_tasks(self):
 
@@ -126,3 +129,19 @@ class InvenTreeConfig(AppConfig):
 
         if update:
             update_exchange_rates()
+
+    def update_mfa_settings(self):
+        """updates the settings for MFA after the apps are loaded"""
+        try:
+            from common.models import InvenTreeSetting
+
+            project_name = InvenTreeSetting.get_setting('INVENTREE_INSTANCE')
+            project_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+
+            settings.TOKEN_ISSUER_NAME=project_name
+            settings.U2F_APPID=project_url
+            settings.FIDO_SERVER_ID=project_url
+            settings.FIDO_SERVER_NAME=project_name
+        except AppRegistryNotReady:
+            pass
+
