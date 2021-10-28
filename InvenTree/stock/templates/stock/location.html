@@ -3,8 +3,8 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% block menubar %}
-{% include "stock/location_navbar.html" %}
+{% block sidebar %}
+{% include "stock/location_sidebar.html" %}
 {% endblock %}
 
 {% block details_left %}
@@ -173,11 +173,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableNavbar({
-        label: 'location',
-        toggleId: '#location-menu-toggle'
-    });
-
     loadStockLocationTable($('#sublocation-table'), {
         params: {
             {% if location %}
@@ -337,9 +332,6 @@
         url: "{% url 'api-stock-list' %}",
     });
 
-    attachNavCallbacks({
-        name: 'stocklocation',
-        default: 'stock'
-    });
+    enableSidebar('stocklocation');
 
 {% endblock %}
