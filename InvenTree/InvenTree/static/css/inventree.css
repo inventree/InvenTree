@@ -434,22 +434,6 @@
 
 .badge {
     float: right;
-    background-color: #777;
-    color: #fff;
-    border-radius: 5px;
-    margin-left: 10px;
-}
-
-.badge-alert {
-    background-color: #f33;
-}
-
-.badge-orange {
-    background-color: #fcba03;
-}
-
-.badge-green {
-    background-color: #1A1;
 }
 
 .part-properties > span {

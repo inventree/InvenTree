@@ -884,10 +884,6 @@ function loadStockTable(table, options) {
             return html;
         }
     };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
     
     columns.push(col);
 
