@@ -92,6 +92,15 @@
     </div>
 
     <div class="container container-fluid inventree-content" id='inventree-content'>
+        {% if messages %}
+        {% for message in messages %}
+            <div class='{{ message.tags }}'>
+                {{ message|safe }}
+            </div>
+        {% endfor %}
+        {% endif %}
+
+
         {% block content %}
         <!-- Each view fills in here.. -->
         {% endblock %}
