@@ -4,8 +4,8 @@
 {% load status_codes %}
 {% load markdownify %}
 
-{% block menubar %}
-{% include "build/navbar.html" %}
+{% block sidebar %}
+{% include "build/sidebar.html" %}
 {% endblock %}
 
 {% block page_content %}
@@ -551,5 +551,8 @@ $("#btn-order-parts").click(function() {
 });
 
 {% endif %}
+
+enableSidebar('buildorder');
+
 
 {% endblock %}

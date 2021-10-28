@@ -186,11 +186,6 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 
-    enableNavbar({
-        label: 'build',
-        toggleId: '#build-menu-toggle'
-    });
-
     $("#build-edit").click(function () {
         editBuildOrder({{ build.pk }});
     });
@@ -233,11 +228,5 @@ src="{% static 'img/blank_image.png' %}"
             }
         );
     });
-
-    attachNavCallbacks({
-        name: 'buildorder',
-        default: 'details'
-    });
     
-
 {% endblock %}
