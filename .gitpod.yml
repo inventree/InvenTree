@@ -3,15 +3,16 @@ tasks:
  - name: Setup django and start server
    command: |
       export INVENTREE_DB_ENGINE='sqlite3'
-      export  INVENTREE_DB_NAME='/workspace/data/database.sqlite3'
-      export  INVENTREE_MEDIA_ROOT='/workspace/data/media'
-      export INVENTREE_STATIC_ROOT='/workspace/data/static'
+      export  INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
+      export  INVENTREE_MEDIA_ROOT='/workspace/InvenTree/dev/media'
+      export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
       export PIP_USER='no'
 
       python3 -m venv venv
       source venv/bin/activate
       pip install invoke
       inv install
+      mkdir dev
       inv update
       echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'test@test.com', 'inventree')" | python InvenTree/manage.py shell
       inv server
