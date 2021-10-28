@@ -501,7 +501,7 @@ function loadManufacturerPartTable(table, url, options) {
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='badge rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
+                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;
@@ -758,7 +758,7 @@ function loadSupplierPartTable(table, url, options) {
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='badge rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
+                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;

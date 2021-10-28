@@ -1,6 +1,6 @@
 :root {
     --primary-color: #335d88;
-    --secondary-color: #e4dfdf;
+    --secondary-color: #f7f5ee;
     --highlight-color: #f5efe8;
 
     --border-color: #ccc;
@@ -11,7 +11,7 @@
     --label-grey: #aaa;
     --label-yellow: #fdc82a;
 
-    --bs-body-color: #555;
+    --bs-body-color: #68686a;
 }
 
 .login-screen {
@@ -441,7 +441,7 @@
     float: right;
 }
 
-.badge {
+.badge-right {
     float: right;
 }
 

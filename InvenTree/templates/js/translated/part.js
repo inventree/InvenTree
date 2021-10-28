@@ -451,7 +451,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='badge rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
     }
 
     return html;
@@ -528,7 +528,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 if (!row.active) {
-                    html += `<span class='badge rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
                 }
 
                 return html;

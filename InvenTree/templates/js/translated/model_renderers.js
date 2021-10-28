@@ -172,7 +172,7 @@ function renderPart(name, data, parameters, options) {
     }
 
     if (!data.active) {
-        extra += `<span class='badge rounded-pill bg-danger'>{% trans "Inactive" %}</span>`;
+        extra += `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Inactive" %}</span>`;
     }
 
     html += `
