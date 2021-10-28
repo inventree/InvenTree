@@ -644,7 +644,7 @@ DATE_INPUT_FORMATS = [
 ]
 
 # crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True

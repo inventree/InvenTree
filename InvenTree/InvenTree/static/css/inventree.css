@@ -10,6 +10,8 @@
     --label-green: #50aa51;
     --label-grey: #aaa;
     --label-yellow: #fdc82a;
+
+    --bs-body-color: #555;
 }
 
 .login-screen {
@@ -144,18 +146,16 @@
     padding-right: 5px;
 }
 
-.navbar-nav > li {
-    border-left: 1px solid;
-    border-right: 1px solid;
-    border-color: #eee;
-}
-
 .navbar-form {
     padding-right: 3px;
 }
 
+.navbar-light .navbar-nav .nav-link {
+    color: var(--bs-body-color);
+}
+
 #barcode-scan {
-    margin-top: 8px;
+    margin-top: 1px;
 }
 
 .icon-header {
@@ -893,6 +893,16 @@ input[type="submit"] {
 .btn {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.btn-secondary {
+    background-color: var(--bs-body-color);
+    border-color: var(--bs-body-color);
+}
+
+.btn-outline-secondary {
+    color: var(--bs-body-color);
+    border-color: var(--bs-body-color);
 }
 
 .btn-small {

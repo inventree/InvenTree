@@ -150,9 +150,9 @@
     <table class='table table-condensed table-striped'>
         <col width='25'>
         <tr>
-            <td><h4><span class='fas fa-boxes'></span></h4></td>
-            <td><h4>{% trans "Available Stock" %}</h4></td>
-            <td><h4>{% decimal available %}{% if part.units %} {{ part.units }}{% endif %}</h4></td>
+            <td><h5><span class='fas fa-boxes'></span></h5></td>
+            <td><h5>{% trans "Available Stock" %}</h5></td>
+            <td><h5>{% decimal available %}{% if part.units %} {{ part.units }}{% endif %}</h5></td>
         </tr>
         <tr>
             <td><span class='fas fa-map-marker-alt'></span></td>
@@ -191,9 +191,9 @@
         {% if not part.is_template %}
         {% if part.assembly %}
         <tr>
-            <td><h4><span class='fas fa-tools'></span></h4></td>
+            <td><h5><span class='fas fa-tools'></span></h5></td>
             <td colspan='2'>
-                <h4>{% trans "Build Status" %}</h4>
+                <h5>{% trans "Build Status" %}</h5>
             </td>
         </tr>
         <tr>
@@ -423,43 +423,5 @@
         );
     });
     {% endif %}
-
-    $("#toggle-part-details").click(function() {
-        if (this.value == 'show') {
-            this.innerHTML = '<span class="fas fa-chevron-up"></span> {% trans "Hide Part Details" %}';
-            this.value = 'hide';
-            // Store state of part details section
-            localStorage.setItem("part-details-show", true);
-        } else {
-            this.innerHTML = '<span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}';
-            this.value = 'show';
-            // Store state of part details section
-            localStorage.setItem("part-details-show", false);
-        }
-    });
-
-    // Load part details section
-    window.onload = function() {
-        details_show = localStorage.getItem("part-details-show")
-
-        if (details_show === 'true') {
-            console.log(details_show)
-            // Get collapsible details section
-            details = document.getElementById('collapsible-part-details');
-            // Add "show" class
-            details.classList.add("in");
-            // Get toggle
-            toggle = document.getElementById('toggle-part-details');
-            // Change state of toggle
-            toggle.innerHTML = '<span class="fas fa-chevron-up"></span> {% trans "Hide Part Details" %}';
-            toggle.value = 'hide';
-        } else {
-            // Get toggle
-            toggle = document.getElementById('toggle-part-details');
-            // Change state of toggle
-            toggle.innerHTML = '<span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}';
-            toggle.value = 'show';
-        }
-    }
 
 {% endblock %}
