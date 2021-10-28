@@ -1,7 +1,7 @@
 :root {
     --primary-color: #335d88;
     --secondary-color: #f7f5ee;
-    --highlight-color: #f5efe8;
+    --highlight-color: #ffffff;
 
     --border-color: #ccc;
 
@@ -540,7 +540,7 @@
 .inventree-body {
     width: 100%;
     padding: 5px;
-    margin: 10px;
+    margin-top: 10px;
 }
 
 .inventree-pre-content {
@@ -558,7 +558,7 @@
 }
 
 .body {
-    padding-top: 70px;
+    padding-top: 50px;
 }
 
 .modal {
@@ -713,56 +713,15 @@ input[type="submit"] {
     margin-bottom: 10px;
 }
 
-.inventree-navs {
-    display: flex;
+.sidebar-list-group-item {
+    background-color: var(--secondary-color);
+    color: var(--bs-body-color);
 }
 
-.sidenav {
-    height: 100%; /* 100% Full-height */
-    width: 0px; /* 0 width - change this with JavaScript */
-    position: relative; /* Stay in place */
-    overflow-x: hidden; /* Disable horizontal scroll */
-    overflow: hidden;
-    transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
-    z-index: 100;
-    background-color: #fff; /* Black*/
-    padding-top: 5px;
-}
-
-.sidenav li {
-    white-space: nowrap;
-    overflow-x: hidden;
-}
-
-.sidenav .list-group-item.active {
-    background-color: #c6d4ea;
-    border: 2px #aab solid;
-}
-
-/* The side navigation menu */
-.sidenav-left {
-    left: 0px;
-    top: 0px;
-    width: 0px;
-    z-index: 500;
-}
-
-.sidenav-left .badge {
-    position: absolute;
-    right: 3px;
-    margin-right: 5px;
-}
-
-.sidenav-right {
-    left: 0px;
-    top: 70px;
-    position: sticky;
-    font-size: 115%;
-    margin-left: 5px;
-}
-
-.sidenav-right svg {
-    margin-right: 10px;
+.sidebar-list-group-item.active {
+    color: var(--highlight-color);
+    background-color: var(--bs-body-color);
+    border: none;
 }
 
 .container > aside,
@@ -955,8 +914,21 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
     background: var(--label-grey);
 }
 
-.sidebar-icon {
-    min-width: 19px;
+.sidebar-wrapper {
+    overflow-y: auto;
+}
+
+.sidebar-item-icon {
+    min-width: 20px;
+}
+
+.sidebar-item-text {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.sidebar-nav a {
+    color: var(--bs-body-color);
 }
 
 .row.full-height {

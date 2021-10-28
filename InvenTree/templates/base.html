@@ -67,58 +67,41 @@
 
 {% include "navbar.html" %}
 
-<div class='main body wrapper'>
-    
-<div class='inventree-body'>
-    
-    {% block breadcrumb_list %}
-    <div class='container-fluid'>
-        <nav aria-label='breadcrumb'>
-            <ol class='breadcrumb'>
-                {% block breadcrumbs %}
-                {% endblock %}
-            </ol>
-        </nav>
+<div class='main body wrapper container-fluid inventree-body'>
+
+    <div class='row flex-nowrap inventree-body'>
+        <div class='sidebar-wrapper col-auto px-1'>
+            <div id='sidebar' class='collapse collapse-horizontal show border-end' style='display: none;'>
+                <div id='sidebar-nav' class='list-group text-sm-start'>
+                    <ul class='list-group sidebar-list-group'>
+                        {% block sidebar %}
+                        <!-- Sidebar goes here -->
+                        {% endblock %}
+                        {% include "sidebar_toggle.html" %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <main class='col ps-md-2 pt-2'>
+            {% block breadcrumb_list %}
+            <div class='container-fluid'>
+                <nav aria-label='breadcrumb'>
+                    <ol class='breadcrumb'>
+                        {% block breadcrumbs %}
+                        {% endblock %}
+                    </ol>
+                </nav>
+            </div>
+            {% endblock %}
+
+            {% block content %}
+                <!-- Each view fills in here.. -->
+            {% endblock %}
+        </main>
     </div>
-    {% endblock %}
-
-<div class='containter-fluid inventree-pre-content'>    
-    {% block pre_content %}
-    {% endblock %}
-</div>
-
-<div class='inventree-navs'>
-
-    <div class='sidenav sidenav-left' id='sidenav-left'>
-        {% block sidenav %}
-        <!-- Sidenav code here -->
-        {% endblock %}
-    </div>
-
-    <div class='sidenav sidenav-right' id='sidenav-right'>
-        {% block menubar %}
-        <!-- Menubar code here -->
-        {% endblock %}
-    </div>
-
-    <div class="container container-fluid inventree-content" id='inventree-content'>
-        {% block content %}
-        <!-- Each view fills in here.. -->
-        {% endblock %}
-
-    </div>
-
-
-{% block post_content %}
-{% endblock %}
-
-</div>
-
-{% include 'modals.html' %}
-{% include 'about.html' %}
-{% include 'notification.html' %}
-</div>
-
+    {% include 'modals.html' %}
+    {% include 'about.html' %}
+    {% include 'notification.html' %}
 </div>
 
 <!-- Scripts -->

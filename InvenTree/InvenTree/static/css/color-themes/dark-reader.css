@@ -2903,17 +2903,6 @@ a.ui-button:active,
 .ui-widget-header .ui-state-disabled {
     background-image: none;
 }
-.ui-state-active .ui-icon,
-.ui-button:active .ui-icon {
-    background-image: url("/static/script/jquery-ui/images/ui-icons_ffffff_256x240.png");
-}
-.ui-state-highlight .ui-icon,
-.ui-button .ui-state-highlight.ui-icon {
-    background-image: url("/static/script/jquery-ui/images/ui-icons_777620_256x240.png");
-}
-.ui-button .ui-icon {
-    background-image: url("/static/script/jquery-ui/images/ui-icons_777777_256x240.png");
-}
 .ui-widget-overlay {
     background-image: initial;
     background-color: rgb(72, 78, 81);
@@ -3117,13 +3106,6 @@ input[type="submit"] {
 }
 .modal .btn-secondary {
     background-color: rgb(75, 100, 108);
-}
-.sidenav {
-    background-color: rgb(24, 26, 27);
-}
-.sidenav .list-group-item.active {
-    background-color: rgb(43, 47, 49);
-    border-color: rgb(62, 68, 70);
 }
 .help-inline {
     color: rgb(238, 90, 90);

@@ -417,6 +417,7 @@
 
     // Load the "suppliers" tab
     onPanelLoad('suppliers', function() {
+
         function reloadSupplierPartTable() {
             $('#supplier-part-table').bootstrapTable('refresh');
         }
@@ -1112,10 +1113,5 @@
                 }
             var SalePriceChart = loadSellPricingChart($('#SalePriceChart'), salepricedata)
     {% endif %}
-
-    attachNavCallbacks({
-        name: 'part',
-        default: 'part-stock'
-    });
 
 {% endblock %}

@@ -4,8 +4,8 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block menubar %}
-{% include "part/navbar.html" %}
+{% block sidebar %}
+{% include "part/part_sidebar.html" %}
 {% endblock %}
 
 {% block thumbnail %}
@@ -216,10 +216,12 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableNavbar({
-        label: 'part',
-        toggleId: '#part-menu-toggle',
-    });
+    enableSidebar(
+        'part',
+        {
+            default: 'part-details',
+        }
+    );
 
     {% if part.image %}
     $('#part-thumb').click(function() {
