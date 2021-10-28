@@ -3,20 +3,9 @@
 {% load i18n %}
 {% load static %}
 
-{% block menubar %}
-<ul class='list-group'>
-    <li class='list-group-item'>
-        <a href='#' id='po-menu-toggle'>
-            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
-        </a>
-    </li>
-    <li class='list-group-item' title='{% trans "Return To Order" %}'>
-        <a href='{% url "po-detail" order.id %}' id='select-upload-file' class='nav-toggle'>
-            <span class='fas fa-undo side-icon'></span>
-            {% trans "Return To Order" %}
-        </a>
-    </li>
-</ul>
+{% block sidebar %}
+{% url "po-detail" order.id as url %}
+{% include "sidebar_item.html" with url=url text="Return to Orders" icon="fa-undo" %}
 {% endblock %}
 
 {% block page_content %}

@@ -7,8 +7,8 @@
 {% inventree_title %} | {% trans "Supplier Part" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "company/supplier_part_navbar.html" %}
+{% block sidebar %}
+{% include "company/supplier_part_sidebar.html" %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -308,12 +308,6 @@ $("#item-create").click(function() {
     });
 });
 
-
-enableNavbar({
-    label: 'supplier-part',
-    toggleId: '#supplier-part-menu-toggle'
-})
-
 $('#order-part, #order-part2').click(function() {
     launchModalForm(
         "{% url 'order-parts' %}",
@@ -344,9 +338,6 @@ $('#delete-part').click(function() {
     });
 });
 
-attachNavCallbacks({
-    name: 'supplierpart',
-    default: 'stock'
-});
+enableSidebar('supplierpart');
 
 {% endblock %}

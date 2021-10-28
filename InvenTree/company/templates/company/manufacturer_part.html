@@ -6,8 +6,8 @@
 InvenTree | {% trans "Manufacturer Part" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "company/manufacturer_part_navbar.html" %}
+{% block sidebar %}
+{% include "company/manufacturer_part_sidebar.html" %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -152,11 +152,6 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 {{ block.super }}
-
-enableNavbar({
-    label: 'manufacturer-part',
-    toggleId: '#manufacturer-part-menu-toggle'
-});
 
 function reloadParameters() {
     $("#parameter-table").bootstrapTable("refresh");
@@ -315,9 +310,6 @@ $('#delete-part').click(function() {
     });
 });
 
-attachNavCallbacks({
-    name: 'manufacturerpart',
-    default: 'parameters'
-});
+enableSidebar('manufacturerpart');
 
 {% endblock %}

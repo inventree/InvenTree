@@ -13,10 +13,6 @@
 {% endif %}
 {% endblock %}
 
-{% block sidenav %}
-<div id='part-tree'></div>
-{% endblock %}
-
 {% block breadcrumbs %}
 {% if part %}
 {% include "part/cat_link.html" with category=part.category part=part %}
