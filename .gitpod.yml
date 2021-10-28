@@ -15,6 +15,7 @@ tasks:
       mkdir dev
       inv update
       echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'test@test.com', 'inventree')" | python InvenTree/manage.py shell
+      gp sync-done setup_server
    env:
       INVENTREE_DB_ENGINE: 'sqlite3'
       INVENTREE_DB_NAME: '/workspace/data/database.sqlite3'
@@ -24,6 +25,8 @@ tasks:
 
  - name: Start server
    command: |
+      gp sync-await setup_server
+      source venv/bin/activate
       inv server
    env:
       INVENTREE_DB_ENGINE: 'sqlite3'
