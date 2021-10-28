@@ -32,7 +32,7 @@
                 <div>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     {{ col.name }}
-                    <button class='btn btn-default btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove column" %}'>
+                    <button class='btn btn-outline-secondary btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove column" %}'>
                         <span col_id='{{ forloop.counter0 }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </div>
@@ -61,7 +61,7 @@
         {% with forloop.counter as row_index %}
         <tr>
             <td style='width: 32px;'>
-                <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: left;' title='{% trans "Remove row" %}'>
+                <button class='btn btn-outline-secondary btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: left;' title='{% trans "Remove row" %}'>
                     <span row_id='{{ row_index }}' class='fas fa-trash-alt icon-red'></span>
                 </button>
             </td>

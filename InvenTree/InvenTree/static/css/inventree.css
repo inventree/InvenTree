@@ -394,6 +394,13 @@
     padding: .25em .5em;
 }
 
+.table button {
+    font-size: 90%;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 /* grid display for part images */
 
 .table-img-grid tr {

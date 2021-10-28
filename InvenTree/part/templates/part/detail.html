@@ -188,7 +188,7 @@
             </div>
             <div class='col-sm-6'>
                 <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-default'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-outline-secondary'>
                         <span class='fas fa-edit'>      
                         </span>
                     </button>
@@ -293,7 +293,7 @@
                             <a href='/part/{{ part.id }}/'>{{ part }}</a>
                             <div class='btn-group' style='float: right;'>
                                 {% if roles.part.change %}
-                                <button title='{% trans "Delete" %}' class='btn btn-default delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
+                                <button title='{% trans "Delete" %}' class='btn btn-outline-secondary delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
                                 {% endif %}
                             </div>
                         </td>

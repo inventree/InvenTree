@@ -71,6 +71,7 @@ function createNewModal(options={}) {
                     <div id='modal-footer-buttons'>
                         <!-- Extra buttons can be inserted here -->
                     </div>
+                    <span class='flex-item' style='flex-grow: 1;'></span>
                     <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>
@@ -787,7 +788,7 @@ function insertActionButton(modal, options) {
     if (already_present == false) {
         var html = `
         <span style='float: right;'>
-            <button name='${options.name}' type='submit' class='btn btn-default modal-form-button' value='${options.name}'>
+            <button name='${options.name}' type='submit' class='btn btn-outline-secondary modal-form-button' value='${options.name}'>
                 ${options.title}
             </button>
         </span>`;

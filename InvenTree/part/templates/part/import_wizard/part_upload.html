@@ -52,9 +52,9 @@
 
         {% block form_buttons_bottom %}
         {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
         {% endif %}
-        <button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
+        <button type="submit" class="save btn btn-outline-secondary">{% trans "Upload File" %}</button>
         </form>
         {% endblock form_buttons_bottom %}
 

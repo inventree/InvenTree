@@ -564,7 +564,8 @@ function insertConfirmButton(options) {
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="modal-confirm">
         <label class="form-check-label" for="modal-confirm">${message}</label>
-    </div>`;
+    </div>
+    `;
 
     $(options.modal).find('#modal-footer-buttons').append(html);
 
