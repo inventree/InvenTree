@@ -128,6 +128,13 @@
                     </div>
                     {% endif %}
                 </div>
+
+                <p>
+                    <!-- Details show/hide button -->
+                    <button id="toggle-part-details" class="btn btn-primary" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
+                    <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
+                    </button>
+                </p>
             </div>
             </div>
             <div class='info-messages'>
@@ -208,13 +215,6 @@
         </div>
     </div>
 
-    <p>
-        <!-- Details show/hide button -->
-        <button id="toggle-part-details" class="btn btn-primary" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
-        <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
-        </button>
-    </p>
-        
     <div class="collapse" id="collapsible-part-details">
         <div class="card card-body">
             <!-- Details Table -->

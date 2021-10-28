@@ -19,9 +19,13 @@
     <div class='panel-content'>
         {% if roles.sales_order.change %}
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <button type='button' class='btn btn-success' id='new-so-line'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
-            </button>
+            <div class='btn-group'>
+                <button type='button' class='btn btn-success' id='new-so-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+                </button>
+                <div class='filter-list' id='filter-list-sales-order-lines'>
+                </div>
+            </div>
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
