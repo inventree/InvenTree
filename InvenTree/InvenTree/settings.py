@@ -694,21 +694,20 @@ SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
 # MFA settings
-MFA_UNALLOWED_METHODS=()   # Methods that shouldn't be allowed for the user
-MFA_LOGIN_CALLBACK=""      # A function that should be called by username to login the user in session
-MFA_RECHECK=True           # Allow random rechecking of the user
-MFA_REDIRECT_AFTER_REGISTRATION="mfa_home"   # Allows Changing the page after successful registeration
-MFA_SUCCESS_REGISTRATION_MSG = _("Go to Security Home") # The text of the link
-MFA_RECHECK_MIN=10         # Minimum interval in seconds
-MFA_RECHECK_MAX=30         # Maximum in seconds
-MFA_QUICKLOGIN=True        # Allow quick login for returning users by provide only their 2FA 
+MFA_UNALLOWED_METHODS=()
+MFA_LOGIN_CALLBACK=""
+MFA_RECHECK=False
+MFA_REDIRECT_AFTER_REGISTRATION="index"
+MFA_SUCCESS_REGISTRATION_MSG = _("Go to Security Home")
+MFA_RECHECK_MIN=10
+MFA_RECHECK_MAX=30
+MFA_QUICKLOGIN=True
 
-TOKEN_ISSUER_NAME="PROJECT_NAME"      #TOTP Issuer name
-
-U2F_APPID="https://localhost"    #URL For U2F
-FIDO_SERVER_ID=u"localehost"      # Server rp id for FIDO2, it the full domain of your project
+TOKEN_ISSUER_NAME="PROJECT_NAME"
+U2F_APPID="https://localhost"
+FIDO_SERVER_ID=u"localehost"
 FIDO_SERVER_NAME=u"PROJECT_NAME"
-FIDO_LOGIN_URL='BASE_URL'         # TODO pull that from settings
+FIDO_LOGIN_URL='BASE_URL'
 
 
 # Markdownx configuration
