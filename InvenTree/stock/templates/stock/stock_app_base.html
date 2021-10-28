@@ -24,21 +24,3 @@
 {% include 'stock/loc_link.html' with location=location %}
 {% endif %}
 {% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
-
-    loadTree("{% url 'api-stock-tree' %}",
-        "#stock-tree",
-        {
-            name: 'stock',
-        }
-    );
-
-    initNavTree({
-        label: 'stock',
-        treeId: '#sidenav-left',
-        toggleId: '#toggle-stock-tree',
-    });
-
-{% endblock %}

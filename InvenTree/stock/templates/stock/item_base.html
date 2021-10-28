@@ -426,19 +426,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-loadTree("{% url 'api-stock-tree' %}",
-    "#stock-tree",
-    {
-        name: 'stock',
-    }
-);
-
-initNavTree({
-    label: 'stock',
-    treeId: '#sidenav-left',
-    toggleId: '#toggle-stock-tree',
-});
-
 $("#stock-serialize").click(function() {
     launchModalForm(
         "{% url 'stock-item-serialize' item.id %}",

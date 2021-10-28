@@ -20,20 +20,3 @@
 {% include 'part/cat_link.html' with category=category %}
 {% endif %}
 {% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
-
-    loadTree("{% url 'api-part-tree' %}",
-        "#part-tree",
-        {
-            name: 'part',
-        }
-    );
-
-    initNavTree({
-        label: 'part',
-        treeId: '#sidenav-left',
-        toggleId: '#toggle-part-tree',
-    });
-{% endblock %}

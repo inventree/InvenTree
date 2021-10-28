@@ -7,6 +7,40 @@
 {% inventree_title %} | {% trans "Index" %}
 {% endblock %}
 
+
+{% block sidebar %}
+<!-- Part Entries -->
+{% include "sidebar_header.html" with text="Parts" icon="fa-shapes" %}
+{% include "sidebar_item.html" with label='starred-parts' text="Starred Parts" icon="fa-star" badge=True %}
+{% include "sidebar_item.html" with label='latest-parts' text="Latest Parts" icon="fa-newspaper" badge=True %}
+{% include "sidebar_item.html" with label='bom-validation' text="BOM Requires Attention" icon="fa-times-circle" badge=True %}
+
+<!-- Stock Entries -->
+{% include "sidebar_header.html" with text="Stock" icon="fa-boxes" %}
+{% include "sidebar_item.html" with label='recently-updated-stock' text="Recently Updates" icon="fa-clock" badge=True %}
+{% include "sidebar_item.html" with label='low-stock' text="Low Stock" icon="fa-shopping-cart" badge=True %}
+{% include "sidebar_item.html" with label='depleted-stock' text="Depleted Stock" icon="fa-times badge=True" %}
+{% include "sidebar_item.html" with label='stock-to-build' text="Need to Build" icon="fa-bullhorn" badge=True %}
+{% include "sidebar_item.html" with label='expired-stock' text="Expired Stock" icon="fa-calendar-times" badge=True %}
+{% include "sidebar_item.html" with label='stale-stock' text="Stale Stock" icon="fa-stopwatch" badge=True %}
+
+<!-- Build Orders -->
+{% include "sidebar_header.html" with text="Build Orders" icon="fa-tools" %}
+{% include "sidebar_item.html" with label='build-pending' text="In Progress" icon="fa-cogs" badge=True %}
+{% include "sidebar_item.html" with label='build-overdue' text="Overdue" icon="fa-calendar-times" badge=True %}
+
+<!-- Purchase Orders -->
+{% include "sidebar_header.html" with text="Purchase Orders" icon="fa-shopping-cart" %}
+{% include "sidebar_item.html" with label='po-outstanding' text="Outstanding" icon="fa-sign-in-alt" badge=True %}
+{% include "sidebar_item.html" with label='po-overdue' text="Overdue" icon="fa-calendar-times" badge=True %}
+
+<!-- Sales Orders -->
+{% include "sidebar_header.html" with text="Sales Orders" icon="fa-truck" %}
+{% include "sidebar_item.html" with label='so-outstanding' text="Outstanding" icon="fa-sign-out-alt" badge=True %}
+{% include "sidebar_item.html" with label='so-overdue' text="Overdue" icon="fa-calendar-times" badge=True %}
+
+{% endblock %}
+
 {% block content %}
 <h3>{% inventree_title %} </h3>
 <hr>
@@ -319,5 +353,7 @@ loadSalesOrderTable("#table-so-overdue", {
 {% endif %}
 
 {% endif %}
+
+enableSidebar('index');
 
 {% endblock %}
