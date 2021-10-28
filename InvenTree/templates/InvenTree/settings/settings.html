@@ -8,8 +8,8 @@
 {% inventree_title %} | {% trans "Settings" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "InvenTree/settings/navbar.html" %}
+{% block sidebar %}
+{% include "InvenTree/settings/sidebar.html" %}
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,6 @@
 {% include "InvenTree/settings/user_labels.html" %}
 {% include "InvenTree/settings/user_reports.html" %}
 {% include "InvenTree/settings/user_display.html" %}
-{% include "InvenTree/settings/user_forms.html" %}
 
 {% if user.is_staff %}
 
@@ -320,15 +319,6 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
-
-enableNavbar({
-    label: 'settings',
-    toggleId: '#item-menu-toggle',
-});
-
-attachNavCallbacks({
-    name: 'settings',
-    default: 'account'
-});
+enableSidebar('settings');
 
 {% endblock %}
