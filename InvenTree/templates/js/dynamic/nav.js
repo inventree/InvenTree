@@ -273,7 +273,7 @@ function initNavTree(options) {
 /**
  * Enable support for sidebar on this page
  */
-function enableSidebar(label, options) {
+function enableSidebar(label, options={}) {
 
     // Enable callbacks for sidebar buttons
     $('.sidebar-selector').click(function() {

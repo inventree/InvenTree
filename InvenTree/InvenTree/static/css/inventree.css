@@ -916,6 +916,7 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 
 .sidebar-wrapper {
     overflow-y: auto;
+    background: var(--secondary-color);
 }
 
 .sidebar-item-icon {

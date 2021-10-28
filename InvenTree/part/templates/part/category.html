@@ -2,8 +2,8 @@
 {% load static %}
 {% load i18n %}
 
-{% block menubar %}
-{% include 'part/category_navbar.html' %}
+{% block sidebar %}
+{% include 'part/category_sidebar.html' %}
 {% endblock %}
 
 {% block details_left %}
@@ -214,10 +214,7 @@
     );
     {% endif %}
 
-    enableNavbar({
-        label: 'category',
-        toggleId: '#category-menu-toggle',
-    });
+    enableSidebar('category');
 
     $('#view-list').click(function() {
         $('#view-list').hide();
