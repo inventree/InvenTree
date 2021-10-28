@@ -54,8 +54,6 @@
     <!-- Custom CSS style goes here -->
     {% endblock %}
 </style>
-{% block head %}
-{% endblock %}
 
 <title>
 {% block page_title %}
@@ -175,6 +173,9 @@
 <script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
 
 {% block js_load %}
+{% endblock %}
+
+{% block head %}
 {% endblock %}
 
 <script type='text/javascript'>
