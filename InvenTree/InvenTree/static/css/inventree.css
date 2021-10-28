@@ -1,6 +1,6 @@
 :root {
     --primary-color: #335d88;
-    --secondary-color: #dcdcda;
+    --secondary-color: #e4dfdf;
     --highlight-color: #f5efe8;
 
     --border-color: #ccc;
@@ -1106,10 +1106,14 @@ input[type='number']{
     width: 20%;
     padding: 5px;
     min-height: 25px;
+    background-color: transparent;
 }
 
 .product-card-panel{
     height: 100%;
-    border: 1px solid #ccc;
-    box-shadow: 2px 2px #DDD;
+    margin-bottom: 5px;    
+}
+
+.borderless {
+    border: none;
 }
