@@ -1,7 +1,7 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
- - name: Setup django and start server
-   command: |
+ - name: Setup django
+   init: |
       export INVENTREE_DB_ENGINE='sqlite3'
       export  INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
       export  INVENTREE_MEDIA_ROOT='/workspace/InvenTree/dev/media'
@@ -15,6 +15,15 @@ tasks:
       mkdir dev
       inv update
       echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'test@test.com', 'inventree')" | python InvenTree/manage.py shell
+   env:
+      INVENTREE_DB_ENGINE: 'sqlite3'
+      INVENTREE_DB_NAME: '/workspace/data/database.sqlite3'
+      INVENTREE_MEDIA_ROOT: '/workspace/data/media'
+      INVENTREE_STATIC_ROOT: '/workspace/data/static'
+      PIP_USER: 'no'
+
+ - name: Start server
+   command: |
       inv server
    env:
       INVENTREE_DB_ENGINE: 'sqlite3'
