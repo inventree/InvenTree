@@ -14,24 +14,29 @@
 
 <div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
-        <h4>{% trans "Purchase Order Items" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Purchase Order Items" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.change %}
+                {% if order.status == PurchaseOrderStatus.PENDING %}
+                <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>
+                    <span class='fas fa-file-upload side-icon'></span> {% trans "Upload File" %}
+                </a>
+                <button type='button' class='btn btn-success' id='new-po-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+                </button>
+                {% elif order.status == PurchaseOrderStatus.PLACED %}
+                <button type='button' class='btn btn-success' id='receive-selected-items' title='{% trans "Receive selected items" %}'>
+                    <span class='fas fa-sign-in-alt'></span> {% trans "Receive Items" %}
+                </button>
+                {% endif %}
+                {% endif %}  
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            {% if roles.purchase_order.change %}
-            {% if order.status == PurchaseOrderStatus.PENDING %}
-            <button type='button' class='btn btn-success' id='new-po-line'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
-            </button>
-            <a class='btn btn-primary' href='{% url "po-upload" order.id %}' role='button'>
-                <span class='fas fa-file-upload side-icon'></span> {% trans "Upload File" %}
-            </a>
-            {% elif order.status == PurchaseOrderStatus.PLACED %}
-            <button type='button' class='btn btn-success' id='receive-selected-items' title='{% trans "Receive selected items" %}'>
-                <span class='fas fa-sign-in-alt'></span> {% trans "Receive Items" %}
-            </button>
-            {% endif %}
-            {% endif %}
             <div class='filter-list' id='filter-list-purchase-order-lines'>
                 <!-- An empty div in which the filter list will be constructed-->
             </div>

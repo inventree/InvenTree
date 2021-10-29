@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "page_base.html" %}
 
 {% load inventree_extras %}
 {% load static %}
@@ -8,39 +8,47 @@
 {% inventree_title %} | {% trans "Purchase Orders" %}
 {% endblock %}
 
-{% block content %}
+{% block heading %}
+{% trans "Purchase Orders" %}
+{% endblock %}
 
-<h3>{% trans "Purchase Orders" %}</h3>
-<hr>
+{% block actions %}
+{% if roles.purchase_order.add %}
+<button class='btn btn-success' type='button' id='po-create' title='{% trans "Create new purchase order" %}'>
+    <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}
+</button>
+{% endif %}
+{% endblock %}
 
-<div id='table-buttons'>
-    <div class='button-toolbar container-fluid' style='float: right;'>
-        <div class='btn-group'>
-            {% if roles.purchase_order.add %}
-            <button class='btn btn-success' type='button' id='po-create' title='{% trans "Create new purchase order" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}
-            </button>
-            {% endif %}
-            <button id='order-print' class='btn btn-outline-secondary' title='{% trans "Print Order Reports" %}'>
-                <span class='fas fa-print'></span>
-            </button>
-            <button class='btn btn-outline-secondary' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
-                <span class='fas fa-calendar-alt'></span>
-            </button>
-            <button class='btn btn-outline-secondary' type='button' id='view-list' title='{% trans "Display list view" %}'>
-                <span class='fas fa-th-list'></span>
-            </button>
-            <div class='filter-list' id='filter-list-purchaseorder'>
-                <!-- An empty div in which the filter list will be constructed -->
+{% block page_info %}
+
+<div class='panel-content'>
+    <div id='table-buttons'>
+        <div class='button-toolbar container-fluid' style='float: right;'>
+            <div class='btn-group' role='group'>
+                
+                <button id='order-print' class='btn btn-outline-secondary' title='{% trans "Print Order Reports" %}'>
+                    <span class='fas fa-print'></span>
+                </button>
+                <button class='btn btn-outline-secondary' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+                    <span class='fas fa-calendar-alt'></span>
+                </button>
+                <button class='btn btn-outline-secondary' type='button' id='view-list' title='{% trans "Display list view" %}'>
+                    <span class='fas fa-th-list'></span>
+                </button>
+                <div class='filter-list' id='filter-list-purchaseorder'>
+                    <!-- An empty div in which the filter list will be constructed -->
+                </div>
             </div>
         </div>
     </div>
+    
+    <table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='purchase-order-table'>
+    </table>
+    
+    <div id='purchase-order-calendar'></div>
+    
 </div>
-
-<table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='purchase-order-table'>
-</table>
-
-<div id='purchase-order-calendar'></div>
 
 {% endblock %}
 

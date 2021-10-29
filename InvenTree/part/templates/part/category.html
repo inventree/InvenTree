@@ -33,7 +33,7 @@
 {% endif %}
 {% if roles.part_category.add %}
 <button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
-    <span class='fas fa-plus-circle'></span> {% trans "Add Category" %}
+    <span class='fas fa-plus-circle'></span> {% trans "New Category" %}
 </button>
 {% endif %}
 {% endblock %}
@@ -116,19 +116,24 @@
 
 <div class='panel panel-hidden' id='panel-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Parts" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Parts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part.add %}
+                <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div id='part-button-toolbar'>
         <div class='btn-group' role='group'>
-            <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
-                <span class='fas fa-file-download'></span> {% trans "Export" %}
-            </button>
-            {% if roles.part.add %}
-            <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
-            </button>
-            {% endif %}
             <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
+                    <span class='fas fa-file-download'></span> {% trans "Export" %}
+                </button>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
                     {% trans "Options" %}
                 </button>

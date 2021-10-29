@@ -11,18 +11,23 @@
 
 <div class='panel panel-hidden' id='panel-supplier-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Supplier Parts" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Supplier Parts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                    <button class="btn btn-success" id='supplier-part-create' title='{% trans "Create new supplier part" %}'>
+                        <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+                    </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
         <div id='supplier-part-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
-                    {% if roles.purchase_order.add %}
-                        <button class="btn btn-success" id='supplier-part-create' title='{% trans "Create new supplier part" %}'>
-                            <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
-                        </button>
-                    {% endif %}
                     <div class='btn-group'>
                         <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-bs-toggle="dropdown">{% trans "Options" %}
                             <span class="caret"></span>
@@ -107,20 +112,26 @@
 
 <div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Purchase Orders" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Purchase Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                <button class='btn btn-success' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
-        {% if roles.purchase_order.add %}
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <button class='btn btn-success' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}</button>
                 <div class='filter-list' id='filter-list-purchaseorder'>
                     <!-- Empty div -->
                 </div>
             </div>
         </div>
-        {% endif %}
 
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#po-button-bar'>
         </table>
@@ -129,21 +140,26 @@
 
 <div class='panel panel-hidden' id='panel-sales-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Sales Orders" %}</h4>
-    </div>
-    <div class='panel-content'>
-        {% if roles.sales_order.add %}
-        <div id='so-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Sales Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.sales_order.add %}
                 <button class='btn btn-success' type='button' id='new-sales-order' title='{% trans "Create new sales order" %}'>
                     <div class='fas fa-plus-circle'></div> {% trans "New Sales Order" %}
                 </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='so-button-bar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
                 <div class='filter-list' id='filter-list-salesorder'>
                     <!-- Empty div -->
                 </div>
             </div>
         </div>
-        {% endif %}
 
         <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
         </table>

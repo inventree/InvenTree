@@ -143,17 +143,23 @@ src="{% static 'img/blank_image.png' %}"
 
 <div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Supplier Part Orders" %}</h4>
-    </div>
-    <div class='panel-content'>
-        {% if roles.purchase_order.add %}
-        <div id='button-bar'>
-            <div class='btn-group'>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Supplier Part Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
                 <button class='btn btn-primary' type='button' id='order-part2' title='{% trans "Order part" %}'>
-                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}</button>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+                </button>
+                {% endif %}        
             </div>
         </div>
-        {% endif %}        
+    </div>
+    <div class='panel-content'>
+        <div id='button-bar'>
+            <div class='btn-group'>
+            </div>
+        </div>
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
         </table>
     </div>
@@ -161,16 +167,21 @@ src="{% static 'img/blank_image.png' %}"
 
 <div class='panel panel-hidden' id='panel-pricing'>
     <div class='panel-heading'>
-        <h4>{% trans "Pricing Information" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Pricing Information" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                <button class='btn btn-success' id='new-price-break' type='button'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
-        {% if roles.purchase_order.add %}
         <div id='price-break-toolbar' class='btn-group'>
-            <button class='btn btn-success' id='new-price-break' type='button'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
-            </button>
         </div>
-        {% endif %}
 
         <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'>    
         </table>

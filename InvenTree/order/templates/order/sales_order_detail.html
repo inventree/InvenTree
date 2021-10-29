@@ -14,20 +14,25 @@
 
 <div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
-        <h4>{% trans "Sales Order Items" %}</h4>
-    </div>
-    <div class='panel-content'>
-        {% if roles.sales_order.change %}
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Sales Order Items" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.sales_order.change %}
                 <button type='button' class='btn btn-success' id='new-so-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
+            <div class='btn-group'>
                 <div class='filter-list' id='filter-list-sales-order-lines'>
                 </div>
             </div>
         </div>
-        {% endif %}
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>

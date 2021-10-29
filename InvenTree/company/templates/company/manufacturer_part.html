@@ -104,18 +104,23 @@ src="{% static 'img/blank_image.png' %}"
 
 <div class='panel panel-hidden' id='panel-supplier-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Suppliers" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Suppliers" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class="btn btn-success" id='supplier-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
             <div class='btn-group'>
-                <button class="btn btn-success" id='supplier-create'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
-                </button>
                 <div id='opt-dropdown' class="btn-group">
                     <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
                 </div>
             </div>
@@ -128,18 +133,23 @@ src="{% static 'img/blank_image.png' %}"
 
 <div class='panel panel-hidden' id='panel-parameters'>
     <div class='panel-heading'>
-        <h4>{% trans "Parameters" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Parameters" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class='btn btn-success' id='parameter-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='parameter-toolbar'>
             <div class='btn-group'>
-                <button class='btn btn-success' id='parameter-create'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
-                </button>
                 <div id='opt-dropdown' class="btn-group">
                     <button id='parameter-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href='#' id='multi-parameter-delete' title='{% trans "Delete parameters" %}'>{% trans "Delete" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='multi-parameter-delete' title='{% trans "Delete parameters" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
                 </div>
             </div>

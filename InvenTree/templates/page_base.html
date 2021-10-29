@@ -13,7 +13,7 @@
                 <i>-- page header goes here --</i>
                 {% endblock %}
             </h4>
-            <span class='flex' style='flex-grow: 1;'></span>
+            {% include "spacer.html" %}
             <div id='page-actions' class='btn-group' role='group'>
                 {% block actions %}
                 <i>-- actions go here --</i>
@@ -21,6 +21,8 @@
             </div>
         </div>
     </div>
+    
+    {% block page_info %}
     <div class='panel-content'>
         <div class='row'>
             <div class='col-sm-6' id='detail-panel-left'>
@@ -48,11 +50,11 @@
             </div>
         </div>
     </div>
+    {% endblock %}
+    
 </div>
 
-
 {% block page_content %}
-block page_content
 {% endblock %}
 
 {% endblock %}

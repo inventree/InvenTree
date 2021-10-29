@@ -170,24 +170,29 @@
 
 <div class='panel panel-hidden' id='panel-allocate'>
     <div class='panel-heading'>
-        <h4>{% trans "Allocate Stock to Build" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Allocate Stock to Build" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if build.active and build.has_untracked_bom_items %}
+                <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
+                    <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
+                </button>
+                <button class='btn btn-success' type='button' id='btn-auto-allocate' title='{% trans "Allocate stock to build" %}'>
+                    <span class='fas fa-sign-in-alt'></span> {% trans "Allocate Stock" %}
+                </button>
+                <!--
+                <button class='btn btn-primary' type='button' id='btn-order-parts' title='{% trans "Order required parts" %}'>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
+                </button>
+                -->
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% if build.has_untracked_bom_items %}
         {% if build.active %}
-        <div class='btn-group' role='group'>
-            <button class='btn btn-success' type='button' id='btn-auto-allocate' title='{% trans "Allocate stock to build" %}'>
-                <span class='fas fa-sign-in-alt'></span> {% trans "Allocate Stock" %}
-            </button>
-            <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
-                <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
-            </button>
-            <!--
-            <button class='btn btn-primary' type='button' id='btn-order-parts' title='{% trans "Order required parts" %}'>
-                <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-            </button>
-            -->
-        </div>
         {% if build.areUntrackedPartsFullyAllocated %}
         <div class='alert alert-block alert-success'>
             {% trans "Untracked stock has been fully allocated for this Build Order" %}
@@ -221,23 +226,31 @@
 
 <div class='panel panel-hidden' id='panel-outputs'>
     <div class='panel-heading'>
-        <h4>{% trans "Incomplete Build Outputs" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Incomplete Build Outputs" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if build.active %}
+                <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Build Output" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='build-output-toolbar'>
             <div class='button-toolbar container-fluid'>
                 {% if build.active %}
                 <div class='btn-group'>
-                    <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
-                        <span class='fas fa-plus-circle'></span>
-                    </button>
+
                     <!-- Build output actions -->
                     <div class='btn-group'>
                         <button id='output-options' class='btn btn-primary dropdown-toiggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
                             <span class='fas fa-tools'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
-                            <li><a href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}</a></li>
                         </ul>
                     </div>
                 </div>
