@@ -4,7 +4,7 @@ tasks:
    init: |
       export INVENTREE_DB_ENGINE='sqlite3'
       export INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
-      export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/dev/media'
+      export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/inventree-data/media'
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
       export PIP_USER='no'
 
@@ -14,7 +14,10 @@ tasks:
       inv install
       mkdir dev
       inv update
-      echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'test@test.com', 'inventree')" | python InvenTree/manage.py shell
+      git clone git@github.com:inventree/demo-dataset.git /workspace/InvenTree/inventree-data
+      invoke delete-data
+      invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
+
       gp sync-done setup_server
 
  - name: Start server
@@ -22,7 +25,7 @@ tasks:
       gp sync-await setup_server
       export INVENTREE_DB_ENGINE='sqlite3'
       export INVENTREE_DB_NAME='/workspace/InvenTree/dev/database.sqlite3'
-      export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/dev/media'
+      export INVENTREE_MEDIA_ROOT='/workspace/InvenTree/inventree-data/media'
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
 
       source venv/bin/activate
