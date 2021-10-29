@@ -1,4 +1,3 @@
-# Below the RSA fingerprint for github is hard-encoded. If that does not match in the next few years GH had a bad day.
 tasks:
  - name: Setup django
    before: |
@@ -12,13 +11,8 @@ tasks:
       source venv/bin/activate
       pip install invoke
       inv install
-      echo 'nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8'  >> ~/.ssh/known_hosts
-      git clone git@github.com:inventree/demo-dataset.git /workspace/InvenTree/inventree-data
       mkdir dev
       inv update
-      invoke delete-data -f
-      invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
-
       gp sync-done setup_server
 
  - name: Start server
@@ -31,6 +25,11 @@ tasks:
       export INVENTREE_STATIC_ROOT='/workspace/InvenTree/dev/static'
 
       source venv/bin/activate
+      rm /workspace/InvenTree/inventree-data -r
+      git clone https://github.com/inventree/demo-dataset /workspace/InvenTree/inventree-data
+      invoke delete-data -f
+      invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
+      
       inv server
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
