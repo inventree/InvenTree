@@ -32,3 +32,11 @@ tasks:
 ports:
   - port: 8000
     onOpen: open-preview
+
+github:
+  prebuilds:
+    master: true
+    pullRequests: false
+    pullRequestsFromForks: true
+    addBadge: true
+    addLabel: gitpod-ready
