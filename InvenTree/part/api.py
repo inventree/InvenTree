@@ -50,21 +50,6 @@ from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import BuildStatus
 
 
-class PartCategoryTree(TreeSerializer):
-
-    title = _("Parts")
-    model = PartCategory
-
-    queryset = PartCategory.objects.all()
-
-    @property
-    def root_url(self):
-        return reverse('part-index')
-
-    def get_items(self):
-        return PartCategory.objects.all().prefetch_related('parts', 'children')
-
-
 class CategoryList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartCategory objects.
 
@@ -1332,7 +1317,6 @@ class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 part_api_urls = [
-    url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([

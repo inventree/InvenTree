@@ -48,22 +48,6 @@ from InvenTree.api import AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
 
 
-class StockCategoryTree(TreeSerializer):
-    title = _('Stock')
-    model = StockLocation
-
-    @property
-    def root_url(self):
-        return reverse('stock-index')
-
-    def get_items(self):
-        return StockLocation.objects.all().prefetch_related('stock_items', 'children')
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
-
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API detail endpoint for Stock object
 
@@ -1104,8 +1088,6 @@ stock_api_urls = [
         url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
         url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
-
-    url(r'^tree/', StockCategoryTree.as_view(), name='api-stock-tree'),
 
     # Detail for a single stock item
     url(r'^(?P<pk>\d+)/', StockDetail.as_view(), name='api-stock-detail'),
