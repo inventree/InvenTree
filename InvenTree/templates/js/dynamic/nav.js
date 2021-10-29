@@ -115,15 +115,20 @@ function enableSidebar(label, options={}) {
         activatePanel(label, panel_name);
     }
 
-    // Add callback to "collapse" and "expand" the sidebar
-    $('#sidebar-toggle').click(function() {
+    if (options.hide_toggle) {
+        // Hide the toggle button if specified
+        $('#sidebar-toggle').remove();
+    } else {
+        $('#sidebar-toggle').click(function() {
+            // Add callback to "collapse" and "expand" the sidebar
 
-        // By default, the menu is "expanded"
-        var state = localStorage.getItem(`inventree-menu-state-${label}`) || 'expanded';
-        
-        // We wish to "toggle" the state!
-        setSidebarState(label, state == "expanded" ? "collapsed" : "expanded");
-    });
+            // By default, the menu is "expanded"
+            var state = localStorage.getItem(`inventree-menu-state-${label}`) || 'expanded';
+            
+            // We wish to "toggle" the state!
+            setSidebarState(label, state == "expanded" ? "collapsed" : "expanded");
+        });
+    }
     
     // Set the initial state (default = expanded)
     var state = localStorage.getItem(`inventree-menu-state-${label}`) || 'expanded';
@@ -132,6 +137,7 @@ function enableSidebar(label, options={}) {
 
     // Finally, show the sidebar
     $('#sidebar').show();
+
 }
 
 

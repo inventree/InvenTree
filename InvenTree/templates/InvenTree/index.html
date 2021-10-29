@@ -354,6 +354,11 @@ loadSalesOrderTable("#table-so-overdue", {
 
 {% endif %}
 
-enableSidebar('index');
+enableSidebar(
+    'index',
+    {
+        hide_toggle: true,
+    }
+);
 
 {% endblock %}
