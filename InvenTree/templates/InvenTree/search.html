@@ -10,35 +10,19 @@
 
 {% block content %}
 
-<h3>
-    {% trans "Search Results" %}
-</h3>
-
-<div class="container" style='width: 100%'>
-    {% include "search_form.html" with query_text=query %}
-</div>
-
-{% if query %}
-{% else %}
-<div id='empty-search-query'>
-    <h4><em>{% trans "Enter a search query" %}</em></h4>
-</div>
-{% endif %}
-
-<div class='col-sm-3' id='item-panel'>
-    <div class='panel'>
-        <ul class='list-group' id='search-item-list'>
-        </ul>
+<div class='panel panel-inventree'>
+    <div class='panel-content'>
+        {% include "search_form.html" with query_text=query %}
+        {% if query %}
+        {% else %}
+        <div id='empty-search-query'>
+            <h4><em>{% trans "Enter a search query" %}</em></h4>
+        </div>
+        {% endif %}
     </div>
 </div>
-<div class='col-sm-9' id='details-panel'>
-    <ul class='list-group' id='search-result-list'>
-        <li class='list-group-item panel'>
-            <div class='container'>
-                <img class='index-bg' src='{% static "img/inventree.png" %}'>
-            </div>
-        </li>
-    </ul>
+
+<div id='detail-panels'>
 </div>
 
 {% endblock %}
@@ -47,69 +31,50 @@
 {{ block.super }}
 
     function addItemTitle(title) {
-        // Add header block to the results list
-        $('#search-item-list').append(
-            `<li class='list-group-item'><strong>${title}</strong></li>`
-        );
+        addSidebarHeader({
+            text: title,
+        });
     }
 
     function addItem(label, title, icon, options) {
-        // Add a search itme to the action list
-        $('#search-item-list').append(
-            `<li class='list-group-item' id='search-item-${label}'>
-                <a href='#'>
-                    <span class='fas ${icon}'></span>
-                    ${title}
-                </a>
-                <span class='badge rounded-pill bg-dark' id='badge-${label}'>
-                    <span class='fas fa-spin fa-spinner'></span>
-                </span>
-            </li>`
-        );
+
+        // Construct a "badge" to add to the sidebar item
+        var badge = `
+        <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
+            <span class='fas fa-spin fa-spinner'></span>
+        </span>
+        `;
+
+        addSidebarItem({
+            label: label,
+            text: title,
+            icon: icon,
+            content_after: badge
+        });
 
         // Add a results table
-        $('#search-result-list').append(
-            `<li class='list-group-item panel' id='search-result-${label}'>
-                <h4>${title}</h4>
-                <table class='table table-condensed table-striped' id='table-${label}'></table>
-            </li>`
+        $('#detail-panels').append(
+            `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
+                <div class='panel-heading'>
+                    <h4>${title}</h4>
+                </div>
+                <div class='panel-content'>
+                    <table class='table table-condensed table-striped' id='table-${label}'></table>
+                </div>
+            </div>`
         );
-
-        // Hide the results table
-        $(`#search-result-${label}`).hide();
-
-        // Add callback when the action is clicked
-        $(`#search-item-${label}`).click(function() {
-
-            // Hide all childs
-            $('#search-result-list').children('li').each(function() {
-                $(this).hide();
-            });
-
-            // Show the one we want
-            $(`#search-result-${label}`).fadeIn();
-
-            // Remove css class from all action items
-            $("#search-item-list").children('li').each(function() {
-                $(this).removeClass('index-action-selected');
-            });
-
-            // Add css class to the action we are interested in
-            $(`#search-item-${label}`).addClass('index-action-selected');
-        });
 
         // Connect a callback to the table
         $(`#table-${label}`).on('load-success.bs.table', function() {
             var count = $(`#table-${label}`).bootstrapTable('getData').length;
 
-            $(`#badge-${label}`).html(count);
+            var badge = $(`#sidebar-badge-${label}`);
 
-            $(`#badge-${label}`).removeClass('bg-dark');
+            badge.html(count);
 
             if (count > 0) {
-                $(`#badge-${label}`).addClass('bg-primary');
-            } else {
-                $(`#badge-${label}`).addClass('bg-warning');
+                badge.removeClass('bg-dark');
+                badge.addClass('bg-primary');
             }
         });
     }
@@ -264,7 +229,11 @@
 
     {% endif %}    
 
-
-
+    enableSidebar(
+        'search',
+        {
+            hide_toggle: 'true',
+        }
+    );
 
 {% endblock %}

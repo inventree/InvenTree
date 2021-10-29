@@ -96,8 +96,6 @@ function enableSidebar(label, options={}) {
         // Find the matching panel element to display
         var panel_name = el.attr('id').replace('select-', '');
 
-        console.log("activating panel:", panel_name);
-
         activatePanel(label, panel_name, options);
     });
 
