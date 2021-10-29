@@ -113,10 +113,11 @@ function enableSidebar(label, options={}) {
     } else {
         // Find the "first" available panel (according to the sidebar)
         var selector = $('.sidebar-selector').first();
-        
-        var panel_name = selector.attr('id').replace('select-', '');
-        
-        activatePanel(label, panel_name);
+
+        if (selector.exists()) {
+            var panel_name = selector.attr('id').replace('select-', '');
+            activatePanel(label, panel_name);
+        }
     }
 
     if (options.hide_toggle) {
