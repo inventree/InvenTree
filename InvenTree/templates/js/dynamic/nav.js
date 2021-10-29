@@ -2,6 +2,10 @@
 */
 
 /* exported
+    activatePanel,
+    addSidebarHeader,
+    addSidebarItem,
+    addSidebarLink,
     enableSidebar,
     onPanelLoad,
 */
@@ -92,6 +96,8 @@ function enableSidebar(label, options={}) {
         // Find the matching panel element to display
         var panel_name = el.attr('id').replace('select-', '');
 
+        console.log("activating panel:", panel_name);
+
         activatePanel(label, panel_name, options);
     });
 
@@ -165,4 +171,42 @@ function setSidebarState(label, state) {
 
     // Save the state of this sidebar
     localStorage.setItem(`inventree-menu-state-${label}`, state);
+}
+
+
+/*
+ * Dynamically construct and insert a sidebar item into the sidebar at runtime.
+ * This mirrors the templated code in "sidebar_item.html"
+ */
+function addSidebarItem(options={}) {
+
+    var html = `
+    <a href='#' id='select-${options.label}' title='${options.text}' class='list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate sidebar-selector' data-bs-parent='#sidebar'>
+        <i class='bi bi-bootstrap'></i>
+        ${options.content_before || ''}
+        <span class='sidebar-item-icon fas ${options.icon}'></span>
+        <span class='sidebar-item-text' style='display: none;'>${options.text}</span>
+        ${options.content_after || ''}
+    </a>
+    `;
+
+    $('#sidebar-list-group').append(html);
+}
+
+/*
+ * Dynamicall construct and insert a sidebar header into the sidebar at runtime
+ * This mirrors the templated code in "sidebar_header.html"
+ */
+function addSidebarHeader(options={}) {
+
+    var html = `
+    <span title='${options.text}' class="list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate" data-bs-parent="#sidebar">
+        <h6>
+            <i class="bi bi-bootstrap"></i>
+            <span class='sidebar-item-text' style='display: none;'>${options.text}</span>
+        </h6>
+    </span>
+    `;
+
+    $('#sidebar-list-group').append(html);
 }

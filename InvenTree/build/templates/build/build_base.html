@@ -88,11 +88,13 @@ src="{% static 'img/blank_image.png' %}"
     {% if build.target_date %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Target Date" %}</td>
+        <td>
+            {% trans "Target Date" %}
+        </td>
         <td>
             {{ build.target_date }}
             {% if build.is_overdue %}
-            <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
+            <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='badge badge-right rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
