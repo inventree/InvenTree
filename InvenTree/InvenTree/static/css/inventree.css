@@ -1,6 +1,6 @@
 :root {
     --primary-color: #335d88;
-    --secondary-color: #f7f5ee;
+    --secondary-color: #eef3f7;
     --highlight-color: #ffffff;
 
     --border-color: #ccc;
@@ -920,7 +920,7 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 
 .sidebar-wrapper {
     overflow-y: auto;
-    background: var(--secondary-color);
+    /* background: var(--secondary-color); */
     margin-top: 0.3rem;
     padding-top: 0.25rem;
     padding-left: 0px !important;

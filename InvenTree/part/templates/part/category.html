@@ -180,8 +180,16 @@
     </div>
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
+            <div class='btn-group' role='group'>
     
+                <!-- Buttons to toggle between tree and table view -->
+                <button id='view-cat-list' class='btn btn-outline-secondary' type='button' title='{% trans "View list display" %}'>
+                    <span class='fas fa-th-list'></span>
+                </button>
+                <button id='view-cat-tree' class='btn btn-outline-secondary' type='button' title='{% trans "View tree display" %}'>
+                    <span class='fas fa-sitemap'></span>
+                </button>
+
                 <div class='filter-list' id='filter-list-category'>
                     <!-- An empty div in which the filter list will be constructed -->
                 </div>
@@ -202,16 +210,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-    loadPartCategoryTable($('#subcategory-table'), {
-        params: {
-            {% if category %}
-            parent: {{ category.pk }}
-            {% else %}
-            parent: 'null'
-            {% endif %}
-        }
-    });
-
     {% if category %}
     loadParametricPartTable(
         "#parametric-part-table",
@@ -224,14 +222,58 @@
 
     enableSidebar('category');
 
+    // Callback to view the category table in "list" mode
+    $('#view-cat-list').click(function() {
+        $('#view-cat-list').hide();
+        $('#view-cat-tree').show();
+
+        inventreeSave('category-tree-view', '');
+
+        loadPartCategoryTable($('#subcategory-table'), {
+            params: {
+                {% if category %}
+                parent: {{ category.pk }}
+                {% else %}
+                parent: 'null'
+                {% endif %}
+            },
+            tree_view: false,
+        });
+
+        $('#subcategory-table').bootstrapTable('resetView');
+    });
+
+    // Callback to view the category table in "tree" mode
+    $('#view-cat-tree').click(function() {
+        $('#view-cat-list').show();
+        $('#view-cat-tree').hide();
+
+        inventreeSave('category-tree-view', 1);
+
+        loadPartCategoryTable($('#subcategory-table'), {
+            params: {
+                {% if category %}
+                parent: {{ category.pk }}
+                {% else %}
+                parent: 'null'
+                {% endif %}
+            },
+            tree_view: true,
+        });
+
+        $('#subcategory-table').bootstrapTable('resetView');
+    });
+
+    // Callback to view the part table in "list" mode
     $('#view-list').click(function() {
         $('#view-list').hide();
         $('#view-grid').show();
-
+        
         $('#part-table').bootstrapTable('toggleCustomView');
         inventreeSave('part-grid-view', '');
     });
-
+    
+    // Callback to view the part table in "grid" mode
     $('#view-grid').click(function() {
         $('#view-grid').hide();
         $('#view-list').show();
@@ -332,5 +374,27 @@
     } else {
         $('#view-list').hide();
     }
+
+    var tree_view = false;
+
+    if (inventreeLoad('category-tree-view')) {
+        $('#view-cat-tree').hide();
+
+        tree_view = true;
+    } else {
+        $('#view-cat-list').hide();
+    }
+
+    loadPartCategoryTable($('#subcategory-table'), {
+        params: {
+            {% if category %}
+            parent: {{ category.pk }}
+            {% else %}
+            parent: 'null'
+            {% endif %}
+        },
+        tree_view: tree_view
+    });
+
 
 {% endblock %}
