@@ -151,7 +151,7 @@ function enableSidebar(label, options={}) {
  */
 function setSidebarState(label, state) {
 
-    if (state == "collapsed") {
+    if (state == 'collapsed') {
         $('.sidebar-item-text').animate({
             'opacity': 0.0,
             'font-size': '0%',

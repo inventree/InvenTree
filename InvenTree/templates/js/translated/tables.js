@@ -214,6 +214,8 @@ $.fn.inventreeTable = function(options) {
         options.pageList = [25, 50, 100, 250, 'all'];
         options.totalField = 'count';
         options.dataField = 'results';
+    } else {
+        options.pagination = false;
     }
 
     // Extract query params

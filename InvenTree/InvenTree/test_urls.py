@@ -115,7 +115,7 @@ class URLTest(TestCase):
         if url.startswith("account_"):
             return
 
-        if pk:
+        if pk and pk not in ['as']:
             # We will assume that there is at least one item in the database
             reverse(url, kwargs={"pk": 1})
         else:
