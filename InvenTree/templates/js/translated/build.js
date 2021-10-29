@@ -34,8 +34,8 @@ function buildFormFields() {
         reference: {
             prefix: global_settings.BUILDORDER_REFERENCE_PREFIX,
         },
-        title: {},
         part: {},
+        title: {},
         quantity: {},
         parent: {
             filters: {
@@ -937,7 +937,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                                 var progress = makeProgressBar(
                                     allocatedLines,
-                                    totalLines
+                                    totalLines,
+                                    {
+                                        max_width: '150px',
+                                    }
                                 );
     
                                 build_progress.html(progress);

@@ -146,7 +146,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-check-circle'></span></td>
         <td>{% trans "Completed" %}</td>
-        <td> {{ build.completed }} / {{ build.quantity }}</td>
+        <td>{% progress_bar build.completed build.quantity id='build-completed' max_width='150px' %}</td>
     </tr>
     {% if build.parent %}
     <tr>

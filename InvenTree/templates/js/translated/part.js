@@ -943,20 +943,20 @@ function loadPartTable(table, url, options={}) {
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
                 if (row.minimum_stock && row.minimum_stock > value) {
-                    value += `<span class='badge rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
+                    value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
                 }
 
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
-                value = `0<span class='badge rounded-pill bg-info'>{% trans "On Order" %}: ${row.on_order}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.on_order}</span>`;
                 link = '?display=purchase-orders';
             } else if (row.building) {
                 // There is no stock available, but stock is being built
-                value = `0<span class='badge rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
                 link = '?display=build-orders';
             } else {
                 // There is no stock available
-                value = `0<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
             }
 
             return renderLink(value, `/part/${row.pk}/${link}`);

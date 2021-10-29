@@ -1,6 +1,7 @@
 {% extends "build/build_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 {% load status_codes %}
 {% load markdownify %}
 
@@ -65,7 +66,7 @@
                 <tr>
                     <td><span class='fas fa-check-circle'></span></td>
                     <td>{% trans "Completed" %}</td>
-                    <td>{{ build.completed }} / {{ build.quantity }}</td>
+                    <td>{% progress_bar build.completed build.quantity id='build-completed-2' max_width='150px' %}</td>
                 </tr>
                 {% if build.active and build.has_untracked_bom_items %}
                 <tr>

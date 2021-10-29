@@ -60,18 +60,23 @@
 
 <div class='panel panel-hidden' id='panel-manufacturer-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Manufacturer Parts" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Manufacturer Parts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                    <button type="button" class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
+                        <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
+                    </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
         <div id='manufacturer-part-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
-                    {% if roles.purchase_order.add %}
-                        <button type="button" class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
-                            <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
-                        </button>
-                    {% endif %}
                     <div class='btn-group' role='group'>
                         <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">{% trans "Options" %}
                             <span class="caret"></span>

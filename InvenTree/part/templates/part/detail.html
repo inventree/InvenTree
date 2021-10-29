@@ -109,14 +109,21 @@
 
 <div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Test Templates" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Part Test Templates" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <div class='btn-group' role='group'>
+                    <button type='button' class='btn btn-success' id='add-test-template'>
+                        <span class='fas fa-plus-circle'></span> {% trans "Add Test Template" %}
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
             <div class='button-toolbar container-fluid' style="float: right;">
-                <div class='btn-group' role='group'>
-                    <button type='button' class='btn btn-success' id='add-test-template'>{% trans "Add Test Template" %}</button>
-                </div>
                 <div class='filter-list' id='filter-list-parttests'>
                     <!-- Empty div -->
                 </div>
@@ -214,17 +221,22 @@
 
 <div class='panel panel-hidden' id='panel-variants'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Variants" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Part Variants" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if part.is_template and part.active %}
+                <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Variant" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='variant-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
-                    {% if part.is_template and part.active %}
-                    <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>
-                        <span class='fas fa-plus-circle'></span> {% trans "New Variant" %}
-                    </button>
-                    {% endif %}
                 </div>
                 <div class='filter-list' id='filter-list-variants'>
                     <!-- Empty div (will be filled out with available BOM filters) -->
@@ -330,7 +342,17 @@
 
 <div class='panel panel-hidden' id='panel-bom'>
     <div class='panel-heading'>
-        <h4>{% trans "Bill of Materials" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Bill of Materials" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part.change %}
+                <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% include "part/bom.html" with part=part %}
@@ -355,16 +377,23 @@
 
 <div class='panel panel-hidden' id='panel-build-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Builds" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Part Builds" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if part.active %}
+                {% if roles.build.add %}
+                <button class="btn btn-success" id='start-build'>
+                    <span class='fas fa-tools'></span> {% trans "New Build Order" %}
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='build-button-toolbar'>
             <div class='button-toolbar container-fluid' style='float: right';>
-                {% if part.active %}
-                {% if roles.build.add %}
-                <button class="btn btn-success" id='start-build'><span class='fas fa-tools'></span> {% trans "Start New Build" %}</button>
-                {% endif %}
-                {% endif %}
                 <div class='filter-list' id='filter-list-build'>
                     <!-- Empty div for filters -->
                 </div>

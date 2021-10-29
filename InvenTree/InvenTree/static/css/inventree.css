@@ -94,6 +94,9 @@
     width: 100%;
     margin-bottom: 0px;
     background: #eeeef5;
+    font-size: 75%;
+    height: 1.25rem;
+    border-radius: 10px;
 }
 
 .progress-bar {

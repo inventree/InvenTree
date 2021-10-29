@@ -4,7 +4,18 @@
 
 {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
 
-<div class='dropzone' id='part-thumb'>
+<div class='dropzone part-thumb-container' id='part-thumb'>
+    {% if roles.part.change %}
+    <div class='btn-row part-thumb-overlay'>
+        <div class='btn-group' role='group'>
+            <button type='button' class='btn btn-outline-secondary' title="{% trans 'Select from existing images' %}" id='part-image-select'><span class='fas fa-th'></span></button>
+            <button type='button' class='btn btn-outline-secondary' title="{% trans 'Upload new image' %}" id='part-image-upload'><span class='fas fa-file-upload'></span></button>
+            {% if allow_download %}
+            <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='part-image-url'><span class='fas fa-cloud-download-alt'></span></button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
     <img class="part-thumb" id='part-image'
         {% if part.image %}
         src="{{ part.image.url }}"
@@ -12,14 +23,3 @@
         src="{% static 'img/blank_image.png' %}"
         {% endif %}/>
 </div>
-{% if roles.part.change %}
-<div class='btn-row part-thumb-overlay'>
-    <div class='btn-group'>
-        <button type='button' class='btn btn-outline-secondary' title="{% trans 'Select from existing images' %}" id='part-image-select'><span class='fas fa-th'></span></button>
-        <button type='button' class='btn btn-outline-secondary' title="{% trans 'Upload new image' %}" id='part-image-upload'><span class='fas fa-file-upload'></span></button>
-        {% if allow_download %}
-        <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='part-image-url'><span class='fas fa-cloud-download-alt'></span></button>
-        {% endif %}
-    </div>
-</div>
-{% endif %}

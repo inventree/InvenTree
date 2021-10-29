@@ -182,8 +182,14 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var id = options.id || 'progress-bar';
 
+    var style = '';
+
+    if (opts.max_width) {
+        style += `max-width: ${options.max_width}; `;
+    }
+
     return `
-    <div id='${id}' class='progress'>
+    <div id='${id}' class='progress' style='${style}'>
         <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
         <div class='progress-value'>${text}</div>
     </div>

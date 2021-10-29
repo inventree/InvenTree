@@ -44,7 +44,7 @@
     src="{% static 'img/blank_image.png' %}"
     {% endif %}/>
     <div class='btn-row part-thumb-overlay'>
-        <div class='btn-group'>
+        <div class='btn-group' role='group'>
             <button type='button' class='btn btn-outline-secondary' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
             {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
             {% if allow_download %}
