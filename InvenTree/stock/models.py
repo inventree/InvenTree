@@ -17,7 +17,7 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
@@ -36,6 +36,7 @@ import label.models
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree import tasks as inventree_tasks
 
 from users.models import Owner
 
@@ -1649,6 +1650,17 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+@receiver(post_save, sender=StockItem)
+def after_save_stock_item(sender, instance: StockItem, **kwargs):
+    """
+    Check if the stock quantity has fallen below the minimum threshold of part. If yes, notify the users who have
+    starred the part
+    """
+
+    if instance.quantity <= instance.part.minimum_stock:
+        inventree_tasks.notify_low_stock(instance)
 
 
 class StockItemAttachment(InvenTreeAttachment):
