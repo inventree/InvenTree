@@ -130,7 +130,7 @@ function enableSidebar(label, options={}) {
             var state = localStorage.getItem(`inventree-menu-state-${label}`) || 'expanded';
             
             // We wish to "toggle" the state!
-            setSidebarState(label, state == "expanded" ? "collapsed" : "expanded");
+            setSidebarState(label, state == 'expanded' ? 'collapsed' : 'expanded');
         });
     }
     

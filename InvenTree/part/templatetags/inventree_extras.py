@@ -244,6 +244,7 @@ def global_settings(*args, **kwargs):
 
     return InvenTreeSetting.allValues()
 
+
 @register.simple_tag()
 def progress_bar(val, max, *args, **kwargs):
     """
@@ -259,7 +260,7 @@ def progress_bar(val, max, *args, **kwargs):
     else:
         style = ''
 
-    percent = float(val/max) * 100
+    percent = float(val / max) * 100
 
     if percent > 100:
         percent = 100
