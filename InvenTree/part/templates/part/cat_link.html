@@ -1,6 +1,5 @@
 {% load i18n %}
 
-<li><a href='#' id='toggle-part-tree'><strong><span class='fas fa-stream'></span></strong></a></li>
 <li class="breadcrumb-item{% if category is None %} active" aria-current="page{% endif %}"><a href="/part/">{% trans "Parts" %}</a></li>
 {% if category %}
 {% for path_item in category.parentpath %}

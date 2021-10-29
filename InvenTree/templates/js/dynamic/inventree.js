@@ -190,6 +190,13 @@ function inventreeDocReady() {
     $('.brand-icon').each(function(i, obj) {
         loadBrandIcon($(this), $(this).attr('brand_name'));
     });
+
+    // Callback for "admin view" button
+    $('#admin-button').click(function() {
+        var url = $(this).attr('url');
+
+        location.href = url;
+    });
 }
 
 function isFileTransfer(transfer) {

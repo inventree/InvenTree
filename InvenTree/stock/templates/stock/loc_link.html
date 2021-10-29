@@ -1,6 +1,5 @@
 {% load i18n %}
 
-<li><a href='#' title='Toggle Stock Tree' id='toggle-stock-tree'><strong><span class='fas fa-stream'></span></strong></a></li>  
 <li class="breadcrumb-item{% if location is None %} active" aria-current="page{% endif %}"><a href="/stock/">{% trans "Stock" %}</a></li>
 {% if location %}
 {% for path_item in location.parentpath %}

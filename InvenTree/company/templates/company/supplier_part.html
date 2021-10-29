@@ -19,6 +19,32 @@
 <li class="breadcrumb-item active" aria-current="page"><a href='{% url "supplier-part-detail" part.id %}'>{{ part.SKU }}</a></li>
 {% endblock %}
 
+{% block heading %}
+<h4>
+    {% trans "Supplier Part" %}: {{ part.SKU }}
+</h4>
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and perms.company.change_company %}
+{% url 'admin:company_supplierpart_change' part.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
+    <span class='fas fa-shopping-cart'></span>
+</button>
+{% endif %}
+<button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit supplier part" %}'>
+    <span class='fas fa-edit icon-green'/>
+</button>
+{% if roles.purchase_order.delete %}
+<button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete supplier part" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
+{% endblock %}
+
 {% block thumbnail %}
 <img class='part-thumb'
 {% if part.part.image %}
@@ -29,37 +55,10 @@ src="{% static 'img/blank_image.png' %}"
 {% endblock %}
 
 {% block details %}
-<h4>
-    {% trans "Supplier Part" %}: {{ part.SKU }}
-    {% if user.is_staff and perms.company.change_company %}
-    <a href="{% url 'admin:company_supplierpart_change' part.pk %}">
-        <span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span>
-    </a>
-    {% endif %}
-</h4>
+
 <p>
     {{ part.part.full_name }}
 </p>
-
-{% if roles.purchase_order.change %}
-<div class='btn-row'>
-    <div class='btn-group' role='group'>
-        {% if roles.purchase_order.add %}
-        <button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
-            <span class='fas fa-shopping-cart'></span>
-        </button>
-        {% endif %}
-        <button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit supplier part" %}'>
-            <span class='fas fa-edit icon-green'/>
-        </button>
-        {% if roles.purchase_order.delete %}
-        <button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete supplier part" %}'>
-            <span class='fas fa-trash-alt icon-red'/>
-        </button>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
 
 {% endblock %}
 

@@ -18,6 +18,36 @@ InvenTree | {% trans "Manufacturer Part" %}
 <li class="breadcrumb-item active" aria-current="page"><a href='{% url "manufacturer-part-detail" part.id %}'>{{ part.MPN }}</a></li>
 {% endblock %}
 
+{% block heading %}
+<h4>
+    {% trans "Manufacturer Part" %}: {{ part.part.full_name }}
+</h4>
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and perms.company.change_company %}
+{% url 'admin:company_supplierpart_change' part.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if roles.purchase_order.change %}
+{% comment "for later" %}
+{% if roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
+    <span class='fas fa-shopping-cart'></span>
+</button>
+{% endif %}
+{% endcomment %}
+<button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit manufacturer part" %}'>
+    <span class='fas fa-edit icon-green'/>
+</button>
+{% if roles.purchase_order.delete %}
+<button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete manufacturer part" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
+{% endif %}
+{% endblock %}
+
 {% block thumbnail %}
 <img class='part-thumb'
 {% if part.part.image %}
@@ -28,34 +58,6 @@ src="{% static 'img/blank_image.png' %}"
 {% endblock %}
 
 {% block details %}
-<h4>
-    {% trans "Manufacturer Part" %}: {{ part.part.full_name }}
-    {% if user.is_staff and perms.company.change_company %}
-    <a href="{% url 'admin:company_supplierpart_change' part.pk %}">
-        <span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span>
-    </a>
-    {% endif %}
-</h4>
-
-{% if roles.purchase_order.change %}
-<div class='btn-group' role='group'>
-    {% comment "for later" %}
-    {% if roles.purchase_order.add %}
-    <button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
-        <span class='fas fa-shopping-cart'></span>
-    </button>
-    {% endif %}
-    {% endcomment %}
-    <button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit manufacturer part" %}'>
-        <span class='fas fa-edit icon-green'/>
-    </button>
-    {% if roles.purchase_order.delete %}
-    <button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete manufacturer part" %}'>
-        <span class='fas fa-trash-alt icon-red'/>
-    </button>
-    {% endif %}
-</div>
-{% endif %}
 
 {% endblock %}
 

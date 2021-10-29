@@ -6,6 +6,21 @@
 {% block content %}
 
 <div class='panel'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-row'>
+            <h4>
+                {% block heading %}
+                <i>-- page header goes here --</i>
+                {% endblock %}
+            </h4>
+            <span class='flex' style='flex-grow: 1;'></span>
+            <div id='page-actions' class='btn-group' role='group'>
+                {% block actions %}
+                <i>-- actions go here --</i>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
     <div class='panel-content'>
         <div class='row'>
             <div class='col-sm-6' id='detail-panel-left'>

@@ -6,41 +6,44 @@
 {% include 'part/category_sidebar.html' %}
 {% endblock %}
 
+{% block heading %}
+{% if category %}
+{% trans "Part Category" %}: {{ category.name }}
+{% else %}
+{% trans "Parts" %}
+{% endif %}
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and roles.part_category.change %}
+{% url 'admin:part_partcategory_change' category.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if category %}
+{% if roles.part_category.change %}
+<button class='btn btn-outline-secondary' id='cat-edit' title='{% trans "Edit part category" %}'>
+    <span class='fas fa-edit'/>
+</button>
+{% endif %}
+{% if roles.part_category.delete %}
+<button class='btn btn-outline-secondary' id='cat-delete' title='{% trans "Delete part category" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
+{% endif %}
+{% if roles.part_category.add %}
+<button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
+    <span class='fas fa-plus-circle'></span> {% trans "Add Category" %}
+</button>
+{% endif %}
+{% endblock %}
+
 {% block details_left %}
 {% if category %}
-<h4>
-    {% trans "Part Category" %}: {{ category.name }}
-    {% if user.is_staff and roles.part_category.change %}
-    <a href="{% url 'admin:part_partcategory_change' category.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
-    {% endif %}
-</h4>
 <p>{{ category.description }}</p>
 {% else %}
-<h4>
-    {% trans "Parts" %}
-</h4>
 <p>{% trans "Top level part category" %}</p>
 {% endif %}
-
-<div class='btn-group' role='group'>
-    {% if roles.part_category.add %}
-    <button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
-        <span class='fas fa-plus-circle icon-green'/>
-    </button>
-    {% endif %}
-    {% if category %}
-    {% if roles.part_category.change %}
-    <button class='btn btn-outline-secondary' id='cat-edit' title='{% trans "Edit part category" %}'>
-        <span class='fas fa-edit icon-blue'/>
-    </button>
-    {% endif %}
-    {% if roles.part_category.delete %}
-    <button class='btn btn-outline-secondary' id='cat-delete' title='{% trans "Delete part category" %}'>
-        <span class='fas fa-trash-alt icon-red'/>
-    </button>
-    {% endif %}
-    {% endif %}
-</div>
 
 {% endblock %}
 

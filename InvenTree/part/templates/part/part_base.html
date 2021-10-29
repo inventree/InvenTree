@@ -12,14 +12,84 @@
 {% include "part/part_thumb.html" %}
 {% endblock %}
 
+{% block heading %}
+{{ part.full_name }}
+{% endblock %}
+
+{% block actions %}
+<!-- Admin View -->
+{% if user.is_staff and roles.part.change %}
+{% url 'admin:part_part_change' part.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Star this part" %}'>
+    <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
+</button>
+
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+    </ul>
+</div>
+{% endif %}
+{% if part.active %}
+<button type='button' class='btn btn-outline-secondary' id='price-button' title='{% trans "Show pricing information" %}'>
+    <span id='part-price-icon' class='fas fa-dollar-sign'/>
+</button>
+{% if roles.stock.change %}
+<div class='btn-group'>
+    <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-boxes'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        <li>
+            <a class='dropdown-item' href='#' id='part-count'>
+                <span class='fas fa-clipboard-list'></span>
+                {% trans "Count part stock" %}
+            </a>
+        </li>
+        <li>
+            <a class='dropdown-item' href='#' id='part-move'>
+                <span class='fas fa-exchange-alt'></span>
+                {% trans "Transfer part stock" %}
+            </a>
+        </li>
+    </ul>
+</div>
+{% endif %}
+{% if part.purchaseable and roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='part-order' title='{% trans "Order part" %}'>
+    <span id='part-order-icon' class='fas fa-shopping-cart'/>
+</button>
+{% endif %}
+{% endif %}
+<!-- Part actions -->
+{% if roles.part.add or roles.part.change or roles.part.delete %}
+<div class='btn-group'>
+    <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu'>
+        {% if roles.part.add %}
+        <li><a class='dropdown-item' href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
+        {% endif %}
+        {% if roles.part.change %}
+        <li><a class='dropdown-item' href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
+        {% endif %}
+        {% if roles.part.delete %}
+        <li><a class='dropdown-item' href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block details %}
 
-<h4>
-    {{ part.full_name }}
-    <!-- Admin View -->
-    {% if user.is_staff and roles.part.change %}
-    <a  href="{% url 'admin:part_part_change' part.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>&ensp;
-    {% endif %}
+
 </h4>
 <!-- Properties -->
 <h4>
@@ -67,72 +137,7 @@
     </div>
 </h4>
 
-<!-- Part Actions -->
-<div class='btn-group' role='group'>
-    <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Star this part" %}'>
-        <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
-    </button>
 
-    {% if barcodes %}
-    <!-- Barcode actions menu -->
-    <div class='btn-group'>
-        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
-        <ul class='dropdown-menu'>
-            <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
-            <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-        </ul>
-    </div>
-    {% endif %}
-    {% if part.active %}
-    <button type='button' class='btn btn-outline-secondary' id='price-button' title='{% trans "Show pricing information" %}'>
-        <span id='part-price-icon' class='fas fa-dollar-sign'/>
-    </button>
-    {% if roles.stock.change %}
-    <div class='btn-group'>
-        <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
-            <span class='fas fa-boxes'></span> <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu'>
-            <li>
-                <a class='dropdown-item' href='#' id='part-count'>
-                    <span class='fas fa-clipboard-list'></span>
-                    {% trans "Count part stock" %}
-                </a>
-            </li>
-            <li>
-                <a class='dropdown-item' href='#' id='part-move'>
-                    <span class='fas fa-exchange-alt'></span>
-                    {% trans "Transfer part stock" %}
-                </a>
-            </li>
-        </ul>
-    </div>
-    {% endif %}
-    {% if part.purchaseable and roles.purchase_order.add %}
-    <button type='button' class='btn btn-outline-secondary' id='part-order' title='{% trans "Order part" %}'>
-        <span id='part-order-icon' class='fas fa-shopping-cart'/>
-    </button>
-    {% endif %}
-    {% endif %}
-    <!-- Part actions -->
-    {% if roles.part.add or roles.part.change or roles.part.delete %}
-    <div class='btn-group'>
-        <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
-        <ul class='dropdown-menu'>
-            {% if roles.part.add %}
-            <li><a class='dropdown-item' href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
-            {% endif %}
-            {% if roles.part.change %}
-            <li><a class='dropdown-item' href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
-            {% endif %}
-            {% if roles.part.delete %}
-            <li><a class='dropdown-item' href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
-            {% endif %}
-        </ul>
-    </div>
-    {% endif %}
-
-</div>
 
 <!-- Part info messages -->
 <div class='info-messages'>

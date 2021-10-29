@@ -8,54 +8,56 @@
 {% inventree_title %} | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
-{% block details_left %}
-<div class='row g-0'>
-    <div class='col-md-4'>
-        <div class='dropzone part-thumb-container' id='company-thumb'>
-            <img class="part-thumb" id='company-image'
-            {% if company.image %}
-            src="{{ company.image.url }}"
-            {% else %}
-            src="{% static 'img/blank_image.png' %}"
-            {% endif %}/>
-            <div class='btn-row part-thumb-overlay'>
-                <div class='btn-group'>
-                    <button type='button' class='btn btn-outline-secondary' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
-                    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
-                    {% if allow_download %}
-                    <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class='col-md-8'>
-        <h4>
-            {{ company.name }}
-            {% if user.is_staff and perms.company.change_company %}
-            <a  href="{% url 'admin:company_company_change' company.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
-            {% endif %}
-        </h4>
-        <p>{{ company.description }}</p>
-        <div class='btn-group' role='group'>
-            {% if company.is_supplier and roles.purchase_order.add %}
-            <button type='button' class='btn btn-outline-secondary' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
-                <span class='fas fa-shopping-cart'/>
-            </button>
-            {% endif %}
-            {% if perms.company.change_company %}
-            <button type='button' class='btn btn-outline-secondary' id='company-edit' title='{% trans "Edit company information" %}'>
-                <span class='fas fa-edit icon-green'/>
-            </button>
-            {% endif %}
-            {% if perms.company.delete_company %}
-            <button type='button' class='btn btn-outline-secondary' id='company-delete' title='{% trans "Delete Company" %}'>
-                <span class='fas fa-trash-alt icon-red'/>
-            </button>
+{% block heading %}
+{% trans "Company" %}: {{ company.name }}
+{% endblock %}
+
+{% block actions %}
+<!-- Admin View -->
+{% if user.is_staff and perms.company.change_company %}
+{% url 'admin:company_company_change' company.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if company.is_supplier and roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
+    <span class='fas fa-shopping-cart'/>
+</button>
+{% endif %}
+{% if perms.company.change_company %}
+<button type='button' class='btn btn-outline-secondary' id='company-edit' title='{% trans "Edit company information" %}'>
+    <span class='fas fa-edit icon-green'/>
+</button>
+{% endif %}
+{% if perms.company.delete_company %}
+<button type='button' class='btn btn-outline-secondary' id='company-delete' title='{% trans "Delete Company" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
+{% endblock %}
+
+{% block thumbnail %}
+<div class='dropzone part-thumb-container' id='company-thumb'>
+    <img class="part-thumb" id='company-image'
+    {% if company.image %}
+    src="{{ company.image.url }}"
+    {% else %}
+    src="{% static 'img/blank_image.png' %}"
+    {% endif %}/>
+    <div class='btn-row part-thumb-overlay'>
+        <div class='btn-group'>
+            <button type='button' class='btn btn-outline-secondary' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
+            {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+            {% if allow_download %}
+            <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
             {% endif %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block details %}
+<p>{{ company.description }}</p>
+
 {% endblock %}
 
 {% block details_right %}

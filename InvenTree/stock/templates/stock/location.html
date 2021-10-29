@@ -7,79 +7,84 @@
 {% include "stock/location_sidebar.html" %}
 {% endblock %}
 
-{% block details_left %}
+{% block heading %}
 {% if location %}
-<h4>
-    {% trans "Stock Location" %}: {{ location.name }}
-    {% if user.is_staff and roles.stock_location.change %}
-    <a  href="{% url 'admin:stock_stocklocation_change' location.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
-    {% endif %}
-</h4>
-<p>{{ location.description }}</p>
+{% trans "Stock Location" %}: {{ location.name }}
 {% else %}
-<h4>
-    {% trans "Stock" %}
-</h4>
-<p>{% trans "Top level stock location" %}</p>
+{% trans "Stock" %}
+{% endif %}
+{% endblock %}
+
+{% block actions %}
+<!-- Admin view -->
+{% if location and user.is_staff and roles.stock_location.change %}
+{% url 'admin:stock_stocklocation_change' location.pk as url %}
+{% include "admin_button.html" with url=url %}
 {% endif %}
 
+{% if barcodes %}
+<!-- Barcode actions menu -->
+{% if location %}
 <div class='btn-group' role='group'>
-    {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser or not location %}
-    {% if roles.stock_location.add %}
-    <button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
-        <span class='fas fa-plus-circle'></span>
-    </button>
-    {% endif %}
-    {% endif %}
-    {% if barcodes %}
-    <!-- Barcode actions menu -->
-    {% if location %}
-    <div class='btn-group' role='group'>
-        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
-        <ul class='dropdown-menu'>
-            <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
-            <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-            <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
-        </ul>
-    </div>
-    <!-- Check permissions and owner -->
-    {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
-    {% if roles.stock.change %}
-    <div class='btn-group' role='group'>
-        <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
-            <span class='fas fa-boxes'></span> <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu' role='menu'>
-            <li>
-                <a class='dropdown-item' href='#' id='location-count'>
-                    <span class='fas fa-clipboard-list'></span>
-                    {% trans "Count stock" %}
-                </a>
-            </li>
-            <li>
-                <a class='dropdown-item' href='#' id='location-move'>
-                    <span class='fas fa-exchange-alt'></span>
-                    {% trans "Transfer stock" %}
-                </a>
-            </li>
-        </ul>
-        </div>
-        {% endif %}
-        {% if roles.stock_location.change %}
-        <div class='btn-group' role='group'>
-            <button id='location-actions' title='{% trans "Location actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle="dropdown"><span class='fas fa-sitemap'></span> <span class='caret'></span></button>
-            <ul class='dropdown-menu' role='menu'>
-                <li><a class='dropdown-item' href='#' id='location-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit location" %}</a></li>
-                {% if roles.stock.delete %}
-                <li><a class='dropdown-item' href='#' id='location-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete location" %}</a></li>
-                {% endif %}
-            </ul>
-        </div>
-        {% endif %}
-        {% endif %}
-        {% endif %}
-    {% endif %}
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
+    </ul>
 </div>
+<!-- Check permissions and owner -->
+{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
+{% if roles.stock.change %}
+<div class='btn-group' role='group'>
+    <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-boxes'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li>
+            <a class='dropdown-item' href='#' id='location-count'>
+                <span class='fas fa-clipboard-list'></span>
+                {% trans "Count stock" %}
+            </a>
+        </li>
+        <li>
+            <a class='dropdown-item' href='#' id='location-move'>
+                <span class='fas fa-exchange-alt'></span>
+                {% trans "Transfer stock" %}
+            </a>
+        </li>
+    </ul>
+</div>
+{% endif %}
+{% if roles.stock_location.change %}
+<div class='btn-group' role='group'>
+    <button id='location-actions' title='{% trans "Location actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle="dropdown"><span class='fas fa-sitemap'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='location-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit location" %}</a></li>
+        {% if roles.stock.delete %}
+        <li><a class='dropdown-item' href='#' id='location-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete location" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser or not location %}
+{% if roles.stock_location.add %}
+<button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
+    <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
+</button>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block details_left %}
+{% if location %}
+<p>{{ location.description }}</p>
+{% else %}
+<p>{% trans "Top level stock location" %}</p>
+{% endif %}
 
 {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 {% if owner_control.value == "True" %}
