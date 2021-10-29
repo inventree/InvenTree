@@ -129,14 +129,19 @@
 
 <div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Purchase Orders" %}</h4>
+        <div class='d-flex flex-row'>    
+            <h4>{% trans "Purchase Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>
-                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
-                </button>
                 <div class='filter-list' id='filter-list-purchaseorder'>
                     <!-- An empty div in which the filter list will be constructed -->
                 </div>
@@ -234,16 +239,21 @@
 
 <div class='panel panel-hidden' id='panel-part-parameters'>
     <div class='panel-heading'>
-        <h4>{% trans "Parameters" %}</h4>
-    </div>
-    <div class='panel-content'>
-        <div id='param-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Parameters" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
                 {% if roles.part.add %}
                 <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
                 </button>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
             </div>
         </div>
         <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
@@ -252,7 +262,13 @@
 
 <div class='panel panel-hidden' id='panel-part-attachments'>
     <div class='panel-heading'>
-        <h4>{% trans "Attachments" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% include "attachment_table.html" %}
@@ -261,17 +277,24 @@
 
 <div class='panel panel-hidden' id='panel-related-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Related Parts" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Related Parts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part.change %}
+                <button class='btn btn-success' type='button' id='add-related-part' title='{% trans "Add Related" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Related" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='related-button-bar'>
             <div class='button-toolbar container-fluid' style='float: left;'>
-                {% if roles.part.change %}
-                <button class='btn btn-success' type='button' id='add-related-part' title='{% trans "Add Related" %}'>{% trans "Add Related" %}</button>
                 <div class='filter-list' id='filter-list-related'>
                     <!-- An empty div in which the filter list will be constructed -->
                 </div>
-                {% endif %}
             </div>
         </div>
         
@@ -362,14 +385,19 @@
 
 <div class='panel panel-hidden' id='panel-suppliers'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Suppliers" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Part Suppliers" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class="btn btn-success" id='supplier-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
             <div class='btn-group'>
-                <button class="btn btn-success" id='supplier-create'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
-                </button>
                 <div id='opt-dropdown' class="btn-group">
                     <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
@@ -384,15 +412,20 @@
     </div>
 
     <div class='panel-heading'>
-        <h4>{% trans "Part Manufacturers" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Part Manufacturers" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class="btn btn-success" id='manufacturer-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div class='panel-content'>
             <div id='manufacturer-button-toolbar'>
                 <div class='btn-group'>
-                    <button class="btn btn-success" id='manufacturer-create'>
-                        <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
-                    </button>
                     <div id='opt-dropdown' class="btn-group">
                         <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                         <ul class="dropdown-menu">
