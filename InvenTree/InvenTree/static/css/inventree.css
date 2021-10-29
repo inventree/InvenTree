@@ -503,6 +503,7 @@
 }
 
 .navigation {
+    background-color: var(--secondary-color);
 }
 
 .nav-tabs {
@@ -917,8 +918,9 @@ input[type="date"].form-control, input[type="time"].form-control, input[type="da
 .sidebar-wrapper {
     overflow-y: auto;
     background: var(--secondary-color);
-    margin-top: 1rem;
+    margin-top: 0.3rem;
     padding-top: 0.25rem;
+    padding-left: 0px !important;
 }
 
 .sidebar-item-icon {
