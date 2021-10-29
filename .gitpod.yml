@@ -43,3 +43,4 @@ github:
     pullRequestsFromForks: true
     addBadge: true
     addLabel: gitpod-ready
+    addCheck: false
