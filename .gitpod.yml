@@ -12,9 +12,9 @@ tasks:
       source venv/bin/activate
       pip install invoke
       inv install
+      git clone git@github.com:inventree/demo-dataset.git /workspace/InvenTree/inventree-data
       mkdir dev
       inv update
-      git clone git@github.com:inventree/demo-dataset.git /workspace/InvenTree/inventree-data
       invoke delete-data -f
       invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
 
