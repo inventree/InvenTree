@@ -453,14 +453,14 @@ function removeStockRow(e) {
 function passFailBadge(result) {
 
     if (result) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "PASS" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='badge rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
     }
 }
 
 function noResultBadge() {
-    return `<span class='badge rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
+    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
 function formatDate(row) {

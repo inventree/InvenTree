@@ -346,6 +346,32 @@
             <h4>{% trans "Bill of Materials" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                <!-- Export menu -->
+                <div class='btn-group'>
+                    <button id='export-options' title='{% trans "Export actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                        <span class='fas fa-download'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu' role='menu'>
+                        <li><a class='dropdown-item' href='#' id='download-bom'><span class='fas fa-file-download'></span> {% trans "Export BOM" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='print-bom-report'><span class='fas fa-file-pdf'></span> {% trans "Print BOM Report" %}</a></li>
+                    </ul>
+                </div>
+                <!-- Actions menu -->
+                <div class='btn-group'>
+                    <button id='bom-actions' title='{% trans "BOM actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                        <span class='fas fa-wrench'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu' role='menu'>
+                        <li><a class='dropdown-item' href='#' id='bom-upload'><span class='fas fa-file-upload'></span> {% trans "Upload BOM" %}</a></li>
+                        {% if part.variant_of %}
+                        <li><a class='dropdown-item' href='#' id='bom-duplicate'><span class='fas fa-clone'></span> {% trans "Copy BOM" %}</a></li>
+                        {% endif %}
+                        {% if not part.is_bom_valid %}
+                        <li><a class='dropdown-item' href='#' id='validate-bom'><span class='fas fa-clipboard-check icon-green'></span> {% trans "Validate BOM" %}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+        
                 {% if roles.part.change %}
                 <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
