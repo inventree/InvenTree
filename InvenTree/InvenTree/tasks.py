@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
 from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
 
 
 logger = logging.getLogger("inventree")
@@ -321,21 +322,18 @@ def notify_low_stock(stock_item):
 
     if len(starred_users) > 0:
         logger.info(f"Notify users regarding low stock of {stock_item.part.name}")
-        body = f'Hi, {stock_item.part.name} is low on stock. Kindly do the needful.'
         context = {
             'part_name': stock_item.part.name,
             # Part url can be used to open the page of part in application from the email.
             # It can be facilitated when the application base url is accessible programmatically.
             # 'part_url': f'{application_base_url}/part/{stock_item.part.id}',
 
-            'message': body,
-
             # quantity is in decimal field datatype. Since the same datatype is used in models,
             # it is not converted to number/integer,
             'part_quantity': stock_item.quantity,
             'minimum_quantity': stock_item.part.minimum_stock
         }
-        subject = f'Attention! {stock_item.part.name} is low on stock'
+        subject = _(f'Attention! {stock_item.part.name} is low on stock')
         html_message = render_to_string('stock/low_stock_notification.html', context)
         recipients = starred_users.values_list('email', flat=True)
-        send_email(subject, body, recipients, html_message=html_message)
+        send_email(subject, '', recipients, html_message=html_message)

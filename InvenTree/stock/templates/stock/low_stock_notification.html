@@ -1,4 +1,6 @@
-<p>{{ message }}</p>
+{% load i18n %}
+
+<p>{% trans "Hi, " %} {{ part_name }} {% trans "is low on stock. Kindly do the needful." %}</p>
 
 <table style="border-collapse:collapse; width: 80%;margin-left: 10%; font-size: 1rem">
 
@@ -19,8 +21,9 @@
     </tr>
 
     <tr style="background-color: aliceblue;height: 4rem;">
-        <td colspan="3" style="padding-top:1rem; text-align: center">You are receiving this mail because you have starred the part {{ part_name }} in
-            Inventree application</td>
+        <td colspan="3" style="padding-top:1rem; text-align: center">{% trans "You are receiving this mail because you have starred the part " %} {{ part_name }}
+            {% trans "Inventree application" %}
+            </td>
     </tr>
 
 </table>
