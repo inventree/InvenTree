@@ -48,6 +48,9 @@
  *
  */
 
+// Set global default theme for select2
+$.fn.select2.defaults.set('theme', 'bootstrap-5');
+
 /*
  * Return true if the OPTIONS specify that the user
  * can perform a GET method at the endpoint.
@@ -517,9 +520,6 @@ function constructFormBody(fields, options) {
 
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
-
-    $(modal + ' .select2-container').addClass('select-full-width');
-    $(modal + ' .select2-container').css('width', '100%');
 
     modalShowSubmitButton(modal, true);
 
@@ -1583,7 +1583,6 @@ function initializeChoiceField(field, fields, options) {
     select.select2({
         dropdownAutoWidth: false,
         dropdownParent: $(options.modal),
-        width: '100%',
     });
 }
 
@@ -2124,7 +2123,7 @@ function constructChoiceInput(name, parameters) {
  */
 function constructRelatedFieldInput(name) {
 
-    var html = `<select id='id_${name}' class='select form-control' name='${name}' style='width: 100%;'></select>`;
+    var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
 
     // Don't load any options - they will be filled via an AJAX request
 

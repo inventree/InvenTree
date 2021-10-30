@@ -245,11 +245,6 @@
     color: #98d296;
 }
 
-/* Force select2 elements in modal forms to be full width */
-.select-full-width {
-    width: 100%;
-}
-
 .basecurrency {
     color: #050;
     font-style: italic;
@@ -964,13 +959,6 @@ a.anchor {
     z-index: 99998;
 }
 
-.select2-container {
-    width: 100%;
-}
-
-.select2-container .select2-selection--single {
-    height: 30px;
-}
 
 .select2-thumbnail {
     max-width: 24px;
