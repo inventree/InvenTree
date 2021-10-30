@@ -62,7 +62,9 @@
       </ul>
     </div>
      <ul class='navbar-nav'>
-      <li>{% include "search_form.html" %}</li>
+      <li class='nav-item'>
+        {% include "search_form.html" %}
+      </li>
       {% if barcodes %}
       <li id='navbar-barcode-li'>
         <button id='barcode-scan' class='btn btn-secondary' title='{% trans "Scan Barcode" %}'>
