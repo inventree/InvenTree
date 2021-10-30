@@ -468,11 +468,7 @@ function formatDate(row) {
     var html = row.date;
 
     if (row.user_detail) {
-        html += `<span class='badge'>${row.user_detail.username}</span>`;
-    }
-
-    if (row.attachment) {
-        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+        html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
     }
 
     return html;
@@ -553,6 +549,15 @@ function loadStockTestResultsTable(table, options) {
             {
                 field: 'value',
                 title: '{% trans "Value" %}',
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.attachment) {
+                        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+                    }
+
+                    return html;
+                }
             },
             {
                 field: 'notes',
