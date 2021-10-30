@@ -2,7 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    attachToggle,
     createNewModal,
     inventreeFormDataUpload,
     inventreeGet,
@@ -48,6 +47,9 @@
  * - min_value / max_value
  *
  */
+
+// Set global default theme for select2
+$.fn.select2.defaults.set('theme', 'bootstrap-5');
 
 /*
  * Return true if the OPTIONS specify that the user
@@ -519,11 +521,6 @@ function constructFormBody(fields, options) {
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
 
-    attachToggle(modal);
-
-    $(modal + ' .select2-container').addClass('select-full-width');
-    $(modal + ' .select2-container').css('width', '100%');
-
     modalShowSubmitButton(modal, true);
 
     $(modal).on('click', '#modal-form-submit', function() {
@@ -563,13 +560,14 @@ function insertConfirmButton(options) {
 
     var message = options.confirmMessage || '{% trans "Confirm" %}';
 
-    var confirm = `
-    <span style='float: left;'>
-        ${message}
-        <input id='modal-confirm' name='confirm' type='checkbox'>
-    </span>`;
+    var html = `
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modal-confirm">
+        <label class="form-check-label" for="modal-confirm">${message}</label>
+    </div>
+    `;
 
-    $(options.modal).find('#modal-footer-buttons').append(confirm);
+    $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
     $(options.modal).find('#modal-form-submit').prop('disabled', true);
@@ -621,6 +619,10 @@ function submitFormData(fields, options) {
 
     var has_files = false;
 
+    var data_valid = true;
+
+    var data_errors = {};
+
     // Extract values for each field
     for (var idx = 0; idx < options.field_names.length; idx++) {
 
@@ -632,6 +634,21 @@ function submitFormData(fields, options) {
         if (field && field.type == 'candy') continue;
 
         if (field) {
+
+            switch (field.type) {
+            // Ensure numerical fields are "valid"
+            case 'integer':
+            case 'float':
+            case 'decimal':
+                if (!validateFormField(name, options)) {
+                    data_valid = false;
+    
+                    data_errors[name] = ['{% trans "Enter a valid number" %}'];
+                }
+                break;
+            default:
+                break;
+            }
 
             var value = getFormFieldValue(name, field, options);
 
@@ -660,6 +677,11 @@ function submitFormData(fields, options) {
         } else {
             console.log(`WARNING: Could not find field matching '${name}'`);
         }
+    }
+
+    if (!data_valid) {
+        handleFormErrors(data_errors, fields, options);
+        return;
     }
 
     var upload_func = inventreePut;
@@ -732,7 +754,8 @@ function updateFieldValues(fields, options) {
  * Update the value of a named field
  */
 function updateFieldValue(name, value, field, options) {
-    var el = $(options.modal).find(`#id_${name}`);
+
+    var el = getFormFieldElement(name, options);
 
     if (!el) {
         console.log(`WARNING: updateFieldValue could not find field '${name}'`);
@@ -760,6 +783,46 @@ function updateFieldValue(name, value, field, options) {
 }
 
 
+// Find the named field element in the modal DOM
+function getFormFieldElement(name, options) {
+
+    var el = $(options.modal).find(`#id_${name}`);
+
+    if (!el.exists) {
+        console.log(`ERROR: Could not find form element for field '${name}'`);
+    }
+
+    return el;
+}
+
+
+/*
+ * Check that a "numerical" input field has a valid number in it.
+ * An invalid number is expunged at the client side by the getFormFieldValue() function,
+ * which means that an empty string '' is sent to the server if the number is not valud.
+ * This can result in confusing error messages displayed under the form field.
+ * 
+ * So, we can invalid numbers and display errors *before* the form is submitted!
+ */
+function validateFormField(name, options) {
+
+    if (getFormFieldElement(name, options)) {
+
+        var el = document.getElementById(`id_${name}`);
+
+        if (el.validity.valueMissing) {
+            // Accept empty strings (server will validate)
+            return true;
+        } else {
+            return el.validity.valid;
+        }
+    } else {
+        return false;
+    }
+
+}
+
+
 /*
  * Extract and field value before sending back to the server
  *
@@ -771,7 +834,7 @@ function updateFieldValue(name, value, field, options) {
 function getFormFieldValue(name, field, options) {
 
     // Find the HTML element
-    var el = $(options.modal).find(`#id_${name}`);
+    var el = getFormFieldElement(name, options);
 
     if (!el) {
         return null;
@@ -865,7 +928,7 @@ function clearFormErrors(options) {
     $(options.modal).find('.form-error-message').remove();
 
     // Remove the "has error" class
-    $(options.modal).find('.has-error').removeClass('has-error');
+    $(options.modal).find('.form-field-error').removeClass('form-field-error');
 
     // Hide the 'non field errors'
     $(options.modal).find('#non-field-errors').html('');
@@ -1038,8 +1101,8 @@ function handleFormErrors(errors, fields, options) {
  */
 function addFieldErrorMessage(field_name, error_text, error_idx, options) {
 
-    // Add the 'has-error' class
-    $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+    // Add the 'form-field-error' class
+    $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
 
     var field_dom = $(options.modal).find(`#errors-${field_name}`);
 
@@ -1086,7 +1149,9 @@ function addFieldCallbacks(fields, options) {
 
 function addFieldCallback(name, field, options) {
 
-    $(options.modal).find(`#id_${name}`).change(function() {
+    var el = getFormFieldElement(name, options);
+
+    el.change(function() {
 
         var value = getFormFieldValue(name, field, options);
 
@@ -1232,7 +1297,7 @@ function addSecondaryModal(field, fields, options) {
 
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
+        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
             ${secondary.label || secondary.title}
         </div>
     </span>`;
@@ -1299,7 +1364,7 @@ function initializeRelatedField(field, fields, options) {
     }
 
     // Find the select element and attach a select2 to it
-    var select = $(options.modal).find(`#id_${name}`);
+    var select = getFormFieldElement(name, options);
 
     // Add a button to launch a 'secondary' modal
     if (field.secondary != null) {
@@ -1492,7 +1557,7 @@ function initializeRelatedField(field, fields, options) {
  */
 function setRelatedFieldData(name, data, options) {
 
-    var select = $(options.modal).find(`#id_${name}`);
+    var select = getFormFieldElement(name, options);
 
     var option = new Option(name, data.pk, true, true);
 
@@ -1513,14 +1578,11 @@ function setRelatedFieldData(name, data, options) {
 
 function initializeChoiceField(field, fields, options) {
 
-    var name = field.name;
-
-    var select = $(options.modal).find(`#id_${name}`);
+    var select = getFormFieldElement(field.name, options);
 
     select.select2({
         dropdownAutoWidth: false,
         dropdownParent: $(options.modal),
-        width: '100%',
     });
 }
 
@@ -1666,7 +1728,7 @@ function constructField(name, parameters, options) {
                 <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
             if (group_options.collapsible) {
                 html += `
-                <div data-toggle='collapse' data-target='#form-panel-content-${group}'>
+                <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group}'>
                     <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
                 `;
             } else {
@@ -1692,7 +1754,7 @@ function constructField(name, parameters, options) {
     var form_classes = 'form-group';
 
     if (parameters.errors) {
-        form_classes += ' has-error';
+        form_classes += ' form-field-error';
     }
     
     // Optional content to render before the field
@@ -1734,7 +1796,7 @@ function constructField(name, parameters, options) {
         html += `<div class='input-group'>`;
     
         if (parameters.prefix) {
-            html += `<span class='input-group-addon'>${parameters.prefix}</span>`;
+            html += `<span class='input-group-text'>${parameters.prefix}</span>`;
         }
     }
 
@@ -1744,7 +1806,7 @@ function constructField(name, parameters, options) {
 
         if (!parameters.required) {
             html += `
-            <span class='input-group-addon form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
+            <span class='input-group-text form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
             </span>`;
         }
@@ -1753,7 +1815,11 @@ function constructField(name, parameters, options) {
     }
 
     if (parameters.help_text && !options.hideLabels) {
-        html += constructHelpText(name, parameters, options);
+
+        // Boolean values are handled differently!
+        if (parameters.type != 'boolean') {
+            html += constructHelpText(name, parameters, options);
+        }
     }
 
     // Div for error messages
@@ -1926,12 +1992,29 @@ function constructInputOptions(name, classes, type, parameters) {
         opts.push(`placeholder='${parameters.placeholder}'`);
     }
 
-    if (parameters.type == 'boolean') {
-        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
+    switch (parameters.type) {
+    case 'boolean':
+        break;
+    case 'integer':
+    case 'float':
+    case 'decimal':
+        opts.push(`step='any'`);
+        break;
+    default:
+        break;
     }
 
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
+    } else if (parameters.type == 'boolean') {
+        return `
+        <div class='form-check form-switch'>
+            <input ${opts.join(' ')}>
+            <label class='form-check-label' for=''>
+                <em><small>${parameters.help_text}</small></em>
+            </label>
+        </div>
+        `;
     } else {
         return `<input ${opts.join(' ')}>`;
     }
@@ -1955,7 +2038,7 @@ function constructCheckboxInput(name, parameters) {
 
     return constructInputOptions(
         name,
-        'checkboxinput',
+        'form-check-input',
         'checkbox',
         parameters
     );
@@ -2040,7 +2123,7 @@ function constructChoiceInput(name, parameters) {
  */
 function constructRelatedFieldInput(name) {
 
-    var html = `<select id='id_${name}' class='select form-control' name='${name}' style='width: 100%;'></select>`;
+    var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
 
     // Don't load any options - they will be filled via an AJAX request
 
@@ -2114,13 +2197,7 @@ function constructRawInput(name, parameters) {
  */
 function constructHelpText(name, parameters) {
     
-    var style = '';
-
-    if (parameters.type == 'boolean') {
-        style = `style='display: inline-block; margin-left: 25px' `;
-    }
-
-    var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
+    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
 }

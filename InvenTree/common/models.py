@@ -1064,7 +1064,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Use the escape key to close modal forms'),
             'default': False,
             'validator': bool,
-        }
+        },
+
+        'STICKY_HEADER': {
+            'name': _('Fixed Navbar'),
+            'description': _('InvenTree navbar position is fixed to the top of the screen'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:

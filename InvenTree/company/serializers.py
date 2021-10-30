@@ -9,6 +9,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeImageSerializerField
 
 from part.serializers import PartBriefSerializer
@@ -256,7 +257,11 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    price = serializers.CharField()
+    price = InvenTreeMoneySerializer(
+        allow_null=True,
+        required=True,
+        label=_('Price'),
+    )
 
     price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),

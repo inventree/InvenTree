@@ -11,7 +11,7 @@
 <div id='{{ prefix }}button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
-            <button class='btn btn-default' id='stock-export' title='{% trans "Export Stock Information" %}'>
+            <button class='btn btn-outline-secondary' id='stock-export' title='{% trans "Export Stock Information" %}'>
                 <span class='fas fa-download'></span>
             </button>
 
@@ -23,44 +23,44 @@
             {% endif %}
             {% if barcodes %}
             <!-- Barcode actions menu -->
-            <div class='btn-group'>
-                <button id='stock-barcode-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown' title='{% trans "Barcode Actions" %}'>
+            <div class='btn-group' role='group'>
+                <button id='stock-barcode-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Barcode Actions" %}'>
                     <span class='fas fa-qrcode'></span> <span class='caret'></span>
                 </button>
                 <ul class='dropdown-menu'>
-                    <li><a href='#' id='multi-item-barcode-scan-into-location' title='{% trans "Scan to Location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan to Location" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-barcode-scan-into-location' title='{% trans "Scan to Location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan to Location" %}</a></li>
                 </ul>
             </div>
             {% endif %}
             <!-- Printing actions menu -->
             <div class='btn-group'>
-                <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown" title='{% trans "Printing Actions" %}'>
+                <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
                     <span class='fas fa-print'></span> <span class='caret'></span>
                 </button>
                 <ul class='dropdown-menu'>
-                    <li><a href='#' id='multi-item-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
                     {% if test_report_enabled %}
-                    <li><a href='#' id='multi-item-print-test-report' title='{% trans "Print test reports" %}'><span class='fas fa-file-pdf'></span> {% trans "Print test reports" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-print-test-report' title='{% trans "Print test reports" %}'><span class='fas fa-file-pdf'></span> {% trans "Print test reports" %}</a></li>
                     {% endif %}
                 </ul>
             </div>
             {% if not read_only %}
             {% if roles.stock.change or roles.stock.delete %}
             <div class="btn-group">
-                <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" title='{% trans "Stock Options" %}'>
+                <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" title='{% trans "Stock Options" %}'>
                     <span class='fas fa-boxes'></span> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
                     {% if roles.stock.change %}
-                    <li><a href="#" id='multi-item-add' title='{% trans "Add to selected stock items" %}'><span class='fas fa-plus-circle'></span> {% trans "Add stock" %}</a></li>
-                    <li><a href="#" id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'><span class='fas fa-minus-circle'></span> {% trans "Remove stock" %}</a></li>
-                    <li><a href="#" id='multi-item-stocktake' title='{% trans "Stocktake selected stock items" %}'><span class='fas fa-check-circle'></span> {% trans "Count stock" %}</a></li>
-                    <li><a href='#' id='multi-item-move' title='{% trans "Move selected stock items" %}'><span class='fas fa-exchange-alt'></span> {% trans "Move stock" %}</a></li>
-                    <li><a href='#' id='multi-item-order' title='{% trans "Order selected items" %}'><span class='fas fa-shopping-cart'></span> {% trans "Order stock" %}</a></li>
-                    <li><a href='#' id='multi-item-set-status' title='{% trans "Change status" %}'><span class='fas fa-exclamation-circle'></span> {% trans "Change stock status" %}</a></li>
+                    <li><a class='dropdown-item' href="#" id='multi-item-add' title='{% trans "Add to selected stock items" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
+                    <li><a class='dropdown-item' href="#" id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'><span class='fas fa-minus-circle'></span> {% trans "Remove stock" %}</a></li>
+                    <li><a class='dropdown-item' href="#" id='multi-item-stocktake' title='{% trans "Stocktake selected stock items" %}'><span class='fas fa-check-circle'></span> {% trans "Count stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-move' title='{% trans "Move selected stock items" %}'><span class='fas fa-exchange-alt'></span> {% trans "Move stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-order' title='{% trans "Order selected items" %}'><span class='fas fa-shopping-cart'></span> {% trans "Order stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-set-status' title='{% trans "Change status" %}'><span class='fas fa-exclamation-circle'></span> {% trans "Change stock status" %}</a></li>
                     {% endif %}
                     {% if roles.stock.delete %}
-                    <li><a href='#' id='multi-item-delete' title='{% trans "Delete selected items" %}'><span class='fas fa-trash-alt'></span> {% trans "Delete Stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-delete' title='{% trans "Delete selected items" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Stock" %}</a></li>
                     {% endif %}
                     </ul>
                 </div>

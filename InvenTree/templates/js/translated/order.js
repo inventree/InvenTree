@@ -84,6 +84,7 @@ function createPurchaseOrder(options={}) {
                 prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
             },
             supplier: {
+                icon: 'fa-building',
                 value: options.supplier,
                 secondary: {
                     title: '{% trans "Add Supplier" %}',
@@ -864,6 +865,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             },
             {
                 sortable: true,
+                switchable: false,
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 footerFormatter: function(data) {
@@ -879,18 +881,29 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'purchase_price',
                 title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
-                    return row.purchase_price_string || row.purchase_price;
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency
+                        }
+                    );
+                    return formatter.format(row.purchase_price);
                 }
             },
             {
                 field: 'total_price',
                 sortable: true,
-                field: 'total_price',
-                title: '{% trans "Total price" %}',
+                title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
-                    var total = row.purchase_price * row.quantity;
-                    var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
-                    return formatter.format(total);
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency
+                        }
+                    );
+                    return formatter.format(row.purchase_price * row.quantity);
                 },
                 footerFormatter: function(data) {
                     var total = data.map(function(row) {
@@ -1436,7 +1449,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             sortable: true,
             field: 'reference',
             title: '{% trans "Reference" %}',
-            switchable: false,
+            switchable: true,
         },
         {
             sortable: true,
@@ -1456,14 +1469,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'sale_price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                return row.sale_price_string || row.sale_price;
-            }
-        },
-        {
-            sortable: true,
-            title: '{% trans "Total price" %}',
-            formatter: function(value, row) {
-                var total = row.sale_price * row.quantity;
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
@@ -1472,7 +1477,23 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     }
                 );
 
-                return formatter.format(total);
+                return formatter.format(row.sale_price);
+            }
+        },
+        {
+            field: 'total_price',
+            sortable: true,
+            title: '{% trans "Total Price" %}',
+            formatter: function(value, row) {
+                var formatter = new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency',
+                        currency: row.sale_price_currency
+                    }
+                );
+
+                return formatter.format(row.sale_price * row.quantity);
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -1544,6 +1565,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     if (pending) {
         columns.push({
             field: 'buttons',
+            switchable: false,
             formatter: function(value, row, index, field) {
 
                 var html = `<div class='btn-group float-right' role='group'>`;

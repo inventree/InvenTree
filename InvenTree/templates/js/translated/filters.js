@@ -281,7 +281,12 @@ function setupFilterList(tableKey, table, target) {
     // One blank slate, please
     element.empty();
 
-    element.append(`<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-default filter-tag'><span class='fas fa-redo-alt'></span></button>`);
+    element.append(`<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-outline-secondary filter-tag'><span class='fas fa-redo-alt'></span></button>`);
+
+    // Callback for reloading the table
+    element.find(`#reload-${tableKey}`).click(function() {
+        $(table).bootstrapTable('refresh');
+    });
 
     // If there are no filters defined for this table, exit now
     if (jQuery.isEmptyObject(getAvailableTableFilters(tableKey))) {
@@ -289,10 +294,10 @@ function setupFilterList(tableKey, table, target) {
     }
 
     // If there are filters currently "in use", add them in!
-    element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
+    element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-outline-secondary filter-tag'><span class='fas fa-filter'></span></button>`);
 
     if (Object.keys(filters).length > 0) {
-        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-backspace icon-red'></span></button>`);
+        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-outline-secondary filter-tag'><span class='fas fa-backspace icon-red'></span></button>`);
     }
 
     for (var key in filters) {
@@ -302,11 +307,6 @@ function setupFilterList(tableKey, table, target) {
 
         element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
-
-    // Callback for reloading the table
-    element.find(`#reload-${tableKey}`).click(function() {
-        $(table).bootstrapTable('refresh');
-    });
 
     // Add a callback for adding a new filter
     element.find(`#${add}`).click(function clicked() {
@@ -320,7 +320,7 @@ function setupFilterList(tableKey, table, target) {
             html += generateAvailableFilterList(tableKey);
             html += generateFilterInput(tableKey);
 
-            html += `<button title='{% trans "Create filter" %}' class='btn btn-default filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
+            html += `<button title='{% trans "Create filter" %}' class='btn btn-outline-secondary filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
 
             element.append(html);
 

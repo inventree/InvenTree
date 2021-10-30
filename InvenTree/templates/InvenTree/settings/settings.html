@@ -9,8 +9,8 @@
 {% inventree_title %} | {% trans "Settings" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "InvenTree/settings/navbar.html" %}
+{% block sidebar %}
+{% include "InvenTree/settings/sidebar.html" %}
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,7 @@
 {% include "InvenTree/settings/user_search.html" %}
 {% include "InvenTree/settings/user_labels.html" %}
 {% include "InvenTree/settings/user_reports.html" %}
-{% include "InvenTree/settings/user_forms.html" %}
+{% include "InvenTree/settings/user_display.html" %}
 
 {% if user.is_staff %}
 
@@ -182,8 +182,8 @@ $('#cat-param-table').inventreeTable({
             title: '{% trans "Default Value" %}',
             sortable: 'true',
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = value
                 html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
@@ -281,8 +281,8 @@ $("#param-table").inventreeTable({
         },
         {
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
 
@@ -328,15 +328,6 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
-
-enableNavbar({
-    label: 'settings',
-    toggleId: '#item-menu-toggle',
-});
-
-attachNavCallbacks({
-    name: 'settings',
-    default: 'account'
-});
+enableSidebar('settings');
 
 {% endblock %}

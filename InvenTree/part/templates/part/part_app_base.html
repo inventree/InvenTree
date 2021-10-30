@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "page_base.html" %}
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
@@ -13,33 +13,10 @@
 {% endif %}
 {% endblock %}
 
-{% block sidenav %}
-<div id='part-tree'></div>
-{% endblock %}
-
-{% block pre_content %}
-
+{% block breadcrumbs %}
 {% if part %}
-{% include "part/cat_link.html" with category=part.category %}
+{% include "part/cat_link.html" with category=part.category part=part %}
 {% else %}
 {% include 'part/cat_link.html' with category=category %}
 {% endif %}
-
-{% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
-
-    loadTree("{% url 'api-part-tree' %}",
-        "#part-tree",
-        {
-            name: 'part',
-        }
-    );
-
-    initNavTree({
-        label: 'part',
-        treeId: '#sidenav-left',
-        toggleId: '#toggle-part-tree',
-    });
 {% endblock %}

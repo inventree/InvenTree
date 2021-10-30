@@ -266,7 +266,7 @@ class RegistratonMixin:
         return False
 
     def save_user(self, request, user, form, commit=True):
-        user = super().save_user(request, user, form, commit=commit)
+        user = super().save_user(request, user, form)
         start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
         if start_group:
             try:
