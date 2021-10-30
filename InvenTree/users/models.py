@@ -391,7 +391,7 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        (permission_name, model) = get_model_app(perm)
+        (model, permission_name) = get_model_app(perm)
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
