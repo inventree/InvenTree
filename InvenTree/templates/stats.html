@@ -40,9 +40,9 @@
         <td>{% trans "Server status" %}</td>
         <td>
             {% if system_healthy %}
-            <span class='label label-green'>{% trans "Healthy" %}</span>
+            <span class='badge rounded-pill bg-success'>{% trans "Healthy" %}</span>
             {% else %}
-            <span class='label label-red'>{% trans "Issues detected" %}</span>
+            <span class='badge rounded-pill bg-warning'>{% trans "Issues detected" %}</span>
             {% endif %}
         </td>
     </tr>
@@ -52,7 +52,7 @@
         <td>{% trans "Background Worker" %}</td>
         <td>
             <a href='{% inventree_docs_url %}/admin/tasks'>
-                <span class='label label-red'>{% trans "Background worker not running" %}</span>
+                <span class='badge rounded-pill bg-danger'>{% trans "Background worker not running" %}</span>
             </a>
         </td>
     </tr>
@@ -63,7 +63,7 @@
         <td>{% trans "Email Settings" %}</td>
         <td>
             <a href='{% inventree_docs_url %}/admin/email'>
-                <span class='label label-yellow'>{% trans "Email settings not configured" %}</span>
+                <span class='badge rounded-pill bg-warning'>{% trans "Email settings not configured" %}</span>
             </a>
         </td>
     </tr>

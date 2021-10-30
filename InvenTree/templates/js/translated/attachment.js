@@ -27,7 +27,7 @@ function loadAttachmentTable(url, options) {
             return '{% trans "No attachments found" %}';
         },
         sortable: true,
-        search: false,
+        search: true,
         queryParams: options.filters || {},
         onPostBody: function() {
             // Add callback for 'edit' button
@@ -58,12 +58,16 @@ function loadAttachmentTable(url, options) {
 
                     var fn = value.toLowerCase();
 
-                    if (fn.endsWith('.pdf')) {
+                    if (fn.endsWith('.csv')) {
+                        icon = 'fa-file-csv';
+                    } else if (fn.endsWith('.pdf')) {
                         icon = 'fa-file-pdf';
                     } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
                         icon = 'fa-file-excel';
                     } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
                         icon = 'fa-file-word';
+                    } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
+                        icon = 'fa-file-archive';
                     } else {
                         var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
 

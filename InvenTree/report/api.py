@@ -6,6 +6,8 @@ from django.conf.urls import url, include
 from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse
 
+from django.template.exceptions import TemplateDoesNotExist
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import generics, filters
@@ -218,10 +220,21 @@ class ReportPrintMixin:
 
             report_name = report.generate_filename(request)
 
-            if debug_mode:
-                outputs.append(report.render_as_string(request))
-            else:
-                outputs.append(report.render(request))
+            try:
+                if debug_mode:
+                    outputs.append(report.render_as_string(request))
+                else:
+                    outputs.append(report.render(request))
+            except TemplateDoesNotExist:
+
+                filename = report.template
+
+                return Response(
+                    {
+                        'error': _(f"Template file '{filename}' is missing or does not exist"),
+                    },
+                    status=400,
+                )
 
         if not report_name.endswith('.pdf'):
             report_name += '.pdf'
@@ -243,16 +256,28 @@ class ReportPrintMixin:
 
             pages = []
 
-            if len(outputs) > 1:
-                # If more than one output is generated, merge them into a single file
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
-
+            try:
                 pdf = outputs[0].get_document().copy(pages).write_pdf()
-            else:
-                pdf = outputs[0].get_document().write_pdf()
+
+                if len(outputs) > 1:
+                    # If more than one output is generated, merge them into a single file
+                    for output in outputs:
+                        doc = output.get_document()
+                        for page in doc.pages:
+                            pages.append(page)
+                else:
+                    pdf = outputs[0].get_document().write_pdf()
+
+            except TemplateDoesNotExist:
+
+                filename = report.template
+
+                return Response(
+                    {
+                        'error': _(f"Template file '{filename}' is missing or does not exist"),
+                    },
+                    status=400,
+                )
 
             inline = common.models.InvenTreeUserSetting.get_setting('REPORT_INLINE', user=request.user)
 
