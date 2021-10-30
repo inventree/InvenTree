@@ -6,7 +6,6 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.db import transaction
@@ -43,7 +42,6 @@ from build.models import Build
 
 from . import serializers as part_serializers
 
-from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 

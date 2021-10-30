@@ -7,17 +7,14 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 
-from django.utils.translation import ugettext_lazy as _
-
 from django.conf.urls import url, include
-from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
-from rest_framework import generics, filters, permissions
+from rest_framework import generics, filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -42,7 +39,6 @@ import common.models
 
 import stock.serializers as StockSerializers
 
-from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
