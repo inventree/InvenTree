@@ -457,32 +457,101 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 """
 
 # 'OPTIONS' or 'options' can be specified in config.yaml
-db_options = db_config.get('OPTIONS', db_config.get('options', {}))
+# Set useful sensible timeouts for a transactional webserver to communicate
+# with its database server, that is, if the webserver is having issues
+# connecting to the database server (such as a replica failover) don't sit and
+# wait for possibly an hour or more, just tell the client something went wrong
+# and let the client retry when they want to.
+db_options = db_config.get("OPTIONS", db_config.get("options", {}))
 
 # Specific options for postgres backend
-if 'postgres' in db_engine:
-    from psycopg2.extensions import ISOLATION_LEVEL_READ_COMMITTED, ISOLATION_LEVEL_SERIALIZABLE
+if "postgres" in db_engine:
+    from psycopg2.extensions import (
+        ISOLATION_LEVEL_READ_COMMITTED,
+        ISOLATION_LEVEL_SERIALIZABLE,
+    )
 
     # Connection timeout
-    if 'connect_timeout' not in db_options:
-        db_options['connect_timeout'] = int(os.getenv('INVENTREE_DB_TIMEOUT', 2))
+    if "connect_timeout" not in db_options:
+        # The DB server is in the same data center, it should not take very
+        # long to connect to the database server
+        # # seconds, 2 is minium allowed by libpq
+        db_options["connect_timeout"] = int(
+            os.getenv("INVENTREE_DB_TIMEOUT", 2)
+        )
+
+    # Setup TCP keepalive
+    # DB server is in the same DC, it should not become unresponsive for
+    # very long. With the defaults below we wait 5 seconds for the network
+    # issue to resolve itself.  It it that doesn't happen whatever happened
+    # is probably fatal and no amount of waiting is going to fix it.
+    # # 0 - TCP Keepalives disabled; 1 - enabled
+    if "keepalives" not in db_options:
+        db_options["keepalives"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES", "1")
+        )
+    # # Seconds after connection is idle to send keep alive
+    if "keepalives_idle" not in db_options:
+        db_options["keepalives_idle"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_IDLE", "1")
+        )
+    # # Seconds after missing ACK to send another keep alive
+    if "keepalives_interval" not in db_options:
+        db_options["keepalives_interval"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "1")
+        )
+    # # Number of missing ACKs before we close the connection
+    if "keepalives_count" not in db_options:
+        db_options["keepalives_count"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "5")
+        )
+    # # Milliseconds for how long pending data should remain unacked
+    # by the remote server
+    # TODO: Supported starting in PSQL 11
+    # "tcp_user_timeout": int(os.getenv("PGTCP_USER_TIMEOUT", "1000"),
 
     # Postgres's default isolation level is Read Committed which is
     # normally fine, but most developers think the database server is
     # actually going to do Serializable type checks on the queries to
     # protect against simultaneous changes.
-    if 'isolation_level' not in db_options:
-        serializable = _is_true(os.getenv("PG_ISOLATION_SERIALIZABLE", "true"))
-        db_options['isolation_level'] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
+    # https://www.postgresql.org/docs/devel/transaction-iso.html
+    # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
+    if "isolation_level" not in db_options:
+        serializable = _is_true(
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+        )
+        db_options["isolation_level"] = (
+            ISOLATION_LEVEL_SERIALIZABLE
+            if serializable
+            else ISOLATION_LEVEL_READ_COMMITTED
+        )
 
 # Specific options for MySql / MariaDB backend
-if 'mysql' in db_engine:
-    # TODO
-    pass
+if "mysql" in db_engine:
+    # TODO TCP time outs and keepalives
+
+    # MariaDB's default isolation level is Repeatable Read which is
+    # normally fine, but most developers think the database server is
+    # actually going to Serializable type checks on the queries to
+    # protect against siumltaneous changes.
+    # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
+    # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
+    if "isolation_level" not in db_options:
+        serializable = _is_true(
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+        )
+        db_options["isolation_level"] = (
+            "serializable" if serializable else "read committed"
+        )
 
 # Specific options for sqlite backend
-if 'sqlite' in db_engine:
-    # TODO
+if "sqlite" in db_engine:
+    # TODO: Verify timeouts are not an issue because no network is involved for SQLite
+
+    # SQLite's default isolation level is Serializable due to SQLite's
+    # single writer implementation.  Presumably as a result of this, it is
+    # not possible to implement any lower isolation levels in SQLite.
+    # https://www.sqlite.org/isolation.html
     pass
 
 # Provide OPTIONS dict back to the database configuration dict
