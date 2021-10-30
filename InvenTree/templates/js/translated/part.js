@@ -983,6 +983,10 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    var grid_view = inventreeLoad('part-grid-view') == 1;
+
+    console.log("grid view:", grid_view);
+
     $(table).inventreeTable({
         url: url,
         method: 'get',
@@ -997,8 +1001,52 @@ function loadPartTable(table, url, options={}) {
         },
         columns: columns,
         showColumns: true,
-        showCustomView: false,
+        showCustomView: grid_view,
         showCustomViewButton: false,
+        onPostBody: function() {
+            grid_view = inventreeLoad('part-grid-view') == 1;
+            if (grid_view) {
+                $('#view-part-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-part-grid').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            } else {
+                $('#view-part-grid').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+        },
+        buttons: [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-part-list',
+                },
+                event: () => {
+                    inventreeSave('part-grid-view', 0);
+                    $(table).bootstrapTable(
+                        'refreshOptions',
+                        {
+                            showCustomView: false,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-th',
+                attributes: {
+                    title: '{% trans "Display as grid" %}',
+                    id: 'view-part-grid',
+                },
+                event: () => {
+                    inventreeSave('part-grid-view', 1);
+                    $(table).bootstrapTable(
+                        'refreshOptions',
+                        {
+                            showCustomView: true,
+                        }
+                    );
+                }
+            }
+        ],
         customView: function(data) {
 
             var html = '';
@@ -1092,6 +1140,10 @@ function loadPartCategoryTable(table, options) {
 
     var params = options.params || {};
 
+    if (tree_view) {
+        params.cascade = true;
+    }
+
     var filterListElement = options.filterList || '#filter-list-category';
 
     var filters = {};
@@ -1111,14 +1163,88 @@ function loadPartCategoryTable(table, options) {
 
     setupFilterList(filterKey, table, filterListElement);
 
+    var tree_view = inventreeLoad('category-tree-view') == 1;
+
     table.inventreeTable({
+        treeEnable: tree_view,
+        rootParentId: options.params.parent,
+        uniqueId: 'pk',
+        idField: 'pk',
+        treeShowField: 'name',
+        parentIdField: 'parent',
         method: 'get',
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
-        sidePagination: 'server',
+        disablePagination: tree_view,
+        sidePagination: tree_view ? 'client' : 'server',
+        serverSort: !tree_view, 
+        search: !tree_view,
         name: 'category',
         original: original,
         showColumns: true,
+        buttons: [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-category-list',
+                },
+                event: () => {
+                    inventreeSave('category-tree-view', 0);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: false,
+                            serverSort: true,
+                            search: true,
+                            pagination: true,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-sitemap',
+                attributes: {
+                    title: '{% trans "Display as tree" %}',
+                    id: 'view-category-tree',
+                },
+                event: () => {
+                    inventreeSave('category-tree-view', 1);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: true,
+                            serverSort: false,
+                            search: false,
+                            pagination: false,
+                        }
+                    );
+                }
+            }
+        ],
+        onPostBody: function() {
+
+            tree_view = inventreeLoad('category-tree-view') == 1;
+
+            if (tree_view) {
+
+                $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                
+                table.treegrid({
+                    treeColumn: 0,
+                    onChange: function() {
+                        table.bootstrapTable('resetView');
+                    },
+                    onExpand: function() {
+                        
+                    }
+                });
+            } else {
+                $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+        },
         columns: [
             {
                 checkbox: true,
@@ -1148,7 +1274,8 @@ function loadPartCategoryTable(table, options) {
             {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
-                switchable: true,
+                switchable: !tree_view,
+                visible: !tree_view,
                 sortable: false,
             },
             {

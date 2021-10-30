@@ -399,3 +399,8 @@ function customGroupSorter(sortName, sortOrder, sortData) {
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);
 
 })(jQuery);
+
+$.extend($.fn.treegrid.defaults, {
+    expanderExpandedClass: 'treegrid-expander-expanded',
+    expanderCollapsedClass: 'treegrid-expander-collapsed'
+});
