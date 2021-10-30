@@ -46,6 +46,7 @@ jobs:
       - name: Data Import Export
         run: |
           invoke migrate
+          invoke delete-data -f
           invoke import-fixtures
           invoke export-records -f data.json
           rm test_db.sqlite
