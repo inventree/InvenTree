@@ -16,9 +16,9 @@
 
 {% block form_buttons_top %}
     {% if wizard.steps.prev %}
-    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
     {% endif %}
-    <button type="submit" class="save btn btn-default">{% trans "Submit Selections" %}</button>
+    <button type="submit" class="save btn btn-outline-secondary">{% trans "Submit Selections" %}</button>
 {% endblock form_buttons_top %}
 
 {% block form_content %}
@@ -49,7 +49,7 @@
             {% for row in rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
                 <td>
-                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row.index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
+                    <button class='btn btn-outline-secondary btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row.index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
                             <span row_id='{{ row.index }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>

@@ -6,7 +6,6 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.db import transaction
@@ -43,26 +42,10 @@ from build.models import Build
 
 from . import serializers as part_serializers
 
-from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 
 from InvenTree.status_codes import BuildStatus
-
-
-class PartCategoryTree(TreeSerializer):
-
-    title = _("Parts")
-    model = PartCategory
-
-    queryset = PartCategory.objects.all()
-
-    @property
-    def root_url(self):
-        return reverse('part-index')
-
-    def get_items(self):
-        return PartCategory.objects.all().prefetch_related('parts', 'children')
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -1332,7 +1315,6 @@ class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 part_api_urls = [
-    url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
