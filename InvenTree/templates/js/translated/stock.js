@@ -1438,7 +1438,19 @@ function loadStockLocationTable(table, options) {
         filters[key] = params[key];
     }
 
+    var tree_view = inventreeLoad('location-tree-view') == 1;
+
     table.inventreeTable({
+        treeEnable: tree_view,
+        rootParentId: options.params.parent,
+        uniqueId: 'pk',
+        idField: 'pk',
+        treeShowField: 'name',
+        parentIdField: 'parent',
+        disablePagination: tree_view,
+        sidePagination: tree_view ? 'client' : 'server',
+        serverSort: !tree_view,
+        search: !tree_view,
         method: 'get',
         url: options.url || '{% url "api-location-list" %}',
         queryParams: filters,
@@ -1446,6 +1458,69 @@ function loadStockLocationTable(table, options) {
         name: 'location',
         original: original,
         showColumns: true,
+        onPostBody: function() {
+
+            tree_view = inventreeLoad('location-tree-view') == 1;
+
+            if (tree_view) {
+
+                $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                
+                table.treegrid({
+                    treeColumn: 1,
+                    onChange: function() {
+                        table.bootstrapTable('resetView');
+                    },
+                    onExpand: function() {
+                        
+                    }
+                });
+            } else {
+                $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-location-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+        },
+        buttons: [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-location-list',
+                },
+                event: () => {
+                    inventreeSave('location-tree-view', 0);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: false,
+                            serverSort: true,
+                            search: true,
+                            pagination: true,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-sitemap',
+                attributes: {
+                    title: '{% trans "Display as tree" %}',
+                    id: 'view-location-tree',
+                },
+                event: () => {
+                    inventreeSave('location-tree-view', 1);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: true,
+                            serverSort: false,
+                            search: false,
+                            pagination: false,
+                        }
+                    );
+                }
+            }
+        ],
         columns: [
             {
                 checkbox: true,

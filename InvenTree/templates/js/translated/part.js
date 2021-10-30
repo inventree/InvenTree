@@ -1140,10 +1140,6 @@ function loadPartCategoryTable(table, options) {
 
     var params = options.params || {};
 
-    if (tree_view) {
-        params.cascade = true;
-    }
-
     var filterListElement = options.filterList || '#filter-list-category';
 
     var filters = {};
