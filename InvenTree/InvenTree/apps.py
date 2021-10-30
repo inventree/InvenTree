@@ -138,9 +138,7 @@ class InvenTreeConfig(AppConfig):
             project_name = InvenTreeSetting.get_setting('INVENTREE_INSTANCE')
             project_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
 
-            settings.TOKEN_ISSUER_NAME = project_name
-            settings.U2F_APPID = project_url
-            settings.FIDO_SERVER_ID = project_url
-            settings.FIDO_SERVER_NAME = project_name
+            settings.TOKEN_ISSUER_NAME = settings.FIDO_SERVER_NAME = project_name
+            settings.U2F_APPID = settings.FIDO_SERVER_ID = project_url
         except AppRegistryNotReady:
             pass
