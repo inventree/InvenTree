@@ -73,6 +73,7 @@ class RuleSet(models.Model):
             'socialaccount_socialaccount',
             'socialaccount_socialapp',
             'socialaccount_socialtoken',
+            'mfa_user_keys',
         ],
         'part_category': [
             'part_partcategory',
