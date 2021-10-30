@@ -64,12 +64,13 @@
         {% for plugin_key, plugin in pl_list.items %}
           {% mixin_enabled plugin 'navigation' as navigation %}
           {% if navigation %}
-
-          <li class='nav navbar-nav'>
-            <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='{{plugin.navigation_icon}} icon-header'></span>{{plugin.navigation_name}}</a>
+          <li class='nav-item dropdown'>
+            <a class='nav-link dropdown-toggle' data-bs-toggle="dropdown" aria-expanded="false" href='#'>
+              <span class='{{plugin.navigation_icon}} icon-header'></span>{{plugin.navigation_name}}
+            </a>
             <ul class='dropdown-menu'>
              {% for nav_item in plugin.navigation %}
-                <li><a href="{% url nav_item.link %}"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+                <li><a href="{% url nav_item.link %}" class="dropdown-item"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
              {% endfor %}
             </ul>
           </li>
