@@ -107,6 +107,10 @@ class URLTest(TestCase):
 
         url, pk = url_pair
 
+        # Ignore "renaming"
+        if pk.startswith('as '):
+            pk = None
+
         # TODO: Handle reverse lookup of admin URLs!
         if url.startswith("admin:"):
             return
@@ -115,7 +119,7 @@ class URLTest(TestCase):
         if url.startswith("account_"):
             return
 
-        if pk and pk not in ['as']:
+        if pk:
             # We will assume that there is at least one item in the database
             reverse(url, kwargs={"pk": 1})
         else:

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.core import exceptions
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
