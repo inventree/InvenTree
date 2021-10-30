@@ -279,7 +279,7 @@ def get_model_app(model):
     """get modelname and app from modelstring"""
     app, *model = model.split('_')
 
-    # handle models that have 
+    # handle models that have
     if len(model) > 1:
         model = '_'.join(model)
     else:
