@@ -1652,7 +1652,7 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
         child.save()
 
 
-@receiver(post_save, sender=StockItem)
+@receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
 def after_save_stock_item(sender, instance: StockItem, **kwargs):
     """
     Check if the stock quantity has fallen below the minimum threshold of part. If yes, notify the users who have
