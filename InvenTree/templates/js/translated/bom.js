@@ -612,7 +612,7 @@ function loadBomTable(table, options) {
 
                     var bValidate = makeIconButton('fa-check-circle icon-green', 'bom-validate-button', row.pk, '{% trans "Validate BOM Item" %}');
 
-                    var bValid = `<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>`;
+                    var bValid = makeIconButton('fa-check-double icon-green', 'bom-valid-button', row.pk, '{% trans "This line has been validated" %}', {disabled: true});
 
                     var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% trans "Edit substitute parts" %}');
 
