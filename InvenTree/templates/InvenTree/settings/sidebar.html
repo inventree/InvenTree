@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 
 {% include "sidebar_header.html" with text="User Settings" icon='fa-user' %}
 
@@ -34,7 +35,7 @@
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
     {% if plugin.registered_mixins %}
-        {% include "sidebar_item.html" with label='plugin-'|add:{{plugin_key}} text="plugin.human_name %}
+        {% include "sidebar_item.html" with label='plugin-'|add:plugin_key text=plugin.human_name %}
     {% endif %}
 {% endfor %}
 
