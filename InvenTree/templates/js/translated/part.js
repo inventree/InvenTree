@@ -985,8 +985,6 @@ function loadPartTable(table, url, options={}) {
 
     var grid_view = inventreeLoad('part-grid-view') == 1;
 
-    console.log("grid view:", grid_view);
-
     $(table).inventreeTable({
         url: url,
         method: 'get',
