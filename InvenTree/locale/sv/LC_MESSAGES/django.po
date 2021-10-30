@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-25 21:42+0000\n"
-"PO-Revision-Date: 2021-10-25 22:04\n"
+"POT-Creation-Date: 2021-10-30 02:15+0000\n"
+"PO-Revision-Date: 2021-10-30 02:17\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -217,75 +217,75 @@ msgstr "Måste vara ett giltigt nummer"
 msgid "Filename"
 msgstr "Filnamn"
 
-#: InvenTree/settings.py:536
+#: InvenTree/settings.py:605
 msgid "German"
 msgstr "Tyska"
 
-#: InvenTree/settings.py:537
+#: InvenTree/settings.py:606
 msgid "Greek"
 msgstr "Grekiska"
 
-#: InvenTree/settings.py:538
+#: InvenTree/settings.py:607
 msgid "English"
 msgstr "Engelska"
 
-#: InvenTree/settings.py:539
+#: InvenTree/settings.py:608
 msgid "Spanish"
 msgstr "Spanska"
 
-#: InvenTree/settings.py:540
+#: InvenTree/settings.py:609
 msgid "French"
 msgstr "Franska"
 
-#: InvenTree/settings.py:541
+#: InvenTree/settings.py:610
 msgid "Hebrew"
 msgstr "Hebreiska"
 
-#: InvenTree/settings.py:542
+#: InvenTree/settings.py:611
 msgid "Italian"
 msgstr "Italienska"
 
-#: InvenTree/settings.py:543
+#: InvenTree/settings.py:612
 msgid "Japanese"
 msgstr "Japanska"
 
-#: InvenTree/settings.py:544
+#: InvenTree/settings.py:613
 msgid "Korean"
 msgstr "Koreanska"
 
-#: InvenTree/settings.py:545
+#: InvenTree/settings.py:614
 msgid "Dutch"
 msgstr "Nederländska"
 
-#: InvenTree/settings.py:546
+#: InvenTree/settings.py:615
 msgid "Norwegian"
 msgstr "Norska"
 
-#: InvenTree/settings.py:547
+#: InvenTree/settings.py:616
 msgid "Polish"
 msgstr "Polska"
 
-#: InvenTree/settings.py:548
+#: InvenTree/settings.py:617
 msgid "Russian"
 msgstr "Ryska"
 
-#: InvenTree/settings.py:549
+#: InvenTree/settings.py:618
 msgid "Swedish"
 msgstr "Svenska"
 
-#: InvenTree/settings.py:550
+#: InvenTree/settings.py:619
 msgid "Thai"
 msgstr "Thailändska"
 
-#: InvenTree/settings.py:551
+#: InvenTree/settings.py:620
 msgid "Turkish"
 msgstr "Turkiska"
 
-#: InvenTree/settings.py:552
+#: InvenTree/settings.py:621
 msgid "Vietnamese"
 msgstr "Vietnamesiska"
 
-#: InvenTree/settings.py:553
+#: InvenTree/settings.py:622
 msgid "Chinese"
 msgstr "Kinesiska"
 
