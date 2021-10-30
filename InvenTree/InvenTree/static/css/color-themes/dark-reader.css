@@ -1950,10 +1950,10 @@ button.list-group-item-danger.active:hover {
 .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {
     border-bottom-color: initial;
 }
-.panel > .panel-body + .table,
-.panel > .panel-body + .table-responsive,
-.panel > .table + .panel-body,
-.panel > .table-responsive + .panel-body {
+.panel > .panel-content + .table,
+.panel > .panel-content + .table-responsive,
+.panel > .table + .panel-content,
+.panel > .table-responsive + .panel-content {
     border-top-color: rgb(58, 62, 65);
 }
 .panel > .table > tbody:first-child > tr:first-child td,
@@ -2019,13 +2019,13 @@ button.list-group-item-danger.active:hover {
     border-bottom-color: initial;
 }
 .panel-group .panel-heading + .panel-collapse > .list-group,
-.panel-group .panel-heading + .panel-collapse > .panel-body {
+.panel-group .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(58, 62, 65);
 }
 .panel-group .panel-footer {
     border-top-color: initial;
 }
-.panel-group .panel-footer + .panel-collapse .panel-body {
+.panel-group .panel-footer + .panel-collapse .panel-content {
     border-bottom-color: rgb(58, 62, 65);
 }
 .panel-default {
@@ -2036,14 +2036,14 @@ button.list-group-item-danger.active:hover {
     background-color: rgb(30, 32, 33);
     border-color: rgb(58, 62, 65);
 }
-.panel-default > .panel-heading + .panel-collapse > .panel-body {
+.panel-default > .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(58, 62, 65);
 }
 .panel-default > .panel-heading .badge {
     color: rgb(226, 223, 219);
     background-color: rgb(38, 42, 43);
 }
-.panel-default > .panel-footer + .panel-collapse > .panel-body {
+.panel-default > .panel-footer + .panel-collapse > .panel-content {
     border-bottom-color: rgb(58, 62, 65);
 }
 .panel-primary {
@@ -2054,14 +2054,14 @@ button.list-group-item-danger.active:hover {
     background-color: rgb(41, 98, 146);
     border-color: rgb(40, 96, 145);
 }
-.panel-primary > .panel-heading + .panel-collapse > .panel-body {
+.panel-primary > .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(40, 96, 145);
 }
 .panel-primary > .panel-heading .badge {
     color: rgb(105, 166, 213);
     background-color: rgb(24, 26, 27);
 }
-.panel-primary > .panel-footer + .panel-collapse > .panel-body {
+.panel-primary > .panel-footer + .panel-collapse > .panel-content {
     border-bottom-color: rgb(40, 96, 145);
 }
 .panel-success {
@@ -2072,14 +2072,14 @@ button.list-group-item-danger.active:hover {
     background-color: rgb(41, 60, 23);
     border-color: rgb(60, 91, 35);
 }
-.panel-success > .panel-heading + .panel-collapse > .panel-body {
+.panel-success > .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(60, 91, 35);
 }
 .panel-success > .panel-heading .badge {
     color: rgb(202, 230, 191);
     background-color: rgb(48, 94, 49);
 }
-.panel-success > .panel-footer + .panel-collapse > .panel-body {
+.panel-success > .panel-footer + .panel-collapse > .panel-content {
     border-bottom-color: rgb(60, 91, 35);
 }
 .panel-info {
@@ -2090,14 +2090,14 @@ button.list-group-item-danger.active:hover {
     background-color: rgb(14, 48, 65);
     border-color: rgb(22, 90, 104);
 }
-.panel-info > .panel-heading + .panel-collapse > .panel-body {
+.panel-info > .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(22, 90, 104);
 }
 .panel-info > .panel-heading .badge {
     color: rgb(186, 222, 241);
     background-color: rgb(39, 90, 114);
 }
-.panel-info > .panel-footer + .panel-collapse > .panel-body {
+.panel-info > .panel-footer + .panel-collapse > .panel-content {
     border-bottom-color: rgb(22, 90, 104);
 }
 .panel-warning {
@@ -2108,14 +2108,14 @@ button.list-group-item-danger.active:hover {
     background-color: rgb(63, 54, 7);
     border-color: rgb(108, 76, 11);
 }
-.panel-warning > .panel-heading + .panel-collapse > .panel-body {
+.panel-warning > .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(108, 76, 11);
 }
 .panel-warning > .panel-heading .badge {
     color: rgb(248, 239, 189);
     background-color: rgb(110, 87, 47);
 }
-.panel-warning > .panel-footer + .panel-collapse > .panel-body {
+.panel-warning > .panel-footer + .panel-collapse > .panel-content {
     border-bottom-color: rgb(108, 76, 11);
 }
 .panel-danger {
@@ -2126,14 +2126,14 @@ button.list-group-item-danger.active:hover {
     background-color: rgb(56, 22, 22);
     border-color: rgb(89, 35, 43);
 }
-.panel-danger > .panel-heading + .panel-collapse > .panel-body {
+.panel-danger > .panel-heading + .panel-collapse > .panel-content {
     border-top-color: rgb(89, 35, 43);
 }
 .panel-danger > .panel-heading .badge {
     color: rgb(231, 195, 195);
     background-color: rgb(135, 54, 53);
 }
-.panel-danger > .panel-footer + .panel-collapse > .panel-body {
+.panel-danger > .panel-footer + .panel-collapse > .panel-content {
     border-bottom-color: rgb(89, 35, 43);
 }
 .embed-responsive .embed-responsive-item,
@@ -2903,17 +2903,6 @@ a.ui-button:active,
 .ui-widget-header .ui-state-disabled {
     background-image: none;
 }
-.ui-state-active .ui-icon,
-.ui-button:active .ui-icon {
-    background-image: url("/static/script/jquery-ui/images/ui-icons_ffffff_256x240.png");
-}
-.ui-state-highlight .ui-icon,
-.ui-button .ui-state-highlight.ui-icon {
-    background-image: url("/static/script/jquery-ui/images/ui-icons_777620_256x240.png");
-}
-.ui-button .ui-icon {
-    background-image: url("/static/script/jquery-ui/images/ui-icons_777777_256x240.png");
-}
 .ui-widget-overlay {
     background-image: initial;
     background-color: rgb(72, 78, 81);
@@ -3117,13 +3106,6 @@ input[type="submit"] {
 }
 .modal .btn-secondary {
     background-color: rgb(75, 100, 108);
-}
-.sidenav {
-    background-color: rgb(24, 26, 27);
-}
-.sidenav .list-group-item.active {
-    background-color: rgb(43, 47, 49);
-    border-color: rgb(62, 68, 70);
 }
 .help-inline {
     color: rgb(238, 90, 90);
