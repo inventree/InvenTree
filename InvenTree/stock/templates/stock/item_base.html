@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 {% load static %}
 {% load inventree_extras %}
 {% load status_codes %}
@@ -8,29 +8,126 @@
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
-{% block sidenav %}
-<div id='stock-tree'></div>
+{% block breadcrumbs %}
+{% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
 
-{% block pre_content %}
-{% include 'stock/loc_link.html' with location=item.location %}
+{% block heading %}
+    {% trans "Stock Item" %}: {{ item.part.full_name}}
+{% endblock %}
+
+{% block actions %}
+
+{% if user.is_staff and roles.stock.change %}
+{% url 'admin:stock_stockitem_change' item.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.stock.change %}
+        {% if item.uid %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        <li><a class='dropdown-item' href='#' id='barcode-scan-into-location'><span class='fas fa-sitemap'></span> {% trans "Scan to Location" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+<!-- Document / label menu -->
+<div class='btn-group' role='group'>
+    <button id='document-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-print'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        {% if test_report_enabled %}
+        <li><a class='dropdown-item' href='#' id='stock-test-report'><span class='fas fa-file-pdf'></span> {% trans "Test Report" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+<!-- Stock adjustment menu -->
+<!-- Check permissions and owner -->
+{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
+    {% if roles.stock.change and not item.is_building %}
+    <div class='btn-group'>
+        <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
+        <ul class='dropdown-menu' role='menu'>
+            {% if not item.serialized %}
+            {% if item.in_stock %}
+            <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
+            {% endif %}
+            {% if not item.customer %}
+            <li><a class='dropdown-item' href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
+            {% endif %}
+            {% if item.in_stock %}
+            <li><a class='dropdown-item' href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
+            {% endif %}
+            {% if item.in_stock and item.part.trackable %}
+            <li><a class='dropdown-item' href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
+            {% endif %}
+            {% endif %}
+            {% if item.in_stock and item.can_adjust_location %}
+            <li><a class='dropdown-item' href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
+            {% endif %}
+            {% if item.in_stock and item.can_adjust_location and item.part.salable and not item.customer %}
+            <li><a class='dropdown-item' href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
+            {% endif %}
+            {% if item.customer %}
+            <li><a class='dropdown-item' href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
+            {% endif %}
+            {% if item.belongs_to %}
+            <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
+            {% else %}
+            {% if item.part.get_used_in %}
+            <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+    <!-- Edit stock item -->
+    {% if roles.stock.change and not item.is_building %}
+    <div class='btn-group'>
+        <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
+        <ul class='dropdown-menu' role='menu'>
+            {% if item.part.can_convert %}
+            <li><a class='dropdown-item' href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
+            {% endif %}
+            {% if roles.stock.add %}
+            <li><a class='dropdown-item' href='#' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'><span class='fas fa-copy'></span> {% trans "Duplicate stock item" %}</a></li>
+            {% endif %}
+            <li><a class='dropdown-item' href='#' id='stock-edit' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
+            {% if user.is_staff or roles.stock.delete %}
+            {% if item.can_delete %}
+            <li><a class='dropdown-item' href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block thumbnail %}
 <img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock %}
 
-{% block page_data %}
+{% block details %}
 
 {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 {% if owner_control.value == "True" %}
     {% authorized_owners item.owner as owners %}
 {% endif %}
 
-<h3>
-    {% trans "Stock Item" %}
+<h4>
     {% if item.is_expired %}
-    <span class='label label-large label-large-red'>{% trans "Expired" %}</span>
+    <span class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
     {% else %}
     {% if roles.stock.change %}
     <a href='#' id='stock-edit-status'>
@@ -40,130 +137,13 @@
     </a>
     {% endif %}
     {% if item.is_stale %}
-    <span class='label label-large label-large-yellow'>{% trans "Stale" %}</span>
+    <span class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
     {% endif %}
     {% endif %}
-</h3>
-<hr>
-<h4>
-{% if roles.part.view %}
-<a href='{% url "part-detail" item.part.pk %}'>
-{% endif %}
-{{ item.part.full_name}}
-{% if roles.part.view %}
-</a>
-{% endif %}
-{% if item.serialized %}
- # {{ item.serial }}
-{% else %}
- &times {% decimal item.quantity %}
-{% endif %}
-{% if user.is_staff and roles.stock.change %}
-    <a  href="{% url 'admin:stock_stockitem_change' item.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
-{% endif %}
 </h4>
 
-<div class='btn-group' role='group'>
 
-</div>
 
-<div class='btn-group action-buttons' role='group'>
-
-    {% if barcodes %}
-    <!-- Barcode actions menu -->
-    <div class='btn-group'>
-        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
-            <span class='fas fa-qrcode'></span> <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu' role='menu'>
-            <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
-            {% if roles.stock.change %}
-            {% if item.uid %}
-            <li><a href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
-            {% else %}
-            <li><a href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
-            {% endif %}
-            <li><a href='#' id='barcode-scan-into-location'><span class='fas fa-sitemap'></span> {% trans "Scan to Location" %}</a></li>
-            {% endif %}
-        </ul>
-    </div>
-    {% endif %}
-    <!-- Document / label menu -->
-    <div class='btn-group'>
-        <button id='document-options' title='{% trans "Printing actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-print'></span> <span class='caret'></span></button>
-        <ul class='dropdown-menu' role='menu'>
-            <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-            {% if test_report_enabled %}
-            <li><a href='#' id='stock-test-report'><span class='fas fa-file-pdf'></span> {% trans "Test Report" %}</a></li>
-            {% endif %}
-        </ul>
-    </div>
-    <!-- Stock adjustment menu -->
-    <!-- Check permissions and owner -->
-    {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
-        {% if roles.stock.change and not item.is_building %}
-        <div class='btn-group'>
-            <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
-            <ul class='dropdown-menu' role='menu'>
-                {% if not item.serialized %}
-                {% if item.in_stock %}
-                <li><a href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
-                {% endif %}
-                {% if not item.customer %}
-                <li><a href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
-                {% endif %}
-                {% if item.in_stock %}
-                <li><a href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
-                {% endif %}
-                {% if item.in_stock and item.part.trackable %}
-                <li><a href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
-                {% endif %}
-                {% endif %}
-                {% if item.in_stock and item.can_adjust_location %}
-                <li><a href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
-                {% endif %}
-                {% if item.in_stock and item.can_adjust_location and item.part.salable and not item.customer %}
-                <li><a href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
-                {% endif %}
-                {% if item.customer %}
-                <li><a href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
-                {% endif %}
-                {% if item.belongs_to %}
-                <li><a href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
-                {% else %}
-                {% if item.part.get_used_in %}
-                <li><a href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
-                {% endif %}
-                {% endif %}
-            </ul>
-        </div>
-        {% endif %}
-        <!-- Edit stock item -->
-        {% if roles.stock.change and not item.is_building %}
-        <div class='btn-group'>
-            <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
-            <ul class='dropdown-menu' role='menu'>
-                {% if item.part.can_convert %}
-                <li><a href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
-                {% endif %}
-                {% if roles.stock.add %}
-                <li><a href='#' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'><span class='fas fa-copy'></span> {% trans "Duplicate stock item" %}</a></li>
-                {% endif %}
-                <li><a href='#' id='stock-edit' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
-                {% if user.is_staff or roles.stock.delete %}
-                    {% if item.can_delete %}
-                    <li><a href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
-                    {% endif %}
-                {% endif %}
-            </ul>
-        </div>
-        {% endif %}
-    {% endif %}
-</div>
-
-{% endblock %}
-
-{% block below_thumbnail %}
 <div class='info-messages'>
 
     {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
@@ -230,8 +210,7 @@
 </div>
 {% endblock %}
 
-{% block page_details %}
-<h4>{% trans "Stock Item Details" %}</h4>
+{% block details_right %}
 <table class="table table-striped">
     <col width='25'>
     <tr>
@@ -253,13 +232,13 @@
         <td>{% trans "Serial Number" %}</td>
         <td>
         {% if previous %}
-            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
+            <a class="btn btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
                 <small>{{ previous.serial }}</small>  ‹
             </a>
         {% endif %}
         {{ item.serial }}
         {% if next %}
-            <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
+            <a class="btn btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
                 ›  <small>{{ next.serial }}</small>
             </a>
         {% endif %}
@@ -398,9 +377,9 @@
         <td>
             {{ item.expiry_date }}
             {% if item.is_expired %}
-            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='label label-red'>{% trans "Expired" %}</span>
+            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
             {% elif item.is_stale %}
-            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='label label-yellow'>{% trans "Stale" %}</span>
+            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
             {% endif %}
         </td>
     </tr>
@@ -432,29 +411,11 @@
     </tr>
     {% endif %}
 </table>
-
 {% endblock %}
+
 
 {% block js_ready %}
 {{ block.super }}
-
-enableNavbar({
-    label: 'item',
-    toggleId: '#item-menu-toggle',
-});
-
-loadTree("{% url 'api-stock-tree' %}",
-    "#stock-tree",
-    {
-        name: 'stock',
-    }
-);
-
-initNavTree({
-    label: 'stock',
-    treeId: '#sidenav-left',
-    toggleId: '#toggle-stock-tree',
-});
 
 $("#stock-serialize").click(function() {
     launchModalForm(
@@ -628,10 +589,5 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
-
-attachNavCallbacks({
-    name: 'stockitem',
-    default: 'history'
-});
 
 {% endblock %}

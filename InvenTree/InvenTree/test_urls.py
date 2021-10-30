@@ -107,6 +107,10 @@ class URLTest(TestCase):
 
         url, pk = url_pair
 
+        # Ignore "renaming"
+        if pk.startswith('as '):
+            pk = None
+
         # TODO: Handle reverse lookup of admin URLs!
         if url.startswith("admin:"):
             return

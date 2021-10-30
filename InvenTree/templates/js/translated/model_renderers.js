@@ -94,7 +94,7 @@ function renderStockItem(name, data, parameters, options) {
     if (data.serial && data.quantity == 1) {
         stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
     } else if (data.quantity == 0) {
-        stock_detail = `<span class='label-form label-red'>{% trans "No Stock"% }</span>`;
+        stock_detail = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock"% }</span>`;
     } else {
         stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
     }
@@ -172,7 +172,7 @@ function renderPart(name, data, parameters, options) {
     }
 
     if (!data.active) {
-        extra += `<span class='label-form label-red'>{% trans "Inactive" %}</span>`;
+        extra += `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Inactive" %}</span>`;
     }
 
     html += `

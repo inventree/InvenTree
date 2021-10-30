@@ -2,11 +2,109 @@
 {% load static %}
 {% load i18n %}
 
-{% block menubar %}
-{% include 'part/category_navbar.html' %}
+{% block sidebar %}
+{% include 'part/category_sidebar.html' %}
 {% endblock %}
 
-{% block content %}
+{% block heading %}
+{% if category %}
+{% trans "Part Category" %}: {{ category.name }}
+{% else %}
+{% trans "Parts" %}
+{% endif %}
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and roles.part_category.change %}
+{% url 'admin:part_partcategory_change' category.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if category %}
+{% if roles.part_category.change %}
+<button class='btn btn-outline-secondary' id='cat-edit' title='{% trans "Edit part category" %}'>
+    <span class='fas fa-edit'/>
+</button>
+{% endif %}
+{% if roles.part_category.delete %}
+<button class='btn btn-outline-secondary' id='cat-delete' title='{% trans "Delete part category" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
+{% endif %}
+{% if roles.part_category.add %}
+<button class='btn btn-success' id='cat-create' title='{% trans "Create new part category" %}'>
+    <span class='fas fa-plus-circle'></span> {% trans "New Category" %}
+</button>
+{% endif %}
+{% endblock %}
+
+{% block details_left %}
+{% if category %}
+<p>{{ category.description }}</p>
+{% else %}
+<p>{% trans "Top level part category" %}</p>
+{% endif %}
+
+{% endblock %}
+
+{% block details_right %}
+
+{% if category %}
+<table class='table table-condensed table-striped'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Category Path" %}</td>
+        <td>{{ category.pathstring }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Category Description" %}</td>
+        <td>{{ category.description }}</td>
+    </tr>
+    {% if category.default_location %}
+    <tr>
+        <td><span class='fas fa-map-marker-alt'></span></td>
+        <td>{% trans "Default Location" %}</td>
+        <td><a href="{% url 'stock-location-detail' category.default_location.pk %}">{{ category.default_location.pathstring }}</a></td>
+    </tr>
+    {% endif %}
+    {% if category.default_keywords %}
+    <tr>
+        <td><span class='fas fa-key'></span></td>
+        <td>{% trans "Keywords" %}</td>
+        <td>{{ category.default_keywords }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Subcategories" %}</td>
+        <td>{{ category.children.count }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-shapes'></span></td>
+        <td>{% trans "Parts (Including subcategories)" %}</td>
+        <td>{{ category.partcount }}</td>
+    </tr>
+</table>
+{% else %}
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Part Categories" %}</td>
+        <td>{{ category_count }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-shapes'></span></td>
+        <td>{% trans "Parts" %}</td>
+        <td>{{ part_count }}</td>
+    </tr>
+</table>
+{% endif %}
+{% endblock %}
+
+{% block page_content %}
 
 {% if messages %}
   {% for message in messages %}
@@ -16,139 +114,38 @@
   {% endfor %}
 {% endif %}
 
-
-<div class='panel panel-default panel-inventree'>
-    <div class='row'>
-        <div class='col-sm-6'>
-            {% if category %}
-            <h3>
-                {{ category.name }}
-                {% if user.is_staff and roles.part_category.change %}
-                <a href="{% url 'admin:part_partcategory_change' category.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
-                {% endif %}
-            </h3>
-            <p>{{ category.description }}</p>
-            {% else %}
-            <h3>{% trans "Part Categories" %}</h3>
-            <p>{% trans "All parts" %}</p>
-            {% endif %}
-            <p>
-                <div class='btn-group action-buttons'>
-                    {% if roles.part_category.add %}
-                    <button class='btn btn-default' id='cat-create' title='{% trans "Create new part category" %}'>
-                        <span class='fas fa-plus-circle icon-green'/>
-                    </button>
-                    {% endif %}
-                    {% if category %}
-                    {% if roles.part_category.change %}
-                    <button class='btn btn-default' id='cat-edit' title='{% trans "Edit part category" %}'>
-                        <span class='fas fa-edit icon-blue'/>
-                    </button>
-                    {% endif %}
-                    {% if roles.part_category.delete %}
-                    <button class='btn btn-default' id='cat-delete' title='{% trans "Delete part category" %}'>
-                        <span class='fas fa-trash-alt icon-red'/>
-                    </button>
-                    {% endif %}
-                    {% endif %}
-                </div>
-            </p>
-        </div>
-        <div class='col-sm-6'>
-            {% if category %}
-            <h3>{% trans "Category Details" %}</h3>
-            <table class='table table-condensed table-striped'>
-                <col width='25'>
-                <tr>
-                    <td><span class='fas fa-sitemap'></span></td>
-                    <td>{% trans "Category Path" %}</td>
-                    <td>{{ category.pathstring }}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-info-circle'></span></td>
-                    <td>{% trans "Category Description" %}</td>
-                    <td>{{ category.description }}</td>
-                </tr>
-                {% if category.default_location %}
-                <tr>
-                    <td><span class='fas fa-map-marker-alt'></span></td>
-                    <td>{% trans "Default Location" %}</td>
-                    <td><a href="{% url 'stock-location-detail' category.default_location.pk %}">{{ category.default_location.pathstring }}</a></td>
-                </tr>
-                {% endif %}
-                {% if category.default_keywords %}
-                <tr>
-                    <td><span class='fas fa-key'></span></td>
-                    <td>{% trans "Keywords" %}</td>
-                    <td>{{ category.default_keywords }}</td>
-                </tr>
-                {% endif %}
-                <tr>
-                    <td><span class='fas fa-sitemap'></span></td>
-                    <td>{% trans "Subcategories" %}</td>
-                    <td>{{ category.children.count }}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-shapes'></span></td>
-                    <td>{% trans "Parts (Including subcategories)" %}</td>
-                    <td>{{ category.partcount }}</td>
-                </tr>
-            </table>
-            {% else %}
-            <h3>{% trans "Category Details" %}</h3>
-            <table class='table table-striped table-condensed'>
-                <col width='25'>
-                <tr>
-                    <td><span class='fas fa-sitemap'></span></td>
-                    <td>{% trans "Part Categories" %}</td>
-                    <td>{{ category_count }}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-shapes'></span></td>
-                    <td>{% trans "Parts" %}</td>
-                    <td>{{ part_count }}</td>
-                </tr>
-            </table>
-            {% endif %}
-        </div>
-    </div>
-
-</div>
-
-{% block page_content %}
-
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-parts'>
+<div class='panel panel-hidden' id='panel-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Parts" %}</h4>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Parts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
+                    <span class='fas fa-file-download'></span> {% trans "Export" %}
+                </button>
+                {% if roles.part.add %}
+                <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div id='part-button-toolbar'>
-        <div class='btn-group'>
-            <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>
-                <span class='fas fa-file-download'></span> {% trans "Export" %}
-            </button>
-            {% if roles.part.add %}
-            <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
-            </button>
-            {% endif %}
-            <div class='btn-group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %} <span class='caret'></span></button>
+        <div class='btn-group' role='group'>
+            <div class='btn-group' role='group'>
+                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
+                    {% trans "Options" %}
+                </button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
-                    <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
                     {% endif %}
-                    <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
-                    <li><a href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
-                    <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
             </div>
-            <!-- Buttons to toggle between grid and table view -->
-            <button id='view-list' class='btn btn-default' type='button' title='{% trans "View list display" %}'>
-                <span class='fas fa-th-list'></span>
-            </button>
-            <button id='view-grid' class='btn btn-default' type='button' title='{% trans "View grid display" %}'>
-                <span class='fas fa-th'></span>
-            </button>
             <div class='filter-list' id='filter-list-parts'>
                 <!-- Empty div -->
             </div>
@@ -160,7 +157,7 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-parameters'>
+<div class='panel panel-hidden' id='panel-parameters'>
     <div class='panel-heading'>
         <h4>{% trans "Part Parameters" %}</h4>
     </div>
@@ -170,14 +167,13 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-subcategories'>
+<div class='panel panel-hidden' id='panel-subcategories'>
     <div class='panel-heading'>
         <h4>{% trans "Subcategories" %}</h4>
     </div>
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-    
+            <div class='btn-group' role='group'>
                 <div class='filter-list' id='filter-list-category'>
                     <!-- An empty div in which the filter list will be constructed -->
                 </div>
@@ -191,23 +187,12 @@
 
 {% endblock %}
 
-{% endblock %}
 {% block js_load %}
 {{ block.super }}
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
-
-    loadPartCategoryTable($('#subcategory-table'), {
-        params: {
-            {% if category %}
-            parent: {{ category.pk }}
-            {% else %}
-            parent: 'null'
-            {% endif %}
-        }
-    });
 
     {% if category %}
     loadParametricPartTable(
@@ -219,26 +204,19 @@
     );
     {% endif %}
 
-    enableNavbar({
-        label: 'category',
-        toggleId: '#category-menu-toggle',
-    });
+    enableSidebar('category');
 
-    $('#view-list').click(function() {
-        $('#view-list').hide();
-        $('#view-grid').show();
-
-        $('#part-table').bootstrapTable('toggleCustomView');
-        inventreeSave('part-grid-view', '');
-    });
-
-    $('#view-grid').click(function() {
-        $('#view-grid').hide();
-        $('#view-list').show();
-
-        $('#part-table').bootstrapTable('toggleCustomView');
-        inventreeSave('part-grid-view', 1);
-    });
+    loadPartCategoryTable(
+        $('#subcategory-table'), {
+            params: {
+                {% if category %}
+                parent: {{ category.pk }},
+                {% else %}
+                parent: null,
+                {% endif %}
+            }
+        }
+    );
 
     $("#cat-create").click(function() {
 
@@ -325,17 +303,5 @@
             gridView: true,
         },
     );
-
-    if (inventreeLoad("part-grid-view")) {
-        $('#view-grid').hide();
-        $('#part-table').bootstrapTable('toggleCustomView');
-    } else {
-        $('#view-list').hide();
-    }
-
-    attachNavCallbacks({
-        name: 'partcategory',
-        default: 'part-stock'
-    });
 
 {% endblock %}

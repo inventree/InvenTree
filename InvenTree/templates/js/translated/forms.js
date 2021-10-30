@@ -2,7 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    attachToggle,
     createNewModal,
     inventreeFormDataUpload,
     inventreeGet,
@@ -48,6 +47,9 @@
  * - min_value / max_value
  *
  */
+
+// Set global default theme for select2
+$.fn.select2.defaults.set('theme', 'bootstrap-5');
 
 /*
  * Return true if the OPTIONS specify that the user
@@ -519,11 +521,6 @@ function constructFormBody(fields, options) {
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
 
-    attachToggle(modal);
-
-    $(modal + ' .select2-container').addClass('select-full-width');
-    $(modal + ' .select2-container').css('width', '100%');
-
     modalShowSubmitButton(modal, true);
 
     $(modal).on('click', '#modal-form-submit', function() {
@@ -563,13 +560,14 @@ function insertConfirmButton(options) {
 
     var message = options.confirmMessage || '{% trans "Confirm" %}';
 
-    var confirm = `
-    <span style='float: left;'>
-        ${message}
-        <input id='modal-confirm' name='confirm' type='checkbox'>
-    </span>`;
+    var html = `
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modal-confirm">
+        <label class="form-check-label" for="modal-confirm">${message}</label>
+    </div>
+    `;
 
-    $(options.modal).find('#modal-footer-buttons').append(confirm);
+    $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
     $(options.modal).find('#modal-form-submit').prop('disabled', true);
@@ -930,7 +928,7 @@ function clearFormErrors(options) {
     $(options.modal).find('.form-error-message').remove();
 
     // Remove the "has error" class
-    $(options.modal).find('.has-error').removeClass('has-error');
+    $(options.modal).find('.form-field-error').removeClass('form-field-error');
 
     // Hide the 'non field errors'
     $(options.modal).find('#non-field-errors').html('');
@@ -1103,8 +1101,8 @@ function handleFormErrors(errors, fields, options) {
  */
 function addFieldErrorMessage(field_name, error_text, error_idx, options) {
 
-    // Add the 'has-error' class
-    $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+    // Add the 'form-field-error' class
+    $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
 
     var field_dom = $(options.modal).find(`#errors-${field_name}`);
 
@@ -1299,7 +1297,7 @@ function addSecondaryModal(field, fields, options) {
 
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
+        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
             ${secondary.label || secondary.title}
         </div>
     </span>`;
@@ -1585,7 +1583,6 @@ function initializeChoiceField(field, fields, options) {
     select.select2({
         dropdownAutoWidth: false,
         dropdownParent: $(options.modal),
-        width: '100%',
     });
 }
 
@@ -1731,7 +1728,7 @@ function constructField(name, parameters, options) {
                 <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
             if (group_options.collapsible) {
                 html += `
-                <div data-toggle='collapse' data-target='#form-panel-content-${group}'>
+                <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group}'>
                     <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
                 `;
             } else {
@@ -1757,7 +1754,7 @@ function constructField(name, parameters, options) {
     var form_classes = 'form-group';
 
     if (parameters.errors) {
-        form_classes += ' has-error';
+        form_classes += ' form-field-error';
     }
     
     // Optional content to render before the field
@@ -1799,7 +1796,7 @@ function constructField(name, parameters, options) {
         html += `<div class='input-group'>`;
     
         if (parameters.prefix) {
-            html += `<span class='input-group-addon'>${parameters.prefix}</span>`;
+            html += `<span class='input-group-text'>${parameters.prefix}</span>`;
         }
     }
 
@@ -1809,7 +1806,7 @@ function constructField(name, parameters, options) {
 
         if (!parameters.required) {
             html += `
-            <span class='input-group-addon form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
+            <span class='input-group-text form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
             </span>`;
         }
@@ -1818,7 +1815,11 @@ function constructField(name, parameters, options) {
     }
 
     if (parameters.help_text && !options.hideLabels) {
-        html += constructHelpText(name, parameters, options);
+
+        // Boolean values are handled differently!
+        if (parameters.type != 'boolean') {
+            html += constructHelpText(name, parameters, options);
+        }
     }
 
     // Div for error messages
@@ -1993,7 +1994,6 @@ function constructInputOptions(name, classes, type, parameters) {
 
     switch (parameters.type) {
     case 'boolean':
-        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
         break;
     case 'integer':
     case 'float':
@@ -2006,6 +2006,15 @@ function constructInputOptions(name, classes, type, parameters) {
 
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
+    } else if (parameters.type == 'boolean') {
+        return `
+        <div class='form-check form-switch'>
+            <input ${opts.join(' ')}>
+            <label class='form-check-label' for=''>
+                <em><small>${parameters.help_text}</small></em>
+            </label>
+        </div>
+        `;
     } else {
         return `<input ${opts.join(' ')}>`;
     }
@@ -2029,7 +2038,7 @@ function constructCheckboxInput(name, parameters) {
 
     return constructInputOptions(
         name,
-        'checkboxinput',
+        'form-check-input',
         'checkbox',
         parameters
     );
@@ -2114,7 +2123,7 @@ function constructChoiceInput(name, parameters) {
  */
 function constructRelatedFieldInput(name) {
 
-    var html = `<select id='id_${name}' class='select form-control' name='${name}' style='width: 100%;'></select>`;
+    var html = `<select id='id_${name}' class='select form-control' name='${name}'></select>`;
 
     // Don't load any options - they will be filled via an AJAX request
 
@@ -2188,13 +2197,7 @@ function constructRawInput(name, parameters) {
  */
 function constructHelpText(name, parameters) {
     
-    var style = '';
-
-    if (parameters.type == 'boolean') {
-        style = `style='display: inline-block; margin-left: 25px' `;
-    }
-
-    var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
+    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
 }
