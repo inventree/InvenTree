@@ -84,6 +84,7 @@ function createPurchaseOrder(options={}) {
                 prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
             },
             supplier: {
+                icon: 'fa-building',
                 value: options.supplier,
                 secondary: {
                     title: '{% trans "Add Supplier" %}',

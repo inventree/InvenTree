@@ -410,14 +410,12 @@ function toggleStar(options) {
 }
 
 
-function partStockLabel(part, options={}) {
-
-    var label_class = options.label_class || 'label-form';
+function partStockLabel(part) {
 
     if (part.in_stock) {
-        return `<span class='label ${label_class} label-green'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+        return `<span class='badge rounded-pill bg-success'>{% trans "Stock" %}: ${part.in_stock}</span>`;
     } else {
-        return `<span class='label ${label_class} label-red'>{% trans "No Stock" %}</span>`;
+        return `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     }
 }
 
@@ -453,7 +451,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
     }
 
     return html;
@@ -530,7 +528,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 if (!row.active) {
-                    html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
                 }
 
                 return html;
@@ -769,14 +767,10 @@ function partGridTile(part) {
     // Rows for table view
     var rows = '';
 
-    if (part.IPN) {
-        rows += `<tr><td><b>{% trans "IPN" %}</b></td><td>${part.IPN}</td></tr>`;
-    }
-
     var stock = `${part.in_stock}`;
 
     if (!part.in_stock) {
-        stock = `<span class='label label-red'>{% trans "No Stock" %}</label>`;
+        stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
@@ -791,8 +785,8 @@ function partGridTile(part) {
 
     var html = `
     
-    <div class='product-card card'>
-        <div class='panel panel-default panel-inventree product-card-panel'>
+    <div class='card product-card borderless'>
+        <div class='panel product-card-panel'>
             <div class='panel-heading'>
                 <a href='/part/${part.pk}/'>
                     <b>${part.full_name}</b>
@@ -949,20 +943,20 @@ function loadPartTable(table, url, options={}) {
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
                 if (row.minimum_stock && row.minimum_stock > value) {
-                    value += `<span class='label label-right label-warning'>{% trans "Low stock" %}</span>`;
+                    value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
                 }
 
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
-                value = `0<span class='label label-right label-primary'>{% trans "On Order" %}: ${row.on_order}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.on_order}</span>`;
                 link = '?display=purchase-orders';
             } else if (row.building) {
                 // There is no stock available, but stock is being built
-                value = `0<span class='label label-right label-info'>{% trans "Building" %}: ${row.building}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
                 link = '?display=build-orders';
             } else {
                 // There is no stock available
-                value = `0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
             }
 
             return renderLink(value, `/part/${row.pk}/${link}`);
@@ -989,6 +983,8 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    var grid_view = inventreeLoad('part-grid-view') == 1;
+
     $(table).inventreeTable({
         url: url,
         method: 'get',
@@ -1003,8 +999,52 @@ function loadPartTable(table, url, options={}) {
         },
         columns: columns,
         showColumns: true,
-        showCustomView: false,
+        showCustomView: grid_view,
         showCustomViewButton: false,
+        onPostBody: function() {
+            grid_view = inventreeLoad('part-grid-view') == 1;
+            if (grid_view) {
+                $('#view-part-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-part-grid').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            } else {
+                $('#view-part-grid').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+        },
+        buttons: [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-part-list',
+                },
+                event: () => {
+                    inventreeSave('part-grid-view', 0);
+                    $(table).bootstrapTable(
+                        'refreshOptions',
+                        {
+                            showCustomView: false,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-th',
+                attributes: {
+                    title: '{% trans "Display as grid" %}',
+                    id: 'view-part-grid',
+                },
+                event: () => {
+                    inventreeSave('part-grid-view', 1);
+                    $(table).bootstrapTable(
+                        'refreshOptions',
+                        {
+                            showCustomView: true,
+                        }
+                    );
+                }
+            }
+        ],
         customView: function(data) {
 
             var html = '';
@@ -1117,14 +1157,88 @@ function loadPartCategoryTable(table, options) {
 
     setupFilterList(filterKey, table, filterListElement);
 
+    var tree_view = inventreeLoad('category-tree-view') == 1;
+
     table.inventreeTable({
+        treeEnable: tree_view,
+        rootParentId: options.params.parent,
+        uniqueId: 'pk',
+        idField: 'pk',
+        treeShowField: 'name',
+        parentIdField: 'parent',
         method: 'get',
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
-        sidePagination: 'server',
+        disablePagination: tree_view,
+        sidePagination: tree_view ? 'client' : 'server',
+        serverSort: !tree_view, 
+        search: !tree_view,
         name: 'category',
         original: original,
         showColumns: true,
+        buttons: [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-category-list',
+                },
+                event: () => {
+                    inventreeSave('category-tree-view', 0);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: false,
+                            serverSort: true,
+                            search: true,
+                            pagination: true,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-sitemap',
+                attributes: {
+                    title: '{% trans "Display as tree" %}',
+                    id: 'view-category-tree',
+                },
+                event: () => {
+                    inventreeSave('category-tree-view', 1);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: true,
+                            serverSort: false,
+                            search: false,
+                            pagination: false,
+                        }
+                    );
+                }
+            }
+        ],
+        onPostBody: function() {
+
+            tree_view = inventreeLoad('category-tree-view') == 1;
+
+            if (tree_view) {
+
+                $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                
+                table.treegrid({
+                    treeColumn: 0,
+                    onChange: function() {
+                        table.bootstrapTable('resetView');
+                    },
+                    onExpand: function() {
+                        
+                    }
+                });
+            } else {
+                $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+        },
         columns: [
             {
                 checkbox: true,
@@ -1154,7 +1268,8 @@ function loadPartCategoryTable(table, options) {
             {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
-                switchable: true,
+                switchable: !tree_view,
+                visible: !tree_view,
                 sortable: false,
             },
             {

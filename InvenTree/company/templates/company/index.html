@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "page_base.html" %}
 
 {% load static %}
 {% load i18n %}
@@ -8,23 +8,28 @@
 {% inventree_title %} | {% trans "Supplier List" %} 
 {% endblock %}
 
-{% block content %}
+{% block heading %}
+{{ title }}
+{% endblock %}
 
-<h3>{{ title }}</h3>
-<hr>
-
+{% block actions %}
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
-<div id='button-toolbar'>
-    <button type='button' class="btn btn-success" id='new-company'>
-        <span class='fas fa-plus-circle'></span> {{ button_text }}
-    </button>
-    <div class='btn-group'>
-    </div>
-</div>
+<button type='button' class="btn btn-success" id='new-company'>
+    <span class='fas fa-plus-circle'></span> {{ button_text }}
+</button>
 {% endif %}
+{% endblock %}
 
-<table class='table table-striped table-condensed' id='company-table' data-toolbar='#button-toolbar'>
-</table>
+{% block page_info %}
+
+<div class='panel-content'>
+    
+    <div id='button-toolbar'>
+    </div>
+    
+    <table class='table table-striped table-condensed' id='company-table' data-toolbar='#button-toolbar'>
+    </table>
+</div>
 
 {% endblock %}
 {% block js_ready %}

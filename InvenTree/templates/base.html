@@ -33,15 +33,15 @@
 <meta name="theme-color" content="#ffffff">
 
 <!-- CSS -->
-<link rel='stylesheet' href='{% static "treegrid/css/jquery.treegrid.css" %}'>
-<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap_3.3.7_css_bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/bootstrap-table.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
+<link rel='stylesheet' href='{% static "treegrid/css/jquery.treegrid.css" %}'>
+<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
 <link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
+<link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap-5-theme.css' %}">
 <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
 <link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
 
@@ -66,47 +66,41 @@
 
 {% include "navbar.html" %}
 
-<div class='main body wrapper'>
+<div class='main body wrapper container-fluid inventree-body'>
 
-<div class='inventree-body'>
+    <div class='row flex-nowrap inventree-body'>
+        <div class='col-auto px-1 sidebar-wrapper'>
+            <div id='sidebar' class='collapse collapse-horizontal show border-end' style='display: none;'>
+                <div id='sidebar-nav' class='list-group text-sm-start'>
+                    <ul id='sidebar-list-group' class='list-group sidebar-list-group'>
+                        {% block sidebar %}
+                        <!-- Sidebar goes here -->
+                        {% endblock %}
+                        {% include "sidebar_toggle.html" %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <main class='col ps-md-2 pt-2'>
+            {% block breadcrumb_list %}
+            <div class='container-fluid navigation'>
+                <nav aria-label='breadcrumb'>
+                    <ol class='breadcrumb'>
+                        {% block breadcrumbs %}
+                        {% endblock %}
+                    </ol>
+                </nav>
+            </div>
+            {% endblock %}
 
-<div class='containter-fluid inventree-pre-content'>    
-    {% block pre_content %}
-    {% endblock %}
-</div>
-
-<div class='inventree-navs'>
-
-    <div class='sidenav sidenav-left' id='sidenav-left'>
-        {% block sidenav %}
-        <!-- Sidenav code here -->
-        {% endblock %}
+            {% block content %}
+                <!-- Each view fills in here.. -->
+            {% endblock %}
+        </main>
     </div>
-
-    <div class='sidenav sidenav-right' id='sidenav-right'>
-        {% block menubar %}
-        <!-- Menubar code here -->
-        {% endblock %}
-    </div>
-
-    <div class="container container-fluid inventree-content" id='inventree-content'>
-        {% block content %}
-        <!-- Each view fills in here.. -->
-        {% endblock %}
-
-    </div>
-
-
-{% block post_content %}
-{% endblock %}
-
-</div>
-
-{% include 'modals.html' %}
-{% include 'about.html' %}
-{% include 'notification.html' %}
-</div>
-
+    {% include 'modals.html' %}
+    {% include 'about.html' %}
+    {% include 'notification.html' %}
 </div>
 
 <!-- Scripts -->
@@ -114,11 +108,9 @@
 <script type='text/javascript' src="{% static 'script/jquery.form.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/jquery-ui/jquery-ui.min.js' %}"></script>
 
-<script type="text/javascript" src="{% static 'script/bootstrap/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-treeview.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-toggle.js' %}"></script>
 <script type='text/javascript' src="{% static 'bootstrap-table/bootstrap-table.js' %}"></script>
-<script type='text/javascript' src="{% static 'bootstrap-table/bootstrap-table-en-US.min.js' %}"></script>
 
 <!-- jquery-treegrid -->
 <script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.js" %}'></script>

@@ -111,7 +111,7 @@ function inventreeDocReady() {
 
         modal.modal({
             backdrop: 'static',
-            keyboard: 'false',
+            keyboard: true,
         });
 
         modal.modal('show');
@@ -169,12 +169,7 @@ function inventreeDocReady() {
                 html += '</span>';
                 
                 if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
-                    html += partStockLabel(
-                        item.data,
-                        {
-                            label_class: 'label-right',
-                        }
-                    );
+                    html += partStockLabel(item.data);
                 }
 
                 html += '</a>';
@@ -194,6 +189,13 @@ function inventreeDocReady() {
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
         loadBrandIcon($(this), $(this).attr('brand_name'));
+    });
+
+    // Callback for "admin view" button
+    $('#admin-button').click(function() {
+        var url = $(this).attr('url');
+
+        location.href = url;
     });
 }
 

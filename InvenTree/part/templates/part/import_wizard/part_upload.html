@@ -3,24 +3,13 @@
 {% load i18n %}
 {% load static %}
 
-{% block menubar %}
-<ul class='list-group'>
-    <li class='list-group-item'>
-        <a href='#' id='part-menu-toggle'>
-            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
-        </a>
-    </li>
-    <li class='list-group-item' title='{% trans "Return To Parts" %}'>
-        <a href='{% url "part-index" %}' id='select-upload-file' class='nav-toggle'>
-            <span class='fas fa-undo side-icon'></span>
-            {% trans "Return To Parts" %}
-        </a>
-    </li>
-</ul>
+{% block sidebar %}
+{% url 'part-index' as url %}
+{% include "sidebar_link.html" with url=url text="Return to Parts" icon="fa-undo" %}
 {% endblock %}
 
 {% block content %}
-    <div class='panel panel-default panel-inventree'>
+    <div class='panel'>
         <div class='panel-heading'>
             <h4>
                 {% trans "Import Parts from File" %}
@@ -52,9 +41,9 @@
 
         {% block form_buttons_bottom %}
         {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
         {% endif %}
-        <button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
+        <button type="submit" class="save btn btn-outline-secondary">{% trans "Upload File" %}</button>
         </form>
         {% endblock form_buttons_bottom %}
 
@@ -70,9 +59,6 @@
 {% block js_ready %}
 {{ block.super }}
 
-enableNavbar({
-    label: 'part',
-    toggleId: '#part-menu-toggle',
-});
+enableSidebar('partupload');
 
 {% endblock %}
