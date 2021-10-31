@@ -5,7 +5,7 @@ const {{ label }}Codes = {
     {% for opt in options %}'{{ opt.key }}': {
         key: '{{ opt.key }}',
         value: '{{ opt.value }}',{% if opt.color %}
-        label: 'label-{{ opt.color }}',{% endif %}
+        label: 'bg-{{ opt.color }}',{% endif %}
     },
     {% endfor %}
 };
@@ -32,7 +32,7 @@ function {{ label }}StatusDisplay(key, options={}) {
         label = '';
     }
 
-    var classes = `label ${label}`;
+    var classes = `badge rounded-pill ${label}`;
 
     if (options.classes) {
         classes += ' ' + options.classes;

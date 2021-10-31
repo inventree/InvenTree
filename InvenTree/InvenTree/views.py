@@ -42,8 +42,6 @@ from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import SettingCategorySelectForm
 from .helpers import str2bool
 
-from rest_framework import views
-
 
 def auth_request(request):
     """
@@ -56,84 +54,6 @@ def auth_request(request):
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=403)
-
-
-class TreeSerializer(views.APIView):
-    """ JSON View for serializing a Tree object.
-
-    Turns a 'tree' model into a JSON object compatible with bootstrap-treview.
-
-    Ref: https://github.com/jonmiles/bootstrap-treeview
-    """
-
-    @property
-    def root_url(self):
-        """ Return the root URL for the tree. Implementation is class dependent.
-
-        Default implementation returns #
-        """
-
-        return '#'
-
-    def itemToJson(self, item):
-
-        data = {
-            'pk': item.id,
-            'text': item.name,
-            'href': item.get_absolute_url(),
-            'tags': [item.item_count],
-        }
-
-        if item.has_children:
-            nodes = []
-
-            for child in item.children.all().order_by('name'):
-                nodes.append(self.itemToJson(child))
-
-            data['nodes'] = nodes
-
-        return data
-
-    def get_items(self):
-
-        return self.model.objects.all()
-
-    def generate_tree(self):
-
-        nodes = []
-
-        items = self.get_items()
-
-        # Construct the top-level items
-        top_items = [i for i in items if i.parent is None]
-
-        top_count = 0
-
-        # Construct the top-level items
-        top_items = [i for i in items if i.parent is None]
-
-        for item in top_items:
-            nodes.append(self.itemToJson(item))
-            top_count += item.item_count
-
-        self.tree = {
-            'pk': None,
-            'text': self.title,
-            'href': self.root_url,
-            'nodes': nodes,
-            'tags': [top_count],
-        }
-
-    def get(self, request, *args, **kwargs):
-        """ Respond to a GET request for the Tree """
-
-        self.generate_tree()
-
-        response = {
-            'tree': [self.tree]
-        }
-
-        return JsonResponse(response, safe=False)
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):

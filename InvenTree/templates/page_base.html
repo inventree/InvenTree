@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+
+<div class='panel'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>
+                {% block heading %}
+                <i>-- page header goes here --</i>
+                {% endblock %}
+            </h4>
+            {% include "spacer.html" %}
+            <div id='page-actions' class='btn-group' role='group'>
+                {% block actions %}
+                <i>-- actions go here --</i>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    {% block page_info %}
+    <div class='panel-content'>
+        <div class='row'>
+            <div class='col-sm-6' id='detail-panel-left'>
+                <div class='card'>
+                    {% block details_left %}
+                    <div class='row g-0'>
+                        <div class='col-md-4'>
+                            {% block thumbnail %}
+                            {% endblock %}
+                        </div>
+                        <div class='col-md-8'>
+                            {% block details %}
+                            {% endblock %}
+                        </div>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+            <div class='col-sm-6' id='detail-panel-right'>
+                <div class='card'>
+                    {% block details_right %}
+                    block details_right
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+</div>
+
+{% block page_content %}
+{% endblock %}
+
+{% endblock %}
