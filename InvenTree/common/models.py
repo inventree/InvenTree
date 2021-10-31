@@ -853,6 +853,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
             'choices': settings_group_options
         },
+        'LOGIN_ENFORCE_MFA': {
+            'name': _('Enforce MFA'),
+            'description': _('Users must use multifaktor security.'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     class Meta:

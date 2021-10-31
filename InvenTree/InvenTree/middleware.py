@@ -11,6 +11,7 @@ from rest_framework.authtoken.models import Token
 from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
 
 from InvenTree.urls import frontendpatterns
+from common.models import InvenTreeSetting
 
 
 logger = logging.getLogger("inventree")
@@ -162,7 +163,7 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
         # Superusers are require to have 2FA.
         try:
             if url_matcher.resolve(request.path[1:]):
-                return True
+                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
         except Resolver404:
             pass
         return False
