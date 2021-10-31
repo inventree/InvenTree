@@ -29,7 +29,6 @@ from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.views import ConnectionsView
-from allauth_2fa.views import TwoFactorAuthenticate
 
 from common.settings import currency_code_default, currency_codes
 
@@ -776,7 +775,6 @@ class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow
     """
     success_url = reverse_lazy("account_login")
-
 
 
 class CurrencyRefreshView(RedirectView):

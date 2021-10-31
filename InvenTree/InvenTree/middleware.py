@@ -155,6 +155,7 @@ class QueryCountMiddleware(object):
 
 url_matcher = url('', include(frontendpatterns))
 
+
 class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """check if user is required to have MFA enabled"""
     def require_2fa(self, request):
@@ -165,6 +166,7 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
         except Resolver404:
             pass
         return False
+
 
 class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
     """This function ensures only frontend code triggers the MFA auth cycle"""
