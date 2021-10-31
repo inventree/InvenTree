@@ -15,25 +15,23 @@
 }
 
 .login-screen {
-    background-image: url("/static/img/paper_splash.jpg");
+    background: url(/static/img/paper_splash.jpg) no-repeat center fixed; 
     background-size: cover;
-    background-repeat: no-repeat;
-    height: 100%;
+    height: 100vh;
     font-family: 'Numans', sans-serif;
     color: #eee;
 }
 
 .login-container {
-    left: 50%;
-    position: fixed;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 30%;
-    align-content: center;
+    align-self: center;
     border-radius: 15px;
     padding: 20px;
     padding-bottom: 35px;
     background-color: rgba(50, 50, 50, 0.75);
+
+    width: 100%;
+    max-width: 330px;
+    margin: auto;
 }
 
 .login-header {
