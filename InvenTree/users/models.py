@@ -73,6 +73,9 @@ class RuleSet(models.Model):
             'socialaccount_socialaccount',
             'socialaccount_socialapp',
             'socialaccount_socialtoken',
+            'otp_totp_totpdevice',
+            'otp_static_statictoken',
+            'otp_static_staticdevice',
         ],
         'part_category': [
             'part_partcategory',
