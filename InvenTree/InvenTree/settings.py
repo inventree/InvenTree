@@ -301,7 +301,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_otp.middleware.OTPMiddleware',                      # MFA support
-    'allauth_2fa.middleware.AllauthTwoFactorMiddleware',        # Flow control for allauth
+    'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',

@@ -37,7 +37,7 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView, CustomTwoFactorAuthenticate
+from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
@@ -168,7 +168,6 @@ frontendpatterns = [
     url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
-    url(r"^accounts/two-factor-authenticate/?$", CustomTwoFactorAuthenticate.as_view(), name="two-factor-authenticate"),
     url(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     url(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]

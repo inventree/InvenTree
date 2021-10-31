@@ -8,7 +8,7 @@ import time
 import operator
 
 from rest_framework.authtoken.models import Token
-from allauth_2fa.middleware import BaseRequire2FAMiddleware
+from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
 
 from InvenTree.urls import frontendpatterns
 
@@ -156,6 +156,7 @@ class QueryCountMiddleware(object):
 url_matcher = url('', include(frontendpatterns))
 
 class Check2FAMiddleware(BaseRequire2FAMiddleware):
+    """check if user is required to have MFA enabled"""
     def require_2fa(self, request):
         # Superusers are require to have 2FA.
         try:
@@ -164,3 +165,12 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
         except Resolver404:
             pass
         return False
+
+class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
+    """This function ensures only frontend code triggers the MFA auth cycle"""
+    def process_request(self, request):
+        try:
+            if not url_matcher.resolve(request.path[1:]):
+                super().process_request(request)
+        except Resolver404:
+            pass

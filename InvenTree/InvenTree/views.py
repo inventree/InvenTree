@@ -858,13 +858,6 @@ class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     success_url = reverse_lazy("account_login")
 
 
-class CustomTwoFactorAuthenticate(TwoFactorAuthenticate):
-    def dispatch(self, request, *args, **kwargs):
-        if 'allauth_2fa_user_id' not in request.session and 'otp_token' not in request.POST:
-            return redirect('account_login')
-        if hasattr(request.user, 'id'):
-            request.session['allauth_2fa_user_id'] = request.user.id
-        return super(FormView, self).dispatch(request, *args, **kwargs)
 
 class CurrencyRefreshView(RedirectView):
     """
