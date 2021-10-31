@@ -1659,8 +1659,11 @@ def after_save_stock_item(sender, instance: StockItem, **kwargs):
     starred the part
     """
 
-    if instance.quantity <= instance.part.minimum_stock:
-        inventree_tasks.notify_low_stock(instance)
+    if instance.part.is_part_low_on_stock():
+        inventree_tasks.offload_task(
+            'part.tasks.notify_low_stock',
+            instance.part
+        )
 
 
 class StockItemAttachment(InvenTreeAttachment):
