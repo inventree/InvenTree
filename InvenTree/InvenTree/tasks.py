@@ -11,8 +11,6 @@ from django.utils import timezone
 
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
-from django.template.loader import render_to_string
-from django.utils.translation import gettext_lazy as _
 
 
 logger = logging.getLogger("inventree")
