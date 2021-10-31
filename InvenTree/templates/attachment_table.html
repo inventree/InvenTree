@@ -1,10 +1,8 @@
 {% load i18n %}
 
 <div id='attachment-buttons'>
-    <div class='btn-group'>
-        <div class='filter-list' id='filter-list-related'>
-                    <!-- An empty div in which the filter list will be constructed -->
-        </div>
+    <div class='btn-group' role='group'>
+        {% include "filter_list.html" with id="related" %}
     </div>
 </div>
 

@@ -34,11 +34,8 @@
                 <li><a class='dropdown-item' href='#' id='bom-item-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Items" %}</a></li>
             </ul>
         </div>
-        {% endif %}
-   
-        <div class='filter-list' id='filter-list-bom'>
-            <!-- Empty div (will be filled out with avilable BOM filters) -->
-        </div>
+        {% endif %}   
+        {% include "filter_list.html" with id="bom" %}
     </div>
 </div>
 
