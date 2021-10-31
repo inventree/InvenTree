@@ -110,7 +110,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             return
         
         # Workers are not running: run it as synchronous task
-        _func()
+        _func(*args, **kwargs)
 
 
 def heartbeat():
