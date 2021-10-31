@@ -116,7 +116,7 @@
 
 <div class='panel panel-hidden' id='panel-parts'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -146,9 +146,7 @@
                     <li><a class='dropdown-item' href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
             </div>
-            <div class='filter-list' id='filter-list-parts'>
-                <!-- Empty div -->
-            </div>
+            {% include "filter_list.html" with id="parts" %}
         </div>
     </div>
     <div class='panel-content'>
@@ -174,9 +172,7 @@
     <div class='panel-content'>
         <div id='subcategory-button-toolbar'>
             <div class='btn-group' role='group'>
-                <div class='filter-list' id='filter-list-category'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+                {% include "filter_list.html" with id="category" %}
             </div>
         </div>
     
