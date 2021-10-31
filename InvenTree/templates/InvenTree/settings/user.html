@@ -155,6 +155,51 @@
     </div>
 </div>
 
+<div class="row">
+    <div class='panel-heading'>
+        <h4>{% trans "Multifaktor" %}</h4>
+    </div>
+
+    <div class="col-md-6">
+    {% if user.staticdevice_set.all and user.totpdevice_set.all %}
+    <p>{% trans 'You have these faktors available:' %}</p>
+
+    <table class="table table-striped">
+        <thead>
+            <th>Type</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+        {% for token in user.totpdevice_set.all %}
+        <tr>
+            <td>{% trans 'TOTP' %}</td>
+            <td>{{ token.name }}</td>
+        </tr>
+        {% endfor %}
+        {% for token in user.staticdevice_set.all %}
+        <tr>
+            <td>{% trans 'Static' %}</td>
+            <td>{{ token.name }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <p><strong>{% trans 'Warning:'%}</strong>
+        {% trans "You currently do not have any faktors set up." %}
+    </p>
+
+    {% endif %}
+    </div>
+
+    <div class="col-md-6">
+    <h5>{% trans "Change faktors" %}</h5>
+    <a href="{% url 'two-factor-setup' %}" class="btn btn-primary">{% trans "Setup multifaktor" %}</a>
+    <a href="{% url 'two-factor-remove' %}" class="btn btn-primary">{% trans "Remove multifaktor" %}</a>
+    </div>
+</div>
+
 <div class='row'>
     <div class='panel-heading'>
         <h4>{% trans "Theme Settings" %}</h4>
