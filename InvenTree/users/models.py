@@ -234,7 +234,7 @@ class RuleSet(models.Model):
         given the app_model name, and the permission type.
         """
 
-        app, model = model.split('_')
+        model, app = split_model(model)
 
         return "{app}.{perm}_{model}".format(
             app=app,
@@ -275,6 +275,19 @@ class RuleSet(models.Model):
         """
 
         return self.RULESET_MODELS.get(self.name, [])
+
+
+def split_model(model):
+    """get modelname and app from modelstring"""
+    app, *model = model.split('_')
+
+    # handle models that have
+    if len(model) > 1:
+        model = '_'.join(model)
+    else:
+        model = model[0]
+
+    return model, app
 
 
 def update_group_roles(group, debug=False):
@@ -380,7 +393,7 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        (permission_name, model) = perm.split('_')
+        (model, permission_name) = split_model(perm)
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
