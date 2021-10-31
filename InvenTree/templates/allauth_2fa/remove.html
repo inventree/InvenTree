@@ -1,0 +1,18 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>
+  {% trans "Disable Two-Factor Authentication" %}
+</h1>
+
+<p>{% trans "Are you sure?" %}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">
+    {% trans 'Disable Two-Factor' %}
+  </button>
+</form>
+
+{% endblock %}
