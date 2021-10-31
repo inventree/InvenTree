@@ -109,7 +109,7 @@
 
 <div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Test Templates" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -123,10 +123,8 @@
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='button-toolbar container-fluid' style="float: right;">
-                <div class='filter-list' id='filter-list-parttests'>
-                    <!-- Empty div -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parttests" %}
             </div>
         </div>
         
@@ -136,7 +134,7 @@
 
 <div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>    
+        <div class='d-flex flex-wrap'>    
             <h4>{% trans "Purchase Orders" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -149,9 +147,7 @@
     <div class='panel-content'>
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <div class='filter-list' id='filter-list-purchaseorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+                {% include "filter_list.html" with id="purchaseorder" %}
             </div>
         </div>
         
@@ -166,13 +162,8 @@
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% if 0 %}
-                <button class='btn btn-success' type='button' id='part-order2' title='{% trans "New sales order" %}'>{% trans "New Order" %}</button>
-                {% endif %}
-                <div class='filter-list' id='filter-list-salesorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="salesorder" %}
             </div>
         </div>
 
@@ -221,7 +212,7 @@
 
 <div class='panel panel-hidden' id='panel-variants'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Variants" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -238,9 +229,7 @@
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                 </div>
-                <div class='filter-list' id='filter-list-variants'>
-                    <!-- Empty div (will be filled out with available BOM filters) -->
-                </div>
+                {% include "filter_list.html" with id="variants" %}
             </div>
         </div>
         
@@ -251,7 +240,7 @@
 
 <div class='panel panel-hidden' id='panel-part-parameters'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Parameters" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -274,7 +263,7 @@
 
 <div class='panel panel-hidden' id='panel-part-attachments'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Attachments" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -289,7 +278,7 @@
 
 <div class='panel panel-hidden' id='panel-related-parts'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Related Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -303,10 +292,8 @@
     </div>
     <div class='panel-content'>
         <div id='related-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: left;'>
-                <div class='filter-list' id='filter-list-related'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="related" %}
             </div>
         </div>
         
@@ -342,7 +329,7 @@
 
 <div class='panel panel-hidden' id='panel-bom'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Bill of Materials" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -391,8 +378,8 @@
     </div>
     <div class='panel-content'>
         <div id='assembly-button-toolbar'>
-            <div class='filter-list' id='filter-list-usedin'>
-                <!-- Empty div (will be filled out with avilable BOM filters) -->
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="usedin" %}
             </div>
         </div>
         
@@ -403,7 +390,7 @@
 
 <div class='panel panel-hidden' id='panel-build-orders'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Builds" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -419,10 +406,8 @@
     </div>
     <div class='panel-content'>
         <div id='build-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right';>
-                <div class='filter-list' id='filter-list-build'>
-                    <!-- Empty div for filters -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="build" %}
             </div>
         </div>
         
@@ -440,7 +425,7 @@
 
 <div class='panel panel-hidden' id='panel-suppliers'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Suppliers" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -467,7 +452,7 @@
     </div>
 
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Manufacturers" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
