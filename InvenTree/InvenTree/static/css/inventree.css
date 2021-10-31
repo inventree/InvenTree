@@ -308,7 +308,13 @@
     transform: translate(0%, -25%);
 }
   
-.filter-list .close:hover {background: #bbb;}
+.filter-list .close:hover {
+    background: #bbb;
+}
+
+.filter-list .form-control {
+    width: initial;
+}
 
 .filter-tag {
     display: inline-block;
