@@ -141,6 +141,10 @@
     float: left;
 }
 
+.navbar-spacer {
+    height: 60px;
+}
+
 #navbar-barcode-li {
     border-left: none;
     border-right: none;
@@ -295,8 +299,6 @@
     vertical-align: middle;
     margin: 1px;
     padding: 2px;
-    background: #eee;
-    border: 1px solid #eee;
     border-radius: 3px;
 }
 
@@ -308,7 +310,13 @@
     transform: translate(0%, -25%);
 }
   
-.filter-list .close:hover {background: #bbb;}
+.filter-list .close:hover {
+    background: #bbb;
+}
+
+.filter-list .form-control {
+    width: initial;
+}
 
 .filter-tag {
     display: inline-block;
@@ -316,14 +324,18 @@
     zoom: 1;
     padding-left: 3px;
     padding-right: 3px;
-    padding-top: 2px;
-    padding-bottom: 2px;
     border: 1px solid #aaa;
     border-radius: 3px;
     background: #eee;
     margin: 1px;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+.filter-button {
+    padding: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 .filter-input {
@@ -537,7 +549,6 @@
 .inventree-body {
     width: 100%;
     padding: 5px;
-    margin-top: 10px;
 }
 
 .inventree-pre-content {
@@ -552,10 +563,6 @@
     max-width: 100%;
     display: inline-block;
     transition: 0.1s;
-}
-
-.body {
-    padding-top: 50px;
 }
 
 .modal {
