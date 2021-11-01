@@ -855,7 +855,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'LOGIN_ENFORCE_MFA': {
             'name': _('Enforce MFA'),
-            'description': _('Users must use multifaktor security.'),
+            'description': _('Users must use multifactor security.'),
             'default': False,
             'validator': bool,
         },
