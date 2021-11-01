@@ -279,13 +279,13 @@ class RuleSet(models.Model):
 
 def split_model(model):
     """get modelname and app from modelstring"""
-    app, *model = model.split('_')
+    *app, model = model.split('_')
 
     # handle models that have
-    if len(model) > 1:
-        model = '_'.join(model)
+    if len(app) > 1:
+        app = '_'.join(app)
     else:
-        model = model[0]
+        app = app[0]
 
     return model, app
 
