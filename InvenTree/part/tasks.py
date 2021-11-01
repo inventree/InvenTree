@@ -37,3 +37,16 @@ def notify_low_stock(part: Part):
         html_message = render_to_string('stock/low_stock_notification.html', context)
         recipients = starred_users_email.values_list('email', flat=True)
         inventree_tasks.send_email(subject, '', recipients, html_message=html_message)
+
+
+def notify_low_stock_if_required(part: Part):
+    """
+    Check if the stock quantity has fallen below the minimum threshold of part. If yes, notify the users who have
+    starred the part
+    """
+
+    if part.is_part_low_on_stock():
+        inventree_tasks.offload_task(
+            'part.tasks.notify_low_stock',
+            part
+        )
