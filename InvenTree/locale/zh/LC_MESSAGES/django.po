@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-01 11:47+0000\n"
+"POT-Creation-Date: 2021-11-01 14:08+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -80,36 +80,36 @@ msgstr ""
 msgid "You must type the same email each time."
 msgstr ""
 
-#: InvenTree/helpers.py:401
+#: InvenTree/helpers.py:430
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr "重复的序列号: {n}"
 
-#: InvenTree/helpers.py:408 order/models.py:318 order/models.py:440
+#: InvenTree/helpers.py:437 order/models.py:318 order/models.py:440
 #: stock/views.py:1340
 msgid "Invalid quantity provided"
 msgstr "提供的数量无效"
 
-#: InvenTree/helpers.py:411
+#: InvenTree/helpers.py:440
 msgid "Empty serial number string"
 msgstr "空序列号字符串"
 
-#: InvenTree/helpers.py:433 InvenTree/helpers.py:436 InvenTree/helpers.py:439
-#: InvenTree/helpers.py:464
+#: InvenTree/helpers.py:462 InvenTree/helpers.py:465 InvenTree/helpers.py:468
+#: InvenTree/helpers.py:493
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "无效的群组: {g}"
 
-#: InvenTree/helpers.py:469
+#: InvenTree/helpers.py:498
 #, python-brace-format
 msgid "Duplicate serial: {g}"
 msgstr "重复的序列号: {g}"
 
-#: InvenTree/helpers.py:477
+#: InvenTree/helpers.py:506
 msgid "No serial numbers found"
 msgstr "未找到序列号"
 
-#: InvenTree/helpers.py:481
+#: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
@@ -4172,9 +4172,9 @@ msgstr ""
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
-#: part/tasks.py:36
+#: part/tasks.py:40
 #, python-brace-format
-msgid "Attention! {part.name} is low on stock"
+msgid "[InvenTree] {part.name} is low on stock"
 msgstr ""
 
 #: part/templates/part/bom.html:6
@@ -5769,44 +5769,6 @@ msgstr ""
 msgid "Are you sure you want to delete this stock location?"
 msgstr ""
 
-#: stock/templates/stock/low_stock_notification.html:3
-msgid "Hi, "
-msgstr ""
-
-#: stock/templates/stock/low_stock_notification.html:3
-msgid "is low on stock. Kindly do the needful."
-msgstr ""
-
-#: stock/templates/stock/low_stock_notification.html:8
-msgid "Part low on stock"
-msgstr ""
-
-#: stock/templates/stock/low_stock_notification.html:12
-#, fuzzy
-#| msgid "Name"
-msgid "Part Name"
-msgstr "名称"
-
-#: stock/templates/stock/low_stock_notification.html:13
-#, fuzzy
-#| msgid "Build Quantity"
-msgid "Available Quantity"
-msgstr "生产数量"
-
-#: stock/templates/stock/low_stock_notification.html:14
-#, fuzzy
-#| msgid "Build Quantity"
-msgid "Minimum Quantity"
-msgstr "生产数量"
-
-#: stock/templates/stock/low_stock_notification.html:24
-msgid "You are receiving this mail because you have starred the part "
-msgstr ""
-
-#: stock/templates/stock/low_stock_notification.html:25
-msgid "Inventree application"
-msgstr ""
-
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
 msgstr ""
@@ -6465,6 +6427,41 @@ msgstr ""
 
 #: templates/admin_button.html:2
 msgid "View in administration panel"
+msgstr ""
+
+#: templates/email/low_stock_notification.html:8
+#, python-format
+msgid " The available stock for %(part)s has fallen below the configured minimum level"
+msgstr ""
+
+#: templates/email/low_stock_notification.html:10
+msgid "Click on the following link to view this part"
+msgstr ""
+
+#: templates/email/low_stock_notification.html:16
+#, fuzzy
+#| msgid "Name"
+msgid "Part Name"
+msgstr "名称"
+
+#: templates/email/low_stock_notification.html:17
+#, fuzzy
+#| msgid "Build Quantity"
+msgid "Available Quantity"
+msgstr "生产数量"
+
+#: templates/email/low_stock_notification.html:18
+#, fuzzy
+#| msgid "Build Quantity"
+msgid "Minimum Quantity"
+msgstr "生产数量"
+
+#: templates/email/low_stock_notification.html:29
+msgid "You are receiving this email because you are subscribed to notifications for this part "
+msgstr ""
+
+#: templates/email/low_stock_notification.html:30
+msgid "InvenTree version"
 msgstr ""
 
 #: templates/image_download.html:8
