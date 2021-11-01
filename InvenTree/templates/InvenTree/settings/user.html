@@ -195,9 +195,9 @@
 
     <div class="col-md-6">
     <h5>{% trans "Change factors" %}</h5>
-    <a href="{% url 'two-factor-setup' %}" class="btn btn-primary" {% if user.staticdevice_set.all and user.totpdevice_set.all %}disabled{% endif %}>{% trans "Setup multifactor" %}</a>
+    <button href="{% url 'two-factor-setup' %}" class="btn btn-primary" {% if user.staticdevice_set.all and user.totpdevice_set.all %}disabled{% endif %}>{% trans "Setup multifactor" %}</button>
     {% if user.staticdevice_set.all or user.totpdevice_set.all %}
-    <a href="{% url 'two-factor-remove' %}" class="btn btn-primary">{% trans "Remove multifactor" %}</a>
+    <button href="{% url 'two-factor-remove' %}" class="btn btn-primary">{% trans "Remove multifactor" %}</button>
     {% endif %}
     </div>
 </div>
