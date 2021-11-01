@@ -6,6 +6,8 @@
   {% trans "Two-Factor Authentication Backup Tokens" %}
 </h3>
 
+ <a href="{% url 'settings' %}" class="btn btn-secondary w-100">{% trans "to settings" %}}</a>
+
 {% if backup_tokens %}
   {% if reveal_tokens %}
     <ul>
