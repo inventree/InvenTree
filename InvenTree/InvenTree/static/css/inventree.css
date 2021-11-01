@@ -141,6 +141,10 @@
     float: left;
 }
 
+.navbar-spacer {
+    height: 40px;
+}
+
 #navbar-barcode-li {
     border-left: none;
     border-right: none;
