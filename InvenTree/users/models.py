@@ -290,6 +290,17 @@ def split_model(model):
     return model, app
 
 
+def split_permission(app, perm):
+    """split permission string into permission and model"""
+    permission_name, *model = perm.split('_')
+    # handle models that have underscores
+    if len(model) > 1:
+        app += '_' + '_'.join(model[:-1])
+        perm = permission_name + '_' + model[-1:][0]
+    model = model[-1:][0]
+    return perm, model
+
+
 def update_group_roles(group, debug=False):
     """
 
@@ -393,13 +404,7 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        # split up the permissions -> handle models with underscores
-        permission_name, *model = perm.split('_')
-        # handle models that have
-        if len(model) > 1:
-            app += '_' + '_'.join(model[:-1])
-            perm = permission_name + '_' + model[-1:][0]
-        model = model[-1:][0]
+        perm, model = split_permission(app, perm)
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
