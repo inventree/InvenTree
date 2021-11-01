@@ -393,7 +393,13 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        (model, permission_name) = split_model(perm)
+        # split up the permissions -> handle models with underscores
+        permission_name, *model = perm.split('_')
+        # handle models that have
+        if len(model) > 1:
+            app += '_' + '_'.join(model[:-1])
+            perm = permission_name + '_' + model[-1:][0]
+        model = model[-1:][0]
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
@@ -401,6 +407,8 @@ def update_group_roles(group, debug=False):
         except ContentType.DoesNotExist:
             logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
+        except Exception as _e:
+            print(_e)
 
         return permission
 
