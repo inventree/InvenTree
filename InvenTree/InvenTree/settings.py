@@ -767,8 +767,7 @@ ACCOUNT_FORMS = {
 }
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
-# ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'  # TODO monkey-patch adapter
-ACCOUNT_ADAPTER = 'allauth_2fa.adapter.OTPAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
