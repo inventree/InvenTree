@@ -407,8 +407,6 @@ def update_group_roles(group, debug=False):
         except ContentType.DoesNotExist:
             logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
-        except Exception as _e:
-            print(_e)
 
         return permission
 
