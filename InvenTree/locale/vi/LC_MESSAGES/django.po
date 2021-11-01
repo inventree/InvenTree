@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-01 00:31+0000\n"
+"POT-Creation-Date: 2021-11-01 00:58+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -609,7 +609,7 @@ msgstr ""
 #: build/models.py:122 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
 #: order/templates/order/sales_order_detail.html:42
-#: templates/InvenTree/index.html:209 templates/InvenTree/search.html:142
+#: templates/InvenTree/index.html:211 templates/InvenTree/search.html:145
 #: users/models.py:44
 msgid "Build Orders"
 msgstr ""
@@ -654,7 +654,7 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:110
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:90
-#: templates/InvenTree/search.html:83 templates/js/translated/barcode.js:384
+#: templates/InvenTree/search.html:86 templates/js/translated/barcode.js:384
 #: templates/js/translated/bom.js:212 templates/js/translated/bom.js:390
 #: templates/js/translated/build.js:613 templates/js/translated/build.js:981
 #: templates/js/translated/build.js:1352 templates/js/translated/build.js:1619
@@ -839,7 +839,7 @@ msgid "Selected stock item not found in BOM"
 msgstr ""
 
 #: build/models.py:1224 stock/templates/stock/item_base.html:312
-#: templates/InvenTree/search.html:140 templates/js/translated/build.js:1592
+#: templates/InvenTree/search.html:143 templates/js/translated/build.js:1592
 #: templates/navbar.html:35
 msgid "Build"
 msgstr ""
@@ -2420,7 +2420,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
-#: templates/InvenTree/search.html:179 templates/js/translated/company.js:321
+#: templates/InvenTree/search.html:182 templates/js/translated/company.js:321
 msgid "Company"
 msgstr ""
 
@@ -2469,7 +2469,7 @@ msgstr ""
 msgid "Upload Image"
 msgstr ""
 
-#: company/templates/company/detail.html:15 templates/InvenTree/search.html:121
+#: company/templates/company/detail.html:15 templates/InvenTree/search.html:124
 msgid "Supplier Parts"
 msgstr ""
 
@@ -2509,7 +2509,7 @@ msgstr ""
 msgid "Delete Parts"
 msgstr ""
 
-#: company/templates/company/detail.html:62 templates/InvenTree/search.html:106
+#: company/templates/company/detail.html:62 templates/InvenTree/search.html:109
 msgid "Manufacturer Parts"
 msgstr ""
 
@@ -2529,8 +2529,8 @@ msgstr ""
 #: order/templates/order/order_base.html:13
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
-#: part/templates/part/detail.html:138 templates/InvenTree/index.html:240
-#: templates/InvenTree/search.html:200 templates/navbar.html:47
+#: part/templates/part/detail.html:138 templates/InvenTree/index.html:242
+#: templates/InvenTree/search.html:203 templates/navbar.html:47
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2549,8 +2549,8 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:13
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
-#: part/templates/part/detail.html:161 templates/InvenTree/index.html:271
-#: templates/InvenTree/search.html:220 templates/navbar.html:58
+#: part/templates/part/detail.html:161 templates/InvenTree/index.html:273
+#: templates/InvenTree/search.html:223 templates/navbar.html:58
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -2591,7 +2591,7 @@ msgid "Supplier List"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:14 company/views.py:55
-#: part/templates/part/prices.html:167 templates/InvenTree/search.html:181
+#: part/templates/part/prices.html:167 templates/InvenTree/search.html:184
 #: templates/navbar.html:46
 msgid "Manufacturers"
 msgstr ""
@@ -2620,7 +2620,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:108
 #: company/templates/company/supplier_part.html:15 company/views.py:49
-#: part/templates/part/prices.html:163 templates/InvenTree/search.html:191
+#: part/templates/part/prices.html:163 templates/InvenTree/search.html:194
 #: templates/navbar.html:45
 msgid "Suppliers"
 msgstr ""
@@ -2734,7 +2734,7 @@ msgstr ""
 #: company/templates/company/supplier_part_navbar.html:15
 #: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:14
 #: stock/templates/stock/stock_app_base.html:10
-#: templates/InvenTree/index.html:130 templates/InvenTree/search.html:153
+#: templates/InvenTree/index.html:132 templates/InvenTree/search.html:156
 #: templates/js/translated/part.js:416 templates/js/translated/part.js:551
 #: templates/js/translated/part.js:776 templates/js/translated/part.js:936
 #: templates/js/translated/stock.js:182 templates/js/translated/stock.js:834
@@ -2762,7 +2762,7 @@ msgstr ""
 msgid "New Manufacturer"
 msgstr ""
 
-#: company/views.py:61 templates/InvenTree/search.html:211
+#: company/views.py:61 templates/InvenTree/search.html:214
 #: templates/navbar.html:57
 msgid "Customers"
 msgstr ""
@@ -3725,15 +3725,15 @@ msgid "Part Category"
 msgstr ""
 
 #: part/models.py:94 part/templates/part/category.html:95
-#: templates/InvenTree/search.html:98 templates/stats.html:84
+#: templates/InvenTree/search.html:101 templates/stats.html:84
 #: users/models.py:40
 msgid "Part Categories"
 msgstr ""
 
 #: part/models.py:302 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:13 part/templates/part/category.html:100
-#: part/templates/part/category.html:120 templates/InvenTree/index.html:82
-#: templates/InvenTree/search.html:85 templates/js/translated/part.js:1277
+#: part/templates/part/category.html:120 templates/InvenTree/index.html:84
+#: templates/InvenTree/search.html:88 templates/js/translated/part.js:1277
 #: templates/navbar.html:21 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
@@ -4592,7 +4592,7 @@ msgstr ""
 msgid "On Order"
 msgstr ""
 
-#: part/templates/part/part_base.html:177 templates/InvenTree/index.html:166
+#: part/templates/part/part_base.html:177 templates/InvenTree/index.html:168
 msgid "Required for Build Orders"
 msgstr ""
 
@@ -4796,7 +4796,7 @@ msgstr ""
 msgid "No Stock"
 msgstr ""
 
-#: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:146
+#: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:148
 msgid "Low Stock"
 msgstr ""
 
@@ -5665,13 +5665,13 @@ msgstr ""
 
 #: stock/templates/stock/location.html:118
 #: stock/templates/stock/location.html:132
-#: stock/templates/stock/location.html:143 templates/InvenTree/search.html:155
+#: stock/templates/stock/location.html:143 templates/InvenTree/search.html:158
 #: templates/js/translated/stock.js:1562 templates/stats.html:93
 #: templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
 msgstr ""
 
-#: stock/templates/stock/location.html:127 templates/InvenTree/search.html:167
+#: stock/templates/stock/location.html:127 templates/InvenTree/search.html:170
 #: templates/stats.html:97 users/models.py:42
 msgid "Stock Locations"
 msgstr ""
@@ -5842,55 +5842,55 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: templates/InvenTree/index.html:85
+#: templates/InvenTree/index.html:87
 msgid "Starred Parts"
 msgstr ""
 
-#: templates/InvenTree/index.html:95
+#: templates/InvenTree/index.html:97
 msgid "Latest Parts"
 msgstr ""
 
-#: templates/InvenTree/index.html:106
+#: templates/InvenTree/index.html:108
 msgid "BOM Waiting Validation"
 msgstr ""
 
-#: templates/InvenTree/index.html:133
+#: templates/InvenTree/index.html:135
 msgid "Recently Updated"
 msgstr ""
 
-#: templates/InvenTree/index.html:156
+#: templates/InvenTree/index.html:158
 msgid "Depleted Stock"
 msgstr ""
 
-#: templates/InvenTree/index.html:179
+#: templates/InvenTree/index.html:181
 msgid "Expired Stock"
 msgstr ""
 
-#: templates/InvenTree/index.html:190
+#: templates/InvenTree/index.html:192
 msgid "Stale Stock"
 msgstr ""
 
-#: templates/InvenTree/index.html:212
+#: templates/InvenTree/index.html:214
 msgid "Build Orders In Progress"
 msgstr ""
 
-#: templates/InvenTree/index.html:223
+#: templates/InvenTree/index.html:225
 msgid "Overdue Build Orders"
 msgstr ""
 
-#: templates/InvenTree/index.html:243
+#: templates/InvenTree/index.html:245
 msgid "Outstanding Purchase Orders"
 msgstr ""
 
-#: templates/InvenTree/index.html:254
+#: templates/InvenTree/index.html:256
 msgid "Overdue Purchase Orders"
 msgstr ""
 
-#: templates/InvenTree/index.html:274
+#: templates/InvenTree/index.html:276
 msgid "Outstanding Sales Orders"
 msgstr ""
 
-#: templates/InvenTree/index.html:285
+#: templates/InvenTree/index.html:287
 msgid "Overdue Sales Orders"
 msgstr ""
 
@@ -5898,7 +5898,7 @@ msgstr ""
 msgid "Search Results"
 msgstr ""
 
-#: templates/InvenTree/search.html:19
+#: templates/InvenTree/search.html:22
 msgid "Enter a search query"
 msgstr ""
 
