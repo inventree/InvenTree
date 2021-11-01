@@ -6,8 +6,6 @@
   {% trans "Two-Factor Authentication Backup Tokens" %}
 </h3>
 
- <a href="{% url 'settings' %}" class="btn btn-secondary w-100">{% trans "to settings" %}}</a>
-
 {% if backup_tokens %}
   {% if reveal_tokens %}
     <ul>
@@ -22,14 +20,14 @@
   {% trans 'No tokens. Press the button below to generate some.' %}
 {% endif %}
 
+<br>
 <form method="post">
   {% csrf_token %}
   <button type="submit" class="btn btn-primary w-100">
     {% trans 'Generate backup tokens' %}
   </button>
 </form>
-
 <br>
-<a href="{% url 'two-factor-remove' %}" class="btn btn-warning w-100">{% trans "Disable Two Factor" %}</a>
+<a href="{% url 'settings' %}" class="btn btn-secondary w-100 btn-sm">{% trans "back to settings" %}</a>
 
 {% endblock %}
