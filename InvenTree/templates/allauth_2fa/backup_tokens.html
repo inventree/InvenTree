@@ -2,9 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-<h1>
+<h3>
   {% trans "Two-Factor Authentication Backup Tokens" %}
-</h1>
+</h3>
 
 {% if backup_tokens %}
   {% if reveal_tokens %}
@@ -22,11 +22,12 @@
 
 <form method="post">
   {% csrf_token %}
-  <button type="submit">
+  <button type="submit" class="btn btn-primary">
     {% trans 'Generate backup tokens' %}
   </button>
 </form>
 
-<a href="{% url 'two-factor-remove' %}">Disable Two Factor</a>
+<br>
+<a href="{% url 'two-factor-remove' %}" class="btn btn-warning">Disable Two Factor</a>
 
 {% endblock %}
