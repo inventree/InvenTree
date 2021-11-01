@@ -1,10 +1,10 @@
 {% extends "account/base.html" %}
-{% load i18n %}
+{% load i18n crispy_forms_tags %}
 
 {% block content %}
-<h1>
+<h3>
   {% trans "Setup Two-Factor Authentication" %}
-</h1>
+</h3>
 
 <h4>
   {% trans 'Step 1' %}:
@@ -26,10 +26,9 @@
 
 <form method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
-  {{ form.token.label }}: {{ form.token }}
+  {{ form|crispy }}
 
-  <button type="submit">
+  <button type="submit" class="btn btn-primary btn-block">
     {% trans 'Verify' %}
   </button>
 </form>
