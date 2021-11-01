@@ -5,13 +5,95 @@
 {% load crispy_forms_tags %}
 {% load markdownify %}
 
-{% block menubar %}
-{% include 'part/navbar.html' %}
+{% block sidebar %}
+{% include 'part/part_sidebar.html' %}
 {% endblock %}
 
 {% block page_content %}
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-stock'>
+<div class='panel panel-hidden' id='panel-part-details'>
+    <div class='panel-heading'>
+        <h4>{% trans "Part Details" %}</h4>
+    </div>
+    <div class='panel-content'>
+        
+        <!-- Details Table -->
+        <table class="table table-striped table-condensed">
+            <col width='25'>
+            {% if part.IPN %}
+            <tr>
+                <td><span class='fas fa-tag'></span></td>
+                <td>{% trans "IPN" %}</td>
+                <td>{{ part.IPN }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><span class='fas fa-shapes'></span></td>
+                <td>{% trans "Name" %}</td>
+                <td>{{ part.name }}{% include "clip.html"%}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-info-circle'></span></td>
+                <td>{% trans "Description" %}</td>
+                <td>{{ part.description }}{% include "clip.html"%}</td>
+            </tr>
+            {% if part.revision %}
+            <tr>
+                <td><span class='fas fa-code-branch'></span></td>
+                <td>{% trans "Revision" %}</td>
+                <td>{{ part.revision }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.keywords %}
+            <tr>
+                <td><span class='fas fa-key'></span></td>
+                <td>{% trans "Keywords" %}</td>
+                <td>{{ part.keywords }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.link %}
+            <tr>
+                <td><span class='fas fa-link'></span></td>
+                <td>{% trans "External Link" %}</td>
+                <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Creation Date" %}</td>
+                <td>
+                    {{ part.creation_date }}
+                    {% if part.creation_user %}
+                    <span class='badge'>{{ part.creation_user }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% if part.trackable and part.getLatestSerialNumber %}
+            <tr>
+                <td><span class='fas fa-hashtag'></span></td>
+                <td>{% trans "Latest Serial Number" %}</td>
+                <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.default_location %}
+            <tr>
+                <td><span class='fas fa-search-location'></span></td>
+                <td>{% trans "Default Location" %}</td>
+                <td>{{ part.default_location }}</td>
+            </tr>
+            {% endif %}
+            {% if part.default_supplier %}
+            <tr>
+                <td><span class='fas fa-building'></span></td>
+                <td>{% trans "Default Supplier" %}</td>
+                <td>{{ part.default_supplier }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-part-stock'>
     <div class='panel-heading'>
         <h4>{% trans "Part Stock" %}</h4>
     </div>
@@ -25,19 +107,24 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-test-templates'>
+<div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Test Templates" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Test Templates" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <div class='btn-group' role='group'>
+                    <button type='button' class='btn btn-success' id='add-test-template'>
+                        <span class='fas fa-plus-circle'></span> {% trans "Add Test Template" %}
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='button-toolbar container-fluid' style="float: right;">
-                <div class='btn-group' role='group'>
-                    <button type='button' class='btn btn-success' id='add-test-template'>{% trans "Add Test Template" %}</button>
-                </div>
-                <div class='filter-list' id='filter-list-parttests'>
-                    <!-- Empty div -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parttests" %}
             </div>
         </div>
         
@@ -45,19 +132,22 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-purchase-orders'>
+<div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Purchase Orders" %}</h4>
+        <div class='d-flex flex-wrap'>    
+            <h4>{% trans "Purchase Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>
-                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
-                </button>
-                <div class='filter-list' id='filter-list-purchaseorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+                {% include "filter_list.html" with id="purchaseorder" %}
             </div>
         </div>
         
@@ -66,19 +156,14 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-sales-orders'>
+<div class='panel panel-hidden' id='panel-sales-orders'>
     <div class='panel-heading'>
         <h4>{% trans "Sales Orders" %}</h4>
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% if 0 %}
-                <button class='btn btn-success' type='button' id='part-order2' title='{% trans "New sales order" %}'>{% trans "New Order" %}</button>
-                {% endif %}
-                <div class='filter-list' id='filter-list-salesorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="salesorder" %}
             </div>
         </div>
 
@@ -94,11 +179,11 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-pricing'>
+<div class='panel panel-hidden' id='panel-pricing'>
     {% include "part/prices.html" %}
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-notes'>
+<div class='panel panel-hidden' id='panel-part-notes'>
     <div class='panel-heading'>
         <div class='row'>
             <div class='col-sm-6'>
@@ -106,7 +191,7 @@
             </div>
             <div class='col-sm-6'>
                 <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-default'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-outline-secondary'>
                         <span class='fas fa-edit'>      
                         </span>
                     </button>
@@ -121,27 +206,30 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-pricing'>
+<div class='panel panel-hidden' id='panel-pricing'>
     <!-- TODO -->
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-variants'>
+<div class='panel panel-hidden' id='panel-variants'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Variants" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Variants" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if part.is_template and part.active %}
+                <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Variant" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='variant-button-toolbar'>
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
-                    {% if part.is_template and part.active %}
-                    <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>
-                        <span class='fas fa-plus-circle'></span> {% trans "New Variant" %}
-                    </button>
-                    {% endif %}
                 </div>
-                <div class='filter-list' id='filter-list-variants'>
-                    <!-- Empty div (will be filled out with available BOM filters) -->
-                </div>
+                {% include "filter_list.html" with id="variants" %}
             </div>
         </div>
         
@@ -150,13 +238,12 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-parameters'>
+<div class='panel panel-hidden' id='panel-part-parameters'>
     <div class='panel-heading'>
-        <h4>{% trans "Parameters" %}</h4>
-    </div>
-    <div class='panel-content'>
-        <div id='param-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Parameters" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
                 {% if roles.part.add %}
                 <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
@@ -164,32 +251,49 @@
                 {% endif %}
             </div>
         </div>
+    </div>
+    <div class='panel-content'>
+        <div id='param-button-toolbar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
+            </div>
+        </div>
         <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-part-attachments'>
+<div class='panel panel-hidden' id='panel-part-attachments'>
     <div class='panel-heading'>
-        <h4>{% trans "Attachments" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% include "attachment_table.html" %}
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-related-parts'>
+<div class='panel panel-hidden' id='panel-related-parts'>
     <div class='panel-heading'>
-        <h4>{% trans "Related Parts" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Related Parts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.part.change %}
+                <button class='btn btn-success' type='button' id='add-related-part' title='{% trans "Add Related" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Related" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='related-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: left;'>
-                {% if roles.part.change %}
-                <button class='btn btn-success' type='button' id='add-related-part' title='{% trans "Add Related" %}'>{% trans "Add Related" %}</button>
-                <div class='filter-list' id='filter-list-related'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
-                {% endif %}
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="related" %}
             </div>
         </div>
         
@@ -211,7 +315,7 @@
                             <a href='/part/{{ part.id }}/'>{{ part }}</a>
                             <div class='btn-group' style='float: right;'>
                                 {% if roles.part.change %}
-                                <button title='{% trans "Delete" %}' class='btn btn-default btn-glyph delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
+                                <button title='{% trans "Delete" %}' class='btn btn-outline-secondary delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
                                 {% endif %}
                             </div>
                         </td>
@@ -223,23 +327,59 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-bom'>
+<div class='panel panel-hidden' id='panel-bom'>
     <div class='panel-heading'>
-        <h4>{% trans "Bill of Materials" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Bill of Materials" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <!-- Export menu -->
+                <div class='btn-group'>
+                    <button id='export-options' title='{% trans "Export actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                        <span class='fas fa-download'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu' role='menu'>
+                        <li><a class='dropdown-item' href='#' id='download-bom'><span class='fas fa-file-download'></span> {% trans "Export BOM" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='print-bom-report'><span class='fas fa-file-pdf'></span> {% trans "Print BOM Report" %}</a></li>
+                    </ul>
+                </div>
+                <!-- Actions menu -->
+                <div class='btn-group'>
+                    <button id='bom-actions' title='{% trans "BOM actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                        <span class='fas fa-tools'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu' role='menu'>
+                        <li><a class='dropdown-item' href='#' id='bom-upload'><span class='fas fa-file-upload'></span> {% trans "Upload BOM" %}</a></li>
+                        {% if part.variant_of %}
+                        <li><a class='dropdown-item' href='#' id='bom-duplicate'><span class='fas fa-clone'></span> {% trans "Copy BOM" %}</a></li>
+                        {% endif %}
+                        {% if not part.is_bom_valid %}
+                        <li><a class='dropdown-item' href='#' id='validate-bom'><span class='fas fa-clipboard-check icon-green'></span> {% trans "Validate BOM" %}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+        
+                {% if roles.part.change %}
+                <button class='btn btn-success' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% include "part/bom.html" with part=part %}
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-used-in'>
+<div class='panel panel-hidden' id='panel-used-in'>
     <div class='panel-heading'>
         <h4>{% trans "Assemblies" %}</h4>
     </div>
     <div class='panel-content'>
         <div id='assembly-button-toolbar'>
-            <div class='filter-list' id='filter-list-usedin'>
-                <!-- Empty div (will be filled out with avilable BOM filters) -->
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="usedin" %}
             </div>
         </div>
         
@@ -248,21 +388,26 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-build-orders'>
+<div class='panel panel-hidden' id='panel-build-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Builds" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Builds" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if part.active %}
+                {% if roles.build.add %}
+                <button class="btn btn-success" id='start-build'>
+                    <span class='fas fa-tools'></span> {% trans "New Build Order" %}
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='build-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right';>
-                {% if part.active %}
-                {% if roles.build.add %}
-                <button class="btn btn-success" id='start-build'><span class='fas fa-tools'></span> {% trans "Start New Build" %}</button>
-                {% endif %}
-                {% endif %}
-                <div class='filter-list' id='filter-list-build'>
-                    <!-- Empty div for filters -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="build" %}
             </div>
         </div>
         
@@ -278,20 +423,25 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-suppliers'>
+<div class='panel panel-hidden' id='panel-suppliers'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Suppliers" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Suppliers" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class="btn btn-success" id='supplier-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
             <div class='btn-group'>
-                <button class="btn btn-success" id='supplier-create'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
-                </button>
                 <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
+                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
                     </ul>
                 </div>
             </div>
@@ -302,19 +452,24 @@
     </div>
 
     <div class='panel-heading'>
-        <h4>{% trans "Part Manufacturers" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Manufacturers" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button class="btn btn-success" id='manufacturer-create'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         <div class='panel-content'>
             <div id='manufacturer-button-toolbar'>
                 <div class='btn-group'>
-                    <button class="btn btn-success" id='manufacturer-create'>
-                        <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
-                    </button>
                     <div id='opt-dropdown' class="btn-group">
-                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
+                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'>{% trans "Delete" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -335,6 +490,7 @@
 
     // Load the "suppliers" tab
     onPanelLoad('suppliers', function() {
+
         function reloadSupplierPartTable() {
             $('#supplier-part-table').bootstrapTable('refresh');
         }
@@ -1031,9 +1187,6 @@
             var SalePriceChart = loadSellPricingChart($('#SalePriceChart'), salepricedata)
     {% endif %}
 
-    attachNavCallbacks({
-        name: 'part',
-        default: 'part-stock'
-    });
+    enableSidebar('part');
 
 {% endblock %}

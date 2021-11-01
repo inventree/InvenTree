@@ -1,10 +1,8 @@
 {% load i18n %}
 
 <div id='attachment-buttons'>
-    <div class='btn-group'>
-        <button type='button' class='btn btn-success' id='new-attachment'>
-            <span class='fas fa-plus-circle'></span> {% trans "Add Attachment" %}
-        </button>
+    <div class='btn-group' role='group'>
+        {% include "filter_list.html" with id="related" %}
     </div>
 </div>
 

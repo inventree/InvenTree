@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 {% load static %}
 {% load inventree_extras %}
 {% load status_codes %}
@@ -8,58 +8,19 @@
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
-{% block sidenav %}
-<div id='stock-tree'></div>
-{% endblock %}
-
-{% block pre_content %}
+{% block breadcrumbs %}
 {% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
 
-{% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+{% block heading %}
+    {% trans "Stock Item" %}: {{ item.part.full_name}}
 {% endblock %}
 
-{% block page_data %}
+{% block actions %}
 
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-{% endif %}
-
-<h3>
-    {% trans "Stock Item" %}
-    {% if item.is_expired %}
-    <span class='label label-large label-large-red'>{% trans "Expired" %}</span>
-    {% else %}
-    {% if roles.stock.change %}
-    <a href='#' id='stock-edit-status'>
-    {% endif %}
-    {% stock_status_label item.status large=True %}
-    {% if roles.stock.change %}
-    </a>
-    {% endif %}
-    {% if item.is_stale %}
-    <span class='label label-large label-large-yellow'>{% trans "Stale" %}</span>
-    {% endif %}
-    {% endif %}
-</h3>
-<hr>
-<h4>
-{% if roles.part.view %}
-<a href='{% url "part-detail" item.part.pk %}'>
-{% endif %}
-{{ item.part.full_name}}
-{% if roles.part.view %}
-</a>
-{% endif %}
-{% if item.serialized %}
- # {{ item.serial }}
-{% else %}
- &times {% decimal item.quantity %}
-{% endif %}
 {% if user.is_staff and roles.stock.change %}
-    <a  href="{% url 'admin:stock_stockitem_change' item.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
+{% url 'admin:stock_stockitem_change' item.pk as url %}
+{% include "admin_button.html" with url=url %}
 {% endif %}
 </h4>
 
@@ -162,9 +123,36 @@
     {% endif %}
 </div>
 
+{% block thumbnail %}
+<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock %}
 
-{% block below_thumbnail %}
+{% block details %}
+
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
+{% if owner_control.value == "True" %}
+    {% authorized_owners item.owner as owners %}
+{% endif %}
+
+<h4>
+    {% if item.is_expired %}
+    <span class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
+    {% else %}
+    {% if roles.stock.change %}
+    <a href='#' id='stock-edit-status'>
+    {% endif %}
+    {% stock_status_label item.status large=True %}
+    {% if roles.stock.change %}
+    </a>
+    {% endif %}
+    {% if item.is_stale %}
+    <span class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
+    {% endif %}
+    {% endif %}
+</h4>
+
+
+
 <div class='info-messages'>
 
     {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
@@ -231,8 +219,7 @@
 </div>
 {% endblock %}
 
-{% block page_details %}
-<h4>{% trans "Stock Item Details" %}</h4>
+{% block details_right %}
 <table class="table table-striped">
     <col width='25'>
     <tr>
@@ -254,13 +241,13 @@
         <td>{% trans "Serial Number" %}</td>
         <td>
         {% if previous %}
-            <a class="btn btn-default" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
+            <a class="btn btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
                 <small>{{ previous.serial }}</small>  ‹
             </a>
         {% endif %}
         {{ item.serial }}
         {% if next %}
-            <a class="btn btn-default text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
+            <a class="btn btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
                 ›  <small>{{ next.serial }}</small>
             </a>
         {% endif %}
@@ -399,9 +386,9 @@
         <td>
             {{ item.expiry_date }}
             {% if item.is_expired %}
-            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='label label-red'>{% trans "Expired" %}</span>
+            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
             {% elif item.is_stale %}
-            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='label label-yellow'>{% trans "Stale" %}</span>
+            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
             {% endif %}
         </td>
     </tr>
@@ -433,29 +420,11 @@
     </tr>
     {% endif %}
 </table>
-
 {% endblock %}
+
 
 {% block js_ready %}
 {{ block.super }}
-
-enableNavbar({
-    label: 'item',
-    toggleId: '#item-menu-toggle',
-});
-
-loadTree("{% url 'api-stock-tree' %}",
-    "#stock-tree",
-    {
-        name: 'stock',
-    }
-);
-
-initNavTree({
-    label: 'stock',
-    treeId: '#sidenav-left',
-    toggleId: '#toggle-stock-tree',
-});
 
 $("#stock-serialize").click(function() {
     launchModalForm(
@@ -633,10 +602,5 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
-
-attachNavCallbacks({
-    name: 'stockitem',
-    default: 'history'
-});
 
 {% endblock %}

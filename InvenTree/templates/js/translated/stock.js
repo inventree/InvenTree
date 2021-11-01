@@ -544,17 +544,17 @@ function removeStockRow(e) {
 }
 
 
-function passFailBadge(result, align='float-right') {
+function passFailBadge(result) {
 
     if (result) {
-        return `<span class='label label-green ${align}'>{% trans "PASS" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='label label-red ${align}'>{% trans "FAIL" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
     }
 }
 
-function noResultBadge(align='float-right') {
-    return `<span class='label label-blue ${align}'>{% trans "NO RESULT" %}</span>`;
+function noResultBadge() {
+    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
 function formatDate(row) {
@@ -562,11 +562,7 @@ function formatDate(row) {
     var html = row.date;
 
     if (row.user_detail) {
-        html += `<span class='badge'>${row.user_detail.username}</span>`;
-    }
-
-    if (row.attachment) {
-        html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+        html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
     }
 
     return html;
@@ -647,6 +643,15 @@ function loadStockTestResultsTable(table, options) {
             {
                 field: 'value',
                 title: '{% trans "Value" %}',
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.attachment) {
+                        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+                    }
+
+                    return html;
+                }
             },
             {
                 field: 'notes',
@@ -972,16 +977,12 @@ function loadStockTable(table, options) {
             }
 
             if (row.quantity <= 0) {
-                html += `<span class='label label-right label-danger'>{% trans "Depleted" %}</span>`;
+                html += `<span class='badge rounded-pill bg-danger'>{% trans "Depleted" %}</span>`;
             }
 
             return html;
         }
     };
-
-    if (!options.params.ordering) {
-        col['sortable'] = true;
-    }
     
     columns.push(col);
 
@@ -1536,7 +1537,19 @@ function loadStockLocationTable(table, options) {
         filters[key] = params[key];
     }
 
+    var tree_view = inventreeLoad('location-tree-view') == 1;
+
     table.inventreeTable({
+        treeEnable: tree_view,
+        rootParentId: options.params.parent,
+        uniqueId: 'pk',
+        idField: 'pk',
+        treeShowField: 'name',
+        parentIdField: 'parent',
+        disablePagination: tree_view,
+        sidePagination: tree_view ? 'client' : 'server',
+        serverSort: !tree_view,
+        search: !tree_view,
         method: 'get',
         url: options.url || '{% url "api-location-list" %}',
         queryParams: filters,
@@ -1544,6 +1557,69 @@ function loadStockLocationTable(table, options) {
         name: 'location',
         original: original,
         showColumns: true,
+        onPostBody: function() {
+
+            tree_view = inventreeLoad('location-tree-view') == 1;
+
+            if (tree_view) {
+
+                $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                
+                table.treegrid({
+                    treeColumn: 1,
+                    onChange: function() {
+                        table.bootstrapTable('resetView');
+                    },
+                    onExpand: function() {
+                        
+                    }
+                });
+            } else {
+                $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-location-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+        },
+        buttons: [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-location-list',
+                },
+                event: () => {
+                    inventreeSave('location-tree-view', 0);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: false,
+                            serverSort: true,
+                            search: true,
+                            pagination: true,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-sitemap',
+                attributes: {
+                    title: '{% trans "Display as tree" %}',
+                    id: 'view-location-tree',
+                },
+                event: () => {
+                    inventreeSave('location-tree-view', 1);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: true,
+                            serverSort: false,
+                            search: false,
+                            pagination: false,
+                        }
+                    );
+                }
+            }
+        ],
         columns: [
             {
                 checkbox: true,
@@ -1778,8 +1854,8 @@ function loadStockTrackingTable(table, options) {
         formatter: function(value, row, index, field) {
             // Manually created entries can be edited or deleted
             if (false && !row.system) {
-                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
-                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
+                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-outline-secondary' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
+                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-outline-secondary' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
 
                 return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
             } else {

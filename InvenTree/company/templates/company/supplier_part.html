@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
@@ -7,8 +7,42 @@
 {% inventree_title %} | {% trans "Supplier Part" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "company/supplier_part_navbar.html" %}
+{% block sidebar %}
+{% include "company/supplier_part_sidebar.html" %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "supplier-index" %}'>{% trans "Suppliers" %}</a></li>
+{% if part.supplier %}
+<li class='breadcrumb-item'><a href='{% url "company-detail" part.supplier.id %}'>{{ part.supplier.name }}</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "supplier-part-detail" part.id %}'>{{ part.SKU }}</a></li>
+{% endblock %}
+
+{% block heading %}
+<h4>
+    {% trans "Supplier Part" %}: {{ part.SKU }}
+</h4>
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and perms.company.change_company %}
+{% url 'admin:company_supplierpart_change' part.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
+    <span class='fas fa-shopping-cart'></span>
+</button>
+{% endif %}
+<button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit supplier part" %}'>
+    <span class='fas fa-edit icon-green'/>
+</button>
+{% if roles.purchase_order.delete %}
+<button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete supplier part" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
 {% endblock %}
 
 {% block thumbnail %}
@@ -20,44 +54,16 @@ src="{% static 'img/blank_image.png' %}"
 {% endif %}/>
 {% endblock %}
 
-{% block page_data %}
-<h3>{% trans "Supplier Part" %}</h3>
-<hr>
-<h4>
-    {{ part.part.full_name }}
-    {% if user.is_staff and perms.company.change_company %}
-    <a href="{% url 'admin:company_supplierpart_change' part.pk %}">
-        <span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span>
-    </a>
-    {% endif %}
-</h4>
-<p>{{ part.supplier.name }} - {{ part.SKU }}</p>
+{% block details %}
 
-{% if roles.purchase_order.change %}
-<div class='btn-row'>
-    <div class='btn-group action-buttons' role='group'>
-        {% if roles.purchase_order.add %}
-        <button type='button' class='btn btn-default btn-glyph' id='order-part' title='{% trans "Order part" %}'>
-            <span class='fas fa-shopping-cart'></span>
-        </button>
-        {% endif %}
-        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit supplier part" %}'>
-            <span class='fas fa-edit icon-green'/>
-        </button>
-        {% if roles.purchase_order.delete %}
-        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='{% trans "Delete supplier part" %}'>
-            <span class='fas fa-trash-alt icon-red'/>
-        </button>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
+<p>
+    {{ part.part.full_name }}
+</p>
 
 {% endblock %}
 
-{% block page_details %}
+{% block details_right %}
 
-<h4>{% trans "Supplier Part Details" %}</h4>
 <table class="table table-striped table-condensed">
     <col width='25'>
         <tr>
@@ -126,7 +132,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_content %}
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-stock'>
+<div class='panel panel-hidden' id='panel-stock'>
     <div class='panel-heading'>
         <h4>{% trans "Supplier Part Stock" %}</h4>
     </div>
@@ -135,36 +141,47 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-purchase-orders'>
+<div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <h4>{% trans "Supplier Part Orders" %}</h4>
-    </div>
-    <div class='panel-content'>
-        {% if roles.purchase_order.add %}
-        <div id='button-bar'>
-            <div class='btn-group'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Supplier Part Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
                 <button class='btn btn-primary' type='button' id='order-part2' title='{% trans "Order part" %}'>
-                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}</button>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+                </button>
+                {% endif %}        
             </div>
         </div>
-        {% endif %}        
+    </div>
+    <div class='panel-content'>
+        <div id='button-bar'>
+            <div class='btn-group'>
+            </div>
+        </div>
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
         </table>
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-pricing'>
+<div class='panel panel-hidden' id='panel-pricing'>
     <div class='panel-heading'>
-        <h4>{% trans "Pricing Information" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Pricing Information" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                <button class='btn btn-success' id='new-price-break' type='button'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
-        {% if roles.purchase_order.add %}
         <div id='price-break-toolbar' class='btn-group'>
-            <button class='btn btn-success' id='new-price-break' type='button'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
-            </button>
         </div>
-        {% endif %}
 
         <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'>    
         </table>
@@ -301,12 +318,6 @@ $("#item-create").click(function() {
     });
 });
 
-
-enableNavbar({
-    label: 'supplier-part',
-    toggleId: '#supplier-part-menu-toggle'
-})
-
 $('#order-part, #order-part2').click(function() {
     launchModalForm(
         "{% url 'order-parts' %}",
@@ -337,9 +348,6 @@ $('#delete-part').click(function() {
     });
 });
 
-attachNavCallbacks({
-    name: 'supplierpart',
-    default: 'stock'
-});
+enableSidebar('supplierpart');
 
 {% endblock %}
