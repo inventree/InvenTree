@@ -69,7 +69,7 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
-def construct_absolute_url(url):
+def construct_absolute_url(*arg):
     """
     Construct (or attempt to construct) an absolute URL from a relative URL.
 
@@ -81,7 +81,7 @@ def construct_absolute_url(url):
 
     base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
-    url = str(url)
+    url = '/'.join(arg)
 
     if not base:
         return url
@@ -94,6 +94,8 @@ def construct_absolute_url(url):
         url = url[1:]
 
     url = f"{base}/{url}"
+
+    return url
 
 
 def getBlankImage():
