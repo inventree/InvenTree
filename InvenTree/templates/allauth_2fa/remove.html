@@ -2,15 +2,15 @@
 {% load i18n %}
 
 {% block content %}
-<h1>
+<h3>
   {% trans "Disable Two-Factor Authentication" %}
-</h1>
+</h3>
 
 <p>{% trans "Are you sure?" %}</p>
 
 <form method="post">
   {% csrf_token %}
-  <button type="submit">
+  <button type="submit" class="btn btn-danger">
     {% trans 'Disable Two-Factor' %}
   </button>
 </form>
