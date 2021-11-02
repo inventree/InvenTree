@@ -3,10 +3,11 @@
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
             <h4>{% block heading %}HEADING{% endblock %}</h4>
-        </div>
-        <div class='btn-group' role='group'>
-            {% block actions %}
-            {% endblock %}
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% block actions %}
+                {% endblock %}
+            </div>
         </div>
     </div>
     {% endblock %}
