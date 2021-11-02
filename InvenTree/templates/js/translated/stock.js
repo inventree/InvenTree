@@ -106,6 +106,8 @@ function createStockLocation(options={}) {
 function stockItemFields(options={}) {
     var fields = {
         part: {
+            // Hide the part field unless we are "creating" a new stock item
+            hidden: !options.create,
             onSelect: function(data, field, opts) {
                 // Callback when a new "part" is selected
 
@@ -206,14 +208,34 @@ function stockItemGroups(options={}) {
 
 
 /*
+ * Launch a modal form to duplicate a given StockItem
+ */
+function duplicateStockItem(pk, options) {
+
+    // First, we need the StockItem informatino
+    inventreeGet(`/api/stock/${pk}/`, {}, {
+        success: function(data) {
+
+            options.create = true;
+
+            options.data = data;
+            options.method = 'POST';
+            options.fields = stockItemFields(options);
+            options.groups = stockItemGroups(options);
+            options.title = '{% trans "Duplicate Stock Item" %}';
+
+            constructForm('{% url "api-stock-list" %}', options);
+        }
+    });
+}
+
+
+/*
  * Launch a modal form to edit a given StockItem
  */
 function editStockItem(pk, options={}) {
 
     var url = `/api/stock/${pk}/`;
-
-    // Prevent editing of the "part"
-    fields.part.hidden = true;
 
     options.create = false;
 

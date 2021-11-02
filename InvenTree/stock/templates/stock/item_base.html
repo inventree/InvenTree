@@ -463,11 +463,9 @@ $("#print-label").click(function() {
 
 {% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
-    createNewStockItem({
+    // Duplicate a stock item 
+    duplicateStockItem({{ item.pk }}, {
         follow: true,
-        data: {
-            copy: {{ item.id }},
-        }
     });
 });
 
