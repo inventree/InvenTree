@@ -155,7 +155,9 @@
     </form>
     
     {% else %}
-    <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+    <div class='alert alert-block alert-warning'>
+        {% trans "There are no social network accounts connected to your InvenTree account" %}
+    </div>
     {% endif %}
 
     <br>
