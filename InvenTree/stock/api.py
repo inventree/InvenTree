@@ -101,6 +101,27 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         instance.mark_for_deletion()
 
 
+class StockItemSerialize(generics.CreateAPIView):
+    """
+    API endpoint for serializing a stock item
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.SerializeStockItemSerializer
+
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        try:
+            context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return context
+
+
 class StockAdjustView(generics.CreateAPIView):
     """
     A generic class for handling stocktake actions.
@@ -1126,8 +1147,11 @@ stock_api_urls = [
         url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
-    # Detail for a single stock item
-    url(r'^(?P<pk>\d+)/', StockDetail.as_view(), name='api-stock-detail'),
+    # Detail views for a single stock item
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
+        url(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
+    ])),
 
     # Anything else
     url(r'^.*$', StockList.as_view(), name='api-stock-list'),

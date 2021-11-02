@@ -418,12 +418,18 @@
 {{ block.super }}
 
 $("#stock-serialize").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-serialize' item.id %}",
-        {
-            reload: true,
+
+    serializeStockItem({{ item.pk }}, {
+        reload: true,
+        data: {
+            quantity: {{ item.quantity }},
+            {% if item.location %}
+            destination: {{ item.location.pk }},
+            {% elif item.part.default_location %}
+            destination: {{ item.part.default_location.pk }},
+            {% endif %}
         }
-    );
+    });
 });
 
 $('#stock-install-in').click(function() {

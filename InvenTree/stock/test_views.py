@@ -126,46 +126,6 @@ class StockItemTest(StockViewTestCase):
 
         self.assertIn(expected, str(response.content))
 
-    def test_serialize_item(self):
-        # Test the serialization view
-
-        url = reverse('stock-item-serialize', args=(100,))
-
-        # GET the form
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data_valid = {
-            'quantity': 5,
-            'serial_numbers': '1-5',
-            'destination': 4,
-            'notes': 'Serializing stock test'
-        }
-
-        data_invalid = {
-            'quantity': 4,
-            'serial_numbers': 'dd-23-adf',
-            'destination': 'blorg'
-        }
-
-        # POST
-        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertTrue(data['form_valid'])
-
-        # Try again to serialize with the same numbers
-        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # POST with invalid data
-        response = self.client.post(url, data_invalid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
 
 class StockOwnershipTest(StockViewTestCase):
     """ Tests for stock ownership views """

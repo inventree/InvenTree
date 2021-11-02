@@ -52,10 +52,37 @@
     loadStockTrackingTable,
     loadTableFilters,
     removeStockRow,
+    serializeStockItem,
     stockItemFields,
     stockLocationFields,
     stockStatusCodes,
 */
+
+
+/*
+ * Launches a modal form to serialize a particular StockItem
+ */
+
+function serializeStockItem(pk, options={}) {
+
+    var url = `/api/stock/${pk}/serialize/`;
+
+    options.method = 'POST';
+    options.title = '{% trans "Serialize Stock Item" %}';
+
+    options.fields = {
+        quantity: {},
+        serial_numbers: {
+            icon: 'fa-hashtag',
+        },
+        destination: {
+            icon: 'fa-sitemap',
+        },
+        notes: {},
+    }
+
+    constructForm(url, options);
+}
 
 
 function stockLocationFields(options={}) {
