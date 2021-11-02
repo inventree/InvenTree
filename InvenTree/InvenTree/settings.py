@@ -541,7 +541,9 @@ DATABASES = {
 
 _cache_config = CONFIG.get("cache", {})
 _cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
-_cache_port = _cache_config.get("port", os.getenv("INVENTREE_CACHE_PORT"))
+_cache_port = _cache_config.get(
+    "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
+)
 
 if _cache_host:
     # We are going to rely upon a possibly non-localhost for our cache,
