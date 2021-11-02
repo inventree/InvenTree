@@ -216,12 +216,16 @@ function duplicateStockItem(pk, options) {
     inventreeGet(`/api/stock/${pk}/`, {}, {
         success: function(data) {
 
-            options.create = true;
+            // Do not duplicate the serial number
+            delete data['serial'];
 
             options.data = data;
-            options.method = 'POST';
+            
+            options.create = true;
             options.fields = stockItemFields(options);
             options.groups = stockItemGroups(options);
+            
+            options.method = 'POST';
             options.title = '{% trans "Duplicate Stock Item" %}';
 
             constructForm('{% url "api-stock-list" %}', options);

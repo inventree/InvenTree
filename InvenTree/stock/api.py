@@ -7,9 +7,11 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.conf.urls import url, include
 from django.http import JsonResponse
 from django.db.models import Q
+from django.db import transaction
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
@@ -39,7 +41,7 @@ import common.models
 
 import stock.serializers as StockSerializers
 
-from InvenTree.helpers import str2bool, isNull
+from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
 from InvenTree.api import AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
 
@@ -380,28 +382,67 @@ class StockList(generics.ListCreateAPIView):
         """
 
         user = request.user
+        data = request.data
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save()
+        # Check if a set of serial numbers was provided
+        serial_numbers = data.get('serial_numbers', '')
 
-        # A location was *not* specified - try to infer it
-        if 'location' not in request.data:
-            item.location = item.part.get_default_location()
+        quantity = data['quantity']
 
-        # An expiry date was *not* specified - try to infer it!
-        if 'expiry_date' not in request.data:
+        notes = data.get('notes', '')
 
-            if item.part.default_expiry > 0:
-                item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
+        serials = None
 
-        # Finally, save the item
-        item.save(user=user)
+        if serial_numbers:
+            # If serial numbers are specified, check that they match!
+            try:
+                serials = extract_serial_numbers(serial_numbers, data['quantity'])
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'quantity': e.messages,
+                    'serial_numbers': e.messages,
+                })
 
-        # Return a response
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        with transaction.atomic():
+            
+            # Create an initial stock item
+            item = serializer.save()
+
+            # A location was *not* specified - try to infer it
+            if 'location' not in data:
+                item.location = item.part.get_default_location()
+
+            # An expiry date was *not* specified - try to infer it!
+            if 'expiry_date' not in data:
+
+                if item.part.default_expiry > 0:
+                    item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
+
+            # Finally, save the item (with user information)
+            item.save(user=user)
+
+            # Serialize the stock, if required
+            if serials:
+                try:
+                    item.serializeStock(
+                        quantity,
+                        serials,
+                        user,
+                        notes=notes,
+                        location=item.location,
+                    )
+                except DjangoValidationError as e:
+                    raise ValidationError({
+                        'quantity': e.messages,
+                        'serial_numbers': e.messages,
+                    })
+
+            # Return a response
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def list(self, request, *args, **kwargs):
         """
