@@ -66,10 +66,6 @@ class StockListTest(StockViewTestCase):
 class StockLocationTest(StockViewTestCase):
     """ Tests for StockLocation views """
 
-    def test_location_edit(self):
-        response = self.client.get(reverse('stock-location-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
     def test_qr_code(self):
         # Request the StockLocation QR view
         response = self.client.get(reverse('stock-location-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -258,12 +254,6 @@ class StockOwnershipTest(StockViewTestCase):
         # Enable ownership control
         self.enable_ownership()
 
-        # Set ownership on existing location
-        response = self.client.post(reverse('stock-location-edit', args=(test_location_id,)),
-                                    {'name': 'Office', 'owner': user_group_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
         """
         TODO: Refactor this following test to use the new API form
         # Set ownership on existing item (and change location)
@@ -279,15 +269,6 @@ class StockOwnershipTest(StockViewTestCase):
 
         # Login with new user
         self.client.login(username='john', password='custom123')
-
-        # Test location edit
-        response = self.client.post(reverse('stock-location-edit', args=(test_location_id,)),
-                                    {'name': 'Office', 'owner': new_user_group_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        # Make sure the location's owner is unchanged
-        location = StockLocation.objects.get(pk=test_location_id)
-        self.assertEqual(location.owner, user_group_owner)
 
         """
         TODO: Refactor this following test to use the new API form
@@ -370,16 +351,3 @@ class StockOwnershipTest(StockViewTestCase):
 
         # Logout
         self.client.logout()
-
-        # Login with admin
-        self.client.login(username='username', password='password')
-
-        # Switch owner of location
-        response = self.client.post(reverse('stock-location-edit', args=(location_created.pk,)),
-                                    {'name': new_location['name'], 'owner': user_group_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
-        # Check that owner was updated for item in this location
-        stock_item = StockItem.objects.all().last()
-        self.assertEqual(stock_item.owner, user_group_owner)

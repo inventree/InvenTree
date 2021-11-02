@@ -149,6 +149,10 @@ class StockLocationEdit(AjaxUpdateView):
     """
     View for editing details of a StockLocation.
     This view is used with the EditStockLocationForm to deliver a modal form to the web view
+
+    TODO: Remove this code as location editing has been migrated to the API forms
+          - Have to still validate that all form functionality (as below) as been ported
+
     """
 
     model = StockLocation

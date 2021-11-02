@@ -11,7 +11,6 @@ location_urls = [
     url(r'^new/', views.StockLocationCreate.as_view(), name='stock-location-create'),
 
     url(r'^(?P<pk>\d+)/', include([
-        url(r'^edit/?', views.StockLocationEdit.as_view(), name='stock-location-edit'),
         url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
         url(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
         

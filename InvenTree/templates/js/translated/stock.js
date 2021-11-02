@@ -51,13 +51,14 @@
     loadStockTestResultsTable,
     loadStockTrackingTable,
     loadTableFilters,
-    locationFields,
     removeStockRow,
+    stockItemFields,
+    stockLocationFields,
     stockStatusCodes,
 */
 
 
-function locationFields() {
+function stockLocationFields(options={}) {
     return {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
@@ -65,6 +66,19 @@ function locationFields() {
         name: {},
         description: {},
     };
+}
+
+
+/*
+ * Launch an API form to edit a stock location
+ */
+function editStockLocation(pk, options={}) {
+
+    var url = `/api/stock/location/${pk}/`;
+
+    options.fields = stockLocationFields(options);
+
+    constructForm(url, options);
 }
 
 

@@ -243,12 +243,11 @@
     });
 
     {% if location %}
+
     $('#location-edit').click(function() {
-        launchModalForm("{% url 'stock-location-edit' location.id %}",
-                        {
-                            reload: true
-                        });
-        return false;
+        editStockLocation({{ location.id }}, {
+            reload: true,
+        });
     });
 
     $('#location-delete').click(function() {
