@@ -17,7 +17,7 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save, post_delete
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
@@ -41,6 +41,7 @@ from users.models import Owner
 
 from company import models as CompanyModels
 from part import models as PartModels
+from part import tasks as part_tasks
 
 
 class StockLocation(InvenTreeTree):
@@ -1649,6 +1650,24 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+@receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')
+def after_delete_stock_item(sender, instance: StockItem, **kwargs):
+    """
+    Function to be executed after a StockItem object is deleted
+    """
+
+    part_tasks.notify_low_stock_if_required(instance.part)
+
+
+@receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
+def after_save_stock_item(sender, instance: StockItem, **kwargs):
+    """
+   Hook function to be executed after StockItem object is saved/updated
+    """
+
+    part_tasks.notify_low_stock_if_required(instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):

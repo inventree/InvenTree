@@ -11,17 +11,17 @@
 {% trans "Account Settings" %}
 {% endblock %}
 
+{% block actions %}
+<div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
+    <span class='fas fa-user-cog'></span> {% trans "Edit" %}
+</div>
+<div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+    <span class='fas fa-key'></span> {% trans "Set Password" %}
+</div>
+{% endblock %}
+
 {% block content %}
 {% mail_configured as mail_conf %}
-
-<div class='btn-group' style='float: right;'>
-    <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
-        <span class='fas fa-user-cog'></span> {% trans "Edit" %}
-    </div>
-    <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-        <span class='fas fa-key'></span> {% trans "Set Password" %}
-    </div>
-</div>
 
 <table class='table table-striped table-condensed'>
     <tr>
@@ -40,10 +40,12 @@
 
 <div class="row">
     <div class='panel-heading'>
+        <div class='d-flex flex-span'>
         <h4>{% trans "Email" %}</h4>
+        </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-sm-6">
     {% if user.emailaddress_set.all %}
     <p>{% trans 'The following email addresses are associated with your account:' %}</p>
 
@@ -52,20 +54,26 @@
         <fieldset class="blockLabels">
 
             {% for emailaddress in user.emailaddress_set.all %}
+            <div>
             <div class="ctrlHolder">
-                <label for="email_radio_{{forloop.counter}}"
-                    class="{% if emailaddress.primary %}primary_email{%endif%}">
+                <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
 
                     <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked" {%endif %} value="{{emailaddress.email}}" />
 
-                    {{ emailaddress.email }}
-                    {% if emailaddress.verified %}
-                    <span class="verified">{% trans "Verified" %}</span>
+                    {% if emailaddress.primary %}
+                    <b>{{ emailaddress.email }}</b>
                     {% else %}
-                    <span class="unverified">{% trans "Unverified" %}</span>
+                    {{ emailaddress.email }}
                     {% endif %}
-                    {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>{% endif %}
                 </label>
+
+                {% if emailaddress.verified %}
+                <span class='badge badge-right rounded-pill bg-success'>{% trans "Verified" %}</span>
+                {% else %}
+                <span class='badge badge-right rounded-pill bg-warning'>{% trans "Unverified" %}</span>
+                {% endif %}
+                {% if emailaddress.primary %}<span class='badge badge-right rounded-pill bg-primary'>{% trans "Primary" %}</span>{% endif %}
+            </div>
             </div>
             {% endfor %}
 
@@ -88,7 +96,7 @@
     </div>
 
     {% if can_add_email %}
-    <div class="col-md-6">
+    <div class="col-sm-6">
     <h5>{% trans "Add Email Address" %}</h5>
 
     <form method="post" action="{% url 'account_email' %}" class="add_email">
@@ -207,26 +215,26 @@
         <h4>{% trans "Theme Settings" %}</h4>
     </div>
 
-    <form action='{% url "settings-appearance" %}' method='post'>
-        {% csrf_token %}
-        <input name='next' type='hidden' value='{% url "settings" %}'>
-        <div class="col-sm-6" style="width: 200px;">
-            <div id="div_id_themes" class="form-group">
-                <div class="controls ">
-                    <select name='theme' class='select form-control'>
-                        {% get_available_themes as themes %}
-                        {% for theme in themes %}
-                        <option value='{{ theme.key }}'>{{ theme.name }}</option>
-                        {% endfor %}
-                    </select>
+    <div class='col-sm-6'>
+        <form action='{% url "settings-appearance" %}' method='post'>
+            {% csrf_token %}
+            <input name='next' type='hidden' value='{% url "settings" %}'>
+            <label for='theme' class=' requiredField'>
+                {% trans "Select theme" %}
+            </label>
+            <div class='form-group input-group mb-3'>
+                <select id='theme' name='theme' class='select form-control'>
+                    {% get_available_themes as themes %}
+                    {% for theme in themes %}
+                    <option value='{{ theme.key }}'>{{ theme.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class='input-group-append'>
+                    <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn-primary">
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6" style="width: auto;">
-            <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn btn-primary">
-        </div>
-    </form>
-
+        </form>
+    </div>
 </div>
 
 <div class="row">
@@ -238,33 +246,32 @@
         <form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input name="next" type="hidden" value="{% url 'settings' %}">
-            <div class="col-sm-6" style="width: 200px;">
-                <div id="div_id_language" class="form-group">
-                    <div class="controls ">
-                        <select name="language" class="select form-control">
-                            {% get_current_language as LANGUAGE_CODE %}
-                            {% get_available_languages as LANGUAGES %}
-                            {% get_language_info_list for LANGUAGES as languages %}
-                            {% for language in languages %}
-                            {% define language.code as lang_code %}
-                            {% define locale_stats|keyvalue:lang_code as lang_translated %}
-                            <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
-                                {{ language.name_local }} ({{ lang_code }})
-                                {% if lang_translated %}
+            <label for='language' class=' requiredField'>
+                {% trans "Select language" %}
+            </label>
+            <div class='form-group input-group mb-3'>
+                <select name="language" class="select form-control">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        {% define language.code as lang_code %}
+                        {% define locale_stats|keyvalue:lang_code as lang_translated %}
+                        <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ lang_code }}) 
+                            {% if lang_translated %}
                                 {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
                                 {% else %}
                                 {% trans 'No translations available' %}
-                                {% endif %}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div class='input-group-append'>
+                    <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
                 </div>
             </div>
-            <div class="col-sm-6" style="width: auto;">
-                <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
-            </div>
-        </form>
+    </form>
     </div>
     <div class="col-sm-6">
         <h4>{% trans "Help the translation efforts!" %}</h4>
