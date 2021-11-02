@@ -25,7 +25,9 @@
 */
 
 /* exported
-    setFormGroupVisibility
+    hideFormInput,
+    setFormGroupVisibility,
+    showFormInput,
 */
 
 /**
@@ -1247,6 +1249,18 @@ function initializeGroups(fields, options) {
         }
     }
 }
+
+// Hide a form input
+function hideFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).hide();
+}
+
+
+// Show a form input
+function showFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).show();
+}
+
 
 // Hide a form group
 function hideFormGroup(group, options) {

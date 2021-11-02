@@ -97,6 +97,7 @@ function createStockLocation(options={}) {
 
     options.method = 'POST';
     options.fields = stockLocationFields(options);
+    options.title = '{% trans "New Stock Location" %}';
 
     constructForm(url, options);
 }
@@ -104,8 +105,28 @@ function createStockLocation(options={}) {
 
 function stockItemFields(options={}) {
     var fields = {
-        part: {},
+        part: {
+            onSelect: function(data, field, opts) {
+                // Callback when a new "part" is selected
+
+                // If we are "creating" a new stock item
+                if (options.create) {
+                    // If a "trackable" part is selected, enable serial number field
+                    if (data.trackable) {
+                        showFormInput('serial_numbers', opts);
+                    } else {
+                        updateFieldValue('serial_numbers', '', {}, opts);
+                        hideFormInput('serial_numbers', opts);
+                    }
+                }
+
+                // TODO: Hide "purchase price" fields for non purchaseable parts!
+
+                // TODO: Update "location" based on "default_location" returned 
+            }
+        },
         supplier_part: {
+            icon: 'fa-building',
             filters: {
                 part_detail: true,
                 supplier_detail: true,
@@ -120,17 +141,48 @@ function stockItemFields(options={}) {
                 return query;
             }
         },
-        serial: {},
+        location: {
+            icon: 'fa-sitemap',
+        },
+        quantity: {
+            help_text: '{% trans "Enter initial quantity for this stock item" %}',
+        },
+        serial_numbers: {
+            icon: 'fa-hashtag',
+            type: 'string',
+            label: '{% trans "Serial Numbers" %}',
+            help_text: '{% trans "Enter serial numbers for new stock (or leave blank)" %}',
+            required: false,
+        },
+        serial: {
+            icon: 'fa-hashtag',
+        },
         status: {},
         expiry_date: {},
         batch: {},
-        purchase_price: {},
+        purchase_price: {
+            icon: 'fa-dollar-sign',
+        },
         purchase_price_currency: {},
-        packaging: {},
-        link: {},
+        packaging: {
+            icon: 'fa-box',
+        },
+        link: {
+            icon: 'fa-link',
+        },
         owner: {},
         delete_on_deplete: {},
     };
+
+    if (options.create) {
+        // Use "serial numbers" field when creating a new stock item
+        delete fields['serial'];
+    } else {
+        // These fields cannot be edited once the stock item has been created
+        delete fields['serial_numbers'];
+        delete fields['quantity'];
+        delete fields['location'];
+    }
 
     // Remove stock expiry fields if feature is not enabled
     if (!global_settings.STOCK_ENABLE_EXPIRY) {
@@ -160,14 +212,14 @@ function editStockItem(pk, options={}) {
 
     var url = `/api/stock/${pk}/`;
 
-    var fields = stockItemFields(options);
-
     // Prevent editing of the "part"
     fields.part.hidden = true;
 
+    options.create = false;
+
+    options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
 
-    options.fields = fields;
     options.title = '{% trans "Edit Stock Item" %}';
     
     // Query parameters for retrieving stock item data
@@ -192,6 +244,25 @@ function editStockItem(pk, options={}) {
             delete options.fields.purchase_price_currency;
         }
     };
+
+    constructForm(url, options);
+}
+
+
+/*
+ * Launch an API form to contsruct a new stock item
+ */
+function createNewStockItem(options={}) {
+
+    var url = '{% url "api-stock-list" %}';
+
+    options.title = '{% trans "New Stock Item" %}';
+    options.method = 'POST';
+
+    options.create = true;
+
+    options.fields = stockItemFields(options);
+    options.groups = stockItemGroups(options);
 
     constructForm(url, options);
 }
@@ -1926,79 +1997,6 @@ function loadStockTrackingTable(table, options) {
             reload: true,
         });
     });
-}
-
-
-function createNewStockItem(options) {
-    /* Launch a modal form to create a new stock item.
-     * 
-     * This is really just a helper function which calls launchModalForm,
-     * but it does get called a lot, so here we are ...
-     */
-
-    // Add in some funky options
-
-    options.callback = [
-        {   
-            field: 'part',
-            action: function(value) {
-
-                if (!value) {
-                    // No part chosen
-                    
-                    clearFieldOptions('supplier_part');
-                    enableField('serial_numbers', false);
-                    enableField('purchase_price_0', false);
-                    enableField('purchase_price_1', false);
-
-                    return;
-                }
-
-                // Reload options for supplier part
-                reloadFieldOptions(
-                    'supplier_part',
-                    {
-                        url: '{% url "api-supplier-part-list" %}',
-                        params: {
-                            part: value,
-                            pretty: true,
-                        },
-                        text: function(item) {
-                            return item.pretty_name;
-                        }
-                    }
-                );
-
-                // Request part information from the server
-                inventreeGet(
-                    `/api/part/${value}/`, {},
-                    {
-                        success: function(response) {
-
-                            // Disable serial number field if the part is not trackable
-                            enableField('serial_numbers', response.trackable);
-                            clearField('serial_numbers');
-
-                            enableField('purchase_price_0', response.purchaseable);
-                            enableField('purchase_price_1', response.purchaseable);
-
-                            // Populate the expiry date
-                            if (response.default_expiry <= 0) {
-                                // No expiry date
-                                clearField('expiry_date');
-                            } else {
-                                var expiry = moment().add(response.default_expiry, 'days');
-
-                                setFieldValue('expiry_date', expiry.format('YYYY-MM-DD'));
-                            }
-                        }
-                    }
-                );
-            }
-        },
-    ];
-
-    launchModalForm('{% url "stock-item-create" %}', options);
 }
 
 
