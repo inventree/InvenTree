@@ -931,6 +931,10 @@ class StockLocationCreate(AjaxCreateView):
     """
     View for creating a new StockLocation
     A parent location (another StockLocation object) can be passed as a query parameter
+
+    TODO: Remove this class entirely, as it has been migrated to the API forms
+          - Still need to check that all the functionality (as below) has been implemented
+
     """
 
     model = StockLocation

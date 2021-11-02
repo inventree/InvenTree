@@ -63,32 +63,6 @@ class StockListTest(StockViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class StockLocationTest(StockViewTestCase):
-    """ Tests for StockLocation views """
-
-    def test_qr_code(self):
-        # Request the StockLocation QR view
-        response = self.client.get(reverse('stock-location-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Test for an invalid StockLocation
-        response = self.client.get(reverse('stock-location-qr', args=(999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create(self):
-        # Test StockLocation creation view
-        response = self.client.get(reverse('stock-location-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create with a parent
-        response = self.client.get(reverse('stock-location-create'), {'location': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create with an invalid parent
-        response = self.client.get(reverse('stock-location-create'), {'location': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-
 class StockItemTest(StockViewTestCase):
     """" Tests for StockItem views """
 
@@ -288,38 +262,6 @@ class StockOwnershipTest(StockViewTestCase):
             'description': 'John\'s desk',
             'owner': new_user_group_owner.pk,
         }
-
-        # Create new parent location
-        response = self.client.post(reverse('stock-location-create'),
-                                    parent_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
-        # Retrieve created location
-        parent_location = StockLocation.objects.get(name=parent_location['name'])
-
-        # Create new child location
-        new_location = {
-            'name': 'Upper Left Drawer',
-            'description': 'John\'s desk - Upper left drawer',
-        }
-
-        # Try to create new location with neither parent or owner
-        response = self.client.post(reverse('stock-location-create'),
-                                    new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
-
-        # Try to create new location with invalid owner
-        new_location['parent'] = parent_location.id
-        new_location['owner'] = user_group_owner.pk
-        response = self.client.post(reverse('stock-location-create'),
-                                    new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
-
-        # Try to create new location with valid owner
-        new_location['owner'] = new_user_group_owner.pk
-        response = self.client.post(reverse('stock-location-create'),
-                                    new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
 
         # Retrieve created location
         location_created = StockLocation.objects.get(name=new_location['name'])

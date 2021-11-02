@@ -222,24 +222,13 @@
     });
 
     $('#location-create').click(function () {
-        launchModalForm("{% url 'stock-location-create' %}",
-                        {
-                            data: {
-                                {% if location %}
-                                location: {{ location.id }}
-                                {% endif %}
-                            },
-                            follow: true,
-                            secondary: [
-                                {
-                                    field: 'parent',
-                                    label: '{% trans "New Location" %}',
-                                    title: '{% trans "Create new location" %}',
-                                    url: "{% url 'stock-location-create' %}",
-                                },
-                            ]
-                        });
-        return false;
+
+        createStockLocation({
+            {% if location %}
+            parent: {{ location.pk }},
+            {% endif %}
+            follow: true,
+        });
     });
 
     {% if location %}

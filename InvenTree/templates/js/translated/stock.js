@@ -59,13 +59,19 @@
 
 
 function stockLocationFields(options={}) {
-    return {
+    var fields = {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
         },
         name: {},
         description: {},
     };
+
+    if (options.parent) {
+        fields.parent.value = options.parent;
+    }
+
+    return fields;
 }
 
 
@@ -76,6 +82,20 @@ function editStockLocation(pk, options={}) {
 
     var url = `/api/stock/location/${pk}/`;
 
+    options.fields = stockLocationFields(options);
+
+    constructForm(url, options);
+}
+
+
+/*
+ * Launch an API form to create a new stock location
+ */
+function createStockLocation(options={}) {
+
+    var url = '{% url "api-location-list" %}';
+
+    options.method = 'POST';
     options.fields = stockLocationFields(options);
 
     constructForm(url, options);
