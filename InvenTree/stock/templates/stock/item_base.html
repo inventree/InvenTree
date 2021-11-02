@@ -471,14 +471,10 @@ $("#stock-duplicate").click(function() {
     });
 });
 
-$("#stock-edit").click(function () {
-    launchModalForm(
-        "{% url 'stock-item-edit' item.id %}",
-        {
-            reload: true,
-            submit_text: '{% trans "Save" %}',
-        }
-    );
+$('#stock-edit').click(function() {
+    editStockItem({{ item.pk }}, {
+        reload: true,
+    });
 });
 
 $('#stock-edit-status').click(function () {

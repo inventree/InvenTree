@@ -131,34 +131,35 @@ function editStockItem(pk, options={}) {
     // Prevent editing of the "part"
     fields.part.hidden = true;
 
-    var groups = stockItemGroups(options);
+    options.groups = stockItemGroups(options);
 
-    constructForm(url, {
-        fields: fields,
-        groups: groups,
-        title: '{% trans "Edit Stock Item" %}',
-        params: {
-            part_detail: true,
-            supplier_part_detail: true,
-        },
-        processResults: function(data, fields, options) {
-            // Callback when StockItem data is received from server
+    options.fields = fields;
+    options.title = '{% trans "Edit Stock Item" %}';
+    
+    // Query parameters for retrieving stock item data
+    options.params = {
+        part_detail: true,
+        supplier_part_detail: true,
+    };
 
-            if (data.part_detail.trackable) {
-                delete options.fields.delete_on_deplete;
-            } else {
-                // Remove serial number field if part is not trackable
-                delete options.fields.serial;
-            }
-
-            // Remove pricing fields if part is not purchaseable
-            if (!data.part_detail.purchaseable) {
-                delete options.fields.supplier_part;
-                delete options.fields.purchase_price;
-                delete options.fields.purchase_price_currency;
-            }
+    // Augment the rendered form when we receive information about the StockItem
+    options.processResults = function(data, fields, options) {
+        if (data.part_detail.trackable) {
+            delete options.fields.delete_on_deplete;
+        } else {
+            // Remove serial number field if part is not trackable
+            delete options.fields.serial;
         }
-    });
+
+        // Remove pricing fields if part is not purchaseable
+        if (!data.part_detail.purchaseable) {
+            delete options.fields.supplier_part;
+            delete options.fields.purchase_price;
+            delete options.fields.purchase_price_currency;
+        }
+    };
+
+    constructForm(url, options);
 }
 
 

@@ -105,15 +105,6 @@ class StockItemTest(StockViewTestCase):
         response = self.client.get(reverse('stock-item-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-    def test_edit_item(self):
-        # Test edit view for StockItem
-        response = self.client.get(reverse('stock-item-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with a non-purchaseable part
-        response = self.client.get(reverse('stock-item-edit', args=(100,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
     def test_create_item(self):
         """
         Test creation of StockItem
@@ -273,11 +264,15 @@ class StockOwnershipTest(StockViewTestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertContains(response, '"form_valid": true', status_code=200)
 
+        """
+        TODO: Refactor this following test to use the new API form
         # Set ownership on existing item (and change location)
         response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
                                     {'part': 1, 'status': StockStatus.OK, 'owner': user_as_owner.pk},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
         self.assertContains(response, '"form_valid": true', status_code=200)
+        """
 
         # Logout
         self.client.logout()
@@ -294,6 +289,8 @@ class StockOwnershipTest(StockViewTestCase):
         location = StockLocation.objects.get(pk=test_location_id)
         self.assertEqual(location.owner, user_group_owner)
 
+        """
+        TODO: Refactor this following test to use the new API form
         # Test item edit
         response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
                                     {'part': 1, 'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
@@ -302,6 +299,7 @@ class StockOwnershipTest(StockViewTestCase):
         # Make sure the item's owner is unchanged
         item = StockItem.objects.get(pk=test_item_id)
         self.assertEqual(item.owner, user_as_owner)
+        """
 
         # Create new parent location
         parent_location = {
