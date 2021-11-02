@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 03:22+0000\n"
+"POT-Creation-Date: 2021-11-02 04:08+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
@@ -6355,33 +6355,33 @@ msgstr ""
 msgid "View in administration panel"
 msgstr ""
 
-#: templates/email/low_stock_notification.html:8
+#: templates/email/email.html:35
+msgid "InvenTree version"
+msgstr ""
+
+#: templates/email/low_stock_notification.html:7
 #, python-format
 msgid " The available stock for %(part)s has fallen below the configured minimum level"
 msgstr ""
 
-#: templates/email/low_stock_notification.html:10
+#: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
 msgstr ""
 
-#: templates/email/low_stock_notification.html:16
-msgid "Part Name"
-msgstr ""
-
-#: templates/email/low_stock_notification.html:17
-msgid "Available Quantity"
-msgstr ""
-
-#: templates/email/low_stock_notification.html:18
-msgid "Minimum Quantity"
-msgstr ""
-
-#: templates/email/low_stock_notification.html:29
+#: templates/email/low_stock_notification.html:14
 msgid "You are receiving this email because you are subscribed to notifications for this part "
 msgstr ""
 
-#: templates/email/low_stock_notification.html:30
-msgid "InvenTree version"
+#: templates/email/low_stock_notification.html:19
+msgid "Part Name"
+msgstr ""
+
+#: templates/email/low_stock_notification.html:20
+msgid "Available Quantity"
+msgstr ""
+
+#: templates/email/low_stock_notification.html:21
+msgid "Minimum Quantity"
 msgstr ""
 
 #: templates/image_download.html:8
