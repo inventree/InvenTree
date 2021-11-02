@@ -23,8 +23,8 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
-<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Star this part" %}'>
-    <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Subscribe to nofications for this part" %}'>
+    <span id='part-star-icon' class='fas fa-bullhorn {% if starred %}icon-green{% endif %}'/>
 </button>
 
 {% if barcodes %}

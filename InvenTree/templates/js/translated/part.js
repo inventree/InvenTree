@@ -398,9 +398,9 @@ function toggleStar(options) {
                     method: 'PATCH',
                     success: function(response) {
                         if (response.starred) {
-                            $(options.button).addClass('icon-yellow');
+                            $(options.button).addClass('icon-green');
                         } else {
-                            $(options.button).removeClass('icon-yellow');
+                            $(options.button).removeClass('icon-green');
                         }
                     }
                 }

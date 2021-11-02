@@ -874,8 +874,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     GLOBAL_SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
-            'name': _('Show starred parts'),
-            'description': _('Show starred parts on the homepage'),
+            'name': _('Show subscribed parts'),
+            'description': _('Show subscribed parts on the homepage'),
             'default': True,
             'validator': bool,
         },

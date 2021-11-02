@@ -84,7 +84,7 @@ function addHeaderAction(label, title, icon, options) {
 addHeaderTitle('{% trans "Parts" %}');
 
 {% if setting_part_starred %}
-addHeaderAction('starred-parts', '{% trans "Starred Parts" %}', 'fa-star');
+addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bullhorn');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     params: {
         "starred": true,
