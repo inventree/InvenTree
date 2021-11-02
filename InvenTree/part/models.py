@@ -1988,6 +1988,9 @@ class Part(MPTTModel):
     def related_count(self):
         return len(self.get_related_parts())
 
+    def is_part_low_on_stock(self):
+        return self.total_stock <= self.minimum_stock
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
