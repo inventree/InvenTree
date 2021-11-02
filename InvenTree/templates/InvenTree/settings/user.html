@@ -11,17 +11,17 @@
 {% trans "Account Settings" %}
 {% endblock %}
 
+{% block actions %}
+<div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
+    <span class='fas fa-user-cog'></span> {% trans "Edit" %}
+</div>
+<div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+    <span class='fas fa-key'></span> {% trans "Set Password" %}
+</div>
+{% endblock %}
+
 {% block content %}
 {% mail_configured as mail_conf %}
-
-<div class='btn-group' style='float: right;'>
-    <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
-        <span class='fas fa-user-cog'></span> {% trans "Edit" %}
-    </div>
-    <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-        <span class='fas fa-key'></span> {% trans "Set Password" %}
-    </div>
-</div>
 
 <table class='table table-striped table-condensed'>
     <tr>
@@ -39,7 +39,10 @@
 </table>
 
 <div class='panel-heading'>
-    <h4>{% trans "Email" %}</h4>
+    <div class='d-flex flex-span'>
+        <h4>{% trans "Email" %}</h4>
+        {% include "spacer.html" %}
+    </div>
 </div>
 
 <div>
@@ -89,8 +92,18 @@
 
         <form method="post" action="{% url 'account_email' %}" class="add_email">
             {% csrf_token %}
-            {{ add_email_form|crispy }}
-            <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add Email" %}</button>
+
+            <label for="id_email" class=" requiredField">
+                E-mail<span class="asteriskField">*</span>
+            </label>
+            <div id="div_id_email" class="form-group input-group mb-3">
+                <div class='input-group-prepend'><span class='input-group-text'>@</span></div>
+                <input type="email" name="email" placeholder='{% trans "Enter e-mail address" %}' class="textinput textInput form-control" required="" id="id_email">
+                <div class='input-group-append'>
+                    <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add Email" %}</button>
+                </div>
+            </div>
+
         </form>
     {% endif %}
     <br>
