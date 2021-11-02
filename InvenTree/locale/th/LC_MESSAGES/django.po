@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-01 14:08+0000\n"
-"PO-Revision-Date: 2021-11-01 14:11\n"
+"POT-Creation-Date: 2021-11-02 03:22+0000\n"
+"PO-Revision-Date: 2021-11-02 03:41\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -477,11 +477,11 @@ msgstr ""
 msgid "Check box to confirm item deletion"
 msgstr ""
 
-#: InvenTree/views.py:600 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:600 templates/InvenTree/settings/user.html:15
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:611 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:611 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr ""
 
@@ -1825,7 +1825,7 @@ msgid "Enable password forgot"
 msgstr ""
 
 #: common/models.py:810
-msgid "Enable password forgot function on the login-pages"
+msgid "Enable password forgot function on the login pages"
 msgstr ""
 
 #: common/models.py:815
@@ -1833,7 +1833,7 @@ msgid "Enable registration"
 msgstr ""
 
 #: common/models.py:816
-msgid "Enable self-registration for users on the login-pages"
+msgid "Enable self-registration for users on the login pages"
 msgstr ""
 
 #: common/models.py:821
@@ -1841,7 +1841,7 @@ msgid "Enable SSO"
 msgstr ""
 
 #: common/models.py:822
-msgid "Enable SSO on the login-pages"
+msgid "Enable SSO on the login pages"
 msgstr ""
 
 #: common/models.py:827
@@ -2198,7 +2198,7 @@ msgid "Contact phone number"
 msgstr ""
 
 #: company/models.py:125 company/templates/company/company_base.html:102
-#: templates/InvenTree/settings/user.html:42
+#: templates/InvenTree/settings/user.html:43
 msgid "Email"
 msgstr ""
 
@@ -2646,8 +2646,8 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:141
 #: part/templates/part/detail.html:249
-#: templates/InvenTree/settings/category.html:26
-#: templates/InvenTree/settings/part.html:62
+#: templates/InvenTree/settings/category.html:12
+#: templates/InvenTree/settings/part.html:65
 msgid "New Parameter"
 msgstr ""
 
@@ -5922,23 +5922,23 @@ msgstr ""
 msgid "Currency Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/currencies.html:22
+#: templates/InvenTree/settings/currencies.html:19
 msgid "Base Currency"
 msgstr ""
 
-#: templates/InvenTree/settings/currencies.html:26
+#: templates/InvenTree/settings/currencies.html:24
 msgid "Exchange Rates"
 msgstr ""
 
-#: templates/InvenTree/settings/currencies.html:36
+#: templates/InvenTree/settings/currencies.html:38
 msgid "Last Update"
 msgstr ""
 
-#: templates/InvenTree/settings/currencies.html:42
+#: templates/InvenTree/settings/currencies.html:44
 msgid "Never"
 msgstr ""
 
-#: templates/InvenTree/settings/currencies.html:47
+#: templates/InvenTree/settings/currencies.html:49
 msgid "Update Now"
 msgstr ""
 
@@ -5958,19 +5958,15 @@ msgstr ""
 msgid "Part Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:12
-msgid "Part Options"
-msgstr ""
-
 #: templates/InvenTree/settings/part.html:43
 msgid "Part Import"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:46
+#: templates/InvenTree/settings/part.html:47
 msgid "Import Part"
 msgstr ""
 
-#: templates/InvenTree/settings/part.html:58
+#: templates/InvenTree/settings/part.html:61
 msgid "Part Parameter Templates"
 msgstr ""
 
@@ -5983,11 +5979,11 @@ msgstr ""
 msgid "Report Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:29
+#: templates/InvenTree/settings/setting.html:28
 msgid "No value set"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:41
+#: templates/InvenTree/settings/setting.html:39
 msgid "Edit setting"
 msgstr ""
 
@@ -6025,12 +6021,12 @@ msgstr ""
 msgid "Account Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:19
+#: templates/InvenTree/settings/user.html:16
 #: templates/js/translated/helpers.js:26
 msgid "Edit"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:21
+#: templates/InvenTree/settings/user.html:18
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
@@ -6048,102 +6044,114 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:47
+#: templates/InvenTree/settings/user.html:51
 msgid "The following email addresses are associated with your account:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:61
+#: templates/InvenTree/settings/user.html:71
 msgid "Verified"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:63
+#: templates/InvenTree/settings/user.html:73
 msgid "Unverified"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:65
+#: templates/InvenTree/settings/user.html:75
 msgid "Primary"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:71
+#: templates/InvenTree/settings/user.html:81
 msgid "Make Primary"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:72
+#: templates/InvenTree/settings/user.html:82
 msgid "Re-send Verification"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:73
-#: templates/InvenTree/settings/user.html:130
+#: templates/InvenTree/settings/user.html:83
+#: templates/InvenTree/settings/user.html:150
 msgid "Remove"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:80
+#: templates/InvenTree/settings/user.html:90
 msgid "Warning:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:81
+#: templates/InvenTree/settings/user.html:91
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:88
+#: templates/InvenTree/settings/user.html:98
 msgid "Add Email Address"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:93
+#: templates/InvenTree/settings/user.html:108
+msgid "Enter e-mail address"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:110
 msgid "Add Email"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:100
+#: templates/InvenTree/settings/user.html:120
 msgid "Social Accounts"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:105
+#: templates/InvenTree/settings/user.html:125
 msgid "You can sign in to your account using any of the following third party accounts:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:138
-msgid "You currently have no social network accounts connected to this account."
+#: templates/InvenTree/settings/user.html:159
+msgid "There are no social network accounts connected to your InvenTree account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:142
+#: templates/InvenTree/settings/user.html:164
 msgid "Add a 3rd Party Account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:153
+#: templates/InvenTree/settings/user.html:175
 msgid "Theme Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:174
+#: templates/InvenTree/settings/user.html:185
+msgid "Select theme"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:195
 msgid "Set Theme"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:181
+#: templates/InvenTree/settings/user.html:203
 msgid "Language Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:200
+#: templates/InvenTree/settings/user.html:212
+msgid "Select language"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:225
 #, python-format
 msgid "%(lang_translated)s%% translated"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:202
+#: templates/InvenTree/settings/user.html:227
 msgid "No translations available"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:209
+#: templates/InvenTree/settings/user.html:233
 msgid "Set Language"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:214
+#: templates/InvenTree/settings/user.html:239
 msgid "Help the translation efforts!"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:215
+#: templates/InvenTree/settings/user.html:240
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:223
+#: templates/InvenTree/settings/user.html:248
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
