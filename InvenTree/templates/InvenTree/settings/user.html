@@ -45,50 +45,51 @@
     </div>
 </div>
 
-<div>
-    {% if user.emailaddress_set.all %}
-    <p>{% trans 'The following email addresses are associated with your account:' %}</p>
+<div class='row'>
+    <div class='col-sm-6'>
+        {% if user.emailaddress_set.all %}
+        <p>{% trans 'The following email addresses are associated with your account:' %}</p>
 
-    <form action="{% url 'account_email' %}" class="email_list" method="post">
-    {% csrf_token %}
-        <fieldset class="blockLabels">
+        <form action="{% url 'account_email' %}" class="email_list" method="post">
+        {% csrf_token %}
+            <fieldset class="blockLabels">
 
-        {% for emailaddress in user.emailaddress_set.all %}
-            <div class="ctrlHolder">
-                <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
+            {% for emailaddress in user.emailaddress_set.all %}
+                <div class="ctrlHolder">
+                    <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
 
-                <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+                    <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
 
-            {{ emailaddress.email }}
-                {% if emailaddress.verified %}
-                <span class="verified">{% trans "Verified" %}</span>
-                {% else %}
-                <span class="unverified">{% trans "Unverified" %}</span>
-                {% endif %}
-                {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>{% endif %}
-            </label>
+                {{ emailaddress.email }}
+                    {% if emailaddress.verified %}
+                    <span class="verified">{% trans "Verified" %}</span>
+                    {% else %}
+                    <span class="unverified">{% trans "Unverified" %}</span>
+                    {% endif %}
+                    {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>{% endif %}
+                </label>
+                </div>
+            {% endfor %}
+
+            <div class="buttonHolder">
+                <button class="btn btn-primary secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
+                <button class="btn btn-primary secondaryAction" type="submit" name="action_send" {% if not mail_conf %}disabled{% endif %}>{% trans 'Re-send Verification' %}</button>
+                <button class="btn btn-primary primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
             </div>
-        {% endfor %}
 
-        <div class="buttonHolder">
-            <button class="btn btn-primary secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
-            <button class="btn btn-primary secondaryAction" type="submit" name="action_send" {% if not mail_conf %}disabled{% endif %}>{% trans 'Re-send Verification' %}</button>
-            <button class="btn btn-primary primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
-        </div>
+            </fieldset>
+        </form>
 
-        </fieldset>
-    </form>
+        {% else %}
+        <p><strong>{% trans 'Warning:'%}</strong>
+            {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}
+        </p>
 
-    {% else %}
-    <p><strong>{% trans 'Warning:'%}</strong>
-        {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}
-    </p>
-
-    {% endif %}
-
-    {% if can_add_email %}
-        <br>
-        <h4>{% trans "Add Email Address" %}</h4>
+        {% endif %}
+    </div>
+    <div class='col-sm-6'>
+        {% if can_add_email %}
+        <h5>{% trans "Add Email Address" %}</h5>
 
         <form method="post" action="{% url 'account_email' %}" class="add_email">
             {% csrf_token %}
@@ -106,7 +107,7 @@
 
         </form>
     {% endif %}
-    <br>
+    </div>
 </div>
 
 <div class='panel-heading'>
@@ -168,26 +169,26 @@
 
 <div class='row'>
 
-    <form action='{% url "settings-appearance" %}' method='post'>
-        {% csrf_token %}
-        <input name='next' type='hidden' value='{% url "settings" %}'>
-        <div class="col-sm-6" style="width: 200px;">
-            <div id="div_id_themes" class="form-group">
-                <div class="controls ">
-                    <select name='theme' class='select form-control'>
-                        {% get_available_themes as themes %}
-                        {% for theme in themes %}
-                        <option value='{{ theme.key }}'>{{ theme.name }}</option>
-                        {% endfor %}
-                    </select>
+    <div class='col-sm-6'>
+        <form action='{% url "settings-appearance" %}' method='post'>
+            {% csrf_token %}
+            <input name='next' type='hidden' value='{% url "settings" %}'>
+            <label for='theme' class=' requiredField'>
+                {% trans "Select theme" %}
+            </label>
+            <div class='form-group input-group mb-3'>
+                <select id='theme' name='theme' class='select form-control'>
+                    {% get_available_themes as themes %}
+                    {% for theme in themes %}
+                    <option value='{{ theme.key }}'>{{ theme.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class='input-group-append'>
+                    <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn-primary">
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6" style="width: auto;">
-            <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn btn-primary">
-        </div>
-    </form>
-
+        </form>
+    </div>
 </div>
 
 <div class='panel-heading'>
@@ -199,7 +200,10 @@
         <form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input name="next" type="hidden" value="{% url 'settings' %}">
-            <div class="col-sm-6" style="width: 200px;"><div id="div_id_language" class="form-group"><div class="controls ">
+            <label for='language' class=' requiredField'>
+                {% trans "Select language" %}
+            </label>
+            <div class='form-group input-group mb-3'>
                 <select name="language" class="select form-control">
                     {% get_current_language as LANGUAGE_CODE %}
                     {% get_available_languages as LANGUAGES %}
@@ -217,11 +221,11 @@
                         </option>
                     {% endfor %}
                 </select>
-            </div></div></div>
-            <div class="col-sm-6" style="width: auto;">
-                <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
+                <div class='input-group-append'>
+                    <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
+                </div>
             </div>
-        </form>
+    </form>
     </div>
     <div class="col-sm-6">
         <h4>{% trans "Help the translation efforts!" %}</h4>
