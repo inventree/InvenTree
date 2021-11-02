@@ -134,7 +134,15 @@ src="{% static 'img/blank_image.png' %}"
 
 <div class='panel panel-hidden' id='panel-stock'>
     <div class='panel-heading'>
-        <h4>{% trans "Supplier Part Stock" %}</h4>
+        <span class='d-flex flex-wrap'>
+            <h4>{% trans "Supplier Part Stock" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-success' id='item-create' title='{% trans "Create new stock item" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+                </button>
+            </div>
+        </span>
     </div>
     <div class='panel-content'>
         {% include "stock_table.html" %}

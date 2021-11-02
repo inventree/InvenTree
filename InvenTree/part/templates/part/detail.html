@@ -95,7 +95,15 @@
 
 <div class='panel panel-hidden' id='panel-part-stock'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Stock" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Stock" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-success' id='new-stock-item' title='{% trans "Create new stock item" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% if part.is_template %}
@@ -851,11 +859,14 @@
     });
 
     onPanelLoad("part-stock", function() {
-        $('#add-stock-item').click(function () {
+        $('#new-stock-item').click(function () {
             createNewStockItem({
                 reload: true,
                 data: {
                     part: {{ part.id }},
+                    {% if part.default_location %}
+                    location: {{ part.default_location.pk }},
+                    {% endif %}
                 }
             });
         });
