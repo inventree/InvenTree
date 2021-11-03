@@ -373,15 +373,15 @@ function duplicatePart(pk, options={}) {
 }
 
 
+/* Toggle the 'starred' status of a part.
+ * Performs AJAX queries and updates the display on the button.
+ * 
+ * options:
+ * - button: ID of the button (default = '#part-star-icon')
+ * - part: pk of the part object
+ * - user: pk of the user
+ */
 function toggleStar(options) {
-    /* Toggle the 'starred' status of a part.
-     * Performs AJAX queries and updates the display on the button.
-     * 
-     * options:
-     * - button: ID of the button (default = '#part-star-icon')
-     * - part: pk of the part object
-     * - user: pk of the user
-     */
 
     var url = `/api/part/${options.part}/`;
 
@@ -398,9 +398,9 @@ function toggleStar(options) {
                     method: 'PATCH',
                     success: function(response) {
                         if (response.starred) {
-                            $(options.button).addClass('icon-green');
+                            $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
                         } else {
-                            $(options.button).removeClass('icon-green');
+                            $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
                         }
                     }
                 }

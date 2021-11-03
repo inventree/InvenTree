@@ -24,7 +24,11 @@
 {% endif %}
 
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Subscribe to nofications for this part" %}'>
-    <span id='part-star-icon' class='fas fa-bullhorn {% if starred %}icon-green{% endif %}'/>
+    {% if starred %}
+    <span id='part-star-icon' class='fas fa-bell icon-green'/>
+    {% else %}
+    <span id='part-star-icon' class='fa fa-bell-slash'/>
+    {% endif %}
 </button>
 
 {% if barcodes %}
