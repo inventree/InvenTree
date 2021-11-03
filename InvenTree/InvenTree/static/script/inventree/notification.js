@@ -16,29 +16,83 @@ function showAlertOrCache(alertType, message, cache, timeout=5000) {
     }
 }
 
+
+/*
+ * Display cached alert messages when loading a page
+ */
 function showCachedAlerts() {
 
-    // Success Message
-    if (sessionStorage.getItem("inventree-alert-success")) {
-        showAlert("#alert-success", sessionStorage.getItem("inventree-alert-success"));
-        sessionStorage.removeItem("inventree-alert-success");
+    var styles = [
+        'primary',
+        'secondary',
+        'success',
+        'info',
+        'warning',
+        'danger',
+    ];
+
+    styles.forEach(function(style) {
+
+        var msg = sessionStorage.getItem(`inventree-alert-${style}`);
+
+        if (msg) {
+            showMessage(msg, {
+                style: style,
+            });
+        }
+    });
+}
+
+
+/* 
+ * Display an alert message at the top of the screen.
+ * The message will contain a "close" button,
+ * and also dismiss automatically after a certain amount of time.
+ * 
+ * arguments:
+ * - message: Text / HTML content to display
+ * 
+ * options:
+ * - style: alert style e.g. 'success' / 'warning'
+ * - timeout: Time (in milliseconds) after which the message will be dismissed
+ */
+function showMessage(message, options={}) {
+
+    var style = options.style || 'info';
+
+    var timeout = options.timeout || 5000;
+
+    // Hacky function to get the next available ID
+    var id = 1;
+
+    while ($(`#alert-${id}`).exists()) {
+        id++;
     }
 
-    // Info Message
-    if (sessionStorage.getItem("inventree-alert-info")) {
-        showAlert("#alert-info", sessionStorage.getItem("inventree-alert-info"));
-        sessionStorage.removeItem("inventree-alert-info");
+    var icon = '';
+
+    if (options.icon) {
+        icon = `<span class='${options.icon}></span>`;
     }
 
-    // Warning Message
-    if (sessionStorage.getItem("inventree-alert-warning")) {
-        showAlert("#alert-warning", sessionStorage.getItem("inventree-alert-warning"));
-        sessionStorage.removeItem("inventree-alert-warning");
-    }
+    // Construct the alert
+    var html = `
+    <div id='alert-${id}' class='alert alert-${style} alert-dismissible fade show' role='alert'>
+        ${icon}
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
+    </div>
+    `;
 
-    // Danger Message
-    if (sessionStorage.getItem("inventree-alert-danger")) {
-        showAlert("#alert-danger", sessionStorage.getItem("inventree-alert-danger"));
-        sessionStorage.removeItem("inventree-alert-danger");
-    }
+    $('#alerts').append(html);
+
+    // Remove the alert automatically after a specified period of time
+    setInterval(function() {
+        $(`#alert-${id}`).animate({
+            'opacity': 0.0,
+            'height': '0px',
+        }, 250, function() {
+            $(`#alert-${id}`).remove();
+        });
+    }, timeout);
 }

@@ -399,8 +399,18 @@ function toggleStar(options) {
                     success: function(response) {
                         if (response.starred) {
                             $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
+                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this part" %}');
+
+                            showMessage('{% trans "You have subscribed to notifications for this part" %}', {
+                                style: 'success',
+                            });
                         } else {
                             $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
+                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this part" %}');
+
+                            showMessage('{% trans "You have unsubscribed to notifications for this part" %}', {
+                                style: 'warning',
+                            });
                         }
                     }
                 }
