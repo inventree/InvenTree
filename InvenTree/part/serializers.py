@@ -255,6 +255,9 @@ class PartSerializer(InvenTreeModelSerializer):
         to reduce database trips.
         """
 
+        # TODO: Update the "in_stock" annotation to include stock for variants of the part
+        # Ref: https://github.com/inventree/InvenTree/issues/2240
+
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(
             in_stock=Coalesce(

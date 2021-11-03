@@ -139,8 +139,7 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% to_list setting_stock_recent setting_stock_low setting_stock_depleted setting_stock_needed as settings_list_stock %}
 {% endif %}
 
-{% if roles.stock.view and True in settings_list_stock %}
-addHeaderTitle('{% trans "Stock" %}');
+{% if roles.stock.view %}
 
 {% if setting_stock_recent %}
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
@@ -156,7 +155,7 @@ loadStockTable($('#table-recently-updated-stock'), {
 {% endif %}
 
 {% if setting_stock_low %}
-addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
+addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
     params: {
         low_stock: true,
