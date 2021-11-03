@@ -1226,3 +1226,34 @@ class ColorTheme(models.Model):
                 return True
 
         return False
+
+
+class NotificationEntry(models.Model):
+    """
+    A NotificationEntry records the last time a particular notifaction was sent out.
+
+    It is recorded to ensure that notifications are not sent out "too often" to users.
+
+    Attributes:
+    - key: A text entry describing the notification e.g. 'part.notify_low_stock'
+    - uid: An (optional) numerical ID for a particular instance
+    - date: The last time this notification was sent
+    """
+
+    class Meta:
+        unique_together = [
+            ('key', 'uid'),
+        ]
+
+    key = models.CharField(
+        max_length=250,
+        blank=False,
+    )
+
+    uid = models.IntegerField(
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        null=False,
+    )
