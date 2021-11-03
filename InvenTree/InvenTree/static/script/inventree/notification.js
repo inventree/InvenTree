@@ -1,18 +1,10 @@
-function showAlert(target, message, timeout=5000) {
-
-    $(target).find(".alert-msg").html(message);
-    $(target).show();
-    $(target).delay(timeout).slideUp(200, function() {
-        $(this).alert(close);
-    });
-}
 
 function showAlertOrCache(alertType, message, cache, timeout=5000) {
     if (cache) {
         sessionStorage.setItem("inventree-" + alertType, message);
     }
     else {
-        showAlert('#' + alertType, message, timeout);
+        showMessage('#' + alertType, message, timeout);
     }
 }
 
@@ -87,12 +79,7 @@ function showMessage(message, options={}) {
     $('#alerts').append(html);
 
     // Remove the alert automatically after a specified period of time
-    setInterval(function() {
-        $(`#alert-${id}`).animate({
-            'opacity': 0.0,
-            'height': '0px',
-        }, 250, function() {
-            $(`#alert-${id}`).remove();
-        });
-    }, timeout);
+    $(`#alert-${id}`).delay(timeout).slideUp(200, function() {
+        $(this).alert(close);
+    });
 }
