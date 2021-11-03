@@ -141,9 +141,9 @@
 
 <!-- general InvenTree -->
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 
 <!-- dynamic javascript templates -->
-<script type='text/javascript' src="{% url 'inventree.js' %}"></script>
 <script type='text/javascript' src="{% url 'calendar.js' %}"></script>
 <script type='text/javascript' src="{% url 'nav.js' %}"></script>
 <script type='text/javascript' src="{% url 'settings.js' %}"></script>
@@ -183,15 +183,13 @@ $(document).ready(function () {
 
     inventreeDocReady();
 
-    showCachedAlerts();
-
     {% if barcodes %}
     $('#barcode-scan').click(function() {
         barcodeScanDialog();
     });
     {% endif %}
 
-    moment.locale('{{request.LANGUAGE_CODE}}');
+    moment.locale('{{ request.LANGUAGE_CODE }}');
 });
 
 </script>

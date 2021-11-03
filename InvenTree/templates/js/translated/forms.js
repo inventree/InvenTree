@@ -125,9 +125,10 @@ function getApiEndpointOptions(url, callback) {
             json: 'application/json',
         },
         success: callback,
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            showApiError(xhr, url);
         }
     });
 }
@@ -213,12 +214,14 @@ function constructChangeForm(fields, options) {
 
             // Store the entire data object
             options.instance = data;
-
+            
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -255,9 +258,11 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -722,7 +727,7 @@ function submitFormData(fields, options) {
                     break;
                 default:
                     $(options.modal).modal('hide');
-                    showApiError(xhr);
+                    showApiError(xhr, options.url);
                     break;
                 }
             }
@@ -899,19 +904,19 @@ function handleFormSuccess(response, options) {
 
     // Display any messages
     if (response && response.success) {
-        showAlertOrCache('alert-success', response.success, cache);
+        showAlertOrCache(response.success, 'success', cache);
     }
     
     if (response && response.info) {
-        showAlertOrCache('alert-info', response.info, cache);
+        showAlertOrCache(response.info, 'info', cache);
     }
 
     if (response && response.warning) {
-        showAlertOrCache('alert-warning', response.warning, cache);
+        showAlertOrCache(response.warning, 'warning', cache);
     }
 
     if (response && response.danger) {
-        showAlertOrCache('alert-danger', response.danger, cache);
+        showAlertOrCache(response.danger, 'dagner', cache);
     }
 
     if (options.onSuccess) {
