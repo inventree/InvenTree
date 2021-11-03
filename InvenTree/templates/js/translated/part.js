@@ -1133,8 +1133,10 @@ function loadPartTable(table, url, options={}) {
 }
 
 
+/*
+ * Display a table of part categories
+ */
 function loadPartCategoryTable(table, options) {
-    /* Display a table of part categories */
 
     var params = options.params || {};
 
@@ -1157,15 +1159,15 @@ function loadPartCategoryTable(table, options) {
 
     setupFilterList(filterKey, table, filterListElement);
 
-    var tree_view = inventreeLoad('category-tree-view') == 1;
+    var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
 
     table.inventreeTable({
         treeEnable: tree_view,
-        rootParentId: options.params.parent,
+        rootParentId: tree_view ? options.params.parent : null,
         uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'name',
-        parentIdField: 'parent',
+        parentIdField: tree_view ? 'parent' : null,
         method: 'get',
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
@@ -1176,7 +1178,7 @@ function loadPartCategoryTable(table, options) {
         name: 'category',
         original: original,
         showColumns: true,
-        buttons: [
+        buttons: options.allowTreeView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1215,28 +1217,31 @@ function loadPartCategoryTable(table, options) {
                     );
                 }
             }
-        ],
+        ] : [],
         onPostBody: function() {
 
-            tree_view = inventreeLoad('category-tree-view') == 1;
+            if (options.allowTreeView) {
 
-            if (tree_view) {
+                tree_view = inventreeLoad('category-tree-view') == 1;
 
-                $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                
-                table.treegrid({
-                    treeColumn: 0,
-                    onChange: function() {
-                        table.bootstrapTable('resetView');
-                    },
-                    onExpand: function() {
-                        
-                    }
-                });
-            } else {
-                $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                if (tree_view) {
+
+                    $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                    
+                    table.treegrid({
+                        treeColumn: 0,
+                        onChange: function() {
+                            table.bootstrapTable('resetView');
+                        },
+                        onExpand: function() {
+                            
+                        }
+                    });
+                } else {
+                    $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                }
             }
         },
         columns: [

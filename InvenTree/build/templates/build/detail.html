@@ -142,7 +142,7 @@
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Completed" %}</td>
                         {% if build.completion_date %}
-                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
+                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
                         {% else %}
                         <td><em>{% trans "Build not complete" %}</em></td>
                         {% endif %}
