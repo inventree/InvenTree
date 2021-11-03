@@ -30,6 +30,15 @@
                 <td>{% trans "Description" %}</td>
                 <td>{{ part.description }}{% include "clip.html"%}</td>
             </tr>
+            {% if part.category %}
+            <tr>
+                <td><span class='fas fa-sitemap'></span></td>
+                <td>{% trans "Category" %}</td>
+                <td>
+                    <a href='{% url "category-detail" part.category.pk %}'>{{ part.category }}</a>
+                </td>
+            </tr>
+            {% endif %}
             {% if part.IPN %}
             <tr>
                 <td><span class='fas fa-tag'></span></td>
