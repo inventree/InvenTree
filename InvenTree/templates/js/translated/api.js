@@ -2,8 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    renderErrorMessage,
-    showAlertDialog,
 */
 
 /* exported
