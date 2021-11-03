@@ -141,6 +141,10 @@
     float: left;
 }
 
+.navbar-spacer {
+    height: 60px;
+}
+
 #navbar-barcode-li {
     border-left: none;
     border-right: none;
@@ -545,7 +549,6 @@
 .inventree-body {
     width: 100%;
     padding: 5px;
-    margin-top: 10px;
 }
 
 .inventree-pre-content {
@@ -560,10 +563,6 @@
     max-width: 100%;
     display: inline-block;
     transition: 0.1s;
-}
-
-.body {
-    padding-top: 50px;
 }
 
 .modal {

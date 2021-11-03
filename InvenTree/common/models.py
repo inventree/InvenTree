@@ -830,19 +830,19 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),
-            'description': _('Enable password forgot function on the login-pages'),
+            'description': _('Enable password forgot function on the login pages'),
             'default': True,
             'validator': bool,
         },
         'LOGIN_ENABLE_REG': {
             'name': _('Enable registration'),
-            'description': _('Enable self-registration for users on the login-pages'),
+            'description': _('Enable self-registration for users on the login pages'),
             'default': False,
             'validator': bool,
         },
         'LOGIN_ENABLE_SSO': {
             'name': _('Enable SSO'),
-            'description': _('Enable SSO on the login-pages'),
+            'description': _('Enable SSO on the login pages'),
             'default': False,
             'validator': bool,
         },

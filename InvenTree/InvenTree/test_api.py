@@ -102,9 +102,9 @@ class APITests(InvenTreeAPITestCase):
 
     fixtures = [
         'location',
-        'stock',
-        'part',
         'category',
+        'part',
+        'stock'
     ]
 
     token = None
