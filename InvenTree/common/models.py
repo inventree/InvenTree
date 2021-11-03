@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os
 import decimal
 import math
+from datetime import datetime, timedelta
 
 from django.db import models, transaction
 from django.contrib.auth.models import User, Group
@@ -1257,3 +1258,32 @@ class NotificationEntry(models.Model):
         auto_now=True,
         null=False,
     )
+
+    @classmethod
+    def check_recent(cls, key: str, uid: int, delta: timedelta):
+        """
+        Test if a particular notification has been sent in the specified time period
+        """
+
+        since = datetime.now().date() - delta
+
+        entries = cls.objects.filter(
+            key=key,
+            uid=uid,
+            updated__gte=since
+        )
+
+        return entries.exists()
+
+    @classmethod
+    def notify(cls, key: str, uid: int):
+        """
+        Notify the database that a particular notification has been sent out
+        """
+
+        entry, created = cls.objects.get_or_create(
+            key=key,
+            uid=uid
+        )
+
+        entry.save()
