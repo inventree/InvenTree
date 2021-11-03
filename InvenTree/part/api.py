@@ -62,7 +62,11 @@ class CategoryList(generics.ListCreateAPIView):
 
         ctx = super().get_serializer_context()
 
-        ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
 
         return ctx
 
@@ -173,7 +177,11 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
         ctx = super().get_serializer_context()
 
-        ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
 
         return ctx
 
