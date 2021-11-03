@@ -177,6 +177,17 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return ctx
 
+    def update(self, request, *args, **kwargs):
+
+        if 'starred' in request.data:
+            starred = str2bool(request.data.get('starred', False))
+
+            self.get_object().set_starred(request.user, starred)
+
+        response = super().update(request, *args, **kwargs)
+
+        return response
+
 
 class CategoryParameterList(generics.ListAPIView):
     """ API endpoint for accessing a list of PartCategoryParameterTemplate objects.
@@ -446,7 +457,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         """
 
         if 'starred' in request.data:
-            starred = str2bool(request.data.get('starred', None))
+            starred = str2bool(request.data.get('starred', False))
 
             self.get_object().set_starred(request.user, starred)
 

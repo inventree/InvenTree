@@ -378,19 +378,18 @@ function duplicatePart(pk, options={}) {
  * 
  * options:
  * - button: ID of the button (default = '#part-star-icon')
- * - part: pk of the part object
+ * - URL: API url of the object
  * - user: pk of the user
  */
 function toggleStar(options) {
 
-    var url = `/api/part/${options.part}/`;
-
-    inventreeGet(url, {}, {
+    inventreeGet(options.url, {}, {
         success: function(response) {
+
             var starred = response.starred;
 
             inventreePut(
-                url,
+                options.url,
                 {
                     starred: !starred,
                 },
@@ -399,16 +398,16 @@ function toggleStar(options) {
                     success: function(response) {
                         if (response.starred) {
                             $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
-                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this part" %}');
+                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this item" %}');
 
-                            showMessage('{% trans "You have subscribed to notifications for this part" %}', {
+                            showMessage('{% trans "You have subscribed to notifications for this item" %}', {
                                 style: 'success',
                             });
                         } else {
                             $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
-                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this part" %}');
+                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this item" %}');
 
-                            showMessage('{% trans "You have unsubscribed to notifications for this part" %}', {
+                            showMessage('{% trans "You have unsubscribed to notifications for this item" %}', {
                                 style: 'warning',
                             });
                         }
@@ -453,7 +452,7 @@ function makePartIcons(part) {
     }
 
     if (part.starred) {
-        html += makeIconBadge('fa-star', '{% trans "Starred part" %}');
+        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed part" %}');
     }
 
     if (part.salable) {
@@ -461,7 +460,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `; 
     }
 
     return html;
@@ -1268,10 +1267,17 @@ function loadPartCategoryTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return renderLink(
+
+                    var html = renderLink(
                         value,
                         `/part/category/${row.pk}/`
                     );
+
+                    if (row.starred) {
+                        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed category" %}');
+                    }
+
+                    return html;
                 }
             },
             {

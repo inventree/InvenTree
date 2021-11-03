@@ -20,15 +20,37 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if category %}
-{% if roles.part_category.change %}
-<button class='btn btn-outline-secondary' id='cat-edit' title='{% trans "Edit part category" %}'>
-    <span class='fas fa-edit'/>
+{% if starred_directly %}
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to notifications for this category" %}'>
+    <span id='category-star-icon' class='fas fa-bell icon-green'></span>
+</button>
+{% elif starred %}
+<button type='button' class='btn btn-outline-secondary' title='{% trans "You are subscribed to notifications for this category" %}' disabled='true'>
+    <span class='fas fa-bell icon-green'></span>
+</button>
+{% else %}
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Subscribe to nofications for this category" %}'>
+    <span id='category-star-icon' class='fa fa-bell-slash'/>
 </button>
 {% endif %}
-{% if roles.part_category.delete %}
-<button class='btn btn-outline-secondary' id='cat-delete' title='{% trans "Delete part category" %}'>
-    <span class='fas fa-trash-alt icon-red'/>
-</button>
+{% if roles.part_category.change or roles.part_category.delete %}
+<div class='btn-group' role='group'>
+    <button id='category-options' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Category Actions" %}'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        {% if roles.part_category.change %}
+        <li><a class='dropdown-item' href='#' id='cat-edit' title='{% trans "Edit category" %}'>
+            <span class='fas fa-edit icon-green'></span> {% trans "Edit Category" %}
+        </a></li>
+        {% endif %}
+        {% if roles.part_category.delete %}
+        <li><a class='dropdown-item' href='#' id='cat-delete' title='{% trans "Delete category" %}'>
+            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Category" %}
+        </a></li>
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
 {% endif %}
 {% if roles.part_category.add %}
@@ -198,6 +220,14 @@
             data: {{ parameters|safe }},
         }
     );
+
+    $("#toggle-starred").click(function() {
+        toggleStar({
+            url: '{% url "api-part-category-detail" category.pk %}',
+            button: '#category-star-icon'
+        });
+    });
+
     {% endif %}
 
     enableSidebar('category');

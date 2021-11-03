@@ -320,7 +320,7 @@
 
     $("#toggle-starred").click(function() {
         toggleStar({
-            part: {{ part.id }},
+            url: '{% url "api-part-detail" part.pk %}',
             button: '#part-star-icon',
         });
     });

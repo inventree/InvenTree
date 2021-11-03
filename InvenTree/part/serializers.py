@@ -35,8 +35,6 @@ class CategorySerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
 
-        self.starred_categories = kwargs.pop('starred_categories', [])
-
         super().__init__(*args, **kwargs)
 
     def get_starred(self, category):
@@ -44,7 +42,7 @@ class CategorySerializer(InvenTreeModelSerializer):
         Return True if the category is directly "starred" by the current user
         """
 
-        return category in self.starred_categories
+        return category in self.context.get('starred_categories', [])
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
