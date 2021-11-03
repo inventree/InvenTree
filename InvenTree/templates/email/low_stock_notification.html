@@ -17,13 +17,15 @@
 {% block body %}
 <tr style="height: 3rem; border-bottom: 1px solid">
     <th>{% trans "Part Name" %}</th>
-    <th>{% trans "Available Quantity" %}</th>
+    <th>{% trans "Total Stock" %}</th>
+    <th>{% trans "Available" %}</th>
     <th>{% trans "Minimum Quantity" %}</th>
 </tr>
 
 <tr style="height: 3rem">
     <td style="text-align: center;">{{ part.full_name }}</td>
     <td style="text-align: center;">{{ part.total_stock }}</td>
+    <td style="text-align: center;">{{ part.available_stock }}</td>
     <td style="text-align: center;">{{ part.minimum_stock }}</td>
 </tr>
 {% endblock %}

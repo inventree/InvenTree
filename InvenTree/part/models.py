@@ -20,7 +20,7 @@ from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
 from jinja2 import Template
@@ -47,6 +47,7 @@ from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
+import InvenTree.tasks
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -56,6 +57,7 @@ from company.models import SupplierPart
 from stock import models as StockModels
 
 import common.models
+
 import part.settings as part_settings
 
 
@@ -2085,7 +2087,22 @@ class Part(MPTTModel):
         return len(self.get_related_parts())
 
     def is_part_low_on_stock(self):
+        """
+        Returns True if the total stock for this part is less than the minimum stock level
+        """
+        
         return self.total_stock <= self.minimum_stock
+
+
+
+@receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
+def after_save_part(sender, instance: Part, **kwargs):
+    """
+    Function to be executed after a Part is saved
+    """
+
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
 
 
 def attach_file(instance, filename):

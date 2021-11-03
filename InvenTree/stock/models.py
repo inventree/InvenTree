@@ -27,7 +27,9 @@ from mptt.managers import TreeManager
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
+
 from InvenTree import helpers
+import InvenTree.tasks
 
 import common.models
 import report.models
@@ -41,7 +43,6 @@ from users.models import Owner
 
 from company import models as CompanyModels
 from part import models as PartModels
-from part import tasks as part_tasks
 
 
 class StockLocation(InvenTreeTree):
@@ -1658,16 +1659,18 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     Function to be executed after a StockItem object is deleted
     """
 
-    part_tasks.notify_low_stock_if_required(instance.part)
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
 def after_save_stock_item(sender, instance: StockItem, **kwargs):
     """
-   Hook function to be executed after StockItem object is saved/updated
+    Hook function to be executed after StockItem object is saved/updated
     """
 
-    part_tasks.notify_low_stock_if_required(instance.part)
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):
