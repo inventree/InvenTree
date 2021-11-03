@@ -84,6 +84,13 @@
             </div>
         </div>
         <main class='col ps-md-2 pt-2'>
+
+            {% block alerts %}
+            <div class='notification-area' id='alerts'>
+                <!-- Div for displayed alerts -->
+            </div>
+            {% endblock %}
+
             {% block breadcrumb_list %}
             <div class='container-fluid navigation'>
                 <nav aria-label='breadcrumb'>
@@ -102,7 +109,6 @@
     </div>
     {% include 'modals.html' %}
     {% include 'about.html' %}
-    {% include 'notification.html' %}
 </div>
 
 <!-- Scripts -->
