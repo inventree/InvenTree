@@ -2062,10 +2062,9 @@ class PartInternalPriceBreak(common.models.PriceBreak):
 
 
 class PartStar(models.Model):
-    """ A PartStar object creates a relationship between a User and a Part.
+    """ A PartStar object creates a subscription relationship between a User and a Part.
 
-    It is used to designate a Part as 'starred' (or favourited) for a given User,
-    so that the user can track a list of their favourite parts.
+    It is used to designate a Part as 'subscribed' for a given User.
 
     Attributes:
         part: Link to a Part object
@@ -2077,7 +2076,30 @@ class PartStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
     class Meta:
-        unique_together = ['part', 'user']
+        unique_together = [
+            'part',
+            'user'
+        ]
+
+
+class PartCategoryStar(models.Model):
+    """
+    A PartCategoryStar creates a subscription relationship between a User and a PartCategory.
+
+    Attributes:
+        category: Link to a PartCategory object
+        user: Link to a User object
+    """
+
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'), related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
+
+    class Meta:
+        unique_together = [
+            'category',
+            'user',
+        ]
 
 
 class PartTestTemplate(models.Model):
