@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-03 22:06+0000\n"
-"PO-Revision-Date: 2021-11-03 22:16\n"
+"POT-Creation-Date: 2021-11-03 23:57+0000\n"
+"PO-Revision-Date: 2021-11-03 23:58\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -36,7 +36,7 @@ msgstr "Masukkan tanggal"
 #: InvenTree/forms.py:120 build/forms.py:48 build/forms.py:69 build/forms.py:93
 #: order/forms.py:26 order/forms.py:37 order/forms.py:48 order/forms.py:59
 #: order/forms.py:70 part/forms.py:108 templates/account/email_confirm.html:20
-#: templates/js/translated/forms.js:561
+#: templates/js/translated/forms.js:566
 msgid "Confirm"
 msgstr "Konfirmasi"
 
@@ -6328,7 +6328,7 @@ msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
-#: templates/account/login.html:38
+#: templates/account/login.html:39
 msgid "Forgot Password?"
 msgstr ""
 
@@ -6337,12 +6337,16 @@ msgid "or use SSO"
 msgstr ""
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
-#: templates/account/logout.html:17
+#: templates/account/logout.html:19
 msgid "Sign Out"
 msgstr ""
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: templates/account/logout.html:18
+msgid "Back to Site"
 msgstr ""
 
 #: templates/account/password_reset.html:5
@@ -6371,11 +6375,11 @@ msgstr ""
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
 msgstr ""
 
-#: templates/account/password_reset_from_key.html:17
-msgid "change password"
+#: templates/account/password_reset_from_key.html:18
+msgid "Change password"
 msgstr ""
 
-#: templates/account/password_reset_from_key.html:20
+#: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
 msgstr ""
 
@@ -6526,59 +6530,59 @@ msgstr ""
 msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
-#: templates/js/translated/api.js:174 templates/js/translated/modals.js:1034
+#: templates/js/translated/api.js:180 templates/js/translated/modals.js:1034
 msgid "No Response"
 msgstr ""
 
-#: templates/js/translated/api.js:175 templates/js/translated/modals.js:1035
+#: templates/js/translated/api.js:181 templates/js/translated/modals.js:1035
 msgid "No response from the InvenTree server"
 msgstr ""
 
-#: templates/js/translated/api.js:181
+#: templates/js/translated/api.js:187
 msgid "Error 400: Bad request"
 msgstr ""
 
-#: templates/js/translated/api.js:182
+#: templates/js/translated/api.js:188
 msgid "API request returned error code 400"
 msgstr ""
 
-#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1044
+#: templates/js/translated/api.js:192 templates/js/translated/modals.js:1044
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/translated/api.js:187 templates/js/translated/modals.js:1045
+#: templates/js/translated/api.js:193 templates/js/translated/modals.js:1045
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/translated/api.js:191 templates/js/translated/modals.js:1049
+#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1049
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/translated/api.js:192 templates/js/translated/modals.js:1050
+#: templates/js/translated/api.js:198 templates/js/translated/modals.js:1050
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/translated/api.js:196 templates/js/translated/modals.js:1054
+#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1054
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1055
+#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1055
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/translated/api.js:201 templates/js/translated/modals.js:1059
+#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1059
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1060
+#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1060
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
-#: templates/js/translated/api.js:205
+#: templates/js/translated/api.js:211
 msgid "Unhandled Error Code"
 msgstr ""
 
-#: templates/js/translated/api.js:206
+#: templates/js/translated/api.js:212
 msgid "Error code"
 msgstr ""
 
@@ -7073,45 +7077,45 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:325 templates/js/translated/forms.js:338
-#: templates/js/translated/forms.js:350 templates/js/translated/forms.js:362
+#: templates/js/translated/forms.js:330 templates/js/translated/forms.js:343
+#: templates/js/translated/forms.js:355 templates/js/translated/forms.js:367
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:326
+#: templates/js/translated/forms.js:331
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:339
+#: templates/js/translated/forms.js:344
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:351
+#: templates/js/translated/forms.js:356
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:363
+#: templates/js/translated/forms.js:368
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:646
+#: templates/js/translated/forms.js:651
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1031 templates/modals.html:19
+#: templates/js/translated/forms.js:1036 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1388
+#: templates/js/translated/forms.js:1393
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:1592
+#: templates/js/translated/forms.js:1597
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:1809
+#: templates/js/translated/forms.js:1814
 msgid "Clear input"
 msgstr ""
 
