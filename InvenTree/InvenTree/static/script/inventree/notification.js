@@ -1,10 +1,12 @@
 
 function showAlertOrCache(alertType, message, cache, timeout=5000) {
     if (cache) {
-        sessionStorage.setItem("inventree-" + alertType, message);
+        sessionStorage.setItem(`inventree-${alertType}`, message);
     }
     else {
         showMessage('#' + alertType, message, timeout);
+
+        sessionStorage.removeItem(`inventree-${alertType}`);
     }
 }
 
