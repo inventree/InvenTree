@@ -15,7 +15,7 @@ from django.urls import reverse
 
 from django.db import models, transaction
 from django.db.utils import IntegrityError
-from django.db.models import Q, Sum, UniqueConstraint, query
+from django.db.models import Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -102,11 +102,11 @@ class PartCategory(InvenTreeTree):
 
         if cascade:
             """ Select any parts which exist in this category or any child categories """
-            query = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
+            queryset = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
         else:
-            query = Part.objects.filter(category=self.pk)
+            queryset = Part.objects.filter(category=self.pk)
 
-        return query
+        return queryset
 
     @property
     def item_count(self):
@@ -224,14 +224,14 @@ class PartCategory(InvenTreeTree):
 
         return [s for s in subscribers]
 
-    def is_subscribed_by(self, user, **kwargs):
+    def is_starred_by(self, user, **kwargs):
         """
         Returns True if the specified user subscribes to this category
         """
 
         return user in self.get_subscribers(**kwargs)
 
-    def set_subscription(self, user, status):
+    def set_starred(self, user, status):
         """
         Set the "subscription" status of this PartCategory against the specified user
         """
@@ -239,7 +239,7 @@ class PartCategory(InvenTreeTree):
         if not user:
             return
 
-        if self.is_subscribed_by(user) == status:
+        if self.is_starred_by(user) == status:
             return
 
         if status:
@@ -386,8 +386,15 @@ class Part(MPTTModel):
 
         context = {}
 
-        context['starred'] = self.is_subscribed_by(request.user)
         context['disabled'] = not self.active
+
+        # Subscription status
+        context['starred'] = self.is_starred_by(request.user)
+        context['starred_directly'] = context['starred'] and self.is_starred_by(
+            request.user,
+            include_variants=False,
+            include_categories=False
+        )
 
         # Pre-calculate complex queries so they only need to be performed once
         context['total_stock'] = self.total_stock
@@ -1129,14 +1136,14 @@ class Part(MPTTModel):
 
         return [s for s in subscribers]
 
-    def is_subscribed_by(self, user, **kwargs):
+    def is_starred_by(self, user, **kwargs):
         """
         Return True if the specified user subscribes to this part
         """
 
         return user in self.get_subscribers(**kwargs)
 
-    def set_subscription(self, user, status):
+    def set_starred(self, user, status):
         """
         Set the "subscription" status of this Part against the specified user
         """
@@ -1145,7 +1152,7 @@ class Part(MPTTModel):
             return
 
         # Already subscribed?
-        if self.is_subscribed_by(user) == status:
+        if self.is_starred_by(user) == status:
             return
 
         if status:

@@ -23,9 +23,13 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
-{% if starred %}
+{% if starred_directly %}
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to nofications for this part" %}'>
     <span id='part-star-icon' class='fas fa-bell icon-green'/>
+</button>
+{% elif starred %}
+<button type='button' class='btn btn-outline-secondary' title='{% trans "You are subscribed to notifications for this part" %}' disabled='true'>
+    <span class='fas fa-bell icon-green'></span>
 </button>
 {% else %}
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Subscribe to nofications for this part" %}'>

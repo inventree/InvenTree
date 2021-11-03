@@ -33,11 +33,26 @@ from .models import (BomItem, BomItemSubstitute,
 class CategorySerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategory """
 
+    def __init__(self, *args, **kwargs):
+
+        self.starred_categories = kwargs.pop('starred_categories', [])
+
+        super().__init__(*args, **kwargs)
+
+    def get_starred(self, category):
+        """
+        Return True if the category is directly "starred" by the current user
+        """
+
+        return category in self.starred_categories
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
 
     level = serializers.IntegerField(read_only=True)
+
+    starred = serializers.SerializerMethodField()
 
     class Meta:
         model = PartCategory
@@ -51,6 +66,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'parent',
             'parts',
             'pathstring',
+            'starred',
             'url',
         ]
 

@@ -384,19 +384,19 @@ class PartSubscriptionTests(TestCase):
         """
         
         # First check that the user is *not* subscribed to the part
-        self.assertFalse(self.part.is_subscribed_by(self.user))
+        self.assertFalse(self.part.is_starred_by(self.user))
 
         # Now, subscribe directly to the part
-        self.part.set_subscription(self.user, True)
+        self.part.set_starred(self.user, True)
 
         self.assertEqual(PartStar.objects.count(), 1)
 
-        self.assertTrue(self.part.is_subscribed_by(self.user))
+        self.assertTrue(self.part.is_starred_by(self.user))
 
         # Now, unsubscribe
-        self.part.set_subscription(self.user, False)
+        self.part.set_starred(self.user, False)
 
-        self.assertFalse(self.part.is_subscribed_by(self.user))
+        self.assertFalse(self.part.is_starred_by(self.user))
 
     def test_variant_subscription(self):
         """
@@ -410,13 +410,13 @@ class PartSubscriptionTests(TestCase):
             variant_of=self.part,
         )
 
-        self.assertFalse(sub_part.is_subscribed_by(self.user))
+        self.assertFalse(sub_part.is_starred_by(self.user))
 
         # Subscribe to the "parent" part
-        self.part.set_subscription(self.user, True)
+        self.part.set_starred(self.user, True)
 
-        self.assertTrue(self.part.is_subscribed_by(self.user))
-        self.assertTrue(sub_part.is_subscribed_by(self.user))
+        self.assertTrue(self.part.is_starred_by(self.user))
+        self.assertTrue(sub_part.is_starred_by(self.user))
 
     def test_category_subscription(self):
         """
@@ -425,26 +425,26 @@ class PartSubscriptionTests(TestCase):
 
         self.assertEqual(PartCategoryStar.objects.count(), 0)
 
-        self.assertFalse(self.part.is_subscribed_by(self.user))
-        self.assertFalse(self.category.is_subscribed_by(self.user))
+        self.assertFalse(self.part.is_starred_by(self.user))
+        self.assertFalse(self.category.is_starred_by(self.user))
 
         # Subscribe to the direct parent category
-        self.category.set_subscription(self.user, True)
+        self.category.set_starred(self.user, True)
 
         self.assertEqual(PartStar.objects.count(), 0)
         self.assertEqual(PartCategoryStar.objects.count(), 1)
 
-        self.assertTrue(self.category.is_subscribed_by(self.user))
-        self.assertTrue(self.part.is_subscribed_by(self.user))
+        self.assertTrue(self.category.is_starred_by(self.user))
+        self.assertTrue(self.part.is_starred_by(self.user))
 
         # Check that the "parent" category is not starred
-        self.assertFalse(self.category.parent.is_subscribed_by(self.user))
+        self.assertFalse(self.category.parent.is_starred_by(self.user))
 
         # Un-subscribe
-        self.category.set_subscription(self.user, False)
+        self.category.set_starred(self.user, False)
 
-        self.assertFalse(self.category.is_subscribed_by(self.user))
-        self.assertFalse(self.part.is_subscribed_by(self.user))
+        self.assertFalse(self.category.is_starred_by(self.user))
+        self.assertFalse(self.part.is_starred_by(self.user))
 
     def test_parent_category_subscription(self):
         """
@@ -454,13 +454,13 @@ class PartSubscriptionTests(TestCase):
         # Top-level "electronics" category
         cat = PartCategory.objects.get(pk=1)
 
-        cat.set_subscription(self.user, True)
+        cat.set_starred(self.user, True)
 
         # Check base category
-        self.assertTrue(cat.is_subscribed_by(self.user))
+        self.assertTrue(cat.is_starred_by(self.user))
 
         # Check lower level category
-        self.assertTrue(self.category.is_subscribed_by(self.user))
+        self.assertTrue(self.category.is_starred_by(self.user))
 
         # Check part
-        self.assertTrue(self.part.is_subscribed_by(self.user))
+        self.assertTrue(self.part.is_starred_by(self.user))

@@ -412,6 +412,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         part = self.get_object()
 
         ctx = part.get_context_data(self.request)
+        
         context.update(**ctx)
 
         # Pricing information
