@@ -8,13 +8,7 @@ from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
 
-from .models import PartCategory, Part
-from .models import PartAttachment, PartStar, PartRelated
-from .models import BomItem
-from .models import PartParameterTemplate, PartParameter
-from .models import PartCategoryParameterTemplate
-from .models import PartTestTemplate
-from .models import PartSellPriceBreak, PartInternalPriceBreak
+import part.models as models
 
 from stock.models import StockLocation
 from company.models import SupplierPart
@@ -24,7 +18,7 @@ class PartResource(ModelResource):
     """ Class for managing Part data import/export """
 
     # ForeignKey fields
-    category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
+    category = Field(attribute='category', widget=widgets.ForeignKeyWidget(models.PartCategory))
 
     default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
 
@@ -32,7 +26,7 @@ class PartResource(ModelResource):
 
     category_name = Field(attribute='category__name', readonly=True)
 
-    variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
+    variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(models.Part))
 
     suppliers = Field(attribute='supplier_count', readonly=True)
 
@@ -48,7 +42,7 @@ class PartResource(ModelResource):
     building = Field(attribute='quantity_being_built', readonly=True, widget=widgets.IntegerWidget())
 
     class Meta:
-        model = Part
+        model = models.Part
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
@@ -86,14 +80,14 @@ class PartAdmin(ImportExportModelAdmin):
 class PartCategoryResource(ModelResource):
     """ Class for managing PartCategory data import/export """
 
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(PartCategory))
+    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(models.PartCategory))
 
     parent_name = Field(attribute='parent__name', readonly=True)
 
     default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
 
     class Meta:
-        model = PartCategory
+        model = models.PartCategory
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
@@ -108,14 +102,14 @@ class PartCategoryResource(ModelResource):
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the PartCategory tree(s)
-        PartCategory.objects.rebuild()
+        models.PartCategory.objects.rebuild()
 
 
 class PartCategoryInline(admin.TabularInline):
     """
     Inline for PartCategory model
     """
-    model = PartCategory
+    model = models.PartCategory
 
 
 class PartCategoryAdmin(ImportExportModelAdmin):
@@ -146,6 +140,11 @@ class PartStarAdmin(admin.ModelAdmin):
     list_display = ('part', 'user')
 
 
+class PartCategoryStarAdmin(admin.ModelAdmin):
+
+    list_display = ('category', 'user')
+
+
 class PartTestTemplateAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'test_name', 'required')
@@ -159,7 +158,7 @@ class BomItemResource(ModelResource):
     bom_id = Field(attribute='pk')
 
     # ID of the parent part
-    parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+    parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
 
     # IPN of the parent part
     parent_part_ipn = Field(attribute='part__IPN', readonly=True)
@@ -168,7 +167,7 @@ class BomItemResource(ModelResource):
     parent_part_name = Field(attribute='part__name', readonly=True)
 
     # ID of the sub-part
-    part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+    part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(models.Part))
 
     # IPN of the sub-part
     part_ipn = Field(attribute='sub_part__IPN', readonly=True)
@@ -233,7 +232,7 @@ class BomItemResource(ModelResource):
         return fields
 
     class Meta:
-        model = BomItem
+        model = models.BomItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
@@ -262,16 +261,16 @@ class ParameterTemplateAdmin(ImportExportModelAdmin):
 class ParameterResource(ModelResource):
     """ Class for managing PartParameter data import/export """
 
-    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
 
     part_name = Field(attribute='part__name', readonly=True)
 
-    template = Field(attribute='template', widget=widgets.ForeignKeyWidget(PartParameterTemplate))
+    template = Field(attribute='template', widget=widgets.ForeignKeyWidget(models.PartParameterTemplate))
 
     template_name = Field(attribute='template__name', readonly=True)
 
     class Meta:
-        model = PartParameter
+        model = models.PartParameter
         skip_unchanged = True
         report_skipped = False
         clean_model_instance = True
@@ -292,7 +291,7 @@ class PartCategoryParameterAdmin(admin.ModelAdmin):
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
 
     class Meta:
-        model = PartSellPriceBreak
+        model = models.PartSellPriceBreak
 
     list_display = ('part', 'quantity', 'price',)
 
@@ -300,20 +299,21 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
 class PartInternalPriceBreakAdmin(admin.ModelAdmin):
 
     class Meta:
-        model = PartInternalPriceBreak
+        model = models.PartInternalPriceBreak
 
     list_display = ('part', 'quantity', 'price',)
 
 
-admin.site.register(Part, PartAdmin)
-admin.site.register(PartCategory, PartCategoryAdmin)
-admin.site.register(PartRelated, PartRelatedAdmin)
-admin.site.register(PartAttachment, PartAttachmentAdmin)
-admin.site.register(PartStar, PartStarAdmin)
-admin.site.register(BomItem, BomItemAdmin)
-admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
-admin.site.register(PartParameter, ParameterAdmin)
-admin.site.register(PartCategoryParameterTemplate, PartCategoryParameterAdmin)
-admin.site.register(PartTestTemplate, PartTestTemplateAdmin)
-admin.site.register(PartSellPriceBreak, PartSellPriceBreakAdmin)
-admin.site.register(PartInternalPriceBreak, PartInternalPriceBreakAdmin)
+admin.site.register(models.Part, PartAdmin)
+admin.site.register(models.PartCategory, PartCategoryAdmin)
+admin.site.register(models.PartRelated, PartRelatedAdmin)
+admin.site.register(models.PartAttachment, PartAttachmentAdmin)
+admin.site.register(models.PartStar, PartStarAdmin)
+admin.site.register(models.PartCategoryStar, PartCategoryStarAdmin)
+admin.site.register(models.BomItem, BomItemAdmin)
+admin.site.register(models.PartParameterTemplate, ParameterTemplateAdmin)
+admin.site.register(models.PartParameter, ParameterAdmin)
+admin.site.register(models.PartCategoryParameterTemplate, PartCategoryParameterAdmin)
+admin.site.register(models.PartTestTemplate, PartTestTemplateAdmin)
+admin.site.register(models.PartSellPriceBreak, PartSellPriceBreakAdmin)
+admin.site.register(models.PartInternalPriceBreak, PartInternalPriceBreakAdmin)

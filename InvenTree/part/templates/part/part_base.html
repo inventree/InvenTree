@@ -23,9 +23,19 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
-<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Star this part" %}'>
-    <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
+{% if starred_directly %}
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to nofications for this part" %}'>
+    <span id='part-star-icon' class='fas fa-bell icon-green'/>
 </button>
+{% elif starred %}
+<button type='button' class='btn btn-outline-secondary' title='{% trans "You are subscribed to notifications for this part" %}' disabled='true'>
+    <span class='fas fa-bell icon-green'></span>
+</button>
+{% else %}
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Subscribe to nofications for this part" %}'>
+    <span id='part-star-icon' class='fa fa-bell-slash'/>
+</button>
+{% endif %}
 
 {% if barcodes %}
 <!-- Barcode actions menu -->
@@ -137,8 +147,6 @@
     </div>
 </h4>
 
-
-
 <!-- Part info messages -->
 <div class='info-messages'>
     {% if part.variant_of %}
@@ -164,6 +172,13 @@
             <td>{% trans "In Stock" %}</td>
             <td>{% include "part/stock_count.html" %}</td>
         </tr>
+        {% if part.minimum_stock %}
+        <tr>
+            <td><span class='fas fa-flag'></span></td>
+            <td>{% trans "Minimum Stock" %}</td>
+            <td>{{ part.minimum_stock }}</td>
+        </tr>
+        {% endif %}
         {% if on_order > 0 %}
         <tr>
             <td><span class='fas fa-shopping-cart'></span></td>
@@ -310,7 +325,7 @@
 
     $("#toggle-starred").click(function() {
         toggleStar({
-            part: {{ part.id }},
+            url: '{% url "api-part-detail" part.pk %}',
             button: '#part-star-icon',
         });
     });

@@ -373,24 +373,23 @@ function duplicatePart(pk, options={}) {
 }
 
 
+/* Toggle the 'starred' status of a part.
+ * Performs AJAX queries and updates the display on the button.
+ * 
+ * options:
+ * - button: ID of the button (default = '#part-star-icon')
+ * - URL: API url of the object
+ * - user: pk of the user
+ */
 function toggleStar(options) {
-    /* Toggle the 'starred' status of a part.
-     * Performs AJAX queries and updates the display on the button.
-     * 
-     * options:
-     * - button: ID of the button (default = '#part-star-icon')
-     * - part: pk of the part object
-     * - user: pk of the user
-     */
 
-    var url = `/api/part/${options.part}/`;
-
-    inventreeGet(url, {}, {
+    inventreeGet(options.url, {}, {
         success: function(response) {
+
             var starred = response.starred;
 
             inventreePut(
-                url,
+                options.url,
                 {
                     starred: !starred,
                 },
@@ -398,9 +397,19 @@ function toggleStar(options) {
                     method: 'PATCH',
                     success: function(response) {
                         if (response.starred) {
-                            $(options.button).addClass('icon-yellow');
+                            $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
+                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this item" %}');
+
+                            showMessage('{% trans "You have subscribed to notifications for this item" %}', {
+                                style: 'success',
+                            });
                         } else {
-                            $(options.button).removeClass('icon-yellow');
+                            $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
+                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this item" %}');
+
+                            showMessage('{% trans "You have unsubscribed to notifications for this item" %}', {
+                                style: 'warning',
+                            });
                         }
                     }
                 }
@@ -410,12 +419,12 @@ function toggleStar(options) {
 }
 
 
-function partStockLabel(part) {
+function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+        return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Stock" %}: ${part.in_stock}</span>`;
     } else {
-        return `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+        return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
     }
 }
 
@@ -443,7 +452,7 @@ function makePartIcons(part) {
     }
 
     if (part.starred) {
-        html += makeIconBadge('fa-star', '{% trans "Starred part" %}');
+        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed part" %}');
     }
 
     if (part.salable) {
@@ -451,7 +460,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `; 
     }
 
     return html;
@@ -1258,10 +1267,17 @@ function loadPartCategoryTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return renderLink(
+
+                    var html = renderLink(
                         value,
                         `/part/category/${row.pk}/`
                     );
+
+                    if (row.starred) {
+                        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed category" %}');
+                    }
+
+                    return html;
                 }
             },
             {

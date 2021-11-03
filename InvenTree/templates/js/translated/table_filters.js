@@ -103,6 +103,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include subcategories" %}',
             },
+            starred: {
+                type: 'bool',
+                title: '{% trans "Subscribed" %}',
+            },
         };
     }
 
@@ -368,7 +372,7 @@ function getAvailableTableFilters(tableKey) {
             },
             starred: {
                 type: 'bool',
-                title: '{% trans "Starred" %}',
+                title: '{% trans "Subscribed" %}',
             },
             salable: {
                 type: 'bool',
