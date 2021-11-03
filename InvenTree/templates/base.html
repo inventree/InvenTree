@@ -183,15 +183,13 @@ $(document).ready(function () {
 
     inventreeDocReady();
 
-    showCachedAlerts();
-
     {% if barcodes %}
     $('#barcode-scan').click(function() {
         barcodeScanDialog();
     });
     {% endif %}
 
-    moment.locale('{{request.LANGUAGE_CODE}}');
+    moment.locale('{{ request.LANGUAGE_CODE }}');
 });
 
 </script>

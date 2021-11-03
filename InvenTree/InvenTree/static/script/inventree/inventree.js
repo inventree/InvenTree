@@ -202,6 +202,9 @@ function inventreeDocReady() {
 
         location.href = url;
     });
+
+    // Display any cached alert messages
+    showCachedAlerts();
 }
 
 function isFileTransfer(transfer) {

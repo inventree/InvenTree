@@ -1,12 +1,43 @@
+/*
+ * Add a cached alert message to sesion storage
+ */
+function addCachedAlert(message, style) {
 
-function showAlertOrCache(alertType, message, cache, timeout=5000) {
-    if (cache) {
-        sessionStorage.setItem(`inventree-${alertType}`, message);
+    var alerts = sessionStorage.getItem('inventree-alerts');
+
+    if (alerts) {
+        alerts = JSON.parse(alerts);
+    } else {
+        alerts = [];
     }
-    else {
-        showMessage('#' + alertType, message, timeout);
 
-        sessionStorage.removeItem(`inventree-${alertType}`);
+    alerts.push({
+        message: message,
+        style: style
+    });
+
+    sessionStorage.setItem('inventree-alerts', JSON.stringify(alerts));
+}
+
+
+/*
+ * Remove all cached alert messages
+ */
+function clearCachedAlerts() {
+    sessionStorage.removeItem('inventree-alerts');
+}
+
+
+/*
+ * Display an alert, or cache to display on reload
+ */
+function showAlertOrCache(message, style, cache=false) {
+
+    if (cache) {
+        addCachedAlert(message, style);
+    } else {
+
+        showMessage(message, {style: style});
     }
 }
 
@@ -16,25 +47,13 @@ function showAlertOrCache(alertType, message, cache, timeout=5000) {
  */
 function showCachedAlerts() {
 
-    var styles = [
-        'primary',
-        'secondary',
-        'success',
-        'info',
-        'warning',
-        'danger',
-    ];
+    var alerts = JSON.parse(sessionStorage.getItem('inventree-alerts')) || [];
 
-    styles.forEach(function(style) {
-
-        var msg = sessionStorage.getItem(`inventree-alert-${style}`);
-
-        if (msg) {
-            showMessage(msg, {
-                style: style,
-            });
-        }
+    alerts.forEach(function(alert) {
+        showMessage(alert.message, {style: alert.style});
     });
+
+    clearCachedAlerts();
 }
 
 
