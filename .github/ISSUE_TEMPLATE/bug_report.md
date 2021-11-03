@@ -28,4 +28,4 @@ Docker
 Bare Metal
 
 **Version Information**
-You can get this by going to the "About InvenTree" section in the upper right corner and cicking on to the "copy version information"
+You can get this by going to the "About InvenTree" section in the upper right corner and clicking on to the "copy version information"
