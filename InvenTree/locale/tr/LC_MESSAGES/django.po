@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-02 04:08+0000\n"
-"PO-Revision-Date: 2021-11-02 04:43\n"
+"POT-Creation-Date: 2021-11-03 01:42+0000\n"
+"PO-Revision-Date: 2021-11-03 01:54\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2118,7 +2118,7 @@ msgstr "Kullanıcı Ayarlarını Değiştir"
 #: order/templates/order/po_navbar.html:19
 #: order/templates/order/po_navbar.html:22
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:289
-#: part/templates/part/bom_upload/upload_file.html:54
+#: part/templates/part/bom_upload/upload_file.html:51
 #: part/templates/part/import_wizard/part_upload.html:45 part/views.py:268
 #: part/views.py:875
 msgid "Upload File"
@@ -2149,7 +2149,7 @@ msgstr ""
 #: order/templates/order/order_wizard/po_upload.html:40
 #: part/templates/part/bom_upload/match_fields.html:27
 #: part/templates/part/bom_upload/match_parts.html:19
-#: part/templates/part/bom_upload/upload_file.html:52
+#: part/templates/part/bom_upload/upload_file.html:49
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:43
@@ -3289,7 +3289,7 @@ msgid "Upload File for Purchase Order"
 msgstr "Sipariş Emri için Dosya Yükle"
 
 #: order/templates/order/order_wizard/po_upload.html:18
-#: part/templates/part/bom_upload/upload_file.html:23
+#: part/templates/part/bom_upload/upload_file.html:20
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:21
 #, python-format
@@ -4156,23 +4156,23 @@ msgstr ""
 msgid "Select Part"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:16
+#: part/templates/part/bom_upload/upload_file.html:12
 msgid "Upload Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:35
+#: part/templates/part/bom_upload/upload_file.html:32
 msgid "Requirements for BOM upload"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:37
+#: part/templates/part/bom_upload/upload_file.html:34
 msgid "The BOM file must contain the required named columns as provided in the "
 msgstr "Malzeme Listesi dosyası gerekli sütün adlarını sağlandığı şekilde içermelidir "
 
-#: part/templates/part/bom_upload/upload_file.html:37
+#: part/templates/part/bom_upload/upload_file.html:34
 msgid "BOM Upload Template"
 msgstr "Malzeme Listesi Şablonu Yükle"
 
-#: part/templates/part/bom_upload/upload_file.html:38
+#: part/templates/part/bom_upload/upload_file.html:35
 msgid "Each part must already exist in the database"
 msgstr ""
 
