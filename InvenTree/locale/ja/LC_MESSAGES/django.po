@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-03 01:42+0000\n"
-"PO-Revision-Date: 2021-11-03 01:54\n"
+"POT-Creation-Date: 2021-11-03 02:59+0000\n"
+"PO-Revision-Date: 2021-11-03 03:00\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -133,7 +133,7 @@ msgstr "ファイルコメント"
 #: InvenTree/models.py:118 InvenTree/models.py:119 common/models.py:1048
 #: common/models.py:1049 part/models.py:2077
 #: report/templates/report/inventree_test_report_base.html:91
-#: templates/js/translated/stock.js:1745
+#: templates/js/translated/stock.js:1751
 msgid "User"
 msgstr "ユーザー"
 
@@ -174,8 +174,8 @@ msgstr "無効な選択です"
 #: label/models.py:112 part/models.py:678 part/models.py:2238
 #: part/templates/part/detail.html:32 report/models.py:181
 #: templates/js/translated/company.js:637 templates/js/translated/part.js:488
-#: templates/js/translated/part.js:625 templates/js/translated/part.js:1252
-#: templates/js/translated/stock.js:1538
+#: templates/js/translated/part.js:625 templates/js/translated/part.js:1257
+#: templates/js/translated/stock.js:1544
 msgid "Name"
 msgstr "お名前"
 
@@ -194,9 +194,9 @@ msgstr "お名前"
 #: templates/js/translated/company.js:836 templates/js/translated/order.js:673
 #: templates/js/translated/order.js:833 templates/js/translated/order.js:1069
 #: templates/js/translated/part.js:547 templates/js/translated/part.js:735
-#: templates/js/translated/part.js:904 templates/js/translated/part.js:1264
-#: templates/js/translated/part.js:1333 templates/js/translated/stock.js:824
-#: templates/js/translated/stock.js:1550 templates/js/translated/stock.js:1595
+#: templates/js/translated/part.js:904 templates/js/translated/part.js:1269
+#: templates/js/translated/part.js:1338 templates/js/translated/stock.js:824
+#: templates/js/translated/stock.js:1556 templates/js/translated/stock.js:1601
 msgid "Description"
 msgstr "説明"
 
@@ -557,9 +557,9 @@ msgstr ""
 #: templates/js/translated/order.js:870 templates/js/translated/order.js:1183
 #: templates/js/translated/order.js:1261 templates/js/translated/order.js:1268
 #: templates/js/translated/order.js:1357 templates/js/translated/order.js:1457
-#: templates/js/translated/part.js:1476 templates/js/translated/part.js:1599
-#: templates/js/translated/part.js:1677 templates/js/translated/stock.js:1730
-#: templates/js/translated/stock.js:1905
+#: templates/js/translated/part.js:1481 templates/js/translated/part.js:1604
+#: templates/js/translated/part.js:1682 templates/js/translated/stock.js:1736
+#: templates/js/translated/stock.js:1911
 msgid "Quantity"
 msgstr ""
 
@@ -663,7 +663,7 @@ msgstr ""
 #: templates/js/translated/order.js:818 templates/js/translated/order.js:1435
 #: templates/js/translated/part.js:716 templates/js/translated/part.js:882
 #: templates/js/translated/stock.js:181 templates/js/translated/stock.js:781
-#: templates/js/translated/stock.js:1893
+#: templates/js/translated/stock.js:1899
 msgid "Part"
 msgstr "パーツ"
 
@@ -855,7 +855,7 @@ msgstr "パーツを割り当てるためにビルドする"
 #: templates/js/translated/build.js:401 templates/js/translated/build.js:406
 #: templates/js/translated/build.js:1354 templates/js/translated/build.js:1735
 #: templates/js/translated/order.js:1156 templates/js/translated/order.js:1161
-#: templates/js/translated/stock.js:1681
+#: templates/js/translated/stock.js:1687
 msgid "Stock Item"
 msgstr ""
 
@@ -904,7 +904,7 @@ msgstr ""
 #: templates/js/translated/order.js:1168 templates/js/translated/order.js:1276
 #: templates/js/translated/order.js:1282 templates/js/translated/part.js:180
 #: templates/js/translated/stock.js:183 templates/js/translated/stock.js:922
-#: templates/js/translated/stock.js:1622
+#: templates/js/translated/stock.js:1628
 msgid "Location"
 msgstr ""
 
@@ -918,7 +918,7 @@ msgstr ""
 #: templates/js/translated/barcode.js:141 templates/js/translated/build.js:1648
 #: templates/js/translated/order.js:431 templates/js/translated/order.js:677
 #: templates/js/translated/order.js:1074 templates/js/translated/stock.js:897
-#: templates/js/translated/stock.js:1699 templates/js/translated/stock.js:1921
+#: templates/js/translated/stock.js:1705 templates/js/translated/stock.js:1927
 msgid "Status"
 msgstr ""
 
@@ -1159,7 +1159,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:298
-#: templates/js/translated/stock.js:911 templates/js/translated/stock.js:1928
+#: templates/js/translated/stock.js:911 templates/js/translated/stock.js:1934
 #: templates/js/translated/table_filters.js:129
 #: templates/js/translated/table_filters.js:211
 msgid "Batch"
@@ -2082,7 +2082,7 @@ msgstr ""
 
 #: common/models.py:1088 company/serializers.py:263
 #: company/templates/company/supplier_part.html:248
-#: templates/js/translated/part.js:1481
+#: templates/js/translated/part.js:1486
 msgid "Price"
 msgstr ""
 
@@ -2460,7 +2460,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:111 stock/models.py:497
 #: stock/models.py:498 stock/templates/stock/item_base.html:257
 #: templates/js/translated/company.js:328 templates/js/translated/order.js:1051
-#: templates/js/translated/stock.js:1663
+#: templates/js/translated/stock.js:1669
 msgid "Customer"
 msgstr ""
 
@@ -3017,7 +3017,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:77
 #: stock/templates/stock/item_base.html:319
 #: templates/js/translated/order.js:638 templates/js/translated/stock.js:971
-#: templates/js/translated/stock.js:1644
+#: templates/js/translated/stock.js:1650
 msgid "Purchase Order"
 msgstr ""
 
@@ -3367,7 +3367,7 @@ msgid "Purchase Order Details"
 msgstr ""
 
 #: order/templates/order/po_navbar.html:15
-#: templates/js/translated/stock.js:1610
+#: templates/js/translated/stock.js:1616
 msgid "Details"
 msgstr ""
 
@@ -3733,7 +3733,7 @@ msgstr ""
 #: part/models.py:302 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:13 part/templates/part/category.html:100
 #: part/templates/part/category.html:120 templates/InvenTree/index.html:84
-#: templates/InvenTree/search.html:88 templates/js/translated/part.js:1277
+#: templates/InvenTree/search.html:88 templates/js/translated/part.js:1282
 #: templates/navbar.html:21 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
@@ -3929,7 +3929,7 @@ msgstr ""
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:2159 templates/js/translated/part.js:1328
+#: part/models.py:2159 templates/js/translated/part.js:1333
 #: templates/js/translated/stock.js:531
 msgid "Test Name"
 msgstr ""
@@ -3946,7 +3946,7 @@ msgstr ""
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:2171 templates/js/translated/part.js:1337
+#: part/models.py:2171 templates/js/translated/part.js:1342
 #: templates/js/translated/table_filters.js:254
 msgid "Required"
 msgstr ""
@@ -3955,7 +3955,7 @@ msgstr ""
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:2177 templates/js/translated/part.js:1345
+#: part/models.py:2177 templates/js/translated/part.js:1350
 msgid "Requires Value"
 msgstr ""
 
@@ -3963,7 +3963,7 @@ msgstr ""
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:2183 templates/js/translated/part.js:1352
+#: part/models.py:2183 templates/js/translated/part.js:1357
 msgid "Requires Attachment"
 msgstr ""
 
@@ -4257,11 +4257,11 @@ msgstr ""
 msgid "Part Parameters"
 msgstr ""
 
-#: part/templates/part/category.html:228
+#: part/templates/part/category.html:229
 msgid "Create Part Category"
 msgstr ""
 
-#: part/templates/part/category.html:255
+#: part/templates/part/category.html:256
 msgid "Create Part"
 msgstr ""
 
@@ -5063,7 +5063,7 @@ msgid "Result"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:92
-#: templates/js/translated/order.js:685 templates/js/translated/stock.js:1578
+#: templates/js/translated/order.js:685 templates/js/translated/stock.js:1584
 msgid "Date"
 msgstr ""
 
@@ -5650,7 +5650,7 @@ msgid "Create new stock location"
 msgstr ""
 
 #: stock/templates/stock/location.html:76
-#: stock/templates/stock/location.html:236
+#: stock/templates/stock/location.html:237
 msgid "New Location"
 msgstr ""
 
@@ -5670,7 +5670,7 @@ msgstr ""
 #: stock/templates/stock/location.html:118
 #: stock/templates/stock/location.html:132
 #: stock/templates/stock/location.html:143 templates/InvenTree/search.html:158
-#: templates/js/translated/stock.js:1562 templates/stats.html:93
+#: templates/js/translated/stock.js:1568 templates/stats.html:93
 #: templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
 msgstr ""
@@ -5688,7 +5688,7 @@ msgstr ""
 msgid "Print labels"
 msgstr ""
 
-#: stock/templates/stock/location.html:237
+#: stock/templates/stock/location.html:238
 msgid "Create new location"
 msgstr ""
 
@@ -6877,8 +6877,8 @@ msgid "No builds matching query"
 msgstr ""
 
 #: templates/js/translated/build.js:1586 templates/js/translated/part.js:863
-#: templates/js/translated/part.js:1245 templates/js/translated/stock.js:767
-#: templates/js/translated/stock.js:1532
+#: templates/js/translated/part.js:1250 templates/js/translated/stock.js:767
+#: templates/js/translated/stock.js:1538
 msgid "Select"
 msgstr ""
 
@@ -6886,7 +6886,7 @@ msgstr ""
 msgid "Build order is overdue"
 msgstr ""
 
-#: templates/js/translated/build.js:1667 templates/js/translated/stock.js:1751
+#: templates/js/translated/build.js:1667 templates/js/translated/stock.js:1757
 msgid "No user information"
 msgstr ""
 
@@ -7299,7 +7299,7 @@ msgid "Total"
 msgstr ""
 
 #: templates/js/translated/order.js:882 templates/js/translated/order.js:1470
-#: templates/js/translated/part.js:1455 templates/js/translated/part.js:1666
+#: templates/js/translated/part.js:1460 templates/js/translated/part.js:1671
 msgid "Unit Price"
 msgstr ""
 
@@ -7492,8 +7492,8 @@ msgstr ""
 msgid "Low stock"
 msgstr ""
 
-#: templates/js/translated/part.js:1018 templates/js/translated/part.js:1183
-#: templates/js/translated/stock.js:1493
+#: templates/js/translated/part.js:1018 templates/js/translated/part.js:1185
+#: templates/js/translated/stock.js:1499
 msgid "Display as list"
 msgstr ""
 
@@ -7501,58 +7501,58 @@ msgstr ""
 msgid "Display as grid"
 msgstr ""
 
-#: templates/js/translated/part.js:1202 templates/js/translated/stock.js:1512
+#: templates/js/translated/part.js:1204 templates/js/translated/stock.js:1518
 msgid "Display as tree"
 msgstr ""
 
-#: templates/js/translated/part.js:1270 templates/js/translated/stock.js:1556
+#: templates/js/translated/part.js:1275 templates/js/translated/stock.js:1562
 msgid "Path"
 msgstr ""
 
-#: templates/js/translated/part.js:1314
+#: templates/js/translated/part.js:1319
 msgid "No test templates matching query"
 msgstr ""
 
-#: templates/js/translated/part.js:1365 templates/js/translated/stock.js:489
+#: templates/js/translated/part.js:1370 templates/js/translated/stock.js:489
 msgid "Edit test result"
 msgstr ""
 
-#: templates/js/translated/part.js:1366 templates/js/translated/stock.js:490
+#: templates/js/translated/part.js:1371 templates/js/translated/stock.js:490
 msgid "Delete test result"
 msgstr ""
 
-#: templates/js/translated/part.js:1372
+#: templates/js/translated/part.js:1377
 msgid "This test is defined for a parent part"
 msgstr ""
 
-#: templates/js/translated/part.js:1394
+#: templates/js/translated/part.js:1399
 msgid "Edit Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:1408
+#: templates/js/translated/part.js:1413
 msgid "Delete Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:1433
+#: templates/js/translated/part.js:1438
 #, python-brace-format
 msgid "No ${human_name} information found"
 msgstr ""
 
-#: templates/js/translated/part.js:1488
+#: templates/js/translated/part.js:1493
 #, python-brace-format
 msgid "Edit ${human_name}"
 msgstr ""
 
-#: templates/js/translated/part.js:1489
+#: templates/js/translated/part.js:1494
 #, python-brace-format
 msgid "Delete ${human_name}"
 msgstr ""
 
-#: templates/js/translated/part.js:1590
+#: templates/js/translated/part.js:1595
 msgid "Single Price"
 msgstr ""
 
-#: templates/js/translated/part.js:1609
+#: templates/js/translated/part.js:1614
 msgid "Single Price Difference"
 msgstr ""
 
@@ -7749,51 +7749,51 @@ msgstr ""
 msgid "Status code must be selected"
 msgstr ""
 
-#: templates/js/translated/stock.js:1588
+#: templates/js/translated/stock.js:1594
 msgid "Invalid date"
 msgstr ""
 
-#: templates/js/translated/stock.js:1635
+#: templates/js/translated/stock.js:1641
 msgid "Location no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:1654
+#: templates/js/translated/stock.js:1660
 msgid "Purchase order no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:1673
+#: templates/js/translated/stock.js:1679
 msgid "Customer no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:1691
+#: templates/js/translated/stock.js:1697
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:1714
+#: templates/js/translated/stock.js:1720
 msgid "Added"
 msgstr ""
 
-#: templates/js/translated/stock.js:1722
+#: templates/js/translated/stock.js:1728
 msgid "Removed"
 msgstr ""
 
-#: templates/js/translated/stock.js:1763
+#: templates/js/translated/stock.js:1769
 msgid "Edit tracking entry"
 msgstr ""
 
-#: templates/js/translated/stock.js:1764
+#: templates/js/translated/stock.js:1770
 msgid "Delete tracking entry"
 msgstr ""
 
-#: templates/js/translated/stock.js:1888
+#: templates/js/translated/stock.js:1894
 msgid "No installed items"
 msgstr ""
 
-#: templates/js/translated/stock.js:1911
+#: templates/js/translated/stock.js:1917
 msgid "Serial"
 msgstr ""
 
-#: templates/js/translated/stock.js:1939
+#: templates/js/translated/stock.js:1945
 msgid "Uninstall Stock Item"
 msgstr ""
 
