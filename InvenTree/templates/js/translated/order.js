@@ -555,7 +555,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }

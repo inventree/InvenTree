@@ -480,10 +480,10 @@ function barcodeCheckIn(location_id) {
                             $(modal).modal('hide');
                             if (status == 'success' && 'success' in response) {
 
-                                showAlertOrCache('alert-success', response.success, true);
+                                showAlertOrCache(response.success, 'success', true);
                                 location.reload();
                             } else {
-                                showAlertOrCache('alert-success', '{% trans "Error transferring stock" %}', false);
+                                showAlertOrCache('{% trans "Error transferring stock" %}', 'danger', false);
                             }
                         }
                     }
@@ -604,10 +604,10 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                             $(modal).modal('hide');
 
                             if (status == 'success' && 'success' in response) {
-                                showAlertOrCache('alert-success', response.success, true);
+                                showAlertOrCache(response.success, 'success', true);
                                 location.reload();
                             } else {
-                                showAlertOrCache('alert-danger', '{% trans "Error transferring stock" %}', false);
+                                showAlertOrCache('{% trans "Error transferring stock" %}', 'danger', false);
                             }
                         }
                     }
