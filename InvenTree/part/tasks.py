@@ -2,13 +2,14 @@
 from __future__ import unicode_literals
 
 import logging
+from datetime import timedelta
 
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 from allauth.account.models import EmailAddress
 
-from common.models import InvenTree
+from common.models import NotificationEntry
 
 import InvenTree.helpers
 import InvenTree.tasks
@@ -22,6 +23,13 @@ def notify_low_stock(part: part.models.Part):
     """
     Notify users who have starred a part when its stock quantity falls below the minimum threshold
     """
+
+    # Check if we have notified recently...
+    delta = timedelta(days=1)
+
+    if NotificationEntry.check_recent('part.notify_low_stock', part.pk, delta):
+        logger.info(f"Low stock notification has recently been sent for '{part.full_name}' - SKIPPING")
+        return
 
     logger.info(f"Sending low stock notification email for {part.full_name}")
 
@@ -47,6 +55,8 @@ def notify_low_stock(part: part.models.Part):
         recipients = emails.values_list('email', flat=True)
 
         InvenTree.tasks.send_email(subject, '', recipients, html_message=html_message)
+
+        NotificationEntry.notify('part.notify_low_stock', part.pk)
 
 
 def notify_low_stock_if_required(part: part.models.Part):
