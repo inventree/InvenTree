@@ -128,7 +128,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Created" %}</td>
-        <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
+        <td>{{ order.creation_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
     {% if order.target_date %}
     <tr>
@@ -141,14 +141,14 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-truck'></span></td>
         <td>{% trans "Shipped" %}</td>
-        <td>{{ order.shipment_date }}<span class='badge'>{{ order.shipped_by }}</span></td>
+        <td>{{ order.shipment_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.status == PurchaseOrderStatus.COMPLETE %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
+        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.responsible %}
