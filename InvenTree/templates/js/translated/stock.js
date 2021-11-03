@@ -1449,8 +1449,8 @@ function loadStockLocationTable(table, options) {
     var tree_view = options.allowTreeView && inventreeLoad('location-tree-view') == 1;
 
     table.inventreeTable({
-        treeEnable: options.allowTreeView && tree_view,
-        rootParentId: options.params.parent,
+        treeEnable: tree_view,
+        rootParentId: tree_view ? options.params.parent : null,
         uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'name',
