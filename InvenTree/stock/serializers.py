@@ -277,8 +277,11 @@ class SerializeStockItemSerializer(serializers.Serializer):
     )
 
     def validate_quantity(self, quantity):
+        """
+        Validate that the quantity value is correct
+        """
 
-        item = self.context['item']        
+        item = self.context['item']
 
         if quantity < 0:
             raise ValidationError(_("Quantity must be greater than zero"))
