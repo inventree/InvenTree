@@ -420,7 +420,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         if 'starred' in request.data:
             starred = str2bool(request.data.get('starred', None))
 
-            self.get_object().setStarred(request.user, starred)
+            self.get_object().set_subscription(request.user, starred)
 
         response = super().update(request, *args, **kwargs)
 

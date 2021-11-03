@@ -15,7 +15,7 @@ from django.urls import reverse
 
 from django.db import models, transaction
 from django.db.utils import IntegrityError
-from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models import Q, Sum, UniqueConstraint, query
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -201,6 +201,60 @@ class PartCategory(InvenTreeTree):
 
         return prefetch.filter(category=self.id)
 
+    def get_subscribers(self, include_parents=True):
+        """
+        Return a list of users who subscribe to this PartCategory
+        """
+
+        cats = self.get_ancestors(include_self=True)
+
+        subscribers = set()
+
+        if include_parents:
+            queryset = PartCategoryStar.objects.filter(
+                category__pk__in=[cat.pk for cat in cats]
+            )
+        else:
+            queryset = PartCategoryStar.objects.filter(
+                category=self,
+            )
+
+        for result in queryset:
+            subscribers.add(result.user)
+
+        return [s for s in subscribers]
+
+    def is_subscribed_by(self, user, **kwargs):
+        """
+        Returns True if the specified user subscribes to this category
+        """
+
+        return user in self.get_subscribers(**kwargs)
+
+    def set_subscription(self, user, status):
+        """
+        Set the "subscription" status of this PartCategory against the specified user
+        """
+
+        if not user:
+            return
+
+        if self.is_subscribed_by(user) == status:
+            return
+
+        if status:
+            PartCategoryStar.objects.create(
+                category=self,
+                user=user
+            )
+        else:
+            # Note that this won't actually stop the user being subscribed,
+            # if the user is subscribed to a parent category
+            PartCategoryStar.objects.filter(
+                category=self,
+                user=user,
+            ).delete()
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
@@ -332,7 +386,7 @@ class Part(MPTTModel):
 
         context = {}
 
-        context['starred'] = self.isStarredBy(request.user)
+        context['starred'] = self.is_subscribed_by(request.user)
         context['disabled'] = not self.active
 
         # Pre-calculate complex queries so they only need to be performed once
@@ -1040,30 +1094,65 @@ class Part(MPTTModel):
 
         return self.total_stock - self.allocation_count() + self.on_order
 
-    def isStarredBy(self, user):
-        """ Return True if this part has been starred by a particular user """
-
-        try:
-            PartStar.objects.get(part=self, user=user)
-            return True
-        except PartStar.DoesNotExist:
-            return False
-
-    def setStarred(self, user, starred):
+    def get_subscribers(self, include_variants=True, include_categories=True):
         """
-        Set the "starred" status of this Part for the given user
+        Return a list of users who are 'subscribed' to this part.
+
+        A user may 'subscribe' to this part in the following ways:
+
+        a) Subscribing to the part instance directly
+        b) Subscribing to a template part "above" this part (if it is a variant)
+        c) Subscribing to the part category that this part belongs to
+        d) Subscribing to a parent category of the category in c)
+
+        """
+
+        subscribers = set()
+
+        # Start by looking at direct subscriptions to a Part model
+        queryset = PartStar.objects.all()
+
+        if include_variants:
+            queryset = queryset.filter(
+                part__pk__in=[part.pk for part in self.get_ancestors(include_self=True)]
+            )
+        else:
+            queryset = queryset.filter(part=self)
+
+        for star in queryset:
+            subscribers.add(star.user)
+
+        if include_categories and self.category:
+
+            for sub in self.category.get_subscribers():
+                subscribers.add(sub)
+
+        return [s for s in subscribers]
+
+    def is_subscribed_by(self, user, **kwargs):
+        """
+        Return True if the specified user subscribes to this part
+        """
+
+        return user in self.get_subscribers(**kwargs)
+
+    def set_subscription(self, user, status):
+        """
+        Set the "subscription" status of this Part against the specified user
         """
 
         if not user:
             return
 
-        # Do not duplicate efforts
-        if self.isStarredBy(user) == starred:
+        # Already subscribed?
+        if self.is_subscribed_by(user) == status:
             return
 
-        if starred:
+        if status:
             PartStar.objects.create(part=self, user=user)
         else:
+            # Note that this won't actually stop the user being subscribed,
+            # if the user is subscribed to a parent part or category
             PartStar.objects.filter(part=self, user=user).delete()
 
     def need_to_restock(self):
