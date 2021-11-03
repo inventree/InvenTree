@@ -1669,8 +1669,11 @@ function loadStockTable(table, options) {
     });
 }
 
+
+/* 
+ * Display a table of stock locations
+ */
 function loadStockLocationTable(table, options) {
-    /* Display a table of stock locations */
 
     var params = options.params || {};
 
@@ -1696,15 +1699,15 @@ function loadStockLocationTable(table, options) {
         filters[key] = params[key];
     }
 
-    var tree_view = inventreeLoad('location-tree-view') == 1;
+    var tree_view = options.allowTreeView && inventreeLoad('location-tree-view') == 1;
 
     table.inventreeTable({
         treeEnable: tree_view,
-        rootParentId: options.params.parent,
+        rootParentId: tree_view ? options.params.parent : null,
         uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'name',
-        parentIdField: 'parent',
+        parentIdField: tree_view ? 'parent' : null,
         disablePagination: tree_view,
         sidePagination: tree_view ? 'client' : 'server',
         serverSort: !tree_view,
@@ -1718,28 +1721,31 @@ function loadStockLocationTable(table, options) {
         showColumns: true,
         onPostBody: function() {
 
-            tree_view = inventreeLoad('location-tree-view') == 1;
+            if (options.allowTreeView) {
 
-            if (tree_view) {
+                tree_view = inventreeLoad('location-tree-view') == 1;
 
-                $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                
-                table.treegrid({
-                    treeColumn: 1,
-                    onChange: function() {
-                        table.bootstrapTable('resetView');
-                    },
-                    onExpand: function() {
-                        
-                    }
-                });
-            } else {
-                $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-location-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                if (tree_view) {
+
+                    $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                    
+                    table.treegrid({
+                        treeColumn: 1,
+                        onChange: function() {
+                            table.bootstrapTable('resetView');
+                        },
+                        onExpand: function() {
+                            
+                        }
+                    });
+                } else {
+                    $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-location-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                }
             }
         },
-        buttons: [
+        buttons: options.allowTreeView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1778,7 +1784,7 @@ function loadStockLocationTable(table, options) {
                     );
                 }
             }
-        ],
+        ] : [],
         columns: [
             {
                 checkbox: true,
