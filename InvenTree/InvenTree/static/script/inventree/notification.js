@@ -75,6 +75,12 @@ function showMessage(message, options={}) {
 
     var timeout = options.timeout || 5000;
 
+    var details = '';
+
+    if (options.details) {
+        details = `<p><small>${options.details}</p></small>`;
+    }
+
     // Hacky function to get the next available ID
     var id = 1;
 
@@ -85,14 +91,15 @@ function showMessage(message, options={}) {
     var icon = '';
 
     if (options.icon) {
-        icon = `<span class='${options.icon}></span>`;
+        icon = `<span class='${options.icon}'></span>`;
     }
 
     // Construct the alert
     var html = `
     <div id='alert-${id}' class='alert alert-${style} alert-dismissible fade show' role='alert'>
         ${icon}
-        ${message}
+        <b>${message}</b>
+        ${details}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
     </div>
     `;

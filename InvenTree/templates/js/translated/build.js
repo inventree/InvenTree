@@ -339,7 +339,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }
@@ -1527,7 +1527,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }

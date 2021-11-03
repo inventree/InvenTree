@@ -123,9 +123,10 @@ function getApiEndpointOptions(url, callback) {
             json: 'application/json',
         },
         success: callback,
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            showApiError(xhr, url);
         }
     });
 }
@@ -199,12 +200,14 @@ function constructChangeForm(fields, options) {
 
             // Store the entire data object
             options.instance = data;
-
+            
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -241,9 +244,11 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -708,7 +713,7 @@ function submitFormData(fields, options) {
                     break;
                 default:
                     $(options.modal).modal('hide');
-                    showApiError(xhr);
+                    showApiError(xhr, options.url);
                     break;
                 }
             }
