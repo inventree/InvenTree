@@ -2094,7 +2094,6 @@ class Part(MPTTModel):
         return self.total_stock <= self.minimum_stock
 
 
-
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
 def after_save_part(sender, instance: Part, **kwargs):
     """
