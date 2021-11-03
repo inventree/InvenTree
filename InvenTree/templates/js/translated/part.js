@@ -420,12 +420,12 @@ function toggleStar(options) {
 }
 
 
-function partStockLabel(part) {
+function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+        return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Stock" %}: ${part.in_stock}</span>`;
     } else {
-        return `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+        return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
     }
 }
 

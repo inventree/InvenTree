@@ -879,6 +879,12 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'HOMEPAGE_CATEGORY_STARRED': {
+            'name': _('Show subscribed categories'),
+            'description': _('Show subscribed part categories on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
         'HOMEPAGE_PART_LATEST': {
             'name': _('Show latest parts'),
             'description': _('Show latest parts on the homepage'),

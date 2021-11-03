@@ -76,6 +76,7 @@ function addHeaderAction(label, title, icon, options) {
 }
 
 {% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
+{% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
 {% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
 {% settings_value 'HOMEPAGE_BOM_VALIDATION' user=request.user as setting_bom_validation %}
 {% to_list setting_part_starred setting_part_latest setting_bom_validation as settings_list_part %}
@@ -87,9 +88,19 @@ addHeaderTitle('{% trans "Parts" %}');
 addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     params: {
-        "starred": true,
+        starred: true,
     },
     name: 'starred_parts',
+});
+{% endif %}
+
+{% if setting_category_starred %}
+addHeaderAction('starred-categories', '{% trans "Subscribed Categories" %}', 'fa-bell');
+loadPartCategoryTable($('#table-starred-categories'), {
+    params: {
+        starred: true,
+    },
+    name: 'starred_categories'
 });
 {% endif %}
 
