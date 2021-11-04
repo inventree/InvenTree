@@ -560,6 +560,11 @@
     transition: 0.1s;
 }
 
+.search-autocomplete-item {
+    border-top: 1px solid #EEE;
+    margin-bottom: 2px;
+}
+
 .modal {
   overflow: hidden;
   z-index: 9999;
