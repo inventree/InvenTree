@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-03 23:57+0000\n"
+"POT-Creation-Date: 2021-11-04 01:29+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -2322,8 +2322,8 @@ msgstr ""
 
 #: company/models.py:335 company/templates/company/company_base.html:116
 #: company/templates/company/manufacturer_part.html:93
-#: company/templates/company/supplier_part.html:104 part/bom.py:170
-#: part/bom.py:247 stock/templates/stock/item_base.html:347
+#: company/templates/company/supplier_part.html:104
+#: stock/templates/stock/item_base.html:347
 #: templates/js/translated/company.js:332
 #: templates/js/translated/company.js:513
 #: templates/js/translated/company.js:796 templates/js/translated/part.js:228
@@ -2335,8 +2335,8 @@ msgid "Select manufacturer"
 msgstr ""
 
 #: company/models.py:342 company/templates/company/manufacturer_part.html:97
-#: company/templates/company/supplier_part.html:112 part/bom.py:171
-#: part/bom.py:248 templates/js/translated/company.js:529
+#: company/templates/company/supplier_part.html:112
+#: templates/js/translated/company.js:529
 #: templates/js/translated/company.js:814 templates/js/translated/order.js:852
 #: templates/js/translated/part.js:239
 msgid "MPN"
@@ -2393,8 +2393,8 @@ msgstr ""
 #: company/models.py:545 company/templates/company/company_base.html:121
 #: company/templates/company/supplier_part.html:94 order/models.py:263
 #: order/templates/order/order_base.html:106
-#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:175
-#: part/bom.py:292 stock/templates/stock/item_base.html:364
+#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:226
+#: part/bom.py:254 stock/templates/stock/item_base.html:364
 #: templates/js/translated/company.js:336
 #: templates/js/translated/company.js:770 templates/js/translated/order.js:660
 #: templates/js/translated/part.js:209
@@ -2406,7 +2406,7 @@ msgid "Select supplier"
 msgstr ""
 
 #: company/models.py:551 company/templates/company/supplier_part.html:98
-#: part/bom.py:176 part/bom.py:293 templates/js/translated/order.js:839
+#: part/bom.py:227 part/bom.py:255 templates/js/translated/order.js:839
 #: templates/js/translated/part.js:220
 msgid "SKU"
 msgstr ""
