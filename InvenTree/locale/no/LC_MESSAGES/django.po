@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 20:38+0000\n"
-"PO-Revision-Date: 2021-11-04 20:42\n"
+"POT-Creation-Date: 2021-11-04 23:44+0000\n"
+"PO-Revision-Date: 2021-11-04 23:48\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -4225,7 +4225,7 @@ msgid "You are subscribed to notifications for this category"
 msgstr ""
 
 #: part/templates/part/category.html:32
-msgid "Subscribe to nofications for this category"
+msgid "Subscribe to notifications for this category"
 msgstr ""
 
 #: part/templates/part/category.html:38
@@ -4549,16 +4549,12 @@ msgstr ""
 msgid "Part List"
 msgstr ""
 
-#: part/templates/part/part_base.html:27
-msgid "You are subscribed to nofications for this part"
-msgstr ""
-
-#: part/templates/part/part_base.html:31
+#: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
 msgstr ""
 
 #: part/templates/part/part_base.html:35
-msgid "Subscribe to nofications for this part"
+msgid "Subscribe to notifications for this part"
 msgstr ""
 
 #: part/templates/part/part_base.html:43
