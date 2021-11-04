@@ -410,8 +410,15 @@
         <td>{{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}</td>
     </tr>
     {% endif %}
+    {% if item.owner %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Owner" %}</td>
+        <td>{{ item.owner }}</td>
+    </tr>
+    {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 
 {% block js_ready %}
