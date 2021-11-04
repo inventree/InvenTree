@@ -2098,7 +2098,7 @@ class Part(MPTTModel):
         Returns True if the total stock for this part is less than the minimum stock level
         """
         
-        return self.total_stock <= self.minimum_stock
+        return self.get_stock_count() < self.minimum_stock
 
 
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
