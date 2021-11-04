@@ -19,6 +19,7 @@ import string
 import shutil
 import sys
 import importlib
+from importlib import metadata
 from datetime import datetime
 
 import moneyed
@@ -820,6 +821,11 @@ for plugin in PLUGIN_DIRS:
     modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
     if modules:
         [PLUGINS.append(item) for item in modules]
+
+# Get plugins from setup entry points
+for entry in metadata.entry_points().get('inventree_plugins', []):
+    plugin = entry.load()
+    PLUGINS.append(plugin)
 
 # collect integration plugins
 INTEGRATION_PLUGINS = {}

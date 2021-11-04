@@ -34,7 +34,12 @@ class PluginConfig(AppConfig):
                 # add them to the INSTALLED_APPS
                 for slug, plugin in plugins:
                     if plugin.mixin_enabled('app'):
-                        plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+                        try:
+                            # for local path plugins
+                            plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+                        except ValueError:
+                            # plugin is shipped as package
+                            plugin_path = plugin.PLUGIN_NAME
                         if plugin_path not in settings.INSTALLED_APPS:
                             settings.INSTALLED_APPS += [plugin_path]
                             apps_changed = True
