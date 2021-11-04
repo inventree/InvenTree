@@ -830,6 +830,7 @@ for plugin in PLUGIN_DIRS:
 # Get plugins from setup entry points
 for entry in metadata.entry_points().get('inventree_plugins', []):
     plugin = entry.load()
+    plugin.is_package = True
     PLUGINS.append(plugin)
 
 # collect integration plugins
@@ -838,5 +839,12 @@ INTEGRATION_PLUGIN_SETTING = {}
 INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet
 
 for plugin in inventree_plugins.load_integration_plugins():
+    # check if package
+    was_packaged = getattr(plugin, 'is_package', False)
+
+    # init package
+    plugin.is_package = was_packaged
     plugin = plugin()
+    plugin.is_package = was_packaged
+    # safe reference
     INTEGRATION_PLUGINS[plugin.slug] = plugin
