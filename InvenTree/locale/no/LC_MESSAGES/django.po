@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 01:29+0000\n"
-"PO-Revision-Date: 2021-11-04 01:35\n"
+"POT-Creation-Date: 2021-11-04 04:24+0000\n"
+"PO-Revision-Date: 2021-11-04 04:28\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -131,7 +131,7 @@ msgid "File comment"
 msgstr "Kommentar til fil"
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 common/models.py:1055
-#: common/models.py:1056 part/models.py:2188 part/models.py:2208
+#: common/models.py:1056 part/models.py:2198 part/models.py:2218
 #: report/templates/report/inventree_test_report_base.html:91
 #: templates/js/translated/stock.js:1751
 msgid "User"
@@ -171,7 +171,7 @@ msgid "Invalid choice"
 msgstr "Ugyldig valg"
 
 #: InvenTree/models.py:243 InvenTree/models.py:244 company/models.py:415
-#: label/models.py:112 part/models.py:741 part/models.py:2372
+#: label/models.py:112 part/models.py:741 part/models.py:2382
 #: part/templates/part/detail.html:25 report/models.py:181
 #: templates/js/translated/company.js:637 templates/js/translated/part.js:497
 #: templates/js/translated/part.js:634 templates/js/translated/part.js:1266
@@ -179,7 +179,7 @@ msgstr "Ugyldig valg"
 msgid "Name"
 msgstr "Navn"
 
-#: InvenTree/models.py:250 build/models.py:191
+#: InvenTree/models.py:250 build/models.py:192
 #: build/templates/build/detail.html:25 company/models.py:354
 #: company/models.py:570 company/templates/company/manufacturer_part.html:80
 #: company/templates/company/supplier_part.html:81 label/models.py:119
@@ -208,7 +208,7 @@ msgstr "Beskrivelse (valgfritt)"
 msgid "parent"
 msgstr ""
 
-#: InvenTree/serializers.py:62 part/models.py:2657
+#: InvenTree/serializers.py:62 part/models.py:2667
 msgid "Must be a valid number"
 msgstr "Nummer må være gyldig"
 
@@ -533,14 +533,14 @@ msgstr ""
 msgid "Barcode associated with StockItem"
 msgstr ""
 
-#: build/forms.py:36 build/models.py:1254
+#: build/forms.py:36 build/models.py:1268
 #: build/templates/build/build_base.html:122
 #: build/templates/build/detail.html:35 common/models.py:1087
 #: company/forms.py:42 company/templates/company/supplier_part.html:243
 #: order/forms.py:102 order/models.py:729 order/models.py:991
 #: order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:237
-#: part/forms.py:253 part/forms.py:269 part/models.py:2559
+#: part/forms.py:253 part/forms.py:269 part/models.py:2569
 #: part/templates/part/bom_upload/match_parts.html:31
 #: part/templates/part/detail.html:1115 part/templates/part/detail.html:1201
 #: part/templates/part/part_pricing.html:16
@@ -595,18 +595,18 @@ msgstr ""
 msgid "Confirm build cancellation"
 msgstr ""
 
-#: build/models.py:117
+#: build/models.py:118
 msgid "Invalid choice for parent build"
 msgstr ""
 
-#: build/models.py:121 build/templates/build/build_base.html:9
+#: build/models.py:122 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:390
 msgid "Build Order"
 msgstr ""
 
-#: build/models.py:122 build/templates/build/build_base.html:13
+#: build/models.py:123 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
 #: order/templates/order/sales_order_detail.html:42
 #: templates/InvenTree/index.html:221 templates/InvenTree/search.html:145
@@ -614,12 +614,12 @@ msgstr ""
 msgid "Build Orders"
 msgstr ""
 
-#: build/models.py:182
+#: build/models.py:183
 msgid "Build Order Reference"
 msgstr ""
 
-#: build/models.py:183 order/models.py:249 order/models.py:556
-#: order/models.py:736 part/models.py:2568
+#: build/models.py:184 order/models.py:249 order/models.py:556
+#: order/models.py:736 part/models.py:2578
 #: part/templates/part/bom_upload/match_parts.html:30
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
@@ -628,37 +628,38 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: build/models.py:194
+#: build/models.py:195
 msgid "Brief description of the build"
 msgstr ""
 
-#: build/models.py:203 build/templates/build/build_base.html:154
+#: build/models.py:204 build/templates/build/build_base.html:154
 #: build/templates/build/detail.html:88
 msgid "Parent Build"
 msgstr ""
 
-#: build/models.py:204
+#: build/models.py:205
 msgid "BuildOrder to which this build is allocated"
 msgstr ""
 
-#: build/models.py:209 build/templates/build/build_base.html:117
+#: build/models.py:210 build/templates/build/build_base.html:117
 #: build/templates/build/detail.html:30 company/models.py:705
 #: order/models.py:789 order/models.py:860
 #: order/templates/order/order_wizard/select_parts.html:32 part/models.py:357
-#: part/models.py:2134 part/models.py:2150 part/models.py:2169
-#: part/models.py:2186 part/models.py:2288 part/models.py:2410
-#: part/models.py:2543 part/models.py:2850 part/templates/part/detail.html:328
+#: part/models.py:2144 part/models.py:2160 part/models.py:2179
+#: part/models.py:2196 part/models.py:2298 part/models.py:2420
+#: part/models.py:2553 part/models.py:2860 part/templates/part/detail.html:328
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/set_category.html:13
 #: report/templates/report/inventree_build_order_base.html:110
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:90
-#: templates/InvenTree/search.html:86 templates/js/translated/barcode.js:384
-#: templates/js/translated/bom.js:212 templates/js/translated/bom.js:390
-#: templates/js/translated/build.js:613 templates/js/translated/build.js:981
-#: templates/js/translated/build.js:1352 templates/js/translated/build.js:1619
-#: templates/js/translated/company.js:488
+#: templates/InvenTree/search.html:86
+#: templates/email/build_order_required_stock.html:17
+#: templates/js/translated/barcode.js:384 templates/js/translated/bom.js:212
+#: templates/js/translated/bom.js:390 templates/js/translated/build.js:613
+#: templates/js/translated/build.js:981 templates/js/translated/build.js:1352
+#: templates/js/translated/build.js:1619 templates/js/translated/company.js:488
 #: templates/js/translated/company.js:745 templates/js/translated/order.js:426
 #: templates/js/translated/order.js:818 templates/js/translated/order.js:1435
 #: templates/js/translated/part.js:725 templates/js/translated/part.js:891
@@ -667,97 +668,97 @@ msgstr ""
 msgid "Part"
 msgstr ""
 
-#: build/models.py:217
+#: build/models.py:218
 msgid "Select part to build"
 msgstr ""
 
-#: build/models.py:222
+#: build/models.py:223
 msgid "Sales Order Reference"
 msgstr ""
 
-#: build/models.py:226
+#: build/models.py:227
 msgid "SalesOrder to which this build is allocated"
 msgstr ""
 
-#: build/models.py:231 templates/js/translated/build.js:1340
+#: build/models.py:232 templates/js/translated/build.js:1340
 msgid "Source Location"
 msgstr ""
 
-#: build/models.py:235
+#: build/models.py:236
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr ""
 
-#: build/models.py:240
+#: build/models.py:241
 msgid "Destination Location"
 msgstr ""
 
-#: build/models.py:244
+#: build/models.py:245
 msgid "Select location where the completed items will be stored"
 msgstr ""
 
-#: build/models.py:248
+#: build/models.py:249
 msgid "Build Quantity"
 msgstr ""
 
-#: build/models.py:251
+#: build/models.py:252
 msgid "Number of stock items to build"
 msgstr ""
 
-#: build/models.py:255
+#: build/models.py:256
 msgid "Completed items"
 msgstr ""
 
-#: build/models.py:257
+#: build/models.py:258
 msgid "Number of stock items which have been completed"
 msgstr ""
 
-#: build/models.py:261 part/templates/part/part_base.html:216
+#: build/models.py:262 part/templates/part/part_base.html:216
 msgid "Build Status"
 msgstr ""
 
-#: build/models.py:265
+#: build/models.py:266
 msgid "Build status code"
 msgstr ""
 
-#: build/models.py:269 stock/models.py:515
+#: build/models.py:270 stock/models.py:515
 msgid "Batch Code"
 msgstr ""
 
-#: build/models.py:273
+#: build/models.py:274
 msgid "Batch code for this build output"
 msgstr ""
 
-#: build/models.py:276 order/models.py:165 part/models.py:936
+#: build/models.py:277 order/models.py:165 part/models.py:936
 #: part/templates/part/detail.html:86 templates/js/translated/order.js:1082
 msgid "Creation Date"
 msgstr ""
 
-#: build/models.py:280 order/models.py:578
+#: build/models.py:281 order/models.py:578
 msgid "Target completion date"
 msgstr ""
 
-#: build/models.py:281
+#: build/models.py:282
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr ""
 
-#: build/models.py:284 order/models.py:291
+#: build/models.py:285 order/models.py:291
 #: templates/js/translated/build.js:1690
 msgid "Completion Date"
 msgstr ""
 
-#: build/models.py:290
+#: build/models.py:291
 msgid "completed by"
 msgstr ""
 
-#: build/models.py:298 templates/js/translated/build.js:1661
+#: build/models.py:299 templates/js/translated/build.js:1661
 msgid "Issued by"
 msgstr ""
 
-#: build/models.py:299
+#: build/models.py:300
 msgid "User who issued this build order"
 msgstr ""
 
-#: build/models.py:307 build/templates/build/build_base.html:175
+#: build/models.py:308 build/templates/build/build_base.html:175
 #: build/templates/build/detail.html:116 order/models.py:179
 #: order/templates/order/order_base.html:152
 #: order/templates/order/sales_order_base.html:157 part/models.py:940
@@ -766,11 +767,11 @@ msgstr ""
 msgid "Responsible"
 msgstr ""
 
-#: build/models.py:308
+#: build/models.py:309
 msgid "User responsible for this build order"
 msgstr ""
 
-#: build/models.py:313 build/templates/build/detail.html:102
+#: build/models.py:314 build/templates/build/detail.html:102
 #: company/templates/company/manufacturer_part.html:87
 #: company/templates/company/supplier_part.html:88
 #: part/templates/part/detail.html:80 stock/models.py:509
@@ -778,11 +779,11 @@ msgstr ""
 msgid "External Link"
 msgstr ""
 
-#: build/models.py:314 part/models.py:798 stock/models.py:511
+#: build/models.py:315 part/models.py:798 stock/models.py:511
 msgid "Link to external URL"
 msgstr ""
 
-#: build/models.py:318 build/serializers.py:200 company/models.py:142
+#: build/models.py:319 build/serializers.py:200 company/models.py:142
 #: company/models.py:577 order/models.py:183 order/models.py:738
 #: order/templates/order/po_navbar.html:38
 #: order/templates/order/po_navbar.html:41 part/models.py:925
@@ -797,58 +798,58 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: build/models.py:319
+#: build/models.py:320
 msgid "Extra build notes"
 msgstr ""
 
-#: build/models.py:694
+#: build/models.py:695
 msgid "No build output specified"
 msgstr ""
 
-#: build/models.py:697
+#: build/models.py:698
 msgid "Build output is already completed"
 msgstr ""
 
-#: build/models.py:700
+#: build/models.py:701
 msgid "Build output does not match Build Order"
 msgstr ""
 
-#: build/models.py:1079
+#: build/models.py:1093
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
-#: build/models.py:1088
+#: build/models.py:1102
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1098
+#: build/models.py:1112
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/models.py:1104 order/models.py:964
+#: build/models.py:1118 order/models.py:964
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1110
+#: build/models.py:1124
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1164
+#: build/models.py:1178
 msgid "Selected stock item not found in BOM"
 msgstr ""
 
-#: build/models.py:1224 stock/templates/stock/item_base.html:312
+#: build/models.py:1238 stock/templates/stock/item_base.html:312
 #: templates/InvenTree/search.html:143 templates/js/translated/build.js:1592
 #: templates/navbar.html:35
 msgid "Build"
 msgstr ""
 
-#: build/models.py:1225
+#: build/models.py:1239
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1241 build/serializers.py:327
+#: build/models.py:1255 build/serializers.py:327
 #: stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:16
 #: stock/templates/stock/item_base.html:334
@@ -859,19 +860,19 @@ msgstr ""
 msgid "Stock Item"
 msgstr ""
 
-#: build/models.py:1242
+#: build/models.py:1256
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1255
+#: build/models.py:1269
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1263
+#: build/models.py:1277
 msgid "Install into"
 msgstr ""
 
-#: build/models.py:1264
+#: build/models.py:1278
 msgid "Destination stock item"
 msgstr ""
 
@@ -926,8 +927,8 @@ msgstr ""
 msgid "A list of build outputs must be provided"
 msgstr ""
 
-#: build/serializers.py:258 build/serializers.py:307 part/models.py:2683
-#: part/models.py:2842
+#: build/serializers.py:258 build/serializers.py:307 part/models.py:2693
+#: part/models.py:2852
 msgid "BOM Item"
 msgstr ""
 
@@ -967,6 +968,10 @@ msgstr ""
 
 #: build/serializers.py:430
 msgid "Allocation items must be provided"
+msgstr ""
+
+#: build/tasks.py:92
+msgid "Stock required for build order"
 msgstr ""
 
 #: build/templates/build/build_base.html:38
@@ -1582,7 +1587,7 @@ msgstr ""
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:607 part/models.py:2412 report/models.py:187
+#: common/models.py:607 part/models.py:2422 report/models.py:187
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:355
 msgid "Template"
@@ -2336,7 +2341,7 @@ msgstr ""
 msgid "Parameter value"
 msgstr ""
 
-#: company/models.py:429 part/models.py:882 part/models.py:2380
+#: company/models.py:429 part/models.py:882 part/models.py:2390
 #: part/templates/part/detail.html:59 templates/js/translated/company.js:649
 #: templates/js/translated/part.js:649
 msgid "Units"
@@ -2388,16 +2393,16 @@ msgid "Supplier part description"
 msgstr ""
 
 #: company/models.py:576 company/templates/company/supplier_part.html:126
-#: part/models.py:2571 report/templates/report/inventree_po_report.html:93
+#: part/models.py:2581 report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
 msgstr ""
 
-#: company/models.py:580 part/models.py:1720
+#: company/models.py:580 part/models.py:1727
 msgid "base cost"
 msgstr ""
 
-#: company/models.py:580 part/models.py:1720
+#: company/models.py:580 part/models.py:1727
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
@@ -2411,7 +2416,7 @@ msgstr ""
 msgid "Part packaging"
 msgstr ""
 
-#: company/models.py:584 part/models.py:1722
+#: company/models.py:584 part/models.py:1729
 msgid "multiple"
 msgstr ""
 
@@ -3671,7 +3676,7 @@ msgstr ""
 msgid "Include part supplier data in exported BOM"
 msgstr ""
 
-#: part/forms.py:96 part/models.py:2410
+#: part/forms.py:96 part/models.py:2420
 msgid "Parent Part"
 msgstr ""
 
@@ -3727,7 +3732,7 @@ msgstr ""
 msgid "Default keywords for parts in this category"
 msgstr ""
 
-#: part/models.py:95 part/models.py:2456 part/templates/part/category.html:11
+#: part/models.py:95 part/models.py:2466 part/templates/part/category.html:11
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr ""
@@ -3805,7 +3810,7 @@ msgstr ""
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:778 part/models.py:2206 part/models.py:2455
+#: part/models.py:778 part/models.py:2216 part/models.py:2465
 #: part/templates/part/detail.html:36 part/templates/part/set_category.html:15
 #: templates/InvenTree/settings/settings.html:169
 #: templates/js/translated/part.js:927
@@ -3925,208 +3930,207 @@ msgstr ""
 msgid "Creation User"
 msgstr ""
 
-#: part/models.py:1722
+#: part/models.py:1729
 msgid "Sell multiple"
 msgstr ""
 
-#: part/models.py:2256
+#: part/models.py:2266
 msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
-#: part/models.py:2273
+#: part/models.py:2283
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:2293 templates/js/translated/part.js:1349
+#: part/models.py:2303 templates/js/translated/part.js:1349
 #: templates/js/translated/stock.js:531
 msgid "Test Name"
 msgstr ""
 
-#: part/models.py:2294
+#: part/models.py:2304
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:2299
+#: part/models.py:2309
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:2300
+#: part/models.py:2310
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:2305 templates/js/translated/part.js:1358
+#: part/models.py:2315 templates/js/translated/part.js:1358
 #: templates/js/translated/table_filters.js:258
 msgid "Required"
 msgstr ""
 
-#: part/models.py:2306
+#: part/models.py:2316
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:2311 templates/js/translated/part.js:1366
+#: part/models.py:2321 templates/js/translated/part.js:1366
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:2312
+#: part/models.py:2322
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:2317 templates/js/translated/part.js:1373
+#: part/models.py:2327 templates/js/translated/part.js:1373
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:2318
+#: part/models.py:2328
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:2329
+#: part/models.py:2339
 #, python-brace-format
 msgid "Illegal character in template name ({c})"
 msgstr ""
 
-#: part/models.py:2365
+#: part/models.py:2375
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:2373
+#: part/models.py:2383
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:2380
+#: part/models.py:2390
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:2412 part/models.py:2461 part/models.py:2462
+#: part/models.py:2422 part/models.py:2471 part/models.py:2472
 #: templates/InvenTree/settings/settings.html:164
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:2414
+#: part/models.py:2424
 msgid "Data"
 msgstr ""
 
-#: part/models.py:2414
+#: part/models.py:2424
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2466 templates/InvenTree/settings/settings.html:173
+#: part/models.py:2476 templates/InvenTree/settings/settings.html:173
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:2467
+#: part/models.py:2477
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:2544
+#: part/models.py:2554
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:2552
+#: part/models.py:2562
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:2553
+#: part/models.py:2563
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:2559
+#: part/models.py:2569
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:2561 templates/js/translated/bom.js:451
+#: part/models.py:2571 templates/js/translated/bom.js:451
 #: templates/js/translated/bom.js:525
 msgid "Optional"
 msgstr ""
 
-#: part/models.py:2561
+#: part/models.py:2571
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:2564
+#: part/models.py:2574
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:2565
+#: part/models.py:2575
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:2568
+#: part/models.py:2578
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:2571
+#: part/models.py:2581
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:2573
+#: part/models.py:2583
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:2573
+#: part/models.py:2583
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:2577 templates/js/translated/bom.js:542
+#: part/models.py:2587 templates/js/translated/bom.js:542
 #: templates/js/translated/bom.js:549
 #: templates/js/translated/table_filters.js:68
 msgid "Inherited"
 msgstr ""
 
-#: part/models.py:2578
+#: part/models.py:2588
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:2583 templates/js/translated/bom.js:534
+#: part/models.py:2593 templates/js/translated/bom.js:534
 msgid "Allow Variants"
 msgstr ""
 
-#: part/models.py:2584
+#: part/models.py:2594
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2669 stock/models.py:343
+#: part/models.py:2679 stock/models.py:343
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:2678 part/models.py:2680
+#: part/models.py:2688 part/models.py:2690
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:2809
+#: part/models.py:2819
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:2831
+#: part/models.py:2841
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:2843
+#: part/models.py:2853
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:2851
+#: part/models.py:2861
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:2862
+#: part/models.py:2872
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:2866
+#: part/models.py:2876
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:2866
+#: part/models.py:2876
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:2898
+#: part/models.py:2908
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
 #: part/tasks.py:53
-#, python-brace-format
-msgid "[InvenTree] {part.name} is low on stock"
+msgid "Low stock notification"
 msgstr ""
 
 #: part/templates/part/bom.html:6
@@ -6400,6 +6404,39 @@ msgstr ""
 msgid "View in administration panel"
 msgstr ""
 
+#: templates/email/build_order_required_stock.html:7
+msgid "Stock is required for the following build order"
+msgstr ""
+
+#: templates/email/build_order_required_stock.html:8
+#, python-format
+msgid "Build order %(build)s - building %(quantity)s x %(part)s"
+msgstr ""
+
+#: templates/email/build_order_required_stock.html:10
+msgid "Click on the following link to view this build order"
+msgstr ""
+
+#: templates/email/build_order_required_stock.html:14
+msgid "The following parts are low on required stock"
+msgstr ""
+
+#: templates/email/build_order_required_stock.html:18
+msgid "Required Quantity"
+msgstr ""
+
+#: templates/email/build_order_required_stock.html:19
+#: templates/email/low_stock_notification.html:21
+#: templates/js/translated/bom.js:464 templates/js/translated/build.js:1122
+#: templates/js/translated/build.js:1742
+msgid "Available"
+msgstr ""
+
+#: templates/email/build_order_required_stock.html:38
+#: templates/email/low_stock_notification.html:14
+msgid "You are receiving this email because you are subscribed to notifications for this part "
+msgstr ""
+
 #: templates/email/email.html:35
 msgid "InvenTree version"
 msgstr ""
@@ -6413,22 +6450,12 @@ msgstr ""
 msgid "Click on the following link to view this part"
 msgstr ""
 
-#: templates/email/low_stock_notification.html:14
-msgid "You are receiving this email because you are subscribed to notifications for this part "
-msgstr ""
-
 #: templates/email/low_stock_notification.html:19
 msgid "Part Name"
 msgstr ""
 
 #: templates/email/low_stock_notification.html:20
 msgid "Total Stock"
-msgstr ""
-
-#: templates/email/low_stock_notification.html:21
-#: templates/js/translated/bom.js:464 templates/js/translated/build.js:1122
-#: templates/js/translated/build.js:1742
-msgid "Available"
 msgstr ""
 
 #: templates/email/low_stock_notification.html:22
