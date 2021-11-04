@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-04 20:38+0000\n"
-"PO-Revision-Date: 2021-11-04 20:42\n"
+"PO-Revision-Date: 2021-11-04 21:50\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6897,11 +6897,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:268
 msgid "Output"
-msgstr ""
+msgstr "Endprodukt"
 
 #: templates/js/translated/build.js:284
 msgid "Complete Build Outputs"
-msgstr ""
+msgstr "Endprodukte fertigstellen"
 
 #: templates/js/translated/build.js:379
 msgid "No build order allocations found"
@@ -7603,7 +7603,7 @@ msgstr "virtuelles Teil"
 
 #: templates/js/translated/part.js:455
 msgid "Subscribed part"
-msgstr ""
+msgstr "Abonnierter Teil"
 
 #: templates/js/translated/part.js:459
 msgid "Salable part"
@@ -7629,19 +7629,19 @@ msgstr "Bestand niedrig"
 #: templates/js/translated/part.js:1027 templates/js/translated/part.js:1199
 #: templates/js/translated/stock.js:1800
 msgid "Display as list"
-msgstr ""
+msgstr "Listenansicht"
 
 #: templates/js/translated/part.js:1043
 msgid "Display as grid"
-msgstr ""
+msgstr "Rasteransicht"
 
 #: templates/js/translated/part.js:1218 templates/js/translated/stock.js:1819
 msgid "Display as tree"
-msgstr ""
+msgstr "Baumansicht"
 
 #: templates/js/translated/part.js:1282
 msgid "Subscribed category"
-msgstr ""
+msgstr "Abonnierte Kategorie"
 
 #: templates/js/translated/part.js:1296 templates/js/translated/stock.js:1863
 msgid "Path"
@@ -7993,7 +7993,7 @@ msgstr "Unterkategorien einschließen"
 #: templates/js/translated/table_filters.js:108
 #: templates/js/translated/table_filters.js:375
 msgid "Subscribed"
-msgstr ""
+msgstr "Abonniert"
 
 #: templates/js/translated/table_filters.js:118
 #: templates/js/translated/table_filters.js:195
