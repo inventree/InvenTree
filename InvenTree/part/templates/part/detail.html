@@ -20,13 +20,6 @@
         <!-- Details Table -->
         <table class="table table-striped table-condensed">
             <col width='25'>
-            {% if part.IPN %}
-            <tr>
-                <td><span class='fas fa-tag'></span></td>
-                <td>{% trans "IPN" %}</td>
-                <td>{{ part.IPN }}{% include "clip.html"%}</td>
-            </tr>
-            {% endif %}
             <tr>
                 <td><span class='fas fa-shapes'></span></td>
                 <td>{% trans "Name" %}</td>
@@ -37,11 +30,41 @@
                 <td>{% trans "Description" %}</td>
                 <td>{{ part.description }}{% include "clip.html"%}</td>
             </tr>
+            {% if part.category %}
+            <tr>
+                <td><span class='fas fa-sitemap'></span></td>
+                <td>{% trans "Category" %}</td>
+                <td>
+                    <a href='{% url "category-detail" part.category.pk %}'>{{ part.category.name }}</a>
+                </td>
+            </tr>
+            {% endif %}
+            {% if part.IPN %}
+            <tr>
+                <td><span class='fas fa-tag'></span></td>
+                <td>{% trans "IPN" %}</td>
+                <td>{{ part.IPN }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
             {% if part.revision %}
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>
                 <td>{% trans "Revision" %}</td>
                 <td>{{ part.revision }}{% include "clip.html"%}</td>
+            </tr>
+            {% endif %}
+            {% if part.units %}
+            <tr>
+                <td></td>
+                <td>{% trans "Units" %}</td>
+                <td>{{ part.units }}</td>
+            </tr>
+            {% endif %}
+            {% if part.minimum_stock %}
+            <tr>
+                <td><span class='fas fa-flag'></span></td>
+                <td>{% trans "Minimum stock level" %}</td>
+                <td>{{ part.minimum_stock }}</td>
             </tr>
             {% endif %}
             {% if part.keywords %}
@@ -64,7 +87,7 @@
                 <td>
                     {{ part.creation_date }}
                     {% if part.creation_user %}
-                    <span class='badge'>{{ part.creation_user }}</span>
+                    <span class='badge badge-right rounded-pill bg-dark'>{{ part.creation_user }}</span>
                     {% endif %}
                 </td>
             </tr>
@@ -79,7 +102,9 @@
             <tr>
                 <td><span class='fas fa-search-location'></span></td>
                 <td>{% trans "Default Location" %}</td>
-                <td>{{ part.default_location }}</td>
+                <td>
+                    <a href='{% url "stock-location-detail" part.default_location.pk %}'>{{ part.default_location }}</a>
+                </td>
             </tr>
             {% endif %}
             {% if part.default_supplier %}
@@ -95,7 +120,15 @@
 
 <div class='panel panel-hidden' id='panel-part-stock'>
     <div class='panel-heading'>
-        <h4>{% trans "Part Stock" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Stock" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-success' id='new-stock-item' title='{% trans "Create new stock item" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% if part.is_template %}
@@ -109,7 +142,7 @@
 
 <div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Test Templates" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -123,10 +156,8 @@
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='button-toolbar container-fluid' style="float: right;">
-                <div class='filter-list' id='filter-list-parttests'>
-                    <!-- Empty div -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="parttests" %}
             </div>
         </div>
         
@@ -136,7 +167,7 @@
 
 <div class='panel panel-hidden' id='panel-purchase-orders'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>    
+        <div class='d-flex flex-wrap'>    
             <h4>{% trans "Purchase Orders" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -149,9 +180,7 @@
     <div class='panel-content'>
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                <div class='filter-list' id='filter-list-purchaseorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+                {% include "filter_list.html" with id="purchaseorder" %}
             </div>
         </div>
         
@@ -166,13 +195,8 @@
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% if 0 %}
-                <button class='btn btn-success' type='button' id='part-order2' title='{% trans "New sales order" %}'>{% trans "New Order" %}</button>
-                {% endif %}
-                <div class='filter-list' id='filter-list-salesorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="salesorder" %}
             </div>
         </div>
 
@@ -221,7 +245,7 @@
 
 <div class='panel panel-hidden' id='panel-variants'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Variants" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -238,9 +262,7 @@
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                 </div>
-                <div class='filter-list' id='filter-list-variants'>
-                    <!-- Empty div (will be filled out with available BOM filters) -->
-                </div>
+                {% include "filter_list.html" with id="variants" %}
             </div>
         </div>
         
@@ -251,7 +273,7 @@
 
 <div class='panel panel-hidden' id='panel-part-parameters'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Parameters" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -274,7 +296,7 @@
 
 <div class='panel panel-hidden' id='panel-part-attachments'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Attachments" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -289,7 +311,7 @@
 
 <div class='panel panel-hidden' id='panel-related-parts'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Related Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -303,10 +325,8 @@
     </div>
     <div class='panel-content'>
         <div id='related-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: left;'>
-                <div class='filter-list' id='filter-list-related'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="related" %}
             </div>
         </div>
         
@@ -342,7 +362,7 @@
 
 <div class='panel panel-hidden' id='panel-bom'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Bill of Materials" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -391,8 +411,8 @@
     </div>
     <div class='panel-content'>
         <div id='assembly-button-toolbar'>
-            <div class='filter-list' id='filter-list-usedin'>
-                <!-- Empty div (will be filled out with avilable BOM filters) -->
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="usedin" %}
             </div>
         </div>
         
@@ -403,7 +423,7 @@
 
 <div class='panel panel-hidden' id='panel-build-orders'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Builds" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -419,10 +439,8 @@
     </div>
     <div class='panel-content'>
         <div id='build-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right';>
-                <div class='filter-list' id='filter-list-build'>
-                    <!-- Empty div for filters -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="build" %}
             </div>
         </div>
         
@@ -440,7 +458,7 @@
 
 <div class='panel panel-hidden' id='panel-suppliers'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Suppliers" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -467,7 +485,7 @@
     </div>
 
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Manufacturers" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -866,11 +884,13 @@
     });
 
     onPanelLoad("part-stock", function() {
-        $('#add-stock-item').click(function () {
+        $('#new-stock-item').click(function () {
             createNewStockItem({
-                reload: true,
                 data: {
                     part: {{ part.id }},
+                    {% if part.default_location %}
+                    location: {{ part.default_location.pk }},
+                    {% endif %}
                 }
             });
         });
@@ -898,7 +918,6 @@
     
         $('#item-create').click(function () {
             createNewStockItem({
-                reload: true,
                 data: {
                     part: {{ part.id }},
                 }

@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
 
-from .models import InvenTreeSetting, InvenTreeUserSetting
+import common.models
 
 
 class SettingsAdmin(ImportExportModelAdmin):
@@ -18,5 +18,11 @@ class UserSettingsAdmin(ImportExportModelAdmin):
     list_display = ('key', 'value', 'user', )
 
 
-admin.site.register(InvenTreeSetting, SettingsAdmin)
-admin.site.register(InvenTreeUserSetting, UserSettingsAdmin)
+class NotificationEntryAdmin(admin.ModelAdmin):
+
+    list_display = ('key', 'uid', 'updated', )
+
+
+admin.site.register(common.models.InvenTreeSetting, SettingsAdmin)
+admin.site.register(common.models.InvenTreeUserSetting, UserSettingsAdmin)
+admin.site.register(common.models.NotificationEntry, NotificationEntryAdmin)

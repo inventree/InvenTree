@@ -36,9 +36,7 @@
                 <button class='btn btn-outline-secondary' type='button' id='view-list' title='{% trans "Display list view" %}'>
                     <span class='fas fa-th-list'></span>
                 </button>
-                <div class='filter-list' id='filter-list-purchaseorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+                {% include "filter_list.html" with id="purchaseorder" %}
             </div>
         </div>
     </div>

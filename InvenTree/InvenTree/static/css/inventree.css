@@ -15,25 +15,22 @@
 }
 
 .login-screen {
-    background-image: url("/static/img/paper_splash.jpg");
+    background: url(/static/img/paper_splash.jpg) no-repeat center fixed; 
     background-size: cover;
-    background-repeat: no-repeat;
-    height: 100%;
+    height: 100vh;
     font-family: 'Numans', sans-serif;
     color: #eee;
 }
 
 .login-container {
-    left: 50%;
-    position: fixed;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 30%;
-    align-content: center;
+    align-self: center;
     border-radius: 15px;
     padding: 20px;
     padding-bottom: 35px;
     background-color: rgba(50, 50, 50, 0.75);
+    width: 100%;
+    max-width: 550px;
+    margin: auto;
 }
 
 .login-header {
@@ -143,6 +140,10 @@
     float: left;
 }
 
+.navbar-spacer {
+    height: 60px;
+}
+
 #navbar-barcode-li {
     border-left: none;
     border-right: none;
@@ -176,10 +177,6 @@
 
 .glyphicon-right {
     float: right;
-}
-
-.starred-part {
-    color: #ffbb00;
 }
 
 .red-cell {
@@ -297,8 +294,6 @@
     vertical-align: middle;
     margin: 1px;
     padding: 2px;
-    background: #eee;
-    border: 1px solid #eee;
     border-radius: 3px;
 }
 
@@ -310,7 +305,13 @@
     transform: translate(0%, -25%);
 }
   
-.filter-list .close:hover {background: #bbb;}
+.filter-list .close:hover {
+    background: #bbb;
+}
+
+.filter-list .form-control {
+    width: initial;
+}
 
 .filter-tag {
     display: inline-block;
@@ -318,14 +319,18 @@
     zoom: 1;
     padding-left: 3px;
     padding-right: 3px;
-    padding-top: 2px;
-    padding-bottom: 2px;
     border: 1px solid #aaa;
     border-radius: 3px;
     background: #eee;
     margin: 1px;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+.filter-button {
+    padding: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 .filter-input {
@@ -539,7 +544,6 @@
 .inventree-body {
     width: 100%;
     padding: 5px;
-    margin-top: 10px;
 }
 
 .inventree-pre-content {
@@ -556,8 +560,10 @@
     transition: 0.1s;
 }
 
-.body {
-    padding-top: 50px;
+.search-autocomplete-item {
+    border-top: 1px solid #EEE;
+    margin-bottom: 2px;
+    overflow-x: hidden;
 }
 
 .modal {
@@ -740,13 +746,7 @@ input[type="submit"] {
 }
 
 .notification-area {
-    position: fixed;
-    top: 0px;
-    margin-top: 20px;
-    width: 100%;
-    padding: 20px;
-    z-index: 5000;
-    pointer-events: none; /* Prevent this div from blocking links underneath */
+    opacity: 0.8;
 }
 
 .notes {
@@ -756,7 +756,6 @@ input[type="submit"] {
 }
 
 .alert {
-    display: none;
     border-radius: 5px;
     opacity: 0.9;
     pointer-events: all;
@@ -766,9 +765,8 @@ input[type="submit"] {
     display: block;
 }
 
-.btn {
-    margin-left: 2px;
-    margin-right: 2px;
+.navbar .btn {
+    margin-left: 5px;
 }
 
 .btn-secondary {

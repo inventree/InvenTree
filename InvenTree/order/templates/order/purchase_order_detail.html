@@ -14,7 +14,7 @@
 
 <div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Purchase Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -37,9 +37,7 @@
     </div>
     <div class='panel-content'>
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='filter-list' id='filter-list-purchase-order-lines'>
-                <!-- An empty div in which the filter list will be constructed-->
-            </div>
+            {% include "filter_list.html" with id="order-lines" %}
         </div>
         
         <table class='table table-striped table-condensed' id='po-line-table' data-toolbar='#order-toolbar-buttons'>
@@ -52,13 +50,13 @@
         <h4>{% trans "Received Items" %}</h4>
     </div>
     <div class='panel-content'>
-        {% include "stock_table.html" with prevent_new_stock=True %}
+        {% include "stock_table.html" %}
     </div>
 </div>
 
 <div class='panel panel-hidden' id='panel-order-attachments'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Attachments" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>

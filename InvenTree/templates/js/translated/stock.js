@@ -4,9 +4,6 @@
 
 /* globals
     attachSelect,
-    enableField,
-    clearField,
-    clearFieldOptions,
     closeModal,
     constructField,
     constructFormBody,
@@ -33,10 +30,8 @@
     printStockItemLabels,
     printTestReports,
     renderLink,
-    reloadFieldOptions,
     scanItemsIntoLocation,
     showAlertDialog,
-    setFieldValue,
     setupFilterList,
     showApiError,
     stockStatusDisplay,
@@ -44,6 +39,10 @@
 
 /* exported
     createNewStockItem,
+    createStockLocation,
+    duplicateStockItem,
+    editStockItem,
+    editStockLocation,
     exportStock,
     loadInstalledInTable,
     loadStockLocationTable,
@@ -51,20 +50,318 @@
     loadStockTestResultsTable,
     loadStockTrackingTable,
     loadTableFilters,
-    locationFields,
     removeStockRow,
+    serializeStockItem,
+    stockItemFields,
+    stockLocationFields,
     stockStatusCodes,
 */
 
 
-function locationFields() {
-    return {
+/*
+ * Launches a modal form to serialize a particular StockItem
+ */
+
+function serializeStockItem(pk, options={}) {
+
+    var url = `/api/stock/${pk}/serialize/`;
+
+    options.method = 'POST';
+    options.title = '{% trans "Serialize Stock Item" %}';
+
+    options.fields = {
+        quantity: {},
+        serial_numbers: {
+            icon: 'fa-hashtag',
+        },
+        destination: {
+            icon: 'fa-sitemap',
+        },
+        notes: {},
+    };
+
+    constructForm(url, options);
+}
+
+
+function stockLocationFields(options={}) {
+    var fields = {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
         },
         name: {},
         description: {},
     };
+
+    if (options.parent) {
+        fields.parent.value = options.parent;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Launch an API form to edit a stock location
+ */
+function editStockLocation(pk, options={}) {
+
+    var url = `/api/stock/location/${pk}/`;
+
+    options.fields = stockLocationFields(options);
+
+    constructForm(url, options);
+}
+
+
+/*
+ * Launch an API form to create a new stock location
+ */
+function createStockLocation(options={}) {
+
+    var url = '{% url "api-location-list" %}';
+
+    options.method = 'POST';
+    options.fields = stockLocationFields(options);
+    options.title = '{% trans "New Stock Location" %}';
+
+    constructForm(url, options);
+}
+
+
+function stockItemFields(options={}) {
+    var fields = {
+        part: {
+            // Hide the part field unless we are "creating" a new stock item
+            hidden: !options.create,
+            onSelect: function(data, field, opts) {
+                // Callback when a new "part" is selected
+
+                // If we are "creating" a new stock item,
+                // change the available fields based on the part properties
+                if (options.create) {
+
+                    // If a "trackable" part is selected, enable serial number field
+                    if (data.trackable) {
+                        enableFormInput('serial_numbers', opts);
+                        // showFormInput('serial_numbers', opts);
+                    } else {
+                        clearFormInput('serial_numbers', opts);
+                        disableFormInput('serial_numbers', opts);
+                    }
+
+                    // Enable / disable fields based on purchaseable status
+                    if (data.purchaseable) {
+                        enableFormInput('supplier_part', opts);
+                        enableFormInput('purchase_price', opts);
+                        enableFormInput('purchase_price_currency', opts);
+                    } else {
+                        clearFormInput('supplier_part', opts);
+                        clearFormInput('purchase_price', opts);
+                        
+                        disableFormInput('supplier_part', opts);
+                        disableFormInput('purchase_price', opts);
+                        disableFormInput('purchase_price_currency', opts);
+                    }
+                }
+            }
+        },
+        supplier_part: {
+            icon: 'fa-building',
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+            },
+            adjustFilters: function(query, opts) {
+                var part = getFormFieldValue('part', {}, opts);
+
+                if (part) {
+                    query.part = part;
+                }
+
+                return query;
+            }
+        },
+        location: {
+            icon: 'fa-sitemap',
+        },
+        quantity: {
+            help_text: '{% trans "Enter initial quantity for this stock item" %}',
+        },
+        serial_numbers: {
+            icon: 'fa-hashtag',
+            type: 'string',
+            label: '{% trans "Serial Numbers" %}',
+            help_text: '{% trans "Enter serial numbers for new stock (or leave blank)" %}',
+            required: false,
+        },
+        serial: {
+            icon: 'fa-hashtag',
+        },
+        status: {},
+        expiry_date: {},
+        batch: {},
+        purchase_price: {
+            icon: 'fa-dollar-sign',
+        },
+        purchase_price_currency: {},
+        packaging: {
+            icon: 'fa-box',
+        },
+        link: {
+            icon: 'fa-link',
+        },
+        owner: {},
+        delete_on_deplete: {},
+    };
+
+    if (options.create) {
+        // Use special "serial numbers" field when creating a new stock item
+        delete fields['serial'];
+    } else {
+        // These fields cannot be edited once the stock item has been created
+        delete fields['serial_numbers'];
+        delete fields['quantity'];
+        delete fields['location'];
+    }
+
+    // Remove stock expiry fields if feature is not enabled
+    if (!global_settings.STOCK_ENABLE_EXPIRY) {
+        delete fields['expiry_date'];
+    }
+
+    // Remove ownership field if feature is not enanbled
+    if (!global_settings.STOCK_OWNERSHIP_CONTROL) {
+        delete fields['owner'];
+    }
+
+    return fields;
+}
+
+
+function stockItemGroups(options={}) {
+    return {
+
+    };
+}
+
+
+/*
+ * Launch a modal form to duplicate a given StockItem
+ */
+function duplicateStockItem(pk, options) {
+
+    // First, we need the StockItem informatino
+    inventreeGet(`/api/stock/${pk}/`, {}, {
+        success: function(data) {
+
+            // Do not duplicate the serial number
+            delete data['serial'];
+
+            options.data = data;
+            
+            options.create = true;
+            options.fields = stockItemFields(options);
+            options.groups = stockItemGroups(options);
+            
+            options.method = 'POST';
+            options.title = '{% trans "Duplicate Stock Item" %}';
+
+            constructForm('{% url "api-stock-list" %}', options);
+        }
+    });
+}
+
+
+/*
+ * Launch a modal form to edit a given StockItem
+ */
+function editStockItem(pk, options={}) {
+
+    var url = `/api/stock/${pk}/`;
+
+    options.create = false;
+
+    options.fields = stockItemFields(options);
+    options.groups = stockItemGroups(options);
+
+    options.title = '{% trans "Edit Stock Item" %}';
+    
+    // Query parameters for retrieving stock item data
+    options.params = {
+        part_detail: true,
+        supplier_part_detail: true,
+    };
+
+    // Augment the rendered form when we receive information about the StockItem
+    options.processResults = function(data, fields, options) {
+        if (data.part_detail.trackable) {
+            delete options.fields.delete_on_deplete;
+        } else {
+            // Remove serial number field if part is not trackable
+            delete options.fields.serial;
+        }
+
+        // Remove pricing fields if part is not purchaseable
+        if (!data.part_detail.purchaseable) {
+            delete options.fields.supplier_part;
+            delete options.fields.purchase_price;
+            delete options.fields.purchase_price_currency;
+        }
+    };
+
+    constructForm(url, options);
+}
+
+
+/*
+ * Launch an API form to contsruct a new stock item
+ */
+function createNewStockItem(options={}) {
+
+    var url = '{% url "api-stock-list" %}';
+
+    options.title = '{% trans "New Stock Item" %}';
+    options.method = 'POST';
+
+    options.create = true;
+
+    options.fields = stockItemFields(options);
+    options.groups = stockItemGroups(options);
+
+    if (!options.onSuccess) {
+        options.onSuccess = function(response) {
+            // If a single stock item has been created, follow it!
+            if (response.pk) {
+                var url = `/stock/item/${response.pk}/`;
+
+                addCachedAlert('{% trans "Created new stock item" %}', {
+                    icon: 'fas fa-boxes',
+                });
+
+                window.location.href = url;
+            } else {
+
+                // Multiple stock items have been created (i.e. serialized stock)
+                var details = `
+                <br>{% trans "Quantity" %}: ${response.quantity}
+                <br>{% trans "Serial Numbers" %}: ${response.serial_numbers}
+                `;
+
+                showMessage('{% trans "Created multiple stock items" %}', {
+                    icon: 'fas fa-boxes',
+                    details: details,
+                });
+
+                var table = options.table || '#stock-table';
+
+                // Reload the table
+                $(table).bootstrapTable('refresh');
+            }
+        };
+    }
+
+    constructForm(url, options);
 }
 
 
@@ -427,7 +724,7 @@ function adjustStock(action, items, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }
@@ -1416,12 +1713,21 @@ function loadStockTable(table, options) {
     });
 }
 
+
+/* 
+ * Display a table of stock locations
+ */
 function loadStockLocationTable(table, options) {
-    /* Display a table of stock locations */
 
     var params = options.params || {};
 
     var filterListElement = options.filterList || '#filter-list-location';
+
+    var tree_view = options.allowTreeView && inventreeLoad('location-tree-view') == 1;
+
+    if (tree_view) {
+        params.cascade = true;
+    }
 
     var filters = {};
 
@@ -1443,15 +1749,13 @@ function loadStockLocationTable(table, options) {
         filters[key] = params[key];
     }
 
-    var tree_view = inventreeLoad('location-tree-view') == 1;
-
     table.inventreeTable({
         treeEnable: tree_view,
-        rootParentId: options.params.parent,
+        rootParentId: tree_view ? options.params.parent : null,
         uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'name',
-        parentIdField: 'parent',
+        parentIdField: tree_view ? 'parent' : null,
         disablePagination: tree_view,
         sidePagination: tree_view ? 'client' : 'server',
         serverSort: !tree_view,
@@ -1465,28 +1769,31 @@ function loadStockLocationTable(table, options) {
         showColumns: true,
         onPostBody: function() {
 
-            tree_view = inventreeLoad('location-tree-view') == 1;
+            if (options.allowTreeView) {
 
-            if (tree_view) {
+                tree_view = inventreeLoad('location-tree-view') == 1;
 
-                $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                
-                table.treegrid({
-                    treeColumn: 1,
-                    onChange: function() {
-                        table.bootstrapTable('resetView');
-                    },
-                    onExpand: function() {
-                        
-                    }
-                });
-            } else {
-                $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-location-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                if (tree_view) {
+
+                    $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                    
+                    table.treegrid({
+                        treeColumn: 1,
+                        onChange: function() {
+                            table.bootstrapTable('resetView');
+                        },
+                        onExpand: function() {
+                            
+                        }
+                    });
+                } else {
+                    $('#view-location-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-location-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                }
             }
         },
-        buttons: [
+        buttons: options.allowTreeView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1525,7 +1832,7 @@ function loadStockLocationTable(table, options) {
                     );
                 }
             }
-        ],
+        ] : [],
         columns: [
             {
                 checkbox: true,
@@ -1797,79 +2104,6 @@ function loadStockTrackingTable(table, options) {
             reload: true,
         });
     });
-}
-
-
-function createNewStockItem(options) {
-    /* Launch a modal form to create a new stock item.
-     * 
-     * This is really just a helper function which calls launchModalForm,
-     * but it does get called a lot, so here we are ...
-     */
-
-    // Add in some funky options
-
-    options.callback = [
-        {   
-            field: 'part',
-            action: function(value) {
-
-                if (!value) {
-                    // No part chosen
-                    
-                    clearFieldOptions('supplier_part');
-                    enableField('serial_numbers', false);
-                    enableField('purchase_price_0', false);
-                    enableField('purchase_price_1', false);
-
-                    return;
-                }
-
-                // Reload options for supplier part
-                reloadFieldOptions(
-                    'supplier_part',
-                    {
-                        url: '{% url "api-supplier-part-list" %}',
-                        params: {
-                            part: value,
-                            pretty: true,
-                        },
-                        text: function(item) {
-                            return item.pretty_name;
-                        }
-                    }
-                );
-
-                // Request part information from the server
-                inventreeGet(
-                    `/api/part/${value}/`, {},
-                    {
-                        success: function(response) {
-
-                            // Disable serial number field if the part is not trackable
-                            enableField('serial_numbers', response.trackable);
-                            clearField('serial_numbers');
-
-                            enableField('purchase_price_0', response.purchaseable);
-                            enableField('purchase_price_1', response.purchaseable);
-
-                            // Populate the expiry date
-                            if (response.default_expiry <= 0) {
-                                // No expiry date
-                                clearField('expiry_date');
-                            } else {
-                                var expiry = moment().add(response.default_expiry, 'days');
-
-                                setFieldValue('expiry_date', expiry.format('YYYY-MM-DD'));
-                            }
-                        }
-                    }
-                );
-            }
-        },
-    ];
-
-    launchModalForm('{% url "stock-item-create" %}', options);
 }
 
 

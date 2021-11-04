@@ -364,23 +364,21 @@ class StockItemTest(StockAPITestCase):
                 'part': 1,
                 'location': 1,
             },
-            expected_code=201,
+            expected_code=400
         )
 
-        # Item should have been created with default quantity
-        self.assertEqual(response.data['quantity'], 1)
+        self.assertIn('Quantity is required', str(response.data))
         
         # POST with quantity and part and location
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 1,
                 'location': 1,
                 'quantity': 10,
-            }
+            },
+            expected_code=201
         )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_default_expiry(self):
         """
