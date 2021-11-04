@@ -7,8 +7,6 @@
     closeModal,
     constructField,
     constructFormBody,
-    disableField,
-    enableField,
     getFormFieldValue,
     global_settings,
     handleFormErrors,
@@ -80,7 +78,7 @@ function serializeStockItem(pk, options={}) {
             icon: 'fa-sitemap',
         },
         notes: {},
-    }
+    };
 
     constructForm(url, options);
 }

@@ -7,8 +7,6 @@ from django.contrib.auth.models import Group
 
 from common.models import InvenTreeSetting
 
-from datetime import datetime, timedelta
-
 
 class StockViewTestCase(TestCase):
 
