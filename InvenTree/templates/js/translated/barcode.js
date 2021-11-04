@@ -36,7 +36,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
         <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
             <div class='input-group'>
-                <span class='input-group-addon'>
+                <span class='input-group-text'>
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
@@ -59,7 +59,7 @@ function makeNotesField(options={}) {
         <label class='control-label' for='notes'>{% trans "Notes" %}</label>
         <div class='controls'>
             <div class='input-group'>
-                <span class='input-group-addon'>
+                <span class='input-group-text'>
                     <span class='fas fa-sticky-note'></span>
                 </span>
                 <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='${placeholder}'>

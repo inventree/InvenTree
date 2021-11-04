@@ -158,14 +158,13 @@ function inventreeDocReady() {
             create: function() {
                 $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
 
-                    var html = `<a href='/part/${item.id}/'><span>`;
-
-                    html += `<img class='hover-img-thumb' src='`;
-                    html += item.thumbnail || `/static/img/blank_image.png`;
-                    html += `'> `;
-                    html += item.label;
-
-                    html += '</span>';
+                    var html = `
+                    <div class='search-autocomplete-item' title='${item.data.description}'>
+                        <a href='/part/${item.id}/'>
+                            <span style='padding-right: 10px;'><img class='hover-img-thumb' src='${item.thumbnail || "/static/img/blank_image.png"}'> ${item.label}</span>
+                        </a>
+                        <span class='flex' style='flex-grow: 1;'></span>
+                    `;
                     
                     if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
                         html += partStockLabel(
@@ -176,7 +175,7 @@ function inventreeDocReady() {
                         );
                     }
 
-                    html += '</a>';
+                    html += '</div>';
 
                     return $('<li>').append(html).appendTo(ul);
                 };
@@ -188,6 +187,10 @@ function inventreeDocReady() {
             classes: {
                 'ui-autocomplete': 'dropdown-menu search-menu',
             },
+            position: {
+                my : "right top",
+                at: "right bottom"
+            }
         });
     }
 
