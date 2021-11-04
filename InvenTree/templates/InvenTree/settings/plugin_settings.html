@@ -48,7 +48,7 @@
             {% endif %}
         </table>
 
-        {% if plugin.is_package==False %}
+        {% if plugin.is_package == False %}
         <p>{% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}</p>
         {% endif %}
     </div>
@@ -56,7 +56,18 @@
         <h4>{% trans "Package information" %}</h4>
         <table class='table table-striped table-condensed'>
             <col width='25'>
-            {% if plugin.is_package==False %}
+            <tr>
+                <td></td>
+                <td>{% trans "Installation method" %}</td>
+                <td>
+                    {% if plugin.is_package %}
+                    {% trans "This plugin was installed as a package" %}
+                    {% else %}
+                    {% trans "This plugin was found in a local InvenTree path" %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% if plugin.is_package == False %}
             <tr>
                 <td><span class='fas fa-user'></span></td>
                 <td>{% trans "Commit Author" %}</td><td>{{ plugin.package.author }} - {{ plugin.package.mail }}{% include "clip.html" %}</td>
@@ -72,10 +83,6 @@
             <tr>
                 <td><span class='fas fa-envelope'></span></td>
                 <td>{% trans "Commit Message" %}</td><td>{{ plugin.package.message }}{% include "clip.html" %}</td>
-            </tr>
-            {% else %}
-            <tr>
-                <td>{% trans "This plugin was installed as a package" %}</td>
             </tr>
             {% endif %}
             <tr>
