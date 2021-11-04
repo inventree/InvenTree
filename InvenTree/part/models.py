@@ -1324,6 +1324,17 @@ class Part(MPTTModel):
 
         return query
 
+    def get_stock_count(self, include_variants=True):
+        """
+        Return the total "in stock" count for this part
+        """
+
+        entries = self.stock_entries(in_stock=True, include_variants=include_variants)
+
+        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['t']
+
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
@@ -1332,11 +1343,7 @@ class Part(MPTTModel):
         - If this part is a "template" (variants exist) then these are counted too
         """
 
-        entries = self.stock_entries(in_stock=True)
-
-        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
-
-        return query['t']
+        return self.get_stock_count()
 
     def get_bom_item_filter(self, include_inherited=True):
         """
@@ -2091,17 +2098,20 @@ class Part(MPTTModel):
         Returns True if the total stock for this part is less than the minimum stock level
         """
         
-        return self.total_stock <= self.minimum_stock
+        return self.get_stock_count() < self.minimum_stock
 
 
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
-def after_save_part(sender, instance: Part, **kwargs):
+def after_save_part(sender, instance: Part, created, **kwargs):
     """
     Function to be executed after a Part is saved
     """
 
-    # Run this check in the background
-    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
+    if not created:
+        # Check part stock only if we are *updating* the part (not creating it)
+
+        # Run this check in the background
+        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
 
 
 def attach_file(instance, filename):

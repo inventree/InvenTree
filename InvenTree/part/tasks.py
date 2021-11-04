@@ -50,7 +50,7 @@ def notify_low_stock(part: part.models.Part):
             'link': InvenTree.helpers.construct_absolute_url(part.get_absolute_url()),
         }
 
-        subject = _(f'[InvenTree] {part.name} is low on stock')
+        subject = "[InvenTree] " + _("Low stock notification")
         html_message = render_to_string('email/low_stock_notification.html', context)
         recipients = emails.values_list('email', flat=True)
 
