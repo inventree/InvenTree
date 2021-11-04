@@ -12,6 +12,7 @@ from allauth.account.models import EmailAddress
 import build.models
 import InvenTree.helpers
 import InvenTree.tasks
+import part.models as part_models
 
 
 logger = logging.getLogger('inventree')
@@ -27,7 +28,18 @@ def check_build_stock(build: build.models.Build):
 
     lines = []
 
-    for bom_item in build.part.get_bom_items():
+    if not build:
+        logger.error("Invalid build passed to 'build.tasks.check_build_stock'")
+        return
+
+    try:
+        part = build.part
+    except part_models.Part.DoesNotExist:
+        # Note: This error may be thrown during unit testing...
+        logger.error("Invalid build.part passed to 'build.tasks.check_build_stock'")
+        return
+
+    for bom_item in part.get_bom_items():
 
         sub_part = bom_item.sub_part
 
