@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-04 20:38+0000\n"
-"PO-Revision-Date: 2021-11-04 21:50\n"
+"PO-Revision-Date: 2021-11-04 22:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -976,7 +976,7 @@ msgstr ""
 
 #: build/tasks.py:92
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Bestand für Bauauftrag erforderlich"
 
 #: build/templates/build/build_base.html:38
 #: order/templates/order/order_base.html:28
@@ -986,7 +986,7 @@ msgstr "Aktionen drucken"
 
 #: build/templates/build/build_base.html:42
 msgid "Print build order report"
-msgstr ""
+msgstr "Bauauftragsbericht drucken"
 
 #: build/templates/build/build_base.html:48
 msgid "Build actions"
@@ -1164,7 +1164,7 @@ msgstr "Ziel-Lagerort nicht angegeben"
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:640
 msgid "Allocated Parts"
-msgstr ""
+msgstr "Zugewiesene Teile"
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:298
@@ -1250,11 +1250,11 @@ msgstr "Neues Endprodukt anlegen"
 
 #: build/templates/build/detail.html:232
 msgid "New Build Output"
-msgstr ""
+msgstr "Neues Endprodukt"
 
 #: build/templates/build/detail.html:246
 msgid "Output Actions"
-msgstr ""
+msgstr "Endproduktaktionen"
 
 #: build/templates/build/detail.html:250
 msgid "Complete selected items"
@@ -1679,7 +1679,7 @@ msgstr "Preis in Stückliste anzeigen"
 
 #: common/models.py:676
 msgid "Include pricing information in BOM tables"
-msgstr ""
+msgstr "Preisinformationen in Stücklisten Tabellen einbeziehen"
 
 #: common/models.py:682
 msgid "Show related parts"
@@ -1715,11 +1715,11 @@ msgstr "Interner Preis (falls vorhanden) in Stücklisten-Preisberechnungen verwe
 
 #: common/models.py:710
 msgid "Part Name Display Format"
-msgstr ""
+msgstr "Anzeigeformat für Teilenamen"
 
 #: common/models.py:711
 msgid "Format to display the part name"
-msgstr ""
+msgstr "Format für den Namen eines Teiles"
 
 #: common/models.py:718 templates/stats.html:25
 msgid "Debug Mode"
@@ -1831,11 +1831,11 @@ msgstr "Präfix für Bestellungs-Referenz"
 
 #: common/models.py:810
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Passwort vergessen aktivieren"
 
 #: common/models.py:811
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Passwort-vergessen-Funktion auf den Anmeldeseiten aktivieren"
 
 #: common/models.py:816
 msgid "Enable registration"
@@ -1843,7 +1843,7 @@ msgstr "Anmeldung erlauben"
 
 #: common/models.py:817
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Selbstregistrierung für Benutzer auf den Anmeldeseiten aktivieren"
 
 #: common/models.py:822
 msgid "Enable SSO"
@@ -1851,7 +1851,7 @@ msgstr "SSO aktivieren"
 
 #: common/models.py:823
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "SSO auf den Anmeldeseiten aktivieren"
 
 #: common/models.py:828
 msgid "Email required"
@@ -1895,19 +1895,19 @@ msgstr "Gruppe der neue Benutzer bei der Registrierung zugewiesen werden"
 
 #: common/models.py:878
 msgid "Show subscribed parts"
-msgstr ""
+msgstr "Abonnierte Teile anzeigen"
 
 #: common/models.py:879
 msgid "Show subscribed parts on the homepage"
-msgstr ""
+msgstr "Abonnierte Teile auf der Startseite anzeigen"
 
 #: common/models.py:884
 msgid "Show subscribed categories"
-msgstr ""
+msgstr "Abonnierte Kategorien anzeigen"
 
 #: common/models.py:885
 msgid "Show subscribed part categories on the homepage"
-msgstr ""
+msgstr "Abonnierte Teilkategorien auf der Startseite anzeigen"
 
 #: common/models.py:890
 msgid "Show latest parts"
@@ -2095,11 +2095,11 @@ msgstr "Benutze die Esc-Taste, um Formulare zu schließen"
 
 #: common/models.py:1037
 msgid "Fixed Navbar"
-msgstr ""
+msgstr "Fixierter Navigationsleiste"
 
 #: common/models.py:1038
 msgid "InvenTree navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "Position der InvenTree Navigationsleiste am oberen Bildschirmrand fixieren"
 
 #: common/models.py:1095 company/forms.py:43
 msgid "Price break quantity"
@@ -3185,7 +3185,7 @@ msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
 
 #: order/templates/order/order_base.html:32
 msgid "Print purchase order report"
-msgstr ""
+msgstr "Bestellbericht drucken"
 
 #: order/templates/order/order_base.html:33
 #: order/templates/order/sales_order_base.html:43
@@ -3200,7 +3200,7 @@ msgstr ""
 #: order/templates/order/order_base.html:43
 #: order/templates/order/sales_order_base.html:56
 msgid "Edit order"
-msgstr ""
+msgstr "Auftrag bearbeiten"
 
 #: order/templates/order/order_base.html:54
 msgid "Receive items"
@@ -4134,7 +4134,7 @@ msgstr ""
 
 #: part/models.py:2861
 msgid "Substitute part"
-msgstr ""
+msgstr "Ersatzteil"
 
 #: part/models.py:2872
 msgid "Part 1"
@@ -4154,7 +4154,7 @@ msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist
 
 #: part/tasks.py:53
 msgid "Low stock notification"
-msgstr ""
+msgstr "Benachrichtigungen über geringen Lagerbestand"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -4222,31 +4222,31 @@ msgstr "Damit wird jede Zeile der Stückliste kontrolliert"
 
 #: part/templates/part/category.html:24 part/templates/part/category.html:28
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "Sie haben Benachrichtigungen für diese Kategorie abonniert"
 
 #: part/templates/part/category.html:32
 msgid "Subscribe to nofications for this category"
-msgstr ""
+msgstr "Benachrichtigungen für diese Kategorie abonnieren"
 
 #: part/templates/part/category.html:38
 msgid "Category Actions"
-msgstr ""
+msgstr "Kategorieaktionen"
 
 #: part/templates/part/category.html:43
 msgid "Edit category"
-msgstr ""
+msgstr "Kategorie bearbeiten"
 
 #: part/templates/part/category.html:44
 msgid "Edit Category"
-msgstr ""
+msgstr "Kategorie bearbeiten"
 
 #: part/templates/part/category.html:48
 msgid "Delete category"
-msgstr ""
+msgstr "Kategorie löschen"
 
 #: part/templates/part/category.html:49
 msgid "Delete Category"
-msgstr ""
+msgstr "Kategorie löschen"
 
 #: part/templates/part/category.html:57
 msgid "Create new part category"
@@ -4254,11 +4254,11 @@ msgstr "Teil-Kategorie anlegen"
 
 #: part/templates/part/category.html:58
 msgid "New Category"
-msgstr ""
+msgstr "Neue Kategorie"
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
-msgstr ""
+msgstr "Oberste Teil-Kategorie"
 
 #: part/templates/part/category.html:79
 msgid "Category Path"
@@ -4381,11 +4381,11 @@ msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% übereinstimmend)"
 
 #: part/templates/part/detail.html:16
 msgid "Part Details"
-msgstr ""
+msgstr "Teile-Details"
 
 #: part/templates/part/detail.html:66
 msgid "Minimum stock level"
-msgstr ""
+msgstr "Minimaler Lagerbestand"
 
 #: part/templates/part/detail.html:97
 msgid "Latest Serial Number"
@@ -4551,15 +4551,15 @@ msgstr "Teileliste"
 
 #: part/templates/part/part_base.html:27
 msgid "You are subscribed to nofications for this part"
-msgstr ""
+msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
 
 #: part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
 
 #: part/templates/part/part_base.html:35
 msgid "Subscribe to nofications for this part"
-msgstr ""
+msgstr "Benachrichtigungen für dieses Teil abonnieren"
 
 #: part/templates/part/part_base.html:43
 #: stock/templates/stock/item_base.html:28
@@ -5146,7 +5146,7 @@ msgstr "fehlgeschlagen"
 
 #: stock/api.py:418
 msgid "Quantity is required"
-msgstr ""
+msgstr "Menge ist erforderlich"
 
 #: stock/forms.py:91 stock/forms.py:265 stock/models.py:557
 #: stock/templates/stock/item_base.html:376
@@ -5406,11 +5406,11 @@ msgstr ""
 #: stock/serializers.py:291
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
-msgstr ""
+msgstr "Anzahl darf nicht die verfügbare Menge überschreiten ({q})"
 
 #: stock/serializers.py:297
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "Seriennummern für neue Teile eingeben"
 
 #: stock/serializers.py:308 stock/serializers.py:676
 msgid "Destination stock location"
@@ -5418,7 +5418,7 @@ msgstr "Ziel-Lagerbestand"
 
 #: stock/serializers.py:315
 msgid "Optional note field"
-msgstr ""
+msgstr "Optionales Notizfeld"
 
 #: stock/serializers.py:328
 msgid "Serial numbers cannot be assigned to this part"
@@ -5938,11 +5938,11 @@ msgstr "Index"
 
 #: templates/InvenTree/index.html:88
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Abonnierte Teile"
 
 #: templates/InvenTree/index.html:98
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Abonnierte Kategorien"
 
 #: templates/InvenTree/index.html:108
 msgid "Latest Parts"
@@ -6181,7 +6181,7 @@ msgstr "E-Mail-Adresse hinzufügen"
 
 #: templates/InvenTree/settings/user.html:108
 msgid "Enter e-mail address"
-msgstr ""
+msgstr "Geben Sie Ihre Email-Adresse ein"
 
 #: templates/InvenTree/settings/user.html:110
 msgid "Add Email"
@@ -6197,7 +6197,7 @@ msgstr "Sie können sich mit einem der folgenden Drittanbieterkonten bei Ihrem K
 
 #: templates/InvenTree/settings/user.html:159
 msgid "There are no social network accounts connected to your InvenTree account"
-msgstr ""
+msgstr "Es sind keine sozialen Netzwerke mit Ihrem InvenTree-Konto verbunden"
 
 #: templates/InvenTree/settings/user.html:164
 msgid "Add a 3rd Party Account"
@@ -6209,7 +6209,7 @@ msgstr "Anzeige-Einstellungen"
 
 #: templates/InvenTree/settings/user.html:185
 msgid "Select theme"
-msgstr ""
+msgstr "Stil auswählen"
 
 #: templates/InvenTree/settings/user.html:195
 msgid "Set Theme"
@@ -6221,7 +6221,7 @@ msgstr "Spracheinstellung"
 
 #: templates/InvenTree/settings/user.html:212
 msgid "Select language"
-msgstr ""
+msgstr "Sprache festlegen"
 
 #: templates/InvenTree/settings/user.html:225
 #, python-format
@@ -6251,7 +6251,7 @@ msgstr "Möchten Sie die ausgewählte E-Mail-Adresse wirklich entfernen?"
 
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
-msgstr ""
+msgstr "Anzeigeeinstellungen"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -6397,7 +6397,7 @@ msgstr "Möchtest Sie sich wirklich abmelden?"
 
 #: templates/account/logout.html:18
 msgid "Back to Site"
-msgstr ""
+msgstr "Zurück zur Website"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -6427,7 +6427,7 @@ msgstr "Der Link zum Zurücksetzen des Kennworts war ungültig, da er bereits ve
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
-msgstr ""
+msgstr "Passwort ändern"
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
@@ -6448,7 +6448,7 @@ msgstr "Oder verwenden Sie einen SSO-Anbieter für die Anmeldung"
 
 #: templates/admin_button.html:2
 msgid "View in administration panel"
-msgstr ""
+msgstr "Im Administrationsbereich anzeigen"
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
@@ -6469,7 +6469,7 @@ msgstr ""
 
 #: templates/email/build_order_required_stock.html:18
 msgid "Required Quantity"
-msgstr ""
+msgstr "Benötigte Menge"
 
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
@@ -6481,28 +6481,28 @@ msgstr "Verfügbar"
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:31
 msgid "You are receiving this email because you are subscribed to notifications for this part "
-msgstr ""
+msgstr "Sie erhalten diese E-Mail, weil Sie Benachrichtigungen für diesen Teil abonniert haben "
 
 #: templates/email/email.html:35
 msgid "InvenTree version"
-msgstr ""
+msgstr "InvenTree-Version"
 
 #: templates/email/low_stock_notification.html:7
 #, python-format
 msgid " The available stock for %(part)s has fallen below the configured minimum level"
-msgstr ""
+msgstr " Der verfügbare Bestand für %(part)s ist unter das konfigurierte Mindestniveau gefallen"
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
-msgstr ""
+msgstr "Klicken Sie auf den folgenden Link, um diesen Teil anzuzeigen"
 
 #: templates/email/low_stock_notification.html:17
 msgid "Total Stock"
-msgstr ""
+msgstr "Gesamtbestand"
 
 #: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
-msgstr ""
+msgstr "Mindestmenge"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -6772,7 +6772,7 @@ msgstr "Barcode entspricht keinem Lagerort"
 
 #: templates/js/translated/bom.js:183
 msgid "Remove substitute part"
-msgstr ""
+msgstr "Ersatzteil entfernen"
 
 #: templates/js/translated/bom.js:225
 msgid "Select and add a new variant item using the input below"
@@ -6780,27 +6780,27 @@ msgstr ""
 
 #: templates/js/translated/bom.js:236
 msgid "Are you sure you wish to remove this substitute part link?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie dieses Ersatzteil entfernen möchten?"
 
 #: templates/js/translated/bom.js:242
 msgid "Remove Substitute Part"
-msgstr ""
+msgstr "Ersatzteil entfernen"
 
 #: templates/js/translated/bom.js:281
 msgid "Add Substitute"
-msgstr ""
+msgstr "Ersatzteil hinzufügen"
 
 #: templates/js/translated/bom.js:282
 msgid "Edit BOM Item Substitutes"
-msgstr ""
+msgstr "Stücklisten Ersatzteile bearbeiten"
 
 #: templates/js/translated/bom.js:401
 msgid "Substitutes Available"
-msgstr ""
+msgstr "Ersatzteile verfügbar"
 
 #: templates/js/translated/bom.js:405 templates/js/translated/build.js:1104
 msgid "Variant stock allowed"
-msgstr ""
+msgstr "Varianten erlaubt"
 
 #: templates/js/translated/bom.js:410
 msgid "Open subassembly"
@@ -6808,7 +6808,7 @@ msgstr "Unterbaugruppe öffnen"
 
 #: templates/js/translated/bom.js:482
 msgid "Substitutes"
-msgstr ""
+msgstr "Ersatzteile"
 
 #: templates/js/translated/bom.js:497
 msgid "Purchase Price Range"
@@ -6837,7 +6837,7 @@ msgstr "Diese Position wurde kontrolliert"
 
 #: templates/js/translated/bom.js:617
 msgid "Edit substitute parts"
-msgstr ""
+msgstr "Ersatzteile bearbeiten"
 
 #: templates/js/translated/bom.js:619 templates/js/translated/bom.js:792
 msgid "Edit BOM Item"
@@ -6853,7 +6853,7 @@ msgstr "Keine Stücklisten-Position(en) gefunden"
 
 #: templates/js/translated/bom.js:770
 msgid "Are you sure you want to delete this BOM item?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie diese Stücklisten-Position löschen wollen?"
 
 #: templates/js/translated/build.js:71
 msgid "Edit Build Order"
@@ -6889,11 +6889,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:213
 msgid "Select Build Outputs"
-msgstr ""
+msgstr "Endprodukte auswählen"
 
 #: templates/js/translated/build.js:214
 msgid "At least one build output must be selected"
-msgstr ""
+msgstr "Mindestens ein Endprodukt muss ausgewählt werden"
 
 #: templates/js/translated/build.js:268
 msgid "Output"
@@ -6913,7 +6913,7 @@ msgstr "Standort nicht angegeben"
 
 #: templates/js/translated/build.js:596
 msgid "No active build outputs found"
-msgstr ""
+msgstr "Keine aktiven Endprodukte gefunden"
 
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1753
 #: templates/js/translated/order.js:1305
@@ -6939,7 +6939,7 @@ msgstr "benötigtes Teil"
 
 #: templates/js/translated/build.js:1100
 msgid "Substitute parts available"
-msgstr ""
+msgstr "Ersatzteile verfügbar"
 
 #: templates/js/translated/build.js:1117
 msgid "Quantity Per"
@@ -7579,19 +7579,19 @@ msgstr "Teil bearbeiten"
 
 #: templates/js/translated/part.js:401
 msgid "You are subscribed to notifications for this item"
-msgstr ""
+msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
 
 #: templates/js/translated/part.js:403
 msgid "You have subscribed to notifications for this item"
-msgstr ""
+msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
 
 #: templates/js/translated/part.js:408
 msgid "Subscribe to notifications for this item"
-msgstr ""
+msgstr "Benachrichtigungen für dieses Teil abonnieren"
 
 #: templates/js/translated/part.js:410
 msgid "You have unsubscribed to notifications for this item"
-msgstr ""
+msgstr "Sie haben Benachrichtigungen für dieses Teil abgemeldet"
 
 #: templates/js/translated/part.js:439 templates/js/translated/part.js:524
 msgid "Trackable part"
@@ -7696,7 +7696,7 @@ msgstr "Einzelpreisdifferenz"
 
 #: templates/js/translated/stock.js:70
 msgid "Serialize Stock Item"
-msgstr ""
+msgstr "Lagerbestand serialisieren"
 
 #: templates/js/translated/stock.js:90
 msgid "Parent stock location"
@@ -7704,23 +7704,23 @@ msgstr "Übergeordneter Lagerort"
 
 #: templates/js/translated/stock.js:126
 msgid "New Stock Location"
-msgstr ""
+msgstr "Neuer Lagerstandort"
 
 #: templates/js/translated/stock.js:189
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Ausgangsmenge für diesen Lagerartikel eingeben"
 
 #: templates/js/translated/stock.js:195
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Seriennummern für neue Lagerartikel eingeben (oder leer lassen)"
 
 #: templates/js/translated/stock.js:338
 msgid "Created new stock item"
-msgstr ""
+msgstr "Neuer Lagerartikel erstellt"
 
 #: templates/js/translated/stock.js:351
 msgid "Created multiple stock items"
-msgstr ""
+msgstr "Mehrere Lagerartikel erstellt"
 
 #: templates/js/translated/stock.js:390
 msgid "Export Stock"
