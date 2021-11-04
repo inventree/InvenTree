@@ -27,6 +27,8 @@ admin.site.register(common.models.InvenTreeSetting, SettingsAdmin)
 admin.site.register(common.models.InvenTreeUserSetting, UserSettingsAdmin)
 admin.site.register(common.models.WebhookEndpoint, WebhookAdmin)
 admin.site.register(common.models.WebhookMessage, ImportExportModelAdmin)
+
+
 class NotificationEntryAdmin(admin.ModelAdmin):
 
     list_display = ('key', 'uid', 'updated', )
