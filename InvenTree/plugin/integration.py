@@ -352,8 +352,13 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
 
     def set_sign_values(self):
         """add the last commit of the plugins class file into plugins context"""
-        # fetch git log
-        commit = self.get_plugin_commit()
+        if self.is_package:
+            # is a package - no signing - no commit
+            commit = {}
+        else:
+            # fetch git log
+            commit = self.get_plugin_commit()
+
         # resolve state
         sign_state = getattr(GitStatus, commit['verified'], GitStatus.N)
 
