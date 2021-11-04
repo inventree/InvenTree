@@ -356,12 +356,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
 
     def set_package(self):
         """add packaging info of the plugins into plugins context"""
-        if self.is_package:
-            # is a package - no commit
-            package = self.get_package_metadata()
-        else:
-            # fetch git commit
-            package = self.get_package_commit()
+        package = self.get_package_metadata() if self.is_package else self.get_package_commit()
 
         # process date
         if package.get('date'):
