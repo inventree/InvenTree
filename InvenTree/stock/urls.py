@@ -45,8 +45,6 @@ stock_urls = [
     # Stock location
     url(r'^location/', include(location_urls)),
 
-    url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
-
     url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
 
     url(r'^track/', include(stock_tracking_urls)),

@@ -12,38 +12,38 @@ from django.conf.urls import url, include
 from django.http import JsonResponse
 from django.db.models import Q
 from django.db import transaction
+from django.utils.translation import ugettext_lazy as _
+
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
 from rest_framework import generics, filters
 
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as rest_filters
-
-from .models import StockLocation, StockItem
-from .models import StockItemTracking
-from .models import StockItemAttachment
-from .models import StockItemTestResult
-
-from part.models import BomItem, Part, PartCategory
-from part.serializers import PartBriefSerializer
+import common.settings
+import common.models
 
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
+
+from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
+from InvenTree.api import AttachmentMixin
+from InvenTree.filters import InvenTreeOrderingFilter
 
 from order.models import PurchaseOrder
 from order.models import SalesOrder, SalesOrderAllocation
 from order.serializers import POSerializer
 
-import common.settings
-import common.models
+from part.models import BomItem, Part, PartCategory
+from part.serializers import PartBriefSerializer
 
+from stock.models import StockLocation, StockItem
+from stock.models import StockItemTracking
+from stock.models import StockItemAttachment
+from stock.models import StockItemTestResult
 import stock.serializers as StockSerializers
-
-from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
-from InvenTree.api import AttachmentMixin
-from InvenTree.filters import InvenTreeOrderingFilter
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -411,7 +411,12 @@ class StockList(generics.ListCreateAPIView):
         # Check if a set of serial numbers was provided
         serial_numbers = data.get('serial_numbers', '')
 
-        quantity = data['quantity']
+        quantity = data.get('quantity', None)
+
+        if quantity is None:
+            raise ValidationError({
+                'quantity': _('Quantity is required'),
+            })
 
         notes = data.get('notes', '')
 
