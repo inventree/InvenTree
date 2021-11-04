@@ -159,9 +159,9 @@ function inventreeDocReady() {
                 $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
 
                     var html = `
-                    <div class=''>
+                    <div class='search-autocomplete-item' title='${item.data.description}'>
                         <a href='/part/${item.id}/'>
-                            <span><img class='hover-img-thumb' src='${item.thumbnail || "/static/img/blank_image.png"}'> ${item.label}</span>
+                            <span style='padding-right: 10px;'><img class='hover-img-thumb' src='${item.thumbnail || "/static/img/blank_image.png"}'> ${item.label}</span>
                         </a>
                         <span class='flex' style='flex-grow: 1;'></span>
                     `;
