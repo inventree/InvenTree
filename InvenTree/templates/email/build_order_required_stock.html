@@ -21,7 +21,9 @@
 
 {% for line in lines %}
 <tr style="height: 2.5rem; border-bottom: 1px solid">
-    <td style='padding-left: 1em;'><a href='{{ line.link }}'>{{ line.part.full_name }}</a></td>
+    <td style='padding-left: 1em;'>
+        <a href='{{ line.link }}'>{{ line.part.full_name }}</a>{% if part.description %} - <em>{{ part.description }}</em>{% endif %}
+    </td>
     <td style="text-align: center;">
         {% decimal line.required %} {% if line.part.units %}{{ line.part.units }}{% endif %}
     </td>

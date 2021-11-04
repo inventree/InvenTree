@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decimal import Decimal
 import logging
 
 from django.utils.translation import ugettext_lazy as _
@@ -39,7 +40,7 @@ def check_build_stock(build: build.models.Build):
 
         available = max(0, in_stock - allocated)
 
-        required = bom_item.quantity * build.quantity
+        required = Decimal(bom_item.quantity) * Decimal(build.quantity)
 
         if available < required:
             # There is not sufficient stock for this part
