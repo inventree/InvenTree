@@ -563,6 +563,7 @@
 .search-autocomplete-item {
     border-top: 1px solid #EEE;
     margin-bottom: 2px;
+    overflow-x: hidden;
 }
 
 .modal {
