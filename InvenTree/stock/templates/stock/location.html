@@ -308,12 +308,12 @@
 
     $('#item-create').click(function () {
         createNewStockItem({
-            follow: true,
+            table: '#stock-table',
             data: {
                 {% if location %}
                 location: {{ location.id }}
                 {% endif %}
-            }
+            },
         });
     });
 

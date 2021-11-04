@@ -904,19 +904,19 @@ function handleFormSuccess(response, options) {
 
     // Display any messages
     if (response && response.success) {
-        showAlertOrCache(response.success, 'success', cache);
+        showAlertOrCache(response.success, cache, {style: 'success'});
     }
     
     if (response && response.info) {
-        showAlertOrCache(response.info, 'info', cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
 
     if (response && response.warning) {
-        showAlertOrCache(response.warning, 'warning', cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
 
     if (response && response.danger) {
-        showAlertOrCache(response.danger, 'dagner', cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     if (options.onSuccess) {

@@ -317,6 +317,33 @@ function createNewStockItem(options={}) {
     options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
 
+    if (!options.onSuccess) {
+        options.onSuccess = function(response) {
+            // If a single stock item has been created, follow it!
+            if (response.pk) {
+                var url = `/stock/item/${pk}/`;
+
+                addCachedAlert('{% trans "Created stock item" %}', {
+                    icon: 'fas fa-boxes',
+                });
+
+                location.href = url;
+            } else {
+
+                var q = response.quantity;
+
+                showMessage('{% trans "Created stock items" %}', {
+                    icon: 'fas fa-boxes',
+                });
+
+                if (options.table) {
+                    // Reload the table
+                    $(options.table).bootstrapTable('refresh');
+                }
+            }
+        }
+    }
+
     constructForm(url, options);
 }
 
