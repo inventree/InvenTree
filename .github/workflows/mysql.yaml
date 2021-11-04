@@ -55,8 +55,7 @@ jobs:
           pip3 install mysqlclient
           invoke install
       - name: Run Tests
-        run: |
-          invoke test
+        run: invoke test
       - name: Data Import Export
         run: |
           invoke migrate
