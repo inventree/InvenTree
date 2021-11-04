@@ -8,15 +8,12 @@
 {% if link %}
 <p>{% trans "Click on the following link to view this part" %}: <a href="{{ link }}">{{ link }}</a></p>
 {% endif %}
-{% endblock %}
+{% endblock title %}
 
-{% block subtitle %}
-<p><em>{% blocktrans with part=part.name %}You are receiving this email because you are subscribed to notifications for this part {% endblocktrans %}.</em></p>
-{% endblock %}
 
 {% block body %}
 <tr style="height: 3rem; border-bottom: 1px solid">
-    <th>{% trans "Part Name" %}</th>
+    <th>{% trans "Part" %}</th>
     <th>{% trans "Total Stock" %}</th>
     <th>{% trans "Available" %}</th>
     <th>{% trans "Minimum Quantity" %}</th>
@@ -28,4 +25,8 @@
     <td style="text-align: center;">{% decimal part.available_stock %}</td>
     <td style="text-align: center;">{% decimal part.minimum_stock %}</td>
 </tr>
-{% endblock %}
+{% endblock body %}
+
+{% block footer_prefix %}
+<p><em>{% blocktrans with part=part.name %}You are receiving this email because you are subscribed to notifications for this part {% endblocktrans %}.</em></p>
+{% endblock footer_prefix %}
