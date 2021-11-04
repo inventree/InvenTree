@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 20:38+0000\n"
-"PO-Revision-Date: 2021-11-04 22:48\n"
+"POT-Creation-Date: 2021-11-04 23:44+0000\n"
+"PO-Revision-Date: 2021-11-04 23:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4225,8 +4225,8 @@ msgid "You are subscribed to notifications for this category"
 msgstr "Sie haben Benachrichtigungen für diese Kategorie abonniert"
 
 #: part/templates/part/category.html:32
-msgid "Subscribe to nofications for this category"
-msgstr "Benachrichtigungen für diese Kategorie abonnieren"
+msgid "Subscribe to notifications for this category"
+msgstr ""
 
 #: part/templates/part/category.html:38
 msgid "Category Actions"
@@ -4549,17 +4549,13 @@ msgstr "Teile aus Datei importieren"
 msgid "Part List"
 msgstr "Teileliste"
 
-#: part/templates/part/part_base.html:27
-msgid "You are subscribed to nofications for this part"
-msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
-
-#: part/templates/part/part_base.html:31
+#: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
 msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
 
 #: part/templates/part/part_base.html:35
-msgid "Subscribe to nofications for this part"
-msgstr "Benachrichtigungen für dieses Teil abonnieren"
+msgid "Subscribe to notifications for this part"
+msgstr ""
 
 #: part/templates/part/part_base.html:43
 #: stock/templates/stock/item_base.html:28
