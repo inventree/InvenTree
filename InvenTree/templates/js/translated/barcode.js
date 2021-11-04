@@ -10,7 +10,6 @@
     modalSetSubmitText,
     modalShowSubmitButton,
     modalSubmit,
-    showAlertOrCache,
     showQuestionDialog,
 */
 

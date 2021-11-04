@@ -4,12 +4,11 @@
 
 /* globals
     attachSelect,
-    enableField,
-    clearField,
-    clearFieldOptions,
     closeModal,
     constructField,
     constructFormBody,
+    disableField,
+    enableField,
     getFormFieldValue,
     global_settings,
     handleFormErrors,
@@ -33,10 +32,8 @@
     printStockItemLabels,
     printTestReports,
     renderLink,
-    reloadFieldOptions,
     scanItemsIntoLocation,
     showAlertDialog,
-    setFieldValue,
     setupFilterList,
     showApiError,
     stockStatusDisplay,
@@ -44,6 +41,10 @@
 
 /* exported
     createNewStockItem,
+    createStockLocation,
+    duplicateStockItem,
+    editStockItem,
+    editStockLocation,
     exportStock,
     loadInstalledInTable,
     loadStockLocationTable,
@@ -344,12 +345,14 @@ function createNewStockItem(options={}) {
             } else {
 
                 // Multiple stock items have been created (i.e. serialized stock)
-
-                var q = response.quantity;
+                var details = `
+                <br>{% trans "Quantity" %}: ${response.quantity}
+                <br>{% trans "Serial Numbers" %}: ${response.serial_numbers}
+                `;
 
                 showMessage('{% trans "Created multiple stock items" %}', {
                     icon: 'fas fa-boxes',
-                    details: `{% trans "Serial numbers" %}: ${response.serial_numbers}`
+                    details: details,
                 });
 
                 var table = options.table || '#stock-table';
@@ -357,7 +360,7 @@ function createNewStockItem(options={}) {
                 // Reload the table
                 $(table).bootstrapTable('refresh');
             }
-        }
+        };
     }
 
     constructForm(url, options);
