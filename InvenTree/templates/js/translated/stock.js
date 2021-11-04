@@ -138,20 +138,33 @@ function stockItemFields(options={}) {
             onSelect: function(data, field, opts) {
                 // Callback when a new "part" is selected
 
-                // If we are "creating" a new stock item
+                // If we are "creating" a new stock item,
+                // change the available fields based on the part properties
                 if (options.create) {
+
                     // If a "trackable" part is selected, enable serial number field
                     if (data.trackable) {
-                        showFormInput('serial_numbers', opts);
+                        enableFormInput('serial_numbers', opts);
+                        // showFormInput('serial_numbers', opts);
                     } else {
-                        updateFieldValue('serial_numbers', '', {}, opts);
-                        hideFormInput('serial_numbers', opts);
+                        clearFormInput('serial_numbers', opts);
+                        disableFormInput('serial_numbers', opts);
+                    }
+
+                    // Enable / disable fields based on purchaseable status
+                    if (data.purchaseable) {
+                        enableFormInput('supplier_part', opts);
+                        enableFormInput('purchase_price', opts);
+                        enableFormInput('purchase_price_currency', opts);
+                    } else {
+                        clearFormInput('supplier_part', opts);
+                        clearFormInput('purchase_price', opts);
+                        
+                        disableFormInput('supplier_part', opts);
+                        disableFormInput('purchase_price', opts);
+                        disableFormInput('purchase_price_currency', opts);
                     }
                 }
-
-                // TODO: Hide "purchase price" fields for non purchaseable parts!
-
-                // TODO: Update "location" based on "default_location" returned 
             }
         },
         supplier_part: {
@@ -204,7 +217,7 @@ function stockItemFields(options={}) {
     };
 
     if (options.create) {
-        // Use "serial numbers" field when creating a new stock item
+        // Use special "serial numbers" field when creating a new stock item
         delete fields['serial'];
     } else {
         // These fields cannot be edited once the stock item has been created
@@ -321,25 +334,28 @@ function createNewStockItem(options={}) {
         options.onSuccess = function(response) {
             // If a single stock item has been created, follow it!
             if (response.pk) {
-                var url = `/stock/item/${pk}/`;
+                var url = `/stock/item/${response.pk}/`;
 
-                addCachedAlert('{% trans "Created stock item" %}', {
+                addCachedAlert('{% trans "Created new stock item" %}', {
                     icon: 'fas fa-boxes',
                 });
 
-                location.href = url;
+                window.location.href = url;
             } else {
+
+                // Multiple stock items have been created (i.e. serialized stock)
 
                 var q = response.quantity;
 
-                showMessage('{% trans "Created stock items" %}', {
+                showMessage('{% trans "Created multiple stock items" %}', {
                     icon: 'fas fa-boxes',
+                    details: `{% trans "Serial numbers" %}: ${response.serial_numbers}`
                 });
 
-                if (options.table) {
-                    // Reload the table
-                    $(options.table).bootstrapTable('refresh');
-                }
+                var table = options.table || '#stock-table';
+
+                // Reload the table
+                $(table).bootstrapTable('refresh');
             }
         }
     }

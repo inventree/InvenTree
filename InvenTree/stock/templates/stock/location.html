@@ -308,7 +308,6 @@
 
     $('#item-create').click(function () {
         createNewStockItem({
-            table: '#stock-table',
             data: {
                 {% if location %}
                 location: {{ location.id }}

@@ -25,6 +25,9 @@
 */
 
 /* exported
+    clearFormInput,
+    disableFormInput,
+    enableFormInput,
     hideFormInput,
     setFormGroupVisibility,
     showFormInput,
@@ -1260,6 +1263,23 @@ function initializeGroups(fields, options) {
         }
     }
 }
+
+// Clear a form input
+function clearFormInput(name, options) {
+    updateFieldValue(name, null, {}, options);
+}
+
+// Disable a form input
+function disableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', true);
+}
+
+
+// Enable a form input
+function enableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', false);
+}
+
 
 // Hide a form input
 function hideFormInput(name, options) {

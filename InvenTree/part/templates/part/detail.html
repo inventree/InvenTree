@@ -886,7 +886,6 @@
     onPanelLoad("part-stock", function() {
         $('#new-stock-item').click(function () {
             createNewStockItem({
-                reload: true,
                 data: {
                     part: {{ part.id }},
                     {% if part.default_location %}
@@ -919,7 +918,6 @@
     
         $('#item-create').click(function () {
             createNewStockItem({
-                reload: true,
                 data: {
                     part: {{ part.id }},
                 }
