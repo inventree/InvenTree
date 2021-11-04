@@ -8,8 +8,6 @@ import decimal
 
 import os
 from datetime import datetime
-from django import dispatch
-
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError

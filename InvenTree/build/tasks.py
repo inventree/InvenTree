@@ -9,8 +9,6 @@ from django.template.loader import render_to_string
 
 from allauth.account.models import EmailAddress
 
-from common.models import NotificationEntry
-
 import build.models
 import InvenTree.helpers
 import InvenTree.tasks

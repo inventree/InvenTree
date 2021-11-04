@@ -2102,13 +2102,16 @@ class Part(MPTTModel):
 
 
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
-def after_save_part(sender, instance: Part, **kwargs):
+def after_save_part(sender, instance: Part, created, **kwargs):
     """
     Function to be executed after a Part is saved
     """
 
-    # Run this check in the background
-    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
+    if not created:
+        # Check part stock only if we are *updating* the part (not creating it)
+
+        # Run this check in the background
+        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
 
 
 def attach_file(instance, filename):
