@@ -316,7 +316,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         if not name:
             name = self.commit.get('date')
         else:
-            name = datetime.fromisoformat(name)
+            name = datetime.fromisoformat(str(name))
         if not name:
             name = _('No date found')
         return name
