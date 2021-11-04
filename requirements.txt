@@ -27,6 +27,7 @@ django-weasyprint==1.0.1        # django weasyprint integration
 djangorestframework==3.12.4     # DRF framework
 flake8==3.8.3                   # PEP checking
 gunicorn>=20.1.0                # Gunicorn web server
+importlib_metadata              # Backport for importlib.metadata
 inventree                       # Install the latest version of the InvenTree API python library
 pep8-naming==0.11.1             # PEP naming convention extension
 pillow==8.3.2                   # Image manipulation

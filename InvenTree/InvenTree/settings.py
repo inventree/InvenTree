@@ -19,8 +19,13 @@ import string
 import shutil
 import sys
 import importlib
-from importlib import metadata
 from datetime import datetime
+
+try:
+    from importlib import metadata
+except:
+    import importlib_metadata as metadata
+
 
 import moneyed
 
