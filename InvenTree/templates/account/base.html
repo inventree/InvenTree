@@ -111,7 +111,13 @@ $(document).ready(function () {
     // notifications
     {% if messages %}
     {% for message in messages %}
-    showAlertOrCache('{{ message }}', 'info', true);
+    showAlertOrCache(
+        '{{ message }}',
+        true,
+        {
+            style: 'info',
+        }
+    );
     {% endfor %}
     {% endif %}
 

@@ -140,7 +140,15 @@
 
 <div class='panel panel-hidden' id='panel-stock'>
     <div class='panel-heading'>
-        <h4>{% trans "Stock Items" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Stock Items" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-success' id='item-create' title='{% trans "Create new stock item" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+                </button>
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% include "stock_table.html" %}
@@ -223,33 +231,21 @@
     });
 
     $('#location-create').click(function () {
-        launchModalForm("{% url 'stock-location-create' %}",
-                        {
-                            data: {
-                                {% if location %}
-                                location: {{ location.id }}
-                                {% endif %}
-                            },
-                            follow: true,
-                            secondary: [
-                                {
-                                    field: 'parent',
-                                    label: '{% trans "New Location" %}',
-                                    title: '{% trans "Create new location" %}',
-                                    url: "{% url 'stock-location-create' %}",
-                                },
-                            ]
-                        });
-        return false;
+
+        createStockLocation({
+            {% if location %}
+            parent: {{ location.pk }},
+            {% endif %}
+            follow: true,
+        });
     });
 
     {% if location %}
+
     $('#location-edit').click(function() {
-        launchModalForm("{% url 'stock-location-edit' location.id %}",
-                        {
-                            reload: true
-                        });
-        return false;
+        editStockLocation({{ location.id }}, {
+            reload: true,
+        });
     });
 
     $('#location-delete').click(function() {
@@ -312,12 +308,11 @@
 
     $('#item-create').click(function () {
         createNewStockItem({
-            follow: true,
             data: {
                 {% if location %}
                 location: {{ location.id }}
                 {% endif %}
-            }
+            },
         });
     });
 
