@@ -345,16 +345,20 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             return getattr(self, fnc_name, True)
         return False
 
-    # git
+    # package info
     def get_package_commit(self):
         """get last git commit for plugin"""
         return get_git_log(self.def_path)
+
+    def get_package_metadata(self):
+        """get package metadata for plugin"""
+        return {}
 
     def set_package(self):
         """add packaging info of the plugins into plugins context"""
         if self.is_package:
             # is a package - no commit
-            package = {}
+            package = self.get_package_metadata()
         else:
             # fetch git commit
             package = self.get_package_commit()
