@@ -131,13 +131,21 @@ function inventreeDocReady() {
     if ($('#search-bar').exists()) {
         $('#search-bar').autocomplete({
             source: function(request, response) {
+
+                var params = {
+                    search: request.term,
+                    limit: user_settings.SEARCH_PREVIEW_RESULTS,
+                    offset: 0,
+                };
+
+                if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
+                    // Limit to active parts
+                    params.active = true;
+                }
+
                 $.ajax({
                     url: '/api/part/',
-                    data: {
-                        search: request.term,
-                        limit: user_settings.SEARCH_PREVIEW_RESULTS,
-                        offset: 0
-                    },
+                    data: params,
                     success: function(data) {
 
                         var transformed = $.map(data.results, function(el) {
