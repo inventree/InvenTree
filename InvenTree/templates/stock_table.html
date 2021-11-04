@@ -10,17 +10,10 @@
 
 <div id='{{ prefix }}button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        <div class='btn-group'>
+        <div class='btn-group' role='group'>
             <button class='btn btn-outline-secondary' id='stock-export' title='{% trans "Export Stock Information" %}'>
                 <span class='fas fa-download'></span>
             </button>
-
-            {% if owner_control.value == "True" and user in owners or user.is_superuser or owner_control.value == "False" %}
-            {% if not read_only and not prevent_new_stock and roles.stock.add %}
-            <button class="btn btn-success" id='item-create' title='{% trans "New Stock Item" %}'>
-                <span class='fas fa-plus-circle'></span>
-            </button>
-            {% endif %}
             {% if barcodes %}
             <!-- Barcode actions menu -->
             <div class='btn-group' role='group'>
@@ -46,7 +39,7 @@
             </div>
             {% if not read_only %}
             {% if roles.stock.change or roles.stock.delete %}
-            <div class="btn-group">
+            <div class="btn-group" role="group">
                 <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" title='{% trans "Stock Options" %}'>
                     <span class='fas fa-boxes'></span> <span class="caret"></span>
                 </button>
@@ -64,7 +57,6 @@
                     {% endif %}
                     </ul>
                 </div>
-            {% endif %}
             {% endif %}
             {% endif %}
             {% include "filter_list.html" with id="stock" %}

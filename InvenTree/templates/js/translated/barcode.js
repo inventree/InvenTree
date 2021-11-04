@@ -10,7 +10,6 @@
     modalSetSubmitText,
     modalShowSubmitButton,
     modalSubmit,
-    showAlertOrCache,
     showQuestionDialog,
 */
 
@@ -480,10 +479,13 @@ function barcodeCheckIn(location_id) {
                             $(modal).modal('hide');
                             if (status == 'success' && 'success' in response) {
 
-                                showAlertOrCache(response.success, 'success', true);
+                                addCachedAlert(response.success);
                                 location.reload();
                             } else {
-                                showAlertOrCache('{% trans "Error transferring stock" %}', 'danger', false);
+                                showMessage('{% trans "Error transferring stock" %}', {
+                                    style: 'danger',
+                                    icon: 'fas fa-times-circle',
+                                });
                             }
                         }
                     }
@@ -604,10 +606,12 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                             $(modal).modal('hide');
 
                             if (status == 'success' && 'success' in response) {
-                                showAlertOrCache(response.success, 'success', true);
+                                addCachedAlert(response.success);
                                 location.reload();
                             } else {
-                                showAlertOrCache('{% trans "Error transferring stock" %}', 'danger', false);
+                                showMessage('{% trans "Error transferring stock" %}', {
+                                    style: 'danger',
+                                });
                             }
                         }
                     }

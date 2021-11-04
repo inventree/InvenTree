@@ -25,7 +25,12 @@
 */
 
 /* exported
-    setFormGroupVisibility
+    clearFormInput,
+    disableFormInput,
+    enableFormInput,
+    hideFormInput,
+    setFormGroupVisibility,
+    showFormInput,
 */
 
 /**
@@ -113,6 +118,10 @@ function canDelete(OPTIONS) {
  */
 function getApiEndpointOptions(url, callback) {
 
+    if (!url) {
+        return;
+    }
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -182,6 +191,7 @@ function constructChangeForm(fields, options) {
     // Request existing data from the API endpoint
     $.ajax({
         url: options.url,
+        data: options.params || {},
         type: 'GET',
         contentType: 'application/json',
         dataType: 'json',
@@ -195,6 +205,17 @@ function constructChangeForm(fields, options) {
 
                 if (field in fields) {
                     fields[field].value = data[field];
+                }
+            }
+            
+            // An optional function can be provided to process the returned results,
+            // before they are rendered to the form
+            if (options.processResults) {
+                var processed = options.processResults(data, fields, options);
+                
+                // If the processResults function returns data, it will be stored
+                if (processed) {
+                    data = processed;
                 }
             }
 
@@ -713,6 +734,8 @@ function submitFormData(fields, options) {
                     break;
                 default:
                     $(options.modal).modal('hide');
+
+                    console.log(`upload error at ${options.url}`);
                     showApiError(xhr, options.url);
                     break;
                 }
@@ -890,19 +913,19 @@ function handleFormSuccess(response, options) {
 
     // Display any messages
     if (response && response.success) {
-        showAlertOrCache(response.success, 'success', cache);
+        showAlertOrCache(response.success, cache, {style: 'success'});
     }
     
     if (response && response.info) {
-        showAlertOrCache(response.info, 'info', cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
 
     if (response && response.warning) {
-        showAlertOrCache(response.warning, 'warning', cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
 
     if (response && response.danger) {
-        showAlertOrCache(response.danger, 'dagner', cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     if (options.onSuccess) {
@@ -1240,6 +1263,35 @@ function initializeGroups(fields, options) {
         }
     }
 }
+
+// Clear a form input
+function clearFormInput(name, options) {
+    updateFieldValue(name, null, {}, options);
+}
+
+// Disable a form input
+function disableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', true);
+}
+
+
+// Enable a form input
+function enableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', false);
+}
+
+
+// Hide a form input
+function hideFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).hide();
+}
+
+
+// Show a form input
+function showFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).show();
+}
+
 
 // Hide a form group
 function hideFormGroup(group, options) {
