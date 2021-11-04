@@ -280,7 +280,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         self.def_path = inspect.getfile(self.__class__)
         self.path = os.path.dirname(self.def_path)
 
-        self.set_sign_values()
+        self.set_package()
 
     # properties
     @property
@@ -304,7 +304,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """returns author of plugin - either from plugin settings or git"""
         name = getattr(self, 'AUTHOR', None)
         if not name:
-            name = self.commit.get('author')
+            name = self.package.get('author')
         if not name:
             name = _('No author found')
         return name
@@ -314,7 +314,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """returns publishing date of plugin - either from plugin settings or git"""
         name = getattr(self, 'PUBLISH_DATE', None)
         if not name:
-            name = self.commit.get('date')
+            name = self.package.get('date')
         else:
             name = datetime.fromisoformat(str(name))
         if not name:
@@ -350,25 +350,25 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """get last git commit for plugin"""
         return get_git_log(self.def_path)
 
-    def set_sign_values(self):
+    def set_package(self):
         """add the last commit of the plugins class file into plugins context"""
         if self.is_package:
             # is a package - no signing - no commit
-            commit = {}
+            package = {}
         else:
             # fetch git log
-            commit = self.get_plugin_commit()
+            package = self.get_plugin_commit()
 
         # resolve state
-        sign_state = getattr(GitStatus, str(commit.get('verified')), GitStatus.N)
+        sign_state = getattr(GitStatus, str(package.get('verified')), GitStatus.N)
 
         # set variables
-        self.commit = commit
+        self.package = package
         self.sign_state = sign_state
 
         # process date
-        if self.commit.get('date'):
-            self.commit['date'] = datetime.fromisoformat(self.commit.get('date'))
+        if self.package.get('date'):
+            self.package['date'] = datetime.fromisoformat(self.package.get('date'))
 
         if sign_state.status == 0:
             self.sign_color = 'success'

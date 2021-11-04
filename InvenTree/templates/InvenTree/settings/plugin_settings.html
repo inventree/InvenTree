@@ -56,29 +56,29 @@
             <col width='25'>
             <tr>
                 <td><span class='fas fa-user'></span></td>
-                <td>{% trans "Commit Author" %}</td><td>{{ plugin.commit.author }} - {{ plugin.commit.mail }}{% include "clip.html" %}</td>
+                <td>{% trans "Commit Author" %}</td><td>{{ plugin.package.author }} - {{ plugin.package.mail }}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Commit Date" %}</td><td>{{ plugin.commit.date }}{% include "clip.html" %}</td>
+                <td>{% trans "Commit Date" %}</td><td>{{ plugin.package.date }}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>
-                <td>{% trans "Commit Hash" %}</td><td>{{ plugin.commit.hash }}{% include "clip.html" %}</td>
+                <td>{% trans "Commit Hash" %}</td><td>{{ plugin.package.hash }}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-envelope'></span></td>
-                <td>{% trans "Commit Message" %}</td><td>{{ plugin.commit.message }}{% include "clip.html" %}</td>
+                <td>{% trans "Commit Message" %}</td><td>{{ plugin.package.message }}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='text-{{plugin.sign_color}} fas fa-check'></span></td>
                 <td>{% trans "Commit Sign Status" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{% if plugin.commit.verified %}{{ plugin.commit.verified }}: {% endif%}{{ plugin.sign_state.msg }}</td>
+                <td class="bg-{{plugin.sign_color}}">{% if plugin.package.verified %}{{ plugin.package.verified }}: {% endif%}{{ plugin.sign_state.msg }}</td>
             </tr>
             <tr>
                 <td><span class='text-{{plugin.sign_color}} fas fa-key'></span></td>
                 <td>{% trans "Commit Sign Key" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{{ plugin.commit.key }}{% include "clip.html" %}</td>
+                <td class="bg-{{plugin.sign_color}}">{{ plugin.package.key }}{% include "clip.html" %}</td>
             </tr>
         </table>
     </div>
