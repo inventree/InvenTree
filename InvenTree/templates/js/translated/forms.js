@@ -25,7 +25,12 @@
 */
 
 /* exported
-    setFormGroupVisibility
+    clearFormInput,
+    disableFormInput,
+    enableFormInput,
+    hideFormInput,
+    setFormGroupVisibility,
+    showFormInput,
 */
 
 /**
@@ -113,6 +118,10 @@ function canDelete(OPTIONS) {
  */
 function getApiEndpointOptions(url, callback) {
 
+    if (!url) {
+        return;
+    }
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -123,9 +132,10 @@ function getApiEndpointOptions(url, callback) {
             json: 'application/json',
         },
         success: callback,
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            showApiError(xhr, url);
         }
     });
 }
@@ -181,6 +191,7 @@ function constructChangeForm(fields, options) {
     // Request existing data from the API endpoint
     $.ajax({
         url: options.url,
+        data: options.params || {},
         type: 'GET',
         contentType: 'application/json',
         dataType: 'json',
@@ -196,15 +207,28 @@ function constructChangeForm(fields, options) {
                     fields[field].value = data[field];
                 }
             }
+            
+            // An optional function can be provided to process the returned results,
+            // before they are rendered to the form
+            if (options.processResults) {
+                var processed = options.processResults(data, fields, options);
+                
+                // If the processResults function returns data, it will be stored
+                if (processed) {
+                    data = processed;
+                }
+            }
 
             // Store the entire data object
             options.instance = data;
-
+            
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -241,9 +265,11 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -708,7 +734,9 @@ function submitFormData(fields, options) {
                     break;
                 default:
                     $(options.modal).modal('hide');
-                    showApiError(xhr);
+
+                    console.log(`upload error at ${options.url}`);
+                    showApiError(xhr, options.url);
                     break;
                 }
             }
@@ -885,19 +913,19 @@ function handleFormSuccess(response, options) {
 
     // Display any messages
     if (response && response.success) {
-        showAlertOrCache('alert-success', response.success, cache);
+        showAlertOrCache(response.success, cache, {style: 'success'});
     }
     
     if (response && response.info) {
-        showAlertOrCache('alert-info', response.info, cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
 
     if (response && response.warning) {
-        showAlertOrCache('alert-warning', response.warning, cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
 
     if (response && response.danger) {
-        showAlertOrCache('alert-danger', response.danger, cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     if (options.onSuccess) {
@@ -1235,6 +1263,35 @@ function initializeGroups(fields, options) {
         }
     }
 }
+
+// Clear a form input
+function clearFormInput(name, options) {
+    updateFieldValue(name, null, {}, options);
+}
+
+// Disable a form input
+function disableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', true);
+}
+
+
+// Enable a form input
+function enableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', false);
+}
+
+
+// Hide a form input
+function hideFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).hide();
+}
+
+
+// Show a form input
+function showFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).show();
+}
+
 
 // Hide a form group
 function hideFormGroup(group, options) {

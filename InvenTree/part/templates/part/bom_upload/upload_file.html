@@ -8,58 +8,55 @@
 {% include "sidebar_link.html" with url=url text="Return to BOM" icon="fa-undo" %}
 {% endblock %}
 
-{% block page_content %}
+{% block heading %}
+{% trans "Upload Bill of Materials" %}
+{% endblock %}
 
-<div class='panel' id='panel-upload-file'>
-    <div class='panel-heading'>
-        {% block heading %}
-        <h4>{% trans "Upload Bill of Materials" %}</h4>
-        {{ wizard.form.media }}
-        {% endblock %}
+{% block actions %}
+{% endblock %}
+
+{% block page_info %}
+<div class='panel-content'>
+    <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
+    {% if description %}- {{ description }}{% endif %}</p>
+
+    <form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    {% block form_buttons_top %}
+    {% endblock form_buttons_top %}
+
+    {% block form_alert %}
+    <div class='alert alert-info alert-block'>
+        <strong>{% trans "Requirements for BOM upload" %}:</strong>
+        <ul>
+            <li>{% trans "The BOM file must contain the required named columns as provided in the " %} <strong><a href="/part/bom_template/">{% trans "BOM Upload Template" %}</a></strong></li>
+            <li>{% trans "Each part must already exist in the database" %}</li>
+        </ul>
     </div>
-    <div class='panel-content'>
-        {% block details %}
+    {% endblock %} 
 
-        <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
-        {% if description %}- {{ description }}{% endif %}</p>
+    <table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
+    {{ wizard.management_form }}
+    {% block form_content %}
+    {% crispy wizard.form %}
+    {% endblock form_content %}
+    </table>
 
-        <form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
-        {% csrf_token %}
-        {% load crispy_forms_tags %}
-
-        {% block form_buttons_top %}
-        {% endblock form_buttons_top %}
-
-        {% block form_alert %}
-        <div class='alert alert-info alert-block'>
-            <strong>{% trans "Requirements for BOM upload" %}:</strong>
-            <ul>
-                <li>{% trans "The BOM file must contain the required named columns as provided in the " %} <strong><a href="/part/bom_template/">{% trans "BOM Upload Template" %}</a></strong></li>
-                <li>{% trans "Each part must already exist in the database" %}</li>
-            </ul>
-        </div>
-        {% endblock %} 
-
-        <table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
-        {{ wizard.management_form }}
-        {% block form_content %}
-        {% crispy wizard.form %}
-        {% endblock form_content %}
-        </table>
-
-        {% block form_buttons_bottom %}
-        {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
-        {% endif %}
-        <button type="submit" class="save btn btn-outline-secondary">{% trans "Upload File" %}</button>
-        </form>
-        {% endblock form_buttons_bottom %}
-
-        {% endblock details %}
-    </div>
-
-{% endblock page_content %}
+    {% block form_buttons_bottom %}
+    {% if wizard.steps.prev %}
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
+    {% endif %}
+    <button type="submit" class="save btn btn-outline-secondary">{% trans "Upload File" %}</button>
+    </form>
+    {% endblock form_buttons_bottom %}
+</div>
+{% endblock page_info %}
 
 {% block js_ready %}
 {{ block.super }}
+
+enableSidebar('bom-upload');
+
 {% endblock js_ready %}

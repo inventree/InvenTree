@@ -2,8 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    renderErrorMessage,
-    showAlertDialog,
 */
 
 /* exported
@@ -68,6 +66,8 @@ function inventreeGet(url, filters={}, options={}) {
                 options.error({
                     error: thrownError
                 });
+            } else {
+                showApiError(xhr, url);
             }
         }
     });
@@ -104,6 +104,8 @@ function inventreeFormDataUpload(url, data, options={}) {
 
             if (options.error) {
                 options.error(xhr, status, error);
+            } else {
+                showApiError(xhr, url);
             }
         }
     });
@@ -139,6 +141,8 @@ function inventreePut(url, data={}, options={}) {
             } else {
                 console.error(`Error on ${method} to '${url}' - STATUS ${xhr.status}`);
                 console.error(thrownError);
+
+                showApiError(xhr, url);
             }
         },
         complete: function(xhr, status) {
@@ -162,8 +166,10 @@ function inventreeDelete(url, options={}) {
     return inventreePut(url, {}, options);
 }
 
-
-function showApiError(xhr) {
+/*
+ * Display a notification with error information
+ */
+function showApiError(xhr, url) {
 
     var title = null;
     var message = null;
@@ -208,7 +214,11 @@ function showApiError(xhr) {
     }
 
     message += '<hr>';
-    message += renderErrorMessage(xhr);
+    message += `URL: ${url}`;
 
-    showAlertDialog(title, message);
+    showMessage(title, {
+        style: 'danger',
+        icon: 'fas fa-server icon-red',
+        details: message,
+    });
 }

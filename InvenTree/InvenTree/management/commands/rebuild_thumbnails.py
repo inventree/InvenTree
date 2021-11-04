@@ -17,7 +17,7 @@ from company.models import Company
 from part.models import Part
 
 
-logger = logging.getLogger("inventree-thumbnails")
+logger = logging.getLogger('inventree')
 
 
 class Command(BaseCommand):

@@ -76,6 +76,12 @@ class InvenTreeConfig(AppConfig):
             minutes=30,
         )
 
+        # Delete old notification records
+        InvenTree.tasks.schedule_task(
+            'common.tasks.delete_old_notifications',
+            schedule_type=Schedule.DAILY,
+        )
+
     def update_exchange_rates(self):
         """
         Update exchange rates each time the server is started, *if*:

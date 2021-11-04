@@ -9,16 +9,16 @@ import decimal
 import os
 from datetime import datetime
 
-from django.utils.translation import ugettext_lazy as _
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
-from django.urls import reverse
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
-from django.core.validators import MinValueValidator
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from markdownx.models import MarkdownxField
 
@@ -27,16 +27,17 @@ from mptt.exceptions import InvalidMove
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
-from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from InvenTree.validators import validate_build_order_reference
 
 import common.models
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.tasks
 
-from stock import models as StockModels
 from part import models as PartModels
+from stock import models as StockModels
 from users import models as UserModels
 
 
@@ -1012,6 +1013,19 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """ Returns True if the build status is COMPLETE """
 
         return self.status == BuildStatus.COMPLETE
+
+
+@receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
+def after_save_build(sender, instance: Build, created: bool, **kwargs):
+    """
+    Callback function to be executed after a Build instance is saved
+    """
+
+    if created:
+        # A new Build has just been created
+
+        # Run checks on required parts
+        InvenTree.tasks.offload_task('build.tasks.check_build_stock', instance)
 
 
 class BuildOrderAttachment(InvenTreeAttachment):
