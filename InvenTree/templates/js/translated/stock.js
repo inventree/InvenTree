@@ -1426,6 +1426,12 @@ function loadStockLocationTable(table, options) {
 
     var filterListElement = options.filterList || '#filter-list-location';
 
+    var tree_view = options.allowTreeView && inventreeLoad('location-tree-view') == 1;
+
+    if (tree_view) {
+        params.cascade = true;
+    }
+
     var filters = {};
 
     var filterKey = options.filterKey || options.name || 'location';
@@ -1445,8 +1451,6 @@ function loadStockLocationTable(table, options) {
     for (var key in params) {
         filters[key] = params[key];
     }
-
-    var tree_view = options.allowTreeView && inventreeLoad('location-tree-view') == 1;
 
     table.inventreeTable({
         treeEnable: tree_view,

@@ -1159,6 +1159,13 @@ function loadPartCategoryTable(table, options) {
         filters = loadTableFilters(filterKey);
     }
 
+    
+    var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
+
+    if (tree_view) {
+        params.cascade = true;   
+    }
+
     var original = {};
 
     for (var key in params) {
@@ -1167,8 +1174,6 @@ function loadPartCategoryTable(table, options) {
     }
 
     setupFilterList(filterKey, table, filterListElement);
-
-    var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
 
     table.inventreeTable({
         treeEnable: tree_view,
