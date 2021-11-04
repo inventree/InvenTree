@@ -360,15 +360,15 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             commit = self.get_plugin_commit()
 
         # resolve state
-        sign_state = getattr(GitStatus, commit['verified'], GitStatus.N)
+        sign_state = getattr(GitStatus, str(commit.get('verified')), GitStatus.N)
 
         # set variables
         self.commit = commit
         self.sign_state = sign_state
 
         # process date
-        if self.commit['date']:
-            self.commit['date'] = datetime.fromisoformat(self.commit['date'])
+        if self.commit.get('date'):
+            self.commit['date'] = datetime.fromisoformat(self.commit.get('date'))
 
         if sign_state.status == 0:
             self.sign_color = 'success'
