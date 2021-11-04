@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 04:31+0000\n"
+"POT-Creation-Date: 2021-11-04 05:49+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
@@ -656,6 +656,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:86
 #: templates/email/build_order_required_stock.html:17
+#: templates/email/low_stock_notification.html:16
 #: templates/js/translated/barcode.js:384 templates/js/translated/bom.js:212
 #: templates/js/translated/bom.js:390 templates/js/translated/build.js:613
 #: templates/js/translated/build.js:981 templates/js/translated/build.js:1352
@@ -6429,14 +6430,14 @@ msgid "Required Quantity"
 msgstr ""
 
 #: templates/email/build_order_required_stock.html:19
-#: templates/email/low_stock_notification.html:21
+#: templates/email/low_stock_notification.html:18
 #: templates/js/translated/bom.js:464 templates/js/translated/build.js:1122
 #: templates/js/translated/build.js:1742
 msgid "Available"
 msgstr ""
 
 #: templates/email/build_order_required_stock.html:38
-#: templates/email/low_stock_notification.html:14
+#: templates/email/low_stock_notification.html:31
 msgid "You are receiving this email because you are subscribed to notifications for this part "
 msgstr ""
 
@@ -6453,15 +6454,11 @@ msgstr ""
 msgid "Click on the following link to view this part"
 msgstr ""
 
-#: templates/email/low_stock_notification.html:19
-msgid "Part Name"
-msgstr ""
-
-#: templates/email/low_stock_notification.html:20
+#: templates/email/low_stock_notification.html:17
 msgid "Total Stock"
 msgstr ""
 
-#: templates/email/low_stock_notification.html:22
+#: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
 msgstr ""
 
