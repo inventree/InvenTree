@@ -2811,7 +2811,6 @@ class BomItem(models.Model):
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
 
-
     purchase_price_min = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,

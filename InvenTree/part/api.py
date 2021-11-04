@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url, include
 from django.http import JsonResponse
-from django.db.models import Q, F, Count, Min, Max, Avg
+from django.db.models import Q, F, Count  # , Min, Max, Avg
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
@@ -1228,12 +1228,6 @@ class BomList(generics.ListCreateAPIView):
         """
         Add part pricing information to the queryset
         """
-        # Get values for currencies
-        currencies = queryset.annotate(
-            purchase_price=F('sub_part__stock_items__purchase_price'),
-            purchase_price_currency=F('sub_part__stock_items__purchase_price_currency'),
-        ).values('pk', 'sub_part', 'purchase_price', 'purchase_price_currency')
-
         def convert_price(price, currency, decimal_places=4):
             """ Convert price field, returns Money field """
 
@@ -1265,13 +1259,6 @@ class BomList(generics.ListCreateAPIView):
 
         # Convert prices to default currency (using backend conversion rates)
         for bom_item in queryset:
-            # Find associated currency (select first found)
-            # TODO remove section
-            # purchase_price_currency = None
-            # for currency_item in currencies:
-            #     if currency_item['pk'] == bom_item.pk and currency_item['sub_part'] == bom_item.sub_part.pk and currency_item['purchase_price']:
-            #         purchase_price_currency = currency_item['purchase_price_currency']
-            #         break
             # Convert prices
             bom_item.purchase_price_min = convert_price(bom_item.purchase_price_min.amount, bom_item.purchase_price_min.currency) if bom_item.purchase_price_min else None
             bom_item.purchase_price_max = convert_price(bom_item.purchase_price_max.amount, bom_item.purchase_price_max.currency) if bom_item.purchase_price_max else None
