@@ -25,7 +25,7 @@
 <tr style="height: 3rem">
     <td style="text-align: center;">{{ part.full_name }}</td>
     <td style="text-align: center;">{% decimal part.total_stock %}</td>
-    <td style="text-align: center;">{% part.available_stock %}</td>
-    <td style="text-align: center;">{% part.minimum_stock %}</td>
+    <td style="text-align: center;">{% decimal part.available_stock %}</td>
+    <td style="text-align: center;">{% decimal part.minimum_stock %}</td>
 </tr>
 {% endblock %}
