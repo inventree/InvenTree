@@ -1324,6 +1324,17 @@ class Part(MPTTModel):
 
         return query
 
+    def get_stock_count(self, include_variants=True):
+        """
+        Return the total "in stock" count for this part
+        """
+
+        entries = self.stock_entries(in_stock=True, include_variants=include_variants)
+
+        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['t']
+
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
@@ -1332,11 +1343,7 @@ class Part(MPTTModel):
         - If this part is a "template" (variants exist) then these are counted too
         """
 
-        entries = self.stock_entries(in_stock=True)
-
-        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
-
-        return query['t']
+        return self.get_stock_count()
 
     def get_bom_item_filter(self, include_inherited=True):
         """
