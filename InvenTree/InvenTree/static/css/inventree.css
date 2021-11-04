@@ -28,9 +28,8 @@
     padding: 20px;
     padding-bottom: 35px;
     background-color: rgba(50, 50, 50, 0.75);
-
     width: 100%;
-    max-width: 330px;
+    max-width: 550px;
     margin: auto;
 }
 
@@ -178,10 +177,6 @@
 
 .glyphicon-right {
     float: right;
-}
-
-.starred-part {
-    color: #ffbb00;
 }
 
 .red-cell {
@@ -565,6 +560,11 @@
     transition: 0.1s;
 }
 
+.search-autocomplete-item {
+    border-top: 1px solid #EEE;
+    margin-bottom: 2px;
+}
+
 .modal {
   overflow: hidden;
   z-index: 9999;
@@ -745,13 +745,7 @@ input[type="submit"] {
 }
 
 .notification-area {
-    position: fixed;
-    top: 0px;
-    margin-top: 20px;
-    width: 100%;
-    padding: 20px;
-    z-index: 5000;
-    pointer-events: none; /* Prevent this div from blocking links underneath */
+    opacity: 0.8;
 }
 
 .notes {
@@ -761,7 +755,6 @@ input[type="submit"] {
 }
 
 .alert {
-    display: none;
     border-radius: 5px;
     opacity: 0.9;
     pointer-events: all;
@@ -771,9 +764,8 @@ input[type="submit"] {
     display: block;
 }
 
-.btn {
-    margin-left: 2px;
-    margin-right: 2px;
+.navbar .btn {
+    margin-left: 5px;
 }
 
 .btn-secondary {

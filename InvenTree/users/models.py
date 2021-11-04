@@ -77,6 +77,7 @@ class RuleSet(models.Model):
         'part_category': [
             'part_partcategory',
             'part_partcategoryparametertemplate',
+            'part_partcategorystar',
         ],
         'part': [
             'part_part',
@@ -90,6 +91,7 @@ class RuleSet(models.Model):
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partcategorystar',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
@@ -151,6 +153,7 @@ class RuleSet(models.Model):
         'common_inventreeusersetting',
         'common_webhookendpoint',
         'common_webhookmessage',
+        'common_notificationentry',
         'company_contact',
         'users_owner',
 

@@ -98,7 +98,6 @@ settings_urls = [
 
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
-    url(r'^inventree.js', DynamicJsView.as_view(template_name='js/dynamic/inventree.js'), name='inventree.js'),
     url(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
     url(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
     url(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),

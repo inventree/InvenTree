@@ -15,6 +15,7 @@ import json
 import hashlib
 import base64
 from secrets import compare_digest
+from datetime import datetime, timedelta
 
 from django.db import models, transaction
 from django.contrib.auth.models import User, Group
@@ -921,8 +922,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     GLOBAL_SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
-            'name': _('Show starred parts'),
-            'description': _('Show starred parts on the homepage'),
+            'name': _('Show subscribed parts'),
+            'description': _('Show subscribed parts on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_CATEGORY_STARRED': {
+            'name': _('Show subscribed categories'),
+            'description': _('Show subscribed part categories on the homepage'),
             'default': True,
             'validator': bool,
         },
@@ -1445,3 +1452,63 @@ class WebhookMessage(models.Model):
         verbose_name=_('Worked on'),
         help_text=_('Was the work on this message finished?'),
     )
+
+
+class NotificationEntry(models.Model):
+    """
+    A NotificationEntry records the last time a particular notifaction was sent out.
+
+    It is recorded to ensure that notifications are not sent out "too often" to users.
+
+    Attributes:
+    - key: A text entry describing the notification e.g. 'part.notify_low_stock'
+    - uid: An (optional) numerical ID for a particular instance
+    - date: The last time this notification was sent
+    """
+
+    class Meta:
+        unique_together = [
+            ('key', 'uid'),
+        ]
+
+    key = models.CharField(
+        max_length=250,
+        blank=False,
+    )
+
+    uid = models.IntegerField(
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        null=False,
+    )
+
+    @classmethod
+    def check_recent(cls, key: str, uid: int, delta: timedelta):
+        """
+        Test if a particular notification has been sent in the specified time period
+        """
+
+        since = datetime.now().date() - delta
+
+        entries = cls.objects.filter(
+            key=key,
+            uid=uid,
+            updated__gte=since
+        )
+
+        return entries.exists()
+
+    @classmethod
+    def notify(cls, key: str, uid: int):
+        """
+        Notify the database that a particular notification has been sent out
+        """
+
+        entry, created = cls.objects.get_or_create(
+            key=key,
+            uid=uid
+        )
+
+        entry.save()

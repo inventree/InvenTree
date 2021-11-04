@@ -58,6 +58,18 @@ class CategoryList(generics.ListCreateAPIView):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
 
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
+
+        return ctx
+
     def filter_queryset(self, queryset):
         """
         Custom filtering:
@@ -110,6 +122,18 @@ class CategoryList(generics.ListCreateAPIView):
             except (ValueError, PartCategory.DoesNotExist):
                 pass
 
+        # Filter by "starred" status
+        starred = params.get('starred', None)
+
+        if starred is not None:
+            starred = str2bool(starred)
+            starred_categories = [star.category.pk for star in self.request.user.starred_categories.all()]
+
+            if starred:
+                queryset = queryset.filter(pk__in=starred_categories)
+            else:
+                queryset = queryset.exclude(pk__in=starred_categories)
+
         return queryset
 
     filter_backends = [
@@ -148,6 +172,29 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
+
+        return ctx
+
+    def update(self, request, *args, **kwargs):
+
+        if 'starred' in request.data:
+            starred = str2bool(request.data.get('starred', False))
+
+            self.get_object().set_starred(request.user, starred)
+
+        response = super().update(request, *args, **kwargs)
+
+        return response
 
 
 class CategoryParameterList(generics.ListAPIView):
@@ -389,7 +436,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        # Pass a list of "starred" parts fo the current user to the serializer
+        # Pass a list of "starred" parts of the current user to the serializer
         # We do this to reduce the number of database queries required!
         if self.starred_parts is None and self.request is not None:
             self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
@@ -418,9 +465,9 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         """
 
         if 'starred' in request.data:
-            starred = str2bool(request.data.get('starred', None))
+            starred = str2bool(request.data.get('starred', False))
 
-            self.get_object().setStarred(request.user, starred)
+            self.get_object().set_starred(request.user, starred)
 
         response = super().update(request, *args, **kwargs)
 

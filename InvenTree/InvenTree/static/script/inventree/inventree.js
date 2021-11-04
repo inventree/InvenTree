@@ -1,5 +1,3 @@
-{% load inventree_extras %}
-
 /* globals
     ClipboardJS,
     inventreeFormDataUpload,
@@ -130,61 +128,71 @@ function inventreeDocReady() {
     attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');
 
     // Add autocomplete to the search-bar
-    $('#search-bar').autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: '/api/part/',
-                data: {
-                    search: request.term,
-                    limit: user_settings.SEARCH_PREVIEW_RESULTS,
-                    offset: 0
-                },
-                success: function(data) {
+    if ($('#search-bar').exists()) {
+        $('#search-bar').autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: '/api/part/',
+                    data: {
+                        search: request.term,
+                        limit: user_settings.SEARCH_PREVIEW_RESULTS,
+                        offset: 0
+                    },
+                    success: function(data) {
 
-                    var transformed = $.map(data.results, function(el) {
-                        return {
-                            label: el.full_name,
-                            id: el.pk,
-                            thumbnail: el.thumbnail,
-                            data: el,
-                        };
-                    });
-                    response(transformed);
-                },
-                error: function() {
-                    response([]);
-                }
-            });
-        },
-        create: function() {
-            $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
+                        var transformed = $.map(data.results, function(el) {
+                            return {
+                                label: el.full_name,
+                                id: el.pk,
+                                thumbnail: el.thumbnail,
+                                data: el,
+                            };
+                        });
+                        response(transformed);
+                    },
+                    error: function() {
+                        response([]);
+                    }
+                });
+            },
+            create: function() {
+                $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
 
-                var html = `<a href='/part/${item.id}/'><span>`;
+                    var html = `
+                    <div class='search-autocomplete-item' title='${item.data.description}'>
+                        <a href='/part/${item.id}/'>
+                            <span style='padding-right: 10px;'><img class='hover-img-thumb' src='${item.thumbnail || "/static/img/blank_image.png"}'> ${item.label}</span>
+                        </a>
+                        <span class='flex' style='flex-grow: 1;'></span>
+                    `;
+                    
+                    if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
+                        html += partStockLabel(
+                            item.data,
+                            {
+                                classes: 'badge-right',
+                            }
+                        );
+                    }
 
-                html += `<img class='hover-img-thumb' src='`;
-                html += item.thumbnail || `/static/img/blank_image.png`;
-                html += `'> `;
-                html += item.label;
+                    html += '</div>';
 
-                html += '</span>';
-                
-                if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
-                    html += partStockLabel(item.data);
-                }
-
-                html += '</a>';
-
-                return $('<li>').append(html).appendTo(ul);
-            };
-        },
-        select: function( event, ui ) {
-            window.location = '/part/' + ui.item.id + '/';
-        },
-        minLength: 2,
-        classes: {
-            'ui-autocomplete': 'dropdown-menu search-menu',
-        },
-    });
+                    return $('<li>').append(html).appendTo(ul);
+                };
+            },
+            select: function( event, ui ) {
+                window.location = '/part/' + ui.item.id + '/';
+            },
+            minLength: 2,
+            classes: {
+                'ui-autocomplete': 'dropdown-menu search-menu',
+            },
+            position: {
+                my : "right top",
+                at: "right bottom"
+            }
+        });
+    }
 
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
@@ -197,6 +205,9 @@ function inventreeDocReady() {
 
         location.href = url;
     });
+
+    // Display any cached alert messages
+    showCachedAlerts();
 }
 
 function isFileTransfer(transfer) {

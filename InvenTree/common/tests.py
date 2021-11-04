@@ -2,11 +2,12 @@
 from __future__ import unicode_literals
 from http import HTTPStatus
 import json
+from datetime import timedelta
 
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 
-from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage
+from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
 
 
@@ -200,3 +201,23 @@ class WebhookMessageTests(TestCase):
         assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
         message = WebhookMessage.objects.get()
         assert message.body == {"this": "is a message"}
+
+
+class NotificationTest(TestCase):
+
+    def test_check_notification_entries(self):
+
+        # Create some notification entries
+
+        self.assertEqual(NotificationEntry.objects.count(), 0)
+
+        NotificationEntry.notify('test.notification', 1)
+
+        self.assertEqual(NotificationEntry.objects.count(), 1)
+
+        delta = timedelta(days=1)
+
+        self.assertFalse(NotificationEntry.check_recent('test.notification', 2, delta))
+        self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
+
+        self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))

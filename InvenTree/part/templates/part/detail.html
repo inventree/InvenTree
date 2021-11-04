@@ -35,7 +35,7 @@
                 <td><span class='fas fa-sitemap'></span></td>
                 <td>{% trans "Category" %}</td>
                 <td>
-                    <a href='{% url "category-detail" part.category.pk %}'>{{ part.category }}</a>
+                    <a href='{% url "category-detail" part.category.pk %}'>{{ part.category.name }}</a>
                 </td>
             </tr>
             {% endif %}
@@ -62,7 +62,7 @@
             {% endif %}
             {% if part.minimum_stock %}
             <tr>
-                <td><span class='fas fa-less-than-equal'></span></td>
+                <td><span class='fas fa-flag'></span></td>
                 <td>{% trans "Minimum stock level" %}</td>
                 <td>{{ part.minimum_stock }}</td>
             </tr>
