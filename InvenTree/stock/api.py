@@ -445,8 +445,14 @@ class StockList(generics.ListCreateAPIView):
             # Finally, save the item (with user information)
             item.save(user=user)
 
-            # Serialize the stock, if required
             if serials:
+                """
+                Serialize the stock, if required
+
+                - Note that the "original" stock item needs to be created first, so it can be serialized
+                - It is then immediately deleted
+                """
+
                 try:
                     item.serializeStock(
                         quantity,
@@ -455,6 +461,19 @@ class StockList(generics.ListCreateAPIView):
                         notes=notes,
                         location=item.location,
                     )
+
+                    headers = self.get_success_headers(serializer.data)
+
+                    # Delete the original item
+                    item.delete()
+
+                    response_data = {
+                        'quantity': quantity,
+                        'serial_numbers': serials,
+                    }
+
+                    return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+
                 except DjangoValidationError as e:
                     raise ValidationError({
                         'quantity': e.messages,

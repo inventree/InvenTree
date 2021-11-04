@@ -115,6 +115,10 @@ function canDelete(OPTIONS) {
  */
 function getApiEndpointOptions(url, callback) {
 
+    if (!url) {
+        return;
+    }
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -727,6 +731,8 @@ function submitFormData(fields, options) {
                     break;
                 default:
                     $(options.modal).modal('hide');
+
+                    console.log(`upload error at ${options.url}`);
                     showApiError(xhr, options.url);
                     break;
                 }
