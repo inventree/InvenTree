@@ -142,7 +142,7 @@
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Completed" %}</td>
                         {% if build.completion_date %}
-                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
+                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
                         {% else %}
                         <td><em>{% trans "Build not complete" %}</em></td>
                         {% endif %}
@@ -160,9 +160,7 @@
     <div class='panel-content'>
         <div id='child-button-toolbar'>
             <div class='button-toolbar container-fluid float-right'>
-                <div class='filter-list' id='filter-list-sub-build'>
-                    <!-- Empty div for filters -->
-                </div>
+                {% include "filter_list.html" with id='sub-build' %}
             </div>
         </div>
         <table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#child-button-toolbar'></table>  
@@ -171,7 +169,7 @@
 
 <div class='panel panel-hidden' id='panel-allocate'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Allocate Stock to Build" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -210,9 +208,7 @@
                     <button id='allocate-selected-items' class='btn btn-success' title='{% trans "Allocate selected items" %}'>
                         <span class='fas fa-sign-in-alt'></span>
                     </button>
-                    <div class='filter-list' id='filter-list-builditems'>
-                        <!-- Empty div for table filters-->
-                    </div>
+                    {% include "filter_list.html" with id='builditems' %}
                 </div>
             </div>
         </div>
@@ -227,7 +223,7 @@
 
 <div class='panel panel-hidden' id='panel-outputs'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Incomplete Build Outputs" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -251,7 +247,9 @@
                             <span class='fas fa-tools'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
-                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}</a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'>
+                                <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
+                            </a></li>
                         </ul>
                     </div>
                 </div>
@@ -276,7 +274,7 @@
 
 <div class='panel panel-hidden' id='panel-attachments'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Attachments" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>

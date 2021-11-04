@@ -14,7 +14,7 @@
 
 <div class='panel panel-hidden' id='panel-history'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Stock Tracking Information" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -60,7 +60,7 @@
 
 <div class='panel panel-hidden' id='panel-test-data'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Test Data" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -80,12 +80,8 @@
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='button-toolbar container-fluid' style="float: right;">
-                <div class='btn-group' role='group'>
-                </div>
-                <div class='filter-list' id='filter-list-stocktests'>
-                    <!-- Empty div -->
-                </div>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="stocktests" %}
             </div>
         </div>
         
@@ -95,7 +91,7 @@
 
 <div class='panel panel-hidden' id='panel-attachments'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Attachments" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
@@ -133,7 +129,7 @@
 
 <div class='panel panel-hidden' id='panel-installed-items'>
     <div class='panel-heading'>
-        <div class='d-flex flex-row'>
+        <div class='d-flex flex-wrap'>
             <h4>{% trans "Installed Stock Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>

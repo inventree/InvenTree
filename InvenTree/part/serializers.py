@@ -33,11 +33,24 @@ from .models import (BomItem, BomItemSubstitute,
 class CategorySerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategory """
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+    def get_starred(self, category):
+        """
+        Return True if the category is directly "starred" by the current user
+        """
+
+        return category in self.context.get('starred_categories', [])
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
 
     level = serializers.IntegerField(read_only=True)
+
+    starred = serializers.SerializerMethodField()
 
     class Meta:
         model = PartCategory
@@ -51,6 +64,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'parent',
             'parts',
             'pathstring',
+            'starred',
             'url',
         ]
 
@@ -240,6 +254,9 @@ class PartSerializer(InvenTreeModelSerializer):
         performing database queries as efficiently as possible,
         to reduce database trips.
         """
+
+        # TODO: Update the "in_stock" annotation to include stock for variants of the part
+        # Ref: https://github.com/inventree/InvenTree/issues/2240
 
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(

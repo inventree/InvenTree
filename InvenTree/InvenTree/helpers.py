@@ -72,6 +72,35 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
+def construct_absolute_url(*arg):
+    """
+    Construct (or attempt to construct) an absolute URL from a relative URL.
+
+    This is useful when (for example) sending an email to a user with a link
+    to something in the InvenTree web framework.
+
+    This requires the BASE_URL configuration option to be set!
+    """
+
+    base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
+
+    url = '/'.join(arg)
+
+    if not base:
+        return url
+
+    # Strip trailing slash from base url
+    if base.endswith('/'):
+        base = base[:-1]
+
+    if url.startswith('/'):
+        url = url[1:]
+
+    url = f"{base}/{url}"
+
+    return url
+
+
 def getBlankImage():
     """
     Return the qualified path for the 'blank image' placeholder.
