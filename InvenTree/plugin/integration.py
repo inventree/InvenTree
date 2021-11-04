@@ -346,33 +346,32 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         return False
 
     # git
-    def get_plugin_commit(self):
+    def get_package_commit(self):
         """get last git commit for plugin"""
         return get_git_log(self.def_path)
 
     def set_package(self):
-        """add the last commit of the plugins class file into plugins context"""
+        """add packaging info of the plugins into plugins context"""
         if self.is_package:
-            # is a package - no signing - no commit
+            # is a package - no commit
             package = {}
         else:
-            # fetch git log
-            package = self.get_plugin_commit()
-
-        # resolve state
-        sign_state = getattr(GitStatus, str(package.get('verified')), GitStatus.N)
-
-        # set variables
-        self.package = package
-        self.sign_state = sign_state
+            # fetch git commit
+            package = self.get_package_commit()
 
         # process date
-        if self.package.get('date'):
-            self.package['date'] = datetime.fromisoformat(self.package.get('date'))
+        if package.get('date'):
+            package['date'] = datetime.fromisoformat(package.get('date'))
 
+        # process sign state
+        sign_state = getattr(GitStatus, str(package.get('verified')), GitStatus.N)
         if sign_state.status == 0:
             self.sign_color = 'success'
         elif sign_state.status == 1:
             self.sign_color = 'warning'
         else:
             self.sign_color = 'danger'
+
+        # set variables
+        self.package = package
+        self.sign_state = sign_state
