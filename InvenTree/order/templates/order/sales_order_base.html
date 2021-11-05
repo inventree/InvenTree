@@ -16,7 +16,7 @@
 
 {% block thumbnail %}
 <img class='part-thumb'
-{% if order.customer.image %}
+{% if order.customer and order.customer.image %}
 src="{{ order.customer.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
@@ -106,11 +106,13 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
+    {% if order.customer %}
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
         <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
     </tr>
+    {% endif %}
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
