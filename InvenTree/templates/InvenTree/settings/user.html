@@ -212,7 +212,7 @@
                 {% trans "Select language" %}
             </label>
             <div class='form-group input-group mb-3'>
-                <select name="language" class="select form-control">
+                <select name="language" class="select form-control w-25">
                     {% get_current_language as LANGUAGE_CODE %}
                     {% get_available_languages as LANGUAGES %}
                     {% get_language_info_list for LANGUAGES as languages %}
