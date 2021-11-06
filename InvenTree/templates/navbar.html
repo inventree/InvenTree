@@ -10,9 +10,6 @@
     <div class="navbar-header clearfix content-heading">
       <a class="navbar-brand" id='logo' href="{% url 'index' %}" style="padding-top: 7px; padding-bottom: 5px;"><img src="{% static 'img/inventree.png' %}" width="32" height="32" style="display:block; margin: auto;"/></a>
     </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-objects" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="navbar-collapse collapse" id="navbar-objects">
       <ul class="navbar-nav">
         {% if roles.part.view %}
@@ -70,6 +67,11 @@
         </button>
       </li>
       {% endif %}
+      <li class='nav-item' id='navbar-barcode-li'>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-objects" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </li>
       <li class='nav-item dropdown'>
         <a class='nav-link dropdown-toggle' href='#' id='userMenuDropdown' role='button' data-bs-toggle='dropdown'>
           <span class='fas fa-user'></span> <strong>{{ user.get_username }}</strong>
@@ -108,7 +110,6 @@
         </ul>
       </li>
     </ul>
-
   </div>
 </nav>
 
