@@ -216,7 +216,7 @@
                     {% get_current_language as LANGUAGE_CODE %}
                     {% get_available_languages as LANGUAGES %}
                     {% get_language_info_list for LANGUAGES as languages %}
-                    {% define 'alllang' in request.GET as ALL_LANG %}
+                    {% if 'alllang' in request.GET %}{% define True as ALL_LANG %}{% endif %}
                     {% for language in languages %}
                         {% define language.code as lang_code %}
                         {% define locale_stats|keyvalue:lang_code as lang_translated %}
