@@ -134,6 +134,7 @@
 .navbar {
     border-bottom: 1px solid #ccc;
     background-color: var(--secondary-color);
+    box-shadow: 0px 5px 5px rgb(0 0 0 / 5%);
 }
 
 .navbar-brand {
@@ -829,6 +830,7 @@ input[type="submit"] {
     color: var(--bs-body-color);
     background-color: var(--secondary-color);
     border-bottom: 1px solid var(--border-color);
+    box-shadow: 0px 5px 5px rgb(0 0 0 / 5%);
 }
 
 .panel {
