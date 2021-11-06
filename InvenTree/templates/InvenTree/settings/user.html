@@ -236,11 +236,11 @@
                 <div class='input-group-append'>
                     <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
                 </div>
-                <p>{% trans "Some languages are have a low translation percentage." %}
+                <p>{% trans "Some languages are not complete" %}
                 {% if ALL_LANG %}
-                <a href="{% url 'settings' %}">{% trans "Show only sufficent" %}</a>
+                . <a href="{% url 'settings' %}">{% trans "Show only sufficent" %}</a>
                 {% else %}
-                <a href="?alllang">{% trans "Show them too" %}</a>
+                and hidden. <a href="?alllang">{% trans "Show them too" %}</a>
                 {% endif %}
                 </p>
             </div>
