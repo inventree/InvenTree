@@ -125,12 +125,6 @@
     align-content: center;
 }
 
-.qr-container {
-    width: 100%;
-    align-content: center;
-    object-fit: fill;
-}
-
 .navbar {
     border-bottom: 1px solid #ccc;
     background-color: var(--secondary-color);
