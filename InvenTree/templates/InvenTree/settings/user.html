@@ -216,9 +216,12 @@
                     {% get_current_language as LANGUAGE_CODE %}
                     {% get_available_languages as LANGUAGES %}
                     {% get_language_info_list for LANGUAGES as languages %}
+                    {% define 'alllang' in request.GET as ALL_LANG %}
                     {% for language in languages %}
                         {% define language.code as lang_code %}
                         {% define locale_stats|keyvalue:lang_code as lang_translated %}
+                        {% define lang_translated > 10 or lang_code == 'en' as use_lang %}
+                        {% if ALL_LANG or use_lang  %}
                         <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
                             {{ language.name_local }} ({{ lang_code }}) 
                             {% if lang_translated %}
@@ -227,11 +230,19 @@
                                 {% if lang_code == 'en' %}-{% else %}{% trans 'No translations available' %}{% endif %}
                             {% endif %}
                         </option>
+                        {% endif %}
                     {% endfor %}
                 </select>
                 <div class='input-group-append'>
                     <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
                 </div>
+                <p>{% trans "Some languages are have a low translation percentage." %}
+                {% if ALL_LANG %}
+                <a href="{% url 'settings' %}">{% trans "Show only sufficent" %}</a>
+                {% else %}
+                <a href="?alllang">{% trans "Show them too" %}</a>
+                {% endif %}
+                </p>
             </div>
     </form>
     </div>
