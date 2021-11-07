@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-07 23:01+0000\n"
+"POT-Creation-Date: 2021-11-07 23:20+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -36,7 +36,7 @@ msgstr "Ingrese la fecha"
 #: InvenTree/forms.py:120 build/forms.py:48 build/forms.py:69 build/forms.py:93
 #: order/forms.py:26 order/forms.py:37 order/forms.py:48 order/forms.py:59
 #: order/forms.py:70 part/forms.py:108 templates/account/email_confirm.html:20
-#: templates/js/translated/forms.js:587
+#: templates/js/translated/forms.js:594
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -6456,7 +6456,7 @@ msgid "This email confirmation link expired or is invalid. Please <a href=\"%(em
 msgstr ""
 
 #: templates/account/login.html:5 templates/account/login.html:14
-#: templates/account/login.html:36
+#: templates/account/login.html:37
 msgid "Sign In"
 msgstr ""
 
@@ -6475,18 +6475,18 @@ msgid ""
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
-#: templates/account/login.html:39
+#: templates/account/login.html:40
 #, fuzzy
 #| msgid "Set Password"
 msgid "Forgot Password?"
 msgstr "Configurar Contraseña"
 
-#: templates/account/login.html:45
+#: templates/account/login.html:46
 msgid "or use SSO"
 msgstr ""
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
-#: templates/account/logout.html:19
+#: templates/account/logout.html:20
 msgid "Sign Out"
 msgstr ""
 
@@ -6494,7 +6494,7 @@ msgstr ""
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
-#: templates/account/logout.html:18
+#: templates/account/logout.html:19
 msgid "Back to Site"
 msgstr ""
 
@@ -7281,49 +7281,49 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:351 templates/js/translated/forms.js:364
-#: templates/js/translated/forms.js:376 templates/js/translated/forms.js:388
+#: templates/js/translated/forms.js:349 templates/js/translated/forms.js:364
+#: templates/js/translated/forms.js:378 templates/js/translated/forms.js:392
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:352
+#: templates/js/translated/forms.js:351
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:365
+#: templates/js/translated/forms.js:366
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:377
+#: templates/js/translated/forms.js:380
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:394
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:672
+#: templates/js/translated/forms.js:679
 #, fuzzy
 #| msgid "Must be a valid number"
 msgid "Enter a valid number"
 msgstr "Debe ser un numero valido"
 
-#: templates/js/translated/forms.js:1059 templates/modals.html:19
+#: templates/js/translated/forms.js:1066 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1445
+#: templates/js/translated/forms.js:1452
 #, fuzzy
 #| msgid "No serial numbers found"
 msgid "No results found"
 msgstr "Numeros de serie no encontrados"
 
-#: templates/js/translated/forms.js:1649
+#: templates/js/translated/forms.js:1656
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:1866
+#: templates/js/translated/forms.js:1873
 msgid "Clear input"
 msgstr ""
 
