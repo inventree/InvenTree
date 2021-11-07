@@ -190,6 +190,18 @@ $(document).ready(function () {
     {% endif %}
 
     moment.locale('{{ request.LANGUAGE_CODE }}');
+
+    // Account notifications
+    {% if messages %}
+    {% for message in messages %}
+    showMessage(
+        '{{ message }}',
+        {
+            style: 'info',
+        }
+    );
+    {% endfor %}
+    {% endif %}
 });
 
 </script>
