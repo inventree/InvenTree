@@ -125,12 +125,6 @@
     align-content: center;
 }
 
-.qr-container {
-    width: 100%;
-    align-content: center;
-    object-fit: fill;
-}
-
 .navbar {
     border-bottom: 1px solid #ccc;
     background-color: var(--secondary-color);
@@ -545,6 +539,7 @@
 .inventree-body {
     width: 100%;
     padding: 5px;
+    padding-right: 0;
 }
 
 .inventree-pre-content {
@@ -835,7 +830,7 @@ input[type="submit"] {
 
 .panel {
     box-shadow: 2px 2px #DDD;
-    margin-bottom: 20px;
+    margin-bottom: .75rem;
     background-color: #fff;
     border: 1px solid #ccc;
 }
