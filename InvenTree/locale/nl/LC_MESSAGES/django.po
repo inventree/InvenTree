@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-05 00:24+0000\n"
-"PO-Revision-Date: 2021-11-05 00:55\n"
+"POT-Creation-Date: 2021-11-07 23:01+0000\n"
+"PO-Revision-Date: 2021-11-07 23:07\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -489,7 +489,7 @@ msgstr "Wachtwoord instellen"
 msgid "Password fields must match"
 msgstr "Wachtwoordvelden komen niet overeen"
 
-#: InvenTree/views.py:863 templates/navbar.html:95
+#: InvenTree/views.py:863 templates/navbar.html:97
 msgid "System Information"
 msgstr "Systeeminformatie"
 
@@ -845,7 +845,7 @@ msgstr ""
 
 #: build/models.py:1238 stock/templates/stock/item_base.html:312
 #: templates/InvenTree/search.html:143 templates/js/translated/build.js:1592
-#: templates/navbar.html:35
+#: templates/navbar.html:32
 msgid "Build"
 msgstr "Product"
 
@@ -2556,7 +2556,7 @@ msgstr ""
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
 #: part/templates/part/detail.html:171 templates/InvenTree/index.html:252
-#: templates/InvenTree/search.html:203 templates/navbar.html:47
+#: templates/InvenTree/search.html:203 templates/navbar.html:44
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2576,7 +2576,7 @@ msgstr ""
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
 #: part/templates/part/detail.html:194 templates/InvenTree/index.html:283
-#: templates/InvenTree/search.html:223 templates/navbar.html:58
+#: templates/InvenTree/search.html:223 templates/navbar.html:55
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -2618,7 +2618,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:14 company/views.py:55
 #: part/templates/part/prices.html:167 templates/InvenTree/search.html:184
-#: templates/navbar.html:46
+#: templates/navbar.html:43
 msgid "Manufacturers"
 msgstr ""
 
@@ -2647,7 +2647,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:108
 #: company/templates/company/supplier_part.html:15 company/views.py:49
 #: part/templates/part/prices.html:163 templates/InvenTree/search.html:194
-#: templates/navbar.html:45
+#: templates/navbar.html:42
 msgid "Suppliers"
 msgstr ""
 
@@ -2774,7 +2774,7 @@ msgstr ""
 #: templates/InvenTree/search.html:156 templates/js/translated/part.js:425
 #: templates/js/translated/part.js:560 templates/js/translated/part.js:785
 #: templates/js/translated/part.js:945 templates/js/translated/stock.js:479
-#: templates/js/translated/stock.js:1131 templates/navbar.html:28
+#: templates/js/translated/stock.js:1131 templates/navbar.html:25
 msgid "Stock"
 msgstr ""
 
@@ -2799,7 +2799,7 @@ msgid "New Manufacturer"
 msgstr ""
 
 #: company/views.py:61 templates/InvenTree/search.html:214
-#: templates/navbar.html:57
+#: templates/navbar.html:54
 msgid "Customers"
 msgstr ""
 
@@ -3770,7 +3770,7 @@ msgstr ""
 #: part/templates/part/category.html:13 part/templates/part/category.html:122
 #: part/templates/part/category.html:142 templates/InvenTree/index.html:85
 #: templates/InvenTree/search.html:88 templates/js/translated/part.js:1303
-#: templates/navbar.html:21 templates/stats.html:80 templates/stats.html:89
+#: templates/navbar.html:18 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
 msgstr ""
@@ -6075,7 +6075,7 @@ msgstr ""
 msgid "Edit setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:8 templates/navbar.html:87
+#: templates/InvenTree/settings/settings.html:8 templates/navbar.html:89
 msgid "Settings"
 msgstr ""
 
@@ -6702,7 +6702,7 @@ msgstr ""
 msgid "Scan barcode data below"
 msgstr ""
 
-#: templates/js/translated/barcode.js:280 templates/navbar.html:68
+#: templates/js/translated/barcode.js:280 templates/navbar.html:65
 msgid "Scan Barcode"
 msgstr ""
 
@@ -8199,27 +8199,27 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: templates/navbar.html:42
+#: templates/navbar.html:39
 msgid "Buy"
 msgstr "Inkoop"
 
-#: templates/navbar.html:54
+#: templates/navbar.html:51
 msgid "Sell"
 msgstr "Verkoop"
 
-#: templates/navbar.html:80 users/models.py:39
+#: templates/navbar.html:82 users/models.py:39
 msgid "Admin"
 msgstr ""
 
-#: templates/navbar.html:82
+#: templates/navbar.html:84
 msgid "Logout"
 msgstr ""
 
-#: templates/navbar.html:84
+#: templates/navbar.html:86
 msgid "Login"
 msgstr ""
 
-#: templates/navbar.html:105
+#: templates/navbar.html:107
 msgid "About InvenTree"
 msgstr ""
 
