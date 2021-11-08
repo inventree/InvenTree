@@ -34,8 +34,7 @@
 }
 
 .login-header {
-    padding-right: 30px;
-    margin-right: 30px;
+    margin-right: 5px;
 }
 
 .login-container input {
@@ -125,16 +124,14 @@
     align-content: center;
 }
 
-.qr-container {
-    width: 100%;
-    align-content: center;
-    object-fit: fill;
-}
-
 .navbar {
     border-bottom: 1px solid #ccc;
     background-color: var(--secondary-color);
     box-shadow: 0px 5px 5px rgb(0 0 0 / 5%);
+}
+
+.inventree-navbar-menu {
+    position: absolute !important;
 }
 
 .navbar-brand {
@@ -545,6 +542,7 @@
 .inventree-body {
     width: 100%;
     padding: 5px;
+    padding-right: 0;
 }
 
 .inventree-pre-content {
@@ -835,7 +833,7 @@ input[type="submit"] {
 
 .panel {
     box-shadow: 2px 2px #DDD;
-    margin-bottom: 20px;
+    margin-bottom: .75rem;
     background-color: #fff;
     border: 1px solid #ccc;
 }
