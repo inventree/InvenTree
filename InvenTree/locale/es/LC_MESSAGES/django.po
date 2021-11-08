@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-08 04:11+0000\n"
-"PO-Revision-Date: 2021-11-08 18:51\n"
+"PO-Revision-Date: 2021-11-08 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -619,7 +619,7 @@ msgstr "Construir órdenes"
 
 #: build/models.py:198
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Número de orden de construcción o armado"
 
 #: build/models.py:199 order/models.py:249 order/models.py:556
 #: order/models.py:736 part/models.py:2578
@@ -633,16 +633,16 @@ msgstr "Referencia"
 
 #: build/models.py:210
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Breve descripción de la construcción o armado"
 
 #: build/models.py:219 build/templates/build/build_base.html:154
 #: build/templates/build/detail.html:88
 msgid "Parent Build"
-msgstr ""
+msgstr "Construcción o Armado Superior"
 
 #: build/models.py:220
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Orden de Construcción o Armado a la que se asigna"
 
 #: build/models.py:225 build/templates/build/build_base.html:117
 #: build/templates/build/detail.html:30 company/models.py:705
@@ -674,15 +674,15 @@ msgstr "Parte"
 
 #: build/models.py:233
 msgid "Select part to build"
-msgstr ""
+msgstr "Seleccionar parte a construir o armar"
 
 #: build/models.py:238
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Referencia de orden de venta"
 
 #: build/models.py:242
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Orden de Venta a la que se asigna"
 
 #: build/models.py:247 templates/js/translated/build.js:1347
 msgid "Source Location"
@@ -690,7 +690,7 @@ msgstr "Ubicación de la fuente"
 
 #: build/models.py:251
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Seleccione la ubicación de donde tomar stock para esta construcción o armado (deje en blanco para tomar desde cualquier ubicación)"
 
 #: build/models.py:256
 msgid "Destination Location"
@@ -820,20 +820,20 @@ msgstr "La salida de la construcción no coincide con el orden de construcción"
 
 #: build/models.py:1108
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Item de construcción o armado debe especificar un resultado o salida, ya que la parte maestra está marcada como rastreable"
 
 #: build/models.py:1117
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr ""
+msgstr "Cantidad asignada ({q}) no debe exceder la cantidad disponible de stock ({a})"
 
 #: build/models.py:1127
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Artículo de stock sobreasignado"
 
 #: build/models.py:1133 order/models.py:964
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Cantidad asignada debe ser mayor que cero"
 
 #: build/models.py:1139
 msgid "Quantity must be 1 for serialized stock"
@@ -841,17 +841,17 @@ msgstr "La cantidad debe ser 1 para el stock serializado"
 
 #: build/models.py:1193
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Artículo de stock seleccionado no encontrado en BOM"
 
 #: build/models.py:1253 stock/templates/stock/item_base.html:318
 #: templates/InvenTree/search.html:143 templates/js/translated/build.js:1599
 #: templates/navbar.html:32
 msgid "Build"
-msgstr ""
+msgstr "Construcción o Armado"
 
 #: build/models.py:1254
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Armar para asignar partes"
 
 #: build/models.py:1270 build/serializers.py:327
 #: stock/templates/stock/item_base.html:8
@@ -862,7 +862,7 @@ msgstr ""
 #: templates/js/translated/order.js:1156 templates/js/translated/order.js:1161
 #: templates/js/translated/stock.js:1988
 msgid "Stock Item"
-msgstr ""
+msgstr "Artículo de stock"
 
 #: build/models.py:1271
 msgid "Source stock item"
