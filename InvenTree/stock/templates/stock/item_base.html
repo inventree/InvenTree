@@ -53,6 +53,12 @@
 </div>
 <!-- Stock adjustment menu -->
 <!-- Check permissions and owner -->
+
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
+{% if owner_control.value == "True" %}
+    {% authorized_owners item.owner as owners %}
+{% endif %}
+
 {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
