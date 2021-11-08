@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-07 23:01+0000\n"
-"PO-Revision-Date: 2021-11-07 23:07\n"
+"POT-Creation-Date: 2021-11-07 23:20+0000\n"
+"PO-Revision-Date: 2021-11-08 00:03\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -36,7 +36,7 @@ msgstr "Datum eingeben"
 #: InvenTree/forms.py:120 build/forms.py:48 build/forms.py:69 build/forms.py:93
 #: order/forms.py:26 order/forms.py:37 order/forms.py:48 order/forms.py:59
 #: order/forms.py:70 part/forms.py:108 templates/account/email_confirm.html:20
-#: templates/js/translated/forms.js:587
+#: templates/js/translated/forms.js:594
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -6357,7 +6357,7 @@ msgid "This email confirmation link expired or is invalid. Please <a href=\"%(em
 msgstr "Dieser E-Mail Bestätigungslink ist abgelaufen oder ungültig. Bitte <a href=\"%(email_url)s\">fordern Sie eine neue E-Mail Bestätigung an</a>."
 
 #: templates/account/login.html:5 templates/account/login.html:14
-#: templates/account/login.html:36
+#: templates/account/login.html:37
 msgid "Sign In"
 msgstr "Einloggen"
 
@@ -6374,16 +6374,16 @@ msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
-#: templates/account/login.html:39
+#: templates/account/login.html:40
 msgid "Forgot Password?"
 msgstr "Passwort vergessen?"
 
-#: templates/account/login.html:45
+#: templates/account/login.html:46
 msgid "or use SSO"
 msgstr "oder SSO verwenden"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
-#: templates/account/logout.html:19
+#: templates/account/logout.html:20
 msgid "Sign Out"
 msgstr "Ausloggen"
 
@@ -6391,7 +6391,7 @@ msgstr "Ausloggen"
 msgid "Are you sure you want to sign out?"
 msgstr "Möchtest Sie sich wirklich abmelden?"
 
-#: templates/account/logout.html:18
+#: templates/account/logout.html:19
 msgid "Back to Site"
 msgstr "Zurück zur Website"
 
@@ -7142,45 +7142,45 @@ msgstr "Filter entfernen"
 msgid "Create filter"
 msgstr "Filter anlegen"
 
-#: templates/js/translated/forms.js:351 templates/js/translated/forms.js:364
-#: templates/js/translated/forms.js:376 templates/js/translated/forms.js:388
+#: templates/js/translated/forms.js:349 templates/js/translated/forms.js:364
+#: templates/js/translated/forms.js:378 templates/js/translated/forms.js:392
 msgid "Action Prohibited"
 msgstr "Aktion verboten"
 
-#: templates/js/translated/forms.js:352
+#: templates/js/translated/forms.js:351
 msgid "Create operation not allowed"
 msgstr "Erstellvorgang nicht erlaubt"
 
-#: templates/js/translated/forms.js:365
+#: templates/js/translated/forms.js:366
 msgid "Update operation not allowed"
 msgstr "Updatevorgang nicht erlaubt"
 
-#: templates/js/translated/forms.js:377
+#: templates/js/translated/forms.js:380
 msgid "Delete operation not allowed"
 msgstr "Löschvorgang nicht erlaubt"
 
-#: templates/js/translated/forms.js:389
+#: templates/js/translated/forms.js:394
 msgid "View operation not allowed"
 msgstr "Anzeigevorgang nicht erlaubt"
 
-#: templates/js/translated/forms.js:672
+#: templates/js/translated/forms.js:679
 msgid "Enter a valid number"
 msgstr "Gib eine gültige Nummer ein"
 
-#: templates/js/translated/forms.js:1059 templates/modals.html:19
+#: templates/js/translated/forms.js:1066 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr "Fehler in Formular"
 
-#: templates/js/translated/forms.js:1445
+#: templates/js/translated/forms.js:1452
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
 
-#: templates/js/translated/forms.js:1649
+#: templates/js/translated/forms.js:1656
 msgid "Searching"
 msgstr "Suche"
 
-#: templates/js/translated/forms.js:1866
+#: templates/js/translated/forms.js:1873
 msgid "Clear input"
 msgstr "Eingabe leeren"
 
