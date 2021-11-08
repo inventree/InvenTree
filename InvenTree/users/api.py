@@ -26,6 +26,37 @@ class OwnerList(generics.ListAPIView):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
 
+    def filter_queryset(self, queryset):
+        """
+        Implement text search for the "owner" model.
+
+        Note that an "owner" can be either a group, or a user,
+        so we cannot do a direct text search.
+
+        A "hack" here is to post-process the queryset and simply
+        remove any values which do not match.
+
+        It is not necessarily "efficient" to do it this way,
+        but until we determine a better way, this is what we have...
+        """
+
+        search_term = str(self.request.query_params.get('search', '')).lower()
+
+        queryset = super().filter_queryset(queryset)
+
+        if not search_term:
+            return queryset
+
+        results = []
+
+        # Extract search term f
+
+        for result in queryset.all():
+            if search_term in result.name().lower():
+                results.append(result)
+
+        return results
+
 
 class OwnerDetail(generics.RetrieveAPIView):
     """
