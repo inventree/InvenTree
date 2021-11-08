@@ -2051,10 +2051,10 @@ class Part(MPTTModel):
         if self.variant_of:
             parts.append(self.variant_of)
 
-        siblings = self.get_siblings(include_self=False)
+            siblings = self.get_siblings(include_self=False)
 
-        for sib in siblings:
-            parts.append(sib)
+            for sib in siblings:
+                parts.append(sib)
 
         filtered_parts = Part.objects.filter(pk__in=[part.pk for part in parts])
 

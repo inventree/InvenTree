@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-        <main class='col ps-md-2 pt-2'>
+        <main class='col ps-md-2 pt-2 pe-2'>
 
             {% block alerts %}
             <div class='notification-area' id='alerts'>
@@ -190,6 +190,18 @@ $(document).ready(function () {
     {% endif %}
 
     moment.locale('{{ request.LANGUAGE_CODE }}');
+
+    // Account notifications
+    {% if messages %}
+    {% for message in messages %}
+    showMessage(
+        '{{ message }}',
+        {
+            style: 'info',
+        }
+    );
+    {% endfor %}
+    {% endif %}
 });
 
 </script>

@@ -43,11 +43,18 @@ function buildFormFields() {
             }
         },
         sales_order: {
+            icon: 'fa-truck',
         },
         batch: {},
-        target_date: {},
-        take_from: {},
-        destination: {},
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        take_from: {
+            icon: 'fa-sitemap',
+        },
+        destination: {
+            icon: 'fa-sitemap',
+        },
         link: {
             icon: 'fa-link',
         },
