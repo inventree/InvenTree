@@ -140,7 +140,6 @@ class UserList(generics.ListAPIView):
     ]
 
 
-
 class GetAuthToken(APIView):
     """ Return authentication token for an authenticated user. """
 
