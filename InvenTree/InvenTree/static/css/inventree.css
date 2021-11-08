@@ -130,6 +130,10 @@
     box-shadow: 0px 5px 5px rgb(0 0 0 / 5%);
 }
 
+.inventree-navbar-menu {
+    position: absolute !important;
+}
+
 .navbar-brand {
     float: left;
 }

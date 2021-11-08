@@ -76,7 +76,7 @@
         <a class='nav-link dropdown-toggle' href='#' id='userMenuDropdown' role='button' data-bs-toggle='dropdown'>
           <span class='fas fa-user'></span> <strong>{{ user.get_username }}</strong>
         </a>
-        <ul class='dropdown-menu dropdown-menu-end'>
+        <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
           {% if user.is_staff %}
           <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
