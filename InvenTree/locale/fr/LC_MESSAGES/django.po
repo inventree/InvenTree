@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-07 23:20+0000\n"
-"PO-Revision-Date: 2021-11-08 00:02\n"
+"POT-Creation-Date: 2021-11-08 00:12+0000\n"
+"PO-Revision-Date: 2021-11-08 00:58\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -6217,29 +6217,41 @@ msgstr ""
 msgid "Select language"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:225
+#: templates/InvenTree/settings/user.html:228
 #, python-format
 msgid "%(lang_translated)s%% translated"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:227
+#: templates/InvenTree/settings/user.html:230
 msgid "No translations available"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:233
+#: templates/InvenTree/settings/user.html:237
 msgid "Set Language"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:239
+msgid "Some languages are not complete"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:241
+msgid "Show only sufficent"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:243
+msgid "Show them too"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:250
 msgid "Help the translation efforts!"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:240
+#: templates/InvenTree/settings/user.html:251
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:248
+#: templates/InvenTree/settings/user.html:259
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
