@@ -19,7 +19,6 @@
     renderStockLocation,
     renderSupplierPart,
     renderUser,
-    showAlertDialog,
     showAlertOrCache,
     showApiError,
 */
@@ -347,10 +346,12 @@ function constructForm(url, options) {
                 constructCreateForm(OPTIONS.actions.POST, options);
             } else {
                 // User does not have permission to POST to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Create operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Create operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`'POST action unavailable at ${url}`);
             }
             break;
@@ -360,10 +361,12 @@ function constructForm(url, options) {
                 constructChangeForm(OPTIONS.actions.PUT, options);
             } else {
                 // User does not have permission to PUT/PATCH to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Update operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Update operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`${options.method} action unavailable at ${url}`);
             }
             break;
@@ -372,10 +375,12 @@ function constructForm(url, options) {
                 constructDeleteForm(OPTIONS.actions.DELETE, options);
             } else {
                 // User does not have permission to DELETE to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Delete operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Delete operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`DELETE action unavailable at ${url}`);
             }
             break;
@@ -384,10 +389,12 @@ function constructForm(url, options) {
                 // TODO?
             } else {
                 // User does not have permission to GET to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "View operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "View operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`GET action unavailable at ${url}`);
             }
             break;

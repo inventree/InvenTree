@@ -37,7 +37,7 @@ def get_next_po_number():
     """
 
     if PurchaseOrder.objects.count() == 0:
-        return
+        return '0001'
 
     order = PurchaseOrder.objects.exclude(reference=None).last()
 
@@ -66,7 +66,7 @@ def get_next_so_number():
     """
 
     if SalesOrder.objects.count() == 0:
-        return
+        return '0001'
 
     order = SalesOrder.objects.exclude(reference=None).last()
 
