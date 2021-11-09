@@ -45,6 +45,16 @@ class BaseInvenTreeSetting(models.Model):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """
+        Enforce validation and clean before saving
+        """
+
+        self.clean()
+        self.validate_unique()
+
+        super().save()
+
     @classmethod
     def allValues(cls, user=None):
         """
@@ -426,6 +436,20 @@ class BaseInvenTreeSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
+
+    def setting_type(self):
+        """
+        Return the field type identifier for this setting object
+        """
+
+        if self.is_bool():
+            return 'boolean'
+
+        elif self.is_int():
+            return 'integer'
+        
+        else:
+            return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):

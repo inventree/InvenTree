@@ -16,11 +16,13 @@ class GlobalSettingsSerializer(InvenTreeModelSerializer):
     Serializer for the InvenTreeSetting model
     """
 
+    key = serializers.CharField(read_only=True)
+
     name = serializers.CharField(read_only=True)
 
     description = serializers.CharField(read_only=True)
 
-    # choices = serializers.CharField(read_only=True, many=True)
+    type = serializers.CharField(source='setting_type', read_only=True)
 
     class Meta:
         model = InvenTreeSetting
@@ -30,7 +32,7 @@ class GlobalSettingsSerializer(InvenTreeModelSerializer):
             'value',
             'name',
             'description',
-            # 'type',
+            'type',
         ]
 
 
@@ -39,11 +41,15 @@ class UserSettingsSerializer(InvenTreeModelSerializer):
     Serializer for the InvenTreeUserSetting model
     """
 
+    key = serializers.CharField(read_only=True)
+
     name = serializers.CharField(read_only=True)
 
     description = serializers.CharField(read_only=True)
 
-    # choices = serializers.CharField(read_only=True, many=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    type = serializers.CharField(source='setting_type', read_only=True)
 
     class Meta:
         model = InvenTreeUserSetting
@@ -54,5 +60,5 @@ class UserSettingsSerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'user',
-            # 'type',
+            'type',
         ]

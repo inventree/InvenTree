@@ -107,9 +107,6 @@ class UserSettingsPermissions(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
 
-        print("Checking object permissions:")
-        print(request.user, obj.user)
-
         try:
             user = request.user
         except AttributeError:
