@@ -39,7 +39,11 @@ function editSetting(pk, options={}) {
     // First, read the settings object from the server
     inventreeGet(url, {}, {
         success: function(response) {
-            
+    
+            if (response.choices && response.choices.length > 0) {
+                response.type = 'choice';
+            }
+
             // Construct the field 
             var fields = {
                 value: {

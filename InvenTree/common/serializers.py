@@ -32,7 +32,15 @@ class SettingsSerializer(InvenTreeModelSerializer):
         Returns the choices available for a given item
         """
 
-        return obj.choices()
+        results = []
+
+        for choice in obj.choices():
+            results.append({
+                'value': choice[0],
+                'display_name': choice[1],
+            })
+
+        return results
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
