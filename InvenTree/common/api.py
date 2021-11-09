@@ -52,8 +52,6 @@ class GlobalSettingsPermissions(permissions.BasePermission):
         Check that the requesting user is 'admin'
         """
 
-        print("User:", request.user, request.user.is_staff)
-
         try:
             user = request.user
 
@@ -102,11 +100,45 @@ class UserSettingsList(SettingsList):
         return queryset
 
 
+class UserSettingsPermissions(permissions.BasePermission):
+    """
+    Special permission class to determine if the user can view / edit a particular setting
+    """
+
+    def has_object_permission(self, request, view, obj):
+
+        print("Checking object permissions:")
+        print(request.user, obj.user)
+
+        try:
+            user = request.user
+        except AttributeError:
+            return False
+
+        return user == obj.user
+
+
+class UserSettingsDetail(generics.RetrieveUpdateAPIView):
+    """
+    Detail view for an individual "user setting" object
+
+    - User can only view / edit settings their own settings objects
+    """
+
+    queryset = common.models.InvenTreeUserSetting.objects.all()
+    serializer_class = common.serializers.UserSettingsSerializer
+    
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+
 common_api_urls = [
 
     # User settings
     url(r'^user/', include([
         # User Settings Detail
+        url(r'^(?P<pk>\d+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
 
         # User Settings List
         url(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
