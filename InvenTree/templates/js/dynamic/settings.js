@@ -1,6 +1,7 @@
 {% load inventree_extras %}
 
 /* exported
+    editSettings,
     user_settings,
     global_settings,
 */
@@ -80,7 +81,7 @@ function editSetting(pk, options={}) {
 
                     var setting = response.key;
 
-                    if (response.type == "boolean") {
+                    if (response.type == 'boolean') {
                         var enabled = response.value.toString().toLowerCase() == 'true';
                         $(`#setting-value-${setting}`).prop('checked', enabled);
                     } else {
@@ -93,5 +94,4 @@ function editSetting(pk, options={}) {
             showApiError(xhr, url);
         }
     });
-
 }
