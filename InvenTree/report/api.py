@@ -257,7 +257,6 @@ class ReportPrintMixin:
             pages = []
 
             try:
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
 
                 if len(outputs) > 1:
                     # If more than one output is generated, merge them into a single file
@@ -265,6 +264,8 @@ class ReportPrintMixin:
                         doc = output.get_document()
                         for page in doc.pages:
                             pages.append(page)
+
+                    pdf = outputs[0].get_document().copy(pages).write_pdf()
                 else:
                     pdf = outputs[0].get_document().write_pdf()
 
