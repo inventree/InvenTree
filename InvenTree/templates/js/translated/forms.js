@@ -19,7 +19,6 @@
     renderStockLocation,
     renderSupplierPart,
     renderUser,
-    showAlertDialog,
     showAlertOrCache,
     showApiError,
 */
@@ -199,14 +198,6 @@ function constructChangeForm(fields, options) {
             json: 'application/json',
         },
         success: function(data) {
-
-            // Push existing 'value' to each field
-            for (const field in data) {
-
-                if (field in fields) {
-                    fields[field].value = data[field];
-                }
-            }
             
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
@@ -216,6 +207,14 @@ function constructChangeForm(fields, options) {
                 // If the processResults function returns data, it will be stored
                 if (processed) {
                     data = processed;
+                }
+            }
+
+            // Push existing 'value' to each field
+            for (const field in data) {
+
+                if (field in fields) {
+                    fields[field].value = data[field];
                 }
             }
 
@@ -347,10 +346,12 @@ function constructForm(url, options) {
                 constructCreateForm(OPTIONS.actions.POST, options);
             } else {
                 // User does not have permission to POST to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Create operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Create operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`'POST action unavailable at ${url}`);
             }
             break;
@@ -360,10 +361,12 @@ function constructForm(url, options) {
                 constructChangeForm(OPTIONS.actions.PUT, options);
             } else {
                 // User does not have permission to PUT/PATCH to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Update operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Update operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`${options.method} action unavailable at ${url}`);
             }
             break;
@@ -372,10 +375,12 @@ function constructForm(url, options) {
                 constructDeleteForm(OPTIONS.actions.DELETE, options);
             } else {
                 // User does not have permission to DELETE to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Delete operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Delete operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`DELETE action unavailable at ${url}`);
             }
             break;
@@ -384,10 +389,12 @@ function constructForm(url, options) {
                 // TODO?
             } else {
                 // User does not have permission to GET to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "View operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "View operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`GET action unavailable at ${url}`);
             }
             break;
@@ -715,6 +722,11 @@ function submitFormData(fields, options) {
     if (has_files) {
         upload_func = inventreeFormDataUpload;
         data = form_data;
+    }
+
+    // Optionally pre-process the data before uploading to the server
+    if (options.processBeforeUpload) {
+        data = options.processBeforeUpload(data);
     }
 
     // Submit data

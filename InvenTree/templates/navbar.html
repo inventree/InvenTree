@@ -12,9 +12,6 @@
     <div class="navbar-header clearfix content-heading">
       <a class="navbar-brand" id='logo' href="{% url 'index' %}" style="padding-top: 7px; padding-bottom: 5px;"><img src="{% static 'img/inventree.png' %}" width="32" height="32" style="display:block; margin: auto;"/></a>
     </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-objects" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="navbar-collapse collapse" id="navbar-objects">
       <ul class="navbar-nav">
         {% if roles.part.view %}
@@ -84,19 +81,24 @@
       </ul>
     </div>
     {% include "search_form.html" %}
-    <ul class='navbar-nav'>
+    <ul class='navbar-nav flex-row'>
       {% if barcodes %}
-      <li id='navbar-barcode-li'>
+      <li class='nav-item' id='navbar-barcode-li'>
         <button id='barcode-scan' class='btn btn-secondary' title='{% trans "Scan Barcode" %}'>
           <span class='fas fa-qrcode'></span>
         </button>
       </li>
       {% endif %}
+      <li class='nav-item' id='navbar-barcode-li'>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-objects" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </li>
       <li class='nav-item dropdown'>
         <a class='nav-link dropdown-toggle' href='#' id='userMenuDropdown' role='button' data-bs-toggle='dropdown'>
           <span class='fas fa-user'></span> <strong>{{ user.get_username }}</strong>
         </a>
-        <ul class='dropdown-menu dropdown-menu-end'>
+        <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
           {% if user.is_staff %}
           <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
@@ -130,7 +132,6 @@
         </ul>
       </li>
     </ul>
-
   </div>
 </nav>
 

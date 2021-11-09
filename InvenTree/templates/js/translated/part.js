@@ -992,7 +992,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    var grid_view = inventreeLoad('part-grid-view') == 1;
+    var grid_view = options.gridView && inventreeLoad('part-grid-view') == 1;
 
     $(table).inventreeTable({
         url: url,
@@ -1020,7 +1020,7 @@ function loadPartTable(table, url, options={}) {
                 $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
             }
         },
-        buttons: [
+        buttons: options.gridView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1053,7 +1053,7 @@ function loadPartTable(table, url, options={}) {
                     );
                 }
             }
-        ],
+        ] : [],
         customView: function(data) {
 
             var html = '';

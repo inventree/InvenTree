@@ -12,10 +12,14 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 16
+INVENTREE_API_VERSION = 17
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v17 -> 2021-11-09
+    - Adds API endpoints for GLOBAL and USER settings objects
+    - Ref: https://github.com/inventree/InvenTree/pull/2275
 
 v16 -> 2021-10-17
     - Adds API endpoint for completing build order outputs

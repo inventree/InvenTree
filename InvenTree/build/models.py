@@ -47,7 +47,7 @@ def get_next_build_number():
     """
 
     if Build.objects.count() == 0:
-        return
+        return '0001'
 
     build = Build.objects.exclude(reference=None).last()
 
@@ -100,12 +100,27 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return reverse('api-build-list')
 
     def api_instance_filters(self):
-
+        
         return {
             'parent': {
                 'exclude_tree': self.pk,
             }
         }
+
+    @classmethod
+    def api_defaults(cls, request):
+        """
+        Return default values for this model when issuing an API OPTIONS request
+        """
+
+        defaults = {
+            'reference': get_next_build_number(),
+        }
+
+        if request and request.user:
+            defaults['issued_by'] = request.user.pk
+
+        return defaults
 
     def save(self, *args, **kwargs):
 
