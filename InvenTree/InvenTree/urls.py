@@ -42,8 +42,6 @@ from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
-from common.views import SettingEdit, UserSettingEdit
-
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
 
@@ -84,9 +82,6 @@ settings_urls = [
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
     url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
-
-    url(r'^(?P<pk>\d+)/edit/user', UserSettingEdit.as_view(), name='user-setting-edit'),
-    url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
 
     # Catch any other urls
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
