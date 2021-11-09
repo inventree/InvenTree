@@ -1,7 +1,7 @@
 {% load inventree_extras %}
 
 /* exported
-    editSettings,
+    editSetting,
     user_settings,
     global_settings,
 */
