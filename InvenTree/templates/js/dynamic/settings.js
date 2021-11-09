@@ -18,3 +18,4 @@ const global_settings = {
     {{ key }}: {% primitive_to_javascript value %},
     {% endfor %}
 };
+

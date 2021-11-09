@@ -53,7 +53,7 @@ admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
     url(r'^barcode/', include(barcode_api_urls)),
-    url(r'^common/', include(common_api_urls)),
+    url(r'^settings/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),

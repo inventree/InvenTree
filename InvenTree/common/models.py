@@ -850,7 +850,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group new user are asigned on registration'),
+            'description': _('Group to which new users are assigned on registration'),
             'default': '',
             'choices': settings_group_options
         },
