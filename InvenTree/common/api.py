@@ -85,7 +85,7 @@ class UserSettingsList(SettingsList):
 
     def filter_queryset(self, queryset):
         """
-        Only list settings which apply to the current user        
+        Only list settings which apply to the current user
         """
 
         try:

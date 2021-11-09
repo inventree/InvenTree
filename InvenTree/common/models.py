@@ -436,7 +436,6 @@ class BaseInvenTreeSetting(models.Model):
 
         return [opt[0] for opt in choices]
 
-
     def is_bool(self):
         """
         Check if this setting is required to be a boolean value

@@ -15,7 +15,6 @@ from formtools.wizard.views import SessionWizardView
 from crispy_forms.helper import FormHelper
 
 from InvenTree.views import AjaxView
-from InvenTree.helpers import str2bool
 
 from . import forms
 from .files import FileManager
