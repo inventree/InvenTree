@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django.conf.urls import url, include
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics
+from rest_framework import filters, generics, permissions
 
 import common.models
 import common.serializers
@@ -42,6 +42,40 @@ class GlobalSettingsList(SettingsList):
     serializer_class = common.serializers.GlobalSettingsSerializer
 
 
+class GlobalSettingsPermissions(permissions.BasePermission):
+    """
+    Special permission class to determine if the user is "staff"
+    """
+
+    def has_permission(self, request, view):
+        """
+        Check that the requesting user is 'admin'
+        """
+
+        print("User:", request.user, request.user.is_staff)
+
+        try:
+            user = request.user
+
+            return user.is_staff
+        except AttributeError:
+            return False
+
+
+class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
+    """
+    Detail view for an individual "global setting" object.
+
+    - User must have 'staff' status to view / edit
+    """
+
+    queryset = common.models.InvenTreeSetting.objects.all()
+    serializer_class = common.serializers.GlobalSettingsSerializer
+
+    permission_classes = [
+        GlobalSettingsPermissions,
+    ]
+    
 
 class UserSettingsList(SettingsList):
     """
@@ -81,6 +115,7 @@ common_api_urls = [
     # Global settings
     url(r'^global/', include([
         # Global Settings Detail
+        url(r'^(?P<pk>\d+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
 
         # Global Settings List
         url(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
