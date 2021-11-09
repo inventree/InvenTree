@@ -19,3 +19,68 @@ const global_settings = {
     {% endfor %}
 };
 
+/*
+ * Edit a setting value
+ */
+function editSetting(pk, options={}) {
+
+    // Is this a global setting or a user setting?
+    var global = options.global || false;
+
+    var url = '';
+
+    if (global) {
+        url = `/api/settings/global/${pk}/`;
+    } else {
+        url = `/api/settings/user/${pk}/`;
+    }
+
+    // First, read the settings object from the server
+    inventreeGet(url, {}, {
+        success: function(response) {
+            
+            // Construct the field 
+            var fields = {
+                value: {
+                    label: response.name,
+                    help_text: response.description,
+                    type: response.type,
+                    choices: response.choices,
+                }
+            };
+
+            constructChangeForm(fields, {
+                url: url,
+                method: 'PATCH',
+                title: "edit setting",
+                processResults: function(data, fields, opts) {
+
+                    switch (data.type) {
+                    case 'boolean':
+                        // Convert to boolean value
+                        data.value = data.value.toString().toLowerCase() == 'true';
+                        break;
+                    case 'integer':
+                        // Convert to integer value
+                        data.value = parseInt(data.value.toString());
+                        break;
+                    default:
+                        break;
+                    }
+
+                    return data;
+                },
+                processBeforeUpload: function(data) {
+                    // Convert value to string
+                    data.value = data.value.toString();
+
+                    return data;
+                }
+            });
+        },
+        error: function(xhr) {
+            showApiError(xhr, url);
+        }
+    });
+
+}

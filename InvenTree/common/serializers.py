@@ -34,12 +34,6 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
         return obj.choices()
 
-    value = serializers.SerializerMethodField()
-
-    def get_value(self, obj):
-
-        return obj.to_native_value()
-
 
 class GlobalSettingsSerializer(SettingsSerializer):
     """
