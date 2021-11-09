@@ -34,11 +34,14 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
         results = []
 
-        for choice in obj.choices():
-            results.append({
-                'value': choice[0],
-                'display_name': choice[1],
-            })
+        choices = obj.choices()
+
+        if choices:
+            for choice in choices:
+                results.append({
+                    'value': choice[0],
+                    'display_name': choice[1],
+                })
 
         return results
 
