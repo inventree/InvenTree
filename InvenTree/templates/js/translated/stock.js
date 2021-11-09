@@ -1128,7 +1128,9 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'quantity',
+        sortName: 'stock',
         title: '{% trans "Stock" %}',
+        sortable: true,
         formatter: function(value, row) {
 
             var val = parseFloat(value);
