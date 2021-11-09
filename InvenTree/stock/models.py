@@ -7,6 +7,7 @@ Stock database model definitions
 from __future__ import unicode_literals
 
 import os
+import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
@@ -223,6 +224,29 @@ class StockItem(MPTTModel):
         self.scheduled_for_deletion = True
         self.save()
 
+    def update_serial_number(self):
+        """
+        Update the 'serial_int' field, to be an integer representation of the serial number.
+        This is used for efficient numerical sorting
+        """
+
+        serial = getattr(self, 'serial', '')
+
+        # Default value if we cannot convert to an integer
+        serial_int = 0
+
+        # Look at the start of the string - can it be "integerized"?
+        result = re.match(r'^(\d+)', serial or "")
+
+        if result and len(result.groups()) == 1:
+            try:
+                serial_int = int(result.groups()[0])
+            except:
+                serial_int = 0
+
+        self.serial_int = serial_int
+
+
     def save(self, *args, **kwargs):
         """
         Save this StockItem to the database. Performs a number of checks:
@@ -233,6 +257,8 @@ class StockItem(MPTTModel):
 
         self.validate_unique()
         self.clean()
+
+        self.update_serial_number()
 
         user = kwargs.pop('user', None)
 
