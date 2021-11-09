@@ -52,7 +52,7 @@ function editSetting(pk, options={}) {
             constructChangeForm(fields, {
                 url: url,
                 method: 'PATCH',
-                title: "edit setting",
+                title: options.title,
                 processResults: function(data, fields, opts) {
 
                     switch (data.type) {
@@ -75,6 +75,17 @@ function editSetting(pk, options={}) {
                     data.value = data.value.toString();
 
                     return data;
+                },
+                onSuccess: function(response) {
+
+                    var setting = response.key;
+
+                    if (response.type == "boolean") {
+                        var enabled = response.value.toString().toLowerCase() == 'true';
+                        $(`#setting-value-${setting}`).prop('checked', enabled);
+                    } else {
+                        $(`#setting-value-${setting}`).html(response.value);
+                    }
                 }
             });
         },
