@@ -61,7 +61,11 @@ function inventreeGet(url, filters={}, options={}) {
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
-            console.error(thrownError);
+
+            if (thrownError) {
+                console.error('Error: ' + thrownError);
+            }
+
             if (options.error) {
                 options.error({
                     error: thrownError
@@ -174,7 +178,7 @@ function showApiError(xhr, url) {
     var title = null;
     var message = null;
 
-    switch (xhr.status) {
+    switch (xhr.status || 0) {
     // No response
     case 0:
         title = '{% trans "No Response" %}';
