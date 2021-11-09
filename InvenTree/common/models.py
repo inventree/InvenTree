@@ -353,6 +353,11 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError):
                 raise ValidationError(_('Must be an integer value'))
 
+        options = self.valid_options()
+
+        if options and self.value not in options:
+            raise ValidationError(_("Chosen value is not a valid option"))
+
         if validator is not None:
             self.run_validator(validator)
 
@@ -418,6 +423,19 @@ class BaseInvenTreeSetting(models.Model):
         """
 
         return self.__class__.get_setting_choices(self.key)
+
+    def valid_options(self):
+        """
+        Return a list of valid options for this setting
+        """
+
+        choices = self.choices()
+
+        if not choices:
+            return None
+
+        return [opt[0] for opt in choices]
+
 
     def is_bool(self):
         """
