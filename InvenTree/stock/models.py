@@ -504,6 +504,8 @@ class StockItem(MPTTModel):
         help_text=_('Serial number for this item')
     )
 
+    serial_int = models.IntegerField(default=0)
+
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
         max_length=125, blank=True,
