@@ -11,9 +11,10 @@ from rest_framework import serializers
 
 from common.models import InvenTreeSetting, InvenTreeUserSetting
 
-class GlobalSettingsSerializer(InvenTreeModelSerializer):
+
+class SettingsSerializer(InvenTreeModelSerializer):
     """
-    Serializer for the InvenTreeSetting model
+    Base serializer for a settings object
     """
 
     key = serializers.CharField(read_only=True)
@@ -26,12 +27,24 @@ class GlobalSettingsSerializer(InvenTreeModelSerializer):
 
     choices = serializers.SerializerMethodField()
 
-    def get_choices(self, obj: InvenTreeUserSetting):
+    def get_choices(self, obj):
         """
         Returns the choices available for a given item
         """
 
         return obj.choices()
+
+    value = serializers.SerializerMethodField()
+
+    def get_value(self, obj):
+
+        return obj.to_native_value()
+
+
+class GlobalSettingsSerializer(SettingsSerializer):
+    """
+    Serializer for the InvenTreeSetting model
+    """
 
     class Meta:
         model = InvenTreeSetting
@@ -46,29 +59,12 @@ class GlobalSettingsSerializer(InvenTreeModelSerializer):
         ]
 
 
-class UserSettingsSerializer(InvenTreeModelSerializer):
+class UserSettingsSerializer(SettingsSerializer):
     """
     Serializer for the InvenTreeUserSetting model
     """
 
-    key = serializers.CharField(read_only=True)
-
-    name = serializers.CharField(read_only=True)
-
-    description = serializers.CharField(read_only=True)
-
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    type = serializers.CharField(source='setting_type', read_only=True)
-
-    choices = serializers.SerializerMethodField()
-
-    def get_choices(self, obj: InvenTreeUserSetting):
-        """
-        Returns the choices available for a given item
-        """
-
-        return obj.choices()
 
     class Meta:
         model = InvenTreeUserSetting

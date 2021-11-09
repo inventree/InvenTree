@@ -909,6 +909,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         help_text=_('Settings key (must be unique - case insensitive'),
     )
 
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key)
+
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
@@ -1118,6 +1126,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'key__iexact': key,
             'user__id': kwargs['user'].id
         }
+
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key, user=self.user)
 
 
 class PriceBreak(models.Model):
