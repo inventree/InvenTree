@@ -34,6 +34,19 @@ import logging
 logger = logging.getLogger('inventree')
 
 
+class EmptyURLValidator(URLValidator):
+
+    def __call__(self, value):
+
+        value = str(value).strip()
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
+
+
 class BaseInvenTreeSetting(models.Model):
     """
     An base InvenTreeSetting object is a key:value pair used for storing
@@ -572,7 +585,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': URLValidator(),
+            'validator': EmptyURLValidator(),
             'default': '',
         },
 
