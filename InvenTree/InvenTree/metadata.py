@@ -98,7 +98,7 @@ class InvenTreeMetadata(SimpleMetadata):
         Override get_serializer_info so that we can add 'default' values
         to any fields whose Meta.model specifies a default value
         """
-
+        
         serializer_info = super().get_serializer_info(serializer)
 
         model_class = None
@@ -107,6 +107,13 @@ class InvenTreeMetadata(SimpleMetadata):
             model_class = serializer.Meta.model
 
             model_fields = model_meta.get_field_info(model_class)
+
+            model_default_func = getattr(model_class, 'api_defaults', None)
+
+            if model_default_func:
+                model_default_values = model_class.api_defaults(self.request)
+            else:
+                model_default_values = {}
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
@@ -122,6 +129,9 @@ class InvenTreeMetadata(SimpleMetadata):
                             continue
 
                     serializer_info[name]['default'] = default
+
+                elif name in model_default_values:
+                    serializer_info[name]['default'] = model_default_values[name]
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
@@ -140,6 +150,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 if 'help_text' not in serializer_info[name] and hasattr(relation.model_field, 'help_text'):
                     serializer_info[name]['help_text'] = relation.model_field.help_text
+
+                if name in model_default_values:
+                    serializer_info[name]['default'] = model_default_values[name]
 
         except AttributeError:
             pass

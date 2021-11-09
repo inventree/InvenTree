@@ -34,6 +34,19 @@ import logging
 logger = logging.getLogger('inventree')
 
 
+class EmptyURLValidator(URLValidator):
+
+    def __call__(self, value):
+
+        value = str(value).strip()
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
+
+
 class BaseInvenTreeSetting(models.Model):
     """
     An base InvenTreeSetting object is a key:value pair used for storing
@@ -44,6 +57,16 @@ class BaseInvenTreeSetting(models.Model):
 
     class Meta:
         abstract = True
+
+    def save(self, *args, **kwargs):
+        """
+        Enforce validation and clean before saving
+        """
+
+        self.clean()
+        self.validate_unique()
+
+        super().save()
 
     @classmethod
     def allValues(cls, user=None):
@@ -343,6 +366,11 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError):
                 raise ValidationError(_('Must be an integer value'))
 
+        options = self.valid_options()
+
+        if options and self.value not in options:
+            raise ValidationError(_("Chosen value is not a valid option"))
+
         if validator is not None:
             self.run_validator(validator)
 
@@ -409,6 +437,18 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.__class__.get_setting_choices(self.key)
 
+    def valid_options(self):
+        """
+        Return a list of valid options for this setting
+        """
+
+        choices = self.choices()
+
+        if not choices:
+            return None
+
+        return [opt[0] for opt in choices]
+
     def is_bool(self):
         """
         Check if this setting is required to be a boolean value
@@ -426,6 +466,20 @@ class BaseInvenTreeSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
+
+    def setting_type(self):
+        """
+        Return the field type identifier for this setting object
+        """
+
+        if self.is_bool():
+            return 'boolean'
+
+        elif self.is_int():
+            return 'integer'
+        
+        else:
+            return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
@@ -531,7 +585,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': URLValidator(),
+            'validator': EmptyURLValidator(),
             'default': '',
         },
 
@@ -850,7 +904,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group new user are asigned on registration'),
+            'description': _('Group to which new users are assigned on registration'),
             'default': '',
             'choices': settings_group_options
         },
@@ -872,6 +926,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         unique=True,
         help_text=_('Settings key (must be unique - case insensitive'),
     )
+
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key)
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
@@ -1082,6 +1144,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'key__iexact': key,
             'user__id': kwargs['user'].id
         }
+
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key, user=self.user)
 
 
 class PriceBreak(models.Model):

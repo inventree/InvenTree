@@ -50,26 +50,17 @@
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
-    var url = `/settings/${pk}/edit/`;
+
+    var is_global = true;
 
     if ($(this).attr('user')){
-        url += `user/`;
+        is_global = false;
     }
 
-    launchModalForm(
-        url,
-        {
-            success: function(response) {
-
-                if (response.is_bool) {
-                    var enabled = response.value.toLowerCase() == 'true';
-                    $(`#setting-value-${setting}`).prop('checked', enabled);
-                } else {
-                    $(`#setting-value-${setting}`).html(response.value);
-                }
-            }
-        }
-    );
+    editSetting(pk, {
+        global: is_global,
+        title: is_global ? '{% trans "Edit Global Setting" %}' : '{% trans "Edit User Setting" %}',
+    });
 });
 
 $("#edit-user").on('click', function() {

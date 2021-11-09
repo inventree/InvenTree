@@ -71,9 +71,12 @@
                     {% include "spacer.html" %}
                     <span class='float-right'><h3>{% inventree_title %}</h3></span>
                 </div>
-                <hr>
-                <div class='container-fluid'>{% block content %}{% endblock %}</div>
             </div>
+                <div class='container-fluid'>
+                    <hr>
+                    {% block content %}
+                    {% endblock %}
+                </div>
         </div>
         </div>
 

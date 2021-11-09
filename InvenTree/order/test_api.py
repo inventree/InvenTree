@@ -349,6 +349,31 @@ class PurchaseOrderReceiveTest(OrderTest):
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
 
+    def test_null_barcode(self):
+        """
+        Test than a "null" barcode field can be provided
+        """
+
+        # Set stock item barcode
+        item = StockItem.objects.get(pk=1)
+        item.save()
+
+        # Test with "null" value
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'barcode': None,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201
+        )
+
     def test_invalid_barcodes(self):
         """
         Tests for checking in items with invalid barcodes:
