@@ -235,14 +235,18 @@ class StockItem(MPTTModel):
         # Default value if we cannot convert to an integer
         serial_int = 0
 
-        # Look at the start of the string - can it be "integerized"?
-        result = re.match(r'^(\d+)', serial or "")
+        if serial is not None:
 
-        if result and len(result.groups()) == 1:
-            try:
-                serial_int = int(result.groups()[0])
-            except:
-                serial_int = 0
+            serial = str(serial)
+
+            # Look at the start of the string - can it be "integerized"?
+            result = re.match(r'^(\d+)', serial)
+
+            if result and len(result.groups()) == 1:
+                try:
+                    serial_int = int(result.groups()[0])
+                except:
+                    serial_int = 0
 
         self.serial_int = serial_int
 
