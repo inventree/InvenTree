@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-10 02:46+0000\n"
-"PO-Revision-Date: 2021-11-10 02:57\n"
+"PO-Revision-Date: 2021-11-10 23:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5678,7 +5678,7 @@ msgstr "BestandsObjekte können nur installiert werden wenn folgende Kriterien e
 
 #: stock/templates/stock/item_install.html:14
 msgid "The Stock Item links to a Part which is in the BOM for this Stock Item"
-msgstr ""
+msgstr "Der Lagerartikel ist auf ein Teil verknüpft das in der Stückliste für diesen Lagerartikel ist"
 
 #: stock/templates/stock/item_install.html:15
 msgid "The Stock Item is currently in stock"
@@ -5686,11 +5686,11 @@ msgstr "Dieses BestandsObjekt ist aktuell vorhanden"
 
 #: stock/templates/stock/item_install.html:16
 msgid "The Stock Item is serialized and does not belong to another item"
-msgstr ""
+msgstr "Der Lagerartikel ist serialisiert und gehört nicht zu einem anderen Teil"
 
 #: stock/templates/stock/item_install.html:21
 msgid "Install this Stock Item in another stock item."
-msgstr ""
+msgstr "Diesen Lagerartikel in einem anderen Lagerartikel installieren."
 
 #: stock/templates/stock/item_install.html:27
 msgid "The part associated to this Stock Item belongs to another part's BOM"
