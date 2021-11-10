@@ -1392,6 +1392,27 @@ class Part(MPTTModel):
 
         return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
 
+    def get_installed_part_options(self, include_inherited=True, include_variants=True):
+        """
+        Return a set of all Parts which can be "installed" into this part, based on the BOM.
+
+        arguments:
+            include_inherited - If set, include BomItem entries defined for parent parts
+            include_variants - If set, include variant parts for BomItems which allow variants
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items(include_inherited=include_inherited):
+
+            if include_variants and bom_item.allow_variants:
+                for part in bom_item.sub_part.get_descendants(include_self=True):
+                    parts.add(part)
+            else:
+                parts.add(bom_item.sub_part)
+
+        return parts
+
     def get_used_in_filter(self, include_inherited=True):
         """
         Return a query filter for all parts that this part is used in.
