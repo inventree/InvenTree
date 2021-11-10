@@ -246,7 +246,6 @@ class StockItem(MPTTModel):
 
         self.serial_int = serial_int
 
-
     def save(self, *args, **kwargs):
         """
         Save this StockItem to the database. Performs a number of checks:
