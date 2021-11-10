@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-10 02:46+0000\n"
-"PO-Revision-Date: 2021-11-10 02:56\n"
+"PO-Revision-Date: 2021-11-10 20:21\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -143,7 +143,7 @@ msgstr "date de chargement"
 
 #: InvenTree/models.py:142
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Le nom de fichier ne doit pas être vide"
 
 #: InvenTree/models.py:165
 msgid "Invalid attachment directory"
