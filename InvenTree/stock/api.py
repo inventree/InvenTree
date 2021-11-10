@@ -876,7 +876,7 @@ class StockList(generics.ListCreateAPIView):
 
     ordering_field_aliases = {
         'SKU': 'supplier_part__SKU',
-        'stock': ['quantity', 'serial'],
+        'stock': ['quantity', 'serial_int', 'serial'],
     }
 
     ordering_fields = [
