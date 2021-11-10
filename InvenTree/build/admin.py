@@ -9,6 +9,10 @@ from .models import Build, BuildItem
 
 class BuildAdmin(ImportExportModelAdmin):
 
+    exclude = [
+        'reference_int',
+    ]
+
     list_display = (
         'reference',
         'title',

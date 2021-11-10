@@ -203,6 +203,23 @@ class PurchaseOrderTest(OrderTest):
         # And if we try to access the detail view again, it has gone
         response = self.get(url, expected_code=404)
 
+    def test_po_create(self):
+        """
+        Test that we can create a new PurchaseOrder via the API
+        """
+
+        self.assignRole('purchase_order.add')
+
+        self.post(
+            reverse('api-po-list'),
+            {
+                'reference': '12345678',
+                'supplier': 1,
+                'description': 'A test purchase order',
+            },
+            expected_code=201
+        )
+
 
 class PurchaseOrderReceiveTest(OrderTest):
     """
@@ -331,6 +348,31 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_null_barcode(self):
+        """
+        Test than a "null" barcode field can be provided
+        """
+
+        # Set stock item barcode
+        item = StockItem.objects.get(pk=1)
+        item.save()
+
+        # Test with "null" value
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'barcode': None,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201
+        )
 
     def test_invalid_barcodes(self):
         """
@@ -607,3 +649,20 @@ class SalesOrderTest(OrderTest):
 
         # And the resource should no longer be available
         response = self.get(url, expected_code=404)
+
+    def test_so_create(self):
+        """
+        Test that we can create a new SalesOrder via the API
+        """
+
+        self.assignRole('sales_order.add')
+
+        self.post(
+            reverse('api-so-list'),
+            {
+                'reference': '1234566778',
+                'customer': 4,
+                'description': 'A test sales order',
+            },
+            expected_code=201
+        )

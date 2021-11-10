@@ -56,10 +56,10 @@ function enableButtons(elements, enabled) {
 }
 
 
+/* Link a bootstrap-table object to one or more buttons.
+ * The buttons will only be enabled if there is at least one row selected
+ */
 function linkButtonsToSelection(table, buttons) {
-    /* Link a bootstrap-table object to one or more buttons.
-     * The buttons will only be enabled if there is at least one row selected
-     */
 
     if (typeof table === 'string') {
         table = $(table);
@@ -214,6 +214,8 @@ $.fn.inventreeTable = function(options) {
         options.pageList = [25, 50, 100, 250, 'all'];
         options.totalField = 'count';
         options.dataField = 'results';
+    } else {
+        options.pagination = false;
     }
 
     // Extract query params
@@ -397,3 +399,8 @@ function customGroupSorter(sortName, sortOrder, sortData) {
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);
 
 })(jQuery);
+
+$.extend($.fn.treegrid.defaults, {
+    expanderExpandedClass: 'treegrid-expander-expanded',
+    expanderCollapsedClass: 'treegrid-expander-collapsed'
+});

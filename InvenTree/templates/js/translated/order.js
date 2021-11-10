@@ -21,6 +21,7 @@
 /* exported
     createSalesOrder,
     editPurchaseOrderLineItem,
+    exportOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
@@ -83,6 +84,7 @@ function createPurchaseOrder(options={}) {
                 prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
             },
             supplier: {
+                icon: 'fa-building',
                 value: options.supplier,
                 secondary: {
                     title: '{% trans "Add Supplier" %}',
@@ -183,6 +185,49 @@ function newSupplierPartFromOrderWizard(e) {
                     }
                 }
             );
+        }
+    });
+}
+
+/**
+ * Export an order (PurchaseOrder or SalesOrder)
+ * 
+ * - Display a simple form which presents the user with export options
+ * 
+ */
+function exportOrder(redirect_url, options={}) {
+
+    var format = options.format;
+
+    // If default format is not provided, lookup
+    if (!format) {
+        format = inventreeLoad('order-export-format', 'csv');
+    }
+
+    constructFormBody({}, {
+        title: '{% trans "Export Order" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: format,
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, opts) {
+
+            var format = getFormFieldValue('format', fields['format'], opts);
+
+            // Save the format for next time
+            inventreeSave('order-export-format', format);
+
+            // Hide the modal
+            $(opts.modal).modal('hide');
+
+            // Download the file!
+            location.href = `${redirect_url}?format=${format}`;
         }
     });
 }
@@ -510,7 +555,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }
@@ -820,6 +865,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             },
             {
                 sortable: true,
+                switchable: false,
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 footerFormatter: function(data) {
@@ -835,18 +881,29 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'purchase_price',
                 title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
-                    return row.purchase_price_string || row.purchase_price;
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency
+                        }
+                    );
+                    return formatter.format(row.purchase_price);
                 }
             },
             {
                 field: 'total_price',
                 sortable: true,
-                field: 'total_price',
-                title: '{% trans "Total price" %}',
+                title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
-                    var total = row.purchase_price * row.quantity;
-                    var formatter = new Intl.NumberFormat('en-US', {style: 'currency', currency: row.purchase_price_currency});
-                    return formatter.format(total);
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency
+                        }
+                    );
+                    return formatter.format(row.purchase_price * row.quantity);
                 },
                 footerFormatter: function(data) {
                     var total = data.map(function(row) {
@@ -1392,7 +1449,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             sortable: true,
             field: 'reference',
             title: '{% trans "Reference" %}',
-            switchable: false,
+            switchable: true,
         },
         {
             sortable: true,
@@ -1412,14 +1469,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
             field: 'sale_price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
-                return row.sale_price_string || row.sale_price;
-            }
-        },
-        {
-            sortable: true,
-            title: '{% trans "Total price" %}',
-            formatter: function(value, row) {
-                var total = row.sale_price * row.quantity;
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
@@ -1428,7 +1477,23 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     }
                 );
 
-                return formatter.format(total);
+                return formatter.format(row.sale_price);
+            }
+        },
+        {
+            field: 'total_price',
+            sortable: true,
+            title: '{% trans "Total Price" %}',
+            formatter: function(value, row) {
+                var formatter = new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency',
+                        currency: row.sale_price_currency
+                    }
+                );
+
+                return formatter.format(row.sale_price * row.quantity);
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
@@ -1500,6 +1565,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     if (pending) {
         columns.push({
             field: 'buttons',
+            switchable: false,
             formatter: function(value, row, index, field) {
 
                 var html = `<div class='btn-group float-right' role='group'>`;
@@ -1597,6 +1663,13 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
             var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
+            // Quantity remaining to be allocated
+            var remaining = (line_item.quantity || 0) - (line_item.allocated || 0);
+
+            if (remaining < 0) {
+                remaining = 0;
+            }
+
             var fields = {
                 // SalesOrderLineItem reference
                 line: {
@@ -1610,9 +1683,26 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         in_stock: true,
                         part: line_item.part,
                         exclude_so_allocation: options.order,
-                    } 
+                    },
+                    auto_fill: true,
+                    onSelect: function(data, field, opts) {
+                        // Quantity available from this stock item
+
+                        if (!('quantity' in data)) {
+                            return;
+                        }
+
+                        // Calculate the available quantity
+                        var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
+
+                        // Maximum amount that we need
+                        var desired = Math.min(available, remaining);
+
+                        updateFieldValue('quantity', desired, {}, opts);
+                    }
                 },
                 quantity: {
+                    value: remaining,
                 },
             };
 
@@ -1708,7 +1798,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         showFooter: true,
         uniqueId: 'pk',
         detailView: show_detail,
-        detailViewByClick: show_detail,
+        detailViewByClick: false,
         detailFilter: function(index, row) {
             if (pending) {
                 // Order is pending

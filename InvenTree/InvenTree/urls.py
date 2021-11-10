@@ -8,7 +8,6 @@ Passes URL lookup downstream to each app as required.
 from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 
 from company.urls import company_urls
 from company.urls import manufacturer_part_urls
@@ -38,12 +37,10 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView
+from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
-
-from common.views import SettingEdit, UserSettingEdit
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
@@ -54,7 +51,7 @@ admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
     url(r'^barcode/', include(barcode_api_urls)),
-    url(r'^common/', include(common_api_urls)),
+    url(r'^settings/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
@@ -86,16 +83,12 @@ settings_urls = [
 
     url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
 
-    url(r'^(?P<pk>\d+)/edit/user', UserSettingEdit.as_view(), name='user-setting-edit'),
-    url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
-
     # Catch any other urls
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
 ]
 
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
-    url(r'^inventree.js', DynamicJsView.as_view(template_name='js/dynamic/inventree.js'), name='inventree.js'),
     url(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
     url(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
     url(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
@@ -143,9 +136,6 @@ urlpatterns = [
 
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    url(r'^login/?', auth_views.LoginView.as_view(), name='login'),
-    url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
-
     url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
@@ -154,7 +144,6 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
-    url(r'accounts/', include('django.contrib.auth.urls')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
@@ -166,6 +155,13 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^markdownx/', include('markdownx.urls')),
+
+    # Single Sign On / allauth
+    # overrides of urlpatterns
+    url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
+    url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
+    url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
+    url(r'^accounts/', include('allauth.urls')),  # included urlpatterns
 ]
 
 # Server running in "DEBUG" mode?

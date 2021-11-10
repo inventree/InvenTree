@@ -8,8 +8,8 @@
 {% inventree_title %} | {% trans "Settings" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "InvenTree/settings/navbar.html" %}
+{% block sidebar %}
+{% include "InvenTree/settings/sidebar.html" %}
 {% endblock %}
 
 {% block content %}
@@ -20,11 +20,12 @@
 {% include "InvenTree/settings/user_search.html" %}
 {% include "InvenTree/settings/user_labels.html" %}
 {% include "InvenTree/settings/user_reports.html" %}
-{% include "InvenTree/settings/user_forms.html" %}
+{% include "InvenTree/settings/user_display.html" %}
 
 {% if user.is_staff %}
 
 {% include "InvenTree/settings/global.html" %}
+{% include "InvenTree/settings/login.html" %}
 {% include "InvenTree/settings/barcode.html" %}
 {% include "InvenTree/settings/currencies.html" %}
 {% include "InvenTree/settings/report.html" %}
@@ -49,26 +50,17 @@
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
-    var url = `/settings/${pk}/edit/`;
+
+    var is_global = true;
 
     if ($(this).attr('user')){
-        url += `user/`;
+        is_global = false;
     }
 
-    launchModalForm(
-        url,
-        {
-            success: function(response) {
-
-                if (response.is_bool) {
-                    var enabled = response.value.toLowerCase() == 'true';
-                    $(`#setting-value-${setting}`).prop('checked', enabled);
-                } else {
-                    $(`#setting-value-${setting}`).html(response.value);
-                }
-            }
-        }
-    );
+    editSetting(pk, {
+        global: is_global,
+        title: is_global ? '{% trans "Edit Global Setting" %}' : '{% trans "Edit User Setting" %}',
+    });
 });
 
 $("#edit-user").on('click', function() {
@@ -172,8 +164,8 @@ $('#cat-param-table').inventreeTable({
             title: '{% trans "Default Value" %}',
             sortable: 'true',
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = value
                 html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
@@ -271,8 +263,8 @@ $("#param-table").inventreeTable({
         },
         {
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
 
@@ -318,15 +310,6 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
-
-enableNavbar({
-    label: 'settings',
-    toggleId: '#item-menu-toggle',
-});
-
-attachNavCallbacks({
-    name: 'settings',
-    default: 'account'
-});
+enableSidebar('settings');
 
 {% endblock %}

@@ -102,9 +102,9 @@ class APITests(InvenTreeAPITestCase):
 
     fixtures = [
         'location',
-        'stock',
-        'part',
         'category',
+        'part',
+        'stock'
     ]
 
     token = None
@@ -296,9 +296,9 @@ class APITests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
-        # 'add' permission does not apply here!
-        self.assertEqual(len(actions), 1)
+        self.assertEqual(len(actions), 2)
         self.assertIn('PUT', actions.keys())
+        self.assertIn('GET', actions.keys())
 
         # Add some other permissions
         self.assignRole('part.change')

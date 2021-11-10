@@ -23,7 +23,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
-from .models import (BomItem, Part, PartAttachment, PartCategory,
+from .models import (BomItem, BomItemSubstitute,
+                     Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -32,11 +33,24 @@ from .models import (BomItem, Part, PartAttachment, PartCategory,
 class CategorySerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategory """
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+    def get_starred(self, category):
+        """
+        Return True if the category is directly "starred" by the current user
+        """
+
+        return category in self.context.get('starred_categories', [])
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
 
     level = serializers.IntegerField(read_only=True)
+
+    starred = serializers.SerializerMethodField()
 
     class Meta:
         model = PartCategory
@@ -50,6 +64,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'parent',
             'parts',
             'pathstring',
+            'starred',
             'url',
         ]
 
@@ -108,7 +123,6 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     price = InvenTreeMoneySerializer(
-        max_digits=19, decimal_places=4,
         allow_null=True
     )
 
@@ -133,7 +147,6 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     price = InvenTreeMoneySerializer(
-        max_digits=19, decimal_places=4,
         allow_null=True
     )
 
@@ -241,6 +254,9 @@ class PartSerializer(InvenTreeModelSerializer):
         performing database queries as efficiently as possible,
         to reduce database trips.
         """
+
+        # TODO: Update the "in_stock" annotation to include stock for variants of the part
+        # Ref: https://github.com/inventree/InvenTree/issues/2240
 
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(
@@ -388,14 +404,35 @@ class PartStarSerializer(InvenTreeModelSerializer):
         ]
 
 
+class BomItemSubstituteSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the BomItemSubstitute class
+    """
+
+    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
+
+    class Meta:
+        model = BomItemSubstitute
+        fields = [
+            'pk',
+            'bom_item',
+            'part',
+            'part_detail',
+        ]
+
+
 class BomItemSerializer(InvenTreeModelSerializer):
-    """ Serializer for BomItem object """
+    """
+    Serializer for BomItem object
+    """
 
     price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
+
+    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -419,6 +456,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', False)
+        include_pricing = kwargs.pop('include_pricing', False)
 
         super(BomItemSerializer, self).__init__(*args, **kwargs)
 
@@ -427,6 +465,14 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         if sub_part_detail is not True:
             self.fields.pop('sub_part_detail')
+
+        if not include_pricing:
+            # Remove all pricing related fields
+            self.fields.pop('price_range')
+            self.fields.pop('purchase_price_min')
+            self.fields.pop('purchase_price_max')
+            self.fields.pop('purchase_price_avg')
+            self.fields.pop('purchase_price_range')
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -506,6 +552,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'reference',
             'sub_part',
             'sub_part_detail',
+            'substitutes',
             'price_range',
             'validated',
         ]

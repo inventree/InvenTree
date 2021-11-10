@@ -149,6 +149,10 @@ class StockLocationEdit(AjaxUpdateView):
     """
     View for editing details of a StockLocation.
     This view is used with the EditStockLocationForm to deliver a modal form to the web view
+
+    TODO: Remove this code as location editing has been migrated to the API forms
+          - Have to still validate that all form functionality (as below) as been ported
+
     """
 
     model = StockLocation
@@ -556,9 +560,8 @@ class StockItemInstall(AjaxUpdateView):
 
             # Filter for parts to install in this item
             if self.install_item:
-                # Get parts used in this part's BOM
-                bom_items = self.part.get_bom_items()
-                allowed_parts = [item.sub_part for item in bom_items]
+                # Get all parts which can be installed into this part
+                allowed_parts = self.part.get_installed_part_options()
                 # Filter
                 items = items.filter(part__in=allowed_parts)
 
@@ -927,6 +930,10 @@ class StockLocationCreate(AjaxCreateView):
     """
     View for creating a new StockLocation
     A parent location (another StockLocation object) can be passed as a query parameter
+
+    TODO: Remove this class entirely, as it has been migrated to the API forms
+          - Still need to check that all the functionality (as below) has been implemented
+
     """
 
     model = StockLocation
@@ -1017,89 +1024,6 @@ class StockLocationCreate(AjaxCreateView):
                 except AttributeError:
                     # No parent
                     pass
-
-
-class StockItemSerialize(AjaxUpdateView):
-    """ View for manually serializing a StockItem """
-
-    model = StockItem
-    ajax_template_name = 'stock/item_serialize.html'
-    ajax_form_title = _('Serialize Stock')
-    form_class = StockForms.SerializeStockForm
-
-    def get_form(self):
-
-        context = self.get_form_kwargs()
-
-        # Pass the StockItem object through to the form
-        context['item'] = self.get_object()
-
-        form = StockForms.SerializeStockForm(**context)
-
-        return form
-
-    def get_initial(self):
-
-        initials = super().get_initial().copy()
-
-        item = self.get_object()
-
-        initials['quantity'] = item.quantity
-        initials['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
-        if item.location is not None:
-            initials['destination'] = item.location.pk
-
-        return initials
-
-    def get(self, request, *args, **kwargs):
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.get_form()
-
-        item = self.get_object()
-
-        quantity = request.POST.get('quantity', 0)
-        serials = request.POST.get('serial_numbers', '')
-        dest_id = request.POST.get('destination', None)
-        notes = request.POST.get('note', '')
-        user = request.user
-
-        valid = True
-
-        try:
-            destination = StockLocation.objects.get(pk=dest_id)
-        except (ValueError, StockLocation.DoesNotExist):
-            destination = None
-
-        try:
-            numbers = extract_serial_numbers(serials, quantity)
-        except ValidationError as e:
-            form.add_error('serial_numbers', e.messages)
-            valid = False
-            numbers = []
-
-        if valid:
-            try:
-                item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
-            except ValidationError as e:
-                messages = e.message_dict
-
-                for k in messages.keys():
-                    if k in ['quantity', 'destination', 'serial_numbers']:
-                        form.add_error(k, messages[k])
-                    else:
-                        form.add_error(None, messages[k])
-
-                valid = False
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockItemCreate(AjaxCreateView):

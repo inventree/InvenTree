@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 
 {% load i18n %}
 {% load static %}
@@ -9,19 +9,14 @@
 {% inventree_title %} | {% trans "Sales Order" %}
 {% endblock %}
 
-{% block below_thumbnail %}
-<div class='info-messages'>
-    {% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
-    <div class='alert alert-block alert-danger'>
-        {% trans "This Sales Order has not been fully allocated" %}
-    </div>
-    {% endif %}
-</div>
-    {% endblock %}
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "so-index" %}'>{% trans "Sales Orders" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "so-detail" order.id %}'>{{ order }}</a></li>
+{% endblock %}
 
 {% block thumbnail %}
 <img class='part-thumb'
-{% if order.customer.image %}
+{% if order.customer and order.customer.image %}
 src="{{ order.customer.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
@@ -29,49 +24,71 @@ src="{% static 'img/blank_image.png' %}"
 />
 {% endblock %}
 
-{% block page_data %}
-
-<h3>
-    {% trans "Sales Order" %} {{ order.reference }}
-    {% if user.is_staff and roles.sales_order.change %}
-    <a href="{% url 'admin:order_salesorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
-    {% endif %}
-</h3>
-<h3>
-    {% sales_order_status_label order.status large=True %}
-    {% if order.is_overdue %}
-    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
-    {% endif %}
-</h3>
-<hr>
-<p>{{ order.description }}{% include "clip.html"%}</p>
-<div class='btn-row'>
-    <div class='btn-group action-buttons'>
-        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
-            <span class='fas fa-print'></span> 
-        </button>
-        {% if roles.sales_order.change %}
-        <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
-            <span class='fas fa-edit icon-green'></span>
-        </button>
-        {% if order.status == SalesOrderStatus.PENDING %}
-        <button type='button' class='btn btn-default' id='ship-order' title='{% trans "Ship order" %}'>
-            <span class='fas fa-paper-plane icon-blue'></span>
-        </button>
-        <button type='button' class='btn btn-default' id='cancel-order' title='{% trans "Cancel order" %}'>
-            <span class='fas fa-times-circle icon-red'></span>
-        </button>
-        {% endif %}
-        {% endif %}
-        <button type='button' disabled='' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
-            <span class='fas fa-clipboard-list'></span>
-        </button>
-    </div>
-</div>
+{% block heading %}
+{% trans "Sales Order" %} {{ order.reference }}
 {% endblock %}
 
-{% block page_details %}
-<h4>{% trans "Sales Order Details" %}</h4>
+{% block actions %}
+{% if user.is_staff and roles.sales_order.change %}
+{% url 'admin:order_salesorder_change' order.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+<!-- Printing actions -->
+<div class='btn-group' role='group'>
+    <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print sales order report" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
+        <!--
+        <li><a class='dropdown-item' href='#' id='print-packing-list'><span class='fas fa-clipboard-list'></span>{% trans "Print packing list" %}</a></li>
+        -->
+    </ul>
+</div>
+{% if roles.sales_order.change %}
+<!-- Order actions -->
+<div class='btn-group' role='group'>
+    <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        {% if order.status == SalesOrderStatus.PENDING %}
+        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        {% endif %}
+    </ul>
+
+</div>
+{% if order.status == SalesOrderStatus.PENDING %}
+<button type='button' class='btn btn-success' id='ship-order' title='{% trans "Ship Order" %}'>
+    <span class='fas fa-truck'></span> {% trans "Ship Order" %}
+</button>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block details %}
+
+<h4>
+    {% sales_order_status_label order.status large=True %}
+    {% if order.is_overdue %}
+    <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
+    {% endif %}
+</h4>
+<p>{{ order.description }}{% include "clip.html"%}</p>
+
+<div class='info-messages'>
+    {% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "This Sales Order has not been fully allocated" %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block details_right %}
 <table class='table table-striped table-condensed'>
     <col width='25'>
     <tr>
@@ -85,15 +102,17 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {% sales_order_status_label order.status %}
             {% if order.is_overdue %}
-            <span class='label label-red'>{% trans "Overdue" %}</span>
+            <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
+    {% if order.customer %}
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
         <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
     </tr>
+    {% endif %}
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
@@ -111,7 +130,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Created" %}</td>
-        <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
+        <td>{{ order.creation_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
     {% if order.target_date %}
     <tr>
@@ -124,14 +143,14 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-truck'></span></td>
         <td>{% trans "Shipped" %}</td>
-        <td>{{ order.shipment_date }}<span class='badge'>{{ order.shipped_by }}</span></td>
+        <td>{{ order.shipment_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.status == PurchaseOrderStatus.COMPLETE %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
+        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.responsible %}
@@ -146,11 +165,6 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 {{ block.super }}
-
-enableNavbar({
-    label: 'so',
-    toggleId: '#so-menu-toggle',
-});
 
 $("#edit-order").click(function() {
 
@@ -194,6 +208,10 @@ $("#ship-order").click(function() {
 
 $('#print-order-report').click(function() {
     printSalesOrderReports([{{ order.pk }}]);
+});
+
+$('#export-order').click(function() {
+    exportOrder('{% url "so-export" order.id %}');
 });
 
 {% endblock %}

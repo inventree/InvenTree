@@ -4,6 +4,7 @@ Generic models which provide extra functionality over base Django model types.
 
 from __future__ import unicode_literals
 
+import re
 import os
 import logging
 
@@ -41,6 +42,48 @@ def rename_attachment(instance, filename):
 
     # Construct a path to store a file attachment for a given model type
     return os.path.join(instance.getSubdir(), filename)
+
+
+class ReferenceIndexingMixin(models.Model):
+    """
+    A mixin for keeping track of numerical copies of the "reference" field.
+
+    Here, we attempt to convert a "reference" field value (char) to an integer,
+    for performing fast natural sorting.
+
+    This requires extra database space (due to the extra table column),
+    but is required as not all supported database backends provide equivalent casting.
+
+    This mixin adds a field named 'reference_int'.
+
+    - If the 'reference' field can be cast to an integer, it is stored here
+    - If the 'reference' field *starts* with an integer, it is stored here
+    - Otherwise, we store zero
+    """
+
+    class Meta:
+        abstract = True
+
+    def rebuild_reference_field(self):
+
+        reference = getattr(self, 'reference', '')
+
+        # Default value if we cannot convert to an integer
+        ref_int = 0
+
+        # Look at the start of the string - can it be "integerized"?
+        result = re.match(r"^(\d+)", reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except:
+                ref_int = 0
+
+        self.reference_int = ref_int
+
+    reference_int = models.IntegerField(default=0)
 
 
 class InvenTreeAttachment(models.Model):

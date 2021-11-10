@@ -9,16 +9,16 @@ import decimal
 import os
 from datetime import datetime
 
-from django.utils.translation import ugettext_lazy as _
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
-from django.urls import reverse
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
-from django.core.validators import MinValueValidator
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from markdownx.models import MarkdownxField
 
@@ -27,16 +27,17 @@ from mptt.exceptions import InvalidMove
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
+from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.validators import validate_build_order_reference
-from InvenTree.models import InvenTreeAttachment
 
 import common.models
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.tasks
 
-from stock import models as StockModels
 from part import models as PartModels
+from stock import models as StockModels
 from users import models as UserModels
 
 
@@ -46,7 +47,7 @@ def get_next_build_number():
     """
 
     if Build.objects.count() == 0:
-        return
+        return '0001'
 
     build = Build.objects.exclude(reference=None).last()
 
@@ -69,7 +70,7 @@ def get_next_build_number():
     return reference
 
 
-class Build(MPTTModel):
+class Build(MPTTModel, ReferenceIndexingMixin):
     """ A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -99,14 +100,31 @@ class Build(MPTTModel):
         return reverse('api-build-list')
 
     def api_instance_filters(self):
-
+        
         return {
             'parent': {
                 'exclude_tree': self.pk,
             }
         }
 
+    @classmethod
+    def api_defaults(cls, request):
+        """
+        Return default values for this model when issuing an API OPTIONS request
+        """
+
+        defaults = {
+            'reference': get_next_build_number(),
+        }
+
+        if request and request.user:
+            defaults['issued_by'] = request.user.pk
+
+        return defaults
+
     def save(self, *args, **kwargs):
+
+        self.rebuild_reference_field()
 
         try:
             super().save(*args, **kwargs)
@@ -587,9 +605,13 @@ class Build(MPTTModel):
         self.save()
 
     @transaction.atomic
-    def unallocateOutput(self, output, part=None):
+    def unallocateStock(self, bom_item=None, output=None):
         """
-        Unallocate all stock which are allocated against the provided "output" (StockItem)
+        Unallocate stock from this Build
+
+        arguments:
+            - bom_item: Specify a particular BomItem to unallocate stock against
+            - output: Specify a particular StockItem (output) to unallocate stock against
         """
 
         allocations = BuildItem.objects.filter(
@@ -597,34 +619,8 @@ class Build(MPTTModel):
             install_into=output
         )
 
-        if part:
-            allocations = allocations.filter(stock_item__part=part)
-
-        allocations.delete()
-
-    @transaction.atomic
-    def unallocateUntracked(self, part=None):
-        """
-        Unallocate all "untracked" stock
-        """
-
-        allocations = BuildItem.objects.filter(
-            build=self,
-            install_into=None
-        )
-
-        if part:
-            allocations = allocations.filter(stock_item__part=part)
-
-        allocations.delete()
-
-    @transaction.atomic
-    def unallocateAll(self):
-        """
-        Deletes all stock allocations for this build.
-        """
-
-        allocations = BuildItem.objects.filter(build=self)
+        if bom_item:
+            allocations = allocations.filter(bom_item=bom_item)
 
         allocations.delete()
 
@@ -720,7 +716,7 @@ class Build(MPTTModel):
             raise ValidationError(_("Build output does not match Build Order"))
 
         # Unallocate all build items against the output
-        self.unallocateOutput(output)
+        self.unallocateStock(output=output)
 
         # Remove the build output from the database
         output.delete()
@@ -744,7 +740,7 @@ class Build(MPTTModel):
         items.all().delete()
 
     @transaction.atomic
-    def completeBuildOutput(self, output, user, **kwargs):
+    def complete_build_output(self, output, user, **kwargs):
         """
         Complete a particular build output
 
@@ -761,10 +757,6 @@ class Build(MPTTModel):
         allocated_items = output.items_to_install.all()
 
         for build_item in allocated_items:
-
-            # TODO: This is VERY SLOW as each deletion from the database takes ~1 second to complete
-            # TODO: Use the background worker process to handle this task!
-
             # Complete the allocation of stock for that item
             build_item.complete_allocation(user)
 
@@ -790,6 +782,7 @@ class Build(MPTTModel):
 
         # Increase the completed quantity for this build
         self.completed += output.quantity
+
         self.save()
 
     def requiredQuantity(self, part, output):
@@ -1037,6 +1030,19 @@ class Build(MPTTModel):
         return self.status == BuildStatus.COMPLETE
 
 
+@receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
+def after_save_build(sender, instance: Build, created: bool, **kwargs):
+    """
+    Callback function to be executed after a Build instance is saved
+    """
+
+    if created:
+        # A new Build has just been created
+
+        # Run checks on required parts
+        InvenTree.tasks.offload_task('build.tasks.check_build_stock', instance)
+
+
 class BuildOrderAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a BuildOrder object
@@ -1153,16 +1159,12 @@ class BuildItem(models.Model):
                 i) The sub_part points to the same part as the referenced StockItem
                 ii) The BomItem allows variants and the part referenced by the StockItem
                     is a variant of the sub_part referenced by the BomItem
+                iii) The Part referenced by the StockItem is a valid substitute for the BomItem
             """
 
             if self.build and self.build.part == self.bom_item.part:
 
-                # Check that the sub_part points to the stock_item (either directly or via a variant)
-                if self.bom_item.sub_part == self.stock_item.part:
-                    bom_item_valid = True
-
-                elif self.bom_item.allow_variants and self.stock_item.part in self.bom_item.sub_part.get_descendants(include_self=False):
-                    bom_item_valid = True
+                bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not bom_item_valid:

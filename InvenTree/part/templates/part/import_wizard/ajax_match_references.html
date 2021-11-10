@@ -38,7 +38,7 @@
             {% for row in rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
                 <td>
-                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row.index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
+                    <button class='btn btn-outline-secondary btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row.index }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
                             <span row_id='{{ row.index }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>

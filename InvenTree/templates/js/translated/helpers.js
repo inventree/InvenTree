@@ -16,9 +16,9 @@
 
 function yesNoLabel(value) {
     if (value) {
-        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+        return `<span class='badge rounded-pill bg-success'>{% trans "YES" %}</span>`;
     } else {
-        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+        return `<span class='badge rounded-pill bg-warning'>{% trans "NO" %}</span>`;
     }
 }
 
@@ -87,19 +87,23 @@ function select2Thumbnail(image) {
 }
 
 
+/*
+ * Construct an 'icon badge' which floats to the right of an object
+ */
 function makeIconBadge(icon, title) {
-    // Construct an 'icon badge' which floats to the right of an object
 
-    var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
+    var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
 
     return html;
 }
 
 
+/*
+ * Construct an 'icon button' using the fontawesome set
+ */
 function makeIconButton(icon, cls, pk, title, options={}) {
-    // Construct an 'icon button' using the fontawesome set
 
-    var classes = `btn btn-default btn-glyph ${cls}`;
+    var classes = `btn btn-outline-secondary ${cls}`;
 
     var id = `${cls}-${pk}`;
 
@@ -178,8 +182,14 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var id = options.id || 'progress-bar';
 
+    var style = '';
+
+    if (opts.max_width) {
+        style += `max-width: ${options.max_width}; `;
+    }
+
     return `
-    <div id='${id}' class='progress'>
+    <div id='${id}' class='progress' style='${style}'>
         <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
         <div class='progress-value'>${text}</div>
     </div>

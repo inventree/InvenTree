@@ -1,0 +1,43 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+<table style='border-collapse: collapse; width: 85%; margin-left: 10%; font-size: 1rem; border: 1px solid #68686a; border-radius: 2px;'>
+
+    {% block header %}
+    <tr style='background: #eef3f7; height: 4rem; text-align: center;'>
+        <th colspan="100%" style="padding-bottom: 1rem; color: #68686a;">
+            {% block header_row %}
+            <p style='font-size: 1.25rem;'>{% block title %}<!-- email title goes here -->{% endblock %}</p>
+            {% block subtitle %}
+            <!-- email subtitle goes here -->
+            {% endblock %}
+            {% endblock %}
+        </th>
+
+    </tr>
+    {% endblock %}
+
+    {% block body %}
+    <tr style="height: 3rem; border-bottom: 1px solid #68686a;">
+        {% block body_row %}
+        <!-- email body goes here -->
+        {% endblock %}
+    </tr>
+    {% endblock %}
+
+    {% block footer %}
+    <tr style='background: #eef3f7; height: 2rem;'>
+        <td colspan="100%" style="padding-top:1rem; text-align: center">
+            {% block footer_prefix %}
+            <!-- Custom footer information goes here -->
+            {% endblock %}
+            <p><em><small>{% trans "InvenTree version" %}: {% inventree_version %} - <a href='https://inventree.readthedocs.io'>inventree.readthedocs.io</a></small></em></p>
+            {% block footer_suffix %}
+            <!-- Custom footer information goes here -->
+            {% endblock %}
+        </td>
+    </tr>
+    {% endblock %}
+
+</table>

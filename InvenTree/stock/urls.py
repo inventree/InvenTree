@@ -8,10 +8,7 @@ from stock import views
 
 location_urls = [
 
-    url(r'^new/', views.StockLocationCreate.as_view(), name='stock-location-create'),
-
     url(r'^(?P<pk>\d+)/', include([
-        url(r'^edit/?', views.StockLocationEdit.as_view(), name='stock-location-edit'),
         url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
         url(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
         
@@ -22,9 +19,7 @@ location_urls = [
 ]
 
 stock_item_detail_urls = [
-    url(r'^edit/', views.StockItemEdit.as_view(), name='stock-item-edit'),
     url(r'^convert/', views.StockItemConvert.as_view(), name='stock-item-convert'),
-    url(r'^serialize/', views.StockItemSerialize.as_view(), name='stock-item-serialize'),
     url(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
     url(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
     url(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
@@ -49,8 +44,6 @@ stock_tracking_urls = [
 stock_urls = [
     # Stock location
     url(r'^location/', include(location_urls)),
-
-    url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
     url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
 

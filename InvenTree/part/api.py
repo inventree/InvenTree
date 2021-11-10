@@ -6,7 +6,6 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.db import transaction
@@ -27,7 +26,8 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartCategory
+from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -42,26 +42,10 @@ from build.models import Build
 
 from . import serializers as part_serializers
 
-from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 
 from InvenTree.status_codes import BuildStatus
-
-
-class PartCategoryTree(TreeSerializer):
-
-    title = _("Parts")
-    model = PartCategory
-
-    queryset = PartCategory.objects.all()
-
-    @property
-    def root_url(self):
-        return reverse('part-index')
-
-    def get_items(self):
-        return PartCategory.objects.all().prefetch_related('parts', 'children')
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -73,6 +57,18 @@ class CategoryList(generics.ListCreateAPIView):
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
+
+        return ctx
 
     def filter_queryset(self, queryset):
         """
@@ -126,6 +122,18 @@ class CategoryList(generics.ListCreateAPIView):
             except (ValueError, PartCategory.DoesNotExist):
                 pass
 
+        # Filter by "starred" status
+        starred = params.get('starred', None)
+
+        if starred is not None:
+            starred = str2bool(starred)
+            starred_categories = [star.category.pk for star in self.request.user.starred_categories.all()]
+
+            if starred:
+                queryset = queryset.filter(pk__in=starred_categories)
+            else:
+                queryset = queryset.exclude(pk__in=starred_categories)
+
         return queryset
 
     filter_backends = [
@@ -164,6 +172,29 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
+
+        return ctx
+
+    def update(self, request, *args, **kwargs):
+
+        if 'starred' in request.data:
+            starred = str2bool(request.data.get('starred', False))
+
+            self.get_object().set_starred(request.user, starred)
+
+        response = super().update(request, *args, **kwargs)
+
+        return response
 
 
 class CategoryParameterList(generics.ListAPIView):
@@ -405,7 +436,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        # Pass a list of "starred" parts fo the current user to the serializer
+        # Pass a list of "starred" parts of the current user to the serializer
         # We do this to reduce the number of database queries required!
         if self.starred_parts is None and self.request is not None:
             self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
@@ -434,9 +465,9 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         """
 
         if 'starred' in request.data:
-            starred = str2bool(request.data.get('starred', None))
+            starred = str2bool(request.data.get('starred', False))
 
-            self.get_object().setStarred(request.user, starred)
+            self.get_object().set_starred(request.user, starred)
 
         response = super().update(request, *args, **kwargs)
 
@@ -813,6 +844,27 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Exclude specific part ID values?
+        exclude_id = []
+
+        for key in ['exclude_id', 'exclude_id[]']:
+            if key in params:
+                exclude_id += params.getlist(key, [])
+
+        if exclude_id:
+
+            id_values = []
+
+            for val in exclude_id:
+                try:
+                    # pk values must be integer castable
+                    val = int(val)
+                    id_values.append(val)
+                except ValueError:
+                    pass
+            
+            queryset = queryset.exclude(pk__in=id_values)
+
         # Exclude part variant tree?
         exclude_tree = params.get('exclude_tree', None)
 
@@ -1078,11 +1130,23 @@ class BomList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
-        if request.is_ajax():
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -1097,6 +1161,12 @@ class BomList(generics.ListCreateAPIView):
 
         try:
             kwargs['sub_part_detail'] = str2bool(self.request.GET.get('sub_part_detail', None))
+        except AttributeError:
+            pass
+
+        try:
+            # Include or exclude pricing information in the serialized data
+            kwargs['include_pricing'] = self.include_pricing()
         except AttributeError:
             pass
 
@@ -1140,6 +1210,24 @@ class BomList(generics.ListCreateAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
+
+        if self.include_pricing():
+            queryset = self.annotate_pricing(queryset)
+
+        return queryset
+    
+    def include_pricing(self):
+        """
+        Determine if pricing information should be included in the response
+        """
+        pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
+
+        return str2bool(self.request.query_params.get('include_pricing', pricing_default))
+
+    def annotate_pricing(self, queryset):
+        """
+        Add part pricing information to the queryset
+        """
 
         # Annotate with purchase prices
         queryset = queryset.annotate(
@@ -1244,8 +1332,36 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
+class BomItemSubstituteList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of BomItemSubstitute objects
+    """
+
+    serializer_class = part_serializers.BomItemSubstituteSerializer
+    queryset = BomItemSubstitute.objects.all()
+    
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'part',
+        'bom_item',
+    ]
+
+
+class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a single BomItemSubstitute object
+    """
+
+    queryset = BomItemSubstitute.objects.all()
+    serializer_class = part_serializers.BomItemSubstituteSerializer
+
+
 part_api_urls = [
-    url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
@@ -1296,6 +1412,16 @@ part_api_urls = [
 ]
 
 bom_api_urls = [
+
+    url(r'^substitute/', include([
+
+        # Detail view
+        url(r'^(?P<pk>\d+)/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+
+        # Catch all
+        url(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
+    ])),
+
     # BOM Item Detail
     url(r'^(?P<pk>\d+)/', include([
         url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),

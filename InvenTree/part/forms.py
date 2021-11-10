@@ -18,7 +18,7 @@ import common.models
 from common.forms import MatchItemForm
 
 from .models import Part, PartCategory, PartRelated
-from .models import PartParameterTemplate, PartParameter
+from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
@@ -185,18 +185,6 @@ class EditPartParameterTemplateForm(HelperForm):
         fields = [
             'name',
             'units'
-        ]
-
-
-class EditPartParameterForm(HelperForm):
-    """ Form for editing a PartParameter object """
-
-    class Meta:
-        model = PartParameter
-        fields = [
-            'part',
-            'template',
-            'data'
         ]
 
 

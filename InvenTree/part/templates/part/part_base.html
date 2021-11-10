@@ -4,319 +4,237 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block menubar %}
-{% include "part/navbar.html" %}
+{% block sidebar %}
+{% include "part/part_sidebar.html" %}
 {% endblock %}
 
-{% block content %}
+{% block thumbnail %}
+{% include "part/part_thumb.html" %}
+{% endblock %}
 
-{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
-{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
-{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
-{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
+{% block heading %}
+{{ part.full_name }}
+{% endblock %}
 
-<div class="panel panel-default panel-inventree">
-    <!-- Default panel contents -->
-    <div class="panel-heading"><h3>{{ part.full_name }}</h3></div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-6">
-            {% include "part/part_thumb.html" %}
-            <div class="media-body">
-                <p> 
-                    <h3>
-                    <!-- Admin View -->
-                    {% if user.is_staff and roles.part.change %}
-                    <a  href="{% url 'admin:part_part_change' part.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>&ensp;
-                    {% endif %}
-                    <!-- Properties -->
-                    <div id='part-properties' class='btn-group' role='group'>
-                        {% if part.is_template %}
-                        <span class='fas fa-clone' title='{% trans "Part is a template part (variants can be made from this part)" %}'></span>
-                        {% endif %}
-                        {% if part.assembly %}
-                        <span class='fas fa-tools' title='{% trans "Part can be assembled from other parts" %}'></span>
-                        {% endif %}
-                        {% if part.component %}
-                        <span class='fas fa-th' title='{% trans "Part can be used in assemblies" %}'></span>
-                        {% endif %}
-                        {% if part.trackable %}
-                        <span class='fas fa-directions' title='{% trans "Part stock is tracked by serial number" %}'></span>
-                        {% endif %}
-                        {% if part.purchaseable %}
-                        <span class='fas fa-shopping-cart' title='{% trans "Part can be purchased from external suppliers" %}'></span>
-                        {% endif %}
-                        {% if part.salable %}
-                        <span class='fas fa-dollar-sign' title='{% trans "Part can be sold to customers" %}'></span>
-                        {% endif %}
-                    </div>
-                    <!-- Part active -->
-                    {% if not part.active %}
-                    &ensp;
-                    <div class='label label-large label-large-red'>
-                        <span class='fas fa-skull-crossbones' title='{% trans "Part is virtual (not a physical part)" %}'></span>
-                        {% trans 'Inactive' %}
-                    </div>
-                    {% endif %}
-                    <!-- Part virtual -->
-                    {% if part.virtual and part.active %}
-                    &ensp;
-                    <div class='label label-large label-large-yellow'>
-                        <span class='fas fa-ghost' title='{% trans "Part is virtual (not a physical part)" %}'></span>
-                        {% trans 'Virtual' %}
-                    </div>
-                    {% endif %}
-                    </h3>
-                </p>
+{% block actions %}
+<!-- Admin View -->
+{% if user.is_staff and roles.part.change %}
+{% url 'admin:part_part_change' part.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
 
-                <div class='btn-group action-buttons' role='group'>
-                    <button type='button' class='btn btn-default' id='toggle-starred' title='{% trans "Star this part" %}'>
-                        <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
-                    </button>
+{% if starred_directly %}
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to notifications for this part" %}'>
+    <span id='part-star-icon' class='fas fa-bell icon-green'/>
+</button>
+{% elif starred %}
+<button type='button' class='btn btn-outline-secondary' title='{% trans "You are subscribed to notifications for this part" %}' disabled='true'>
+    <span class='fas fa-bell icon-green'></span>
+</button>
+{% else %}
+<button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "Subscribe to notifications for this part" %}'>
+    <span id='part-star-icon' class='fa fa-bell-slash'/>
+</button>
+{% endif %}
 
-                    {% if barcodes %}
-                    <!-- Barcode actions menu -->
-                    <div class='btn-group'>
-                        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
-                        <ul class='dropdown-menu'>
-                            <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
-                            <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-                        </ul>
-                    </div>
-                    {% endif %}
-                    {% if part.active %}
-                    {% if enable_buy or enable_sell  %}
-                    <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
-                        <span id='part-price-icon' class='fas fa-dollar-sign'/>
-                    </button>
-                    {% endif %}
-                    {% if roles.stock.change and enable_stock %}
-                    <div class='btn-group'>
-                        <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
-                            <span class='fas fa-boxes'></span> <span class='caret'></span>
-                        </button>
-                        <ul class='dropdown-menu'>
-                            <li>
-                                <a href='#' id='part-count'>
-                                    <span class='fas fa-clipboard-list'></span>
-                                    {% trans "Count part stock" %}
-                                </a>
-                            </li>
-                            <li>
-                                <a href='#' id='part-move'>
-                                    <span class='fas fa-exchange-alt'></span>
-                                    {% trans "Transfer part stock" %}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    {% endif %}
-                    {% if part.purchaseable and roles.purchase_order.add %}
-                    {% if enable_buy and enable_po %}
-                    <button type='button' class='btn btn-default' id='part-order' title='{% trans "Order part" %}'>
-                        <span id='part-order-icon' class='fas fa-shopping-cart'/>
-                    </button>
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-                    <!-- Part actions -->
-                    {% if roles.part.add or roles.part.change or roles.part.delete %}
-                    <div class='btn-group'>
-                        <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
-                        <ul class='dropdown-menu'>
-                            {% if roles.part.add %}
-                            <li><a href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
-                            {% endif %}
-                            {% if roles.part.change %}
-                            <li><a href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
-                            {% endif %}
-                            {% if roles.part.delete %}
-                            <li><a href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            </div>
-            <div class='info-messages'>
-                {% if part.variant_of %}
-                <div class='alert alert-info alert-block' style='padding: 10px;'>
-                    {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
-                    {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
-                </div>
-                {% endif %}
-            </div>
-            </div>
-            <div class="col-sm-6">
-                <table class='table table-condensed table-striped'>
-                    <col width='25'>
-                    <tr>
-                        <td><h4><span class='fas fa-boxes'></span></h4></td>
-                        <td><h4>{% trans "Available Stock" %}</h4></td>
-                        <td><h4>{% decimal available %}{% if part.units %} {{ part.units }}{% endif %}</h4></td>
-                    </tr>
-                    <tr>
-                        <td><span class='fas fa-map-marker-alt'></span></td>
-                        <td>{% trans "In Stock" %}</td>
-                        <td>{% include "part/stock_count.html" %}</td>
-                    </tr>
-                    {% if on_order > 0 %}
-                    <tr>
-                        <td><span class='fas fa-shopping-cart'></span></td>
-                        <td>{% trans "On Order" %}</td>
-                        <td>{% decimal on_order %}</td>
-                    </tr>
-                    {% endif %}
-                    {% if required_build_order_quantity > 0 %}
-                    <tr>
-                        <td><span class='fas fa-clipboard-list'></span></td>
-                        <td>{% trans "Required for Build Orders" %}</td>
-                        <td>{% decimal required_build_order_quantity %}
-                    </tr>
-                    {% endif %}
-                    {% if required_sales_order_quantity > 0 %}
-                    <tr>
-                        <td><span class='fas fa-clipboard-list'></span></td>
-                        <td>{% trans "Required for Sales Orders" %}</td>
-                        <td>{% decimal required_sales_order_quantity %}
-                    </tr>
-                    {% endif %}
-                    {% if allocated > 0 %}
-                    <tr>
-                        <td><span class='fas fa-dolly'></span></td>
-                        <td>{% trans "Allocated to Orders" %}</td>
-                        <td>{% decimal allocated %}</td>
-                    </tr>
-                    {% endif %}
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+    </ul>
+</div>
+{% endif %}
+{% if part.active %}
+<button type='button' class='btn btn-outline-secondary' id='price-button' title='{% trans "Show pricing information" %}'>
+    <span id='part-price-icon' class='fas fa-dollar-sign'/>
+</button>
+{% if roles.stock.change %}
+<div class='btn-group'>
+    <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-boxes'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu'>
+        <li>
+            <a class='dropdown-item' href='#' id='part-count'>
+                <span class='fas fa-clipboard-list'></span>
+                {% trans "Count part stock" %}
+            </a>
+        </li>
+        <li>
+            <a class='dropdown-item' href='#' id='part-move'>
+                <span class='fas fa-exchange-alt'></span>
+                {% trans "Transfer part stock" %}
+            </a>
+        </li>
+    </ul>
+</div>
+{% endif %}
+{% if part.purchaseable and roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='part-order' title='{% trans "Order part" %}'>
+    <span id='part-order-icon' class='fas fa-shopping-cart'/>
+</button>
+{% endif %}
+{% endif %}
+<!-- Part actions -->
+{% if roles.part.add or roles.part.change or roles.part.delete %}
+<div class='btn-group'>
+    <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
+    <ul class='dropdown-menu'>
+        {% if roles.part.add %}
+        <li><a class='dropdown-item' href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
+        {% endif %}
+        {% if roles.part.change %}
+        <li><a class='dropdown-item' href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
+        {% endif %}
+        {% if roles.part.delete %}
+        <li><a class='dropdown-item' href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
 
-                    {% if not part.is_template %}
-                    {% if part.assembly %}
-                    <tr>
-                        <td><h4><span class='fas fa-tools'></span></h4></td>
-                        <td colspan='2'>
-                            <h4>{% trans "Build Status" %}</h4>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>{% trans "Can Build" %}</td>
-                        <td>{% decimal part.can_build %}</td>
-                    </tr>
-                    {% if quantity_being_built > 0 %}
-                    <tr>
-                        <td></td>
-                        <td>{% trans "Building" %}</td>
-                        <td>{% decimal quantity_being_built %}</td>
-                    </tr>
-                    {% endif %}
-                    {% endif %}
-                {% endif %}
-            </table>
-            </div>
+{% block details %}
+
+
+</h4>
+<!-- Properties -->
+<h4>
+    <div id='part-properties' class='btn-group'>
+        {% if part.is_template %}
+        &ensp;
+        <span class='fas fa-clone' title='{% trans "Part is a template part (variants can be made from this part)" %}'></span>
+        {% endif %}
+        {% if part.assembly %}
+        &ensp;
+        <span class='fas fa-tools' title='{% trans "Part can be assembled from other parts" %}'></span>
+        {% endif %}
+        {% if part.component %}
+        &ensp;
+        <span class='fas fa-th' title='{% trans "Part can be used in assemblies" %}'></span>
+        {% endif %}
+        {% if part.trackable %}
+        &ensp;
+        <span class='fas fa-directions' title='{% trans "Part stock is tracked by serial number" %}'></span>
+        {% endif %}
+        {% if part.purchaseable %}
+        &ensp;
+        <span class='fas fa-shopping-cart' title='{% trans "Part can be purchased from external suppliers" %}'></span>
+        {% endif %}
+        {% if part.salable %}
+        &ensp;
+        <span class='fas fa-dollar-sign' title='{% trans "Part can be sold to customers" %}'></span>
+        {% endif %}
+        <!-- Part active -->
+        {% if not part.active %}
+        &ensp;
+        <div class='badge rounded-pill bg-danger'>
+            <span class='fas fa-skull-crossbones' title='{% trans "Part is virtual (not a physical part)" %}'></span>
+            {% trans 'Inactive' %}
         </div>
-    </div>
-
-    <p>
-        <!-- Details show/hide button -->
-        <button id="toggle-part-details" class="btn btn-primary" data-toggle="collapse" data-target="#collapsible-part-details" value="show">
-        <span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}
-        </button>
-    </p>
-        
-    <div class="collapse" id="collapsible-part-details">
-        <div class="card card-body">
-            <!-- Details Table -->
-            <table class="table table-striped">
-                <col width='25'>
-                {% if part.IPN %}
-                <tr>
-                    <td><span class='fas fa-tag'></span></td>
-                    <td>{% trans "IPN" %}</td>
-                    <td>{{ part.IPN }}{% include "clip.html"%}</td>
-                </tr>
-                {% endif %}
-                <tr>
-                    <td><span class='fas fa-shapes'></span></td>
-                    <td>{% trans "Name" %}</td>
-                    <td>{{ part.name }}{% include "clip.html"%}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-info-circle'></span></td>
-                    <td>{% trans "Description" %}</td>
-                    <td>{{ part.description }}{% include "clip.html"%}</td>
-                </tr>
-                {% if part.revision %}
-                <tr>
-                    <td><span class='fas fa-code-branch'></span></td>
-                    <td>{% trans "Revision" %}</td>
-                    <td>{{ part.revision }}{% include "clip.html"%}</td>
-                </tr>
-                {% endif %}
-                {% if part.keywords %}
-                <tr>
-                    <td><span class='fas fa-key'></span></td>
-                    <td>{% trans "Keywords" %}</td>
-                    <td>{{ part.keywords }}{% include "clip.html"%}</td>
-                </tr>
-                {% endif %}
-                {% if part.link %}
-                <tr>
-                    <td><span class='fas fa-link'></span></td>
-                    <td>{% trans "External Link" %}</td>
-                    <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
-                </tr>
-                {% endif %}
-                <tr>
-                    <td><span class='fas fa-calendar-alt'></span></td>
-                    <td>{% trans "Creation Date" %}</td>
-                    <td>
-                        {{ part.creation_date }}
-                        {% if part.creation_user %}
-                        <span class='badge'>{{ part.creation_user }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% if part.trackable and part.getLatestSerialNumber %}
-                <tr>
-                    <td><span class='fas fa-hashtag'></span></td>
-                    <td>{% trans "Latest Serial Number" %}</td>
-                    <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
-                </tr>
-                {% endif %}
-                {% if part.default_location %}
-                <tr>
-                    <td><span class='fas fa-search-location'></span></td>
-                    <td>{% trans "Default Location" %}</td>
-                    <td>{{ part.default_location }}</td>
-                </tr>
-                {% endif %}
-                {% if part.default_supplier %}
-                <tr>
-                    <td><span class='fas fa-building'></span></td>
-                    <td>{% trans "Default Supplier" %}</td>
-                    <td>{{ part.default_supplier }}</td>
-                </tr>
-                {% endif %}
-            </table>
+        {% endif %}
+        <!-- Part virtual -->
+        {% if part.virtual and part.active %}
+        &ensp;
+        <div class='badge rounded-pill bg-warning'>
+            <span class='fas fa-ghost' title='{% trans "Part is virtual (not a physical part)" %}'></span>
+            {% trans 'Virtual' %}
         </div>
+        {% endif %}
     </div>
+</h4>
 
-    
+<!-- Part info messages -->
+<div class='info-messages'>
+    {% if part.variant_of %}
+    <div class='alert alert-info alert-block' style='padding: 10px;'>
+        {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
+        {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
+    </div>
+    {% endif %}
 </div>
 
-{% block page_content %}
 {% endblock %}
 
+{% block details_right %}
+    <table class='table table-condensed table-striped'>
+        <col width='25'>
+        <tr>
+            <td><h5><span class='fas fa-boxes'></span></h5></td>
+            <td><h5>{% trans "Available Stock" %}</h5></td>
+            <td><h5>{% decimal available %}{% if part.units %} {{ part.units }}{% endif %}</h5></td>
+        </tr>
+        <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
+            <td>{% trans "In Stock" %}</td>
+            <td>{% include "part/stock_count.html" %}</td>
+        </tr>
+        {% if part.minimum_stock %}
+        <tr>
+            <td><span class='fas fa-flag'></span></td>
+            <td>{% trans "Minimum Stock" %}</td>
+            <td>{{ part.minimum_stock }}</td>
+        </tr>
+        {% endif %}
+        {% if on_order > 0 %}
+        <tr>
+            <td><span class='fas fa-shopping-cart'></span></td>
+            <td>{% trans "On Order" %}</td>
+            <td>{% decimal on_order %}</td>
+        </tr>
+        {% endif %}
+        {% if required_build_order_quantity > 0 %}
+        <tr>
+            <td><span class='fas fa-clipboard-list'></span></td>
+            <td>{% trans "Required for Build Orders" %}</td>
+            <td>{% decimal required_build_order_quantity %}
+        </tr>
+        {% endif %}
+        {% if required_sales_order_quantity > 0 %}
+        <tr>
+            <td><span class='fas fa-clipboard-list'></span></td>
+            <td>{% trans "Required for Sales Orders" %}</td>
+            <td>{% decimal required_sales_order_quantity %}
+        </tr>
+        {% endif %}
+        {% if allocated > 0 %}
+        <tr>
+            <td><span class='fas fa-dolly'></span></td>
+            <td>{% trans "Allocated to Orders" %}</td>
+            <td>{% decimal allocated %}</td>
+        </tr>
+        {% endif %}
+
+        {% if not part.is_template %}
+        {% if part.assembly %}
+        <tr>
+            <td><h5><span class='fas fa-tools'></span></h5></td>
+            <td colspan='2'>
+                <h5>{% trans "Build Status" %}</h5>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>{% trans "Can Build" %}</td>
+            <td>{% decimal part.can_build %}</td>
+        </tr>
+        {% if quantity_being_built > 0 %}
+        <tr>
+            <td></td>
+            <td>{% trans "Building" %}</td>
+            <td>{% decimal quantity_being_built %}</td>
+        </tr>
+        {% endif %}
+        {% endif %}
+    {% endif %}
+</table>
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
-
-    enableNavbar({
-        label: 'part',
-        toggleId: '#part-menu-toggle',
-    });
 
     {% if part.image %}
     $('#part-thumb').click(function() {
@@ -407,7 +325,7 @@
 
     $("#toggle-starred").click(function() {
         toggleStar({
-            part: {{ part.id }},
+            url: '{% url "api-part-detail" part.pk %}',
             button: '#part-star-icon',
         });
     });
@@ -520,43 +438,5 @@
         );
     });
     {% endif %}
-
-    $("#toggle-part-details").click(function() {
-        if (this.value == 'show') {
-            this.innerHTML = '<span class="fas fa-chevron-up"></span> {% trans "Hide Part Details" %}';
-            this.value = 'hide';
-            // Store state of part details section
-            localStorage.setItem("part-details-show", true);
-        } else {
-            this.innerHTML = '<span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}';
-            this.value = 'show';
-            // Store state of part details section
-            localStorage.setItem("part-details-show", false);
-        }
-    });
-
-    // Load part details section
-    window.onload = function() {
-        details_show = localStorage.getItem("part-details-show")
-
-        if (details_show === 'true') {
-            console.log(details_show)
-            // Get collapsible details section
-            details = document.getElementById('collapsible-part-details');
-            // Add "show" class
-            details.classList.add("in");
-            // Get toggle
-            toggle = document.getElementById('toggle-part-details');
-            // Change state of toggle
-            toggle.innerHTML = '<span class="fas fa-chevron-up"></span> {% trans "Hide Part Details" %}';
-            toggle.value = 'hide';
-        } else {
-            // Get toggle
-            toggle = document.getElementById('toggle-part-details');
-            // Change state of toggle
-            toggle.innerHTML = '<span class="fas fa-chevron-down"></span> {% trans "Show Part Details" %}';
-            toggle.value = 'show';
-        }
-    }
 
 {% endblock %}
