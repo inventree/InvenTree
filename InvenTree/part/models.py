@@ -1403,7 +1403,7 @@ class Part(MPTTModel):
 
         parts = set()
 
-        for bom_item in self.get_bom_items.all(include_inherited=include_inherited):
+        for bom_item in self.get_bom_items(include_inherited=include_inherited):
 
             if include_variants and bom_item.allow_variants:
                 for part in bom_item.sub_part.get_descendants(include_self=True):
