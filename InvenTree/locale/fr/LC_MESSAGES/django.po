@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-10 02:46+0000\n"
-"PO-Revision-Date: 2021-11-10 20:21\n"
+"PO-Revision-Date: 2021-11-10 21:24\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -70,15 +70,15 @@ msgstr "Sélectionnez une catégorie"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (encore)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Confirmation de l'adresse email"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Vous devez taper le même e-mail à chaque fois."
 
 #: InvenTree/helpers.py:430
 #, python-brace-format
@@ -147,16 +147,16 @@ msgstr "Le nom de fichier ne doit pas être vide"
 
 #: InvenTree/models.py:165
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Répertoire de pièce jointe invalide"
 
 #: InvenTree/models.py:175
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Le nom de fichier contient le caractère illégal '{c}'"
 
 #: InvenTree/models.py:178
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Extension manquante du nom de fichier"
 
 #: InvenTree/models.py:185
 msgid "Attachment with this filename already exists"
