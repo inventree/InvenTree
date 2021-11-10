@@ -1413,7 +1413,6 @@ class Part(MPTTModel):
 
         return parts
 
-
     def get_used_in_filter(self, include_inherited=True):
         """
         Return a query filter for all parts that this part is used in.
