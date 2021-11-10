@@ -20,7 +20,7 @@ def update_serials(apps, schema_editor):
 
         serial = 0
 
-        result = re.match(r"^(\d+)", item.serial or "")
+        result = re.match(r"^(\d+)", str(item.serial))
 
         if result and len(result.groups()) == 1:
             try:
@@ -30,7 +30,6 @@ def update_serials(apps, schema_editor):
 
 
         item.serial_int = serial
-        print(item, item.serial, '->', item.serial_int)
         item.save()
 
 
