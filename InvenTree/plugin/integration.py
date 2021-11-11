@@ -282,6 +282,10 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
 
         self.set_package()
 
+    @property
+    def _is_package(self):
+        return getattr(self, 'is_package', False)
+
     # properties
     @property
     def slug(self):
@@ -356,7 +360,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
 
     def set_package(self):
         """add packaging info of the plugins into plugins context"""
-        package = self.get_package_metadata() if getattr(self, 'is_package', False) else self.get_package_commit()
+        package = self.get_package_metadata() if self._is_package else self.get_package_commit()
 
         # process date
         if package.get('date'):
