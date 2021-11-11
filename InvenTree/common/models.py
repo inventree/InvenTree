@@ -1269,9 +1269,6 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
 class ColorTheme(models.Model):
     """ Color Theme Setting """
-
-    default_color_theme = ('', _('Default'))
-
     name = models.CharField(max_length=20,
                             default='',
                             blank=True)
@@ -1291,10 +1288,7 @@ class ColorTheme(models.Model):
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
                    for file_name, file_ext in files_list
-                   if file_ext == '.css' and file_name.lower() != 'default']
-
-        # Add default option as empty option
-        choices.insert(0, cls.default_color_theme)
+                   if file_ext == '.css']
 
         return choices
 
