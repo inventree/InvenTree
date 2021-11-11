@@ -71,6 +71,11 @@
                     {% endif %}
                 </td>
             </tr>
+            <tr>
+                <td></td>
+                <td>{% trans "Installation path" %}</td>
+                <td>{{ plugin.package_path }}</td>
+            </tr>
             {% if plugin.is_package == False %}
             <tr>
                 <td><span class='fas fa-user'></span></td>

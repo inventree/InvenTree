@@ -6,6 +6,7 @@ import os
 import subprocess
 import inspect
 from datetime import datetime
+import pathlib
 
 from django.conf.urls import url, include
 from django.conf import settings
@@ -336,6 +337,13 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """returns website of plugin"""
         name = getattr(self, 'WEBSITE', None)
         return name
+
+    @property
+    def package_path(self):
+        """returns the path to the plugin"""
+        if self._is_package:
+            return self.__module__
+        return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
 
     # mixins
     def mixin(self, key):
