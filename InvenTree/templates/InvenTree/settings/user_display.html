@@ -21,4 +21,32 @@
     </table>
 </div>
 
+<div class='panel-heading'>
+    <h4>{% trans "Theme Settings" %}</h4>
+</div>
+
+<div class='row'>
+
+    <div class='col-sm-6'>
+        <form action='{% url "settings-appearance" %}' method='post'>
+            {% csrf_token %}
+            <input name='next' type='hidden' value='{% url "settings" %}'>
+            <label for='theme' class=' requiredField'>
+                {% trans "Select theme" %}
+            </label>
+            <div class='form-group input-group mb-3'>
+                <select id='theme' name='theme' class='select form-control'>
+                    {% get_available_themes as themes %}
+                    {% for theme in themes %}
+                    <option value='{{ theme.key }}'>{{ theme.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class='input-group-append'>
+                    <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
