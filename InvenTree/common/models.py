@@ -545,6 +545,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
+    def save(self, *args, **kwargs):
+        """
+        When saving a global setting, check to see if it requires a server restart.
+        If so, set the "SERVER_RESTART_REQUIRED" setting to True
+        """
+
+        super().save()
+
+        if self.requires_restart():
+            InvenTreeSetting.set_setting('SERVER_REQUIRES_RESTART', True, None)
+
     """
     Dict of all global settings values:
 
@@ -562,6 +573,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     """
 
     GLOBAL_SETTINGS = {
+
+        'SERVER_RESTART_REQUIRED': {
+            'name': _('Restart required'),
+            'description': _('A setting has been changed which requires a server restart'),
+            'default': False,
+            'validator': bool,
+            'hidden': True,
+        },
 
         'INVENTREE_INSTANCE': {
             'name': _('InvenTree Instance Name'),
@@ -935,6 +954,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         """
 
         return self.__class__.get_setting(self.key)
+
+    def requires_restart(self):
+        """
+        Return True if this setting requires a server restart after changing
+        """
+
+        options = InvenTreeSetting.GLOBAL_SETTINGS.get(self.key, None)
+
+        if options:
+            return options.get('requires_restart', False)
+        else:
+            return False
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
