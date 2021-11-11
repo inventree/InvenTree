@@ -63,6 +63,8 @@ class BaseInvenTreeSetting(models.Model):
         Enforce validation and clean before saving
         """
 
+        self.key = str(self.key).upper()
+
         self.clean()
         self.validate_unique()
 
