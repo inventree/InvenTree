@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 00:24+0000\n"
+"POT-Creation-Date: 2021-11-11 06:10+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -216,75 +216,75 @@ msgstr "Debe ser un numero valido"
 msgid "Filename"
 msgstr "Nombre de Archivo"
 
-#: InvenTree/settings.py:605
+#: InvenTree/settings.py:654
 msgid "German"
 msgstr "Alemán"
 
-#: InvenTree/settings.py:606
+#: InvenTree/settings.py:655
 msgid "Greek"
 msgstr "Griego"
 
-#: InvenTree/settings.py:607
+#: InvenTree/settings.py:656
 msgid "English"
 msgstr "Inglés"
 
-#: InvenTree/settings.py:608
+#: InvenTree/settings.py:657
 msgid "Spanish"
 msgstr "Español"
 
-#: InvenTree/settings.py:609
+#: InvenTree/settings.py:658
 msgid "French"
 msgstr "Francés"
 
-#: InvenTree/settings.py:610
+#: InvenTree/settings.py:659
 msgid "Hebrew"
 msgstr "Hebreo"
 
-#: InvenTree/settings.py:611
+#: InvenTree/settings.py:660
 msgid "Italian"
 msgstr "Italiano"
 
-#: InvenTree/settings.py:612
+#: InvenTree/settings.py:661
 msgid "Japanese"
 msgstr "Japonés"
 
-#: InvenTree/settings.py:613
+#: InvenTree/settings.py:662
 msgid "Korean"
 msgstr "Coreano"
 
-#: InvenTree/settings.py:614
+#: InvenTree/settings.py:663
 msgid "Dutch"
 msgstr "Holandés"
 
-#: InvenTree/settings.py:615
+#: InvenTree/settings.py:664
 msgid "Norwegian"
 msgstr "Noruego"
 
-#: InvenTree/settings.py:616
+#: InvenTree/settings.py:665
 msgid "Polish"
 msgstr "Polaco"
 
-#: InvenTree/settings.py:617
+#: InvenTree/settings.py:666
 msgid "Russian"
 msgstr "Ruso"
 
-#: InvenTree/settings.py:618
+#: InvenTree/settings.py:667
 msgid "Swedish"
 msgstr "Sueco"
 
-#: InvenTree/settings.py:619
+#: InvenTree/settings.py:668
 msgid "Thai"
 msgstr "Tailandés"
 
-#: InvenTree/settings.py:620
+#: InvenTree/settings.py:669
 msgid "Turkish"
 msgstr "Turco"
 
-#: InvenTree/settings.py:621
+#: InvenTree/settings.py:670
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: InvenTree/settings.py:622
+#: InvenTree/settings.py:671
 msgid "Chinese"
 msgstr "Chino"
 
