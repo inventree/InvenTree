@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-10 21:41+0000\n"
+"POT-Creation-Date: 2021-11-11 00:04+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -3922,7 +3922,7 @@ msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 
 #: part/models.py:778 part/models.py:2237 part/models.py:2486
 #: part/templates/part/detail.html:36 part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:160
+#: templates/InvenTree/settings/settings.html:163
 #: templates/js/translated/part.js:927
 msgid "Category"
 msgstr "Kategorie"
@@ -4112,7 +4112,7 @@ msgid "Parameter Units"
 msgstr "Einheit des Parameters"
 
 #: part/models.py:2443 part/models.py:2492 part/models.py:2493
-#: templates/InvenTree/settings/settings.html:155
+#: templates/InvenTree/settings/settings.html:158
 msgid "Parameter Template"
 msgstr "Parameter Vorlage"
 
@@ -4124,7 +4124,7 @@ msgstr "Wert"
 msgid "Parameter Value"
 msgstr "Parameter Wert"
 
-#: part/models.py:2497 templates/InvenTree/settings/settings.html:164
+#: part/models.py:2497 templates/InvenTree/settings/settings.html:167
 msgid "Default Value"
 msgstr "Standard-Wert"
 
@@ -6236,37 +6236,37 @@ msgstr "Kein Wert angegeben"
 msgid "Edit setting"
 msgstr "Einstellungen ändern"
 
-#: templates/InvenTree/settings/settings.html:8 templates/navbar.html:89
+#: templates/InvenTree/settings/settings.html:11 templates/navbar.html:89
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: templates/InvenTree/settings/settings.html:62
+#: templates/InvenTree/settings/settings.html:65
 #, fuzzy
 #| msgid "Label Settings"
 msgid "Edit Global Setting"
 msgstr "Labeleinstellungen"
 
-#: templates/InvenTree/settings/settings.html:62
+#: templates/InvenTree/settings/settings.html:65
 #, fuzzy
 #| msgid "Edit setting"
 msgid "Edit User Setting"
 msgstr "Einstellungen ändern"
 
-#: templates/InvenTree/settings/settings.html:145
+#: templates/InvenTree/settings/settings.html:148
 msgid "No category parameter templates found"
 msgstr "Keine Kategorie-Parametervorlagen gefunden"
 
-#: templates/InvenTree/settings/settings.html:167
-#: templates/InvenTree/settings/settings.html:266
+#: templates/InvenTree/settings/settings.html:170
+#: templates/InvenTree/settings/settings.html:269
 msgid "Edit Template"
 msgstr "Vorlage bearbeiten"
 
-#: templates/InvenTree/settings/settings.html:168
-#: templates/InvenTree/settings/settings.html:267
+#: templates/InvenTree/settings/settings.html:171
+#: templates/InvenTree/settings/settings.html:270
 msgid "Delete Template"
 msgstr "Vorlage löschen"
 
-#: templates/InvenTree/settings/settings.html:246
+#: templates/InvenTree/settings/settings.html:249
 msgid "No part parameter templates found"
 msgstr "Keine Teilparametervorlagen gefunden"
 
