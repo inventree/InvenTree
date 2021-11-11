@@ -4,6 +4,7 @@
 """
 from django.conf import settings as djangosettings
 from django import template
+from django.urls import reverse
 
 from common.models import InvenTreeSetting
 
@@ -35,3 +36,12 @@ def navigation_enabled(*args, **kwargs):
     if djangosettings.TESTING:
         return True
     return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')
+
+
+@register.simple_tag()
+def safe_url(view_name, *args, **kwargs):
+    """ safe lookup for urls """
+    try:
+        return reverse(view_name, args=args, kwargs=kwargs)
+    except:
+        return None

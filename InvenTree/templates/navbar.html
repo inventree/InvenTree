@@ -70,7 +70,10 @@
             </a>
             <ul class='dropdown-menu'>
              {% for nav_item in plugin.navigation %}
-                <li><a href="{% url nav_item.link %}" class="dropdown-item"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+                {% safe_url nav_item.link as nav_link %}
+                {% if nav_link %}
+                <li><a href="{{ nav_link }}" class="dropdown-item"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+                {% endif %}
              {% endfor %}
             </ul>
           </li>
