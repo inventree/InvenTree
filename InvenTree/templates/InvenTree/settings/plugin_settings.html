@@ -55,6 +55,13 @@
                 <td>{{ plugin.website }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
+            {% if plugin.license %}
+            <tr>
+                <td><span class='fas fa-balance-scale'></span></td>
+                <td>{% trans "License" %}</td>
+                <td>{{ plugin.license }}{% include "clip.html" %}</td>
+            </tr>
+            {% endif %}
         </table>
 
         {% if plugin.is_package == False %}

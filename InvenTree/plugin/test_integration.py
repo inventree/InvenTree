@@ -166,6 +166,7 @@ class IntegrationPluginBaseTests(TestCase):
             DESCRIPTION = 'A description'
             VERSION = '1.2.3a'
             WEBSITE = 'http://aa.bb/cc'
+            LICENSE = 'MIT'
 
         self.plugin_name = NameIntegrationPluginBase()
 
@@ -206,3 +207,8 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin.website, None)
         self.assertEqual(self.plugin_simple.website, None)
         self.assertEqual(self.plugin_name.website, 'http://aa.bb/cc')
+
+        # license
+        self.assertEqual(self.plugin.license, None)
+        self.assertEqual(self.plugin_simple.license, None)
+        self.assertEqual(self.plugin_name.license, 'MIT')
