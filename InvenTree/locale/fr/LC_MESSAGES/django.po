@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-11 06:10+0000\n"
-"PO-Revision-Date: 2021-11-11 09:56\n"
+"PO-Revision-Date: 2021-11-11 19:32\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1626,11 +1626,11 @@ msgstr ""
 
 #: common/models.py:682 part/models.py:905
 msgid "Purchaseable"
-msgstr ""
+msgstr "Achetable"
 
 #: common/models.py:683
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "Les pièces sont achetables par défaut"
 
 #: common/models.py:689 part/models.py:910
 #: templates/js/translated/table_filters.js:379
@@ -1835,7 +1835,7 @@ msgstr ""
 
 #: common/models.py:864
 msgid "Purchase Order Reference Prefix"
-msgstr ""
+msgstr "Préfixe des commandes d'achats"
 
 #: common/models.py:865
 msgid "Prefix value for purchase order reference"
@@ -2445,7 +2445,7 @@ msgstr ""
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:121
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Créer une commande d'achat"
 
 #: company/templates/company/company_base.html:27
 msgid "Edit company information"
@@ -2551,17 +2551,17 @@ msgstr ""
 #: templates/InvenTree/search.html:203 templates/navbar.html:44
 #: users/models.py:45
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Commandes d'achat"
 
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Créer une commande d'achat"
 
 #: company/templates/company/detail.html:122
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Nouvelle commande achat"
 
 #: company/templates/company/detail.html:143
 #: order/templates/order/sales_order_base.html:13
@@ -3411,7 +3411,7 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
-msgstr ""
+msgstr "Articles de la commande d'achat"
 
 #: order/templates/order/purchase_order_detail.html:27
 #: order/templates/order/purchase_order_detail.html:216
@@ -4715,7 +4715,7 @@ msgstr ""
 
 #: part/templates/part/part_pricing.html:65 part/templates/part/prices.html:69
 msgid "Unit Purchase Price"
-msgstr ""
+msgstr "Prix d’achat unitaire"
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
 msgid "Total Purchase Price"
