@@ -164,7 +164,9 @@
                     <li><a class='dropdown-item' href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
                     {% endif %}
                     <li><a class='dropdown-item' href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                    {% if report_enabled %}
                     <li><a class='dropdown-item' href='#' id='multi-part-print-label' title='{% trans "Print Labels" %}'>{% trans "Print Labels" %}</a></li>
+                    {% endif %}
                     <li><a class='dropdown-item' href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
             </div>
