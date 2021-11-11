@@ -768,6 +768,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'REPORT_ENABLE': {
+            'name': _('Enable Reports'),
+            'description': _('Enable generation of reports'),
+            'default': False,
+            'validator': bool,
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),

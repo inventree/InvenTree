@@ -373,7 +373,9 @@
                     </button>
                     <ul class='dropdown-menu' role='menu'>
                         <li><a class='dropdown-item' href='#' id='download-bom'><span class='fas fa-file-download'></span> {% trans "Export BOM" %}</a></li>
+                        {% if report_enabled %}
                         <li><a class='dropdown-item' href='#' id='print-bom-report'><span class='fas fa-file-pdf'></span> {% trans "Print BOM Report" %}</a></li>
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- Actions menu -->
@@ -766,9 +768,11 @@
             );
         });
 
+        {% if report_enabled %}
         $("#print-bom-report").click(function() {
             printBomReports([{{ part.pk }}]);
         });
+        {% endif %}
     });
 
     // Load the "related parts" tab
