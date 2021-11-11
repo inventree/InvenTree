@@ -32,13 +32,17 @@
                 <td>{% trans "Date" %}</td>
                 <td>{{ plugin.pub_date }}{% include "clip.html" %}</td>
             </tr>
-            {% if plugin.version %}
             <tr>
                 <td><span class='fas fa-hashtag'></span></td>
                 <td>{% trans "Version" %}</td>
-                <td>{{ plugin.version }}{% include "clip.html" %}</td>
+                <td>
+                    {% if plugin.version %}
+                        {{ plugin.version }}{% include "clip.html" %}
+                    {% else %}
+                        {% trans 'no version information supplied' %}
+                    {% endif %}
+                </td>
             </tr>
-            {% endif %}
             {% if plugin.website %}
             <tr>
                 <td><span class='fas fa-globe'></span></td>
