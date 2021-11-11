@@ -50,7 +50,7 @@
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                 <a class='nav-toggle' id='select-plugin-{{plugin_key}}'>
-                    <span class='badge badge-badge-secondary'>{% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</span>
+                    <span class='badge bg-dark badge-right'>{% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</span>
                 </a>
                 {% endfor %}
                 {% endif %}
