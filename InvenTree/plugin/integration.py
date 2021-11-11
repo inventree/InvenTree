@@ -293,18 +293,18 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     @property
     def slug(self):
         """slug for the plugin"""
-        name = getattr(self, 'PLUGIN_SLUG', None)
-        if not name:
-            name = self.plugin_name()
-        return slugify(name)
+        slug = getattr(self, 'PLUGIN_SLUG', None)
+        if not slug:
+            slug = self.plugin_name()
+        return slugify(slug)
 
     @property
     def human_name(self):
         """human readable name for labels etc."""
-        name = getattr(self, 'PLUGIN_TITLE', None)
-        if not name:
-            name = self.plugin_name()
-        return name
+        human_name = getattr(self, 'PLUGIN_TITLE', None)
+        if not human_name:
+            human_name = self.plugin_name()
+        return human_name
 
     @property
     def description(self):
@@ -317,36 +317,36 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     @property
     def author(self):
         """returns author of plugin - either from plugin settings or git"""
-        name = getattr(self, 'AUTHOR', None)
-        if not name:
-            name = self.package.get('author')
-        if not name:
-            name = _('No author found')
-        return name
+        author = getattr(self, 'AUTHOR', None)
+        if not author:
+            author = self.package.get('author')
+        if not author:
+            author = _('No author found')
+        return author
 
     @property
     def pub_date(self):
         """returns publishing date of plugin - either from plugin settings or git"""
-        name = getattr(self, 'PUBLISH_DATE', None)
-        if not name:
-            name = self.package.get('date')
+        pub_date = getattr(self, 'PUBLISH_DATE', None)
+        if not pub_date:
+            pub_date = self.package.get('date')
         else:
-            name = datetime.fromisoformat(str(name))
-        if not name:
-            name = _('No date found')
-        return name
+            pub_date = datetime.fromisoformat(str(pub_date))
+        if not pub_date:
+            pub_date = _('No date found')
+        return pub_date
 
     @property
     def version(self):
         """returns version of plugin"""
-        name = getattr(self, 'VERSION', None)
-        return name
+        version = getattr(self, 'VERSION', None)
+        return version
 
     @property
     def website(self):
         """returns website of plugin"""
-        name = getattr(self, 'WEBSITE', None)
-        return name
+        website = getattr(self, 'WEBSITE', None)
+        return website
 
     @property
     def license(self):
