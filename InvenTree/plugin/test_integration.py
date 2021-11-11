@@ -163,6 +163,7 @@ class IntegrationPluginBaseTests(TestCase):
             PLUGIN_TITLE = 'a titel'
             PUBLISH_DATE = "1111-11-11"
             AUTHOR = 'AA BB'
+            DESCRIPTION = 'A description'
             VERSION = '1.2.3a'
             WEBSITE = 'http://aa.bb/cc'
 
@@ -184,6 +185,11 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin.human_name, '')
         self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
         self.assertEqual(self.plugin_name.human_name, 'a titel')
+
+        # description
+        self.assertEqual(self.plugin.description, '')
+        self.assertEqual(self.plugin_simple.description, 'SimplePlugin')
+        self.assertEqual(self.plugin_name.description, 'A description')
 
         # author
         self.assertEqual(self.plugin_name.author, 'AA BB')

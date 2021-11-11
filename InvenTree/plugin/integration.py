@@ -271,6 +271,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     PLUGIN_TITLE = None
 
     AUTHOR = None
+    DESCRIPTION = None
     PUBLISH_DATE = None
     VERSION = None
     WEBSITE = None
@@ -303,6 +304,14 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         if not name:
             name = self.plugin_name()
         return name
+
+    @property
+    def description(self):
+        """description of plugin"""
+        description = getattr(self, 'DESCRIPTION', None)
+        if not description:
+            description = self.plugin_name()
+        return description
 
     @property
     def author(self):
