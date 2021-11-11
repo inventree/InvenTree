@@ -69,7 +69,7 @@ class BaseInvenTreeSetting(models.Model):
         super().save()
 
     @classmethod
-    def allValues(cls, user=None):
+    def allValues(cls, user=None, exclude_hidden=False):
         """
         Return a dict of "all" defined global settings.
 
@@ -94,8 +94,14 @@ class BaseInvenTreeSetting(models.Model):
         for key in cls.GLOBAL_SETTINGS.keys():
 
             if key.upper() not in settings:
-
                 settings[key.upper()] = cls.get_setting_default(key)
+
+            if exclude_hidden:
+                hidden = cls.GLOBAL_SETTINGS[key].get('hidden', False)
+
+                if hidden:
+                    # Remove hidden items
+                    del settings[key.upper()]
 
         for key, value in settings.items():
             validator = cls.get_setting_validator(key)
