@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os
 import decimal
 import math
+from datetime import datetime, timedelta
 
 from django.db import models, transaction
 from django.contrib.auth.models import User, Group
@@ -33,6 +34,19 @@ import logging
 logger = logging.getLogger('inventree')
 
 
+class EmptyURLValidator(URLValidator):
+
+    def __call__(self, value):
+
+        value = str(value).strip()
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
+
+
 class BaseInvenTreeSetting(models.Model):
     """
     An base InvenTreeSetting object is a key:value pair used for storing
@@ -43,6 +57,16 @@ class BaseInvenTreeSetting(models.Model):
 
     class Meta:
         abstract = True
+
+    def save(self, *args, **kwargs):
+        """
+        Enforce validation and clean before saving
+        """
+
+        self.clean()
+        self.validate_unique()
+
+        super().save()
 
     @classmethod
     def allValues(cls, user=None):
@@ -342,6 +366,11 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError):
                 raise ValidationError(_('Must be an integer value'))
 
+        options = self.valid_options()
+
+        if options and self.value not in options:
+            raise ValidationError(_("Chosen value is not a valid option"))
+
         if validator is not None:
             self.run_validator(validator)
 
@@ -408,6 +437,18 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.__class__.get_setting_choices(self.key)
 
+    def valid_options(self):
+        """
+        Return a list of valid options for this setting
+        """
+
+        choices = self.choices()
+
+        if not choices:
+            return None
+
+        return [opt[0] for opt in choices]
+
     def is_bool(self):
         """
         Check if this setting is required to be a boolean value
@@ -425,6 +466,20 @@ class BaseInvenTreeSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
+
+    def setting_type(self):
+        """
+        Return the field type identifier for this setting object
+        """
+
+        if self.is_bool():
+            return 'boolean'
+
+        elif self.is_int():
+            return 'integer'
+        
+        else:
+            return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
@@ -530,7 +585,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': URLValidator(),
+            'validator': EmptyURLValidator(),
             'default': '',
         },
 
@@ -713,6 +768,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'REPORT_ENABLE': {
+            'name': _('Enable Reports'),
+            'description': _('Enable generation of reports'),
+            'default': False,
+            'validator': bool,
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
@@ -807,19 +869,19 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),
-            'description': _('Enable password forgot function on the login-pages'),
+            'description': _('Enable password forgot function on the login pages'),
             'default': True,
             'validator': bool,
         },
         'LOGIN_ENABLE_REG': {
             'name': _('Enable registration'),
-            'description': _('Enable self-registration for users on the login-pages'),
+            'description': _('Enable self-registration for users on the login pages'),
             'default': False,
             'validator': bool,
         },
         'LOGIN_ENABLE_SSO': {
             'name': _('Enable SSO'),
-            'description': _('Enable SSO on the login-pages'),
+            'description': _('Enable SSO on the login pages'),
             'default': False,
             'validator': bool,
         },
@@ -849,7 +911,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group new user are asigned on registration'),
+            'description': _('Group to which new users are assigned on registration'),
             'default': '',
             'choices': settings_group_options
         },
@@ -866,6 +928,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         help_text=_('Settings key (must be unique - case insensitive'),
     )
 
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key)
+
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
@@ -874,8 +944,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     GLOBAL_SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
-            'name': _('Show starred parts'),
-            'description': _('Show starred parts on the homepage'),
+            'name': _('Show subscribed parts'),
+            'description': _('Show subscribed parts on the homepage'),
+            'default': True,
+            'validator': bool,
+        },
+        'HOMEPAGE_CATEGORY_STARRED': {
+            'name': _('Show subscribed categories'),
+            'description': _('Show subscribed part categories on the homepage'),
             'default': True,
             'validator': bool,
         },
@@ -1005,6 +1081,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_HIDE_INACTIVE_PARTS': {
+            'name': _("Hide Inactive Parts"),
+            'description': _('Hide inactive parts in search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),
@@ -1062,6 +1145,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'key__iexact': key,
             'user__id': kwargs['user'].id
         }
+
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key, user=self.user)
 
 
 class PriceBreak(models.Model):
@@ -1220,3 +1311,63 @@ class ColorTheme(models.Model):
                 return True
 
         return False
+
+
+class NotificationEntry(models.Model):
+    """
+    A NotificationEntry records the last time a particular notifaction was sent out.
+
+    It is recorded to ensure that notifications are not sent out "too often" to users.
+
+    Attributes:
+    - key: A text entry describing the notification e.g. 'part.notify_low_stock'
+    - uid: An (optional) numerical ID for a particular instance
+    - date: The last time this notification was sent
+    """
+
+    class Meta:
+        unique_together = [
+            ('key', 'uid'),
+        ]
+
+    key = models.CharField(
+        max_length=250,
+        blank=False,
+    )
+
+    uid = models.IntegerField(
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        null=False,
+    )
+
+    @classmethod
+    def check_recent(cls, key: str, uid: int, delta: timedelta):
+        """
+        Test if a particular notification has been sent in the specified time period
+        """
+
+        since = datetime.now().date() - delta
+
+        entries = cls.objects.filter(
+            key=key,
+            uid=uid,
+            updated__gte=since
+        )
+
+        return entries.exists()
+
+    @classmethod
+    def notify(cls, key: str, uid: int):
+        """
+        Notify the database that a particular notification has been sent out
+        """
+
+        entry, created = cls.objects.get_or_create(
+            key=key,
+            uid=uid
+        )
+
+        entry.save()

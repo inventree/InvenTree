@@ -52,7 +52,7 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
-def offload_task(taskname, force_sync=False, *args, **kwargs):
+def offload_task(taskname, *args, force_sync=False, **kwargs):
     """
         Create an AsyncTask if workers are running.
         This is different to a 'scheduled' task,
@@ -108,7 +108,7 @@ def offload_task(taskname, force_sync=False, *args, **kwargs):
             return
         
         # Workers are not running: run it as synchronous task
-        _func()
+        _func(*args, **kwargs)
 
 
 def heartbeat():
@@ -290,7 +290,7 @@ def update_exchange_rates():
     Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
 
 
-def send_email(subject, body, recipients, from_email=None):
+def send_email(subject, body, recipients, from_email=None, html_message=None):
     """
     Send an email with the specified subject and body,
     to the specified recipients list.
@@ -306,4 +306,5 @@ def send_email(subject, body, recipients, from_email=None):
         from_email,
         recipients,
         fail_silently=False,
+        html_message=html_message
     )

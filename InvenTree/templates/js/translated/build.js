@@ -43,11 +43,18 @@ function buildFormFields() {
             }
         },
         sales_order: {
+            icon: 'fa-truck',
         },
         batch: {},
-        target_date: {},
-        take_from: {},
-        destination: {},
+        target_date: {
+            icon: 'fa-calendar-alt',
+        },
+        take_from: {
+            icon: 'fa-sitemap',
+        },
+        destination: {
+            icon: 'fa-sitemap',
+        },
         link: {
             icon: 'fa-link',
         },
@@ -339,7 +346,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }
@@ -1527,7 +1534,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                             break;
                         default:
                             $(opts.modal).modal('hide');
-                            showApiError(xhr);
+                            showApiError(xhr, opts.url);
                             break;
                         }
                     }

@@ -83,7 +83,9 @@ class POLineItemResource(ModelResource):
 
 
 class SOLineItemResource(ModelResource):
-    """ Class for managing import / export of SOLineItem data """
+    """
+    Class for managing import / export of SOLineItem data
+    """
 
     part_name = Field(attribute='part__name', readonly=True)
 
@@ -92,6 +94,17 @@ class SOLineItemResource(ModelResource):
     description = Field(attribute='part__description', readonly=True)
 
     fulfilled = Field(attribute='fulfilled_quantity', readonly=True)
+
+    def dehydrate_sale_price(self, item):
+        """
+        Return a string value of the 'sale_price' field, rather than the 'Money' object.
+        Ref: https://github.com/inventree/InvenTree/issues/2207
+        """
+
+        if item.sale_price:
+            return str(item.sale_price)
+        else:
+            return ''
 
     class Meta:
         model = SalesOrderLineItem

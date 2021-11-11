@@ -19,13 +19,17 @@
     renderStockLocation,
     renderSupplierPart,
     renderUser,
-    showAlertDialog,
     showAlertOrCache,
     showApiError,
 */
 
 /* exported
-    setFormGroupVisibility
+    clearFormInput,
+    disableFormInput,
+    enableFormInput,
+    hideFormInput,
+    setFormGroupVisibility,
+    showFormInput,
 */
 
 /**
@@ -113,6 +117,10 @@ function canDelete(OPTIONS) {
  */
 function getApiEndpointOptions(url, callback) {
 
+    if (!url) {
+        return;
+    }
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -123,9 +131,10 @@ function getApiEndpointOptions(url, callback) {
             json: 'application/json',
         },
         success: callback,
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            showApiError(xhr, url);
         }
     });
 }
@@ -181,6 +190,7 @@ function constructChangeForm(fields, options) {
     // Request existing data from the API endpoint
     $.ajax({
         url: options.url,
+        data: options.params || {},
         type: 'GET',
         contentType: 'application/json',
         dataType: 'json',
@@ -188,6 +198,17 @@ function constructChangeForm(fields, options) {
             json: 'application/json',
         },
         success: function(data) {
+            
+            // An optional function can be provided to process the returned results,
+            // before they are rendered to the form
+            if (options.processResults) {
+                var processed = options.processResults(data, fields, options);
+                
+                // If the processResults function returns data, it will be stored
+                if (processed) {
+                    data = processed;
+                }
+            }
 
             // Push existing 'value' to each field
             for (const field in data) {
@@ -199,12 +220,14 @@ function constructChangeForm(fields, options) {
 
             // Store the entire data object
             options.instance = data;
-
+            
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -241,9 +264,11 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -321,10 +346,12 @@ function constructForm(url, options) {
                 constructCreateForm(OPTIONS.actions.POST, options);
             } else {
                 // User does not have permission to POST to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Create operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Create operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`'POST action unavailable at ${url}`);
             }
             break;
@@ -334,10 +361,12 @@ function constructForm(url, options) {
                 constructChangeForm(OPTIONS.actions.PUT, options);
             } else {
                 // User does not have permission to PUT/PATCH to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Update operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Update operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`${options.method} action unavailable at ${url}`);
             }
             break;
@@ -346,10 +375,12 @@ function constructForm(url, options) {
                 constructDeleteForm(OPTIONS.actions.DELETE, options);
             } else {
                 // User does not have permission to DELETE to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Delete operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Delete operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`DELETE action unavailable at ${url}`);
             }
             break;
@@ -358,10 +389,12 @@ function constructForm(url, options) {
                 // TODO?
             } else {
                 // User does not have permission to GET to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "View operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "View operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`GET action unavailable at ${url}`);
             }
             break;
@@ -691,6 +724,11 @@ function submitFormData(fields, options) {
         data = form_data;
     }
 
+    // Optionally pre-process the data before uploading to the server
+    if (options.processBeforeUpload) {
+        data = options.processBeforeUpload(data);
+    }
+
     // Submit data
     upload_func(
         options.url,
@@ -708,7 +746,9 @@ function submitFormData(fields, options) {
                     break;
                 default:
                     $(options.modal).modal('hide');
-                    showApiError(xhr);
+
+                    console.log(`upload error at ${options.url}`);
+                    showApiError(xhr, options.url);
                     break;
                 }
             }
@@ -885,19 +925,19 @@ function handleFormSuccess(response, options) {
 
     // Display any messages
     if (response && response.success) {
-        showAlertOrCache('alert-success', response.success, cache);
+        showAlertOrCache(response.success, cache, {style: 'success'});
     }
     
     if (response && response.info) {
-        showAlertOrCache('alert-info', response.info, cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
 
     if (response && response.warning) {
-        showAlertOrCache('alert-warning', response.warning, cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
 
     if (response && response.danger) {
-        showAlertOrCache('alert-danger', response.danger, cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     if (options.onSuccess) {
@@ -1235,6 +1275,35 @@ function initializeGroups(fields, options) {
         }
     }
 }
+
+// Clear a form input
+function clearFormInput(name, options) {
+    updateFieldValue(name, null, {}, options);
+}
+
+// Disable a form input
+function disableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', true);
+}
+
+
+// Enable a form input
+function enableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', false);
+}
+
+
+// Hide a form input
+function hideFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).hide();
+}
+
+
+// Show a form input
+function showFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).show();
+}
+
 
 // Hide a form group
 function hideFormGroup(group, options) {

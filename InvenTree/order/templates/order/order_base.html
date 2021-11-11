@@ -29,7 +29,9 @@
         <span class='fas fa-print'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
+        {% if report_enabled %}
         <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print purchase order report" %}</a></li>
+        {% endif %}
         <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
     </ul>
 </div>
@@ -123,7 +125,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Created" %}</td>
-        <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
+        <td>{{ order.creation_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
     {% if order.issue_date %}
     <tr>
@@ -143,7 +145,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
+        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.responsible %}
@@ -169,9 +171,11 @@ $("#place-order").click(function() {
 });
 {% endif %}
 
+{% if report_enabled %}
 $('#print-order-report').click(function() {
     printPurchaseOrderReports([{{ order.pk }}]);
 });
+{% endif %}
 
 $("#edit-order").click(function() {
 

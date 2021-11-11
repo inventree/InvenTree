@@ -373,24 +373,23 @@ function duplicatePart(pk, options={}) {
 }
 
 
+/* Toggle the 'starred' status of a part.
+ * Performs AJAX queries and updates the display on the button.
+ * 
+ * options:
+ * - button: ID of the button (default = '#part-star-icon')
+ * - URL: API url of the object
+ * - user: pk of the user
+ */
 function toggleStar(options) {
-    /* Toggle the 'starred' status of a part.
-     * Performs AJAX queries and updates the display on the button.
-     * 
-     * options:
-     * - button: ID of the button (default = '#part-star-icon')
-     * - part: pk of the part object
-     * - user: pk of the user
-     */
 
-    var url = `/api/part/${options.part}/`;
-
-    inventreeGet(url, {}, {
+    inventreeGet(options.url, {}, {
         success: function(response) {
+
             var starred = response.starred;
 
             inventreePut(
-                url,
+                options.url,
                 {
                     starred: !starred,
                 },
@@ -398,9 +397,19 @@ function toggleStar(options) {
                     method: 'PATCH',
                     success: function(response) {
                         if (response.starred) {
-                            $(options.button).addClass('icon-yellow');
+                            $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
+                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this item" %}');
+
+                            showMessage('{% trans "You have subscribed to notifications for this item" %}', {
+                                style: 'success',
+                            });
                         } else {
-                            $(options.button).removeClass('icon-yellow');
+                            $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
+                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this item" %}');
+
+                            showMessage('{% trans "You have unsubscribed to notifications for this item" %}', {
+                                style: 'warning',
+                            });
                         }
                     }
                 }
@@ -410,12 +419,12 @@ function toggleStar(options) {
 }
 
 
-function partStockLabel(part) {
+function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+        return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Stock" %}: ${part.in_stock}</span>`;
     } else {
-        return `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+        return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
     }
 }
 
@@ -443,7 +452,7 @@ function makePartIcons(part) {
     }
 
     if (part.starred) {
-        html += makeIconBadge('fa-star', '{% trans "Starred part" %}');
+        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed part" %}');
     }
 
     if (part.salable) {
@@ -451,7 +460,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `; 
     }
 
     return html;
@@ -983,7 +992,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    var grid_view = inventreeLoad('part-grid-view') == 1;
+    var grid_view = options.gridView && inventreeLoad('part-grid-view') == 1;
 
     $(table).inventreeTable({
         url: url,
@@ -1011,7 +1020,7 @@ function loadPartTable(table, url, options={}) {
                 $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
             }
         },
-        buttons: [
+        buttons: options.gridView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1044,7 +1053,7 @@ function loadPartTable(table, url, options={}) {
                     );
                 }
             }
-        ],
+        ] : [],
         customView: function(data) {
 
             var html = '';
@@ -1133,8 +1142,10 @@ function loadPartTable(table, url, options={}) {
 }
 
 
+/*
+ * Display a table of part categories
+ */
 function loadPartCategoryTable(table, options) {
-    /* Display a table of part categories */
 
     var params = options.params || {};
 
@@ -1148,6 +1159,13 @@ function loadPartCategoryTable(table, options) {
         filters = loadTableFilters(filterKey);
     }
 
+    
+    var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
+
+    if (tree_view) {
+        params.cascade = true;   
+    }
+
     var original = {};
 
     for (var key in params) {
@@ -1157,15 +1175,13 @@ function loadPartCategoryTable(table, options) {
 
     setupFilterList(filterKey, table, filterListElement);
 
-    var tree_view = inventreeLoad('category-tree-view') == 1;
-
     table.inventreeTable({
         treeEnable: tree_view,
-        rootParentId: options.params.parent,
+        rootParentId: tree_view ? options.params.parent : null,
         uniqueId: 'pk',
         idField: 'pk',
         treeShowField: 'name',
-        parentIdField: 'parent',
+        parentIdField: tree_view ? 'parent' : null,
         method: 'get',
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
@@ -1176,7 +1192,7 @@ function loadPartCategoryTable(table, options) {
         name: 'category',
         original: original,
         showColumns: true,
-        buttons: [
+        buttons: options.allowTreeView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1215,28 +1231,31 @@ function loadPartCategoryTable(table, options) {
                     );
                 }
             }
-        ],
+        ] : [],
         onPostBody: function() {
 
-            tree_view = inventreeLoad('category-tree-view') == 1;
+            if (options.allowTreeView) {
 
-            if (tree_view) {
+                tree_view = inventreeLoad('category-tree-view') == 1;
 
-                $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                
-                table.treegrid({
-                    treeColumn: 0,
-                    onChange: function() {
-                        table.bootstrapTable('resetView');
-                    },
-                    onExpand: function() {
-                        
-                    }
-                });
-            } else {
-                $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
-                $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                if (tree_view) {
+
+                    $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                    
+                    table.treegrid({
+                        treeColumn: 0,
+                        onChange: function() {
+                            table.bootstrapTable('resetView');
+                        },
+                        onExpand: function() {
+                            
+                        }
+                    });
+                } else {
+                    $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                }
             }
         },
         columns: [
@@ -1253,10 +1272,17 @@ function loadPartCategoryTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return renderLink(
+
+                    var html = renderLink(
                         value,
                         `/part/category/${row.pk}/`
                     );
+
+                    if (row.starred) {
+                        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed category" %}');
+                    }
+
+                    return html;
                 }
             },
             {

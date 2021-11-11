@@ -123,6 +123,12 @@ def inventree_title(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_base_url(*args, **kwargs):
+    """ Return the INVENTREE_BASE_URL setting """
+    return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+
+
+@register.simple_tag()
 def python_version(*args, **kwargs):
     """
     Return the current python version

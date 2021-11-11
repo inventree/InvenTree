@@ -7,6 +7,8 @@
 {% inventree_title %} | {% trans "Index" %}
 {% endblock %}
 
+{% block breadcrumb_list %}
+{% endblock %}
 
 {% block sidebar %}
 <!-- Sidebar data is filled dynamically for the index page-->
@@ -74,6 +76,7 @@ function addHeaderAction(label, title, icon, options) {
 }
 
 {% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
+{% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
 {% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
 {% settings_value 'HOMEPAGE_BOM_VALIDATION' user=request.user as setting_bom_validation %}
 {% to_list setting_part_starred setting_part_latest setting_bom_validation as settings_list_part %}
@@ -82,12 +85,22 @@ function addHeaderAction(label, title, icon, options) {
 addHeaderTitle('{% trans "Parts" %}');
 
 {% if setting_part_starred %}
-addHeaderAction('starred-parts', '{% trans "Starred Parts" %}', 'fa-star');
+addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     params: {
-        "starred": true,
+        starred: true,
     },
     name: 'starred_parts',
+});
+{% endif %}
+
+{% if setting_category_starred %}
+addHeaderAction('starred-categories', '{% trans "Subscribed Categories" %}', 'fa-bell');
+loadPartCategoryTable($('#table-starred-categories'), {
+    params: {
+        starred: true,
+    },
+    name: 'starred_categories'
 });
 {% endif %}
 
@@ -126,8 +139,7 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% to_list setting_stock_recent setting_stock_low setting_stock_depleted setting_stock_needed as settings_list_stock %}
 {% endif %}
 
-{% if roles.stock.view and True in settings_list_stock %}
-addHeaderTitle('{% trans "Stock" %}');
+{% if roles.stock.view %}
 
 {% if setting_stock_recent %}
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
@@ -143,7 +155,7 @@ loadStockTable($('#table-recently-updated-stock'), {
 {% endif %}
 
 {% if setting_stock_low %}
-addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
+addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
     params: {
         low_stock: true,

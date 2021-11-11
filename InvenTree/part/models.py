@@ -20,7 +20,7 @@ from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
 from jinja2 import Template
@@ -47,6 +47,7 @@ from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
+import InvenTree.tasks
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -56,6 +57,7 @@ from company.models import SupplierPart
 from stock import models as StockModels
 
 import common.models
+
 import part.settings as part_settings
 
 
@@ -102,11 +104,11 @@ class PartCategory(InvenTreeTree):
 
         if cascade:
             """ Select any parts which exist in this category or any child categories """
-            query = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
+            queryset = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
         else:
-            query = Part.objects.filter(category=self.pk)
+            queryset = Part.objects.filter(category=self.pk)
 
-        return query
+        return queryset
 
     @property
     def item_count(self):
@@ -200,6 +202,60 @@ class PartCategory(InvenTreeTree):
         prefetch = PartCategoryParameterTemplate.objects.prefetch_related('category', 'parameter_template')
 
         return prefetch.filter(category=self.id)
+
+    def get_subscribers(self, include_parents=True):
+        """
+        Return a list of users who subscribe to this PartCategory
+        """
+
+        cats = self.get_ancestors(include_self=True)
+
+        subscribers = set()
+
+        if include_parents:
+            queryset = PartCategoryStar.objects.filter(
+                category__pk__in=[cat.pk for cat in cats]
+            )
+        else:
+            queryset = PartCategoryStar.objects.filter(
+                category=self,
+            )
+
+        for result in queryset:
+            subscribers.add(result.user)
+
+        return [s for s in subscribers]
+
+    def is_starred_by(self, user, **kwargs):
+        """
+        Returns True if the specified user subscribes to this category
+        """
+
+        return user in self.get_subscribers(**kwargs)
+
+    def set_starred(self, user, status):
+        """
+        Set the "subscription" status of this PartCategory against the specified user
+        """
+
+        if not user:
+            return
+
+        if self.is_starred_by(user) == status:
+            return
+
+        if status:
+            PartCategoryStar.objects.create(
+                category=self,
+                user=user
+            )
+        else:
+            # Note that this won't actually stop the user being subscribed,
+            # if the user is subscribed to a parent category
+            PartCategoryStar.objects.filter(
+                category=self,
+                user=user,
+            ).delete()
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -332,8 +388,15 @@ class Part(MPTTModel):
 
         context = {}
 
-        context['starred'] = self.isStarredBy(request.user)
         context['disabled'] = not self.active
+
+        # Subscription status
+        context['starred'] = self.is_starred_by(request.user)
+        context['starred_directly'] = context['starred'] and self.is_starred_by(
+            request.user,
+            include_variants=False,
+            include_categories=False
+        )
 
         # Pre-calculate complex queries so they only need to be performed once
         context['total_stock'] = self.total_stock
@@ -1040,30 +1103,65 @@ class Part(MPTTModel):
 
         return self.total_stock - self.allocation_count() + self.on_order
 
-    def isStarredBy(self, user):
-        """ Return True if this part has been starred by a particular user """
-
-        try:
-            PartStar.objects.get(part=self, user=user)
-            return True
-        except PartStar.DoesNotExist:
-            return False
-
-    def setStarred(self, user, starred):
+    def get_subscribers(self, include_variants=True, include_categories=True):
         """
-        Set the "starred" status of this Part for the given user
+        Return a list of users who are 'subscribed' to this part.
+
+        A user may 'subscribe' to this part in the following ways:
+
+        a) Subscribing to the part instance directly
+        b) Subscribing to a template part "above" this part (if it is a variant)
+        c) Subscribing to the part category that this part belongs to
+        d) Subscribing to a parent category of the category in c)
+
+        """
+
+        subscribers = set()
+
+        # Start by looking at direct subscriptions to a Part model
+        queryset = PartStar.objects.all()
+
+        if include_variants:
+            queryset = queryset.filter(
+                part__pk__in=[part.pk for part in self.get_ancestors(include_self=True)]
+            )
+        else:
+            queryset = queryset.filter(part=self)
+
+        for star in queryset:
+            subscribers.add(star.user)
+
+        if include_categories and self.category:
+
+            for sub in self.category.get_subscribers():
+                subscribers.add(sub)
+
+        return [s for s in subscribers]
+
+    def is_starred_by(self, user, **kwargs):
+        """
+        Return True if the specified user subscribes to this part
+        """
+
+        return user in self.get_subscribers(**kwargs)
+
+    def set_starred(self, user, status):
+        """
+        Set the "subscription" status of this Part against the specified user
         """
 
         if not user:
             return
 
-        # Do not duplicate efforts
-        if self.isStarredBy(user) == starred:
+        # Already subscribed?
+        if self.is_starred_by(user) == status:
             return
 
-        if starred:
+        if status:
             PartStar.objects.create(part=self, user=user)
         else:
+            # Note that this won't actually stop the user being subscribed,
+            # if the user is subscribed to a parent part or category
             PartStar.objects.filter(part=self, user=user).delete()
 
     def need_to_restock(self):
@@ -1226,6 +1324,17 @@ class Part(MPTTModel):
 
         return query
 
+    def get_stock_count(self, include_variants=True):
+        """
+        Return the total "in stock" count for this part
+        """
+
+        entries = self.stock_entries(in_stock=True, include_variants=include_variants)
+
+        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['t']
+
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
@@ -1234,11 +1343,7 @@ class Part(MPTTModel):
         - If this part is a "template" (variants exist) then these are counted too
         """
 
-        entries = self.stock_entries(in_stock=True)
-
-        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
-
-        return query['t']
+        return self.get_stock_count()
 
     def get_bom_item_filter(self, include_inherited=True):
         """
@@ -1286,6 +1391,27 @@ class Part(MPTTModel):
         """
 
         return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+
+    def get_installed_part_options(self, include_inherited=True, include_variants=True):
+        """
+        Return a set of all Parts which can be "installed" into this part, based on the BOM.
+
+        arguments:
+            include_inherited - If set, include BomItem entries defined for parent parts
+            include_variants - If set, include variant parts for BomItems which allow variants
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items(include_inherited=include_inherited):
+
+            if include_variants and bom_item.allow_variants:
+                for part in bom_item.sub_part.get_descendants(include_self=True):
+                    parts.add(part)
+            else:
+                parts.add(bom_item.sub_part)
+
+        return parts
 
     def get_used_in_filter(self, include_inherited=True):
         """
@@ -1945,10 +2071,10 @@ class Part(MPTTModel):
         if self.variant_of:
             parts.append(self.variant_of)
 
-        siblings = self.get_siblings(include_self=False)
+            siblings = self.get_siblings(include_self=False)
 
-        for sib in siblings:
-            parts.append(sib)
+            for sib in siblings:
+                parts.append(sib)
 
         filtered_parts = Part.objects.filter(pk__in=[part.pk for part in parts])
 
@@ -1987,6 +2113,26 @@ class Part(MPTTModel):
     @property
     def related_count(self):
         return len(self.get_related_parts())
+
+    def is_part_low_on_stock(self):
+        """
+        Returns True if the total stock for this part is less than the minimum stock level
+        """
+        
+        return self.get_stock_count() < self.minimum_stock
+
+
+@receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
+def after_save_part(sender, instance: Part, created, **kwargs):
+    """
+    Function to be executed after a Part is saved
+    """
+
+    if not created:
+        # Check part stock only if we are *updating* the part (not creating it)
+
+        # Run this check in the background
+        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
 
 
 def attach_file(instance, filename):
@@ -2059,10 +2205,9 @@ class PartInternalPriceBreak(common.models.PriceBreak):
 
 
 class PartStar(models.Model):
-    """ A PartStar object creates a relationship between a User and a Part.
+    """ A PartStar object creates a subscription relationship between a User and a Part.
 
-    It is used to designate a Part as 'starred' (or favourited) for a given User,
-    so that the user can track a list of their favourite parts.
+    It is used to designate a Part as 'subscribed' for a given User.
 
     Attributes:
         part: Link to a Part object
@@ -2074,7 +2219,30 @@ class PartStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
     class Meta:
-        unique_together = ['part', 'user']
+        unique_together = [
+            'part',
+            'user'
+        ]
+
+
+class PartCategoryStar(models.Model):
+    """
+    A PartCategoryStar creates a subscription relationship between a User and a PartCategory.
+
+    Attributes:
+        category: Link to a PartCategory object
+        user: Link to a User object
+    """
+
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'), related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
+
+    class Meta:
+        unique_together = [
+            'category',
+            'user',
+        ]
 
 
 class PartTestTemplate(models.Model):

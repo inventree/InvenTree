@@ -399,19 +399,19 @@ function afterForm(response, options) {
 
     // Display any messages
     if (response.success) {
-        showAlertOrCache('alert-success', response.success, cache);
+        showAlertOrCache(response.success, cache, {style: 'success'});
     }
 
     if (response.info) {
-        showAlertOrCache('alert-info', response.info, cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
     
     if (response.warning) {
-        showAlertOrCache('alert-warning', response.warning, cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
     
     if (response.danger) {
-        showAlertOrCache('alert-danger', response.danger, cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     // Was a callback provided?

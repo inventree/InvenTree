@@ -7,6 +7,7 @@ Stock database model definitions
 from __future__ import unicode_literals
 
 import os
+import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
@@ -17,7 +18,7 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save, post_delete
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
@@ -27,7 +28,9 @@ from mptt.managers import TreeManager
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
+
 from InvenTree import helpers
+import InvenTree.tasks
 
 import common.models
 import report.models
@@ -221,6 +224,32 @@ class StockItem(MPTTModel):
         self.scheduled_for_deletion = True
         self.save()
 
+    def update_serial_number(self):
+        """
+        Update the 'serial_int' field, to be an integer representation of the serial number.
+        This is used for efficient numerical sorting
+        """
+
+        serial = getattr(self, 'serial', '')
+
+        # Default value if we cannot convert to an integer
+        serial_int = 0
+
+        if serial is not None:
+
+            serial = str(serial)
+
+            # Look at the start of the string - can it be "integerized"?
+            result = re.match(r'^(\d+)', serial)
+
+            if result and len(result.groups()) == 1:
+                try:
+                    serial_int = int(result.groups()[0])
+                except:
+                    serial_int = 0
+
+        self.serial_int = serial_int
+
     def save(self, *args, **kwargs):
         """
         Save this StockItem to the database. Performs a number of checks:
@@ -231,6 +260,8 @@ class StockItem(MPTTModel):
 
         self.validate_unique()
         self.clean()
+
+        self.update_serial_number()
 
         user = kwargs.pop('user', None)
 
@@ -454,7 +485,6 @@ class StockItem(MPTTModel):
         verbose_name=_('Base Part'),
         related_name='stock_items', help_text=_('Base part'),
         limit_choices_to={
-            'active': True,
             'virtual': False
         })
 
@@ -502,6 +532,8 @@ class StockItem(MPTTModel):
         max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
+
+    serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
@@ -1649,6 +1681,26 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+@receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')
+def after_delete_stock_item(sender, instance: StockItem, **kwargs):
+    """
+    Function to be executed after a StockItem object is deleted
+    """
+
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+
+
+@receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
+def after_save_stock_item(sender, instance: StockItem, **kwargs):
+    """
+    Hook function to be executed after StockItem object is saved/updated
+    """
+
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):

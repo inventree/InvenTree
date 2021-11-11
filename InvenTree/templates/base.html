@@ -4,6 +4,7 @@
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
+{% settings_value "REPORT_ENABLE" as report_enabled %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -83,7 +84,14 @@
                 </div>
             </div>
         </div>
-        <main class='col ps-md-2 pt-2'>
+        <main class='col ps-md-2 pt-2 pe-2'>
+
+            {% block alerts %}
+            <div class='notification-area' id='alerts'>
+                <!-- Div for displayed alerts -->
+            </div>
+            {% endblock %}
+
             {% block breadcrumb_list %}
             <div class='container-fluid navigation'>
                 <nav aria-label='breadcrumb'>
@@ -102,7 +110,6 @@
     </div>
     {% include 'modals.html' %}
     {% include 'about.html' %}
-    {% include 'notification.html' %}
 </div>
 
 <!-- Scripts -->
@@ -135,9 +142,9 @@
 
 <!-- general InvenTree -->
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 
 <!-- dynamic javascript templates -->
-<script type='text/javascript' src="{% url 'inventree.js' %}"></script>
 <script type='text/javascript' src="{% url 'calendar.js' %}"></script>
 <script type='text/javascript' src="{% url 'nav.js' %}"></script>
 <script type='text/javascript' src="{% url 'settings.js' %}"></script>
@@ -177,15 +184,25 @@ $(document).ready(function () {
 
     inventreeDocReady();
 
-    showCachedAlerts();
-
     {% if barcodes %}
     $('#barcode-scan').click(function() {
         barcodeScanDialog();
     });
     {% endif %}
 
-    moment.locale('{{request.LANGUAGE_CODE}}');
+    moment.locale('{{ request.LANGUAGE_CODE }}');
+
+    // Account notifications
+    {% if messages %}
+    {% for message in messages %}
+    showMessage(
+        '{{ message }}',
+        {
+            style: 'info',
+        }
+    );
+    {% endfor %}
+    {% endif %}
 });
 
 </script>

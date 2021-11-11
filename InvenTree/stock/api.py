@@ -7,41 +7,43 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.conf.urls import url, include
 from django.http import JsonResponse
 from django.db.models import Q
+from django.db import transaction
+from django.utils.translation import ugettext_lazy as _
+
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as rest_filters
 
 from rest_framework import status
 from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
 from rest_framework import generics, filters
 
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as rest_filters
-
-from .models import StockLocation, StockItem
-from .models import StockItemTracking
-from .models import StockItemAttachment
-from .models import StockItemTestResult
-
-from part.models import BomItem, Part, PartCategory
-from part.serializers import PartBriefSerializer
+import common.settings
+import common.models
 
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
+
+from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
+from InvenTree.api import AttachmentMixin
+from InvenTree.filters import InvenTreeOrderingFilter
 
 from order.models import PurchaseOrder
 from order.models import SalesOrder, SalesOrderAllocation
 from order.serializers import POSerializer
 
-import common.settings
-import common.models
+from part.models import BomItem, Part, PartCategory
+from part.serializers import PartBriefSerializer
 
+from stock.models import StockLocation, StockItem
+from stock.models import StockItemTracking
+from stock.models import StockItemAttachment
+from stock.models import StockItemTestResult
 import stock.serializers as StockSerializers
-
-from InvenTree.helpers import str2bool, isNull
-from InvenTree.api import AttachmentMixin
-from InvenTree.filters import InvenTreeOrderingFilter
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -97,6 +99,27 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         """
 
         instance.mark_for_deletion()
+
+
+class StockItemSerialize(generics.CreateAPIView):
+    """
+    API endpoint for serializing a stock item
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.SerializeStockItemSerializer
+
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        try:
+            context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return context
 
 
 class StockAdjustView(generics.CreateAPIView):
@@ -380,28 +403,91 @@ class StockList(generics.ListCreateAPIView):
         """
 
         user = request.user
+        data = request.data
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save()
+        # Check if a set of serial numbers was provided
+        serial_numbers = data.get('serial_numbers', '')
 
-        # A location was *not* specified - try to infer it
-        if 'location' not in request.data:
-            item.location = item.part.get_default_location()
+        quantity = data.get('quantity', None)
 
-        # An expiry date was *not* specified - try to infer it!
-        if 'expiry_date' not in request.data:
+        if quantity is None:
+            raise ValidationError({
+                'quantity': _('Quantity is required'),
+            })
 
-            if item.part.default_expiry > 0:
-                item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
+        notes = data.get('notes', '')
 
-        # Finally, save the item
-        item.save(user=user)
+        serials = None
 
-        # Return a response
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        if serial_numbers:
+            # If serial numbers are specified, check that they match!
+            try:
+                serials = extract_serial_numbers(serial_numbers, data['quantity'])
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'quantity': e.messages,
+                    'serial_numbers': e.messages,
+                })
+
+        with transaction.atomic():
+            
+            # Create an initial stock item
+            item = serializer.save()
+
+            # A location was *not* specified - try to infer it
+            if 'location' not in data:
+                item.location = item.part.get_default_location()
+
+            # An expiry date was *not* specified - try to infer it!
+            if 'expiry_date' not in data:
+
+                if item.part.default_expiry > 0:
+                    item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
+
+            # Finally, save the item (with user information)
+            item.save(user=user)
+
+            if serials:
+                """
+                Serialize the stock, if required
+
+                - Note that the "original" stock item needs to be created first, so it can be serialized
+                - It is then immediately deleted
+                """
+
+                try:
+                    item.serializeStock(
+                        quantity,
+                        serials,
+                        user,
+                        notes=notes,
+                        location=item.location,
+                    )
+
+                    headers = self.get_success_headers(serializer.data)
+
+                    # Delete the original item
+                    item.delete()
+
+                    response_data = {
+                        'quantity': quantity,
+                        'serial_numbers': serials,
+                    }
+
+                    return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+
+                except DjangoValidationError as e:
+                    raise ValidationError({
+                        'quantity': e.messages,
+                        'serial_numbers': e.messages,
+                    })
+
+            # Return a response
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def list(self, request, *args, **kwargs):
         """
@@ -790,6 +876,7 @@ class StockList(generics.ListCreateAPIView):
 
     ordering_field_aliases = {
         'SKU': 'supplier_part__SKU',
+        'stock': ['quantity', 'serial_int', 'serial'],
     }
 
     ordering_fields = [
@@ -801,6 +888,7 @@ class StockList(generics.ListCreateAPIView):
         'stocktake_date',
         'expiry_date',
         'quantity',
+        'stock',
         'status',
         'SKU',
     ]
@@ -1085,8 +1173,11 @@ stock_api_urls = [
         url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
-    # Detail for a single stock item
-    url(r'^(?P<pk>\d+)/', StockDetail.as_view(), name='api-stock-detail'),
+    # Detail views for a single stock item
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
+        url(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
+    ])),
 
     # Anything else
     url(r'^.*$', StockList.as_view(), name='api-stock-list'),

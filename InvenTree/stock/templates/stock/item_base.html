@@ -53,6 +53,12 @@
 </div>
 <!-- Stock adjustment menu -->
 <!-- Check permissions and owner -->
+
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
+{% if owner_control.value == "True" %}
+    {% authorized_owners item.owner as owners %}
+{% endif %}
+
 {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
@@ -393,7 +399,7 @@
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Last Stocktake" %}</td>
         {% if item.stocktake_date %}
-        <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
+        <td>{{ item.stocktake_date }} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
         {% else %}
         <td><em>{% trans "No stocktake performed" %}</em></td>
         {% endif %}
@@ -410,20 +416,33 @@
         <td>{{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}</td>
     </tr>
     {% endif %}
+    {% if item.owner %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Owner" %}</td>
+        <td>{{ item.owner }}</td>
+    </tr>
+    {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 
 {% block js_ready %}
 {{ block.super }}
 
 $("#stock-serialize").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-serialize' item.id %}",
-        {
-            reload: true,
+
+    serializeStockItem({{ item.pk }}, {
+        reload: true,
+        data: {
+            quantity: {{ item.quantity }},
+            {% if item.location %}
+            destination: {{ item.location.pk }},
+            {% elif item.part.default_location %}
+            destination: {{ item.part.default_location.pk }},
+            {% endif %}
         }
-    );
+    });
 });
 
 $('#stock-install-in').click(function() {
@@ -463,22 +482,16 @@ $("#print-label").click(function() {
 
 {% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
-    createNewStockItem({
+    // Duplicate a stock item 
+    duplicateStockItem({{ item.pk }}, {
         follow: true,
-        data: {
-            copy: {{ item.id }},
-        }
     });
 });
 
-$("#stock-edit").click(function () {
-    launchModalForm(
-        "{% url 'stock-item-edit' item.id %}",
-        {
-            reload: true,
-            submit_text: '{% trans "Save" %}',
-        }
-    );
+$('#stock-edit').click(function() {
+    editStockItem({{ item.pk }}, {
+        reload: true,
+    });
 });
 
 $('#stock-edit-status').click(function () {

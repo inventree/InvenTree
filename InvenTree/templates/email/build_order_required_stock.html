@@ -1,0 +1,39 @@
+{% extends "email/email.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block title %}
+{% trans "Stock is required for the following build order" %}<br>
+{% blocktrans with build=build.reference part=part.full_name quantity=build.quantity %}Build order {{ build }} - building {{ quantity }} x {{ part }}{% endblocktrans %}
+<br>
+<p>{% trans "Click on the following link to view this build order" %}: <a href='{{ link }}'>{{ link }}</a></p>
+{% endblock title %}
+
+{% block body %}
+<tr colspan='100%' style='height: 2rem; text-align: center;'>{% trans "The following parts are low on required stock" %}</tr>
+
+<tr style="height: 3rem; border-bottom: 1px solid">
+    <th>{% trans "Part" %}</th>
+    <th>{% trans "Required Quantity" %}</th>
+    <th>{% trans "Available" %}</th>
+</tr>
+
+{% for line in lines %}
+<tr style="height: 2.5rem; border-bottom: 1px solid">
+    <td style='padding-left: 1em;'>
+        <a href='{{ line.link }}'>{{ line.part.full_name }}</a>{% if part.description %} - <em>{{ part.description }}</em>{% endif %}
+    </td>
+    <td style="text-align: center;">
+        {% decimal line.required %} {% if line.part.units %}{{ line.part.units }}{% endif %}
+    </td>
+    <td style="text-align: center;">{% decimal line.available %}  {% if line.part.units %}{{ line.part.units }}{% endif %}</td>
+</tr>
+
+{% endfor %}
+
+{% endblock body %}
+
+{% block footer_prefix %}
+<p><em>{% blocktrans with part=part.name %}You are receiving this email because you are subscribed to notifications for this part {% endblocktrans %}.</em></p>
+{% endblock footer_prefix %}

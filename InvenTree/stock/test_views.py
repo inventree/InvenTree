@@ -7,11 +7,6 @@ from django.contrib.auth.models import Group
 
 from common.models import InvenTreeSetting
 
-import json
-from datetime import datetime, timedelta
-
-from InvenTree.status_codes import StockStatus
-
 
 class StockViewTestCase(TestCase):
 
@@ -63,149 +58,6 @@ class StockListTest(StockViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class StockLocationTest(StockViewTestCase):
-    """ Tests for StockLocation views """
-
-    def test_location_edit(self):
-        response = self.client.get(reverse('stock-location-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_qr_code(self):
-        # Request the StockLocation QR view
-        response = self.client.get(reverse('stock-location-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Test for an invalid StockLocation
-        response = self.client.get(reverse('stock-location-qr', args=(999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create(self):
-        # Test StockLocation creation view
-        response = self.client.get(reverse('stock-location-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create with a parent
-        response = self.client.get(reverse('stock-location-create'), {'location': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create with an invalid parent
-        response = self.client.get(reverse('stock-location-create'), {'location': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-
-class StockItemTest(StockViewTestCase):
-    """" Tests for StockItem views """
-
-    def test_qr_code(self):
-        # QR code for a valid item
-        response = self.client.get(reverse('stock-item-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # QR code for an invalid item
-        response = self.client.get(reverse('stock-item-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_edit_item(self):
-        # Test edit view for StockItem
-        response = self.client.get(reverse('stock-item-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Test with a non-purchaseable part
-        response = self.client.get(reverse('stock-item-edit', args=(100,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_item(self):
-        """
-        Test creation of StockItem
-        """
-
-        url = reverse('stock-item-create')
-
-        response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(url, {'part': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Copy from a valid item, valid location
-        response = self.client.get(url, {'location': 1, 'copy': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Copy from an invalid item, invalid location
-        response = self.client.get(url, {'location': 999, 'copy': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_stock_with_expiry(self):
-        """
-        Test creation of stock item of a part with an expiry date.
-        The initial value for the "expiry_date" field should be pre-filled,
-        and should be in the future!
-        """
-
-        # First, ensure that the expiry date feature is enabled!
-        InvenTreeSetting.set_setting('STOCK_ENABLE_EXPIRY', True, self.user)
-
-        url = reverse('stock-item-create')
-
-        response = self.client.get(url, {'part': 25}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        self.assertEqual(response.status_code, 200)
-
-        # We are expecting 10 days in the future
-        expiry = datetime.now().date() + timedelta(10)
-
-        expected = f'name=\\\\"expiry_date\\\\" value=\\\\"{expiry.isoformat()}\\\\"'
-
-        self.assertIn(expected, str(response.content))
-
-        # Now check with a part which does *not* have a default expiry period
-        response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        expected = 'name=\\\\"expiry_date\\\\" placeholder=\\\\"\\\\"'
-
-        self.assertIn(expected, str(response.content))
-
-    def test_serialize_item(self):
-        # Test the serialization view
-
-        url = reverse('stock-item-serialize', args=(100,))
-
-        # GET the form
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data_valid = {
-            'quantity': 5,
-            'serial_numbers': '1-5',
-            'destination': 4,
-            'notes': 'Serializing stock test'
-        }
-
-        data_invalid = {
-            'quantity': 4,
-            'serial_numbers': 'dd-23-adf',
-            'destination': 'blorg'
-        }
-
-        # POST
-        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertTrue(data['form_valid'])
-
-        # Try again to serialize with the same numbers
-        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # POST with invalid data
-        response = self.client.post(url, data_invalid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-
 class StockOwnershipTest(StockViewTestCase):
     """ Tests for stock ownership views """
 
@@ -248,36 +100,31 @@ class StockOwnershipTest(StockViewTestCase):
         InvenTreeSetting.set_setting('STOCK_OWNERSHIP_CONTROL', True, self.user)
         self.assertEqual(True, InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL'))
 
+    """
+    TODO: Refactor this following test to use the new API form
     def test_owner_control(self):
         # Test stock location and item ownership
-        from .models import StockLocation, StockItem
+        from .models import StockLocation
         from users.models import Owner
 
-        user_group = self.user.groups.all()[0]
-        user_group_owner = Owner.get_owner(user_group)
         new_user_group = self.new_user.groups.all()[0]
         new_user_group_owner = Owner.get_owner(new_user_group)
 
         user_as_owner = Owner.get_owner(self.user)
         new_user_as_owner = Owner.get_owner(self.new_user)
 
-        test_location_id = 4
-        test_item_id = 11
-
         # Enable ownership control
         self.enable_ownership()
 
-        # Set ownership on existing location
-        response = self.client.post(reverse('stock-location-edit', args=(test_location_id,)),
-                                    {'name': 'Office', 'owner': user_group_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
+        test_location_id = 4
+        test_item_id = 11
         # Set ownership on existing item (and change location)
         response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
                                     {'part': 1, 'status': StockStatus.OK, 'owner': user_as_owner.pk},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
         self.assertContains(response, '"form_valid": true', status_code=200)
+
 
         # Logout
         self.client.logout()
@@ -285,15 +132,7 @@ class StockOwnershipTest(StockViewTestCase):
         # Login with new user
         self.client.login(username='john', password='custom123')
 
-        # Test location edit
-        response = self.client.post(reverse('stock-location-edit', args=(test_location_id,)),
-                                    {'name': 'Office', 'owner': new_user_group_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        # Make sure the location's owner is unchanged
-        location = StockLocation.objects.get(pk=test_location_id)
-        self.assertEqual(location.owner, user_group_owner)
-
+        # TODO: Refactor this following test to use the new API form
         # Test item edit
         response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
                                     {'part': 1, 'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
@@ -309,38 +148,6 @@ class StockOwnershipTest(StockViewTestCase):
             'description': 'John\'s desk',
             'owner': new_user_group_owner.pk,
         }
-
-        # Create new parent location
-        response = self.client.post(reverse('stock-location-create'),
-                                    parent_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
-        # Retrieve created location
-        parent_location = StockLocation.objects.get(name=parent_location['name'])
-
-        # Create new child location
-        new_location = {
-            'name': 'Upper Left Drawer',
-            'description': 'John\'s desk - Upper left drawer',
-        }
-
-        # Try to create new location with neither parent or owner
-        response = self.client.post(reverse('stock-location-create'),
-                                    new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
-
-        # Try to create new location with invalid owner
-        new_location['parent'] = parent_location.id
-        new_location['owner'] = user_group_owner.pk
-        response = self.client.post(reverse('stock-location-create'),
-                                    new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": false', status_code=200)
-
-        # Try to create new location with valid owner
-        new_location['owner'] = new_user_group_owner.pk
-        response = self.client.post(reverse('stock-location-create'),
-                                    new_location, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
 
         # Retrieve created location
         location_created = StockLocation.objects.get(name=new_location['name'])
@@ -372,16 +179,4 @@ class StockOwnershipTest(StockViewTestCase):
 
         # Logout
         self.client.logout()
-
-        # Login with admin
-        self.client.login(username='username', password='password')
-
-        # Switch owner of location
-        response = self.client.post(reverse('stock-location-edit', args=(location_created.pk,)),
-                                    {'name': new_location['name'], 'owner': user_group_owner.pk},
-                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response, '"form_valid": true', status_code=200)
-
-        # Check that owner was updated for item in this location
-        stock_item = StockItem.objects.all().last()
-        self.assertEqual(stock_item.owner, user_group_owner)
+    """

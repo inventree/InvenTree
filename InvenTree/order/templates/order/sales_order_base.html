@@ -16,7 +16,7 @@
 
 {% block thumbnail %}
 <img class='part-thumb'
-{% if order.customer.image %}
+{% if order.customer and order.customer.image %}
 src="{{ order.customer.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
@@ -39,7 +39,9 @@ src="{% static 'img/blank_image.png' %}"
         <span class='fas fa-print'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
+        {% if report_enabled %}
         <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print sales order report" %}</a></li>
+        {% endif %}
         <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
         <!--
         <li><a class='dropdown-item' href='#' id='print-packing-list'><span class='fas fa-clipboard-list'></span>{% trans "Print packing list" %}</a></li>
@@ -106,11 +108,13 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
+    {% if order.customer %}
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
         <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
     </tr>
+    {% endif %}
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
@@ -128,7 +132,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Created" %}</td>
-        <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
+        <td>{{ order.creation_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
     {% if order.target_date %}
     <tr>
@@ -141,14 +145,14 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-truck'></span></td>
         <td>{% trans "Shipped" %}</td>
-        <td>{{ order.shipment_date }}<span class='badge'>{{ order.shipped_by }}</span></td>
+        <td>{{ order.shipment_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.status == PurchaseOrderStatus.COMPLETE %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
+        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.responsible %}
@@ -204,9 +208,11 @@ $("#ship-order").click(function() {
     });
 });
 
+{% if report_enabled %}
 $('#print-order-report').click(function() {
     printSalesOrderReports([{{ order.pk }}]);
 });
+{% endif %}
 
 $('#export-order').click(function() {
     exportOrder('{% url "so-export" order.id %}');

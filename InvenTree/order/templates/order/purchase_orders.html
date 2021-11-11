@@ -26,19 +26,18 @@
     <div id='table-buttons'>
         <div class='button-toolbar container-fluid' style='float: right;'>
             <div class='btn-group' role='group'>
-                
+                {% if report_enabled %}
                 <button id='order-print' class='btn btn-outline-secondary' title='{% trans "Print Order Reports" %}'>
                     <span class='fas fa-print'></span>
                 </button>
+                {% endif %}
                 <button class='btn btn-outline-secondary' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
                     <span class='fas fa-calendar-alt'></span>
                 </button>
                 <button class='btn btn-outline-secondary' type='button' id='view-list' title='{% trans "Display list view" %}'>
                     <span class='fas fa-th-list'></span>
                 </button>
-                <div class='filter-list' id='filter-list-purchaseorder'>
-                    <!-- An empty div in which the filter list will be constructed -->
-                </div>
+                {% include "filter_list.html" with id="purchaseorder" %}
             </div>
         </div>
     </div>
@@ -171,6 +170,7 @@ $("#view-list").click(function() {
     $("#view-calendar").show();
 });
 
+{% if report_enabled %}
 $("#order-print").click(function() {
     var rows = $("#purchase-order-table").bootstrapTable('getSelections');
 
@@ -182,6 +182,7 @@ $("#order-print").click(function() {
 
     printPurchaseOrderReports(orders);
 })
+{% endif %}
 
 $("#po-create").click(function() {
     createPurchaseOrder();

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import timedelta
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from .models import InvenTreeSetting
+from .models import NotificationEntry
 
 
 class SettingsTest(TestCase):
@@ -85,3 +88,23 @@ class SettingsTest(TestCase):
 
                 if setting.default_value not in [True, False]:
                     raise ValueError(f'Non-boolean default value specified for {key}')
+
+
+class NotificationTest(TestCase):
+
+    def test_check_notification_entries(self):
+
+        # Create some notification entries
+
+        self.assertEqual(NotificationEntry.objects.count(), 0)
+
+        NotificationEntry.notify('test.notification', 1)
+
+        self.assertEqual(NotificationEntry.objects.count(), 1)
+
+        delta = timedelta(days=1)
+
+        self.assertFalse(NotificationEntry.check_recent('test.notification', 2, delta))
+        self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
+
+        self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
