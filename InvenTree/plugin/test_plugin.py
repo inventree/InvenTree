@@ -8,7 +8,7 @@ import plugin.integration
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 from plugin.plugins import load_integration_plugins  # , load_action_plugins, load_barcode_plugins
-import part.templatetags.plugin_extras as plugin_tags
+import plugin.templatetags.plugin_extras as plugin_tags
 
 
 class InvenTreePluginTests(TestCase):
