@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 06:10+0000\n"
-"PO-Revision-Date: 2021-11-11 06:16\n"
+"POT-Creation-Date: 2021-11-12 00:15+0000\n"
+"PO-Revision-Date: 2021-11-12 00:21\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -2125,10 +2125,6 @@ msgstr ""
 
 #: common/models.py:1180
 msgid "Unit price at specified quantity"
-msgstr ""
-
-#: common/models.py:1273
-msgid "Default"
 msgstr ""
 
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:42
@@ -6197,66 +6193,66 @@ msgstr ""
 msgid "Add a 3rd Party Account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:175
-msgid "Theme Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:185
-msgid "Select theme"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:195
-msgid "Set Theme"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:203
+#: templates/InvenTree/settings/user.html:174
 msgid "Language Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:212
+#: templates/InvenTree/settings/user.html:183
 msgid "Select language"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:228
+#: templates/InvenTree/settings/user.html:199
 #, python-format
 msgid "%(lang_translated)s%% translated"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:230
+#: templates/InvenTree/settings/user.html:201
 msgid "No translations available"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:237
+#: templates/InvenTree/settings/user.html:208
 msgid "Set Language"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:239
+#: templates/InvenTree/settings/user.html:210
 msgid "Some languages are not complete"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:241
+#: templates/InvenTree/settings/user.html:212
 msgid "Show only sufficent"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:243
+#: templates/InvenTree/settings/user.html:214
 msgid "Show them too"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:250
+#: templates/InvenTree/settings/user.html:221
 msgid "Help the translation efforts!"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:251
+#: templates/InvenTree/settings/user.html:222
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:259
+#: templates/InvenTree/settings/user.html:230
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:25
+msgid "Theme Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:35
+msgid "Select theme"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:46
+msgid "Set Theme"
 msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
