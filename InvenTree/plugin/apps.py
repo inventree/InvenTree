@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import importlib
 import pathlib
 from typing import OrderedDict
 
@@ -7,12 +8,46 @@ from django.apps import AppConfig, apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
+try:
+    from importlib import metadata
+except:
+    import importlib_metadata as metadata
+
+from plugin import plugins as inventree_plugins
+from plugin.integration import IntegrationPluginBase
+
 
 class PluginConfig(AppConfig):
     name = 'plugin'
 
     def ready(self):
         from common.models import InvenTreeSetting
+
+        # Collect plugins from paths
+        for plugin in settings.PLUGIN_DIRS:
+            modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
+            if modules:
+                [settings.PLUGINS.append(item) for item in modules]
+
+        # Collect plugins from setup entry points
+        for entry in metadata.entry_points().get('inventree_plugins', []):
+            plugin = entry.load()
+            plugin.is_package = True
+            settings.PLUGINS.append(plugin)
+
+        # Initialize integration plugins
+        for plugin in inventree_plugins.load_integration_plugins():
+            # check if package
+            was_packaged = getattr(plugin, 'is_package', False)
+
+            # init package
+            plugin.is_package = was_packaged
+            plugin = plugin()
+            plugin.is_package = was_packaged
+            # safe reference
+            settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
+
+        # activate integrations
         plugins = settings.INTEGRATION_PLUGINS.items()
 
         try:

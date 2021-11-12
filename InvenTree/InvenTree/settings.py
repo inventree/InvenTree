@@ -19,23 +19,13 @@ import socket
 import string
 import shutil
 import sys
-import importlib
 from datetime import datetime
-
-try:
-    from importlib import metadata
-except:
-    import importlib_metadata as metadata
-
 
 import moneyed
 
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
-
-from plugin import plugins as inventree_plugins
-from plugin.integration import IntegrationPluginBase
 
 
 def _is_true(x):
@@ -869,31 +859,7 @@ if not TESTING:
 if DEBUG or TESTING:
     PLUGIN_DIRS.append('plugin.samples')
 
-# collect all plugins from paths
 PLUGINS = []
-for plugin in PLUGIN_DIRS:
-    modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
-    if modules:
-        [PLUGINS.append(item) for item in modules]
-
-# Get plugins from setup entry points
-for entry in metadata.entry_points().get('inventree_plugins', []):
-    plugin = entry.load()
-    plugin.is_package = True
-    PLUGINS.append(plugin)
-
-# collect integration plugins
 INTEGRATION_PLUGINS = {}
 INTEGRATION_PLUGIN_SETTING = {}
 INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet
-
-for plugin in inventree_plugins.load_integration_plugins():
-    # check if package
-    was_packaged = getattr(plugin, 'is_package', False)
-
-    # init package
-    plugin.is_package = was_packaged
-    plugin = plugin()
-    plugin.is_package = was_packaged
-    # safe reference
-    INTEGRATION_PLUGINS[plugin.slug] = plugin
