@@ -76,6 +76,7 @@ class PluginAppConfig(AppConfig):
                 plugin = plugin()
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
+                plugin.pk = plugin_db_setting.pk
 
                 # safe reference
                 settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
