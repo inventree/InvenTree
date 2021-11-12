@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import importlib
 import pathlib
+import logging
 from typing import OrderedDict
 
 from django.apps import AppConfig, apps
@@ -15,6 +16,8 @@ except:
 
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
+
+logger = logging.getLogger('inventree')
 
 
 class PluginConfig(AppConfig):
@@ -36,6 +39,10 @@ class PluginConfig(AppConfig):
             plugin.is_package = True
             settings.PLUGINS.append(plugin)
 
+        # Log found plugins
+        logger.info(f'Found {len(settings.PLUGINS)} plugins!')
+        logger.info(", ".join([a.__module__ for a in settings.PLUGINS]))
+
         # Initialize integration plugins
         for plugin in inventree_plugins.load_integration_plugins():
             # check if package
@@ -51,7 +58,9 @@ class PluginConfig(AppConfig):
                 # init package
                 # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
+                logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
                 plugin = plugin()
+                logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
                 # safe reference
                 settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
