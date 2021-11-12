@@ -25,11 +25,15 @@
     </tbody>
 </table>
 
-<h4>{% trans "Plugin list" %}</h4>
+<h4>{% trans "Plugin list" %}
+    {% url 'admin:plugin_pluginconfig' as url %}
+    {% include "admin_button.html" with url=url %}
+</h4>
 
 <table class='table table-striped table-condensed'>
     <thead>
         <tr>
+            <th>{% trans "Admin" %}</th>
             <th>{% trans "Name" %}</th>
             <th>{% trans "Author" %}</th>
             <th>{% trans "Date" %}</th>
@@ -44,6 +48,12 @@
         {% mixin_enabled plugin 'settings' as settings %}
 
         <tr>
+            <td>
+                {% if user.is_staff and perms.plugin.change_pluginconfig %}
+                {% url 'admin:plugin_pluginconfig_change' plugin.pk as url %}
+                {% include "admin_button.html" with url=url %}
+                {% endif %}
+            </td>
             <td>{{ plugin.human_name }}<span class="text-muted"> - {{plugin_key}}</span>
                 {% define plugin.registered_mixins as mixin_list %}
 
@@ -67,10 +77,16 @@
 
         {% inactive_plugin_list as in_pl_list %}
         {% if in_pl_list %}
-        <tr><td colspan="4"></td></tr>
-        <tr><td colspan="4"><h6>{% trans 'Inactiv plugins' %}</h6></td></tr>
+        <tr><td colspan="5"></td></tr>
+        <tr><td colspan="5"><h6>{% trans 'Inactiv plugins' %}</h6></td></tr>
         {% for plugin_key, plugin in in_pl_list.items %}
         <tr>
+            <td>
+                {% if user.is_staff and perms.plugin.change_pluginconfig %}
+                {% url 'admin:plugin_pluginconfig_change' plugin.pk as url %}
+                {% include "admin_button.html" with url=url %}
+                {% endif %}
+            </td>
             <td>{{plugin.name}}<span class="text-muted"> - {{plugin.key}}</span></td>
             <td colspan="3"></td>
         </tr>
