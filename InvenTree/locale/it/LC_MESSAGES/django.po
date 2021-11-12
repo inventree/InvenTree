@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-12 05:04+0000\n"
-"PO-Revision-Date: 2021-11-12 08:57\n"
+"PO-Revision-Date: 2021-11-12 09:55\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -3834,7 +3834,7 @@ msgstr ""
 #: templates/InvenTree/settings/settings.html:163
 #: templates/js/translated/part.js:927
 msgid "Category"
-msgstr ""
+msgstr "Categoria"
 
 #: part/models.py:779
 msgid "Part category"
@@ -4238,11 +4238,11 @@ msgstr ""
 
 #: part/templates/part/category.html:48
 msgid "Delete category"
-msgstr ""
+msgstr "Elimina la categoria"
 
 #: part/templates/part/category.html:49
 msgid "Delete Category"
-msgstr ""
+msgstr "Cancella categoria"
 
 #: part/templates/part/category.html:57
 msgid "Create new part category"
@@ -4250,7 +4250,7 @@ msgstr ""
 
 #: part/templates/part/category.html:58
 msgid "New Category"
-msgstr ""
+msgstr "Nuova categoria"
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
@@ -4258,7 +4258,7 @@ msgstr ""
 
 #: part/templates/part/category.html:79
 msgid "Category Path"
-msgstr ""
+msgstr "Percorso Categoria"
 
 #: part/templates/part/category.html:84
 msgid "Category Description"
@@ -4331,7 +4331,7 @@ msgstr ""
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
-msgstr ""
+msgstr "categoria"
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
@@ -6000,7 +6000,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
-msgstr ""
+msgstr "Impostazioni categoria"
 
 #: templates/InvenTree/settings/currencies.html:8
 msgid "Currency Settings"
