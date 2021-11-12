@@ -970,24 +970,28 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable plugins to add URL routes'),
             'default': False,
             'validator': bool,
+            'requires_restart': True,
         },
         'ENABLE_PLUGINS_NAVIGATION': {
             'name': _('Enable navigation integration'),
             'description': _('Enable plugins to integrate into navigation'),
             'default': False,
             'validator': bool,
+            'requires_restart': True,
         },
         'ENABLE_PLUGINS_SETTING': {
             'name': _('Enable setting integration'),
             'description': _('Enable plugins to integrate into inventree settings'),
             'default': False,
             'validator': bool,
+            'requires_restart': True,
         },
         'ENABLE_PLUGINS_APP': {
             'name': _('Enable app integration'),
             'description': _('Enable plugins to add apps'),
             'default': False,
             'validator': bool,
+            'requires_restart': True,
         },
     }
 
