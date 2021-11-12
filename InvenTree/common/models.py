@@ -71,13 +71,15 @@ class BaseInvenTreeSetting(models.Model):
         Enforce validation and clean before saving
         """
 
+        self.key = str(self.key).upper()
+
         self.clean()
         self.validate_unique()
 
         super().save()
 
     @classmethod
-    def allValues(cls, user=None):
+    def allValues(cls, user=None, exclude_hidden=False):
         """
         Return a dict of "all" defined global settings.
 
@@ -102,8 +104,14 @@ class BaseInvenTreeSetting(models.Model):
         for key in cls.GLOBAL_SETTINGS.keys():
 
             if key.upper() not in settings:
-
                 settings[key.upper()] = cls.get_setting_default(key)
+
+            if exclude_hidden:
+                hidden = cls.GLOBAL_SETTINGS[key].get('hidden', False)
+
+                if hidden:
+                    # Remove hidden items
+                    del settings[key.upper()]
 
         for key, value in settings.items():
             validator = cls.get_setting_validator(key)
@@ -568,6 +576,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     even if that key does not exist.
     """
 
+    def save(self, *args, **kwargs):
+        """
+        When saving a global setting, check to see if it requires a server restart.
+        If so, set the "SERVER_RESTART_REQUIRED" setting to True
+        """
+
+        super().save()
+
+        if self.requires_restart():
+            InvenTreeSetting.set_setting('SERVER_REQUIRES_RESTART', True, None)
+
     """
     Dict of all global settings values:
 
@@ -585,6 +604,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     """
 
     GLOBAL_SETTINGS = {
+
+        'SERVER_RESTART_REQUIRED': {
+            'name': _('Restart required'),
+            'description': _('A setting has been changed which requires a server restart'),
+            'default': False,
+            'validator': bool,
+            'hidden': True,
+        },
 
         'INVENTREE_INSTANCE': {
             'name': _('InvenTree Instance Name'),
@@ -983,6 +1010,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         return self.__class__.get_setting(self.key)
 
+    def requires_restart(self):
+        """
+        Return True if this setting requires a server restart after changing
+        """
+
+        options = InvenTreeSetting.GLOBAL_SETTINGS.get(self.key, None)
+
+        if options:
+            return options.get('requires_restart', False)
+        else:
+            return False
+
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """
@@ -1316,9 +1355,6 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
 class ColorTheme(models.Model):
     """ Color Theme Setting """
-
-    default_color_theme = ('', _('Default'))
-
     name = models.CharField(max_length=20,
                             default='',
                             blank=True)
@@ -1338,10 +1374,7 @@ class ColorTheme(models.Model):
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
                    for file_name, file_ext in files_list
-                   if file_ext == '.css' and file_name.lower() != 'default']
-
-        # Add default option as empty option
-        choices.insert(0, cls.default_color_theme)
+                   if file_ext == '.css']
 
         return choices
 
