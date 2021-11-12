@@ -252,6 +252,15 @@ def global_settings(*args, **kwargs):
 
 
 @register.simple_tag()
+def visible_global_settings(*args, **kwargs):
+    """
+    Return any global settings which are not marked as 'hidden'
+    """
+
+    return InvenTreeSetting.allValues(exclude_hidden=True)
+
+
+@register.simple_tag()
 def progress_bar(val, max, *args, **kwargs):
     """
     Render a progress bar element
