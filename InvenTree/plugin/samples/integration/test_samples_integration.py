@@ -3,6 +3,10 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+from InvenTree.helpers import setup_plugin
+
+from plugin.samples.integration.sample import SampleIntegrationPlugin
+
 
 class SampleIntegrationPluginTests(TestCase):
     """ Tests for SampleIntegrationPlugin """
@@ -13,6 +17,7 @@ class SampleIntegrationPluginTests(TestCase):
         user.objects.create_user('testuser', 'test@testing.com', 'password')
 
         self.client.login(username='testuser', password='password')
+        setup_plugin(SampleIntegrationPlugin.PLUGIN_SLUG, SampleIntegrationPlugin.PLUGIN_NAME)
 
     def test_view(self):
         """check the function of the custom  sample plugin """

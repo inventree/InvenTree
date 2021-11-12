@@ -22,6 +22,7 @@ import InvenTree.version
 from common.models import InvenTreeSetting
 from .settings import MEDIA_URL, STATIC_URL
 from common.settings import currency_code_default
+from plugin.models import PluginConfig
 
 from djmoney.money import Money
 
@@ -711,3 +712,12 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
+
+
+def setup_plugin(plg_key, plg_name):
+    """
+    Enables plugins by reference
+    """
+    plg_setting, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
+    plg_setting.active = True
+    plg_setting.save()
