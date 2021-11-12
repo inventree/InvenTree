@@ -64,6 +64,9 @@ class PluginConfig(AppConfig):
                 plugin.is_package = was_packaged
                 # safe reference
                 settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
+            else:
+                # save for later reference
+                settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
 
         # activate integrations
         plugins = settings.INTEGRATION_PLUGINS.items()
