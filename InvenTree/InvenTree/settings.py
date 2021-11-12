@@ -655,6 +655,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('es-419', _('Spanish (Latin America)')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
