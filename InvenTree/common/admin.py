@@ -18,7 +18,7 @@ class SettingsAdmin(ImportExportModelAdmin):
         """
 
         if obj:
-            return ['key',]
+            return ['key']
         else:
             return []
 
@@ -33,7 +33,7 @@ class UserSettingsAdmin(ImportExportModelAdmin):
         """
 
         if obj:
-            return ['key',]
+            return ['key']
         else:
             return []
 
