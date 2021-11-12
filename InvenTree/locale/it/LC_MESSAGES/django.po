@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-12 05:04+0000\n"
-"PO-Revision-Date: 2021-11-12 05:08\n"
+"PO-Revision-Date: 2021-11-12 08:57\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -70,7 +70,7 @@ msgstr "Selezione una categoria"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (ancora)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
@@ -450,7 +450,7 @@ msgstr "IPN deve corrispondere al modello regex {pat}"
 #: InvenTree/validators.py:106
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Il campo %name% deve corrispondere con il modello %pattern%"
 
 #: InvenTree/validators.py:114
 #, python-brace-format
@@ -519,11 +519,11 @@ msgstr "Il codice a barre corrisponde già all'oggetto StockItem"
 
 #: barcodes/api.py:194
 msgid "Barcode already matches StockLocation object"
-msgstr ""
+msgstr "Il codice a barre corrisponde già all'oggetto StockItem"
 
 #: barcodes/api.py:198
 msgid "Barcode already matches Part object"
-msgstr ""
+msgstr "Il codice a barre corrisponde già all'articolo"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
@@ -629,7 +629,7 @@ msgstr ""
 #: templates/js/translated/bom.js:432 templates/js/translated/build.js:1119
 #: templates/js/translated/order.js:864 templates/js/translated/order.js:1451
 msgid "Reference"
-msgstr ""
+msgstr "Riferimento"
 
 #: build/models.py:210
 msgid "Brief description of the build"
@@ -670,7 +670,7 @@ msgstr ""
 #: templates/js/translated/stock.js:478 templates/js/translated/stock.js:1078
 #: templates/js/translated/stock.js:2129
 msgid "Part"
-msgstr ""
+msgstr "Articolo"
 
 #: build/models.py:233
 msgid "Select part to build"
