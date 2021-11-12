@@ -22,6 +22,7 @@ class PluginConfig(AppConfig):
 
     def ready(self):
         from common.models import InvenTreeSetting
+        from plugin.models import PluginConfig
 
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
@@ -40,12 +41,20 @@ class PluginConfig(AppConfig):
             # check if package
             was_packaged = getattr(plugin, 'is_package', False)
 
-            # init package
-            plugin.is_package = was_packaged
-            plugin = plugin()
-            plugin.is_package = was_packaged
-            # safe reference
-            settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
+            # check if activated
+            # these checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
+            plug_name = plugin.PLUGIN_NAME
+            plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
+            plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+
+            if plugin_db_setting.active:
+                # init package
+                # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
+                # but we could enhance those to check signatures, run the plugin against a whitelist etc.
+                plugin = plugin()
+                plugin.is_package = was_packaged
+                # safe reference
+                settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
 
         # activate integrations
         plugins = settings.INTEGRATION_PLUGINS.items()
