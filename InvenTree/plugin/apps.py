@@ -43,37 +43,40 @@ class PluginConfig(AppConfig):
         logger.info(f'Found {len(settings.PLUGINS)} plugins!')
         logger.info(", ".join([a.__module__ for a in settings.PLUGINS]))
 
-        # Initialize integration plugins
-        for plugin in inventree_plugins.load_integration_plugins():
-            # check if package
-            was_packaged = getattr(plugin, 'is_package', False)
-
-            # check if activated
-            # these checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plug_name = plugin.PLUGIN_NAME
-            plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
-            plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
-
-            if plugin_db_setting.active:
-                # init package
-                # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
-                # but we could enhance those to check signatures, run the plugin against a whitelist etc.
-                logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
-                plugin = plugin()
-                logger.info(f'Loaded integration plugin {plugin.slug}')
-                plugin.is_package = was_packaged
-                # safe reference
-                settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
-            else:
-                # save for later reference
-                settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
-
-        # activate integrations
-        plugins = settings.INTEGRATION_PLUGINS.items()
-
         try:
+            logger.info('Starting plugin initialisation')
+            # Initialize integration plugins
+            for plugin in inventree_plugins.load_integration_plugins():
+                # check if package
+                was_packaged = getattr(plugin, 'is_package', False)
+
+                # check if activated
+                # these checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
+                plug_name = plugin.PLUGIN_NAME
+                plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
+                plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+
+                if plugin_db_setting.active:
+                    # init package
+                    # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
+                    # but we could enhance those to check signatures, run the plugin against a whitelist etc.
+                    logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
+                    plugin = plugin()
+                    logger.info(f'Loaded integration plugin {plugin.slug}')
+                    plugin.is_package = was_packaged
+                    # safe reference
+                    settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
+                else:
+                    # save for later reference
+                    settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
+
+            # activate integrations
+            plugins = settings.INTEGRATION_PLUGINS.items()
+            logger.info(f'Found {len(plugins)} active plugins')
+
             # if plugin settings are enabled enhance the settings
             if settings.TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
+                logger.info('Registering IntegrationPlugin settings')
                 for slug, plugin in plugins:
                     if plugin.mixin_enabled('settings'):
                         plugin_setting = plugin.settingspatterns
@@ -84,6 +87,7 @@ class PluginConfig(AppConfig):
 
             # if plugin apps are enabled
             if settings.TESTING or ((not settings.INTEGRATION_APPS_LOADED) and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
+                logger.info('Registering IntegrationPlugin apps')
                 settings.INTEGRATION_APPS_LOADED = True  # ensure this section will not run again
                 apps_changed = False
 
