@@ -40,3 +40,9 @@ class PluginConfig(models.Model):
         verbose_name=_('Active'),
         help_text=_('Is the plugin active'),
     )
+
+    def __str__(self) -> str:
+        name = f'{self.name} - {self.key}'
+        if not self.active:
+            name += '(not active)'
+        return name
