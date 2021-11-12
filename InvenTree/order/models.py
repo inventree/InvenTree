@@ -1017,3 +1017,35 @@ class SalesOrderAllocation(models.Model):
         # (It may have changed if the stock was split)
         self.item = item
         self.save()
+
+
+class SalesOrderBasket(models.Model):
+    order = models.ForeignKey(
+        'SalesOrder',
+        on_delete=models.CASCADE,
+        related_name='sales_order_basket',
+        verbose_name=_('Order'),
+        help_text=_('Select order to put in basket')
+    ),
+    name = models.CharField(max_length=124, unique=True, nullable=True, default=None)
+    # barcode = models.CharField(max_length=124, unique=True, nullable=True, default=None)
+
+    def format_barcode(self, **kwargs):
+        """ Return a JSON string for formatting a barcode for this StockLocation object """
+
+        return helpers.MakeBarcode(
+            'orderbasket',
+            self.pk,
+            {
+                "name": self.name,
+                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
+            },
+            **kwargs
+        )
+
+    @property
+    def barcode(self):
+        """
+        Brief payload data (e.g. for labels)
+        """
+        return self.format_barcode(brief=True)
