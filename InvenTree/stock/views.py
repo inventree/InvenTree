@@ -560,9 +560,8 @@ class StockItemInstall(AjaxUpdateView):
 
             # Filter for parts to install in this item
             if self.install_item:
-                # Get parts used in this part's BOM
-                bom_items = self.part.get_bom_items()
-                allowed_parts = [item.sub_part for item in bom_items]
+                # Get all parts which can be installed into this part
+                allowed_parts = self.part.get_installed_part_options()
                 # Filter
                 items = items.filter(part__in=allowed_parts)
 

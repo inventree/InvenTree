@@ -34,6 +34,7 @@ src="{% static 'img/blank_image.png' %}"
 {% include "admin_button.html" with url=url %}
 {% endif %}
 <!-- Printing options -->
+{% if report_enabled %}
 <div class='btn-group'>
     <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
         <span class='fas fa-print'></span> <span class='caret'></span>
@@ -42,6 +43,7 @@ src="{% static 'img/blank_image.png' %}"
         <li><a class='dropdown-item' href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print build order report" %}</a></li>
     </ul>
 </div>
+{% endif %}
 <!-- Build actions -->
 {% if roles.build.change %}
 <div class='btn-group'>
@@ -224,9 +226,11 @@ src="{% static 'img/blank_image.png' %}"
         {% endif %}
     });
 
+    {% if report_enabled %}
     $('#print-build-report').click(function() {
         printBuildReports([{{ build.pk }}]);
     });
+    {% endif %}
 
     $("#build-delete").on('click', function() {
         launchModalForm(
