@@ -979,9 +979,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
-        'ENABLE_PLUGINS_SETTING': {
-            'name': _('Enable setting integration'),
-            'description': _('Enable plugins to integrate into inventree settings'),
+        'ENABLE_PLUGINS_GLOBALSETTING': {
+            'name': _('Enable global setting integration'),
+            'description': _('Enable plugins to integrate into inventree global settings'),
             'default': False,
             'validator': bool,
             'requires_restart': True,

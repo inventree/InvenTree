@@ -59,9 +59,9 @@ class PluginTagTests(TestCase):
         """test that all plugins are listed"""
         self.assertEqual(plugin_tags.plugin_list(), settings.INTEGRATION_PLUGINS)
 
-    def test_tag_plugin_settings(self):
+    def test_tag_plugin_globalsettings(self):
         """check all plugins are listed"""
-        self.assertEqual(plugin_tags.plugin_settings(self.sample), settings.INTEGRATION_PLUGIN_SETTING.get(self.sample))
+        self.assertEqual(plugin_tags.plugin_globalsettings(self.sample), settings.INTEGRATION_PLUGIN_GLOBALSETTING.get(self.sample))
 
     def test_tag_mixin_enabled(self):
         """check that mixin enabled functions work"""

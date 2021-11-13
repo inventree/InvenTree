@@ -57,53 +57,53 @@ class MixinBase:
         return mixins
 
 
-class SettingsMixin:
-    """Mixin that enables settings for the plugin"""
+class GlobalSettingsMixin:
+    """Mixin that enables global settings for the plugin"""
     class Meta:
         """meta options for this mixin"""
-        MIXIN_NAME = 'Settings'
+        MIXIN_NAME = 'Global settings'
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('settings', 'has_settings', __class__)
-        self.settings = self.setup_settings()
+        self.add_mixin('globalsettings', 'has_globalsettings', __class__)
+        self.globalsettings = self.setup_globalsettings()
 
-    def setup_settings(self):
+    def setup_globalsettings(self):
         """
-        setup settings for this plugin
+        setup global settings for this plugin
         """
-        return getattr(self, 'SETTINGS', None)
-
-    @property
-    def has_settings(self):
-        """
-        does this plugin use custom settings
-        """
-        return bool(self.settings)
+        return getattr(self, 'GLOBALSETTINGS', None)
 
     @property
-    def settingspatterns(self):
+    def has_globalsettings(self):
+        """
+        does this plugin use custom global settings
+        """
+        return bool(self.globalsettings)
+
+    @property
+    def globalsettingspatterns(self):
         """
         get patterns for InvenTreeSetting defintion
         """
-        if self.has_settings:
-            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.settings.items()}
+        if self.has_globalsettings:
+            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.globalsettings.items()}
         return None
 
-    def _setting_name(self, key):
+    def _globalsetting_name(self, key):
         """get global name of setting"""
         return f'PLUGIN_{self.slug.upper()}_{key}'
 
-    def get_setting(self, key):
+    def get_globalsetting(self, key):
         """
-        get plugin setting by key
+        get plugin global setting by key
         """
         from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(self._setting_name(key))
+        return InvenTreeSetting.get_setting(self._globalsetting_name(key))
 
-    def set_setting(self, key, value, user):
+    def set_globalsetting(self, key, value, user):
         """
-        set plugin setting by key
+        set plugin global setting by key
         """
         from common.models import InvenTreeSetting
         return InvenTreeSetting.set_setting(self._setting_name(key), value, user)

@@ -92,20 +92,20 @@ class PluginAppConfig(AppConfig):
         logger.info(f'Found {len(plugins)} active plugins')
 
         # if plugin settings are enabled enhance the settings
-        self.activate_integration_settings(plugins)
+        self.activate_integration_globalsettings(plugins)
 
         # if plugin apps are enabled
         self.activate_integration_app(plugins)
 
-    def activate_integration_settings(self, plugins):
+    def activate_integration_globalsettings(self, plugins):
         from common.models import InvenTreeSetting
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
-            logger.info('Registering IntegrationPlugin settings')
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_GLOBALSETTING'):
+            logger.info('Registering IntegrationPlugin global settings')
             for slug, plugin in plugins:
-                if plugin.mixin_enabled('settings'):
-                    plugin_setting = plugin.settingspatterns
-                    settings.INTEGRATION_PLUGIN_SETTING[slug] = plugin_setting
+                if plugin.mixin_enabled('globalsettings'):
+                    plugin_setting = plugin.globalsettingspatterns
+                    settings.INTEGRATION_PLUGIN_GLOBALSETTING[slug] = plugin_setting
 
                     # Add to settings dir
                     InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
