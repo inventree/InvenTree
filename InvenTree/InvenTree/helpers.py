@@ -712,12 +712,3 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
-
-
-def setup_plugin(plg_key, plg_name):
-    """
-    Enables plugins by reference
-    """
-    plg_setting, _ = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
-    plg_setting.active = True
-    plg_setting.save()
