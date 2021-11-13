@@ -6,4 +6,9 @@ from django.contrib import admin
 import plugin.models as models
 
 
-admin.site.register(models.PluginConfig, admin.ModelAdmin)
+class PluginConfigAdmin(admin.ModelAdmin):
+    """Custom admin with restricted id fields"""
+    readonly_fields = ["key", "name", ]
+
+
+admin.site.register(models.PluginConfig, PluginConfigAdmin)
