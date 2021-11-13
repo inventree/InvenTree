@@ -27,6 +27,7 @@
         <div class='button-toolbar container-fluid' style='float: right;'>
             <div class='btn-group' role='group'>
                 
+                {% if report_enabled %}
                 <div class='btn-group' role='group'>
                     <!-- Print actions -->
                     <button id='build-print-options' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown'>
@@ -38,6 +39,7 @@
                         </a></li>
                     </ul>
                 </div>
+                {% endif %}
                 <!-- Buttons to switch between list and calendar views -->
                 <button class='btn btn-outline-secondary' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
                     <span class='fas fa-calendar-alt'></span>
@@ -181,6 +183,7 @@ loadBuildTable($("#build-table"), {
     url: "{% url 'api-build-list' %}",
 });
 
+{% if report_enabled %}
 $('#multi-build-print').click(function() {
     var rows = $("#build-table").bootstrapTable('getSelections');
 
@@ -192,5 +195,6 @@ $('#multi-build-print').click(function() {
 
     printBuildReports(build_ids);
 });
+{% endif %}
 
 {% endblock %}
