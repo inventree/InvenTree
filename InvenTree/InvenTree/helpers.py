@@ -22,7 +22,6 @@ import InvenTree.version
 from common.models import InvenTreeSetting
 from .settings import MEDIA_URL, STATIC_URL
 from common.settings import currency_code_default
-from plugin.models import PluginConfig
 
 from djmoney.money import Money
 
