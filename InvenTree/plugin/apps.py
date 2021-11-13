@@ -68,7 +68,8 @@ class PluginAppConfig(AppConfig):
             plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
             plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
 
-            if plugin_db_setting.active:
+            # always activate if testing
+            if settings.TESTING or plugin_db_setting.active:
                 # init package
                 # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
