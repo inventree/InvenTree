@@ -69,7 +69,7 @@ class PluginAppConfig(AppConfig):
             plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
 
             # always activate if testing
-            if settings.TESTING or plugin_db_setting.active:
+            if settings.PLUGIN_TESTING or plugin_db_setting.active:
                 # init package
                 # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
@@ -100,7 +100,7 @@ class PluginAppConfig(AppConfig):
     def activate_integration_settings(self, plugins):
         from common.models import InvenTreeSetting
 
-        if settings.TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SETTING'):
             logger.info('Registering IntegrationPlugin settings')
             for slug, plugin in plugins:
                 if plugin.mixin_enabled('settings'):
@@ -113,7 +113,7 @@ class PluginAppConfig(AppConfig):
     def activate_integration_app(self, plugins):
         from common.models import InvenTreeSetting
 
-        if settings.TESTING or ((not settings.INTEGRATION_APPS_LOADED) and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
+        if settings.PLUGIN_TESTING or ((not settings.INTEGRATION_APPS_LOADED) and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
             logger.info('Registering IntegrationPlugin apps')
             settings.INTEGRATION_APPS_LOADED = True  # ensure this section will not run again
             apps_changed = False

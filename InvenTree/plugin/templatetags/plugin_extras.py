@@ -39,7 +39,7 @@ def mixin_enabled(plugin, key, *args, **kwargs):
 @register.simple_tag()
 def navigation_enabled(*args, **kwargs):
     """Return if plugin navigation is enabled"""
-    if djangosettings.TESTING:
+    if djangosettings.PLUGIN_TESTING:
         return True
     return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')
 
