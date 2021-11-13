@@ -9,6 +9,7 @@ from datetime import datetime
 import pathlib
 
 from django.conf.urls import url, include
+from django.urls.base import reverse
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -361,6 +362,11 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         if self._is_package:
             return self.__module__
         return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
+
+    @property
+    def settings_url(self):
+        """returns url to the settings panel"""
+        return f'{reverse("settings")}#select-plugin-{self.slug}'
 
     # region mixins
     def mixin(self, key):
