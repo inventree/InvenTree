@@ -289,7 +289,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     def _is_package(self):
         return getattr(self, 'is_package', False)
 
-    # properties
+    # region properties
     @property
     def slug(self):
         """slug for the plugin"""
@@ -353,6 +353,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """returns license of plugin"""
         license = getattr(self, 'LICENSE', None)
         return license
+    # endregion
 
     @property
     def package_path(self):
@@ -361,7 +362,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             return self.__module__
         return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
 
-    # mixins
+    # region mixins
     def mixin(self, key):
         """check if mixin is registered"""
         return key in self._mixins
@@ -372,8 +373,9 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             fnc_name = self._mixins.get(key)
             return getattr(self, fnc_name, True)
         return False
+    # endregion
 
-    # package info
+    # region package info
     def get_package_commit(self):
         """get last git commit for plugin"""
         return get_git_log(self.def_path)
@@ -402,3 +404,4 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         # set variables
         self.package = package
         self.sign_state = sign_state
+    # endregion
