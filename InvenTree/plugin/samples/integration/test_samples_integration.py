@@ -2,6 +2,7 @@
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 
 class SampleIntegrationPluginTests(TestCase):
@@ -16,6 +17,7 @@ class SampleIntegrationPluginTests(TestCase):
 
     def test_view(self):
         """check the function of the custom  sample plugin """
+        print(f'current testing settings: {settings.PLUGIN_TESTING}')
         response = self.client.get('/plugin/sample/ho/he/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'Hi there testuser this works')
