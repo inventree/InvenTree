@@ -7,9 +7,7 @@ from django.contrib.auth import get_user_model
 
 from datetime import datetime
 
-from InvenTree.helpers import setup_plugin
 from plugin.integration import AppMixin, IntegrationPluginBase, SettingsMixin, UrlsMixin, NavigationMixin
-from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
 class BaseMixinDefinition:
@@ -111,8 +109,6 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
         class TestCls(AppMixin, IntegrationPluginBase):
             pass
         self.mixin = TestCls()
-
-        setup_plugin(SampleIntegrationPlugin.PLUGIN_SLUG, SampleIntegrationPlugin.PLUGIN_NAME)
 
     def test_function(self):
         # test that this plugin is in settings
