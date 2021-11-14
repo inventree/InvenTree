@@ -8,7 +8,7 @@ from typing import OrderedDict
 from django.apps import AppConfig, apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 
 try:
@@ -217,13 +217,15 @@ class PluginAppConfig(AppConfig):
         self._update_urls()
 
     def _update_urls(self):
-        from InvenTree.urls import urlpatterns as root_urlpatterns
+        from InvenTree.urls import urlpatterns, get_integration_urls
 
-        for index, a in enumerate(root_urlpatterns):
-            if hasattr(a, 'app_name') and a.app_name == 'admin':
-                root_urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
-                print('exchanged')
-                break
+        for index, a in enumerate(urlpatterns):
+            if hasattr(a, 'app_name'):
+                if a.app_name == 'admin':
+                    urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
+                elif a.app_name == 'plugin':
+                    integ_urls = get_integration_urls()
+                    urlpatterns[index] = url(f'^{settings.PLUGIN_URL}/', include((integ_urls, 'plugin')))
         print('done')
 
     def _reload_apps(self, populate: bool = False):
