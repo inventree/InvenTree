@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-13 12:13+0000\n"
-"PO-Revision-Date: 2021-11-13 12:57\n"
+"PO-Revision-Date: 2021-11-14 14:38\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -74,11 +74,11 @@ msgstr "Email (еще раз)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Подтверждение адреса электронной почты"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Вы должны вводить один и тот же адрес электронной почты."
 
 #: InvenTree/helpers.py:430
 #, python-brace-format
@@ -147,7 +147,7 @@ msgstr "Имя файла не должно быть пустым"
 
 #: InvenTree/models.py:165
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Неверная директория вложений"
 
 #: InvenTree/models.py:175
 #, python-brace-format
