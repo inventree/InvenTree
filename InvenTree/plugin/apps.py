@@ -26,8 +26,9 @@ class PluginAppConfig(AppConfig):
     name = 'plugin'
 
     def ready(self):
-        self._collect_plugins()
-        self.load_plugins()
+        if not settings.INTEGRATION_PLUGINS_RELOADING:
+            self._collect_plugins()
+            self.load_plugins()
 
     # region public plugin functions
     def load_plugins(self):
@@ -224,10 +225,8 @@ class PluginAppConfig(AppConfig):
         print('done')
 
     def _reload_apps(self):
-        # TODO this is a bit jankey to be honest
-        apps.app_configs = OrderedDict()
-        apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
-        apps.clear_cache()
-        apps.populate(settings.INSTALLED_APPS)
+        settings.INTEGRATION_PLUGINS_RELOADING = True
+        apps.set_installed_apps(settings.INSTALLED_APPS)
+        settings.INTEGRATION_PLUGINS_RELOADING = False
     # endregion
     # endregion
