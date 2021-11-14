@@ -26,22 +26,24 @@ class PluginAppConfig(AppConfig):
     name = 'plugin'
 
     def ready(self):
-        self.collect_plugins()
+        self._collect_plugins()
         self.load_plugins()
 
-    # region general public plugin functions
+    # region public plugin functions
     def load_plugins(self):
+        """load and activate all IntegrationPlugins"""
         logger.info('Start loading plugins')
         try:
             # we are using the db so for migrations etc we need to try this block
-            self.init_plugins()
-            self.activate_plugins()
+            self._init_plugins()
+            self._activate_plugins()
         except (OperationalError, ProgrammingError):
             # Exception if the database has not been migrated yet
             logger.info('Database not accessible while loading plugins')
         logger.info('Finished loading plugins')
 
     def unload_plugins(self):
+        """unload and deactivate all IntegrationPlugins"""
         logger.info('Start unloading plugins')
         # remove all plugins from registry
         # plugins = settings.INTEGRATION_PLUGINS
@@ -50,18 +52,19 @@ class PluginAppConfig(AppConfig):
         settings.INTEGRATION_PLUGINS_INACTIVE = {}
 
         # deactivate all integrations
-        self.deactivate_plugins()
+        self._deactivate_plugins()
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self):
+        """safely reload IntegrationPlugins"""
         logger.info('Start reloading plugins')
         self.unload_plugins()
         self.load_plugins()
         logger.info('Finished reloading plugins')
     # endregion
 
-    # region general mechanisms
-    def collect_plugins(self):
+    # region general plugin managment mechanisms
+    def _collect_plugins(self):
         """collect integration plugins from all possible ways of loading"""
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
@@ -81,7 +84,7 @@ class PluginAppConfig(AppConfig):
         logger.info(f'Found {len(settings.PLUGINS)} plugins!')
         logger.info(", ".join([a.__module__ for a in settings.PLUGINS]))
 
-    def init_plugins(self):
+    def _init_plugins(self):
         """initialise all found plugins"""
         from plugin.models import PluginConfig
 
@@ -121,23 +124,22 @@ class PluginAppConfig(AppConfig):
                 # save for later reference
                 settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
 
-    def activate_plugins(self):
-        """fullfill integrations for all activated plugins"""
+    def _activate_plugins(self):
+        """run integration functions for all plugins"""
         # activate integrations
         plugins = settings.INTEGRATION_PLUGINS.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
-        # if plugin settings are enabled enhance the settings
         self.activate_integration_globalsettings(plugins)
-
-        # if plugin apps are enabled
         self.activate_integration_app(plugins)
 
-    def deactivate_plugins(self):
+    def _deactivate_plugins(self):
+        """run integration deactivation functions for all plugins"""
         self.deactivate_integration_app()
         self.deactivate_integration_globalsettings()
     # endregion
 
+    # region specific integrations
     # region integration_globalsettings
     def activate_integration_globalsettings(self, plugins):
         from common.models import InvenTreeSetting
@@ -224,4 +226,5 @@ class PluginAppConfig(AppConfig):
         apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
         apps.clear_cache()
         apps.populate(settings.INSTALLED_APPS)
+    # endregion
     # endregion
