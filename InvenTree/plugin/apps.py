@@ -8,6 +8,8 @@ from typing import OrderedDict
 from django.apps import AppConfig, apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
+from django.conf.urls import url
+from django.contrib import admin
 
 try:
     from importlib import metadata
@@ -25,14 +27,36 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         self.collect_plugins()
+        self.load_plugins()
 
+    def load_plugins(self):
+        logger.info('Start loading plugins')
         try:
-            # we are using the db from here - so for migrations etc we need to try this block
+            # we are using the db so for migrations etc we need to try this block
             self.init_plugins()
-            self.activate_integration()
+            self.activate_plugins()
         except (OperationalError, ProgrammingError):
             # Exception if the database has not been migrated yet
-            pass
+            logger.info('Database not accessible while loading plugins')
+        logger.info('Finished loading plugins')
+
+    def unload_plugins(self):
+        logger.info('Start unloading plugins')
+        # remove all plugins from registry
+        # plugins = settings.INTEGRATION_PLUGINS
+        settings.INTEGRATION_PLUGINS = {}
+        # plugins_inactive = settings.INTEGRATION_PLUGINS_INACTIVE
+        settings.INTEGRATION_PLUGINS_INACTIVE = {}
+
+        # deactivate all integrations
+        self.deactivate_plugins()
+        logger.info('Finished unloading plugins')
+
+    def reload_plugins(self):
+        logger.info('Start reloading plugins')
+        self.unload_plugins()
+        self.load_plugins()
+        logger.info('Finished reloading plugins')
 
     def collect_plugins(self):
         """collect integration plugins from all possible ways of loading"""
@@ -42,6 +66,7 @@ class PluginAppConfig(AppConfig):
             if modules:
                 [settings.PLUGINS.append(item) for item in modules]
 
+        # check if running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
             for entry in metadata.entry_points().get('inventree_plugins', []):
@@ -93,7 +118,7 @@ class PluginAppConfig(AppConfig):
                 # save for later reference
                 settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
 
-    def activate_integration(self):
+    def activate_plugins(self):
         """fullfill integrations for all activated plugins"""
         # activate integrations
         plugins = settings.INTEGRATION_PLUGINS.items()
@@ -105,6 +130,11 @@ class PluginAppConfig(AppConfig):
         # if plugin apps are enabled
         self.activate_integration_app(plugins)
 
+    def deactivate_plugins(self):
+        self.deactivate_integration_app()
+        self.deactivate_integration_globalsettings()
+
+    # region integration_globalsettings
     def activate_integration_globalsettings(self, plugins):
         from common.models import InvenTreeSetting
 
@@ -118,6 +148,20 @@ class PluginAppConfig(AppConfig):
                     # Add to settings dir
                     InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
 
+    def deactivate_integration_globalsettings(self):
+        from common.models import InvenTreeSetting
+
+        # collect all settings
+        plugin_settings = {}
+        for _, plugin_setting in settings.INTEGRATION_PLUGIN_GLOBALSETTING.items():
+            plugin_settings.update(plugin_setting)
+
+        # remove settings
+        for setting in plugin_settings:
+            InvenTreeSetting.GLOBAL_SETTINGS.pop(setting)
+    # endregion
+
+    # region integration_app
     def activate_integration_app(self, plugins):
         from common.models import InvenTreeSetting
 
@@ -137,12 +181,43 @@ class PluginAppConfig(AppConfig):
                         plugin_path = plugin.PLUGIN_NAME
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]
+                        settings.INTEGRATION_APPS_PATHS += [plugin_path]
                         apps_changed = True
 
-            # if apps were changed reload
-            # TODO this is a bit jankey to be honest
             if apps_changed:
-                apps.app_configs = OrderedDict()
-                apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
-                apps.clear_cache()
-                apps.populate(settings.INSTALLED_APPS)
+                # if apps were changed reload
+                self._reload_apps()
+                # update urls
+                self._update_urls()
+
+    def deactivate_integration_app(self):
+        # remove plugin from installed_apps
+        for plugin in settings.INTEGRATION_APPS_PATHS:
+            settings.INSTALLED_APPS.remove(plugin)
+
+        # reset load flag and reload apps
+        settings.INTEGRATION_APPS_PATHS = []
+        settings.INTEGRATION_APPS_LOADED = False
+        self._reload_apps()
+
+        # update urls
+        self._update_urls()
+
+    def _update_urls(self):
+        from InvenTree.urls import urlpatterns as root_urlpatterns
+        # add admin urls
+        new_conf = url(r'^admin/', admin.site.urls, name='inventree-admin')
+        for index, a in enumerate(root_urlpatterns):
+            if hasattr(a, 'app_name') and a.app_name == 'admin':
+                root_urlpatterns[index] = new_conf
+                print('exchanged')
+                break
+        print('done')
+
+    def _reload_apps(self):
+        # TODO this is a bit jankey to be honest
+        apps.app_configs = OrderedDict()
+        apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
+        apps.clear_cache()
+        apps.populate(settings.INSTALLED_APPS)
+    # endregion

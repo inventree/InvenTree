@@ -864,7 +864,9 @@ PLUGINS = []
 INTEGRATION_PLUGINS = {}
 INTEGRATION_PLUGINS_INACTIVE = {}
 INTEGRATION_PLUGIN_GLOBALSETTING = {}
-INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet
+
+INTEGRATION_APPS_LOADED = False     # Marks if apps were reloaded yet
+INTEGRATION_APPS_PATHS = []         # Holds all added plugin_paths
 
 # Test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # used to force enable everything plugin

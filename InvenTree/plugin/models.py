@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
+from django.apps import apps
 
 
 class PluginConfig(models.Model):
@@ -46,3 +47,23 @@ class PluginConfig(models.Model):
         if not self.active:
             name += '(not active)'
         return name
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__org_active = self.active
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        """extend save method to reload plugins if the 'active' status changes"""
+        ret = super().save(force_insert, force_update,  *args, **kwargs)
+        app = apps.get_app_config('plugin')
+
+        if self.active is False and self.__org_active is True:
+            print('deactivated')
+            app.reload_plugins()
+
+        elif self.active is True and self.__org_active is False:
+            print('activated')
+            app.reload_plugins()
+
+        return ret
+
