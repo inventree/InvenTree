@@ -106,7 +106,7 @@ class GlobalSettingsMixin:
         set plugin global setting by key
         """
         from common.models import InvenTreeSetting
-        return InvenTreeSetting.set_setting(self._setting_name(key), value, user)
+        return InvenTreeSetting.set_setting(self._globalsetting_name(key), value, user)
 
 
 class UrlsMixin:
