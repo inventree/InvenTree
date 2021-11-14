@@ -55,7 +55,6 @@ def get_setting(environment_var, backup_val, default_value=None):
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
-PLUGIN_TESTING = TESTING  # used to forece enable everything plugin
 
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -866,3 +865,7 @@ INTEGRATION_PLUGINS = {}
 INTEGRATION_PLUGINS_INACTIVE = {}
 INTEGRATION_PLUGIN_GLOBALSETTING = {}
 INTEGRATION_APPS_LOADED = False  # Marks if apps were reloaded yet
+
+# Test settings
+PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # used to force enable everything plugin
+PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)

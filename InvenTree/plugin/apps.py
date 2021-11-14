@@ -42,11 +42,12 @@ class PluginAppConfig(AppConfig):
             if modules:
                 [settings.PLUGINS.append(item) for item in modules]
 
-        # Collect plugins from setup entry points
-        for entry in metadata.entry_points().get('inventree_plugins', []):
-            plugin = entry.load()
-            plugin.is_package = True
-            settings.PLUGINS.append(plugin)
+        if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
+            # Collect plugins from setup entry points
+            for entry in metadata.entry_points().get('inventree_plugins', []):
+                plugin = entry.load()
+                plugin.is_package = True
+                settings.PLUGINS.append(plugin)
 
         # Log found plugins
         logger.info(f'Found {len(settings.PLUGINS)} plugins!')
