@@ -43,7 +43,7 @@ class GlobalSettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.globalsettings, self.TEST_SETTINGS)
 
         # settings pattern
-        target_pattern = {f'PLUGIN_{self.mixin.slug.upper()}_{key}': value for key, value in self.mixin.settings.items()}
+        target_pattern = {f'PLUGIN_{self.mixin.slug.upper()}_{key}': value for key, value in self.mixin.globalsettings.items()}
         self.assertEqual(self.mixin.globalsettingspatterns, target_pattern)
 
         # no settings
