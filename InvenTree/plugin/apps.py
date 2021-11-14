@@ -211,11 +211,10 @@ class PluginAppConfig(AppConfig):
 
     def _update_urls(self):
         from InvenTree.urls import urlpatterns as root_urlpatterns
-        # add admin urls
-        new_conf = url(r'^admin/', admin.site.urls, name='inventree-admin')
+
         for index, a in enumerate(root_urlpatterns):
             if hasattr(a, 'app_name') and a.app_name == 'admin':
-                root_urlpatterns[index] = new_conf
+                root_urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
                 print('exchanged')
                 break
         print('done')
