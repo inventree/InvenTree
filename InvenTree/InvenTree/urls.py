@@ -123,12 +123,17 @@ translated_javascript_urls = [
 ]
 
 # Integration plugin urls
-interation_urls = []
+integration_urls = []
+def get_integration_urls():
+    urls = []
+    for plugin in settings.INTEGRATION_PLUGINS.values():
+        if plugin.mixin_enabled('urls'):
+            urls.append(plugin.urlpatterns)
+    return urls
+
 try:
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
-        for plugin in settings.INTEGRATION_PLUGINS.values():
-            if plugin.mixin_enabled('urls'):
-                interation_urls.append(plugin.urlpatterns)
+        integration_urls = get_integration_urls()
 except (OperationalError, ProgrammingError):
     # Exception if the database has not been migrated yet
     pass
@@ -172,7 +177,7 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     # plugins
-    url(f'^{settings.PLUGIN_URL}/', include((interation_urls, 'plugin'))),
+    url(f'^{settings.PLUGIN_URL}/', include((integration_urls, 'plugin'))),
 
     url(r'^markdownx/', include('markdownx.urls')),
 
