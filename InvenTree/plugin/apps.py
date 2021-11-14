@@ -166,6 +166,9 @@ class PluginAppConfig(AppConfig):
         # remove settings
         for setting in plugin_settings:
             InvenTreeSetting.GLOBAL_SETTINGS.pop(setting)
+
+        # clear cache
+        settings.INTEGRATION_PLUGIN_GLOBALSETTING = {}
     # endregion
 
     # region integration_app
