@@ -179,12 +179,7 @@ class PluginAppConfig(AppConfig):
             # add them to the INSTALLED_APPS
             for slug, plugin in plugins:
                 if plugin.mixin_enabled('app'):
-                    try:
-                        # for local path plugins
-                        plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
-                    except ValueError:
-                        # plugin is shipped as package
-                        plugin_path = plugin.PLUGIN_NAME
+                    plugin_path = self._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]
                         settings.INTEGRATION_APPS_PATHS += [plugin_path]
@@ -195,6 +190,15 @@ class PluginAppConfig(AppConfig):
                 self._reload_apps()
                 # update urls
                 self._update_urls()
+
+    def _get_plugin_path(self, plugin):
+        try:
+                        # for local path plugins
+            plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
+        except ValueError:
+                        # plugin is shipped as package
+            plugin_path = plugin.PLUGIN_NAME
+        return plugin_path
 
     def deactivate_integration_app(self):
         # remove plugin from installed_apps
