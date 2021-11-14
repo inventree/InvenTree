@@ -13,7 +13,7 @@ const user_settings = {
     {% endfor %}
 };
 
-{% global_settings as GLOBAL_SETTINGS %}
+{% visible_global_settings as GLOBAL_SETTINGS %}
 const global_settings = {
     {% for key, value in GLOBAL_SETTINGS.items %}
     {{ key }}: {% primitive_to_javascript value %},
