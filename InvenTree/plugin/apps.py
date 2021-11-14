@@ -67,10 +67,15 @@ class PluginAppConfig(AppConfig):
             # these checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plug_name = plugin.PLUGIN_NAME
             plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
-            plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+            try:
+                plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
+            except (OperationalError, ProgrammingError) as error:
+                # Exception if the database has not been migrated yet
+                logger.error('Database error while gettign/setting PluginConfig', error)
+                plugin_db_setting = None
 
             # always activate if testing
-            if settings.PLUGIN_TESTING or plugin_db_setting.active:
+            if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
                 # init package
                 # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
@@ -78,7 +83,8 @@ class PluginAppConfig(AppConfig):
                 plugin = plugin()
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
-                plugin.pk = plugin_db_setting.pk
+                if plugin_db_setting:
+                    plugin.pk = plugin_db_setting.pk
 
                 # safe reference
                 settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
