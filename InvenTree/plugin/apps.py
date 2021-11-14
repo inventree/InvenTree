@@ -32,7 +32,7 @@ class PluginAppConfig(AppConfig):
             self.activate_integration()
         except (OperationalError, ProgrammingError):
             # Exception if the database has not been migrated yet
-            logger.debug('Database was not ready for loading PluginAppConfig')
+            pass
 
     def collect_plugins(self):
         """collect integration plugins from all possible ways of loading"""
@@ -70,8 +70,9 @@ class PluginAppConfig(AppConfig):
             try:
                 plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
             except (OperationalError, ProgrammingError) as error:
-                # Exception if the database has not been migrated yet
-                logger.error('Database error while gettign/setting PluginConfig', error)
+                # Exception if the database has not been migrated yet - check if test are running - raise if not
+                if not settings.PLUGIN_TESTING:
+                    raise error
                 plugin_db_setting = None
 
             # always activate if testing
