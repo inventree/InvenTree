@@ -29,6 +29,7 @@ class PluginAppConfig(AppConfig):
         self.collect_plugins()
         self.load_plugins()
 
+    # region general public plugin functions
     def load_plugins(self):
         logger.info('Start loading plugins')
         try:
@@ -57,7 +58,9 @@ class PluginAppConfig(AppConfig):
         self.unload_plugins()
         self.load_plugins()
         logger.info('Finished reloading plugins')
+    # endregion
 
+    # region general mechanisms
     def collect_plugins(self):
         """collect integration plugins from all possible ways of loading"""
         # Collect plugins from paths
@@ -133,6 +136,7 @@ class PluginAppConfig(AppConfig):
     def deactivate_plugins(self):
         self.deactivate_integration_app()
         self.deactivate_integration_globalsettings()
+    # endregion
 
     # region integration_globalsettings
     def activate_integration_globalsettings(self, plugins):
