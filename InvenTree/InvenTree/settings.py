@@ -865,7 +865,7 @@ INTEGRATION_PLUGINS = {}
 INTEGRATION_PLUGINS_INACTIVE = {}
 INTEGRATION_PLUGIN_GLOBALSETTING = {}
 
-INTEGRATION_APPS_LOADED = False     # Marks if apps were reloaded yet
+INTEGRATION_APPS_LOADING = True     # Marks if apps were reloaded yet
 INTEGRATION_PLUGINS_RELOADING = False
 INTEGRATION_APPS_PATHS = []         # Holds all added plugin_paths
 

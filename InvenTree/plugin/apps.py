@@ -172,9 +172,8 @@ class PluginAppConfig(AppConfig):
     def activate_integration_app(self, plugins):
         from common.models import InvenTreeSetting
 
-        if settings.PLUGIN_TESTING or ((not settings.INTEGRATION_APPS_LOADED) and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
+        if settings.PLUGIN_TESTING or (settings.INTEGRATION_APPS_LOADING and InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
             logger.info('Registering IntegrationPlugin apps')
-            settings.INTEGRATION_APPS_LOADED = True  # ensure this section will not run again
             apps_changed = False
 
             # add them to the INSTALLED_APPS
@@ -188,6 +187,9 @@ class PluginAppConfig(AppConfig):
 
             if apps_changed:
                 # if apps were changed reload
+                if settings.INTEGRATION_APPS_LOADING:
+                    settings.INTEGRATION_APPS_LOADING = False
+                    self._reload_apps(populate=True)
                 self._reload_apps()
                 # update urls
                 self._update_urls()
@@ -224,7 +226,13 @@ class PluginAppConfig(AppConfig):
                 break
         print('done')
 
-    def _reload_apps(self):
+    def _reload_apps(self, populate: bool = False):
+        if populate:
+            apps.app_configs = OrderedDict()
+            apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
+            apps.clear_cache()
+            apps.populate(settings.INSTALLED_APPS)
+            return
         settings.INTEGRATION_PLUGINS_RELOADING = True
         apps.set_installed_apps(settings.INSTALLED_APPS)
         settings.INTEGRATION_PLUGINS_RELOADING = False
