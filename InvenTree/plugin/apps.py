@@ -32,7 +32,7 @@ class PluginAppConfig(AppConfig):
             self.activate_integration()
         except (OperationalError, ProgrammingError):
             # Exception if the database has not been migrated yet
-            pass
+            logger.debug('Database was not ready for loading PluginAppConfig')
 
     def collect_plugins(self):
         """collect integration plugins from all possible ways of loading"""
