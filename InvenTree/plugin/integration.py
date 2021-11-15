@@ -36,7 +36,7 @@ class MixinBase:
     def setup_mixin(self, key, cls=None):
         """define mixin details for the current mixin -> provides meta details for all active mixins"""
         # get human name
-        human_name = getattr(cls.Meta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'Meta') else key
+        human_name = getattr(cls.MixinMeta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'MixinMeta') else key
 
         # register
         self._mixinreg[key] = {
@@ -59,7 +59,7 @@ class MixinBase:
 
 class GlobalSettingsMixin:
     """Mixin that enables global settings for the plugin"""
-    class Meta:
+    class MixinMeta:
         """meta options for this mixin"""
         MIXIN_NAME = 'Global settings'
 
@@ -111,7 +111,7 @@ class GlobalSettingsMixin:
 
 class UrlsMixin:
     """Mixin that enables urls for the plugin"""
-    class Meta:
+    class MixinMeta:
         """meta options for this mixin"""
         MIXIN_NAME = 'URLs'
 
@@ -162,7 +162,7 @@ class NavigationMixin:
     NAVIGATION_TAB_NAME = None
     NAVIGATION_TAB_ICON = "fas fa-question"
 
-    class Meta:
+    class MixinMeta:
         """meta options for this mixin"""
         MIXIN_NAME = 'Navigation Links'
 
@@ -206,7 +206,7 @@ class NavigationMixin:
 
 class AppMixin:
     """Mixin that enables full django app functions for a plugin"""
-    class Meta:
+    class MixinMeta:
         """meta options for this mixin"""
         MIXIN_NAME = 'App registration'
 
