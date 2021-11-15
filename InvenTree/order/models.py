@@ -26,7 +26,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, increment, getSetting
+from InvenTree.helpers import decimal2string, increment, getSetting, MakeBarcode
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeAttachment
 
@@ -1027,18 +1027,18 @@ class SalesOrderBasket(models.Model):
         verbose_name=_('Order'),
         help_text=_('Select order to put in basket')
     ),
-    name = models.CharField(max_length=124, unique=True, nullable=True, default=None)
-    # barcode = models.CharField(max_length=124, unique=True, nullable=True, default=None)
+    name = models.CharField(max_length=124, unique=True, null=True, default=None)
+    # barcode = models.CharField(max_length=124, unique=True, null=True, default=None)
 
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
-        return helpers.MakeBarcode(
+        return MakeBarcode(
             'orderbasket',
             self.pk,
             {
                 "name": self.name,
-                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
+                "url": reverse('api-basket-detail', kwargs={'pk': self.id}),
             },
             **kwargs
         )
