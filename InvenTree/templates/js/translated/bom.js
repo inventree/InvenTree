@@ -673,8 +673,9 @@ function loadBomTable(table, options={}) {
 
                     table.treegrid('collapseAll');
                 },
-                error: function() {
+                error: function(xhr) {
                     console.log('Error requesting BOM for part=' + part_pk);
+                    showApiError(xhr);
                 }
             }
         );
@@ -879,6 +880,63 @@ function loadUsedInTable(table, part_id, options={}) {
         showColumns: true,
         queryParams: filters,
         original: params,
+        rootParentId: 'top-level-item',
+        idField: 'pk',
+        uniqueId: 'pk',
+        parentIdField: 'parent',
+        treeShowField: 'part',
+        onLoadSuccess: function(tableData) {
+            // Once the initial data are loaded, check if there are any "inherited" BOM lines
+            for (var ii = 0; ii < tableData.length; ii++) {
+                var row = tableData[ii];
+
+                // This is a "top level" item in the table
+                row.parent = 'top-level-item';
+
+                // Ignore this row as it is not "inherited" by variant parts
+                if (!row.inherited) {
+                    continue;
+                }
+
+                var variants = inventreeGet(
+                    '{% url "api-part-list" %}',
+                    {
+                        assembly: true,
+                        ancestor: row.part,
+                    },
+                    {
+                        success: function(variantData) {
+                            // Iterate through each variant item
+                            for (var jj = 0; jj < variantData.length; jj++) {
+                                variantData[jj].parent = row.pk;
+
+                                var variant = variantData[jj];
+
+                                // Add this variant to the table, augmented
+                                $(table).bootstrapTable('append', [{
+                                    // Point the parent to the "master" assembly row 
+                                    parent: row.pk,
+                                    part: variant.pk,                       
+                                    part_detail: variant,
+                                    sub_part: row.sub_part,
+                                    sub_part_detail: row.sub_part_detail,
+                                    quantity: row.quantity,
+                                }]);
+                            }
+                        },
+                        error: function(xhr) {
+                            showApiError(xhr);
+                        }
+                    }
+                );
+
+            }
+        },
+        onPostBody: function() {
+            $(table).treegrid({
+                treeColumn: 0,
+            });
+        },
         columns: [
             {
                 field: 'pk',
@@ -892,7 +950,7 @@ function loadUsedInTable(table, part_id, options={}) {
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
-                    var url = `/part/${value}/`;
+                    var url = `/part/${value}/?display=bom`;
                     var html = '';
 
                     var part = row.part_detail;
@@ -923,7 +981,7 @@ function loadUsedInTable(table, part_id, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Quantity" %}',
+                title: '{% trans "Required Quantity" %}',
             }
         ]
     });
