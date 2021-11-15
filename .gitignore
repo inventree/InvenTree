@@ -80,3 +80,6 @@ locale_stats.json
 package-lock.json
 package.json
 node_modules/
+
+# maintenance locker
+maintenance_mode_state.txt
