@@ -1,14 +1,17 @@
-{% extends "account/base.html" %}
+{% extends "auth_base.html" %}
 {% load i18n %}
 
-{% block head_title %}
-{% trans "Page is in Maintenance" %}
+
+{% block head %}
+<meta http-equiv="refresh" content="30">
 {% endblock %}
 
-{% block content %}
-    <h3>{% trans "The Page is in currently in maintenance mode" %}</h3>
+{% block page_title %}
+    {% trans 'Site is in Maintenance' %}
+{% endblock %}
 
-    <div class='alert alert-danger alert-block'>
-        {% trans "This page will reload each minute until the page becomes available again." %}
-    </div>
+{% block body_title %}{% trans 'Site is in Maintenance' %}{% endblock %}
+
+{% block content %}
+{% trans 'The site is currently in maintenance and should be up again soon!' %}
 {% endblock %}
