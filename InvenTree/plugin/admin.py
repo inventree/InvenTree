@@ -12,11 +12,11 @@ def plugin_update(queryset, new_status: bool):
     apps_changed = False
 
     # run through all plugins in the queryset as the save method needs to be overridden
-    for model in queryset:
-        if model.active is not new_status:
-            model.active = new_status
+    for plugin in queryset:
+        if plugin.active is not new_status:
+            plugin.active = new_status
+            plugin.save(no_reload=True)
             apps_changed = True
-        model.save(no_reload=True)
 
     # reload plugins if they changed
     if apps_changed:
