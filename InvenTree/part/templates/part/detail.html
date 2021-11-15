@@ -649,14 +649,10 @@
 
     // Load the "used in" tab
     onPanelLoad("used-in", function() {
-        loadPartTable('#used-table',
-            '{% url "api-part-list" %}',
-            {
-                params: {
-                    uses: {{ part.pk }},
-                },
-                filterTarget: '#filter-list-usedin',
-            }
+
+        loadUsedInTable(
+            '#used-table',
+            {{ part.pk }},
         );
     });
 

@@ -16,6 +16,7 @@
 /* exported
     newPartFromBomWizard,
     loadBomTable,
+    loadUsedInTable,
     removeRowFromBomWizard,
     removeColFromBomWizard,
 */
@@ -311,7 +312,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 }
 
 
-function loadBomTable(table, options) {
+function loadBomTable(table, options={}) {
     /* Load a BOM table with some configurable options.
      * 
      * Following options are available:
@@ -395,7 +396,7 @@ function loadBomTable(table, options) {
 
                 var sub_part = row.sub_part_detail;
 
-                html += makePartIcons(row.sub_part_detail);
+                html += makePartIcons(sub_part);
 
                 if (row.substitutes && row.substitutes.length > 0) {
                     html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
@@ -834,4 +835,96 @@ function loadBomTable(table, options) {
             );
         });
     }
+}
+
+
+/*
+ * Load a table which shows the assemblies which "require" a certain part.
+ *
+ * Arguments:
+ * - table: The ID string of the table element e.g. '#used-in-table'
+ * - part_id: The ID (PK) of the part we are interested in
+ * 
+ * Options:
+ * - 
+ * 
+ * The following "options" are available.
+ */
+function loadUsedInTable(table, part_id, options={}) {
+
+    var params = options.params || {};
+
+    params.uses = part_id;
+    params.part_detail = true;
+    params.sub_part_detail = true,
+    params.show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('usedin');
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('usedin', $(table), options.filterTarget || '#filter-list-usedin');
+
+    $(table).inventreeTable({
+        url: options.url || '{% url "api-bom-list" %}',
+        name: options.table_name || 'usedin',
+        sortable: true,
+        search: true,
+        showColumns: true,
+        queryParams: filters,
+        original: params,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'part',
+                title: '{% trans "Part" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${value}/`;
+                    var html = '';
+
+                    var part = row.part_detail;
+
+                    html += imageHoverIcon(part.thumbnail);
+                    html += renderLink(part.full_name, url);
+                    html += makePartIcons(part);
+
+                    return html;
+                }
+            },
+            {
+                field: 'sub_part',
+                title: '{% trans "Sub Part" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${value}/`;
+                    var html = '';
+
+                    var sub_part = row.sub_part_detail;
+
+                    html += imageHoverIcon(sub_part.thumbnail);
+                    html += renderLink(sub_part.full_name, url);
+                    html += makePartIcons(sub_part);
+
+                    return html;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            }
+        ]
+    });
 }
