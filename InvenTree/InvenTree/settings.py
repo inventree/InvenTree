@@ -260,6 +260,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'basket.apps.BasketConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons

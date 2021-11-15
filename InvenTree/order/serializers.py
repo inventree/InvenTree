@@ -31,7 +31,7 @@ from part.serializers import PartBriefSerializer
 import stock.models
 from stock.serializers import LocationBriefSerializer, StockItemSerializer, LocationSerializer
 
-from .models import PurchaseOrder, PurchaseOrderLineItem, SalesOrderBasket
+from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
@@ -612,24 +612,3 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
         read_only_fields = [
             'upload_date',
         ]
-
-
-class SOBasketSerializer(InvenTreeModelSerializer):
-    """
-    Serializers for the SalesOrderAttachment model
-    """
-
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
-    class Meta:
-        model = SalesOrderBasket
-
-        fields = [
-            'pk',
-            'order',
-            'name',
-        ]
-
-        # read_only_fields = [
-        #     'upload_date',
-        # ]

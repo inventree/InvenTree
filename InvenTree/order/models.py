@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
@@ -26,9 +27,10 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, increment, getSetting, MakeBarcode
+from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeAttachment
+from basket.models import SalesOrderBasket
 
 
 def get_next_po_number():
@@ -549,6 +551,14 @@ class SalesOrder(Order):
         default=get_next_so_number,
     )
 
+    basket = models.ForeignKey(
+        SalesOrderBasket,
+        on_delete=models.SET_NULL,
+        related_name='sales_orders',
+        verbose_name=_('Basket'),
+        help_text=_('Select basket to put order')
+    ),
+
     customer = models.ForeignKey(
         Company,
         on_delete=models.SET_NULL,
@@ -1017,35 +1027,3 @@ class SalesOrderAllocation(models.Model):
         # (It may have changed if the stock was split)
         self.item = item
         self.save()
-
-
-class SalesOrderBasket(models.Model):
-    order = models.ForeignKey(
-        'SalesOrder',
-        on_delete=models.CASCADE,
-        related_name='sales_order_basket',
-        verbose_name=_('Order'),
-        help_text=_('Select order to put in basket')
-    ),
-    name = models.CharField(max_length=124, unique=True, null=True, default=None)
-    # barcode = models.CharField(max_length=124, unique=True, null=True, default=None)
-
-    def format_barcode(self, **kwargs):
-        """ Return a JSON string for formatting a barcode for this StockLocation object """
-
-        return MakeBarcode(
-            'orderbasket',
-            self.pk,
-            {
-                "name": self.name,
-                "url": reverse('api-basket-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
-
-    @property
-    def barcode(self):
-        """
-        Brief payload data (e.g. for labels)
-        """
-        return self.format_barcode(brief=True)

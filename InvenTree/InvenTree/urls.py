@@ -19,6 +19,7 @@ from part.urls import part_urls
 from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
+from basket.urls import basket_urls
 
 from barcodes.api import barcode_api_urls
 from common.api import common_api_urls
@@ -29,6 +30,7 @@ from build.api import build_api_urls
 from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
+from basket.api import basket_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -63,6 +65,7 @@ apipatterns = [
     url(r'^order/', include(order_api_urls)),
     url(r'^label/', include(label_api_urls)),
     url(r'^report/', include(report_api_urls)),
+    url(r'^basket/',  include(basket_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),
@@ -116,6 +119,7 @@ translated_javascript_urls = [
     url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/translated/model_renderers.js'), name='model_renderers.js'),
     url(r'^modals.js', DynamicJsView.as_view(template_name='js/translated/modals.js'), name='modals.js'),
     url(r'^order.js', DynamicJsView.as_view(template_name='js/translated/order.js'), name='order.js'),
+    url(r'^basket.js', DynamicJsView.as_view(template_name='js/translated/basket.js'), name='basket.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/translated/part.js'), name='part.js'),
     url(r'^report.js', DynamicJsView.as_view(template_name='js/translated/report.js'), name='report.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
@@ -138,6 +142,7 @@ urlpatterns = [
 
     url(r'^company/', include(company_urls)),
     url(r'^order/', include(order_urls)),
+    url(r'^basket/', include(basket_urls)),
 
     url(r'^build/', include(build_urls)),
 

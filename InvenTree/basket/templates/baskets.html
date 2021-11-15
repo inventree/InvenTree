@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% load inventree_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Purchase Orders" %}
+{% endblock %}
+
+{% block content %}
+
+<h3>{% trans "Baskets" %}</h3>
+<hr>
+
+<div id='table-buttons'>
+    <div class='button-toolbar container-fluid' style='float: right;'>
+        <div class='btn-group'>
+            {% if roles.purchase_order.add %}
+            <button class='btn btn-success' type='button' id='po-create' title='{% trans "Create new basket" %}'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Basket" %}
+            </button>
+            {% endif %}
+            <button id='order-print' class='btn btn-default' title='{% trans "Print Basket Reports" %}'>
+                <span class='fas fa-print'></span>
+            </button>
+            <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+                <span class='fas fa-calendar-alt'></span>
+            </button>
+            <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
+                <span class='fas fa-th-list'></span>
+            </button>
+            <div class='filter-list' id='filter-list-purchaseorder'>
+                <!-- An empty div in which the filter list will be constructed -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='basket-table'>
+</table>
+
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+
+<script type='text/javascript'>
+
+    // function loadOrderEvents(calendar) {
+
+    //     var start = startDate(calendar);
+    //     var end = endDate(calendar);
+
+    //     clearEvents(calendar);
+
+    //     // Request purchase orders from the server within specified date range
+    //     inventreeGet(
+    //         '{% url "api-po-list" %}',
+    //         {
+    //             supplier_detail: true,
+    //             min_date: start,
+    //             max_date: end,
+    //         },
+    //         {
+    //             success: function(response) {
+    //                 var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+
+    //                 for (var idx = 0; idx < response.length; idx++) {
+
+    //                     var order = response[idx];
+
+    //                     var date = order.creation_date;
+
+    //                     if (order.complete_date) {
+    //                         date = order.complete_date;
+    //                     } else if (order.target_date) {
+    //                         date = order.target_date;
+    //                     }
+
+    //                     var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
+
+    //                     var color = '#4c68f5';
+
+    //                     if (order.complete_date) {
+    //                         color = '#25c235';
+    //                     } else if (order.overdue) {
+    //                         color = '#c22525';
+    //                     } else {
+    //                         color = '#4c68f5';
+    //                     }
+
+    //                     var event = {
+    //                         title: title,
+    //                         start: date,
+    //                         end: date,
+    //                         url: `/order/purchase-order/${order.pk}/`,
+    //                         backgroundColor: color,
+    //                     };
+
+    //                     calendar.addEvent(event);
+    //                 }
+    //             }
+    //         }
+    //     );
+    // }
+
+    // var calendar = null;
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var el = document.getElementById('purchase-order-calendar');
+
+    //     calendar = new FullCalendar.Calendar(el, {
+    //         initialView: 'dayGridMonth',
+    //         nowIndicator: true,
+    //         aspectRatio: 2.5,
+    //         locale: '{{request.LANGUAGE_CODE}}',
+    //         datesSet: function() {
+    //             loadOrderEvents(calendar);
+    //         }
+    //     });
+
+    //     calendar.render();
+    // });
+</script>
+
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('#purchase-order-calendar').hide();
+$('#view-list').hide();
+
+<!-- $('#view-calendar').click(function() {
+    // Hide the list view, show the calendar view
+    $("#purchase-order-table").hide();
+    $("#view-calendar").hide();
+    $(".fixed-table-pagination").hide();
+    $(".columns-right").hide();
+    $(".search").hide();
+    $('#filter-list-salesorder').hide();
+
+    $("#purchase-order-calendar").show();
+    $("#view-list").show();
+
+    calendar.render();
+});
+
+$("#view-list").click(function() {
+    // Hide the calendar view, show the list view
+    $("#purchase-order-calendar").hide();
+    $("#view-list").hide();
+
+    $(".fixed-table-pagination").show();
+    $(".columns-right").show();
+    $(".search").show();
+    $("#purchase-order-table").show();
+    $('#filter-list-salesorder').show();
+    $("#view-calendar").show();
+});
+
+$("#order-print").click(function() {
+    var rows = $("#purchase-order-table").bootstrapTable('getSelections');
+
+    var orders = [];
+
+    rows.forEach(function(row) {
+        orders.push(row.pk);
+    });
+
+    printPurchaseOrderReports(orders);
+})
+
+$("#po-create").click(function() {
+    createPurchaseOrder();
+}); -->
+
+loadBasketsTable("#basket-table", {
+    url: "{% url 'api-basket-list' %}",
+});
+
+{% endblock %}
