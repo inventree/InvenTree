@@ -1028,10 +1028,16 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
     filter_backends = [
+        DjangoFilterBackend,
         filters.OrderingFilter,
+        filters.SearchFilter,
     ]
 
     filter_fields = [
+        'name',
+    ]
+
+    search_fields = [
         'name',
     ]
 
