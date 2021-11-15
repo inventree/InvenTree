@@ -39,7 +39,7 @@ def plugin_deactivate(modeladmin, request, queryset):
 class PluginConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields"""
     readonly_fields = ["key", "name", ]
-    list_display = ['key', 'name', 'active', ]
+    list_display = ['active', '__str__', 'key', 'name', ]
     actions = [plugin_activate, plugin_deactivate, ]
 
 
