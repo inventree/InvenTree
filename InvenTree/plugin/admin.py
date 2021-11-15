@@ -40,7 +40,7 @@ class PluginConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields"""
     readonly_fields = ["key", "name", ]
     list_display = ['active', '__str__', 'key', 'name', ]
-    list_filter  = ['active']
+    list_filter = ['active']
     actions = [plugin_activate, plugin_deactivate, ]
 
 
