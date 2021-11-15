@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-13 12:13+0000\n"
-"PO-Revision-Date: 2021-11-15 11:09\n"
+"PO-Revision-Date: 2021-11-15 12:20\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1018,28 +1018,28 @@ msgstr "Completar construcción"
 #: build/templates/build/build_base.html:79
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "Este pedido de construcción está asignado a la orden de venta %(link)s"
 
 #: build/templates/build/build_base.html:86
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Esta orden de construcción es hijo de la orden de construcción %(link)s"
 
 #: build/templates/build/build_base.html:93
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "Orden de construcción está lista para marcar como completada"
 
 #: build/templates/build/build_base.html:98
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "La orden de construcción no se puede completar ya que existen salidas pendientes"
 
 #: build/templates/build/build_base.html:103
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "La cantidad de construcción requerida aún no se ha completado"
 
 #: build/templates/build/build_base.html:108
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "Stock no ha sido asignado completamente a este pedido de construcción"
 
 #: build/templates/build/build_base.html:138
 #: build/templates/build/detail.html:132
@@ -1054,7 +1054,7 @@ msgstr "Fecha objetivo"
 #: build/templates/build/build_base.html:143
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr ""
+msgstr "Esta construcción vence el %(target)s"
 
 #: build/templates/build/build_base.html:143
 #: build/templates/build/build_base.html:188
@@ -1066,7 +1066,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:304
 #: templates/js/translated/table_filters.js:321
 msgid "Overdue"
-msgstr ""
+msgstr "Vencido"
 
 #: build/templates/build/build_base.html:150
 #: build/templates/build/detail.html:68 build/templates/build/detail.html:143
@@ -1085,7 +1085,7 @@ msgstr "Completados"
 #: stock/templates/stock/item_base.html:280
 #: templates/js/translated/order.js:1029
 msgid "Sales Order"
-msgstr ""
+msgstr "Orden de Venta"
 
 #: build/templates/build/build_base.html:170
 #: build/templates/build/detail.html:109
@@ -1095,51 +1095,51 @@ msgstr "Emitido por"
 
 #: build/templates/build/build_base.html:215
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Salidas incompletas"
 
 #: build/templates/build/build_base.html:216
 msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
+msgstr "Orden de construcción no se puede completar ya que quedan salidas incompletas de construcción"
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
-msgstr ""
+msgstr "La ley de materiales contiene partes rastreables"
 
 #: build/templates/build/build_output_create.html:8
 msgid "Build outputs must be generated individually."
-msgstr ""
+msgstr "Las salidas de construcción deben ser generadas individualmente."
 
 #: build/templates/build/build_output_create.html:9
 msgid "Multiple build outputs will be created based on the quantity specified."
-msgstr ""
+msgstr "Múltiples salidas de construcción se crearán en función de la cantidad especificada."
 
 #: build/templates/build/build_output_create.html:15
 msgid "Trackable parts can have serial numbers specified"
-msgstr ""
+msgstr "Las partes rastreables pueden tener números de serie especificados"
 
 #: build/templates/build/build_output_create.html:16
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr ""
+msgstr "Introduzca números de serie para generar múltiples salidas de construcción única"
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
-msgstr ""
+msgstr "¿Estás seguro de que quieres cancelar esta construcción?"
 
 #: build/templates/build/complete.html:8
 msgid "Build Order is complete"
-msgstr ""
+msgstr "Orden de construcción completa"
 
 #: build/templates/build/complete.html:12
 msgid "Build Order is incomplete"
-msgstr ""
+msgstr "Orden de construcción incompleta"
 
 #: build/templates/build/complete.html:15
 msgid "Incompleted build outputs remain"
-msgstr ""
+msgstr "Quedan salidas de construcción incompletas"
 
 #: build/templates/build/complete.html:18
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "La cantidad de construcción requerida aún no se ha completado"
 
 #: build/templates/build/complete.html:21
 msgid "Required stock has not been fully allocated"
@@ -1147,7 +1147,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
-msgstr ""
+msgstr "Detalles de Trabajo"
 
 #: build/templates/build/detail.html:39
 msgid "Stock Source"
@@ -1191,15 +1191,15 @@ msgstr ""
 
 #: build/templates/build/detail.html:147
 msgid "Build not complete"
-msgstr ""
+msgstr "Trabajo incompleto"
 
 #: build/templates/build/detail.html:158
 msgid "Child Build Orders"
-msgstr ""
+msgstr "Órdenes de Trabajo herederas"
 
 #: build/templates/build/detail.html:173
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "Asignar Stock a Trabajo"
 
 #: build/templates/build/detail.html:177 templates/js/translated/build.js:1202
 msgid "Unallocate stock"
@@ -1211,7 +1211,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:180
 msgid "Allocate stock to build"
-msgstr ""
+msgstr "Asignar Stock a Trabajo"
 
 #: build/templates/build/detail.html:181
 msgid "Allocate Stock"
@@ -1230,11 +1230,11 @@ msgstr ""
 
 #: build/templates/build/detail.html:197
 msgid "Untracked stock has been fully allocated for this Build Order"
-msgstr ""
+msgstr "Stock no ha sido asignado completamente a esta Orden de Trabajo"
 
 #: build/templates/build/detail.html:201
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr ""
+msgstr "El stock sin rastrear no ha sido asignado completamente para esta Orden de Trabajo"
 
 #: build/templates/build/detail.html:208
 msgid "Allocate selected items"
@@ -1242,19 +1242,19 @@ msgstr ""
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr ""
+msgstr "Esta Orden de Trabajo no tiene ningún objeto BOM sin seguimiento asociados"
 
 #: build/templates/build/detail.html:227
 msgid "Incomplete Build Outputs"
-msgstr ""
+msgstr "Salidas de Trabajo incompletas"
 
 #: build/templates/build/detail.html:231
 msgid "Create new build output"
-msgstr ""
+msgstr "Crear nueva salida de trabajo"
 
 #: build/templates/build/detail.html:232
 msgid "New Build Output"
-msgstr ""
+msgstr "Nueva Salida de Trabajo"
 
 #: build/templates/build/detail.html:246
 msgid "Output Actions"
@@ -1270,7 +1270,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:266
 msgid "Completed Build Outputs"
-msgstr ""
+msgstr "Salidas de Trabajo Completadas"
 
 #: build/templates/build/detail.html:278
 #: order/templates/order/po_navbar.html:35
@@ -1282,7 +1282,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:294
 msgid "Build Notes"
-msgstr ""
+msgstr "Notas del Trabajo"
 
 #: build/templates/build/detail.html:298 build/templates/build/detail.html:489
 #: company/templates/company/detail.html:188
@@ -1340,11 +1340,11 @@ msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:435
 msgid "New Build Order"
-msgstr ""
+msgstr "Nueva Orden de Trabajo"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr ""
+msgstr "Imprimir Ordenes de Trabajo"
 
 #: build/templates/build/index.html:44
 #: order/templates/order/purchase_orders.html:34
@@ -1360,11 +1360,11 @@ msgstr ""
 
 #: build/views.py:76
 msgid "Build was cancelled"
-msgstr ""
+msgstr "Trabajo fue cancelado"
 
 #: build/views.py:88
 msgid "Create Build Output"
-msgstr ""
+msgstr "Crear Salida de Trabajo"
 
 #: build/views.py:106
 msgid "Maximum output quantity is "
@@ -1372,55 +1372,55 @@ msgstr ""
 
 #: build/views.py:122 stock/serializers.py:345 stock/views.py:1290
 msgid "Serial numbers already exist"
-msgstr ""
+msgstr "Números de serie ya existen"
 
 #: build/views.py:131
 msgid "Serial numbers required for trackable build output"
-msgstr ""
+msgstr "Números de serie requeridos para la salida de trabajo rastreable"
 
 #: build/views.py:197
 msgid "Delete Build Output"
-msgstr ""
+msgstr "Eliminar Salida de Trabajo"
 
 #: build/views.py:218
 msgid "Confirm unallocation of build stock"
-msgstr ""
+msgstr "Confirmar la desasignación de stock de trabajo"
 
 #: build/views.py:219 stock/views.py:385
 msgid "Check the confirmation box"
-msgstr ""
+msgstr "Marque la casilla de confirmación"
 
 #: build/views.py:231
 msgid "Build output does not match build"
-msgstr ""
+msgstr "La salida de la construcción no coincide con el orden de construcción"
 
 #: build/views.py:233
 msgid "Build output must be specified"
-msgstr ""
+msgstr "La salida de compilación debe ser especificada"
 
 #: build/views.py:245
 msgid "Build output deleted"
-msgstr ""
+msgstr "Salida de construcción eliminada"
 
 #: build/views.py:261
 msgid "Complete Build Order"
-msgstr ""
+msgstr "Completar Orden de Construcción"
 
 #: build/views.py:267
 msgid "Build order cannot be completed - incomplete outputs remain"
-msgstr ""
+msgstr "Orden de construcción no se puede completar ya que quedan salidas incompletas de construcción"
 
 #: build/views.py:278
 msgid "Completed build order"
-msgstr ""
+msgstr "Orden de construcción completada"
 
 #: build/views.py:319
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Eliminar Orden de Trabajo"
 
 #: common/files.py:67
 msgid "Unsupported file format: {ext.upper()}"
-msgstr ""
+msgstr "Formato de archivo no soportado: {ext.upper()}"
 
 #: common/files.py:69
 msgid "Error reading file (invalid encoding)"
@@ -1799,11 +1799,11 @@ msgstr "días"
 
 #: common/models.py:853
 msgid "Build Expired Stock"
-msgstr ""
+msgstr "Crear Stock Caducado"
 
 #: common/models.py:854
 msgid "Allow building with expired stock"
-msgstr ""
+msgstr "Permitir crear con stock caducado"
 
 #: common/models.py:860
 msgid "Stock Ownership Control"
@@ -1823,19 +1823,19 @@ msgstr ""
 
 #: common/models.py:874
 msgid "Build Order Reference Prefix"
-msgstr ""
+msgstr "Prefijo de Referencia de Orden de Trabajo"
 
 #: common/models.py:875
 msgid "Prefix value for build order reference"
-msgstr ""
+msgstr "Valor de prefijo para referencia de la orden de trabajo"
 
 #: common/models.py:880
 msgid "Build Order Reference Regex"
-msgstr ""
+msgstr "Regex de Referencia de Orden de Trabajo"
 
 #: common/models.py:881
 msgid "Regular expression pattern for matching build order reference"
-msgstr ""
+msgstr "Patrón de expresión regular para referencia de orden de trabajo coincidente"
 
 #: common/models.py:885
 msgid "Sales Order Reference Prefix"
@@ -1995,7 +1995,7 @@ msgstr ""
 
 #: common/models.py:1042
 msgid "Show stock items needed for builds on the homepage"
-msgstr ""
+msgstr "Mostrar elementos de stock necesarios para trabajos en la página de inicio"
 
 #: common/models.py:1047
 msgid "Show expired stock"
@@ -2015,15 +2015,15 @@ msgstr ""
 
 #: common/models.py:1059
 msgid "Show pending builds"
-msgstr ""
+msgstr "Mostrar trabajos pendientes"
 
 #: common/models.py:1060
 msgid "Show pending builds on the homepage"
-msgstr ""
+msgstr "Mostrar trabajos pendientes en la página de inicio"
 
 #: common/models.py:1065
 msgid "Show overdue builds"
-msgstr ""
+msgstr "Mostrar trabajos vencidos"
 
 #: common/models.py:1066
 msgid "Show overdue builds on the homepage"
@@ -2245,7 +2245,7 @@ msgstr ""
 #: templates/js/translated/company.js:536
 #: templates/js/translated/company.js:825 templates/js/translated/part.js:983
 msgid "Link"
-msgstr ""
+msgstr "Enlace"
 
 #: company/models.py:131
 msgid "Link to external company information"
@@ -2594,7 +2594,7 @@ msgstr ""
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:999
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Stock asignado"
 
 #: company/templates/company/detail.html:184
 msgid "Company Notes"
@@ -3219,7 +3219,7 @@ msgstr ""
 #: order/templates/order/order_base.html:133
 #: report/templates/report/inventree_build_order_base.html:122
 msgid "Issued"
-msgstr ""
+msgstr "Emitido"
 
 #: order/templates/order/order_base.html:203
 msgid "Edit Purchase Order"
@@ -3300,7 +3300,7 @@ msgstr ""
 #: templates/js/translated/build.js:240 templates/js/translated/build.js:1251
 #: templates/js/translated/order.js:377
 msgid "Remove row"
-msgstr ""
+msgstr "Eliminar fila"
 
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/bom_upload/match_parts.html:12
@@ -5091,7 +5091,7 @@ msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:147
 msgid "Required For"
-msgstr ""
+msgstr "Requerido para"
 
 #: report/templates/report/inventree_po_report.html:85
 #: report/templates/report/inventree_so_report.html:85
@@ -5627,7 +5627,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:290
 #: templates/js/translated/build.js:1035
 msgid "No location set"
-msgstr ""
+msgstr "Ubicación no establecida"
 
 #: stock/templates/stock/item_base.html:297
 msgid "Barcode Identifier"
@@ -6000,7 +6000,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
-msgstr ""
+msgstr "Configuración de Pedido de Trabajo"
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
@@ -6478,36 +6478,36 @@ msgstr ""
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
-msgstr ""
+msgstr "Se requiere stock para el siguiente orden de trabajo"
 
 #: templates/email/build_order_required_stock.html:8
 #, python-format
 msgid "Build order %(build)s - building %(quantity)s x %(part)s"
-msgstr ""
+msgstr "Orden de trabajo %(build)s - creando %(quantity)s x %(part)s"
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
-msgstr ""
+msgstr "Haga clic en el siguiente enlace para ver esta orden de trabajo"
 
 #: templates/email/build_order_required_stock.html:14
 msgid "The following parts are low on required stock"
-msgstr ""
+msgstr "Las siguientes partes están bajas en stock requerido"
 
 #: templates/email/build_order_required_stock.html:18
 msgid "Required Quantity"
-msgstr ""
+msgstr "Cantidad requerida"
 
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
 #: templates/js/translated/bom.js:464 templates/js/translated/build.js:1129
 #: templates/js/translated/build.js:1749
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:31
 msgid "You are receiving this email because you are subscribed to notifications for this part "
-msgstr ""
+msgstr "Estás recibiendo este correo electrónico porque estás suscrito a las notificaciones de esta parte "
 
 #: templates/email/email.html:35
 msgid "InvenTree version"
@@ -6594,7 +6594,7 @@ msgstr ""
 #: templates/js/report.js:205 templates/js/translated/build.js:1333
 #: templates/js/translated/label.js:134 templates/js/translated/report.js:225
 msgid "Select Parts"
-msgstr ""
+msgstr "Seleccionar partes"
 
 #: templates/js/report.js:206 templates/js/translated/report.js:226
 msgid "Part(s) must be selected before printing reports"
@@ -6826,7 +6826,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:405 templates/js/translated/build.js:1111
 msgid "Variant stock allowed"
-msgstr ""
+msgstr "Stock de variante permitido"
 
 #: templates/js/translated/bom.js:410
 msgid "Open subassembly"
@@ -6851,7 +6851,7 @@ msgstr ""
 #: templates/js/translated/bom.js:605 templates/js/translated/build.js:1183
 #: templates/js/translated/order.js:1298
 msgid "Actions"
-msgstr ""
+msgstr "Acciones"
 
 #: templates/js/translated/bom.js:613
 msgid "Validate BOM Item"
@@ -6875,7 +6875,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:714 templates/js/translated/build.js:855
 msgid "No BOM items found"
-msgstr ""
+msgstr "No se encontraron elementos BOM"
 
 #: templates/js/translated/bom.js:770
 msgid "Are you sure you want to delete this BOM item?"
@@ -6883,122 +6883,122 @@ msgstr ""
 
 #: templates/js/translated/build.js:78
 msgid "Edit Build Order"
-msgstr ""
+msgstr "Editar Orden de Trabajo"
 
 #: templates/js/translated/build.js:112
 msgid "Create Build Order"
-msgstr ""
+msgstr "Crear Orden de Trabajo"
 
 #: templates/js/translated/build.js:133
 msgid "Allocate stock items to this build output"
-msgstr ""
+msgstr "Asignar elementos de stock a esta salida de trabajo"
 
 #: templates/js/translated/build.js:144
 msgid "Unallocate stock from build output"
-msgstr ""
+msgstr "Desasignar stock de la salida de trabajo"
 
 #: templates/js/translated/build.js:153
 msgid "Complete build output"
-msgstr ""
+msgstr "Completar salida de trabajo"
 
 #: templates/js/translated/build.js:161
 msgid "Delete build output"
-msgstr ""
+msgstr "Eliminar Salida de Trabajo"
 
 #: templates/js/translated/build.js:184
 msgid "Are you sure you wish to unallocate stock items from this build?"
-msgstr ""
+msgstr "¿Está seguro que desea desasignar los artículos de stock de este trabajo?"
 
 #: templates/js/translated/build.js:202
 msgid "Unallocate Stock Items"
-msgstr ""
+msgstr "Desasignar artículos de stock"
 
 #: templates/js/translated/build.js:220
 msgid "Select Build Outputs"
-msgstr ""
+msgstr "Seleccionar Salida de Trabajo"
 
 #: templates/js/translated/build.js:221
 msgid "At least one build output must be selected"
-msgstr ""
+msgstr "Se debe seleccionar al menos una salida de trabajo"
 
 #: templates/js/translated/build.js:275
 msgid "Output"
-msgstr ""
+msgstr "Salida"
 
 #: templates/js/translated/build.js:291
 msgid "Complete Build Outputs"
-msgstr ""
+msgstr "Completar salidas de trabajo"
 
 #: templates/js/translated/build.js:386
 msgid "No build order allocations found"
-msgstr ""
+msgstr "No se encontraron asignaciones de órdenes de trabajo"
 
 #: templates/js/translated/build.js:424 templates/js/translated/order.js:1172
 msgid "Location not specified"
-msgstr ""
+msgstr "Ubicación no especificada"
 
 #: templates/js/translated/build.js:603
 msgid "No active build outputs found"
-msgstr ""
+msgstr "No se encontraron salidas de trabajo activas"
 
 #: templates/js/translated/build.js:1052 templates/js/translated/build.js:1760
 #: templates/js/translated/order.js:1305
 msgid "Edit stock allocation"
-msgstr ""
+msgstr "Editar asignación de stock"
 
 #: templates/js/translated/build.js:1054 templates/js/translated/build.js:1761
 #: templates/js/translated/order.js:1306
 msgid "Delete stock allocation"
-msgstr ""
+msgstr "Eliminar asignación de stock"
 
 #: templates/js/translated/build.js:1072
 msgid "Edit Allocation"
-msgstr ""
+msgstr "Editar Asignación"
 
 #: templates/js/translated/build.js:1082
 msgid "Remove Allocation"
-msgstr ""
+msgstr "Quitar asignación"
 
 #: templates/js/translated/build.js:1095
 msgid "Required Part"
-msgstr ""
+msgstr "Parte requerida"
 
 #: templates/js/translated/build.js:1107
 msgid "Substitute parts available"
-msgstr ""
+msgstr "Piezas sustitutas disponibles"
 
 #: templates/js/translated/build.js:1124
 msgid "Quantity Per"
-msgstr ""
+msgstr "Cantidad por"
 
 #: templates/js/translated/build.js:1134 templates/js/translated/build.js:1360
 #: templates/js/translated/build.js:1756 templates/js/translated/order.js:1535
 msgid "Allocated"
-msgstr ""
+msgstr "Asignadas"
 
 #: templates/js/translated/build.js:1190 templates/js/translated/order.js:1589
 msgid "Build stock"
-msgstr ""
+msgstr "Stock de Trabajo"
 
 #: templates/js/translated/build.js:1194 templates/stock_table.html:52
 msgid "Order stock"
-msgstr ""
+msgstr "Pedido de stock"
 
 #: templates/js/translated/build.js:1197 templates/js/translated/order.js:1582
 msgid "Allocate stock"
-msgstr ""
+msgstr "Asignar stock"
 
 #: templates/js/translated/build.js:1262
 msgid "Specify stock allocation quantity"
-msgstr ""
+msgstr "Especificar la cantidad de asignación de stock"
 
 #: templates/js/translated/build.js:1334
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "Debe seleccionar al menos una parte para asignar"
 
 #: templates/js/translated/build.js:1348
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Seleccionar ubicación de origen (dejar en blanco para tomar de todas las ubicaciones)"
 
 #: templates/js/translated/build.js:1377
 msgid "Confirm stock allocation"
@@ -7006,41 +7006,41 @@ msgstr "Confirmar asignación de stock"
 
 #: templates/js/translated/build.js:1378
 msgid "Allocate Stock Items to Build Order"
-msgstr ""
+msgstr "Asignar Artículos de Stock a Orden de Trabajo"
 
 #: templates/js/translated/build.js:1389
 msgid "No matching stock locations"
-msgstr ""
+msgstr "No hay ubicaciones de stock coincidentes"
 
 #: templates/js/translated/build.js:1451
 msgid "No matching stock items"
-msgstr ""
+msgstr "No hay artículos de stock coincidentes"
 
 #: templates/js/translated/build.js:1576
 msgid "No builds matching query"
-msgstr ""
+msgstr "No hay trabajos que coincidan con la consulta"
 
 #: templates/js/translated/build.js:1593 templates/js/translated/part.js:872
 #: templates/js/translated/part.js:1264 templates/js/translated/stock.js:1064
 #: templates/js/translated/stock.js:1841
 msgid "Select"
-msgstr ""
+msgstr "Seleccionar"
 
 #: templates/js/translated/build.js:1613
 msgid "Build order is overdue"
-msgstr ""
+msgstr "Orden de trabajo atrasada"
 
 #: templates/js/translated/build.js:1674 templates/js/translated/stock.js:2060
 msgid "No user information"
-msgstr ""
+msgstr "No hay información de usuario"
 
 #: templates/js/translated/build.js:1686
 msgid "No information"
-msgstr ""
+msgstr "Sin información"
 
 #: templates/js/translated/build.js:1737
 msgid "No parts allocated for"
-msgstr ""
+msgstr "No se asignaron partes para"
 
 #: templates/js/translated/company.js:65
 msgid "Add Manufacturer"
