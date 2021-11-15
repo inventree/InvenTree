@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-13 12:13+0000\n"
-"PO-Revision-Date: 2021-11-13 12:57\n"
+"PO-Revision-Date: 2021-11-15 15:07\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -866,7 +866,7 @@ msgstr ""
 #: templates/js/translated/order.js:1156 templates/js/translated/order.js:1161
 #: templates/js/translated/stock.js:1990
 msgid "Stock Item"
-msgstr ""
+msgstr "Articoli in magazzino"
 
 #: build/models.py:1271
 msgid "Source stock item"
@@ -1226,7 +1226,7 @@ msgstr ""
 #: company/templates/company/detail.html:85 order/views.py:509
 #: part/templates/part/category.html:166
 msgid "Order Parts"
-msgstr ""
+msgstr "Ordine Articoli"
 
 #: build/templates/build/detail.html:197
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1699,7 +1699,7 @@ msgstr ""
 
 #: common/models.py:763
 msgid "Show related parts"
-msgstr ""
+msgstr "Mostra articoli correlati"
 
 #: common/models.py:764
 msgid "Display related parts for a part"
@@ -1935,7 +1935,7 @@ msgstr ""
 
 #: common/models.py:998
 msgid "Show latest parts"
-msgstr ""
+msgstr "Mostra ultimi articoli"
 
 #: common/models.py:999
 msgid "Show latest parts on the homepage"
@@ -2167,7 +2167,7 @@ msgstr ""
 
 #: common/views.py:495
 msgid "Parts imported"
-msgstr ""
+msgstr "Articoli importati"
 
 #: common/views.py:517 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -2376,7 +2376,7 @@ msgstr ""
 #: templates/js/translated/company.js:770 templates/js/translated/order.js:660
 #: templates/js/translated/part.js:209
 msgid "Supplier"
-msgstr ""
+msgstr "Fornitore"
 
 #: company/models.py:546 templates/js/translated/part.js:210
 msgid "Select supplier"
@@ -2523,17 +2523,17 @@ msgstr ""
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:166
 msgid "Order parts"
-msgstr ""
+msgstr "Articoli ordinati"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr ""
+msgstr "Cancella articoli"
 
 #: company/templates/company/detail.html:43
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr ""
+msgstr "Cancella articoli"
 
 #: company/templates/company/detail.html:62 templates/InvenTree/search.html:109
 msgid "Manufacturer Parts"
@@ -2559,7 +2559,7 @@ msgstr ""
 #: templates/InvenTree/search.html:203 templates/navbar.html:44
 #: users/models.py:45
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Ordine di acquisto"
 
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
@@ -2649,7 +2649,7 @@ msgstr ""
 #: part/templates/part/prices.html:163 templates/InvenTree/search.html:194
 #: templates/navbar.html:42
 msgid "Suppliers"
-msgstr ""
+msgstr "Fornitori"
 
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:479
@@ -2699,7 +2699,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:375
 #: templates/js/translated/company.js:786 templates/js/translated/stock.js:1293
 msgid "Supplier Part"
-msgstr ""
+msgstr "Articolo Fornitore"
 
 #: company/templates/company/supplier_part.html:38
 #: templates/js/translated/company.js:859
@@ -2719,7 +2719,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:141
 #: part/templates/part/detail.html:127 stock/templates/stock/location.html:147
 msgid "Create new stock item"
-msgstr ""
+msgstr "Crea nuova allocazione magazzino"
 
 #: company/templates/company/supplier_part.html:142
 #: part/templates/part/detail.html:128 stock/templates/stock/location.html:148
@@ -2776,7 +2776,7 @@ msgstr ""
 #: templates/js/translated/part.js:945 templates/js/translated/stock.js:479
 #: templates/js/translated/stock.js:1132 templates/navbar.html:25
 msgid "Stock"
-msgstr ""
+msgstr "Magazzino"
 
 #: company/templates/company/supplier_part_navbar.html:22
 msgid "Orders"
@@ -3346,7 +3346,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
-msgstr ""
+msgstr "Nessun articolo acquistabile selezionato"
 
 #: order/templates/order/order_wizard/select_parts.html:33
 msgid "Select Supplier"
@@ -3641,7 +3641,7 @@ msgstr ""
 
 #: part/bom.py:126 part/templates/part/part_base.html:167
 msgid "Available Stock"
-msgstr ""
+msgstr "Disponibilità in magazzino"
 
 #: part/forms.py:63
 msgid "File Format"
@@ -3773,7 +3773,7 @@ msgstr ""
 #: templates/navbar.html:18 templates/stats.html:80 templates/stats.html:89
 #: users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "Articoli"
 
 #: part/models.py:450
 msgid "Invalid choice for parent part"
@@ -4270,11 +4270,11 @@ msgstr ""
 
 #: part/templates/part/category.html:103 part/templates/part/category.html:194
 msgid "Subcategories"
-msgstr ""
+msgstr "Sottocategorie"
 
 #: part/templates/part/category.html:108
 msgid "Parts (Including subcategories)"
-msgstr ""
+msgstr "Articoli (incluse le sottocategorie)"
 
 #: part/templates/part/category.html:145
 msgid "Export Part Data"
@@ -4583,7 +4583,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:103
 #: stock/templates/stock/location.html:40
 msgid "Stock actions"
-msgstr ""
+msgstr "Azioni magazzino"
 
 #: part/templates/part/part_base.html:63
 msgid "Count part stock"
@@ -4861,11 +4861,11 @@ msgstr ""
 #: templates/js/translated/part.js:427 templates/js/translated/part.js:782
 #: templates/js/translated/part.js:968
 msgid "No Stock"
-msgstr ""
+msgstr "Nessuna giacenza"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
-msgstr ""
+msgstr "Disponibilità scarsa"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
@@ -5245,7 +5245,7 @@ msgstr ""
 #: stock/models.py:499 stock/templates/stock/location.html:12
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "Ubicazione magazzino"
 
 #: stock/models.py:502
 msgid "Where is this stock item located?"
@@ -5273,7 +5273,7 @@ msgstr ""
 
 #: stock/models.py:551
 msgid "Stock Quantity"
-msgstr ""
+msgstr "Quantità disponibile"
 
 #: stock/models.py:560
 msgid "Source Build"
@@ -5511,11 +5511,11 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:72 templates/stock_table.html:48
 msgid "Add stock"
-msgstr ""
+msgstr "Aggiungi giacenza"
 
 #: stock/templates/stock/item_base.html:75 templates/stock_table.html:49
 msgid "Remove stock"
-msgstr ""
+msgstr "Rimuovi giacenza"
 
 #: stock/templates/stock/item_base.html:78
 msgid "Serialize stock"
@@ -5524,7 +5524,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:82
 #: stock/templates/stock/location.html:53
 msgid "Transfer stock"
-msgstr ""
+msgstr "Trasferisci giacenza"
 
 #: stock/templates/stock/item_base.html:85
 msgid "Assign to customer"
@@ -8014,7 +8014,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:104
 #: templates/js/translated/table_filters.js:340
 msgid "Include subcategories"
-msgstr ""
+msgstr "Includi sottocategorie"
 
 #: templates/js/translated/table_filters.js:108
 #: templates/js/translated/table_filters.js:375
@@ -8156,7 +8156,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:341
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Includi articoli nelle sottocategorie"
 
 #: templates/js/translated/table_filters.js:345
 msgid "Has IPN"
@@ -8172,7 +8172,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:359
 msgid "Stock available"
-msgstr ""
+msgstr "Disponibilità"
 
 #: templates/js/translated/table_filters.js:387
 msgid "Purchasable"
