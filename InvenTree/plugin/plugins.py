@@ -29,7 +29,7 @@ def get_modules(pkg, recursive: bool = False):
     """get all modules in a package"""
     if not recursive:
         return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
-    
+
     context = {}
     for loader, name, ispkg in pkgutil.walk_packages(pkg.__path__):
         try:
