@@ -9,6 +9,7 @@ from django.apps import AppConfig, apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 from django.conf.urls import url, include
+from django.urls import clear_url_caches
 from django.contrib import admin
 
 try:
@@ -237,6 +238,7 @@ class PluginAppConfig(AppConfig):
                 elif a.app_name == 'plugin':
                     integ_urls = get_integration_urls()
                     urlpatterns[index] = url(f'^{settings.PLUGIN_URL}/', include((integ_urls, 'plugin')))
+        clear_url_caches()
 
     def _reload_apps(self, populate: bool = False):
         if populate:
