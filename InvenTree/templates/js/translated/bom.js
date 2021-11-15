@@ -872,6 +872,42 @@ function loadUsedInTable(table, part_id, options={}) {
 
     setupFilterList('usedin', $(table), options.filterTarget || '#filter-list-usedin');
 
+    function loadVariantData(row) {
+        // Load variants information for inherited BOM rows
+
+        inventreeGet(
+            '{% url "api-part-list" %}',
+            {
+                assembly: true,
+                ancestor: row.part,
+            },
+            {
+                success: function(variantData) {
+                    // Iterate through each variant item
+                    for (var jj = 0; jj < variantData.length; jj++) {
+                        variantData[jj].parent = row.pk;
+                        
+                        var variant = variantData[jj];
+
+                        // Add this variant to the table, augmented
+                        $(table).bootstrapTable('append', [{
+                            // Point the parent to the "master" assembly row 
+                            parent: row.pk,
+                            part: variant.pk,                       
+                            part_detail: variant,
+                            sub_part: row.sub_part,
+                            sub_part_detail: row.sub_part_detail,
+                            quantity: row.quantity,
+                        }]);
+                    }
+                },
+                error: function(xhr) {
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
+
     $(table).inventreeTable({
         url: options.url || '{% url "api-bom-list" %}',
         name: options.table_name || 'usedin',
@@ -898,38 +934,7 @@ function loadUsedInTable(table, part_id, options={}) {
                     continue;
                 }
 
-                var variants = inventreeGet(
-                    '{% url "api-part-list" %}',
-                    {
-                        assembly: true,
-                        ancestor: row.part,
-                    },
-                    {
-                        success: function(variantData) {
-                            // Iterate through each variant item
-                            for (var jj = 0; jj < variantData.length; jj++) {
-                                variantData[jj].parent = row.pk;
-
-                                var variant = variantData[jj];
-
-                                // Add this variant to the table, augmented
-                                $(table).bootstrapTable('append', [{
-                                    // Point the parent to the "master" assembly row 
-                                    parent: row.pk,
-                                    part: variant.pk,                       
-                                    part_detail: variant,
-                                    sub_part: row.sub_part,
-                                    sub_part_detail: row.sub_part_detail,
-                                    quantity: row.quantity,
-                                }]);
-                            }
-                        },
-                        error: function(xhr) {
-                            showApiError(xhr);
-                        }
-                    }
-                );
-
+                loadVariantData(row);
             }
         },
         onPostBody: function() {
@@ -985,7 +990,7 @@ function loadUsedInTable(table, part_id, options={}) {
                 formatter: function(value, row) {
                     var html = value;
 
-                    if (row.parent != 'top-level-item') {
+                    if (row.parent && row.parent != 'top-level-item') {
                         html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
                     }
 
