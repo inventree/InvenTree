@@ -207,6 +207,14 @@ class PluginAppConfig(AppConfig):
         return plugin_path
 
     def deactivate_integration_app(self):
+        # unregister models from admin
+        for app_name in settings.INTEGRATION_APPS_PATHS:
+            for model in apps.get_app_config(app_name.split('.')[-1]).get_models():
+                try:
+                    admin.site.unregister(model)
+                except:
+                    pass
+
         # remove plugin from installed_apps
         for plugin in settings.INTEGRATION_APPS_PATHS:
             settings.INSTALLED_APPS.remove(plugin)
