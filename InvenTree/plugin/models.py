@@ -20,6 +20,9 @@ class PluginConfig(models.Model):
         name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
     """
+    class Meta:
+        verbose_name = _("Plugin Configuration")
+        verbose_name_plural = _("Plugin Configurations")
 
     key = models.CharField(
         unique=True,
