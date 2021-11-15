@@ -7,7 +7,8 @@ from django.contrib.auth import get_user_model
 
 from datetime import datetime
 
-from plugin.integration import AppMixin, IntegrationPluginBase, GlobalSettingsMixin, UrlsMixin, NavigationMixin
+from plugin.integration import IntegrationPluginBase
+from plugin.builtin.integration.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
 
 
 class BaseMixinDefinition:

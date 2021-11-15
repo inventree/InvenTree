@@ -1,5 +1,6 @@
 """sample implementations for IntegrationPlugin"""
-from plugin.integration import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase
+from plugin.integration import IntegrationPluginBase
+from plugin.builtin.integration.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
 
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
