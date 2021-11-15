@@ -49,6 +49,7 @@ class PluginConfig(models.Model):
         return name
 
     def __init__(self, *args, **kwargs):
+        """override to set original state of"""
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
