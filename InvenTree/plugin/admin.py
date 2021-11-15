@@ -8,6 +8,7 @@ import plugin.models as models
 
 
 def plugin_update(queryset, new_status: bool):
+    """general function for bulk changing plugins"""
     for model in queryset:
         model.active = new_status
         model.save(no_reload=True)
@@ -18,11 +19,13 @@ def plugin_update(queryset, new_status: bool):
 
 @admin.action(description='Activate plugin(s)')
 def plugin_activate(modeladmin, request, queryset):
+    """activate a set of plugins"""
     plugin_update(queryset, True)
 
 
 @admin.action(description='Deactivate plugin(s)')
 def plugin_deactivate(modeladmin, request, queryset):
+    """deactivate a set of plugins"""
     plugin_update(queryset, False)
 
 
