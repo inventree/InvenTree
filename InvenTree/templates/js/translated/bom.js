@@ -951,7 +951,7 @@ function loadUsedInTable(table, part_id, options={}) {
             },
             {
                 field: 'part',
-                title: '{% trans "Part" %}',
+                title: '{% trans "Assembly" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
@@ -969,7 +969,7 @@ function loadUsedInTable(table, part_id, options={}) {
             },
             {
                 field: 'sub_part',
-                title: '{% trans "Sub Part" %}',
+                title: '{% trans "Required Part" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var url = `/part/${value}/`;
