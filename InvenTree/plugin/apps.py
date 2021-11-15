@@ -59,6 +59,7 @@ class PluginAppConfig(AppConfig):
 
     def reload_plugins(self):
         """safely reload IntegrationPlugins"""
+        # TODO check if the system is in maintainance mode before reloading
         logger.info('Start reloading plugins')
         self.unload_plugins()
         self.load_plugins()
