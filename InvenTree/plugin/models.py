@@ -55,13 +55,16 @@ class PluginConfig(models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """extend save method to reload plugins if the 'active' status changes"""
+        reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
+
         ret = super().save(force_insert, force_update, *args, **kwargs)
         app = apps.get_app_config('plugin')
 
-        if self.active is False and self.__org_active is True:
-            app.reload_plugins()
+        if not reload:
+            if self.active is False and self.__org_active is True:
+                app.reload_plugins()
 
-        elif self.active is True and self.__org_active is False:
-            app.reload_plugins()
+            elif self.active is True and self.__org_active is False:
+                app.reload_plugins()
 
         return ret
