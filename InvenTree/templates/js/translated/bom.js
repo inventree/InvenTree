@@ -982,6 +982,15 @@ function loadUsedInTable(table, part_id, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Required Quantity" %}',
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.parent != 'top-level-item') {
+                        html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
+                    }
+
+                    return html;
+                }
             }
         ]
     });
