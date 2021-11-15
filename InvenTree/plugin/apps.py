@@ -176,7 +176,7 @@ class PluginAppConfig(AppConfig):
     def activate_integration_app(self, plugins):
         from common.models import InvenTreeSetting
 
-        if settings.PLUGIN_TESTING or (InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP')):
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
             logger.info('Registering IntegrationPlugin apps')
             apps_changed = False
 
