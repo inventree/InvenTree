@@ -9,12 +9,19 @@ import plugin.models as models
 
 def plugin_update(queryset, new_status: bool):
     """general function for bulk changing plugins"""
+    apps_changed = False
+
+    # run through all plugins in the queryset as the save method needs to be overridden
     for model in queryset:
-        model.active = new_status
+        if model.active is not new_status:
+            model.active = new_status
+            apps_changed = True
         model.save(no_reload=True)
 
-    app = apps.get_app_config('plugin')
-    app.reload_plugins()
+    # reload plugins if they changed
+    if apps_changed:
+        app = apps.get_app_config('plugin')
+        app.reload_plugins()
 
 
 @admin.action(description='Activate plugin(s)')
