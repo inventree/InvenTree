@@ -17,6 +17,9 @@ try:
 except:
     import importlib_metadata as metadata
 
+from maintenance_mode.core import maintenance_mode_on
+from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
 
@@ -35,6 +38,11 @@ class PluginAppConfig(AppConfig):
     def load_plugins(self):
         """load and activate all IntegrationPlugins"""
         logger.info('Start loading plugins')
+        # set maintanace mode
+        _maintenance = get_maintenance_mode()
+        if not _maintenance:
+            set_maintenance_mode(True)
+
         try:
             # we are using the db so for migrations etc we need to try this block
             self._init_plugins()
@@ -42,11 +50,20 @@ class PluginAppConfig(AppConfig):
         except (OperationalError, ProgrammingError):
             # Exception if the database has not been migrated yet
             logger.info('Database not accessible while loading plugins')
+
+        # remove maintenance
+        if not _maintenance:
+            set_maintenance_mode(False)
         logger.info('Finished loading plugins')
 
     def unload_plugins(self):
         """unload and deactivate all IntegrationPlugins"""
         logger.info('Start unloading plugins')
+        # set maintanace mode
+        _maintenance = get_maintenance_mode()
+        if not _maintenance:
+            set_maintenance_mode(True)
+
         # remove all plugins from registry
         # plugins = settings.INTEGRATION_PLUGINS
         settings.INTEGRATION_PLUGINS = {}
@@ -55,14 +72,18 @@ class PluginAppConfig(AppConfig):
 
         # deactivate all integrations
         self._deactivate_plugins()
+
+        # remove maintenance
+        if not _maintenance:
+            set_maintenance_mode(False)
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self):
         """safely reload IntegrationPlugins"""
-        # TODO check if the system is in maintainance mode before reloading
         logger.info('Start reloading plugins')
-        self.unload_plugins()
-        self.load_plugins()
+        with maintenance_mode_on():
+            self.unload_plugins()
+            self.load_plugins()
         logger.info('Finished reloading plugins')
     # endregion
 

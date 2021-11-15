@@ -123,6 +123,11 @@ LOGGING = {
         'handlers': ['console'],
         'level': log_level,
     },
+    'filters': {
+        'require_not_maintenance_mode_503': {
+            '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503',
+        },
+    },
 }
 
 # Get a logger instance for this setup file
@@ -252,6 +257,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    # Maintenance
+    'maintenance_mode',
+
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -298,7 +306,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
+    'maintenance_mode.middleware.MaintenanceModeMiddleware'
 ])
 
 # Error reporting middleware
@@ -847,6 +856,10 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 ]
 
 MARKDOWNIFY_BLEACH = False
+
+# Maintenance mode
+MAINTENANCE_MODE_RETRY_AFTER = 60
+
 
 # Plugins
 PLUGIN_URL = 'plugin'

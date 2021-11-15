@@ -1,0 +1,14 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}
+{% trans "Page is in Maintenance" %}
+{% endblock %}
+
+{% block content %}
+    <h3>{% trans "The Page is in currently in maintenance mode" %}</h3>
+
+    <div class='alert alert-danger alert-block'>
+        {% trans "This page will reload each minute until the page becomes available again." %}
+    </div>
+{% endblock %}
