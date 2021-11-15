@@ -1125,7 +1125,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_bom_item_uses(self):
         """
-        Tests for the 'uses' field 
+        Tests for the 'uses' field
         """
 
         url = reverse('api-bom-list')
