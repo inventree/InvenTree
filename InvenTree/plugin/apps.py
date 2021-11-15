@@ -229,7 +229,6 @@ class PluginAppConfig(AppConfig):
                 elif a.app_name == 'plugin':
                     integ_urls = get_integration_urls()
                     urlpatterns[index] = url(f'^{settings.PLUGIN_URL}/', include((integ_urls, 'plugin')))
-        print('done')
 
     def _reload_apps(self, populate: bool = False):
         if populate:

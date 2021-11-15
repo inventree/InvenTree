@@ -58,11 +58,9 @@ class PluginConfig(models.Model):
         app = apps.get_app_config('plugin')
 
         if self.active is False and self.__org_active is True:
-            print('deactivated')
             app.reload_plugins()
 
         elif self.active is True and self.__org_active is False:
-            print('activated')
             app.reload_plugins()
 
         return ret
