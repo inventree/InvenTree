@@ -1123,6 +1123,59 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 5)
 
+    def test_bom_item_uses(self):
+        """
+        Tests for the 'uses' field 
+        """
+
+        url = reverse('api-bom-list')
+
+        # Test that the direct 'sub_part' association works
+
+        assemblies = []
+
+        for i in range(5):
+            assy = Part.objects.create(
+                name=f"Assy_{i}",
+                description="An assembly made of other parts",
+                active=True,
+                assembly=True
+            )
+
+            assemblies.append(assy)
+
+        components = []
+
+        # Create some sub-components
+        for i in range(5):
+
+            cmp = Part.objects.create(
+                name=f"Component_{i}",
+                description="A sub component",
+                active=True,
+                component=True
+            )
+
+            for j in range(i):
+                # Create a BOM item
+                BomItem.objects.create(
+                    quantity=10,
+                    part=assemblies[j],
+                    sub_part=cmp,
+                )
+
+            components.append(cmp)
+
+            response = self.get(
+                url,
+                {
+                    'uses': cmp.pk,
+                },
+                expected_code=200,
+            )
+
+            self.assertEqual(len(response.data), i)
+
 
 class PartParameterTest(InvenTreeAPITestCase):
     """
