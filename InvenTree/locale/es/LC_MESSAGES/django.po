@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-13 12:13+0000\n"
-"PO-Revision-Date: 2021-11-13 12:57\n"
+"PO-Revision-Date: 2021-11-15 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -870,39 +870,39 @@ msgstr "Artículo de stock"
 
 #: build/models.py:1271
 msgid "Source stock item"
-msgstr ""
+msgstr "Producto original de stock"
 
 #: build/models.py:1284
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Cantidad de stock a asignar para construir"
 
 #: build/models.py:1292
 msgid "Install into"
-msgstr ""
+msgstr "Instalar en"
 
 #: build/models.py:1293
 msgid "Destination stock item"
-msgstr ""
+msgstr "Artículo de stock de destino"
 
 #: build/serializers.py:136 build/serializers.py:356
 msgid "Build Output"
-msgstr ""
+msgstr "Resultado de la construcción o armado"
 
 #: build/serializers.py:145
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "La salida de construcción no coincide con la construcción padre"
 
 #: build/serializers.py:149
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "La parte de salida no coincide con la parte de la Orden de Construcción"
 
 #: build/serializers.py:153
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Esta salida de construcción ya ha sido completada"
 
 #: build/serializers.py:157
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Esta salida de construcción no está completamente asignada"
 
 #: build/serializers.py:189 order/serializers.py:216 order/serializers.py:284
 #: stock/forms.py:236 stock/serializers.py:307 stock/serializers.py:675
@@ -919,7 +919,7 @@ msgstr "Unicación"
 
 #: build/serializers.py:190
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Ubicación para las salidas de construcción completadas"
 
 #: build/serializers.py:196 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
@@ -933,87 +933,87 @@ msgstr "Estado"
 
 #: build/serializers.py:212
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Debe proporcionarse una lista de salidas de construcción"
 
 #: build/serializers.py:258 build/serializers.py:307 part/models.py:2714
 #: part/models.py:2873
 msgid "BOM Item"
-msgstr ""
+msgstr "Item de Lista de Materiales"
 
 #: build/serializers.py:268
 msgid "Build output"
-msgstr ""
+msgstr "Resultado de la construcción o armado"
 
 #: build/serializers.py:277
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "La salida de la construcción debe apuntar a la misma construcción"
 
 #: build/serializers.py:318
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part debe apuntar a la misma parte que la orden de construcción"
 
 #: build/serializers.py:333
 msgid "Item must be in stock"
-msgstr ""
+msgstr "El artículo debe estar en stock"
 
 #: build/serializers.py:347 order/models.py:316 order/serializers.py:230
 #: stock/models.py:382 stock/models.py:1104 stock/serializers.py:287
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "La cantidad debe ser mayor que cero"
 
 #: build/serializers.py:389
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Cantidad disponible ({q}) excedida"
 
 #: build/serializers.py:395
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "La salida de la construcción debe especificarse para la asignación de partes rastreadas"
 
 #: build/serializers.py:402
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "La salida de construcción no se puede especificar para la asignación de partes no rastreadas"
 
 #: build/serializers.py:430
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "Debe proporcionarse la adjudicación de artículos"
 
 #: build/tasks.py:92
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Stock requerido para la orden de construcción"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
 #: order/templates/order/sales_order_base.html:38
 msgid "Print actions"
-msgstr ""
+msgstr "Imprimir acciones"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Imprimir informe de orden de construcción"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr ""
+msgstr "Acciones de construcción o armado"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
-msgstr ""
+msgstr "Editar construcción o armado"
 
 #: build/templates/build/build_base.html:56
 #: build/templates/build/build_base.html:207 build/views.py:56
 msgid "Cancel Build"
-msgstr ""
+msgstr "Cancelar construcción o armado"
 
 #: build/templates/build/build_base.html:59
 msgid "Delete Build"
-msgstr ""
+msgstr "Eliminar construcción o armado"
 
 #: build/templates/build/build_base.html:64
 #: build/templates/build/build_base.html:65
 #: build/templates/build/build_base.html:223
 msgid "Complete Build"
-msgstr ""
+msgstr "Completar construcción"
 
 #: build/templates/build/build_base.html:79
 #, python-format
