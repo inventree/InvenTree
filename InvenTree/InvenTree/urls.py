@@ -124,12 +124,15 @@ translated_javascript_urls = [
 
 # Integration plugin urls
 integration_urls = []
+
+
 def get_integration_urls():
     urls = []
     for plugin in settings.INTEGRATION_PLUGINS.values():
         if plugin.mixin_enabled('urls'):
             urls.append(plugin.urlpatterns)
     return urls
+
 
 try:
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
