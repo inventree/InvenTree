@@ -388,9 +388,7 @@
                         {% if part.variant_of %}
                         <li><a class='dropdown-item' href='#' id='bom-duplicate'><span class='fas fa-clone'></span> {% trans "Copy BOM" %}</a></li>
                         {% endif %}
-                        {% if not part.is_bom_valid %}
                         <li><a class='dropdown-item' href='#' id='validate-bom'><span class='fas fa-clipboard-check icon-green'></span> {% trans "Validate BOM" %}</a></li>
-                        {% endif %}
                     </ul>
                 </div>
         
@@ -649,14 +647,10 @@
 
     // Load the "used in" tab
     onPanelLoad("used-in", function() {
-        loadPartTable('#used-table',
-            '{% url "api-part-list" %}',
-            {
-                params: {
-                    uses: {{ part.pk }},
-                },
-                filterTarget: '#filter-list-usedin',
-            }
+
+        loadUsedInTable(
+            '#used-table',
+            {{ part.pk }},
         );
     });
 

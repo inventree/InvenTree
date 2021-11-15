@@ -832,18 +832,6 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
-        # Filter by "uses" query - Limit to parts which use the provided part
-        uses = params.get('uses', None)
-
-        if uses:
-            try:
-                uses = Part.objects.get(pk=uses)
-
-                queryset = queryset.filter(uses.get_used_in_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
         # Exclude specific part ID values?
         exclude_id = []
 
@@ -1040,10 +1028,16 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
     filter_backends = [
+        DjangoFilterBackend,
         filters.OrderingFilter,
+        filters.SearchFilter,
     ]
 
     filter_fields = [
+        'name',
+    ]
+
+    search_fields = [
         'name',
     ]
 
@@ -1207,6 +1201,54 @@ class BomList(generics.ListCreateAPIView):
                 part = Part.objects.get(pk=part)
 
                 queryset = queryset.filter(part.get_bom_item_filter())
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        """
+        Filter by 'uses'?
+
+        Here we pass a part ID and return BOM items for any assemblies which "use" (or "require") that part.
+
+        There are multiple ways that an assembly can "use" a sub-part:
+
+        A) Directly specifying the sub_part in a BomItem field
+        B) Specifing a "template" part with inherited=True
+        C) Allowing variant parts to be substituted
+        D) Allowing direct substitute parts to be specified
+
+        - BOM items which are "inherited" by parts which are variants of the master BomItem
+        """
+        uses = params.get('uses', None)
+
+        if uses is not None:
+
+            try:
+                # Extract the part we are interested in
+                uses_part = Part.objects.get(pk=uses)
+
+                # Construct the database query in multiple parts
+
+                # A) Direct specification of sub_part
+                q_A = Q(sub_part=uses_part)
+
+                # B) BomItem is inherited and points to a "parent" of this part
+                parents = uses_part.get_ancestors(include_self=False)
+
+                q_B = Q(
+                    inherited=True,
+                    sub_part__in=parents
+                )
+
+                # C) Substitution of variant parts
+                # TODO
+
+                # D) Specification of individual substitutes
+                # TODO
+
+                q = q_A | q_B
+
+                queryset = queryset.filter(q)
 
             except (ValueError, Part.DoesNotExist):
                 pass

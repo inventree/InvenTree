@@ -331,6 +331,7 @@ function editPart(pk) {
         groups: groups,
         title: '{% trans "Edit Part" %}',
         reload: true,
+        successMessage: '{% trans "Part edited" %}',
     });
 }
 
