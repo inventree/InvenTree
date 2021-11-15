@@ -8,7 +8,7 @@ class SOBasketIndex(ListView):
     """ List view for all purchase orders """
 
     model = SalesOrderBasket
-    template_name = 'basket/baskets.html'
+    template_name = 'baskets.html'
     context_object_name = 'baskets'
 
     def get_queryset(self):
