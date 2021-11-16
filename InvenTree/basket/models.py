@@ -19,11 +19,17 @@ class SalesOrderBasket(models.Model):
     BUSY = 1  # Order is pending
     EMPTY = 0
     WAITING_FOR_PACKAGE = 2
-    status = {
-        BUSY: _("Busy"),
-        EMPTY: _("Empty"),
-        WAITING_FOR_PACKAGE: _("Waiting for packing")
-    }
+    STATUS_CHOICES = [
+        (BUSY, _("Busy")),
+        (EMPTY, _("Empty")),
+        (WAITING_FOR_PACKAGE, _("Waiting for packing"))
+    ]
+
+    status = models.CharField(
+        max_length=2,
+        choices=STATUS_CHOICES,
+        default=EMPTY,
+    )
     # barcode = models.CharField(max_length=124, unique=True, null=True, default=None)
 
     def format_barcode(self, **kwargs):

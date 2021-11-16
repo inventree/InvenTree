@@ -156,6 +156,7 @@ class Order(models.Model):
 
     class Meta:
         abstract = True
+        managed = True
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
@@ -555,6 +556,7 @@ class SalesOrder(Order):
         SalesOrderBasket,
         on_delete=models.SET_NULL,
         related_name='sales_orders',
+        null=True,
         verbose_name=_('Basket'),
         help_text=_('Select basket to put order')
     ),

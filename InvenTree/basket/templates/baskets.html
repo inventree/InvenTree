@@ -133,7 +133,7 @@
 $('#purchase-order-calendar').hide();
 $('#view-list').hide();
 
-<!-- $('#view-calendar').click(function() {
+$('#view-calendar').click(function() {
     // Hide the list view, show the calendar view
     $("#purchase-order-table").hide();
     $("#view-calendar").hide();
@@ -175,7 +175,7 @@ $("#order-print").click(function() {
 
 $("#po-create").click(function() {
     createPurchaseOrder();
-}); -->
+});
 
 loadBasketsTable("#basket-table", {
     url: "{% url 'api-basket-list' %}",

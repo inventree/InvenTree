@@ -1,3 +1,5 @@
+{% load i18n %}
+{% load inventree_extras %}
 function loadBasketsTable(table, options) {
 
   options.params = options.params || {};
@@ -32,19 +34,14 @@ function loadBasketsTable(table, options) {
           },
           {
               sortable: true,
-              field: 'reference',
-              title: '{% trans "Sales Order" %}',
+              field: 'name',
+              title: '{% trans "Basket" %}',
               formatter: function(value, row) {
 
-                  var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
-                  if (prefix) {
-                      value = `${prefix}${value}`;
-                  }
+                  var html = renderLink(value, `/basket/${row.pk}/`);
 
-                  var html = renderLink(value, `/order/basket/${row.pk}/`);
-
-                  if (row.overdue) {
+                  if (row.status === 'busy') {
                       html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Basket is busy" %}');
                   }
 
@@ -53,22 +50,8 @@ function loadBasketsTable(table, options) {
           },
           {
               sortable: true,
-              sortName: 'basket__name',
-              field: 'customer_detail',
-              title: '{% trans "Customer" %}',
-              formatter: function(value, row) {
-
-                  if (!row.customer_detail) {
-                      return '{% trans "Invalid Basket" %}';
-                  }
-
-                  return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
-              }
-          },
-          {
-              sortable: true,
-              field: 'basket_name',
-              title: '{% trans "Basket Name" %}',
+              field: 'creation_date',
+              title: '{% trans "Creation Date" %}',
           },
           {
               sortable: true,

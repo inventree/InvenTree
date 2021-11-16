@@ -38,10 +38,10 @@ class BasketList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        try:
-            kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
-        except AttributeError:
-            pass
+        # try:
+        #     kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
+        # except AttributeError:
+        #     pass
 
         # Ensure the context is passed through to the serializer
         kwargs['context'] = self.get_serializer_context()
@@ -53,10 +53,10 @@ class BasketList(generics.ListCreateAPIView):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
-            'orders',
+            'sales_orders',
         )
 
-        queryset = SOBasketSerializer.annotate_queryset(queryset)
+        # queryset = SOBasketSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -123,19 +123,17 @@ class BasketList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'order',
+       
     ]
 
     ordering_fields = [
         'name',
         'status',
-        'orders',
     ]
 
     search_fields = [
         'name',
         'status',
-        'orders',
     ]
 
     ordering = '-creation_date'
@@ -151,10 +149,10 @@ class BasketDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        try:
-            kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
-        except AttributeError:
-            pass
+        # try:
+        #     kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
+        # except AttributeError:
+        #     pass
 
         kwargs['context'] = self.get_serializer_context()
 
@@ -164,9 +162,9 @@ class BasketDetail(generics.RetrieveUpdateDestroyAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related('orders')
+        queryset = queryset.prefetch_related('sales_orders')
 
-        queryset = SOBasketSerializer.annotate_queryset(queryset)
+        # queryset = SOBasketSerializer.annotate_queryset(queryset)
 
         return queryset
 

@@ -13,7 +13,6 @@ class SOBasketSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
-            'order',
             'name',
             'status'
         ]
