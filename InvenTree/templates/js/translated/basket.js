@@ -5,7 +5,7 @@ function loadBasketsTable(table, options) {
   options.params = options.params || {};
   // options.params['customer_detail'] = true;
 
-  var filters = loadTableFilters('baskets');
+  var filters = loadTableFilters('basket');
 
   for (var key in options.params) {
       filters[key] = options.params[key];
@@ -13,7 +13,7 @@ function loadBasketsTable(table, options) {
 
   options.url = options.url || '{% url "api-basket-list" %}';
 
-  setupFilterList('baskets', $(table));
+  setupFilterList('basket', $(table));
 
   $(table).inventreeTable({
       url: options.url,
@@ -41,7 +41,7 @@ function loadBasketsTable(table, options) {
 
                   var html = renderLink(value, `/basket/${row.pk}/`);
 
-                  if (row.status === 'busy') {
+                  if (row.status === 10) {
                       html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Basket is busy" %}');
                   }
 
@@ -58,7 +58,7 @@ function loadBasketsTable(table, options) {
               field: 'status',
               title: '{% trans "Status" %}',
               formatter: function(value, row) {
-                  return salesOrderStatusDisplay(row.status, row.status_text);
+                  return basketStatusDisplay(row.status, row.status_text);
               }
           },
       ],

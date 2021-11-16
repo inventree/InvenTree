@@ -137,6 +137,7 @@ class SalesOrderStatus(StatusCode):
 
     PENDING = 10  # Order is pending
     SHIPPED = 20  # Order has been shipped to customer
+    IN_BASKET = 30 # Order currently in basket
     CANCELLED = 40  # Order has been cancelled
     LOST = 50  # Order was lost
     RETURNED = 60  # Order was returned
@@ -144,6 +145,7 @@ class SalesOrderStatus(StatusCode):
     options = {
         PENDING: _("Pending"),
         SHIPPED: _("Shipped"),
+        IN_BASKET: _("In basket"),
         CANCELLED: _("Cancelled"),
         LOST: _("Lost"),
         RETURNED: _("Returned"),
@@ -154,6 +156,7 @@ class SalesOrderStatus(StatusCode):
         SHIPPED: 'green',
         CANCELLED: 'red',
         LOST: 'yellow',
+        IN_BASKET:"purple",
         RETURNED: 'yellow',
     }
 
@@ -328,3 +331,20 @@ class BuildStatus(StatusCode):
         PENDING,
         PRODUCTION,
     ]
+
+
+class BasketStatus(StatusCode):
+    BUSY = 10
+    EMPTY = 20
+    WAITING_FOR_PACKAGE = 30
+    options = {
+        BUSY:_("Busy"),
+        EMPTY: _("Empty"),
+        WAITING_FOR_PACKAGE: _("Waiting for packing"),
+    }
+
+    colors = {
+        EMPTY: 'green',
+        BUSY: 'red',
+        WAITING_FOR_PACKAGE: 'yellow',
+    }

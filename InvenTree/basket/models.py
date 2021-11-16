@@ -1,4 +1,5 @@
 from django.db import models
+from InvenTree.status_codes import BasketStatus
 import InvenTree.helpers as helpers
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
@@ -16,19 +17,12 @@ class SalesOrderBasket(models.Model):
                                    )
     creation_date = models.DateField(auto_now_add=True, editable=False, verbose_name=_('Creation Date'))
     
-    BUSY = 1  # Order is pending
-    EMPTY = 0
-    WAITING_FOR_PACKAGE = 2
-    STATUS_CHOICES = [
-        (BUSY, _("Busy")),
-        (EMPTY, _("Empty")),
-        (WAITING_FOR_PACKAGE, _("Waiting for packing"))
-    ]
+  
 
-    status = models.CharField(
-        max_length=2,
-        choices=STATUS_CHOICES,
-        default=EMPTY,
+    status =  models.PositiveIntegerField(
+        choices=BasketStatus.items(),
+        default=BasketStatus.EMPTY,
+        help_text=_('Basket status')
     )
     # barcode = models.CharField(max_length=124, unique=True, null=True, default=None)
 
@@ -51,3 +45,8 @@ class SalesOrderBasket(models.Model):
         Brief payload data (e.g. for labels)
         """
         return self.format_barcode(brief=True)
+
+
+    def __str__(self):
+
+        return f"{self.name} - {self.status}"

@@ -559,7 +559,7 @@ class SalesOrder(Order):
         null=True,
         verbose_name=_('Basket'),
         help_text=_('Select basket to put order')
-    ),
+    )
 
     customer = models.ForeignKey(
         Company,

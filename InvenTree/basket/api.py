@@ -51,7 +51,7 @@ class BasketList(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-
+        print(queryset)
         queryset = queryset.prefetch_related(
             'sales_orders',
         )

@@ -5,7 +5,7 @@ Provide templates for the various model status codes.
 from django import template
 from django.utils.safestring import mark_safe
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-from InvenTree.status_codes import StockStatus, BuildStatus
+from InvenTree.status_codes import StockStatus, BuildStatus, BasketStatus
 
 register = template.Library()
 
@@ -37,3 +37,8 @@ def stock_status_text(key, *args, **kwargs):
 def build_status_label(key, *args, **kwargs):
     """ Render a Build status label """
     return mark_safe(BuildStatus.render(key, large=kwargs.get('large', False)))
+
+@register.simple_tag
+def build_status_label(key, *args, **kwargs):
+    """ Render a Basket status label """
+    return mark_safe(BasketStatus.render(key, large=kwargs.get('large', False)))
