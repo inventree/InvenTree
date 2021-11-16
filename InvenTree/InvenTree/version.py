@@ -12,14 +12,18 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 18
+INVENTREE_API_VERSION = 19
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
-
-v18 -> 2021-11-11
+v19 -> 2021-11-16
     - Adds support for multiple "Shipments" against a SalesOrder
     - Refactors process for stock allocation against a SalesOrder
+
+v18 -> 2021-11-15
+    - Adds the ability to filter BomItem API by "uses" field
+    - This returns a list of all BomItems which "use" the specified part
+    - Includes inherited BomItem objects
 
 v17 -> 2021-11-09
     - Adds API endpoints for GLOBAL and USER settings objects

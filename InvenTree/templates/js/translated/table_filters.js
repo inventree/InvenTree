@@ -77,9 +77,21 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "used in" table
     if (tableKey == 'usedin') {
         return {
+            'inherited': {
+                type: 'bool',
+                title: '{% trans "Inherited" %}',
+            },
+            'optional': {
+                type: 'bool',
+                title: '{% trans "Optional" %}',
+            },
             'part_active': {
                 type: 'bool',
                 title: '{% trans "Active" %}',
+            },
+            'part_trackable': {
+                type: 'bool',
+                title: '{% trans "Trackable" %}',
             },
         };
     }
