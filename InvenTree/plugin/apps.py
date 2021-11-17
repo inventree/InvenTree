@@ -219,11 +219,11 @@ class PluginAppConfig(AppConfig):
                     self._reload_apps(populate=True)
                 self._reload_apps()
                 # rediscover models/ admin sites
-                self._reload_contrib()
+                self._reregister_contrib_apps()
                 # update urls - must be last as models must be registered for creating admin routes
                 self._update_urls()
 
-    def _reload_contrib(self):
+    def _reregister_contrib_apps(self):
         """fix reloading of contrib apps - models and admin
         this is needed if plugins were loaded earlier and then reloaded as models and admins rely on imports
         those register models and admin in their respective objects (e.g. admin.site for admin)
