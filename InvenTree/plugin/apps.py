@@ -4,6 +4,7 @@ import importlib
 import pathlib
 import logging
 from typing import OrderedDict
+from importlib import reload
 
 from django.apps import AppConfig, apps
 from django.conf import settings
@@ -217,7 +218,9 @@ class PluginAppConfig(AppConfig):
                     settings.INTEGRATION_APPS_LOADING = False
                     self._reload_apps(populate=True)
                 self._reload_apps()
+                # rediscover models/ admin sites
                 self._reload_contrib()
+                # update urls - must be last as models must be registered for creating admin routes
                 self._update_urls()
 
     def _reload_contrib(self):
@@ -247,6 +250,11 @@ class PluginAppConfig(AppConfig):
                 reload(app_config.module.admin)
 
     def _get_plugin_path(self, plugin):
+        """parse plugin path
+        the input can be eiter:
+        - a local file / dir
+        - a package
+        """
         try:
             # for local path plugins
             plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
