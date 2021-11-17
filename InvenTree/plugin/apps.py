@@ -12,6 +12,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.conf.urls import url, include
 from django.urls import clear_url_caches
 from django.contrib import admin
+from django.utils.text import slugify
 
 try:
     from importlib import metadata
@@ -123,6 +124,7 @@ class PluginAppConfig(AppConfig):
             # these checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plug_name = plugin.PLUGIN_NAME
             plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
+            plug_key = slugify(plug_key)  # keys are slugs!
             try:
                 plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
             except (OperationalError, ProgrammingError) as error:
