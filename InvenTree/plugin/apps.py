@@ -229,7 +229,11 @@ class PluginAppConfig(AppConfig):
         those register models and admin in their respective objects (e.g. admin.site for admin)
         """
         for plugin_path in settings.INTEGRATION_APPS_PATHS:
-            app_config = apps.get_app_config(plugin_path.split('.')[-1])
+            try:
+                app_config = apps.get_app_config(plugin_path.split('.')[-1])
+            except LookupError:
+                # the plugin was never loaded correctly
+                break
 
             # reload models if they were set
             # models_module gets set if models were defined - even after multiple loads
