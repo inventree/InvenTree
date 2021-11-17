@@ -230,9 +230,11 @@ class PluginAppConfig(AppConfig):
         """
         for plugin_path in settings.INTEGRATION_APPS_PATHS:
             try:
-                app_config = apps.get_app_config(plugin_path.split('.')[-1])
+                app_name = plugin_path.split('.')[-1]
+                app_config = apps.get_app_config(app_name)
             except LookupError:
                 # the plugin was never loaded correctly
+                logger.debug(f'{app_name} App was not found during deregistering')
                 break
 
             # reload models if they were set
