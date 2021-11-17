@@ -15,6 +15,7 @@
 <div class="row">
     <div class="col-md-6">
         <h4>{% trans "Plugin information" %}</h4>
+        <div class='table-responsive'>
         <table class='table table-striped table-condensed'>
             <col width='25'>
             <tr>
@@ -63,6 +64,7 @@
             </tr>
             {% endif %}
         </table>
+        </div>
 
         {% if plugin.is_package == False %}
         <p>{% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}</p>
@@ -70,6 +72,7 @@
     </div>
     <div class="col-md-6">
         <h4>{% trans "Package information" %}</h4>
+        <div class='table-responsive'>
         <table class='table table-striped table-condensed'>
             <col width='25'>
             <tr>
@@ -117,6 +120,7 @@
                 <td class="bg-{{plugin.sign_color}}">{{ plugin.package.key }}{% include "clip.html" %}</td>
             </tr>
         </table>
+        </div>
     </div>
 </div>
 

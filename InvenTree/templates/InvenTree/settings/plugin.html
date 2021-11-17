@@ -16,6 +16,7 @@
     {% trans "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage." %}
 </div>
 
+<div class='table-responsive'>
 <table class='table table-striped table-condensed'>
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" %}
@@ -24,12 +25,14 @@
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP"%}
     </tbody>
 </table>
+</div>
 
 <h4>{% trans "Plugin list" %}
     {% url 'admin:plugin_pluginconfig_changelist' as url %}
     {% include "admin_button.html" with url=url %}
 </h4>
 
+<div class='table-responsive'>
 <table class='table table-striped table-condensed'>
     <thead>
         <tr>
@@ -94,5 +97,6 @@
         {% endif %}
     </tbody>
 </table>
+</div>
 
 {% endblock %}
