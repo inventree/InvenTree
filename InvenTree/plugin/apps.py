@@ -269,12 +269,17 @@ class PluginAppConfig(AppConfig):
         for plugin_path in settings.INTEGRATION_APPS_PATHS:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
             app_name = plugin_path.split('.')[-1]
+            try:
+                app_config = apps.get_app_config(app_name)
 
-            # check all models
-            for model in apps.get_app_config(app_name).get_models():
-                # remove model from admin site
-                admin.site.unregister(model)
-                models += [model._meta.model_name]
+                # check all models
+                for model in app_config.get_models():
+                    # remove model from admin site
+                    admin.site.unregister(model)
+                    models += [model._meta.model_name]
+            except LookupError:
+                # if an error occurs the app was never loaded right -> so nothing to do anymore
+                break
 
             # unregister the models (yes, models are just kept in multilevel dicts)
             for model in models:
