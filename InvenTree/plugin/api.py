@@ -39,7 +39,28 @@ class PluginList(generics.ListAPIView):
     ]
 
 
+class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API detail endpoint for PluginConfig object
+
+    get:
+    Return a single PluginConfig object
+
+    post:
+    Update a PluginConfig
+
+    delete:
+    Remove a PluginConfig
+    """
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginConfigSerializer
+
+
 plugin_api_urls = [
+    # Detail views for a single PluginConfig item
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+    ])),
     # Anything else
     url(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
 ]
