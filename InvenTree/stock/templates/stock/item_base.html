@@ -232,6 +232,15 @@
             {% endif %}
         </td>
     </tr>
+    {% if item.part.category %}
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Part Category" %}</td>
+        <td>
+            <a href='{% url "category-detail" item.part.category.id %}'>{{ item.part.category }}</a>
+        </td>
+    </tr>
+    {% endif %}
     {% if item.serialized %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
