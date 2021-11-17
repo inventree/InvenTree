@@ -298,9 +298,11 @@ class PluginAppConfig(AppConfig):
 
         # remove plugin from installed_apps
         for plugin in settings.INTEGRATION_APPS_PATHS:
-            settings.INSTALLED_APPS.remove(plugin)
+            if plugin in settings.INSTALLED_APPS:
+                settings.INSTALLED_APPS.remove(plugin)
 
         # reset load flag and reload apps
+        settings.INTEGRATION_APPS_PATHS = []
         settings.INTEGRATION_APPS_LOADED = False
         self._reload_apps()
 
