@@ -23,15 +23,20 @@
     <span class='fas fa-shopping-cart'/>
 </button>
 {% endif %}
-{% if perms.company.change_company %}
-<button type='button' class='btn btn-outline-secondary' id='company-edit' title='{% trans "Edit company information" %}'>
-    <span class='fas fa-edit icon-green'/>
-</button>
-{% endif %}
-{% if perms.company.delete_company %}
-<button type='button' class='btn btn-outline-secondary' id='company-delete' title='{% trans "Delete Company" %}'>
-    <span class='fas fa-trash-alt icon-red'/>
-</button>
+{% if perms.company.change_company or perms.company.delete_company %}
+<div class='btn-group'>
+    <button id='company-options' title='{% trans "Company actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        {% if perms.company.change_company %}
+        <li><a class='dropdown-item' href='#' id='company-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit Company" %}</a></li>
+        {% endif %}
+        {% if perms.company.delete_company %}
+        <li><a class='dropdown-item' href='#' id='company-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Company" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
 {% endblock %}
 
