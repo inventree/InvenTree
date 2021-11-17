@@ -27,6 +27,9 @@ function {{ label }}StatusDisplay(key, options={}) {
         label = {{ label }}Codes[key].label;
     }
 
+    // Fallback option for label
+    label = label || 'bg-dark';
+
     if (value == null || value.length == 0) {
         value = key;
         label = '';
