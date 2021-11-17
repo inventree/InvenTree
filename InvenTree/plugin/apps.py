@@ -293,7 +293,8 @@ class PluginAppConfig(AppConfig):
             # clear the registry for that app
             # so that the import trick will work on reloading the same plugin
             # -> the registry is kept for the whole lifecycle
-            apps.all_models.pop(app_name)
+            if models:
+                apps.all_models.pop(app_name)
 
         # remove plugin from installed_apps
         for plugin in settings.INTEGRATION_APPS_PATHS:
