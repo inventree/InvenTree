@@ -230,13 +230,27 @@ class PluginAppConfig(AppConfig):
         return plugin_path
 
     def deactivate_integration_app(self):
+        """deactivate integration app - some magic required"""
         # unregister models from admin
-        for app_name in settings.INTEGRATION_APPS_PATHS:
-            for model in apps.get_app_config(app_name.split('.')[-1]).get_models():
-                try:
-                    admin.site.unregister(model)
-                except:
-                    pass
+        for plugin_path in settings.INTEGRATION_APPS_PATHS:
+            models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
+            app_name = plugin_path.split('.')[-1]
+
+            # check all models
+            for model in apps.get_app_config(app_name).get_models():
+                # remove model from admin site
+                admin.site.unregister(model)
+                models += [model._meta.model_name]
+
+            # unregister the models (yes, models are just kept in multilevel dicts)
+            for model in models:
+                # remove model from general registry
+                apps.all_models[plugin_path].pop(model)
+
+            # clear the registry for that app
+             # so that the import trick will work on reloading the same plugin
+             # -> the registry is kept for the whole lifecycle
+            apps.all_models.pop(app_name)
 
         # remove plugin from installed_apps
         for plugin in settings.INTEGRATION_APPS_PATHS:
