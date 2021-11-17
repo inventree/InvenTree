@@ -285,6 +285,7 @@ class PluginAppConfig(AppConfig):
                     models += [model._meta.model_name]
             except LookupError:
                 # if an error occurs the app was never loaded right -> so nothing to do anymore
+                logger.debug(f'{app_name} App was not found during deregistering')
                 break
 
             # unregister the models (yes, models are just kept in multilevel dicts)
