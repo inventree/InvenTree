@@ -217,8 +217,34 @@ class PluginAppConfig(AppConfig):
                     settings.INTEGRATION_APPS_LOADING = False
                     self._reload_apps(populate=True)
                 self._reload_apps()
-                # update urls
+                self._reload_contrib()
                 self._update_urls()
+
+    def _reload_contrib(self):
+        """fix reloading of contrib apps - models and admin
+        this is needed if plugins were loaded earlier and then reloaded as models and admins rely on imports
+        those register models and admin in their respective objects (e.g. admin.site for admin)
+        """
+        for plugin_path in settings.INTEGRATION_APPS_PATHS:
+            app_config = apps.get_app_config(plugin_path.split('.')[-1])
+
+            # reload models if they were set
+            # models_module gets set if models were defined - even after multiple loads
+            # on a reload the models registery is empty but models_module is not
+            if app_config.models_module and len(app_config.models) == 0:
+                reload(app_config.models_module)
+
+            # check for all models if they are registered with the site admin
+            model_not_reg = False
+            for model in app_config.get_models():
+                if not admin.site.is_registered(model):
+                    model_not_reg = True
+
+            # reload admin if at least one model is not registered
+            # models are registered with admin in the 'admin.py' file - so we check
+            # if the app_config has an admin module before trying to laod it
+            if model_not_reg and hasattr(app_config.module, 'admin'):
+                reload(app_config.module.admin)
 
     def _get_plugin_path(self, plugin):
         try:
