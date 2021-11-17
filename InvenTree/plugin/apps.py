@@ -283,11 +283,10 @@ class PluginAppConfig(AppConfig):
             settings.INSTALLED_APPS.remove(plugin)
 
         # reset load flag and reload apps
-        settings.INTEGRATION_APPS_PATHS = []
         settings.INTEGRATION_APPS_LOADED = False
         self._reload_apps()
 
-        # update urls
+        # update urls to remove the apps from the site admin
         self._update_urls()
 
     def _update_urls(self):
