@@ -28,6 +28,7 @@ from build.api import build_api_urls
 from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
+from plugin.api import plugin_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -63,6 +64,7 @@ apipatterns = [
     url(r'^order/', include(order_api_urls)),
     url(r'^label/', include(label_api_urls)),
     url(r'^report/', include(report_api_urls)),
+    url(r'^plugin/', include(plugin_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),

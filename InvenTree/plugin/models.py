@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.apps import apps
+from django.conf import settings
 
 
 class PluginConfig(models.Model):
@@ -51,10 +52,24 @@ class PluginConfig(models.Model):
             name += '(not active)'
         return name
 
+    # functions
+
     def __init__(self, *args, **kwargs):
         """override to set original state of"""
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
+
+        # append settings from registry
+        self.plugin = settings.INTEGRATION_PLUGINS.get(self.key, None)
+
+        def get_plugin_meta(name):
+            if self.plugin:
+                return str(getattr(self.plugin, name, None))
+            return None
+
+        self.meta = {key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author', \
+            'pub_date', 'version', 'website', 'license', 'package_path', 'settings_url', ]}
+
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """extend save method to reload plugins if the 'active' status changes"""
