@@ -52,6 +52,10 @@ class PluginConfig(models.Model):
             name += '(not active)'
         return name
 
+    # extra attributes form the registry
+    def mixins(self):
+        return self.plugin._mixinreg
+
     # functions
 
     def __init__(self, *args, **kwargs):

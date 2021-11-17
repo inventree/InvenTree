@@ -17,6 +17,7 @@ class PluginConfigSerializer(serializers.ModelSerializer):
     """
 
     meta = serializers.DictField(read_only=True)
+    mixins = serializers.DictField(read_only=True)
 
     class Meta:
         model = PluginConfig
@@ -25,4 +26,5 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'name',
             'active',
             'meta',
+            'mixins',
         ]
