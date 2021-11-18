@@ -15,6 +15,7 @@ from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -120,7 +121,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
     Serializer for sale prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -144,7 +145,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
     Serializer for internal prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -428,7 +429,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
 
