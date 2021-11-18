@@ -67,12 +67,12 @@ def status_codes(request):
 
     return {
         # Expose the StatusCode classes to the templates
+        'BasketStatus': BasketStatus,
         'SalesOrderStatus': SalesOrderStatus,
         'PurchaseOrderStatus': PurchaseOrderStatus,
         'BuildStatus': BuildStatus,
         'StockStatus': StockStatus,
         'StockHistoryCode': StockHistoryCode,
-        'BasketStatus': BasketStatus
     }
 
 

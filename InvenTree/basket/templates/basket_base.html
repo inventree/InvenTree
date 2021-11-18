@@ -1,0 +1,98 @@
+{% extends "two_column.html" %} 
+{% load i18n %} 
+{% load static %} 
+{% load inventree_extras %} 
+{% load status_codes %} 
+{% block page_title %} 
+{%inventree_title %} | {% trans "Basket" %} 
+{% endblock %} 
+{% block page_data %}
+
+<hr />
+<!-- <p>{{ order.description }}{% include "clip.html"%}</p> -->
+<div class="btn-row">
+  <!-- Document / label menu -->
+  <div class="btn-group">
+   
+    <button
+      id="document-options"
+      title='{% trans "Printing actions" %}'
+      class="btn btn-default dropdown-toggle"
+      type="button"
+      data-toggle="dropdown"
+    >
+      <span class="fas fa-print"></span> <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li>
+        <a href="#" id="show-qr-code"
+          ><span class="fas fa-qrcode"></span> {% trans "Show QR Code" %}</a
+        >
+      </li>
+      <li>
+        <a href="#" id="print-label"
+          ><span class="fas fa-tag"></span> {% trans "Print Label" %}</a
+        >
+      </li>
+      {% if test_report_enabled %}
+      <li>
+        <a href="#" id="stock-test-report"
+          ><span class="fas fa-file-pdf"></span> {% trans "Test Report" %}</a
+        >
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="btn-group action-buttons">
+    <button
+      type="button"
+      class="btn btn-default"
+      id="print-basket-report"
+      title='{% trans "Print" %}'
+    >
+      <span class="fas fa-print"></span>
+    </button>
+    <button
+      type="button"
+      class="btn btn-default"
+      id="export-basket"
+      title='{% trans "Export basket to file" %}'
+    >
+      <span class="fas fa-file-download"></span>
+    </button>
+  </div>
+</div>
+{% endblock %} {% block page_details %}
+<h4>{% trans "Basket Details" %}</h4>
+<table class="table table-striped table-condensed">
+  <col width="25" />
+  <tr>
+    <td><span class="fas fa-hashtag"></span></td>
+    <td>{% trans "Basket Name" %}</td>
+    <td>{{ basket.name }}{% include "clip.html"%}</td>
+  </tr>
+  <tr>
+    <td><span class="fas fa-info"></span></td>
+    <td>{% trans "Basket Status" %}</td>
+    <td>
+      {% basket_status_label basket.status %}
+      <!-- {% if order.is_overdue %}
+            <span class='label label-red'>{% trans "Overdue" %}</span>
+            {% endif %} -->
+    </td>
+  </tr>
+
+  <tr>
+    <td><span class="fas fa-calendar-alt"></span></td>
+    <td>{% trans "Created" %}</td>
+    <td>
+      {{ basket.creation_date }}<span class="badge"
+        >{{ basket.created_by }}</span
+      >
+    </td>
+  </tr>
+</table>
+{% endblock %} 
+{% block js_ready %} 
+{{ block.super }} 
+{% endblock %}

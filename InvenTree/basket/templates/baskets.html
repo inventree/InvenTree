@@ -17,7 +17,7 @@
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
             {% if roles.purchase_order.add %}
-            <button class='btn btn-success' type='button' id='po-create' title='{% trans "Create new basket" %}'>
+            <button class='btn btn-success' type='button' id='b-create' title='{% trans "Create new basket" %}'>
                 <span class='fas fa-plus-circle'></span> {% trans "New Basket" %}
             </button>
             {% endif %}
@@ -173,8 +173,8 @@ $("#order-print").click(function() {
     printPurchaseOrderReports(orders);
 })
 
-$("#po-create").click(function() {
-    createPurchaseOrder();
+$("#b-create").click(function() {
+    createBasket();
 });
 
 loadBasketsTable("#basket-table", {

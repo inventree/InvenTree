@@ -400,11 +400,13 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
     def __init__(self, *args, **kwargs):
 
         customer_detail = kwargs.pop('customer_detail', False)
-
+        basket = kwargs.pop('basket', False)
         super().__init__(*args, **kwargs)
 
         if customer_detail is not True:
             self.fields.pop('customer_detail')
+        if not basket:
+            self.fields.pop('basket')
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -460,10 +462,12 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'status_text',
             'shipment_date',
             'target_date',
+            'basket',
         ]
 
         read_only_fields = [
             'status',
+            'basket',
             'creation_date',
             'shipment_date',
         ]

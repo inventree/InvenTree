@@ -304,6 +304,22 @@ class StockHistoryCode(StatusCode):
 
     }
 
+class BasketStatus(StatusCode):
+    BUSY = 10
+    EMPTY = 20
+    WAITING_FOR_PACKAGE = 30
+    options = {
+        BUSY:_("Busy"),
+        EMPTY: _("Empty"),
+        WAITING_FOR_PACKAGE: _("Waiting for packing"),
+    }
+
+    colors = {
+        EMPTY: 'green',
+        BUSY: 'red',
+        WAITING_FOR_PACKAGE: 'yellow',
+    }
+
 
 class BuildStatus(StatusCode):
 
@@ -331,20 +347,3 @@ class BuildStatus(StatusCode):
         PENDING,
         PRODUCTION,
     ]
-
-
-class BasketStatus(StatusCode):
-    BUSY = 10
-    EMPTY = 20
-    WAITING_FOR_PACKAGE = 30
-    options = {
-        BUSY:_("Busy"),
-        EMPTY: _("Empty"),
-        WAITING_FOR_PACKAGE: _("Waiting for packing"),
-    }
-
-    colors = {
-        EMPTY: 'green',
-        BUSY: 'red',
-        WAITING_FOR_PACKAGE: 'yellow',
-    }

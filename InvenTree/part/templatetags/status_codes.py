@@ -39,6 +39,6 @@ def build_status_label(key, *args, **kwargs):
     return mark_safe(BuildStatus.render(key, large=kwargs.get('large', False)))
 
 @register.simple_tag
-def build_status_label(key, *args, **kwargs):
+def basket_status_label(key, *args, **kwargs):
     """ Render a Basket status label """
     return mark_safe(BasketStatus.render(key, large=kwargs.get('large', False)))

@@ -983,6 +983,10 @@ function loadSalesOrderTable(table, options) {
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
+    if (options.basket) {
+        options.params.basket = options.basket;
+    }
+
     var filters = loadTableFilters('salesorder');
 
     for (var key in options.params) {
@@ -990,7 +994,6 @@ function loadSalesOrderTable(table, options) {
     }
 
     options.url = options.url || '{% url "api-so-list" %}';
-
     setupFilterList('salesorder', $(table));
 
     $(table).inventreeTable({

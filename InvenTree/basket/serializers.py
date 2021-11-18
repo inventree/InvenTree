@@ -18,7 +18,6 @@ class SOBasketSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
             'creation_date',
-            'sales_orders',
         ]
 
         read_only_fields = [

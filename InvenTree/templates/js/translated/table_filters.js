@@ -2,12 +2,13 @@
 {% load status_codes %}
 {% load inventree_extras %}
 
+{% include "status_codes.html" with label='basket' options=BasketStatus.list %}
 {% include "status_codes.html" with label='stock' options=StockStatus.list %}
 {% include "status_codes.html" with label='stockHistory' options=StockHistoryCode.list %}
 {% include "status_codes.html" with label='build' options=BuildStatus.list %}
 {% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
 {% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
-{% include "status_codes.html" with label='basket' options=BasketStatus.list %}
+
 
 /* globals
     global_settings
