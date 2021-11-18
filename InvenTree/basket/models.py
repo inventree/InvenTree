@@ -17,7 +17,6 @@ class SalesOrderBasket(models.Model):
                                    )
     creation_date = models.DateField(auto_now_add=True, editable=False, verbose_name=_('Creation Date'))
     
-  
 
     status =  models.PositiveIntegerField(
         choices=BasketStatus.items(),
@@ -48,5 +47,4 @@ class SalesOrderBasket(models.Model):
 
 
     def __str__(self):
-
         return f"{self.name} - {self.status}"

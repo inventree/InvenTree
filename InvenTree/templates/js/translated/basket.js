@@ -1,5 +1,7 @@
 {% load i18n %}
 {% load inventree_extras %}
+
+
 function loadBasketsTable(table, options) {
 
   options.params = options.params || {};
@@ -63,4 +65,74 @@ function loadBasketsTable(table, options) {
           },
       ],
   });
+}
+
+
+function createBasket(options={}) {
+
+    constructForm('{% url "api-basket-list" %}', {
+        method: 'POST',
+        fields: {
+            // reference: {
+            //     prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
+            // },
+            name: {},
+            // status: {
+            //     icon: 'fa-calendar-alt',
+            // },
+            // link: {
+            //     icon: 'fa-link',
+            // },
+            // responsible: {
+            //     icon: 'fa-user',
+            // }
+        },
+        onSuccess: function(data) {
+            location.href = `/order/sales-order/${data.pk}/`;
+        },
+        title: '{% trans "Create Basket" %}',
+    });
+}
+
+
+/**
+ * Load a table displaying orders for a particular Basket
+ * 
+ * @param {String} table : HTML ID tag e.g. '#table'
+ * @param {Object} options : object which contains:
+ *      - order {integer} : pk of the Basket
+ *      - status: {integer} : status code for the Basket
+ */
+function loadBasketOrdersTable(table, options={}) {
+
+    options.table = table;
+
+    options.params = options.params || {};
+
+    if (!options.basket) {
+        console.log('ERROR: function called without basket ID');
+        return;
+    }
+
+    if (!options.status) {
+        console.log('ERROR: function called without basket status');
+        return;
+    }
+
+    options.params.basket = options.basket;
+    // options.params.part_detail = true;
+    // options.params.allocations = true;
+    
+    var filters = loadTableFilters('salesorder');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    options.url = options.url || '{% url "api-so-list" %}';
+
+    var filter_target = options.filter_target || '#sales-order';
+
+    setupFilterList('salesorder', $(table), filter_target);
+
 }
