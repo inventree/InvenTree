@@ -68,7 +68,7 @@ class PluginInstall(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = self.perform_create(serializer)
-        result['data'] = serializer.data
+        result['input'] = serializer.data
         headers = self.get_success_headers(serializer.data)
         return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
