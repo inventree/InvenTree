@@ -43,12 +43,19 @@ class PluginConfigInstallSerializer(serializers.Serializer):
     url = serializers.CharField(
         required=False,
         allow_blank=True,
+        label=_('source URL'),
+        help_text=_('Source for the package - this can be a custom registry or a VCS path')
     )
     packagename = serializers.CharField(
         required=False,
         allow_blank=True,
+        label=_('Package Name'),
+        help_text=_('Name for the Plugin Package - can also contain a version indicator'),
     )
-    confirm = serializers.BooleanField()
+    confirm = serializers.BooleanField(
+        label=_('Confirm plugin installation'),
+        help_text=_('This will install this plugin now into the current instance. The instance will go into maintenance.')
+    )
 
     class Meta:
         fields = [
