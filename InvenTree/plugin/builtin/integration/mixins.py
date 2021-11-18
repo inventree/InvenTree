@@ -1,5 +1,4 @@
 """default shpping mixins for IntegrationMixins"""
-from django.conf import settings
 from django.conf.urls import url, include
 
 from plugin.urls import PLUGIN_BASE
