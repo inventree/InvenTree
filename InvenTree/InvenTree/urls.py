@@ -33,7 +33,6 @@ from plugin.api import plugin_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
-from django.db.utils import OperationalError, ProgrammingError
 
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
@@ -44,8 +43,6 @@ from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView,
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
-
-from common.models import InvenTreeSetting
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
