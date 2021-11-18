@@ -43,7 +43,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
     url = serializers.CharField(
         required=False,
         allow_blank=True,
-        label=_('source URL'),
+        label=_('Source URL'),
         help_text=_('Source for the package - this can be a custom registry or a VCS path')
     )
     packagename = serializers.CharField(
