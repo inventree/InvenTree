@@ -924,8 +924,8 @@ function handleFormSuccess(response, options) {
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
     // Display any messages
-    if (response && response.success) {
-        showAlertOrCache(response.success, cache, {style: 'success'});
+    if (response && (response.success || options.successMessage)) {
+        showAlertOrCache(response.success || options.successMessage, cache, {style: 'success'});
     }
     
     if (response && response.info) {

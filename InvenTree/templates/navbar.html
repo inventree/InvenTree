@@ -6,6 +6,7 @@
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
 {% navigation_enabled as plugin_nav %}
+{% inventree_demo_mode as demo %}
 
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
@@ -83,6 +84,9 @@
 
       </ul>
     </div>
+    {% if demo %}
+    {% include "navbar_demo.html" %}
+    {% endif %}
     {% include "search_form.html" %}
     <ul class='navbar-nav flex-row'>
       {% if barcodes %}
@@ -103,7 +107,7 @@
         </a>
         <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
-          {% if user.is_staff %}
+          {% if user.is_staff and not demo %}
           <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
           {% endif %}
           <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
