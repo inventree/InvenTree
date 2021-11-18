@@ -296,3 +296,17 @@ class InvenTreeImageSerializerField(serializers.ImageField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
+
+
+class InvenTreeDecimalField(serializers.FloatField):
+    """
+    Custom serializer for decimal fields. Solves the following issues:
+
+    - The normal DRF DecimalField renders values with trailing zeros
+    - Using a FloatField can result in rounding issues: https://code.djangoproject.com/ticket/30290
+    """
+
+    def to_internal_value(self, data):
+
+        # Convert the value to a string, and then a decimal
+        return Decimal(str(data))

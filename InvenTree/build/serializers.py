@@ -18,8 +18,9 @@ from rest_framework.serializers import ValidationError
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
 
-from InvenTree.status_codes import StockStatus
 import InvenTree.helpers
+from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.status_codes import StockStatus
 
 from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
@@ -41,7 +42,7 @@ class BuildSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
@@ -473,7 +474,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
     location_detail = LocationSerializer(source='stock_item.location', read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     def __init__(self, *args, **kwargs):
 

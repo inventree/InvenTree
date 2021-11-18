@@ -20,10 +20,10 @@ from sql_util.utils import SubqueryCount
 from common.settings import currency_code_mappings
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
-
+from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.helpers import normalize
 from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializer
+from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 from InvenTree.status_codes import StockStatus
@@ -550,8 +550,8 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
-    quantity = serializers.FloatField()
-
+    quantity = InvenTreeDecimalField()
+    
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
     
