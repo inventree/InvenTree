@@ -5,6 +5,11 @@ JSON serializers for Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+import subprocess
+
+from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
@@ -28,3 +33,73 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'meta',
             'mixins',
         ]
+
+
+class PluginConfigInstallSerializer(serializers.Serializer):
+    """
+    Serializer for installing a new plugin
+    """
+
+    url = serializers.CharField(required=False)
+    packagename = serializers.CharField(required=False)
+    confirm = serializers.BooleanField()
+
+    class Meta:
+        fields = [
+            'url',
+            'packagename',
+            'confirm',
+        ]
+
+    def validate(self, data):
+        super().validate(data)
+
+        # check the base requirements are met
+        if not data.get('confirm'):
+            raise ValidationError({'confirm': _('Installation not confirmed')})
+        if (not data.get('url')) and (not data.get('packagename')):
+            msg = _('Either packagenmae of url must be provided')
+            raise ValidationError({'url': msg, 'packagename': msg})
+
+        return data
+
+    def save(self):
+        data = self.validated_data
+
+        packagename = data.get('packagename', '')
+        url = data.get('url', '')
+
+        # build up the command
+        command = 'python -m pip install'.split()
+
+        if url:
+            # use custom registration / VCS
+            if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', '']]:
+                # using a VCS provider
+                if packagename:
+                    command.append(f'{packagename}@{url}')
+                else:
+                    command.append(url)
+            else:
+                # using a custom package repositories
+                command.append('-i')
+                command.append(url)
+                command.append(packagename)
+
+        elif packagename:
+            # use pypi
+            command.append(packagename)
+
+        ret = {'command': command}
+        # execute pypi
+        try:
+            result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
+            ret['result'] = str(result, 'utf-8')
+        except subprocess.CalledProcessError as error:
+            ret['result'] = str(error.output, 'utf-8')
+            ret['error'] = True
+
+        # register plugins
+        # TODO
+
+        return ret

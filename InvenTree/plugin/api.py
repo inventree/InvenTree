@@ -5,7 +5,7 @@ JSON API for the plugin app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import generics
@@ -56,11 +56,22 @@ class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PluginSerializers.PluginConfigSerializer
 
 
+class PluginInstall(generics.CreateAPIView):
+    """
+    Endpoint for installing a new plugin
+    """
+    queryset = PluginConfig.objects.none()
+    serializer_class = PluginSerializers.PluginConfigInstallSerializer
+
+
 plugin_api_urls = [
     # Detail views for a single PluginConfig item
     url(r'^(?P<pk>\d+)/', include([
         url(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
     ])),
+
+    url(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+
     # Anything else
     url(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
 ]
