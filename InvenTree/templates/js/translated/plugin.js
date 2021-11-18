@@ -14,8 +14,8 @@ function installPlugin() {
         method: 'POST',
         title: '{% trans "Install Plugin" %}',
         fields: {
-            url: {},
             packagename: {},
+            url: {},
             confirm: {},
         },
         onSuccess: function(data) {
