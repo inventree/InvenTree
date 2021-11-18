@@ -25,6 +25,7 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
 
+
 logger = logging.getLogger('inventree')
 
 
@@ -315,7 +316,8 @@ class PluginAppConfig(AppConfig):
         self._update_urls()
 
     def _update_urls(self):
-        from InvenTree.urls import urlpatterns, get_integration_urls
+        from InvenTree.urls import urlpatterns
+        from plugin.urls import PLUGIN_BASE, get_integration_urls
 
         for index, a in enumerate(urlpatterns):
             if hasattr(a, 'app_name'):
@@ -323,7 +325,7 @@ class PluginAppConfig(AppConfig):
                     urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
                 elif a.app_name == 'plugin':
                     integ_urls = get_integration_urls()
-                    urlpatterns[index] = url(f'^{settings.PLUGIN_URL}/', include((integ_urls, 'plugin')))
+                    urlpatterns[index] = url(f'^{PLUGIN_BASE}/', include((integ_urls, 'plugin')))
         clear_url_caches()
 
     def _reload_apps(self, populate: bool = False):

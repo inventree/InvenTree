@@ -9,6 +9,7 @@ from datetime import datetime
 
 from plugin.integration import IntegrationPluginBase
 from plugin.builtin.integration.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
+from plugin.urls import PLUGIN_BASE
 
 
 class BaseMixinDefinition:
@@ -82,7 +83,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         plg_name = self.mixin.plugin_name()
 
         # base_url
-        target_url = f'{settings.PLUGIN_URL}/{plg_name}/'
+        target_url = f'{PLUGIN_BASE}/{plg_name}/'
         self.assertEqual(self.mixin.base_url, target_url)
 
         # urlpattern

@@ -18,6 +18,7 @@ from part.urls import part_urls
 from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
+from plugin.urls import plugin_urls, PLUGIN_BASE
 
 from barcodes.api import barcode_api_urls
 from common.api import common_api_urls
@@ -124,25 +125,6 @@ translated_javascript_urls = [
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
 ]
 
-# Integration plugin urls
-integration_urls = []
-
-
-def get_integration_urls():
-    urls = []
-    for plugin in settings.INTEGRATION_PLUGINS.values():
-        if plugin.mixin_enabled('urls'):
-            urls.append(plugin.urlpatterns)
-    return urls
-
-
-try:
-    if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
-        integration_urls = get_integration_urls()
-except (OperationalError, ProgrammingError):
-    # Exception if the database has not been migrated yet
-    pass
-
 urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^manufacturer-part/', include(manufacturer_part_urls)),
@@ -181,8 +163,9 @@ urlpatterns = [
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
-    # plugins
-    url(f'^{settings.PLUGIN_URL}/', include((integration_urls, 'plugin'))),
+    # plugin urls
+    url(r'^plugins/', include(plugin_urls)),
+    url(f'^{PLUGIN_BASE}/', include(([], 'plugin'))),  # on startup we do not have any plugins enabled
 
     url(r'^markdownx/', include('markdownx.urls')),
 

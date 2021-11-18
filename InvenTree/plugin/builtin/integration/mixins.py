@@ -2,6 +2,8 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
+from plugin.urls import PLUGIN_BASE
+
 
 class GlobalSettingsMixin:
     """Mixin that enables global settings for the plugin"""
@@ -77,7 +79,7 @@ class UrlsMixin:
         """
         returns base url for this plugin
         """
-        return f'{settings.PLUGIN_URL}/{self.slug}/'
+        return f'{PLUGIN_BASE}/{self.slug}/'
 
     @property
     def internal_name(self):

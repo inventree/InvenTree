@@ -871,8 +871,6 @@ MAINTENANCE_MODE_RETRY_AFTER = 60
 
 
 # Plugins
-PLUGIN_URL = 'plugin'
-
 PLUGIN_DIRS = ['plugin.builtin', ]
 
 if not TESTING:
