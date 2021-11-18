@@ -28,8 +28,11 @@
 </div>
 
 <h4>{% trans "Plugin list" %}
+<div id="page-actions" class="btn-group" role="group">
     {% url 'admin:plugin_pluginconfig_changelist' as url %}
     {% include "admin_button.html" with url=url %}
+    <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
+</div>
 </h4>
 
 <div class='table-responsive'>

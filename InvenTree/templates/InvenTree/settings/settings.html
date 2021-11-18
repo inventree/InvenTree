@@ -322,6 +322,10 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
+$("#install-plugin").click(function() {
+    installPlugin();
+});
+
 enableSidebar('settings');
 
 {% endblock %}
