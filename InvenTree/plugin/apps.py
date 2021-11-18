@@ -42,7 +42,7 @@ class PluginAppConfig(AppConfig):
         """load and activate all IntegrationPlugins"""
         logger.info('Start loading plugins')
         # set maintanace mode
-        _maintenance = get_maintenance_mode()
+        _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)
 
@@ -63,7 +63,7 @@ class PluginAppConfig(AppConfig):
         """unload and deactivate all IntegrationPlugins"""
         logger.info('Start unloading plugins')
         # set maintanace mode
-        _maintenance = get_maintenance_mode()
+        _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)
 
