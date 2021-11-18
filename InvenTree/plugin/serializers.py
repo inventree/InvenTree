@@ -40,8 +40,14 @@ class PluginConfigInstallSerializer(serializers.Serializer):
     Serializer for installing a new plugin
     """
 
-    url = serializers.CharField(required=False, allow_blank=True)
-    packagename = serializers.CharField(required=False, allow_blank=True)
+    url = serializers.CharField(
+        required=False,
+        allow_blank=True,
+    )
+    packagename = serializers.CharField(
+        required=False,
+        allow_blank=True,
+    )
     confirm = serializers.BooleanField()
 
     class Meta:
