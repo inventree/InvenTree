@@ -10,6 +10,8 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 
+from InvenTree.serializers import InvenTreeDecimalField
+
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
@@ -428,7 +430,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
 
