@@ -9,6 +9,8 @@ from django.conf.urls import url, include
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import generics
+from rest_framework import status
+from rest_framework.response import Response
 
 from plugin.models import PluginConfig
 import plugin.serializers as PluginSerializers
@@ -62,6 +64,17 @@ class PluginInstall(generics.CreateAPIView):
     """
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = self.perform_create(serializer)
+        result['data'] = serializer.data
+        headers = self.get_success_headers(serializer.data)
+        return Response(result, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        return serializer.save()
 
 
 plugin_api_urls = [
