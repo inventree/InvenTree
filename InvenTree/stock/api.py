@@ -72,7 +72,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_context(self):
 
         ctx = super().get_serializer_context()
-        ctx['user'] = self.request.user
+        ctx['user'] = getattr(self.request, 'user', None)
 
         return ctx
 
@@ -392,7 +392,7 @@ class StockList(generics.ListCreateAPIView):
     def get_serializer_context(self):
 
         ctx = super().get_serializer_context()
-        ctx['user'] = self.request.user
+        ctx['user'] = getattr(self.request, 'user', None)
 
         return ctx
 
