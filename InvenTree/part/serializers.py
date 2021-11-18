@@ -10,13 +10,12 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 
-from InvenTree.serializers import InvenTreeDecimalField
-
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -122,7 +121,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
     Serializer for sale prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -146,7 +145,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
     Serializer for internal prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True

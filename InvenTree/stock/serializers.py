@@ -32,6 +32,7 @@ from company.serializers import SupplierPartSerializer
 
 import InvenTree.helpers
 import InvenTree.serializers
+from InvenTree.serializers import InvenTreeDecimalField
 
 from part.serializers import PartBriefSerializer
 
@@ -55,7 +56,8 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
-    quantity = serializers.FloatField()
+    
+    quantity = InvenTreeDecimalField()
 
     class Meta:
         model = StockItem
@@ -136,7 +138,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
 
-    # quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
