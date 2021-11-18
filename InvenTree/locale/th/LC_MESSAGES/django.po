@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-18 10:29+0000\n"
+"POT-Creation-Date: 2021-11-18 12:25+0000\n"
 "PO-Revision-Date: 2021-09-12 13:44\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
@@ -552,7 +552,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:91
 #: report/templates/report/inventree_test_report_base.html:77
-#: stock/forms.py:156 stock/serializers.py:275
+#: stock/forms.py:156 stock/serializers.py:277
 #: stock/templates/stock/item_base.html:256
 #: templates/js/translated/barcode.js:385 templates/js/translated/bom.js:441
 #: templates/js/translated/build.js:235 templates/js/translated/build.js:435
@@ -573,7 +573,7 @@ msgid "Enter quantity for build output"
 msgstr ""
 
 #: build/forms.py:41 order/forms.py:96 stock/forms.py:95
-#: stock/serializers.py:296 templates/js/translated/stock.js:194
+#: stock/serializers.py:298 templates/js/translated/stock.js:194
 #: templates/js/translated/stock.js:348
 msgid "Serial Numbers"
 msgstr ""
@@ -791,15 +791,15 @@ msgstr ""
 msgid "Link to external URL"
 msgstr ""
 
-#: build/models.py:334 build/serializers.py:200 company/models.py:142
+#: build/models.py:334 build/serializers.py:201 company/models.py:142
 #: company/models.py:577 order/models.py:183 order/models.py:738
 #: order/templates/order/po_navbar.html:38
 #: order/templates/order/po_navbar.html:41 part/models.py:925
 #: part/templates/part/detail.html:223
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:154 stock/forms.py:204 stock/forms.py:238 stock/models.py:611
-#: stock/models.py:1775 stock/models.py:1881 stock/serializers.py:314
-#: stock/serializers.py:573 templates/js/translated/barcode.js:58
+#: stock/models.py:1775 stock/models.py:1881 stock/serializers.py:316
+#: stock/serializers.py:575 templates/js/translated/barcode.js:58
 #: templates/js/translated/bom.js:597 templates/js/translated/company.js:841
 #: templates/js/translated/order.js:963 templates/js/translated/order.js:1561
 #: templates/js/translated/stock.js:861 templates/js/translated/stock.js:1340
@@ -857,7 +857,7 @@ msgstr ""
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1270 build/serializers.py:327
+#: build/models.py:1270 build/serializers.py:328
 #: stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:16
 #: stock/templates/stock/item_base.html:340
@@ -884,28 +884,28 @@ msgstr ""
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:136 build/serializers.py:356
+#: build/serializers.py:137 build/serializers.py:357
 msgid "Build Output"
 msgstr ""
 
-#: build/serializers.py:145
+#: build/serializers.py:146
 msgid "Build output does not match the parent build"
 msgstr ""
 
-#: build/serializers.py:149
+#: build/serializers.py:150
 msgid "Output part does not match BuildOrder part"
 msgstr ""
 
-#: build/serializers.py:153
+#: build/serializers.py:154
 msgid "This build output has already been completed"
 msgstr ""
 
-#: build/serializers.py:157
+#: build/serializers.py:158
 msgid "This build output is not fully allocated"
 msgstr ""
 
-#: build/serializers.py:189 order/serializers.py:216 order/serializers.py:284
-#: stock/forms.py:236 stock/serializers.py:307 stock/serializers.py:675
+#: build/serializers.py:190 order/serializers.py:217 order/serializers.py:285
+#: stock/forms.py:236 stock/serializers.py:309 stock/serializers.py:677
 #: stock/templates/stock/item_base.html:286
 #: templates/js/translated/barcode.js:384
 #: templates/js/translated/barcode.js:557 templates/js/translated/build.js:420
@@ -917,13 +917,13 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: build/serializers.py:190
+#: build/serializers.py:191
 msgid "Location for completed build outputs"
 msgstr ""
 
-#: build/serializers.py:196 build/templates/build/build_base.html:129
+#: build/serializers.py:197 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
-#: order/serializers.py:237 stock/templates/stock/item_base.html:409
+#: order/serializers.py:238 stock/templates/stock/item_base.html:409
 #: templates/js/translated/barcode.js:140 templates/js/translated/build.js:1655
 #: templates/js/translated/order.js:431 templates/js/translated/order.js:677
 #: templates/js/translated/order.js:1074 templates/js/translated/stock.js:1196
@@ -931,50 +931,50 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: build/serializers.py:212
+#: build/serializers.py:213
 msgid "A list of build outputs must be provided"
 msgstr ""
 
-#: build/serializers.py:258 build/serializers.py:307 part/models.py:2700
+#: build/serializers.py:259 build/serializers.py:308 part/models.py:2700
 #: part/models.py:2859
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:268
+#: build/serializers.py:269
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:277
+#: build/serializers.py:278
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:318
+#: build/serializers.py:319
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:333
+#: build/serializers.py:334
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:347 order/models.py:316 order/serializers.py:230
-#: stock/models.py:382 stock/models.py:1104 stock/serializers.py:287
+#: build/serializers.py:348 order/models.py:316 order/serializers.py:231
+#: stock/models.py:382 stock/models.py:1104 stock/serializers.py:289
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/serializers.py:389
+#: build/serializers.py:390
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:395
+#: build/serializers.py:396
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:402
+#: build/serializers.py:403
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:430
+#: build/serializers.py:431
 msgid "Allocation items must be provided"
 msgstr ""
 
@@ -1370,7 +1370,7 @@ msgstr ""
 msgid "Maximum output quantity is "
 msgstr ""
 
-#: build/views.py:122 stock/serializers.py:345 stock/views.py:1290
+#: build/views.py:122 stock/serializers.py:347 stock/views.py:1290
 msgid "Serial numbers already exist"
 msgstr ""
 
@@ -2130,7 +2130,7 @@ msgstr ""
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1218 company/serializers.py:263
+#: common/models.py:1218 company/serializers.py:264
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:1508
 msgid "Price"
@@ -2280,8 +2280,8 @@ msgstr ""
 msgid "Does this company manufacture parts?"
 msgstr ""
 
-#: company/models.py:152 company/serializers.py:269
-#: company/templates/company/company_base.html:76 stock/serializers.py:161
+#: company/models.py:152 company/serializers.py:270
+#: company/templates/company/company_base.html:76 stock/serializers.py:163
 msgid "Currency"
 msgstr ""
 
@@ -2437,11 +2437,11 @@ msgstr ""
 msgid "Order multiple"
 msgstr ""
 
-#: company/serializers.py:69
+#: company/serializers.py:70
 msgid "Default currency used for this supplier"
 msgstr ""
 
-#: company/serializers.py:70
+#: company/serializers.py:71
 msgid "Currency Code"
 msgstr ""
 
@@ -3073,7 +3073,7 @@ msgid "Number of items received"
 msgstr ""
 
 #: order/models.py:805 part/templates/part/prices.html:176 stock/models.py:620
-#: stock/serializers.py:152 stock/templates/stock/item_base.html:332
+#: stock/serializers.py:154 stock/templates/stock/item_base.html:332
 #: templates/js/translated/stock.js:1324
 msgid "Purchase Price"
 msgstr ""
@@ -3135,47 +3135,47 @@ msgstr ""
 msgid "Enter stock allocation quantity"
 msgstr ""
 
-#: order/serializers.py:166
+#: order/serializers.py:167
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:201
+#: order/serializers.py:202
 msgid "Line Item"
 msgstr ""
 
-#: order/serializers.py:207
+#: order/serializers.py:208
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:217 order/serializers.py:285
+#: order/serializers.py:218 order/serializers.py:286
 msgid "Select destination location for received items"
 msgstr ""
 
-#: order/serializers.py:241
+#: order/serializers.py:242
 msgid "Barcode Hash"
 msgstr ""
 
-#: order/serializers.py:242
+#: order/serializers.py:243
 msgid "Unique identifier field"
 msgstr ""
 
-#: order/serializers.py:259
+#: order/serializers.py:260
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:297
+#: order/serializers.py:298
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:314
+#: order/serializers.py:315
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:325
+#: order/serializers.py:326
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:567
+#: order/serializers.py:568
 msgid "Sale price currency"
 msgstr ""
 
@@ -5389,48 +5389,48 @@ msgstr ""
 msgid "Test notes"
 msgstr ""
 
-#: stock/serializers.py:155
+#: stock/serializers.py:157
 msgid "Purchase price of this stock item"
 msgstr ""
 
-#: stock/serializers.py:162
+#: stock/serializers.py:164
 msgid "Purchase currency of this stock item"
 msgstr ""
 
-#: stock/serializers.py:276
+#: stock/serializers.py:278
 msgid "Enter number of stock items to serialize"
 msgstr ""
 
-#: stock/serializers.py:291
+#: stock/serializers.py:293
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr ""
 
-#: stock/serializers.py:297
+#: stock/serializers.py:299
 msgid "Enter serial numbers for new items"
 msgstr ""
 
-#: stock/serializers.py:308 stock/serializers.py:676
+#: stock/serializers.py:310 stock/serializers.py:678
 msgid "Destination stock location"
 msgstr ""
 
-#: stock/serializers.py:315
+#: stock/serializers.py:317
 msgid "Optional note field"
 msgstr ""
 
-#: stock/serializers.py:328
+#: stock/serializers.py:330
 msgid "Serial numbers cannot be assigned to this part"
 msgstr ""
 
-#: stock/serializers.py:546
+#: stock/serializers.py:548
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:574
+#: stock/serializers.py:576
 msgid "Stock transaction notes"
 msgstr ""
 
-#: stock/serializers.py:584
+#: stock/serializers.py:586
 msgid "A list of stock items must be provided"
 msgstr ""
 
