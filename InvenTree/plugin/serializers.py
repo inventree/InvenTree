@@ -74,7 +74,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         if url:
             # use custom registration / VCS
-            if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', '']]:
+            if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
                 # using a VCS provider
                 if packagename:
                     command.append(f'{packagename}@{url}')
