@@ -79,6 +79,15 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the item location
     """
 
+    def update(self, instance, validated_data):
+        """
+        Custom update method to pass the user information through to the instance
+        """
+
+        instance._user = self.context['user']
+
+        return super().update(instance, validated_data)
+
     @staticmethod
     def annotate_queryset(queryset):
         """
