@@ -103,7 +103,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             # use pypi
             command.append(packagename)
 
-        ret = {'command': command}
+        ret = {'command': ' '.join(command)}
         # execute pypi
         try:
             result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
