@@ -92,6 +92,12 @@ DEBUG = _is_true(get_setting(
     CONFIG.get('debug', True)
 ))
 
+# Determine if we are running in "demo mode"
+DEMO_MODE = _is_true(get_setting(
+    'INVENTREE_DEMO',
+    CONFIG.get('demo', False)
+))
+
 DOCKER = _is_true(get_setting(
     'INVENTREE_DOCKER',
     False
