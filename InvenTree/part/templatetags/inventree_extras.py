@@ -89,6 +89,12 @@ def inventree_in_debug_mode(*args, **kwargs):
 
     return djangosettings.DEBUG
 
+@register.simple_tag()
+def inventree_demo_mode(*args, **kwargs):
+    """ Return True if the server is running in DEMO mode """
+
+    return djangosettings.DEMO_MODE
+
 
 @register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
