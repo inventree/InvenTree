@@ -133,6 +133,7 @@ def rebuild_models(c):
 
     manage(c, "rebuild_models", pty=True)
 
+
 @task
 def rebuild_thumbnails(c):
     """
@@ -140,6 +141,7 @@ def rebuild_thumbnails(c):
     """
 
     manage(c, "rebuild_thumbnails", pty=True)
+
 
 @task
 def clean_settings(c):

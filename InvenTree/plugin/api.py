@@ -6,7 +6,6 @@ JSON API for the plugin app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import generics
 from rest_framework import status

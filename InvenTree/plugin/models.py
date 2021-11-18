@@ -71,9 +71,11 @@ class PluginConfig(models.Model):
                 return str(getattr(self.plugin, name, None))
             return None
 
-        self.meta = {key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author', \
-            'pub_date', 'version', 'website', 'license', 'package_path', 'settings_url', ]}
-
+        self.meta = {
+            key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
+                                                  'pub_date', 'version', 'website', 'license',
+                                                  'package_path', 'settings_url', ]
+        }
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """extend save method to reload plugins if the 'active' status changes"""
