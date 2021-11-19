@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from http import HTTPStatus
-import json
+
 from datetime import timedelta
 
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
-from .api import WebhookView
+from .models import InvenTreeSetting
+from .models import NotificationEntry
 
 
 class SettingsTest(TestCase):
@@ -89,118 +88,6 @@ class SettingsTest(TestCase):
 
                 if setting.default_value not in [True, False]:
                     raise ValueError(f'Non-boolean default value specified for {key}')
-
-
-class WebhookMessageTests(TestCase):
-    def setUp(self):
-        self.endpoint_def = WebhookEndpoint.objects.create()
-        self.url = f'/api/webhook/{self.endpoint_def.endpoint_id}/'
-        self.client = Client(enforce_csrf_checks=True)
-
-    def test_bad_method(self):
-        response = self.client.get(self.url)
-
-        assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
-
-    def test_missing_token(self):
-        response = self.client.post(
-            self.url,
-            content_type='application/json',
-        )
-
-        assert response.status_code == HTTPStatus.FORBIDDEN
-        assert (
-            json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR
-        )
-
-    def test_bad_token(self):
-        response = self.client.post(
-            self.url,
-            content_type='application/json',
-            **{'HTTP_TOKEN': '1234567fghj'},
-        )
-
-        assert response.status_code == HTTPStatus.FORBIDDEN
-        assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
-
-    def test_bad_url(self):
-        response = self.client.post(
-            '/api/webhook/1234/',
-            content_type='application/json',
-        )
-
-        assert response.status_code == HTTPStatus.NOT_FOUND
-
-    def test_bad_json(self):
-        response = self.client.post(
-            self.url,
-            data="{'this': 123}",
-            content_type='application/json',
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
-        )
-
-        assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
-        assert (
-            json.loads(response.content)['detail'] == 'Expecting property name enclosed in double quotes'
-        )
-
-    def test_success_no_token_check(self):
-        # delete token
-        self.endpoint_def.token = ''
-        self.endpoint_def.save()
-
-        # check
-        response = self.client.post(
-            self.url,
-            content_type='application/json',
-        )
-
-        assert response.status_code == HTTPStatus.OK
-        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
-
-    def test_bad_hmac(self):
-        # delete token
-        self.endpoint_def.token = ''
-        self.endpoint_def.secret = '123abc'
-        self.endpoint_def.save()
-
-        # check
-        response = self.client.post(
-            self.url,
-            content_type='application/json',
-        )
-
-        assert response.status_code == HTTPStatus.FORBIDDEN
-        assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
-
-    def test_success_hmac(self):
-        # delete token
-        self.endpoint_def.token = ''
-        self.endpoint_def.secret = '123abc'
-        self.endpoint_def.save()
-
-        # check
-        response = self.client.post(
-            self.url,
-            content_type='application/json',
-            **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
-        )
-
-        assert response.status_code == HTTPStatus.OK
-        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
-
-    def test_success(self):
-        response = self.client.post(
-            self.url,
-            data={"this": "is a message"},
-            content_type='application/json',
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
-        )
-
-        assert response.status_code == HTTPStatus.OK
-        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
-        message = WebhookMessage.objects.get()
-        assert message.body == {"this": "is a message"}
 
 
 class NotificationTest(TestCase):
