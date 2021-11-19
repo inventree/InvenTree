@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-18 21:13+0000\n"
-"PO-Revision-Date: 2021-11-19 14:15\n"
+"POT-Creation-Date: 2021-11-19 22:47+0000\n"
+"PO-Revision-Date: 2021-11-19 23:34\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -233,8 +233,8 @@ msgid "Spanish"
 msgstr "Spagnolo"
 
 #: InvenTree/settings.py:667
-msgid "Spanish (Mexican"
-msgstr "Spagnolo (messicano)"
+msgid "Spanish (Mexican)"
+msgstr ""
 
 #: InvenTree/settings.py:668
 msgid "French"
