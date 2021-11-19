@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-18 21:13+0000\n"
-"PO-Revision-Date: 2021-11-19 13:15\n"
+"PO-Revision-Date: 2021-11-19 14:15\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -849,7 +849,7 @@ msgstr "La quantità deve essere 1 per lo stock serializzato"
 
 #: build/models.py:1193
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Articolo in giacenza selezionato non trovato nel BOM"
 
 #: build/models.py:1253 stock/templates/stock/item_base.html:318
 #: templates/InvenTree/search.html:143 templates/js/translated/build.js:1599
@@ -980,7 +980,7 @@ msgstr ""
 
 #: build/serializers.py:431
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "Deve essere indicata l'allocazione dell'articolo"
 
 #: build/tasks.py:92
 msgid "Stock required for build order"
@@ -1420,35 +1420,35 @@ msgstr ""
 
 #: build/views.py:319
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Elimina Ordine Build"
 
 #: common/files.py:67
 msgid "Unsupported file format: {ext.upper()}"
-msgstr ""
+msgstr "Formato file non supportato: {ext.upper()}"
 
 #: common/files.py:69
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Errore nella lettura del file (codifica non valida)"
 
 #: common/files.py:74
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Errore nella lettura del file (formato non valido)"
 
 #: common/files.py:76
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Errore nella lettura del file (dimensione errata)"
 
 #: common/files.py:78
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Errore di lettura del file (i dati potrebbero essere danneggiati)"
 
 #: common/forms.py:34 templates/js/translated/attachment.js:54
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: common/forms.py:35
 msgid "Select file to upload"
-msgstr ""
+msgstr "Seleziona file da caricare"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
@@ -1457,7 +1457,7 @@ msgstr ""
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "Seleziona il file {name} da caricare"
 
 #: common/models.py:338 common/models.py:955 common/models.py:1163
 msgid "Settings key (must be unique - case insensitive"
@@ -1465,95 +1465,95 @@ msgstr ""
 
 #: common/models.py:340
 msgid "Settings value"
-msgstr ""
+msgstr "Valore impostazioni"
 
 #: common/models.py:375
 msgid "Must be an integer value"
-msgstr ""
+msgstr "Deve essere un valore intero"
 
 #: common/models.py:380
 msgid "Chosen value is not a valid option"
-msgstr ""
+msgstr "Il valore specificato non è un opzione valida"
 
 #: common/models.py:403
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "Il valore deve essere un valore booleano"
 
 #: common/models.py:414
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "Il valore deve essere un intero"
 
 #: common/models.py:437
 msgid "Key string must be unique"
-msgstr ""
+msgstr "La stringa chiave deve essere univoca"
 
 #: common/models.py:544
 msgid "No group"
-msgstr ""
+msgstr "Nessun gruppo"
 
 #: common/models.py:586
 msgid "Restart required"
-msgstr ""
+msgstr "Riavvio richiesto"
 
 #: common/models.py:587
 msgid "A setting has been changed which requires a server restart"
-msgstr ""
+msgstr "È stata modificata un'impostazione che richiede un riavvio del server"
 
 #: common/models.py:594
 msgid "InvenTree Instance Name"
-msgstr ""
+msgstr "Nome Istanza InvenTree"
 
 #: common/models.py:596
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "Descrittore stringa per l'istanza del server"
 
 #: common/models.py:600
 msgid "Use instance name"
-msgstr ""
+msgstr "Utilizza nome istanza"
 
 #: common/models.py:601
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Usa il nome dell'istanza nella barra del titolo"
 
 #: common/models.py:607 company/models.py:100 company/models.py:101
 msgid "Company name"
-msgstr ""
+msgstr "Nome azienda"
 
 #: common/models.py:608
 msgid "Internal company name"
-msgstr ""
+msgstr "Nome interno dell'azienda"
 
 #: common/models.py:613
 msgid "Base URL"
-msgstr ""
+msgstr "URL Base"
 
 #: common/models.py:614
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "URL di base per l'istanza del server"
 
 #: common/models.py:620
 msgid "Default Currency"
-msgstr ""
+msgstr "Valuta predefinita"
 
 #: common/models.py:621
 msgid "Default currency"
-msgstr ""
+msgstr "Valuta predefinita"
 
 #: common/models.py:627
 msgid "Download from URL"
-msgstr ""
+msgstr "Scarica dall'URL"
 
 #: common/models.py:628
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Consenti il download di immagini e file remoti da URL esterno"
 
 #: common/models.py:634
 msgid "Barcode Support"
-msgstr ""
+msgstr "Supporto Codice A Barre"
 
 #: common/models.py:635
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "Abilita supporto scanner codici a barre"
 
 #: common/models.py:641
 msgid "IPN Regex"
@@ -1696,11 +1696,11 @@ msgstr ""
 
 #: common/models.py:756
 msgid "Show Price in BOM"
-msgstr ""
+msgstr "Mostra il prezzo nella BOM"
 
 #: common/models.py:757
 msgid "Include pricing information in BOM tables"
-msgstr ""
+msgstr "Includi le informazioni sui prezzi nelle tabelle BOM"
 
 #: common/models.py:763
 msgid "Show related parts"
@@ -1708,47 +1708,47 @@ msgstr "Mostra articoli correlati"
 
 #: common/models.py:764
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Visualizza parti correlate per ogni articolo"
 
 #: common/models.py:770
 msgid "Create initial stock"
-msgstr ""
+msgstr "Crea giacenza iniziale"
 
 #: common/models.py:771
 msgid "Create initial stock on part creation"
-msgstr ""
+msgstr "Crea giacenza iniziale sulla creazione articolo"
 
 #: common/models.py:777
 msgid "Internal Prices"
-msgstr ""
+msgstr "Prezzi interni"
 
 #: common/models.py:778
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Abilita prezzi interni per gli articoli"
 
 #: common/models.py:784
 msgid "Internal Price as BOM-Price"
-msgstr ""
+msgstr "Prezzo interno come BOM-Price"
 
 #: common/models.py:785
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr ""
+msgstr "Utilizzare il prezzo interno (se impostato) nel calcolo del prezzo BOM"
 
 #: common/models.py:791
 msgid "Part Name Display Format"
-msgstr ""
+msgstr "Formato di visualizzazione del nome articolo"
 
 #: common/models.py:792
 msgid "Format to display the part name"
-msgstr ""
+msgstr "Formato per visualizzare il nome dell'articolo"
 
 #: common/models.py:799
 msgid "Enable Reports"
-msgstr ""
+msgstr "Abilita Report di Stampa"
 
 #: common/models.py:800
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Abilita generazione di report di stampa"
 
 #: common/models.py:806 templates/stats.html:25
 msgid "Debug Mode"
@@ -1756,39 +1756,39 @@ msgstr ""
 
 #: common/models.py:807
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "Genera report in modalità debug (output HTML)"
 
 #: common/models.py:813
 msgid "Page Size"
-msgstr ""
+msgstr "Dimensioni pagina"
 
 #: common/models.py:814
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Dimensione predefinita della pagina per i report PDF"
 
 #: common/models.py:824
 msgid "Test Reports"
-msgstr ""
+msgstr "Stampa di prova"
 
 #: common/models.py:825
 msgid "Enable generation of test reports"
-msgstr ""
+msgstr "Abilita generazione di stampe di prova"
 
 #: common/models.py:831
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Scadenza giacenza"
 
 #: common/models.py:832
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Abilita funzionalità di scadenza della giacenza"
 
 #: common/models.py:838
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Vendi giacenza scaduta"
 
 #: common/models.py:839
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Consenti la vendita di stock scaduti"
 
 #: common/models.py:845
 msgid "Stock Stale Time"
@@ -1796,11 +1796,11 @@ msgstr ""
 
 #: common/models.py:846
 msgid "Number of days stock items are considered stale before expiring"
-msgstr ""
+msgstr "Numero di giorni in cui gli articoli in magazzino sono considerati obsoleti prima della scadenza"
 
 #: common/models.py:848
 msgid "days"
-msgstr ""
+msgstr "giorni"
 
 #: common/models.py:853
 msgid "Build Expired Stock"
@@ -1812,19 +1812,19 @@ msgstr ""
 
 #: common/models.py:860
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "Controllo della proprietà della giacenza"
 
 #: common/models.py:861
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "Abilita il controllo della proprietà sulle posizioni e gli oggetti in giacenza"
 
 #: common/models.py:867
 msgid "Group by Part"
-msgstr ""
+msgstr "Raggruppa per articolo"
 
 #: common/models.py:868
 msgid "Group stock items by part reference in table views"
-msgstr ""
+msgstr "Raggruppa le voci di giacenza per riferimento articolo nelle viste della tabella"
 
 #: common/models.py:874
 msgid "Build Order Reference Prefix"
@@ -1852,7 +1852,7 @@ msgstr ""
 
 #: common/models.py:891
 msgid "Purchase Order Reference Prefix"
-msgstr ""
+msgstr "Referenza ordine d'acquisto"
 
 #: common/models.py:892
 msgid "Prefix value for purchase order reference"
@@ -1860,43 +1860,43 @@ msgstr ""
 
 #: common/models.py:898
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Abilita password dimenticata"
 
 #: common/models.py:899
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Abilita la funzione password dimenticata nelle pagine di accesso"
 
 #: common/models.py:904
 msgid "Enable registration"
-msgstr ""
+msgstr "Abilita registrazione"
 
 #: common/models.py:905
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Abilita auto-registrazione per gli utenti nelle pagine di accesso"
 
 #: common/models.py:910
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO abilitato"
 
 #: common/models.py:911
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "Abilita SSO nelle pagine di accesso"
 
 #: common/models.py:916
 msgid "Email required"
-msgstr ""
+msgstr "Email richiesta"
 
 #: common/models.py:917
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Richiedi all'utente di fornire una email al momento dell'iscrizione"
 
 #: common/models.py:922
 msgid "Auto-fill SSO users"
-msgstr ""
+msgstr "Riempimento automatico degli utenti SSO"
 
 #: common/models.py:923
 msgid "Automatically fill out user-details from SSO account-data"
-msgstr ""
+msgstr "Compila automaticamente i dettagli dell'utente dai dati dell'account SSO"
 
 #: common/models.py:928
 msgid "Mail twice"
@@ -2138,7 +2138,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:1508
 msgid "Price"
-msgstr ""
+msgstr "Prezzo"
 
 #: common/models.py:1219
 msgid "Unit price at specified quantity"
@@ -2205,44 +2205,44 @@ msgstr "Descrizione dell'azienda"
 #: company/models.py:112 company/templates/company/company_base.html:70
 #: templates/js/translated/company.js:348
 msgid "Website"
-msgstr ""
+msgstr "Sito Web"
 
 #: company/models.py:113
 msgid "Company website URL"
-msgstr ""
+msgstr "Sito web aziendale"
 
 #: company/models.py:117 company/templates/company/company_base.html:88
 msgid "Address"
-msgstr ""
+msgstr "Indirizzo"
 
 #: company/models.py:118
 msgid "Company address"
-msgstr ""
+msgstr "Indirizzo dell'azienda"
 
 #: company/models.py:121
 msgid "Phone number"
-msgstr ""
+msgstr "Telefono"
 
 #: company/models.py:122
 msgid "Contact phone number"
-msgstr ""
+msgstr "Numero di telefono di contatto"
 
 #: company/models.py:125 company/templates/company/company_base.html:102
 #: templates/InvenTree/settings/user.html:46
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: company/models.py:125
 msgid "Contact email address"
-msgstr ""
+msgstr "Indirizzo email"
 
 #: company/models.py:128 company/templates/company/company_base.html:109
 msgid "Contact"
-msgstr ""
+msgstr "Contatto"
 
 #: company/models.py:129
 msgid "Point of contact"
-msgstr ""
+msgstr "Punto di contatto"
 
 #: company/models.py:131 company/models.py:348 company/models.py:564
 #: order/models.py:163 part/models.py:797
@@ -2250,7 +2250,7 @@ msgstr ""
 #: templates/js/translated/company.js:536
 #: templates/js/translated/company.js:825 templates/js/translated/part.js:984
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: company/models.py:131
 msgid "Link to external company information"
