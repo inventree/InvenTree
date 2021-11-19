@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from shutil import copyfile
 import os
 import json
 import sys
@@ -134,6 +133,7 @@ def rebuild_models(c):
 
     manage(c, "rebuild_models", pty=True)
 
+
 @task
 def rebuild_thumbnails(c):
     """
@@ -142,6 +142,7 @@ def rebuild_thumbnails(c):
 
     manage(c, "rebuild_thumbnails", pty=True)
 
+
 @task
 def clean_settings(c):
     """
@@ -149,6 +150,7 @@ def clean_settings(c):
     """
 
     manage(c, "clean_settings")
+
 
 @task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
@@ -306,7 +308,7 @@ def export_records(c, filename='data.json'):
     # Get an absolute path to the file
     if not os.path.isabs(filename):
         filename = os.path.join(localDir(), filename)
-        filename = os.path.abspath(filename) 
+        filename = os.path.abspath(filename)
 
     print(f"Exporting database records to file '{filename}'")
 

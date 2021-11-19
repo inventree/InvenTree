@@ -24,7 +24,7 @@ for line in str(out.decode()).split('\n'):
 if len(locales) > 0:
     print("There are {n} unstaged locale files:".format(n=len(locales)))
 
-    for l in locales:
-        print(" - {l}".format(l=l))
+    for lang in locales:
+        print(" - {l}".format(l=lang))
 
 sys.exit(len(locales))
