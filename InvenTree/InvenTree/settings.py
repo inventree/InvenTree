@@ -306,7 +306,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
 ])
 
 # Error reporting middleware
