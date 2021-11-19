@@ -16,9 +16,10 @@ import common.models
 
 from stock.models import StockItem, StockLocation
 from part.models import Part
+from basket.models import SalesOrderBasket
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
-from .serializers import StockItemLabelSerializer, StockLocationLabelSerializer, PartLabelSerializer
+from .models import BasketLabel, StockItemLabel, StockLocationLabel, PartLabel
+from .serializers import StockItemLabelSerializer, StockLocationLabelSerializer, PartLabelSerializer, BasketLabelSerializer
 
 
 class LabelListView(generics.ListAPIView):
@@ -487,6 +488,110 @@ class PartLabelPrint(generics.RetrieveAPIView, PartLabelMixin, LabelPrintMixin):
         return self.print(request, parts)
 
 
+class BasketLabelMixin:
+    """
+    Mixin for extracting Part objects from query parameters
+    """
+
+    def get_baskets(self):
+        """
+        Return a list of requested Part objects
+        """
+
+        baskets = []
+
+        params = self.request.query_params
+
+        for key in ['basket', 'basket[]', 'baskets', 'baskkets[]']:
+            if key in params:
+                baskets = params.getlist(key, [])
+                break
+                
+        valid_ids = []
+
+        for basket in baskets:
+            try:
+                valid_ids.append(int(basket))
+            except (ValueError):
+                pass
+
+        # List of Part objects which match provided values
+        return SalesOrderBasket.objects.filter(pk__in=valid_ids)
+
+class BasketLabelDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single BasketLabel object
+    """
+
+    queryset = BasketLabel.objects.all()
+    serializer_class = BasketLabelSerializer
+
+
+class BasketLabelList(LabelListView, BasketLabelMixin):
+    """
+    API endpoint for viewing list of PartLabel objects
+    """
+
+    queryset = BasketLabel.objects.all()
+    serializer_class = BasketLabelSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        baskets = self.get_baskets()
+
+        if len(baskets) > 0:
+
+            valid_label_ids = set()
+
+            for label in queryset.all():
+
+                matches = True
+
+                try:
+                    filters = InvenTree.helpers.validateFilterString(label.filters)
+                except ValidationError:
+                    continue
+
+                for basket in baskets:
+
+                    basket_query = SalesOrderBasket.objects.filter(pk=basket.pk)
+
+                    try:
+                        if not basket_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                if matches:
+                    valid_label_ids.add(label.pk)
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
+
+        return queryset
+
+class BasketLabelPrint(generics.RetrieveAPIView, BasketLabelMixin, LabelPrintMixin):
+    """
+    API endpoint for printing a PartLabel object
+    """
+
+    queryset = BasketLabel.objects.all()
+    serializer_class = BasketLabelSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Check if valid basket(s) have been provided
+        """
+
+        baskets = self.get_baskets()
+
+        return self.print(request, baskets)
+
+
 label_api_urls = [
 
     # Stock item labels
@@ -523,5 +628,17 @@ label_api_urls = [
 
         # List view
         url(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
+    ])),
+
+        # Part labels
+    url(r'^basket/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^print/', BasketLabelPrint.as_view(), name='api-basket-label-print'),
+            url(r'^.*$', BasketLabelDetail.as_view(), name='api-basket-label-detail'),
+        ])),
+
+        # List view
+        url(r'^.*$', BasketLabelList.as_view(), name='api-basket-label-list'),
     ])),
 ]

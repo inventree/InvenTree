@@ -432,27 +432,28 @@ class BasketLabel(LabelTemplate):
 
     def matches_basket(self, basket):
         """
-        Test if this label template matches a given StockLocation object
+        Test if this label template matches a given Basket object
         """
 
         try:
             filters = validateFilterString(self.filters)
-            locs = order.models.SalesOrderBasket.objects.filter(**filters)
+            baskets = order.models.SalesOrderBasket.objects.filter(**filters)
         except (ValidationError, FieldError):
             return False
 
-        locs = locs.filter(pk=basket.pk)
+        baskets = baskets.filter(pk=basket.pk)
 
-        return locs.exists()
+        return baskets.exists()
 
     def get_context_data(self, request):
         """
-        Generate context data for each provided StockLocation
+        Generate context data for each provided Basket
         """
 
         basket = self.object_to_print
 
         return {
             'basket': basket,
+            'basket_name': basket.name,
             'qr_data': basket.format_barcode(brief=True),
         }

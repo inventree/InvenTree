@@ -45,7 +45,7 @@ class BasketQRCode(QRCodeView):
     # role_required = ['stock_location.view', 'stock.view']
 
     def get_qr_data(self):
-        """ Generate QR code data for the StockLocation """
+        """ Generate QR code data for the Basket """
         try:
             loc = SalesOrderBasket.objects.get(id=self.pk)
             return loc.format_barcode()

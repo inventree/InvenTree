@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
+from .models import StockItemLabel, StockLocationLabel, PartLabel, BasketLabel
 
 
 class StockItemLabelSerializer(InvenTreeModelSerializer):
@@ -54,6 +54,24 @@ class PartLabelSerializer(InvenTreeModelSerializer):
 
     class Meta:
         model = PartLabel
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'label',
+            'filters',
+            'enabled',
+        ]
+
+class BasketLabelSerializer(InvenTreeModelSerializer):
+    """
+    Serializes a PartLabel object
+    """
+
+    label = InvenTreeAttachmentSerializerField(required=True)
+
+    class Meta:
+        model = BasketLabel
         fields = [
             'pk',
             'name',

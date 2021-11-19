@@ -178,6 +178,60 @@ function printPartLabels(parts) {
     );
 }
 
+function printBasketLabels(baskets) {
+    /**
+     * Print labels for the provided parts
+     */
+
+    if (baskets.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Baskets" %}',
+            '{% trans "Basket(s) must be selected before printing labels" %}',
+        );
+
+        return;
+    }
+
+    // Request available labels from the server
+    inventreeGet(
+        '{% url "api-basket-label-list" %}',
+        {
+            enabled: true,
+            basket: baskets,
+        },
+        {
+            success: function(response) {
+
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Labels Found" %}',
+                        '{% trans "No labels found which match the selected part(s)" %}',
+                    );
+
+                    return;
+                }
+
+                // Select label to print
+                selectLabel(
+                    response,
+                    baskets,
+                    {
+                        success: function(pk) {
+                            var url = `/api/label/basket/${pk}/print/?`;
+
+                            baskets.forEach(function(basket) {
+                                url += `parts[]=${basket}&`;
+                            });
+
+                            window.location.href = url;
+                        }
+                    }
+                );
+            }
+        }
+    );
+}
+
 
 function selectLabel(labels, items, options={}) {
     /**
