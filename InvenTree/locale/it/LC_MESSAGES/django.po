@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-18 21:13+0000\n"
-"PO-Revision-Date: 2021-11-18 21:49\n"
+"PO-Revision-Date: 2021-11-19 13:15\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -234,7 +234,7 @@ msgstr "Spagnolo"
 
 #: InvenTree/settings.py:667
 msgid "Spanish (Mexican"
-msgstr ""
+msgstr "Spagnolo (messicano)"
 
 #: InvenTree/settings.py:668
 msgid "French"
@@ -535,11 +535,11 @@ msgstr "Il codice a barre corrisponde già all'articolo"
 
 #: barcodes/api.py:204 barcodes/api.py:216
 msgid "Barcode hash already matches StockItem object"
-msgstr ""
+msgstr "Il codice a barre corrisponde già all'articolo in giacenza"
 
 #: barcodes/api.py:222
 msgid "Barcode associated with StockItem"
-msgstr ""
+msgstr "Codice a barre associato all'articolo in giacenza"
 
 #: build/forms.py:36 build/models.py:1283
 #: build/templates/build/build_base.html:124
@@ -574,7 +574,7 @@ msgstr "Quantità"
 
 #: build/forms.py:37
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Inserisci la quantità per l'output di compilazione"
 
 #: build/forms.py:41 order/forms.py:96 stock/forms.py:95
 #: stock/serializers.py:307 templates/js/translated/stock.js:194
@@ -584,15 +584,15 @@ msgstr "Codice Seriale"
 
 #: build/forms.py:43
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Inserisci i numeri di serie per gli output di compilazione (build option)"
 
 #: build/forms.py:49
 msgid "Confirm creation of build output"
-msgstr ""
+msgstr "Conferma la creazione dell'output di compilazione"
 
 #: build/forms.py:70
 msgid "Confirm deletion of build output"
-msgstr ""
+msgstr "Conferma la creazione dell'output di compilazione"
 
 #: build/forms.py:94
 msgid "Mark build as complete"
@@ -686,7 +686,7 @@ msgstr ""
 
 #: build/models.py:238
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Numero di riferimento ordine di vendita"
 
 #: build/models.py:242
 msgid "SalesOrder to which this build is allocated"
@@ -694,19 +694,19 @@ msgstr ""
 
 #: build/models.py:247 templates/js/translated/build.js:1347
 msgid "Source Location"
-msgstr ""
+msgstr "Posizione Di Origine"
 
 #: build/models.py:251
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Seleziona la posizione da cui prelevare la giacenza (lasciare vuoto per prelevare da qualsiasi posizione di magazzino)"
 
 #: build/models.py:256
 msgid "Destination Location"
-msgstr ""
+msgstr "Posizione Della Destinazione"
 
 #: build/models.py:260
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Seleziona il luogo in cui gli articoli completati saranno immagazzinati"
 
 #: build/models.py:264
 msgid "Build Quantity"
@@ -718,7 +718,7 @@ msgstr ""
 
 #: build/models.py:271
 msgid "Completed items"
-msgstr ""
+msgstr "Articoli completati"
 
 #: build/models.py:273
 msgid "Number of stock items which have been completed"
@@ -837,15 +837,15 @@ msgstr ""
 
 #: build/models.py:1127
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "L'articolo in giacenza è sovrallocato"
 
 #: build/models.py:1133 order/models.py:964
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "La quantità di assegnazione deve essere maggiore di zero"
 
 #: build/models.py:1139
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "La quantità deve essere 1 per lo stock serializzato"
 
 #: build/models.py:1193
 msgid "Selected stock item not found in BOM"
