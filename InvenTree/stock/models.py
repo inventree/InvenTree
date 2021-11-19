@@ -265,15 +265,15 @@ class StockItem(MPTTModel):
 
         user = kwargs.pop('user', None)
 
+        if user is None:
+            user = getattr(self, '_user', None)
+
         # If 'add_note = False' specified, then no tracking note will be added for item creation
         add_note = kwargs.pop('add_note', True)
 
         notes = kwargs.pop('notes', '')
-
-        if not self.pk:
-            # StockItem has not yet been saved
-            add_note = add_note and True
-        else:
+        
+        if self.pk:
             # StockItem has already been saved
 
             # Check if "interesting" fields have been changed
@@ -301,11 +301,10 @@ class StockItem(MPTTModel):
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-            add_note = False
-
         super(StockItem, self).save(*args, **kwargs)
 
-        if add_note:
+        # If user information is provided, and no existing note exists, create one!
+        if user and self.tracking_info.count() == 0:
 
             tracking_info = {
                 'status': self.status,

@@ -17,8 +17,9 @@ from rest_framework.serializers import ValidationError
 
 from sql_util.utils import SubqueryCount
 
-from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializer
+from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
@@ -551,8 +552,8 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
-    quantity = serializers.FloatField()
-
+    quantity = InvenTreeDecimalField()
+    
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
     

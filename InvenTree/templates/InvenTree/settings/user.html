@@ -12,12 +12,15 @@
 {% endblock %}
 
 {% block actions %}
+{% inventree_demo_mode as demo %}
+{% if not demo %}
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
 </div>
 <div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
     <span class='fas fa-key'></span> {% trans "Set Password" %}
 </div>
+{% endif %}
 {% endblock %}
 
 {% block content %}

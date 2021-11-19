@@ -92,6 +92,12 @@ DEBUG = _is_true(get_setting(
     CONFIG.get('debug', True)
 ))
 
+# Determine if we are running in "demo mode"
+DEMO_MODE = _is_true(get_setting(
+    'INVENTREE_DEMO',
+    CONFIG.get('demo', False)
+))
+
 DOCKER = _is_true(get_setting(
     'INVENTREE_DOCKER',
     False
@@ -234,7 +240,10 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 MEDIA_URL = '/media/'
 
 if DEBUG:
-    logger.info("InvenTree running in DEBUG mode")
+    logger.info("InvenTree running with DEBUG enabled")
+
+if DEMO_MODE:
+    logger.warning("InvenTree running in DEMO mode")
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -297,7 +306,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
 ])
 
 # Error reporting middleware
@@ -655,6 +664,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('es-mx', _('Spanish (Mexican')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
