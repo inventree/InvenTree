@@ -69,6 +69,13 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return queryset
 
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+        ctx['user'] = getattr(self.request, 'user', None)
+
+        return ctx
+
     def get_serializer(self, *args, **kwargs):
 
         kwargs['part_detail'] = True
@@ -78,16 +85,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
-
-    def update(self, request, *args, **kwargs):
-        """
-        Record the user who updated the item
-        """
-
-        # TODO: Record the user!
-        # user = request.user
-
-        return super().update(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         """
@@ -391,6 +388,13 @@ class StockList(generics.ListCreateAPIView):
     serializer_class = StockSerializers.StockItemSerializer
     queryset = StockItem.objects.all()
     filterset_class = StockFilter
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+        ctx['user'] = getattr(self.request, 'user', None)
+
+        return ctx
 
     def create(self, request, *args, **kwargs):
         """

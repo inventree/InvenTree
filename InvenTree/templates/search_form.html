@@ -2,8 +2,10 @@
 
 <form class="d-flex" action="{% url 'search' %}" method='post'>
     {% csrf_token %}
-    <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-bar" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
-    <button type="submit" id='search-submit' class="btn btn-secondary" title='{% trans "Search" %}'>
-        <span class='fas fa-search'></span>
-    </button>
+    <div class='input-group'>
+        <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-bar" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
+        <button type="submit" id='search-submit' class="btn btn-secondary" title='{% trans "Search" %}'>
+            <span class='fas fa-search'></span>
+        </button>
+    </div>
 </form>

@@ -1,5 +1,6 @@
 {% extends "account/base.html" %}
 
+{% load inventree_extras %}
 {% load i18n account socialaccount crispy_forms_tags inventree_extras %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
@@ -10,6 +11,7 @@
 {% settings_value 'LOGIN_ENABLE_PWD_FORGOT' as enable_pwd_forgot %}
 {% settings_value 'LOGIN_ENABLE_SSO' as enable_sso %}
 {% mail_configured as mail_conf %}
+{% inventree_demo_mode as demo %}
 
 <h1>{% trans "Sign In" %}</h1>
 
@@ -36,8 +38,15 @@ for a account and sign in below:{% endblocktrans %}</p>
   <div class="btn-group float-right" role="group">
     <button class="btn btn-success" type="submit">{% trans "Sign In" %}</button>
   </div>
-  {% if mail_conf and enable_pwd_forgot %}
+  {% if mail_conf and enable_pwd_forgot and not demo %}
   <a class="" href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>
+  {% endif %}
+  {% if demo %}
+  <p>
+    <h6>
+      {% trans "InvenTree demo instance" %} - <a href='https://inventree.readthedocs.io/en/latest/demo/'>{% trans "Click here for login details" %}</a>
+    </h6>
+  </p>
   {% endif %}
 </form>
 

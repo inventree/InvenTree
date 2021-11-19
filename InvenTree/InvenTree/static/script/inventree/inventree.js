@@ -208,7 +208,7 @@ function inventreeDocReady() {
     });
 
     // Callback for "admin view" button
-    $('#admin-button').click(function() {
+    $('#admin-button, .admin-button').click(function() {
         var url = $(this).attr('url');
 
         location.href = url;

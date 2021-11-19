@@ -2136,20 +2136,6 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
 
 
-def attach_file(instance, filename):
-    """ Function for storing a file for a PartAttachment
-
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
-
-    Returns:
-        path to store file, format: 'part_file_<pk>_filename'
-    """
-    # Construct a path to store a file attachment
-    return os.path.join('part_files', str(instance.part.id), filename)
-
-
 class PartAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a Part object
