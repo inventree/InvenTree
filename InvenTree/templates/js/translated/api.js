@@ -217,8 +217,10 @@ function showApiError(xhr, url) {
         break;
     }
 
-    message += '<hr>';
-    message += `URL: ${url}`;
+    if (url) {
+        message += '<hr>';
+        message += `URL: ${url}`;
+    }
 
     showMessage(title, {
         style: 'danger',

@@ -29,6 +29,7 @@ djangorestframework==3.12.4     # DRF framework
 flake8==3.8.3                   # PEP checking
 gunicorn>=20.1.0                # Gunicorn web server
 inventree                       # Install the latest version of the InvenTree API python library
+markdown==3.3.4                 # Force particular version of markdown
 pep8-naming==0.11.1             # PEP naming convention extension
 pillow==8.3.2                   # Image manipulation
 py-moneyed==0.8.0               # Specific version requirement for py-moneyed

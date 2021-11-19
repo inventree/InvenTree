@@ -15,6 +15,7 @@ import logging
 
 import os
 import random
+import socket
 import string
 import shutil
 import sys
@@ -89,6 +90,12 @@ with open(cfg_filename, 'r') as cfg:
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
+))
+
+# Determine if we are running in "demo mode"
+DEMO_MODE = _is_true(get_setting(
+    'INVENTREE_DEMO',
+    CONFIG.get('demo', False)
 ))
 
 DOCKER = _is_true(get_setting(
@@ -233,7 +240,10 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 MEDIA_URL = '/media/'
 
 if DEBUG:
-    logger.info("InvenTree running in DEBUG mode")
+    logger.info("InvenTree running with DEBUG enabled")
+
+if DEMO_MODE:
+    logger.warning("InvenTree running in DEMO mode")
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -369,30 +379,6 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
-
-background_workers = os.environ.get('INVENTREE_BACKGROUND_WORKERS', None)
-
-if background_workers is not None:
-    try:
-        background_workers = int(background_workers)
-    except ValueError:
-        background_workers = None
-
-if background_workers is None:
-    # Sensible default?
-    background_workers = 4
-
-# django-q configuration
-Q_CLUSTER = {
-    'name': 'InvenTree',
-    'workers': background_workers,
-    'timeout': 90,
-    'retry': 120,
-    'queue_limit': 50,
-    'bulk': 10,
-    'orm': 'default',
-    'sync': False,
-}
 
 """
 Configure the database backend based on the user-specified values.
@@ -571,11 +557,83 @@ DATABASES = {
 }
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
+_cache_config = CONFIG.get("cache", {})
+_cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
+_cache_port = _cache_config.get(
+    "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
+)
+
+if _cache_host:
+    # We are going to rely upon a possibly non-localhost for our cache,
+    # so don't wait too long for the cache as nothing in the cache should be
+    # irreplacable.  Django Q Cluster will just try again later.
+    _cache_options = {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
+        "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
+        "CONNECTION_POOL_KWARGS": {
+            "socket_keepalive": _is_true(
+                os.getenv("CACHE_TCP_KEEPALIVE", "1")
+            ),
+            "socket_keepalive_options": {
+                socket.TCP_KEEPCNT: int(
+                    os.getenv("CACHE_KEEPALIVES_COUNT", "5")
+                ),
+                socket.TCP_KEEPIDLE: int(
+                    os.getenv("CACHE_KEEPALIVES_IDLE", "1")
+                ),
+                socket.TCP_KEEPINTVL: int(
+                    os.getenv("CACHE_KEEPALIVES_INTERVAL", "1")
+                ),
+                socket.TCP_USER_TIMEOUT: int(
+                    os.getenv("CACHE_TCP_USER_TIMEOUT", "1000")
+                ),
+            },
+        },
+    }
+    CACHES = {
+        # Connection configuration for Django Q Cluster
+        "worker": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
+            "OPTIONS": _cache_options,
+        },
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/1",
+            "OPTIONS": _cache_options,
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        },
+    }
+
+try:
+    # 4 background workers seems like a sensible default
+    background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
+except ValueError:
+    background_workers = 4
+
+# django-q configuration
+Q_CLUSTER = {
+    'name': 'InvenTree',
+    'workers': background_workers,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': False,
 }
+
+if _cache_host:
+    # If using external redis cache, make the cache the broker for Django Q
+    # as well
+    Q_CLUSTER["django_redis"] = "worker"
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -615,6 +673,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('es-mx', _('Spanish (Mexican')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
@@ -623,6 +682,7 @@ LANGUAGES = [
     ('nl', _('Dutch')),
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('pt', _('Portugese')),
     ('ru', _('Russian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),

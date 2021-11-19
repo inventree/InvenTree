@@ -91,6 +91,13 @@ def inventree_in_debug_mode(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_demo_mode(*args, **kwargs):
+    """ Return True if the server is running in DEMO mode """
+
+    return djangosettings.DEMO_MODE
+
+
+@register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 
@@ -252,6 +259,15 @@ def global_settings(*args, **kwargs):
 
 
 @register.simple_tag()
+def visible_global_settings(*args, **kwargs):
+    """
+    Return any global settings which are not marked as 'hidden'
+    """
+
+    return InvenTreeSetting.allValues(exclude_hidden=True)
+
+
+@register.simple_tag()
 def progress_bar(val, max, *args, **kwargs):
     """
     Render a progress bar element
@@ -292,6 +308,19 @@ def progress_bar(val, max, *args, **kwargs):
 
 @register.simple_tag()
 def get_color_theme_css(username):
+    user_theme_name = get_user_color_theme(username)
+    # Build path to CSS sheet
+    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
+
+    # Build static URL
+    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
+
+    return inventree_css_static_url
+
+
+@register.simple_tag()
+def get_user_color_theme(username):
+    """ Get current user color theme """
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
         user_theme_name = user_theme.name
@@ -300,13 +329,7 @@ def get_color_theme_css(username):
     except ColorTheme.DoesNotExist:
         user_theme_name = 'default'
 
-    # Build path to CSS sheet
-    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
-
-    # Build static URL
-    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
-
-    return inventree_css_static_url
+    return user_theme_name
 
 
 @register.simple_tag()

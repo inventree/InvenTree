@@ -7,6 +7,7 @@ Stock database model definitions
 from __future__ import unicode_literals
 
 import os
+import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
@@ -223,6 +224,32 @@ class StockItem(MPTTModel):
         self.scheduled_for_deletion = True
         self.save()
 
+    def update_serial_number(self):
+        """
+        Update the 'serial_int' field, to be an integer representation of the serial number.
+        This is used for efficient numerical sorting
+        """
+
+        serial = getattr(self, 'serial', '')
+
+        # Default value if we cannot convert to an integer
+        serial_int = 0
+
+        if serial is not None:
+
+            serial = str(serial)
+
+            # Look at the start of the string - can it be "integerized"?
+            result = re.match(r'^(\d+)', serial)
+
+            if result and len(result.groups()) == 1:
+                try:
+                    serial_int = int(result.groups()[0])
+                except:
+                    serial_int = 0
+
+        self.serial_int = serial_int
+
     def save(self, *args, **kwargs):
         """
         Save this StockItem to the database. Performs a number of checks:
@@ -234,17 +261,19 @@ class StockItem(MPTTModel):
         self.validate_unique()
         self.clean()
 
+        self.update_serial_number()
+
         user = kwargs.pop('user', None)
+
+        if user is None:
+            user = getattr(self, '_user', None)
 
         # If 'add_note = False' specified, then no tracking note will be added for item creation
         add_note = kwargs.pop('add_note', True)
 
         notes = kwargs.pop('notes', '')
-
-        if not self.pk:
-            # StockItem has not yet been saved
-            add_note = add_note and True
-        else:
+        
+        if self.pk:
             # StockItem has already been saved
 
             # Check if "interesting" fields have been changed
@@ -272,11 +301,10 @@ class StockItem(MPTTModel):
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-            add_note = False
-
         super(StockItem, self).save(*args, **kwargs)
 
-        if add_note:
+        # If user information is provided, and no existing note exists, create one!
+        if user and self.tracking_info.count() == 0:
 
             tracking_info = {
                 'status': self.status,
@@ -503,6 +531,8 @@ class StockItem(MPTTModel):
         max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
+
+    serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
         verbose_name=_('External Link'),

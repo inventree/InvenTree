@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 from django.utils.translation import gettext as _
 
-from InvenTree.helpers import DownloadFile, GetExportFormats
+from InvenTree.helpers import DownloadFile, GetExportFormats, normalize
 
 from .admin import BomItemResource
 from .models import BomItem
@@ -59,7 +59,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
     uids = []
 
-    def add_items(items, level):
+    def add_items(items, level, cascade):
         # Add items at a given layer
         for item in items:
 
@@ -71,21 +71,13 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
             bom_items.append(item)
 
-            if item.sub_part.assembly:
+            if cascade and item.sub_part.assembly:
                 if max_levels is None or level < max_levels:
                     add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
 
-    if cascade:
-        # Cascading (multi-level) BOM
+    top_level_items = part.get_bom_items().order_by('id')
 
-        # Start with the top level
-        items_to_process = part.bom_items.all().order_by('id')
-
-        add_items(items_to_process, 1)
-
-    else:
-        # No cascading needed - just the top-level items
-        bom_items = [item for item in part.bom_items.all().order_by('id')]
+    add_items(top_level_items, 1, cascade)
 
     dataset = BomItemResource().export(queryset=bom_items, cascade=cascade)
 
@@ -148,8 +140,9 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
                     stock_data.append('')
             except AttributeError:
                 stock_data.append('')
+
             # Get part current stock
-            stock_data.append(str(bom_item.sub_part.available_stock))
+            stock_data.append(str(normalize(bom_item.sub_part.available_stock)))
 
             for s_idx, header in enumerate(stock_headers):
                 try:

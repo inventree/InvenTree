@@ -1,7 +1,7 @@
 {% load i18n %}
 <a href="#" id='select-{{ label }}' title='{% trans text %}' class="list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate sidebar-selector" data-bs-parent="#sidebar">
     <i class="bi bi-bootstrap"></i>
-    <span class='sidebar-item-icon fas {{ icon }}'></span>
+    <span class='sidebar-item-icon fas {{ icon|default:"fa-circle" }}'></span>
     <span class='sidebar-item-text' style='display: none;'>{% trans text %}</span>
     {% if badge %}
     <span id='sidebar-badge-{{ label }}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
