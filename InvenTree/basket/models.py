@@ -25,6 +25,9 @@ class SalesOrderBasket(models.Model):
     )
     # barcode = models.CharField(max_length=124, unique=True, null=True, default=None)
 
+    def get_current_so(self):
+        return self.sales_orders.filter(basket=self.pk, status=30).first()
+
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this Basket object """
 

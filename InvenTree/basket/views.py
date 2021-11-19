@@ -1,7 +1,9 @@
 from django.shortcuts import render
+from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 from .models import SalesOrderBasket
 from django.views.generic import ListView, DetailView
+from django.utils.translation import gettext_lazy as _
 # Create your views here.
 
 class SOBasketIndex(ListView):
@@ -34,3 +36,18 @@ class SOBasketDetail(DetailView):
         ctx = super().get_context_data(**kwargs)
 
         return ctx
+
+class BasketQRCode(QRCodeView):
+    """ View for displaying a QR code for a basket object """
+
+    ajax_form_title = _("Basket QR code")
+
+    # role_required = ['stock_location.view', 'stock.view']
+
+    def get_qr_data(self):
+        """ Generate QR code data for the StockLocation """
+        try:
+            loc = SalesOrderBasket.objects.get(id=self.pk)
+            return loc.format_barcode()
+        except SalesOrderBasket.DoesNotExist:
+            return None

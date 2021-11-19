@@ -11,7 +11,7 @@
 
 <div class='panel panel-default panel-inventree panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
-        <h4>{% trans "Sales Orders" %}</h4>
+        <h4>{% trans "Sales Orders History" %}</h4>
     </div>
     <div class='panel-content'>
         <!-- {% if roles.sales_order.change %}
@@ -38,4 +38,11 @@ loadSalesOrderTable(
         <!-- status: {{ .status }}, -->
     }
 );
+
+$('#show-qr-code').click(function() {
+    launchModalForm("{% url 'basket-qr' basket.id %}",
+    {
+        no_post: true,
+    });
+});
 {% endblock %}
