@@ -152,8 +152,6 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
-        'common_webhookendpoint',
-        'common_webhookmessage',
         'common_notificationentry',
         'company_contact',
         'users_owner',
