@@ -316,7 +316,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',
-    'maintenance_mode.middleware.MaintenanceModeMiddleware'
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
 ])
 
 # Error reporting middleware
@@ -680,6 +680,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('es-mx', _('Spanish (Mexican')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
