@@ -696,18 +696,3 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
-
-
-def inheritors(cls):
-    """
-    Return all classes that are subclasses from the supplied cls
-    """
-    subcls = set()
-    work = [cls]
-    while work:
-        parent = work.pop()
-        for child in parent.__subclasses__():
-            if child not in subcls:
-                subcls.add(child)
-                work.append(child)
-    return subcls
