@@ -3,8 +3,6 @@ from __future__ import unicode_literals
 import importlib
 import pathlib
 import logging
-import sysconfig
-import traceback
 from typing import OrderedDict
 from importlib import reload
 
@@ -26,6 +24,7 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
+from plugin.helpers import get_plugin_error
 
 
 logger = logging.getLogger('inventree')
@@ -416,9 +415,6 @@ class PluginAppConfig(AppConfig):
             cmd(*args, **kwargs)
             return True, []
         except Exception as error:
-            package_path = traceback.extract_tb(error.__traceback__)[-1].filename
-            install_path = sysconfig.get_paths()["purelib"]
-            package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
-            raise PluginLoadingError(package_name, str(error))
+            raise PluginLoadingError(get_plugin_error(error))
     # endregion
     # endregion
