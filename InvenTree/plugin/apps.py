@@ -70,12 +70,14 @@ class PluginAppConfig(AppConfig):
                 logger.info('Database not accessible while loading plugins')
             except PluginLoadingError as error:
                 logger.error(f'Encountered an error with {error.path}:\n{error.message}')
-                blocked_plugin = error.path
+                blocked_plugin = error.path  # we will not try to load this app again
 
                 # init apps without any integration plugins
                 self._clean_registry()
                 self._clean_installed_apps()
                 self._activate_plugins(force_reload=True)
+
+                # now the loading will re-start up with init
 
         # remove maintenance
         if not _maintenance:
