@@ -385,15 +385,14 @@ class PluginAppConfig(AppConfig):
 
     def _update_urls(self):
         from InvenTree.urls import urlpatterns
-        from plugin.urls import PLUGIN_BASE, get_integration_urls
+        from plugin.urls import get_integration_urls
 
         for index, a in enumerate(urlpatterns):
             if hasattr(a, 'app_name'):
                 if a.app_name == 'admin':
                     urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
                 elif a.app_name == 'plugin':
-                    integ_urls = get_integration_urls()
-                    urlpatterns[index] = url(f'^{PLUGIN_BASE}/', include((integ_urls, 'plugin')))
+                    urlpatterns[index] = get_integration_urls()
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False):
