@@ -1,8 +1,6 @@
 """
 load templates for loaded plugins
 """
-from django.conf import settings
-
 from django.template.loaders.filesystem import Loader as FilesystemLoader
 from pathlib import Path
 

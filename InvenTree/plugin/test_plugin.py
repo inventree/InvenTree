@@ -1,7 +1,6 @@
 """ Unit tests for plugins """
 
 from django.test import TestCase
-from django.conf import settings
 
 import plugin.plugin
 import plugin.integration

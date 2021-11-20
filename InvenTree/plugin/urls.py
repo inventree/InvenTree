@@ -1,7 +1,6 @@
 """
 URL lookup for plugin app
 """
-from django.conf import settings
 from django.conf.urls import url, include
 
 from plugin.helpers import get_plugin_error

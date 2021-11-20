@@ -6,15 +6,11 @@ import importlib
 import pkgutil
 import logging
 
-from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 
 # Action plugins
 import plugin.builtin.action as action
 from plugin.action import ActionPlugin
-
-# Integration
-from .integration import IntegrationPluginBase
 
 
 logger = logging.getLogger("inventree")

@@ -52,7 +52,6 @@ class Plugins:
         # mixins
         self.mixins_globalsettings = {}
 
-
     # region public plugin functions
     def load_plugins(self):
         """load and activate all IntegrationPlugins"""
