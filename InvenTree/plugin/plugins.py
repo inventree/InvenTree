@@ -9,6 +9,8 @@ import logging
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 
+from InvenTree.helpers import log_plugin_error
+
 # Action plugins
 import plugin.builtin.action as action
 from plugin.action import ActionPlugin
@@ -43,14 +45,10 @@ def get_modules(pkg, recursive: bool = False):
             pass
         except Exception as error:
             # this 'protects' against malformed plugin modules by more or less silently failing
-            # TODO log
+            # TODO log to logging
 
-            # make sure the registry is set up
-            if 'discovery' not in settings.INTEGRATION_ERRORS:
-                settings.INTEGRATION_ERRORS['discovery'] = []
-
-            # add error to stack
-            settings.INTEGRATION_ERRORS['discovery'].append({name: str(error)})
+            # log to stack
+            log_plugin_error({name: str(error)}, 'discovery')
 
     return [v for k, v in context.items()]
 
