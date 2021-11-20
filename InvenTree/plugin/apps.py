@@ -9,7 +9,7 @@ from importlib import reload
 from django.apps import AppConfig, apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.urls import clear_url_caches
 from django.contrib import admin
 from django.utils.text import slugify
