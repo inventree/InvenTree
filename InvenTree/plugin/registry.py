@@ -75,6 +75,7 @@ class Plugins:
             except (OperationalError, ProgrammingError):
                 # Exception if the database has not been migrated yet
                 logger.info('Database not accessible while loading plugins')
+                break
             except IntegrationPluginError as error:
                 logger.error(f'Encountered an error with {error.path}:\n{error.message}')
                 log_plugin_error({error.path: error.message}, 'load')
