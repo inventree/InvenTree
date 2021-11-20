@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 14:12\n"
+"PO-Revision-Date: 2021-11-20 15:31\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2345,7 +2345,7 @@ msgstr ""
 
 #: company/models.py:416
 msgid "Parameter name"
-msgstr ""
+msgstr "Nome parametro"
 
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:90
@@ -2356,13 +2356,13 @@ msgstr ""
 
 #: company/models.py:423
 msgid "Parameter value"
-msgstr ""
+msgstr "Valore del parametro"
 
 #: company/models.py:429 part/models.py:882 part/models.py:2397
 #: part/templates/part/detail.html:59 templates/js/translated/company.js:649
 #: templates/js/translated/part.js:650
 msgid "Units"
-msgstr ""
+msgstr "Unità"
 
 #: company/models.py:430
 msgid "Parameter units"
