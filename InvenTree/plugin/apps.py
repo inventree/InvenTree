@@ -29,6 +29,15 @@ from plugin.integration import IntegrationPluginBase
 logger = logging.getLogger('inventree')
 
 
+class PluginLoadingError(Exception):
+    def __init__(self, path, message):
+        self.path = path
+        self.message = message
+    
+    def __str__(self):
+        return self.message
+
+
 class PluginAppConfig(AppConfig):
     name = 'plugin'
 
