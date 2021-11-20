@@ -1,5 +1,5 @@
 """sample of a broken python file that will be ignroed on import"""
-from plugin.integration import IntegrationPluginBase
+from plugin import IntegrationPluginBase
 
 
 class BrokenIntegrationPlugin(IntegrationPluginBase):

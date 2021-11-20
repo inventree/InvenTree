@@ -1,6 +1,6 @@
 """sample implementation for IntegrationPlugin"""
-from plugin.integration import IntegrationPluginBase
-from plugin.builtin.integration.mixins import UrlsMixin
+from plugin import IntegrationPluginBase
+from plugin.mixins import UrlsMixin
 
 
 class NoIntegrationPlugin(IntegrationPluginBase):
