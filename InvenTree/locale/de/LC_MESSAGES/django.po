@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 08:33\n"
+"PO-Revision-Date: 2021-11-20 21:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -234,7 +234,7 @@ msgstr "Spanisch"
 
 #: InvenTree/settings.py:667
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanisch (Mexikanisch)"
 
 #: InvenTree/settings.py:668
 msgid "French"
@@ -1242,7 +1242,7 @@ msgstr "Nicht verfolgter Bestand wurde Bauauftrag noch nicht vollständig zugewi
 
 #: build/templates/build/detail.html:208
 msgid "Allocate selected items"
-msgstr ""
+msgstr "Ausgewählte Positionen zuweisen"
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
@@ -1266,11 +1266,11 @@ msgstr "Endproduktaktionen"
 
 #: build/templates/build/detail.html:250
 msgid "Complete selected items"
-msgstr ""
+msgstr "Ausgewählte Positionen abschließen"
 
 #: build/templates/build/detail.html:251
 msgid "Complete outputs"
-msgstr ""
+msgstr "Endprodukte fertigstellen"
 
 #: build/templates/build/detail.html:266
 msgid "Completed Build Outputs"
@@ -1340,7 +1340,7 @@ msgstr "Zuordnung abgeschlossen"
 
 #: build/templates/build/detail.html:514
 msgid "All untracked stock items have been allocated"
-msgstr ""
+msgstr "Alle nicht verfolgten Lagerartikel wurden zugewiesen"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:433
 msgid "New Build Order"
@@ -1920,7 +1920,7 @@ msgstr "Gruppe bei Registrierung"
 
 #: common/models.py:956
 msgid "Group to which new users are assigned on registration"
-msgstr ""
+msgstr "Gruppe der neue Benutzer bei der Registrierung zugewiesen werden"
 
 #: common/models.py:1001
 msgid "Show subscribed parts"
@@ -2370,7 +2370,7 @@ msgstr "Parametereinheit"
 
 #: company/models.py:502
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "Verlinktes Herstellerteil muss dasselbe Basisteil referenzieren"
 
 #: company/models.py:545 company/templates/company/company_base.html:121
 #: company/templates/company/supplier_part.html:94 order/models.py:263
@@ -2891,7 +2891,7 @@ msgstr "Muster für die Erstellung von Label-Dateinamen"
 
 #: label/models.py:258
 msgid "Query filters (comma-separated list of key=value pairs),"
-msgstr ""
+msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
 #: label/models.py:259 label/models.py:319 label/models.py:366
 #: report/models.py:322 report/models.py:457 report/models.py:495
@@ -2904,7 +2904,7 @@ msgstr "Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
 #: label/models.py:365
 msgid "Part query filters (comma-separated value of key=value pairs)"
-msgstr ""
+msgstr "Teile-Abfragefilter (kommagetrennte Liste mit Schlüssel=Wert-Paaren)"
 
 #: order/forms.py:26 order/templates/order/order_base.html:52
 msgid "Place order"
@@ -3177,7 +3177,7 @@ msgstr "Ziel-Lagerort muss angegeben werden"
 
 #: order/serializers.py:326
 msgid "Supplied barcode values must be unique"
-msgstr ""
+msgstr "Barcode muss eindeutig sein"
 
 #: order/serializers.py:568
 msgid "Sale price currency"
@@ -3200,7 +3200,7 @@ msgstr "Exportiere Bestellung in Datei"
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
 msgid "Order actions"
-msgstr ""
+msgstr "Bestell-Aktionen"
 
 #: order/templates/order/order_base.html:45
 #: order/templates/order/sales_order_base.html:58
@@ -4129,15 +4129,15 @@ msgstr "Zuliefererteil muss festgelegt sein"
 
 #: part/models.py:2826
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "Stücklisten Ersatzteile"
 
 #: part/models.py:2848
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "Ersatzteil kann nicht identisch mit dem Hauptteil sein"
 
 #: part/models.py:2860
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Übergeordnete Stücklisten Position"
 
 #: part/models.py:2868
 msgid "Substitute part"
@@ -4233,7 +4233,7 @@ msgstr "Sie haben Benachrichtigungen für diese Kategorie abonniert"
 
 #: part/templates/part/category.html:32
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "Benachrichtigungen für diese Kategorie abonnieren"
 
 #: part/templates/part/category.html:38
 msgid "Category Actions"
@@ -4562,7 +4562,7 @@ msgstr "Sie haben Benachrichtigungen für dieses Teil abonniert"
 
 #: part/templates/part/part_base.html:35
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Benachrichtigungen für dieses Teil abonnieren"
 
 #: part/templates/part/part_base.html:43
 #: stock/templates/stock/item_base.html:28
@@ -5396,15 +5396,15 @@ msgstr "Test Notizen"
 
 #: stock/serializers.py:166
 msgid "Purchase price of this stock item"
-msgstr ""
+msgstr "Kaufpreis für diesen Lagerartikel"
 
 #: stock/serializers.py:173
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Kaufwährung dieses Lagerartikels"
 
 #: stock/serializers.py:287
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Anzahl der zu serialisierenden Lagerartikel eingeben"
 
 #: stock/serializers.py:302
 #, python-brace-format
@@ -5425,7 +5425,7 @@ msgstr "Optionales Notizfeld"
 
 #: stock/serializers.py:339
 msgid "Serial numbers cannot be assigned to this part"
-msgstr ""
+msgstr "Seriennummern können diesem Teil nicht zugewiesen werden"
 
 #: stock/serializers.py:557
 msgid "StockItem primary key value"
@@ -5757,7 +5757,7 @@ msgstr "Neuer Lagerort"
 
 #: stock/templates/stock/location.html:86
 msgid "Top level stock location"
-msgstr ""
+msgstr "Oberster Lagerstandort"
 
 #: stock/templates/stock/location.html:95
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
@@ -6495,20 +6495,20 @@ msgstr "Bitte kontaktieren Sie Ihren Administrator für mehr Informationen"
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
-msgstr ""
+msgstr "Für die folgenden Bauaufträge werden Lagerartikel benötigt"
 
 #: templates/email/build_order_required_stock.html:8
 #, python-format
 msgid "Build order %(build)s - building %(quantity)s x %(part)s"
-msgstr ""
+msgstr "Bauauftrag %(build)s - %(quantity)s x %(part)s bauen"
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
-msgstr ""
+msgstr "Klicken Sie auf den folgenden Link, um diesen Bauauftrag anzuzeigen"
 
 #: templates/email/build_order_required_stock.html:14
 msgid "The following parts are low on required stock"
-msgstr ""
+msgstr "Bei den folgenden Teilen gibt es wenige Lagerartikel"
 
 #: templates/email/build_order_required_stock.html:18
 #: templates/js/translated/bom.js:989
@@ -6905,7 +6905,7 @@ msgstr "benötigtes Teil"
 
 #: templates/js/translated/bom.js:994
 msgid "Inherited from parent BOM"
-msgstr ""
+msgstr "Geerbt von übergeordneter Stückliste"
 
 #: templates/js/translated/build.js:78
 msgid "Edit Build Order"
@@ -6917,7 +6917,7 @@ msgstr "Bauauftrag erstellen"
 
 #: templates/js/translated/build.js:133
 msgid "Allocate stock items to this build output"
-msgstr ""
+msgstr "Lagerartikel zu diesem Endprodukt zuweisen"
 
 #: templates/js/translated/build.js:144
 msgid "Unallocate stock from build output"
@@ -6933,7 +6933,7 @@ msgstr "Endprodukt entfernen"
 
 #: templates/js/translated/build.js:184
 msgid "Are you sure you wish to unallocate stock items from this build?"
-msgstr ""
+msgstr "Sind Sie sicher, dass sie alle Lagerartikel von diesem Bauauftrag entfernen möchten?"
 
 #: templates/js/translated/build.js:202
 msgid "Unallocate Stock Items"
