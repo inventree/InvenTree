@@ -885,3 +885,4 @@ if DEBUG or TESTING:
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
+PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5 if not TESTING else 1)  # how often should plugin loading be tried?

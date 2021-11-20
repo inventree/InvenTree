@@ -65,6 +65,7 @@ class Plugins:
 
         registered_sucessfull = False
         blocked_plugin = None
+        retry_counter = settings.PLUGIN_RETRY
         while not registered_sucessfull:
             try:
                 # we are using the db so for migrations etc we need to try this block
@@ -83,6 +84,13 @@ class Plugins:
                 self._clean_registry()
                 self._clean_installed_apps()
                 self._activate_plugins(force_reload=True)
+
+                # we do not want to end in an endless loop
+                retry_counter -=1
+                if retry_counter <= 0:
+                    if settings.PLUGIN_TESTING:
+                        print('Max retries, breaking loading')
+                    break
 
                 # now the loading will re-start up with init
 
