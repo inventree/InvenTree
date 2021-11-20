@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 20:35\n"
+"PO-Revision-Date: 2021-11-20 21:34\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -4237,15 +4237,15 @@ msgstr ""
 
 #: part/templates/part/category.html:38
 msgid "Category Actions"
-msgstr ""
+msgstr "Azioni Categoria"
 
 #: part/templates/part/category.html:43
 msgid "Edit category"
-msgstr ""
+msgstr "Modifica categoria"
 
 #: part/templates/part/category.html:44
 msgid "Edit Category"
-msgstr ""
+msgstr "Modifica Categoria"
 
 #: part/templates/part/category.html:48
 msgid "Delete category"
@@ -4257,7 +4257,7 @@ msgstr "Cancella categoria"
 
 #: part/templates/part/category.html:57
 msgid "Create new part category"
-msgstr ""
+msgstr "Crea nuova categoria articoli"
 
 #: part/templates/part/category.html:58
 msgid "New Category"
@@ -4265,7 +4265,7 @@ msgstr "Nuova categoria"
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
-msgstr ""
+msgstr "Categoria articolo di livello superiore"
 
 #: part/templates/part/category.html:79
 msgid "Category Path"
@@ -4285,60 +4285,60 @@ msgstr "Articoli (incluse le sottocategorie)"
 
 #: part/templates/part/category.html:145
 msgid "Export Part Data"
-msgstr ""
+msgstr "Esporta dati articolo"
 
 #: part/templates/part/category.html:146 part/templates/part/category.html:170
 msgid "Export"
-msgstr ""
+msgstr "Esporta"
 
 #: part/templates/part/category.html:149
 msgid "Create new part"
-msgstr ""
+msgstr "Crea nuovo articolo"
 
 #: part/templates/part/category.html:150 templates/js/translated/bom.js:40
 msgid "New Part"
-msgstr ""
+msgstr "Nuovo articolo"
 
 #: part/templates/part/category.html:164
 msgid "Set category"
-msgstr ""
+msgstr "Imposta categoria"
 
 #: part/templates/part/category.html:164
 msgid "Set Category"
-msgstr ""
+msgstr "Imposta Categoria"
 
 #: part/templates/part/category.html:168
 msgid "Print Labels"
-msgstr ""
+msgstr "Stampa Etichette"
 
 #: part/templates/part/category.html:170
 msgid "Export Data"
-msgstr ""
+msgstr "Esporta Dati"
 
 #: part/templates/part/category.html:184
 msgid "Part Parameters"
-msgstr ""
+msgstr "Parametri articolo"
 
 #: part/templates/part/category.html:261
 msgid "Create Part Category"
-msgstr ""
+msgstr "Crea Categoria Articolo"
 
 #: part/templates/part/category.html:288
 msgid "Create Part"
-msgstr ""
+msgstr "Crea Articolo"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
-msgstr ""
+msgstr "Sei sicuro di voler eliminare la categoria"
 
 #: part/templates/part/category_delete.html:8
 #, python-format
 msgid "This category contains %(count)s child categories"
-msgstr ""
+msgstr "Questa categoria contiene %(count)s sottocategorie"
 
 #: part/templates/part/category_delete.html:9
 msgid "If this category is deleted, these child categories will be moved to the"
-msgstr ""
+msgstr "Se questa categoria viene eliminata, queste sottocategorie verranno spostate al"
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
@@ -4445,7 +4445,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:366
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Distinta base"
 
 #: part/templates/part/detail.html:371
 msgid "Export actions"
@@ -4606,15 +4606,15 @@ msgstr ""
 
 #: part/templates/part/part_base.html:87
 msgid "Duplicate part"
-msgstr ""
+msgstr "Duplica articolo"
 
 #: part/templates/part/part_base.html:90
 msgid "Edit part"
-msgstr ""
+msgstr "Modifica articolo"
 
 #: part/templates/part/part_base.html:93
 msgid "Delete part"
-msgstr ""
+msgstr "Cancella articolo"
 
 #: part/templates/part/part_base.html:109
 msgid "Part is a template part (variants can be made from this part)"
@@ -4651,7 +4651,7 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:175
 #: templates/js/translated/part.js:464 templates/js/translated/part.js:541
 msgid "Inactive"
-msgstr ""
+msgstr "Inattivo"
 
 #: part/templates/part/part_base.html:155
 #, python-format
@@ -4661,11 +4661,11 @@ msgstr ""
 #: part/templates/part/part_base.html:172 templates/js/translated/order.js:1524
 #: templates/js/translated/table_filters.js:182
 msgid "In Stock"
-msgstr ""
+msgstr "In magazzino"
 
 #: part/templates/part/part_base.html:185 templates/js/translated/part.js:961
 msgid "On Order"
-msgstr ""
+msgstr "Ordinato"
 
 #: part/templates/part/part_base.html:192 templates/InvenTree/index.html:178
 msgid "Required for Build Orders"
@@ -4716,7 +4716,7 @@ msgstr ""
 #: part/templates/part/prices.html:59 part/templates/part/prices.html:108
 #: part/templates/part/prices.html:125
 msgid "Total Cost"
-msgstr ""
+msgstr "Costo Totale"
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
 #: templates/js/translated/bom.js:518
@@ -4885,7 +4885,7 @@ msgstr ""
 
 #: part/templatetags/inventree_extras.py:113
 msgid "Unknown database"
-msgstr ""
+msgstr "Database sconosciuto"
 
 #: part/views.py:95
 msgid "Add Related Part"
@@ -4950,7 +4950,7 @@ msgstr ""
 
 #: part/views.py:1261
 msgid "Export Bill of Materials"
-msgstr ""
+msgstr "Esporta Distinta base"
 
 #: part/views.py:1313
 msgid "Confirm Part Deletion"
@@ -4978,15 +4978,15 @@ msgstr ""
 
 #: part/views.py:1554 templates/js/translated/part.js:309
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Modifica Categoria Articoli"
 
 #: part/views.py:1592
 msgid "Delete Part Category"
-msgstr ""
+msgstr "Elimina categoria"
 
 #: part/views.py:1598
 msgid "Part category was deleted"
-msgstr ""
+msgstr "La Categoria articoli è stata eliminata"
 
 #: part/views.py:1607
 msgid "Create Category Parameter Template"
@@ -5135,7 +5135,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:92
 #: templates/js/translated/order.js:685 templates/js/translated/stock.js:1887
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: report/templates/report/inventree_test_report_base.html:103
 msgid "Pass"
@@ -5143,17 +5143,17 @@ msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:105
 msgid "Fail"
-msgstr ""
+msgstr "Fallito"
 
 #: stock/api.py:422
 msgid "Quantity is required"
-msgstr ""
+msgstr "La quantità è richiesta"
 
 #: stock/forms.py:91 stock/forms.py:265 stock/models.py:587
 #: stock/templates/stock/item_base.html:382
 #: templates/js/translated/stock.js:1246
 msgid "Expiry Date"
-msgstr ""
+msgstr "Data di Scadenza"
 
 #: stock/forms.py:92 stock/forms.py:266
 msgid "Expiration date for this stock item"
@@ -5189,11 +5189,11 @@ msgstr ""
 
 #: stock/forms.py:236
 msgid "Destination location for uninstalled items"
-msgstr ""
+msgstr "Posizione di destinazione per gli elementi disinstallati"
 
 #: stock/forms.py:240
 msgid "Confirm uninstall"
-msgstr ""
+msgstr "Conferma la disinstallazione"
 
 #: stock/forms.py:240
 msgid "Confirm removal of installed stock items"
@@ -5206,7 +5206,7 @@ msgstr ""
 
 #: stock/models.py:61 stock/models.py:625
 msgid "Select Owner"
-msgstr ""
+msgstr "Seleziona Owner"
 
 #: stock/models.py:352
 msgid "StockItem with this serial number already exists"
@@ -5243,7 +5243,7 @@ msgstr ""
 
 #: stock/models.py:485
 msgid "Base part"
-msgstr ""
+msgstr "Articolo base"
 
 #: stock/models.py:493
 msgid "Select a matching supplier part for this stock item"
@@ -5264,7 +5264,7 @@ msgstr ""
 
 #: stock/models.py:513 stock/templates/stock/item_base.html:271
 msgid "Installed In"
-msgstr ""
+msgstr "Installato In"
 
 #: stock/models.py:516
 msgid "Is this item installed in another item?"
@@ -5308,7 +5308,7 @@ msgstr ""
 
 #: stock/models.py:601
 msgid "Delete on deplete"
-msgstr ""
+msgstr "Elimina al esaurimento"
 
 #: stock/models.py:601
 msgid "Delete this Stock Item when stock is depleted"
@@ -5514,7 +5514,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:69
 #: stock/templates/stock/location.html:47 templates/stock_table.html:50
 msgid "Count stock"
-msgstr ""
+msgstr "Conta giacenza"
 
 #: stock/templates/stock/item_base.html:72 templates/stock_table.html:48
 msgid "Add stock"
