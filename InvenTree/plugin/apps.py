@@ -57,15 +57,20 @@ class PluginAppConfig(AppConfig):
         if not _maintenance:
             set_maintenance_mode(True)
 
-        try:
-            # we are using the db so for migrations etc we need to try this block
-            self._init_plugins()
-            self._activate_plugins()
-        except (OperationalError, ProgrammingError):
-            # Exception if the database has not been migrated yet
-            logger.info('Database not accessible while loading plugins')
-        except PluginLoadingError as error:
-            logger.error(f'Encountered an error with {error.path}:\n{error.message}')
+        registered_sucessfull = False
+        blocked_plugin = None
+        while not registered_sucessfull:
+            try:
+                # we are using the db so for migrations etc we need to try this block
+                self._init_plugins(blocked_plugin)
+                self._activate_plugins()
+                registered_sucessfull = True
+            except (OperationalError, ProgrammingError):
+                # Exception if the database has not been migrated yet
+                logger.info('Database not accessible while loading plugins')
+            except PluginLoadingError as error:
+                logger.error(f'Encountered an error with {error.path}:\n{error.message}')
+                blocked_plugin = error.path
 
         # remove maintenance
         if not _maintenance:
@@ -121,8 +126,13 @@ class PluginAppConfig(AppConfig):
         logger.info(f'Found {len(settings.PLUGINS)} plugins!')
         logger.info(", ".join([a.__module__ for a in settings.PLUGINS]))
 
-    def _init_plugins(self):
-        """initialise all found plugins"""
+    def _init_plugins(self, disabled=None):
+        """initialise all found plugins
+
+        :param disabled: loading path of disabled app, defaults to None
+        :type disabled: str, optional
+        :raises error: PluginLoadingError
+        """
         from plugin.models import PluginConfig
 
         logger.info('Starting plugin initialisation')
@@ -146,6 +156,20 @@ class PluginAppConfig(AppConfig):
 
             # always activate if testing
             if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
+                # check if the plugin was blocked -> threw an error
+                if disabled:
+                    if plugin.__name__==disabled:
+                        # errors are bad so disable the plugin in the database
+                        # but only if not in testing mode as that breaks in the GH pipeline
+                        if not settings.PLUGIN_TESTING:
+                            plugin_db_setting.active = False
+                            # TODO save the error to the plugin
+                            plugin_db_setting.save()
+
+                        # add to inactive plugins so it shows up in the ui
+                        settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
+                        continue  # continue -> the plugin is not loaded
+
                 # init package
                 # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
@@ -162,14 +186,18 @@ class PluginAppConfig(AppConfig):
                 # save for later reference
                 settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
 
-    def _activate_plugins(self):
-        """run integration functions for all plugins"""
+    def _activate_plugins(self, force_reload=False):
+        """run integration functions for all plugins
+
+        :param force_reload: force reload base apps, defaults to False
+        :type force_reload: bool, optional
+        """
         # activate integrations
         plugins = settings.INTEGRATION_PLUGINS.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
         self.activate_integration_globalsettings(plugins)
-        self.activate_integration_app(plugins)
+        self.activate_integration_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
         """run integration deactivation functions for all plugins"""
@@ -209,7 +237,14 @@ class PluginAppConfig(AppConfig):
     # endregion
 
     # region integration_app
-    def activate_integration_app(self, plugins):
+    def activate_integration_app(self, plugins, force_reload=False):
+        """activate AppMixin plugins - add custom apps and reload
+
+        :param plugins: list of IntegrationPlugins that should be installed
+        :type plugins: dict
+        :param force_reload: only reload base apps, defaults to False
+        :type force_reload: bool, optional
+        """
         from common.models import InvenTreeSetting
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
@@ -225,9 +260,9 @@ class PluginAppConfig(AppConfig):
                         settings.INTEGRATION_APPS_PATHS += [plugin_path]
                         apps_changed = True
 
-            if apps_changed:
+            if apps_changed or force_reload:
                 # if apps were changed reload
-                if settings.INTEGRATION_APPS_LOADING:
+                if settings.INTEGRATION_APPS_LOADING or force_reload:
                     settings.INTEGRATION_APPS_LOADING = False
                     self._reload_apps(populate=True)
                 self._reload_apps()
