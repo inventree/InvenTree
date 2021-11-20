@@ -884,9 +884,6 @@ if DEBUG or TESTING:
 PLUGINS = []
 INTEGRATION_PLUGIN_GLOBALSETTING = {}
 
-INTEGRATION_APPS_PATHS = []         # Holds all added plugin_paths
-INTEGRATION_ERRORS = {}              # Holds discovering errors
-
 # Test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # used to force enable everything plugin
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)

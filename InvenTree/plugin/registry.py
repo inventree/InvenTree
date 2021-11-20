@@ -41,7 +41,12 @@ class Plugins:
 
         # flags
         self.is_loading = False
-        self.apps_loading = True     # Marks if apps were reloaded yet
+        self.apps_loading = True        # Marks if apps were reloaded yet
+
+        # integration specific
+        self.installed_apps = []         # Holds all added plugin_paths
+
+        self.errors = {}                 # Holds discovering errors
 
     # region public plugin functions
     def load_plugins(self):
@@ -265,7 +270,7 @@ class Plugins:
                     plugin_path = self._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
                         settings.INSTALLED_APPS += [plugin_path]
-                        settings.INTEGRATION_APPS_PATHS += [plugin_path]
+                        self.installed_apps += [plugin_path]
                         apps_changed = True
 
             # if apps were changed or force loading base apps -> reload
@@ -288,7 +293,7 @@ class Plugins:
         this is needed if plugins were loaded earlier and then reloaded as models and admins rely on imports
         those register models and admin in their respective objects (e.g. admin.site for admin)
         """
-        for plugin_path in settings.INTEGRATION_APPS_PATHS:
+        for plugin_path in self.installed_apps:
             try:
                 app_name = plugin_path.split('.')[-1]
                 app_config = apps.get_app_config(app_name)
@@ -332,7 +337,7 @@ class Plugins:
     def deactivate_integration_app(self):
         """deactivate integration app - some magic required"""
         # unregister models from admin
-        for plugin_path in settings.INTEGRATION_APPS_PATHS:
+        for plugin_path in self.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed
             app_name = plugin_path.split('.')[-1]
             try:
@@ -370,11 +375,11 @@ class Plugins:
         self._update_urls()
 
     def _clean_installed_apps(self):
-        for plugin in settings.INTEGRATION_APPS_PATHS:
+        for plugin in self.installed_apps:
             if plugin in settings.INSTALLED_APPS:
                 settings.INSTALLED_APPS.remove(plugin)
 
-        settings.INTEGRATION_APPS_PATHS = []
+        self.installed_apps = []
 
     def _clean_registry(self):
         # remove all plugins from registry

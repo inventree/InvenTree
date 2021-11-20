@@ -57,4 +57,4 @@ def safe_url(view_name, *args, **kwargs):
 @register.simple_tag()
 def plugin_errors(*args, **kwargs):
     """Return all plugin errors"""
-    return djangosettings.INTEGRATION_ERRORS
+    return plugin_reg.errors

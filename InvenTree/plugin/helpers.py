@@ -10,12 +10,14 @@ from django.conf import settings
 
 # region logging / errors
 def log_plugin_error(error, reference: str = 'general'):
+    from plugin import plugin_reg
+
     # make sure the registry is set up
-    if reference not in settings.INTEGRATION_ERRORS:
-        settings.INTEGRATION_ERRORS[reference] = []
+    if reference not in plugin_reg.errors:
+        plugin_reg.errors[reference] = []
 
     # add error to stack
-    settings.INTEGRATION_ERRORS[reference].append(error)
+    plugin_reg.errors[reference].append(error)
 
 
 class IntegrationPluginError(Exception):
