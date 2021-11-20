@@ -3,7 +3,6 @@
 
 import logging
 import os
-import subprocess
 import inspect
 from datetime import datetime
 import pathlib
@@ -14,6 +13,7 @@ from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 import plugin.plugin as plugin
+from plugin.helpers import get_git_log, GitStatus
 
 
 logger = logging.getLogger("inventree")
@@ -53,46 +53,6 @@ class MixinBase:
             # only return dict
             mixins = [a for a in mixins.values()]
         return mixins
-
-
-# region git-helpers
-def get_git_log(path):
-    """get dict with info of the last commit to file named in path"""
-    path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
-    command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
-    try:
-        output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
-        if output:
-            output = output.split('\n')
-        else:
-            output = 7 * ['']
-    except subprocess.CalledProcessError:
-        output = 7 * ['']
-    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
-
-
-class GitStatus:
-    """class for resolving git gpg singing state"""
-    class Definition:
-        """definition of a git gpg sing state"""
-        key: str = 'N'
-        status: int = 2
-        msg: str = ''
-
-        def __init__(self, key: str = 'N', status: int = 2, msg: str = '') -> None:
-            self.key = key
-            self.status = status
-            self.msg = msg
-
-    N = Definition(key='N', status=2, msg='no signature',)
-    G = Definition(key='G', status=0, msg='valid signature',)
-    B = Definition(key='B', status=2, msg='bad signature',)
-    U = Definition(key='U', status=1, msg='good signature, unknown validity',)
-    X = Definition(key='X', status=1, msg='good signature, expired',)
-    Y = Definition(key='Y', status=1, msg='good signature, expired key',)
-    R = Definition(key='R', status=2, msg='good signature, revoked key',)
-    E = Definition(key='E', status=1, msg='cannot be checked',)
-# endregion
 
 
 class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
