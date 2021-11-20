@@ -52,6 +52,7 @@ def safe_url(view_name, *args, **kwargs):
     except:
         return None
 
+
 @register.simple_tag()
 def plugin_errors(*args, **kwargs):
     """Return all plugin errors"""
