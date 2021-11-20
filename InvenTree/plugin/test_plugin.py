@@ -60,6 +60,10 @@ class PluginTagTests(TestCase):
         """test that all plugins are listed"""
         self.assertEqual(plugin_tags.plugin_list(), plugin_reg.plugins)
 
+    def test_tag_incative_plugin_list(self):
+        """test that all inactive plugins are listed"""
+        self.assertEqual(plugin_tags.inactive_plugin_list(), plugin_reg.plugins_inactive)
+
     def test_tag_plugin_globalsettings(self):
         """check all plugins are listed"""
         self.assertEqual(
@@ -76,3 +80,14 @@ class PluginTagTests(TestCase):
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_wrong, key), False)
         # mxixn not existing
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
+
+    def test_tag_safe_url(self):
+        """test that the safe url tag works expected"""
+        # right url
+        self.assertEqual(plugin_tags.safe_url('index'), '/index')
+        # wrong url
+        self.assertEqual(plugin_tags.safe_url('indexas'), None)
+
+    def test_tag_plugin_errors(self):
+        """test that all errors are listed"""
+        self.assertEqual(plugin_tags.plugin_errors(), plugin_reg.errors)
