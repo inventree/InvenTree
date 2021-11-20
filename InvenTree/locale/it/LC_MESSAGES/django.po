@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 12:49\n"
+"PO-Revision-Date: 2021-11-20 14:12\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1561,27 +1561,27 @@ msgstr "IPN Regex"
 
 #: common/models.py:657
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Schema di espressione regolare per l'articolo corrispondente IPN"
 
 #: common/models.py:661
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Consenti duplicati IPN"
 
 #: common/models.py:662
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "Permetti a più articoli di condividere lo stesso IPN"
 
 #: common/models.py:668
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Permetti modifiche al part number interno (IPN)"
 
 #: common/models.py:669
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "Consenti di modificare il valore del part number durante la modifica di un articolo"
 
 #: common/models.py:675
 msgid "Copy Part BOM Data"
-msgstr ""
+msgstr "Copia I Dati Della distinta base dell'articolo"
 
 #: common/models.py:676
 msgid "Copy BOM data by default when duplicating a part"
@@ -1589,11 +1589,11 @@ msgstr ""
 
 #: common/models.py:682
 msgid "Copy Part Parameter Data"
-msgstr ""
+msgstr "Copia I Dati Parametro dell'articolo"
 
 #: common/models.py:683
 msgid "Copy parameter data by default when duplicating a part"
-msgstr ""
+msgstr "Copia i dati dei parametri di default quando si duplica un articolo"
 
 #: common/models.py:689
 msgid "Copy Part Test Data"
@@ -1601,98 +1601,98 @@ msgstr ""
 
 #: common/models.py:690
 msgid "Copy test data by default when duplicating a part"
-msgstr ""
+msgstr "Copia i dati di prova di default quando si duplica un articolo"
 
 #: common/models.py:696
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Copia Template Parametri Categoria"
 
 #: common/models.py:697
 msgid "Copy category parameter templates when creating a part"
-msgstr ""
+msgstr "Copia i modelli dei parametri categoria quando si crea un articolo"
 
 #: common/models.py:703 part/models.py:2429 report/models.py:187
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:367
 msgid "Template"
-msgstr ""
+msgstr "Template"
 
 #: common/models.py:704
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Gli articoli sono modelli per impostazione predefinita"
 
 #: common/models.py:710 part/models.py:888 templates/js/translated/bom.js:954
 #: templates/js/translated/table_filters.js:162
 #: templates/js/translated/table_filters.js:379
 msgid "Assembly"
-msgstr ""
+msgstr "Assemblaggio"
 
 #: common/models.py:711
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "Gli articoli possono essere assemblate da altri componenti per impostazione predefinita"
 
 #: common/models.py:717 part/models.py:894
 #: templates/js/translated/table_filters.js:383
 msgid "Component"
-msgstr ""
+msgstr "Componente"
 
 #: common/models.py:718
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "Gli articoli possono essere assemblati da altri componenti per impostazione predefinita"
 
 #: common/models.py:724 part/models.py:905
 msgid "Purchaseable"
-msgstr ""
+msgstr "Acquistabile"
 
 #: common/models.py:725
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "Gli articoli sono acquistabili per impostazione predefinita"
 
 #: common/models.py:731 part/models.py:910
 #: templates/js/translated/table_filters.js:391
 msgid "Salable"
-msgstr ""
+msgstr "Vendibile"
 
 #: common/models.py:732
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "Gli articoli sono acquistabili per impostazione predefinita"
 
 #: common/models.py:738 part/models.py:900
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:94
 #: templates/js/translated/table_filters.js:395
 msgid "Trackable"
-msgstr ""
+msgstr "Tracciabile"
 
 #: common/models.py:739
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Gli articoli sono tracciabili per impostazione predefinita"
 
 #: common/models.py:745 part/models.py:920
 #: part/templates/part/part_base.html:144
 #: templates/js/translated/table_filters.js:42
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuale"
 
 #: common/models.py:746
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Gli articoli sono virtuali per impostazione predefinita"
 
 #: common/models.py:752
 msgid "Show Import in Views"
-msgstr ""
+msgstr "Mostra l'importazione nelle viste"
 
 #: common/models.py:753
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "Mostra la procedura guidata di importazione in alcune viste articoli"
 
 #: common/models.py:759
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "Mostra il prezzo nei moduli"
 
 #: common/models.py:760
 msgid "Display part price in some forms"
-msgstr ""
+msgstr "Mostra il prezzo dell'articolo in alcuni moduli"
 
 #: common/models.py:771
 msgid "Show Price in BOM"
@@ -1752,7 +1752,7 @@ msgstr "Abilita generazione di report di stampa"
 
 #: common/models.py:821 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Modalità Debug"
 
 #: common/models.py:822
 msgid "Generate reports in debug mode (HTML output)"
@@ -2659,7 +2659,7 @@ msgstr "Fornitori"
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:477
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Elimina articolo fornitore"
 
 #: company/templates/company/manufacturer_part.html:123
 #: company/templates/company/manufacturer_part.html:152
@@ -2668,36 +2668,36 @@ msgstr ""
 #: part/templates/part/detail.html:505 templates/js/translated/company.js:424
 #: templates/js/translated/helpers.js:31 users/models.py:204
 msgid "Delete"
-msgstr ""
+msgstr "Elimina"
 
 #: company/templates/company/manufacturer_part.html:137
 #: part/templates/part/detail.html:277
 msgid "Parameters"
-msgstr ""
+msgstr "Parametri"
 
 #: company/templates/company/manufacturer_part.html:141
 #: part/templates/part/detail.html:282
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:65
 msgid "New Parameter"
-msgstr ""
+msgstr "Nuovo Parametro"
 
 #: company/templates/company/manufacturer_part.html:152
 msgid "Delete parameters"
-msgstr ""
+msgstr "Elimina il parametro"
 
 #: company/templates/company/manufacturer_part.html:185
 #: part/templates/part/detail.html:983
 msgid "Add Parameter"
-msgstr ""
+msgstr "Aggiungi parametro"
 
 #: company/templates/company/manufacturer_part.html:233
 msgid "Selected parameters will be deleted"
-msgstr ""
+msgstr "Gli eventi selezionati verranno eliminati"
 
 #: company/templates/company/manufacturer_part.html:245
 msgid "Delete Parameters"
-msgstr ""
+msgstr "Elimina Parametri"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
