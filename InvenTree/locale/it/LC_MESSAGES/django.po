@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 15:31\n"
+"PO-Revision-Date: 2021-11-20 16:32\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2366,11 +2366,11 @@ msgstr "Unità"
 
 #: company/models.py:430
 msgid "Parameter units"
-msgstr ""
+msgstr "Unità parametri"
 
 #: company/models.py:502
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "L'articolo del costruttore collegato deve riferirsi alla stesso articolo"
 
 #: company/models.py:545 company/templates/company/company_base.html:121
 #: company/templates/company/supplier_part.html:94 order/models.py:263
@@ -2391,7 +2391,7 @@ msgstr "Seleziona fornitore"
 #: part/bom.py:220 part/bom.py:248 templates/js/translated/order.js:839
 #: templates/js/translated/part.js:220
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: company/models.py:552 templates/js/translated/part.js:221
 msgid "Supplier stock keeping unit"
@@ -2399,93 +2399,93 @@ msgstr ""
 
 #: company/models.py:559
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Selezionare un produttore"
 
 #: company/models.py:565
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "URL dell'articolo del fornitore"
 
 #: company/models.py:571
 msgid "Supplier part description"
-msgstr ""
+msgstr "Descrizione articolo fornitore"
 
 #: company/models.py:576 company/templates/company/supplier_part.html:126
 #: part/models.py:2588 report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
-msgstr ""
+msgstr "Nota"
 
 #: company/models.py:580 part/models.py:1748
 msgid "base cost"
-msgstr ""
+msgstr "costo base"
 
 #: company/models.py:580 part/models.py:1748
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Onere minimo (ad esempio tassa di stoccaggio)"
 
 #: company/models.py:582 company/templates/company/supplier_part.html:119
 #: stock/models.py:507 stock/templates/stock/item_base.html:311
 #: templates/js/translated/company.js:846 templates/js/translated/stock.js:1336
 msgid "Packaging"
-msgstr ""
+msgstr "Confezionamento"
 
 #: company/models.py:582
 msgid "Part packaging"
-msgstr ""
+msgstr "Imballaggio del pezzo"
 
 #: company/models.py:584 part/models.py:1750
 msgid "multiple"
-msgstr ""
+msgstr "multiplo"
 
 #: company/models.py:584
 msgid "Order multiple"
-msgstr ""
+msgstr "Ordine multiplo"
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Valuta predefinita utilizzata per questo fornitore"
 
 #: company/serializers.py:71
 msgid "Currency Code"
-msgstr ""
+msgstr "Codice valuta"
 
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:182 templates/js/translated/company.js:321
 msgid "Company"
-msgstr ""
+msgstr "Azienda"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:121
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Crea ordine d'acquisto"
 
 #: company/templates/company/company_base.html:27
 msgid "Edit company information"
-msgstr ""
+msgstr "Modifica le informazioni dell'azienda"
 
 #: company/templates/company/company_base.html:32
 #: company/templates/company/company_base.html:148
 msgid "Delete Company"
-msgstr ""
+msgstr "Elimina Azienda"
 
 #: company/templates/company/company_base.html:48
 #: part/templates/part/part_thumb.html:12
 msgid "Upload new image"
-msgstr ""
+msgstr "Carica nuova immagine"
 
 #: company/templates/company/company_base.html:51
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr ""
+msgstr "Scarica immagine dall'URL"
 
 #: company/templates/company/company_base.html:81
 msgid "Uses default currency"
-msgstr ""
+msgstr "Valuta predefinita"
 
 #: company/templates/company/company_base.html:95
 msgid "Phone"
-msgstr ""
+msgstr "Telefono"
 
 #: company/templates/company/company_base.html:126 order/models.py:567
 #: order/templates/order/sales_order_base.html:114 stock/models.py:525
@@ -2493,12 +2493,12 @@ msgstr ""
 #: templates/js/translated/company.js:328 templates/js/translated/order.js:1051
 #: templates/js/translated/stock.js:1972
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #: company/templates/company/company_base.html:194
 #: part/templates/part/part_base.html:342
 msgid "Upload Image"
-msgstr ""
+msgstr "Carica immagine"
 
 #: company/templates/company/detail.html:15 templates/InvenTree/search.html:124
 msgid "Supplier Parts"
@@ -2507,7 +2507,7 @@ msgstr "Articoli fornitore"
 #: company/templates/company/detail.html:19
 #: order/templates/order/order_wizard/select_parts.html:44
 msgid "Create new supplier part"
-msgstr ""
+msgstr "Crea nuovo fornitore"
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:112
