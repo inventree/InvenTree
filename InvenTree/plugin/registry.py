@@ -86,7 +86,7 @@ class Plugins:
                 self._activate_plugins(force_reload=True)
 
                 # we do not want to end in an endless loop
-                retry_counter -=1
+                retry_counter -= 1
                 if retry_counter <= 0:
                     if settings.PLUGIN_TESTING:
                         print('Max retries, breaking loading')
