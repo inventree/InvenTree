@@ -9,8 +9,6 @@ import logging
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 
-from InvenTree.helpers import log_plugin_error
-
 # Action plugins
 import plugin.builtin.action as action
 from plugin.action import ActionPlugin
@@ -29,6 +27,8 @@ def iter_namespace(pkg):
 
 def get_modules(pkg, recursive: bool = False):
     """get all modules in a package"""
+    from InvenTree.helpers import log_plugin_error
+
     if not recursive:
         return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
 

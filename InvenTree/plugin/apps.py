@@ -24,8 +24,6 @@ except:
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
-from InvenTree.helpers import log_plugin_error
-
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
 
@@ -53,6 +51,8 @@ class PluginAppConfig(AppConfig):
     # region public plugin functions
     def load_plugins(self):
         """load and activate all IntegrationPlugins"""
+        from InvenTree.helpers import log_plugin_error
+
         logger.info('Start loading plugins')
         # set maintanace mode
         _maintenance = bool(get_maintenance_mode())
@@ -143,6 +143,7 @@ class PluginAppConfig(AppConfig):
         :type disabled: str, optional
         :raises error: PluginLoadingError
         """
+        from InvenTree.helpers import log_plugin_error
         from plugin.models import PluginConfig
 
         logger.info('Starting plugin initialisation')
