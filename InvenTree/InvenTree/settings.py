@@ -882,7 +882,6 @@ if DEBUG or TESTING:
     PLUGIN_DIRS.append('plugin.samples')
 
 PLUGINS = []
-INTEGRATION_PLUGIN_GLOBALSETTING = {}
 
 # Test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # used to force enable everything plugin

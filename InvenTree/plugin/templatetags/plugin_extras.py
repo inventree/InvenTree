@@ -28,7 +28,7 @@ def inactive_plugin_list(*args, **kwargs):
 @register.simple_tag()
 def plugin_globalsettings(plugin, *args, **kwargs):
     """ Return a list of all global settings for a plugin """
-    return djangosettings.INTEGRATION_PLUGIN_GLOBALSETTING.get(plugin)
+    return plugin_reg.mixins_globalsettings.get(plugin)
 
 
 @register.simple_tag()
