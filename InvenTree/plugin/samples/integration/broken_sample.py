@@ -1,7 +1,5 @@
-"""sample implementation for IntegrationPlugin"""
+"""sample of a broken python file that will be ignroed on import"""
 from plugin.integration import IntegrationPluginBase
-
-aaa = bb  # noqa: F821
 
 
 class BrokenIntegrationPlugin(IntegrationPluginBase):
@@ -9,4 +7,5 @@ class BrokenIntegrationPlugin(IntegrationPluginBase):
     An very broken integration plugin
     """
 
-    PLUGIN_NAME = "BrokenIntegrationPlugin"
+
+aaa = bb  # noqa: F821
