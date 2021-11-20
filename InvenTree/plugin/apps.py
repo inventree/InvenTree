@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 import importlib
 import pathlib
 import logging
+import sysconfig
+import traceback
 from typing import OrderedDict
 from importlib import reload
 
@@ -62,6 +64,8 @@ class PluginAppConfig(AppConfig):
         except (OperationalError, ProgrammingError):
             # Exception if the database has not been migrated yet
             logger.info('Database not accessible while loading plugins')
+        except PluginLoadingError as error:
+            logger.error(f'Encountered an error with {error.path}:\n{error.message}')
 
         # remove maintenance
         if not _maintenance:
@@ -348,10 +352,23 @@ class PluginAppConfig(AppConfig):
             apps.app_configs = OrderedDict()
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
-            apps.populate(settings.INSTALLED_APPS)
-            return
+            self._try_reload(apps.populate, settings.INSTALLED_APPS)
         settings.INTEGRATION_PLUGINS_RELOADING = True
-        apps.set_installed_apps(settings.INSTALLED_APPS)
+        self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
         settings.INTEGRATION_PLUGINS_RELOADING = False
+
+    def _try_reload(self, cmd, *args, **kwargs):
+        """
+        wrapper to try reloading the apps
+        throws an custom error that gets handled by the loading function
+        """
+        try:
+            cmd(*args, **kwargs)
+            return True, []
+        except Exception as error:
+            package_path = traceback.extract_tb(error.__traceback__)[-1].filename
+            install_path = sysconfig.get_paths()["purelib"]
+            package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
+            raise PluginLoadingError(package_name, str(error))
     # endregion
     # endregion
