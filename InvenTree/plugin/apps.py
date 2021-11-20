@@ -261,8 +261,9 @@ class PluginAppConfig(AppConfig):
                         apps_changed = True
 
             if apps_changed or force_reload:
-                # if apps were changed reload
+                # if apps were changed or force loading base apps -> reload
                 if settings.INTEGRATION_APPS_LOADING or force_reload:
+                    # first startup or force loading of base apps -> registry is prob false
                     settings.INTEGRATION_APPS_LOADING = False
                     self._reload_apps(populate=True)
                 self._reload_apps()
@@ -382,8 +383,7 @@ class PluginAppConfig(AppConfig):
                     urlpatterns[index] = url(f'^{PLUGIN_BASE}/', include((integ_urls, 'plugin')))
         clear_url_caches()
 
-    def _reload_apps(self, populate: bool = False):
-        if populate:
+            # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
