@@ -46,11 +46,11 @@ def get_modules(pkg, recursive: bool = False):
             # TODO log
 
             # make sure the registry is set up
-            if 'discovery' not in settings.INTEGRATION_STARTUP_ERRORS:
-                settings.INTEGRATION_STARTUP_ERRORS['discovery'] = []
+            if 'discovery' not in settings.INTEGRATION_ERRORS:
+                settings.INTEGRATION_ERRORS['discovery'] = []
 
             # add error to stack
-            settings.INTEGRATION_STARTUP_ERRORS['discovery'].append({name: str(error)})
+            settings.INTEGRATION_ERRORS['discovery'].append({name: str(error)})
 
     return [v for k, v in context.items()]
 
