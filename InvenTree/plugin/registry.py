@@ -20,6 +20,7 @@ try:
     from importlib import metadata
 except:
     import importlib_metadata as metadata
+    # TODO remove when python minimum is 3.8
 
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
