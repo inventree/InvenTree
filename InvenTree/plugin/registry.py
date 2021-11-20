@@ -34,6 +34,10 @@ logger = logging.getLogger('inventree')
 
 
 class Plugins:
+    def __init__(self) -> None:
+        self.plugins = {}
+        self.plugins_inactive = {}
+
     # region public plugin functions
     def load_plugins(self):
         """load and activate all IntegrationPlugins"""
@@ -166,7 +170,7 @@ class Plugins:
                             plugin_db_setting.save()
 
                         # add to inactive plugins so it shows up in the ui
-                        settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
+                        self.plugins_inactive[plug_key] = plugin_db_setting
                         continue  # continue -> the plugin is not loaded
 
                 # init package
@@ -180,10 +184,10 @@ class Plugins:
                     plugin.pk = plugin_db_setting.pk
 
                 # safe reference
-                settings.INTEGRATION_PLUGINS[plugin.slug] = plugin
+                self.plugins[plugin.slug] = plugin
             else:
                 # save for later reference
-                settings.INTEGRATION_PLUGINS_INACTIVE[plug_key] = plugin_db_setting
+                self.plugins_inactive[plug_key] = plugin_db_setting
 
     def _activate_plugins(self, force_reload=False):
         """run integration functions for all plugins
@@ -192,7 +196,7 @@ class Plugins:
         :type force_reload: bool, optional
         """
         # activate integrations
-        plugins = settings.INTEGRATION_PLUGINS.items()
+        plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
         self.activate_integration_globalsettings(plugins)
@@ -366,8 +370,8 @@ class Plugins:
 
     def _clean_registry(self):
         # remove all plugins from registry
-        settings.INTEGRATION_PLUGINS = {}
-        settings.INTEGRATION_PLUGINS_INACTIVE = {}
+        self.plugins = {}
+        self.plugins_inactive = {}
 
     def _update_urls(self):
         from InvenTree.urls import urlpatterns

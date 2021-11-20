@@ -10,6 +10,8 @@ from django.db import models
 from django.apps import apps
 from django.conf import settings
 
+from plugin import plugin_reg
+
 
 class PluginConfig(models.Model):
     """ A PluginConfig object holds settings for plugins.
@@ -64,7 +66,7 @@ class PluginConfig(models.Model):
         self.__org_active = self.active
 
         # append settings from registry
-        self.plugin = settings.INTEGRATION_PLUGINS.get(self.key, None)
+        self.plugin = plugin_reg.plugins.get(self.key, None)
 
         def get_plugin_meta(name):
             if self.plugin:

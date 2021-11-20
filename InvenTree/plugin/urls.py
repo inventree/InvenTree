@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 
 from plugin.helpers import get_plugin_error
+from plugin import plugin_reg
 
 
 PLUGIN_BASE = 'plugin'  # Constant for links
@@ -13,7 +14,7 @@ PLUGIN_BASE = 'plugin'  # Constant for links
 def get_plugin_urls():
     """returns a urlpattern that can be integrated into the global urls"""
     urls = []
-    for plugin in settings.INTEGRATION_PLUGINS.values():
+    for plugin in plugin_reg.plugins.values():
         if plugin.mixin_enabled('urls'):
             urls.append(plugin.urlpatterns)
     # TODO wrap everything in plugin_url_wrapper

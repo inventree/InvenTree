@@ -7,6 +7,7 @@ from django import template
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
+from plugin import plugin_reg
 
 
 register = template.Library()
@@ -15,13 +16,13 @@ register = template.Library()
 @register.simple_tag()
 def plugin_list(*args, **kwargs):
     """ Return a list of all installed integration plugins """
-    return djangosettings.INTEGRATION_PLUGINS
+    return plugin_reg.plugins
 
 
 @register.simple_tag()
 def inactive_plugin_list(*args, **kwargs):
     """ Return a list of all inactive integration plugins """
-    return djangosettings.INTEGRATION_PLUGINS_INACTIVE
+    return plugin_reg.plugins_inactive
 
 
 @register.simple_tag()

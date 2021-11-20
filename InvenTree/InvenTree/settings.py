@@ -882,8 +882,6 @@ if DEBUG or TESTING:
     PLUGIN_DIRS.append('plugin.samples')
 
 PLUGINS = []
-INTEGRATION_PLUGINS = {}
-INTEGRATION_PLUGINS_INACTIVE = {}
 INTEGRATION_PLUGIN_GLOBALSETTING = {}
 
 INTEGRATION_APPS_LOADING = True     # Marks if apps were reloaded yet

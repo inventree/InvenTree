@@ -1,7 +1,7 @@
-from .registry import plugins
+from .registry import plugins as plugin_reg
 from .integration import IntegrationPluginBase
 from .action import ActionPlugin
 
 __all__ = [
-    'plugins', 'IntegrationPluginBase', 'ActionPlugin',
+    'plugin_reg', 'IntegrationPluginBase', 'ActionPlugin',
 ]

@@ -9,6 +9,7 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 from plugin.plugins import load_integration_plugins  # , load_action_plugins, load_barcode_plugins
 import plugin.templatetags.plugin_extras as plugin_tags
+from plugin import plugin_reg
 
 
 class InvenTreePluginTests(TestCase):
@@ -57,7 +58,7 @@ class PluginTagTests(TestCase):
 
     def test_tag_plugin_list(self):
         """test that all plugins are listed"""
-        self.assertEqual(plugin_tags.plugin_list(), settings.INTEGRATION_PLUGINS)
+        self.assertEqual(plugin_tags.plugin_list(), plugin_reg.plugins)
 
     def test_tag_plugin_globalsettings(self):
         """check all plugins are listed"""
