@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 11:51\n"
+"PO-Revision-Date: 2021-11-20 12:49\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -747,7 +747,7 @@ msgstr "Data di creazione"
 
 #: build/models.py:296 order/models.py:578
 msgid "Target completion date"
-msgstr ""
+msgstr "Data completamento obiettivo"
 
 #: build/models.py:297
 msgid "Target date for build completion. Build will be overdue after this date."
@@ -756,7 +756,7 @@ msgstr ""
 #: build/models.py:300 order/models.py:291
 #: templates/js/translated/build.js:1697
 msgid "Completion Date"
-msgstr ""
+msgstr "Data di completamento"
 
 #: build/models.py:306
 msgid "completed by"
@@ -833,7 +833,7 @@ msgstr ""
 #: build/models.py:1117
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr ""
+msgstr "La quantità assegnata ({q}) non deve essere maggiore della quantità disponibile ({a})"
 
 #: build/models.py:1127
 msgid "Stock item is over-allocated"
@@ -874,7 +874,7 @@ msgstr "Articoli in magazzino"
 
 #: build/models.py:1271
 msgid "Source stock item"
-msgstr ""
+msgstr "Origine giacenza articolo"
 
 #: build/models.py:1284
 msgid "Stock quantity to allocate to build"
@@ -886,7 +886,7 @@ msgstr "Installa in"
 
 #: build/models.py:1293
 msgid "Destination stock item"
-msgstr ""
+msgstr "Destinazione articolo in giacenza"
 
 #: build/serializers.py:137 build/serializers.py:357
 msgid "Build Output"
@@ -942,7 +942,7 @@ msgstr ""
 #: build/serializers.py:259 build/serializers.py:308 part/models.py:2700
 #: part/models.py:2859
 msgid "BOM Item"
-msgstr ""
+msgstr "Distinta base (Bom)"
 
 #: build/serializers.py:269
 msgid "Build output"
@@ -958,17 +958,17 @@ msgstr ""
 
 #: build/serializers.py:334
 msgid "Item must be in stock"
-msgstr ""
+msgstr "L'articolo deve essere disponibile"
 
 #: build/serializers.py:348 order/models.py:316 order/serializers.py:231
 #: stock/models.py:381 stock/models.py:1103 stock/serializers.py:298
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "La quantità deve essere maggiore di zero"
 
 #: build/serializers.py:390
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Quantità disponibile ({q}) superata"
 
 #: build/serializers.py:396
 msgid "Build output must be specified for allocation of tracked parts"
@@ -1053,7 +1053,7 @@ msgstr ""
 #: templates/js/translated/build.js:1692 templates/js/translated/order.js:690
 #: templates/js/translated/order.js:1087
 msgid "Target Date"
-msgstr ""
+msgstr "Data scadenza"
 
 #: build/templates/build/build_base.html:143
 #, python-format
@@ -1089,7 +1089,7 @@ msgstr "Completato"
 #: stock/templates/stock/item_base.html:280
 #: templates/js/translated/order.js:1029
 msgid "Sales Order"
-msgstr ""
+msgstr "Ordini di Vendita"
 
 #: build/templates/build/build_base.html:170
 #: build/templates/build/detail.html:109
@@ -1099,7 +1099,7 @@ msgstr "Inviato da"
 
 #: build/templates/build/build_base.html:215
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Output Incompleti"
 
 #: build/templates/build/build_base.html:216
 msgid "Build Order cannot be completed as incomplete build outputs remain"
@@ -1107,7 +1107,7 @@ msgstr ""
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
-msgstr ""
+msgstr "La distinta base contiene articoli tracciabili"
 
 #: build/templates/build/build_output_create.html:8
 msgid "Build outputs must be generated individually."
@@ -1452,7 +1452,7 @@ msgstr "Seleziona file da caricare"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} File"
 
 #: common/forms.py:51
 #, python-brace-format
@@ -1461,7 +1461,7 @@ msgstr "Seleziona il file {name} da caricare"
 
 #: common/models.py:340 common/models.py:970 common/models.py:1178
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Tasto impostazioni (deve essere univoco - maiuscole e minuscole"
 
 #: common/models.py:342
 msgid "Settings value"
@@ -1557,7 +1557,7 @@ msgstr "Abilita supporto scanner codici a barre"
 
 #: common/models.py:656
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN Regex"
 
 #: common/models.py:657
 msgid "Regular expression pattern for matching Part IPN"
