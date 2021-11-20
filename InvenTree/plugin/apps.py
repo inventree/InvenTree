@@ -24,6 +24,8 @@ except:
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
+from InvenTree.helpers import log_plugin_error
+
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
 
@@ -70,6 +72,7 @@ class PluginAppConfig(AppConfig):
                 logger.info('Database not accessible while loading plugins')
             except PluginLoadingError as error:
                 logger.error(f'Encountered an error with {error.path}:\n{error.message}')
+                log_plugin_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
                 # init apps without any integration plugins
@@ -171,6 +174,8 @@ class PluginAppConfig(AppConfig):
                         if not settings.PLUGIN_TESTING:
                             plugin_db_setting.active = False
                             # TODO save the error to the plugin
+
+                            log_plugin_error({plug_key: 'Disabled'}, 'init')
                             plugin_db_setting.save()
 
                         # add to inactive plugins so it shows up in the ui
