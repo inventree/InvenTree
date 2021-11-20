@@ -6,6 +6,7 @@ import traceback
 from django.conf import settings
 
 
+# region logging / errors
 def log_plugin_error(error, reference: str = 'general'):
     # make sure the registry is set up
     if reference not in settings.INTEGRATION_ERRORS:
@@ -39,3 +40,4 @@ def get_plugin_error(error, do_raise: bool = False, do_log: bool = False, log_na
         raise IntegrationPluginError(package_name, str(error))
 
     return package_name, str(error)
+# endregion
