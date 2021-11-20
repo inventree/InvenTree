@@ -21,14 +21,14 @@ from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
 
-from plugin import plugins as inventree_plugins
+from plugin.plugins import load_action_plugins
 
 
 logger = logging.getLogger("inventree")
 
 
 logger.info("Loading action plugins...")
-action_plugins = inventree_plugins.load_action_plugins()
+action_plugins = load_action_plugins()
 
 
 class InfoView(AjaxView):
