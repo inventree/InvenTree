@@ -24,19 +24,10 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from plugin import plugins as inventree_plugins
 from plugin.integration import IntegrationPluginBase
-from plugin.helpers import get_plugin_error
+from plugin.helpers import get_plugin_error, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
-
-
-class PluginLoadingError(Exception):
-    def __init__(self, path, message):
-        self.path = path
-        self.message = message
-    
-    def __str__(self):
-        return self.message
 
 
 class PluginAppConfig(AppConfig):
@@ -69,7 +60,7 @@ class PluginAppConfig(AppConfig):
             except (OperationalError, ProgrammingError):
                 # Exception if the database has not been migrated yet
                 logger.info('Database not accessible while loading plugins')
-            except PluginLoadingError as error:
+            except IntegrationPluginError as error:
                 logger.error(f'Encountered an error with {error.path}:\n{error.message}')
                 log_plugin_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
@@ -140,7 +131,7 @@ class PluginAppConfig(AppConfig):
 
         :param disabled: loading path of disabled app, defaults to None
         :type disabled: str, optional
-        :raises error: PluginLoadingError
+        :raises error: IntegrationPluginError
         """
         from plugin.helpers import log_plugin_error
         from plugin.models import PluginConfig
@@ -415,6 +406,6 @@ class PluginAppConfig(AppConfig):
             cmd(*args, **kwargs)
             return True, []
         except Exception as error:
-            raise PluginLoadingError(get_plugin_error(error))
+            get_plugin_error(error, do_raise=True)
     # endregion
     # endregion
