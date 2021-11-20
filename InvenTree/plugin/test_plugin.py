@@ -83,7 +83,7 @@ class PluginTagTests(TestCase):
     def test_tag_safe_url(self):
         """test that the safe url tag works expected"""
         # right url
-        self.assertEqual(plugin_tags.safe_url('index'), '/index')
+        self.assertEqual(plugin_tags.safe_url('api-plugin-install'), '/api/plugin/install/')
         # wrong url
         self.assertEqual(plugin_tags.safe_url('indexas'), None)
 
