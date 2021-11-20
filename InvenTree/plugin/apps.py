@@ -11,6 +11,6 @@ class PluginAppConfig(AppConfig):
     name = 'plugin'
 
     def ready(self):
-        if not settings.INTEGRATION_PLUGINS_RELOADING:
+        if not plugins.is_loading:
             plugins.collect_plugins()
             plugins.load_plugins()

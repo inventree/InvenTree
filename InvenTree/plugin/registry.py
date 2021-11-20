@@ -35,8 +35,12 @@ logger = logging.getLogger('inventree')
 
 class Plugins:
     def __init__(self) -> None:
+        # plugin registry
         self.plugins = {}
         self.plugins_inactive = {}
+
+        # flags
+        self.is_loading = False
 
     # region public plugin functions
     def load_plugins(self):
@@ -393,9 +397,9 @@ class Plugins:
             apps.clear_cache()
             self._try_reload(apps.populate, settings.INSTALLED_APPS)
 
-        settings.INTEGRATION_PLUGINS_RELOADING = True
+        self.is_loading = True
         self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
-        settings.INTEGRATION_PLUGINS_RELOADING = False
+        self.is_loading = False
 
     def _try_reload(self, cmd, *args, **kwargs):
         """
