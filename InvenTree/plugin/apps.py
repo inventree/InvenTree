@@ -300,17 +300,21 @@ class PluginAppConfig(AppConfig):
                 apps.all_models.pop(app_name)
 
         # remove plugin from installed_apps
-        for plugin in settings.INTEGRATION_APPS_PATHS:
-            if plugin in settings.INSTALLED_APPS:
-                settings.INSTALLED_APPS.remove(plugin)
+        self._clean_installed_apps()
 
         # reset load flag and reload apps
-        settings.INTEGRATION_APPS_PATHS = []
         settings.INTEGRATION_APPS_LOADED = False
         self._reload_apps()
 
         # update urls to remove the apps from the site admin
         self._update_urls()
+
+    def _clean_installed_apps(self):
+        for plugin in settings.INTEGRATION_APPS_PATHS:
+            if plugin in settings.INSTALLED_APPS:
+                settings.INSTALLED_APPS.remove(plugin)
+
+        settings.INTEGRATION_APPS_PATHS = []
 
     def _clean_registry(self):
         # remove all plugins from registry
