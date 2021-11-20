@@ -103,7 +103,9 @@
 </div>
 
 
-<h4>{% trans "Plugin errors" %}</h4>
+{% plugin_errors as pl_errors %}
+{% if pl_errors %}
+<h4>{% trans "Plugin Error Stack" %}</h4>
 <div class='table-responsive'>
     <table class='table table-striped table-condensed'>
         <thead>
@@ -115,7 +117,6 @@
         </thead>
         
         <tbody>
-        {% plugin_errors as pl_errors %}
         {% for stage, errors in pl_errors.items %}
             {% for error_detail in errors %}
             {% for name, message in error_detail.items %}
@@ -130,4 +131,6 @@
         </tbody>
     </table>
     </div>
+{% endif %}
+
 {% endblock %}
