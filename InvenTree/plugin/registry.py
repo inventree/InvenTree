@@ -129,7 +129,7 @@ class Plugins:
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
-        # check if running in testing mode and apps should be loaded from hooks
+        # check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
             for entry in metadata.entry_points().get('inventree_plugins', []):

@@ -875,12 +875,13 @@ MAINTENANCE_MODE_RETRY_AFTER = 60
 PLUGIN_DIRS = ['plugin.builtin', ]
 
 if not TESTING:
+    # load local deploy directory in prod
     PLUGIN_DIRS.append('plugins')
 
-# load samples if in debug mode
 if DEBUG or TESTING:
+    # load samples in debug mode
     PLUGIN_DIRS.append('plugin.samples')
 
-# Test settings
-PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # used to force enable everything plugin
-PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)
+# Plugin test settings
+PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
