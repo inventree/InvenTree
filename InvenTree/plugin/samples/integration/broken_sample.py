@@ -1,7 +1,8 @@
 """sample implementation for IntegrationPlugin"""
 from plugin.integration import IntegrationPluginBase
 
-aaa = bb
+aaa = bb  # noqa: F821
+
 
 class BrokenIntegrationPlugin(IntegrationPluginBase):
     """
