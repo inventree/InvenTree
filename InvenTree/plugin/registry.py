@@ -268,15 +268,18 @@ class Plugins:
                         settings.INTEGRATION_APPS_PATHS += [plugin_path]
                         apps_changed = True
 
+            # if apps were changed or force loading base apps -> reload
             if apps_changed or force_reload:
-                # if apps were changed or force loading base apps -> reload
+                # first startup or force loading of base apps -> registry is prob false
                 if self.apps_loading or force_reload:
-                    # first startup or force loading of base apps -> registry is prob false
                     self.apps_loading = False
                     self._reload_apps(force_reload=True)
+
                 self._reload_apps()
+
                 # rediscover models/ admin sites
                 self._reregister_contrib_apps()
+
                 # update urls - must be last as models must be registered for creating admin routes
                 self._update_urls()
 
