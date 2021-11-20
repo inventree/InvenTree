@@ -59,7 +59,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
     uids = []
 
-    def add_items(items, level, cascade):
+    def add_items(items, level, cascade=True):
         # Add items at a given layer
         for item in items:
 

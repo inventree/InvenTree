@@ -1587,7 +1587,7 @@ class Part(MPTTModel):
         # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
         used_in = self.get_used_in().all()
 
-        parts = parts.exclude(id__in=[item.part.id for item in used_in])
+        parts = parts.exclude(id__in=[part.id for part in used_in])
 
         return parts
 
