@@ -41,6 +41,17 @@ def get_modules(pkg, recursive: bool = False):
             context[name] = module
         except AppRegistryNotReady:
             pass
+        except Exception as error:
+            # this 'protects' against malformed plugin modules by more or less silently failing
+            # TODO log
+
+            # make sure the registry is set up
+            if 'discovery' not in settings.INTEGRATION_STARTUP_ERRORS:
+                settings.INTEGRATION_STARTUP_ERRORS['discovery'] = []
+
+            # add error to stack
+            settings.INTEGRATION_STARTUP_ERRORS['discovery'].append({name: str(error)})
+
     return [v for k, v in context.items()]
 
 
