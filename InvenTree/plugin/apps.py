@@ -72,6 +72,11 @@ class PluginAppConfig(AppConfig):
                 logger.error(f'Encountered an error with {error.path}:\n{error.message}')
                 blocked_plugin = error.path
 
+                # init apps without any integration plugins
+                self._clean_registry()
+                self._clean_installed_apps()
+                self._activate_plugins(force_reload=True)
+
         # remove maintenance
         if not _maintenance:
             set_maintenance_mode(False)
