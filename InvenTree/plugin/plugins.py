@@ -27,7 +27,7 @@ def iter_namespace(pkg):
 
 def get_modules(pkg, recursive: bool = False):
     """get all modules in a package"""
-    from InvenTree.helpers import log_plugin_error
+    from plugin.helpers import log_plugin_error
 
     if not recursive:
         return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]

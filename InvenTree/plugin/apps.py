@@ -51,7 +51,7 @@ class PluginAppConfig(AppConfig):
     # region public plugin functions
     def load_plugins(self):
         """load and activate all IntegrationPlugins"""
-        from InvenTree.helpers import log_plugin_error
+        from plugin.helpers import log_plugin_error
 
         logger.info('Start loading plugins')
         # set maintanace mode
@@ -143,7 +143,7 @@ class PluginAppConfig(AppConfig):
         :type disabled: str, optional
         :raises error: PluginLoadingError
         """
-        from InvenTree.helpers import log_plugin_error
+        from plugin.helpers import log_plugin_error
         from plugin.models import PluginConfig
 
         logger.info('Starting plugin initialisation')

@@ -697,12 +697,3 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
-
-
-def log_plugin_error(error, reference: str = 'general'):
-    # make sure the registry is set up
-    if reference not in settings.INTEGRATION_ERRORS:
-        settings.INTEGRATION_ERRORS[reference] = []
-
-    # add error to stack
-    settings.INTEGRATION_ERRORS[reference].append(error)
