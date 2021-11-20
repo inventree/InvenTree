@@ -14,7 +14,7 @@ import plugin.builtin.action as action
 from plugin.action import ActionPlugin
 
 # Integration
-from plugin.integration import IntegrationPluginBase
+from .integration import IntegrationPluginBase
 
 
 logger = logging.getLogger("inventree")
