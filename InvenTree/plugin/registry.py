@@ -39,6 +39,8 @@ class Plugins:
         self.plugins = {}
         self.plugins_inactive = {}
 
+        self.errors = {}                 # Holds discovering errors
+
         # flags
         self.is_loading = False
         self.apps_loading = True        # Marks if apps were reloaded yet
@@ -48,7 +50,6 @@ class Plugins:
         # mixins
         self.mixins_globalsettings = {}
 
-        self.errors = {}                 # Holds discovering errors
 
     # region public plugin functions
     def load_plugins(self):
