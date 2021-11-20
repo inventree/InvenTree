@@ -265,7 +265,7 @@ class PluginAppConfig(AppConfig):
                 if settings.INTEGRATION_APPS_LOADING or force_reload:
                     # first startup or force loading of base apps -> registry is prob false
                     settings.INTEGRATION_APPS_LOADING = False
-                    self._reload_apps(populate=True)
+                    self._reload_apps(force_reload=True)
                 self._reload_apps()
                 # rediscover models/ admin sites
                 self._reregister_contrib_apps()
@@ -383,11 +383,14 @@ class PluginAppConfig(AppConfig):
                     urlpatterns[index] = url(f'^{PLUGIN_BASE}/', include((integ_urls, 'plugin')))
         clear_url_caches()
 
+    def _reload_apps(self, force_reload: bool = False):
+        if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
             self._try_reload(apps.populate, settings.INSTALLED_APPS)
+
         settings.INTEGRATION_PLUGINS_RELOADING = True
         self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
         settings.INTEGRATION_PLUGINS_RELOADING = False
