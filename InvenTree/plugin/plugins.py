@@ -81,7 +81,7 @@ def get_plugins(pkg, baseclass, recursive: bool = False):
     return plugins
 
 
-def load_plugins(name: str, cls, module=None):
+def load_plugins(name: str, cls, module):
     """general function to load a plugin class
 
     :param name: name of the plugin for logs
@@ -89,10 +89,9 @@ def load_plugins(name: str, cls, module=None):
     :param module: module from which the plugins should be loaded
     :return: class of the to-be-loaded plugin
     """
-
     logger.debug("Loading %s plugins", name)
 
-    plugins = get_plugins(module, cls) if module else settings.PLUGINS
+    plugins = get_plugins(module, cls)
 
     if len(plugins) > 0:
         logger.info("Discovered %i %s plugins:", len(plugins), name)
@@ -107,14 +106,7 @@ def load_action_plugins():
     """
     Return a list of all registered action plugins
     """
-    return load_plugins('action', ActionPlugin, module=action)
-
-
-def load_integration_plugins():
-    """
-    Return a list of all registered integration plugins
-    """
-    return load_plugins('integration', IntegrationPluginBase)
+    return load_plugins('action', ActionPlugin, action)
 
 
 def load_barcode_plugins():
@@ -124,4 +116,4 @@ def load_barcode_plugins():
     from barcodes import plugins as BarcodePlugins
     from barcodes.barcode import BarcodePlugin
 
-    return load_plugins('barcode', BarcodePlugin, module=BarcodePlugins)
+    return load_plugins('barcode', BarcodePlugin, BarcodePlugins)

@@ -39,6 +39,8 @@ class Plugins:
         self.plugins = {}
         self.plugins_inactive = {}
 
+        self.plugin_modules = []         # Holds all discovered plugins
+
         self.errors = {}                 # Holds discovering errors
 
         # flags
@@ -125,7 +127,7 @@ class Plugins:
         for plugin in settings.PLUGIN_DIRS:
             modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
             if modules:
-                [settings.PLUGINS.append(item) for item in modules]
+                [self.plugin_modules.append(item) for item in modules]
 
         # check if running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
@@ -133,11 +135,11 @@ class Plugins:
             for entry in metadata.entry_points().get('inventree_plugins', []):
                 plugin = entry.load()
                 plugin.is_package = True
-                settings.PLUGINS.append(plugin)
+                self.plugin_modules.append(plugin)
 
-        # Log found plugins
-        logger.info(f'Found {len(settings.PLUGINS)} plugins!')
-        logger.info(", ".join([a.__module__ for a in settings.PLUGINS]))
+        # Log collected plugins
+        logger.info(f'Collected {len(self.plugin_modules)} plugins!')
+        logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
 
     def _init_plugins(self, disabled=None):
         """initialise all found plugins
@@ -151,7 +153,7 @@ class Plugins:
 
         logger.info('Starting plugin initialisation')
         # Initialize integration plugins
-        for plugin in inventree_plugins.load_integration_plugins():
+        for plugin in self.plugin_modules:
             # check if package
             was_packaged = getattr(plugin, 'is_package', False)
 

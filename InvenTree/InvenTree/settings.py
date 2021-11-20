@@ -881,8 +881,6 @@ if not TESTING:
 if DEBUG or TESTING:
     PLUGIN_DIRS.append('plugin.samples')
 
-PLUGINS = []
-
 # Test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # used to force enable everything plugin
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)
