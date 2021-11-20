@@ -41,6 +41,7 @@ class Plugins:
 
         # flags
         self.is_loading = False
+        self.apps_loading = True     # Marks if apps were reloaded yet
 
     # region public plugin functions
     def load_plugins(self):
@@ -269,9 +270,9 @@ class Plugins:
 
             if apps_changed or force_reload:
                 # if apps were changed or force loading base apps -> reload
-                if settings.INTEGRATION_APPS_LOADING or force_reload:
+                if self.apps_loading or force_reload:
                     # first startup or force loading of base apps -> registry is prob false
-                    settings.INTEGRATION_APPS_LOADING = False
+                    self.apps_loading = False
                     self._reload_apps(force_reload=True)
                 self._reload_apps()
                 # rediscover models/ admin sites
