@@ -18,7 +18,7 @@ from part.urls import part_urls
 from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
-from plugin.urls import plugin_urls, get_integration_urls
+from plugin.urls import get_plugin_urls
 
 from barcodes.api import barcode_api_urls
 from common.api import common_api_urls
@@ -159,8 +159,7 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     # plugin urls
-    url(r'^plugins/', include(plugin_urls)),
-    get_integration_urls(),  # appends currently loaded plugin urls = None
+    get_plugin_urls(),  # appends currently loaded plugin urls = None
 
     url(r'^markdownx/', include('markdownx.urls')),
 
