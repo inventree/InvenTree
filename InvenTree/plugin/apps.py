@@ -68,10 +68,7 @@ class PluginAppConfig(AppConfig):
             set_maintenance_mode(True)
 
         # remove all plugins from registry
-        # plugins = settings.INTEGRATION_PLUGINS
-        settings.INTEGRATION_PLUGINS = {}
-        # plugins_inactive = settings.INTEGRATION_PLUGINS_INACTIVE
-        settings.INTEGRATION_PLUGINS_INACTIVE = {}
+        self._clean_registry()
 
         # deactivate all integrations
         self._deactivate_plugins()
@@ -314,6 +311,11 @@ class PluginAppConfig(AppConfig):
 
         # update urls to remove the apps from the site admin
         self._update_urls()
+
+    def _clean_registry(self):
+        # remove all plugins from registry
+        settings.INTEGRATION_PLUGINS = {}
+        settings.INTEGRATION_PLUGINS_INACTIVE = {}
 
     def _update_urls(self):
         from InvenTree.urls import urlpatterns
