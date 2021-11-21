@@ -83,13 +83,12 @@ class PluginConfig(models.Model):
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
         ret = super().save(force_insert, force_update, *args, **kwargs)
-        app = apps.get_app_config('plugin')
 
         if not reload:
             if self.active is False and self.__org_active is True:
-                app.reload_plugins()
+                plugin_reg.reload_plugins()
 
             elif self.active is True and self.__org_active is False:
-                app.reload_plugins()
+                plugin_reg.reload_plugins()
 
         return ret

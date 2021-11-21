@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.apps import apps
 
 import plugin.models as models
-
+from plugin import plugin_reg
 
 def plugin_update(queryset, new_status: bool):
     """general function for bulk changing plugins"""
@@ -20,8 +20,7 @@ def plugin_update(queryset, new_status: bool):
 
     # reload plugins if they changed
     if apps_changed:
-        app = apps.get_app_config('plugin')
-        app.reload_plugins()
+        plugin_reg.reload_plugins()
 
 
 @admin.action(description='Activate plugin(s)')
