@@ -77,7 +77,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         print([str(a) for a in fixtures])
         fixtures = fixtures[0:1]
         # deactivate plugin
-        response =  self.client.post(url, {
+        response = self.client.post(url, {
             'action': 'plugin_deactivate',
             'index': 0,
             '_selected_action': [f.pk for f in fixtures],
@@ -85,7 +85,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         # deactivate plugin - deactivate again -> nothing will hapen but the nothing 'changed' function is triggered
-        response =  self.client.post(url, {
+        response = self.client.post(url, {
             'action': 'plugin_deactivate',
             'index': 0,
             '_selected_action': [f.pk for f in fixtures],
@@ -93,7 +93,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         # activate plugin
-        response =  self.client.post(url, {
+        response = self.client.post(url, {
             'action': 'plugin_activate',
             'index': 0,
             '_selected_action': [f.pk for f in fixtures],
@@ -102,7 +102,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
 
         # activate everything
         fixtures = PluginConfig.objects.all()
-        response =  self.client.post(url, {
+        response = self.client.post(url, {
             'action': 'plugin_activate',
             'index': 0,
             '_selected_action': [f.pk for f in fixtures],
@@ -111,7 +111,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
 
         fixtures = PluginConfig.objects.filter(active=True)
         # save to deactivate a plugin
-        response =  self.client.post(reverse('admin:plugin_pluginconfig_change', args=(fixtures.first().pk, )), {
+        response = self.client.post(reverse('admin:plugin_pluginconfig_change', args=(fixtures.first().pk, )), {
             '_save': 'Save',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
