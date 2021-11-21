@@ -200,7 +200,19 @@ class Plugins:
                 # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
                 logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
-                plugin = plugin()
+                try:
+                    plugin = plugin()
+                except Exception as error:
+                    # log error
+                    get_plugin_error(error, do_log=True, log_name='init')
+
+                    plugin_db_setting.active = False
+                    # TODO save the error to the plugin
+                    plugin_db_setting.save()
+
+                    # add to incative plugins
+                    self.plugins_inactive[plug_key] = plugin_db_setting
+
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
                 if plugin_db_setting:
