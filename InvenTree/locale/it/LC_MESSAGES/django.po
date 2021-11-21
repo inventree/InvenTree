@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 11:09\n"
+"PO-Revision-Date: 2021-11-21 15:08\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -7754,59 +7754,59 @@ msgstr ""
 
 #: templates/js/translated/stock.js:126
 msgid "New Stock Location"
-msgstr ""
+msgstr "Nuova posizione giacenza"
 
 #: templates/js/translated/stock.js:189
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Inserisci quantità iniziale per questo articolo in giacenza"
 
 #: templates/js/translated/stock.js:195
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Inserire i numeri di serie per la nuova giacenza (o lasciare vuoto)"
 
 #: templates/js/translated/stock.js:338
 msgid "Created new stock item"
-msgstr ""
+msgstr "Crea nuova allocazione magazzino"
 
 #: templates/js/translated/stock.js:351
 msgid "Created multiple stock items"
-msgstr ""
+msgstr "Creato più elementi stock"
 
 #: templates/js/translated/stock.js:390
 msgid "Export Stock"
-msgstr ""
+msgstr "Esporta giacenza"
 
 #: templates/js/translated/stock.js:401
 msgid "Include Sublocations"
-msgstr ""
+msgstr "Includi sotto allocazioni"
 
 #: templates/js/translated/stock.js:402
 msgid "Include stock items in sublocations"
-msgstr ""
+msgstr "Includi elementi in giacenza nelle sottoallocazioni"
 
 #: templates/js/translated/stock.js:444
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Trasferisci giacenza"
 
 #: templates/js/translated/stock.js:445
 msgid "Move"
-msgstr ""
+msgstr "Sposta"
 
 #: templates/js/translated/stock.js:451
 msgid "Count Stock"
-msgstr ""
+msgstr "Conta giacenza"
 
 #: templates/js/translated/stock.js:452
 msgid "Count"
-msgstr ""
+msgstr "Conta"
 
 #: templates/js/translated/stock.js:456
 msgid "Remove Stock"
-msgstr ""
+msgstr "Rimuovi giacenza"
 
 #: templates/js/translated/stock.js:457
 msgid "Take"
-msgstr ""
+msgstr "Prendi"
 
 #: templates/js/translated/stock.js:461
 msgid "Add Stock"
