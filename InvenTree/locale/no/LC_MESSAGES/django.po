@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-21 11:39+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-11-20 08:27+0000\n"
+"PO-Revision-Date: 2021-11-20 08:33\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -233,10 +233,8 @@ msgid "Spanish"
 msgstr "Spansk"
 
 #: InvenTree/settings.py:667
-#, fuzzy
-#| msgid "Spanish"
 msgid "Spanish (Mexican)"
-msgstr "Spansk"
+msgstr ""
 
 #: InvenTree/settings.py:668
 msgid "French"
@@ -1745,10 +1743,8 @@ msgid "Format to display the part name"
 msgstr ""
 
 #: common/models.py:814
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable Reports"
-msgstr "Oppgi passord"
+msgstr ""
 
 #: common/models.py:815
 msgid "Enable generation of reports"
@@ -1863,16 +1859,12 @@ msgid "Prefix value for purchase order reference"
 msgstr ""
 
 #: common/models.py:913
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot"
-msgstr "Oppgi passord"
+msgstr ""
 
 #: common/models.py:914
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot function on the login pages"
-msgstr "Oppgi passord"
+msgstr ""
 
 #: common/models.py:919
 msgid "Enable registration"
@@ -2731,10 +2723,8 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:141
 #: part/templates/part/detail.html:127 stock/templates/stock/location.html:147
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Create new stock item"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:142
 #: part/templates/part/detail.html:128 stock/templates/stock/location.html:148
@@ -4170,10 +4160,8 @@ msgid "Error creating relationship: check that the part is not related to itself
 msgstr ""
 
 #: part/tasks.py:53
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Low stock notification"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -4252,38 +4240,28 @@ msgid "Category Actions"
 msgstr ""
 
 #: part/templates/part/category.html:43
-#, fuzzy
-#| msgid "Select Category"
 msgid "Edit category"
-msgstr "Velg kategori"
+msgstr ""
 
 #: part/templates/part/category.html:44
-#, fuzzy
-#| msgid "Select Category"
 msgid "Edit Category"
-msgstr "Velg kategori"
+msgstr ""
 
 #: part/templates/part/category.html:48
-#, fuzzy
-#| msgid "Select Category"
 msgid "Delete category"
-msgstr "Velg kategori"
+msgstr ""
 
 #: part/templates/part/category.html:49
-#, fuzzy
-#| msgid "Select Category"
 msgid "Delete Category"
-msgstr "Velg kategori"
+msgstr ""
 
 #: part/templates/part/category.html:57
 msgid "Create new part category"
 msgstr ""
 
 #: part/templates/part/category.html:58
-#, fuzzy
-#| msgid "Select Category"
 msgid "New Category"
-msgstr "Velg kategori"
+msgstr ""
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
@@ -4781,8 +4759,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5433,16 +5410,12 @@ msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr ""
 
 #: stock/serializers.py:308
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Enter serial numbers for new items"
-msgstr "Ingen serienummer funnet"
+msgstr ""
 
 #: stock/serializers.py:319 stock/serializers.py:687
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Destination stock location"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: stock/serializers.py:326
 msgid "Optional note field"
@@ -5781,10 +5754,8 @@ msgid "New Location"
 msgstr ""
 
 #: stock/templates/stock/location.html:86
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Top level stock location"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: stock/templates/stock/location.html:95
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
@@ -6246,10 +6217,8 @@ msgid "Language Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:186
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select language"
-msgstr "Velg kategori"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:202
 #, python-format
@@ -6298,10 +6267,8 @@ msgid "Theme Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:35
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select theme"
-msgstr "Velg kategori"
+msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:46
 msgid "Set Theme"
@@ -6421,24 +6388,20 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
 #: templates/account/login.html:42
-#, fuzzy
-#| msgid "Confirm password"
 msgid "Forgot Password?"
-msgstr "Bekreft passord"
+msgstr ""
 
 #: templates/account/login.html:47
 msgid "InvenTree demo instance"
@@ -6492,10 +6455,8 @@ msgid "The password reset link was invalid, possibly because it has already been
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:18
-#, fuzzy
-#| msgid "Enter password"
 msgid "Change password"
-msgstr "Oppgi passord"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
@@ -7001,10 +6962,8 @@ msgid "Location not specified"
 msgstr ""
 
 #: templates/js/translated/build.js:603
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No active build outputs found"
-msgstr "Ingen serienummer funnet"
+msgstr ""
 
 #: templates/js/translated/build.js:1052 templates/js/translated/build.js:1760
 #: templates/js/translated/order.js:1305
@@ -7070,16 +7029,12 @@ msgid "Allocate Stock Items to Build Order"
 msgstr ""
 
 #: templates/js/translated/build.js:1389
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "No matching stock locations"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/build.js:1451
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "No matching stock items"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/build.js:1576
 msgid "No builds matching query"
@@ -7259,10 +7214,8 @@ msgid "View operation not allowed"
 msgstr ""
 
 #: templates/js/translated/forms.js:679
-#, fuzzy
-#| msgid "Must be a valid number"
 msgid "Enter a valid number"
-msgstr "Nummer må være gyldig"
+msgstr ""
 
 #: templates/js/translated/forms.js:1071 templates/modals.html:19
 #: templates/modals.html:43
@@ -7270,10 +7223,8 @@ msgid "Form errors exist"
 msgstr ""
 
 #: templates/js/translated/forms.js:1457
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No results found"
-msgstr "Ingen serienummer funnet"
+msgstr ""
 
 #: templates/js/translated/forms.js:1661
 msgid "Searching"
@@ -7480,10 +7431,8 @@ msgid "Receive"
 msgstr ""
 
 #: templates/js/translated/order.js:449
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm receipt of items"
-msgstr "Bekreft sletting"
+msgstr ""
 
 #: templates/js/translated/order.js:450
 msgid "Receive Purchase Order Items"
@@ -7547,22 +7496,16 @@ msgid "No sales order allocations found"
 msgstr ""
 
 #: templates/js/translated/order.js:1226
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Edit Stock Allocation"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/order.js:1244
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Delete Stock Allocation"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/order.js:1286
-#, fuzzy
-#| msgid "No action specified"
 msgid "Stock location not specified"
-msgstr "Ingen handling spesifisert"
+msgstr ""
 
 #: templates/js/translated/order.js:1535
 msgid "Fulfilled"
@@ -7681,10 +7624,8 @@ msgid "Edit Part"
 msgstr ""
 
 #: templates/js/translated/part.js:334
-#, fuzzy
-#| msgid "Name"
 msgid "Part edited"
-msgstr "Navn"
+msgstr ""
 
 #: templates/js/translated/part.js:402
 msgid "You are subscribed to notifications for this item"
@@ -7812,10 +7753,8 @@ msgid "Parent stock location"
 msgstr ""
 
 #: templates/js/translated/stock.js:126
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "New Stock Location"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/stock.js:189
 msgid "Enter initial quantity for this stock item"
@@ -7826,16 +7765,12 @@ msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr ""
 
 #: templates/js/translated/stock.js:338
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Created new stock item"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/stock.js:351
-#, fuzzy
-#| msgid "No matching stock item found"
 msgid "Created multiple stock items"
-msgstr "Ingen samsvarende lagervare funnet"
+msgstr ""
 
 #: templates/js/translated/stock.js:390
 msgid "Export Stock"
@@ -8527,3 +8462,4 @@ msgstr ""
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr ""
+

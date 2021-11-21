@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-21 11:39+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-11-20 08:27+0000\n"
+"PO-Revision-Date: 2021-11-20 08:33\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -922,10 +922,8 @@ msgid "Location"
 msgstr ""
 
 #: build/serializers.py:191
-#, fuzzy
-#| msgid "Location of completed parts"
 msgid "Location for completed build outputs"
-msgstr "完了したパーツの場所"
+msgstr ""
 
 #: build/serializers.py:197 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
@@ -1173,10 +1171,8 @@ msgid "Destination location not specified"
 msgstr ""
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:647
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Allocated Parts"
-msgstr "パーツを削除"
+msgstr ""
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:304
@@ -1273,10 +1269,8 @@ msgid "Complete selected items"
 msgstr ""
 
 #: build/templates/build/detail.html:251
-#, fuzzy
-#| msgid "Complete"
 msgid "Complete outputs"
-msgstr "完了"
+msgstr ""
 
 #: build/templates/build/detail.html:266
 msgid "Completed Build Outputs"
@@ -1341,10 +1335,8 @@ msgid "Delete Attachment"
 msgstr ""
 
 #: build/templates/build/detail.html:513
-#, fuzzy
-#| msgid "Location of completed parts"
 msgid "Allocation Complete"
-msgstr "完了したパーツの場所"
+msgstr ""
 
 #: build/templates/build/detail.html:514
 msgid "All untracked stock items have been allocated"
@@ -1500,10 +1492,8 @@ msgid "No group"
 msgstr ""
 
 #: common/models.py:601
-#, fuzzy
-#| msgid "Order required parts"
 msgid "Restart required"
-msgstr "注文必須パーツ"
+msgstr ""
 
 #: common/models.py:602
 msgid "A setting has been changed which requires a server restart"
@@ -1753,10 +1743,8 @@ msgid "Format to display the part name"
 msgstr ""
 
 #: common/models.py:814
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable Reports"
-msgstr "パスワードを入力してください"
+msgstr ""
 
 #: common/models.py:815
 msgid "Enable generation of reports"
@@ -1871,16 +1859,12 @@ msgid "Prefix value for purchase order reference"
 msgstr ""
 
 #: common/models.py:913
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot"
-msgstr "パスワードを入力してください"
+msgstr ""
 
 #: common/models.py:914
-#, fuzzy
-#| msgid "Enter password"
 msgid "Enable password forgot function on the login pages"
-msgstr "パスワードを入力してください"
+msgstr ""
 
 #: common/models.py:919
 msgid "Enable registration"
@@ -1939,10 +1923,8 @@ msgid "Group to which new users are assigned on registration"
 msgstr ""
 
 #: common/models.py:1001
-#, fuzzy
-#| msgid "Edit manufacturer part"
 msgid "Show subscribed parts"
-msgstr "メーカー・パーツの編集"
+msgstr ""
 
 #: common/models.py:1002
 msgid "Show subscribed parts on the homepage"
@@ -2117,10 +2099,8 @@ msgid "Display stock levels in search preview window"
 msgstr ""
 
 #: common/models.py:1139
-#, fuzzy
-#| msgid "New Manufacturer Part"
 msgid "Hide Inactive Parts"
-msgstr "新しいメーカ―・パーツ"
+msgstr ""
 
 #: common/models.py:1140
 msgid "Hide inactive parts in search preview window"
@@ -2743,10 +2723,8 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:141
 #: part/templates/part/detail.html:127 stock/templates/stock/location.html:147
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Create new stock item"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:142
 #: part/templates/part/detail.html:128 stock/templates/stock/location.html:148
@@ -3221,10 +3199,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Order actions"
-msgstr "パーツの注文"
+msgstr ""
 
 #: order/templates/order/order_base.html:45
 #: order/templates/order/sales_order_base.html:58
@@ -4184,10 +4160,8 @@ msgid "Error creating relationship: check that the part is not related to itself
 msgstr ""
 
 #: part/tasks.py:53
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Low stock notification"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -4213,10 +4187,8 @@ msgid "BOM actions"
 msgstr ""
 
 #: part/templates/part/bom.html:34
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Items"
-msgstr "パーツを削除"
+msgstr ""
 
 #: part/templates/part/bom_duplicate.html:13
 msgid "This part already has a Bill of Materials"
@@ -4264,44 +4236,32 @@ msgid "Subscribe to notifications for this category"
 msgstr ""
 
 #: part/templates/part/category.html:38
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Category Actions"
-msgstr "パーツの注文"
+msgstr ""
 
 #: part/templates/part/category.html:43
-#, fuzzy
-#| msgid "Select Category"
 msgid "Edit category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: part/templates/part/category.html:44
-#, fuzzy
-#| msgid "Select Category"
 msgid "Edit Category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: part/templates/part/category.html:48
-#, fuzzy
-#| msgid "Select Category"
 msgid "Delete category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: part/templates/part/category.html:49
-#, fuzzy
-#| msgid "Select Category"
 msgid "Delete Category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: part/templates/part/category.html:57
 msgid "Create new part category"
 msgstr ""
 
 #: part/templates/part/category.html:58
-#, fuzzy
-#| msgid "Select Category"
 msgid "New Category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
@@ -4427,10 +4387,8 @@ msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
 msgstr ""
 
 #: part/templates/part/detail.html:16
-#, fuzzy
-#| msgid "Manufacturer Part Details"
 msgid "Part Details"
-msgstr "メーカー・パーツの詳細"
+msgstr ""
 
 #: part/templates/part/detail.html:66
 msgid "Minimum stock level"
@@ -4801,8 +4759,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5453,16 +5410,12 @@ msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr ""
 
 #: stock/serializers.py:308
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Enter serial numbers for new items"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: stock/serializers.py:319 stock/serializers.py:687
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Destination stock location"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: stock/serializers.py:326
 msgid "Optional note field"
@@ -5801,10 +5754,8 @@ msgid "New Location"
 msgstr ""
 
 #: stock/templates/stock/location.html:86
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Top level stock location"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: stock/templates/stock/location.html:95
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
@@ -5987,10 +5938,8 @@ msgid "Index"
 msgstr ""
 
 #: templates/InvenTree/index.html:88
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Subscribed Parts"
-msgstr "サプライヤー・パーツ"
+msgstr ""
 
 #: templates/InvenTree/index.html:98
 msgid "Subscribed Categories"
@@ -6268,10 +6217,8 @@ msgid "Language Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:186
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select language"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:202
 #, python-format
@@ -6320,10 +6267,8 @@ msgid "Theme Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:35
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select theme"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:46
 msgid "Set Theme"
@@ -6443,24 +6388,20 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
 #: templates/account/login.html:42
-#, fuzzy
-#| msgid "Confirm password"
 msgid "Forgot Password?"
-msgstr "パスワードの確認"
+msgstr ""
 
 #: templates/account/login.html:47
 msgid "InvenTree demo instance"
@@ -6514,10 +6455,8 @@ msgid "The password reset link was invalid, possibly because it has already been
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:18
-#, fuzzy
-#| msgid "Enter password"
 msgid "Change password"
-msgstr "パスワードを入力してください"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
@@ -6939,10 +6878,8 @@ msgid "This line has been validated"
 msgstr ""
 
 #: templates/js/translated/bom.js:618
-#, fuzzy
-#| msgid "Edit manufacturer part"
 msgid "Edit substitute parts"
-msgstr "メーカー・パーツの編集"
+msgstr ""
 
 #: templates/js/translated/bom.js:620 templates/js/translated/bom.js:794
 msgid "Edit BOM Item"
@@ -7025,10 +6962,8 @@ msgid "Location not specified"
 msgstr ""
 
 #: templates/js/translated/build.js:603
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No active build outputs found"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: templates/js/translated/build.js:1052 templates/js/translated/build.js:1760
 #: templates/js/translated/order.js:1305
@@ -7094,16 +7029,12 @@ msgid "Allocate Stock Items to Build Order"
 msgstr ""
 
 #: templates/js/translated/build.js:1389
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching stock locations"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/build.js:1451
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching stock items"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/build.js:1576
 msgid "No builds matching query"
@@ -7283,10 +7214,8 @@ msgid "View operation not allowed"
 msgstr ""
 
 #: templates/js/translated/forms.js:679
-#, fuzzy
-#| msgid "Must be a valid number"
 msgid "Enter a valid number"
-msgstr "有効な数字でなければなりません"
+msgstr ""
 
 #: templates/js/translated/forms.js:1071 templates/modals.html:19
 #: templates/modals.html:43
@@ -7294,10 +7223,8 @@ msgid "Form errors exist"
 msgstr ""
 
 #: templates/js/translated/forms.js:1457
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No results found"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: templates/js/translated/forms.js:1661
 msgid "Searching"
@@ -7440,10 +7367,8 @@ msgid "Part ID"
 msgstr ""
 
 #: templates/js/translated/model_renderers.js:236
-#, fuzzy
-#| msgid "Order part"
 msgid "Order ID"
-msgstr "パーツの注文"
+msgstr ""
 
 #: templates/js/translated/model_renderers.js:256
 msgid "Category ID"
@@ -7506,10 +7431,8 @@ msgid "Receive"
 msgstr ""
 
 #: templates/js/translated/order.js:449
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm receipt of items"
-msgstr "削除の確認"
+msgstr ""
 
 #: templates/js/translated/order.js:450
 msgid "Receive Purchase Order Items"
@@ -7573,22 +7496,16 @@ msgid "No sales order allocations found"
 msgstr ""
 
 #: templates/js/translated/order.js:1226
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Edit Stock Allocation"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/order.js:1244
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Delete Stock Allocation"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/order.js:1286
-#, fuzzy
-#| msgid "No action specified"
 msgid "Stock location not specified"
-msgstr "アクションが指定されていません"
+msgstr ""
 
 #: templates/js/translated/order.js:1535
 msgid "Fulfilled"
@@ -7707,10 +7624,8 @@ msgid "Edit Part"
 msgstr ""
 
 #: templates/js/translated/part.js:334
-#, fuzzy
-#| msgid "Manufacturer Part Details"
 msgid "Part edited"
-msgstr "メーカー・パーツの詳細"
+msgstr ""
 
 #: templates/js/translated/part.js:402
 msgid "You are subscribed to notifications for this item"
@@ -7838,10 +7753,8 @@ msgid "Parent stock location"
 msgstr ""
 
 #: templates/js/translated/stock.js:126
-#, fuzzy
-#| msgid "No matching action found"
 msgid "New Stock Location"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/stock.js:189
 msgid "Enter initial quantity for this stock item"
@@ -7852,16 +7765,12 @@ msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr ""
 
 #: templates/js/translated/stock.js:338
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Created new stock item"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/stock.js:351
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Created multiple stock items"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/stock.js:390
 msgid "Export Stock"
@@ -8554,26 +8463,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Name"
-#~ msgid "Part Name"
-#~ msgstr "お名前"
-
-#, fuzzy
-#~| msgid "Pending"
-#~ msgid "Pending Outputs"
-#~ msgstr "処理待ち"
-
-#, fuzzy
-#~| msgid "Complete"
-#~ msgid "Completed Outputs"
-#~ msgstr "完了"
-
-#~ msgid "Manufacturer Part Stock"
-#~ msgstr "メーカー・パーツの在庫"
-
-#~ msgid "Manufacturer Part Orders"
-#~ msgstr "メーカー・パーツの注文"
-
-#~ msgid "All parts"
-#~ msgstr "全てのパーツ"
