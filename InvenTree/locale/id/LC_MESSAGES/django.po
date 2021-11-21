@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-21 11:39+0000\n"
-"PO-Revision-Date: 2021-09-12 13:44\n"
+"POT-Creation-Date: 2021-11-20 08:27+0000\n"
+"PO-Revision-Date: 2021-11-20 08:33\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -19,62 +19,62 @@ msgstr ""
 
 #: InvenTree/api.py:64
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API endpoint tidak ditemukan"
 
 #: InvenTree/api.py:110
 msgid "No action specified"
-msgstr ""
+msgstr "Tidak ada tindakan yang ditentukan"
 
 #: InvenTree/api.py:124
 msgid "No matching action found"
-msgstr ""
+msgstr "Aksi tidak ditemukan"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Masukkan tanggal"
 
 #: InvenTree/forms.py:120 build/forms.py:48 build/forms.py:69 build/forms.py:93
 #: order/forms.py:26 order/forms.py:37 order/forms.py:48 order/forms.py:59
 #: order/forms.py:70 part/forms.py:108 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:594
 msgid "Confirm"
-msgstr ""
+msgstr "Konfirmasi"
 
 #: InvenTree/forms.py:136
 msgid "Confirm delete"
-msgstr ""
+msgstr "Konfirmasi penghapusan"
 
 #: InvenTree/forms.py:137
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Konfirmasi penghapusan item"
 
 #: InvenTree/forms.py:168
 msgid "Enter password"
-msgstr ""
+msgstr "Masukkan sandi"
 
 #: InvenTree/forms.py:169
 msgid "Enter new password"
-msgstr ""
+msgstr "Masukkan kata sandi baru"
 
 #: InvenTree/forms.py:176
 msgid "Confirm password"
-msgstr ""
+msgstr "Konfirmasikan kata sandi"
 
 #: InvenTree/forms.py:177
 msgid "Confirm new password"
-msgstr ""
+msgstr "Konfirmasi sandi baru"
 
 #: InvenTree/forms.py:209
 msgid "Select Category"
-msgstr ""
+msgstr "Pilih Kategori"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (ulang)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Konfirmasi alamat email"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
@@ -4759,8 +4759,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6389,16 +6388,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8465,3 +8462,4 @@ msgstr ""
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr ""
+
