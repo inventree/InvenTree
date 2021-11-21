@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 08:53\n"
+"PO-Revision-Date: 2021-11-21 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -458,7 +458,7 @@ msgstr "IPN deve corrispondere al modello regex {pat}"
 #: InvenTree/validators.py:106
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr "Il campo %name% deve corrispondere con il modello %pattern%"
+msgstr "Il campo deve corrispondere con il modello {pattern}"
 
 #: InvenTree/validators.py:114
 #, python-brace-format
