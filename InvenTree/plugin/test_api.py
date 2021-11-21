@@ -58,3 +58,39 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             'confirm': False,
         }, expected_code=400).data
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
+
+    def test_admin_action(self):
+        """
+        Test the PluginConfig action commands
+        """
+        from plugin.models import PluginConfig
+        from plugin import plugin_reg
+
+        url = reverse('admin:plugin_pluginconfig_changelist')
+        fixtures = PluginConfig.objects.all()
+
+        # check if plugins were registered -> in some test setups the startup has no db access
+        if not fixtures:
+            plugin_reg.reload_plugins()
+            fixtures = PluginConfig.objects.all()
+
+        print([str(a) for a in fixtures])
+        fixtures = fixtures.first()
+
+        # deactivate plugin
+        self.post(url, {
+            'action': 'plugin_deactivate',
+            '_selected_action':  [f.pk for f in fixtures],
+        }, expected_code=200)
+
+        # deactivate plugin - deactivate again -> nothing will hapen but the nothing 'changed' function is triggered
+        self.post(url, {
+            'action': 'plugin_deactivate',
+            '_selected_action':  [f.pk for f in fixtures],
+        }, expected_code=200)
+
+        # activate plugin
+        self.post(url, {
+            'action': 'plugin_activate',
+            '_selected_action':  [f.pk for f in fixtures],
+        }, expected_code=200)
