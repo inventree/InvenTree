@@ -298,8 +298,8 @@ class Plugins:
                 if self.apps_loading or force_reload:
                     self.apps_loading = False
                     self._reload_apps(force_reload=True)
-
-                self._reload_apps()
+                else:
+                    self._reload_apps()
 
                 # rediscover models/ admin sites
                 self._reregister_contrib_apps()
