@@ -1,4 +1,4 @@
-"""sample of a broken python file that will be ignroed on import"""
+"""sample of a broken integration plugin"""
 from plugin import IntegrationPluginBase
 
 
@@ -6,6 +6,10 @@ class BrokenIntegrationPlugin(IntegrationPluginBase):
     """
     An very broken integration plugin
     """
+    PLUGIN_TITLE = 'Broken Plugin'
+    PLUGIN_SLUG = 'broken'
 
+    def __init__(self):
+        super().__init__()
 
-aaa = bb  # noqa: F821
+        raise KeyError('This is a dummy error')
