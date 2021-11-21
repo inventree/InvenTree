@@ -204,16 +204,8 @@ class Plugins:
                 try:
                     plugin = plugin()
                 except Exception as error:
-                    # log error
-                    get_plugin_error(error, do_log=True, log_name='init')
-
-                    plugin_db_setting.active = False
-                    # TODO save the error to the plugin
-                    plugin_db_setting.save()
-
-                    # add to incative plugins
-                    self.plugins_inactive[plug_key] = plugin_db_setting
-                    continue  # continue -> the plugin is not loaded
+                    # log error and raise it -> disable plugin
+                    get_plugin_error(error, do_raise=True, do_log=True, log_name='init')
 
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
