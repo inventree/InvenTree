@@ -96,3 +96,8 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             'index': 0,
             '_selected_action': [f.pk for f in fixtures],
         }, expected_code=200)
+
+        # save to deactivate plugin
+        self.post(reverse('admin:plugin_pluginconfig_change', {'pk': fixtures[0].pk}), {
+            '_save': 'Save',
+        }, expected_code=200)
