@@ -2,7 +2,7 @@
 from plugin import IntegrationPluginBase
 
 
-class BrokenIntegrationPlugin(IntegrationPluginBase):
+class BrokenFileIntegrationPlugin(IntegrationPluginBase):
     """
     An very broken integration plugin
     """
