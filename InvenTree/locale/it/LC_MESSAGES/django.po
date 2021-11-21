@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 17:18\n"
+"PO-Revision-Date: 2021-11-21 18:35\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -8393,19 +8393,19 @@ msgstr "Modifica stato"
 
 #: templates/stock_table.html:53
 msgid "Change stock status"
-msgstr ""
+msgstr "Modifica stato stock"
 
 #: templates/stock_table.html:56
 msgid "Delete selected items"
-msgstr ""
+msgstr "Elimina articoli selezionati"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: users/admin.py:64
 msgid "Users"
@@ -8413,15 +8413,15 @@ msgstr "Utenti"
 
 #: users/admin.py:65
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "Selezionare quali utenti sono assegnati a questo gruppo"
 
 #: users/admin.py:187
 msgid "The following users are members of multiple groups:"
-msgstr ""
+msgstr "Gli utenti seguenti sono membri di più gruppi:"
 
 #: users/admin.py:210
 msgid "Personal info"
-msgstr ""
+msgstr "Informazioni personali"
 
 #: users/admin.py:211
 msgid "Permissions"
@@ -8429,11 +8429,11 @@ msgstr "Permessi"
 
 #: users/admin.py:214
 msgid "Important dates"
-msgstr ""
+msgstr "Date Importanti"
 
 #: users/models.py:187
 msgid "Permission set"
-msgstr ""
+msgstr "Impostazione autorizzazioni"
 
 #: users/models.py:195
 msgid "Group"
@@ -8445,11 +8445,11 @@ msgstr "Visualizza"
 
 #: users/models.py:198
 msgid "Permission to view items"
-msgstr ""
+msgstr "Autorizzazione a visualizzare gli articoli"
 
 #: users/models.py:200
 msgid "Permission to add items"
-msgstr ""
+msgstr "Autorizzazione ad aggiungere elementi"
 
 #: users/models.py:202
 msgid "Change"
@@ -8457,9 +8457,9 @@ msgstr "Modificare"
 
 #: users/models.py:202
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Permessi per modificare gli elementi"
 
 #: users/models.py:204
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Autorizzazione ad eliminare gli elementi"
 
