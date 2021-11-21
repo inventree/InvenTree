@@ -184,7 +184,8 @@ class Plugins:
             if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
                 # check if the plugin was blocked -> threw an error
                 if disabled:
-                    if plugin.__name__ == disabled:
+                    # option1: package, option2: file-based
+                    if (plugin.__name__ == disabled) or (plugin.__module__==disabled):
                         # errors are bad so disable the plugin in the database
                         # but only if not in testing mode as that breaks in the GH pipeline
                         log_plugin_error({plug_key: 'Disabled'}, 'init')
