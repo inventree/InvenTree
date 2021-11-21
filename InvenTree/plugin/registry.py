@@ -211,6 +211,7 @@ class Plugins:
 
                     # add to incative plugins
                     self.plugins_inactive[plug_key] = plugin_db_setting
+                    continue  # continue -> the plugin is not loaded
 
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
