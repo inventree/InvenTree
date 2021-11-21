@@ -6,6 +6,7 @@ class BrokenIntegrationPlugin(IntegrationPluginBase):
     """
     An very broken integration plugin
     """
+    PLUGIN_NAME = 'Test'
     PLUGIN_TITLE = 'Broken Plugin'
     PLUGIN_SLUG = 'broken'
 
