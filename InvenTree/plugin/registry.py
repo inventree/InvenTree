@@ -131,6 +131,8 @@ class Plugins:
     # region general plugin managment mechanisms
     def collect_plugins(self):
         """collect integration plugins from all possible ways of loading"""
+        self.plugin_modules = []  # clear
+
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
             modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
