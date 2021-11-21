@@ -75,8 +75,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             fixtures = PluginConfig.objects.all()
 
         print([str(a) for a in fixtures])
-        fixtures = fixtures.first()
-
+        fixtures = fixtures[0:1]
         # deactivate plugin
         self.post(url, {
             'action': 'plugin_deactivate',
