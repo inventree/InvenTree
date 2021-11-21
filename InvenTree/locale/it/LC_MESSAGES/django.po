@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 16:22\n"
+"PO-Revision-Date: 2021-11-21 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -8113,70 +8113,70 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:183
 msgid "Show items which are in stock"
-msgstr ""
+msgstr "Mostra gli elementi che sono in giacenza"
 
 #: templates/js/translated/table_filters.js:187
 msgid "In Production"
-msgstr ""
+msgstr "In Produzione"
 
 #: templates/js/translated/table_filters.js:188
 msgid "Show items which are in production"
-msgstr ""
+msgstr "Mostra gli elementi in produzione"
 
 #: templates/js/translated/table_filters.js:192
 msgid "Include Variants"
-msgstr ""
+msgstr "Includi Varianti"
 
 #: templates/js/translated/table_filters.js:193
 msgid "Include stock items for variant parts"
-msgstr ""
+msgstr "Includi gli articoli stock per le varianti degli articoli"
 
 #: templates/js/translated/table_filters.js:197
 msgid "Installed"
-msgstr ""
+msgstr "Installato"
 
 #: templates/js/translated/table_filters.js:198
 msgid "Show stock items which are installed in another item"
-msgstr ""
+msgstr "Mostra gli elementi stock che sono installati in un altro elemento"
 
 #: templates/js/translated/table_filters.js:203
 msgid "Show items which have been assigned to a customer"
-msgstr ""
+msgstr "Mostra elementi che sono stati assegnati a un cliente"
 
 #: templates/js/translated/table_filters.js:223
 #: templates/js/translated/table_filters.js:224
 msgid "Stock status"
-msgstr ""
+msgstr "Stato magazzino"
 
 #: templates/js/translated/table_filters.js:232
 msgid "Has purchase price"
-msgstr ""
+msgstr "Ha il prezzo d'acquisto"
 
 #: templates/js/translated/table_filters.js:233
 msgid "Show stock items which have a purchase price set"
-msgstr ""
+msgstr "Mostra gli articoli di magazzino che hanno un prezzo di acquisto impostato"
 
 #: templates/js/translated/table_filters.js:242
 msgid "Show stock items which have expired"
-msgstr ""
+msgstr "Mostra gli elementi in giacenza scaduti"
 
 #: templates/js/translated/table_filters.js:248
 msgid "Show stock which is close to expiring"
-msgstr ""
+msgstr "Mostra giacenza prossima alla scadenza"
 
 #: templates/js/translated/table_filters.js:279
 msgid "Build status"
-msgstr ""
+msgstr "Stato Build"
 
 #: templates/js/translated/table_filters.js:307
 #: templates/js/translated/table_filters.js:324
 msgid "Order status"
-msgstr ""
+msgstr "Stato dell'ordine"
 
 #: templates/js/translated/table_filters.js:312
 #: templates/js/translated/table_filters.js:329
 msgid "Outstanding"
-msgstr ""
+msgstr "In Sospeso"
 
 #: templates/js/translated/table_filters.js:353
 msgid "Include parts in subcategories"
@@ -8184,15 +8184,15 @@ msgstr "Includi articoli nelle sottocategorie"
 
 #: templates/js/translated/table_filters.js:357
 msgid "Has IPN"
-msgstr ""
+msgstr "Ha IPN"
 
 #: templates/js/translated/table_filters.js:358
 msgid "Part has internal part number"
-msgstr ""
+msgstr "L'articolo possiede un part number interno"
 
 #: templates/js/translated/table_filters.js:363
 msgid "Show active parts"
-msgstr ""
+msgstr "Visualizza articoli attivi"
 
 #: templates/js/translated/table_filters.js:371
 msgid "Stock available"
@@ -8200,136 +8200,136 @@ msgstr "Disponibilità"
 
 #: templates/js/translated/table_filters.js:399
 msgid "Purchasable"
-msgstr ""
+msgstr "Acquistabile"
 
 #: templates/js/translated/tables.js:368
 msgid "Loading data"
-msgstr ""
+msgstr "Caricamento dati"
 
 #: templates/js/translated/tables.js:371
 msgid "rows per page"
-msgstr ""
+msgstr "righe per pagina"
 
 #: templates/js/translated/tables.js:374
 msgid "Showing"
-msgstr ""
+msgstr "Visualizzo"
 
 #: templates/js/translated/tables.js:374
 msgid "to"
-msgstr ""
+msgstr "a"
 
 #: templates/js/translated/tables.js:374
 msgid "of"
-msgstr ""
+msgstr "di"
 
 #: templates/js/translated/tables.js:374
 msgid "rows"
-msgstr ""
+msgstr "righe"
 
 #: templates/js/translated/tables.js:377 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Cerca"
 
 #: templates/js/translated/tables.js:380
 msgid "No matching results"
-msgstr ""
+msgstr "Nessun risultato corrispondente"
 
 #: templates/js/translated/tables.js:383
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Mostra/nascondi la paginazione"
 
 #: templates/js/translated/tables.js:386
 msgid "Refresh"
-msgstr ""
+msgstr "Aggiorna"
 
 #: templates/js/translated/tables.js:389
 msgid "Toggle"
-msgstr ""
+msgstr "Attiva/disattiva"
 
 #: templates/js/translated/tables.js:392
 msgid "Columns"
-msgstr ""
+msgstr "Colonne"
 
 #: templates/js/translated/tables.js:395
 msgid "All"
-msgstr ""
+msgstr "Tutti"
 
 #: templates/navbar.html:40
 msgid "Buy"
-msgstr ""
+msgstr "Acquista"
 
 #: templates/navbar.html:52
 msgid "Sell"
-msgstr ""
+msgstr "Vendi"
 
 #: templates/navbar.html:86 users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: templates/navbar.html:88
 msgid "Logout"
-msgstr ""
+msgstr "Esci"
 
 #: templates/navbar.html:90
 msgid "Login"
-msgstr ""
+msgstr "Accedi"
 
 #: templates/navbar.html:111
 msgid "About InvenTree"
-msgstr ""
+msgstr "Informazioni Su InvenTree"
 
 #: templates/navbar_demo.html:5
 msgid "InvenTree demo mode"
-msgstr ""
+msgstr "Modalità demo InvenTree"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "Dati QR non forniti"
 
 #: templates/registration/logged_out.html:6
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Sei stato disconnesso con successo."
 
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
-msgstr ""
+msgstr "Accedi di nuovo"
 
 #: templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: templates/stats.html:13
 msgid "Instance Name"
-msgstr ""
+msgstr "Nome istanza"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Database"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Server in esecuzione in modalità debug"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Modalità Docker"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Il server è distribuito utilizzando docker"
 
 #: templates/stats.html:40
 msgid "Server status"
-msgstr ""
+msgstr "Stato del Server"
 
 #: templates/stats.html:43
 msgid "Healthy"
-msgstr ""
+msgstr "Healthy"
 
 #: templates/stats.html:45
 msgid "Issues detected"
-msgstr ""
+msgstr "Problemi rilevati"
 
 #: templates/stats.html:52
 msgid "Background Worker"
@@ -8337,39 +8337,39 @@ msgstr ""
 
 #: templates/stats.html:55
 msgid "Background worker not running"
-msgstr ""
+msgstr "Processo in background non in esecuzione"
 
 #: templates/stats.html:63
 msgid "Email Settings"
-msgstr ""
+msgstr "Email Settings"
 
 #: templates/stats.html:66
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Impostazioni dell'email non configurate"
 
 #: templates/stock_table.html:14
 msgid "Export Stock Information"
-msgstr ""
+msgstr "Esporta Informazioni Di Giacenza"
 
 #: templates/stock_table.html:20
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Azioni Barcode"
 
 #: templates/stock_table.html:36
 msgid "Print test reports"
-msgstr ""
+msgstr "Stampa report di prova"
 
 #: templates/stock_table.html:43
 msgid "Stock Options"
-msgstr ""
+msgstr "Opzioni Magazzino"
 
 #: templates/stock_table.html:48
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Aggiungi alle voci stock selezionate"
 
 #: templates/stock_table.html:49
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Rimuovi dagli elementi stock selezionati"
 
 #: templates/stock_table.html:50
 msgid "Stocktake selected stock items"
@@ -8377,19 +8377,19 @@ msgstr ""
 
 #: templates/stock_table.html:51
 msgid "Move selected stock items"
-msgstr ""
+msgstr "Sposta gli elementi stock selezionati"
 
 #: templates/stock_table.html:51
 msgid "Move stock"
-msgstr ""
+msgstr "Sposta giacenza"
 
 #: templates/stock_table.html:52
 msgid "Order selected items"
-msgstr ""
+msgstr "Ordina articolo selezionato"
 
 #: templates/stock_table.html:53
 msgid "Change status"
-msgstr ""
+msgstr "Modifica stato"
 
 #: templates/stock_table.html:53
 msgid "Change stock status"
