@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 21:34\n"
+"PO-Revision-Date: 2021-11-21 07:39\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -3343,7 +3343,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:11
 msgid "Step 1 of 2 - Select Part Suppliers"
-msgstr ""
+msgstr "Fase 1 di 2 - Selezionare fornitori dell'articolo"
 
 #: order/templates/order/order_wizard/select_parts.html:16
 msgid "Select suppliers"
