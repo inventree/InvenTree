@@ -1,0 +1,21 @@
+name: Check Translations
+
+on:
+  push:
+    branches:
+      - l10
+  pull_request:
+    branches:
+      - l10
+
+jobs:
+
+  check:
+    runs-on: ubuntu-latest
+
+  steps:
+    - uses: actions/checkout@v2
+    - name: Test Translations 
+      run: invoke translate
+    - name: Check Migration Files
+      run: python3 ci/check_migration_files.py
