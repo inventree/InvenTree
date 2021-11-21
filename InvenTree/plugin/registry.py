@@ -199,7 +199,8 @@ class Plugins:
                         continue  # continue -> the plugin is not loaded
 
                 # init package
-                # now we can be sure that an admin has activated the plugin -> as of Nov 2021 there are not many checks in place
+                # now we can be sure that an admin has activated the plugin
+                # TODO check more stuff -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
                 logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
                 try:
