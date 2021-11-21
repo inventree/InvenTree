@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 15:08\n"
+"PO-Revision-Date: 2021-11-21 16:22\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -7810,15 +7810,15 @@ msgstr "Prendi"
 
 #: templates/js/translated/stock.js:461
 msgid "Add Stock"
-msgstr ""
+msgstr "Aggiungi giacenza"
 
 #: templates/js/translated/stock.js:462 users/models.py:200
 msgid "Add"
-msgstr ""
+msgstr "Aggiungi"
 
 #: templates/js/translated/stock.js:466 templates/stock_table.html:56
 msgid "Delete Stock"
-msgstr ""
+msgstr "Elimina Stock"
 
 #: templates/js/translated/stock.js:555
 msgid "Quantity cannot be adjusted for serialized stock"
@@ -7826,31 +7826,31 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Specify stock quantity"
-msgstr ""
+msgstr "Specificare la quantità di magazzino"
 
 #: templates/js/translated/stock.js:595
 msgid "You must select at least one available stock item"
-msgstr ""
+msgstr "Devi selezionare almeno un articolo disponibile"
 
 #: templates/js/translated/stock.js:753
 msgid "PASS"
-msgstr ""
+msgstr "PASS"
 
 #: templates/js/translated/stock.js:755
 msgid "FAIL"
-msgstr ""
+msgstr "FAIL"
 
 #: templates/js/translated/stock.js:760
 msgid "NO RESULT"
-msgstr ""
+msgstr "NESSUN RISULTATO"
 
 #: templates/js/translated/stock.js:782
 msgid "Add test result"
-msgstr ""
+msgstr "Aggiungi risultato test"
 
 #: templates/js/translated/stock.js:808
 msgid "No test results found"
-msgstr ""
+msgstr "Nessun risultato di prova trovato"
 
 #: templates/js/translated/stock.js:865
 msgid "Test Date"
@@ -7858,27 +7858,27 @@ msgstr ""
 
 #: templates/js/translated/stock.js:972
 msgid "In production"
-msgstr ""
+msgstr "In produzione"
 
 #: templates/js/translated/stock.js:976
 msgid "Installed in Stock Item"
-msgstr ""
+msgstr "Installato nell'elemento stock"
 
 #: templates/js/translated/stock.js:980
 msgid "Shipped to customer"
-msgstr ""
+msgstr "Spedito al cliente"
 
 #: templates/js/translated/stock.js:984
 msgid "Assigned to Sales Order"
-msgstr ""
+msgstr "Assegnato all'ordine di vendita"
 
 #: templates/js/translated/stock.js:990
 msgid "No stock location set"
-msgstr ""
+msgstr "Nessuna giacenza impostata"
 
 #: templates/js/translated/stock.js:1148
 msgid "Stock item is in production"
-msgstr ""
+msgstr "L'articolo di magazzino è in produzione"
 
 #: templates/js/translated/stock.js:1153
 msgid "Stock item assigned to sales order"
@@ -7886,27 +7886,27 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1156
 msgid "Stock item assigned to customer"
-msgstr ""
+msgstr "Articolo stock assegnato al cliente"
 
 #: templates/js/translated/stock.js:1160
 msgid "Stock item has expired"
-msgstr ""
+msgstr "L'articolo stock è scaduto"
 
 #: templates/js/translated/stock.js:1162
 msgid "Stock item will expire soon"
-msgstr ""
+msgstr "Articolo in giacenza prossimo alla scadenza"
 
 #: templates/js/translated/stock.js:1166
 msgid "Stock item has been allocated"
-msgstr ""
+msgstr "L'articolo stock è stato allocato"
 
 #: templates/js/translated/stock.js:1170
 msgid "Stock item has been installed in another item"
-msgstr ""
+msgstr "L'elemento stock è stato installato in un altro articolo"
 
 #: templates/js/translated/stock.js:1177
 msgid "Stock item has been rejected"
-msgstr ""
+msgstr "L'articolo stock è stato rifiutato"
 
 #: templates/js/translated/stock.js:1179
 msgid "Stock item is lost"
