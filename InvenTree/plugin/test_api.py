@@ -80,17 +80,17 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         # deactivate plugin
         self.post(url, {
             'action': 'plugin_deactivate',
-            '_selected_action':  [f.pk for f in fixtures],
+            '_selected_action': [f.pk for f in fixtures],
         }, expected_code=200)
 
         # deactivate plugin - deactivate again -> nothing will hapen but the nothing 'changed' function is triggered
         self.post(url, {
             'action': 'plugin_deactivate',
-            '_selected_action':  [f.pk for f in fixtures],
+            '_selected_action': [f.pk for f in fixtures],
         }, expected_code=200)
 
         # activate plugin
         self.post(url, {
             'action': 'plugin_activate',
-            '_selected_action':  [f.pk for f in fixtures],
+            '_selected_action': [f.pk for f in fixtures],
         }, expected_code=200)
