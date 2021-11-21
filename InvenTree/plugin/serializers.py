@@ -108,6 +108,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         try:
             result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
             ret['result'] = str(result, 'utf-8')
+            ret['success'] = True
         except subprocess.CalledProcessError as error:
             ret['result'] = str(error.output, 'utf-8')
             ret['error'] = True
