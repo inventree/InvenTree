@@ -50,6 +50,11 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertEqual(data['packagename'][0].title().upper(), self.MSG_NO_PKG.upper())
 
         # not confirmed
-        data = self.post(url, {
+        self.post(url, {
             'packagename': self.PKG_NAME
         }, expected_code=400).data
+        data = self.post(url, {
+            'packagename': self.PKG_NAME,
+            'confirm': False,
+        }, expected_code=400).data
+        self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
