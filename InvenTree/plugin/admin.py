@@ -2,10 +2,10 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from django.apps import apps
 
 import plugin.models as models
 from plugin import plugin_reg
+
 
 def plugin_update(queryset, new_status: bool):
     """general function for bulk changing plugins"""

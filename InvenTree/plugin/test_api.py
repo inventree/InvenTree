@@ -78,7 +78,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         fixtures = fixtures[0:1]
         # deactivate plugin
         self.post(url, {
-            'action': 'plugin_deactivate', 
+            'action': 'plugin_deactivate',
             'index': 0,
             '_selected_action': [f.pk for f in fixtures],
         }, expected_code=200)
