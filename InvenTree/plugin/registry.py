@@ -418,6 +418,7 @@ class Plugins:
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False):
+        self.is_loading = True  # set flag to disable loop reloading
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
@@ -425,7 +426,6 @@ class Plugins:
             apps.clear_cache()
             self._try_reload(apps.populate, settings.INSTALLED_APPS)
 
-        self.is_loading = True
         self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
         self.is_loading = False
 
