@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 18:35\n"
+"PO-Revision-Date: 2021-11-22 08:06\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -923,7 +923,7 @@ msgstr "Posizione"
 
 #: build/serializers.py:191
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Posizione per gli output di build completati"
 
 #: build/serializers.py:197 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
@@ -1159,7 +1159,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:44
 msgid "Stock can be taken from any available location."
-msgstr ""
+msgstr "Lo stock può essere prelevato da qualsiasi posizione disponibile."
 
 #: build/templates/build/detail.html:50 order/models.py:811 stock/forms.py:150
 #: templates/js/translated/order.js:432 templates/js/translated/order.js:952
@@ -2730,7 +2730,7 @@ msgstr "Crea nuova allocazione magazzino"
 #: part/templates/part/detail.html:128 stock/templates/stock/location.html:148
 #: templates/js/translated/stock.js:324
 msgid "New Stock Item"
-msgstr ""
+msgstr "Nuovo Elemento in giacenza"
 
 #: company/templates/company/supplier_part.html:155
 #: company/templates/company/supplier_part_navbar.html:19
@@ -3113,7 +3113,7 @@ msgstr ""
 
 #: order/models.py:957
 msgid "Allocation quantity cannot exceed stock quantity"
-msgstr ""
+msgstr "La quantità di ripartizione non puo' superare la disponibilità della giacenza"
 
 #: order/models.py:961
 msgid "StockItem is over-allocated"
@@ -3137,7 +3137,7 @@ msgstr ""
 
 #: order/models.py:991
 msgid "Enter stock allocation quantity"
-msgstr ""
+msgstr "Inserisci la quantità assegnata alla giacenza"
 
 #: order/serializers.py:167
 msgid "Purchase price currency"
@@ -3153,7 +3153,7 @@ msgstr ""
 
 #: order/serializers.py:218 order/serializers.py:286
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Seleziona la posizione di destinazione per gli elementi ricevuti"
 
 #: order/serializers.py:242
 msgid "Barcode Hash"
@@ -3173,7 +3173,7 @@ msgstr ""
 
 #: order/serializers.py:315
 msgid "Destination location must be specified"
-msgstr ""
+msgstr "La destinazione deve essere specificata"
 
 #: order/serializers.py:326
 msgid "Supplied barcode values must be unique"
@@ -3498,7 +3498,7 @@ msgstr ""
 
 #: order/templates/order/sales_order_ship.html:12
 msgid "Ensure that the order allocation is correct before shipping the order."
-msgstr ""
+msgstr "Assicurarsi che l'assegnazione degli ordini sia corretta prima di spedire l'ordine."
 
 #: order/templates/order/sales_order_ship.html:18
 msgid "Some line items in this order have been over-allocated"
@@ -3633,7 +3633,7 @@ msgstr ""
 
 #: part/api.py:750
 msgid "Specify location for initial part stock"
-msgstr ""
+msgstr "Specifica la posizione per lo stock iniziale"
 
 #: part/api.py:781 part/api.py:785 part/api.py:800 part/api.py:804
 msgid "This field is required"
@@ -4417,7 +4417,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:208
 msgid "Sales Order Allocations"
-msgstr ""
+msgstr "Assegnazione Ordine Di Vendita"
 
 #: part/templates/part/detail.html:249
 msgid "Part Variants"
@@ -4568,19 +4568,19 @@ msgstr ""
 #: stock/templates/stock/item_base.html:28
 #: stock/templates/stock/location.html:29
 msgid "Barcode actions"
-msgstr ""
+msgstr "Azioni Barcode"
 
 #: part/templates/part/part_base.html:45
 #: stock/templates/stock/item_base.html:32
 #: stock/templates/stock/location.html:31 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "Mostra QR Code"
 
 #: part/templates/part/part_base.html:46
 #: stock/templates/stock/item_base.html:48
 #: stock/templates/stock/location.html:32
 msgid "Print Label"
-msgstr ""
+msgstr "Stampa Etichetta"
 
 #: part/templates/part/part_base.html:51
 msgid "Show pricing information"
@@ -5415,7 +5415,7 @@ msgstr ""
 
 #: stock/serializers.py:319 stock/serializers.py:687
 msgid "Destination stock location"
-msgstr ""
+msgstr "Posizione magazzino di destinazione"
 
 #: stock/serializers.py:326
 msgid "Optional note field"
@@ -5501,7 +5501,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:39 templates/stock_table.html:24
 msgid "Scan to Location"
-msgstr ""
+msgstr "Scansiona nella posizione"
 
 #: stock/templates/stock/item_base.html:46
 msgid "Printing actions"
@@ -5634,7 +5634,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:290
 #: templates/js/translated/build.js:1035
 msgid "No location set"
-msgstr ""
+msgstr "Nessuna posizione impostata"
 
 #: stock/templates/stock/item_base.html:297
 msgid "Barcode Identifier"
@@ -5731,40 +5731,40 @@ msgstr ""
 
 #: stock/templates/stock/location.html:33
 msgid "Check-in Items"
-msgstr ""
+msgstr "Articoli controllati"
 
 #: stock/templates/stock/location.html:61
 msgid "Location actions"
-msgstr ""
+msgstr "Azioni posizione"
 
 #: stock/templates/stock/location.html:63
 msgid "Edit location"
-msgstr ""
+msgstr "Modifica la posizione"
 
 #: stock/templates/stock/location.html:65
 msgid "Delete location"
-msgstr ""
+msgstr "Elimina la posizione"
 
 #: stock/templates/stock/location.html:75
 msgid "Create new stock location"
-msgstr ""
+msgstr "Crea nuova posizione di magazzino"
 
 #: stock/templates/stock/location.html:76
 msgid "New Location"
-msgstr ""
+msgstr "Nuova Posizione"
 
 #: stock/templates/stock/location.html:86
 msgid "Top level stock location"
-msgstr ""
+msgstr "Posizione stock di livello superiore"
 
 #: stock/templates/stock/location.html:95
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
-msgstr ""
+msgstr "Non sei nell'elenco dei proprietari di questa posizione. Questa posizione di giacenza non può essere modificata."
 
 #: stock/templates/stock/location.html:113
 #: stock/templates/stock/location.html:160
 msgid "Sublocations"
-msgstr ""
+msgstr "Sottoallocazioni"
 
 #: stock/templates/stock/location.html:118
 #: stock/templates/stock/location.html:132
@@ -5772,24 +5772,24 @@ msgstr ""
 #: templates/js/translated/stock.js:1871 templates/stats.html:93
 #: templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
-msgstr ""
+msgstr "Articoli in magazzino"
 
 #: stock/templates/stock/location.html:127 templates/InvenTree/search.html:170
 #: templates/stats.html:97 users/models.py:42
 msgid "Stock Locations"
-msgstr ""
+msgstr "Posizioni magazzino"
 
 #: stock/templates/stock/location.html:167 templates/stock_table.html:30
 msgid "Printing Actions"
-msgstr ""
+msgstr "Azioni di stampa"
 
 #: stock/templates/stock/location.html:171 templates/stock_table.html:34
 msgid "Print labels"
-msgstr ""
+msgstr "Stampa etichette"
 
 #: stock/templates/stock/location_delete.html:7
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "Sei sicuro di voler eliminare questa posizione?"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -5822,7 +5822,7 @@ msgstr ""
 
 #: stock/views.py:162
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Modifica Posizione Giacenza"
 
 #: stock/views.py:269 stock/views.py:891 stock/views.py:1017
 #: stock/views.py:1299
@@ -5831,7 +5831,7 @@ msgstr ""
 
 #: stock/views.py:284
 msgid "Stock Location QR code"
-msgstr ""
+msgstr "QR Code della posizione magazzino"
 
 #: stock/views.py:303
 msgid "Assign to Customer"
@@ -5847,7 +5847,7 @@ msgstr ""
 
 #: stock/views.py:345
 msgid "Specify a valid location"
-msgstr ""
+msgstr "Specificare una posizione valida"
 
 #: stock/views.py:356
 msgid "Stock item returned from customer"
@@ -5883,7 +5883,7 @@ msgstr ""
 
 #: stock/views.py:943
 msgid "Create new Stock Location"
-msgstr ""
+msgstr "Crea una nuova Posizione di Giacenza"
 
 #: stock/views.py:1044
 msgid "Create new Stock Item"
@@ -5899,7 +5899,7 @@ msgstr ""
 
 #: stock/views.py:1368
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "Elimina Posizione di Giacenza"
 
 #: stock/views.py:1381
 msgid "Delete Stock Item"
@@ -6776,7 +6776,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:439
 msgid "Check Stock Items into Location"
-msgstr ""
+msgstr "Controlla gli elementi in magazzino nella posizione"
 
 #: templates/js/translated/barcode.js:443
 #: templates/js/translated/barcode.js:573
@@ -6794,7 +6794,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:511
 msgid "Stock Item already in this location"
-msgstr ""
+msgstr "Elemento in giacenza già in questa posizione"
 
 #: templates/js/translated/barcode.js:518
 msgid "Added stock item"
@@ -6806,11 +6806,11 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:568
 msgid "Check Into Location"
-msgstr ""
+msgstr "Controlla Nella Posizione"
 
 #: templates/js/translated/barcode.js:633
 msgid "Barcode does not match a valid location"
-msgstr ""
+msgstr "Il codice a barre non corrisponde a una posizione valida"
 
 #: templates/js/translated/bom.js:184
 msgid "Remove substitute part"
@@ -6959,7 +6959,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:424 templates/js/translated/order.js:1172
 msgid "Location not specified"
-msgstr ""
+msgstr "Posizione non specificata"
 
 #: templates/js/translated/build.js:603
 msgid "No active build outputs found"
@@ -6968,20 +6968,20 @@ msgstr ""
 #: templates/js/translated/build.js:1052 templates/js/translated/build.js:1760
 #: templates/js/translated/order.js:1305
 msgid "Edit stock allocation"
-msgstr ""
+msgstr "Modifica allocazione magazzino"
 
 #: templates/js/translated/build.js:1054 templates/js/translated/build.js:1761
 #: templates/js/translated/order.js:1306
 msgid "Delete stock allocation"
-msgstr ""
+msgstr "Elimina posizione giacenza"
 
 #: templates/js/translated/build.js:1072
 msgid "Edit Allocation"
-msgstr ""
+msgstr "Modifica Posizione"
 
 #: templates/js/translated/build.js:1082
 msgid "Remove Allocation"
-msgstr ""
+msgstr "Rimuovi Posizione"
 
 #: templates/js/translated/build.js:1107
 msgid "Substitute parts available"
@@ -7010,7 +7010,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1262
 msgid "Specify stock allocation quantity"
-msgstr ""
+msgstr "Specificare il quantitativo assegnato allo stock"
 
 #: templates/js/translated/build.js:1334
 msgid "You must select at least one part to allocate"
@@ -7018,11 +7018,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:1348
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Seleziona la posizione di origine (lascia vuoto per prendere da tutte le posizioni)"
 
 #: templates/js/translated/build.js:1377
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Conferma l'assegnazione della giacenza"
 
 #: templates/js/translated/build.js:1378
 msgid "Allocate Stock Items to Build Order"
@@ -7030,7 +7030,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1389
 msgid "No matching stock locations"
-msgstr ""
+msgstr "Nessuna posizione di magazzino corrispondente"
 
 #: templates/js/translated/build.js:1451
 msgid "No matching stock items"
@@ -7257,7 +7257,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:80
 msgid "Select Stock Locations"
-msgstr ""
+msgstr "Seleziona Posizioni Giacenza"
 
 #: templates/js/translated/label.js:81
 msgid "Stock location(s) must be selected before printing labels"
@@ -7356,7 +7356,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:130
 msgid "Location ID"
-msgstr ""
+msgstr "ID Posizione"
 
 #: templates/js/translated/model_renderers.js:147
 msgid "Build ID"
@@ -7497,15 +7497,15 @@ msgstr ""
 
 #: templates/js/translated/order.js:1226
 msgid "Edit Stock Allocation"
-msgstr ""
+msgstr "Modifica posizione giacenza"
 
 #: templates/js/translated/order.js:1244
 msgid "Delete Stock Allocation"
-msgstr ""
+msgstr "Elimina posizione giacenza"
 
 #: templates/js/translated/order.js:1286
 msgid "Stock location not specified"
-msgstr ""
+msgstr "Nessun posizione specificata"
 
 #: templates/js/translated/order.js:1535
 msgid "Fulfilled"
@@ -7577,7 +7577,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:181
 msgid "Select destination stock location"
-msgstr ""
+msgstr "Selezione la posizione di destinazione della giacenza"
 
 #: templates/js/translated/part.js:192
 msgid "Copy Category Parameters"
@@ -7750,7 +7750,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:90
 msgid "Parent stock location"
-msgstr ""
+msgstr "Posizione giacenza principale"
 
 #: templates/js/translated/stock.js:126
 msgid "New Stock Location"
@@ -7919,7 +7919,7 @@ msgstr ""
 #: templates/js/translated/stock.js:1185
 #: templates/js/translated/table_filters.js:177
 msgid "Depleted"
-msgstr ""
+msgstr "Esaurito"
 
 #: templates/js/translated/stock.js:1235
 msgid "Stocktake"
@@ -7943,11 +7943,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1482
 msgid "locations"
-msgstr ""
+msgstr "posizione"
 
 #: templates/js/translated/stock.js:1484
 msgid "Undefined location"
-msgstr ""
+msgstr "Posizione non definita"
 
 #: templates/js/translated/stock.js:1658
 msgid "Set Stock Status"
@@ -7967,7 +7967,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1944
 msgid "Location no longer exists"
-msgstr ""
+msgstr "La posizione non esiste più"
 
 #: templates/js/translated/stock.js:1963
 msgid "Purchase order no longer exists"
@@ -8028,11 +8028,11 @@ msgstr ""
 #: templates/js/translated/table_filters.js:104
 #: templates/js/translated/table_filters.js:172
 msgid "Include sublocations"
-msgstr ""
+msgstr "Includi sottoallocazioni/posizioni"
 
 #: templates/js/translated/table_filters.js:105
 msgid "Include locations"
-msgstr ""
+msgstr "Includi posizioni"
 
 #: templates/js/translated/table_filters.js:115
 #: templates/js/translated/table_filters.js:116
@@ -8105,7 +8105,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:173
 msgid "Include stock in sublocations"
-msgstr ""
+msgstr "Includi elementi in giacenza nelle sottoallocazioni"
 
 #: templates/js/translated/table_filters.js:178
 msgid "Show stock items which are depleted"
