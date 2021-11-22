@@ -188,7 +188,6 @@ class Plugins:
                     if (plugin.__name__ == disabled) or (plugin.__module__==disabled):
                         # errors are bad so disable the plugin in the database
                         # but only if not in testing mode as that breaks in the GH pipeline
-                        log_plugin_error({plug_key: 'Disabled'}, 'init')
                         if not settings.PLUGIN_TESTING:
                             plugin_db_setting.active = False
                             # TODO save the error to the plugin
