@@ -5,7 +5,8 @@
 
 {% block sidebar %}
 {% url "po-detail" order.id as url %}
-{% include "sidebar_item.html" with url=url text='{% trans "Return to Orders" %}' icon="fa-undo" %}
+{% trans "Return to Orders" as text %}
+{% include "sidebar_item.html" with url=url text=text icon="fa-undo" %}
 {% endblock %}
 
 {% block page_content %}

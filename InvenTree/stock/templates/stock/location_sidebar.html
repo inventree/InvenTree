@@ -2,5 +2,7 @@
 {% load static %}
 {% load inventree_extras %}
 
-{% include "sidebar_item.html" with label='sublocations' text='{% trans "Sublocations" %}' icon="fa-sitemap" %}
-{% include "sidebar_item.html" with label='stock' text='{% trans "Stock Items" %}' icon="fa-boxes" %}
+{% trans "Sublocations" as text %}
+{% include "sidebar_item.html" with label='sublocations' text=text icon="fa-sitemap" %}
+{% trans "Stock Items" as text %}
+{% include "sidebar_item.html" with label='stock' text=text icon="fa-boxes" %}

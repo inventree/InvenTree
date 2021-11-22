@@ -3,17 +3,24 @@
 {% load inventree_extras %}
 
 {% if company.is_manufacturer %}
-{% include "sidebar_item.html" with label='manufacturer-parts' text='{% trans "Manufactured Parts" %}' icon="fa-industry" %}
+{% trans "Manufactured Parts" as text %}
+{% include "sidebar_item.html" with label='manufacturer-parts' text=text icon="fa-industry" %}
 {% endif %}
 {% if company.is_supplier %}
-{% include "sidebar_item.html" with label='supplier-parts' text='{% trans "Supplied Parts" %}' icon="fa-building" %}
-{% include "sidebar_item.html" with label='purchase-orders' text='{% trans "Purchase Orders" %}' icon="fa-shopping-cart" %}
+{% trans "Supplied Parts" as text %}
+{% include "sidebar_item.html" with label='supplier-parts' text=text icon="fa-building" %}
+{% trans "Purchase Orders" as text %}
+{% include "sidebar_item.html" with label='purchase-orders' text=text icon="fa-shopping-cart" %}
 {% endif %}
 {% if company.is_manufacturer or company.is_supplier %}
-{% include "sidebar_item.html" with label='company-stock' text='{% trans "Supplied Stock Items" %}' icon="fa-boxes" %}
+{% trans "Supplied Stock Items" as text %}
+{% include "sidebar_item.html" with label='company-stock' text=text icon="fa-boxes" %}
 {% endif %}
 {% if company.is_customer %}
-{% include "sidebar_item.html" with label='sales-orders' text='{% trans "Sales Orders" %}' icon="fa-truck" %}
-{% include "sidebar_item.html" with label='assigned-stock' text='{% trans "Assigned Stock Items" %}' icon="fa-sign-out-alt" %}
+{% trans "Sales Orders" as text %}
+{% include "sidebar_item.html" with label='sales-orders' text=text icon="fa-truck" %}
+{% trans "Assigned Stock Items" as text %}
+{% include "sidebar_item.html" with label='assigned-stock' text=text icon="fa-sign-out-alt" %}
 {% endif %}
-{% include "sidebar_item.html" with label='company-notes' text='{% trans "Notes" %}' icon="fa-clipboard" %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label='company-notes' text=text icon="fa-clipboard" %}
