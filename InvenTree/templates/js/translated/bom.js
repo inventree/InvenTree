@@ -16,6 +16,7 @@
 
 /* exported
     downloadBomTemplate,
+    exportBom,
     newPartFromBomWizard,
     loadBomTable,
     loadUsedInTable,
@@ -57,6 +58,86 @@ function downloadBomTemplate(options={}) {
 
         }
     });
+}
+
+
+/**
+ * Export BOM (Bill of Materials) for the specified Part instance
+ */
+function exportBom(part_id, options={}) {
+
+    constructFormBody({}, {
+        title: '{% trans "Export BOM" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: inventreeLoad('bom-export-format', 'csv'),
+                choices: exportFormatOptions(),
+            },
+            cascading: {
+                label: '{% trans "Cascading" %}',
+                help_text: '{% trans "Download cascading / mmulti-level BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-cascading', true),
+            },
+            levels: {
+                label: '{% trans "Levels" %}',
+                help_text: '{% trans "Select maximum number of BOM levels to export (0 = all levels)" %}',
+                type: 'integer',
+                value: 0,
+                min_value: 0,
+            },
+            parameter_data: {
+                label: '{% trans "Include Parameter Data" %}',
+                help_text: '{% trans "Include part  parameter data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-parameter_data', false),
+            },
+            stock_data: {
+                label: '{% trans "Include Stock Data" %}',
+                help_text: '{% trans "Include part stock data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-stock_data', false),
+            },
+            manufacturer_data: {
+                label: '{% trans "Include Manufacturer Data" %}',
+                help_text: '{% trans "Include part manufacturer data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-manufacturer_data', false),
+            },
+            supplier_data: {
+                label: '{% trans "Include Supplier Data" %}',
+                help_text: '{% trans "Include part supplier data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-supplier_data', false),
+            }
+        },
+        onSubmit: function(fields, opts) {
+
+            // Extract values from the form
+            var field_names = ['format', 'cascading', 'levels', 'parameter_data', 'stock_data', 'manufacturer_data', 'supplier_data'];
+
+            var url = `/part/${part_id}/bom-download/?`;
+
+            field_names.forEach(function(fn) {
+                var val = getFormFieldValue(fn, fields[fn], opts);
+
+                // Update user preferences
+                inventreeSave(`bom-export-${fn}`, val);
+
+                url += `${fn}=${val}&`;
+            });
+
+            $(opts.modal).modal('hide');
+
+            // Redirect to the BOM file download
+            location.href = url;
+        }
+    });
+
 }
 
 

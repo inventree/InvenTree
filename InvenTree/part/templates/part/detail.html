@@ -753,13 +753,7 @@
         });
 
         $("#download-bom").click(function () {
-            launchModalForm("{% url 'bom-export' part.id %}",
-                {
-                    success: function(response) {
-                        location.href = response.url;
-                    },
-                }
-            );
+            exportBom({{ part.id }});
         });
 
         {% if report_enabled %}

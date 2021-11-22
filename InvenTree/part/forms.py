@@ -55,36 +55,6 @@ class PartImageDownloadForm(HelperForm):
         ]
 
 
-class BomExportForm(forms.Form):
-    """ Simple form to let user set BOM export options,
-    before exporting a BOM (bill of materials) file.
-    """
-
-    file_format = forms.ChoiceField(label=_("File Format"), help_text=_("Select output file format"))
-
-    cascading = forms.BooleanField(label=_("Cascading"), required=False, initial=True, help_text=_("Download cascading / multi-level BOM"))
-
-    levels = forms.IntegerField(label=_("Levels"), required=True, initial=0, help_text=_("Select maximum number of BOM levels to export (0 = all levels)"))
-
-    parameter_data = forms.BooleanField(label=_("Include Parameter Data"), required=False, initial=False, help_text=_("Include part parameters data in exported BOM"))
-
-    stock_data = forms.BooleanField(label=_("Include Stock Data"), required=False, initial=False, help_text=_("Include part stock data in exported BOM"))
-
-    manufacturer_data = forms.BooleanField(label=_("Include Manufacturer Data"), required=False, initial=True, help_text=_("Include part manufacturer data in exported BOM"))
-
-    supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include part supplier data in exported BOM"))
-
-    def get_choices(self):
-        """ BOM export format choices """
-
-        return [(x, x.upper()) for x in GetExportFormats()]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['file_format'].choices = self.get_choices()
-
-
 class BomDuplicateForm(HelperForm):
     """
     Simple confirmation form for BOM duplication.
