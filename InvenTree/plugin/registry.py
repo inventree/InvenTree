@@ -121,6 +121,10 @@ class Plugins:
 
     def reload_plugins(self):
         """safely reload IntegrationPlugins"""
+        # do not reload whe currently loading
+        if self.is_loading:
+            return
+
         logger.info('Start reloading plugins')
         with maintenance_mode_on():
             self.unload_plugins()
