@@ -194,7 +194,7 @@ class Plugins:
                         if not settings.PLUGIN_TESTING:
                             plugin_db_setting.active = False
                             # TODO save the error to the plugin
-                            plugin_db_setting.save()
+                            plugin_db_setting.save(no_reload=True)
 
                         # add to inactive plugins so it shows up in the ui
                         self.plugins_inactive[plug_key] = plugin_db_setting
