@@ -162,7 +162,6 @@ class Plugins:
         :type disabled: str, optional
         :raises error: IntegrationPluginError
         """
-        from plugin.helpers import log_plugin_error
         from plugin.models import PluginConfig
 
         logger.info('Starting plugin initialisation')
@@ -189,7 +188,7 @@ class Plugins:
                 # check if the plugin was blocked -> threw an error
                 if disabled:
                     # option1: package, option2: file-based
-                    if (plugin.__name__ == disabled) or (plugin.__module__==disabled):
+                    if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
                         # errors are bad so disable the plugin in the database
                         # but only if not in testing mode as that breaks in the GH pipeline
                         if not settings.PLUGIN_TESTING:
