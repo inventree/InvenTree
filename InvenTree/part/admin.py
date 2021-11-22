@@ -236,6 +236,7 @@ class BomItemResource(ModelResource):
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
+        import_id_fields = ['bom_id',]
 
         exclude = [
             'checksum',
