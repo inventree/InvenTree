@@ -8,7 +8,7 @@
 {% include "sidebar_item.html" with label="parts" text='{% trans "Parts" %}' icon="fa-shapes" %}
 {% if show_import and user.is_staff and roles.part.add %}
 {% url "part-import" as url %}
-{% include "sidebar_link.html" with url=url text="Import Parts" icon="fa-file-upload" %}
+{% include "sidebar_link.html" with url=url text='{% trans "Import Parts" %}' icon="fa-file-upload" %}
 {% endif %}
 {% if category %}
 {% include "sidebar_item.html" with label="parameters" text='{% trans "Parameters" %}' icon="fa-tasks" %}
