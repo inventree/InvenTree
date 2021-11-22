@@ -430,8 +430,8 @@ class Plugins:
             apps.apps_ready = apps.models_ready = apps.loading = apps.ready = False
             apps.clear_cache()
             self._try_reload(apps.populate, settings.INSTALLED_APPS)
-
-        self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
+        else:
+            self._try_reload(apps.set_installed_apps, settings.INSTALLED_APPS)
         self.is_loading = False
 
     def _try_reload(self, cmd, *args, **kwargs):
