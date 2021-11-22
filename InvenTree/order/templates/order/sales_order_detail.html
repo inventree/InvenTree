@@ -6,6 +6,8 @@
 {% load static %}
 {% load markdownify %}
 
+{% settings_value 'BARCODE_ENABLE' as barcodes %}
+
 {% block menubar %}
 {% include "order/so_navbar.html"  %}
 {% endblock %}
@@ -190,6 +192,10 @@
     attachNavCallbacks({
         name: 'sales-order',
         default: 'order-items'
+    });
+
+    $("#barcode-scan-into-basket").click(function() {
+        scanOrderIntoBasket([{{ order.id }}]);
     });
 
 {% endblock %}
