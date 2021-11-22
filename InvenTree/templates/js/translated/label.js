@@ -197,7 +197,7 @@ function printBasketLabels(baskets) {
         '{% url "api-basket-label-list" %}',
         {
             enabled: true,
-            basket: baskets,
+            baskets: baskets,
         },
         {
             success: function(response) {
@@ -205,7 +205,7 @@ function printBasketLabels(baskets) {
                 if (response.length == 0) {
                     showAlertDialog(
                         '{% trans "No Labels Found" %}',
-                        '{% trans "No labels found which match the selected part(s)" %}',
+                        '{% trans "No labels found which match the selected basket(s)" %}',
                     );
 
                     return;
@@ -220,7 +220,7 @@ function printBasketLabels(baskets) {
                             var url = `/api/label/basket/${pk}/print/?`;
 
                             baskets.forEach(function(basket) {
-                                url += `parts[]=${basket}&`;
+                                url += `baskets[]=${basket}&`;
                             });
 
                             window.location.href = url;

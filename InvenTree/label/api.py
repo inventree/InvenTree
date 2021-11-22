@@ -502,7 +502,7 @@ class BasketLabelMixin:
 
         params = self.request.query_params
 
-        for key in ['basket', 'basket[]', 'baskets', 'baskkets[]']:
+        for key in ['basket', 'basket[]', 'baskets', 'baskets[]']:
             if key in params:
                 baskets = params.getlist(key, [])
                 break
@@ -588,7 +588,6 @@ class BasketLabelPrint(generics.RetrieveAPIView, BasketLabelMixin, LabelPrintMix
         """
 
         baskets = self.get_baskets()
-
         return self.print(request, baskets)
 
 

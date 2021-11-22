@@ -45,4 +45,9 @@ $('#show-qr-code').click(function() {
         no_post: true,
     });
 });
+
+
+$('#print-label').click(function() {
+    printBasketLabels([{{ basket.pk }}]);
+  });
 {% endblock %}

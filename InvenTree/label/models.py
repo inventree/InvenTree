@@ -420,7 +420,7 @@ class BasketLabel(LabelTemplate):
     def get_api_url():
         return reverse('api-basket-label-list')
 
-    SUBDIR = "baskets"
+    SUBDIR = "basket"
 
     filters = models.CharField(
         blank=True, max_length=250,
