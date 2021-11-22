@@ -2,6 +2,6 @@
 {% load static %}
 {% load inventree_extras %}
 
-{% include "sidebar_item.html" with label='stock' text="Stock Items" icon="fa-boxes" %}
-{% include "sidebar_item.html" with label='purchase-orders' text="Purchase Orders" icon="fa-shopping-cart" %}
-{% include "sidebar_item.html" with label='pricing' text="Supplier Part Pricing" icon="fa-dollar-sign" %}
+{% include "sidebar_item.html" with label='stock' text='{% trans "Stock Items" %}' icon="fa-boxes" %}
+{% include "sidebar_item.html" with label='purchase-orders' text='{% trans "Purchase Orders" %}' icon="fa-shopping-cart" %}
+{% include "sidebar_item.html" with label='pricing' text='{% trans "Supplier Part Pricing" %}' icon="fa-dollar-sign" %}

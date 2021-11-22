@@ -2,15 +2,15 @@
 {% load static %}
 {% load inventree_extras %}
 
-{% include "sidebar_item.html" with label='history' text="Stock Tracking" icon="fa-history" %}
+{% include "sidebar_item.html" with label='history' text='{% trans "Stock Tracking" %}' icon="fa-history" %}
 {% if item.part.trackable %}
-{% include "sidebar_item.html" with label='test-data' text="Test Data" icon="fa-vial" %}
+{% include "sidebar_item.html" with label='test-data' text='{% trans "Test Data" %}' icon="fa-vial" %}
 {% endif %}
 {% if item.part.assembly %}
-{% include "sidebar_item.html" with label='installed-items' text="Installed Items" icon="fa-sign-in-alt" %}
+{% include "sidebar_item.html" with label='installed-items' text='{% trans "Installed Items" %}' icon="fa-sign-in-alt" %}
 {% endif %}
 {% if item.child_count > 0 %}
-{% include "sidebar_item.html" with label='children' text="Child Items" icon="fa-sitemap" %}
+{% include "sidebar_item.html" with label='children' text='{% trans "Child Items" %}' icon="fa-sitemap" %}
 {% endif %}
-{% include "sidebar_item.html" with label='attachments' text="Attachments" icon="fa-paperclip" %}
-{% include "sidebar_item.html" with label='notes' text="Notes" icon="fa-clipboard" %}
+{% include "sidebar_item.html" with label='attachments' text='{% trans "Attachments" %}' icon="fa-paperclip" %}
+{% include "sidebar_item.html" with label='notes' text='{% trans "Notes" %}' icon="fa-clipboard" %}

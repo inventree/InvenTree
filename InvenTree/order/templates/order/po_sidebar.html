@@ -2,7 +2,7 @@
 {% load static %}
 {% load inventree_extras %}
 
-{% include "sidebar_item.html" with label='order-items' text="Line Items" icon="fa-list-ol" %}
-{% include "sidebar_item.html" with label='received-items' text="Received Stock" icon="fa-sign-in-alt" %}
-{% include "sidebar_item.html" with label='order-attachments' text="Attachments" icon="fa-paperclip" %}
-{% include "sidebar_item.html" with label='order-notes' text="Notes" icon="fa-clipboard" %}
+{% include "sidebar_item.html" with label='order-items' text='{% trans "Line Items" %}' icon="fa-list-ol" %}
+{% include "sidebar_item.html" with label='received-items' text='{% trans "Received Stock" %}' icon="fa-sign-in-alt" %}
+{% include "sidebar_item.html" with label='order-attachments' text='{% trans "Attachments" %}' icon="fa-paperclip" %}
+{% include "sidebar_item.html" with label='order-notes' text='{% trans "Notes" %}' icon="fa-clipboard" %}

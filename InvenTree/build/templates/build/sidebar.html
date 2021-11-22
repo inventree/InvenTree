@@ -2,14 +2,14 @@
 {% load static %}
 {% load inventree_extras %}
 
-{% include "sidebar_item.html" with label='details' text="Build Order Details" icon="fa-info-circle" %}
+{% include "sidebar_item.html" with label='details' text='{% trans "Build Order Details" %}' icon="fa-info-circle" %}
 {% if build.active %}
-{% include "sidebar_item.html" with label='allocate' text="Allocate Stock" icon="fa-tasks" %}
+{% include "sidebar_item.html" with label='allocate' text='{% trans "Allocate Stock" %}' icon="fa-tasks" %}
 {% endif %}
 {% if not build.is_complete %}
-{% include "sidebar_item.html" with label='outputs' text="Pending Items" icon="fa-tools" %}
+{% include "sidebar_item.html" with label='outputs' text='{% trans "Pending Items" %}' icon="fa-tools" %}
 {% endif %}
-{% include "sidebar_item.html" with label='completed' text="Completed Items" icon="fa-boxes" %}
-{% include "sidebar_item.html" with label='children' text="Child Build Orders" icon="fa-sitemap" %}
-{% include "sidebar_item.html" with label='attachments' text="Attachments" icon="fa-paperclip" %}
-{% include "sidebar_item.html" with label='notes' text="Notes" icon="fa-clipboard" %}
+{% include "sidebar_item.html" with label='completed' text='{% trans "Completed Items" %}' icon="fa-boxes" %}
+{% include "sidebar_item.html" with label='children' text='{% trans "Child Build Orders" %}' icon="fa-sitemap" %}
+{% include "sidebar_item.html" with label='attachments' text='{% trans "Attachments" %}' icon="fa-paperclip" %}
+{% include "sidebar_item.html" with label='notes' text='{% trans "Notes" %}' icon="fa-clipboard" %}

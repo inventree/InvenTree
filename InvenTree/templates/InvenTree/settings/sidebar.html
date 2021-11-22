@@ -4,27 +4,27 @@
 
 {% include "sidebar_header.html" with text="User Settings" icon='fa-user' %}
 
-{% include "sidebar_item.html" with label='account' text="Account Settings" icon="fa-cog" %}
-{% include "sidebar_item.html" with label='user-display' text="Display Settings" icon="fa-desktop" %}
-{% include "sidebar_item.html" with label='user-home' text="Home Page" icon="fa-home" %}
-{% include "sidebar_item.html" with label='user-search' text="Search Settings" icon="fa-search" %}
-{% include "sidebar_item.html" with label='user-labels' text="Label Printing" icon="fa-tag" %}
-{% include "sidebar_item.html" with label='user-reports' text="Reporting" icon="fa-file-pdf" %}
+{% include "sidebar_item.html" with label='account' text='{% trans "Account Settings" %}' icon="fa-cog" %}
+{% include "sidebar_item.html" with label='user-display' text='{% trans "Display Settings" %}' icon="fa-desktop" %}
+{% include "sidebar_item.html" with label='user-home' text='{% trans "Home Page" %}' icon="fa-home" %}
+{% include "sidebar_item.html" with label='user-search' text='{% trans "Search Settings" %}' icon="fa-search" %}
+{% include "sidebar_item.html" with label='user-labels' text='{% trans "Label Printing" %}' icon="fa-tag" %}
+{% include "sidebar_item.html" with label='user-reports' text='{% trans "Reporting" %}' icon="fa-file-pdf" %}
 
 {% if user.is_staff %}
 
 {% include "sidebar_header.html" with text="Global Settings" icon='fa-cogs' %}
 
-{% include "sidebar_item.html" with label='server' text="Server Configuration" icon="fa-server" %}
-{% include "sidebar_item.html" with label='login' text="Login Settings" icon="fa-fingerprint" %}
-{% include "sidebar_item.html" with label='barcodes' text="Barcode Support" icon="fa-qrcode" %}
-{% include "sidebar_item.html" with label='currencies' text="Currencies" icon="fa-dollar-sign" %}
-{% include "sidebar_item.html" with label='reporting' text="Reporting" icon="fa-file-pdf" %}
-{% include "sidebar_item.html" with label='parts' text="Parts" icon="fa-shapes" %}
-{% include "sidebar_item.html" with label='category' text="Categories" icon="fa-sitemap" %}
-{% include "sidebar_item.html" with label='stock' text="Stock" icon="fa-boxes" %}
-{% include "sidebar_item.html" with label='build-order' text="Build Orders" icon="fa-tools" %}
-{% include "sidebar_item.html" with label='purchase-order' text="Purchase Orders" icon="fa-shopping-cart" %}
-{% include "sidebar_item.html" with label='sales-order' text="Sales Orders" icon="fa-truck" %}
+{% include "sidebar_item.html" with label='server' text='{% trans "Server Configuration" %}' icon="fa-server" %}
+{% include "sidebar_item.html" with label='login' text='{% trans "Login Settings" %}' icon="fa-fingerprint" %}
+{% include "sidebar_item.html" with label='barcodes' text='{% trans "Barcode Support" %}' icon="fa-qrcode" %}
+{% include "sidebar_item.html" with label='currencies' text='{% trans "Currencies" %}' icon="fa-dollar-sign" %}
+{% include "sidebar_item.html" with label='reporting' text='{% trans "Reporting" %}' icon="fa-file-pdf" %}
+{% include "sidebar_item.html" with label='parts' text='{% trans "Parts" %}' icon="fa-shapes" %}
+{% include "sidebar_item.html" with label='category' text='{% trans "Categories" %}' icon="fa-sitemap" %}
+{% include "sidebar_item.html" with label='stock' text='{% trans "Stock" %}' icon="fa-boxes" %}
+{% include "sidebar_item.html" with label='build-order' text='{% trans "Build Orders" %}' icon="fa-tools" %}
+{% include "sidebar_item.html" with label='purchase-order' text='{% trans "Purchase Orders" %}' icon="fa-shopping-cart" %}
+{% include "sidebar_item.html" with label='sales-order' text='{% trans "Sales Orders" %}' icon="fa-truck" %}
 
 {% endif %}
