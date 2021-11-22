@@ -77,7 +77,7 @@ class Plugins:
                 logger.info('Database not accessible while loading plugins')
                 break
             except IntegrationPluginError as error:
-                logger.error(f'Encountered an error with {error.path}:\n{error.message}')
+                logger.error(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
                 log_plugin_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
@@ -90,8 +90,11 @@ class Plugins:
                 retry_counter -= 1
                 if retry_counter <= 0:
                     if settings.PLUGIN_TESTING:
-                        print('Max retries, breaking loading')
+                        print('[PLUGIN] Max retries, breaking loading')
+                    # TODO error for server status
                     break
+                if settings.PLUGIN_TESTING:
+                    print(f'[PLUGIN] Above error occured during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
 
                 # now the loading will re-start up with init
 
@@ -190,11 +193,9 @@ class Plugins:
                     # option1: package, option2: file-based
                     if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
                         # errors are bad so disable the plugin in the database
-                        # but only if not in testing mode as that breaks in the GH pipeline
-                        if not settings.PLUGIN_TESTING:
-                            plugin_db_setting.active = False
-                            # TODO save the error to the plugin
-                            plugin_db_setting.save(no_reload=True)
+                        plugin_db_setting.active = False
+                        # TODO save the error to the plugin
+                        plugin_db_setting.save(no_reload=True)
 
                         # add to inactive plugins so it shows up in the ui
                         self.plugins_inactive[plug_key] = plugin_db_setting
