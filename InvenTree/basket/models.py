@@ -4,6 +4,8 @@ import InvenTree.helpers as helpers
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from django.contrib.auth.models import User
+
+from order.models import SalesOrder
 # Create your models here.
 
 
@@ -51,3 +53,39 @@ class SalesOrderBasket(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.status}"
+
+
+    @transaction.atomic
+    def add_order(self, order_pk):
+        """ Perform item stocktake.
+        When the quantity of an item is counted,
+        record the date of stocktake
+        """
+
+        # try:
+        #     order = SalesOrder.objects.filter(pk=order_pk).first()
+
+        #     sales_orders = self.sales_orders.all()
+        #     sales_orders.add(order)
+        #     self.save()
+        # except InvalidOperation:
+        #     return False
+
+        # if count < 0 or self.infinite:
+        #     return False
+
+        # self.stocktake_date = datetime.now().date()
+        # self.stocktake_user = user
+
+        # if self.updateQuantity(count):
+
+        #     self.add_tracking_entry(
+        #         StockHistoryCode.STOCK_COUNT,
+        #         user,
+        #         notes=notes,
+        #         deltas={
+        #             'quantity': float(self.quantity),
+        #         }
+        #     )
+
+        return True

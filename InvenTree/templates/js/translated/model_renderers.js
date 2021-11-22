@@ -127,6 +127,27 @@ function renderStockLocation(name, data, parameters, options) {
     return html;
 }
 
+function renderBasket(name, data, parameters, options) {
+
+    var level = '- '.repeat(data.level);
+
+    var html = `<span>${level}${data.pathstring}</span>`;
+
+    var render_description = true;
+
+    if ('render_description' in parameters) {
+        render_description = parameters['render_description'];
+    }
+
+    if (render_description && data.description) {
+        html += ` - <i>${data.description}</i>`;
+    }
+
+    html += `<span class='float-right'><small>{% trans "Location ID" %}: ${data.pk}</small></span>`;
+
+    return html;
+}
+
 // eslint-disable-next-line no-unused-vars
 function renderBuild(name, data, parameters, options) {
     

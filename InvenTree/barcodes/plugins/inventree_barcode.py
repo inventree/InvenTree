@@ -13,10 +13,12 @@ references model objects actually exist in the database.
 
 import json
 
+
 from barcodes.barcode import BarcodePlugin
 
 from stock.models import StockItem, StockLocation
 from part.models import Part
+from basket.models import SalesOrderBasket
 
 from rest_framework.exceptions import ValidationError
 
@@ -139,5 +141,33 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                     return part
                 except (ValueError, Part.DoesNotExist):
                     raise ValidationError({k, 'Part does not exist'})
+
+        return None
+
+
+    def getBasket(self):
+
+        for k in self.data.keys():
+            if k.lower() == 'orderbasket':
+
+                pk = None
+
+                # Try integer lookup first
+                try:
+                    pk = int(self.data[k])
+                except (TypeError, ValueError):
+                    pk = None
+
+                if pk is None:
+                    try:
+                        pk = self.data[k]['id']
+                    except (AttributeError, KeyError):
+                        raise ValidationError({k, 'id parameter not supplied'})
+
+                try:
+                    part = SalesOrderBasket.objects.get(pk=pk)
+                    return part
+                except (ValueError, SalesOrderBasket.DoesNotExist):
+                    raise ValidationError({k, 'Basket does not exist'})
 
         return None

@@ -19,6 +19,7 @@
     barcodeScanDialog,
     linkBarcodeDialog,
     scanItemsIntoLocation,
+    scanOrderIntoBasket,
     unlinkBarcode,
 */
 
@@ -615,6 +616,7 @@ function scanItemsIntoLocation(item_id_list, options={}) {
             },
             onScan: function(response) {
                 updateLocationInfo(null);
+                console.log(2134132565)
                 if ('stocklocation' in response) {
                     // Barcode corresponds to a StockLocation
                     stock_location = response.stocklocation;
@@ -627,6 +629,113 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                     showBarcodeMessage(
                         modal,
                         '{% trans "Barcode does not match a valid location" %}',
+                        'warning',
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+/*
+ * Display dialog to check a single stock item into a stock location
+ */
+function scanOrderIntoBasket(item_id_list, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var basket = null;
+
+    // Extra form fields
+    // var extra = makeNotesField();
+
+    // Header contentfor
+    var header = `
+    <div id='header-div'>
+    </div>
+    `;
+
+    function updateBasketInfo(basket) {
+        var div = $(modal + ' #header-div');
+        if (basket && basket.pk) {
+            div.html(`
+            <div class='alert alert-block alert-info'>
+            <b>{% trans "Basket" %}</b></br>
+            ${basket.name}<br>
+            // <i>${basket.status}</i>
+            </div>
+            `);
+        } else {
+            div.html('');
+        }
+    }
+
+    barcodeDialog(
+        '{% trans "Check Into Basket" %}',
+        {
+            headerContent: header,
+            // extraFields: extra,
+            preShow: function() {
+                modalSetSubmitText(modal, '{% trans "Check In" %}');
+                modalEnable(modal, false);
+            },
+            onShow: function() {
+            },
+            onSubmit: function() {
+                // Called when the 'check-in' button is pressed
+                if (!basket) {
+                    return;
+                }
+
+                var items = [];
+
+                item_id_list.forEach(function(pk) {
+                    items.push({
+                        pk: pk,
+                    });
+                });
+
+                var data = {
+                    order: order.pk,
+                    // notes: $(modal + ' #notes').val(),
+                    // orders: orders,
+                };
+
+                // Send API request
+                inventreePut(
+                    '{% url "api-basket-putorder" %}',
+                    data,
+                    {
+                        method: 'POST',
+                        success: function(response, status) {
+                            // First hide the modal
+                            $(modal).modal('hide');
+
+                            if (status == 'success' && 'success' in response) {
+                                showAlertOrCache('alert-success', response.success, true);
+                                location.reload();
+                            } else {
+                                showAlertOrCache('alert-danger', '{% trans "Error transferring stock" %}', false);
+                            }
+                        }
+                    }
+                );
+            },
+            onScan: function(response) {
+                updateBasketInfo(null);
+                if ('orderbasket' in response) {
+                    // Barcode corresponds to a StockLocation
+                    order_basket = response.orderbasket;
+
+                    updateBasketInfo(order_basket);
+                    modalEnable(modal, true);
+
+                } else {
+                    // Barcode does *NOT* correspond to a StockLocation
+                    showBarcodeMessage(
+                        modal,
+                        '{% trans "Barcode does not match a valid basket" %}',
                         'warning',
                     );
                 }

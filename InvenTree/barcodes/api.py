@@ -104,6 +104,13 @@ class BarcodeScan(APIView):
             response['hash'] = plugin.hash()
             response['plugin'] = plugin.name
 
+            # Try to associate with a basket
+            basket = plugin.getBasket()
+            if basket is not None:
+                response['orderbasket'] = plugin.renderBasket(basket)
+                response['url'] = reverse('basket-details', kwargs={'pk': basket.id})
+                match_found = True
+
         # No plugin is found!
         # However, the hash of the barcode may still be associated with a StockItem!
         else:

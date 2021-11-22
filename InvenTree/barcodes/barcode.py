@@ -10,6 +10,7 @@ from barcodes import plugins as BarcodePlugins
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer, LocationSerializer
 from part.serializers import PartSerializer
+from basket.serializers import SOBasketSerializer
 
 
 logger = logging.getLogger('inventree')
@@ -116,6 +117,14 @@ class BarcodePlugin:
         """
 
         serializer = PartSerializer(part)
+        return serializer.data
+
+    def renderBasket(self, basket):
+        """
+        Render a part to JSON response
+        """
+
+        serializer = SOBasketSerializer(basket)
         return serializer.data
 
     def hash(self):
