@@ -169,7 +169,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a single PartCategory object
     """
-    
+
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
@@ -222,7 +222,7 @@ class CategoryParameterList(generics.ListAPIView):
 
         if category is not None:
             try:
-                
+
                 category = PartCategory.objects.get(pk=category)
 
                 fetch_parent = str2bool(params.get('fetch_parent', True))
@@ -734,7 +734,7 @@ class PartList(generics.ListCreateAPIView):
                 raise ValidationError({
                     'initial_stock_quantity': [_('Must be a valid quantity')],
                 })
-            
+
             initial_stock_location = request.data.get('initial_stock_location', None)
 
             try:
@@ -850,7 +850,7 @@ class PartList(generics.ListCreateAPIView):
                     id_values.append(val)
                 except ValueError:
                     pass
-            
+
             queryset = queryset.exclude(pk__in=id_values)
 
         # Exclude part variant tree?
@@ -1096,7 +1096,7 @@ class BomFilter(rest_filters.FilterSet):
             queryset = queryset.filter(pk__in=pks)
         else:
             queryset = queryset.exclude(pk__in=pks)
-    
+
         return queryset
 
     # Filters for linked 'part'
@@ -1257,7 +1257,7 @@ class BomList(generics.ListCreateAPIView):
             queryset = self.annotate_pricing(queryset)
 
         return queryset
-    
+
     def include_pricing(self):
         """
         Determine if pricing information should be included in the response
@@ -1291,7 +1291,7 @@ class BomList(generics.ListCreateAPIView):
 
             # Get default currency from settings
             default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-            
+
             if price:
                 if currency and default_currency:
                     try:
@@ -1381,7 +1381,7 @@ class BomItemSubstituteList(generics.ListCreateAPIView):
 
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
-    
+
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,

@@ -542,7 +542,7 @@ class PartAPITest(InvenTreeAPITestCase):
         # Check that there is a new manufacturer part *and* a new supplier part
         self.assertEqual(new_part.supplier_parts.count(), 1)
         self.assertEqual(new_part.manufacturer_parts.count(), 1)
-        
+
     def test_strange_chars(self):
         """
         Test that non-standard ASCII chars are accepted
@@ -911,7 +911,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # How many BOM items currently exist in the database?
         n = BomItem.objects.count()
-        
+
         url = reverse('api-bom-list')
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), n)
@@ -962,7 +962,7 @@ class BomItemTest(InvenTreeAPITestCase):
         }
 
         self.post(url, data, expected_code=201)
-        
+
         # Now try to create a BomItem which references itself
         data['part'] = 100
         data['sub_part'] = 100
@@ -1003,7 +1003,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
         # Now we will create some variant parts and stock
         for ii in range(5):
-            
+
             # Create a variant part!
             variant = Part.objects.create(
                 name=f"Variant_{ii}",

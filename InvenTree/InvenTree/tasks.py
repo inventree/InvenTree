@@ -106,7 +106,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
         except NameError:
             logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
             return
-        
+
         # Workers are not running: run it as synchronous task
         _func(*args, **kwargs)
 

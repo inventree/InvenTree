@@ -487,7 +487,7 @@ class BaseInvenTreeSetting(models.Model):
 
         elif self.is_int():
             return 'integer'
-        
+
         else:
             return 'string'
 

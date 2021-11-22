@@ -46,7 +46,7 @@ class InvenTreeAPITestCase(APITestCase):
             self.user.is_staff = True
 
         self.user.save()
-        
+
         for role in self.roles:
             self.assignRole(role)
 

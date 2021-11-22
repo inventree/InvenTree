@@ -446,9 +446,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
     purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
 
     purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
-    
+
     purchase_price_avg = serializers.SerializerMethodField()
-    
+
     purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -520,7 +520,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     def get_purchase_price_avg(self, obj):
         """ Return purchase price average """
-        
+
         try:
             purchase_price_avg = obj.purchase_price_avg
         except AttributeError:
