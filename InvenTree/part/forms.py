@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
-from InvenTree.helpers import GetExportFormats, clean_decimal
+from InvenTree.helpers import clean_decimal
 from InvenTree.fields import RoundingDecimalFormField
 
 import common.models

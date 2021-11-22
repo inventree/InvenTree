@@ -190,6 +190,56 @@ class BomItemResource(ModelResource):
         """
         return float(item.quantity)
 
+    def before_import_row(self, row, **kwargs):
+        """
+        Pre-process rows before import.
+
+        Here, we try to "guess" the sub_part instance being specified!
+        """
+
+        # Try to "guess" the sub-part we are looking for
+        sub_part = None
+
+        part_id = row.get('part_id', None)
+
+        # Check if a (valid) part ID has been supplied
+        try:
+            sub_part = models.Part.objects.get(pk=part_id)
+        except (ValueError, models.Part.DoesNotExist):
+            sub_part = None
+
+        """
+        If a valid 'id' is provided, use other fields ('name', 'IPN') to find
+        """
+        if sub_part is None:
+
+            # Extract some other fields
+            part_name = row.get('part_name', None)
+            part_ipn = row.get('part_ipn', None)
+
+            if part_name is not None:
+                parts = models.Part.objects.filter(name=part_name)
+
+                # Only one match for the part name? A likely candidate!
+                if parts.count() == 1:
+                    sub_part = parts.first()
+
+                elif part_ipn is not None:
+
+                    if parts.count() == 0:
+                        parts = models.Part.objects.filter(IPN=part_ipn)
+                    else:
+                        parts = parts.filter(IPN=part_ipn)
+
+                    if parts.count() == 1:
+                        sub_part = parts.first()
+
+            # A 'sub-part' has now been determined!
+            if sub_part is not None:
+                row['part_id'] = sub_part.pk
+
+        return row
+
     def before_export(self, queryset, *args, **kwargs):
 
         self.is_importing = kwargs.get('importing', False)
@@ -236,7 +286,7 @@ class BomItemResource(ModelResource):
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
-        import_id_fields = ['bom_id',]
+        import_id_fields = ['bom_id']
 
         exclude = [
             'checksum',
