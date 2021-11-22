@@ -2,6 +2,7 @@
 
 /* globals
     constructForm,
+    exportFormatOptions,
     imageHoverIcon,
     inventreeGet,
     inventreePut,
@@ -14,6 +15,7 @@
 */
 
 /* exported
+    downloadBomTemplate,
     newPartFromBomWizard,
     loadBomTable,
     loadUsedInTable,
@@ -21,12 +23,41 @@
     removeColFromBomWizard,
 */
 
-/* BOM management functions.
- * Requires follwing files to be loaded first:
- * - api.js
- * - part.js
- * - modals.js
- */
+function downloadBomTemplate(options={}) {
+
+    var format = options.format;
+
+    if (!format) {
+        format = inventreeLoad('bom-export-format', 'csv');
+    }
+
+    constructFormBody({}, {
+        title: '{% trans "Download BOM Template" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: format,
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, opts) {
+            var format = getFormFieldValue('format', fields['format'], opts);
+
+            // Save the format for next time
+            inventreeSave('bom-export-format', format);
+
+            // Hide the modal
+            $(opts.modal).modal('hide');
+
+            // Download the file
+            location.href = `{% url "bom-upload-template" %}?format=${format}`;
+
+        }
+    });
+}
 
 
 function bomItemFields() {
