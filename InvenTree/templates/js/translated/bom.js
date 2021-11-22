@@ -79,7 +79,7 @@ function exportBom(part_id, options={}) {
             },
             cascading: {
                 label: '{% trans "Cascading" %}',
-                help_text: '{% trans "Download cascading / mmulti-level BOM" %}',
+                help_text: '{% trans "Download cascading / multi-level BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-cascading', true),
             },
