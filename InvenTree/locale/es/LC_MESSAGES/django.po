@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-21 13:35\n"
+"PO-Revision-Date: 2021-11-23 00:49\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1340,7 +1340,7 @@ msgstr "Asignación completa"
 
 #: build/templates/build/detail.html:514
 msgid "All untracked stock items have been allocated"
-msgstr ""
+msgstr "Todos los artículos de stock no rastreados han sido asignados"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:433
 msgid "New Build Order"
@@ -1354,13 +1354,13 @@ msgstr "Imprimir Ordenes de Trabajo"
 #: order/templates/order/purchase_orders.html:34
 #: order/templates/order/sales_orders.html:37
 msgid "Display calendar view"
-msgstr ""
+msgstr "Mostrar vista de calendario"
 
 #: build/templates/build/index.html:47
 #: order/templates/order/purchase_orders.html:37
 #: order/templates/order/sales_orders.html:40
 msgid "Display list view"
-msgstr ""
+msgstr "Mostrar vista de lista"
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -1372,7 +1372,7 @@ msgstr "Crear Salida de Trabajo"
 
 #: build/views.py:106
 msgid "Maximum output quantity is "
-msgstr ""
+msgstr "Cantidad máxima de salida es "
 
 #: build/views.py:122 stock/serializers.py:356 stock/views.py:1290
 msgid "Serial numbers already exist"
@@ -1428,88 +1428,88 @@ msgstr "Formato de archivo no soportado: {ext.upper()}"
 
 #: common/files.py:69
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Error al leer el archivo (codificación inválida)"
 
 #: common/files.py:74
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Error al leer el archivo (formato no válido)"
 
 #: common/files.py:76
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Error leyendo el archivo (dimensión incorrecta)"
 
 #: common/files.py:78
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Error al leer el archivo (los datos podrían estar corruptos)"
 
 #: common/forms.py:34 templates/js/translated/attachment.js:54
 msgid "File"
-msgstr ""
+msgstr "Archivo"
 
 #: common/forms.py:35
 msgid "Select file to upload"
-msgstr ""
+msgstr "Seleccione el archivo a cargar"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
-msgstr ""
+msgstr "Archivo {name.title()}"
 
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "Seleccione el archivo {name} para subir"
 
 #: common/models.py:340 common/models.py:970 common/models.py:1178
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Tecla de ajustes (debe ser única - mayúsculas y minúsculas"
 
 #: common/models.py:342
 msgid "Settings value"
-msgstr ""
+msgstr "Valor de ajuste"
 
 #: common/models.py:377
 msgid "Must be an integer value"
-msgstr ""
+msgstr "Debe ser un número entero"
 
 #: common/models.py:382
 msgid "Chosen value is not a valid option"
-msgstr ""
+msgstr "El valor elegido no es una opción válida"
 
 #: common/models.py:405
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "El valor debe ser un valor booleano"
 
 #: common/models.py:416
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "El valor debe ser un entero"
 
 #: common/models.py:439
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Cadena de clave debe ser única"
 
 #: common/models.py:559
 msgid "No group"
-msgstr ""
+msgstr "Sin grupo"
 
 #: common/models.py:601
 msgid "Restart required"
-msgstr ""
+msgstr "Reinicio requerido"
 
 #: common/models.py:602
 msgid "A setting has been changed which requires a server restart"
-msgstr ""
+msgstr "Se ha cambiado una configuración que requiere un reinicio del servidor"
 
 #: common/models.py:609
 msgid "InvenTree Instance Name"
-msgstr ""
+msgstr "Nombre de Instancia de InvenTree"
 
 #: common/models.py:611
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "Descriptor de cadena para la instancia del servidor"
 
 #: common/models.py:615
 msgid "Use instance name"
-msgstr ""
+msgstr "Usar nombre de instancia"
 
 #: common/models.py:616
 msgid "Use the instance name in the title-bar"
