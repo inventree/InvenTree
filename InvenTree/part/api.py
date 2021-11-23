@@ -1081,6 +1081,14 @@ class BomFilter(rest_filters.FilterSet):
     inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
     allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
 
+    # Filters for linked 'part'
+    part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
+    part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
+
+    # Filters for linked 'sub_part'
+    sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
+    sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
+
     validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
 
     def filter_validated(self, queryset, name, value):
@@ -1098,14 +1106,6 @@ class BomFilter(rest_filters.FilterSet):
             queryset = queryset.exclude(pk__in=pks)
 
         return queryset
-
-    # Filters for linked 'part'
-    part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
-    part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
-
-    # Filters for linked 'sub_part'
-    sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
-    sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
 
 
 class BomList(generics.ListCreateAPIView):

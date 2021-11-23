@@ -925,7 +925,14 @@ class BomItemTest(InvenTreeAPITestCase):
             expected_code=200
         )
 
-        print("results:", len(response.data))
+        # Filter by "validated"
+        response = self.get(
+            url,
+            data={
+                'validated': True,
+            },
+            expected_code=200,
+        )
 
     def test_get_bom_detail(self):
         """
