@@ -2,5 +2,7 @@
 {% load static %}
 {% load inventree_extras %}
 
-{% include "sidebar_item.html" with label='parameters' text="Parameters" icon="fa-th-list" %}
-{% include "sidebar_item.html" with label='supplier-parts' text="Supplier Parts" icon="fa-building" %}
+{% trans "Parameters" as text %}
+{% include "sidebar_item.html" with label='parameters' text=text icon="fa-th-list" %}
+{% trans "Supplier Parts" as text %}
+{% include "sidebar_item.html" with label='supplier-parts' text=text icon="fa-building" %}

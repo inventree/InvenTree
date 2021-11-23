@@ -543,7 +543,7 @@ class StockItemInstall(AjaxUpdateView):
         - Items must be in BOM of stock item
         - Items must be serialized
         """
-        
+
         # Filter items in stock
         items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
 
@@ -900,7 +900,7 @@ class StockItemEdit(AjaxUpdateView):
         item.save(user=self.request.user)
 
         return item
-        
+
 
 class StockItemConvert(AjaxUpdateView):
     """

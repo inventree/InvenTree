@@ -2118,7 +2118,7 @@ class Part(MPTTModel):
         """
         Returns True if the total stock for this part is less than the minimum stock level
         """
-        
+
         return self.get_stock_count() < self.minimum_stock
 
 
@@ -2155,7 +2155,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     """
     Represents a price break for selling this part
     """
-    
+
     @staticmethod
     def get_api_url():
         return reverse('api-part-sale-price-list')

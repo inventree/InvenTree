@@ -83,7 +83,7 @@ class ConvertStockItemForm(HelperForm):
 class CreateStockItemForm(HelperForm):
     """
     Form for creating a new StockItem
-    
+
     TODO: Migrate this form to the modern API forms interface
     """
 
@@ -143,7 +143,7 @@ class CreateStockItemForm(HelperForm):
 class SerializeStockForm(HelperForm):
     """
     Form for serializing a StockItem.
-    
+
     TODO: Migrate this form to the modern API forms interface
     """
 

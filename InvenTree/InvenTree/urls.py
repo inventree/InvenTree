@@ -80,7 +80,7 @@ apipatterns = [
 settings_urls = [
 
     url(r'^i18n/?', include('django.conf.urls.i18n')),
-    
+
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 

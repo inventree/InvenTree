@@ -29,7 +29,7 @@ company_urls = [
 ]
 
 manufacturer_part_urls = [
-    
+
     url(r'^(?P<pk>\d+)/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part.html'), name='manufacturer-part-detail'),
 ]
 

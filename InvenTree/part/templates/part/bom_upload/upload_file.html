@@ -5,7 +5,8 @@
 
 {% block sidebar %}
 {% url "part-detail" part.id as url %}
-{% include "sidebar_link.html" with url=url text="Return to BOM" icon="fa-undo" %}
+{% trans "Return to BOM" as text %}
+{% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
 {% endblock %}
 
 {% block heading %}
