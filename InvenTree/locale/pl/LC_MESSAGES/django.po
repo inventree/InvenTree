@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-23 01:56+0000\n"
+"POT-Creation-Date: 2021-11-23 01:58+0000\n"
 "PO-Revision-Date: 2021-11-20 08:33\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -620,8 +620,10 @@ msgstr "Zlecenie Budowy"
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
 #: order/templates/order/sales_order_detail.html:42
-#: templates/InvenTree/index.html:221 templates/InvenTree/search.html:145
-#: users/models.py:44
+#: order/templates/order/so_sidebar.html:7
+#: part/templates/part/part_sidebar.html:22 templates/InvenTree/index.html:221
+#: templates/InvenTree/search.html:145
+#: templates/InvenTree/settings/sidebar.html:42 users/models.py:44
 msgid "Build Orders"
 msgstr "Zlecenia budowy"
 
@@ -795,18 +797,23 @@ msgstr "Link Zewnętrzny"
 msgid "Link to external URL"
 msgstr "Link do zewnętrznego adresu URL"
 
-#: build/models.py:334 build/serializers.py:201 company/models.py:142
-#: company/models.py:577 order/models.py:183 order/models.py:738
+#: build/models.py:334 build/serializers.py:201
+#: build/templates/build/sidebar.html:21 company/models.py:142
+#: company/models.py:577 company/templates/company/sidebar.html:25
+#: order/models.py:183 order/models.py:738
 #: order/templates/order/po_navbar.html:38
-#: order/templates/order/po_navbar.html:41 part/models.py:925
-#: part/templates/part/detail.html:223
+#: order/templates/order/po_navbar.html:41
+#: order/templates/order/po_sidebar.html:11
+#: order/templates/order/so_sidebar.html:11 part/models.py:925
+#: part/templates/part/detail.html:223 part/templates/part/part_sidebar.html:52
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:154 stock/forms.py:204 stock/forms.py:238 stock/models.py:610
 #: stock/models.py:1774 stock/models.py:1880 stock/serializers.py:325
-#: stock/serializers.py:584 templates/js/translated/barcode.js:58
-#: templates/js/translated/bom.js:597 templates/js/translated/company.js:841
-#: templates/js/translated/order.js:963 templates/js/translated/order.js:1561
-#: templates/js/translated/stock.js:861 templates/js/translated/stock.js:1340
+#: stock/serializers.py:584 stock/templates/stock/stock_sidebar.html:21
+#: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:597
+#: templates/js/translated/company.js:841 templates/js/translated/order.js:963
+#: templates/js/translated/order.js:1561 templates/js/translated/stock.js:861
+#: templates/js/translated/stock.js:1340
 msgid "Notes"
 msgstr "Uwagi"
 
@@ -1197,7 +1204,7 @@ msgstr ""
 msgid "Build not complete"
 msgstr "Budowa niezakończona"
 
-#: build/templates/build/detail.html:158
+#: build/templates/build/detail.html:158 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
 msgstr ""
 
@@ -1217,7 +1224,7 @@ msgstr "Cofnij przydział zapasów"
 msgid "Allocate stock to build"
 msgstr "Przydziel zapasy do budowy"
 
-#: build/templates/build/detail.html:181
+#: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
 msgstr "Przydziel zapasy"
 
@@ -1276,11 +1283,14 @@ msgstr ""
 msgid "Completed Build Outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:278
+#: build/templates/build/detail.html:278 build/templates/build/sidebar.html:19
 #: order/templates/order/po_navbar.html:35
+#: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:52
-#: part/templates/part/detail.html:300 stock/templates/stock/item.html:95
+#: order/templates/order/so_sidebar.html:9 part/templates/part/detail.html:300
+#: part/templates/part/part_sidebar.html:50 stock/templates/stock/item.html:95
+#: stock/templates/stock/stock_sidebar.html:19
 msgid "Attachments"
 msgstr "Załączniki"
 
@@ -1361,6 +1371,24 @@ msgstr "Pokaż widok kalendarza"
 #: order/templates/order/sales_orders.html:40
 msgid "Display list view"
 msgstr "Pokaż widok listy"
+
+#: build/templates/build/sidebar.html:5
+#, fuzzy
+#| msgid "Build Details"
+msgid "Build Order Details"
+msgstr "Szczegóły budowy"
+
+#: build/templates/build/sidebar.html:12
+#, fuzzy
+#| msgid "Pending"
+msgid "Pending Items"
+msgstr "W toku"
+
+#: build/templates/build/sidebar.html:15
+#, fuzzy
+#| msgid "Completed items"
+msgid "Completed Items"
+msgstr "Ukończone elementy"
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -1547,7 +1575,7 @@ msgstr "Pobierz z adresu URL"
 msgid "Allow download of remote images and files from external URL"
 msgstr "Zezwól na pobieranie zewnętrznych obrazów i plików z zewnętrznego URL"
 
-#: common/models.py:649
+#: common/models.py:649 templates/InvenTree/settings/sidebar.html:30
 msgid "Barcode Support"
 msgstr "Obsługa kodu kreskowego"
 
@@ -2148,7 +2176,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:19
 #: order/templates/order/po_navbar.html:22
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:289
-#: part/templates/part/bom_upload/upload_file.html:51
+#: part/templates/part/bom_upload/upload_file.html:52
 #: part/templates/part/import_wizard/part_upload.html:45 part/views.py:281
 #: part/views.py:923
 msgid "Upload File"
@@ -2179,7 +2207,7 @@ msgstr ""
 #: order/templates/order/order_wizard/po_upload.html:40
 #: part/templates/part/bom_upload/match_fields.html:27
 #: part/templates/part/bom_upload/match_parts.html:19
-#: part/templates/part/bom_upload/upload_file.html:49
+#: part/templates/part/bom_upload/upload_file.html:50
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:43
@@ -2500,7 +2528,9 @@ msgstr "Klient"
 msgid "Upload Image"
 msgstr ""
 
-#: company/templates/company/detail.html:15 templates/InvenTree/search.html:124
+#: company/templates/company/detail.html:15
+#: company/templates/company/manufacturer_part_sidebar.html:7
+#: templates/InvenTree/search.html:124
 msgid "Supplier Parts"
 msgstr "Komponenty dostawcy"
 
@@ -2557,11 +2587,14 @@ msgid "Supplier Stock"
 msgstr "Zapasy dostawcy"
 
 #: company/templates/company/detail.html:117
+#: company/templates/company/sidebar.html:12
+#: company/templates/company/supplier_part_sidebar.html:7
 #: order/templates/order/order_base.html:13
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
-#: part/templates/part/detail.html:171 templates/InvenTree/index.html:252
-#: templates/InvenTree/search.html:203 templates/navbar.html:45
+#: part/templates/part/detail.html:171 part/templates/part/part_sidebar.html:35
+#: templates/InvenTree/index.html:252 templates/InvenTree/search.html:203
+#: templates/InvenTree/settings/sidebar.html:44 templates/navbar.html:45
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2577,11 +2610,13 @@ msgid "New Purchase Order"
 msgstr ""
 
 #: company/templates/company/detail.html:143
+#: company/templates/company/sidebar.html:20
 #: order/templates/order/sales_order_base.html:13
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
-#: part/templates/part/detail.html:194 templates/InvenTree/index.html:283
-#: templates/InvenTree/search.html:223 templates/navbar.html:56
+#: part/templates/part/detail.html:194 part/templates/part/part_sidebar.html:39
+#: templates/InvenTree/index.html:283 templates/InvenTree/search.html:223
+#: templates/InvenTree/settings/sidebar.html:46 templates/navbar.html:56
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -2651,8 +2686,8 @@ msgstr "Część wewnętrzna"
 
 #: company/templates/company/manufacturer_part.html:108
 #: company/templates/company/supplier_part.html:15 company/views.py:49
-#: part/templates/part/prices.html:163 templates/InvenTree/search.html:194
-#: templates/navbar.html:43
+#: part/templates/part/part_sidebar.html:33 part/templates/part/prices.html:163
+#: templates/InvenTree/search.html:194 templates/navbar.html:43
 msgid "Suppliers"
 msgstr "Dostawcy"
 
@@ -2671,7 +2706,9 @@ msgid "Delete"
 msgstr "Usuń"
 
 #: company/templates/company/manufacturer_part.html:137
-#: part/templates/part/detail.html:277
+#: company/templates/company/manufacturer_part_sidebar.html:5
+#: part/templates/part/category_sidebar.html:17
+#: part/templates/part/detail.html:277 part/templates/part/part_sidebar.html:10
 msgid "Parameters"
 msgstr "Parametry"
 
@@ -2698,6 +2735,30 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:245
 msgid "Delete Parameters"
 msgstr ""
+
+#: company/templates/company/sidebar.html:6
+#, fuzzy
+#| msgid "Manufacturer Parts"
+msgid "Manufactured Parts"
+msgstr "Części producenta"
+
+#: company/templates/company/sidebar.html:10
+#, fuzzy
+#| msgid "Supplier Parts"
+msgid "Supplied Parts"
+msgstr "Komponenty dostawcy"
+
+#: company/templates/company/sidebar.html:16
+#, fuzzy
+#| msgid "Supplier Stock"
+msgid "Supplied Stock Items"
+msgstr "Zapasy dostawcy"
+
+#: company/templates/company/sidebar.html:22
+#, fuzzy
+#| msgid "Stock Item"
+msgid "Assigned Stock Items"
+msgstr "Element magazynowy"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -2774,12 +2835,15 @@ msgid "Delete price break"
 msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:15
+#: part/templates/part/part_sidebar.html:16
 #: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:14
 #: stock/templates/stock/stock_app_base.html:10
-#: templates/InvenTree/search.html:156 templates/js/translated/part.js:426
-#: templates/js/translated/part.js:561 templates/js/translated/part.js:786
-#: templates/js/translated/part.js:946 templates/js/translated/stock.js:479
-#: templates/js/translated/stock.js:1132 templates/navbar.html:26
+#: templates/InvenTree/search.html:156
+#: templates/InvenTree/settings/sidebar.html:40
+#: templates/js/translated/part.js:426 templates/js/translated/part.js:561
+#: templates/js/translated/part.js:786 templates/js/translated/part.js:946
+#: templates/js/translated/stock.js:479 templates/js/translated/stock.js:1132
+#: templates/navbar.html:26
 msgid "Stock"
 msgstr "Stan"
 
@@ -2788,12 +2852,24 @@ msgid "Orders"
 msgstr "Zamówienia"
 
 #: company/templates/company/supplier_part_navbar.html:26
+#: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
 msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:29
+#: part/templates/part/part_sidebar.html:30
 msgid "Pricing"
 msgstr "Cennik"
+
+#: company/templates/company/supplier_part_sidebar.html:5
+#: stock/templates/stock/location.html:118
+#: stock/templates/stock/location.html:132
+#: stock/templates/stock/location.html:144
+#: stock/templates/stock/location_sidebar.html:7
+#: templates/InvenTree/search.html:158 templates/js/translated/stock.js:1871
+#: templates/stats.html:93 templates/stats.html:102 users/models.py:43
+msgid "Stock Items"
+msgstr ""
 
 #: company/views.py:50
 msgid "New Supplier"
@@ -3330,7 +3406,7 @@ msgid "Upload File for Purchase Order"
 msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:18
-#: part/templates/part/bom_upload/upload_file.html:20
+#: part/templates/part/bom_upload/upload_file.html:21
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:21
 #, python-format
@@ -3408,6 +3484,7 @@ msgid "Purchase Order Details"
 msgstr "Szczegóły zamówienia"
 
 #: order/templates/order/po_navbar.html:15
+#: part/templates/part/part_sidebar.html:8
 #: templates/js/translated/stock.js:1919
 msgid "Details"
 msgstr "Szczegóły"
@@ -3421,6 +3498,19 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:50
 msgid "Received Items"
 msgstr "Otrzymane elementy"
+
+#: order/templates/order/po_sidebar.html:5
+#: order/templates/order/so_sidebar.html:5
+#: report/templates/report/inventree_po_report.html:85
+#: report/templates/report/inventree_so_report.html:85
+msgid "Line Items"
+msgstr ""
+
+#: order/templates/order/po_sidebar.html:7
+#, fuzzy
+#| msgid "Received"
+msgid "Received Stock"
+msgstr "Odebrane"
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
@@ -3773,10 +3863,12 @@ msgstr ""
 
 #: part/models.py:358 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:13 part/templates/part/category.html:122
-#: part/templates/part/category.html:142 templates/InvenTree/index.html:85
-#: templates/InvenTree/search.html:88 templates/js/translated/part.js:1304
-#: templates/navbar.html:19 templates/stats.html:80 templates/stats.html:89
-#: users/models.py:41
+#: part/templates/part/category.html:142
+#: part/templates/part/category_sidebar.html:9
+#: templates/InvenTree/index.html:85 templates/InvenTree/search.html:88
+#: templates/InvenTree/settings/sidebar.html:36
+#: templates/js/translated/part.js:1304 templates/navbar.html:19
+#: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
 msgstr "Części"
 
@@ -4198,23 +4290,27 @@ msgstr ""
 msgid "Select Part"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:12
+#: part/templates/part/bom_upload/upload_file.html:8
+msgid "Return to BOM"
+msgstr ""
+
+#: part/templates/part/bom_upload/upload_file.html:13
 msgid "Upload Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:32
+#: part/templates/part/bom_upload/upload_file.html:33
 msgid "Requirements for BOM upload"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:34
+#: part/templates/part/bom_upload/upload_file.html:35
 msgid "The BOM file must contain the required named columns as provided in the "
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:34
+#: part/templates/part/bom_upload/upload_file.html:35
 msgid "BOM Upload Template"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:35
+#: part/templates/part/bom_upload/upload_file.html:36
 msgid "Each part must already exist in the database"
 msgstr ""
 
@@ -4276,6 +4372,7 @@ msgid "Category Description"
 msgstr ""
 
 #: part/templates/part/category.html:103 part/templates/part/category.html:194
+#: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
 msgstr ""
 
@@ -4362,6 +4459,12 @@ msgstr ""
 msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
 msgstr ""
 
+#: part/templates/part/category_sidebar.html:13
+#, fuzzy
+#| msgid "Supplier Parts"
+msgid "Import Parts"
+msgstr "Komponenty dostawcy"
+
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:365
 msgid "Duplicate Part"
 msgstr "Duplikuj część"
@@ -4435,7 +4538,7 @@ msgstr "Nowy wariant"
 msgid "Add new parameter"
 msgstr ""
 
-#: part/templates/part/detail.html:315
+#: part/templates/part/detail.html:315 part/templates/part/part_sidebar.html:47
 msgid "Related Parts"
 msgstr ""
 
@@ -4443,7 +4546,7 @@ msgstr ""
 msgid "Add Related"
 msgstr "Dodaj powiązane"
 
-#: part/templates/part/detail.html:366
+#: part/templates/part/detail.html:366 part/templates/part/part_sidebar.html:19
 msgid "Bill of Materials"
 msgstr "Zestawienie materiałowe"
 
@@ -4752,6 +4855,22 @@ msgstr ""
 #: part/templates/part/prices.html:134
 msgid "No pricing information is available for this part."
 msgstr ""
+
+#: part/templates/part/part_sidebar.html:13
+#, fuzzy
+#| msgid "Variant Of"
+msgid "Variants"
+msgstr "Wariant"
+
+#: part/templates/part/part_sidebar.html:27
+msgid "Used In"
+msgstr ""
+
+#: part/templates/part/part_sidebar.html:43
+#, fuzzy
+#| msgid "Template"
+msgid "Test Templates"
+msgstr "Szablon"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -5099,11 +5218,6 @@ msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:147
 msgid "Required For"
-msgstr ""
-
-#: report/templates/report/inventree_po_report.html:85
-#: report/templates/report/inventree_so_report.html:85
-msgid "Line Items"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:21
@@ -5455,6 +5569,7 @@ msgid "This stock item does not have any child items"
 msgstr ""
 
 #: stock/templates/stock/item.html:64
+#: stock/templates/stock/stock_sidebar.html:8
 msgid "Test Data"
 msgstr ""
 
@@ -5764,15 +5879,8 @@ msgstr ""
 
 #: stock/templates/stock/location.html:113
 #: stock/templates/stock/location.html:160
+#: stock/templates/stock/location_sidebar.html:5
 msgid "Sublocations"
-msgstr ""
-
-#: stock/templates/stock/location.html:118
-#: stock/templates/stock/location.html:132
-#: stock/templates/stock/location.html:144 templates/InvenTree/search.html:158
-#: templates/js/translated/stock.js:1871 templates/stats.html:93
-#: templates/stats.html:102 users/models.py:43
-msgid "Stock Items"
 msgstr ""
 
 #: stock/templates/stock/location.html:127 templates/InvenTree/search.html:170
@@ -5795,6 +5903,24 @@ msgstr "Czy na pewno chcesz skasować tą lokację?"
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
 msgstr ""
+
+#: stock/templates/stock/stock_sidebar.html:5
+#, fuzzy
+#| msgid "Stock actions"
+msgid "Stock Tracking"
+msgstr "Akcje magazynowe"
+
+#: stock/templates/stock/stock_sidebar.html:12
+#, fuzzy
+#| msgid "Install into"
+msgid "Installed Items"
+msgstr "Zainstaluj do"
+
+#: stock/templates/stock/stock_sidebar.html:16
+#, fuzzy
+#| msgid "Received Items"
+msgid "Child Items"
+msgstr "Otrzymane elementy"
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
@@ -6043,6 +6169,7 @@ msgid "Server Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/login.html:9
+#: templates/InvenTree/settings/sidebar.html:28
 msgid "Login Settings"
 msgstr ""
 
@@ -6113,16 +6240,67 @@ msgstr ""
 msgid "No part parameter templates found"
 msgstr ""
 
+#: templates/InvenTree/settings/sidebar.html:5
+#: templates/InvenTree/settings/user_settings.html:9
+msgid "User Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:8
+#: templates/InvenTree/settings/user.html:11
+msgid "Account Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:10
+#: templates/InvenTree/settings/user_display.html:9
+msgid "Display Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:12
+msgid "Home Page"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:14
+#: templates/InvenTree/settings/user_search.html:9
+msgid "Search Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:16
+#, fuzzy
+#| msgid "Label description"
+msgid "Label Printing"
+msgstr "Opis etykiety"
+
+#: templates/InvenTree/settings/sidebar.html:18
+#: templates/InvenTree/settings/sidebar.html:34
+msgid "Reporting"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:23
+msgid "Global Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:26
+msgid "Server Configuration"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:32
+#, fuzzy
+#| msgid "Currency"
+msgid "Currencies"
+msgstr "Waluta"
+
+#: templates/InvenTree/settings/sidebar.html:38
+#, fuzzy
+#| msgid "Category"
+msgid "Categories"
+msgstr "Kategoria"
+
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:11
-msgid "Account Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:18
@@ -6259,10 +6437,6 @@ msgstr ""
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
-#: templates/InvenTree/settings/user_display.html:9
-msgid "Display Settings"
-msgstr ""
-
 #: templates/InvenTree/settings/user_display.html:25
 msgid "Theme Settings"
 msgstr ""
@@ -6281,14 +6455,6 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/user_search.html:9
-msgid "Search Settings"
-msgstr ""
-
-#: templates/InvenTree/settings/user_settings.html:9
-msgid "User Settings"
 msgstr ""
 
 #: templates/about.html:10
