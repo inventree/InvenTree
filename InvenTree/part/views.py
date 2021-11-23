@@ -459,7 +459,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         part = self.get_object()
 
         ctx = part.get_context_data(self.request)
-        
+
         context.update(**ctx)
 
         # Pricing information
@@ -1056,7 +1056,7 @@ class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
                     matches = sorted(matches, key=lambda item: item['match'], reverse=True)
 
                     part_options = [m['part'] for m in matches]
-            
+
             # Supply list of part options for each row, sorted by how closely they match the part name
             row['item_options'] = part_options
 
@@ -1526,11 +1526,11 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
             # Prefetch parts parameters
             parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
-            
+
             # Get table headers (unique parameters names)
             context['headers'] = category.get_unique_parameters(cascade=cascade,
                                                                 prefetch=parts_parameters)
-            
+
             # Insert part information
             context['headers'].insert(0, 'description')
             context['headers'].insert(0, 'part')

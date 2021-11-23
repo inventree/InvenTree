@@ -1602,7 +1602,7 @@ class Part(MPTTModel):
         # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
         used_in = self.get_used_in().all()
 
-        parts = parts.exclude(id__in=[item.part.id for item in used_in])
+        parts = parts.exclude(id__in=[part.id for part in used_in])
 
         return parts
 
@@ -2153,7 +2153,7 @@ class Part(MPTTModel):
         """
         Returns True if the total stock for this part is less than the minimum stock level
         """
-        
+
         return self.get_stock_count() < self.minimum_stock
 
 
@@ -2190,7 +2190,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     """
     Represents a price break for selling this part
     """
-    
+
     @staticmethod
     def get_api_url():
         return reverse('api-part-sale-price-list')

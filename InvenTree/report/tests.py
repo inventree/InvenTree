@@ -106,7 +106,7 @@ class ReportTest(InvenTreeAPITestCase):
         # Filter by "enabled" status
         response = self.get(url, {'enabled': True})
         self.assertEqual(len(response.data), n)
-        
+
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), 0)
 
@@ -118,7 +118,7 @@ class ReportTest(InvenTreeAPITestCase):
         # Filter by "enabled" status
         response = self.get(url, {'enabled': True})
         self.assertEqual(len(response.data), 0)
-        
+
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
 
@@ -199,7 +199,7 @@ class BuildReportTest(ReportTest):
         build = Build.objects.first()
 
         response = self.get(url, {'build': build.pk})
-        
+
         self.assertEqual(type(response), StreamingHttpResponse)
 
         headers = response.headers

@@ -186,7 +186,7 @@ class LabelTemplate(models.Model):
         """
 
         template_string = Template(self.filename_pattern)
-        
+
         ctx = self.context(request)
 
         context = Context(ctx)

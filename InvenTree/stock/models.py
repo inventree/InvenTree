@@ -272,7 +272,7 @@ class StockItem(MPTTModel):
         add_note = kwargs.pop('add_note', True)
 
         notes = kwargs.pop('notes', '')
-        
+
         if self.pk:
             # StockItem has already been saved
 

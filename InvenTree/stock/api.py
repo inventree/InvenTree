@@ -91,7 +91,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         Instead of "deleting" the StockItem
         (which may take a long time)
         we instead schedule it for deletion at a later date.
-        
+
         The background worker will delete these in the future
         """
 
@@ -134,7 +134,7 @@ class StockAdjustView(generics.CreateAPIView):
     queryset = StockItem.objects.none()
 
     def get_serializer_context(self):
-            
+
         context = super().get_serializer_context()
 
         context['request'] = self.request
@@ -348,7 +348,7 @@ class StockFilter(rest_filters.FilterSet):
             queryset = queryset.exclude(customer=None)
         else:
             queryset = queryset.filter(customer=None)
-            
+
         return queryset
 
     depleted = rest_filters.BooleanFilter(label='Depleted', method='filter_depleted')
@@ -437,7 +437,7 @@ class StockList(generics.ListCreateAPIView):
                 })
 
         with transaction.atomic():
-            
+
             # Create an initial stock item
             item = serializer.save()
 

@@ -553,10 +553,10 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
     quantity = InvenTreeDecimalField()
-    
+
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
-    
+
     sale_price = InvenTreeMoneySerializer(
         allow_null=True
     )

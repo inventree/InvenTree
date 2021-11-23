@@ -247,7 +247,7 @@ class ReportTemplateBase(ReportBase):
         """
 
         template_string = Template(self.filename_pattern)
-        
+
         ctx = self.context(request)
 
         context = Context(ctx)

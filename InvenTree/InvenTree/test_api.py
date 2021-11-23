@@ -19,7 +19,7 @@ from base64 import b64encode
 class HTMLAPITests(TestCase):
     """
     Test that we can access the REST API endpoints via the HTML interface.
-    
+
     History: Discovered on 2021-06-28 a bug in InvenTreeModelSerializer,
     which raised an AssertionError when using the HTML API interface,
     while the regular JSON interface continued to work as expected.
@@ -280,7 +280,7 @@ class APITests(InvenTreeAPITestCase):
         """
         Tests for detail API endpoint actions
         """
-        
+
         self.basicAuth()
 
         url = reverse('api-part-detail', kwargs={'pk': 1})

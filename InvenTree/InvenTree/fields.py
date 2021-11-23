@@ -53,7 +53,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
     """
     Custom MoneyField for clean migrations while using dynamic currency settings
     """
-    
+
     def __init__(self, **kwargs):
         # detect if creating migration
         if 'migrate' in sys.argv or 'makemigrations' in sys.argv:

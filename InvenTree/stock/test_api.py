@@ -368,7 +368,7 @@ class StockItemTest(StockAPITestCase):
         )
 
         self.assertIn('Quantity is required', str(response.data))
-        
+
         # POST with quantity and part and location
         response = self.post(
             self.list_url,
