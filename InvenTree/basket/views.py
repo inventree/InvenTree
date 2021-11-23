@@ -7,14 +7,14 @@ from django.utils.translation import gettext_lazy as _
 # Create your views here.
 
 class SOBasketIndex(ListView):
-    """ List view for all purchase orders """
+    """ List view for all baskets """
 
     model = SalesOrderBasket
     template_name = 'baskets.html'
     context_object_name = 'baskets'
 
     def get_queryset(self):
-        """ Retrieve the list of purchase orders,
+        """ Retrieve the baskets,
         ensure that the most recent ones are returned first. """
 
         queryset = SalesOrderBasket.objects.all().order_by('-creation_date')
