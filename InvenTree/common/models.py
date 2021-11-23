@@ -116,7 +116,9 @@ class BaseInvenTreeSetting(models.Model):
         for key, value in settings.items():
             validator = cls.get_setting_validator(key)
 
-            if cls.validator_is_bool(validator):
+            if cls.is_protected(key):
+                value = '***'
+            elif cls.validator_is_bool(validator):
                 value = InvenTree.helpers.str2bool(value)
             elif cls.validator_is_int(validator):
                 try:
@@ -493,7 +495,7 @@ class BaseInvenTreeSetting(models.Model):
 
         elif self.is_int():
             return 'integer'
-        
+
         else:
             return 'string'
 
@@ -545,6 +547,19 @@ class BaseInvenTreeSetting(models.Model):
             value = self.default_value()
 
         return value
+
+    @classmethod
+    def is_protected(cls, key):
+        """
+        Check if the setting value is protected
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            return cls.GLOBAL_SETTINGS[key].get('protected', False)
+        else:
+            return False
 
 
 def settings_group_options():

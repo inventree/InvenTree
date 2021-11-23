@@ -120,10 +120,10 @@ def isInvenTreeDevelopmentVersion():
 def inventreeDocsVersion():
     """
     Return the version string matching the latest documentation.
-    
+
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
-    
+
     """
 
     if isInvenTreeDevelopmentVersion():

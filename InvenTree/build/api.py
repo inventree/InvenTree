@@ -198,7 +198,7 @@ class BuildUnallocate(generics.CreateAPIView):
     queryset = Build.objects.none()
 
     serializer_class = BuildUnallocationSerializer
-    
+
     def get_serializer_context(self):
 
         ctx = super().get_serializer_context()
@@ -231,7 +231,7 @@ class BuildComplete(generics.CreateAPIView):
             ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
         except:
             pass
-        
+
         return ctx
 
 
@@ -296,7 +296,7 @@ class BuildItemList(generics.ListCreateAPIView):
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
         except AttributeError:
             pass
-        
+
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):

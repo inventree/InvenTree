@@ -105,7 +105,7 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
         data = js_file.readlines()
 
     pattern = r'{% trans '
-    
+
     err_count = 0
 
     for idx, line in enumerate(data):

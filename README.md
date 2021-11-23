@@ -5,6 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
+[![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
 ![PEP](https://github.com/inventree/inventree/actions/workflows/style.yaml/badge.svg)
 ![SQLite](https://github.com/inventree/inventree/actions/workflows/coverage.yaml/badge.svg)
 ![MySQL](https://github.com/inventree/inventree/actions/workflows/mysql.yaml/badge.svg)

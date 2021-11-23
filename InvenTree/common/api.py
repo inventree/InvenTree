@@ -161,7 +161,7 @@ class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [
         GlobalSettingsPermissions,
     ]
-    
+
 
 class UserSettingsList(SettingsList):
     """
@@ -212,7 +212,7 @@ class UserSettingsDetail(generics.RetrieveUpdateAPIView):
 
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
-    
+
     permission_classes = [
         UserSettingsPermissions,
     ]

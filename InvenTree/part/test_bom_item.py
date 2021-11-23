@@ -153,7 +153,7 @@ class BomItemTest(TestCase):
         subs = []
 
         for ii in range(5):
-            
+
             # Create a new part
             sub_part = Part.objects.create(
                 name=f"Orphan {ii}",
@@ -181,7 +181,7 @@ class BomItemTest(TestCase):
 
         # There should be now 5 substitute parts available
         self.assertEqual(bom_item.substitutes.count(), 5)
-            
+
         # Try to create a substitute which points to the same sub-part (should fail)
         with self.assertRaises(django_exceptions.ValidationError):
             BomItemSubstitute.objects.create(
