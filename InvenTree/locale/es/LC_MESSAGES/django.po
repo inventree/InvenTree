@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-23 00:49\n"
+"PO-Revision-Date: 2021-11-23 01:52\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1724,79 +1724,79 @@ msgstr ""
 
 #: common/models.py:793
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Habilitar precios internos para piezas"
 
 #: common/models.py:799
 msgid "Internal Price as BOM-Price"
-msgstr ""
+msgstr "Precio interno como precio de BOM"
 
 #: common/models.py:800
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr ""
+msgstr "Usar el precio interno (si está establecido) en los cálculos de precios BOM"
 
 #: common/models.py:806
 msgid "Part Name Display Format"
-msgstr ""
+msgstr "Formato de visualización de Nombre de Parte"
 
 #: common/models.py:807
 msgid "Format to display the part name"
-msgstr ""
+msgstr "Formato para mostrar el nombre de la pieza"
 
 #: common/models.py:814
 msgid "Enable Reports"
-msgstr ""
+msgstr "Habilitar informes"
 
 #: common/models.py:815
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Habilitar generación de informes"
 
 #: common/models.py:821 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Modo de depuración"
 
 #: common/models.py:822
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "Generar informes en modo de depuración (salida HTML)"
 
 #: common/models.py:828
 msgid "Page Size"
-msgstr ""
+msgstr "Tamaño de página"
 
 #: common/models.py:829
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Tamaño de página predeterminado para informes PDF"
 
 #: common/models.py:839
 msgid "Test Reports"
-msgstr ""
+msgstr "Informe de prueba"
 
 #: common/models.py:840
 msgid "Enable generation of test reports"
-msgstr ""
+msgstr "Habilitar generación de informes de prueba"
 
 #: common/models.py:846
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Expiración de stock"
 
 #: common/models.py:847
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Habilitar la funcionalidad de expiración de stock"
 
 #: common/models.py:853
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Vender existencias caducadas"
 
 #: common/models.py:854
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Permitir venta de existencias caducadas"
 
 #: common/models.py:860
 msgid "Stock Stale Time"
-msgstr ""
+msgstr "Tiempo histórico de Stock"
 
 #: common/models.py:861
 msgid "Number of days stock items are considered stale before expiring"
-msgstr ""
+msgstr "Número de días de artículos de stock se consideran obsoletos antes de caducar"
 
 #: common/models.py:863
 msgid "days"
@@ -1812,19 +1812,19 @@ msgstr "Permitir crear con stock caducado"
 
 #: common/models.py:875
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "Control de Stock"
 
 #: common/models.py:876
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "Habilitar control de propiedad sobre ubicaciones de stock y artículos"
 
 #: common/models.py:882
 msgid "Group by Part"
-msgstr ""
+msgstr "Agrupar por parte"
 
 #: common/models.py:883
 msgid "Group stock items by part reference in table views"
-msgstr ""
+msgstr "Agrupar elementos de stock por referencia de parte en vistas de tabla"
 
 #: common/models.py:889
 msgid "Build Order Reference Prefix"
