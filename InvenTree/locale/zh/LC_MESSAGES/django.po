@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-20 08:27+0000\n"
-"PO-Revision-Date: 2021-11-20 08:33\n"
+"POT-Creation-Date: 2021-11-23 01:58+0000\n"
+"PO-Revision-Date: 2021-11-23 03:01\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -620,8 +620,10 @@ msgstr "生产订单"
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
 #: order/templates/order/sales_order_detail.html:42
-#: templates/InvenTree/index.html:221 templates/InvenTree/search.html:145
-#: users/models.py:44
+#: order/templates/order/so_sidebar.html:7
+#: part/templates/part/part_sidebar.html:22 templates/InvenTree/index.html:221
+#: templates/InvenTree/search.html:145
+#: templates/InvenTree/settings/sidebar.html:42 users/models.py:44
 msgid "Build Orders"
 msgstr "生产订单"
 
@@ -795,18 +797,23 @@ msgstr "外部链接"
 msgid "Link to external URL"
 msgstr "链接到外部 URL"
 
-#: build/models.py:334 build/serializers.py:201 company/models.py:142
-#: company/models.py:577 order/models.py:183 order/models.py:738
+#: build/models.py:334 build/serializers.py:201
+#: build/templates/build/sidebar.html:21 company/models.py:142
+#: company/models.py:577 company/templates/company/sidebar.html:25
+#: order/models.py:183 order/models.py:738
 #: order/templates/order/po_navbar.html:38
-#: order/templates/order/po_navbar.html:41 part/models.py:925
-#: part/templates/part/detail.html:223
+#: order/templates/order/po_navbar.html:41
+#: order/templates/order/po_sidebar.html:11
+#: order/templates/order/so_sidebar.html:11 part/models.py:925
+#: part/templates/part/detail.html:223 part/templates/part/part_sidebar.html:52
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:154 stock/forms.py:204 stock/forms.py:238 stock/models.py:610
 #: stock/models.py:1774 stock/models.py:1880 stock/serializers.py:325
-#: stock/serializers.py:584 templates/js/translated/barcode.js:58
-#: templates/js/translated/bom.js:597 templates/js/translated/company.js:841
-#: templates/js/translated/order.js:963 templates/js/translated/order.js:1561
-#: templates/js/translated/stock.js:861 templates/js/translated/stock.js:1340
+#: stock/serializers.py:584 stock/templates/stock/stock_sidebar.html:21
+#: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:597
+#: templates/js/translated/company.js:841 templates/js/translated/order.js:963
+#: templates/js/translated/order.js:1561 templates/js/translated/stock.js:861
+#: templates/js/translated/stock.js:1340
 msgid "Notes"
 msgstr "备注"
 
@@ -1197,7 +1204,7 @@ msgstr "无预计日期"
 msgid "Build not complete"
 msgstr "生产未完成"
 
-#: build/templates/build/detail.html:158
+#: build/templates/build/detail.html:158 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
 msgstr "子生产订单"
 
@@ -1217,7 +1224,7 @@ msgstr "未分配库存"
 msgid "Allocate stock to build"
 msgstr "为生产分配库存"
 
-#: build/templates/build/detail.html:181
+#: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
 msgstr "分配库存"
 
@@ -1276,11 +1283,14 @@ msgstr ""
 msgid "Completed Build Outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:278
+#: build/templates/build/detail.html:278 build/templates/build/sidebar.html:19
 #: order/templates/order/po_navbar.html:35
+#: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:52
-#: part/templates/part/detail.html:300 stock/templates/stock/item.html:95
+#: order/templates/order/so_sidebar.html:9 part/templates/part/detail.html:300
+#: part/templates/part/part_sidebar.html:50 stock/templates/stock/item.html:95
+#: stock/templates/stock/stock_sidebar.html:19
 msgid "Attachments"
 msgstr "附件"
 
@@ -1361,6 +1371,18 @@ msgstr "显示日历"
 #: order/templates/order/sales_orders.html:40
 msgid "Display list view"
 msgstr "列表视图"
+
+#: build/templates/build/sidebar.html:5
+msgid "Build Order Details"
+msgstr ""
+
+#: build/templates/build/sidebar.html:12
+msgid "Pending Items"
+msgstr ""
+
+#: build/templates/build/sidebar.html:15
+msgid "Completed Items"
+msgstr ""
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -1547,7 +1569,7 @@ msgstr ""
 msgid "Allow download of remote images and files from external URL"
 msgstr ""
 
-#: common/models.py:649
+#: common/models.py:649 templates/InvenTree/settings/sidebar.html:30
 msgid "Barcode Support"
 msgstr ""
 
@@ -2148,7 +2170,7 @@ msgstr ""
 #: order/templates/order/po_navbar.html:19
 #: order/templates/order/po_navbar.html:22
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:289
-#: part/templates/part/bom_upload/upload_file.html:51
+#: part/templates/part/bom_upload/upload_file.html:52
 #: part/templates/part/import_wizard/part_upload.html:45 part/views.py:281
 #: part/views.py:923
 msgid "Upload File"
@@ -2179,7 +2201,7 @@ msgstr "已导入商品"
 #: order/templates/order/order_wizard/po_upload.html:40
 #: part/templates/part/bom_upload/match_fields.html:27
 #: part/templates/part/bom_upload/match_parts.html:19
-#: part/templates/part/bom_upload/upload_file.html:49
+#: part/templates/part/bom_upload/upload_file.html:50
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:43
@@ -2500,7 +2522,9 @@ msgstr "客户"
 msgid "Upload Image"
 msgstr "上传图片"
 
-#: company/templates/company/detail.html:15 templates/InvenTree/search.html:124
+#: company/templates/company/detail.html:15
+#: company/templates/company/manufacturer_part_sidebar.html:7
+#: templates/InvenTree/search.html:124
 msgid "Supplier Parts"
 msgstr "供应商商品"
 
@@ -2557,11 +2581,14 @@ msgid "Supplier Stock"
 msgstr "供货商库存"
 
 #: company/templates/company/detail.html:117
+#: company/templates/company/sidebar.html:12
+#: company/templates/company/supplier_part_sidebar.html:7
 #: order/templates/order/order_base.html:13
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
-#: part/templates/part/detail.html:171 templates/InvenTree/index.html:252
-#: templates/InvenTree/search.html:203 templates/navbar.html:45
+#: part/templates/part/detail.html:171 part/templates/part/part_sidebar.html:35
+#: templates/InvenTree/index.html:252 templates/InvenTree/search.html:203
+#: templates/InvenTree/settings/sidebar.html:44 templates/navbar.html:45
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "采购订单"
@@ -2577,11 +2604,13 @@ msgid "New Purchase Order"
 msgstr "新建采购订单"
 
 #: company/templates/company/detail.html:143
+#: company/templates/company/sidebar.html:20
 #: order/templates/order/sales_order_base.html:13
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
-#: part/templates/part/detail.html:194 templates/InvenTree/index.html:283
-#: templates/InvenTree/search.html:223 templates/navbar.html:56
+#: part/templates/part/detail.html:194 part/templates/part/part_sidebar.html:39
+#: templates/InvenTree/index.html:283 templates/InvenTree/search.html:223
+#: templates/InvenTree/settings/sidebar.html:46 templates/navbar.html:56
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "销售订单"
@@ -2651,8 +2680,8 @@ msgstr "内部商品"
 
 #: company/templates/company/manufacturer_part.html:108
 #: company/templates/company/supplier_part.html:15 company/views.py:49
-#: part/templates/part/prices.html:163 templates/InvenTree/search.html:194
-#: templates/navbar.html:43
+#: part/templates/part/part_sidebar.html:33 part/templates/part/prices.html:163
+#: templates/InvenTree/search.html:194 templates/navbar.html:43
 msgid "Suppliers"
 msgstr "供应商"
 
@@ -2671,7 +2700,9 @@ msgid "Delete"
 msgstr "删除"
 
 #: company/templates/company/manufacturer_part.html:137
-#: part/templates/part/detail.html:277
+#: company/templates/company/manufacturer_part_sidebar.html:5
+#: part/templates/part/category_sidebar.html:17
+#: part/templates/part/detail.html:277 part/templates/part/part_sidebar.html:10
 msgid "Parameters"
 msgstr "参数"
 
@@ -2698,6 +2729,22 @@ msgstr "所选参数将被删除"
 #: company/templates/company/manufacturer_part.html:245
 msgid "Delete Parameters"
 msgstr "删除参数"
+
+#: company/templates/company/sidebar.html:6
+msgid "Manufactured Parts"
+msgstr ""
+
+#: company/templates/company/sidebar.html:10
+msgid "Supplied Parts"
+msgstr ""
+
+#: company/templates/company/sidebar.html:16
+msgid "Supplied Stock Items"
+msgstr ""
+
+#: company/templates/company/sidebar.html:22
+msgid "Assigned Stock Items"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -2774,12 +2821,15 @@ msgid "Delete price break"
 msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:15
+#: part/templates/part/part_sidebar.html:16
 #: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:14
 #: stock/templates/stock/stock_app_base.html:10
-#: templates/InvenTree/search.html:156 templates/js/translated/part.js:426
-#: templates/js/translated/part.js:561 templates/js/translated/part.js:786
-#: templates/js/translated/part.js:946 templates/js/translated/stock.js:479
-#: templates/js/translated/stock.js:1132 templates/navbar.html:26
+#: templates/InvenTree/search.html:156
+#: templates/InvenTree/settings/sidebar.html:40
+#: templates/js/translated/part.js:426 templates/js/translated/part.js:561
+#: templates/js/translated/part.js:786 templates/js/translated/part.js:946
+#: templates/js/translated/stock.js:479 templates/js/translated/stock.js:1132
+#: templates/navbar.html:26
 msgid "Stock"
 msgstr "库存"
 
@@ -2788,12 +2838,24 @@ msgid "Orders"
 msgstr "订单"
 
 #: company/templates/company/supplier_part_navbar.html:26
+#: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
 msgstr "供应商商品价格"
 
 #: company/templates/company/supplier_part_navbar.html:29
+#: part/templates/part/part_sidebar.html:30
 msgid "Pricing"
 msgstr "定价"
+
+#: company/templates/company/supplier_part_sidebar.html:5
+#: stock/templates/stock/location.html:118
+#: stock/templates/stock/location.html:132
+#: stock/templates/stock/location.html:144
+#: stock/templates/stock/location_sidebar.html:7
+#: templates/InvenTree/search.html:158 templates/js/translated/stock.js:1871
+#: templates/stats.html:93 templates/stats.html:102 users/models.py:43
+msgid "Stock Items"
+msgstr "库存项"
 
 #: company/views.py:50
 msgid "New Supplier"
@@ -3330,7 +3392,7 @@ msgid "Upload File for Purchase Order"
 msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:18
-#: part/templates/part/bom_upload/upload_file.html:20
+#: part/templates/part/bom_upload/upload_file.html:21
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:21
 #, python-format
@@ -3408,6 +3470,7 @@ msgid "Purchase Order Details"
 msgstr ""
 
 #: order/templates/order/po_navbar.html:15
+#: part/templates/part/part_sidebar.html:8
 #: templates/js/translated/stock.js:1919
 msgid "Details"
 msgstr "详情"
@@ -3420,6 +3483,17 @@ msgstr ""
 #: order/templates/order/po_received_items.html:12
 #: order/templates/order/purchase_order_detail.html:50
 msgid "Received Items"
+msgstr ""
+
+#: order/templates/order/po_sidebar.html:5
+#: order/templates/order/so_sidebar.html:5
+#: report/templates/report/inventree_po_report.html:85
+#: report/templates/report/inventree_so_report.html:85
+msgid "Line Items"
+msgstr ""
+
+#: order/templates/order/po_sidebar.html:7
+msgid "Received Stock"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:18
@@ -3773,10 +3847,12 @@ msgstr "商品类别"
 
 #: part/models.py:358 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:13 part/templates/part/category.html:122
-#: part/templates/part/category.html:142 templates/InvenTree/index.html:85
-#: templates/InvenTree/search.html:88 templates/js/translated/part.js:1304
-#: templates/navbar.html:19 templates/stats.html:80 templates/stats.html:89
-#: users/models.py:41
+#: part/templates/part/category.html:142
+#: part/templates/part/category_sidebar.html:9
+#: templates/InvenTree/index.html:85 templates/InvenTree/search.html:88
+#: templates/InvenTree/settings/sidebar.html:36
+#: templates/js/translated/part.js:1304 templates/navbar.html:19
+#: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
 msgstr "商品"
 
@@ -4198,23 +4274,27 @@ msgstr ""
 msgid "Select Part"
 msgstr "选择商品"
 
-#: part/templates/part/bom_upload/upload_file.html:12
+#: part/templates/part/bom_upload/upload_file.html:8
+msgid "Return to BOM"
+msgstr ""
+
+#: part/templates/part/bom_upload/upload_file.html:13
 msgid "Upload Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:32
+#: part/templates/part/bom_upload/upload_file.html:33
 msgid "Requirements for BOM upload"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:34
+#: part/templates/part/bom_upload/upload_file.html:35
 msgid "The BOM file must contain the required named columns as provided in the "
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:34
+#: part/templates/part/bom_upload/upload_file.html:35
 msgid "BOM Upload Template"
 msgstr ""
 
-#: part/templates/part/bom_upload/upload_file.html:35
+#: part/templates/part/bom_upload/upload_file.html:36
 msgid "Each part must already exist in the database"
 msgstr "每个商品必须已经存在于数据库"
 
@@ -4276,6 +4356,7 @@ msgid "Category Description"
 msgstr "类别说明"
 
 #: part/templates/part/category.html:103 part/templates/part/category.html:194
+#: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
 msgstr "子类别"
 
@@ -4362,6 +4443,10 @@ msgstr "如果删除此类别，这些商品将移至其父类别 %(path)s"
 msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
 msgstr ""
 
+#: part/templates/part/category_sidebar.html:13
+msgid "Import Parts"
+msgstr ""
+
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:365
 msgid "Duplicate Part"
 msgstr "复制部件"
@@ -4435,7 +4520,7 @@ msgstr ""
 msgid "Add new parameter"
 msgstr ""
 
-#: part/templates/part/detail.html:315
+#: part/templates/part/detail.html:315 part/templates/part/part_sidebar.html:47
 msgid "Related Parts"
 msgstr ""
 
@@ -4443,7 +4528,7 @@ msgstr ""
 msgid "Add Related"
 msgstr ""
 
-#: part/templates/part/detail.html:366
+#: part/templates/part/detail.html:366 part/templates/part/part_sidebar.html:19
 msgid "Bill of Materials"
 msgstr ""
 
@@ -4752,6 +4837,18 @@ msgstr ""
 #: part/templates/part/prices.html:134
 msgid "No pricing information is available for this part."
 msgstr "此商品无价格信息可用。"
+
+#: part/templates/part/part_sidebar.html:13
+msgid "Variants"
+msgstr ""
+
+#: part/templates/part/part_sidebar.html:27
+msgid "Used In"
+msgstr ""
+
+#: part/templates/part/part_sidebar.html:43
+msgid "Test Templates"
+msgstr ""
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -5098,11 +5195,6 @@ msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:147
 msgid "Required For"
-msgstr ""
-
-#: report/templates/report/inventree_po_report.html:85
-#: report/templates/report/inventree_so_report.html:85
-msgid "Line Items"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:21
@@ -5454,6 +5546,7 @@ msgid "This stock item does not have any child items"
 msgstr ""
 
 #: stock/templates/stock/item.html:64
+#: stock/templates/stock/stock_sidebar.html:8
 msgid "Test Data"
 msgstr ""
 
@@ -5763,16 +5856,9 @@ msgstr "您不在此仓储地的所有者列表中，无法编辑此仓储地。
 
 #: stock/templates/stock/location.html:113
 #: stock/templates/stock/location.html:160
+#: stock/templates/stock/location_sidebar.html:5
 msgid "Sublocations"
 msgstr ""
-
-#: stock/templates/stock/location.html:118
-#: stock/templates/stock/location.html:132
-#: stock/templates/stock/location.html:144 templates/InvenTree/search.html:158
-#: templates/js/translated/stock.js:1871 templates/stats.html:93
-#: templates/stats.html:102 users/models.py:43
-msgid "Stock Items"
-msgstr "库存项"
 
 #: stock/templates/stock/location.html:127 templates/InvenTree/search.html:170
 #: templates/stats.html:97 users/models.py:42
@@ -5793,6 +5879,18 @@ msgstr "确实要删除此仓储地点吗?"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
+msgstr ""
+
+#: stock/templates/stock/stock_sidebar.html:5
+msgid "Stock Tracking"
+msgstr ""
+
+#: stock/templates/stock/stock_sidebar.html:12
+msgid "Installed Items"
+msgstr ""
+
+#: stock/templates/stock/stock_sidebar.html:16
+msgid "Child Items"
 msgstr ""
 
 #: stock/templates/stock/stock_uninstall.html:8
@@ -6042,6 +6140,7 @@ msgid "Server Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/login.html:9
+#: templates/InvenTree/settings/sidebar.html:28
 msgid "Login Settings"
 msgstr ""
 
@@ -6112,6 +6211,55 @@ msgstr "删除模板"
 msgid "No part parameter templates found"
 msgstr "未找到商品参数模板"
 
+#: templates/InvenTree/settings/sidebar.html:5
+#: templates/InvenTree/settings/user_settings.html:9
+msgid "User Settings"
+msgstr "用户设置"
+
+#: templates/InvenTree/settings/sidebar.html:8
+#: templates/InvenTree/settings/user.html:11
+msgid "Account Settings"
+msgstr "帐户设置"
+
+#: templates/InvenTree/settings/sidebar.html:10
+#: templates/InvenTree/settings/user_display.html:9
+msgid "Display Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:12
+msgid "Home Page"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:14
+#: templates/InvenTree/settings/user_search.html:9
+msgid "Search Settings"
+msgstr "搜索设置"
+
+#: templates/InvenTree/settings/sidebar.html:16
+msgid "Label Printing"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:18
+#: templates/InvenTree/settings/sidebar.html:34
+msgid "Reporting"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:23
+msgid "Global Settings"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:26
+msgid "Server Configuration"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:32
+msgid "Currencies"
+msgstr ""
+
+#: templates/InvenTree/settings/sidebar.html:38
+msgid "Categories"
+msgstr ""
+
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
 msgstr "销售订单设置"
@@ -6119,10 +6267,6 @@ msgstr "销售订单设置"
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
 msgstr "库存设置"
-
-#: templates/InvenTree/settings/user.html:11
-msgid "Account Settings"
-msgstr "帐户设置"
 
 #: templates/InvenTree/settings/user.html:18
 #: templates/js/translated/helpers.js:26
@@ -6258,10 +6402,6 @@ msgstr "InventTree web 应用程序的本地语言翻译是 <a href=\"%(link)s\"
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
-#: templates/InvenTree/settings/user_display.html:9
-msgid "Display Settings"
-msgstr ""
-
 #: templates/InvenTree/settings/user_display.html:25
 msgid "Theme Settings"
 msgstr "主题设置"
@@ -6281,14 +6421,6 @@ msgstr "主页设置"
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
 msgstr "标签设置"
-
-#: templates/InvenTree/settings/user_search.html:9
-msgid "Search Settings"
-msgstr "搜索设置"
-
-#: templates/InvenTree/settings/user_settings.html:9
-msgid "User Settings"
-msgstr "用户设置"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
