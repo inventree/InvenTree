@@ -36,7 +36,7 @@ class Command(BaseCommand):
         img = model.image
         url = img.thumbnail.name
         loc = os.path.join(settings.MEDIA_ROOT, url)
-        
+
         if not os.path.exists(loc):
             logger.info(f"Generating thumbnail image for '{img}'")
 

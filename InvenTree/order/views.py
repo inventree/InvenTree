@@ -406,7 +406,7 @@ class PurchaseOrderUpload(FileManagementFormView):
 
     def done(self, form_list, **kwargs):
         """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
-        
+
         order = self.get_order()
         items = self.get_clean_items()
 
@@ -432,7 +432,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 except IntegrityError:
                     # PurchaseOrderLineItem already exists
                     pass
-            
+
         return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
 
 
@@ -449,7 +449,7 @@ class SalesOrderExport(AjaxView):
     role_required = 'sales_order.view'
 
     def get(self, request, *args, **kwargs):
-        
+
         order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')

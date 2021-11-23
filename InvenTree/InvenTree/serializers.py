@@ -66,7 +66,7 @@ class InvenTreeMoneySerializer(MoneyField):
 
         if currency and amount is not None and not isinstance(amount, MONEY_CLASSES) and amount is not empty:
             return Money(amount, currency)
-        
+
         return amount
 
 

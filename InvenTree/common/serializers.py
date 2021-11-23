@@ -45,6 +45,18 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
         return results
 
+    def get_value(self, obj):
+        """
+        Make sure protected values are not returned
+        """
+        result = obj.value
+
+        # never return protected values
+        if obj.is_protected:
+            result = '***'
+
+        return result
+
 
 class GlobalSettingsSerializer(SettingsSerializer):
     """

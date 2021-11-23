@@ -5,7 +5,8 @@
 
 {% block sidebar %}
 {% url 'part-index' as url %}
-{% include "sidebar_link.html" with url=url text="Return to Parts" icon="fa-undo" %}
+{% trans "Return to Parts" as text %}
+{% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
 {% endblock %}
 
 {% block content %}
