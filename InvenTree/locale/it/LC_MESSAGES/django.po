@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-23 01:58+0000\n"
-"PO-Revision-Date: 2021-11-23 03:01\n"
+"PO-Revision-Date: 2021-11-23 18:51\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -6424,7 +6424,7 @@ msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
-msgstr "Informazioni Versione Ge.Ma.Co."
+msgstr "Informazioni Versione InvenTree"
 
 #: templates/about.html:11 templates/about.html:105
 #: templates/js/translated/bom.js:281 templates/js/translated/modals.js:53
@@ -6436,7 +6436,7 @@ msgstr "Chiudi"
 
 #: templates/about.html:20
 msgid "InvenTree Version"
-msgstr "Versione di Ge.Ma.Co."
+msgstr "Versione di InvenTree"
 
 #: templates/about.html:25
 msgid "Development Version"
@@ -6660,7 +6660,7 @@ msgstr ""
 
 #: templates/email/email.html:35
 msgid "InvenTree version"
-msgstr "Versione di Ge.Ma.Co."
+msgstr "Versione di InvenTree"
 
 #: templates/email/low_stock_notification.html:7
 #, python-format
