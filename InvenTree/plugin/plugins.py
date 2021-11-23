@@ -41,7 +41,6 @@ def get_modules(pkg, recursive: bool = False):
             pass
         except Exception as error:
             # this 'protects' against malformed plugin modules by more or less silently failing
-            # TODO log to logging
 
             # log to stack
             log_plugin_error({name: str(error)}, 'discovery')
