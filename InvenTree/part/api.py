@@ -1096,11 +1096,17 @@ class BomFilter(rest_filters.FilterSet):
         # Work out which lines have actually been validated
         pks = []
 
+        value = str2bool(value)
+
+        # Shortcut for quicker filtering - BomItem with empty 'checksum' values are not validated
+        if value:
+            queryset = queryset.exclude(checksum=None).exclude(checksum='')
+
         for bom_item in queryset.all():
-            if bom_item.is_line_valid():
+            if bom_item.is_line_valid:
                 pks.append(bom_item.pk)
 
-        if str2bool(value):
+        if value:
             queryset = queryset.filter(pk__in=pks)
         else:
             queryset = queryset.exclude(pk__in=pks)
