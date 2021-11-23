@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-23 01:58+0000\n"
-"PO-Revision-Date: 2021-11-23 17:44\n"
+"PO-Revision-Date: 2021-11-23 18:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1009,7 +1009,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
-msgstr ""
+msgstr "Modifier l'assemblage"
 
 #: build/templates/build/build_base.html:56
 #: build/templates/build/build_base.html:207 build/views.py:56
@@ -1018,13 +1018,13 @@ msgstr "Annuler l'assemblage"
 
 #: build/templates/build/build_base.html:59
 msgid "Delete Build"
-msgstr ""
+msgstr "Supprimer l'assemblage"
 
 #: build/templates/build/build_base.html:64
 #: build/templates/build/build_base.html:65
 #: build/templates/build/build_base.html:223
 msgid "Complete Build"
-msgstr ""
+msgstr "Compléter l'assemblage"
 
 #: build/templates/build/build_base.html:79
 #, python-format
@@ -2855,7 +2855,7 @@ msgstr "Tarif"
 #: templates/InvenTree/search.html:158 templates/js/translated/stock.js:1871
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
-msgstr "Article en stock"
+msgstr "Éléments en stock"
 
 #: company/views.py:50
 msgid "New Supplier"
@@ -3092,7 +3092,7 @@ msgstr ""
 
 #: order/models.py:589
 msgid "shipped by"
-msgstr ""
+msgstr "expédié par"
 
 #: order/models.py:633
 msgid "SalesOrder cannot be shipped as it is not currently pending"
@@ -3100,7 +3100,7 @@ msgstr ""
 
 #: order/models.py:730
 msgid "Item quantity"
-msgstr "Nombre d'articles"
+msgstr "Nombre d'élement"
 
 #: order/models.py:736
 msgid "Line item reference"
@@ -3136,7 +3136,7 @@ msgstr "Reçu"
 
 #: order/models.py:798
 msgid "Number of items received"
-msgstr "Nombre d'articles reçus"
+msgstr "Nombre d'éléments reçus"
 
 #: order/models.py:805 part/templates/part/prices.html:176 stock/models.py:619
 #: stock/serializers.py:163 stock/templates/stock/item_base.html:332
@@ -3203,7 +3203,7 @@ msgstr ""
 
 #: order/serializers.py:167
 msgid "Purchase price currency"
-msgstr ""
+msgstr "Devise du prix d'achat"
 
 #: order/serializers.py:202
 msgid "Line Item"
@@ -3281,7 +3281,7 @@ msgstr ""
 #: order/templates/order/order_base.html:98
 #: order/templates/order/sales_order_base.html:103
 msgid "Order Status"
-msgstr ""
+msgstr "Statut de la commande"
 
 #: order/templates/order/order_base.html:133
 #: report/templates/report/inventree_build_order_base.html:122
@@ -3600,7 +3600,7 @@ msgstr ""
 
 #: order/views.py:115 order/views.py:141
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "La commande ne peut pas être annulée"
 
 #: order/views.py:129
 msgid "Cancel sales order"
@@ -4000,7 +4000,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:284
 #: templates/js/translated/table_filters.js:362
 msgid "Active"
-msgstr ""
+msgstr "Actif"
 
 #: part/models.py:916
 msgid "Is this part active?"
@@ -4112,7 +4112,7 @@ msgstr ""
 
 #: part/models.py:2431
 msgid "Data"
-msgstr ""
+msgstr "Données"
 
 #: part/models.py:2431
 msgid "Parameter Value"
@@ -4264,7 +4264,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
-msgstr ""
+msgstr "Supprimer l'élément"
 
 #: part/templates/part/bom_duplicate.html:13
 msgid "This part already has a Bill of Materials"
@@ -4341,7 +4341,7 @@ msgstr ""
 
 #: part/templates/part/category.html:58
 msgid "New Category"
-msgstr ""
+msgstr "Nouvelle catégorie"
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
