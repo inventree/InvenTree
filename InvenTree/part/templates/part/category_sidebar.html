@@ -4,12 +4,16 @@
 
 {% settings_value 'PART_SHOW_IMPORT' as show_import %}
 
-{% include "sidebar_item.html" with label="subcategories" text="Subcategories" icon="fa-sitemap" %}
-{% include "sidebar_item.html" with label="parts" text="Parts" icon="fa-shapes" %}
+{% trans "Subcategories" as text %}
+{% include "sidebar_item.html" with label="subcategories" text=text icon="fa-sitemap" %}
+{% trans "Parts" as text %}
+{% include "sidebar_item.html" with label="parts" text=text icon="fa-shapes" %}
 {% if show_import and user.is_staff and roles.part.add %}
 {% url "part-import" as url %}
-{% include "sidebar_link.html" with url=url text="Import Parts" icon="fa-file-upload" %}
+{% trans "Import Parts" as text %}
+{% include "sidebar_link.html" with url=url text=text icon="fa-file-upload" %}
 {% endif %}
 {% if category %}
-{% include "sidebar_item.html" with label="parameters" text="Parameters" icon="fa-tasks" %}
+{% trans "Parameters" as text %}
+{% include "sidebar_item.html" with label="parameters" text=text icon="fa-tasks" %}
 {% endif %}

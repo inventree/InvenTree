@@ -370,7 +370,7 @@ class PartSubscriptionTests(TestCase):
 
         # electronics / IC / MCU
         self.category = PartCategory.objects.get(pk=4)
-        
+
         self.part = Part.objects.create(
             category=self.category,
             name='STM32F103',
@@ -382,7 +382,7 @@ class PartSubscriptionTests(TestCase):
         """
         Test basic subscription against a part
         """
-        
+
         # First check that the user is *not* subscribed to the part
         self.assertFalse(self.part.is_starred_by(self.user))
 
@@ -450,7 +450,7 @@ class PartSubscriptionTests(TestCase):
         """
         Check that a parent category can be subscribed to
         """
-        
+
         # Top-level "electronics" category
         cat = PartCategory.objects.get(pk=1)
 
