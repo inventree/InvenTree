@@ -24,7 +24,7 @@ class IntegrationPluginError(Exception):
     def __init__(self, path, message):
         self.path = path
         self.message = message
-    
+
     def __str__(self):
         return self.message
 
