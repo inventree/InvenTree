@@ -62,7 +62,7 @@ def notify_low_stock(part: part.models.Part):
 def notify_low_stock_if_required(part: part.models.Part):
     """
     Check if the stock quantity has fallen below the minimum threshold of part.
-    
+
     If true, notify the users who have subscribed to the part
     """
 

@@ -38,7 +38,7 @@ class InvenTreeOrderingFilter(OrderingFilter):
             ordering = []
 
             for field in ordering_initial:
-                
+
                 reverse = field.startswith('-')
 
                 if reverse:
@@ -52,7 +52,7 @@ class InvenTreeOrderingFilter(OrderingFilter):
 
                 """
                 Potentially, a single field could be "aliased" to multiple field,
-                
+
                 (For example to enforce a particular ordering sequence)
 
                 e.g. to filter first by the integer value...
