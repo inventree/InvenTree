@@ -125,7 +125,6 @@ class AddOrderToBasket(APIView):
             basket = SalesOrderBasket.objects.filter(pk=request.data.get('basket', None)).first()
             order_id = request.data.get('order', None)
             basket.add_order(order_id["pk"])
-            print("wowo")
             # serializer = self.get_serializer(basket, many=True)
             # return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:

@@ -9,23 +9,9 @@
 
 {% block page_content %}
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-items'>
-    <div class='panel-heading'>
-        <h4>{% trans "Sales Orders History" %}</h4>
-    </div>
-    <div class='panel-content'>
-        <!-- {% if roles.sales_order.change %}
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <button type='button' class='btn btn-success' id='new-so-line'>
-                <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
-            </button>
-        </div>
-        {% endif %} -->
-        <table class='table table-striped table-condensed' id='orders-table' data-toolbar='#order-toolbar-buttons'>
-        </table>
-    </div>
-</div>
-
+<h4>{% trans "Basket  sales order history" %}</h4>
+<table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='orders-table' data-toolbar='#order-toolbar-buttons'>
+</table>
 
 {% endblock %}
 

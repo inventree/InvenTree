@@ -979,7 +979,6 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
 
 function loadSalesOrderTable(table, options) {
-
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
