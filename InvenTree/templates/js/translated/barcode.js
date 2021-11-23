@@ -19,8 +19,8 @@
     barcodeScanDialog,
     linkBarcodeDialog,
     scanItemsIntoLocation,
-    scanOrderIntoBasket,
     unlinkBarcode,
+    scanOrderIntoBasket,
 */
 
 function makeBarcodeInput(placeholderText='', hintText='') {
@@ -616,7 +616,6 @@ function scanItemsIntoLocation(item_id_list, options={}) {
             },
             onScan: function(response) {
                 updateLocationInfo(null);
-                console.log(2134132565)
                 if ('stocklocation' in response) {
                     // Barcode corresponds to a StockLocation
                     stock_location = response.stocklocation;
@@ -663,7 +662,7 @@ function scanOrderIntoBasket(item_id_list, options={}) {
             <div class='alert alert-block alert-info'>
             <b>{% trans "Basket" %}</b></br>
             ${basket.name}<br>
-            // <i>${basket.status}</i>
+            // <i>${basket.status_text}</i>
             </div>
             `);
         } else {
@@ -697,14 +696,15 @@ function scanOrderIntoBasket(item_id_list, options={}) {
                 });
 
                 var data = {
-                    order: order.pk,
+                    order: items[0],
+                    basket: basket.pk
                     // notes: $(modal + ' #notes').val(),
                     // orders: orders,
                 };
 
                 // Send API request
                 inventreePut(
-                    '{% url "api-basket-putorder" %}',
+                    "{% url 'api-basket-addorder' %}add_order/",
                     data,
                     {
                         method: 'POST',
@@ -716,7 +716,7 @@ function scanOrderIntoBasket(item_id_list, options={}) {
                                 showAlertOrCache('alert-success', response.success, true);
                                 location.reload();
                             } else {
-                                showAlertOrCache('alert-danger', '{% trans "Error transferring stock" %}', false);
+                                showAlertOrCache('alert-danger', '{% trans "Error adding order to basket" %}', false);
                             }
                         }
                     }
@@ -726,9 +726,9 @@ function scanOrderIntoBasket(item_id_list, options={}) {
                 updateBasketInfo(null);
                 if ('orderbasket' in response) {
                     // Barcode corresponds to a StockLocation
-                    order_basket = response.orderbasket;
+                    basket = response.orderbasket;
 
-                    updateBasketInfo(order_basket);
+                    updateBasketInfo(basket);
                     modalEnable(modal, true);
 
                 } else {

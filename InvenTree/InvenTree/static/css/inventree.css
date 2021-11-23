@@ -9,6 +9,7 @@
     --label-green: #50aa51;
     --label-grey: #aaa;
     --label-yellow: #fdc82a;
+    --label-purple: #DA70D6;
 }
 
 .login-screen {
@@ -284,6 +285,10 @@
 .label-large-yellow {
     color: var(--label-yellow);
     border-color: var(--label-yellow);
+}
+.label-large-purple {
+    color: var(--label-purple);
+    border-color: var(--label-purple);
 }
 
 .label-yellow {

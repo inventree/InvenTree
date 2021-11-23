@@ -8,8 +8,8 @@ register = django.template.Library()
 def get_current_so_name(key):
   try:
     order = SalesOrderBasket.objects.filter(pk=key).first().get_current_so()
-    return order.name
-  except:
+    return order.reference
+  except Exception as e:
      return _("There is no order in basket right now")
   
 

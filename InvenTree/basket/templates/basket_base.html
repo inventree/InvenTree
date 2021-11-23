@@ -46,7 +46,7 @@
     <td><span class="fas fa-shopping-bag "></span></td>
     <td>{% trans "Current order" %}</td>
     <td>
-      {% get_current_so_name  basket.id %}<span class="badge"
+      <a href="/order/sales-order/{% get_current_so_link basket.id %}/"> {% get_current_so_name  basket.id %}</a><span class="badge"
         >{% get_current_so_responsible basket.id %}</span
       >
     </td>

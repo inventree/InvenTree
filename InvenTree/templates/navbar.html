@@ -54,6 +54,7 @@
             {% if enable_so %}
             <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
             {% endif %}
+            <li><a href="{% url 'basket-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Baskets" %}</a></li>
           </ul>
         </li>
         {% endif %}
