@@ -4,6 +4,7 @@ import os
 import json
 import sys
 import pathlib
+import re
 
 try:
     from invoke import ctask as task
@@ -497,13 +498,33 @@ def test_translations(c):
 
     file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
     new_file_path = str(file_path) + '_new'
-    with open(file_path, "rt") as fin:
-        with open(new_file_path, "wt") as fout:
-            for line in fin:
+
+    # complie regex
+    reg = re.compile(
+        r"[a-zA-Z0-9]{1}"+  # match any single letter and number
+        r"(?![^{]*})"+  # that is not inside curly brackets
+        r"(?![^\<]*\>)"+  # that is not a tag
+        r"(?![^\(]*\))"+  # that is not inside brackets
+        r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
+        r"(?![^\\][\n])"  # that is not a newline
+    )
+    last_string = ''
+
+    # loop through input file lines
+    with open(file_path, "rt") as file_org:
+        with open(new_file_path, "wt") as file_new:
+            for line in file_org:
                 if line.startswith('msgstr "'):
-                    fout.write(f'msgstr "{"xxx"}"\n')
+                    # write output -> replace regex matches with x in the read in (multi)string
+                    file_new.write(f'msgstr "{reg.sub("x", last_string[7:-2])}"\n')
+                    last_string = ""  # reset (multi)string
+                elif line.startswith('msgid "'):
+                    last_string = last_string + line  # a new translatable string starts -> start append
+                    file_new.write(line)
                 else:
-                    fout.write(line)
+                    if last_string:
+                        last_string = last_string + line  # a string is beeing read in -> continue appending
+                    file_new.write(line)
 
     # change out translation files
     os.rename(file_path, str(file_path) + '_old')
