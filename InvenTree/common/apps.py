@@ -12,7 +12,7 @@ class CommonConfig(AppConfig):
     name = 'common'
 
     def ready(self):
-        
+
         self.clear_restart_flag()
 
     def clear_restart_flag(self):
@@ -22,7 +22,7 @@ class CommonConfig(AppConfig):
 
         try:
             import common.models
-            
+
             if common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'):
                 logger.info("Clearing SERVER_RESTART_REQUIRED flag")
                 common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', False, None)

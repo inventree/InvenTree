@@ -477,7 +477,7 @@ class SupplierPart(models.Model):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
     def api_instance_filters(self):
-        
+
         return {
             'manufacturer_part': {
                 'part': self.part.pk

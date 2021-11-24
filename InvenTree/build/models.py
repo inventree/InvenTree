@@ -66,7 +66,7 @@ def get_next_build_number():
             attempts.add(reference)
         else:
             break
-    
+
     return reference
 
 
@@ -94,13 +94,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     """
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
-    
+
     @staticmethod
     def get_api_url():
         return reverse('api-build-list')
 
     def api_instance_filters(self):
-        
+
         return {
             'parent': {
                 'exclude_tree': self.pk,
@@ -1178,7 +1178,7 @@ class BuildItem(models.Model):
                         bom_item = PartModels.BomItem.objects.get(part=self.build.part, sub_part=ancestor)
                     except PartModels.BomItem.DoesNotExist:
                         continue
-                    
+
                     # A matching BOM item has been found!
                     if idx == 0 or bom_item.allow_variants:
                         bom_item_valid = True
@@ -1234,7 +1234,7 @@ class BuildItem(models.Model):
                 thumb_url = self.stock_item.part.image.thumbnail.url
             except:
                 pass
-        
+
         if thumb_url is None and self.bom_item and self.bom_item.sub_part:
             try:
                 thumb_url = self.bom_item.sub_part.image.thumbnail.url

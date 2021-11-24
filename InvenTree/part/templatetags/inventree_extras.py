@@ -236,7 +236,7 @@ def settings_value(key, *args, **kwargs):
 
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
-        
+
     return InvenTreeSetting.get_setting(key)
 
 
@@ -384,7 +384,7 @@ def keyvalue(dict, key):
 def call_method(obj, method_name, *args):
     """
     enables calling model methods / functions from templates with arguments
-    
+
     usage:
     {% call_method model_object 'fnc_name' argument1 %}
     """

@@ -169,7 +169,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a single PartCategory object
     """
-    
+
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
@@ -222,7 +222,7 @@ class CategoryParameterList(generics.ListAPIView):
 
         if category is not None:
             try:
-                
+
                 category = PartCategory.objects.get(pk=category)
 
                 fetch_parent = str2bool(params.get('fetch_parent', True))
@@ -734,7 +734,7 @@ class PartList(generics.ListCreateAPIView):
                 raise ValidationError({
                     'initial_stock_quantity': [_('Must be a valid quantity')],
                 })
-            
+
             initial_stock_location = request.data.get('initial_stock_location', None)
 
             try:
@@ -850,7 +850,7 @@ class PartList(generics.ListCreateAPIView):
                     id_values.append(val)
                 except ValueError:
                     pass
-            
+
             queryset = queryset.exclude(pk__in=id_values)
 
         # Exclude part variant tree?
@@ -1081,24 +1081,6 @@ class BomFilter(rest_filters.FilterSet):
     inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
     allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
 
-    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
-
-    def filter_validated(self, queryset, name, value):
-
-        # Work out which lines have actually been validated
-        pks = []
-
-        for bom_item in queryset.all():
-            if bom_item.is_line_valid():
-                pks.append(bom_item.pk)
-
-        if str2bool(value):
-            queryset = queryset.filter(pk__in=pks)
-        else:
-            queryset = queryset.exclude(pk__in=pks)
-    
-        return queryset
-
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
     part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
@@ -1106,6 +1088,30 @@ class BomFilter(rest_filters.FilterSet):
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
     sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
+
+    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
+
+    def filter_validated(self, queryset, name, value):
+
+        # Work out which lines have actually been validated
+        pks = []
+
+        value = str2bool(value)
+
+        # Shortcut for quicker filtering - BomItem with empty 'checksum' values are not validated
+        if value:
+            queryset = queryset.exclude(checksum=None).exclude(checksum='')
+
+        for bom_item in queryset.all():
+            if bom_item.is_line_valid:
+                pks.append(bom_item.pk)
+
+        if value:
+            queryset = queryset.filter(pk__in=pks)
+        else:
+            queryset = queryset.exclude(pk__in=pks)
+
+        return queryset
 
 
 class BomList(generics.ListCreateAPIView):
@@ -1257,7 +1263,7 @@ class BomList(generics.ListCreateAPIView):
             queryset = self.annotate_pricing(queryset)
 
         return queryset
-    
+
     def include_pricing(self):
         """
         Determine if pricing information should be included in the response
@@ -1291,7 +1297,7 @@ class BomList(generics.ListCreateAPIView):
 
             # Get default currency from settings
             default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-            
+
             if price:
                 if currency and default_currency:
                     try:
@@ -1381,7 +1387,7 @@ class BomItemSubstituteList(generics.ListCreateAPIView):
 
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
-    
+
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,

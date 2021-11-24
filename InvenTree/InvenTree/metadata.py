@@ -31,7 +31,7 @@ class InvenTreeMetadata(SimpleMetadata):
     """
 
     def determine_metadata(self, request, view):
-        
+
         self.request = request
         self.view = view
 
@@ -98,7 +98,7 @@ class InvenTreeMetadata(SimpleMetadata):
         Override get_serializer_info so that we can add 'default' values
         to any fields whose Meta.model specifies a default value
         """
-        
+
         serializer_info = super().get_serializer_info(serializer)
 
         model_class = None
@@ -174,7 +174,7 @@ class InvenTreeMetadata(SimpleMetadata):
         # Extract extra information if an instance is available
         if hasattr(serializer, 'instance'):
             instance = serializer.instance
-        
+
         if instance is None and model_class is not None:
             # Attempt to find the instance based on kwargs lookup
             kwargs = getattr(self.view, 'kwargs', None)
@@ -240,7 +240,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
-            
+
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
             if isinstance(field, serializers.PrimaryKeyRelatedField):
                 model = field.queryset.model
