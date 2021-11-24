@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
-from rest_framework import generics
+from rest_framework import generics, views
 from rest_framework.exceptions import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -1409,6 +1409,46 @@ class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = part_serializers.BomItemSubstituteSerializer
 
 
+class BomUpload(views.APIView):
+    """
+    An API for uploading a Bill of Materials (BOM) against a particular Part instance.
+
+    The BOM upload process is as follows:
+
+    1. Client performs POST action with file attachment.
+       Server then checks file validity, etc
+        - If OK, extract data and return 200
+        - If NOT OK, extract error and return 400
+    2. Client performs POST action with multiple BOM data rows
+       Server then validates each line
+        - Specify "dry_run" to ensure data is not committed
+        - Return errors for any invalid row
+        - Return "non_field_error"
+    3. Client keeps POSTing data until all rows are validated
+    4. Once valid, return "OK"
+    5. Client performs POST action with "confirm"
+    6. If data valid *AND* confirm, actually create BOM
+    """
+
+    queryset = Part.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle a POST request.
+
+        There are two actions that can occur here:
+
+        A) Upload a data file (compatible with tablib library)
+        B) Provide a list of rows for validation
+        """
+
+        return Response(
+            {
+                'hello': 'world',
+            },
+            status=400,
+        )
+
 part_api_urls = [
 
     # Base URL for PartCategory API endpoints
@@ -1454,7 +1494,10 @@ part_api_urls = [
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^bom-upload', BomUpload.as_view(), name='api-bom-upload'),
+        url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
+    ])),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
