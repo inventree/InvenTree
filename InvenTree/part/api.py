@@ -1081,24 +1081,6 @@ class BomFilter(rest_filters.FilterSet):
     inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
     allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
 
-    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
-
-    def filter_validated(self, queryset, name, value):
-
-        # Work out which lines have actually been validated
-        pks = []
-
-        for bom_item in queryset.all():
-            if bom_item.is_line_valid():
-                pks.append(bom_item.pk)
-
-        if str2bool(value):
-            queryset = queryset.filter(pk__in=pks)
-        else:
-            queryset = queryset.exclude(pk__in=pks)
-
-        return queryset
-
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
     part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
@@ -1106,6 +1088,30 @@ class BomFilter(rest_filters.FilterSet):
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
     sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
+
+    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
+
+    def filter_validated(self, queryset, name, value):
+
+        # Work out which lines have actually been validated
+        pks = []
+
+        value = str2bool(value)
+
+        # Shortcut for quicker filtering - BomItem with empty 'checksum' values are not validated
+        if value:
+            queryset = queryset.exclude(checksum=None).exclude(checksum='')
+
+        for bom_item in queryset.all():
+            if bom_item.is_line_valid:
+                pks.append(bom_item.pk)
+
+        if value:
+            queryset = queryset.filter(pk__in=pks)
+        else:
+            queryset = queryset.exclude(pk__in=pks)
+
+        return queryset
 
 
 class BomList(generics.ListCreateAPIView):

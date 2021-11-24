@@ -925,7 +925,46 @@ class BomItemTest(InvenTreeAPITestCase):
             expected_code=200
         )
 
-        print("results:", len(response.data))
+        # Filter by "validated"
+        response = self.get(
+            url,
+            data={
+                'validated': True,
+            },
+            expected_code=200,
+        )
+
+        # Should be zero validated results
+        self.assertEqual(len(response.data), 0)
+
+        # Now filter by "not validated"
+        response = self.get(
+            url,
+            data={
+                'validated': False,
+            },
+            expected_code=200
+        )
+
+        # There should be at least one non-validated item
+        self.assertTrue(len(response.data) > 0)
+
+        # Now, let's validate an item
+        bom_item = BomItem.objects.first()
+
+        bom_item.validate_hash()
+
+        response = self.get(
+            url,
+            data={
+                'validated': True,
+            },
+            expected_code=200
+        )
+
+        # Check that the expected response is returned
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], bom_item.pk)
 
     def test_get_bom_detail(self):
         """
