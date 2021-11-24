@@ -3,6 +3,7 @@
 import os
 import json
 import sys
+import pathlib
 
 try:
     from invoke import ctask as task
@@ -467,6 +468,57 @@ def server(c, address="127.0.0.1:8000"):
     """
 
     manage(c, "runserver {address}".format(address=address), pty=True)
+
+
+@task(post=[translate_stats, static, server])
+def test_translations(c):
+    """
+    Add a fictional language to test if each component is ready for translations
+    """
+    import django
+    from django.conf import settings
+
+    # setup django
+    base_path = os.getcwd()
+    new_base_path = pathlib.Path('InvenTree').absolute()
+    sys.path.append(str(new_base_path))
+    os.chdir(new_base_path)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')
+    django.setup()
+
+    # Add language
+    print("Add dummy language...")
+    print("========================================")
+    manage(c, "makemessages -e py,html,js --no-wrap -l xx")
+
+    # change translation
+    print("Fill in dummy translations...")
+    print("========================================")
+
+    file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
+    new_file_path = str(file_path) + '_new'
+    with open(file_path, "rt") as fin:
+        with open(new_file_path, "wt") as fout:
+            for line in fin:
+                if line.startswith('msgstr "'):
+                    fout.write(f'msgstr "{"xxx"}"\n')
+                else:
+                    fout.write(line)
+
+    # change out translation files
+    os.rename(file_path, str(file_path) + '_old')
+    os.rename(new_file_path, file_path)
+
+    # compile languages
+    print("Compile languages ...")
+    print("========================================")
+    manage(c, "compilemessages")
+
+    # reset cwd
+    os.chdir(base_path)
+
+    # set env flag
+    os.environ['TEST_TRANSLATIONS'] = 'True'
 
 
 @task
