@@ -502,9 +502,7 @@ def test_translations(c):
     # complie regex
     reg = re.compile(
         r"[a-zA-Z0-9]{1}"+  # match any single letter and number
-        r"(?![^{]*})"+  # that is not inside curly brackets
-        r"(?![^\<]*\>)"+  # that is not a tag
-        r"(?![^\(]*\))"+  # that is not inside brackets
+        r"(?![^{\(\<]*[}\)\>])"+  # that is not inside curly brackets, brackets or a tag
         r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
         r"(?![^\\][\n])"  # that is not a newline
     )
