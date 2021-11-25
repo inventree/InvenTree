@@ -4,8 +4,12 @@
 
 {% trans "Line Items" as text %}
 {% include "sidebar_item.html" with label='order-items' text=text icon="fa-list-ol" %}
-{% trans "Shipments" as text %}
-{% include "sidebar_item.html" with label='order-shipments' text=text icon="fa-truck" %}
+{% if order.is_pending %}
+{% trans "Pending Shipments" as text %}
+{% include "sidebar_item.html" with label='order-shipments' text=text icon="fa-truck-loading" %}
+{% endif %}
+{% trans "Completed Shipments" as text %}
+{% include "sidebar_item.html" with label='order-shipments-complete' text=text icon="fa-truck" %}
 {% trans "Build Orders" as text %}
 {% include "sidebar_item.html" with label='order-builds' text=text icon="fa-tools" %}
 {% trans "Attachments" as text %}

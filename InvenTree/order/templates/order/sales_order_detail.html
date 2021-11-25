@@ -37,8 +37,8 @@
     </div>
 </div>
 
+{% if order.is_pending %}
 <div class='panel panel-hidden' id='panel-order-shipments'>
-    {% if order.is_pending %}
     <div class='panel-heading'>
         <div class='d-flex flex-row'>
             <h4>{% trans "Pending Shipments" %}</h4>
@@ -57,7 +57,10 @@
         {% endif %}
         <table class='table table-striped table-condensed' id='pending-shipments-table' data-toolbar='#pending-shipment-toolbar'></table>
     </div>
-    {% endif %}
+</div>
+{% endif %}
+
+<div class='panel panel-hidden' id='panel-order-shipments-complete'>
     <div class='panel-heading'>
         <h4>{% trans "Completed Shipments" %}</h4>
     </div>
