@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-24 02:41+0000\n"
+"POT-Creation-Date: 2021-11-25 02:29+0000\n"
 "PO-Revision-Date: 2021-11-20 08:33\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -173,6 +173,7 @@ msgstr "Błędny wybór"
 #: InvenTree/models.py:243 InvenTree/models.py:244 company/models.py:415
 #: label/models.py:112 part/models.py:741 part/models.py:2389
 #: part/templates/part/detail.html:25 report/models.py:181
+#: templates/InvenTree/settings/settings.html:259
 #: templates/js/translated/company.js:638 templates/js/translated/part.js:498
 #: templates/js/translated/part.js:635 templates/js/translated/part.js:1272
 #: templates/js/translated/stock.js:1847
@@ -216,83 +217,83 @@ msgstr "Numer musi być prawidłowy"
 msgid "Filename"
 msgstr ""
 
-#: InvenTree/settings.py:663
+#: InvenTree/settings.py:664
 msgid "German"
 msgstr "Niemiecki"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:665
 msgid "Greek"
 msgstr "Grecki"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:666
 msgid "English"
 msgstr "Angielski"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:667
 msgid "Spanish"
 msgstr "Hiszpański"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:668
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:669
 msgid "French"
 msgstr "Francuski"
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:670
 msgid "Hebrew"
 msgstr "Hebrajski"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:671
 msgid "Italian"
 msgstr "Włoski"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:672
 msgid "Japanese"
 msgstr "Japoński"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:673
 msgid "Korean"
 msgstr "Koreański"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:674
 msgid "Dutch"
 msgstr "Holenderski"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:675
 msgid "Norwegian"
 msgstr "Norweski"
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:676
 msgid "Polish"
 msgstr "Polski"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:677
 msgid "Portugese"
 msgstr ""
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:678
 msgid "Russian"
 msgstr "Rosyjski"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:679
 msgid "Swedish"
 msgstr "Szwedzki"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:680
 msgid "Thai"
 msgstr "Tajski"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:681
 msgid "Turkish"
 msgstr "Turecki"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:682
 msgid "Vietnamese"
 msgstr "Wietnamski"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:683
 msgid "Chinese"
 msgstr "Chiński"
 
@@ -2387,8 +2388,9 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:429 part/models.py:882 part/models.py:2397
-#: part/templates/part/detail.html:59 templates/js/translated/company.js:650
-#: templates/js/translated/part.js:650
+#: part/templates/part/detail.html:59
+#: templates/InvenTree/settings/settings.html:264
+#: templates/js/translated/company.js:650 templates/js/translated/part.js:650
 msgid "Units"
 msgstr "Jednostki"
 
@@ -3942,7 +3944,8 @@ msgid "Part category"
 msgstr ""
 
 #: part/models.py:784 part/templates/part/detail.html:45
-#: templates/js/translated/part.js:549
+#: templates/js/translated/part.js:549 templates/js/translated/part.js:881
+#: templates/js/translated/stock.js:1104
 msgid "IPN"
 msgstr "IPN"
 
@@ -6240,6 +6243,10 @@ msgstr ""
 msgid "No part parameter templates found"
 msgstr ""
 
+#: templates/InvenTree/settings/settings.html:253
+msgid "ID"
+msgstr ""
+
 #: templates/InvenTree/settings/sidebar.html:5
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
@@ -6418,6 +6425,10 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:215
 msgid "Show only sufficent"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:217
+msgid "and hidden."
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:217

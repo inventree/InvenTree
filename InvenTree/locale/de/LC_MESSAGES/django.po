@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-24 02:41+0000\n"
+"POT-Creation-Date: 2021-11-25 02:29+0000\n"
 "PO-Revision-Date: 2021-11-20 21:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -173,6 +173,7 @@ msgstr "Ungültige Auswahl"
 #: InvenTree/models.py:243 InvenTree/models.py:244 company/models.py:415
 #: label/models.py:112 part/models.py:741 part/models.py:2389
 #: part/templates/part/detail.html:25 report/models.py:181
+#: templates/InvenTree/settings/settings.html:259
 #: templates/js/translated/company.js:638 templates/js/translated/part.js:498
 #: templates/js/translated/part.js:635 templates/js/translated/part.js:1272
 #: templates/js/translated/stock.js:1847
@@ -216,83 +217,83 @@ msgstr "Muss eine gültige Nummer sein"
 msgid "Filename"
 msgstr "Dateiname"
 
-#: InvenTree/settings.py:663
+#: InvenTree/settings.py:664
 msgid "German"
 msgstr "Deutsch"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:665
 msgid "Greek"
 msgstr "Griechisch"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:666
 msgid "English"
 msgstr "Englisch"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:667
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:668
 msgid "Spanish (Mexican)"
 msgstr "Spanisch (Mexikanisch)"
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:669
 msgid "French"
 msgstr "Französisch"
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:670
 msgid "Hebrew"
 msgstr "Hebräisch"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:671
 msgid "Italian"
 msgstr "Italienisch"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:672
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:673
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:674
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:675
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:676
 msgid "Polish"
 msgstr "Polnisch"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:677
 msgid "Portugese"
 msgstr "Portugiesisch"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:678
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:679
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:680
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:681
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:682
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:683
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -2387,8 +2388,9 @@ msgid "Parameter value"
 msgstr "Parameterwert"
 
 #: company/models.py:429 part/models.py:882 part/models.py:2397
-#: part/templates/part/detail.html:59 templates/js/translated/company.js:650
-#: templates/js/translated/part.js:650
+#: part/templates/part/detail.html:59
+#: templates/InvenTree/settings/settings.html:264
+#: templates/js/translated/company.js:650 templates/js/translated/part.js:650
 msgid "Units"
 msgstr "Einheiten"
 
@@ -3942,7 +3944,8 @@ msgid "Part category"
 msgstr "Teile-Kategorie"
 
 #: part/models.py:784 part/templates/part/detail.html:45
-#: templates/js/translated/part.js:549
+#: templates/js/translated/part.js:549 templates/js/translated/part.js:881
+#: templates/js/translated/stock.js:1104
 msgid "IPN"
 msgstr "IPN (Interne Produktnummer)"
 
@@ -6247,6 +6250,10 @@ msgstr "Vorlage löschen"
 msgid "No part parameter templates found"
 msgstr "Keine Teilparametervorlagen gefunden"
 
+#: templates/InvenTree/settings/settings.html:253
+msgid "ID"
+msgstr ""
+
 #: templates/InvenTree/settings/sidebar.html:5
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
@@ -6432,6 +6439,10 @@ msgstr "Einige Sprachen sind nicht vollständig übersetzt"
 #: templates/InvenTree/settings/user.html:215
 msgid "Show only sufficent"
 msgstr "Zeige nur ausreichende"
+
+#: templates/InvenTree/settings/user.html:217
+msgid "and hidden."
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:217
 msgid "Show them too"
