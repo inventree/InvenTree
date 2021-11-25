@@ -759,11 +759,25 @@
         );
 
         $("#add-related-part").click(function() {
-            launchModalForm("{% url 'part-related-create' %}", {
-                data: {
-                    part: {{ part.id }},
+
+            constructForm('{% url "api-part-related-list" %}', {
+                method: 'POST',
+                fields: {
+                    part_1: {
+                        hidden: true,
+                        value: {{ part.pk }},
+                    },
+                    part_2: {
+                        label: '{% trans "Related Part" %}',
+                        filters: {
+                            exclude_related: {{ part.pk }},
+                        }
+                    }
                 },
-                reload: true,
+                title: '{% trans "Add Related Part" %}',
+                onSuccess: function() {
+                    $('#related-parts-table').bootstrapTable('refresh');
+                }
             });
         });
 

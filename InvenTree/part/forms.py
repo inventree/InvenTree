@@ -157,20 +157,6 @@ class BomMatchItemForm(MatchItemForm):
         return super().get_special_field(col_guess, row, file_manager)
 
 
-class CreatePartRelatedForm(HelperForm):
-    """ Form for creating a PartRelated object """
-
-    class Meta:
-        model = PartRelated
-        fields = [
-            'part_1',
-            'part_2',
-        ]
-        labels = {
-            'part_2': _('Related Part'),
-        }
-
-
 class SetPartCategoryForm(forms.Form):
     """ Form for setting the category of multiple Part objects """
 
