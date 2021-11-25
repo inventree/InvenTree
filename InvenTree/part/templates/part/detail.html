@@ -326,7 +326,7 @@
     <div class='panel-content'>
         <div id='related-button-bar'>
             <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="parts" %}
+                {% include "filter_list.html" with id="related" %}
             </div>
         </div>
 
@@ -746,16 +746,9 @@
     // Load the "related parts" tab
     onPanelLoad("related-parts", function() {
 
-        loadPartTable(
-            '#related-parts-table',
-            '{% url "api-part-list" %}',
-            {
-                params: {
-                    related: {{ part.pk }},
-                },
-                gridView: true,
-                checkbox: false,
-            }
+        loadRelatedPartsTable(
+            "#related-parts-table",
+            {{ part.pk }}
         );
 
         $("#add-related-part").click(function() {

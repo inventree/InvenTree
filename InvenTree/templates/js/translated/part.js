@@ -705,6 +705,97 @@ function loadPartParameterTable(table, url, options) {
 }
 
 
+function loadRelatedPartsTable(table, part_id, options={}) {
+    /*
+     * Load table of "related" parts
+     */
+
+    options.params = options.params || {};
+
+    options.params.part = part_id;
+
+    var filters = {};
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('related', $(table), options.filterTarget);
+
+    function getPart(row) {
+        if (row.part_1 == part_id) {
+            return row.part_2_detail;
+        } else {
+            return row.part_1_detail;
+        }
+    }
+
+    var columns = [
+        {
+            field: 'name',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            formatter: function(value, row) {
+
+                var part = getPart(row);
+
+                var html = imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`)
+
+                html += makePartIcons(part);
+
+                return html;
+            }
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+            formatter: function(value, row) {
+                return getPart(row).description;
+            }
+        },
+        {
+            field: 'actions',
+            title: '',
+            switchable: false,
+            formatter: function(value, row) {
+                
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
+
+                html += '</div>';
+
+                return html;
+            }
+        }
+    ];
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-related-list" %}',
+        groupBy: false,
+        name: 'related',
+        original: options.params,
+        queryParams: filters,
+        columns: columns,
+        showColumns: false,
+        search: true,
+        onPostBody: function() {
+            $(table).find('.button-related-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/related/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Part Relationship" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        },
+    });
+}
+
+
 function loadParametricPartTable(table, options={}) {
     /* Load parametric table for part parameters
      * 
@@ -836,6 +927,7 @@ function loadPartTable(table, url, options={}) {
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      *      disableFilters: If true, disable custom filters
+     *      actions: Provide a callback function to construct an "actions" column
      */
 
     // Ensure category detail is included
@@ -895,7 +987,7 @@ function loadPartTable(table, url, options={}) {
 
             var name = row.full_name;
 
-            var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
+            var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
 
             display += makePartIcons(row);
 
@@ -993,6 +1085,21 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    // Push an "actions" column
+    if (options.actions) {
+        columns.push({
+            field: 'actions',
+            title: '',
+            switchable: false,
+            visible: true,
+            searchable: false,
+            sortable: false,
+            formatter: function(value, row) {
+                return options.actions(value, row);
+            }
+        });
+    }
+
     var grid_view = options.gridView && inventreeLoad('part-grid-view') == 1;
 
     $(table).inventreeTable({
@@ -1019,6 +1126,10 @@ function loadPartTable(table, url, options={}) {
             } else {
                 $('#view-part-grid').removeClass('btn-secondary').addClass('btn-outline-secondary');
                 $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+
+            if (options.onPostBody) {
+                options.onPostBody();
             }
         },
         buttons: options.gridView ? [
