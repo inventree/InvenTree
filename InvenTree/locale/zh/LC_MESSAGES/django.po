@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 04:46+0000\n"
-"PO-Revision-Date: 2021-11-20 08:33\n"
+"PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1375,22 +1375,16 @@ msgid "Display list view"
 msgstr "列表视图"
 
 #: build/templates/build/sidebar.html:5
-#, fuzzy
-#| msgid "Build Order Settings"
 msgid "Build Order Details"
-msgstr "生产订单设置"
+msgstr ""
 
 #: build/templates/build/sidebar.html:12
-#, fuzzy
-#| msgid "Pending"
 msgid "Pending Items"
-msgstr "待定"
+msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Items"
-msgstr "已完成项目"
+msgstr ""
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -2740,28 +2734,20 @@ msgid "Delete Parameters"
 msgstr "删除参数"
 
 #: company/templates/company/sidebar.html:6
-#, fuzzy
-#| msgid "Manufacturer Parts"
 msgid "Manufactured Parts"
-msgstr "制造商商品"
+msgstr ""
 
 #: company/templates/company/sidebar.html:10
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplied Parts"
-msgstr "供应商商品"
+msgstr ""
 
 #: company/templates/company/sidebar.html:16
-#, fuzzy
-#| msgid "Select Stock Items"
 msgid "Supplied Stock Items"
-msgstr "选择库存项"
+msgstr ""
 
 #: company/templates/company/sidebar.html:22
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Assigned Stock Items"
-msgstr "库存项"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -3510,10 +3496,8 @@ msgid "Line Items"
 msgstr ""
 
 #: order/templates/order/po_sidebar.html:7
-#, fuzzy
-#| msgid "Sell Expired Stock"
 msgid "Received Stock"
-msgstr "销售过期库存"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
@@ -4460,10 +4444,8 @@ msgid "If this category is deleted, these parts will be moved to the top-level c
 msgstr ""
 
 #: part/templates/part/category_sidebar.html:13
-#, fuzzy
-#| msgid "Import Part"
 msgid "Import Parts"
-msgstr "导入商品"
+msgstr ""
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
@@ -4873,10 +4855,8 @@ msgid "Used In"
 msgstr ""
 
 #: part/templates/part/part_sidebar.html:43
-#, fuzzy
-#| msgid "Delete Template"
 msgid "Test Templates"
-msgstr "删除模板"
+msgstr ""
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -4884,8 +4864,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5903,22 +5882,16 @@ msgid "Loading..."
 msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:5
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Stock Tracking"
-msgstr "仓储地点"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:12
-#, fuzzy
-#| msgid "Installed into assembly"
 msgid "Installed Items"
-msgstr "安装到组装中"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:16
-#, fuzzy
-#| msgid "Match Items"
 msgid "Child Items"
-msgstr "匹配项"
+msgstr ""
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
@@ -6258,10 +6231,8 @@ msgid "Display Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:12
-#, fuzzy
-#| msgid "Home Page Settings"
 msgid "Home Page"
-msgstr "主页设置"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:14
 #: templates/InvenTree/settings/user_search.html:9
@@ -6269,39 +6240,29 @@ msgid "Search Settings"
 msgstr "搜索设置"
 
 #: templates/InvenTree/settings/sidebar.html:16
-#, fuzzy
-#| msgid "Label Settings"
 msgid "Label Printing"
-msgstr "标签设置"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:18
 #: templates/InvenTree/settings/sidebar.html:34
-#, fuzzy
-#| msgid "Report Settings"
 msgid "Reporting"
-msgstr "报表设置"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:23
-#, fuzzy
-#| msgid "Label Settings"
 msgid "Global Settings"
-msgstr "标签设置"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Server Configuration"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:32
-#, fuzzy
-#| msgid "Currency"
 msgid "Currencies"
-msgstr "货币"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:38
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Categories"
-msgstr "商品类别"
+msgstr ""
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -6567,16 +6528,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7845,16 +7804,12 @@ msgid "No variants found"
 msgstr ""
 
 #: templates/js/translated/part.js:765
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete part relationship"
-msgstr "删除商品"
+msgstr ""
 
 #: templates/js/translated/part.js:789
-#, fuzzy
-#| msgid "Delete Part Category"
 msgid "Delete Part Relationship"
-msgstr "删除商品类别"
+msgstr ""
 
 #: templates/js/translated/part.js:856 templates/js/translated/part.js:1116
 msgid "No parts found"
@@ -8655,3 +8610,4 @@ msgstr "编辑项目权限"
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr "删除项目权限"
+

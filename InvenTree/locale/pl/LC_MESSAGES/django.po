@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 04:46+0000\n"
-"PO-Revision-Date: 2021-11-20 08:33\n"
+"PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1375,22 +1375,16 @@ msgid "Display list view"
 msgstr "Pokaż widok listy"
 
 #: build/templates/build/sidebar.html:5
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build Order Details"
-msgstr "Szczegóły budowy"
+msgstr ""
 
 #: build/templates/build/sidebar.html:12
-#, fuzzy
-#| msgid "Pending"
 msgid "Pending Items"
-msgstr "W toku"
+msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Items"
-msgstr "Ukończone elementy"
+msgstr ""
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -2740,28 +2734,20 @@ msgid "Delete Parameters"
 msgstr ""
 
 #: company/templates/company/sidebar.html:6
-#, fuzzy
-#| msgid "Manufacturer Parts"
 msgid "Manufactured Parts"
-msgstr "Części producenta"
+msgstr ""
 
 #: company/templates/company/sidebar.html:10
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplied Parts"
-msgstr "Komponenty dostawcy"
+msgstr ""
 
 #: company/templates/company/sidebar.html:16
-#, fuzzy
-#| msgid "Supplier Stock"
 msgid "Supplied Stock Items"
-msgstr "Zapasy dostawcy"
+msgstr ""
 
 #: company/templates/company/sidebar.html:22
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Assigned Stock Items"
-msgstr "Element magazynowy"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -3510,10 +3496,8 @@ msgid "Line Items"
 msgstr ""
 
 #: order/templates/order/po_sidebar.html:7
-#, fuzzy
-#| msgid "Received"
 msgid "Received Stock"
-msgstr "Odebrane"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
@@ -4460,10 +4444,8 @@ msgid "If this category is deleted, these parts will be moved to the top-level c
 msgstr ""
 
 #: part/templates/part/category_sidebar.html:13
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Import Parts"
-msgstr "Komponenty dostawcy"
+msgstr ""
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
@@ -4865,20 +4847,16 @@ msgid "No pricing information is available for this part."
 msgstr ""
 
 #: part/templates/part/part_sidebar.html:13
-#, fuzzy
-#| msgid "Variant Of"
 msgid "Variants"
-msgstr "Wariant"
+msgstr ""
 
 #: part/templates/part/part_sidebar.html:27
 msgid "Used In"
 msgstr ""
 
 #: part/templates/part/part_sidebar.html:43
-#, fuzzy
-#| msgid "Template"
 msgid "Test Templates"
-msgstr "Szablon"
+msgstr ""
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -4886,8 +4864,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5905,22 +5882,16 @@ msgid "Loading..."
 msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:5
-#, fuzzy
-#| msgid "Stock actions"
 msgid "Stock Tracking"
-msgstr "Akcje magazynowe"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:12
-#, fuzzy
-#| msgid "Install into"
 msgid "Installed Items"
-msgstr "Zainstaluj do"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:16
-#, fuzzy
-#| msgid "Received Items"
 msgid "Child Items"
-msgstr "Otrzymane elementy"
+msgstr ""
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
@@ -6269,10 +6240,8 @@ msgid "Search Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:16
-#, fuzzy
-#| msgid "Label description"
 msgid "Label Printing"
-msgstr "Opis etykiety"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:18
 #: templates/InvenTree/settings/sidebar.html:34
@@ -6288,16 +6257,12 @@ msgid "Server Configuration"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:32
-#, fuzzy
-#| msgid "Currency"
 msgid "Currencies"
-msgstr "Waluta"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:38
-#, fuzzy
-#| msgid "Category"
 msgid "Categories"
-msgstr "Kategoria"
+msgstr ""
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -6563,16 +6528,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7841,16 +7804,12 @@ msgid "No variants found"
 msgstr ""
 
 #: templates/js/translated/part.js:765
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete part relationship"
-msgstr "Usuń części"
+msgstr ""
 
 #: templates/js/translated/part.js:789
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part Relationship"
-msgstr "Usuń części"
+msgstr ""
 
 #: templates/js/translated/part.js:856 templates/js/translated/part.js:1116
 msgid "No parts found"
@@ -8651,3 +8610,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+

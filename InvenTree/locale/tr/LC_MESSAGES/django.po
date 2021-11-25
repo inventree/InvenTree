@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 04:46+0000\n"
-"PO-Revision-Date: 2021-11-20 08:33\n"
+"PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1375,22 +1375,16 @@ msgid "Display list view"
 msgstr "Liste görünümünü görüntüle"
 
 #: build/templates/build/sidebar.html:5
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build Order Details"
-msgstr "Yapım İşi Detayları"
+msgstr ""
 
 #: build/templates/build/sidebar.html:12
-#, fuzzy
-#| msgid "Pending"
 msgid "Pending Items"
-msgstr "Bekliyor"
+msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Items"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -2740,28 +2734,20 @@ msgid "Delete Parameters"
 msgstr ""
 
 #: company/templates/company/sidebar.html:6
-#, fuzzy
-#| msgid "Manufacturers"
 msgid "Manufactured Parts"
-msgstr "Üreticiler"
+msgstr ""
 
 #: company/templates/company/sidebar.html:10
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplied Parts"
-msgstr "Tedarikçi Parçaları"
+msgstr ""
 
 #: company/templates/company/sidebar.html:16
-#, fuzzy
-#| msgid "Supplier Stock"
 msgid "Supplied Stock Items"
-msgstr "Tedarikçi Stoku"
+msgstr ""
 
 #: company/templates/company/sidebar.html:22
-#, fuzzy
-#| msgid "Assigned Stock"
 msgid "Assigned Stock Items"
-msgstr "Atanan Stok"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -3510,10 +3496,8 @@ msgid "Line Items"
 msgstr ""
 
 #: order/templates/order/po_sidebar.html:7
-#, fuzzy
-#| msgid "Assigned Stock"
 msgid "Received Stock"
-msgstr "Atanan Stok"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
@@ -4460,10 +4444,8 @@ msgid "If this category is deleted, these parts will be moved to the top-level c
 msgstr ""
 
 #: part/templates/part/category_sidebar.html:13
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Import Parts"
-msgstr "Tedarikçi Parçaları"
+msgstr ""
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
@@ -4865,20 +4847,16 @@ msgid "No pricing information is available for this part."
 msgstr ""
 
 #: part/templates/part/part_sidebar.html:13
-#, fuzzy
-#| msgid "Variant Of"
 msgid "Variants"
-msgstr "Çeşidi"
+msgstr ""
 
 #: part/templates/part/part_sidebar.html:27
 msgid "Used In"
 msgstr ""
 
 #: part/templates/part/part_sidebar.html:43
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Test Templates"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -4886,8 +4864,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5905,22 +5882,16 @@ msgid "Loading..."
 msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:5
-#, fuzzy
-#| msgid "Stock actions"
 msgid "Stock Tracking"
-msgstr "Stok işlemleri"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:12
-#, fuzzy
-#| msgid "Installed into assembly"
 msgid "Installed Items"
-msgstr "Montajda kullanıldı"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:16
-#, fuzzy
-#| msgid "Build Notes"
 msgid "Child Items"
-msgstr "Yapım İşi Notları"
+msgstr ""
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
@@ -6260,10 +6231,8 @@ msgid "Display Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:12
-#, fuzzy
-#| msgid "Home Page Settings"
 msgid "Home Page"
-msgstr "Ana Sayfa Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:14
 #: templates/InvenTree/settings/user_search.html:9
@@ -6271,10 +6240,8 @@ msgid "Search Settings"
 msgstr "Arama Ayarları"
 
 #: templates/InvenTree/settings/sidebar.html:16
-#, fuzzy
-#| msgid "Label description"
 msgid "Label Printing"
-msgstr "Etiket tanımı"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:18
 #: templates/InvenTree/settings/sidebar.html:34
@@ -6282,26 +6249,20 @@ msgid "Reporting"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:23
-#, fuzzy
-#| msgid "Home Page Settings"
 msgid "Global Settings"
-msgstr "Ana Sayfa Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Server Configuration"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:32
-#, fuzzy
-#| msgid "Currency"
 msgid "Currencies"
-msgstr "Para birimi"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:38
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Categories"
-msgstr "Parça Kategorileri"
+msgstr ""
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -6567,16 +6528,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7845,16 +7804,12 @@ msgid "No variants found"
 msgstr "Çeşit bulunamadı"
 
 #: templates/js/translated/part.js:765
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete part relationship"
-msgstr "Parçaları sil"
+msgstr ""
 
 #: templates/js/translated/part.js:789
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part Relationship"
-msgstr "Parçaları Sil"
+msgstr ""
 
 #: templates/js/translated/part.js:856 templates/js/translated/part.js:1116
 msgid "No parts found"
@@ -8655,3 +8610,4 @@ msgstr ""
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr ""
+
