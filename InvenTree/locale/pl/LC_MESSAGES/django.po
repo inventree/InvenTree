@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 10:11+0000\n"
-"PO-Revision-Date: 2021-11-25 10:50\n"
+"PO-Revision-Date: 2021-11-25 18:29\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Potwierdzenie adresu email"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
@@ -164,7 +164,7 @@ msgstr ""
 
 #: InvenTree/models.py:192
 msgid "Error renaming file"
-msgstr ""
+msgstr "Błąd zmiany nazwy pliku"
 
 #: InvenTree/models.py:227
 msgid "Invalid choice"
@@ -216,7 +216,7 @@ msgstr "Numer musi być prawidłowy"
 
 #: InvenTree/serializers.py:251
 msgid "Filename"
-msgstr ""
+msgstr "Nazwa pliku"
 
 #: InvenTree/settings.py:664
 msgid "German"
@@ -236,7 +236,7 @@ msgstr "Hiszpański"
 
 #: InvenTree/settings.py:668
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Hiszpański (Meksyk)"
 
 #: InvenTree/settings.py:669
 msgid "French"
@@ -272,7 +272,7 @@ msgstr "Polski"
 
 #: InvenTree/settings.py:677
 msgid "Portugese"
-msgstr ""
+msgstr "Portugalski"
 
 #: InvenTree/settings.py:678
 msgid "Russian"
