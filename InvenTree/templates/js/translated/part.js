@@ -878,7 +878,7 @@ function loadPartTable(table, url, options={}) {
 
     col = {
         field: 'IPN',
-        title: 'IPN',
+        title: '{% trans "IPN" %}',
     };
 
     if (!options.params.ordering) {
