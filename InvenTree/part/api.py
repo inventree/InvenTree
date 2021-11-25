@@ -26,7 +26,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
-from .models import Part, PartCategory
+from .models import Part, PartCategory, PartRelated
 from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
@@ -901,6 +901,40 @@ class PartList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(pk__in=pks)
 
+        # Filter by 'related' parts?
+        related = params.get('related', None)
+        exclude_related = params.get('exclude_related', None)
+
+        if related is not None or exclude_related is not None:
+            try:
+                pk = related if related is not None else exclude_related
+                pk = int(pk)
+
+                related_part = Part.objects.get(pk=pk)
+
+                part_ids = set()
+
+                # Return any relationship which points to the part in question
+                relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+
+                for relation in PartRelated.objects.filter(relation_filter):
+
+                    if relation.part_1.pk != pk:
+                        part_ids.add(relation.part_1.pk)
+
+                    if relation.part_2.pk != pk:
+                        part_ids.add(relation.part_2.pk)
+
+                if related is not None:
+                    # Only return related results
+                    queryset = queryset.filter(pk__in=[pk for pk in part_ids])
+                elif exclude_related is not None:
+                    # Exclude related results
+                    queryset = queryset.exclude(pk__in=[pk for pk in part_ids])
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
 
@@ -1015,6 +1049,44 @@ class PartList(generics.ListCreateAPIView):
         'keywords',
         'category__name',
     ]
+
+
+class PartRelatedList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of PartRelated objects
+    """
+
+    queryset = PartRelated.objects.all()
+    serializer_class = part_serializers.PartRelationSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Add a filter for "part" - we can filter either part_1 or part_2
+        part = params.get('part', None)
+
+        if part is not None:
+            try:
+                part = Part.objects.get(pk=part)
+
+                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part))
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        return queryset
+
+
+class PartRelatedDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for accessing detail view of a PartRelated object
+    """
+
+    queryset = PartRelated.objects.all()
+    serializer_class = part_serializers.PartRelationSerializer
 
 
 class PartParameterTemplateList(generics.ListCreateAPIView):
@@ -1439,6 +1511,12 @@ part_api_urls = [
     # Base URL for part internal pricing
     url(r'^internal-price/', include([
         url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
+    ])),
+
+    # Base URL for PartRelated API endpoints
+    url(r'^related/', include([
+        url(r'^(?P<pk>\d+)/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        url(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
     ])),
 
     # Base URL for PartParameter API endpoints
