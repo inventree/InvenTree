@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 10:11+0000\n"
-"PO-Revision-Date: 2021-11-25 11:49\n"
+"PO-Revision-Date: 2021-11-25 15:13\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1684,7 +1684,7 @@ msgstr ""
 
 #: common/models.py:739
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Las piezas son rastreables por defecto"
 
 #: common/models.py:745 part/models.py:920
 #: part/templates/part/part_base.html:144
@@ -1694,7 +1694,7 @@ msgstr ""
 
 #: common/models.py:746
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Las piezas son virtuales por defecto"
 
 #: common/models.py:752
 msgid "Show Import in Views"
@@ -1722,11 +1722,11 @@ msgstr ""
 
 #: common/models.py:778
 msgid "Show related parts"
-msgstr ""
+msgstr "Mostrar piezas relacionadas"
 
 #: common/models.py:779
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Mostrar partes relacionadas para una pieza"
 
 #: common/models.py:785
 msgid "Create initial stock"
@@ -1942,11 +1942,11 @@ msgstr ""
 
 #: common/models.py:1001
 msgid "Show subscribed parts"
-msgstr ""
+msgstr "Mostrar partes suscritas"
 
 #: common/models.py:1002
 msgid "Show subscribed parts on the homepage"
-msgstr ""
+msgstr "Mostrar las partes suscritas en la página principal"
 
 #: common/models.py:1007
 msgid "Show subscribed categories"
@@ -1958,11 +1958,11 @@ msgstr ""
 
 #: common/models.py:1013
 msgid "Show latest parts"
-msgstr ""
+msgstr "Mostrar últimas partes"
 
 #: common/models.py:1014
 msgid "Show latest parts on the homepage"
-msgstr ""
+msgstr "Mostrar las últimas partes en la página de inicio"
 
 #: common/models.py:1019
 msgid "Recent Part Count"
@@ -1970,7 +1970,7 @@ msgstr ""
 
 #: common/models.py:1020
 msgid "Number of recent parts to display on index page"
-msgstr ""
+msgstr "Número de partes recientes a mostrar en la página de índice"
 
 #: common/models.py:1026
 msgid "Show unvalidated BOMs"
@@ -2118,11 +2118,11 @@ msgstr ""
 
 #: common/models.py:1139
 msgid "Hide Inactive Parts"
-msgstr ""
+msgstr "Ocultar Partes Inactivas"
 
 #: common/models.py:1140
 msgid "Hide inactive parts in search preview window"
-msgstr ""
+msgstr "Ocultar partes inactivas en la ventana de vista previa de búsqueda"
 
 #: common/models.py:1146
 msgid "Show Quantity in Forms"
@@ -2188,7 +2188,7 @@ msgstr ""
 
 #: common/views.py:495
 msgid "Parts imported"
-msgstr ""
+msgstr "Partes importadas"
 
 #: common/views.py:517 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -2298,7 +2298,7 @@ msgstr ""
 
 #: company/models.py:148
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "¿Esta empresa fabrica piezas?"
 
 #: company/models.py:152 company/serializers.py:270
 #: company/templates/company/company_base.html:76 stock/serializers.py:172
@@ -2521,7 +2521,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:124
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Partes de Proveedor"
 
 #: company/templates/company/detail.html:19
 #: order/templates/order/order_wizard/select_parts.html:44
@@ -2547,21 +2547,21 @@ msgstr "Opciones"
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:166
 msgid "Order parts"
-msgstr ""
+msgstr "Piezas de pedido"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr ""
+msgstr "Eliminar partes"
 
 #: company/templates/company/detail.html:43
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr ""
+msgstr "Eliminar Partes"
 
 #: company/templates/company/detail.html:62 templates/InvenTree/search.html:109
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Partes del fabricante"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
@@ -2633,13 +2633,13 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:209
 #: part/templates/part/detail.html:520
 msgid "Delete Supplier Parts?"
-msgstr ""
+msgstr "¿Eliminar piezas de proveedor?"
 
 #: company/templates/company/detail.html:384
 #: company/templates/company/manufacturer_part.html:210
 #: part/templates/part/detail.html:521
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "Se eliminarán todas las partes del proveedor seleccionadas"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -2683,7 +2683,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:451
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Eliminar partes del proveedor"
 
 #: company/templates/company/manufacturer_part.html:123
 #: company/templates/company/manufacturer_part.html:152
@@ -2727,11 +2727,11 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Partes Manufacturadas"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Partes suministradas"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
@@ -3618,7 +3618,7 @@ msgstr ""
 
 #: order/views.py:291
 msgid "Match Supplier Parts"
-msgstr ""
+msgstr "Coincidir Piezas de Proveedor"
 
 #: order/views.py:535
 msgid "Update prices"
@@ -3627,7 +3627,7 @@ msgstr ""
 #: order/views.py:793
 #, python-brace-format
 msgid "Ordered {n} parts"
-msgstr ""
+msgstr "{n} partes pedidas"
 
 #: order/views.py:846
 msgid "Allocate Serial Numbers"
@@ -3798,7 +3798,7 @@ msgstr ""
 
 #: part/models.py:82
 msgid "Default location for parts in this category"
-msgstr ""
+msgstr "Ubicación predeterminada para partes de esta categoría"
 
 #: part/models.py:85
 msgid "Default keywords"
@@ -3806,7 +3806,7 @@ msgstr ""
 
 #: part/models.py:85
 msgid "Default keywords for parts in this category"
-msgstr ""
+msgstr "Palabras clave por defecto para partes en esta categoría"
 
 #: part/models.py:95 part/models.py:2473 part/templates/part/category.html:11
 #: part/templates/part/part_app_base.html:10
@@ -3828,7 +3828,7 @@ msgstr ""
 #: templates/js/translated/part.js:1416 templates/navbar.html:19
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "Partes"
 
 #: part/models.py:450
 msgid "Invalid choice for parent part"
@@ -3952,7 +3952,7 @@ msgstr ""
 
 #: part/models.py:889
 msgid "Can this part be built from other parts?"
-msgstr ""
+msgstr "¿Se puede construir esta pieza a partir de otras piezas?"
 
 #: part/models.py:895
 msgid "Can this part be used to build other parts?"
@@ -4015,7 +4015,7 @@ msgstr ""
 
 #: part/models.py:2273
 msgid "Test templates can only be created for trackable parts"
-msgstr ""
+msgstr "Las plantillas de prueba sólo pueden ser creadas para partes rastreables"
 
 #: part/models.py:2290
 msgid "Test with this name already exists for this part"
@@ -4160,7 +4160,7 @@ msgstr ""
 
 #: part/models.py:2595
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr ""
+msgstr "Este artículo BOM es heredado por BOMs para partes variantes"
 
 #: part/models.py:2600 templates/js/translated/bom.js:537
 msgid "Allow Variants"
@@ -4168,11 +4168,11 @@ msgstr ""
 
 #: part/models.py:2601
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr ""
+msgstr "Artículos de stock para partes variantes pueden ser usados para este artículo BOM"
 
 #: part/models.py:2686 stock/models.py:371
 msgid "Quantity must be integer value for trackable parts"
-msgstr ""
+msgstr "La cantidad debe ser un valor entero para las partes rastreables"
 
 #: part/models.py:2695 part/models.py:2697
 msgid "Sub part must be specified"
@@ -4337,7 +4337,7 @@ msgstr ""
 
 #: part/templates/part/category.html:108
 msgid "Parts (Including subcategories)"
-msgstr ""
+msgstr "Partes (incluyendo subcategorías)"
 
 #: part/templates/part/category.html:145
 msgid "Export Part Data"
@@ -4402,25 +4402,25 @@ msgstr ""
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
-msgstr ""
+msgstr "categoría de piezas de alto nivel"
 
 #: part/templates/part/category_delete.html:25
 #, python-format
 msgid "This category contains %(count)s parts"
-msgstr ""
+msgstr "Esta categoría contiene %(count)s partes"
 
 #: part/templates/part/category_delete.html:27
 #, python-format
 msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
-msgstr ""
+msgstr "Si se elimina esta categoría, estas partes se moverán a la categoría principal %(path)s"
 
 #: part/templates/part/category_delete.html:29
 msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
-msgstr ""
+msgstr "Si se elimina esta categoría, estas partes se moverán a la categoría principal"
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
-msgstr ""
+msgstr "Importar Partes"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
@@ -4434,12 +4434,12 @@ msgstr ""
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
 msgid "Possible Matching Parts"
-msgstr ""
+msgstr "Posibles Partes coincidentes"
 
 #: part/templates/part/copy_part.html:15
 #: part/templates/part/create_part.html:12
 msgid "The new part may be a duplicate of these existing parts"
-msgstr ""
+msgstr "La nueva parte puede ser un duplicado de estas partes existentes"
 
 #: part/templates/part/create_part.html:17
 #, python-format
@@ -4497,7 +4497,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:315 part/templates/part/part_sidebar.html:47
 msgid "Related Parts"
-msgstr ""
+msgstr "Partes relacionadas"
 
 #: part/templates/part/detail.html:319 part/templates/part/detail.html:320
 msgid "Add Related"
@@ -4561,7 +4561,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:479
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "Eliminar partes del fabricante"
 
 #: part/templates/part/detail.html:660
 msgid "Delete selected BOM items?"
