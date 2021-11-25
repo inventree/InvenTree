@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-24 02:41+0000\n"
-"PO-Revision-Date: 2021-11-24 03:13\n"
+"POT-Creation-Date: 2021-11-25 02:29+0000\n"
+"PO-Revision-Date: 2021-11-25 02:30\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -173,6 +173,7 @@ msgstr "Choix invalide"
 #: InvenTree/models.py:243 InvenTree/models.py:244 company/models.py:415
 #: label/models.py:112 part/models.py:741 part/models.py:2389
 #: part/templates/part/detail.html:25 report/models.py:181
+#: templates/InvenTree/settings/settings.html:259
 #: templates/js/translated/company.js:638 templates/js/translated/part.js:498
 #: templates/js/translated/part.js:635 templates/js/translated/part.js:1272
 #: templates/js/translated/stock.js:1847
@@ -2381,8 +2382,9 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:429 part/models.py:882 part/models.py:2397
-#: part/templates/part/detail.html:59 templates/js/translated/company.js:650
-#: templates/js/translated/part.js:650
+#: part/templates/part/detail.html:59
+#: templates/InvenTree/settings/settings.html:264
+#: templates/js/translated/company.js:650 templates/js/translated/part.js:650
 msgid "Units"
 msgstr ""
 
@@ -3926,7 +3928,8 @@ msgid "Part category"
 msgstr "Catégorie de la pièce"
 
 #: part/models.py:784 part/templates/part/detail.html:45
-#: templates/js/translated/part.js:549
+#: templates/js/translated/part.js:549 templates/js/translated/part.js:881
+#: templates/js/translated/stock.js:1104
 msgid "IPN"
 msgstr "IPN"
 
@@ -6211,6 +6214,10 @@ msgstr ""
 msgid "No part parameter templates found"
 msgstr ""
 
+#: templates/InvenTree/settings/settings.html:253
+msgid "ID"
+msgstr ""
+
 #: templates/InvenTree/settings/sidebar.html:5
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
@@ -6383,6 +6390,10 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:215
 msgid "Show only sufficent"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:217
+msgid "and hidden."
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:217
