@@ -1101,7 +1101,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'part_detail.IPN',
-        title: 'IPN',
+        title: '{% trans "IPN" %}',
         sortName: 'part__IPN',
         visible: params['part_detail'],
         switchable: params['part_detail'],

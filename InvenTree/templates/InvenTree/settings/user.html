@@ -214,7 +214,7 @@
                 {% if ALL_LANG %}
                 . <a href="{% url 'settings' %}">{% trans "Show only sufficent" %}</a>
                 {% else %}
-                and hidden. <a href="?alllang">{% trans "Show them too" %}</a>
+                {% trans "and hidden." %} <a href="?alllang">{% trans "Show them too" %}</a>
                 {% endif %}
                 </p>
             </div>

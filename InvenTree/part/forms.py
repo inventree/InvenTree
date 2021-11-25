@@ -17,7 +17,7 @@ from InvenTree.fields import RoundingDecimalFormField
 import common.models
 from common.forms import MatchItemForm
 
-from .models import Part, PartCategory, PartRelated
+from .models import Part, PartCategory
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -125,20 +125,6 @@ class BomMatchItemForm(MatchItemForm):
 
         # return default
         return super().get_special_field(col_guess, row, file_manager)
-
-
-class CreatePartRelatedForm(HelperForm):
-    """ Form for creating a PartRelated object """
-
-    class Meta:
-        model = PartRelated
-        fields = [
-            'part_1',
-            'part_2',
-        ]
-        labels = {
-            'part_2': _('Related Part'),
-        }
 
 
 class SetPartCategoryForm(forms.Form):

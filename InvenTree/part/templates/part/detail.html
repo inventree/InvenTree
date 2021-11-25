@@ -329,34 +329,8 @@
                 {% include "filter_list.html" with id="related" %}
             </div>
         </div>
-        
-        <table id='table-related-part' class='table table-condensed table-striped' data-toolbar='#related-button-toolbar'>
-            <thead>
-                <tr>
-                    <th data-field='part' data-serachable='true'>{% trans "Part" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in part.get_related_parts %}
-                {% with part_related=item.0 part=item.1 %}
-                    <tr>
-                        <td>
-                            <a class='hover-icon'>
-                                <img class='hover-img-thumb' src='{{ part.get_thumbnail_url }}'>
-                                <img class='hover-img-large' src='{{ part.get_thumbnail_url }}'>
-                            </a>
-                            <a href='/part/{{ part.id }}/'>{{ part }}</a>
-                            <div class='btn-group' style='float: right;'>
-                                {% if roles.part.change %}
-                                <button title='{% trans "Delete" %}' class='btn btn-outline-secondary delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                {% endwith %}
-                {% endfor %}
-            </tbody>
-        </table>
+
+        <table id='related-parts-table' class='table table-striped table-condensed' data-toolbar='#related-button-toolbar'></table>
     </div>
 </div>
 
@@ -765,15 +739,32 @@
 
     // Load the "related parts" tab
     onPanelLoad("related-parts", function() {
-        $('#table-related-part').inventreeTable({
-        });
+
+        loadRelatedPartsTable(
+            "#related-parts-table",
+            {{ part.pk }}
+        );
 
         $("#add-related-part").click(function() {
-            launchModalForm("{% url 'part-related-create' %}", {
-                data: {
-                    part: {{ part.id }},
+
+            constructForm('{% url "api-part-related-list" %}', {
+                method: 'POST',
+                fields: {
+                    part_1: {
+                        hidden: true,
+                        value: {{ part.pk }},
+                    },
+                    part_2: {
+                        label: '{% trans "Related Part" %}',
+                        filters: {
+                            exclude_related: {{ part.pk }},
+                        }
+                    }
                 },
-                reload: true,
+                title: '{% trans "Add Related Part" %}',
+                onSuccess: function() {
+                    $('#related-parts-table').bootstrapTable('refresh');
+                }
             });
         });
 
