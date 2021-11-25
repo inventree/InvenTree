@@ -1059,6 +1059,26 @@ class PartRelatedList(generics.ListCreateAPIView):
     queryset = PartRelated.objects.all()
     serializer_class = part_serializers.PartRelationSerializer
 
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Add a filter for "part" - we can filter either part_1 or part_2
+        part = params.get('part', None)
+
+        if part is not None:
+            try:
+                part = Part.objects.get(pk=part)
+                
+                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part))
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        return queryset
+
 
 class PartRelatedDetail(generics.RetrieveUpdateDestroyAPIView):
     """
