@@ -1071,7 +1071,7 @@ class PartRelatedList(generics.ListCreateAPIView):
         if part is not None:
             try:
                 part = Part.objects.get(pk=part)
-                
+
                 queryset = queryset.filter(Q(part_1=part) | Q(part_2=part))
 
             except (ValueError, Part.DoesNotExist):

@@ -17,7 +17,7 @@ from InvenTree.fields import RoundingDecimalFormField
 import common.models
 from common.forms import MatchItemForm
 
-from .models import Part, PartCategory, PartRelated
+from .models import Part, PartCategory
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
