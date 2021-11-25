@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 10:11+0000\n"
-"PO-Revision-Date: 2021-11-25 10:50\n"
+"PO-Revision-Date: 2021-11-25 11:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -902,7 +902,7 @@ msgstr "Endprodukt"
 
 #: build/serializers.py:146
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Endprodukt stimmt nicht mit übergeordnetem Bauauftrag überein"
 
 #: build/serializers.py:150
 msgid "Output part does not match BuildOrder part"
@@ -910,11 +910,11 @@ msgstr "Endprodukt entspricht nicht dem Teil des Bauauftrags"
 
 #: build/serializers.py:154
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Dieses Endprodukt wurde bereits fertiggestellt"
 
 #: build/serializers.py:158
 msgid "This build output is not fully allocated"
-msgstr "Dieses Endpordukt ist nicht vollsändig zugewiesen"
+msgstr "Dieses Endprodukt ist nicht vollständig zugewiesen"
 
 #: build/serializers.py:190 order/serializers.py:217 order/serializers.py:285
 #: stock/forms.py:236 stock/serializers.py:318 stock/serializers.py:686
@@ -958,11 +958,11 @@ msgstr "Endprodukt"
 
 #: build/serializers.py:278
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Endprodukt muss auf den gleichen Bauauftrag verweisen"
 
 #: build/serializers.py:319
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part muss auf dasselbe Teil verweisen wie der Bauauftrag"
 
 #: build/serializers.py:334
 msgid "Item must be in stock"
@@ -980,11 +980,11 @@ msgstr "Verfügbare Menge ({q}) überschritten"
 
 #: build/serializers.py:396
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "Für Zuweisung von verfolgten Teilen muss ein Endprodukt angegeben sein"
 
 #: build/serializers.py:403
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "Endprodukt kann bei Zuweisung nicht-verfolgter Teile nicht angegeben werden"
 
 #: build/serializers.py:431
 msgid "Allocation items must be provided"
@@ -1370,7 +1370,7 @@ msgstr "Listen-Ansicht"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr "Bauauftrag-details"
+msgstr "Bauauftragdetails"
 
 #: build/templates/build/sidebar.html:12
 msgid "Pending Items"
@@ -3384,7 +3384,7 @@ msgstr "Zulieferer-Teil auswählen"
 
 #: order/templates/order/order_wizard/po_upload.html:8
 msgid "Return to Orders"
-msgstr ""
+msgstr "Zurück zu Bestellungen"
 
 #: order/templates/order/order_wizard/po_upload.html:17
 msgid "Upload File for Purchase Order"
@@ -4618,7 +4618,7 @@ msgstr "Unzureichende Benutzerrechte."
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
-msgstr ""
+msgstr "Zurück zu Teilen"
 
 #: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
@@ -5098,7 +5098,7 @@ msgstr "Interne Preisspanne löschen"
 #: report/api.py:234 report/api.py:278
 #, python-brace-format
 msgid "Template file '{filename}' is missing or does not exist"
-msgstr ""
+msgstr "Vorlagendatei '{filename}' fehlt oder existiert nicht"
 
 #: report/models.py:182
 msgid "Template name"
