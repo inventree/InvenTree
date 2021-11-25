@@ -225,20 +225,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PartRelationSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for a PartRelated model
-    """
-
-    class Meta:
-        model = PartRelated
-        fields = [
-            'pk',
-            'part_1',
-            'part_2',
-        ]
-
-
 class PartSerializer(InvenTreeModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
@@ -399,6 +385,25 @@ class PartSerializer(InvenTreeModelSerializer):
             # 'used_in',
             'variant_of',
             'virtual',
+        ]
+
+
+class PartRelationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a PartRelated model
+    """
+
+    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_1', read_only=True, many=False)
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'pk',
+            'part_1',
+            'part_1_detail',
+            'part_2',
+            'part_2_detail',
         ]
 
 
