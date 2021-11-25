@@ -229,7 +229,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
     def setUp(self):
         super().setUp()
-        
+
         self.assignRole('purchase_order.add')
 
         self.url = reverse('api-po-receive', kwargs={'pk': 1})

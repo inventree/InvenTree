@@ -56,7 +56,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
-    
+
     quantity = InvenTreeDecimalField()
 
     class Meta:
@@ -615,7 +615,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
 
                 stock_item = item['pk']
                 quantity = item['quantity']
-                
+
                 stock_item.stocktake(
                     quantity,
                     request.user,
@@ -654,7 +654,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
     """
 
     def save(self):
-        
+
         request = self.context['request']
 
         data = self.validated_data
@@ -707,7 +707,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         request = self.context['request']
 
         data = self.validated_data
-        
+
         items = data['items']
         notes = data.get('notes', '')
         location = data['location']

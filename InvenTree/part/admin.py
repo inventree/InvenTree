@@ -205,7 +205,7 @@ class BomItemResource(ModelResource):
 
         # If we are not generating an "import" template,
         # just return the complete list of fields
-        if not self.is_importing:
+        if not getattr(self, 'is_importing', False):
             return fields
 
         # Otherwise, remove some fields we are not interested in

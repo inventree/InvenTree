@@ -59,7 +59,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
     uids = []
 
-    def add_items(items, level, cascade):
+    def add_items(items, level, cascade=True):
         # Add items at a given layer
         for item in items:
 
@@ -172,7 +172,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
                 # Filter manufacturer parts
                 manufacturer_parts = ManufacturerPart.objects.filter(part__pk=b_part.pk).prefetch_related('supplier_parts')
-                
+
                 for mp_idx, mp_part in enumerate(manufacturer_parts):
 
                     # Extract the "name" field of the Manufacturer (Company)
@@ -190,7 +190,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
                     # Generate a column name for this manufacturer
                     k_man = f'{_("Manufacturer")}_{mp_idx}'
                     k_mpn = f'{_("MPN")}_{mp_idx}'
-                    
+
                     try:
                         manufacturer_cols[k_man].update({bom_idx: manufacturer_name})
                         manufacturer_cols[k_mpn].update({bom_idx: manufacturer_mpn})
@@ -200,7 +200,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
                     # We wish to include supplier data for this manufacturer part
                     if supplier_data:
-                        
+
                         for sp_idx, sp_part in enumerate(mp_part.supplier_parts.all()):
 
                             supplier_parts_used.add(sp_part)

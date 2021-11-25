@@ -42,7 +42,7 @@ class POList(generics.ListCreateAPIView):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         item = serializer.save()
         item.created_by = request.user
         item.save()
@@ -397,7 +397,7 @@ class SOList(generics.ListCreateAPIView):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         item = serializer.save()
         item.created_by = request.user
         item.save()

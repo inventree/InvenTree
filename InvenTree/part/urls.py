@@ -12,10 +12,6 @@ from django.conf.urls import url, include
 
 from . import views
 
-part_related_urls = [
-    url(r'^new/?', views.PartRelatedCreate.as_view(), name='part-related-create'),
-    url(r'^(?P<pk>\d+)/delete/?', views.PartRelatedDelete.as_view(), name='part-related-delete'),
-]
 
 sale_price_break_urls = [
     url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
@@ -40,7 +36,7 @@ part_detail_urls = [
     url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
-    
+
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
 
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
@@ -95,9 +91,6 @@ part_urls = [
 
     # Part category
     url(r'^category/', include(category_urls)),
-
-    # Part related
-    url(r'^related-parts/', include(part_related_urls)),
 
     # Part price breaks
     url(r'^sale-price/', include(sale_price_break_urls)),

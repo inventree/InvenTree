@@ -743,7 +743,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_base_part(self):
         """
         Return the base part.Part object for the line item
-        
+
         Note: Returns None if the SupplierPart is not set!
         """
         if self.part is None:
