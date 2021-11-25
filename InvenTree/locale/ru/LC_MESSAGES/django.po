@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 04:46+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-25 09:47\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -401,7 +401,7 @@ msgstr "Укомплектовано"
 
 #: InvenTree/status_codes.py:283
 msgid "Removed from assembly"
-msgstr "Снято со сборки"
+msgstr "Удалено из сборки"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed component item"
