@@ -6,7 +6,8 @@ import json
 import requests
 import logging
 
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
@@ -35,7 +36,7 @@ def schedule_task(taskname, **kwargs):
         # If this task is already scheduled, don't schedule it again
         # Instead, update the scheduling parameters
         if Schedule.objects.filter(func=taskname).exists():
-            logger.info(f"Scheduled task '{taskname}' already exists - updating!")
+            logger.debug(f"Scheduled task '{taskname}' already exists - updating!")
 
             Schedule.objects.filter(func=taskname).update(**kwargs)
         else:
@@ -51,11 +52,14 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
-def offload_task(taskname, *args, **kwargs):
+def offload_task(taskname, *args, force_sync=False, **kwargs):
     """
-    Create an AsyncTask.
-    This is different to a 'scheduled' task,
-    in that it only runs once!
+        Create an AsyncTask if workers are running.
+        This is different to a 'scheduled' task,
+        in that it only runs once!
+
+        If workers are not running or force_sync flag
+        is set then the task is ran synchronously.
     """
 
     try:
@@ -63,10 +67,48 @@ def offload_task(taskname, *args, **kwargs):
     except (AppRegistryNotReady):
         logger.warning("Could not offload task - app registry not ready")
         return
+    import importlib
+    from InvenTree.status import is_worker_running
 
-    task = AsyncTask(taskname, *args, **kwargs)
+    if is_worker_running() and not force_sync:
+        # Running as asynchronous task
+        try:
+            task = AsyncTask(taskname, *args, **kwargs)
+            task.run()
+        except ImportError:
+            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+    else:
+        # Split path
+        try:
+            app, mod, func = taskname.split('.')
+            app_mod = app + '.' + mod
+        except ValueError:
+            logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+            return
 
-    task.run()
+        # Import module from app
+        try:
+            _mod = importlib.import_module(app_mod)
+        except ModuleNotFoundError:
+            logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+            return
+
+        # Retrieve function
+        try:
+            _func = getattr(_mod, func)
+        except AttributeError:
+            # getattr does not work for local import
+            _func = None
+
+        try:
+            if not _func:
+                _func = eval(func)
+        except NameError:
+            logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+            return
+
+        # Workers are not running: run it as synchronous task
+        _func(*args, **kwargs)
 
 
 def heartbeat():
@@ -84,7 +126,7 @@ def heartbeat():
     except AppRegistryNotReady:
         return
 
-    threshold = datetime.now() - timedelta(minutes=30)
+    threshold = timezone.now() - timedelta(minutes=30)
 
     # Delete heartbeat results more than half an hour old,
     # otherwise they just create extra noise
@@ -108,13 +150,40 @@ def delete_successful_tasks():
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
-    threshold = datetime.now() - timedelta(days=30)
+    threshold = timezone.now() - timedelta(days=30)
 
     results = Success.objects.filter(
         started__lte=threshold
     )
 
-    results.delete()
+    if results.count() > 0:
+        logger.info(f"Deleting {results.count()} successful task records")
+        results.delete()
+
+
+def delete_old_error_logs():
+    """
+    Delete old error logs from the server
+    """
+
+    try:
+        from error_report.models import Error
+
+        # Delete any error logs more than 30 days old
+        threshold = timezone.now() - timedelta(days=30)
+
+        errors = Error.objects.filter(
+            when__lte=threshold,
+        )
+
+        if errors.count() > 0:
+            logger.info(f"Deleting {errors.count()} old error logs")
+            errors.delete()
+
+    except AppRegistryNotReady:
+        # Apps not yet loaded
+        logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
+        return
 
 
 def check_for_updates():
@@ -162,6 +231,25 @@ def check_for_updates():
     )
 
 
+def delete_expired_sessions():
+    """
+    Remove any expired user sessions from the database
+    """
+
+    try:
+        from django.contrib.sessions.models import Session
+
+        # Delete any sessions that expired more than a day ago
+        expired = Session.objects.filter(expire_date__lt=timezone.now() - timedelta(days=1))
+
+        if expired.count() > 0:
+            logger.info(f"Deleting {expired.count()} expired sessions.")
+            expired.delete()
+
+    except AppRegistryNotReady:
+        logger.info("Could not perform 'delete_expired_sessions' - App registry not ready")
+
+
 def update_exchange_rates():
     """
     Update currency exchange rates
@@ -186,15 +274,15 @@ def update_exchange_rates():
         pass
     except:
         # Some other error
-        print("Database not ready")
+        logger.warning("update_exchange_rates: Database not ready")
         return
 
     backend = InvenTreeExchange()
-    print(f"Updating exchange rates from {backend.url}")
+    logger.info(f"Updating exchange rates from {backend.url}")
 
     base = currency_code_default()
 
-    print(f"Using base currency '{base}'")
+    logger.info(f"Using base currency '{base}'")
 
     backend.update_rates(base_currency=base)
 
@@ -202,7 +290,7 @@ def update_exchange_rates():
     Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
 
 
-def send_email(subject, body, recipients, from_email=None):
+def send_email(subject, body, recipients, from_email=None, html_message=None):
     """
     Send an email with the specified subject and body,
     to the specified recipients list.
@@ -213,7 +301,10 @@ def send_email(subject, body, recipients, from_email=None):
 
     offload_task(
         'django.core.mail.send_mail',
-        subject, body,
+        subject,
+        body,
         from_email,
         recipients,
+        fail_silently=False,
+        html_message=html_message
     )

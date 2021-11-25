@@ -9,8 +9,11 @@ from rest_framework import status
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import PurchaseOrderStatus
 
-from .models import PurchaseOrder, SalesOrder
+from stock.models import StockItem
+
+from .models import PurchaseOrder, PurchaseOrderLineItem, SalesOrder
 
 
 class OrderTest(InvenTreeAPITestCase):
@@ -200,6 +203,312 @@ class PurchaseOrderTest(OrderTest):
         # And if we try to access the detail view again, it has gone
         response = self.get(url, expected_code=404)
 
+    def test_po_create(self):
+        """
+        Test that we can create a new PurchaseOrder via the API
+        """
+
+        self.assignRole('purchase_order.add')
+
+        self.post(
+            reverse('api-po-list'),
+            {
+                'reference': '12345678',
+                'supplier': 1,
+                'description': 'A test purchase order',
+            },
+            expected_code=201
+        )
+
+
+class PurchaseOrderReceiveTest(OrderTest):
+    """
+    Unit tests for receiving items against a PurchaseOrder
+    """
+
+    def setUp(self):
+        super().setUp()
+
+        self.assignRole('purchase_order.add')
+
+        self.url = reverse('api-po-receive', kwargs={'pk': 1})
+
+        # Number of stock items which exist at the start of each test
+        self.n = StockItem.objects.count()
+
+        # Mark the order as "placed" so we can receive line items
+        order = PurchaseOrder.objects.get(pk=1)
+        order.status = PurchaseOrderStatus.PLACED
+        order.save()
+
+    def test_empty(self):
+        """
+        Test without any POST data
+        """
+
+        data = self.post(self.url, {}, expected_code=400).data
+
+        self.assertIn('This field is required', str(data['items']))
+        self.assertIn('This field is required', str(data['location']))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_no_items(self):
+        """
+        Test with an empty list of items
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [],
+                "location": None,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('Line items must be provided', str(data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_invalid_items(self):
+        """
+        Test than errors are returned as expected for invalid data
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "line_item": 12345,
+                        "location": 12345
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        items = data['items'][0]
+
+        self.assertIn('Invalid pk "12345"', str(items['line_item']))
+        self.assertIn("object does not exist", str(items['location']))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_invalid_status(self):
+        """
+        Test with an invalid StockStatus value
+        """
+
+        data = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "line_item": 22,
+                        "location": 1,
+                        "status": 99999,
+                        "quantity": 5,
+                    }
+                ]
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('"99999" is not a valid choice.', str(data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_mismatched_items(self):
+        """
+        Test for supplier parts which *do* exist but do not match the order supplier
+        """
+
+        data = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 22,
+                        'quantity': 123,
+                        'location': 1,
+                    }
+                ],
+                'location': None,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('Line item does not match purchase order', str(data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_null_barcode(self):
+        """
+        Test than a "null" barcode field can be provided
+        """
+
+        # Set stock item barcode
+        item = StockItem.objects.get(pk=1)
+        item.save()
+
+        # Test with "null" value
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'barcode': None,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201
+        )
+
+    def test_invalid_barcodes(self):
+        """
+        Tests for checking in items with invalid barcodes:
+
+        - Cannot check in "duplicate" barcodes
+        - Barcodes cannot match UID field for existing StockItem
+        """
+
+        # Set stock item barcode
+        item = StockItem.objects.get(pk=1)
+        item.uid = 'MY-BARCODE-HASH'
+        item.save()
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'barcode': 'MY-BARCODE-HASH',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Barcode is already in use', str(response.data))
+
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 5,
+                        'barcode': 'MY-BARCODE-HASH-1',
+                    },
+                    {
+                        'line_item': 1,
+                        'quantity': 5,
+                        'barcode': 'MY-BARCODE-HASH-1'
+                    },
+                ],
+                'location': 1,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('barcode values must be unique', str(response.data))
+
+        # No new stock items have been created
+        self.assertEqual(self.n, StockItem.objects.count())
+
+    def test_valid(self):
+        """
+        Test receipt of valid data
+        """
+
+        line_1 = PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = PurchaseOrderLineItem.objects.get(pk=2)
+
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_1.part).count(), 0)
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_2.part).count(), 0)
+
+        self.assertEqual(line_1.received, 0)
+        self.assertEqual(line_2.received, 50)
+
+        valid_data = {
+            'items': [
+                {
+                    'line_item': 1,
+                    'quantity': 50,
+                    'barcode': 'MY-UNIQUE-BARCODE-123',
+                },
+                {
+                    'line_item': 2,
+                    'quantity': 200,
+                    'location': 2,  # Explicit location
+                    'barcode': 'MY-UNIQUE-BARCODE-456',
+                }
+            ],
+            'location': 1,  # Default location
+        }
+
+        # Before posting "valid" data, we will mark the purchase order as "pending"
+        # In this case we do expect an error!
+        order = PurchaseOrder.objects.get(pk=1)
+        order.status = PurchaseOrderStatus.PENDING
+        order.save()
+
+        response = self.post(
+            self.url,
+            valid_data,
+            expected_code=400
+        )
+
+        self.assertIn('can only be received against', str(response.data))
+
+        # Now, set the PO back to "PLACED" so the items can be received
+        order.status = PurchaseOrderStatus.PLACED
+        order.save()
+
+        # Receive two separate line items against this order
+        self.post(
+            self.url,
+            valid_data,
+            expected_code=201,
+        )
+
+        # There should be two newly created stock items
+        self.assertEqual(self.n + 2, StockItem.objects.count())
+
+        line_1 = PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = PurchaseOrderLineItem.objects.get(pk=2)
+
+        self.assertEqual(line_1.received, 50)
+        self.assertEqual(line_2.received, 250)
+
+        stock_1 = StockItem.objects.filter(supplier_part=line_1.part)
+        stock_2 = StockItem.objects.filter(supplier_part=line_2.part)
+
+        # 1 new stock item created for each supplier part
+        self.assertEqual(stock_1.count(), 1)
+        self.assertEqual(stock_2.count(), 1)
+
+        # Different location for each received item
+        self.assertEqual(stock_1.last().location.pk, 1)
+        self.assertEqual(stock_2.last().location.pk, 2)
+
+        # Barcodes should have been assigned to the stock items
+        self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-123').exists())
+        self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-456').exists())
+
 
 class SalesOrderTest(OrderTest):
     """
@@ -340,3 +649,20 @@ class SalesOrderTest(OrderTest):
 
         # And the resource should no longer be available
         response = self.get(url, expected_code=404)
+
+    def test_so_create(self):
+        """
+        Test that we can create a new SalesOrder via the API
+        """
+
+        self.assignRole('sales_order.add')
+
+        self.post(
+            reverse('api-so-list'),
+            {
+                'reference': '1234566778',
+                'customer': 4,
+                'description': 'A test sales order',
+            },
+            expected_code=201
+        )

@@ -1,0 +1,53 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% settings_value 'PART_SHOW_RELATED' as show_related %}
+
+{% trans "Details" as text %}
+{% include "sidebar_item.html" with label="part-details" text=text icon="fa-shapes" %}
+{% trans "Parameters" as text %}
+{% include "sidebar_item.html" with label="part-parameters" text=text icon="fa-th-list" %}
+{% if part.is_template %}
+{% trans "Variants" as text %}
+{% include "sidebar_item.html" with label="variants" text=text icon="fa-shapes" %}
+{% endif %}
+{% trans "Stock" as text %}
+{% include "sidebar_item.html" with label="part-stock" text=text icon="fa-boxes" %}
+{% if part.assembly %}
+{% trans "Bill of Materials" as text %}
+{% include "sidebar_item.html" with label="bom" text=text icon="fa-list" %}
+{% if roles.build.view %}
+{% trans "Build Orders" as text %}
+{% include "sidebar_item.html" with label="build-orders" text=text icon="fa-tools" %}
+{% endif %}
+{% endif %}
+{% if part.component %}
+{% trans "Used In" as text %}
+{% include "sidebar_item.html" with label="used-in" text=text icon="fa-layer-group" %}
+{% endif %}
+{% trans "Pricing" as text %}
+{% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
+{% if part.purchaseable and roles.purchase_order.view %}
+{% trans "Suppliers" as text %}
+{% include "sidebar_item.html" with label="suppliers" text=text icon="fa-building" %}
+{% trans "Purchase Orders" as text %}
+{% include "sidebar_item.html" with label="purchase-orders" text=text icon="fa-shopping-cart" %}
+{% endif %}
+{% if part.salable and roles.sales_order.view %}
+{% trans "Sales Orders" as text %}
+{% include "sidebar_item.html" with label="sales-orders" text=text icon="fa-truck" %}
+{% endif %}
+{% if part.trackable %}
+{% trans "Test Templates" as text %}
+{% include "sidebar_item.html" with label="test-templates" text=text icon="fa-vial" %}
+{% endif %}
+{% if show_related %}
+{% trans "Related Parts" as text %}
+{% include "sidebar_item.html" with label="related-parts" text=text icon="fa-random" %}
+{% endif %}
+{% trans "Attachments" as text %}
+{% include "sidebar_item.html" with label="part-attachments" text=text icon="fa-paperclip" %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label="part-notes" text=text icon="fa-clipboard" %}

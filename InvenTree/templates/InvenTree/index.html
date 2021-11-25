@@ -7,22 +7,16 @@
 {% inventree_title %} | {% trans "Index" %}
 {% endblock %}
 
-{% block content %}
-<h3>{% inventree_title %} </h3>
-<hr>
+{% block breadcrumb_list %}
+{% endblock %}
 
-<div class='col-sm-3' id='item-panel'>
-    <ul class='list-group' id='action-item-list'>
-    </ul>
-</div>
-<div class='col-sm-9' id='details-panel'>
-    <ul class='list-group' id='detail-item-list'>
-        <li class='list-group-item'>
-            <div class='container'>
-                <img class='index-bg' src='{% static "img/inventree.png" %}'>
-            </div>
-        </li>
-    </ul>
+{% block sidebar %}
+<!-- Sidebar data is filled dynamically for the index page-->
+{% endblock %}
+
+{% block content %}
+
+<div id='detail-panels'>
 </div>
 
 {% endblock %}
@@ -32,120 +26,169 @@
 {{ block.super }}
 
 function addHeaderTitle(title) {
-    // Add a header block to the action list
-    $("#action-item-list").append(
-        `<li class='list-group-item'><b>${title}</b></li>`
-    );
+
+    addSidebarHeader({
+        text: title,
+    });
 }
 
 function addHeaderAction(label, title, icon, options) {
-    // Add an action block to the action list
-    $("#action-item-list").append(
-        `<li class='list-group-item' id='action-${label}'>
-            <a href='#'>
-                <span class='fas ${icon}'></span>
-                ${title}
-            </a>
-            <span class='badge' id='badge-${label}'>
-                <span class='fas fa-spin fa-spinner'></span>
-            </span>
-        </li>`
-    );
+
+    // Construct a "badge" to add to the sidebar item
+    var badge = `
+    <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
+        <span class='fas fa-spin fa-spinner'></span>
+    </span>
+    `;
+
+    addSidebarItem({
+        label: label,
+        text: title,
+        icon: icon,
+        content_after: badge
+    });
 
     // Add a detail item to the detail item-panel
-    $("#detail-item-list").append(
-        `<li class='list-group-item' id='detail-${label}'>
-            <h4>${title}</h4>
-            <table class='table table-condensed table-striped' id='table-${label}'></table>
-        </li>`
+    $("#detail-panels").append(
+        `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
+            <div class='panel-heading'>
+                <h4>${title}</h4>
+            </div>
+            <div class='panel-content'>
+                <table class='table table-condensed table-striped' id='table-${label}'></table>
+            </div>
+        </div>`
     );
-
-    $(`#detail-${label}`).hide();
-
-    $(`#action-${label}`).click(function() {
-
-        // Hide all child elements
-        $('#detail-item-list').children('li').each(function() {
-            $(this).hide();
-        });
-
-        // Show the one we want
-        $(`#detail-${label}`).fadeIn();
-
-        // Remove css class from all action items
-        $("#action-item-list").children('li').each(function() {
-            $(this).removeClass('index-action-selected');
-        });
-
-        // Add css class to the action we are interested in
-        $(`#action-${label}`).addClass('index-action-selected');
-    });
 
     // Connect a callback to the table
     $(`#table-${label}`).on('load-success.bs.table', function() {
         var count = $(`#table-${label}`).bootstrapTable('getData').length;
 
-        $(`#badge-${label}`).html(count);
+        var badge = $(`#sidebar-badge-${label}`);
+
+        badge.html(count);
 
         if (count > 0) {
-            $(`#badge-${label}`).addClass('badge-orange');
+            badge.removeClass('bg-dark');
+            badge.addClass('bg-primary');
         }
     });
 }
 
-{% if roles.part.view %}
+{% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
+{% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
+{% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
+{% settings_value 'HOMEPAGE_BOM_VALIDATION' user=request.user as setting_bom_validation %}
+{% to_list setting_part_starred setting_part_latest setting_bom_validation as settings_list_part %}
+
+{% if roles.part.view and True in settings_list_part %}
 addHeaderTitle('{% trans "Parts" %}');
-addHeaderAction('starred-parts', '{% trans "Starred Parts" %}', 'fa-star');
-addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
-addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
 
-
-loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
-    params: {
-        ordering: "-creation_date",
-        max_results: {% settings_value "PART_RECENT_COUNT" %},
-    },
-    name: 'latest_parts',
-});
-
+{% if setting_part_starred %}
+addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     params: {
-        "starred": true,
+        starred: true,
     },
     name: 'starred_parts',
 });
+{% endif %}
 
+{% if setting_category_starred %}
+addHeaderAction('starred-categories', '{% trans "Subscribed Categories" %}', 'fa-bell');
+loadPartCategoryTable($('#table-starred-categories'), {
+    params: {
+        starred: true,
+    },
+    name: 'starred_categories'
+});
+{% endif %}
+
+{% if setting_part_latest %}
+addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
+loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
+    params: {
+        ordering: "-creation_date",
+        max_results: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+    },
+    name: 'latest_parts',
+});
+{% endif %}
+
+{% if setting_bom_validation %}
+addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
     params: {
         "bom_valid": false,
     },
     name: 'bom_invalid_parts',
 });
+{% endif %}
+{% endif %}
 
+{% settings_value 'HOMEPAGE_STOCK_RECENT' user=request.user as setting_stock_recent %}
+{% settings_value 'HOMEPAGE_STOCK_LOW' user=request.user as setting_stock_low %}
+{% settings_value 'HOMEPAGE_STOCK_DEPLETED' user=request.user as setting_stock_depleted %}
+{% settings_value 'HOMEPAGE_STOCK_NEEDED' user=request.user as setting_stock_needed %}
+{% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+{% if expiry %}
+{% settings_value 'HOMEPAGE_STOCK_EXPIRED' user=request.user as setting_stock_expired %}
+{% settings_value 'HOMEPAGE_STOCK_STALE' user=request.user as setting_stock_stale %}
+{% to_list setting_stock_recent setting_stock_low setting_stock_depleted setting_stock_needed setting_stock_expired setting_stock_stale as settings_list_stock %}
+{% else %}
+{% to_list setting_stock_recent setting_stock_low setting_stock_depleted setting_stock_needed as settings_list_stock %}
 {% endif %}
 
 {% if roles.stock.view %}
-addHeaderTitle('{% trans "Stock" %}');
-addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
-addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
-addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
-addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
 
+{% if setting_stock_recent %}
+addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
         part_detail: true,
         ordering: "-updated",
-        max_results: {% settings_value "STOCK_RECENT_COUNT" %},
+        max_results: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
     },
     name: 'recently-updated-stock',
     grouping: false,
 });
+{% endif %}
 
-{% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+{% if setting_stock_low %}
+addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
+loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
+    params: {
+        low_stock: true,
+    },
+    name: "low_stock_parts",
+});
+{% endif %}
+
+{% if setting_stock_depleted %}
+addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
+loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
+    params: {
+        depleted_stock: true,
+    },
+    name: "depleted_stock_parts",
+});
+{% endif %}
+
+{% if setting_stock_needed %}
+addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
+loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
+    params: {
+        stock_to_build: true,
+    },
+    name: "to_build_parts",
+});
+{% endif %}
+
+
 {% if expiry %}
-addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
-addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
 
+{% if setting_stock_expired %}
+addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
 loadStockTable($("#table-expired-stock"), {
     params: {
         expired: true,
@@ -153,7 +196,10 @@ loadStockTable($("#table-expired-stock"), {
         part_detail: true,
     },
 });
+{% endif %}
 
+{% if setting_stock_stale %}
+addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
 loadStockTable($("#table-stale-stock"), {
     params: {
         stale: true,
@@ -164,34 +210,18 @@ loadStockTable($("#table-stale-stock"), {
 });
 {% endif %}
 
-loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
-    params: {
-        low_stock: true,
-    },
-    name: "low_stock_parts",
-});
-
-loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
-    params: {
-        depleted_stock: true,
-    },
-    name: "depleted_stock_parts",
-});
-
-loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
-    params: {
-        stock_to_build: true,
-    },
-    name: "to_build_parts",
-});
-
+{% endif %}
 {% endif %}
 
-{% if roles.build.view %}
-addHeaderTitle('{% trans "Build Orders" %}');
-addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
-addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
+{% settings_value 'HOMEPAGE_BUILD_PENDING' user=request.user as setting_build_pending %}
+{% settings_value 'HOMEPAGE_BUILD_OVERDUE' user=request.user as setting_build_overdue %}
+{% to_list setting_build_pending setting_build_overdue as settings_list_build %}
 
+{% if roles.build.view and True in settings_list_build %}
+addHeaderTitle('{% trans "Build Orders" %}');
+
+{% if setting_build_pending %}
+addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
 loadBuildTable("#table-build-pending", {
     url: "{% url 'api-build-list' %}",
     params: {
@@ -199,7 +229,10 @@ loadBuildTable("#table-build-pending", {
     },
     disableFilters: true,
 });
+{% endif %}
 
+{% if setting_build_overdue %}
+addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
 loadBuildTable("#table-build-overdue", {
     url: "{% url 'api-build-list' %}",
     params: {
@@ -209,11 +242,17 @@ loadBuildTable("#table-build-overdue", {
 });
 {% endif %}
 
-{% if roles.purchase_order.view %}
-addHeaderTitle('{% trans "Purchase Orders" %}');
-addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
-addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" %}', 'fa-calendar-times');
+{% endif %}
 
+{% settings_value 'HOMEPAGE_PO_OUTSTANDING' user=request.user as setting_po_outstanding %}
+{% settings_value 'HOMEPAGE_PO_OVERDUE' user=request.user as setting_po_overdue %}
+{% to_list setting_po_outstanding setting_po_overdue as settings_list_po %}
+
+{% if roles.purchase_order.view and True in settings_list_po %}
+addHeaderTitle('{% trans "Purchase Orders" %}');
+
+{% if setting_po_outstanding %}
+addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
 loadPurchaseOrderTable("#table-po-outstanding", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -221,7 +260,10 @@ loadPurchaseOrderTable("#table-po-outstanding", {
         outstanding: true,
     }
 });
+{% endif %}
 
+{% if setting_po_overdue %}
+addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" %}', 'fa-calendar-times');
 loadPurchaseOrderTable("#table-po-overdue", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -229,14 +271,19 @@ loadPurchaseOrderTable("#table-po-overdue", {
         overdue: true,
     }
 });
+{% endif %}
 
 {% endif %}
 
-{% if roles.sales_order.view %}
-addHeaderTitle('{% trans "Sales Orders" %}');
-addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
-addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" %}', 'fa-calendar-times');
+{% settings_value 'HOMEPAGE_SO_OUTSTANDING' user=request.user as setting_so_outstanding %}
+{% settings_value 'HOMEPAGE_SO_OVERDUE' user=request.user as setting_so_overdue %}
+{% to_list setting_so_outstanding setting_so_overdue as settings_list_so %}
 
+{% if roles.sales_order.view and True in settings_list_so %}
+addHeaderTitle('{% trans "Sales Orders" %}');
+
+{% if setting_so_outstanding %}
+addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
 loadSalesOrderTable("#table-so-outstanding", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -244,7 +291,10 @@ loadSalesOrderTable("#table-so-outstanding", {
         outstanding: true,
     },
 });
+{% endif %}
 
+{% if setting_so_overdue %}
+addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" %}', 'fa-calendar-times');
 loadSalesOrderTable("#table-so-overdue", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -252,7 +302,15 @@ loadSalesOrderTable("#table-so-overdue", {
         customer_detail: true,
     }
 });
+{% endif %}
 
 {% endif %}
+
+enableSidebar(
+    'index',
+    {
+        hide_toggle: true,
+    }
+);
 
 {% endblock %}

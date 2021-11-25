@@ -13,6 +13,21 @@ version: "3.8"
 # specified in the "volumes" section at the end of this file.
 # This path determines where the InvenTree data will be stored!
 # 
+#
+# InvenTree Image Versions
+# ------------------------
+# By default, this docker-compose script targets the STABLE version of InvenTree,
+# image: inventree/inventree:stable
+# 
+# To run the LATEST (development) version of InvenTree, change the target image to:
+# image: inventree/inventree:latest
+#
+# Alternatively, you could target a specific tagged release version with (for example):
+# image: inventree/inventree:0.5.3
+#
+# NOTE: If you change the target image, ensure it is the same for the following containers:
+# - inventree-server
+# - inventree-worker
 
 services:
     # Database service
@@ -21,12 +36,13 @@ services:
     #       just make sure that you change the INVENTREE_DB_xxx vars below
     inventree-db:
         container_name: inventree-db
-        image: postgres
+        image: postgres:13
         ports:
             - 5432/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
             # The pguser and pgpassword values must be the same in the other containers
+            # Ensure that these are correctly configured in your prod-config.env file
             - POSTGRES_USER=pguser
             - POSTGRES_PASSWORD=pgpassword
         volumes:
@@ -38,7 +54,8 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         container_name: inventree-server
-        image: inventree/inventree:latest
+        # If you wish to specify a particular InvenTree version, do so here
+        image: inventree/inventree:stable
         expose:
             - 8000
         depends_on:
@@ -46,39 +63,26 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
-        environment:
-            # Default environment variables are configured to match the 'db' container
-            # Note: If you change the database image, these will need to be adjusted
-            # Note: INVENTREE_DB_HOST should match the container name of the database
-            - INVENTREE_DB_USER=pguser
-            - INVENTREE_DB_PASSWORD=pgpassword
-            - INVENTREE_DB_ENGINE=postgresql
-            - INVENTREE_DB_NAME=inventree
-            - INVENTREE_DB_HOST=inventree-db
-            - INVENTREE_DB_PORT=5432
+        env_file:
+            # Environment variables required for the production server are configured in prod-config.env
+            - prod-config.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
         container_name: inventree-worker
-        image: inventree/inventree:latest
-        entrypoint: ./start_prod_worker.sh
+        # If you wish to specify a particular InvenTree version, do so here
+        image: inventree/inventree:stable
+        command: invoke worker
         depends_on:
             - inventree-db
             - inventree-server
         volumes:
             # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
-        environment:
-            # Default environment variables are configured to match the 'db' container
-            # Note: If you change the database image, these will need to be adjusted
-            # Note: INVENTREE_DB_HOST should match the container name of the database
-            - INVENTREE_DB_USER=pguser
-            - INVENTREE_DB_PASSWORD=pgpassword
-            - INVENTREE_DB_ENGINE=postgresql
-            - INVENTREE_DB_NAME=inventree
-            - INVENTREE_DB_HOST=inventree-db
-            - INVENTREE_DB_PORT=5432
+        env_file:
+            # Environment variables required for the production server are configured in prod-config.env
+            - prod-config.env
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
@@ -88,7 +92,7 @@ services:
     # NOTE: You will need to provide a working nginx.conf file!
     inventree-proxy:
         container_name: inventree-proxy
-        image: nginx
+        image: nginx:stable
         depends_on:
             - inventree-server
         ports:

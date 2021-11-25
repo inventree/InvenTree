@@ -1,14 +1,16 @@
-{% extends "part/category.html" %}
+{% extends "part/part_app_base.html" %}
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
 
-{% block menubar %}
-{% include 'part/category_navbar.html' with tab='import' %}
+{% block sidebar %}
+{% url 'part-index' as url %}
+{% trans "Return to Parts" as text %}
+{% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
 {% endblock %}
 
-{% block category_content %}
-    <div class='panel panel-default panel-inventree'>
+{% block content %}
+    <div class='panel'>
         <div class='panel-heading'>
             <h4>
                 {% trans "Import Parts from File" %}
@@ -40,9 +42,9 @@
 
         {% block form_buttons_bottom %}
         {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
         {% endif %}
-        <button type="submit" class="save btn btn-default">{% trans "Upload File" %}</button>
+        <button type="submit" class="save btn btn-outline-secondary">{% trans "Upload File" %}</button>
         </form>
         {% endblock form_buttons_bottom %}
 
@@ -57,5 +59,7 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+enableSidebar('partupload');
 
 {% endblock %}

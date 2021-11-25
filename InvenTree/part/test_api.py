@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import PIL
 
@@ -11,7 +12,8 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
 
 from part.models import Part, PartCategory
-from stock.models import StockItem
+from part.models import BomItem, BomItemSubstitute
+from stock.models import StockItem, StockLocation
 from company.models import Company
 from common.models import InvenTreeSetting
 
@@ -129,6 +131,7 @@ class PartAPITest(InvenTreeAPITestCase):
         'location',
         'bom',
         'test_templates',
+        'company',
     ]
 
     roles = [
@@ -272,53 +275,6 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
 
-    def test_get_bom_list(self):
-        """ There should be 4 BomItem objects in the database """
-        url = reverse('api-bom-list')
-        response = self.client.get(url, format='json')
-        self.assertEqual(len(response.data), 4)
-
-    def test_get_bom_detail(self):
-        # Get the detail for a single BomItem
-        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(int(float(response.data['quantity'])), 25)
-
-        # Increase the quantity
-        data = response.data
-        data['quantity'] = 57
-        data['note'] = 'Added a note'
-
-        response = self.client.patch(url, data, format='json')
-
-        # Check that the quantity was increased and a note added
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(int(float(response.data['quantity'])), 57)
-        self.assertEqual(response.data['note'], 'Added a note')
-
-    def test_add_bom_item(self):
-        url = reverse('api-bom-list')
-
-        data = {
-            'part': 100,
-            'sub_part': 4,
-            'quantity': 777,
-        }
-
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # Now try to create a BomItem which points to a non-assembly part (should fail)
-        data['part'] = 3
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        # TODO - Now try to create a BomItem which references itself
-        data['part'] = 2
-        data['sub_part'] = 2
-        response = self.client.post(url, data, format='json')
-
     def test_test_templates(self):
 
         url = reverse('api-part-test-template-list')
@@ -434,8 +390,8 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertTrue(data['active'])
         self.assertFalse(data['virtual'])
 
-        # By default, parts are not purchaseable
-        self.assertFalse(data['purchaseable'])
+        # By default, parts are purchaseable
+        self.assertTrue(data['purchaseable'])
 
         # Set the default 'purchaseable' status to True
         InvenTreeSetting.set_setting(
@@ -464,6 +420,149 @@ class PartAPITest(InvenTreeAPITestCase):
 
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
+
+    def test_initial_stock(self):
+        """
+        Tests for initial stock quantity creation
+        """
+
+        url = reverse('api-part-list')
+
+        # Track how many parts exist at the start of this test
+        n = Part.objects.count()
+
+        # Set up required part data
+        data = {
+            'category': 1,
+            'name': "My lil' test part",
+            'description': 'A part with which to test',
+        }
+
+        # Signal that we want to add initial stock
+        data['initial_stock'] = True
+
+        # Post without a quantity
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('initial_stock_quantity', response.data)
+
+        # Post with an invalid quantity
+        data['initial_stock_quantity'] = "ax"
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('initial_stock_quantity', response.data)
+
+        # Post with a negative quantity
+        data['initial_stock_quantity'] = -1
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('Must be greater than zero', response.data['initial_stock_quantity'])
+
+        # Post with a valid quantity
+        data['initial_stock_quantity'] = 12345
+
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('initial_stock_location', response.data)
+
+        # Check that the number of parts has not increased (due to form failures)
+        self.assertEqual(Part.objects.count(), n)
+
+        # Now, set a location
+        data['initial_stock_location'] = 1
+
+        response = self.post(url, data, expected_code=201)
+
+        # Check that the part has been created
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        pk = response.data['pk']
+
+        new_part = Part.objects.get(pk=pk)
+
+        self.assertEqual(new_part.total_stock, 12345)
+
+    def test_initial_supplier_data(self):
+        """
+        Tests for initial creation of supplier / manufacturer data
+        """
+
+        url = reverse('api-part-list')
+
+        n = Part.objects.count()
+
+        # Set up initial part data
+        data = {
+            'category': 1,
+            'name': 'Buy Buy Buy',
+            'description': 'A purchaseable part',
+            'purchaseable': True,
+        }
+
+        # Signal that we wish to create initial supplier data
+        data['add_supplier_info'] = True
+
+        # Specify MPN but not manufacturer
+        data['MPN'] = 'MPN-123'
+
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('manufacturer', response.data)
+
+        # Specify manufacturer but not MPN
+        del data['MPN']
+        data['manufacturer'] = 1
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('MPN', response.data)
+
+        # Specify SKU but not supplier
+        del data['manufacturer']
+        data['SKU'] = 'SKU-123'
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('supplier', response.data)
+
+        # Specify supplier but not SKU
+        del data['SKU']
+        data['supplier'] = 1
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('SKU', response.data)
+
+        # Check that no new parts have been created
+        self.assertEqual(Part.objects.count(), n)
+
+        # Now, fully specify the details
+        data['SKU'] = 'SKU-123'
+        data['supplier'] = 3
+        data['MPN'] = 'MPN-123'
+        data['manufacturer'] = 6
+
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(Part.objects.count(), n + 1)
+
+        pk = response.data['pk']
+
+        new_part = Part.objects.get(pk=pk)
+
+        # Check that there is a new manufacturer part *and* a new supplier part
+        self.assertEqual(new_part.supplier_parts.count(), 1)
+        self.assertEqual(new_part.manufacturer_parts.count(), 1)
+
+    def test_strange_chars(self):
+        """
+        Test that non-standard ASCII chars are accepted
+        """
+
+        url = reverse('api-part-list')
+
+        name = "KaltgerÃ¤testecker"
+        description = "Gerät"
+
+        data = {
+            "name": name,
+            "description": description,
+            "category": 2
+        }
+
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['name'], name)
+        self.assertEqual(response.data['description'], description)
 
 
 class PartDetailTests(InvenTreeAPITestCase):
@@ -782,6 +881,341 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['stock_item_count'], 105)
 
 
+class BomItemTest(InvenTreeAPITestCase):
+    """
+    Unit tests for the BomItem API
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock',
+        'bom',
+        'company',
+    ]
+
+    roles = [
+        'part.add',
+        'part.change',
+        'part.delete',
+    ]
+
+    def setUp(self):
+        super().setUp()
+
+    def test_bom_list(self):
+        """
+        Tests for the BomItem list endpoint
+        """
+
+        # How many BOM items currently exist in the database?
+        n = BomItem.objects.count()
+
+        url = reverse('api-bom-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), n)
+
+        # Now, filter by part
+        response = self.get(
+            url,
+            data={
+                'part': 100,
+            },
+            expected_code=200
+        )
+
+        # Filter by "validated"
+        response = self.get(
+            url,
+            data={
+                'validated': True,
+            },
+            expected_code=200,
+        )
+
+        # Should be zero validated results
+        self.assertEqual(len(response.data), 0)
+
+        # Now filter by "not validated"
+        response = self.get(
+            url,
+            data={
+                'validated': False,
+            },
+            expected_code=200
+        )
+
+        # There should be at least one non-validated item
+        self.assertTrue(len(response.data) > 0)
+
+        # Now, let's validate an item
+        bom_item = BomItem.objects.first()
+
+        bom_item.validate_hash()
+
+        response = self.get(
+            url,
+            data={
+                'validated': True,
+            },
+            expected_code=200
+        )
+
+        # Check that the expected response is returned
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], bom_item.pk)
+
+    def test_get_bom_detail(self):
+        """
+        Get the detail view for a single BomItem object
+        """
+
+        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(int(float(response.data['quantity'])), 25)
+
+        # Increase the quantity
+        data = response.data
+        data['quantity'] = 57
+        data['note'] = 'Added a note'
+
+        response = self.patch(url, data, expected_code=200)
+
+        self.assertEqual(int(float(response.data['quantity'])), 57)
+        self.assertEqual(response.data['note'], 'Added a note')
+
+    def test_add_bom_item(self):
+        """
+        Test that we can create a new BomItem via the API
+        """
+
+        url = reverse('api-bom-list')
+
+        data = {
+            'part': 100,
+            'sub_part': 4,
+            'quantity': 777,
+        }
+
+        self.post(url, data, expected_code=201)
+
+        # Now try to create a BomItem which references itself
+        data['part'] = 100
+        data['sub_part'] = 100
+        self.client.post(url, data, expected_code=400)
+
+    def test_variants(self):
+        """
+        Tests for BomItem use with variants
+        """
+
+        stock_url = reverse('api-stock-list')
+
+        # BOM item we are interested in
+        bom_item = BomItem.objects.get(pk=1)
+
+        bom_item.allow_variants = True
+        bom_item.save()
+
+        # sub part that the BOM item points to
+        sub_part = bom_item.sub_part
+
+        sub_part.is_template = True
+        sub_part.save()
+
+        # How many stock items are initially available for this part?
+        response = self.get(
+            stock_url,
+            {
+                'bom_item': bom_item.pk,
+            },
+            expected_code=200
+        )
+
+        n_items = len(response.data)
+        self.assertEqual(n_items, 2)
+
+        loc = StockLocation.objects.get(pk=1)
+
+        # Now we will create some variant parts and stock
+        for ii in range(5):
+
+            # Create a variant part!
+            variant = Part.objects.create(
+                name=f"Variant_{ii}",
+                description="A variant part",
+                component=True,
+                variant_of=sub_part
+            )
+
+            variant.save()
+
+            Part.objects.rebuild()
+
+            # Create some stock items for this new part
+            for jj in range(ii):
+                StockItem.objects.create(
+                    part=variant,
+                    location=loc,
+                    quantity=100
+                )
+
+            # Keep track of running total
+            n_items += ii
+
+            # Now, there should be more stock items available!
+            response = self.get(
+                stock_url,
+                {
+                    'bom_item': bom_item.pk,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), n_items)
+
+        # Now, disallow variant parts in the BomItem
+        bom_item.allow_variants = False
+        bom_item.save()
+
+        # There should now only be 2 stock items available again
+        response = self.get(
+            stock_url,
+            {
+                'bom_item': bom_item.pk,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 2)
+
+    def test_substitutes(self):
+        """
+        Tests for BomItem substitutes
+        """
+
+        url = reverse('api-bom-substitute-list')
+        stock_url = reverse('api-stock-list')
+
+        # Initially we have no substitute parts
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        # BOM item we are interested in
+        bom_item = BomItem.objects.get(pk=1)
+
+        # Filter stock items which can be assigned against this stock item
+        response = self.get(
+            stock_url,
+            {
+                "bom_item": bom_item.pk,
+            },
+            expected_code=200
+        )
+
+        n_items = len(response.data)
+
+        loc = StockLocation.objects.get(pk=1)
+
+        # Let's make some!
+        for ii in range(5):
+            sub_part = Part.objects.create(
+                name=f"Substitute {ii}",
+                description="A substitute part",
+                component=True,
+                is_template=False,
+                assembly=False
+            )
+
+            # Create a new StockItem for this Part
+            StockItem.objects.create(
+                part=sub_part,
+                quantity=1000,
+                location=loc,
+            )
+
+            # Now, create an "alternative" for the BOM Item
+            BomItemSubstitute.objects.create(
+                bom_item=bom_item,
+                part=sub_part
+            )
+
+            # We should be able to filter the API list to just return this new part
+            response = self.get(url, data={'part': sub_part.pk}, expected_code=200)
+            self.assertEqual(len(response.data), 1)
+
+            # We should also have more stock available to allocate against this BOM item!
+            response = self.get(
+                stock_url,
+                {
+                    "bom_item": bom_item.pk,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(len(response.data), n_items + ii + 1)
+
+        # There should now be 5 substitute parts available in the database
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 5)
+
+    def test_bom_item_uses(self):
+        """
+        Tests for the 'uses' field
+        """
+
+        url = reverse('api-bom-list')
+
+        # Test that the direct 'sub_part' association works
+
+        assemblies = []
+
+        for i in range(5):
+            assy = Part.objects.create(
+                name=f"Assy_{i}",
+                description="An assembly made of other parts",
+                active=True,
+                assembly=True
+            )
+
+            assemblies.append(assy)
+
+        components = []
+
+        # Create some sub-components
+        for i in range(5):
+
+            cmp = Part.objects.create(
+                name=f"Component_{i}",
+                description="A sub component",
+                active=True,
+                component=True
+            )
+
+            for j in range(i):
+                # Create a BOM item
+                BomItem.objects.create(
+                    quantity=10,
+                    part=assemblies[j],
+                    sub_part=cmp,
+                )
+
+            components.append(cmp)
+
+            response = self.get(
+                url,
+                {
+                    'uses': cmp.pk,
+                },
+                expected_code=200,
+            )
+
+            self.assertEqual(len(response.data), i)
+
+
 class PartParameterTest(InvenTreeAPITestCase):
     """
     Tests for the ParParameter API
@@ -805,7 +1239,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         Test for listing part parameters
         """
 
-        url = reverse('api-part-param-list')
+        url = reverse('api-part-parameter-list')
 
         response = self.client.get(url, format='json')
 
@@ -838,7 +1272,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         Test that we can create a param via the API
         """
 
-        url = reverse('api-part-param-list')
+        url = reverse('api-part-parameter-list')
 
         response = self.client.post(
             url,
@@ -860,7 +1294,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         Tests for the PartParameter detail endpoint
         """
 
-        url = reverse('api-part-param-detail', kwargs={'pk': 5})
+        url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
 
         response = self.client.get(url)
 

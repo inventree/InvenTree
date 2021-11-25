@@ -24,9 +24,9 @@
 
 {% block form_buttons_top %}
     {% if wizard.steps.prev %}
-    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-default">{% trans "Previous Step" %}</button>
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
     {% endif %}
-    <button type="submit" class="save btn btn-default">{% trans "Submit Selections" %}</button>
+    <button type="submit" class="save btn btn-outline-secondary">{% trans "Submit Selections" %}</button>
 {% endblock form_buttons_top %}
 
 {% block form_content %}
@@ -39,7 +39,7 @@
                 <div>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     {{ col.name }}
-                    <button class='btn btn-default btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove column" %}'>
+                    <button class='btn btn-outline-secondary btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove column" %}'>
                         <span col_id='{{ forloop.counter0 }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </div>
@@ -57,7 +57,7 @@
                 {% for duplicate in duplicates %}
                     {% if duplicate == col.value %}
                     <div class='alert alert-danger alert-block text-center' role='alert' style='padding:2px; margin-top:6px; margin-bottom:2px'>
-                        <b>{% trans "Duplicate selection" %}</b>
+                        <strong>{% trans "Duplicate selection" %}</strong>
                     </div>
                     {% endif %}
                 {% endfor %}
@@ -68,7 +68,7 @@
         {% with forloop.counter as row_index %}
         <tr>
             <td style='width: 32px;'>
-                <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: left;' title='{% trans "Remove row" %}'>
+                <button class='btn btn-outline-secondary btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: left;' title='{% trans "Remove row" %}'>
                     <span row_id='{{ row_index }}' class='fas fa-trash-alt icon-red'></span>
                 </button>
             </td>

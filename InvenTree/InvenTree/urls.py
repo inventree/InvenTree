@@ -8,7 +8,6 @@ Passes URL lookup downstream to each app as required.
 from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 
 from company.urls import company_urls
 from company.urls import manufacturer_part_urls
@@ -38,12 +37,10 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView
-from .views import CurrencySettingsView, CurrencyRefreshView
+from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
+from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
-
-from common.views import SettingEdit
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
@@ -54,7 +51,7 @@ admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
     url(r'^barcode/', include(barcode_api_urls)),
-    url(r'^common/', include(common_api_urls)),
+    url(r'^settings/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
@@ -79,47 +76,44 @@ apipatterns = [
 
 settings_urls = [
 
-    url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
-    url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^i18n/?', include('django.conf.urls.i18n')),
 
-    url(r'^global/', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
-    url(r'^report/', SettingsView.as_view(template_name='InvenTree/settings/report.html'), name='settings-report'),
-    url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
-    url(r'^part/', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
-    url(r'^stock/', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),
-    url(r'^build/', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
-    url(r'^purchase-order/', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
-    url(r'^sales-order/', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
-    url(r'^currencies/', CurrencySettingsView.as_view(), name='settings-currencies'),
+    url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
-    url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
+    url(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
 
     # Catch any other urls
-    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
+    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
 ]
 
-# Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
+# These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
-    url(r'^api.js', DynamicJsView.as_view(template_name='js/api.js'), name='api.js'),
-    url(r'^attachment.js', DynamicJsView.as_view(template_name='js/attachment.js'), name='attachment.js'),
-    url(r'^forms.js', DynamicJsView.as_view(template_name='js/forms.js'), name='forms.js'),
-    url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/model_renderers.js'), name='model_renderers.js'),
-    url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),
-    url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.js'), name='barcode.js'),
-    url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.js'), name='bom.js'),
-    url(r'^build.js', DynamicJsView.as_view(template_name='js/build.js'), name='build.js'),
-    url(r'^calendar.js', DynamicJsView.as_view(template_name='js/calendar.js'), name='calendar.js'),
-    url(r'^company.js', DynamicJsView.as_view(template_name='js/company.js'), name='company.js'),
-    url(r'^order.js', DynamicJsView.as_view(template_name='js/order.js'), name='order.js'),
-    url(r'^part.js', DynamicJsView.as_view(template_name='js/part.js'), name='part.js'),
-    url(r'^label.js', DynamicJsView.as_view(template_name='js/label.js'), name='label.js'),
-    url(r'^report.js', DynamicJsView.as_view(template_name='js/report.js'), name='report.js'),
-    url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.js'), name='stock.js'),
-    url(r'^tables.js', DynamicJsView.as_view(template_name='js/tables.js'), name='tables.js'),
-    url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.js'), name='table_filters.js'),
-    url(r'^filters.js', DynamicJsView.as_view(template_name='js/filters.js'), name='filters.js'),
+    url(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
+    url(r'^nav.js', DynamicJsView.as_view(template_name='js/dynamic/nav.js'), name='nav.js'),
+    url(r'^settings.js', DynamicJsView.as_view(template_name='js/dynamic/settings.js'), name='settings.js'),
+]
+
+# These javascript files are pased through the Django translation layer
+translated_javascript_urls = [
+    url(r'^api.js', DynamicJsView.as_view(template_name='js/translated/api.js'), name='api.js'),
+    url(r'^attachment.js', DynamicJsView.as_view(template_name='js/translated/attachment.js'), name='attachment.js'),
+    url(r'^barcode.js', DynamicJsView.as_view(template_name='js/translated/barcode.js'), name='barcode.js'),
+    url(r'^bom.js', DynamicJsView.as_view(template_name='js/translated/bom.js'), name='bom.js'),
+    url(r'^build.js', DynamicJsView.as_view(template_name='js/translated/build.js'), name='build.js'),
+    url(r'^company.js', DynamicJsView.as_view(template_name='js/translated/company.js'), name='company.js'),
+    url(r'^filters.js', DynamicJsView.as_view(template_name='js/translated/filters.js'), name='filters.js'),
+    url(r'^forms.js', DynamicJsView.as_view(template_name='js/translated/forms.js'), name='forms.js'),
+    url(r'^helpers.js', DynamicJsView.as_view(template_name='js/translated/helpers.js'), name='helpers.js'),
+    url(r'^label.js', DynamicJsView.as_view(template_name='js/translated/label.js'), name='label.js'),
+    url(r'^model_renderers.js', DynamicJsView.as_view(template_name='js/translated/model_renderers.js'), name='model_renderers.js'),
+    url(r'^modals.js', DynamicJsView.as_view(template_name='js/translated/modals.js'), name='modals.js'),
+    url(r'^order.js', DynamicJsView.as_view(template_name='js/translated/order.js'), name='order.js'),
+    url(r'^part.js', DynamicJsView.as_view(template_name='js/translated/part.js'), name='part.js'),
+    url(r'^report.js', DynamicJsView.as_view(template_name='js/translated/report.js'), name='report.js'),
+    url(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
+    url(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
+    url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
 ]
 
 urlpatterns = [
@@ -128,7 +122,8 @@ urlpatterns = [
     url(r'^supplier-part/', include(supplier_part_urls)),
 
     # "Dynamic" javascript files which are rendered using InvenTree templating.
-    url(r'^dynamic/', include(dynamic_javascript_urls)),
+    url(r'^js/dynamic/', include(dynamic_javascript_urls)),
+    url(r'^js/i18n/', include(translated_javascript_urls)),
 
     url(r'^common/', include(common_urls)),
 
@@ -141,9 +136,6 @@ urlpatterns = [
 
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    url(r'^login/?', auth_views.LoginView.as_view(), name='login'),
-    url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
-
     url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
@@ -152,7 +144,6 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
-    url(r'accounts/', include('django.contrib.auth.urls')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
@@ -164,6 +155,13 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^markdownx/', include('markdownx.urls')),
+
+    # Single Sign On / allauth
+    # overrides of urlpatterns
+    url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
+    url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
+    url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
+    url(r'^accounts/', include('allauth.urls')),  # included urlpatterns
 ]
 
 # Server running in "DEBUG" mode?

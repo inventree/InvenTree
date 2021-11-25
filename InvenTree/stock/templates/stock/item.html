@@ -3,43 +3,397 @@
 {% load static %}
 {% load inventree_extras %}
 {% load i18n %}
+{% load l10n %}
+{% load markdownify %}
 
-{% block menubar %}
-{% include "stock/navbar.html" with tab="tracking" %}
+{% block sidebar %}
+{% include "stock/stock_sidebar.html" %}
 {% endblock %}
 
-{% block heading %}
-{% trans "Stock Tracking Information" %}
-{% endblock %}
+{% block page_content %}
 
-{% block details %}
-
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-{% endif %}
-
-<hr>
-
-<!-- Check permissions and owner -->
-{% if owner_control.value == "False" or owner_control.value == "True" and user in owners %}
-    {% if roles.stock.change and not item.is_building %}
-    <div id='table-toolbar'>  
-        <div class='btn-group'>
-            <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
-            </button>
+<div class='panel panel-hidden' id='panel-history'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Stock Tracking Information" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
+                {% if owner_control.value == "True" %}
+                    {% authorized_owners item.owner as owners %}
+                {% endif %}
+                <!-- Check permissions and owner -->
+                {% if owner_control.value == "False" or owner_control.value == "True" and user in owners %}
+                {% if roles.stock.change and not item.is_building %}
+                <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
-    {% endif %}
-{% endif %}
-<table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
-</table>
+    <div class='panel-content'>
+        <div id='table-toolbar'>  
+            <div class='btn-group'>
+            </div>
+        </div>
+        <table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
+        </table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-children'>
+    <div class='panel-heading'>
+        <h4>{% trans "Child Stock Items" %}</h4>
+    </div>
+    <div class='panel-content'>
+        {% if item.child_count > 0 %}
+        {% include "stock_table.html" with prefix="childs-" %}
+        {% else %}
+        <div class='alert alert-block alert-info'>
+            {% trans "This stock item does not have any child items" %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-test-data'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Test Data" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-outline-secondary' id='test-report'>
+                    <span class='fas fa-file-pdf'></span> {% trans "Test Report" %}
+                </button>
+                {% if user.is_staff %}
+                <button type='button' class='btn btn-danger' id='delete-test-results'>
+                    <span class='fas fa-trash-alt'></span> {% trans "Delete Test Data" %}
+                </button>
+                {% endif %}
+                <button type='button' class='btn btn-success' id='add-test-result'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Test Data" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='test-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="stocktests" %}
+            </div>
+        </div>
+        
+        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>                        
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-notes'>
+    <div class='panel-heading'>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <h4>{% trans "Stock Item Notes" %}</h4>
+            </div>
+            <div class='col-sm-6'>
+                <div class='btn-group float-right'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-outline-secondary'>
+                        <span class='fas fa-edit'>      
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% if item.notes %}
+        {{ item.notes | markdownify }}
+        {% endif %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-installed-items'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Installed Stock Items" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-success' id='stock-item-install'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Install Stock Item" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div class='btn-group'>
+        </div>
+        <table class='table table-striped table-condensed' id='installed-table'></table>
+    </div>
+</div>
 
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+    $('#stock-item-install').click(function() {
+
+        launchModalForm(
+            "{% url 'stock-item-install' item.pk %}",
+            {
+                data: {
+                    'part': {{ item.part.pk }},
+                    'install_item': true,
+                },
+                reload: true,
+            }
+        );
+    });
+
+    loadInstalledInTable(
+        $('#installed-table'),
+        {
+            stock_item: {{ item.pk }},
+            part: {{ item.part.pk }},
+            quantity: {{ item.quantity|unlocalize }},
+        }
+    );
+
+    $('#multi-item-uninstall').click(function() {
+
+        var selections = $('#installed-table').bootstrapTable('getSelections');
+
+        var items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        });
+
+        launchModalForm(
+            "{% url 'stock-item-uninstall' %}",
+            {
+                data: {
+                    'items[]': items,
+                },
+                reload: true,
+            }
+        );
+    });
+
+    $('#edit-notes').click(function() {
+        constructForm('{% url "api-stock-detail" item.pk %}', {
+            fields: {
+                notes: {
+                    multiline: true,
+                }
+            },
+            title: '{% trans "Edit Notes" %}',
+            reload: true,
+        });
+    });
+
+    enableDragAndDrop(
+            '#attachment-dropzone',
+            "{% url 'api-stock-attachment-list' %}",
+            {
+                data: {
+                    stock_item: {{ item.id }},
+                },
+                label: 'attachment',
+                success: function(data, status, xhr) {
+                    reloadAttachmentTable();
+                }
+            }
+        );
+
+    loadAttachmentTable(
+        '{% url "api-stock-attachment-list" %}',
+        {
+            filters: {
+                stock_item: {{ item.pk }},
+            },
+            onEdit: function(pk) {
+                var url = `/api/stock/attachment/${pk}/`;
+
+                constructForm(url, {
+                    fields: {
+                        filename: {},
+                        comment: {},
+                    },
+                    title: '{% trans "Edit Attachment" %}',
+                    onSuccess: reloadAttachmentTable 
+                });
+            },
+            onDelete: function(pk) {
+                var url = `/api/stock/attachment/${pk}/`;
+
+                constructForm(url, {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
+            }
+        }
+    );
+
+    $("#new-attachment").click(function() {
+
+        constructForm(
+            '{% url "api-stock-attachment-list" %}',
+            {
+                method: 'POST',
+                fields: {
+                    attachment: {},
+                    comment: {},
+                    stock_item: {
+                        value: {{ item.pk }},
+                        hidden: true,
+                    },
+                },
+                reload: true,
+                title: '{% trans "Add Attachment" %}',
+            }
+        );
+    });
+
+    loadStockTestResultsTable(
+        $("#test-result-table"), {
+            part: {{ item.part.id }},
+            stock_item: {{ item.id }},
+        }
+    );
+
+    function reloadTable() {
+        $("#test-result-table").bootstrapTable("refresh");
+    }
+
+    {% if item.has_test_reports %}
+    $("#test-report").click(function() {
+        printTestReports([{{ item.pk }}]);
+    });
+    {% endif %}
+
+    {% if user.is_staff %}
+    $("#delete-test-results").click(function() {
+        launchModalForm(
+            "{% url 'stock-item-delete-test-data' item.id %}",
+            {
+                success: reloadTable,
+            }
+        );
+    });
+    {% endif %}
+
+    $("#add-test-result").click(function() {
+
+        constructForm('{% url "api-stock-test-result-list" %}', {
+            method: 'POST',
+            fields: {
+                test: {},
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+                stock_item: {
+                    value: {{ item.pk }},
+                    hidden: true,
+                }
+            },
+            title: '{% trans "Add Test Result" %}',
+            onSuccess: reloadTable,
+        });
+    });
+
+    $("#test-result-table").on('click', '.button-test-add', function() {
+        var button = $(this);
+
+        var test_name = button.attr('pk');
+
+        constructForm('{% url "api-stock-test-result-list" %}', {
+            method: 'POST',
+            fields: {
+                test: {
+                    value: test_name,
+                },
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+                stock_item: {
+                    value: {{ item.pk }},
+                    hidden: true,
+                }
+            },
+            title: '{% trans "Add Test Result" %}',
+            onSuccess: reloadTable,
+        });
+    });
+
+    $("#test-result-table").on('click', '.button-test-edit', function() {
+        var button = $(this);
+
+        var pk = button.attr('pk');
+
+        var url = `/api/stock/test/${pk}/`;
+
+        constructForm(url, {
+            fields: {
+                test: {},
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Test Result" %}',
+            onSuccess: reloadTable,
+        });
+    });
+
+    $("#test-result-table").on('click', '.button-test-delete', function() {
+        var button = $(this);
+
+        var pk = button.attr('pk');
+
+        var url = `/api/stock/test/${pk}/`;
+
+        constructForm(url, {
+            method: 'DELETE',
+            title: '{% trans "Delete Test Result" %}',
+            onSuccess: reloadTable,
+        });
+    });
+
+    {% if item.child_count > 0 %}
+    loadStockTable($("#childs-stock-table"), {
+        params: {
+            location_detail: true,
+            part_detail: false,
+            ancestor: {{ item.id }},
+        },
+        name: 'item-childs',
+        groupByField: 'location',
+        buttons: [
+            '#stock-options',
+        ],
+        url: "{% url 'api-stock-list' %}",
+    });
+    {% endif %}
 
     $("#new-entry").click(function() {
         launchModalForm(
@@ -59,5 +413,7 @@
         },
         url: "{% url 'api-stock-tracking-list' %}", 
     });
+
+    enableSidebar('stockitem');
 
 {% endblock %}

@@ -1,6 +1,7 @@
 """
 JSON serializers for Part app
 """
+
 import imghdr
 from decimal import Decimal
 
@@ -14,12 +15,17 @@ from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
-                                   InvenTreeModelSerializer)
+                                   InvenTreeModelSerializer,
+                                   InvenTreeAttachmentSerializer,
+                                   InvenTreeMoneySerializer)
+
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
-from .models import (BomItem, Part, PartAttachment, PartCategory,
+from .models import (BomItem, BomItemSubstitute,
+                     Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -28,9 +34,24 @@ from .models import (BomItem, Part, PartAttachment, PartCategory,
 class CategorySerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategory """
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+    def get_starred(self, category):
+        """
+        Return True if the category is directly "starred" by the current user
+        """
+
+        return category in self.context.get('starred_categories', [])
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
+
+    level = serializers.IntegerField(read_only=True)
+
+    starred = serializers.SerializerMethodField()
 
     class Meta:
         model = PartCategory
@@ -40,14 +61,16 @@ class CategorySerializer(InvenTreeModelSerializer):
             'description',
             'default_location',
             'default_keywords',
-            'pathstring',
-            'url',
+            'level',
             'parent',
             'parts',
+            'pathstring',
+            'starred',
+            'url',
         ]
 
 
-class PartAttachmentSerializer(InvenTreeModelSerializer):
+class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for the PartAttachment class
     """
@@ -61,6 +84,7 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'attachment',
+            'filename',
             'comment',
             'upload_date',
         ]
@@ -97,9 +121,13 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
     Serializer for sale prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
-    price = serializers.CharField()
+    price = InvenTreeMoneySerializer(
+        allow_null=True
+    )
+
+    price_string = serializers.CharField(source='price', read_only=True)
 
     class Meta:
         model = PartSellPriceBreak
@@ -108,6 +136,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_string',
         ]
 
 
@@ -116,9 +145,13 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
     Serializer for internal prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
-    price = serializers.CharField()
+    price = InvenTreeMoneySerializer(
+        allow_null=True
+    )
+
+    price_string = serializers.CharField(source='price', read_only=True)
 
     class Meta:
         model = PartInternalPriceBreak
@@ -127,6 +160,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_string',
         ]
 
 
@@ -173,6 +207,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'default_location',
             'name',
             'revision',
             'full_name',
@@ -186,6 +221,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'stock',
             'trackable',
             'virtual',
+            'units',
         ]
 
 
@@ -213,31 +249,15 @@ class PartSerializer(InvenTreeModelSerializer):
             self.fields.pop('category_detail')
 
     @staticmethod
-    def prefetch_queryset(queryset):
-        """
-        Prefetch related database tables,
-        to reduce database hits.
-        """
-
-        return queryset.prefetch_related(
-            'category',
-            'category__parts',
-            'category__parent',
-            'stock_items',
-            'bom_items',
-            'builds',
-            'supplier_parts',
-            'supplier_parts__purchase_order_line_items',
-            'supplier_parts__purchase_order_line_items__order',
-        )
-
-    @staticmethod
     def annotate_queryset(queryset):
         """
         Add some extra annotations to the queryset,
         performing database queries as efficiently as possible,
         to reduce database trips.
         """
+
+        # TODO: Update the "in_stock" annotation to include stock for variants of the part
+        # Ref: https://github.com/inventree/InvenTree/issues/2240
 
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(
@@ -368,6 +388,25 @@ class PartSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartRelationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a PartRelated model
+    """
+
+    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'pk',
+            'part_1',
+            'part_1_detail',
+            'part_2',
+            'part_2_detail',
+        ]
+
+
 class PartStarSerializer(InvenTreeModelSerializer):
     """ Serializer for a PartStar object """
 
@@ -385,14 +424,35 @@ class PartStarSerializer(InvenTreeModelSerializer):
         ]
 
 
+class BomItemSubstituteSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the BomItemSubstitute class
+    """
+
+    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
+
+    class Meta:
+        model = BomItemSubstitute
+        fields = [
+            'pk',
+            'bom_item',
+            'part',
+            'part_detail',
+        ]
+
+
 class BomItemSerializer(InvenTreeModelSerializer):
-    """ Serializer for BomItem object """
+    """
+    Serializer for BomItem object
+    """
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
+
+    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -405,9 +465,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
     purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
 
     purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
-    
+
     purchase_price_avg = serializers.SerializerMethodField()
-    
+
     purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -416,6 +476,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         part_detail = kwargs.pop('part_detail', False)
         sub_part_detail = kwargs.pop('sub_part_detail', False)
+        include_pricing = kwargs.pop('include_pricing', False)
 
         super(BomItemSerializer, self).__init__(*args, **kwargs)
 
@@ -424,6 +485,14 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         if sub_part_detail is not True:
             self.fields.pop('sub_part_detail')
+
+        if not include_pricing:
+            # Remove all pricing related fields
+            self.fields.pop('price_range')
+            self.fields.pop('purchase_price_min')
+            self.fields.pop('purchase_price_max')
+            self.fields.pop('purchase_price_avg')
+            self.fields.pop('purchase_price_range')
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -470,7 +539,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     def get_purchase_price_avg(self, obj):
         """ Return purchase price average """
-        
+
         try:
             purchase_price_avg = obj.purchase_price_avg
         except AttributeError:
@@ -503,21 +572,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'reference',
             'sub_part',
             'sub_part_detail',
+            'substitutes',
             'price_range',
             'validated',
-        ]
-
-
-class PartParameterSerializer(InvenTreeModelSerializer):
-    """ JSON serializers for the PartParameter model """
-
-    class Meta:
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'data'
         ]
 
 
@@ -533,17 +590,36 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartParameterSerializer(InvenTreeModelSerializer):
+    """ JSON serializers for the PartParameter model """
+
+    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
+
+    class Meta:
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'template',
+            'template_detail',
+            'data'
+        ]
+
+
 class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategoryParameterTemplate """
 
     parameter_template = PartParameterTemplateSerializer(many=False,
                                                          read_only=True)
 
+    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+
     class Meta:
         model = PartCategoryParameterTemplate
         fields = [
             'pk',
             'category',
+            'category_detail',
             'parameter_template',
             'default_value',
         ]

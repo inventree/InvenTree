@@ -5,10 +5,12 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
-from build.models import Build, BuildItem
-from stock.models import StockItem
-from part.models import Part, BomItem
 from InvenTree import status_codes as status
+
+from build.models import Build, BuildItem, get_next_build_number
+from part.models import Part, BomItem
+from stock.models import StockItem
+from stock.tasks import delete_old_stock_items
 
 
 class BuildTest(TestCase):
@@ -80,8 +82,14 @@ class BuildTest(TestCase):
             quantity=2
         )
 
+        ref = get_next_build_number()
+
+        if ref is None:
+            ref = "0001"
+
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
+            reference=ref,
             title="This is a build",
             part=self.assembly,
             quantity=10
@@ -109,6 +117,26 @@ class BuildTest(TestCase):
         self.stock_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=5000)
 
         self.stock_3_1 = StockItem.objects.create(part=self.sub_part_3, quantity=1000)
+
+    def test_ref_int(self):
+        """
+        Test the "integer reference" field used for natural sorting
+        """
+
+        for ii in range(10):
+            build = Build(
+                reference=f"{ii}_abcde",
+                quantity=1,
+                part=self.assembly,
+                title="Making some parts"
+            )
+
+            self.assertEqual(build.reference_int, 0)
+
+            build.save()
+
+            # After saving, the integer reference should have been updated
+            self.assertEqual(build.reference_int, ii)
 
     def test_init(self):
         # Perform some basic tests before we start the ball rolling
@@ -242,7 +270,7 @@ class BuildTest(TestCase):
 
         self.assertEqual(len(unallocated), 1)
 
-        self.build.unallocateUntracked()
+        self.build.unallocateStock()
 
         unallocated = self.build.unallocatedParts(None)
 
@@ -260,25 +288,6 @@ class BuildTest(TestCase):
         )
 
         self.assertTrue(self.build.areUntrackedPartsFullyAllocated())
-
-    def test_auto_allocate(self):
-        """
-        Test auto-allocation functionality against the build outputs.
-
-        Note: auto-allocations only work for un-tracked stock!
-        """
-
-        allocations = self.build.getAutoAllocations()
-
-        self.assertEqual(len(allocations), 1)
-
-        self.build.autoAllocate()
-        self.assertEqual(BuildItem.objects.count(), 1)
-
-        # Check that one un-tracked part has been fully allocated to the build
-        self.assertTrue(self.build.isPartFullyAllocated(self.sub_part_2, None))
-
-        self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_1, None))
 
     def test_cancel(self):
         """
@@ -330,11 +339,11 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.isFullyAllocated(self.output_1))
         self.assertTrue(self.build.isFullyAllocated(self.output_2))
 
-        self.build.completeBuildOutput(self.output_1, None)
+        self.build.complete_build_output(self.output_1, None)
 
         self.assertFalse(self.build.can_complete)
 
-        self.build.completeBuildOutput(self.output_2, None)
+        self.build.complete_build_output(self.output_2, None)
 
         self.assertTrue(self.build.can_complete)
 
@@ -344,6 +353,11 @@ class BuildTest(TestCase):
 
         # the original BuildItem objects should have been deleted!
         self.assertEqual(BuildItem.objects.count(), 0)
+
+        self.assertEqual(StockItem.objects.count(), 8)
+
+        # Clean up old stock items
+        delete_old_stock_items()
 
         # New stock items should have been created!
         self.assertEqual(StockItem.objects.count(), 7)

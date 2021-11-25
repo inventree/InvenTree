@@ -11,8 +11,8 @@ from django.core.exceptions import ValidationError
 
 import os
 
-from .models import Part, PartCategory, PartTestTemplate
-from .models import rename_part_image, match_part_names
+from .models import Part, PartCategory, PartCategoryStar, PartStar, PartTestTemplate
+from .models import rename_part_image
 from .templatetags import inventree_extras
 
 import part.settings
@@ -163,12 +163,6 @@ class PartTest(TestCase):
     def test_copy(self):
         self.r2.deep_copy(self.r1, image=True, bom=True)
 
-    def test_match_names(self):
-
-        matches = match_part_names('M2x5 LPHS')
-
-        self.assertTrue(len(matches) > 0)
-
     def test_sell_pricing(self):
         # check that the sell pricebreaks were loaded
         self.assertTrue(self.r1.has_price_breaks)
@@ -281,7 +275,7 @@ class PartSettingsTest(TestCase):
         """
 
         self.assertTrue(part.settings.part_component_default())
-        self.assertFalse(part.settings.part_purchaseable_default())
+        self.assertTrue(part.settings.part_purchaseable_default())
         self.assertFalse(part.settings.part_salable_default())
         self.assertFalse(part.settings.part_trackable_default())
 
@@ -293,7 +287,7 @@ class PartSettingsTest(TestCase):
         part = self.make_part()
 
         self.assertTrue(part.component)
-        self.assertFalse(part.purchaseable)
+        self.assertTrue(part.purchaseable)
         self.assertFalse(part.salable)
         self.assertFalse(part.trackable)
 
@@ -353,3 +347,120 @@ class PartSettingsTest(TestCase):
         with self.assertRaises(ValidationError):
             part = Part(name='Hello', description='A thing', IPN='IPN123', revision='C')
             part.full_clean()
+
+
+class PartSubscriptionTests(TestCase):
+
+    fixtures = [
+        'location',
+        'category',
+        'part',
+    ]
+
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+
+        self.user = user.objects.create_user(
+            username='testuser',
+            email='test@testing.com',
+            password='password',
+            is_staff=True
+        )
+
+        # electronics / IC / MCU
+        self.category = PartCategory.objects.get(pk=4)
+
+        self.part = Part.objects.create(
+            category=self.category,
+            name='STM32F103',
+            description='Currently worth a lot of money',
+            is_template=True,
+        )
+
+    def test_part_subcription(self):
+        """
+        Test basic subscription against a part
+        """
+
+        # First check that the user is *not* subscribed to the part
+        self.assertFalse(self.part.is_starred_by(self.user))
+
+        # Now, subscribe directly to the part
+        self.part.set_starred(self.user, True)
+
+        self.assertEqual(PartStar.objects.count(), 1)
+
+        self.assertTrue(self.part.is_starred_by(self.user))
+
+        # Now, unsubscribe
+        self.part.set_starred(self.user, False)
+
+        self.assertFalse(self.part.is_starred_by(self.user))
+
+    def test_variant_subscription(self):
+        """
+        Test subscription against a parent part
+        """
+
+        # Construct a sub-part to star against
+        sub_part = Part.objects.create(
+            name='sub_part',
+            description='a sub part',
+            variant_of=self.part,
+        )
+
+        self.assertFalse(sub_part.is_starred_by(self.user))
+
+        # Subscribe to the "parent" part
+        self.part.set_starred(self.user, True)
+
+        self.assertTrue(self.part.is_starred_by(self.user))
+        self.assertTrue(sub_part.is_starred_by(self.user))
+
+    def test_category_subscription(self):
+        """
+        Test subscription against a PartCategory
+        """
+
+        self.assertEqual(PartCategoryStar.objects.count(), 0)
+
+        self.assertFalse(self.part.is_starred_by(self.user))
+        self.assertFalse(self.category.is_starred_by(self.user))
+
+        # Subscribe to the direct parent category
+        self.category.set_starred(self.user, True)
+
+        self.assertEqual(PartStar.objects.count(), 0)
+        self.assertEqual(PartCategoryStar.objects.count(), 1)
+
+        self.assertTrue(self.category.is_starred_by(self.user))
+        self.assertTrue(self.part.is_starred_by(self.user))
+
+        # Check that the "parent" category is not starred
+        self.assertFalse(self.category.parent.is_starred_by(self.user))
+
+        # Un-subscribe
+        self.category.set_starred(self.user, False)
+
+        self.assertFalse(self.category.is_starred_by(self.user))
+        self.assertFalse(self.part.is_starred_by(self.user))
+
+    def test_parent_category_subscription(self):
+        """
+        Check that a parent category can be subscribed to
+        """
+
+        # Top-level "electronics" category
+        cat = PartCategory.objects.get(pk=1)
+
+        cat.set_starred(self.user, True)
+
+        # Check base category
+        self.assertTrue(cat.is_starred_by(self.user))
+
+        # Check lower level category
+        self.assertTrue(self.category.is_starred_by(self.user))
+
+        # Check part
+        self.assertTrue(self.part.is_starred_by(self.user))

@@ -31,7 +31,10 @@ class InvenTreeMetadata(SimpleMetadata):
     """
 
     def determine_metadata(self, request, view):
-        
+
+        self.request = request
+        self.view = view
+
         metadata = super().determine_metadata(request, view)
 
         user = request.user
@@ -69,7 +72,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Remove any HTTP methods that the user does not have permission for
                 for method, permission in rolemap.items():
-                    if method in actions and not check(user, table, permission):
+
+                    result = check(user, table, permission)
+
+                    if method in actions and not result:
                         del actions[method]
 
                 # Add a 'DELETE' action if we are allowed to delete
@@ -95,25 +101,48 @@ class InvenTreeMetadata(SimpleMetadata):
 
         serializer_info = super().get_serializer_info(serializer)
 
-        try:
-            ModelClass = serializer.Meta.model
+        model_class = None
 
-            model_fields = model_meta.get_field_info(ModelClass)
+        try:
+            model_class = serializer.Meta.model
+
+            model_fields = model_meta.get_field_info(model_class)
+
+            model_default_func = getattr(model_class, 'api_defaults', None)
+
+            if model_default_func:
+                model_default_values = model_class.api_defaults(self.request)
+            else:
+                model_default_values = {}
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
 
-                if field.has_default() and name in serializer_info.keys():
+                if name in serializer_info.keys():
 
-                    default = field.default
+                    if field.has_default():
 
-                    if callable(default):
-                        try:
-                            default = default()
-                        except:
-                            continue
+                        default = field.default
 
-                    serializer_info[name]['default'] = default
+                        if callable(default):
+                            try:
+                                default = default()
+                            except:
+                                continue
+
+                        serializer_info[name]['default'] = default
+
+                    elif name in model_default_values:
+                        serializer_info[name]['default'] = model_default_values[name]
+
+                    # Attributes to copy from the model to the field (if they don't exist)
+                    attributes = ['help_text']
+
+                    for attr in attributes:
+                        if attr not in serializer_info[name]:
+
+                            if hasattr(field, attr):
+                                serializer_info[name][attr] = getattr(field, attr)
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
@@ -133,8 +162,59 @@ class InvenTreeMetadata(SimpleMetadata):
                 if 'help_text' not in serializer_info[name] and hasattr(relation.model_field, 'help_text'):
                     serializer_info[name]['help_text'] = relation.model_field.help_text
 
+                if name in model_default_values:
+                    serializer_info[name]['default'] = model_default_values[name]
+
         except AttributeError:
             pass
+
+        # Try to extract 'instance' information
+        instance = None
+
+        # Extract extra information if an instance is available
+        if hasattr(serializer, 'instance'):
+            instance = serializer.instance
+
+        if instance is None and model_class is not None:
+            # Attempt to find the instance based on kwargs lookup
+            kwargs = getattr(self.view, 'kwargs', None)
+
+            if kwargs:
+                pk = None
+
+                for field in ['pk', 'id', 'PK', 'ID']:
+                    if field in kwargs:
+                        pk = kwargs[field]
+                        break
+
+                if pk is not None:
+                    try:
+                        instance = model_class.objects.get(pk=pk)
+                    except (ValueError, model_class.DoesNotExist):
+                        pass
+
+        if instance is not None:
+            """
+            If there is an instance associated with this API View,
+            introspect that instance to find any specific API info.
+            """
+
+            if hasattr(instance, 'api_instance_filters'):
+
+                instance_filters = instance.api_instance_filters()
+
+                for field_name, field_filters in instance_filters.items():
+
+                    if field_name not in serializer_info.keys():
+                        # The field might be missing, but is added later on
+                        # This function seems to get called multiple times?
+                        continue
+
+                    if 'instance_filters' not in serializer_info[field_name].keys():
+                        serializer_info[field_name]['instance_filters'] = {}
+
+                    for key, value in field_filters.items():
+                        serializer_info[field_name]['instance_filters'][key] = value
 
         return serializer_info
 
@@ -153,9 +233,14 @@ class InvenTreeMetadata(SimpleMetadata):
         if 'default' not in field_info and not field.default == empty:
             field_info['default'] = field.get_default()
 
+        # Force non-nullable fields to read as "required"
+        # (even if there is a default value!)
+        if not field.allow_null and not (hasattr(field, 'allow_blank') and field.allow_blank):
+            field_info['required'] = True
+
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
-            
+
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
             if isinstance(field, serializers.PrimaryKeyRelatedField):
                 model = field.queryset.model
@@ -166,7 +251,12 @@ class InvenTreeMetadata(SimpleMetadata):
             if model:
                 # Mark this field as "related", and point to the URL where we can get the data!
                 field_info['type'] = 'related field'
-                field_info['api_url'] = model.get_api_url()
                 field_info['model'] = model._meta.model_name
+
+                # Special case for 'user' model
+                if field_info['model'] == 'user':
+                    field_info['api_url'] = '/api/user/'
+                else:
+                    field_info['api_url'] = model.get_api_url()
 
         return field_info

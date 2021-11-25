@@ -7,19 +7,29 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+import json
 
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.conf import settings
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from allauth.account.forms import AddEmailForm
+from allauth.socialaccount.forms import DisconnectForm
+from allauth.account.models import EmailAddress
+from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.socialaccount.views import ConnectionsView
+
 from common.settings import currency_code_default, currency_codes
 
 from part.models import Part, PartCategory
@@ -27,13 +37,9 @@ from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
 
-import InvenTree.tasks
-
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .forms import ColorThemeSelectForm, SettingCategorySelectForm
+from .forms import SettingCategorySelectForm
 from .helpers import str2bool
-
-from rest_framework import views
 
 
 def auth_request(request):
@@ -47,84 +53,6 @@ def auth_request(request):
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=403)
-
-
-class TreeSerializer(views.APIView):
-    """ JSON View for serializing a Tree object.
-
-    Turns a 'tree' model into a JSON object compatible with bootstrap-treview.
-
-    Ref: https://github.com/jonmiles/bootstrap-treeview
-    """
-
-    @property
-    def root_url(self):
-        """ Return the root URL for the tree. Implementation is class dependent.
-
-        Default implementation returns #
-        """
-
-        return '#'
-
-    def itemToJson(self, item):
-
-        data = {
-            'pk': item.id,
-            'text': item.name,
-            'href': item.get_absolute_url(),
-            'tags': [item.item_count],
-        }
-
-        if item.has_children:
-            nodes = []
-
-            for child in item.children.all().order_by('name'):
-                nodes.append(self.itemToJson(child))
-
-            data['nodes'] = nodes
-
-        return data
-
-    def get_items(self):
-
-        return self.model.objects.all()
-
-    def generate_tree(self):
-
-        nodes = []
-
-        items = self.get_items()
-
-        # Construct the top-level items
-        top_items = [i for i in items if i.parent is None]
-
-        top_count = 0
-
-        # Construct the top-level items
-        top_items = [i for i in items if i.parent is None]
-
-        for item in top_items:
-            nodes.append(self.itemToJson(item))
-            top_count += item.item_count
-
-        self.tree = {
-            'pk': None,
-            'text': self.title,
-            'href': self.root_url,
-            'nodes': nodes,
-            'tags': [top_count],
-        }
-
-    def get(self, request, *args, **kwargs):
-        """ Respond to a GET request for the Tree """
-
-        self.generate_tree()
-
-        response = {
-            'tree': [self.tree]
-        }
-
-        return JsonResponse(response, safe=False)
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):
@@ -727,17 +655,6 @@ class IndexView(TemplateView):
 
         context = super(TemplateView, self).get_context_data(**kwargs)
 
-        # TODO - Re-implement this when a less expensive method is worked out
-        # context['starred'] = [star.part for star in self.request.user.starred_parts.all()]
-
-        # Generate a list of orderable parts which have stock below their minimum values
-        # TODO - Is there a less expensive way to get these from the database
-        # context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
-
-        # Generate a list of assembly parts which have stock below their minimum values
-        # TODO - Is there a less expensive way to get these from the database
-        # context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
-
         return context
 
 
@@ -779,7 +696,7 @@ class SettingsView(TemplateView):
     """ View for configuring User settings
     """
 
-    template_name = "InvenTree/settings.html"
+    template_name = "InvenTree/settings/settings.html"
 
     def get_context_data(self, **kwargs):
 
@@ -787,7 +704,66 @@ class SettingsView(TemplateView):
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
 
+        ctx["base_currency"] = currency_code_default()
+        ctx["currencies"] = currency_codes
+
+        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+
+        ctx["categories"] = PartCategory.objects.all().order_by('tree_id', 'lft', 'name')
+
+        # When were the rates last updated?
+        try:
+            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
+            ctx["rates_updated"] = backend.last_update
+        except:
+            ctx["rates_updated"] = None
+
+        # load locale stats
+        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
+        try:
+            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
+        except:
+            ctx["locale_stats"] = {}
+
+        # Forms and context for allauth
+        ctx['add_email_form'] = AddEmailForm
+        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
+
+        # Form and context for allauth social-accounts
+        ctx["request"] = self.request
+        ctx['social_form'] = DisconnectForm(request=self.request)
+
         return ctx
+
+
+class AllauthOverrides(LoginRequiredMixin):
+    """
+    Override allauths views to always redirect to success_url
+    """
+    def get(self, request, *args, **kwargs):
+        # always redirect to settings
+        return HttpResponseRedirect(self.success_url)
+
+
+class CustomEmailView(AllauthOverrides, EmailView):
+    """
+    Override of allauths EmailView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+
+class CustomConnectionsView(AllauthOverrides, ConnectionsView):
+    """
+    Override of allauths ConnectionsView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+
+class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
+    """
+    Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("account_login")
 
 
 class CurrencyRefreshView(RedirectView):
@@ -802,45 +778,19 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        # Will block for a little bit
-        InvenTree.tasks.update_exchange_rates()
+        from InvenTree.tasks import offload_task
 
-        return self.get(request, *args, **kwargs)
+        # Define associated task from InvenTree.tasks list of methods
+        taskname = 'InvenTree.tasks.update_exchange_rates'
 
+        # Run it
+        offload_task(taskname, force_sync=True)
 
-class CurrencySettingsView(TemplateView):
-    """
-    View for configuring currency settings
-    """
-
-    template_name = "InvenTree/settings/currencies.html"
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs).copy()
-
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-        ctx["base_currency"] = currency_code_default()
-        ctx["currencies"] = currency_codes
-
-        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
-
-        # When were the rates last updated?
-        try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
-        except:
-            ctx["rates_updated"] = None
-
-        return ctx
+        return redirect(reverse_lazy('settings'))
 
 
-class AppearanceSelectView(FormView):
+class AppearanceSelectView(RedirectView):
     """ View for selecting a color theme """
-
-    form_class = ColorThemeSelectForm
-    success_url = reverse_lazy('settings-appearance')
-    template_name = "InvenTree/settings/appearance.html"
 
     def get_user_theme(self):
         """ Get current user color theme """
@@ -851,40 +801,10 @@ class AppearanceSelectView(FormView):
 
         return user_theme
 
-    def get_initial(self):
-        """ Select current user color theme as initial choice """
-
-        initial = super(AppearanceSelectView, self).get_initial()
-
-        user_theme = self.get_user_theme()
-        if user_theme:
-            initial['name'] = user_theme.name
-        return initial
-
-    def get(self, request, *args, **kwargs):
-        """ Check if current color theme exists, else display alert box """
-
-        context = {}
-
-        form = self.get_form()
-        context['form'] = form
-
-        user_theme = self.get_user_theme()
-        if user_theme:
-            # Check color theme is a valid choice
-            if not ColorTheme.is_valid_choice(user_theme):
-                user_color_theme_name = user_theme.name
-                if not user_color_theme_name:
-                    user_color_theme_name = 'default'
-
-                context['invalid_color_theme'] = user_color_theme_name
-
-        return self.render_to_response(context)
-
     def post(self, request, *args, **kwargs):
         """ Save user color theme selection """
 
-        form = self.get_form()
+        theme = request.POST.get('theme', None)
 
         # Get current user theme
         user_theme = self.get_user_theme()
@@ -894,20 +814,10 @@ class AppearanceSelectView(FormView):
             user_theme = ColorTheme()
             user_theme.user = request.user
 
-        if form.is_valid():
-            theme_selected = form.cleaned_data['name']
+        user_theme.name = theme
+        user_theme.save()
 
-            # Set color theme to form selection
-            user_theme.name = theme_selected
-            user_theme.save()
-
-            return self.form_valid(form)
-        else:
-            # Set color theme to default
-            user_theme.name = ColorTheme.default_color_theme[0]
-            user_theme.save()
-
-            return self.form_invalid(form)
+        return redirect(reverse_lazy('settings'))
 
 
 class SettingCategorySelectView(FormView):

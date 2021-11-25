@@ -1,12 +1,13 @@
 /*
  * Status codes for the {{ label }} model.
  */
-var {{ label }}Codes = {
+const {{ label }}Codes = {
     {% for opt in options %}'{{ opt.key }}': {
         key: '{{ opt.key }}',
         value: '{{ opt.value }}',{% if opt.color %}
-        label: 'label-{{ opt.color }}',{% endif %}
-    },{% endfor %}
+        label: 'bg-{{ opt.color }}',{% endif %}
+    },
+    {% endfor %}
 };
 
 /* 
@@ -26,12 +27,15 @@ function {{ label }}StatusDisplay(key, options={}) {
         label = {{ label }}Codes[key].label;
     }
 
+    // Fallback option for label
+    label = label || 'bg-dark';
+
     if (value == null || value.length == 0) {
         value = key;
         label = '';
     }
 
-    var classes = `label ${label}`;
+    var classes = `badge rounded-pill ${label}`;
 
     if (options.classes) {
         classes += ' ' + options.classes;

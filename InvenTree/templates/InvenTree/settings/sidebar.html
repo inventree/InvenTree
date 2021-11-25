@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% trans "User Settings" as text %}
+{% include "sidebar_header.html" with text=text icon='fa-user' %}
+
+{% trans "Account Settings" as text %}
+{% include "sidebar_item.html" with label='account' text=text icon="fa-cog" %}
+{% trans "Display Settings" as text %}
+{% include "sidebar_item.html" with label='user-display' text=text icon="fa-desktop" %}
+{% trans "Home Page" as text %}
+{% include "sidebar_item.html" with label='user-home' text=text icon="fa-home" %}
+{% trans "Search Settings" as text %}
+{% include "sidebar_item.html" with label='user-search' text=text icon="fa-search" %}
+{% trans "Label Printing" as text %}
+{% include "sidebar_item.html" with label='user-labels' text=text icon="fa-tag" %}
+{% trans "Reporting" as text %}
+{% include "sidebar_item.html" with label='user-reports' text=text icon="fa-file-pdf" %}
+
+{% if user.is_staff %}
+
+{% trans "Global Settings" as text %}
+{% include "sidebar_header.html" with text=text icon='fa-cogs' %}
+
+{% trans "Server Configuration" as text %}
+{% include "sidebar_item.html" with label='server' text=text icon="fa-server" %}
+{% trans "Login Settings" as text %}
+{% include "sidebar_item.html" with label='login' text=text icon="fa-fingerprint" %}
+{% trans "Barcode Support" as text %}
+{% include "sidebar_item.html" with label='barcodes' text=text icon="fa-qrcode" %}
+{% trans "Currencies" as text %}
+{% include "sidebar_item.html" with label='currencies' text=text icon="fa-dollar-sign" %}
+{% trans "Reporting" as text %}
+{% include "sidebar_item.html" with label='reporting' text=text icon="fa-file-pdf" %}
+{% trans "Parts" as text %}
+{% include "sidebar_item.html" with label='parts' text=text icon="fa-shapes" %}
+{% trans "Categories" as text %}
+{% include "sidebar_item.html" with label='category' text=text icon="fa-sitemap" %}
+{% trans "Stock" as text %}
+{% include "sidebar_item.html" with label='stock' text=text icon="fa-boxes" %}
+{% trans "Build Orders" as text %}
+{% include "sidebar_item.html" with label='build-order' text=text icon="fa-tools" %}
+{% trans "Purchase Orders" as text %}
+{% include "sidebar_item.html" with label='purchase-order' text=text icon="fa-shopping-cart" %}
+{% trans "Sales Orders" as text %}
+{% include "sidebar_item.html" with label='sales-order' text=text icon="fa-truck" %}
+
+{% endif %}

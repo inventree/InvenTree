@@ -1,9 +1,0 @@
-[run]
-source = ./InvenTree
-omit =
-    InvenTree/manage.py
-    InvenTree/setup.py
-    InvenTree/InvenTree/middleware.py
-    InvenTree/InvenTree/utils.py
-    InvenTree/InvenTree/wsgi.py
-    InvenTree/users/apps.py

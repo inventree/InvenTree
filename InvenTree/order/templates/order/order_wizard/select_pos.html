@@ -40,7 +40,7 @@
             <td>{{ supplier.order_items|length }}</td>
             <td>
                 <button 
-                    class='btn btn-default btn-create'
+                    class='btn btn-outline-secondary btn-create'
                     id='new_po_{{ supplier.id }}'
                     title='{% blocktrans with name=supplier.name %}Create new purchase order for {{name}}{% endblocktrans %}'
                     type='button'

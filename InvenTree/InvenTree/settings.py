@@ -12,8 +12,10 @@ database setup in this file.
 """
 
 import logging
+
 import os
 import random
+import socket
 import string
 import shutil
 import sys
@@ -24,6 +26,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+import django.conf.locale
 
 
 def _is_true(x):
@@ -88,6 +91,12 @@ with open(cfg_filename, 'r') as cfg:
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
+))
+
+# Determine if we are running in "demo mode"
+DEMO_MODE = _is_true(get_setting(
+    'INVENTREE_DEMO',
+    CONFIG.get('demo', False)
 ))
 
 DOCKER = _is_true(get_setting(
@@ -168,6 +177,30 @@ else:
         logger.exception(f"Couldn't load keyfile {key_file}")
         sys.exit(-1)
 
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_STATIC_ROOT',
+        CONFIG.get('static_root', None)
+    )
+)
+
+if STATIC_ROOT is None:
+    print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
+    sys.exit(1)
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_MEDIA_ROOT',
+        CONFIG.get('media_root', None)
+    )
+)
+
+if MEDIA_ROOT is None:
+    print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
+    sys.exit(1)
+
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -188,22 +221,12 @@ if cors_opt:
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
-# The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', '/home/inventree/data/static')
-    )
-)
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
-]
+STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
-STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js')
-STATICFILES_I18_TRG = STATICFILES_DIRS[0] + '_' + STATICFILES_I18_PREFIX
+STATICFILES_I18_SRC = os.path.join(BASE_DIR, 'templates', 'js', 'translated')
+STATICFILES_I18_TRG = os.path.join(BASE_DIR, 'InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = os.path.join(STATICFILES_I18_TRG, STATICFILES_I18_PREFIX)
 
@@ -217,19 +240,14 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(
-    get_setting(
-        'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', '/home/inventree/data/media')
-    )
-)
-
 if DEBUG:
-    logger.info("InvenTree running in DEBUG mode")
+    logger.info("InvenTree running with DEBUG enabled")
 
-logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
-logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
+if DEMO_MODE:
+    logger.warning("InvenTree running in DEMO mode")
+
+logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
+logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
 # Application definition
 
@@ -242,6 +260,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -272,6 +291,10 @@ INSTALLED_APPS = [
     'error_report',                         # Error reporting in the admin interface
     'django_q',
     'formtools',                            # Form wizard tools
+
+    'allauth',                              # Base app for SSO
+    'allauth.account',                      # Extend user with accounts
+    'allauth.socialaccount',                # Use 'social' providers
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -284,14 +307,15 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
 ])
 
 # Error reporting middleware
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
 # If the debug toolbar is enabled, add the modules
@@ -319,6 +343,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Custom InvenTree context processors
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
@@ -347,51 +372,6 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
-# django-q configuration
-Q_CLUSTER = {
-    'name': 'InvenTree',
-    'workers': 4,
-    'timeout': 90,
-    'retry': 120,
-    'queue_limit': 50,
-    'bulk': 10,
-    'orm': 'default',
-    'sync': False,
-}
-
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
-
-# Markdownify configuration
-# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
-
-MARKDOWNIFY_WHITELIST_TAGS = [
-    'a',
-    'abbr',
-    'b',
-    'blockquote',
-    'em',
-    'h1', 'h2', 'h3',
-    'i',
-    'img',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'ul'
-]
-
-MARKDOWNIFY_WHITELIST_ATTRS = [
-    'href',
-    'src',
-    'alt',
-]
-
-MARKDOWNIFY_BLEACH = False
-
-DATABASES = {}
-
 """
 Configure the database backend based on the user-specified values.
 
@@ -400,7 +380,7 @@ Configure the database backend based on the user-specified values.
 - The following code lets the user "mix and match" database configuration
 """
 
-logger.info("Configuring database backend:")
+logger.debug("Configuring database backend:")
 
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
@@ -454,19 +434,198 @@ if db_engine in ['sqlite3', 'postgresql', 'mysql']:
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
 
-print("InvenTree Database Configuration")
-print("================================")
-print(f"ENGINE: {db_engine}")
-print(f"NAME: {db_name}")
-print(f"HOST: {db_host}")
+logger.info(f"DB_ENGINE: {db_engine}")
+logger.info(f"DB_NAME: {db_name}")
+logger.info(f"DB_HOST: {db_host}")
 
-DATABASES['default'] = db_config
+"""
+In addition to base-level database configuration, we may wish to specify specific options to the database backend
+Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
+"""
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
+# 'OPTIONS' or 'options' can be specified in config.yaml
+# Set useful sensible timeouts for a transactional webserver to communicate
+# with its database server, that is, if the webserver is having issues
+# connecting to the database server (such as a replica failover) don't sit and
+# wait for possibly an hour or more, just tell the client something went wrong
+# and let the client retry when they want to.
+db_options = db_config.get("OPTIONS", db_config.get("options", {}))
+
+# Specific options for postgres backend
+if "postgres" in db_engine:
+    from psycopg2.extensions import (
+        ISOLATION_LEVEL_READ_COMMITTED,
+        ISOLATION_LEVEL_SERIALIZABLE,
+    )
+
+    # Connection timeout
+    if "connect_timeout" not in db_options:
+        # The DB server is in the same data center, it should not take very
+        # long to connect to the database server
+        # # seconds, 2 is minium allowed by libpq
+        db_options["connect_timeout"] = int(
+            os.getenv("INVENTREE_DB_TIMEOUT", 2)
+        )
+
+    # Setup TCP keepalive
+    # DB server is in the same DC, it should not become unresponsive for
+    # very long. With the defaults below we wait 5 seconds for the network
+    # issue to resolve itself.  It it that doesn't happen whatever happened
+    # is probably fatal and no amount of waiting is going to fix it.
+    # # 0 - TCP Keepalives disabled; 1 - enabled
+    if "keepalives" not in db_options:
+        db_options["keepalives"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES", "1")
+        )
+    # # Seconds after connection is idle to send keep alive
+    if "keepalives_idle" not in db_options:
+        db_options["keepalives_idle"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_IDLE", "1")
+        )
+    # # Seconds after missing ACK to send another keep alive
+    if "keepalives_interval" not in db_options:
+        db_options["keepalives_interval"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "1")
+        )
+    # # Number of missing ACKs before we close the connection
+    if "keepalives_count" not in db_options:
+        db_options["keepalives_count"] = int(
+            os.getenv("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "5")
+        )
+    # # Milliseconds for how long pending data should remain unacked
+    # by the remote server
+    # TODO: Supported starting in PSQL 11
+    # "tcp_user_timeout": int(os.getenv("PGTCP_USER_TIMEOUT", "1000"),
+
+    # Postgres's default isolation level is Read Committed which is
+    # normally fine, but most developers think the database server is
+    # actually going to do Serializable type checks on the queries to
+    # protect against simultaneous changes.
+    # https://www.postgresql.org/docs/devel/transaction-iso.html
+    # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
+    if "isolation_level" not in db_options:
+        serializable = _is_true(
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+        )
+        db_options["isolation_level"] = (
+            ISOLATION_LEVEL_SERIALIZABLE
+            if serializable
+            else ISOLATION_LEVEL_READ_COMMITTED
+        )
+
+# Specific options for MySql / MariaDB backend
+if "mysql" in db_engine:
+    # TODO TCP time outs and keepalives
+
+    # MariaDB's default isolation level is Repeatable Read which is
+    # normally fine, but most developers think the database server is
+    # actually going to Serializable type checks on the queries to
+    # protect against siumltaneous changes.
+    # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
+    # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
+    if "isolation_level" not in db_options:
+        serializable = _is_true(
+            os.getenv("INVENTREE_DB_ISOLATION_SERIALIZABLE", "true")
+        )
+        db_options["isolation_level"] = (
+            "serializable" if serializable else "read committed"
+        )
+
+# Specific options for sqlite backend
+if "sqlite" in db_engine:
+    # TODO: Verify timeouts are not an issue because no network is involved for SQLite
+
+    # SQLite's default isolation level is Serializable due to SQLite's
+    # single writer implementation.  Presumably as a result of this, it is
+    # not possible to implement any lower isolation levels in SQLite.
+    # https://www.sqlite.org/isolation.html
+    pass
+
+# Provide OPTIONS dict back to the database configuration dict
+db_config['OPTIONS'] = db_options
+
+DATABASES = {
+    'default': db_config
 }
+
+
+_cache_config = CONFIG.get("cache", {})
+_cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
+_cache_port = _cache_config.get(
+    "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
+)
+
+if _cache_host:
+    # We are going to rely upon a possibly non-localhost for our cache,
+    # so don't wait too long for the cache as nothing in the cache should be
+    # irreplacable.  Django Q Cluster will just try again later.
+    _cache_options = {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
+        "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
+        "CONNECTION_POOL_KWARGS": {
+            "socket_keepalive": _is_true(
+                os.getenv("CACHE_TCP_KEEPALIVE", "1")
+            ),
+            "socket_keepalive_options": {
+                socket.TCP_KEEPCNT: int(
+                    os.getenv("CACHE_KEEPALIVES_COUNT", "5")
+                ),
+                socket.TCP_KEEPIDLE: int(
+                    os.getenv("CACHE_KEEPALIVES_IDLE", "1")
+                ),
+                socket.TCP_KEEPINTVL: int(
+                    os.getenv("CACHE_KEEPALIVES_INTERVAL", "1")
+                ),
+                socket.TCP_USER_TIMEOUT: int(
+                    os.getenv("CACHE_TCP_USER_TIMEOUT", "1000")
+                ),
+            },
+        },
+    }
+    CACHES = {
+        # Connection configuration for Django Q Cluster
+        "worker": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
+            "OPTIONS": _cache_options,
+        },
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/1",
+            "OPTIONS": _cache_options,
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        },
+    }
+
+try:
+    # 4 background workers seems like a sensible default
+    background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
+except ValueError:
+    background_workers = 4
+
+# django-q configuration
+Q_CLUSTER = {
+    'name': 'InvenTree',
+    'workers': background_workers,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': False,
+}
+
+if _cache_host:
+    # If using external redis cache, make the cache the broker for Django Q
+    # as well
+    Q_CLUSTER["django_redis"] = "worker"
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -502,12 +661,46 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
-    ('en', _('English')),
-    ('fr', _('French')),
     ('de', _('German')),
+    ('el', _('Greek')),
+    ('en', _('English')),
+    ('es', _('Spanish')),
+    ('es-mx', _('Spanish (Mexican)')),
+    ('fr', _('French')),
+    ('he', _('Hebrew')),
+    ('it', _('Italian')),
+    ('ja', _('Japanese')),
+    ('ko', _('Korean')),
+    ('nl', _('Dutch')),
+    ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('pt', _('Portugese')),
+    ('ru', _('Russian')),
+    ('sv', _('Swedish')),
+    ('th', _('Thai')),
     ('tr', _('Turkish')),
+    ('vi', _('Vietnamese')),
+    ('zh-cn', _('Chinese')),
 ]
+
+# Testing interface translations
+if get_setting('TEST_TRANSLATIONS', False):
+    # Set default language
+    LANGUAGE_CODE = 'xx'
+
+    # Add to language catalog
+    LANGUAGES.append(('xx', 'Test'))
+
+    # Add custom languages not provided by Django
+    EXTRA_LANG_INFO = {
+        'xx': {
+            'code': 'xx',
+            'name': 'Test',
+            'name_local': 'Test'
+        },
+    }
+    LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
+    django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
 CURRENCIES = CONFIG.get(
@@ -600,7 +793,7 @@ DATE_INPUT_FORMATS = [
 ]
 
 # crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
@@ -615,3 +808,65 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert alert-block alert-danger',
     messages.INFO: 'alert alert-block alert-info',
 }
+
+SITE_ID = 1
+
+# Load the allauth social backends
+SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
+for app in SOCIAL_BACKENDS:
+    INSTALLED_APPS.append(app)
+
+SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
+
+# settings for allauth
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
+
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
+
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+# override forms / adapters
+ACCOUNT_FORMS = {
+    'login': 'allauth.account.forms.LoginForm',
+    'signup': 'InvenTree.forms.CustomSignupForm',
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+}
+
+SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+
+# Markdownx configuration
+# Ref: https://neutronx.github.io/django-markdownx/customization/
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
+
+# Markdownify configuration
+# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
+
+MARKDOWNIFY_WHITELIST_TAGS = [
+    'a',
+    'abbr',
+    'b',
+    'blockquote',
+    'em',
+    'h1', 'h2', 'h3',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul'
+]
+
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+]
+
+MARKDOWNIFY_BLEACH = False

@@ -4,34 +4,42 @@
 {% load static %}
 {% load inventree_extras %}
 
+{% block breadcrumb_list %}
+{% endblock %}
+
 {% block page_title %}
 {% inventree_title %} | {% trans "Settings" %}
 {% endblock %}
 
+{% block sidebar %}
+{% include "InvenTree/settings/sidebar.html" %}
+{% endblock %}
+
 {% block content %}
-<div class='settings-container'>
 
-    <h3>InvenTree {% trans "Settings" %}</h3>
-    <hr>
+{% include "InvenTree/settings/user.html" %}
+{% include "InvenTree/settings/user_settings.html" %}
+{% include "InvenTree/settings/user_homepage.html" %}
+{% include "InvenTree/settings/user_search.html" %}
+{% include "InvenTree/settings/user_labels.html" %}
+{% include "InvenTree/settings/user_reports.html" %}
+{% include "InvenTree/settings/user_display.html" %}
 
-    <div class='settings-nav'>
-        {% block tabs %}
-        {% include "InvenTree/settings/tabs.html" %} 
-        {% endblock %}
-    </div>
+{% if user.is_staff %}
 
-    <div class='settings-content'>
-        <h3>
-            {% block subtitle %}
-            SUBTITLE GOES HERE
-            {% endblock %}
-        </h3>
-        <hr>
-        {% block settings %}
-        {% endblock %}
-    </div>
+{% include "InvenTree/settings/global.html" %}
+{% include "InvenTree/settings/login.html" %}
+{% include "InvenTree/settings/barcode.html" %}
+{% include "InvenTree/settings/currencies.html" %}
+{% include "InvenTree/settings/report.html" %}
+{% include "InvenTree/settings/part.html" %}
+{% include "InvenTree/settings/category.html" %}
+{% include "InvenTree/settings/stock.html" %}
+{% include "InvenTree/settings/build.html" %}
+{% include "InvenTree/settings/po.html" %}
+{% include "InvenTree/settings/so.html" %}
 
-</div>
+{% endif %}
 
 {% endblock %}
 
@@ -46,12 +54,265 @@ $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
 
+    var is_global = true;
+
+    if ($(this).attr('user')){
+        is_global = false;
+    }
+
+    editSetting(pk, {
+        global: is_global,
+        title: is_global ? '{% trans "Edit Global Setting" %}' : '{% trans "Edit User Setting" %}',
+    });
+});
+
+$("#edit-user").on('click', function() {
     launchModalForm(
-        `/settings/${pk}/edit/`,
+        "{% url 'edit-user' %}",
         {
             reload: true,
         }
     );
 });
+
+$("#edit-password").on('click', function() {
+    launchModalForm(
+        "{% url 'set-password' %}",
+        {
+            reload: true,
+        }
+    );
+});
+
+
+$('#category-select').select2({
+    placeholder: '',
+    width: '100%',
+    ajax: {
+        url: '{% url "api-part-category-list" %}',
+        dataType: 'json',
+        delay: 250,
+        cache: false,
+        data: function(params) {
+            if (!params.page) {
+                offset = 0;
+            } else {
+                offset = (params.page - 1) * 25;
+            }
+
+            return {
+                search: params.term,
+                offset: offset,
+                limit: 25,
+            };
+        },
+        processResults: function(response) {
+            var data = [];
+
+            var more = false;
+
+            if ('count' in response && 'results' in response) {
+                // Response is paginated
+                data = response.results;
+
+                // Any more data available?
+                if (response.next) {
+                    more = true;
+                }
+
+            } else {
+                // Non-paginated response
+                data = response;
+            }
+
+            // Each 'row' must have the 'id' attribute
+            for (var idx = 0; idx < data.length; idx++) {
+                data[idx].id = data[idx].pk;
+                data[idx].text = data[idx].pathstring;
+            }
+
+            // Ref: https://select2.org/data-sources/formats
+            var results = {
+                results: data,
+                pagination: {
+                    more: more,
+                }
+            };
+
+            return results;
+        }
+    },
+});
+
+$('#cat-param-table').inventreeTable({
+    formatNoMatches: function() { return '{% trans "No category parameter templates found" %}'; },
+    columns: [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'parameter_template.name',
+            title: '{% trans "Parameter Template" %}',
+            sortable: 'true',
+        },
+        {
+            field: 'category_detail.pathstring',
+            title: '{% trans "Category" %}',
+        },
+        {
+            field: 'default_value',
+            title: '{% trans "Default Value" %}',
+            sortable: 'true',
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+
+                var html = value
+                html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
+
+                return html;
+            }
+        }
+    ]
+});
+
+function loadTemplateTable(pk) {
+
+    // Enable the buttons
+    $('#new-cat-param').removeAttr('disabled');
+
+    // Load the parameter table
+    $("#cat-param-table").bootstrapTable('refresh', {
+        query: {
+            category: pk,
+        },
+        url: '{% url "api-part-category-parameter-list" %}',
+    });
+}
+
+$('body').on('change', '#category-select', function() {
+    var pk = $(this).val();
+    loadTemplateTable(pk);
+});
+
+$("#new-cat-param").click(function() {
+
+    var pk = $('#category-select').val();
+
+    launchModalForm(`/part/category/${pk}/parameters/new/`, {
+        success: function() {
+            $("#cat-param-table").bootstrapTable('refresh', {
+                query: {
+                    category: pk,
+                }
+            });
+        },
+    });
+});
+
+$("#cat-param-table").on('click', '.template-edit', function() {
+
+    var category = $('#category-select').val();
+    var pk = $(this).attr('pk');
+
+    var url = `/part/category/${category}/parameters/${pk}/edit/`;
+
+    launchModalForm(url, {
+        success: function() {
+            $("#cat-param-table").bootstrapTable('refresh');
+        }
+    });
+});
+
+$("#cat-param-table").on('click', '.template-delete', function() {
+
+    var category = $('#category-select').val();
+    var pk = $(this).attr('pk');
+
+    var url = `/part/category/${category}/parameters/${pk}/delete/`;
+
+    launchModalForm(url, {
+        success: function() {
+            $("#cat-param-table").bootstrapTable('refresh');
+        }
+    });
+});
+
+$("#param-table").inventreeTable({
+    url: "{% url 'api-part-parameter-template-list' %}",
+    queryParams: {
+        ordering: 'name',
+    },
+    formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
+    columns: [
+        {
+            field: 'pk',
+            title: '{% trans "ID" %}',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'name',
+            title: '{% trans "Name" %}',
+            sortable: 'true',
+        },
+        {
+            field: 'units',
+            title: '{% trans "Units" %}',
+            sortable: 'true',
+        },
+        {
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+
+                var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
+
+                return html;
+            }
+        }
+    ]
+});
+
+$("#new-param").click(function() {
+    launchModalForm("{% url 'part-param-template-create' %}", {
+        success: function() {
+            $("#param-table").bootstrapTable('refresh');
+        },
+    });
+});
+
+$("#param-table").on('click', '.template-edit', function() {
+    var button = $(this);
+
+    var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
+
+    launchModalForm(url, {
+        success: function() {
+            $("#param-table").bootstrapTable('refresh');
+        }
+    });
+});
+
+$("#param-table").on('click', '.template-delete', function() {
+    var button = $(this);
+
+    var url = "/part/parameter/template/" + button.attr('pk') + "/delete/";
+
+    launchModalForm(url, {
+        success: function() {
+            $("#param-table").bootstrapTable('refresh');
+        }
+    });
+});
+
+$("#import-part").click(function() {
+    launchModalForm("{% url 'api-part-import' %}?reset", {});
+});
+
+enableSidebar('settings');
 
 {% endblock %}

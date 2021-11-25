@@ -1,4 +1,4 @@
-{% extends "two_column.html" %}
+{% extends "page_base.html" %}
 
 {% load i18n %}
 {% load static %}
@@ -7,6 +7,60 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Purchase Order" %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "po-index" %}'>{% trans "Purchase Orders" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "po-detail" order.id %}'>{{ order }}</a></li>
+{% endblock %}
+
+{% block heading %}
+{% trans "Purchase Order" %}: {{ order.reference }}
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and roles.purchase_order.change %}
+{% url 'admin:order_purchaseorder_change' order.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+<!-- Printing options -->
+<div class='btn-group' role='group'>
+    <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        {% if report_enabled %}
+        <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print purchase order report" %}</a></li>
+        {% endif %}
+        <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
+    </ul>
+</div>
+{% if roles.purchase_order.change %}
+<!-- order actions -->
+<div class='btn-group'>
+    <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        {% if order.can_cancel %}
+        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
+<button type='button' class='btn btn-outline-secondary' id='place-order' title='{% trans "Place order" %}'>
+    <span class='fas fa-shopping-cart icon-blue'></span>
+</button>
+{% elif order.status == PurchaseOrderStatus.PLACED %}
+<button type='button' class='btn btn-outline-secondary' id='receive-order' title='{% trans "Receive items" %}'>
+    <span class='fas fa-sign-in-alt icon-blue'></span>
+</button>
+<button type='button' class='btn btn-outline-secondary' id='complete-order' title='{% trans "Mark order as complete" %}'>
+    <span class='fas fa-check-circle icon-green'></span>
+</button>
+{% endif %}
+{% endif %}
 {% endblock %}
 
 {% block thumbnail %}
@@ -19,57 +73,19 @@ src="{% static 'img/blank_image.png' %}"
 />
 {% endblock %}
 
-{% block page_data %}
-<h3>
-    {% trans "Purchase Order" %} {{ order.reference }}
-    {% if user.is_staff and roles.purchase_order.change %}
-    <a href="{% url 'admin:order_purchaseorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
-    {% endif %}
-</h3>
-<h3>
+{% block details %}
+
+<h4>
     {% purchase_order_status_label order.status large=True %}
     {% if order.is_overdue %}
-    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
+    <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}
-</h3>
-<hr>
+</h4>
 <p>{{ order.description }}{% include "clip.html"%}</p>
-<div class='btn-row'>
-    <div class='btn-group action-buttons' role='group'>
-        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
-            <span class='fas fa-print'></span> 
-        </button>
-        {% if roles.purchase_order.change %}
-        <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
-            <span class='fas fa-edit icon-green'></span>
-        </button>
-        {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
-        <button type='button' class='btn btn-default' id='place-order' title='{% trans "Place order" %}'>
-            <span class='fas fa-paper-plane icon-blue'></span>
-        </button>
-        {% elif order.status == PurchaseOrderStatus.PLACED %}
-        <button type='button' class='btn btn-default' id='receive-order' title='{% trans "Receive items" %}'>
-            <span class='fas fa-clipboard-check'></span>
-        </button>
-        <button type='button' class='btn btn-default' id='complete-order' title='{% trans "Mark order as complete" %}'>
-            <span class='fas fa-check-circle'></span>
-        </button>
-        {% endif %}
-        {% if order.can_cancel %}
-        <button type='button' class='btn btn-default' id='cancel-order' title='{% trans "Cancel order" %}'>
-            <span class='fas fa-times-circle icon-red'></span>
-        </button>
-        {% endif %}
-        {% endif %}
-        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
-            <span class='fas fa-file-download'></span>
-        </button>
-    </div>
-</div>
+
 {% endblock %}
 
-{% block page_details %}
-<h4>{% trans "Purchase Order Details" %}</h4>
+{% block details_right %}
 <table class='table'>
     <col width='25'>
     <tr>
@@ -83,7 +99,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {% purchase_order_status_label order.status %}
             {% if order.is_overdue %}
-            <span class='label label-red'>{% trans "Overdue" %}</span>
+            <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
@@ -109,7 +125,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Created" %}</td>
-        <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
+        <td>{{ order.creation_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
     {% if order.issue_date %}
     <tr>
@@ -129,7 +145,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
+        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.responsible %}
@@ -145,10 +161,6 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-enableNavbar({
-    label: 'po',
-    toggleId: '#po-menu-toggle',
-});
 
 {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
@@ -159,21 +171,24 @@ $("#place-order").click(function() {
 });
 {% endif %}
 
+{% if report_enabled %}
 $('#print-order-report').click(function() {
     printPurchaseOrderReports([{{ order.pk }}]);
 });
+{% endif %}
 
 $("#edit-order").click(function() {
 
     constructForm('{% url "api-po-detail" order.pk %}', {
         fields: {
             reference: {
-                prefix: "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}",
+                prefix: global_settings.PURCHASEORDER_REFERENCE_PREFIX,
             },
             {% if order.lines.count == 0 and order.status == PurchaseOrderStatus.PENDING %}
             supplier: {
             },
             {% endif %}
+            supplier_reference: {},
             description: {},
             target_date: {
                 icon: 'fa-calendar-alt',
@@ -191,17 +206,27 @@ $("#edit-order").click(function() {
 });
 
 $("#receive-order").click(function() {
-    launchModalForm("{% url 'po-receive' order.id %}", {
-        reload: true,
-        secondary: [
-            {
-                field: 'location',
-                label: '{% trans "New Location" %}',
-                title: '{% trans "Create new stock location" %}',
-                url: "{% url 'stock-location-create' %}",
-            },
-        ]
+
+    // Auto select items which have not been fully allocated
+    var items = $("#po-line-table").bootstrapTable('getData');
+
+    var items_to_receive = [];
+
+    items.forEach(function(item) {
+        if (item.received < item.quantity) {
+            items_to_receive.push(item);
+        }
     });
+
+    receivePurchaseOrderItems(
+        {{ order.id }},
+        items_to_receive,
+        {
+            success: function() {
+                $("#po-line-table").bootstrapTable('refresh');
+            }
+        }
+    );
 });
 
 $("#complete-order").click(function() {
@@ -217,7 +242,7 @@ $("#cancel-order").click(function() {
 });
 
 $("#export-order").click(function() {
-    location.href = "{% url 'po-export' order.id %}";
+    exportOrder('{% url "po-export" order.id %}');
 });
 
 

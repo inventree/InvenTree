@@ -8,10 +8,8 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from mptt.fields import TreeNodeChoiceField
-
 from InvenTree.forms import HelperForm
-from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
+from InvenTree.fields import InvenTreeMoneyField
 
 from InvenTree.helpers import clean_decimal
 
@@ -19,10 +17,8 @@ from common.forms import MatchItemForm
 
 import part.models
 
-from stock.models import StockLocation
 from .models import PurchaseOrder
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -80,26 +76,12 @@ class ShipSalesOrderForm(HelperForm):
         ]
 
 
-class ReceivePurchaseOrderForm(HelperForm):
-
-    location = TreeNodeChoiceField(
-        queryset=StockLocation.objects.all(),
-        required=True,
-        label=_("Destination"),
-        help_text=_("Receive parts to this location"),
-    )
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            "location",
-        ]
-
-
 class AllocateSerialsToSalesOrderForm(forms.Form):
     """
     Form for assigning stock to a sales order,
     by serial number lookup
+
+    TODO: Refactor this form / view to use the new API forms interface
     """
 
     line = forms.ModelChoiceField(
@@ -132,39 +114,6 @@ class AllocateSerialsToSalesOrderForm(forms.Form):
             'serials',
             'quantity',
         ]
-
-
-class CreateSalesOrderAllocationForm(HelperForm):
-    """
-    Form for creating a SalesOrderAllocation item.
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderAllocation
-
-        fields = [
-            'line',
-            'item',
-            'quantity',
-        ]
-
-
-class EditSalesOrderAllocationForm(HelperForm):
-    """
-    Form for editing a SalesOrderAllocation item
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderAllocation
-
-        fields = [
-            'line',
-            'item',
-            'quantity']
 
 
 class OrderMatchItemForm(MatchItemForm):

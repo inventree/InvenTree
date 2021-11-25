@@ -1,0 +1,360 @@
+{% extends "page_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Supplier Part" %}
+{% endblock %}
+
+{% block sidebar %}
+{% include "company/supplier_part_sidebar.html" %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "supplier-index" %}'>{% trans "Suppliers" %}</a></li>
+{% if part.supplier %}
+<li class='breadcrumb-item'><a href='{% url "company-detail" part.supplier.id %}'>{{ part.supplier.name }}</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "supplier-part-detail" part.id %}'>{{ part.SKU }}</a></li>
+{% endblock %}
+
+{% block heading %}
+<h4>
+    {% trans "Supplier Part" %}: {{ part.SKU }}
+</h4>
+{% endblock %}
+
+{% block actions %}
+{% if user.is_staff and perms.company.change_company %}
+{% url 'admin:company_supplierpart_change' part.pk as url %}
+{% include "admin_button.html" with url=url %}
+{% endif %}
+{% if roles.purchase_order.add %}
+<button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
+    <span class='fas fa-shopping-cart'></span>
+</button>
+{% endif %}
+<button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit supplier part" %}'>
+    <span class='fas fa-edit icon-green'/>
+</button>
+{% if roles.purchase_order.delete %}
+<button type='button' class='btn btn-outline-secondary' id='delete-part' title='{% trans "Delete supplier part" %}'>
+    <span class='fas fa-trash-alt icon-red'/>
+</button>
+{% endif %}
+{% endblock %}
+
+{% block thumbnail %}
+<img class='part-thumb'
+{% if part.part.image %}
+src='{{ part.part.image.url }}'
+{% else %}
+src="{% static 'img/blank_image.png' %}"
+{% endif %}/>
+{% endblock %}
+
+{% block details %}
+
+<p>
+    {{ part.part.full_name }}
+</p>
+
+{% endblock %}
+
+{% block details_right %}
+
+<table class="table table-striped table-condensed">
+    <col width='25'>
+        <tr>
+            <td><span class='fas fa-shapes'></span></td>
+            <td>{% trans "Internal Part" %}</td>
+            <td>
+                {% if part.part %}
+                <a href="{% url 'part-detail' part.part.id %}?display=part-suppliers">{{ part.part.full_name }}</a>{% include "clip.html"%}
+                {% endif %}
+            </td>
+        </tr>
+        {% if part.description %}
+        <tr>
+            <td></td>
+            <td>{% trans "Description" %}</td>
+            <td>{{ part.description }}{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+        {% if part.link %}
+        <tr>
+            <td><span class='fas fa-link'></span></td>
+            <td>{% trans "External Link" %}</td>
+            <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td><span class='fas fa-building'></span></td>
+            <td>{% trans "Supplier" %}</td>
+            <td><a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}</td></tr>
+        <tr>
+            <td><span class='fas fa-hashtag'></span></td>
+            <td>{% trans "SKU" %}</td>
+            <td>{{ part.SKU }}{% include "clip.html"%}</tr>
+        </tr>
+        {% if part.manufacturer_part.manufacturer %}
+        <tr>
+            <td><span class='fas fa-industry'></span></td>
+            <td>{% trans "Manufacturer" %}</td>
+            <td><a href="{% url 'company-detail' part.manufacturer_part.manufacturer.id %}">
+            {{ part.manufacturer_part.manufacturer.name }}</a>{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+        {% if part.manufacturer_part.MPN %}
+        <tr>
+            <td><span class='fas fa-hashtag'></span></td>
+            <td>{% trans "MPN" %}</td>
+            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a>{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+        {% if part.packaging %}
+        <tr>
+            <td><span class='fas fa-cube'></span></td>
+            <td>{% trans "Packaging" %}</td>
+            <td>{{ part.packaging }}{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+        {% if part.note %}
+        <tr>
+            <td><span class='fas fa-sticky-note'></span></td>
+            <td>{% trans "Note" %}</td>
+            <td>{{ part.note }}{% include "clip.html"%}</td>
+        </tr>
+        {% endif %}
+</table>
+{% endblock %}
+
+{% block page_content %}
+
+<div class='panel panel-hidden' id='panel-stock'>
+    <div class='panel-heading'>
+        <span class='d-flex flex-wrap'>
+            <h4>{% trans "Supplier Part Stock" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <button type='button' class='btn btn-success' id='item-create' title='{% trans "Create new stock item" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+                </button>
+            </div>
+        </span>
+    </div>
+    <div class='panel-content'>
+        {% include "stock_table.html" %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-purchase-orders'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Supplier Part Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                <button class='btn btn-primary' type='button' id='order-part2' title='{% trans "Order part" %}'>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+                </button>
+                {% endif %}        
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='button-bar'>
+            <div class='btn-group'>
+            </div>
+        </div>
+        <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
+        </table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-pricing'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Pricing Information" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add %}
+                <button class='btn btn-success' id='new-price-break' type='button'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='price-break-toolbar' class='btn-group'>
+        </div>
+
+        <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'>    
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+function reloadPriceBreaks() {
+    $("#price-break-table").bootstrapTable("refresh");
+}
+
+$('#price-break-table').inventreeTable({
+    name: 'buypricebreaks',
+    formatNoMatches: function() { return "{% trans "No price break information found" %}"; },
+    queryParams: {
+        part: {{ part.id }},
+    },
+    url: "{% url 'api-part-supplier-price-list' %}",
+    onPostBody: function() {
+        var table = $('#price-break-table');
+
+        table.find('.button-price-break-delete').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/company/price-break/${pk}/`, {
+                method: 'DELETE',
+                onSuccess: reloadPriceBreaks,
+                title: '{% trans "Delete Price Break" %}',
+            });
+        });
+
+        table.find('.button-price-break-edit').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/company/price-break/${pk}/`, {
+                fields: {
+                    quantity: {},
+                    price: {},
+                    price_currency: {},
+                },
+                onSuccess: reloadPriceBreaks,
+                title: '{% trans "Edit Price Break" %}',
+            });
+        });
+    },
+    columns: [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'quantity',
+            title: '{% trans "Quantity" %}',
+            sortable: true,
+        },
+        {
+            field: 'price',
+            title: '{% trans "Price" %}',
+            sortable: true,
+            formatter: function(value, row, index) {
+                var html = value;
+
+                html += `<div class='btn-group float-right' role='group'>`
+
+                html += makeIconButton('fa-edit icon-blue', 'button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
+
+                html += `</div>`;
+
+                return html;
+            }
+        },
+    ]
+});
+
+$('#new-price-break').click(function() {
+
+    constructForm(
+        '{% url "api-part-supplier-price-list" %}',
+        {
+            method: 'POST',
+            fields: {
+                quantity: {},
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true,
+                },
+                price: {},
+                price_currency: {
+                },
+            },
+            title: '{% trans "Add Price Break" %}',
+            onSuccess: reloadPriceBreaks,
+        }
+    );
+});
+
+loadPurchaseOrderTable($("#purchase-order-table"), {
+    url: "{% url 'api-po-list' %}?supplier_part={{ part.id }}",
+});
+
+loadStockTable($("#stock-table"), {
+    params: {
+        supplier_part: {{ part.id }},
+        location_detail: true,
+        part_detail: false,
+    },
+    groupByField: 'location',
+    buttons: ['#stock-options'],
+    url: "{% url 'api-stock-list' %}",
+});
+
+$("#stock-export").click(function() {
+
+    exportStock({
+        supplier_part: {{ part.pk }},
+    });
+
+});
+
+$("#item-create").click(function() {
+    createNewStockItem({
+        data: {
+            part: {{ part.part.id }},
+            supplier_part: {{ part.id }},
+        },
+    });
+});
+
+$('#order-part, #order-part2').click(function() {
+    launchModalForm(
+        "{% url 'order-parts' %}",
+        {
+            data: {
+                part: {{ part.part.id }},
+            },
+            reload: true,
+        },
+    );
+});
+
+$('#edit-part').click(function () {
+
+    editSupplierPart({{ part.pk }}, {
+        onSuccess: function() {
+            location.reload();
+        }
+    });
+});
+
+$('#delete-part').click(function() {
+
+    deleteSupplierPart({{ part.pk }}, {
+        onSuccess: function() {
+            window.location.href = "{% url 'company-detail' part.supplier.id %}";
+        }
+    });
+});
+
+enableSidebar('supplierpart');
+
+{% endblock %}

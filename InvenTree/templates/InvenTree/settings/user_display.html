@@ -1,0 +1,53 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}user-display{% endblock %}
+
+{% block heading %}
+{% trans "Display Settings" %}
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+    <table class='table table-striped table-condensed'>
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="STICKY_HEADER" icon="fa-bars" user_setting=True %}
+            {% include "InvenTree/settings/setting.html" with key="FORMS_CLOSE_USING_ESCAPE" icon="fa-window-close" user_setting=True %}
+            {% include "InvenTree/settings/setting.html" with key="PART_SHOW_QUANTITY_IN_FORMS" icon="fa-hashtag" user_setting=True %}
+        </tbody>
+    </table>
+</div>
+
+<div class='panel-heading'>
+    <h4>{% trans "Theme Settings" %}</h4>
+</div>
+
+<div class='row'>
+
+    <div class='col-sm-6'>
+        <form action='{% url "settings-appearance" %}' method='post'>
+            {% csrf_token %}
+            <input name='next' type='hidden' value='{% url "settings" %}'>
+            <label for='theme' class=' requiredField'>
+                {% trans "Select theme" %}
+            </label>
+            <div class='form-group input-group mb-3'>
+                <select id='theme' name='theme' class='select form-control'>
+                    {% get_available_themes as themes %}
+                    {% get_user_color_theme request.user.username as user_theme %}
+                    {% for theme in themes %}
+                    <option value='{{ theme.key }}'{% if theme.key == user_theme %} selected{% endif%}>{{ theme.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class='input-group-append'>
+                    <input type="submit" value="{% trans 'Set Theme' %}" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -32,24 +32,53 @@ class InvenTreeConfig(AppConfig):
 
         logger.info("Starting background tasks...")
 
+        # Remove successful task results from the database
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.delete_successful_tasks',
             schedule_type=Schedule.DAILY,
         )
 
+        # Check for InvenTree updates
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.check_for_updates',
             schedule_type=Schedule.DAILY
         )
 
+        # Heartbeat to let the server know the background worker is running
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.heartbeat',
             schedule_type=Schedule.MINUTES,
             minutes=15
         )
 
+        # Keep exchange rates up to date
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.update_exchange_rates',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Remove expired sessions
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.delete_expired_sessions',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Delete old error messages
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.delete_old_error_logs',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Delete "old" stock items
+        InvenTree.tasks.schedule_task(
+            'stock.tasks.delete_old_stock_items',
+            schedule_type=Schedule.MINUTES,
+            minutes=30,
+        )
+
+        # Delete old notification records
+        InvenTree.tasks.schedule_task(
+            'common.tasks.delete_old_notifications',
             schedule_type=Schedule.DAILY,
         )
 

@@ -1,143 +1,576 @@
 {% extends "build/build_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 {% load status_codes %}
+{% load markdownify %}
 
-{% block menubar %}
-{% include "build/navbar.html" with tab='details' %}
+{% block sidebar %}
+{% include "build/sidebar.html" %}
 {% endblock %}
 
-{% block heading %}
-{% trans "Build Details" %}
-{% endblock %}
+{% block page_content %}
 
-{% block details %}
-<div class='row'>
-    <div class='col-sm-6'>
-        <table class='table table-striped'>
-            <col width='25'>
-        <tr>
-            <td><span class='fas fa-info'></span></td>
-            <td>{% trans "Description" %}</td>
-            <td>{{ build.title }}{% include "clip.html"%}</td>
-        </tr>
-        <tr>
-            <td><span class='fas fa-shapes'></span></td>
-            <td>{% trans "Part" %}</td>
-            <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a>{% include "clip.html"%}</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>{% trans "Quantity" %}</td><td>{{ build.quantity }}</td>
-        </tr>
-        <tr>
-            <td><span class='fas fa-map-marker-alt'></span></td>
-            <td>{% trans "Stock Source" %}</td>
-            <td>
-                {% if build.take_from %}
-                <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>{% include "clip.html"%}
-                {% else %}
-                <i>{% trans "Stock can be taken from any available location." %}</i>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td><span class='fas fa-map-marker-alt'></span></td>
-            <td>{% trans "Destination" %}</td>
-            <td>
-                {% if build.destination %}
-                <a href="{% url 'stock-location-detail' build.destination.id %}">
-                    {{ build.destination }}
-                </a>{% include "clip.html"%}
-                {% else %}
-                <i>{% trans "Destination location not specified" %}</i>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td><span class='fas fa-info'></span></td>
-            <td>{% trans "Status" %}</td>
-            <td>{% build_status_label build.status %}</td>
-        </tr>
-        <tr>
-            <td><span class='fas fa-spinner'></span></td>
-            <td>{% trans "Progress" %}</td>
-            <td>{{ build.completed }} / {{ build.quantity }}</td>
-        </tr>
-        {% if build.batch %}
-        <tr>
-            <td><span class='fas fa-layer-group'></span></td>
-            <td>{% trans "Batch" %}</td>
-            <td>{{ build.batch }}{% include "clip.html"%}</td>
-        </tr>
-        {% endif %}
-        {% if build.parent %}
-        <tr>
-            <td><span class='fas fa-sitemap'></span></td>
-            <td>{% trans "Parent Build" %}</td>
-            <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
-        </tr>
-        {% endif %}
-        {% if build.sales_order %}
-        <tr>
-            <td><span class='fas fa-dolly'></span></td>
-            <td>{% trans "Sales Order" %}</td>
-            <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a>{% include "clip.html"%}</td>
-        </tr>
-        {% endif %}
-        {% if build.link %}
-        <tr>
-            <td><span class='fas fa-link'></span></td>
-            <td>{% trans "External Link" %}</td>
-            <td><a href="{{ build.link }}">{{ build.link }}</a>{% include "clip.html"%}</td>
-        </tr>
-        {% endif %}
-        {% if build.issued_by %}
-        <tr>
-            <td><span class='fas fa-user'></span></td>
-            <td>{% trans "Issued By" %}</td>
-            <td>{{ build.issued_by }}</td>
-        </tr>
-        {% endif %}
-        {% if build.responsible %}
-        <tr>
-            <td><span class='fas fa-users'></span></td>
-            <td>{% trans "Responsible" %}</td>
-            <td>{{ build.responsible }}</td>
-        </tr>
-        {% endif %}
-        </table>
+<div class='panel panel-hidden' id='panel-details'>
+    <div class='panel-heading'>
+        <h4>{% trans "Build Details" %}</h4>
     </div>
-    <div class='col-sm-6'>
-        <table class='table table-striped'>
-            <col width='25'>
-            <tr>
-                <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Created" %}</td>
-                <td>{{ build.creation_date }}</td>
-            </tr>
-            <tr>
-                <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Target Date" %}</td>
-                {% if build.target_date %}
-                <td>
-                    {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
-                </td>
-                {% else %}
-                <td><i>{% trans "No target date set" %}</i></td>
+    <div class='panel-content'>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <table class='table table-striped'>
+                    <col width='25'>
+                <tr>
+                    <td><span class='fas fa-info'></span></td>
+                    <td>{% trans "Description" %}</td>
+                    <td>{{ build.title }}{% include "clip.html"%}</td>
+                </tr>
+                <tr>
+                    <td><span class='fas fa-shapes'></span></td>
+                    <td>{% trans "Part" %}</td>
+                    <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a>{% include "clip.html"%}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{% trans "Quantity" %}</td><td>{{ build.quantity }}</td>
+                </tr>
+                <tr>
+                    <td><span class='fas fa-map-marker-alt'></span></td>
+                    <td>{% trans "Stock Source" %}</td>
+                    <td>
+                        {% if build.take_from %}
+                        <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>{% include "clip.html"%}
+                        {% else %}
+                        <em>{% trans "Stock can be taken from any available location." %}</em>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class='fas fa-map-marker-alt'></span></td>
+                    <td>{% trans "Destination" %}</td>
+                    <td>
+                        {% if build.destination %}
+                        <a href="{% url 'stock-location-detail' build.destination.id %}">
+                            {{ build.destination }}
+                        </a>{% include "clip.html"%}
+                        {% else %}
+                        <em>{% trans "Destination location not specified" %}</em>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class='fas fa-info'></span></td>
+                    <td>{% trans "Status" %}</td>
+                    <td>{% build_status_label build.status %}</td>
+                </tr>
+                <tr>
+                    <td><span class='fas fa-check-circle'></span></td>
+                    <td>{% trans "Completed" %}</td>
+                    <td>{% progress_bar build.completed build.quantity id='build-completed-2' max_width='150px' %}</td>
+                </tr>
+                {% if build.active and build.has_untracked_bom_items %}
+                <tr>
+                    <td><span class='fas fa-list'></span></td>
+                    <td>{% trans "Allocated Parts" %}</td>
+                    <td id='output-progress-untracked'><span class='fas fa-spinner fa-spin'></span></td>
+                </tr>
                 {% endif %}
-            </tr>
-            <tr>
-                <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Completed" %}</td>
-                {% if build.completion_date %}
-                <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
-                {% else %}
-                <td><i>{% trans "Build not complete" %}</i></td>
+                {% if build.batch %}
+                <tr>
+                    <td><span class='fas fa-layer-group'></span></td>
+                    <td>{% trans "Batch" %}</td>
+                    <td>{{ build.batch }}{% include "clip.html"%}</td>
+                </tr>
                 {% endif %}
-            </tr>
-        </table>
+                {% if build.parent %}
+                <tr>
+                    <td><span class='fas fa-sitemap'></span></td>
+                    <td>{% trans "Parent Build" %}</td>
+                    <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a>{% include "clip.html"%}</td>
+                </tr>
+                {% endif %}
+                {% if build.sales_order %}
+                <tr>
+                    <td><span class='fas fa-dolly'></span></td>
+                    <td>{% trans "Sales Order" %}</td>
+                    <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a>{% include "clip.html"%}</td>
+                </tr>
+                {% endif %}
+                {% if build.link %}
+                <tr>
+                    <td><span class='fas fa-link'></span></td>
+                    <td>{% trans "External Link" %}</td>
+                    <td><a href="{{ build.link }}">{{ build.link }}</a>{% include "clip.html"%}</td>
+                </tr>
+                {% endif %}
+                {% if build.issued_by %}
+                <tr>
+                    <td><span class='fas fa-user'></span></td>
+                    <td>{% trans "Issued By" %}</td>
+                    <td>{{ build.issued_by }}</td>
+                </tr>
+                {% endif %}
+                {% if build.responsible %}
+                <tr>
+                    <td><span class='fas fa-users'></span></td>
+                    <td>{% trans "Responsible" %}</td>
+                    <td>{{ build.responsible }}</td>
+                </tr>
+                {% endif %}
+                </table>
+            </div>
+            <div class='col-sm-6'>
+                <table class='table table-striped'>
+                    <col width='25'>
+                    <tr>
+                        <td><span class='fas fa-calendar-alt'></span></td>
+                        <td>{% trans "Created" %}</td>
+                        <td>{{ build.creation_date }}</td>
+                    </tr>
+                    <tr>
+                        <td><span class='fas fa-calendar-alt'></span></td>
+                        <td>{% trans "Target Date" %}</td>
+                        {% if build.target_date %}
+                        <td>
+                            {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
+                        </td>
+                        {% else %}
+                        <td><em>{% trans "No target date set" %}</em></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td><span class='fas fa-calendar-alt'></span></td>
+                        <td>{% trans "Completed" %}</td>
+                        {% if build.completion_date %}
+                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
+                        {% else %}
+                        <td><em>{% trans "Build not complete" %}</em></td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<div class='panel panel-hidden' id='panel-children'>
+    <div class='panel-heading'>
+        <h4>{% trans "Child Build Orders" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='child-button-toolbar'>
+            <div class='button-toolbar container-fluid float-right'>
+                {% include "filter_list.html" with id='sub-build' %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#child-button-toolbar'></table>  
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-allocate'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Allocate Stock to Build" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if build.active and build.has_untracked_bom_items %}
+                <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
+                    <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
+                </button>
+                <button class='btn btn-success' type='button' id='btn-auto-allocate' title='{% trans "Allocate stock to build" %}'>
+                    <span class='fas fa-sign-in-alt'></span> {% trans "Allocate Stock" %}
+                </button>
+                <!--
+                <button class='btn btn-primary' type='button' id='btn-order-parts' title='{% trans "Order required parts" %}'>
+                    <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
+                </button>
+                -->
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% if build.has_untracked_bom_items %}
+        {% if build.active %}
+        {% if build.areUntrackedPartsFullyAllocated %}
+        <div class='alert alert-block alert-success'>
+            {% trans "Untracked stock has been fully allocated for this Build Order" %}
+        </div>
+        {% else %}
+        <div class='alert alert-block alert-danger'>
+            {% trans "Untracked stock has not been fully allocated for this Build Order" %}
+        </div>
+        {% endif %}
+        {% endif %}
+        <div id='unallocated-toolbar'>
+            <div class='button-toolbar container-fluid' style='float: right;'>
+                <div class='btn-group'>
+                    <button id='allocate-selected-items' class='btn btn-success' title='{% trans "Allocate selected items" %}'>
+                        <span class='fas fa-sign-in-alt'></span>
+                    </button>
+                    {% include "filter_list.html" with id='builditems' %}
+                </div>
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='allocation-table-untracked' data-toolbar='#unallocated-toolbar'></table>
+        {% else %}
+        <div class='alert alert-block alert-info'>
+            {% trans "This Build Order does not have any associated untracked BOM items" %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-outputs'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Incomplete Build Outputs" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if build.active %}
+                <button class='btn btn-success' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Build Output" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='build-output-toolbar'>
+            <div class='button-toolbar container-fluid'>
+                {% if build.active %}
+                <div class='btn-group'>
+
+                    <!-- Build output actions -->
+                    <div class='btn-group'>
+                        <button id='output-options' class='btn btn-primary dropdown-toiggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
+                            <span class='fas fa-tools'></span> <span class='caret'></span>
+                        </button>
+                        <ul class='dropdown-menu'>
+                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'>
+                                <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-completed'>
+    <div class='panel-heading'>
+        <h4>
+            {% trans "Completed Build Outputs" %}
+        </h4>
+    </div>
+
+    <div class='panel-content'>
+        {% include "stock_table.html" with read_only=True prefix="build-" %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-notes'>
+    <div class='panel-heading'>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <h4>{% trans "Build Notes" %}</h4>
+            </div>
+            <div class='col-sm-6'>
+                <div class='btn-group float-right'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-outline-secondary'>
+                        <span class='fas fa-edit'>      
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% if build.notes %}
+        {{ build.notes | markdownify }}
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('#btn-create-output').click(function() {
+    launchModalForm('{% url "build-output-create" build.id %}',
+        {
+            reload: true,
+        }
+    );
+});
+
+loadStockTable($("#build-stock-table"), {
+    params: {
+        location_detail: true,
+        part_detail: true,
+        build: {{ build.id }},
+        is_building: false,
+    },
+    groupByField: 'location',
+    buttons: [
+        '#stock-options',
+    ],
+    url: "{% url 'api-stock-list' %}",    
+});
+
+
+// Get the list of BOM items required for this build
+inventreeGet(
+    '{% url "api-bom-list" %}',
+    {
+        part: {{ build.part.pk }},
+        sub_part_detail: true,
+    },
+    {
+        success: function(response) {
+
+            var build_info = {
+                pk: {{ build.pk }},
+                part: {{ build.part.pk }},
+                quantity: {{ build.quantity }},
+                bom_items: response,
+                {% if build.take_from %}
+                source_location: {{ build.take_from.pk }},
+                {% endif %}
+                {% if build.has_tracked_bom_items %}
+                tracked_parts: true,
+                {% else %}
+                tracked_parts: false,
+                {% endif %}
+            };
+
+            {% if build.active %}
+            loadBuildOutputTable(build_info);
+            linkButtonsToSelection(
+                '#build-output-table',
+                [
+                    '#output-options',
+                    '#multi-output-complete',
+                ]
+            );
+
+            $('#multi-output-complete').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                completeBuildOutputs(
+                    build_info.pk,
+                    outputs,
+                    {
+                        success: function() {
+                            // Reload the "in progress" table
+                            $('#build-output-table').bootstrapTable('refresh');
+
+                            // Reload the "completed" table
+                            $('#build-stock-table').bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+
+            {% endif %}
+        
+            {% if build.active and build.has_untracked_bom_items %}
+            // Load allocation table for un-tracked parts
+            loadBuildOutputAllocationTable(
+                build_info,
+                null,
+                {
+                    search: true,
+                }
+            );
+            {% endif %}
+        }
+    }
+);
+
+loadBuildTable($('#sub-build-table'), {
+    url: '{% url "api-build-list" %}',
+    filterTarget: "#filter-list-sub-build",
+    params: {
+        ancestor: {{ build.pk }},
+    }
+});
+
+
+enableDragAndDrop(
+    '#attachment-dropzone',
+    '{% url "api-build-attachment-list" %}',
+    {
+        data: {
+            build: {{ build.id }},
+        },
+        label: 'attachment',
+        success: function(data, status, xhr) {
+            location.reload();
+        }
+    }
+);
+
+// Callback for creating a new attachment
+$('#new-attachment').click(function() {
+
+    constructForm('{% url "api-build-attachment-list" %}', {
+        fields: {
+            attachment: {},
+            comment: {},
+            build: {
+                value: {{ build.pk }},
+                hidden: true,
+            }
+        },
+        method: 'POST',
+        onSuccess: reloadAttachmentTable,
+        title: '{% trans "Add Attachment" %}',
+    });
+});
+
+loadAttachmentTable(
+    '{% url "api-build-attachment-list" %}',
+    {
+        filters: {
+            build: {{ build.pk }},
+        },
+        onEdit: function(pk) {
+            var url = `/api/build/attachment/${pk}/`;
+
+            constructForm(url, {
+                fields: {
+                    filename: {},
+                    comment: {},
+                },
+                onSuccess: reloadAttachmentTable,
+                title: '{% trans "Edit Attachment" %}',
+            });
+        },
+        onDelete: function(pk) {
+
+            constructForm(`/api/build/attachment/${pk}/`, {
+                method: 'DELETE',
+                confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                title: '{% trans "Delete Attachment" %}',
+                onSuccess: reloadAttachmentTable,
+            });
+        }
+    }
+);
+
+$('#edit-notes').click(function() {
+    constructForm('{% url "api-build-detail" build.pk %}', {
+        fields: {
+            notes: {
+                multiline: true,
+            }
+        },
+        title: '{% trans "Edit Notes" %}',
+        reload: true,
+    });
+});
+
+function reloadTable() {
+    $('#allocation-table-untracked').bootstrapTable('refresh');
+}
+
+{% if build.active %}
+$("#btn-auto-allocate").on('click', function() {
+
+    var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
+
+    var incomplete_bom_items = [];
+
+    bom_items.forEach(function(bom_item) {
+        if (bom_item.required > bom_item.allocated) {
+            incomplete_bom_items.push(bom_item);
+        }
+    });
+
+    if (incomplete_bom_items.length == 0) {
+        showAlertDialog(
+            '{% trans "Allocation Complete" %}',
+            '{% trans "All untracked stock items have been allocated" %}',
+        );
+    } else {
+
+        allocateStockToBuild(
+            {{ build.pk }},
+            {{ build.part.pk }},
+            incomplete_bom_items,
+            {
+                {% if build.take_from %}
+                source_location: {{ build.take_from.pk }},
+                {% endif %}
+                success: function(data) {
+                    $('#allocation-table-untracked').bootstrapTable('refresh');
+                }
+            }
+        );
+    }
+});
+
+$('#btn-unallocate').on('click', function() {
+    unallocateStock({{ build.id }}, {
+        table: '#allocation-table-untracked',
+    });
+});
+
+$('#allocate-selected-items').click(function() {
+
+    var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
+
+    if (bom_items.length == 0) {
+        bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
+    }
+
+    allocateStockToBuild(
+        {{ build.pk }},
+        {{ build.part.pk }},
+        bom_items,
+        {
+            {% if build.take_from %}
+            source_location: {{ build.take_from.pk }},
+            {% endif %}
+            success: function(data) {
+                $('#allocation-table-untracked').bootstrapTable('refresh');
+            }
+        }
+    );
+});
+
+$("#btn-order-parts").click(function() {
+    launchModalForm("/order/purchase-order/order-parts/", {
+        data: {
+            build: {{ build.id }},
+        },
+    });
+});
+
+{% endif %}
+
+enableSidebar('buildorder');
+
 
 {% endblock %}

@@ -7,5 +7,5 @@
 *.yml text
 *.yaml text
 *.conf text
-*.sh text
+*.sh text eol=lf
 *.js text

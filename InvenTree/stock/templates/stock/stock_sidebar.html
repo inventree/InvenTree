@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% trans "Stock Tracking" as text %}
+{% include "sidebar_item.html" with label='history' text=text icon="fa-history" %}
+{% if item.part.trackable %}
+{% trans "Test Data" as text %}
+{% include "sidebar_item.html" with label='test-data' text=text icon="fa-vial" %}
+{% endif %}
+{% if item.part.assembly %}
+{% trans "Installed Items" as text %}
+{% include "sidebar_item.html" with label='installed-items' text=text icon="fa-sign-in-alt" %}
+{% endif %}
+{% if item.child_count > 0 %}
+{% trans "Child Items" as text %}
+{% include "sidebar_item.html" with label='children' text=text icon="fa-sitemap" %}
+{% endif %}
+{% trans "Attachments" as text %}
+{% include "sidebar_item.html" with label='attachments' text=text icon="fa-paperclip" %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label='notes' text=text icon="fa-clipboard" %}

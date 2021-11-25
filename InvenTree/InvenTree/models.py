@@ -4,9 +4,12 @@ Generic models which provide extra functionality over base Django model types.
 
 from __future__ import unicode_literals
 
+import re
 import os
+import logging
 
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
@@ -19,6 +22,9 @@ from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
 from .validators import validate_tree_name
+
+
+logger = logging.getLogger('inventree')
 
 
 def rename_attachment(instance, filename):
@@ -36,6 +42,48 @@ def rename_attachment(instance, filename):
 
     # Construct a path to store a file attachment for a given model type
     return os.path.join(instance.getSubdir(), filename)
+
+
+class ReferenceIndexingMixin(models.Model):
+    """
+    A mixin for keeping track of numerical copies of the "reference" field.
+
+    Here, we attempt to convert a "reference" field value (char) to an integer,
+    for performing fast natural sorting.
+
+    This requires extra database space (due to the extra table column),
+    but is required as not all supported database backends provide equivalent casting.
+
+    This mixin adds a field named 'reference_int'.
+
+    - If the 'reference' field can be cast to an integer, it is stored here
+    - If the 'reference' field *starts* with an integer, it is stored here
+    - Otherwise, we store zero
+    """
+
+    class Meta:
+        abstract = True
+
+    def rebuild_reference_field(self):
+
+        reference = getattr(self, 'reference', '')
+
+        # Default value if we cannot convert to an integer
+        ref_int = 0
+
+        # Look at the start of the string - can it be "integerized"?
+        result = re.match(r"^(\d+)", reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except:
+                ref_int = 0
+
+        self.reference_int = ref_int
+
+    reference_int = models.IntegerField(default=0)
 
 
 class InvenTreeAttachment(models.Model):
@@ -77,6 +125,72 @@ class InvenTreeAttachment(models.Model):
     def basename(self):
         return os.path.basename(self.attachment.name)
 
+    @basename.setter
+    def basename(self, fn):
+        """
+        Function to rename the attachment file.
+
+        - Filename cannot be empty
+        - Filename cannot contain illegal characters
+        - Filename must specify an extension
+        - Filename cannot match an existing file
+        """
+
+        fn = fn.strip()
+
+        if len(fn) == 0:
+            raise ValidationError(_('Filename must not be empty'))
+
+        attachment_dir = os.path.join(
+            settings.MEDIA_ROOT,
+            self.getSubdir()
+        )
+
+        old_file = os.path.join(
+            settings.MEDIA_ROOT,
+            self.attachment.name
+        )
+
+        new_file = os.path.join(
+            settings.MEDIA_ROOT,
+            self.getSubdir(),
+            fn
+        )
+
+        new_file = os.path.abspath(new_file)
+
+        # Check that there are no directory tricks going on...
+        if not os.path.dirname(new_file) == attachment_dir:
+            logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
+            raise ValidationError(_("Invalid attachment directory"))
+
+        # Ignore further checks if the filename is not actually being renamed
+        if new_file == old_file:
+            return
+
+        forbidden = ["'", '"', "#", "@", "!", "&", "^", "<", ">", ":", ";", "/", "\\", "|", "?", "*", "%", "~", "`"]
+
+        for c in forbidden:
+            if c in fn:
+                raise ValidationError(_(f"Filename contains illegal character '{c}'"))
+
+        if len(fn.split('.')) < 2:
+            raise ValidationError(_("Filename missing extension"))
+
+        if not os.path.exists(old_file):
+            logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
+            return
+
+        if os.path.exists(new_file):
+            raise ValidationError(_("Attachment with this filename already exists"))
+
+        try:
+            os.rename(old_file, new_file)
+            self.attachment.name = os.path.join(self.getSubdir(), fn)
+            self.save()
+        except:
+            raise ValidationError(_("Error renaming file"))
+
     class Meta:
         abstract = True
 
@@ -92,6 +206,17 @@ class InvenTreeTree(MPTTModel):
         description: longer form description
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
+
+    def api_instance_filters(self):
+        """
+        Instance filters for InvenTreeTree models
+        """
+
+        return {
+            'parent': {
+                'exclude_tree': self.pk,
+            }
+        }
 
     def save(self, *args, **kwargs):
 

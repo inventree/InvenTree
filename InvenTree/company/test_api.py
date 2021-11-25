@@ -202,7 +202,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         data = {
             'MPN': 'MPN-TEST-123',
         }
-        
+
         response = self.client.patch(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -218,19 +218,32 @@ class ManufacturerTest(InvenTreeAPITestCase):
     def test_supplier_part_create(self):
         url = reverse('api-supplier-part-list')
 
-        # Create supplier part
+        # Create a manufacturer part
+        response = self.post(
+            reverse('api-manufacturer-part-list'),
+            {
+                'part': 1,
+                'manufacturer': 7,
+                'MPN': 'PART_NUMBER',
+            },
+            expected_code=201
+        )
+
+        pk = response.data['pk']
+
+        # Create a supplier part (associated with the new manufacturer part)
         data = {
             'part': 1,
             'supplier': 1,
             'SKU': 'SKU_TEST',
-            'manufacturer': 7,
-            'MPN': 'PART_NUMBER',
+            'manufacturer_part': pk,
         }
+
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Check manufacturer part
-        manufacturer_part_id = int(response.data['manufacturer_part']['pk'])
+        manufacturer_part_id = int(response.data['manufacturer_part_detail']['pk'])
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': manufacturer_part_id})
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'PART_NUMBER')

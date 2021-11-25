@@ -1,53 +1,52 @@
-{% extends "InvenTree/settings/settings.html" %}
+{% extends "panel.html" %}
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='currencies' %}
-{% endblock %}
+{% block label %}currencies{% endblock %}
 
-{% block subtitle %}
+{% block heading %}
 {% trans "Currency Settings" %}
 {% endblock %}
 
-{% block settings %}
+{% block content %}
 
 <table class='table table-striped table-condensed'>
-    {% include "InvenTree/settings/header.html" %}
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_DEFAULT_CURRENCY" icon="fa-globe" %}
-    </tbody>
-</table>
 
-<table class='table table-striped table-condensed'>
-    <tbody>
         <tr>
+            <td></td>
             <th>{% trans "Base Currency" %}</th>
             <th>{{ base_currency }}</th>
         </tr>
         <tr>
-            <th colspan='2'>{% trans "Exchange Rates" %}</th>
+            <td></td>
+            <th colspan='4'>{% trans "Exchange Rates" %}</th>
         </tr>
         {% for rate in rates %}
         <tr>
-            <td>{{ rate.currency }}</td>
+            <td></td>
             <td>{{ rate.value }}</td>
+            <td>{{ rate.currency }}</td>
+            <td></td>
+            <td></td>
         </tr>
         {% endfor %}
         <tr>
+            <th></th>
             <th>
                 {% trans "Last Update" %}
             </th>
-            <td>
+            <td colspan="3">
                 {% if rates_updated %}
                 {{ rates_updated }}
                 {% else %}
-                <i>{% trans "Never" %}</i>
+                <em>{% trans "Never" %}</em>
                 {% endif %}
                 <form action='{% url "settings-currencies-refresh" %}' method='post'>
                     <div id='refresh-rates-form'>
                         {% csrf_token %}
-                        <button type='submit' id='update-rates' class='btn btn-default float-right'>{% trans "Update Now" %}</button>
+                        <button type='submit' id='update-rates' class='btn btn-primary float-right'>{% trans "Update Now" %}</button>
                     </div>
                 </form>
             </td>
@@ -55,8 +54,4 @@
     </tbody>
 </table>
 
-{% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
 {% endblock %}

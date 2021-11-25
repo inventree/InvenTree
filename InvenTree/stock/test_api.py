@@ -5,10 +5,12 @@ Unit testing for the Stock API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from datetime import datetime, timedelta
 
-from rest_framework import status
 from django.urls import reverse
+from rest_framework import status
 
 from InvenTree.status_codes import StockStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -16,6 +18,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from common.models import InvenTreeSetting
 
 from .models import StockItem, StockLocation
+from .tasks import delete_old_stock_items
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -35,6 +38,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock_location.change',
         'stock_location.add',
+        'stock.delete',
     ]
 
     def setUp(self):
@@ -360,23 +364,21 @@ class StockItemTest(StockAPITestCase):
                 'part': 1,
                 'location': 1,
             },
-            expected_code=201,
+            expected_code=400
         )
 
-        # Item should have been created with default quantity
-        self.assertEqual(response.data['quantity'], 1)
-        
+        self.assertIn('Quantity is required', str(response.data))
+
         # POST with quantity and part and location
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 1,
                 'location': 1,
                 'quantity': 10,
-            }
+            },
+            expected_code=201
         )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_default_expiry(self):
         """
@@ -428,6 +430,67 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
+    def test_purchase_price(self):
+        """
+        Test that we can correctly read and adjust purchase price information via the API
+        """
+
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        data = self.get(url, expected_code=200).data
+
+        # Check fixture values
+        self.assertEqual(data['purchase_price'], '123.0000')
+        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        self.assertEqual(data['purchase_price_string'], 'A$123.0000')
+
+        # Update just the amount
+        data = self.patch(
+            url,
+            {
+                'purchase_price': 456
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price'], '456.0000')
+        self.assertEqual(data['purchase_price_currency'], 'AUD')
+
+        # Update the currency
+        data = self.patch(
+            url,
+            {
+                'purchase_price_currency': 'NZD',
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price_currency'], 'NZD')
+
+        # Clear the price field
+        data = self.patch(
+            url,
+            {
+                'purchase_price': None,
+            },
+            expected_code=200
+        ).data
+
+        self.assertEqual(data['purchase_price'], None)
+        self.assertEqual(data['purchase_price_string'], '-')
+
+        # Invalid currency code
+        data = self.patch(
+            url,
+            {
+                'purchase_price_currency': 'xyz',
+            },
+            expected_code=400
+        )
+
+        data = self.get(url).data
+        self.assertEqual(data['purchase_price_currency'], 'NZD')
+
 
 class StocktakeTest(StockAPITestCase):
     """
@@ -448,38 +511,43 @@ class StocktakeTest(StockAPITestCase):
 
             # POST with a valid action
             response = self.post(url, data)
-            self.assertContains(response, "must contain list", status_code=status.HTTP_400_BAD_REQUEST)
+
+            self.assertIn("This field is required", str(response.data["items"]))
 
             data['items'] = [{
                 'no': 'aa'
             }]
 
             # POST without a PK
-            response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+            response = self.post(url, data, expected_code=400)
 
-            # POST with a PK but no quantity
+            self.assertIn('This field is required', str(response.data))
+
+            # POST with an invalid PK
             data['items'] = [{
                 'pk': 10
             }]
 
-            response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+            response = self.post(url, data, expected_code=400)
 
+            self.assertContains(response, 'object does not exist', status_code=status.HTTP_400_BAD_REQUEST)
+
+            # POST with missing quantity value
             data['items'] = [{
                 'pk': 1234
             }]
 
-            response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+            response = self.post(url, data, expected_code=400)
+            self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
 
+            # POST with an invalid quantity value
             data['items'] = [{
                 'pk': 1234,
                 'quantity': '10x0d'
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'A valid number is required', status_code=status.HTTP_400_BAD_REQUEST)
 
             data['items'] = [{
                 'pk': 1234,
@@ -487,18 +555,7 @@ class StocktakeTest(StockAPITestCase):
             }]
 
             response = self.post(url, data)
-            self.assertContains(response, 'must not be less than zero', status_code=status.HTTP_400_BAD_REQUEST)
-
-            # Test with a single item
-            data = {
-                'item': {
-                    'pk': 1234,
-                    'quantity': '10',
-                }
-            }
-
-            response = self.post(url, data)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertContains(response, 'Ensure this value is greater than or equal to 0', status_code=status.HTTP_400_BAD_REQUEST)
 
     def test_transfer(self):
         """
@@ -506,24 +563,81 @@ class StocktakeTest(StockAPITestCase):
         """
 
         data = {
-            'item': {
-                'pk': 1234,
-                'quantity': 10,
-            },
+            'items': [
+                {
+                    'pk': 1234,
+                    'quantity': 10,
+                }
+            ],
             'location': 1,
             'notes': "Moving to a new location"
         }
 
         url = reverse('api-stock-transfer')
 
-        response = self.post(url, data)
-        self.assertContains(response, "Moved 1 parts to", status_code=status.HTTP_200_OK)
+        # This should succeed
+        response = self.post(url, data, expected_code=201)
 
         # Now try one which will fail due to a bad location
         data['location'] = 'not a location'
 
-        response = self.post(url, data)
-        self.assertContains(response, 'Valid location must be specified', status_code=status.HTTP_400_BAD_REQUEST)
+        response = self.post(url, data, expected_code=400)
+
+        self.assertContains(response, 'Incorrect type. Expected pk value', status_code=status.HTTP_400_BAD_REQUEST)
+
+
+class StockItemDeletionTest(StockAPITestCase):
+    """
+    Tests for stock item deletion via the API
+    """
+
+    def test_delete(self):
+
+        # Check there are no stock items scheduled for deletion
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            0
+        )
+
+        # Create and then delete a bunch of stock items
+        for idx in range(10):
+
+            # Create new StockItem via the API
+            response = self.post(
+                reverse('api-stock-list'),
+                {
+                    'part': 1,
+                    'location': 1,
+                    'quantity': idx,
+                },
+                expected_code=201
+            )
+
+            pk = response.data['pk']
+
+            item = StockItem.objects.get(pk=pk)
+
+            self.assertFalse(item.scheduled_for_deletion)
+
+            # Request deletion via the API
+            self.delete(
+                reverse('api-stock-detail', kwargs={'pk': pk}),
+                expected_code=204
+            )
+
+        # There should be 100x StockItem objects marked for deletion
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            10
+        )
+
+        # Perform the actual delete (will take some time)
+        delete_old_stock_items()
+
+        self.assertEqual(
+            StockItem.objects.filter(scheduled_for_deletion=True).count(),
+            0
+        )
 
 
 class StockTestResultTest(StockAPITestCase):
@@ -603,3 +717,37 @@ class StockTestResultTest(StockAPITestCase):
         test = response.data[0]
         self.assertEqual(test['value'], '150kPa')
         self.assertEqual(test['user'], self.user.pk)
+
+    def test_post_bitmap(self):
+        """
+        2021-08-25
+
+        For some (unknown) reason, prior to fix https://github.com/inventree/InvenTree/pull/2018
+        uploading a bitmap image would result in a failure.
+
+        This test has been added to ensure that there is no regression.
+
+        As a bonus this also tests the file-upload component
+        """
+
+        here = os.path.dirname(__file__)
+
+        image_file = os.path.join(here, 'fixtures', 'test_image.bmp')
+
+        with open(image_file, 'rb') as bitmap:
+
+            data = {
+                'stock_item': 105,
+                'test': 'Checked Steam Valve',
+                'result': False,
+                'value': '150kPa',
+                'notes': 'I guess there was just too much pressure?',
+                "attachment": bitmap,
+            }
+
+            response = self.client.post(self.get_url(), data)
+
+            self.assertEqual(response.status_code, 201)
+
+            # Check that an attachment has been uploaded
+            self.assertIsNotNone(response.data['attachment'])

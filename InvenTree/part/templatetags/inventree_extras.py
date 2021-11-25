@@ -6,6 +6,7 @@ over and above the built-in Django tags.
 
 import os
 import sys
+from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as djangosettings
@@ -18,7 +19,7 @@ from InvenTree import version, settings
 
 import InvenTree.helpers
 
-from common.models import InvenTreeSetting, ColorTheme
+from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
 
 register = template.Library()
@@ -70,6 +71,12 @@ def add(x, y, *args, **kwargs):
 
 
 @register.simple_tag()
+def to_list(*args):
+    """ Return the input arguments as list """
+    return args
+
+
+@register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 
@@ -81,6 +88,13 @@ def inventree_in_debug_mode(*args, **kwargs):
     """ Return True if the server is running in DEBUG mode """
 
     return djangosettings.DEBUG
+
+
+@register.simple_tag()
+def inventree_demo_mode(*args, **kwargs):
+    """ Return True if the server is running in DEMO mode """
+
+    return djangosettings.DEMO_MODE
 
 
 @register.simple_tag()
@@ -116,6 +130,12 @@ def inventree_title(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_base_url(*args, **kwargs):
+    """ Return the INVENTREE_BASE_URL setting """
+    return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+
+
+@register.simple_tag()
 def python_version(*args, **kwargs):
     """
     Return the current python version
@@ -127,6 +147,21 @@ def python_version(*args, **kwargs):
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()
+
+
+@register.simple_tag()
+def inventree_is_development(*args, **kwargs):
+    return version.isInvenTreeDevelopmentVersion()
+
+
+@register.simple_tag()
+def inventree_is_release(*args, **kwargs):
+    return not version.isInvenTreeDevelopmentVersion()
+
+
+@register.simple_tag()
+def inventree_docs_version(*args, **kwargs):
+    return version.inventreeDocsVersion()
 
 
 @register.simple_tag()
@@ -162,7 +197,10 @@ def inventree_github_url(*args, **kwargs):
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
     """ Return URL for InvenTree documenation site """
-    return "https://inventree.readthedocs.io/"
+
+    tag = version.inventreeDocsVersion()
+
+    return f"https://inventree.readthedocs.io/en/{tag}"
 
 
 @register.simple_tag()
@@ -182,11 +220,12 @@ def setting_object(key, *args, **kwargs):
     """
     Return a setting object speciifed by the given key
     (Or return None if the setting does not exist)
+    if a user-setting was requested return that
     """
 
-    setting = InvenTreeSetting.get_setting_object(key)
-
-    return setting
+    if 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+    return InvenTreeSetting.get_setting_object(key)
 
 
 @register.simple_tag()
@@ -195,11 +234,93 @@ def settings_value(key, *args, **kwargs):
     Return a settings value specified by the given key
     """
 
+    if 'user' in kwargs:
+        return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
+
     return InvenTreeSetting.get_setting(key)
 
 
 @register.simple_tag()
+def user_settings(user, *args, **kwargs):
+    """
+    Return all USER settings as a key:value dict
+    """
+
+    return InvenTreeUserSetting.allValues(user=user)
+
+
+@register.simple_tag()
+def global_settings(*args, **kwargs):
+    """
+    Return all GLOBAL InvenTree settings as a key:value dict
+    """
+
+    return InvenTreeSetting.allValues()
+
+
+@register.simple_tag()
+def visible_global_settings(*args, **kwargs):
+    """
+    Return any global settings which are not marked as 'hidden'
+    """
+
+    return InvenTreeSetting.allValues(exclude_hidden=True)
+
+
+@register.simple_tag()
+def progress_bar(val, max, *args, **kwargs):
+    """
+    Render a progress bar element
+    """
+
+    id = kwargs.get('id', 'progress-bar')
+
+    if val > max:
+        style = 'progress-bar-over'
+    elif val < max:
+        style = 'progress-bar-under'
+    else:
+        style = ''
+
+    percent = float(val / max) * 100
+
+    if percent > 100:
+        percent = 100
+    elif percent < 0:
+        percent = 0
+
+    style_tags = []
+
+    max_width = kwargs.get('max_width', None)
+
+    if max_width:
+        style_tags.append(f'max-width: {max_width};')
+
+    html = f"""
+    <div id='{id}' class='progress' style='{" ".join(style_tags)}'>
+        <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
+        <div class='progress-value'>{val} / {max}</div>
+    </div>
+    """
+
+    return mark_safe(html)
+
+
+@register.simple_tag()
 def get_color_theme_css(username):
+    user_theme_name = get_user_color_theme(username)
+    # Build path to CSS sheet
+    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
+
+    # Build static URL
+    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
+
+    return inventree_css_static_url
+
+
+@register.simple_tag()
+def get_user_color_theme(username):
+    """ Get current user color theme """
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
         user_theme_name = user_theme.name
@@ -208,13 +329,44 @@ def get_color_theme_css(username):
     except ColorTheme.DoesNotExist:
         user_theme_name = 'default'
 
-    # Build path to CSS sheet
-    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
+    return user_theme_name
 
-    # Build static URL
-    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
 
-    return inventree_css_static_url
+@register.simple_tag()
+def get_available_themes(*args, **kwargs):
+    """
+    Return the available theme choices
+    """
+
+    themes = []
+
+    for key, name in ColorTheme.get_color_themes_choices():
+        themes.append({
+            'key': key,
+            'name': name
+        })
+
+    return themes
+
+
+@register.simple_tag()
+def primitive_to_javascript(primitive):
+    """
+    Convert a python primitive to a javascript primitive.
+
+    e.g. True -> true
+         'hello' -> '"hello"'
+    """
+
+    if type(primitive) is bool:
+        return str(primitive).lower()
+
+    elif type(primitive) in [int, float]:
+        return primitive
+
+    else:
+        # Wrap with quotes
+        return format_html("'{}'", primitive)
 
 
 @register.filter
@@ -225,14 +377,14 @@ def keyvalue(dict, key):
     usage:
     {% mydict|keyvalue:mykey %}
     """
-    return dict[key]
+    return dict.get(key)
 
 
 @register.simple_tag()
 def call_method(obj, method_name, *args):
     """
     enables calling model methods / functions from templates with arguments
-    
+
     usage:
     {% call_method model_object 'fnc_name' argument1 %}
     """
@@ -265,6 +417,12 @@ def object_link(url_name, pk, ref):
 
     ref_url = reverse(url_name, kwargs={'pk': pk})
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
+
+
+@register.simple_tag()
+def mail_configured():
+    """ Return if mail is configured """
+    return bool(settings.EMAIL_HOST)
 
 
 class I18nStaticNode(StaticNode):

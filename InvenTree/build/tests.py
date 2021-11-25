@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from .models import Build
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus
 
 
 class BuildTestSimple(TestCase):
@@ -172,7 +172,7 @@ class TestBuildAPI(APITestCase):
 
         # Filter by 'part' status
         response = self.client.get(url, {'part': 25}, format='json')
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 1)
 
         # Filter by an invalid part
         response = self.client.get(url, {'part': 99999}, format='json')
@@ -252,111 +252,6 @@ class TestBuildViews(TestCase):
 
         self.assertIn(build.title, content)
 
-    def test_build_create(self):
-        """ Test the build creation view (ajax form) """
-
-        url = reverse('build-create')
-
-        # Create build without specifying part
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create build with valid part
-        response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Create build with invalid part
-        response = self.client.get(url, {'part': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_build_allocate(self):
-        """ Test the part allocation view for a Build """
-
-        url = reverse('build-allocate', args=(1,))
-
-        # Get the page normally
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        # Get the page in editing mode
-        response = self.client.get(url, {'edit': 1})
-        self.assertEqual(response.status_code, 200)
-
-    def test_build_item_create(self):
-        """ Test the BuildItem creation view (ajax form) """
-
-        url = reverse('build-item-create')
-
-        # Try without a part specified
-        response = self.client.get(url, {'build': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Try with an invalid build ID
-        response = self.client.get(url, {'build': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Try with a valid part specified
-        response = self.client.get(url, {'build': 1, 'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        # Try with an invalid part specified
-        response = self.client.get(url, {'build': 1, 'part': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-    def test_build_item_edit(self):
-        """ Test the BuildItem edit view (ajax form) """
-
-        # TODO
-        # url = reverse('build-item-edit')
-        pass
-
-    def test_build_output_complete(self):
-        """
-        Test the build output completion form
-        """
-
-        # Firstly, check that the build cannot be completed!
-        self.assertFalse(self.build.can_complete)
-
-        url = reverse('build-output-complete', args=(1,))
-
-        # Test without confirmation
-        response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # Test with confirmation, valid location
-        response = self.client.post(
-            url,
-            {
-                'confirm': 1,
-                'confirm_incomplete': 1,
-                'location': 1,
-                'output': self.output.pk,
-                'stock_status': StockStatus.DAMAGED
-            },
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-
-        self.assertTrue(data['form_valid'])
-
-        # Now the build should be able to be completed
-        self.build.refresh_from_db()
-        self.assertTrue(self.build.can_complete)
-
-        # Test with confirmation, invalid location
-        response = self.client.post(url, {'confirm': 1, 'location': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
     def test_build_cancel(self):
         """ Test the build cancellation form """
 
@@ -381,22 +276,3 @@ class TestBuildViews(TestCase):
 
         b = Build.objects.get(pk=1)
         self.assertEqual(b.status, 30)  # Build status is now CANCELLED
-
-    def test_build_unallocate(self):
-        """ Test the build unallocation view (ajax form) """
-
-        url = reverse('build-unallocate', args=(1,))
-
-        # Test without confirmation
-        response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertFalse(data['form_valid'])
-
-        # Test with confirmation
-        response = self.client.post(url, {'confirm': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertTrue(data['form_valid'])

@@ -4,7 +4,13 @@ FROM alpine:3.13 as base
 ARG repository="https://github.com/inventree/InvenTree.git"
 ARG branch="master"
 
+# Optionally specify a particular tag to checkout
+ARG tag=""
+
 ENV PYTHONUNBUFFERED 1
+
+# Ref: https://github.com/pyca/cryptography/issues/5776
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
 
 # InvenTree key settings
 
@@ -12,8 +18,9 @@ ENV PYTHONUNBUFFERED 1
 ENV INVENTREE_HOME="/home/inventree"
 
 # GitHub settings
-ENV INVENTREE_REPO="${repository}"
-ENV INVENTREE_BRANCH="${branch}"
+ENV INVENTREE_GIT_REPO="${repository}"
+ENV INVENTREE_GIT_BRANCH="${branch}"
+ENV INVENTREE_GIT_TAG="${tag}"
 
 ENV INVENTREE_LOG_LEVEL="INFO"
 ENV INVENTREE_DOCKER="true"
@@ -27,82 +34,96 @@ ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 
-# Default web server port is 8000
-ENV INVENTREE_WEB_PORT="8000"
+# Worker configuration (can be altered by user)
+ENV INVENTREE_GUNICORN_WORKERS="4"
+ENV INVENTREE_BACKGROUND_WORKERS="4"
+
+# Default web server address:port
+ENV INVENTREE_WEB_ADDR=0.0.0.0
+ENV INVENTREE_WEB_PORT=8000
 
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
       org.label-schema.vendor="inventree" \
       org.label-schema.name="inventree/inventree" \
       org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.version=${INVENTREE_VERSION} \
-      org.label-schema.vcs-url=${INVENTREE_REPO} \
-      org.label-schema.vcs-branch=${BRANCH} \
-      org.label-schema.vcs-ref=${COMMIT}
+      org.label-schema.vcs-url=${INVENTREE_GIT_REPO} \
+      org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
+      org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 
-WORKDIR ${INVENTREE_HOME}
+RUN apk -U upgrade
 
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
-    zlib zlib-dev
+    zlib zlib-dev \
+    # Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
+    cairo cairo-dev pango pango-dev \
+    # Fonts
+    fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto \
+    # Core python
+    python3 python3-dev py3-pip \
+    # SQLite support
+    sqlite \
+    # PostgreSQL support
+    postgresql postgresql-contrib postgresql-dev libpq \
+    # MySQL/MariaDB support
+    mariadb-connector-c mariadb-dev mariadb-client \
+    # Required for python cryptography support
+    openssl-dev musl-dev libffi-dev rust cargo
 
-# Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
-RUN apk add --no-cache cairo cairo-dev pango pango-dev
-RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
+# Update pip
+RUN pip install --upgrade pip
 
-# Python
-RUN apk add --no-cache python3 python3-dev py3-pip
+# Install required base-level python packages
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -U -r requirements.txt
 
-# SQLite support
-RUN apk add --no-cache sqlite
-
-# PostgreSQL support
-RUN apk add --no-cache postgresql postgresql-contrib postgresql-dev libpq
-
-# MySQL support
-RUN apk add --no-cache mariadb-connector-c mariadb-dev mariadb-client
-
-# Install required python packages
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -U invoke
-RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
-RUN pip install --no-cache-dir -U gunicorn
-
+# Production code (pulled from tagged github release)
 FROM base as production
+
 # Clone source code
-RUN echo "Downloading InvenTree from ${INVENTREE_REPO}"
-RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_HOME}
+RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"
+
+RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
+
+# Checkout against a particular git tag
+RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
+
+RUN chown -R inventree:inventreegroup ${INVENTREE_HOME}/*
+
+# Drop to the inventree user
+USER inventree
 
 # Install InvenTree packages
-RUN pip install --no-cache-dir -U -r ${INVENTREE_HOME}/requirements.txt
+RUN pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
-# Copy gunicorn config file
-COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
+# Need to be running from within this directory
+WORKDIR ${INVENTREE_MNG_DIR}
 
-# Copy startup scripts
-COPY start_prod_server.sh ${INVENTREE_HOME}/start_prod_server.sh
-COPY start_prod_worker.sh ${INVENTREE_HOME}/start_prod_worker.sh
+# Server init entrypoint
+ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
 
-RUN chmod 755 ${INVENTREE_HOME}/start_prod_server.sh
-RUN chmod 755 ${INVENTREE_HOME}/start_prod_worker.sh
-
-WORKDIR ${INVENTREE_HOME}
-
-# Let us begin
-CMD ["bash", "./start_prod_server.sh"]
+# Launch the production server
+# TODO: Work out why environment variables cannot be interpolated in this command
+# TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
+CMD gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM base as dev
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
 
-ENV INVENTREE_DEV_DIR = "${INVENTREE_HOME}/dev"
+ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
+
+# Location for python virtual environment
+# If the INVENTREE_PY_ENV variable is set, the entrypoint script will use it!
+ENV INVENTREE_PY_ENV="${INVENTREE_DEV_DIR}/env"
 
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
@@ -112,5 +133,8 @@ ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 
 WORKDIR ${INVENTREE_HOME}
 
+# Entrypoint ensures that we are running in the python virtual environment
+ENTRYPOINT ["/bin/bash", "./docker/init.sh"]
+
 # Launch the development server
-CMD ["bash", "/home/inventree/docker/start_dev_server.sh"]
+CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]

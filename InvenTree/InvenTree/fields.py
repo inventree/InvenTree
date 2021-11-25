@@ -20,7 +20,6 @@ from djmoney.forms.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
 
 import InvenTree.helpers
-import common.settings
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -42,9 +41,11 @@ class InvenTreeURLField(models.URLField):
 
 def money_kwargs():
     """ returns the database settings for MoneyFields """
+    from common.settings import currency_code_mappings, currency_code_default
+
     kwargs = {}
-    kwargs['currency_choices'] = common.settings.currency_code_mappings()
-    kwargs['default_currency'] = common.settings.currency_code_default
+    kwargs['currency_choices'] = currency_code_mappings()
+    kwargs['default_currency'] = currency_code_default()
     return kwargs
 
 
@@ -52,10 +53,10 @@ class InvenTreeModelMoneyField(ModelMoneyField):
     """
     Custom MoneyField for clean migrations while using dynamic currency settings
     """
-    
+
     def __init__(self, **kwargs):
         # detect if creating migration
-        if 'makemigrations' in sys.argv:
+        if 'migrate' in sys.argv or 'makemigrations' in sys.argv:
             # remove currency information for a clean migration
             kwargs['default_currency'] = ''
             kwargs['currency_choices'] = []

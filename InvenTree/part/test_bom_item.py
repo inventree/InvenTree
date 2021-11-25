@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.db import transaction
+
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from decimal import Decimal
 
-from .models import Part, BomItem
+from .models import Part, BomItem, BomItemSubstitute
 
 
 class BomItemTest(TestCase):
@@ -120,7 +125,77 @@ class BomItemTest(TestCase):
 
     def test_pricing(self):
         self.bob.get_price(1)
-        self.assertEqual(self.bob.get_bom_price_range(1, internal=True), (Decimal(84.5), Decimal(89.5)))
+        self.assertEqual(
+            self.bob.get_bom_price_range(1, internal=True),
+            (Decimal(29.5), Decimal(89.5))
+        )
         # remove internal price for R_2K2_0805
         self.r1.internal_price_breaks.delete()
-        self.assertEqual(self.bob.get_bom_price_range(1, internal=True), (Decimal(82.5), Decimal(87.5)))
+        self.assertEqual(
+            self.bob.get_bom_price_range(1, internal=True),
+            (Decimal(27.5), Decimal(87.5))
+        )
+
+    def test_substitutes(self):
+        """
+        Tests for BOM item substitutes
+        """
+
+        # We will make some subtitute parts for the "orphan" part
+        bom_item = BomItem.objects.get(
+            part=self.bob,
+            sub_part=self.orphan
+        )
+
+        # No substitute parts available
+        self.assertEqual(bom_item.substitutes.count(), 0)
+
+        subs = []
+
+        for ii in range(5):
+
+            # Create a new part
+            sub_part = Part.objects.create(
+                name=f"Orphan {ii}",
+                description="A substitute part for the orphan part",
+                component=True,
+                is_template=False,
+                assembly=False,
+            )
+
+            subs.append(sub_part)
+
+            # Link it as a substitute part
+            BomItemSubstitute.objects.create(
+                bom_item=bom_item,
+                part=sub_part
+            )
+
+            # Try to link it again (this should fail as it is a duplicate substitute)
+            with self.assertRaises(django_exceptions.ValidationError):
+                with transaction.atomic():
+                    BomItemSubstitute.objects.create(
+                        bom_item=bom_item,
+                        part=sub_part
+                    )
+
+        # There should be now 5 substitute parts available
+        self.assertEqual(bom_item.substitutes.count(), 5)
+
+        # Try to create a substitute which points to the same sub-part (should fail)
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItemSubstitute.objects.create(
+                bom_item=bom_item,
+                part=self.orphan,
+            )
+
+        # Remove one substitute part
+        bom_item.substitutes.last().delete()
+
+        self.assertEqual(bom_item.substitutes.count(), 4)
+
+        for sub in subs:
+            sub.delete()
+
+        # The substitution links should have been automatically removed
+        self.assertEqual(bom_item.substitutes.count(), 0)

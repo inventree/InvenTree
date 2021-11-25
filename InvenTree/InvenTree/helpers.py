@@ -69,6 +69,35 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
+def construct_absolute_url(*arg):
+    """
+    Construct (or attempt to construct) an absolute URL from a relative URL.
+
+    This is useful when (for example) sending an email to a user with a link
+    to something in the InvenTree web framework.
+
+    This requires the BASE_URL configuration option to be set!
+    """
+
+    base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
+
+    url = '/'.join(arg)
+
+    if not base:
+        return url
+
+    # Strip trailing slash from base url
+    if base.endswith('/'):
+        base = base[:-1]
+
+    if url.startswith('/'):
+        url = url[1:]
+
+    url = f"{base}/{url}"
+
+    return url
+
+
 def getBlankImage():
     """
     Return the qualified path for the 'blank image' placeholder.
@@ -344,13 +373,15 @@ def GetExportFormats():
     ]
 
 
-def DownloadFile(data, filename, content_type='application/text'):
-    """ Create a dynamic file for the user to download.
+def DownloadFile(data, filename, content_type='application/text', inline=False):
+    """
+    Create a dynamic file for the user to download.
 
     Args:
         data: Raw file data (string or bytes)
         filename: Filename for the file download
         content_type: Content type for the download
+        inline: Download "inline" or as attachment? (Default = attachment)
 
     Return:
         A StreamingHttpResponse object wrapping the supplied data
@@ -365,7 +396,10 @@ def DownloadFile(data, filename, content_type='application/text'):
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
     response['Content-Length'] = len(data)
-    response['Content-Disposition'] = 'attachment; filename={f}'.format(f=filename)
+
+    disposition = "inline" if inline else "attachment"
+
+    response['Content-Disposition'] = f'{disposition}; filename={filename}'
 
     return response
 
@@ -631,13 +665,34 @@ def clean_decimal(number):
     """ Clean-up decimal value """
 
     # Check if empty
-    if number is None or number == '':
+    if number is None or number == '' or number == 0:
         return Decimal(0)
 
-    # Check if decimal type
+    # Convert to string and remove spaces
+    number = str(number).replace(' ', '')
+
+    # Guess what type of decimal and thousands separators are used
+    count_comma = number.count(',')
+    count_point = number.count('.')
+
+    if count_comma == 1:
+        # Comma is used as decimal separator
+        if count_point > 0:
+            # Points are used as thousands separators: remove them
+            number = number.replace('.', '')
+        # Replace decimal separator with point
+        number = number.replace(',', '.')
+    elif count_point == 1:
+        # Point is used as decimal separator
+        if count_comma > 0:
+            # Commas are used as thousands separators: remove them
+            number = number.replace(',', '')
+
+    # Convert to Decimal type
     try:
         clean_number = Decimal(number)
     except InvalidOperation:
-        clean_number = number
+        # Number cannot be converted to Decimal (eg. a string containing letters)
+        return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()

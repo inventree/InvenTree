@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% trans "Build Order Details" as text %}
+{% include "sidebar_item.html" with label='details' text=text icon="fa-info-circle" %}
+{% if build.active %}
+{% trans "Allocate Stock" as text %}
+{% include "sidebar_item.html" with label='allocate' text=text icon="fa-tasks" %}
+{% endif %}
+{% if not build.is_complete %}
+{% trans "Pending Items" as text %}
+{% include "sidebar_item.html" with label='outputs' text=text icon="fa-tools" %}
+{% endif %}
+{% trans "Completed Items" as text %}
+{% include "sidebar_item.html" with label='completed' text=text icon="fa-boxes" %}
+{% trans "Child Build Orders" as text %}
+{% include "sidebar_item.html" with label='children' text=text icon="fa-sitemap" %}
+{% trans "Attachments" as text %}
+{% include "sidebar_item.html" with label='attachments' text=text icon="fa-paperclip" %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label='notes' text=text icon="fa-clipboard" %}

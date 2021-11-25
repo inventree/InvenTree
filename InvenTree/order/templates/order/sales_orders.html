@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "page_base.html" %}
 
 {% load inventree_extras %}
 {% load static %}
@@ -8,40 +8,49 @@
 {% inventree_title %} | {% trans "Sales Orders" %}
 {% endblock %}
 
-{% block content %}
+{% block breadcrumb_list %}
+{% endblock %}
 
-<h3>{% trans "Sales Orders" %}</h3>
-<hr>
+{% block heading %}
+{% trans "Sales Orders" %}
+{% endblock %}
 
-<div id='table-buttons'>
-    <div class='button-toolbar container-fluid' style='float: right;'>
-        <div class='btn-group'>
-            {% if roles.sales_order.add %}
-            <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}
-            </button>
-            {% endif %}
-            <button id='order-print' class='btn btn-default' title='{% trans "Print Order Reports" %}'>
-                <span class='fas fa-print'></span>
-            </button>
-            <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
-                <span class='fas fa-calendar-alt'></span>
-            </button>
-            <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
-                <span class='fas fa-th-list'></span>
-            </button>
-            <div class='filter-list' id='filter-list-salesorder'>
-                <!-- An empty div in which the filter list will be constructed -->
+{% block actions %}
+{% if roles.sales_order.add %}
+<button class='btn btn-success' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
+    <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}
+</button>
+{% endif %}
+{% endblock %}
+
+{% block page_info %}
+
+<div class='panel-content'>
+    <div id='table-buttons'>
+        <div class='button-toolbar container-fluid' style='float: right;'>
+            <div class='btn-group'>
+                {% if report_enabled %}
+                <button id='order-print' class='btn btn-outline-secondary' title='{% trans "Print Order Reports" %}'>
+                    <span class='fas fa-print'></span>
+                </button>
+                {% endif %}
+                <button class='btn btn-outline-secondary' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+                    <span class='fas fa-calendar-alt'></span>
+                </button>
+                <button class='btn btn-outline-secondary' type='button' id='view-list' title='{% trans "Display list view" %}'>
+                    <span class='fas fa-th-list'></span>
+                </button>
+                {% include "filter_list.html" with id="salesorder" %}
             </div>
         </div>
     </div>
+    
+    <table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='sales-order-table'>
+    </table>
+    
+    <div id='sales-order-calendar'></div>
 </div>
-
-<table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='sales-order-table'>
-</table>
-
-<div id='sales-order-calendar'></div>
-
+    
 {% endblock %}
 
 {% block js_load %}
@@ -67,7 +76,7 @@
             {
                 success: function(response) {
 
-                    var prefix = '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}';
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
                     for (var idx = 0; idx < response.length; idx++) {
                         var order = response[idx];
@@ -165,6 +174,7 @@ loadSalesOrderTable("#sales-order-table", {
     url: "{% url 'api-so-list' %}",
 });
 
+{% if report_enabled %}
 $("#order-print").click(function() {
     var rows = $("#sales-order-table").bootstrapTable('getSelections');
 
@@ -176,6 +186,7 @@ $("#order-print").click(function() {
 
     printSalesOrderReports(orders);
 })
+{% endif %}
 
 $("#so-create").click(function() {
     createSalesOrder();

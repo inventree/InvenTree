@@ -7,6 +7,7 @@ Stock database model definitions
 from __future__ import unicode_literals
 
 import os
+import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
@@ -17,16 +18,19 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save, post_delete
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.managers import TreeManager
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
+
 from InvenTree import helpers
+import InvenTree.tasks
 
 import common.models
 import report.models
@@ -130,6 +134,31 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         child.save()
 
 
+class StockItemManager(TreeManager):
+    """
+    Custom database manager for the StockItem class.
+
+    StockItem querysets will automatically prefetch related fields.
+    """
+
+    def get_queryset(self):
+
+        return super().get_queryset().prefetch_related(
+            'belongs_to',
+            'build',
+            'customer',
+            'purchase_order',
+            'sales_order',
+            'supplier_part',
+            'supplier_part__supplier',
+            'allocations',
+            'sales_order_allocations',
+            'location',
+            'part',
+            'tracking_info'
+        )
+
+
 class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
@@ -165,6 +194,17 @@ class StockItem(MPTTModel):
     def get_api_url():
         return reverse('api-stock-list')
 
+    def api_instance_filters(self):
+        """
+        Custom API instance filters
+        """
+
+        return {
+            'parent': {
+                'exclude_tree': self.pk,
+            }
+        }
+
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
@@ -172,11 +212,43 @@ class StockItem(MPTTModel):
         belongs_to=None,
         customer=None,
         is_building=False,
-        status__in=StockStatus.AVAILABLE_CODES
+        status__in=StockStatus.AVAILABLE_CODES,
+        scheduled_for_deletion=False,
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
     EXPIRED_FILTER = IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=datetime.now().date())
+
+    def mark_for_deletion(self):
+
+        self.scheduled_for_deletion = True
+        self.save()
+
+    def update_serial_number(self):
+        """
+        Update the 'serial_int' field, to be an integer representation of the serial number.
+        This is used for efficient numerical sorting
+        """
+
+        serial = getattr(self, 'serial', '')
+
+        # Default value if we cannot convert to an integer
+        serial_int = 0
+
+        if serial is not None:
+
+            serial = str(serial)
+
+            # Look at the start of the string - can it be "integerized"?
+            result = re.match(r'^(\d+)', serial)
+
+            if result and len(result.groups()) == 1:
+                try:
+                    serial_int = int(result.groups()[0])
+                except:
+                    serial_int = 0
+
+        self.serial_int = serial_int
 
     def save(self, *args, **kwargs):
         """
@@ -189,17 +261,19 @@ class StockItem(MPTTModel):
         self.validate_unique()
         self.clean()
 
+        self.update_serial_number()
+
         user = kwargs.pop('user', None)
+
+        if user is None:
+            user = getattr(self, '_user', None)
 
         # If 'add_note = False' specified, then no tracking note will be added for item creation
         add_note = kwargs.pop('add_note', True)
 
         notes = kwargs.pop('notes', '')
 
-        if not self.pk:
-            # StockItem has not yet been saved
-            add_note = add_note and True
-        else:
+        if self.pk:
             # StockItem has already been saved
 
             # Check if "interesting" fields have been changed
@@ -227,11 +301,10 @@ class StockItem(MPTTModel):
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-            add_note = False
-
         super(StockItem, self).save(*args, **kwargs)
 
-        if add_note:
+        # If user information is provided, and no existing note exists, create one!
+        if user and self.tracking_info.count() == 0:
 
             tracking_info = {
                 'status': self.status,
@@ -411,7 +484,6 @@ class StockItem(MPTTModel):
         verbose_name=_('Base Part'),
         related_name='stock_items', help_text=_('Base part'),
         limit_choices_to={
-            'active': True,
             'virtual': False
         })
 
@@ -459,6 +531,8 @@ class StockItem(MPTTModel):
         max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
+
+    serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
@@ -550,6 +624,12 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
+
+    scheduled_for_deletion = models.BooleanField(
+        default=False,
+        verbose_name=_('Scheduled for deletion'),
+        help_text=_('This StockItem will be deleted by the background worker'),
+    )
 
     def is_stale(self):
         """
@@ -1211,7 +1291,7 @@ class StockItem(MPTTModel):
             # We need to split the stock!
 
             # Split the existing StockItem in two
-            self.splitStock(quantity, location, user)
+            self.splitStock(quantity, location, user, **{'notes': notes})
 
             return True
 
@@ -1257,9 +1337,8 @@ class StockItem(MPTTModel):
         self.quantity = quantity
 
         if quantity == 0 and self.delete_on_deplete and self.can_delete():
+            self.mark_for_deletion()
 
-            # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
-            self.delete()
             return False
         else:
             self.save()
@@ -1602,8 +1681,25 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
         child.parent = instance.parent
         child.save()
 
-    # Rebuild the MPTT tree
-    StockItem.objects.rebuild()
+
+@receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')
+def after_delete_stock_item(sender, instance: StockItem, **kwargs):
+    """
+    Function to be executed after a StockItem object is deleted
+    """
+
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+
+
+@receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
+def after_save_stock_item(sender, instance: StockItem, **kwargs):
+    """
+    Hook function to be executed after StockItem object is saved/updated
+    """
+
+    # Run this check in the background
+    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):

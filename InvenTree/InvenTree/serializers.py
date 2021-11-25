@@ -10,6 +10,8 @@ import os
 
 from decimal import Decimal
 
+from collections import OrderedDict
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -34,6 +36,13 @@ class InvenTreeMoneySerializer(MoneyField):
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
     """
 
+    def __init__(self, *args, **kwargs):
+
+        kwargs["max_digits"] = kwargs.get("max_digits", 19)
+        kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
+
+        super().__init__(*args, **kwargs)
+
     def get_value(self, data):
         """
         Test that the returned amount is a valid Decimal
@@ -46,16 +55,18 @@ class InvenTreeMoneySerializer(MoneyField):
             amount = None
 
         try:
-            if amount is not None:
+            if amount is not None and amount is not empty:
                 amount = Decimal(amount)
         except:
-            raise ValidationError(_("Must be a valid number"))
+            raise ValidationError({
+                self.field_name: [_("Must be a valid number")],
+            })
 
         currency = data.get(get_currency_field_name(self.field_name), self.default_currency)
 
         if currency and amount is not None and not isinstance(amount, MONEY_CLASSES) and amount is not empty:
             return Money(amount, currency)
-        
+
         return amount
 
 
@@ -85,14 +96,21 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     """
 
     def __init__(self, instance=None, data=empty, **kwargs):
-
-        # self.instance = instance
+        """
+        Custom __init__ routine to ensure that *default* values (as specified in the ORM)
+        are used by the DRF serializers, *if* the values are not provided by the user.
+        """
 
         # If instance is None, we are creating a new instance
         if instance is None and data is not empty:
-            
-            # Required to side-step immutability of a QueryDict
-            data = data.copy()
+
+            if data is None:
+                data = OrderedDict()
+            else:
+                new_data = OrderedDict()
+                new_data.update(data)
+
+                data = new_data
 
             # Add missing fields which have default values
             ModelClass = self.Meta.model
@@ -165,6 +183,18 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
         return self.instance
 
+    def update(self, instance, validated_data):
+        """
+        Catch any django ValidationError, and re-throw as a DRF ValidationError
+        """
+
+        try:
+            instance = super().update(instance, validated_data)
+        except (ValidationError, DjangoValidationError) as exc:
+            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+        return instance
+
     def run_validation(self, data=empty):
         """
         Perform serializer validation.
@@ -186,16 +216,43 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
             # Update instance fields
             for attr, value in data.items():
-                setattr(instance, attr, value)
+                try:
+                    setattr(instance, attr, value)
+                except (ValidationError, DjangoValidationError) as exc:
+                    raise ValidationError(detail=serializers.as_serializer_error(exc))
 
         # Run a 'full_clean' on the model.
         # Note that by default, DRF does *not* perform full model validation!
         try:
             instance.full_clean()
         except (ValidationError, DjangoValidationError) as exc:
-            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+            data = exc.message_dict
+
+            # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
+            if '__all__' in data:
+                data['non_field_errors'] = data['__all__']
+                del data['__all__']
+
+            raise ValidationError(data)
 
         return data
+
+
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='basename',
+        allow_blank=False,
+    )
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
@@ -239,3 +296,17 @@ class InvenTreeImageSerializerField(serializers.ImageField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
+
+
+class InvenTreeDecimalField(serializers.FloatField):
+    """
+    Custom serializer for decimal fields. Solves the following issues:
+
+    - The normal DRF DecimalField renders values with trailing zeros
+    - Using a FloatField can result in rounding issues: https://code.djangoproject.com/ticket/30290
+    """
+
+    def to_internal_value(self, data):
+
+        # Convert the value to a string, and then a decimal
+        return Decimal(str(data))

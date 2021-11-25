@@ -7,14 +7,12 @@
 
 </div>
 
-<div class='modal fade modal-fixed-footer modal-primary' role='dialog' id='modal-form'>
+<div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form' tabindex='-1'>
     <div class='modal-dialog'>
         <div class='modal-content'>
             <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h3 id='modal-title'><i>Form Title Here</i></h3>
+              <h4 id='modal-title'><em>Form Title Here</em></h4>
+              <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% trans "Close" %}'></button>
             </div>
             <div class='modal-form-content-wrapper'>
               <div class='alert alert-block alert-danger' id='form-validation-warning' style='display: none;'>
@@ -26,7 +24,7 @@
             </div>
             <div class='modal-footer'>
                 <div id='modal-footer-buttons'></div>
-                <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Close" %}</button>
+                <button type='button' class='btn btn-outline-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Close" %}</button>
                 <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
             </div>
         </div>
@@ -37,10 +35,8 @@
         <div class='modal-dialog'>
             <div class='modal-content'>
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h3 id='modal-title'><i>Form Title Here</i></h3>
+                  <h4 id='modal-title'><em>Form Title Here</em></h4>
+                  <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% trans "Close" %}'></button>
                 </div>
                 <div class='modal-form-content-wrapper'>
                   <div class='alert alert-block alert-danger' id='form-validation-warning' style="display: none;">
@@ -51,51 +47,9 @@
                 </div>
                 <div class='modal-footer'>
                     <div id='modal-footer-buttons'></div>
-                    <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Close" %}</button>
+                    <button type='button' class='btn btn-outline-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Close" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>
             </div>
         </div>
     </div>
-
-
-<div class='modal fade modal-fixed-footer' role='dialog' id='modal-question-dialog'>
-        <div class='modal-dialog'>
-            <div class='modal-content'>
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <h3 id='modal-title'>Question Here</h3>
-                </div>
-                <div class='modal-form-content'>
-                </div>
-                <div class='modal-footer'>
-                    <div id='modal-footer-buttons'></div>
-                    <button type='button' class='btn btn-default' id='modal-form-cancel' data-dismiss='modal'>{% trans "Cancel" %}</button>
-                    <button type='button' class='btn btn-primary' id='modal-form-accept'>{% trans "Accept" %}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<div class='modal fade modal-fixed-footer' role='dialog' id='modal-alert-dialog'>
-    <div class='modal-dialog'>
-        <div class='modal-content'>
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h3 id='modal-title'>Alert Information</h3>
-            </div>
-            <div class='modal-form-content-wrapper'>
-              <div class='modal-form-content'>
-              </div>
-            </div>
-            <div class='modal-footer'>
-                <div id='modal-footer-buttons'></div>
-                <button type='button' class='btn btn-default' data-dismiss='modal'>{% trans "Close" %}</button>
-            </div>
-        </div>
-    </div>
-</div>

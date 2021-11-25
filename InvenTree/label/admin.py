@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import StockItemLabel, StockLocationLabel
+from .models import StockItemLabel, StockLocationLabel, PartLabel
 
 
 class LabelAdmin(admin.ModelAdmin):
@@ -13,3 +13,4 @@ class LabelAdmin(admin.ModelAdmin):
 
 admin.site.register(StockItemLabel, LabelAdmin)
 admin.site.register(StockLocationLabel, LabelAdmin)
+admin.site.register(PartLabel, LabelAdmin)

@@ -8,17 +8,13 @@ from __future__ import unicode_literals
 from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
 from mptt.fields import TreeNodeChoiceField
 
-from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
-
-from report.models import TestReport
 
 from part.models import Part
 
@@ -28,6 +24,8 @@ from .models import StockLocation, StockItem, StockItemTracking
 class AssignStockItemToCustomerForm(HelperForm):
     """
     Form for manually assigning a StockItem to a Customer
+
+    TODO: This could be a simple API driven form!
     """
 
     class Meta:
@@ -40,6 +38,8 @@ class AssignStockItemToCustomerForm(HelperForm):
 class ReturnStockItemForm(HelperForm):
     """
     Form for manually returning a StockItem into stock
+
+    TODO: This could be a simple API driven form!
     """
 
     class Meta:
@@ -50,7 +50,11 @@ class ReturnStockItemForm(HelperForm):
 
 
 class EditStockLocationForm(HelperForm):
-    """ Form for editing a StockLocation """
+    """
+    Form for editing a StockLocation
+
+    TODO: Migrate this form to the modern API forms interface
+    """
 
     class Meta:
         model = StockLocation
@@ -65,6 +69,8 @@ class EditStockLocationForm(HelperForm):
 class ConvertStockItemForm(HelperForm):
     """
     Form for converting a StockItem to a variant of its current part.
+
+    TODO: Migrate this form to the modern API forms interface
     """
 
     class Meta:
@@ -75,7 +81,11 @@ class ConvertStockItemForm(HelperForm):
 
 
 class CreateStockItemForm(HelperForm):
-    """ Form for creating a new StockItem """
+    """
+    Form for creating a new StockItem
+
+    TODO: Migrate this form to the modern API forms interface
+    """
 
     expiry_date = DatePickerFormField(
         label=_('Expiry Date'),
@@ -131,7 +141,11 @@ class CreateStockItemForm(HelperForm):
 
 
 class SerializeStockForm(HelperForm):
-    """ Form for serializing a StockItem. """
+    """
+    Form for serializing a StockItem.
+
+    TODO: Migrate this form to the modern API forms interface
+    """
 
     destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination for serialized stock (by default, will remain in current location)'))
 
@@ -162,100 +176,11 @@ class SerializeStockForm(HelperForm):
         ]
 
 
-class StockItemLabelSelectForm(HelperForm):
-    """ Form for selecting a label template for a StockItem """
-
-    label = forms.ChoiceField(
-        label=_('Label'),
-        help_text=_('Select test report template')
-    )
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'label',
-        ]
-
-    def get_label_choices(self, labels):
-
-        choices = []
-
-        if len(labels) > 0:
-            for label in labels:
-                choices.append((label.pk, label))
-
-        return choices
-
-    def __init__(self, labels, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
-        self.fields['label'].choices = self.get_label_choices(labels)
-
-
-class TestReportFormatForm(HelperForm):
-    """ Form for selection a test report template """
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'template',
-        ]
-
-    def __init__(self, stock_item, *args, **kwargs):
-        self.stock_item = stock_item
-
-        super().__init__(*args, **kwargs)
-        self.fields['template'].choices = self.get_template_choices()
-
-    def get_template_choices(self):
-        """
-        Generate a list of of TestReport options for the StockItem
-        """
-
-        choices = []
-
-        templates = TestReport.objects.filter(enabled=True)
-
-        for template in templates:
-            if template.enabled and template.matches_stock_item(self.stock_item):
-                choices.append((template.pk, template))
-
-        return choices
-
-    template = forms.ChoiceField(label=_('Template'), help_text=_('Select test report template'))
-
-
-class ExportOptionsForm(HelperForm):
-    """ Form for selecting stock export options """
-
-    file_format = forms.ChoiceField(label=_('File Format'), help_text=_('Select output file format'))
-
-    include_sublocations = forms.BooleanField(required=False, initial=True, label=_('Include sublocations'), help_text=_("Include stock items in sub locations"))
-
-    class Meta:
-        model = StockLocation
-        fields = [
-            'file_format',
-            'include_sublocations',
-        ]
-
-    def get_format_choices(self):
-        """ File format choices """
-
-        choices = [(x, x.upper()) for x in GetExportFormats()]
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['file_format'].choices = self.get_format_choices()
-
-
 class InstallStockForm(HelperForm):
     """
     Form for manually installing a stock item into another stock item
+
+    TODO: Migrate this form to the modern API forms interface
     """
 
     part = forms.ModelChoiceField(
@@ -269,14 +194,9 @@ class InstallStockForm(HelperForm):
         help_text=_('Stock item to install')
     )
 
-    quantity_to_install = RoundingDecimalFormField(
-        max_digits=10, decimal_places=5,
-        initial=1,
-        label=_('Quantity'),
-        help_text=_('Stock quantity to assign'),
-        validators=[
-            MinValueValidator(0.001)
-        ]
+    to_install = forms.BooleanField(
+        widget=forms.HiddenInput(),
+        required=False,
     )
 
     notes = forms.CharField(
@@ -289,7 +209,7 @@ class InstallStockForm(HelperForm):
         fields = [
             'part',
             'stock_item',
-            'quantity_to_install',
+            # 'quantity_to_install',
             'notes',
         ]
 
@@ -309,6 +229,8 @@ class InstallStockForm(HelperForm):
 class UninstallStockForm(forms.ModelForm):
     """
     Form for uninstalling a stock item which is installed in another item.
+
+    TODO: Migrate this form to the modern API forms interface
     """
 
     location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Location'), help_text=_('Destination location for uninstalled items'))
@@ -328,50 +250,6 @@ class UninstallStockForm(forms.ModelForm):
         ]
 
 
-class AdjustStockForm(forms.ModelForm):
-    """ Form for performing simple stock adjustments.
-
-    - Add stock
-    - Remove stock
-    - Count stock
-    - Move stock
-
-    This form is used for managing stock adjuments for single or multiple stock items.
-    """
-
-    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination stock location'))
-
-    note = forms.CharField(label=_('Notes'), required=True, help_text=_('Add note (required)'))
-
-    # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
-
-    confirm = forms.BooleanField(required=False, initial=False, label=_('Confirm stock adjustment'), help_text=_('Confirm movement of stock items'))
-
-    set_loc = forms.BooleanField(required=False, initial=False, label=_('Set Default Location'), help_text=_('Set the destination as the default location for selected parts'))
-
-    class Meta:
-        model = StockItem
-
-        fields = [
-            'destination',
-            'note',
-            # 'transaction',
-            'confirm',
-        ]
-
-
-class EditStockItemStatusForm(HelperForm):
-    """
-    Simple form for editing StockItem status field
-    """
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'status',
-        ]
-
-
 class EditStockItemForm(HelperForm):
     """ Form for editing a StockItem object.
     Note that not all fields can be edited here (even if they can be specified during creation.
@@ -379,6 +257,8 @@ class EditStockItemForm(HelperForm):
     location - Must be updated in a 'move' transaction
     quantity - Must be updated in a 'stocktake' transaction
     part - Cannot be edited after creation
+
+    TODO: Migrate this form to the modern API forms interface
     """
 
     expiry_date = DatePickerFormField(

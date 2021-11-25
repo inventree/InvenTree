@@ -8,15 +8,6 @@ from . import views
 
 
 company_detail_urls = [
-    # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
-
-    url(r'^supplier-parts/', views.CompanyDetail.as_view(template_name='company/detail_supplier_part.html'), name='company-detail-supplier-parts'),
-    url(r'^manufacturer-parts/', views.CompanyDetail.as_view(template_name='company/detail_manufacturer_part.html'), name='company-detail-manufacturer-parts'),
-    url(r'^stock/', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
-    url(r'^purchase-orders/', views.CompanyDetail.as_view(template_name='company/purchase_orders.html'), name='company-detail-purchase-orders'),
-    url(r'^assigned-stock/', views.CompanyDetail.as_view(template_name='company/assigned_stock.html'), name='company-detail-assigned-stock'),
-    url(r'^sales-orders/', views.CompanyDetail.as_view(template_name='company/sales_orders.html'), name='company-detail-sales-orders'),
-    url(r'^notes/', views.CompanyNotes.as_view(), name='company-notes'),
 
     url(r'^thumb-download/', views.CompanyImageDownloadFromURL.as_view(), name='company-image-download'),
 
@@ -38,29 +29,10 @@ company_urls = [
 ]
 
 manufacturer_part_urls = [
-    url(r'^new/?', views.ManufacturerPartCreate.as_view(), name='manufacturer-part-create'),
 
-    url(r'^(?P<pk>\d+)/', include([
-        url(r'^suppliers/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-suppliers'),
-        url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_suppliers.html'), name='manufacturer-part-detail'),
-    ])),
-]
-
-supplier_part_detail_urls = [
-    url(r'^edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
-
-    url(r'^manufacturers/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_manufacturers.html'), name='supplier-part-manufacturers'),
-    url(r'^pricing/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_pricing.html'), name='supplier-part-pricing'),
-    url(r'^orders/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_orders.html'), name='supplier-part-orders'),
-    url(r'^stock/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_stock.html'), name='supplier-part-stock'),
-
-    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part_pricing.html'), name='supplier-part-detail'),
+    url(r'^(?P<pk>\d+)/', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part.html'), name='manufacturer-part-detail'),
 ]
 
 supplier_part_urls = [
-    url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
-
-    url(r'delete/', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
-
-    url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
+    url(r'^(?P<pk>\d+)/', views.SupplierPartDetail.as_view(template_name='company/supplier_part.html'), name='supplier-part-detail'),
 ]

@@ -1,0 +1,20 @@
+# Check that the version number format matches the current branch
+
+name: Version Numbering
+
+on:
+  pull_request:
+    branches-ignore:
+      - l10*
+
+jobs:
+
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Check version number
+        run: |
+          python3 ci/check_version_number.py --branch ${{ github.base_ref }}

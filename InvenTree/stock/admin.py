@@ -117,6 +117,8 @@ class StockItemResource(ModelResource):
         exclude = [
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
+            # Exclude internal fields
+            'serial_int',
         ]
 
 

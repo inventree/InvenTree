@@ -1,4 +1,5 @@
 from common.settings import currency_code_default, currency_codes
+from urllib.error import HTTPError, URLError
 
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 
@@ -26,4 +27,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
 
         symbols = ','.join(currency_codes())
 
-        super().update_rates(base=base_currency, symbols=symbols)
+        try:
+            super().update_rates(base=base_currency, symbols=symbols)
+        # catch connection errors
+        except (HTTPError, URLError):
+            print('Encountered connection error while updating')
