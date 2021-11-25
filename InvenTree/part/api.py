@@ -5,6 +5,8 @@ Provides a JSON API for the Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import tablib
+
 from django.conf.urls import url, include
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
@@ -25,6 +27,8 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
+
+from .admin import BomItemResource
 
 from .models import Part, PartCategory, PartRelated
 from .models import BomItem, BomItemSubstitute
@@ -1514,12 +1518,49 @@ class BomUpload(views.APIView):
         B) Provide a list of rows for validation
         """
 
+        # Try to extract a file from the POSTed data
+        bom_file = request.FILES.get('file', None)
+
+        format = request.data.get('format', 'csv')
+
+        if bom_file:
+
+            fd = bom_file.read()
+
+            fd = fd.decode('utf-8')
+
+            dataset = tablib.Dataset().load(fd, format=format)
+
+            resource = BomItemResource()
+
+            result = resource.import_data(dataset, dry_run=True, parent_part=3)
+
+            """
+            print("Results:")
+            print("errors?", result.has_errors(), result.has_validation_errors())
+            print(dir(result))
+            print(result.row_errors())
+            print(result.base_errors)
+            print("Rows:")
+            print(result.rows)
+            print("Valid Rows:")
+            print(result.valid_rows())
+            print("Invalid Rows:")
+            print(result.invalid_rows)
+            """
+
+            for row in result.invalid_rows:
+                print(row, dir(row))
+                print("error_dict:", row.error_dict)
+                print("values:", row.values)
+
         return Response(
             {
                 'hello': 'world',
             },
             status=400,
         )
+
 
 part_api_urls = [
 
