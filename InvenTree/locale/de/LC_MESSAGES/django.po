@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 04:46+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-25 09:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1376,15 +1376,15 @@ msgstr "Listen-Ansicht"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr ""
+msgstr "Bauauftrag-details"
 
 #: build/templates/build/sidebar.html:12
 msgid "Pending Items"
-msgstr ""
+msgstr "Ausstehende Einträge"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Items"
-msgstr ""
+msgstr "Abgeschlossene Elemente"
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -1952,7 +1952,7 @@ msgstr "Abonnierte Teile anzeigen"
 
 #: common/models.py:1002
 msgid "Show subscribed parts on the homepage"
-msgstr "Abonnierte Teile auf der Startseite anzeigen"
+msgstr "Zeige abonnierte Teile auf der Startseite"
 
 #: common/models.py:1007
 msgid "Show subscribed categories"
@@ -1960,7 +1960,7 @@ msgstr "Abonnierte Kategorien anzeigen"
 
 #: common/models.py:1008
 msgid "Show subscribed part categories on the homepage"
-msgstr "Abonnierte Teilkategorien auf der Startseite anzeigen"
+msgstr "Zeige abonnierte Teilkategorien auf der Startseite"
 
 #: common/models.py:1013
 msgid "Show latest parts"
@@ -2064,7 +2064,7 @@ msgstr "Ausstehende POs anzeigen"
 
 #: common/models.py:1087
 msgid "Show outstanding POs on the homepage"
-msgstr "Ausstehende POs auf der Startseite anzeigen"
+msgstr "Zeige ausstehende POs auf der Startseite"
 
 #: common/models.py:1092
 msgid "Show overdue POs"
@@ -2072,7 +2072,7 @@ msgstr "Überfällige POs anzeigen"
 
 #: common/models.py:1093
 msgid "Show overdue POs on the homepage"
-msgstr "Überfällige POs auf der Startseite anzeigen"
+msgstr "Zeige überfällige POs auf der Startseite"
 
 #: common/models.py:1098
 msgid "Show outstanding SOs"
@@ -2080,7 +2080,7 @@ msgstr "Ausstehende SOs anzeigen"
 
 #: common/models.py:1099
 msgid "Show outstanding SOs on the homepage"
-msgstr "Ausstehende SOs auf der Startseite anzeigen"
+msgstr "Zeige ausstehende SOs auf der Startseite"
 
 #: common/models.py:1104
 msgid "Show overdue SOs"
@@ -2735,7 +2735,7 @@ msgstr "Parameter löschen"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Hergestellte Teile"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
@@ -4276,7 +4276,7 @@ msgstr "Teil auswählen"
 
 #: part/templates/part/bom_upload/upload_file.html:8
 msgid "Return to BOM"
-msgstr ""
+msgstr "Zurück zur Stückliste"
 
 #: part/templates/part/bom_upload/upload_file.html:13
 msgid "Upload Bill of Materials"
@@ -4445,7 +4445,7 @@ msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die oberste Kat. v
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
-msgstr ""
+msgstr "Teile importieren"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
@@ -4848,15 +4848,15 @@ msgstr "Keine Preise für dieses Teil verfügbar"
 
 #: part/templates/part/part_sidebar.html:13
 msgid "Variants"
-msgstr ""
+msgstr "Varianten"
 
 #: part/templates/part/part_sidebar.html:27
 msgid "Used In"
-msgstr ""
+msgstr "Benutzt in"
 
 #: part/templates/part/part_sidebar.html:43
 msgid "Test Templates"
-msgstr ""
+msgstr "Testvorlagen"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -5885,15 +5885,15 @@ msgstr "Lade..."
 
 #: stock/templates/stock/stock_sidebar.html:5
 msgid "Stock Tracking"
-msgstr ""
+msgstr "Lagerartikel-Verfolgung"
 
 #: stock/templates/stock/stock_sidebar.html:12
 msgid "Installed Items"
-msgstr ""
+msgstr "Verbaute Objekte"
 
 #: stock/templates/stock/stock_sidebar.html:16
 msgid "Child Items"
-msgstr ""
+msgstr "Untergeordnete Objekte"
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
@@ -6215,7 +6215,7 @@ msgstr "Keine Teilparametervorlagen gefunden"
 
 #: templates/InvenTree/settings/settings.html:253
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/InvenTree/settings/sidebar.html:5
 #: templates/InvenTree/settings/user_settings.html:9
@@ -6234,7 +6234,7 @@ msgstr "Anzeigeeinstellungen"
 
 #: templates/InvenTree/settings/sidebar.html:12
 msgid "Home Page"
-msgstr ""
+msgstr "Startseite"
 
 #: templates/InvenTree/settings/sidebar.html:14
 #: templates/InvenTree/settings/user_search.html:9
@@ -6243,28 +6243,28 @@ msgstr "Sucheinstellungen"
 
 #: templates/InvenTree/settings/sidebar.html:16
 msgid "Label Printing"
-msgstr ""
+msgstr "Etikettendruck"
 
 #: templates/InvenTree/settings/sidebar.html:18
 #: templates/InvenTree/settings/sidebar.html:34
 msgid "Reporting"
-msgstr ""
+msgstr "Berichte"
 
 #: templates/InvenTree/settings/sidebar.html:23
 msgid "Global Settings"
-msgstr ""
+msgstr "Allgemeine Einstellungen"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Server Configuration"
-msgstr ""
+msgstr "Serverkonfiguration"
 
 #: templates/InvenTree/settings/sidebar.html:32
 msgid "Currencies"
-msgstr ""
+msgstr "Währungen"
 
 #: templates/InvenTree/settings/sidebar.html:38
 msgid "Categories"
-msgstr ""
+msgstr "Kategorien"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -6393,7 +6393,7 @@ msgstr "Zeige nur ausreichende"
 
 #: templates/InvenTree/settings/user.html:217
 msgid "and hidden."
-msgstr ""
+msgstr "und versteckt."
 
 #: templates/InvenTree/settings/user.html:217
 msgid "Show them too"
@@ -6960,7 +6960,7 @@ msgstr "Ersatzteil entfernen"
 
 #: templates/js/translated/bom.js:228
 msgid "Select and add a new variant item using the input below"
-msgstr ""
+msgstr "Wählen Sie eine neue Variante aus und fügen Sie sie mit den folgenden Eingaben hinzu"
 
 #: templates/js/translated/bom.js:239
 msgid "Are you sure you wish to remove this substitute part link?"
@@ -7807,11 +7807,11 @@ msgstr "Keine Varianten gefunden"
 
 #: templates/js/translated/part.js:765
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Teile-Beziehung löschen"
 
 #: templates/js/translated/part.js:789
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Teile-Beziehung löschen"
 
 #: templates/js/translated/part.js:856 templates/js/translated/part.js:1116
 msgid "No parts found"
