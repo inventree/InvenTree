@@ -394,7 +394,7 @@ class PartRelationSerializer(InvenTreeModelSerializer):
     """
 
     part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
-    part_2_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
 
     class Meta:
         model = PartRelated
