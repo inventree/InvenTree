@@ -25,7 +25,7 @@ from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute,
-                     Part, PartAttachment, PartCategory,
+                     Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -222,6 +222,20 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'trackable',
             'virtual',
             'units',
+        ]
+
+
+class PartRelationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a PartRelated model
+    """
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'pk',
+            'part_1',
+            'part_2',
         ]
 
 

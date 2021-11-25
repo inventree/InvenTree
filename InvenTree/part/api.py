@@ -1051,6 +1051,24 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
+class PartRelatedList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of PartRelated objects
+    """
+
+    queryset = PartRelated.objects.all()
+    serializer_class = part_serializers.PartRelationSerializer
+
+
+class PartRelatedDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for accessing detail view of a PartRelated object
+    """
+
+    queryset = PartRelated.objects.all()
+    serializer_class = part_serializers.PartRelationSerializer
+
+
 class PartParameterTemplateList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartParameterTemplate objects.
 
@@ -1473,6 +1491,12 @@ part_api_urls = [
     # Base URL for part internal pricing
     url(r'^internal-price/', include([
         url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
+    ])),
+
+    # Base URL for PartRelated API endpoints
+    url(r'^related/', include([
+        url(r'^(?P<pk>\d+)/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        url(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
     ])),
 
     # Base URL for PartParameter API endpoints
