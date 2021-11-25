@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-25 04:46+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"POT-Creation-Date: 2021-11-25 10:11+0000\n"
+"PO-Revision-Date: 2021-11-25 10:49\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -132,7 +132,7 @@ msgstr ""
 
 #: InvenTree/models.py:118 InvenTree/models.py:119 common/models.py:1185
 #: common/models.py:1186 part/models.py:2205 part/models.py:2225
-#: report/templates/report/inventree_test_report_base.html:91
+#: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2054
 msgid "User"
 msgstr ""
@@ -186,7 +186,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:81 label/models.py:119
 #: order/models.py:161 part/models.py:764 part/templates/part/detail.html:30
 #: part/templates/part/set_category.html:14 report/models.py:194
-#: report/models.py:551 report/models.py:590
+#: report/models.py:553 report/models.py:592
 #: report/templates/report/inventree_build_order_base.html:118
 #: stock/templates/stock/location.html:108 templates/js/translated/bom.js:215
 #: templates/js/translated/bom.js:428 templates/js/translated/build.js:1621
@@ -557,7 +557,8 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:114
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:91
-#: report/templates/report/inventree_test_report_base.html:77
+#: report/templates/report/inventree_test_report_base.html:81
+#: report/templates/report/inventree_test_report_base.html:139
 #: stock/forms.py:156 stock/serializers.py:286
 #: stock/templates/stock/item_base.html:256
 #: templates/js/translated/barcode.js:385 templates/js/translated/bom.js:443
@@ -803,8 +804,6 @@ msgstr ""
 #: build/templates/build/sidebar.html:21 company/models.py:142
 #: company/models.py:577 company/templates/company/sidebar.html:25
 #: order/models.py:183 order/models.py:738
-#: order/templates/order/po_navbar.html:38
-#: order/templates/order/po_navbar.html:41
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:11 part/models.py:925
 #: part/templates/part/detail.html:223 part/templates/part/part_sidebar.html:52
@@ -1286,7 +1285,6 @@ msgid "Completed Build Outputs"
 msgstr ""
 
 #: build/templates/build/detail.html:278 build/templates/build/sidebar.html:19
-#: order/templates/order/po_navbar.html:35
 #: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:52
@@ -1313,7 +1311,6 @@ msgid "Edit Notes"
 msgstr ""
 
 #: build/templates/build/detail.html:448
-#: order/templates/order/po_attachments.html:79
 #: order/templates/order/purchase_order_detail.html:170
 #: order/templates/order/sales_order_detail.html:160
 #: part/templates/part/detail.html:1060 stock/templates/stock/item.html:270
@@ -1322,7 +1319,6 @@ msgid "Add Attachment"
 msgstr ""
 
 #: build/templates/build/detail.html:467
-#: order/templates/order/po_attachments.html:51
 #: order/templates/order/purchase_order_detail.html:142
 #: order/templates/order/sales_order_detail.html:133
 #: part/templates/part/detail.html:1014 stock/templates/stock/item.html:238
@@ -1330,7 +1326,6 @@ msgid "Edit Attachment"
 msgstr ""
 
 #: build/templates/build/detail.html:474
-#: order/templates/order/po_attachments.html:58
 #: order/templates/order/purchase_order_detail.html:149
 #: order/templates/order/sales_order_detail.html:139
 #: part/templates/part/detail.html:1023 stock/templates/stock/item.html:247
@@ -1339,7 +1334,6 @@ msgid "Confirm Delete Operation"
 msgstr ""
 
 #: build/templates/build/detail.html:475
-#: order/templates/order/po_attachments.html:59
 #: order/templates/order/purchase_order_detail.html:150
 #: order/templates/order/sales_order_detail.html:140
 #: part/templates/part/detail.html:1024 stock/templates/stock/item.html:248
@@ -2168,12 +2162,10 @@ msgstr ""
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/views.py:93 order/templates/order/order_wizard/po_upload.html:42
-#: order/templates/order/po_navbar.html:19
-#: order/templates/order/po_navbar.html:22
+#: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:289
 #: part/templates/part/bom_upload/upload_file.html:52
-#: part/templates/part/import_wizard/part_upload.html:45 part/views.py:212
+#: part/templates/part/import_wizard/part_upload.html:47 part/views.py:212
 #: part/views.py:854
 msgid "Upload File"
 msgstr ""
@@ -2200,13 +2192,13 @@ msgstr ""
 
 #: common/views.py:517 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
-#: order/templates/order/order_wizard/po_upload.html:40
+#: order/templates/order/order_wizard/po_upload.html:47
 #: part/templates/part/bom_upload/match_fields.html:27
 #: part/templates/part/bom_upload/match_parts.html:19
 #: part/templates/part/bom_upload/upload_file.html:50
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
-#: part/templates/part/import_wizard/part_upload.html:43
+#: part/templates/part/import_wizard/part_upload.html:45
 msgid "Previous Step"
 msgstr ""
 
@@ -2372,7 +2364,7 @@ msgid "Parameter name"
 msgstr ""
 
 #: company/models.py:422
-#: report/templates/report/inventree_test_report_base.html:90
+#: report/templates/report/inventree_test_report_base.html:95
 #: stock/models.py:1867 templates/js/translated/company.js:644
 #: templates/js/translated/part.js:645 templates/js/translated/stock.js:848
 msgid "Value"
@@ -2902,7 +2894,7 @@ msgstr ""
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: label/api.py:57 report/api.py:201
+#: label/api.py:57 report/api.py:203
 msgid "No valid objects provided to template"
 msgstr ""
 
@@ -2959,7 +2951,7 @@ msgid "Query filters (comma-separated list of key=value pairs),"
 msgstr ""
 
 #: label/models.py:259 label/models.py:319 label/models.py:366
-#: report/models.py:322 report/models.py:457 report/models.py:495
+#: report/models.py:322 report/models.py:459 report/models.py:497
 msgid "Filters"
 msgstr ""
 
@@ -3390,19 +3382,23 @@ msgstr ""
 msgid "Select Supplier Part"
 msgstr ""
 
-#: order/templates/order/order_wizard/po_upload.html:11
+#: order/templates/order/order_wizard/po_upload.html:8
+msgid "Return to Orders"
+msgstr ""
+
+#: order/templates/order/order_wizard/po_upload.html:17
 msgid "Upload File for Purchase Order"
 msgstr ""
 
-#: order/templates/order/order_wizard/po_upload.html:18
+#: order/templates/order/order_wizard/po_upload.html:25
 #: part/templates/part/bom_upload/upload_file.html:21
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
-#: part/templates/part/import_wizard/part_upload.html:21
+#: part/templates/part/import_wizard/part_upload.html:23
 #, python-format
 msgid "Step %(step)s of %(count)s"
 msgstr ""
 
-#: order/templates/order/order_wizard/po_upload.html:48
+#: order/templates/order/order_wizard/po_upload.html:55
 msgid "Order is already processed. Files cannot be uploaded."
 msgstr ""
 
@@ -3463,31 +3459,6 @@ msgstr ""
 msgid "Select a purchase order for %(name)s"
 msgstr ""
 
-#: order/templates/order/po_attachments.html:12
-#: order/templates/order/po_navbar.html:32
-msgid "Purchase Order Attachments"
-msgstr ""
-
-#: order/templates/order/po_navbar.html:12
-msgid "Purchase Order Details"
-msgstr ""
-
-#: order/templates/order/po_navbar.html:15
-#: part/templates/part/part_sidebar.html:8
-#: templates/js/translated/stock.js:1919
-msgid "Details"
-msgstr ""
-
-#: order/templates/order/po_navbar.html:26
-msgid "Received Stock Items"
-msgstr ""
-
-#: order/templates/order/po_navbar.html:29
-#: order/templates/order/po_received_items.html:12
-#: order/templates/order/purchase_order_detail.html:50
-msgid "Received Items"
-msgstr ""
-
 #: order/templates/order/po_sidebar.html:5
 #: order/templates/order/so_sidebar.html:5
 #: report/templates/report/inventree_po_report.html:85
@@ -3516,6 +3487,10 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:31
 msgid "Receive Items"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:50
+msgid "Received Items"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:76
@@ -4637,11 +4612,15 @@ msgid "Unit Price - %(currency)s"
 msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
-#: part/templates/part/import_wizard/part_upload.html:51
+#: part/templates/part/import_wizard/part_upload.html:53
 msgid "Unsuffitient privileges."
 msgstr ""
 
-#: part/templates/part/import_wizard/part_upload.html:14
+#: part/templates/part/import_wizard/part_upload.html:8
+msgid "Return to Parts"
+msgstr ""
+
+#: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
 msgstr ""
 
@@ -4844,6 +4823,11 @@ msgstr ""
 #: part/templates/part/part_pricing.html:128
 #: part/templates/part/prices.html:134
 msgid "No pricing information is available for this part."
+msgstr ""
+
+#: part/templates/part/part_sidebar.html:8
+#: templates/js/translated/stock.js:1919
+msgid "Details"
 msgstr ""
 
 #: part/templates/part/part_sidebar.html:13
@@ -5109,6 +5093,11 @@ msgstr ""
 msgid "Delete Internal Price Break"
 msgstr ""
 
+#: report/api.py:234 report/api.py:278
+#, python-brace-format
+msgid "Template file '{filename}' is missing or does not exist"
+msgstr ""
+
 #: report/models.py:182
 msgid "Template name"
 msgstr ""
@@ -5145,51 +5134,51 @@ msgstr ""
 msgid "Include test results for stock items installed inside assembled item"
 msgstr ""
 
-#: report/models.py:380
+#: report/models.py:382
 msgid "Build Filters"
 msgstr ""
 
-#: report/models.py:381
+#: report/models.py:383
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:423
+#: report/models.py:425
 msgid "Part Filters"
 msgstr ""
 
-#: report/models.py:424
+#: report/models.py:426
 msgid "Part query filters (comma-separated list of key=value pairs"
 msgstr ""
 
-#: report/models.py:458
+#: report/models.py:460
 msgid "Purchase order query filters"
 msgstr ""
 
-#: report/models.py:496
+#: report/models.py:498
 msgid "Sales order query filters"
 msgstr ""
 
-#: report/models.py:546
+#: report/models.py:548
 msgid "Snippet"
 msgstr ""
 
-#: report/models.py:547
+#: report/models.py:549
 msgid "Report snippet file"
 msgstr ""
 
-#: report/models.py:551
+#: report/models.py:553
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:586
+#: report/models.py:588
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:587
+#: report/models.py:589
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:590
+#: report/models.py:592
 msgid "Asset file description"
 msgstr ""
 
@@ -5201,7 +5190,7 @@ msgstr ""
 msgid "Stock Item Test Report"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:75
+#: report/templates/report/inventree_test_report_base.html:79
 #: stock/models.py:530 stock/templates/stock/item_base.html:238
 #: templates/js/translated/build.js:233 templates/js/translated/build.js:637
 #: templates/js/translated/build.js:1013
@@ -5210,31 +5199,41 @@ msgstr ""
 msgid "Serial Number"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:83
+#: report/templates/report/inventree_test_report_base.html:88
 msgid "Test Results"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:88
+#: report/templates/report/inventree_test_report_base.html:93
 #: stock/models.py:1855
 msgid "Test"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:89
+#: report/templates/report/inventree_test_report_base.html:94
 #: stock/models.py:1861
 msgid "Result"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:92
+#: report/templates/report/inventree_test_report_base.html:97
 #: templates/js/translated/order.js:685 templates/js/translated/stock.js:1887
 msgid "Date"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:103
+#: report/templates/report/inventree_test_report_base.html:108
 msgid "Pass"
 msgstr ""
 
-#: report/templates/report/inventree_test_report_base.html:105
+#: report/templates/report/inventree_test_report_base.html:110
 msgid "Fail"
+msgstr ""
+
+#: report/templates/report/inventree_test_report_base.html:123
+#: stock/templates/stock/stock_sidebar.html:12
+msgid "Installed Items"
+msgstr ""
+
+#: report/templates/report/inventree_test_report_base.html:137
+#: templates/js/translated/stock.js:2147
+msgid "Serial"
 msgstr ""
 
 #: stock/api.py:422
@@ -5885,10 +5884,6 @@ msgstr ""
 msgid "Stock Tracking"
 msgstr ""
 
-#: stock/templates/stock/stock_sidebar.html:12
-msgid "Installed Items"
-msgstr ""
-
 #: stock/templates/stock/stock_sidebar.html:16
 msgid "Child Items"
 msgstr ""
@@ -6164,11 +6159,11 @@ msgstr ""
 msgid "Part Parameter Templates"
 msgstr ""
 
-#: templates/InvenTree/settings/po.html:9
+#: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/report.html:10
+#: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
 msgstr ""
@@ -6702,85 +6697,6 @@ msgstr ""
 msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
-#: templates/js/report.js:47 templates/js/translated/report.js:67
-msgid "items selected"
-msgstr ""
-
-#: templates/js/report.js:55 templates/js/translated/report.js:75
-msgid "Select Report Template"
-msgstr ""
-
-#: templates/js/report.js:70 templates/js/translated/report.js:90
-msgid "Select Test Report Template"
-msgstr ""
-
-#: templates/js/report.js:98 templates/js/translated/label.js:29
-#: templates/js/translated/report.js:118 templates/js/translated/stock.js:594
-msgid "Select Stock Items"
-msgstr ""
-
-#: templates/js/report.js:99 templates/js/translated/report.js:119
-msgid "Stock item(s) must be selected before printing reports"
-msgstr ""
-
-#: templates/js/report.js:116 templates/js/report.js:169
-#: templates/js/report.js:223 templates/js/report.js:277
-#: templates/js/report.js:331 templates/js/translated/report.js:136
-#: templates/js/translated/report.js:189 templates/js/translated/report.js:243
-#: templates/js/translated/report.js:297 templates/js/translated/report.js:351
-msgid "No Reports Found"
-msgstr ""
-
-#: templates/js/report.js:117 templates/js/translated/report.js:137
-msgid "No report templates found which match selected stock item(s)"
-msgstr ""
-
-#: templates/js/report.js:152 templates/js/translated/report.js:172
-msgid "Select Builds"
-msgstr ""
-
-#: templates/js/report.js:153 templates/js/translated/report.js:173
-msgid "Build(s) must be selected before printing reports"
-msgstr ""
-
-#: templates/js/report.js:170 templates/js/translated/report.js:190
-msgid "No report templates found which match selected build(s)"
-msgstr ""
-
-#: templates/js/report.js:205 templates/js/translated/build.js:1333
-#: templates/js/translated/label.js:134 templates/js/translated/report.js:225
-msgid "Select Parts"
-msgstr ""
-
-#: templates/js/report.js:206 templates/js/translated/report.js:226
-msgid "Part(s) must be selected before printing reports"
-msgstr ""
-
-#: templates/js/report.js:224 templates/js/translated/report.js:244
-msgid "No report templates found which match selected part(s)"
-msgstr ""
-
-#: templates/js/report.js:259 templates/js/translated/report.js:279
-msgid "Select Purchase Orders"
-msgstr ""
-
-#: templates/js/report.js:260 templates/js/translated/report.js:280
-msgid "Purchase Order(s) must be selected before printing report"
-msgstr ""
-
-#: templates/js/report.js:278 templates/js/report.js:332
-#: templates/js/translated/report.js:298 templates/js/translated/report.js:352
-msgid "No report templates found which match selected orders"
-msgstr ""
-
-#: templates/js/report.js:313 templates/js/translated/report.js:333
-msgid "Select Sales Orders"
-msgstr ""
-
-#: templates/js/report.js:314 templates/js/translated/report.js:334
-msgid "Sales Order(s) must be selected before printing report"
-msgstr ""
-
 #: templates/js/translated/api.js:184 templates/js/translated/modals.js:1034
 msgid "No Response"
 msgstr ""
@@ -7152,6 +7068,11 @@ msgstr ""
 msgid "Specify stock allocation quantity"
 msgstr ""
 
+#: templates/js/translated/build.js:1333 templates/js/translated/label.js:134
+#: templates/js/translated/report.js:225
+msgid "Select Parts"
+msgstr ""
+
 #: templates/js/translated/build.js:1334
 msgid "You must select at least one part to allocate"
 msgstr ""
@@ -7380,6 +7301,11 @@ msgstr ""
 
 #: templates/js/translated/helpers.js:21
 msgid "NO"
+msgstr ""
+
+#: templates/js/translated/label.js:29 templates/js/translated/report.js:118
+#: templates/js/translated/stock.js:594
+msgid "Select Stock Items"
 msgstr ""
 
 #: templates/js/translated/label.js:30
@@ -7892,6 +7818,72 @@ msgstr ""
 msgid "Single Price Difference"
 msgstr ""
 
+#: templates/js/translated/report.js:67
+msgid "items selected"
+msgstr ""
+
+#: templates/js/translated/report.js:75
+msgid "Select Report Template"
+msgstr ""
+
+#: templates/js/translated/report.js:90
+msgid "Select Test Report Template"
+msgstr ""
+
+#: templates/js/translated/report.js:119
+msgid "Stock item(s) must be selected before printing reports"
+msgstr ""
+
+#: templates/js/translated/report.js:136 templates/js/translated/report.js:189
+#: templates/js/translated/report.js:243 templates/js/translated/report.js:297
+#: templates/js/translated/report.js:351
+msgid "No Reports Found"
+msgstr ""
+
+#: templates/js/translated/report.js:137
+msgid "No report templates found which match selected stock item(s)"
+msgstr ""
+
+#: templates/js/translated/report.js:172
+msgid "Select Builds"
+msgstr ""
+
+#: templates/js/translated/report.js:173
+msgid "Build(s) must be selected before printing reports"
+msgstr ""
+
+#: templates/js/translated/report.js:190
+msgid "No report templates found which match selected build(s)"
+msgstr ""
+
+#: templates/js/translated/report.js:226
+msgid "Part(s) must be selected before printing reports"
+msgstr ""
+
+#: templates/js/translated/report.js:244
+msgid "No report templates found which match selected part(s)"
+msgstr ""
+
+#: templates/js/translated/report.js:279
+msgid "Select Purchase Orders"
+msgstr ""
+
+#: templates/js/translated/report.js:280
+msgid "Purchase Order(s) must be selected before printing report"
+msgstr ""
+
+#: templates/js/translated/report.js:298 templates/js/translated/report.js:352
+msgid "No report templates found which match selected orders"
+msgstr ""
+
+#: templates/js/translated/report.js:333
+msgid "Select Sales Orders"
+msgstr ""
+
+#: templates/js/translated/report.js:334
+msgid "Sales Order(s) must be selected before printing report"
+msgstr ""
+
 #: templates/js/translated/stock.js:70
 msgid "Serialize Stock Item"
 msgstr ""
@@ -8147,10 +8139,6 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2124
 msgid "No installed items"
-msgstr ""
-
-#: templates/js/translated/stock.js:2147
-msgid "Serial"
 msgstr ""
 
 #: templates/js/translated/stock.js:2175
