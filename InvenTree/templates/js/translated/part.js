@@ -32,6 +32,7 @@
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartVariantTable,
+    loadRelatedPartsTable,
     loadSellPricingChart,
     loadSimplePartTable,
     loadStockPricingChart,
@@ -739,7 +740,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
 
                 var part = getPart(row);
 
-                var html = imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`)
+                var html = imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
 
                 html += makePartIcons(part);
 
