@@ -26,7 +26,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
-from .models import Part, PartCategory
+from .models import Part, PartCategory, PartRelated
 from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
@@ -900,6 +900,40 @@ class PartList(generics.ListCreateAPIView):
                     pks.append(part.pk)
 
             queryset = queryset.filter(pk__in=pks)
+
+        # Filter by 'related' parts?
+        related = params.get('related', None)
+        exclude_related = params.get('exclude_related', None)
+
+        if related is not None or exclude_related is not None:
+            try:
+                pk = related if related is not None else exclude_related
+                pk = int(pk)
+
+                related_part = Part.objects.get(pk=pk)
+
+                part_ids = set()
+
+                # Return any relationship which points to the part in question
+                relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+
+                for relation in PartRelated.objects.filter(relation_filter):
+
+                    if relation.part_1.pk != pk:
+                        part_ids.add(relation.part_1.pk)
+
+                    if relation.part_2.pk != pk:
+                        part_ids.add(relation.part_2.pk)
+
+                if related is not None:
+                    # Only return related results
+                    queryset = queryset.filter(pk__in=[pk for pk in part_ids])
+                elif exclude_related is not None:
+                    # Exclude related results
+                    queryset = queryset.exclude(pk__in=[pk for pk in part_ids])
+
+            except (ValueError, Part.DoesNotExist):
+                pass
 
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
