@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 10:11+0000\n"
-"PO-Revision-Date: 2021-11-25 15:13\n"
+"PO-Revision-Date: 2021-11-25 16:33\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1986,7 +1986,7 @@ msgstr ""
 
 #: common/models.py:1033
 msgid "Show recently changed stock items on the homepage"
-msgstr ""
+msgstr "Mostrar artículos de stock recientemente modificados en la página de inicio"
 
 #: common/models.py:1038
 msgid "Recent Stock Count"
@@ -1994,7 +1994,7 @@ msgstr ""
 
 #: common/models.py:1039
 msgid "Number of recent stock items to display on index page"
-msgstr ""
+msgstr "Número de elementos de stock recientes a mostrar en la página de índice"
 
 #: common/models.py:1044
 msgid "Show low stock"
@@ -2002,7 +2002,7 @@ msgstr ""
 
 #: common/models.py:1045
 msgid "Show low stock items on the homepage"
-msgstr ""
+msgstr "Mostrar artículos de stock bajo en la página de inicio"
 
 #: common/models.py:1050
 msgid "Show depleted stock"
@@ -2010,7 +2010,7 @@ msgstr ""
 
 #: common/models.py:1051
 msgid "Show depleted stock items on the homepage"
-msgstr ""
+msgstr "Mostrar artículos agotados en la página de inicio"
 
 #: common/models.py:1056
 msgid "Show needed stock"
@@ -2026,7 +2026,7 @@ msgstr ""
 
 #: common/models.py:1063
 msgid "Show expired stock items on the homepage"
-msgstr ""
+msgstr "Mostrar artículos de stock caducados en la página de inicio"
 
 #: common/models.py:1068
 msgid "Show stale stock"
@@ -2034,7 +2034,7 @@ msgstr ""
 
 #: common/models.py:1069
 msgid "Show stale stock items on the homepage"
-msgstr ""
+msgstr "Mostrar elementos de stock obsoletos en la página de inicio"
 
 #: common/models.py:1074
 msgid "Show pending builds"
@@ -2180,7 +2180,7 @@ msgstr ""
 
 #: common/views.py:95
 msgid "Match Items"
-msgstr ""
+msgstr "Coincidir elementos"
 
 #: common/views.py:440
 msgid "Fields matching failed"
@@ -2282,7 +2282,7 @@ msgstr ""
 
 #: company/models.py:144
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "¿Vendes artículos a esta empresa?"
 
 #: company/models.py:146
 msgid "is supplier"
@@ -2290,7 +2290,7 @@ msgstr ""
 
 #: company/models.py:146
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "¿Compras artículos de esta empresa?"
 
 #: company/models.py:148
 msgid "is manufacturer"
@@ -2735,11 +2735,11 @@ msgstr "Partes suministradas"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr ""
+msgstr "Elementos de stock suministrados"
 
 #: company/templates/company/sidebar.html:22
 msgid "Assigned Stock Items"
-msgstr ""
+msgstr "Elementos de Stock Asignados"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -2850,7 +2850,7 @@ msgstr ""
 #: templates/InvenTree/search.html:158 templates/js/translated/stock.js:1871
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
-msgstr ""
+msgstr "Elementos de stock"
 
 #: company/views.py:50
 msgid "New Supplier"
