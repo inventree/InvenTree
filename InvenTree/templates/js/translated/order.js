@@ -1156,7 +1156,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
         filters[key] = options.params[key];
     }
 
-    var todo = "Setup filter list for this table";
+    setupFilterList('salesordershipment', $(table), options.filter_target);
 
     function makeShipmentActions(row) {
         // Construct "actions" for the given shipment row
@@ -1733,6 +1733,10 @@ function showAllocationSubTable(index, row, element, options) {
         data: row.allocations,
         showHeader: false,
         columns: [
+            {
+                field: 'part',
+                title: '{% trans "Part" %}',
+            },
             {
                 field: 'allocated',
                 title: '{% trans "Quantity" %}',

@@ -61,6 +61,9 @@
     <div class='panel-content'>
         {% if roles.sales_order.change %}
         <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="pending-shipments" %}
+            </div>
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='pending-shipments-table' data-toolbar='#pending-shipment-toolbar'></table>
@@ -74,6 +77,9 @@
     </div>
     <div class='panel-content'>
         <div id='completed-shipment-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="completed-shipments" %}
+            </div>
         </div>
         <table class='table table-striped table-condensed' id='completed-shipments-table' data-toolbar='#completed-shipment-toolbar'></table>
     </div>
@@ -84,7 +90,12 @@
         <h4>{% trans "Build Orders" %}</h4>
     </div>
     <div class='panel-content'>
-        <table class='table table-striped table-condensed' id='builds-table'></table>
+        <div id='builds-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id='build' %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='builds-table' data-toolbar='#builds-toolbar'></table>
     </div>
 </div>
 
@@ -138,6 +149,7 @@
         loadSalesOrderShipmentTable('#pending-shipments-table', {
             order: {{ order.pk }},
             shipped: false,
+            filter_target: '#filter-list-pending-shipments',
         });
 
         $('#new-shipment').click(function() {
@@ -151,11 +163,14 @@
 
         {% endif %}
 
+    });
+    
+    onPanelLoad('order-shipments-complete', function() {
         loadSalesOrderShipmentTable('#completed-shipments-table', {
             order: {{ order.pk }},
             shipped: true,
+            filter_target: '#filter-list-completed-shipments',
         });
-
     });
 
     $('#edit-notes').click(function() {
