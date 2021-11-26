@@ -44,6 +44,14 @@
             <h4>{% trans "Pending Shipments" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if 0 %}
+                <button id='pending-shipment-options' title='{% trans "Actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                    <span class='fas fa-tools'></span> <span class='caret'></span>
+                </button>
+                <ul class='dropdown-menu' role='menu'>
+
+                </ul>
+                {% endif %}
                 <button type='button' class='btn btn-success' id='new-shipment'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Shipment" %}
                 </button>
