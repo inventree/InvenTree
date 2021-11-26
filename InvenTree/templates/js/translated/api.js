@@ -54,6 +54,7 @@ function inventreeGet(url, filters={}, options={}) {
         data: filters,
         dataType: 'json',
         contentType: 'application/json',
+        async: (options.async == false) ? false : true,
         success: function(response) {
             if (options.success) {
                 options.success(response);

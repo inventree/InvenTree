@@ -80,6 +80,20 @@ function serializeStockItem(pk, options={}) {
         notes: {},
     };
 
+    if (options.part) {
+        // Work out the next available serial number
+        inventreeGet(`/api/part/${options.part}/serial-numbers/`, {}, {
+            success: function(data) {
+                if (data.next) {
+                    options.fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                } else if (data.latest) {
+                    options.fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                }
+            },
+            async: false,
+        });
+    }
+
     constructForm(url, options);
 }
 
