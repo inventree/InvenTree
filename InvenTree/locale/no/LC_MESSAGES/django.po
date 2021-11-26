@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-26 11:01+0000\n"
-"PO-Revision-Date: 2021-11-26 11:02\n"
+"POT-Creation-Date: 2021-11-26 11:32+0000\n"
+"PO-Revision-Date: 2021-11-26 11:57\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -193,7 +193,7 @@ msgstr "Navn"
 #: templates/js/translated/company.js:345
 #: templates/js/translated/company.js:548
 #: templates/js/translated/company.js:837 templates/js/translated/order.js:673
-#: templates/js/translated/order.js:833 templates/js/translated/order.js:1069
+#: templates/js/translated/order.js:850 templates/js/translated/order.js:1086
 #: templates/js/translated/part.js:558 templates/js/translated/part.js:752
 #: templates/js/translated/part.js:837 templates/js/translated/part.js:1007
 #: templates/js/translated/part.js:1403 templates/js/translated/part.js:1472
@@ -566,9 +566,9 @@ msgstr ""
 #: templates/js/translated/build.js:629 templates/js/translated/build.js:639
 #: templates/js/translated/build.js:1015 templates/js/translated/build.js:1362
 #: templates/js/translated/model_renderers.js:99
-#: templates/js/translated/order.js:870 templates/js/translated/order.js:1183
-#: templates/js/translated/order.js:1261 templates/js/translated/order.js:1268
-#: templates/js/translated/order.js:1357 templates/js/translated/order.js:1457
+#: templates/js/translated/order.js:887 templates/js/translated/order.js:1200
+#: templates/js/translated/order.js:1278 templates/js/translated/order.js:1285
+#: templates/js/translated/order.js:1374 templates/js/translated/order.js:1474
 #: templates/js/translated/part.js:1615 templates/js/translated/part.js:1738
 #: templates/js/translated/part.js:1816 templates/js/translated/stock.js:347
 #: templates/js/translated/stock.js:2039 templates/js/translated/stock.js:2141
@@ -640,7 +640,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
 #: templates/js/translated/bom.js:435 templates/js/translated/build.js:1119
-#: templates/js/translated/order.js:864 templates/js/translated/order.js:1451
+#: templates/js/translated/order.js:881 templates/js/translated/order.js:1468
 msgid "Reference"
 msgstr ""
 
@@ -678,7 +678,7 @@ msgstr ""
 #: templates/js/translated/build.js:988 templates/js/translated/build.js:1359
 #: templates/js/translated/build.js:1626 templates/js/translated/company.js:489
 #: templates/js/translated/company.js:746 templates/js/translated/order.js:426
-#: templates/js/translated/order.js:818 templates/js/translated/order.js:1435
+#: templates/js/translated/order.js:835 templates/js/translated/order.js:1452
 #: templates/js/translated/part.js:737 templates/js/translated/part.js:818
 #: templates/js/translated/part.js:985 templates/js/translated/stock.js:478
 #: templates/js/translated/stock.js:1078 templates/js/translated/stock.js:2129
@@ -746,7 +746,7 @@ msgid "Batch code for this build output"
 msgstr ""
 
 #: build/models.py:292 order/models.py:165 part/models.py:936
-#: part/templates/part/detail.html:86 templates/js/translated/order.js:1082
+#: part/templates/part/detail.html:86 templates/js/translated/order.js:1099
 msgid "Creation Date"
 msgstr ""
 
@@ -780,7 +780,7 @@ msgstr ""
 #: order/templates/order/order_base.html:154
 #: order/templates/order/sales_order_base.html:161 part/models.py:940
 #: report/templates/report/inventree_build_order_base.html:159
-#: templates/js/translated/build.js:1680
+#: templates/js/translated/build.js:1680 templates/js/translated/order.js:700
 msgid "Responsible"
 msgstr ""
 
@@ -812,8 +812,8 @@ msgstr ""
 #: stock/models.py:1774 stock/models.py:1880 stock/serializers.py:325
 #: stock/serializers.py:584 stock/templates/stock/stock_sidebar.html:21
 #: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:599
-#: templates/js/translated/company.js:842 templates/js/translated/order.js:963
-#: templates/js/translated/order.js:1561 templates/js/translated/stock.js:861
+#: templates/js/translated/company.js:842 templates/js/translated/order.js:980
+#: templates/js/translated/order.js:1578 templates/js/translated/stock.js:861
 #: templates/js/translated/stock.js:1340
 msgid "Notes"
 msgstr ""
@@ -875,7 +875,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:340
 #: templates/js/translated/build.js:408 templates/js/translated/build.js:413
 #: templates/js/translated/build.js:1361 templates/js/translated/build.js:1742
-#: templates/js/translated/order.js:1156 templates/js/translated/order.js:1161
+#: templates/js/translated/order.js:1173 templates/js/translated/order.js:1178
 #: templates/js/translated/stock.js:1990
 msgid "Stock Item"
 msgstr ""
@@ -916,14 +916,14 @@ msgstr ""
 msgid "This build output is not fully allocated"
 msgstr ""
 
-#: build/serializers.py:190 order/serializers.py:217 order/serializers.py:285
+#: build/serializers.py:190 order/serializers.py:220 order/serializers.py:288
 #: stock/forms.py:236 stock/serializers.py:318 stock/serializers.py:686
 #: stock/templates/stock/item_base.html:286
 #: templates/js/translated/barcode.js:384
 #: templates/js/translated/barcode.js:557 templates/js/translated/build.js:420
 #: templates/js/translated/build.js:1027 templates/js/translated/order.js:348
-#: templates/js/translated/order.js:1168 templates/js/translated/order.js:1276
-#: templates/js/translated/order.js:1282 templates/js/translated/part.js:181
+#: templates/js/translated/order.js:1185 templates/js/translated/order.js:1293
+#: templates/js/translated/order.js:1299 templates/js/translated/part.js:181
 #: templates/js/translated/stock.js:480 templates/js/translated/stock.js:1221
 #: templates/js/translated/stock.js:1931
 msgid "Location"
@@ -935,10 +935,10 @@ msgstr ""
 
 #: build/serializers.py:197 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
-#: order/serializers.py:238 stock/templates/stock/item_base.html:409
+#: order/serializers.py:241 stock/templates/stock/item_base.html:409
 #: templates/js/translated/barcode.js:140 templates/js/translated/build.js:1655
 #: templates/js/translated/order.js:431 templates/js/translated/order.js:677
-#: templates/js/translated/order.js:1074 templates/js/translated/stock.js:1196
+#: templates/js/translated/order.js:1091 templates/js/translated/stock.js:1196
 #: templates/js/translated/stock.js:2008 templates/js/translated/stock.js:2157
 msgid "Status"
 msgstr ""
@@ -968,7 +968,7 @@ msgstr ""
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:348 order/models.py:316 order/serializers.py:231
+#: build/serializers.py:348 order/models.py:316 order/serializers.py:234
 #: stock/models.py:381 stock/models.py:1103 stock/serializers.py:298
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1059,7 +1059,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:140
 #: report/templates/report/inventree_build_order_base.html:126
 #: templates/js/translated/build.js:1692 templates/js/translated/order.js:690
-#: templates/js/translated/order.js:1087
+#: templates/js/translated/order.js:1104
 msgid "Target Date"
 msgstr ""
 
@@ -1095,7 +1095,7 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:136
 #: report/templates/report/inventree_so_report.html:77
 #: stock/templates/stock/item_base.html:280
-#: templates/js/translated/order.js:1029
+#: templates/js/translated/order.js:1046
 msgid "Sales Order"
 msgstr ""
 
@@ -1170,7 +1170,7 @@ msgid "Stock can be taken from any available location."
 msgstr ""
 
 #: build/templates/build/detail.html:50 order/models.py:811 stock/forms.py:150
-#: templates/js/translated/order.js:432 templates/js/translated/order.js:952
+#: templates/js/translated/order.js:432 templates/js/translated/order.js:969
 msgid "Destination"
 msgstr ""
 
@@ -1329,7 +1329,7 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:149
 #: order/templates/order/sales_order_detail.html:139
 #: part/templates/part/detail.html:1025 stock/templates/stock/item.html:247
-#: templates/js/translated/order.js:1243
+#: templates/js/translated/order.js:1260
 msgid "Confirm Delete Operation"
 msgstr ""
 
@@ -2335,7 +2335,7 @@ msgstr ""
 #: company/models.py:342 company/templates/company/manufacturer_part.html:97
 #: company/templates/company/supplier_part.html:112
 #: templates/js/translated/company.js:530
-#: templates/js/translated/company.js:815 templates/js/translated/order.js:852
+#: templates/js/translated/company.js:815 templates/js/translated/order.js:869
 #: templates/js/translated/part.js:240
 msgid "MPN"
 msgstr ""
@@ -2405,7 +2405,7 @@ msgid "Select supplier"
 msgstr ""
 
 #: company/models.py:551 company/templates/company/supplier_part.html:98
-#: part/bom.py:220 part/bom.py:248 templates/js/translated/order.js:839
+#: part/bom.py:220 part/bom.py:248 templates/js/translated/order.js:856
 #: templates/js/translated/part.js:221
 msgid "SKU"
 msgstr ""
@@ -2507,7 +2507,7 @@ msgstr ""
 #: company/templates/company/company_base.html:126 order/models.py:567
 #: order/templates/order/sales_order_base.html:114 stock/models.py:525
 #: stock/models.py:526 stock/templates/stock/item_base.html:263
-#: templates/js/translated/company.js:329 templates/js/translated/order.js:1051
+#: templates/js/translated/company.js:329 templates/js/translated/order.js:1068
 #: templates/js/translated/stock.js:1972
 msgid "Customer"
 msgstr ""
@@ -3081,7 +3081,7 @@ msgstr ""
 msgid "Target date for order completion. Order will be overdue after this date."
 msgstr ""
 
-#: order/models.py:582 templates/js/translated/order.js:1092
+#: order/models.py:582 templates/js/translated/order.js:1109
 msgid "Shipment Date"
 msgstr ""
 
@@ -3106,7 +3106,7 @@ msgid "Line item notes"
 msgstr ""
 
 #: order/models.py:768 order/models.py:856
-#: templates/js/translated/order.js:1144
+#: templates/js/translated/order.js:1161
 msgid "Order"
 msgstr ""
 
@@ -3125,7 +3125,7 @@ msgstr ""
 
 #: order/models.py:797 order/templates/order/order_base.html:147
 #: order/templates/order/sales_order_base.html:154
-#: templates/js/translated/order.js:429 templates/js/translated/order.js:932
+#: templates/js/translated/order.js:429 templates/js/translated/order.js:949
 msgid "Received"
 msgstr ""
 
@@ -3196,47 +3196,47 @@ msgstr ""
 msgid "Enter stock allocation quantity"
 msgstr ""
 
-#: order/serializers.py:167
+#: order/serializers.py:170
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:202
+#: order/serializers.py:205
 msgid "Line Item"
 msgstr ""
 
-#: order/serializers.py:208
+#: order/serializers.py:211
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:218 order/serializers.py:286
+#: order/serializers.py:221 order/serializers.py:289
 msgid "Select destination location for received items"
 msgstr ""
 
-#: order/serializers.py:242
+#: order/serializers.py:245
 msgid "Barcode Hash"
 msgstr ""
 
-#: order/serializers.py:243
+#: order/serializers.py:246
 msgid "Unique identifier field"
 msgstr ""
 
-#: order/serializers.py:260
+#: order/serializers.py:263
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:298
+#: order/serializers.py:301
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:315
+#: order/serializers.py:318
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:326
+#: order/serializers.py:329
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:568
+#: order/serializers.py:571
 msgid "Sale price currency"
 msgstr ""
 
@@ -3441,7 +3441,7 @@ msgid "Select existing purchase orders, or create new orders."
 msgstr ""
 
 #: order/templates/order/order_wizard/select_pos.html:31
-#: templates/js/translated/order.js:695 templates/js/translated/order.js:1097
+#: templates/js/translated/order.js:695 templates/js/translated/order.js:1114
 msgid "Items"
 msgstr ""
 
@@ -3521,7 +3521,7 @@ msgid "This Sales Order has not been fully allocated"
 msgstr ""
 
 #: order/templates/order/sales_order_base.html:121
-#: templates/js/translated/order.js:1064
+#: templates/js/translated/order.js:1081
 msgid "Customer Reference"
 msgstr ""
 
@@ -4730,7 +4730,7 @@ msgstr ""
 msgid "This part is a variant of %(link)s"
 msgstr ""
 
-#: part/templates/part/part_base.html:172 templates/js/translated/order.js:1524
+#: part/templates/part/part_base.html:172 templates/js/translated/order.js:1541
 #: templates/js/translated/table_filters.js:188
 msgid "In Stock"
 msgstr ""
@@ -5195,7 +5195,7 @@ msgstr ""
 #: templates/js/translated/build.js:233 templates/js/translated/build.js:637
 #: templates/js/translated/build.js:1013
 #: templates/js/translated/model_renderers.js:95
-#: templates/js/translated/order.js:1266 templates/js/translated/order.js:1355
+#: templates/js/translated/order.js:1283 templates/js/translated/order.js:1372
 msgid "Serial Number"
 msgstr ""
 
@@ -6921,7 +6921,7 @@ msgid "View BOM"
 msgstr ""
 
 #: templates/js/translated/bom.js:608 templates/js/translated/build.js:1183
-#: templates/js/translated/order.js:1298
+#: templates/js/translated/order.js:1315
 msgid "Actions"
 msgstr ""
 
@@ -7013,7 +7013,7 @@ msgstr ""
 msgid "No build order allocations found"
 msgstr ""
 
-#: templates/js/translated/build.js:424 templates/js/translated/order.js:1172
+#: templates/js/translated/build.js:424 templates/js/translated/order.js:1189
 msgid "Location not specified"
 msgstr ""
 
@@ -7022,12 +7022,12 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1052 templates/js/translated/build.js:1760
-#: templates/js/translated/order.js:1305
+#: templates/js/translated/order.js:1322
 msgid "Edit stock allocation"
 msgstr ""
 
 #: templates/js/translated/build.js:1054 templates/js/translated/build.js:1761
-#: templates/js/translated/order.js:1306
+#: templates/js/translated/order.js:1323
 msgid "Delete stock allocation"
 msgstr ""
 
@@ -7048,11 +7048,11 @@ msgid "Quantity Per"
 msgstr ""
 
 #: templates/js/translated/build.js:1134 templates/js/translated/build.js:1360
-#: templates/js/translated/build.js:1756 templates/js/translated/order.js:1535
+#: templates/js/translated/build.js:1756 templates/js/translated/order.js:1552
 msgid "Allocated"
 msgstr ""
 
-#: templates/js/translated/build.js:1190 templates/js/translated/order.js:1589
+#: templates/js/translated/build.js:1190 templates/js/translated/order.js:1606
 msgid "Build stock"
 msgstr ""
 
@@ -7060,7 +7060,7 @@ msgstr ""
 msgid "Order stock"
 msgstr ""
 
-#: templates/js/translated/build.js:1197 templates/js/translated/order.js:1582
+#: templates/js/translated/build.js:1197 templates/js/translated/order.js:1599
 msgid "Allocate stock"
 msgstr ""
 
@@ -7508,100 +7508,100 @@ msgstr ""
 msgid "No purchase orders found"
 msgstr ""
 
-#: templates/js/translated/order.js:652 templates/js/translated/order.js:1041
+#: templates/js/translated/order.js:652 templates/js/translated/order.js:1058
 msgid "Order is overdue"
 msgstr ""
 
-#: templates/js/translated/order.js:750 templates/js/translated/order.js:1624
+#: templates/js/translated/order.js:767 templates/js/translated/order.js:1641
 msgid "Edit Line Item"
 msgstr ""
 
-#: templates/js/translated/order.js:762 templates/js/translated/order.js:1635
+#: templates/js/translated/order.js:779 templates/js/translated/order.js:1652
 msgid "Delete Line Item"
 msgstr ""
 
-#: templates/js/translated/order.js:801
+#: templates/js/translated/order.js:818
 msgid "No line items found"
 msgstr ""
 
-#: templates/js/translated/order.js:828 templates/js/translated/order.js:1445
+#: templates/js/translated/order.js:845 templates/js/translated/order.js:1462
 msgid "Total"
 msgstr ""
 
-#: templates/js/translated/order.js:882 templates/js/translated/order.js:1470
+#: templates/js/translated/order.js:899 templates/js/translated/order.js:1487
 #: templates/js/translated/part.js:1594 templates/js/translated/part.js:1805
 msgid "Unit Price"
 msgstr ""
 
-#: templates/js/translated/order.js:897 templates/js/translated/order.js:1486
+#: templates/js/translated/order.js:914 templates/js/translated/order.js:1503
 msgid "Total Price"
 msgstr ""
 
-#: templates/js/translated/order.js:975 templates/js/translated/order.js:1595
+#: templates/js/translated/order.js:992 templates/js/translated/order.js:1612
 msgid "Edit line item"
 msgstr ""
 
-#: templates/js/translated/order.js:976
+#: templates/js/translated/order.js:993
 msgid "Delete line item"
 msgstr ""
 
-#: templates/js/translated/order.js:980
+#: templates/js/translated/order.js:997
 msgid "Receive line item"
 msgstr ""
 
-#: templates/js/translated/order.js:1017
+#: templates/js/translated/order.js:1034
 msgid "No sales orders found"
 msgstr ""
 
-#: templates/js/translated/order.js:1055
+#: templates/js/translated/order.js:1072
 msgid "Invalid Customer"
 msgstr ""
 
-#: templates/js/translated/order.js:1133
+#: templates/js/translated/order.js:1150
 msgid "No sales order allocations found"
 msgstr ""
 
-#: templates/js/translated/order.js:1226
+#: templates/js/translated/order.js:1243
 msgid "Edit Stock Allocation"
 msgstr ""
 
-#: templates/js/translated/order.js:1244
+#: templates/js/translated/order.js:1261
 msgid "Delete Stock Allocation"
 msgstr ""
 
-#: templates/js/translated/order.js:1286
+#: templates/js/translated/order.js:1303
 msgid "Stock location not specified"
 msgstr ""
 
-#: templates/js/translated/order.js:1535
+#: templates/js/translated/order.js:1552
 msgid "Fulfilled"
 msgstr ""
 
-#: templates/js/translated/order.js:1579
+#: templates/js/translated/order.js:1596
 msgid "Allocate serial numbers"
 msgstr ""
 
-#: templates/js/translated/order.js:1585
+#: templates/js/translated/order.js:1602
 msgid "Purchase stock"
 msgstr ""
 
-#: templates/js/translated/order.js:1592 templates/js/translated/order.js:1771
+#: templates/js/translated/order.js:1609 templates/js/translated/order.js:1788
 msgid "Calculate price"
 msgstr ""
 
-#: templates/js/translated/order.js:1596
+#: templates/js/translated/order.js:1613
 msgid "Delete line item "
 msgstr ""
 
-#: templates/js/translated/order.js:1719
+#: templates/js/translated/order.js:1736
 msgid "Allocate Stock Item"
 msgstr ""
 
-#: templates/js/translated/order.js:1779
+#: templates/js/translated/order.js:1796
 msgid "Update Unit Price"
 msgstr ""
 
-#: templates/js/translated/order.js:1793
+#: templates/js/translated/order.js:1810
 msgid "No matching line items"
 msgstr ""
 
