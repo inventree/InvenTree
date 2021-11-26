@@ -553,7 +553,6 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     quantity = InvenTreeDecimalField()
 
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
-    fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
 
     shipped = InvenTreeDecimalField(read_only=True)
 
@@ -576,7 +575,6 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'allocated',
             'allocations',
             'quantity',
-            'fulfilled',
             'reference',
             'notes',
             'order',

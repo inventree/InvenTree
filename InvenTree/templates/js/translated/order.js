@@ -1918,7 +1918,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         */
         {
             sortable: true,
-            sortName: 'part__name',
+            sortName: 'part_detail.name',
             field: 'part',
             title: '{% trans "Part" %}',
             switchable: false,
@@ -2015,40 +2015,66 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 },
             },
         );
+
+        columns.push(
+            {
+                field: 'allocated',
+                title: '{% trans "Allocated" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                        return makeProgressBar(row.allocated, row.quantity, {
+                        id: `order-line-progress-${row.pk}`,
+                    });
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+    
+                    var A = rowA.allocated;
+                    var B = rowB.allocated;
+    
+                    if (A == 0 && B == 0) {
+                        return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                    }
+    
+                    var progressA = parseFloat(A) / rowA.quantity;
+                    var progressB = parseFloat(B) / rowB.quantity;
+    
+                    return (progressA < progressB) ? 1 : -1;
+                }
+            },
+        );
     }
 
-    columns.push(
-        {
-            field: 'allocated',
-            title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
-            switchable: false,
-            formatter: function(value, row, index, field) {
+    columns.push({
+        field: 'shipped',
+        title: '{% trans "Shipped" %}',
+        switchable: false,
+        sortable: true,
+        formatter: function(value, row) {
+            return makeProgressBar(row.shipped, row.quantity, {
+                id: `order-line-shipped-${row.pk}`
+            });
+        },
+        sorter: function(valA, valB, rowA, rowB) {
+            var A = rowA.shipped;
+            var B = rowB.shipped;
 
-                var quantity = pending ? row.allocated : row.fulfilled;
-                return makeProgressBar(quantity, row.quantity, {
-                    id: `order-line-progress-${row.pk}`,
-                });
-            },
-            sorter: function(valA, valB, rowA, rowB) {
-
-                var A = pending ? rowA.allocated : rowA.fulfilled;
-                var B = pending ? rowB.allocated : rowB.fulfilled;
-
-                if (A == 0 && B == 0) {
-                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
-                }
-
-                var progressA = parseFloat(A) / rowA.quantity;
-                var progressB = parseFloat(B) / rowB.quantity;
-
-                return (progressA < progressB) ? 1 : -1;
+            if (A == 0 && B == 0) {
+                return (rowA.quantity > rowB.quantity) ? 1 : -1;
             }
-        },
-        {
-            field: 'notes',
-            title: '{% trans "Notes" %}',
-        },
-    );
+
+            var progressA = parseFloat(A) / rowA.quantity;
+            var progressB = parseFloat(B) / rowB.quantity;
+
+            return (progressA < progressB) ? 1 : -1;
+        }
+    });
+
+    columns.push(
+    {
+        field: 'notes',
+        title: '{% trans "Notes" %}',
+    });
 
     if (pending) {
         columns.push({
@@ -2230,7 +2256,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
         name: 'salesorderlineitems',
-        sidePagination: 'server',
+        sidePagination: 'client',
         formatNoMatches: function() {
             return '{% trans "No matching line items" %}';
         },
@@ -2246,7 +2272,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 // Order is pending
                 return row.allocated > 0;
             } else {
-                return row.fulfilled > 0;
+                return row.shipped > 0;
             }
         },
         detailFormatter: function(index, row, element) {
