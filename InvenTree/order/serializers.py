@@ -17,15 +17,15 @@ from rest_framework.serializers import ValidationError
 
 from sql_util.utils import SubqueryCount
 
+from common.settings import currency_code_mappings
+from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+
 from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
-
 from InvenTree.status_codes import StockStatus
-
-from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 
 from part.serializers import PartBriefSerializer
 
@@ -37,7 +37,7 @@ from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
-from common.settings import currency_code_mappings
+from users.serializers import OwnerSerializer
 
 
 class POSerializer(InvenTreeModelSerializer):
@@ -86,6 +86,8 @@ class POSerializer(InvenTreeModelSerializer):
 
     reference = serializers.CharField(required=True)
 
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
+
     class Meta:
         model = PurchaseOrder
 
@@ -100,6 +102,7 @@ class POSerializer(InvenTreeModelSerializer):
             'overdue',
             'reference',
             'responsible',
+            'responsible_detail',
             'supplier',
             'supplier_detail',
             'supplier_reference',
