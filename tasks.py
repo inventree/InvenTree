@@ -291,6 +291,7 @@ def content_excludes():
         "exchange.rate",
         "exchange.exchangebackend",
         "common.notificationentry",
+        "sessions.session",
     ]
 
     output = ""
