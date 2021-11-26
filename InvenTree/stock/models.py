@@ -46,7 +46,6 @@ from users.models import Owner
 
 from company import models as CompanyModels
 from part import models as PartModels
-from part.models import BomItem
 
 
 class StockLocation(InvenTreeTree):
@@ -1687,6 +1686,8 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
 
 @receiver(post_save, sender=StockItem)
 def changed_stockitem(sender, instance, **kwargs):
+    from part.models import BomItem
+
     # TODO make this async
     bomitems = BomItem.objects.filter(sub_part__stock_items__id=instance.id)
     queryset = bomitems.annotate(
