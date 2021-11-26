@@ -763,10 +763,12 @@
                     part_2: {
                         label: '{% trans "Related Part" %}',
                         filters: {
+                            exclude_id: {{ part.pk }},
                             exclude_related: {{ part.pk }},
                         }
                     }
                 },
+                focus: 'part_2',
                 title: '{% trans "Add Related Part" %}',
                 onSuccess: function() {
                     $('#related-parts-table').bootstrapTable('refresh');
