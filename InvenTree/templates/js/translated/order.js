@@ -1206,7 +1206,11 @@ function loadSalesOrderShipmentTable(table, options={}) {
         detailFormatter: function(index, row, element) {
             return showAllocationSubTable(index, row, element, options);
         },
-        onPostBody: setupShipmentCallbacks,
+        onPostBody: function() {
+            setupShipmentCallbacks();
+
+            $(table).bootstrapTable('expandAllRows');
+        },
         formatNoMatches: function() {
             return '{% trans "No matching shipments found" %}';
         },
@@ -1218,7 +1222,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             },
             {
                 field: 'reference',
-                title: '{% trans "Reference" %}',
+                title: '{% trans "Shipment" %}',
                 switchable: false,
             },
             {
@@ -1734,8 +1738,11 @@ function showAllocationSubTable(index, row, element, options) {
         showHeader: false,
         columns: [
             {
-                field: 'part',
+                field: 'part_detail',
                 title: '{% trans "Part" %}',
+                formatter: function(part, row) {
+                    return imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
+                }
             },
             {
                 field: 'allocated',

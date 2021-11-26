@@ -489,7 +489,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     def __init__(self, *args, **kwargs):
 
         order_detail = kwargs.pop('order_detail', False)
-        part_detail = kwargs.pop('part_detail', False)
+        part_detail = kwargs.pop('part_detail', True)
         item_detail = kwargs.pop('item_detail', False)
         location_detail = kwargs.pop('location_detail', False)
 
