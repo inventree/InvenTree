@@ -555,6 +555,8 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
 
+    shipped = InvenTreeDecimalField(read_only=True)
+
     sale_price = InvenTreeMoneySerializer(
         allow_null=True
     )
@@ -584,6 +586,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
+            'shipped',
         ]
 
 

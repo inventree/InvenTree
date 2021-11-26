@@ -814,6 +814,7 @@ class SalesOrderLineItem(OrderLineItem):
         order: Link to the SalesOrder that this line item belongs to
         part: Link to a Part object (may be null)
         sale_price: The unit sale price for this OrderLineItem
+        shipped: The number of items which have actually shipped against this line item
     """
 
     @staticmethod
@@ -836,6 +837,14 @@ class SalesOrderLineItem(OrderLineItem):
         null=True, blank=True,
         verbose_name=_('Sale Price'),
         help_text=_('Unit sale price'),
+    )
+
+    shipped = RoundingDecimalField(
+        verbose_name=_('Shipped'),
+        help_text=_('Shipped quantity'),
+        default=0,
+        max_digits=15, decimal_places=5,
+        validators=[MinValueValidator(0)]
     )
 
     class Meta:
