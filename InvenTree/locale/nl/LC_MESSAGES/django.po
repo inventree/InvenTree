@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-25 10:11+0000\n"
+"POT-Creation-Date: 2021-11-26 11:00+0000\n"
 "PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -6379,19 +6379,19 @@ msgstr ""
 msgid "Set Language"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:213
+#: templates/InvenTree/settings/user.html:214
 msgid "Some languages are not complete"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:215
+#: templates/InvenTree/settings/user.html:216
 msgid "Show only sufficent"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:217
+#: templates/InvenTree/settings/user.html:218
 msgid "and hidden."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:217
+#: templates/InvenTree/settings/user.html:218
 msgid "Show them too"
 msgstr ""
 
