@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-26 11:00+0000\n"
+"POT-Creation-Date: 2021-11-26 11:01+0000\n"
 "PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
@@ -552,7 +552,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:223
 #: part/forms.py:239 part/forms.py:255 part/models.py:2576
 #: part/templates/part/bom_upload/match_parts.html:31
-#: part/templates/part/detail.html:1113 part/templates/part/detail.html:1199
+#: part/templates/part/detail.html:1115 part/templates/part/detail.html:1201
 #: part/templates/part/part_pricing.html:16
 #: report/templates/report/inventree_build_order_base.html:114
 #: report/templates/report/inventree_po_report.html:91
@@ -1313,7 +1313,7 @@ msgstr ""
 #: build/templates/build/detail.html:448
 #: order/templates/order/purchase_order_detail.html:170
 #: order/templates/order/sales_order_detail.html:160
-#: part/templates/part/detail.html:1060 stock/templates/stock/item.html:270
+#: part/templates/part/detail.html:1062 stock/templates/stock/item.html:270
 #: templates/attachment_button.html:4
 msgid "Add Attachment"
 msgstr ""
@@ -1321,14 +1321,14 @@ msgstr ""
 #: build/templates/build/detail.html:467
 #: order/templates/order/purchase_order_detail.html:142
 #: order/templates/order/sales_order_detail.html:133
-#: part/templates/part/detail.html:1014 stock/templates/stock/item.html:238
+#: part/templates/part/detail.html:1016 stock/templates/stock/item.html:238
 msgid "Edit Attachment"
 msgstr ""
 
 #: build/templates/build/detail.html:474
 #: order/templates/order/purchase_order_detail.html:149
 #: order/templates/order/sales_order_detail.html:139
-#: part/templates/part/detail.html:1023 stock/templates/stock/item.html:247
+#: part/templates/part/detail.html:1025 stock/templates/stock/item.html:247
 #: templates/js/translated/order.js:1243
 msgid "Confirm Delete Operation"
 msgstr ""
@@ -1336,7 +1336,7 @@ msgstr ""
 #: build/templates/build/detail.html:475
 #: order/templates/order/purchase_order_detail.html:150
 #: order/templates/order/sales_order_detail.html:140
-#: part/templates/part/detail.html:1024 stock/templates/stock/item.html:248
+#: part/templates/part/detail.html:1026 stock/templates/stock/item.html:248
 msgid "Delete Attachment"
 msgstr ""
 
@@ -2713,7 +2713,7 @@ msgid "Delete parameters"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:185
-#: part/templates/part/detail.html:974
+#: part/templates/part/detail.html:976
 msgid "Add Parameter"
 msgstr ""
 
@@ -4579,34 +4579,34 @@ msgstr ""
 msgid "Related Part"
 msgstr ""
 
-#: part/templates/part/detail.html:770
+#: part/templates/part/detail.html:772
 msgid "Add Related Part"
 msgstr ""
 
-#: part/templates/part/detail.html:867
+#: part/templates/part/detail.html:869
 msgid "Add Test Result Template"
 msgstr ""
 
-#: part/templates/part/detail.html:924
+#: part/templates/part/detail.html:926
 msgid "Edit Part Notes"
 msgstr ""
 
-#: part/templates/part/detail.html:1076
+#: part/templates/part/detail.html:1078
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1088
+#: part/templates/part/detail.html:1090
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1100
+#: part/templates/part/detail.html:1102
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1189
+#: part/templates/part/detail.html:1191
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr ""
