@@ -118,6 +118,8 @@ class NotificationMessageSerializer(SettingsSerializer):
 
     age_human = serializers.CharField()
 
+    read = serializers.BooleanField()
+
     class Meta:
         model = NotificationMessage
         fields = [
@@ -130,4 +132,5 @@ class NotificationMessageSerializer(SettingsSerializer):
             'creation',
             'age',
             'age_human',
+            'read',
         ]
