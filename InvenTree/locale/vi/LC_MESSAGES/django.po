@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-26 20:05+0000\n"
-"PO-Revision-Date: 2021-11-26 20:11\n"
+"PO-Revision-Date: 2021-11-27 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -58,15 +58,15 @@ msgstr ""
 
 #: InvenTree/forms.py:176
 msgid "Confirm password"
-msgstr ""
+msgstr "Xác nhận mật khẩu"
 
 #: InvenTree/forms.py:177
 msgid "Confirm new password"
-msgstr ""
+msgstr "Xác nhận mật khẩu mới"
 
 #: InvenTree/forms.py:209
 msgid "Select Category"
-msgstr ""
+msgstr "Chọn danh mục"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
@@ -124,7 +124,7 @@ msgstr ""
 
 #: InvenTree/models.py:112 templates/js/translated/attachment.js:91
 msgid "Comment"
-msgstr ""
+msgstr "Bình luận"
 
 #: InvenTree/models.py:112
 msgid "File comment"
@@ -135,15 +135,15 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2084
 msgid "User"
-msgstr ""
+msgstr "Người dùng"
 
 #: InvenTree/models.py:122
 msgid "upload date"
-msgstr ""
+msgstr "Ngày tải lên"
 
 #: InvenTree/models.py:142
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Tên tập tin không được để trống"
 
 #: InvenTree/models.py:165
 msgid "Invalid attachment directory"
@@ -216,7 +216,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:251
 msgid "Filename"
-msgstr ""
+msgstr "Tên tập tin"
 
 #: InvenTree/settings.py:664
 msgid "German"
