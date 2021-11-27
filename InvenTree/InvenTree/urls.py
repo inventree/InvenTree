@@ -20,7 +20,7 @@ from build.urls import build_urls
 from order.urls import order_urls
 
 from barcodes.api import barcode_api_urls
-from common.api import common_api_urls
+from common.api import common_api_urls, settings_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
 from stock.api import stock_api_urls
@@ -52,7 +52,7 @@ admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
     url(r'^barcode/', include(barcode_api_urls)),
-    url(r'^settings/', include(common_api_urls)),
+    url(r'^settings/', include(settings_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
@@ -67,6 +67,9 @@ apipatterns = [
 
     # Plugin endpoints
     url(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+
+    # common endpoints
+    url(r'', include(common_api_urls)),
 
     # InvenTree information endpoint
     url(r'^$', InfoView.as_view(), name='api-inventree-info'),

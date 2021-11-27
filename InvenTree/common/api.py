@@ -144,6 +144,7 @@ class NotificationList(generics.ListAPIView):
         #'age',  # TODO enable ordering by age
         'category',
         'name',
+        'read',
     ]
 
     search_fields = [
@@ -181,8 +182,7 @@ class NotificationDetail(generics.RetrieveDestroyAPIView):
     ]
 
 
-common_api_urls = [
-
+settings_api_urls = [
     # User settings
     url(r'^user/', include([
         # User Settings Detail
@@ -200,6 +200,9 @@ common_api_urls = [
         # Global Settings List
         url(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
     ])),
+]
+
+common_api_urls = [
 
     # Notifications
     url(r'^notifications/', include([
