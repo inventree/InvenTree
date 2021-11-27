@@ -71,6 +71,16 @@
         </button>
       </li>
       {% endif %}
+
+      <li class='nav-item me-2'>
+        <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" class='btn position-relative' title='{% trans "Show Notifications" %}'>
+          <span class='fas fa-bell'></span>
+          <span class="position-absolute top-100 start-100 translate-middle p-2 bg-danger border border-light rounded-circle d-none" id="notification-alert">
+            <span class="visually-hidden">{% trans "New Notifications" %}</span>
+          </span>
+        </button>
+      </li>
+
       <li class='nav-item me-2'>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-objects" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>

@@ -1,0 +1,14 @@
+{% load i18n %}
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" data-bs-scroll="true" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">{% trans "Notifications" %}</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="notification-center">
+        <p class='text-muted'>Notifications will load here</p>
+      </div>
+      <hr>
+      <a href="{% url 'notifications' %}">{% trans "Show all notifications and history" %}</a>
+    </div>
+</div>
