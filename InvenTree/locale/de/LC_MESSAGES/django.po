@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-26 20:05+0000\n"
-"PO-Revision-Date: 2021-11-26 20:12\n"
+"PO-Revision-Date: 2021-11-27 15:29\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -7892,11 +7892,11 @@ msgstr "Lagerartikel serialisieren"
 
 #: templates/js/translated/stock.js:88 templates/js/translated/stock.js:167
 msgid "Next available serial number"
-msgstr ""
+msgstr "Nächste verfügbare Seriennummer"
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
 msgid "Latest serial number"
-msgstr ""
+msgstr "Letzte Seriennummer"
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
@@ -7908,7 +7908,7 @@ msgstr "Neuer Lagerstandort"
 
 #: templates/js/translated/stock.js:180
 msgid "This part cannot be serialized"
-msgstr ""
+msgstr "Dieser Teil kann nicht serialisiert werden"
 
 #: templates/js/translated/stock.js:219
 msgid "Enter initial quantity for this stock item"
