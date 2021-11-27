@@ -24,6 +24,9 @@
 
 function loadNotificationTable(table, options={}) {
 
+    var params = options.params || {};
+    var read = typeof(params.read) === 'undefined' ? true : params.read;
+
     $(table).inventreeTable({
         url: options.url,
         name: options.name,
@@ -31,9 +34,9 @@ function loadNotificationTable(table, options={}) {
         search: true,
         queryParams: {
             ordering: 'age',
+            read: read,
         },
         paginationVAlign: 'bottom',
-        original: options.params,
         formatNoMatches: options.no_matches,
         columns: [
             {
@@ -87,6 +90,9 @@ function loadNotificationTable(table, options={}) {
 loadNotificationTable("#inbox-table", {
     name: 'inbox',
     url: '{% url 'api-notifications-list' %}',
+    params: {
+        read: false,
+    },
     no_matches: function() { return '{% trans "No unread notifications found" %}'; },
 });
 
