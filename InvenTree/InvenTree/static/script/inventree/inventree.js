@@ -220,6 +220,11 @@ function inventreeDocReady() {
 
     // Start notification background worker to check every 5 seconds if notifications are available
     var notificationRunner = setInterval(notificationCheck, 5000);
+
+    // also run when the focus returns
+    $(document).on('focus', function(e){
+        notificationCheck();
+    });
 }
 
 
@@ -229,6 +234,8 @@ function inventreeDocReady() {
  **/
 var current_alert_state = false;
 function notificationCheck() {
+    // only refresh state if in focus
+    if (document.hasFocus()) {
     inventreeGet(
         '/api/notifications/',
         {
@@ -250,6 +257,7 @@ function notificationCheck() {
             }
         }
     );
+    }
 }
 
 function isFileTransfer(transfer) {
