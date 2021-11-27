@@ -22,52 +22,72 @@
 {% block js_ready %}
 {{ block.super }}
 
-$("#inbox-table").inventreeTable({
-    url: "{% url 'api-part-parameter-template-list' %}",
-    queryParams: {
-        ordering: 'name',
-    },
-    formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
-    columns: [
-        {
-            field: 'pk',
-            title: '{% trans "ID" %}',
-            visible: false,
-            switchable: false,
-        },
-        {
-            field: 'name',
-            title: '{% trans "Name" %}',
-            sortable: 'true',
-        },
-        {
-            field: 'units',
-            title: '{% trans "Units" %}',
-            sortable: 'true',
-        },
-        {
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+function loadNotificationTable(table, options={}) {
 
-                var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
-
-                return html;
+    $(table).inventreeTable({
+        url: options.url,
+        name: options.name,
+        groupBy: false,
+        search: true,
+        queryParams: {
+            ordering: 'age',
+        },
+        paginationVAlign: 'bottom',
+        original: options.params,
+        formatNoMatches: options.no_matches,
+        columns: [
+            {
+                field: 'pk',
+                title: '{% trans "ID" %}',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'age',
+                title: '{% trans "Age" %}',
+                sortable: 'true',
+                formatter: function(value, row) {
+                    return row.age_human
+                }
+            },
+            {
+                field: 'category',
+                title: '{% trans "Category" %}',
+                sortable: 'true',
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+            },
+            {
+                field: 'message',
+                title: '{% trans "Message" %}',
+            },
+            {
+                formatter: function(value, row, index, field) {
+                    var bRead = "<button title='{% trans "Mark as read" %}' class='notification-read btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-check icon-green'></span></button>";
+                    var html = "<div class='btn-group float-right' role='group'>" + bRead + "</div>";
+                    return html;
+                }
             }
-        }
-    ]
-});
-
-$("#inbox-table").on('click', '.template-edit', function() {
-    var button = $(this);
-
-    var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
-
-    launchModalForm(url, {
-        success: function() {
-            $("#inbox-table").bootstrapTable('refresh');
-        }
+        ]
     });
+
+    $(table).on('click', '.notification-read', function() {
+        var url = "/notifications/" + $(this).attr('pk') + "/";
+
+        inventreeDelete(url, {
+            success: function() {
+                $(table).bootstrapTable('refresh');
+            }
+        });
+    });
+}
+
+loadNotificationTable("#inbox-table", {
+    name: 'inbox',
+    url: '{% url 'api-notifications-list' %}',
+    no_matches: function() { return '{% trans "No unread notifications found" %}'; },
 });
 
 $("#inbox-refresh").on('click', function() {
@@ -75,40 +95,10 @@ $("#inbox-refresh").on('click', function() {
 });
 
 
-$("#history-table").inventreeTable({
-    url: "{% url 'api-part-parameter-template-list' %}",
-    queryParams: {
-        ordering: 'name',
-    },
-    formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
-    columns: [
-        {
-            field: 'pk',
-            title: '{% trans "ID" %}',
-            visible: false,
-            switchable: false,
-        },
-        {
-            field: 'name',
-            title: '{% trans "Name" %}',
-            sortable: 'true',
-        },
-        {
-            field: 'units',
-            title: '{% trans "Units" %}',
-            sortable: 'true',
-        },
-        {
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
-
-                var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
-
-                return html;
-            }
-        }
-    ]
+loadNotificationTable("#history-table", {
+    name: 'history',
+    url: '{% url 'api-notifications-list' %}',
+    no_matches: function() { return '{% trans "No notification history found" %}'; },
 });
 
 $("#history-refresh").on('click', function() {

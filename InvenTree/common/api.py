@@ -130,6 +130,57 @@ class UserSettingsDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
+class NotificationList(generics.ListAPIView):
+    queryset = common.models.NotificationMessage.objects.all()
+    serializer_class = common.serializers.NotificationMessageSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    ordering_fields = [
+        #'age',  # TODO enable ordering by age
+        'category',
+        'name',
+    ]
+
+    search_fields = [
+        'name',
+        'message',
+    ]
+
+    def filter_queryset(self, queryset):
+        """
+        Only list notifications which apply to the current user
+        """
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            return common.models.NotificationMessage.objects.none()
+
+        queryset = super().filter_queryset(queryset)
+        queryset = queryset.filter(user=user)
+        return queryset
+
+
+class NotificationDetail(generics.RetrieveDestroyAPIView):
+    """
+    Detail view for an individual notification object
+
+    - User can only view / delete their own notification objects
+    """
+
+    queryset = common.models.NotificationMessage.objects.all()
+    serializer_class = common.serializers.NotificationMessageSerializer
+
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+
 common_api_urls = [
 
     # User settings
@@ -148,6 +199,12 @@ common_api_urls = [
 
         # Global Settings List
         url(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
-    ]))
+    ])),
+
+    # Notifications
+    url(r'^notifications/', include([
+        url(r'^(?P<pk>\d+)/', NotificationDetail.as_view(), name='api-notifications-detail'),
+        url(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+    ])),
 
 ]

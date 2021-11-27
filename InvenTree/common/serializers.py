@@ -9,7 +9,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 
 from rest_framework import serializers
 
-from common.models import InvenTreeSetting, InvenTreeUserSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationMessage
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -94,4 +94,40 @@ class UserSettingsSerializer(SettingsSerializer):
             'user',
             'type',
             'choices',
+        ]
+
+
+class NotificationMessageSerializer(SettingsSerializer):
+    """
+    Serializer for the InvenTreeUserSetting model
+    """
+
+    #content_object = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    category = serializers.CharField(read_only=True)
+
+    name = serializers.CharField(read_only=True)
+
+    message = serializers.CharField(read_only=True)
+
+    creation = serializers.CharField(read_only=True)
+
+    age = serializers.IntegerField()
+
+    age_human = serializers.CharField()
+
+    class Meta:
+        model = NotificationMessage
+        fields = [
+            'pk',
+            #'content_object',
+            'user',
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
         ]
