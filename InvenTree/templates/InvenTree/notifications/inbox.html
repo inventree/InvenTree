@@ -1,0 +1,25 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}inbox{% endblock %}
+
+{% block heading %}
+{% trans "Inbox" %}
+{% endblock %}
+
+{% block actions %}
+<div class='btn btn-secondary' type='button' id='inbox-refresh' title='{% trans "Refresh Inbox" %}'>
+    <span class='fa fa-sync'></span> {% trans "Refresh Inbox" %}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+    <table class='table table-striped table-condensed' id='inbox-table'>
+    </table>
+</div>
+
+{% endblock %}

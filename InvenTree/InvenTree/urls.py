@@ -41,6 +41,7 @@ from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView,
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
+from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
@@ -85,6 +86,12 @@ settings_urls = [
 
     # Catch any other urls
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
+]
+
+notifications_urls = [
+
+    # Catch any other urls
+    url(r'^.*$', NotificationsView.as_view(), name='notifications'),
 ]
 
 # These javascript files are served "dynamically" - i.e. rendered on demand
@@ -137,6 +144,8 @@ urlpatterns = [
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^settings/', include(settings_urls)),
+
+    url(r'^notifications/', include(notifications_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),

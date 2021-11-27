@@ -1,0 +1,25 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}history{% endblock %}
+
+{% block heading %}
+{% trans "History" %}
+{% endblock %}
+
+{% block actions %}
+<div class='btn btn-secondary' type='button' id='history-refresh' title='{% trans "Refresh History" %}'>
+    <span class='fa fa-sync'></span> {% trans "Refresh History" %}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+    <table class='table table-striped table-condensed' id='history-table'>
+    </table>
+</div>
+
+{% endblock %}

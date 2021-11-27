@@ -884,3 +884,18 @@ class DatabaseStatsView(AjaxView):
         """
 
         return ctx
+
+
+class NotificationsView(TemplateView):
+    """ View for showing notifications
+    """
+
+    template_name = "InvenTree/notifications/notifications.html"
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs).copy()
+
+        # ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+
+        return ctx

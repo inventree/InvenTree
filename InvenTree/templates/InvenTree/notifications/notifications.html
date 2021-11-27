@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block breadcrumb_list %}
+{% endblock %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Notifications" %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include "InvenTree/notifications/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+    {% include "InvenTree/notifications/inbox.html" %}
+    {% include "InvenTree/notifications/history.html" %}
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#inbox-table").inventreeTable({
+    url: "{% url 'api-part-parameter-template-list' %}",
+    queryParams: {
+        ordering: 'name',
+    },
+    formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
+    columns: [
+        {
+            field: 'pk',
+            title: '{% trans "ID" %}',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'name',
+            title: '{% trans "Name" %}',
+            sortable: 'true',
+        },
+        {
+            field: 'units',
+            title: '{% trans "Units" %}',
+            sortable: 'true',
+        },
+        {
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+
+                var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
+
+                return html;
+            }
+        }
+    ]
+});
+
+$("#inbox-table").on('click', '.template-edit', function() {
+    var button = $(this);
+
+    var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
+
+    launchModalForm(url, {
+        success: function() {
+            $("#inbox-table").bootstrapTable('refresh');
+        }
+    });
+});
+
+$("#inbox-refresh").on('click', function() {
+    $("#inbox-table").bootstrapTable('refresh');
+});
+
+
+$("#history-table").inventreeTable({
+    url: "{% url 'api-part-parameter-template-list' %}",
+    queryParams: {
+        ordering: 'name',
+    },
+    formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
+    columns: [
+        {
+            field: 'pk',
+            title: '{% trans "ID" %}',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'name',
+            title: '{% trans "Name" %}',
+            sortable: 'true',
+        },
+        {
+            field: 'units',
+            title: '{% trans "Units" %}',
+            sortable: 'true',
+        },
+        {
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+
+                var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
+
+                return html;
+            }
+        }
+    ]
+});
+
+$("#history-refresh").on('click', function() {
+    $("#history-table").bootstrapTable('refresh');
+});
+
+enableSidebar('notifications');
+{% endblock %}

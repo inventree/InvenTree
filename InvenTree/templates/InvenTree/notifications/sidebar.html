@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% trans "Notifications" as text %}
+{% include "sidebar_header.html" with text=text icon='fa-user' %}
+
+{% trans "Inbox" as text %}
+{% include "sidebar_item.html" with label='inbox' text=text icon="fa-cog" %}
+{% trans "History" as text %}
+{% include "sidebar_item.html" with label='history' text=text icon="fa-desktop" %}
