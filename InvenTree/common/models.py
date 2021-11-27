@@ -1471,6 +1471,8 @@ class NotificationMessage(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('User'),
         help_text=_('User'),
+        null=True,
+        blank=True,
     )
 
     category = models.CharField(
@@ -1492,6 +1494,7 @@ class NotificationMessage(models.Model):
     creation = models.DateTimeField(
         auto_now=True,
         null=False,
+        editable=False,
     )
 
     read = models.BooleanField(
