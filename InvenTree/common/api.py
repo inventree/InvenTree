@@ -141,7 +141,6 @@ class NotificationList(generics.ListAPIView):
     ]
 
     ordering_fields = [
-        #'age',  # TODO enable ordering by age
         'category',
         'name',
         'read',
