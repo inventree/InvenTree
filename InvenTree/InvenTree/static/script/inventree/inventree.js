@@ -236,27 +236,21 @@ var current_alert_state = false;
 function notificationCheck() {
     // only refresh state if in focus
     if (document.hasFocus()) {
-    inventreeGet(
-        '/api/notifications/',
-        {
-            read: false,
-        },
-        {
-            success: function(response) {
-                if (response.length == 0) {
-                    if (current_alert_state == true){
+        inventreeGet(
+            '/api/notifications/',
+            {
+                read: false,
+            },
+            {
+                success: function(response) {
+                    if (response.length == 0) {
                         $("#notification-alert").addClass("d-none");
-                        current_alert_state = false;
-                    }
-                } else {
-                    if (current_alert_state == false){
+                    } else {
                         $("#notification-alert").removeClass("d-none");
-                        current_alert_state = true;
                     }
                 }
             }
-        }
-    );
+        );
     }
 }
 
