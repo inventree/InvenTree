@@ -1,6 +1,7 @@
 /* globals
     ClipboardJS,
     inventreeFormDataUpload,
+    inventreeGet,
     launchModalForm,
     user_settings,
 */
@@ -216,6 +217,39 @@ function inventreeDocReady() {
 
     // Display any cached alert messages
     showCachedAlerts();
+
+    // Start notification background worker to check every 5 seconds if notifications are available
+    var notificationRunner = setInterval(notificationCheck, 5000);
+}
+
+
+/**
+ * The notification checker is initiated when the doc is loaded. It checks if there are unread notifications
+ * if unread messages exist the alert flag is raised by making it visible
+ **/
+var current_alert_state = false;
+function notificationCheck() {
+    inventreeGet(
+        '/api/notifications/',
+        {
+            read: false,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    if (current_alert_state == true){
+                        $("#notification-alert").addClass("d-none");
+                        current_alert_state = false;
+                    }
+                } else {
+                    if (current_alert_state == false){
+                        $("#notification-alert").removeClass("d-none");
+                        current_alert_state = true;
+                    }
+                }
+            }
+        }
+    );
 }
 
 function isFileTransfer(transfer) {
