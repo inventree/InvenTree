@@ -152,6 +152,11 @@ class NotificationList(generics.ListAPIView):
         'message',
     ]
 
+    filter_fields = [
+        'category',
+        'read',
+    ]
+
     def filter_queryset(self, queryset):
         """
         Only list notifications which apply to the current user
