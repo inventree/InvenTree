@@ -228,31 +228,6 @@ function inventreeDocReady() {
 }
 
 
-/**
- * The notification checker is initiated when the doc is loaded. It checks if there are unread notifications
- * if unread messages exist the alert flag is raised by making it visible
- **/
-function notificationCheck() {
-    // only refresh state if in focus
-    if (document.hasFocus()) {
-        inventreeGet(
-            '/api/notifications/',
-            {
-                read: false,
-            },
-            {
-                success: function(response) {
-                    if (response.length == 0) {
-                        $("#notification-alert").addClass("d-none");
-                    } else {
-                        $("#notification-alert").removeClass("d-none");
-                    }
-                }
-            }
-        );
-    }
-}
-
 function isFileTransfer(transfer) {
     /* Determine if a transfer (e.g. drag-and-drop) is a file transfer 
      */
