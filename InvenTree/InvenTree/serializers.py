@@ -239,22 +239,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
-    """
-    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
-    """
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'),
-        required=False,
-        source='basename',
-        allow_blank=False,
-    )
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """
     Override the DRF native FileField serializer,
@@ -282,6 +266,27 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
+
+
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    attachment = InvenTreeAttachmentSerializerField(
+        required=False,
+        allow_null=False,
+    )
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='basename',
+        allow_blank=False,
+    )
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
