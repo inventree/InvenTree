@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 12:02+0000\n"
-"PO-Revision-Date: 2021-11-28 15:50\n"
+"PO-Revision-Date: 2021-11-28 16:53\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4264,56 +4264,56 @@ msgstr ""
 
 #: part/templates/part/category.html:24 part/templates/part/category.html:28
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "Estás suscrito a las notificaciones de esta categoría"
 
 #: part/templates/part/category.html:32
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "Suscribirse a las notificaciones de esta categoría"
 
 #: part/templates/part/category.html:38
 msgid "Category Actions"
-msgstr ""
+msgstr "Acciones de categoría"
 
 #: part/templates/part/category.html:43
 msgid "Edit category"
-msgstr ""
+msgstr "Editar categoría"
 
 #: part/templates/part/category.html:44
 msgid "Edit Category"
-msgstr ""
+msgstr "Editar Categoría"
 
 #: part/templates/part/category.html:48
 msgid "Delete category"
-msgstr ""
+msgstr "Eliminar categoría"
 
 #: part/templates/part/category.html:49
 msgid "Delete Category"
-msgstr ""
+msgstr "Eliminar Categoría"
 
 #: part/templates/part/category.html:57
 msgid "Create new part category"
-msgstr ""
+msgstr "Crear nueva categoría de partes"
 
 #: part/templates/part/category.html:58
 msgid "New Category"
-msgstr ""
+msgstr "Nueva Categoría"
 
 #: part/templates/part/category.html:67
 msgid "Top level part category"
-msgstr ""
+msgstr "Categoría de partes de nivel superior"
 
 #: part/templates/part/category.html:79
 msgid "Category Path"
-msgstr ""
+msgstr "Ruta de Categoría"
 
 #: part/templates/part/category.html:84
 msgid "Category Description"
-msgstr ""
+msgstr "Descripción de Categoría"
 
 #: part/templates/part/category.html:103 part/templates/part/category.html:194
 #: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
-msgstr ""
+msgstr "Subcategorías"
 
 #: part/templates/part/category.html:108
 msgid "Parts (Including subcategories)"
@@ -4321,7 +4321,7 @@ msgstr "Partes (incluyendo subcategorías)"
 
 #: part/templates/part/category.html:145
 msgid "Export Part Data"
-msgstr ""
+msgstr "Exportar Datos de Parte"
 
 #: part/templates/part/category.html:146 part/templates/part/category.html:170
 msgid "Export"
@@ -4329,56 +4329,56 @@ msgstr "Exportar"
 
 #: part/templates/part/category.html:149
 msgid "Create new part"
-msgstr ""
+msgstr "Crear nueva parte"
 
 #: part/templates/part/category.html:150 templates/js/translated/bom.js:40
 msgid "New Part"
-msgstr ""
+msgstr "Nueva Parte"
 
 #: part/templates/part/category.html:164
 msgid "Set category"
-msgstr ""
+msgstr "Definir categoría"
 
 #: part/templates/part/category.html:164
 msgid "Set Category"
-msgstr ""
+msgstr "Definir Categoría"
 
 #: part/templates/part/category.html:168
 msgid "Print Labels"
-msgstr ""
+msgstr "Imprimir Etiquetas"
 
 #: part/templates/part/category.html:170
 msgid "Export Data"
-msgstr ""
+msgstr "Exportar Datos"
 
 #: part/templates/part/category.html:184
 msgid "Part Parameters"
-msgstr ""
+msgstr "Parámetros de Parte"
 
 #: part/templates/part/category.html:261
 msgid "Create Part Category"
-msgstr ""
+msgstr "Crear Categoría de Parte"
 
 #: part/templates/part/category.html:288
 msgid "Create Part"
-msgstr ""
+msgstr "Crear Parte"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
-msgstr ""
+msgstr "¿Está seguro que desea eliminar la categoría"
 
 #: part/templates/part/category_delete.html:8
 #, python-format
 msgid "This category contains %(count)s child categories"
-msgstr ""
+msgstr "Esta categoría contiene %(count)s subcategorías"
 
 #: part/templates/part/category_delete.html:9
 msgid "If this category is deleted, these child categories will be moved to the"
-msgstr ""
+msgstr "Si se elimina esta categoría, estas categorías se moverán a la"
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
-msgstr ""
+msgstr "categoría"
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
@@ -4404,12 +4404,12 @@ msgstr "Importar Partes"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
-msgstr ""
+msgstr "Duplicar Parte"
 
 #: part/templates/part/copy_part.html:10
 #, python-format
 msgid "Make a copy of part '%(full_name)s'."
-msgstr ""
+msgstr "Hacer una copia de la parte '%(full_name)s'."
 
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
@@ -4424,56 +4424,56 @@ msgstr "La nueva parte puede ser un duplicado de estas partes existentes"
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% coincidencia)"
 
 #: part/templates/part/detail.html:16
 msgid "Part Details"
-msgstr ""
+msgstr "Detalles de Parte"
 
 #: part/templates/part/detail.html:66
 msgid "Minimum stock level"
-msgstr ""
+msgstr "Nivel mínimo de stock"
 
 #: part/templates/part/detail.html:97
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Último Número Serial"
 
 #: part/templates/part/detail.html:124
 msgid "Part Stock"
-msgstr ""
+msgstr "Stock de parte"
 
 #: part/templates/part/detail.html:136
 #, python-format
 msgid "Showing stock for all variants of <em>%(full_name)s</em>"
-msgstr ""
+msgstr "Mostrando stock para todas las variantes de <em>%(full_name)s</em>"
 
 #: part/templates/part/detail.html:146
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Plantillas de prueba de parte"
 
 #: part/templates/part/detail.html:151
 msgid "Add Test Template"
-msgstr ""
+msgstr "Añadir Plantilla de Prueba"
 
 #: part/templates/part/detail.html:208
 msgid "Sales Order Allocations"
-msgstr ""
+msgstr "Asignaciones de órdenes de venta"
 
 #: part/templates/part/detail.html:249
 msgid "Part Variants"
-msgstr ""
+msgstr "Variantes de Parte"
 
 #: part/templates/part/detail.html:253
 msgid "Create new variant"
-msgstr ""
+msgstr "Crear nueva variante"
 
 #: part/templates/part/detail.html:254
 msgid "New Variant"
-msgstr ""
+msgstr "Nueva Variante"
 
 #: part/templates/part/detail.html:281
 msgid "Add new parameter"
-msgstr ""
+msgstr "Añadir nuevo parámetro"
 
 #: part/templates/part/detail.html:315 part/templates/part/part_sidebar.html:47
 msgid "Related Parts"
@@ -4481,35 +4481,35 @@ msgstr "Partes relacionadas"
 
 #: part/templates/part/detail.html:319 part/templates/part/detail.html:320
 msgid "Add Related"
-msgstr ""
+msgstr "Añadir Relacionado"
 
 #: part/templates/part/detail.html:340 part/templates/part/part_sidebar.html:19
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Lista de Materiales"
 
 #: part/templates/part/detail.html:345
 msgid "Export actions"
-msgstr ""
+msgstr "Exportar acciones"
 
 #: part/templates/part/detail.html:349
 msgid "Export BOM"
-msgstr ""
+msgstr "Exportar BOM"
 
 #: part/templates/part/detail.html:351
 msgid "Print BOM Report"
-msgstr ""
+msgstr "Imprimir informe BOM"
 
 #: part/templates/part/detail.html:361
 msgid "Upload BOM"
-msgstr ""
+msgstr "Subir BOM"
 
 #: part/templates/part/detail.html:363 templates/js/translated/part.js:267
 msgid "Copy BOM"
-msgstr ""
+msgstr "Copiar BOM"
 
 #: part/templates/part/detail.html:365 part/views.py:751
 msgid "Validate BOM"
-msgstr ""
+msgstr "Validar BOM"
 
 #: part/templates/part/detail.html:370
 msgid "New BOM Item"
@@ -4786,24 +4786,24 @@ msgstr ""
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
 msgid "Total Purchase Price"
-msgstr ""
+msgstr "Precio total de compra"
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
-msgstr ""
+msgstr "Nota: los precios BOM están incompletos para esta parte"
 
 #: part/templates/part/part_pricing.html:88 part/templates/part/prices.html:93
 msgid "No BOM pricing available"
-msgstr ""
+msgstr "No hay precios BOM disponibles"
 
 #: part/templates/part/part_pricing.html:97 part/templates/part/prices.html:102
 msgid "Internal Price"
-msgstr ""
+msgstr "Precio Interno"
 
 #: part/templates/part/part_pricing.html:128
 #: part/templates/part/prices.html:134
 msgid "No pricing information is available for this part."
-msgstr ""
+msgstr "No hay información de precios disponible para esta parte."
 
 #: part/templates/part/part_sidebar.html:8
 #: templates/js/translated/stock.js:1949
@@ -4812,19 +4812,19 @@ msgstr "Detalles"
 
 #: part/templates/part/part_sidebar.html:13
 msgid "Variants"
-msgstr ""
+msgstr "Variantes"
 
 #: part/templates/part/part_sidebar.html:27
 msgid "Used In"
-msgstr ""
+msgstr "Usado en"
 
 #: part/templates/part/part_sidebar.html:43
 msgid "Test Templates"
-msgstr ""
+msgstr "Plantillas de Prueba"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
-msgstr ""
+msgstr "Seleccionar de imágenes existentes"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
