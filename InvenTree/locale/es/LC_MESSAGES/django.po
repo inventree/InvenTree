@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 12:02+0000\n"
-"PO-Revision-Date: 2021-11-28 14:39\n"
+"PO-Revision-Date: 2021-11-28 15:50\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -3833,102 +3833,102 @@ msgstr "El número de serie más reciente es"
 
 #: part/models.py:715
 msgid "Duplicate IPN not allowed in part settings"
-msgstr ""
+msgstr "IPN duplicado no permitido en la configuración de partes"
 
 #: part/models.py:740
 msgid "Part name"
-msgstr ""
+msgstr "Nombre de la pieza"
 
 #: part/models.py:747
 msgid "Is Template"
-msgstr ""
+msgstr "Es plantilla"
 
 #: part/models.py:748
 msgid "Is this part a template part?"
-msgstr ""
+msgstr "¿Es esta parte una parte de la plantilla?"
 
 #: part/models.py:758
 msgid "Is this part a variant of another part?"
-msgstr ""
+msgstr "¿Es esta parte una variante de otra parte?"
 
 #: part/models.py:759
 msgid "Variant Of"
-msgstr ""
+msgstr "Variante de"
 
 #: part/models.py:765
 msgid "Part description"
-msgstr ""
+msgstr "Descripción de la pieza"
 
 #: part/models.py:770 part/templates/part/category.html:97
 #: part/templates/part/detail.html:73
 msgid "Keywords"
-msgstr ""
+msgstr "Palabras claves"
 
 #: part/models.py:771
 msgid "Part keywords to improve visibility in search results"
-msgstr ""
+msgstr "Palabras clave para mejorar la visibilidad en los resultados de búsqueda"
 
 #: part/models.py:778 part/models.py:2223 part/models.py:2472
 #: part/templates/part/detail.html:36 part/templates/part/set_category.html:15
 #: templates/InvenTree/settings/settings.html:163
 #: templates/js/translated/part.js:1021
 msgid "Category"
-msgstr ""
+msgstr "Categoría"
 
 #: part/models.py:779
 msgid "Part category"
-msgstr ""
+msgstr "Categoría de parte"
 
 #: part/models.py:784 part/templates/part/detail.html:45
 #: templates/js/translated/part.js:550 templates/js/translated/part.js:974
 #: templates/js/translated/stock.js:1134
 msgid "IPN"
-msgstr ""
+msgstr "IPN"
 
 #: part/models.py:785
 msgid "Internal Part Number"
-msgstr ""
+msgstr "Número de parte interna"
 
 #: part/models.py:791
 msgid "Part revision or version number"
-msgstr ""
+msgstr "Revisión de parte o número de versión"
 
 #: part/models.py:792 part/templates/part/detail.html:52 report/models.py:200
 #: templates/js/translated/part.js:554
 msgid "Revision"
-msgstr ""
+msgstr "Revisión"
 
 #: part/models.py:814
 msgid "Where is this item normally stored?"
-msgstr ""
+msgstr "¿Dónde se almacena este elemento normalmente?"
 
 #: part/models.py:861 part/templates/part/detail.html:113
 msgid "Default Supplier"
-msgstr ""
+msgstr "Proveedor por defecto"
 
 #: part/models.py:862
 msgid "Default supplier part"
-msgstr ""
+msgstr "Parte de proveedor predeterminada"
 
 #: part/models.py:869
 msgid "Default Expiry"
-msgstr ""
+msgstr "Expiración por defecto"
 
 #: part/models.py:870
 msgid "Expiry time (in days) for stock items of this part"
-msgstr ""
+msgstr "Tiempo de expiración (en días) para los artículos de stock de esta parte"
 
 #: part/models.py:875 part/templates/part/part_base.html:178
 msgid "Minimum Stock"
-msgstr ""
+msgstr "Stock mínimo"
 
 #: part/models.py:876
 msgid "Minimum allowed stock level"
-msgstr ""
+msgstr "Nivel mínimo de stock permitido"
 
 #: part/models.py:883
 msgid "Stock keeping units for this part"
-msgstr ""
+msgstr "Unidades de mantenimiento de stock para esta parte"
 
 #: part/models.py:889
 msgid "Can this part be built from other parts?"
@@ -3940,58 +3940,58 @@ msgstr "¿Se puede utilizar esta pieza para construir otras partes?"
 
 #: part/models.py:901
 msgid "Does this part have tracking for unique items?"
-msgstr ""
+msgstr "¿Esta parte tiene seguimiento de objetos únicos?"
 
 #: part/models.py:906
 msgid "Can this part be purchased from external suppliers?"
-msgstr ""
+msgstr "¿Se puede comprar esta pieza a proveedores externos?"
 
 #: part/models.py:911
 msgid "Can this part be sold to customers?"
-msgstr ""
+msgstr "¿Se puede vender esta pieza a los clientes?"
 
 #: part/models.py:915 templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:96
 #: templates/js/translated/table_filters.js:290
 #: templates/js/translated/table_filters.js:368
 msgid "Active"
-msgstr ""
+msgstr "Activo"
 
 #: part/models.py:916
 msgid "Is this part active?"
-msgstr ""
+msgstr "¿Está activa esta parte?"
 
 #: part/models.py:921
 msgid "Is this a virtual part, such as a software product or license?"
-msgstr ""
+msgstr "¿Es ésta una parte virtual, como un producto de software o una licencia?"
 
 #: part/models.py:926
 msgid "Part notes - supports Markdown formatting"
-msgstr ""
+msgstr "Notas de parte - soporta formato Markdown"
 
 #: part/models.py:929
 msgid "BOM checksum"
-msgstr ""
+msgstr "BOM checksum"
 
 #: part/models.py:929
 msgid "Stored BOM checksum"
-msgstr ""
+msgstr "Suma de control BOM almacenada"
 
 #: part/models.py:932
 msgid "BOM checked by"
-msgstr ""
+msgstr "BOM comprobado por"
 
 #: part/models.py:934
 msgid "BOM checked date"
-msgstr ""
+msgstr "Fecha BOM comprobada"
 
 #: part/models.py:938
 msgid "Creation User"
-msgstr ""
+msgstr "Creación de Usuario"
 
 #: part/models.py:1750
 msgid "Sell multiple"
-msgstr ""
+msgstr "Vender múltiples"
 
 #: part/models.py:2273
 msgid "Test templates can only be created for trackable parts"
@@ -3999,41 +3999,41 @@ msgstr "Las plantillas de prueba sólo pueden ser creadas para partes rastreable
 
 #: part/models.py:2290
 msgid "Test with this name already exists for this part"
-msgstr ""
+msgstr "Ya existe una prueba con este nombre para esta parte"
 
 #: part/models.py:2310 templates/js/translated/part.js:1467
 #: templates/js/translated/stock.js:858
 msgid "Test Name"
-msgstr ""
+msgstr "Nombre de prueba"
 
 #: part/models.py:2311
 msgid "Enter a name for the test"
-msgstr ""
+msgstr "Introduzca un nombre para la prueba"
 
 #: part/models.py:2316
 msgid "Test Description"
-msgstr ""
+msgstr "Descripción de prueba"
 
 #: part/models.py:2317
 msgid "Enter description for this test"
-msgstr ""
+msgstr "Introduce la descripción para esta prueba"
 
 #: part/models.py:2322 templates/js/translated/part.js:1476
 #: templates/js/translated/table_filters.js:276
 msgid "Required"
-msgstr ""
+msgstr "Requerido"
 
 #: part/models.py:2323
 msgid "Is this test required to pass?"
-msgstr ""
+msgstr "¿Es necesario pasar esta prueba?"
 
 #: part/models.py:2328 templates/js/translated/part.js:1484
 msgid "Requires Value"
-msgstr ""
+msgstr "Requiere valor"
 
 #: part/models.py:2329
 msgid "Does this test require a value when adding a test result?"
-msgstr ""
+msgstr "¿Esta prueba requiere un valor al agregar un resultado de la prueba?"
 
 #: part/models.py:2334 templates/js/translated/part.js:1491
 msgid "Requires Attachment"
