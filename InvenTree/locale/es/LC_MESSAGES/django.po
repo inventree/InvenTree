@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 12:02+0000\n"
-"PO-Revision-Date: 2021-11-28 19:48\n"
+"POT-Creation-Date: 2021-11-28 20:33+0000\n"
+"PO-Revision-Date: 2021-11-28 20:45\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -240,83 +240,83 @@ msgstr "Debe ser un numero valido"
 msgid "Filename"
 msgstr "Nombre de Archivo"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:670
 msgid "German"
 msgstr "Alemán"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:671
 msgid "Greek"
 msgstr "Griego"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:672
 msgid "English"
 msgstr "Inglés"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:673
 msgid "Spanish"
 msgstr "Español"
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:674
 msgid "Spanish (Mexican)"
 msgstr "Español (México)"
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:675
 msgid "French"
 msgstr "Francés"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:676
 msgid "Hebrew"
 msgstr "Hebreo"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:677
 msgid "Italian"
 msgstr "Italiano"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:678
 msgid "Japanese"
 msgstr "Japonés"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:679
 msgid "Korean"
 msgstr "Coreano"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:680
 msgid "Dutch"
 msgstr "Holandés"
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:681
 msgid "Norwegian"
 msgstr "Noruego"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:682
 msgid "Polish"
 msgstr "Polaco"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:683
 msgid "Portugese"
 msgstr "Portugués"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:684
 msgid "Russian"
 msgstr "Ruso"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:685
 msgid "Swedish"
 msgstr "Sueco"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:686
 msgid "Thai"
 msgstr "Tailandés"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:687
 msgid "Turkish"
 msgstr "Turco"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:688
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: InvenTree/settings.py:683
+#: InvenTree/settings.py:689
 msgid "Chinese"
 msgstr "Chino"
 
@@ -501,27 +501,27 @@ msgstr "El excedente no debe superar el 100%"
 msgid "Overage must be an integer value or a percentage"
 msgstr "El excedente debe ser un valor entero o un porcentaje"
 
-#: InvenTree/views.py:536
+#: InvenTree/views.py:538
 msgid "Delete Item"
 msgstr "Eliminar elemento"
 
-#: InvenTree/views.py:585
+#: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
 msgstr "Marque la casilla para confirmar la eliminación del artículo"
 
-#: InvenTree/views.py:600 templates/InvenTree/settings/user.html:17
+#: InvenTree/views.py:602 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr "Editar datos del usuario"
 
-#: InvenTree/views.py:611 templates/InvenTree/settings/user.html:21
+#: InvenTree/views.py:613 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr "Configurar Contraseña"
 
-#: InvenTree/views.py:630
+#: InvenTree/views.py:632
 msgid "Password fields must match"
 msgstr "Los campos de contraseña deben coincidir"
 
-#: InvenTree/views.py:863 templates/navbar.html:101
+#: InvenTree/views.py:883 templates/navbar.html:101
 msgid "System Information"
 msgstr "Información del sistema"
 
@@ -2232,7 +2232,7 @@ msgid "Contact phone number"
 msgstr "Teléfono de contacto"
 
 #: company/models.py:125 company/templates/company/company_base.html:102
-#: templates/InvenTree/settings/user.html:46
+#: templates/InvenTree/settings/user.html:47
 msgid "Email"
 msgstr "Email"
 
@@ -6198,7 +6198,7 @@ msgid "User Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:8
-#: templates/InvenTree/settings/user.html:11
+#: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
 msgstr ""
 
@@ -6249,141 +6249,138 @@ msgstr "Configuración de orden de venta"
 msgid "Stock Settings"
 msgstr "Configuración de Stock"
 
-#: templates/InvenTree/settings/user.html:18
+#: templates/InvenTree/settings/user.html:19
 #: templates/js/translated/helpers.js:26
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/InvenTree/settings/user.html:20
+#: templates/InvenTree/settings/user.html:21
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
 msgstr "Cambiar Contraseña"
 
-#: templates/InvenTree/settings/user.html:31
+#: templates/InvenTree/settings/user.html:32
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: templates/InvenTree/settings/user.html:35
+#: templates/InvenTree/settings/user.html:36
 msgid "First Name"
 msgstr "Nombre"
 
-#: templates/InvenTree/settings/user.html:39
+#: templates/InvenTree/settings/user.html:40
 msgid "Last Name"
 msgstr "Apellido"
 
-#: templates/InvenTree/settings/user.html:54
+#: templates/InvenTree/settings/user.html:55
 msgid "The following email addresses are associated with your account:"
 msgstr "Las siguientes direcciones de correo electrónico están asociadas con tu cuenta:"
 
-#: templates/InvenTree/settings/user.html:74
+#: templates/InvenTree/settings/user.html:75
 msgid "Verified"
 msgstr "Verificado"
 
-#: templates/InvenTree/settings/user.html:76
+#: templates/InvenTree/settings/user.html:77
 msgid "Unverified"
 msgstr "Sin verificar"
 
-#: templates/InvenTree/settings/user.html:78
+#: templates/InvenTree/settings/user.html:79
 msgid "Primary"
 msgstr "Principal"
 
-#: templates/InvenTree/settings/user.html:84
+#: templates/InvenTree/settings/user.html:85
 msgid "Make Primary"
 msgstr "Hacer Principal"
 
-#: templates/InvenTree/settings/user.html:85
+#: templates/InvenTree/settings/user.html:86
 msgid "Re-send Verification"
 msgstr "Reenviar verificación"
 
-#: templates/InvenTree/settings/user.html:86
-#: templates/InvenTree/settings/user.html:153
+#: templates/InvenTree/settings/user.html:87
+#: templates/InvenTree/settings/user.html:154
 msgid "Remove"
 msgstr "Eliminar"
 
-#: templates/InvenTree/settings/user.html:93
+#: templates/InvenTree/settings/user.html:94
 msgid "Warning:"
 msgstr "Advertencia:"
 
-#: templates/InvenTree/settings/user.html:94
+#: templates/InvenTree/settings/user.html:95
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
 msgstr "Actualmente no tiene ninguna dirección de correo electrónico configurada. Realmente deberías añadir una dirección de correo electrónico para que puedas recibir notificaciones, restablecer tu contraseña, etc."
 
-#: templates/InvenTree/settings/user.html:101
+#: templates/InvenTree/settings/user.html:102
 msgid "Add Email Address"
 msgstr "Añadir correo electrónico"
 
-#: templates/InvenTree/settings/user.html:111
+#: templates/InvenTree/settings/user.html:112
 msgid "Enter e-mail address"
 msgstr "Introduzca dirección de e-mail"
 
-#: templates/InvenTree/settings/user.html:113
+#: templates/InvenTree/settings/user.html:114
 msgid "Add Email"
 msgstr "Agregar Email"
 
-#: templates/InvenTree/settings/user.html:123
+#: templates/InvenTree/settings/user.html:124
 msgid "Social Accounts"
 msgstr "Cuentas Sociales"
 
-#: templates/InvenTree/settings/user.html:128
+#: templates/InvenTree/settings/user.html:129
 msgid "You can sign in to your account using any of the following third party accounts:"
 msgstr "Puede iniciar sesión en su cuenta utilizando cualquiera de las siguientes cuentas de terceros:"
 
-#: templates/InvenTree/settings/user.html:162
+#: templates/InvenTree/settings/user.html:163
 msgid "There are no social network accounts connected to your InvenTree account"
 msgstr "No hay cuentas de redes sociales conectadas a tu cuenta de InvenTree"
 
-#: templates/InvenTree/settings/user.html:167
+#: templates/InvenTree/settings/user.html:168
 msgid "Add a 3rd Party Account"
 msgstr "Añadir una cuenta de terceros"
 
-#: templates/InvenTree/settings/user.html:177
-msgid "Language Settings"
-msgstr "Configuración de Idioma"
+#: templates/InvenTree/settings/user.html:178
+msgid "Active Sessions"
+msgstr ""
 
-#: templates/InvenTree/settings/user.html:186
-msgid "Select language"
-msgstr "Seleccionar idioma"
+#: templates/InvenTree/settings/user.html:182
+msgid "<em>unknown on unknown</em>"
+msgstr ""
 
-#: templates/InvenTree/settings/user.html:202
+#: templates/InvenTree/settings/user.html:183
+msgid "<em>unknown</em>"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:187
+msgid "IP Address"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:188
+msgid "Device"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:189
+msgid "Last Activity"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:198
 #, python-format
-msgid "%(lang_translated)s%% translated"
-msgstr "%(lang_translated)s%% traducido"
+msgid "%(time)s ago (this session)"
+msgstr ""
 
-#: templates/InvenTree/settings/user.html:204
-msgid "No translations available"
-msgstr "No hay traducciones disponibles"
-
-#: templates/InvenTree/settings/user.html:211
-msgid "Set Language"
-msgstr "Definir Idioma"
-
-#: templates/InvenTree/settings/user.html:214
-msgid "Some languages are not complete"
-msgstr "Algunos idiomas no están completos"
-
-#: templates/InvenTree/settings/user.html:216
-msgid "Show only sufficent"
-msgstr "Mostrar solo el contenido"
-
-#: templates/InvenTree/settings/user.html:218
-msgid "and hidden."
-msgstr "y oculto."
-
-#: templates/InvenTree/settings/user.html:218
-msgid "Show them too"
-msgstr "Mostrar también"
-
-#: templates/InvenTree/settings/user.html:224
-msgid "Help the translation efforts!"
-msgstr "¡Ayuda a los esfuerzos de traducción!"
-
-#: templates/InvenTree/settings/user.html:225
+#: templates/InvenTree/settings/user.html:200
 #, python-format
-msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr "La traducción nativa de la aplicación web de InvenTree es <a href=\"%(link)s\"> un aporte de la comunidad a través de crowdin</a>. Las contribuciones son bienvenidas y animadas."
+msgid "%(time)s ago"
+msgstr ""
 
-#: templates/InvenTree/settings/user.html:233
+#: templates/InvenTree/settings/user.html:210
+msgid "You can also end all other sessions but the current.\n"
+"        This will log you out on all other devices."
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:212
+msgid "End All Other Sessions"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:220
 msgid "Do you really want to remove the selected email address?"
 msgstr "¿Realmente desea eliminar la dirección de correo electrónico seleccionada?"
 
@@ -6398,6 +6395,52 @@ msgstr "Seleccionar tema"
 #: templates/InvenTree/settings/user_display.html:46
 msgid "Set Theme"
 msgstr "Establecer tema"
+
+#: templates/InvenTree/settings/user_display.html:54
+msgid "Language Settings"
+msgstr "Configuración de Idioma"
+
+#: templates/InvenTree/settings/user_display.html:63
+msgid "Select language"
+msgstr "Seleccionar idioma"
+
+#: templates/InvenTree/settings/user_display.html:79
+#, python-format
+msgid "%(lang_translated)s%% translated"
+msgstr "%(lang_translated)s%% traducido"
+
+#: templates/InvenTree/settings/user_display.html:81
+msgid "No translations available"
+msgstr "No hay traducciones disponibles"
+
+#: templates/InvenTree/settings/user_display.html:88
+msgid "Set Language"
+msgstr "Definir Idioma"
+
+#: templates/InvenTree/settings/user_display.html:91
+msgid "Some languages are not complete"
+msgstr "Algunos idiomas no están completos"
+
+#: templates/InvenTree/settings/user_display.html:93
+msgid "Show only sufficent"
+msgstr "Mostrar solo el contenido"
+
+#: templates/InvenTree/settings/user_display.html:95
+msgid "and hidden."
+msgstr "y oculto."
+
+#: templates/InvenTree/settings/user_display.html:95
+msgid "Show them too"
+msgstr "Mostrar también"
+
+#: templates/InvenTree/settings/user_display.html:101
+msgid "Help the translation efforts!"
+msgstr "¡Ayuda a los esfuerzos de traducción!"
+
+#: templates/InvenTree/settings/user_display.html:102
+#, python-format
+msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
+msgstr "La traducción nativa de la aplicación web de InvenTree es <a href=\"%(link)s\"> un aporte de la comunidad a través de crowdin</a>. Las contribuciones son bienvenidas y animadas."
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -6685,67 +6728,67 @@ msgstr "Servidor remoto debe ser accesible"
 
 #: templates/image_download.html:13
 msgid "Remote image must not exceed maximum allowable file size"
-msgstr ""
+msgstr "La imagen remota no debe exceder el tamaño máximo permitido de archivo"
 
 #: templates/js/translated/api.js:185 templates/js/translated/modals.js:1034
 msgid "No Response"
-msgstr ""
+msgstr "Sin Respuesta"
 
 #: templates/js/translated/api.js:186 templates/js/translated/modals.js:1035
 msgid "No response from the InvenTree server"
-msgstr ""
+msgstr "No hay respuesta del servidor InvenTree"
 
 #: templates/js/translated/api.js:192
 msgid "Error 400: Bad request"
-msgstr ""
+msgstr "Error 400: Solicitud incorrecta"
 
 #: templates/js/translated/api.js:193
 msgid "API request returned error code 400"
-msgstr ""
+msgstr "La solicitud API devolvió el código de error 400"
 
 #: templates/js/translated/api.js:197 templates/js/translated/modals.js:1044
 msgid "Error 401: Not Authenticated"
-msgstr ""
+msgstr "Error 401: No autenticado"
 
 #: templates/js/translated/api.js:198 templates/js/translated/modals.js:1045
 msgid "Authentication credentials not supplied"
-msgstr ""
+msgstr "Credenciales de autenticación no suministradas"
 
 #: templates/js/translated/api.js:202 templates/js/translated/modals.js:1049
 msgid "Error 403: Permission Denied"
-msgstr ""
+msgstr "Error 403: Permiso Denegado"
 
 #: templates/js/translated/api.js:203 templates/js/translated/modals.js:1050
 msgid "You do not have the required permissions to access this function"
-msgstr ""
+msgstr "No tiene los permisos necesarios para acceder a esta función"
 
 #: templates/js/translated/api.js:207 templates/js/translated/modals.js:1054
 msgid "Error 404: Resource Not Found"
-msgstr ""
+msgstr "Error 404: Recurso No Encontrado"
 
 #: templates/js/translated/api.js:208 templates/js/translated/modals.js:1055
 msgid "The requested resource could not be located on the server"
-msgstr ""
+msgstr "El recurso solicitado no se pudo encontrar en el servidor"
 
 #: templates/js/translated/api.js:212 templates/js/translated/modals.js:1059
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "Error 408: Tiempo de espera agotado"
 
 #: templates/js/translated/api.js:213 templates/js/translated/modals.js:1060
 msgid "Connection timeout while requesting data from server"
-msgstr ""
+msgstr "Tiempo de espera de conexión agotado al solicitar datos del servidor"
 
 #: templates/js/translated/api.js:216
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Código de error no controlado"
 
 #: templates/js/translated/api.js:217
 msgid "Error code"
-msgstr ""
+msgstr "Código de error"
 
 #: templates/js/translated/attachment.js:76
 msgid "No attachments found"
-msgstr ""
+msgstr "No se encontraron archivos adjuntos"
 
 #: templates/js/translated/attachment.js:98
 msgid "Edit Attachment"
@@ -6753,7 +6796,7 @@ msgstr "Editar archivos adjuntos"
 
 #: templates/js/translated/attachment.js:108
 msgid "Confirm Delete"
-msgstr ""
+msgstr "Confirmar eliminación"
 
 #: templates/js/translated/attachment.js:109
 msgid "Delete Attachment"
@@ -6761,134 +6804,134 @@ msgstr "Eliminar archivo adjunto"
 
 #: templates/js/translated/attachment.js:165
 msgid "Upload Date"
-msgstr ""
+msgstr "Fecha de subida"
 
 #: templates/js/translated/attachment.js:178
 msgid "Edit attachment"
-msgstr ""
+msgstr "Editar adjunto"
 
 #: templates/js/translated/attachment.js:185
 msgid "Delete attachment"
-msgstr ""
+msgstr "Eliminar adjunto"
 
 #: templates/js/translated/barcode.js:29
 msgid "Scan barcode data here using wedge scanner"
-msgstr ""
+msgstr "Escanea los datos de código de barras aquí usando un escáner de cuña"
 
 #: templates/js/translated/barcode.js:31
 msgid "Enter barcode data"
-msgstr ""
+msgstr "Introduzca datos de código de barras"
 
 #: templates/js/translated/barcode.js:35
 msgid "Barcode"
-msgstr ""
+msgstr "Código de barras"
 
 #: templates/js/translated/barcode.js:53
 msgid "Enter optional notes for stock transfer"
-msgstr ""
+msgstr "Introduzca notas opcionales para la transferencia de stock"
 
 #: templates/js/translated/barcode.js:54
 msgid "Enter notes"
-msgstr ""
+msgstr "Escribir notas"
 
 #: templates/js/translated/barcode.js:92
 msgid "Server error"
-msgstr ""
+msgstr "Error del servidor"
 
 #: templates/js/translated/barcode.js:113
 msgid "Unknown response from server"
-msgstr ""
+msgstr "Respuesta desconocida del servidor"
 
 #: templates/js/translated/barcode.js:140
 #: templates/js/translated/modals.js:1024
 msgid "Invalid server response"
-msgstr ""
+msgstr "Respuesta del servidor inválida"
 
 #: templates/js/translated/barcode.js:233
 msgid "Scan barcode data below"
-msgstr ""
+msgstr "Escanear datos de código de barras abajo"
 
 #: templates/js/translated/barcode.js:280 templates/navbar.html:69
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Escanear código de barras"
 
 #: templates/js/translated/barcode.js:291
 msgid "No URL in response"
-msgstr ""
+msgstr "No hay URL en respuesta"
 
 #: templates/js/translated/barcode.js:309
 msgid "Link Barcode to Stock Item"
-msgstr ""
+msgstr "Enlazar código de barras al artículo de stock"
 
 #: templates/js/translated/barcode.js:332
 msgid "This will remove the association between this stock item and the barcode"
-msgstr ""
+msgstr "Esto eliminará la asociación entre este artículo de stock y el código de barras"
 
 #: templates/js/translated/barcode.js:338
 msgid "Unlink"
-msgstr ""
+msgstr "Desvincular"
 
 #: templates/js/translated/barcode.js:397 templates/js/translated/stock.js:600
 msgid "Remove stock item"
-msgstr ""
+msgstr "Eliminar elemento de stock"
 
 #: templates/js/translated/barcode.js:439
 msgid "Check Stock Items into Location"
-msgstr ""
+msgstr "Comprobar elementos de stock en ubicación"
 
 #: templates/js/translated/barcode.js:443
 #: templates/js/translated/barcode.js:573
 msgid "Check In"
-msgstr ""
+msgstr "Registrar"
 
 #: templates/js/translated/barcode.js:485
 #: templates/js/translated/barcode.js:612
 msgid "Error transferring stock"
-msgstr ""
+msgstr "Error al transferir stock"
 
 #: templates/js/translated/barcode.js:507
 msgid "Stock Item already scanned"
-msgstr ""
+msgstr "Artículo de stock ya escaneado"
 
 #: templates/js/translated/barcode.js:511
 msgid "Stock Item already in this location"
-msgstr ""
+msgstr "Artículo de stock ya está en esta ubicación"
 
 #: templates/js/translated/barcode.js:518
 msgid "Added stock item"
-msgstr ""
+msgstr "Artículo de stock añadido"
 
 #: templates/js/translated/barcode.js:525
 msgid "Barcode does not match Stock Item"
-msgstr ""
+msgstr "El código de barras no coincide con el artículo de stock"
 
 #: templates/js/translated/barcode.js:568
 msgid "Check Into Location"
-msgstr ""
+msgstr "Comprobar en la ubicación"
 
 #: templates/js/translated/barcode.js:633
 msgid "Barcode does not match a valid location"
-msgstr ""
+msgstr "El código de barras no coincide con una ubicación válida"
 
 #: templates/js/translated/bom.js:184
 msgid "Remove substitute part"
-msgstr ""
+msgstr "Eliminar parte sustituta"
 
 #: templates/js/translated/bom.js:228
 msgid "Select and add a new variant item using the input below"
-msgstr ""
+msgstr "Seleccione y añada una nueva variante usando la siguiente entrada"
 
 #: templates/js/translated/bom.js:239
 msgid "Are you sure you wish to remove this substitute part link?"
-msgstr ""
+msgstr "¿Está seguro que desea eliminar este enlace de la parte sustituta?"
 
 #: templates/js/translated/bom.js:245
 msgid "Remove Substitute Part"
-msgstr ""
+msgstr "Eliminar parte sustituta"
 
 #: templates/js/translated/bom.js:284
 msgid "Add Substitute"
-msgstr ""
+msgstr "Añadir sustituto"
 
 #: templates/js/translated/bom.js:285
 msgid "Edit BOM Item Substitutes"
@@ -7278,153 +7321,153 @@ msgstr ""
 
 #: templates/js/translated/forms.js:680
 msgid "Enter a valid number"
-msgstr ""
+msgstr "Introduzca un número válido"
 
 #: templates/js/translated/forms.js:1072 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
-msgstr ""
+msgstr "Existen errores en el formulario"
 
 #: templates/js/translated/forms.js:1463
 msgid "No results found"
-msgstr ""
+msgstr "No hay resultados"
 
 #: templates/js/translated/forms.js:1667
 msgid "Searching"
-msgstr ""
+msgstr "Buscando"
 
 #: templates/js/translated/forms.js:1884
 msgid "Clear input"
-msgstr ""
+msgstr "Limpiar entrada"
 
 #: templates/js/translated/helpers.js:19
 msgid "YES"
-msgstr ""
+msgstr "SI"
 
 #: templates/js/translated/helpers.js:21
 msgid "NO"
-msgstr ""
+msgstr "NO"
 
 #: templates/js/translated/label.js:29 templates/js/translated/report.js:118
 #: templates/js/translated/stock.js:624
 msgid "Select Stock Items"
-msgstr ""
+msgstr "Seleccionar elementos de stock"
 
 #: templates/js/translated/label.js:30
 msgid "Stock item(s) must be selected before printing labels"
-msgstr ""
+msgstr "Elemento(s) de stock deben ser seleccionados antes de imprimir etiquetas"
 
 #: templates/js/translated/label.js:48 templates/js/translated/label.js:98
 #: templates/js/translated/label.js:153
 msgid "No Labels Found"
-msgstr ""
+msgstr "No se encontraron etiquetas"
 
 #: templates/js/translated/label.js:49
 msgid "No labels found which match selected stock item(s)"
-msgstr ""
+msgstr "No se han encontrado etiquetas que coincidan con los artículos de stock seleccionado(s)"
 
 #: templates/js/translated/label.js:80
 msgid "Select Stock Locations"
-msgstr ""
+msgstr "Seleccionar ubicaciones de stock"
 
 #: templates/js/translated/label.js:81
 msgid "Stock location(s) must be selected before printing labels"
-msgstr ""
+msgstr "Las ubicación(es) del stock deben ser seleccionadas antes de imprimir etiquetas"
 
 #: templates/js/translated/label.js:99
 msgid "No labels found which match selected stock location(s)"
-msgstr ""
+msgstr "No se encontraron etiquetas que coincidan con las ubicaciones de stock seleccionadas"
 
 #: templates/js/translated/label.js:135
 msgid "Part(s) must be selected before printing labels"
-msgstr ""
+msgstr "Pieza(s) deben ser seleccionadas antes de imprimir etiquetas"
 
 #: templates/js/translated/label.js:154
 msgid "No labels found which match the selected part(s)"
-msgstr ""
+msgstr "No se encontraron etiquetas que coincidan con la(s) parte(s) seleccionada(s)"
 
 #: templates/js/translated/label.js:228
 msgid "stock items selected"
-msgstr ""
+msgstr "artículos de stock seleccionados"
 
 #: templates/js/translated/label.js:236
 msgid "Select Label"
-msgstr ""
+msgstr "Seleccionar Etiqueta"
 
 #: templates/js/translated/label.js:251
 msgid "Select Label Template"
-msgstr ""
+msgstr "Seleccione Plantilla de Etiqueta"
 
 #: templates/js/translated/modals.js:75 templates/js/translated/modals.js:119
 #: templates/js/translated/modals.js:593
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: templates/js/translated/modals.js:76 templates/js/translated/modals.js:118
 #: templates/js/translated/modals.js:660 templates/js/translated/modals.js:963
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
-msgstr ""
+msgstr "Enviar"
 
 #: templates/js/translated/modals.js:117
 msgid "Form Title"
-msgstr ""
+msgstr "Título del Formulario"
 
 #: templates/js/translated/modals.js:380
 msgid "Waiting for server..."
-msgstr ""
+msgstr "Esperando al servidor..."
 
 #: templates/js/translated/modals.js:539
 msgid "Show Error Information"
-msgstr ""
+msgstr "Mostrar Información de Error"
 
 #: templates/js/translated/modals.js:592
 msgid "Accept"
-msgstr ""
+msgstr "Aceptar"
 
 #: templates/js/translated/modals.js:649
 msgid "Loading Data"
-msgstr ""
+msgstr "Cargando Datos"
 
 #: templates/js/translated/modals.js:915
 msgid "Invalid response from server"
-msgstr ""
+msgstr "Respuesta no válida del servidor"
 
 #: templates/js/translated/modals.js:915
 msgid "Form data missing from server response"
-msgstr ""
+msgstr "Datos del formulario faltantes de la respuesta del servidor"
 
 #: templates/js/translated/modals.js:927
 msgid "Error posting form data"
-msgstr ""
+msgstr "Error al publicar datos del formulario"
 
 #: templates/js/translated/modals.js:1024
 msgid "JSON response missing form data"
-msgstr ""
+msgstr "Respuesta JSON faltan datos del formulario"
 
 #: templates/js/translated/modals.js:1039
 msgid "Error 400: Bad Request"
-msgstr ""
+msgstr "Error 400: Solicitud Incorrecta"
 
 #: templates/js/translated/modals.js:1040
 msgid "Server returned error code 400"
-msgstr ""
+msgstr "El servidor devolvió el código de error 400"
 
 #: templates/js/translated/modals.js:1063
 msgid "Error requesting form data"
-msgstr ""
+msgstr "Error al solicitar datos del formulario"
 
 #: templates/js/translated/model_renderers.js:40
 msgid "Company ID"
-msgstr ""
+msgstr "ID de Empresa"
 
 #: templates/js/translated/model_renderers.js:77
 msgid "Stock ID"
-msgstr ""
+msgstr "ID de Stock"
 
 #: templates/js/translated/model_renderers.js:130
 msgid "Location ID"
-msgstr ""
+msgstr "ID de Ubicación"
 
 #: templates/js/translated/model_renderers.js:147
 msgid "Build ID"
@@ -7432,59 +7475,59 @@ msgstr "ID de construcción"
 
 #: templates/js/translated/model_renderers.js:182
 msgid "Part ID"
-msgstr ""
+msgstr "ID de Parte"
 
 #: templates/js/translated/model_renderers.js:236
 msgid "Order ID"
-msgstr ""
+msgstr "ID del Pedido"
 
 #: templates/js/translated/model_renderers.js:256
 msgid "Category ID"
-msgstr ""
+msgstr "ID de Categoría"
 
 #: templates/js/translated/model_renderers.js:293
 msgid "Manufacturer Part ID"
-msgstr ""
+msgstr "ID de Parte del Fabricante"
 
 #: templates/js/translated/model_renderers.js:322
 msgid "Supplier Part ID"
-msgstr ""
+msgstr "ID Parte del Proveedor"
 
 #: templates/js/translated/order.js:48
 msgid "Add Customer"
-msgstr ""
+msgstr "Añadir Cliente"
 
 #: templates/js/translated/order.js:73
 msgid "Create Sales Order"
-msgstr ""
+msgstr "Crear Orden de Venta"
 
 #: templates/js/translated/order.js:208
 msgid "Export Order"
-msgstr ""
+msgstr "Exportar Orden"
 
 #: templates/js/translated/order.js:211 templates/js/translated/stock.js:423
 msgid "Format"
-msgstr ""
+msgstr "Formato"
 
 #: templates/js/translated/order.js:212 templates/js/translated/stock.js:424
 msgid "Select file format"
-msgstr ""
+msgstr "Seleccionar formato de archivo"
 
 #: templates/js/translated/order.js:300
 msgid "Select Line Items"
-msgstr ""
+msgstr "Seleccionar Artículos de Línea"
 
 #: templates/js/translated/order.js:301
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Debe seleccionar al menos un elemento de línea"
 
 #: templates/js/translated/order.js:326
 msgid "Quantity to receive"
-msgstr ""
+msgstr "Cantidad a recibir"
 
 #: templates/js/translated/order.js:360 templates/js/translated/stock.js:1673
 msgid "Stock Status"
-msgstr ""
+msgstr "Estado del Stock"
 
 #: templates/js/translated/order.js:427
 msgid "Order Code"
@@ -7693,162 +7736,162 @@ msgstr ""
 
 #: templates/js/translated/part.js:333
 msgid "Edit Part"
-msgstr ""
+msgstr "Editar Parte"
 
 #: templates/js/translated/part.js:335
 msgid "Part edited"
-msgstr ""
+msgstr "Parte editada"
 
 #: templates/js/translated/part.js:403
 msgid "You are subscribed to notifications for this item"
-msgstr ""
+msgstr "Estás suscrito a las notificaciones de este elemento"
 
 #: templates/js/translated/part.js:405
 msgid "You have subscribed to notifications for this item"
-msgstr ""
+msgstr "Te has suscrito a las notificaciones de este elemento"
 
 #: templates/js/translated/part.js:410
 msgid "Subscribe to notifications for this item"
-msgstr ""
+msgstr "Suscríbete a las notificaciones de este elemento"
 
 #: templates/js/translated/part.js:412
 msgid "You have unsubscribed to notifications for this item"
-msgstr ""
+msgstr "Has cancelado la suscripción a las notificaciones de este elemento"
 
 #: templates/js/translated/part.js:441 templates/js/translated/part.js:526
 msgid "Trackable part"
-msgstr ""
+msgstr "Parte Rastreable"
 
 #: templates/js/translated/part.js:445 templates/js/translated/part.js:530
 msgid "Virtual part"
-msgstr ""
+msgstr "Parte virtual"
 
 #: templates/js/translated/part.js:457
 msgid "Subscribed part"
-msgstr ""
+msgstr "Parte suscrita"
 
 #: templates/js/translated/part.js:461
 msgid "Salable part"
-msgstr ""
+msgstr "Pieza vendible"
 
 #: templates/js/translated/part.js:576
 msgid "No variants found"
-msgstr ""
+msgstr "No se encontraron variantes"
 
 #: templates/js/translated/part.js:765
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Eliminar relación de parte"
 
 #: templates/js/translated/part.js:789
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Eliminar Relación de Parte"
 
 #: templates/js/translated/part.js:856 templates/js/translated/part.js:1116
 msgid "No parts found"
-msgstr ""
+msgstr "No se encontraron partes"
 
 #: templates/js/translated/part.js:1026
 msgid "No category"
-msgstr ""
+msgstr "Sin categoría"
 
 #: templates/js/translated/part.js:1049
 #: templates/js/translated/table_filters.js:381
 msgid "Low stock"
-msgstr ""
+msgstr "Stock bajo"
 
 #: templates/js/translated/part.js:1140 templates/js/translated/part.js:1312
 #: templates/js/translated/stock.js:1832
 msgid "Display as list"
-msgstr ""
+msgstr "Mostrar como lista"
 
 #: templates/js/translated/part.js:1156
 msgid "Display as grid"
-msgstr ""
+msgstr "Mostrar como cuadrícula"
 
 #: templates/js/translated/part.js:1331 templates/js/translated/stock.js:1851
 msgid "Display as tree"
-msgstr ""
+msgstr "Mostrar como árbol"
 
 #: templates/js/translated/part.js:1395
 msgid "Subscribed category"
-msgstr ""
+msgstr "Categoría suscrita"
 
 #: templates/js/translated/part.js:1409 templates/js/translated/stock.js:1895
 msgid "Path"
-msgstr ""
+msgstr "Ruta"
 
 #: templates/js/translated/part.js:1453
 msgid "No test templates matching query"
-msgstr ""
+msgstr "No hay plantillas de prueba que coincidan con la consulta"
 
 #: templates/js/translated/part.js:1504 templates/js/translated/stock.js:816
 msgid "Edit test result"
-msgstr ""
+msgstr "Editar resultado de prueba"
 
 #: templates/js/translated/part.js:1505 templates/js/translated/stock.js:817
 msgid "Delete test result"
-msgstr ""
+msgstr "Eliminar resultado de prueba"
 
 #: templates/js/translated/part.js:1511
 msgid "This test is defined for a parent part"
-msgstr ""
+msgstr "Esta prueba está definida para una parte principal"
 
 #: templates/js/translated/part.js:1533
 msgid "Edit Test Result Template"
-msgstr ""
+msgstr "Editar plantilla de resultado de prueba"
 
 #: templates/js/translated/part.js:1547
 msgid "Delete Test Result Template"
-msgstr ""
+msgstr "Eliminar plantilla de resultados de prueba"
 
 #: templates/js/translated/part.js:1572
 #, python-brace-format
 msgid "No ${human_name} information found"
-msgstr ""
+msgstr "No se encontró información de ${human_name}"
 
 #: templates/js/translated/part.js:1627
 #, python-brace-format
 msgid "Edit ${human_name}"
-msgstr ""
+msgstr "Editar ${human_name}"
 
 #: templates/js/translated/part.js:1628
 #, python-brace-format
 msgid "Delete ${human_name}"
-msgstr ""
+msgstr "Eliminar ${human_name}"
 
 #: templates/js/translated/part.js:1729
 msgid "Single Price"
-msgstr ""
+msgstr "Precio Único"
 
 #: templates/js/translated/part.js:1748
 msgid "Single Price Difference"
-msgstr ""
+msgstr "Diferencia de Precio Único"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
-msgstr ""
+msgstr "ítems seleccionados"
 
 #: templates/js/translated/report.js:75
 msgid "Select Report Template"
-msgstr ""
+msgstr "Seleccionar Plantilla de Informe"
 
 #: templates/js/translated/report.js:90
 msgid "Select Test Report Template"
-msgstr ""
+msgstr "Seleccione Plantilla de Informe de Prueba"
 
 #: templates/js/translated/report.js:119
 msgid "Stock item(s) must be selected before printing reports"
-msgstr ""
+msgstr "Elemento(s) de stock deben ser seleccionados antes de imprimir informes"
 
 #: templates/js/translated/report.js:136 templates/js/translated/report.js:189
 #: templates/js/translated/report.js:243 templates/js/translated/report.js:297
 #: templates/js/translated/report.js:351
 msgid "No Reports Found"
-msgstr ""
+msgstr "No se Encontraron Informes"
 
 #: templates/js/translated/report.js:137
 msgid "No report templates found which match selected stock item(s)"
-msgstr ""
+msgstr "No se encontraron plantillas de informe que coincidan con los artículos de stock seleccionados"
 
 #: templates/js/translated/report.js:172
 msgid "Select Builds"
@@ -7864,51 +7907,51 @@ msgstr "No se encontraron plantillas de informe que coincidan con la construcci�
 
 #: templates/js/translated/report.js:226
 msgid "Part(s) must be selected before printing reports"
-msgstr ""
+msgstr "Pieza(s) deben ser seleccionadas antes de imprimir informes"
 
 #: templates/js/translated/report.js:244
 msgid "No report templates found which match selected part(s)"
-msgstr ""
+msgstr "No se encontraron plantillas de informe que coincidan con la(s) parte(s) seleccionada(s)"
 
 #: templates/js/translated/report.js:279
 msgid "Select Purchase Orders"
-msgstr ""
+msgstr "Seleccionar órdenes de compra"
 
 #: templates/js/translated/report.js:280
 msgid "Purchase Order(s) must be selected before printing report"
-msgstr ""
+msgstr "Pedido(s) de compra debe ser seleccionado antes de imprimir informe"
 
 #: templates/js/translated/report.js:298 templates/js/translated/report.js:352
 msgid "No report templates found which match selected orders"
-msgstr ""
+msgstr "No se encontraron plantillas de informe que coincidan con los pedidos seleccionados"
 
 #: templates/js/translated/report.js:333
 msgid "Select Sales Orders"
-msgstr ""
+msgstr "Seleccionar Pedidos de Venta"
 
 #: templates/js/translated/report.js:334
 msgid "Sales Order(s) must be selected before printing report"
-msgstr ""
+msgstr "Pedido(s) de venta debe ser seleccionado antes de imprimir el informe"
 
 #: templates/js/translated/stock.js:70
 msgid "Serialize Stock Item"
-msgstr ""
+msgstr "Serializar Artículo de Stock"
 
 #: templates/js/translated/stock.js:88 templates/js/translated/stock.js:167
 msgid "Next available serial number"
-msgstr ""
+msgstr "Siguiente número de serie disponible"
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
 msgid "Latest serial number"
-msgstr ""
+msgstr "Último número de serie"
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
-msgstr ""
+msgstr "Ubicación del stock principal"
 
 #: templates/js/translated/stock.js:140
 msgid "New Stock Location"
-msgstr ""
+msgstr "Nueva Ubicación de Stock"
 
 #: templates/js/translated/stock.js:180
 msgid "This part cannot be serialized"
