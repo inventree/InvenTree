@@ -432,6 +432,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
             'stock_item',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
             'user',

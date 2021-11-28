@@ -85,6 +85,7 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
             'part',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]

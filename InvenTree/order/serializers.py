@@ -386,6 +386,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'order',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',
@@ -607,6 +608,7 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
             'order',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]

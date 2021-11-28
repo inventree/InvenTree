@@ -525,6 +525,7 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'build',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',
