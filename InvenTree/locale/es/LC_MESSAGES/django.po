@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-28 22:41\n"
+"PO-Revision-Date: 2021-11-28 23:43\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1890,43 +1890,43 @@ msgstr "Habilitar SSO en las páginas de inicio de sesión"
 
 #: common/models.py:931
 msgid "Email required"
-msgstr ""
+msgstr "Email requerido"
 
 #: common/models.py:932
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Requiere usuario para suministrar correo al registrarse"
 
 #: common/models.py:937
 msgid "Auto-fill SSO users"
-msgstr ""
+msgstr "Auto-rellenar usuarios SSO"
 
 #: common/models.py:938
 msgid "Automatically fill out user-details from SSO account-data"
-msgstr ""
+msgstr "Rellenar automáticamente los datos de usuario de la cuenta SSO"
 
 #: common/models.py:943
 msgid "Mail twice"
-msgstr ""
+msgstr "Correo dos veces"
 
 #: common/models.py:944
 msgid "On signup ask users twice for their mail"
-msgstr ""
+msgstr "Al registrarse pregunte dos veces a los usuarios por su correo"
 
 #: common/models.py:949
 msgid "Password twice"
-msgstr ""
+msgstr "Contraseña dos veces"
 
 #: common/models.py:950
 msgid "On signup ask users twice for their password"
-msgstr ""
+msgstr "Al registrarse, preguntar dos veces a los usuarios por su contraseña"
 
 #: common/models.py:955
 msgid "Group on signup"
-msgstr ""
+msgstr "Grupo al registrarse"
 
 #: common/models.py:956
 msgid "Group to which new users are assigned on registration"
-msgstr ""
+msgstr "Grupo al que se asignan nuevos usuarios al registrarse"
 
 #: common/models.py:1001
 msgid "Show subscribed parts"
@@ -1938,7 +1938,7 @@ msgstr "Mostrar las partes suscritas en la página principal"
 
 #: common/models.py:1007
 msgid "Show subscribed categories"
-msgstr ""
+msgstr "Mostrar categorías suscritas"
 
 #: common/models.py:1008
 msgid "Show subscribed part categories on the homepage"
@@ -8537,125 +8537,125 @@ msgstr ""
 
 #: templates/stats.html:63
 msgid "Email Settings"
-msgstr ""
+msgstr "Configuración de Email"
 
 #: templates/stats.html:66
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Configuración de correo no configurada"
 
 #: templates/stock_table.html:14
 msgid "Export Stock Information"
-msgstr ""
+msgstr "Exportar información de stock"
 
 #: templates/stock_table.html:20
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Acciones de código de barras"
 
 #: templates/stock_table.html:36
 msgid "Print test reports"
-msgstr ""
+msgstr "Imprimir informes de prueba"
 
 #: templates/stock_table.html:43
 msgid "Stock Options"
-msgstr ""
+msgstr "Opciones Stock"
 
 #: templates/stock_table.html:48
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Añadir a los elementos de stock seleccionados"
 
 #: templates/stock_table.html:49
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Eliminar de los elementos de stock seleccionados"
 
 #: templates/stock_table.html:50
 msgid "Stocktake selected stock items"
-msgstr ""
+msgstr "Artículos de stock seleccionados"
 
 #: templates/stock_table.html:51
 msgid "Move selected stock items"
-msgstr ""
+msgstr "Mover elementos de stock seleccionados"
 
 #: templates/stock_table.html:51
 msgid "Move stock"
-msgstr ""
+msgstr "Mover stock"
 
 #: templates/stock_table.html:52
 msgid "Order selected items"
-msgstr ""
+msgstr "Ordenar artículos seleccionados"
 
 #: templates/stock_table.html:53
 msgid "Change status"
-msgstr ""
+msgstr "Cambiar estado"
 
 #: templates/stock_table.html:53
 msgid "Change stock status"
-msgstr ""
+msgstr "Cambiar estado de stock"
 
 #: templates/stock_table.html:56
 msgid "Delete selected items"
-msgstr ""
+msgstr "Eliminar elementos seleccionados"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: users/admin.py:64
 msgid "Users"
-msgstr ""
+msgstr "Usuarios"
 
 #: users/admin.py:65
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "Seleccione qué usuarios están asignados a este grupo"
 
 #: users/admin.py:187
 msgid "The following users are members of multiple groups:"
-msgstr ""
+msgstr "Los siguientes usuarios son miembros de varios grupos:"
 
 #: users/admin.py:210
 msgid "Personal info"
-msgstr ""
+msgstr "Información personal"
 
 #: users/admin.py:211
 msgid "Permissions"
-msgstr ""
+msgstr "Permisos"
 
 #: users/admin.py:214
 msgid "Important dates"
-msgstr ""
+msgstr "Fechas importantes"
 
 #: users/models.py:187
 msgid "Permission set"
-msgstr ""
+msgstr "Permiso establecido"
 
 #: users/models.py:195
 msgid "Group"
-msgstr ""
+msgstr "Grupo"
 
 #: users/models.py:198
 msgid "View"
-msgstr ""
+msgstr "Vista"
 
 #: users/models.py:198
 msgid "Permission to view items"
-msgstr ""
+msgstr "Permiso para ver elementos"
 
 #: users/models.py:200
 msgid "Permission to add items"
-msgstr ""
+msgstr "Permiso para añadir elementos"
 
 #: users/models.py:202
 msgid "Change"
-msgstr ""
+msgstr "Cambiar"
 
 #: users/models.py:202
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Permisos para editar elementos"
 
 #: users/models.py:204
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Permiso para eliminar elementos"
 
