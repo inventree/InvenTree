@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 12:02+0000\n"
+"POT-Creation-Date: 2021-11-28 20:33+0000\n"
 "PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -242,83 +242,83 @@ msgstr "必须是有效数字"
 msgid "Filename"
 msgstr "文件名"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:670
 msgid "German"
 msgstr "德语"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:671
 msgid "Greek"
 msgstr "希腊语"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:672
 msgid "English"
 msgstr "英语"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:673
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:674
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:675
 msgid "French"
 msgstr "法语"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:676
 msgid "Hebrew"
 msgstr "希伯来语"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:677
 msgid "Italian"
 msgstr "意大利语"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:678
 msgid "Japanese"
 msgstr "日语"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:679
 msgid "Korean"
 msgstr "韩语"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:680
 msgid "Dutch"
 msgstr "荷兰语"
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:681
 msgid "Norwegian"
 msgstr "挪威语"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:682
 msgid "Polish"
 msgstr "波兰语"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:683
 msgid "Portugese"
 msgstr ""
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:684
 msgid "Russian"
 msgstr "俄语"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:685
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:686
 msgid "Thai"
 msgstr "泰语"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:687
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:688
 msgid "Vietnamese"
 msgstr "越南语"
 
-#: InvenTree/settings.py:683
+#: InvenTree/settings.py:689
 msgid "Chinese"
 msgstr "中文（简体）"
 
@@ -503,27 +503,27 @@ msgstr "备损不能超过 100%"
 msgid "Overage must be an integer value or a percentage"
 msgstr "备损必须是整数值或百分比"
 
-#: InvenTree/views.py:536
+#: InvenTree/views.py:538
 msgid "Delete Item"
 msgstr "删除项"
 
-#: InvenTree/views.py:585
+#: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
 msgstr "选中方框以确认项目删除"
 
-#: InvenTree/views.py:600 templates/InvenTree/settings/user.html:17
+#: InvenTree/views.py:602 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr "编辑用户信息"
 
-#: InvenTree/views.py:611 templates/InvenTree/settings/user.html:21
+#: InvenTree/views.py:613 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr "设置密码"
 
-#: InvenTree/views.py:630
+#: InvenTree/views.py:632
 msgid "Password fields must match"
 msgstr "密码字段必须相匹配。"
 
-#: InvenTree/views.py:863 templates/navbar.html:101
+#: InvenTree/views.py:883 templates/navbar.html:101
 msgid "System Information"
 msgstr "系统信息"
 
@@ -2234,7 +2234,7 @@ msgid "Contact phone number"
 msgstr "联系电话"
 
 #: company/models.py:125 company/templates/company/company_base.html:102
-#: templates/InvenTree/settings/user.html:46
+#: templates/InvenTree/settings/user.html:47
 msgid "Email"
 msgstr "电子邮件"
 
@@ -6203,7 +6203,7 @@ msgid "User Settings"
 msgstr "用户设置"
 
 #: templates/InvenTree/settings/sidebar.html:8
-#: templates/InvenTree/settings/user.html:11
+#: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
 msgstr "帐户设置"
 
@@ -6254,141 +6254,141 @@ msgstr "销售订单设置"
 msgid "Stock Settings"
 msgstr "库存设置"
 
-#: templates/InvenTree/settings/user.html:18
+#: templates/InvenTree/settings/user.html:19
 #: templates/js/translated/helpers.js:26
 msgid "Edit"
 msgstr "编辑"
 
-#: templates/InvenTree/settings/user.html:20
+#: templates/InvenTree/settings/user.html:21
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
 msgstr "更改密码"
 
-#: templates/InvenTree/settings/user.html:31
+#: templates/InvenTree/settings/user.html:32
 msgid "Username"
 msgstr "用户名"
 
-#: templates/InvenTree/settings/user.html:35
+#: templates/InvenTree/settings/user.html:36
 msgid "First Name"
 msgstr "名字"
 
-#: templates/InvenTree/settings/user.html:39
+#: templates/InvenTree/settings/user.html:40
 msgid "Last Name"
 msgstr "姓氏"
 
-#: templates/InvenTree/settings/user.html:54
+#: templates/InvenTree/settings/user.html:55
 msgid "The following email addresses are associated with your account:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:74
+#: templates/InvenTree/settings/user.html:75
 msgid "Verified"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:76
+#: templates/InvenTree/settings/user.html:77
 msgid "Unverified"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:78
+#: templates/InvenTree/settings/user.html:79
 msgid "Primary"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:84
+#: templates/InvenTree/settings/user.html:85
 msgid "Make Primary"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:85
+#: templates/InvenTree/settings/user.html:86
 msgid "Re-send Verification"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:86
-#: templates/InvenTree/settings/user.html:153
+#: templates/InvenTree/settings/user.html:87
+#: templates/InvenTree/settings/user.html:154
 msgid "Remove"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:93
+#: templates/InvenTree/settings/user.html:94
 msgid "Warning:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:94
+#: templates/InvenTree/settings/user.html:95
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:101
+#: templates/InvenTree/settings/user.html:102
 msgid "Add Email Address"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:111
+#: templates/InvenTree/settings/user.html:112
 msgid "Enter e-mail address"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:113
+#: templates/InvenTree/settings/user.html:114
 msgid "Add Email"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:123
+#: templates/InvenTree/settings/user.html:124
 msgid "Social Accounts"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:128
+#: templates/InvenTree/settings/user.html:129
 msgid "You can sign in to your account using any of the following third party accounts:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:162
+#: templates/InvenTree/settings/user.html:163
 msgid "There are no social network accounts connected to your InvenTree account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:167
+#: templates/InvenTree/settings/user.html:168
 msgid "Add a 3rd Party Account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:177
-msgid "Language Settings"
-msgstr "语言设置"
-
-#: templates/InvenTree/settings/user.html:186
-msgid "Select language"
+#: templates/InvenTree/settings/user.html:178
+msgid "Active Sessions"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:202
+#: templates/InvenTree/settings/user.html:182
+msgid "<em>unknown on unknown</em>"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:183
+msgid "<em>unknown</em>"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:187
+#, fuzzy
+#| msgid "Address"
+msgid "IP Address"
+msgstr "地址"
+
+#: templates/InvenTree/settings/user.html:188
+msgid "Device"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:189
+msgid "Last Activity"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:198
 #, python-format
-msgid "%(lang_translated)s%% translated"
-msgstr "%(lang_translated)s%% 已翻译"
-
-#: templates/InvenTree/settings/user.html:204
-msgid "No translations available"
-msgstr "无可用翻译"
-
-#: templates/InvenTree/settings/user.html:211
-msgid "Set Language"
-msgstr "设置语言"
-
-#: templates/InvenTree/settings/user.html:214
-msgid "Some languages are not complete"
+msgid "%(time)s ago (this session)"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:216
-msgid "Show only sufficent"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:218
-msgid "and hidden."
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:218
-msgid "Show them too"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:224
-msgid "Help the translation efforts!"
-msgstr "帮助翻译工作！"
-
-#: templates/InvenTree/settings/user.html:225
+#: templates/InvenTree/settings/user.html:200
 #, python-format
-msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr "InventTree web 应用程序的本地语言翻译是 <a href=\"%(link)s\">社区通过crowdin</a>贡献。欢迎并鼓励提交信息。"
+msgid "%(time)s ago"
+msgstr ""
 
-#: templates/InvenTree/settings/user.html:233
+#: templates/InvenTree/settings/user.html:210
+msgid ""
+"You can also end all other sessions but the current.\n"
+"        This will log you out on all other devices."
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:212
+msgid "End All Other Sessions"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:220
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
@@ -6403,6 +6403,52 @@ msgstr ""
 #: templates/InvenTree/settings/user_display.html:46
 msgid "Set Theme"
 msgstr "设置主题"
+
+#: templates/InvenTree/settings/user_display.html:54
+msgid "Language Settings"
+msgstr "语言设置"
+
+#: templates/InvenTree/settings/user_display.html:63
+msgid "Select language"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:79
+#, python-format
+msgid "%(lang_translated)s%% translated"
+msgstr "%(lang_translated)s%% 已翻译"
+
+#: templates/InvenTree/settings/user_display.html:81
+msgid "No translations available"
+msgstr "无可用翻译"
+
+#: templates/InvenTree/settings/user_display.html:88
+msgid "Set Language"
+msgstr "设置语言"
+
+#: templates/InvenTree/settings/user_display.html:91
+msgid "Some languages are not complete"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:93
+msgid "Show only sufficent"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:95
+msgid "and hidden."
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:95
+msgid "Show them too"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:101
+msgid "Help the translation efforts!"
+msgstr "帮助翻译工作！"
+
+#: templates/InvenTree/settings/user_display.html:102
+#, python-format
+msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
+msgstr "InventTree web 应用程序的本地语言翻译是 <a href=\"%(link)s\">社区通过crowdin</a>贡献。欢迎并鼓励提交信息。"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
