@@ -164,7 +164,7 @@ function openNotificationPanel() {
                         html += '<li class="list-group-item">';
                         // d-flex justify-content-between align-items-start
                         html += '<div>';
-                        html += `<span class="badge rounded-pill bg-primary">${item.category}</span><span class="me-1">${item.name}</span>`;
+                        html += `<span class="badge rounded-pill bg-primary">${item.category}</span><span class="ms-2">${item.name}</span>`;
                         html += '</div>';
                         if (item.target) {
                             var link_text = `${item.target.model}: ${item.target.name}`;
