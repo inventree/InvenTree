@@ -433,6 +433,7 @@
 $("#stock-serialize").click(function() {
 
     serializeStockItem({{ item.pk }}, {
+        part: {{ item.part.pk }},
         reload: true,
         data: {
             quantity: {{ item.quantity }},
