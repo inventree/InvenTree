@@ -700,7 +700,7 @@ def clean_decimal(number):
 
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
     """lookup method for the GenericForeignKey fields
-    
+
     Attributes:
     - obj: object that will be resolved
     - type_ref: field name for the contenttype field in the model
