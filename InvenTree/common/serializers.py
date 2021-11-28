@@ -6,6 +6,7 @@ JSON serializers for common components
 from __future__ import unicode_literals
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.helpers import get_objectreference
 
 from rest_framework import serializers
 
@@ -102,7 +103,9 @@ class NotificationMessageSerializer(SettingsSerializer):
     Serializer for the InvenTreeUserSetting model
     """
 
-    #content_object = serializers.PrimaryKeyRelatedField(read_only=True)
+    target = serializers.SerializerMethodField()
+
+    source = serializers.SerializerMethodField()
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -120,11 +123,18 @@ class NotificationMessageSerializer(SettingsSerializer):
 
     read = serializers.BooleanField()
 
+    def get_target(self, obj):
+        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+
+    def get_source(self, obj):
+        return get_objectreference(obj, 'source_content_type', 'source_object_id')
+
     class Meta:
         model = NotificationMessage
         fields = [
             'pk',
-            #'content_object',
+            'target',
+            'source',
             'user',
             'category',
             'name',

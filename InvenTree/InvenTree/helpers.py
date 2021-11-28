@@ -696,3 +696,43 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
+
+def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
+    """lookup method for the GenericForeignKey fields
+    
+    Attributes:
+    - obj: object that will be resolved
+    - type_ref: field name for the contenttype field in the model
+    - object_ref: field name for the object id in the model
+
+    Example implementation in the serializer:
+    ```
+    target = serializers.SerializerMethodField()
+    def get_target(self, obj):
+        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+    ```
+
+    The method name must always be the name of the field prefixed by 'get_'
+    """
+    model_cls = getattr(obj, type_ref)
+    obj_id = getattr(obj, object_ref)
+
+    # check if references are set -> return nothing if not
+    if model_cls is None or obj_id is None:
+        return None
+
+    # resolve referenced data into objects
+    model_cls = model_cls.model_class()
+    item = model_cls.objects.get(id=obj_id)
+    url_fnc = getattr(item, 'get_absolute_url', None)
+
+    # create output
+    ret = {}
+    if url_fnc:
+        ret['link'] = url_fnc()
+    return {
+        'name': str(item),
+        'model': str(model_cls._meta.verbose_name),
+        **ret
+    }
