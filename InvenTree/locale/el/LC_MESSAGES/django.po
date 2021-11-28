@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-26 20:05+0000\n"
+"POT-Creation-Date: 2021-11-28 12:02+0000\n"
 "PO-Revision-Date: 2021-11-25 05:07\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
@@ -114,63 +114,85 @@ msgstr ""
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
 
-#: InvenTree/models.py:109 stock/models.py:1874
+#: InvenTree/models.py:114
+msgid "Missing file"
+msgstr ""
+
+#: InvenTree/models.py:115
+msgid "Missing external link"
+msgstr ""
+
+#: InvenTree/models.py:126 stock/models.py:1874
+#: templates/js/translated/attachment.js:117
 msgid "Attachment"
 msgstr ""
 
-#: InvenTree/models.py:110
+#: InvenTree/models.py:127
 msgid "Select file to attach"
 msgstr ""
 
-#: InvenTree/models.py:112 templates/js/translated/attachment.js:91
+#: InvenTree/models.py:133 company/models.py:131 company/models.py:348
+#: company/models.py:564 order/models.py:163 part/models.py:797
+#: report/templates/report/inventree_build_order_base.html:165
+#: templates/js/translated/company.js:537
+#: templates/js/translated/company.js:826 templates/js/translated/part.js:1077
+msgid "Link"
+msgstr ""
+
+#: InvenTree/models.py:134 build/models.py:330 part/models.py:798
+#: stock/models.py:540
+msgid "Link to external URL"
+msgstr ""
+
+#: InvenTree/models.py:137 templates/js/translated/attachment.js:161
 msgid "Comment"
 msgstr ""
 
-#: InvenTree/models.py:112
+#: InvenTree/models.py:137
 msgid "File comment"
 msgstr ""
 
-#: InvenTree/models.py:118 InvenTree/models.py:119 common/models.py:1185
+#: InvenTree/models.py:143 InvenTree/models.py:144 common/models.py:1185
 #: common/models.py:1186 part/models.py:2205 part/models.py:2225
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2084
 msgid "User"
 msgstr ""
 
-#: InvenTree/models.py:122
+#: InvenTree/models.py:147
 msgid "upload date"
 msgstr ""
 
-#: InvenTree/models.py:142
+#: InvenTree/models.py:170
 msgid "Filename must not be empty"
 msgstr ""
 
-#: InvenTree/models.py:165
+#: InvenTree/models.py:193
 msgid "Invalid attachment directory"
 msgstr ""
 
-#: InvenTree/models.py:175
+#: InvenTree/models.py:203
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr ""
 
-#: InvenTree/models.py:178
+#: InvenTree/models.py:206
 msgid "Filename missing extension"
 msgstr ""
 
-#: InvenTree/models.py:185
+#: InvenTree/models.py:213
 msgid "Attachment with this filename already exists"
 msgstr ""
 
-#: InvenTree/models.py:192
+#: InvenTree/models.py:220
 msgid "Error renaming file"
 msgstr ""
 
-#: InvenTree/models.py:227
+#: InvenTree/models.py:255
 msgid "Invalid choice"
 msgstr ""
 
-#: InvenTree/models.py:243 InvenTree/models.py:244 company/models.py:415
+#: InvenTree/models.py:271 InvenTree/models.py:272 company/models.py:415
 #: label/models.py:112 part/models.py:741 part/models.py:2389
 #: part/templates/part/detail.html:25 report/models.py:181
 #: templates/InvenTree/settings/settings.html:259
@@ -180,7 +202,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: InvenTree/models.py:250 build/models.py:207
+#: InvenTree/models.py:278 build/models.py:207
 #: build/templates/build/detail.html:25 company/models.py:354
 #: company/models.py:570 company/templates/company/manufacturer_part.html:80
 #: company/templates/company/supplier_part.html:81 label/models.py:119
@@ -202,11 +224,11 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: InvenTree/models.py:251
+#: InvenTree/models.py:279
 msgid "Description (optional)"
 msgstr ""
 
-#: InvenTree/models.py:259
+#: InvenTree/models.py:287
 msgid "parent"
 msgstr ""
 
@@ -214,7 +236,7 @@ msgstr ""
 msgid "Must be a valid number"
 msgstr ""
 
-#: InvenTree/serializers.py:251
+#: InvenTree/serializers.py:285
 msgid "Filename"
 msgstr ""
 
@@ -552,7 +574,7 @@ msgstr ""
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:223
 #: part/forms.py:239 part/forms.py:255 part/models.py:2576
 #: part/templates/part/bom_upload/match_parts.html:31
-#: part/templates/part/detail.html:1115 part/templates/part/detail.html:1201
+#: part/templates/part/detail.html:1076 part/templates/part/detail.html:1162
 #: part/templates/part/part_pricing.html:16
 #: report/templates/report/inventree_build_order_base.html:114
 #: report/templates/report/inventree_po_report.html:91
@@ -796,10 +818,6 @@ msgstr ""
 msgid "External Link"
 msgstr ""
 
-#: build/models.py:330 part/models.py:798 stock/models.py:540
-msgid "Link to external URL"
-msgstr ""
-
 #: build/models.py:334 build/serializers.py:201
 #: build/templates/build/sidebar.html:21 company/models.py:142
 #: company/models.py:577 company/templates/company/sidebar.html:25
@@ -810,7 +828,7 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:154 stock/forms.py:204 stock/forms.py:238 stock/models.py:610
 #: stock/models.py:1774 stock/models.py:1880 stock/serializers.py:325
-#: stock/serializers.py:584 stock/templates/stock/stock_sidebar.html:21
+#: stock/serializers.py:583 stock/templates/stock/stock_sidebar.html:21
 #: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:599
 #: templates/js/translated/company.js:842 templates/js/translated/order.js:980
 #: templates/js/translated/order.js:1578 templates/js/translated/stock.js:891
@@ -916,8 +934,8 @@ msgstr ""
 msgid "This build output is not fully allocated"
 msgstr ""
 
-#: build/serializers.py:190 order/serializers.py:220 order/serializers.py:288
-#: stock/forms.py:236 stock/serializers.py:318 stock/serializers.py:686
+#: build/serializers.py:190 order/serializers.py:219 order/serializers.py:287
+#: stock/forms.py:236 stock/serializers.py:318 stock/serializers.py:685
 #: stock/templates/stock/item_base.html:286
 #: templates/js/translated/barcode.js:384
 #: templates/js/translated/barcode.js:557 templates/js/translated/build.js:420
@@ -935,7 +953,7 @@ msgstr ""
 
 #: build/serializers.py:197 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
-#: order/serializers.py:241 stock/templates/stock/item_base.html:409
+#: order/serializers.py:240 stock/templates/stock/item_base.html:409
 #: templates/js/translated/barcode.js:140 templates/js/translated/build.js:1655
 #: templates/js/translated/order.js:431 templates/js/translated/order.js:677
 #: templates/js/translated/order.js:1091 templates/js/translated/stock.js:1226
@@ -968,7 +986,7 @@ msgstr ""
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:348 order/models.py:316 order/serializers.py:234
+#: build/serializers.py:348 order/models.py:316 order/serializers.py:233
 #: stock/models.py:381 stock/models.py:1103 stock/serializers.py:298
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1298,7 +1316,7 @@ msgstr ""
 msgid "Build Notes"
 msgstr ""
 
-#: build/templates/build/detail.html:298 build/templates/build/detail.html:489
+#: build/templates/build/detail.html:298 build/templates/build/detail.html:453
 #: company/templates/company/detail.html:188
 #: company/templates/company/detail.html:215
 #: order/templates/order/purchase_order_detail.html:80
@@ -1310,41 +1328,11 @@ msgstr ""
 msgid "Edit Notes"
 msgstr ""
 
-#: build/templates/build/detail.html:448
-#: order/templates/order/purchase_order_detail.html:170
-#: order/templates/order/sales_order_detail.html:160
-#: part/templates/part/detail.html:1062 stock/templates/stock/item.html:270
-#: templates/attachment_button.html:4
-msgid "Add Attachment"
-msgstr ""
-
-#: build/templates/build/detail.html:467
-#: order/templates/order/purchase_order_detail.html:142
-#: order/templates/order/sales_order_detail.html:133
-#: part/templates/part/detail.html:1016 stock/templates/stock/item.html:238
-msgid "Edit Attachment"
-msgstr ""
-
-#: build/templates/build/detail.html:474
-#: order/templates/order/purchase_order_detail.html:149
-#: order/templates/order/sales_order_detail.html:139
-#: part/templates/part/detail.html:1025 stock/templates/stock/item.html:247
-#: templates/js/translated/order.js:1260
-msgid "Confirm Delete Operation"
-msgstr ""
-
-#: build/templates/build/detail.html:475
-#: order/templates/order/purchase_order_detail.html:150
-#: order/templates/order/sales_order_detail.html:140
-#: part/templates/part/detail.html:1026 stock/templates/stock/item.html:248
-msgid "Delete Attachment"
-msgstr ""
-
-#: build/templates/build/detail.html:513
+#: build/templates/build/detail.html:477
 msgid "Allocation Complete"
 msgstr ""
 
-#: build/templates/build/detail.html:514
+#: build/templates/build/detail.html:478
 msgid "All untracked stock items have been allocated"
 msgstr ""
 
@@ -1460,7 +1448,7 @@ msgstr ""
 msgid "Error reading file (data could be corrupted)"
 msgstr ""
 
-#: common/forms.py:34 templates/js/translated/attachment.js:54
+#: common/forms.py:34
 msgid "File"
 msgstr ""
 
@@ -2258,14 +2246,6 @@ msgstr ""
 
 #: company/models.py:129
 msgid "Point of contact"
-msgstr ""
-
-#: company/models.py:131 company/models.py:348 company/models.py:564
-#: order/models.py:163 part/models.py:797
-#: report/templates/report/inventree_build_order_base.html:165
-#: templates/js/translated/company.js:537
-#: templates/js/translated/company.js:826 templates/js/translated/part.js:1077
-msgid "Link"
 msgstr ""
 
 #: company/models.py:131
@@ -3196,47 +3176,47 @@ msgstr ""
 msgid "Enter stock allocation quantity"
 msgstr ""
 
-#: order/serializers.py:170
+#: order/serializers.py:169
 msgid "Purchase price currency"
 msgstr ""
 
-#: order/serializers.py:205
+#: order/serializers.py:204
 msgid "Line Item"
 msgstr ""
 
-#: order/serializers.py:211
+#: order/serializers.py:210
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:221 order/serializers.py:289
+#: order/serializers.py:220 order/serializers.py:288
 msgid "Select destination location for received items"
 msgstr ""
 
-#: order/serializers.py:245
+#: order/serializers.py:244
 msgid "Barcode Hash"
 msgstr ""
 
-#: order/serializers.py:246
+#: order/serializers.py:245
 msgid "Unique identifier field"
 msgstr ""
 
-#: order/serializers.py:263
+#: order/serializers.py:262
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:301
+#: order/serializers.py:300
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:318
+#: order/serializers.py:317
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:329
+#: order/serializers.py:328
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:571
+#: order/serializers.py:569
 msgid "Sale price currency"
 msgstr ""
 
@@ -3475,9 +3455,9 @@ msgid "Purchase Order Items"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:27
-#: order/templates/order/purchase_order_detail.html:216
+#: order/templates/order/purchase_order_detail.html:181
 #: order/templates/order/sales_order_detail.html:23
-#: order/templates/order/sales_order_detail.html:191
+#: order/templates/order/sales_order_detail.html:157
 msgid "Add Line Item"
 msgstr ""
 
@@ -4591,22 +4571,22 @@ msgstr ""
 msgid "Edit Part Notes"
 msgstr ""
 
-#: part/templates/part/detail.html:1078
+#: part/templates/part/detail.html:1039
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1090
+#: part/templates/part/detail.html:1051
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1102
+#: part/templates/part/detail.html:1063
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1191
+#: part/templates/part/detail.html:1152
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr ""
@@ -5505,7 +5485,7 @@ msgstr ""
 msgid "Enter serial numbers for new items"
 msgstr ""
 
-#: stock/serializers.py:319 stock/serializers.py:687
+#: stock/serializers.py:319 stock/serializers.py:686
 msgid "Destination stock location"
 msgstr ""
 
@@ -5517,15 +5497,15 @@ msgstr ""
 msgid "Serial numbers cannot be assigned to this part"
 msgstr ""
 
-#: stock/serializers.py:557
+#: stock/serializers.py:556
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:585
+#: stock/serializers.py:584
 msgid "Stock transaction notes"
 msgstr ""
 
-#: stock/serializers.py:595
+#: stock/serializers.py:594
 msgid "A list of stock items must be provided"
 msgstr ""
 
@@ -5570,15 +5550,15 @@ msgstr ""
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/templates/stock/item.html:318 stock/templates/stock/item.html:343
+#: stock/templates/stock/item.html:279 stock/templates/stock/item.html:304
 msgid "Add Test Result"
 msgstr ""
 
-#: stock/templates/stock/item.html:363
+#: stock/templates/stock/item.html:324
 msgid "Edit Test Result"
 msgstr ""
 
-#: stock/templates/stock/item.html:377
+#: stock/templates/stock/item.html:338
 msgid "Delete Test Result"
 msgstr ""
 
@@ -6617,6 +6597,14 @@ msgstr ""
 msgid "View in administration panel"
 msgstr ""
 
+#: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
+msgid "Add Link"
+msgstr ""
+
+#: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
+msgid "Add Attachment"
+msgstr ""
+
 #: templates/base.html:96
 msgid "Server Restart Required"
 msgstr ""
@@ -6756,19 +6744,31 @@ msgstr ""
 msgid "Error code"
 msgstr ""
 
-#: templates/js/translated/attachment.js:27
+#: templates/js/translated/attachment.js:76
 msgid "No attachments found"
 msgstr ""
 
-#: templates/js/translated/attachment.js:95
-msgid "Upload Date"
+#: templates/js/translated/attachment.js:98
+msgid "Edit Attachment"
 msgstr ""
 
 #: templates/js/translated/attachment.js:108
+msgid "Confirm Delete"
+msgstr ""
+
+#: templates/js/translated/attachment.js:109
+msgid "Delete Attachment"
+msgstr ""
+
+#: templates/js/translated/attachment.js:165
+msgid "Upload Date"
+msgstr ""
+
+#: templates/js/translated/attachment.js:178
 msgid "Edit attachment"
 msgstr ""
 
-#: templates/js/translated/attachment.js:115
+#: templates/js/translated/attachment.js:185
 msgid "Delete attachment"
 msgstr ""
 
@@ -7566,6 +7566,10 @@ msgstr ""
 
 #: templates/js/translated/order.js:1243
 msgid "Edit Stock Allocation"
+msgstr ""
+
+#: templates/js/translated/order.js:1260
+msgid "Confirm Delete Operation"
 msgstr ""
 
 #: templates/js/translated/order.js:1261
