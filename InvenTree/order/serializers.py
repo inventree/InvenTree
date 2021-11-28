@@ -24,7 +24,6 @@ from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
 from InvenTree.status_codes import StockStatus
 
 from part.serializers import PartBriefSerializer

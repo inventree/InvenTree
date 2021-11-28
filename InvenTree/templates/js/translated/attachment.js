@@ -149,7 +149,8 @@ function loadAttachmentTable(url, options) {
 
                         return renderLink(html, value);
                     } else if (row.link) {
-                        return renderLink(row.link, row.link);
+                        var html = `<span class='fas fa-link'></span> ${row.link}`;
+                        return renderLink(html, row.link);
                     } else {
                         return '-';
                     }

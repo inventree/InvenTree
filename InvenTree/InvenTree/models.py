@@ -116,7 +116,7 @@ class InvenTreeAttachment(models.Model):
             })
 
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)

@@ -289,7 +289,6 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
     )
 
 
-
 class InvenTreeImageSerializerField(serializers.ImageField):
     """
     Custom image serializer.

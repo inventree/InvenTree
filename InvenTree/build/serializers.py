@@ -16,7 +16,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
