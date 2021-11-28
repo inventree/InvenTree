@@ -59,6 +59,20 @@ function loadNotificationTable(table, options={}) {
                 sortable: 'true',
             },
             {
+                field: 'target',
+                title: '{% trans "Item" %}',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    if (value == null) {
+                        return '';
+                    }
+
+                    var html = `${value.model}: ${value.name}`;
+                    if (value.link ) {html = `<a href='${value.link}'>${html}</a>`;}
+                    return html;
+                }
+            },
+            {
                 field: 'name',
                 title: '{% trans "Name" %}',
             },
