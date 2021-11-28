@@ -220,11 +220,13 @@ function inventreeDocReady() {
 
     // Start notification background worker to check every 5 seconds if notifications are available
     setInterval(notificationCheck, 5000);
-
     // also run when the focus returns
     $(document).on('focus', function(e){
         notificationCheck();
     });
+
+    $('#offcanvasRight').on('show.bs.offcanvas', openNotificationPanel)  // listener for opening the notification panel
+    $('#offcanvasRight').on('hidden.bs.offcanvas', closeNotificationPanel)  // listener for closing the notification panel
 }
 
 

@@ -144,3 +144,52 @@ function showMessage(message, options={}) {
         );
     }
 }
+
+
+function openNotificationPanel() {
+    var html = '';
+
+    inventreeGet(
+        '/api/notifications/',
+        {
+            read: false,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    html = `<p class='text-muted'>{% trans "No unread notifications" %}</p>`;
+                } else {
+                    // build up items
+                    response.forEach(function(item, index) {
+                        html += '<li class="list-group-item">';
+                        // d-flex justify-content-between align-items-start
+                        html += '<div>';
+                        html += `<span class="badge rounded-pill bg-primary">${item.category}</span><span class="me-1">${item.name}</span>`;
+                        html += '</div>';
+                        if (item.target) {
+                            var link_text = `${item.target.model}: ${item.target.name}`;
+                            if (item.target.link) {
+                                link_text = `<a href='${item.target.link}'>${link_text}</a>`;
+                            }
+                            html += link_text
+                        }
+                        html += '<div>';
+                        html += `<span class="text-muted">${item.age_human}</span>`;
+                        html += "</div></li>";
+                    });
+
+                    // package up
+                    html = `<ul class="list-group">${html}</ul>`
+                }
+
+                // set html
+                $('#notification-center').html(html);
+            }
+        }
+    );
+}
+
+
+function closeNotificationPanel() {
+    $('#notification-center').html(`<p class='text-muted'>{% trans "Notifications will load here" %}</p>`);
+}
