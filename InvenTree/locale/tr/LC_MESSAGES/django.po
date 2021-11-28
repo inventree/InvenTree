@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -119,10 +119,8 @@ msgid "Missing file"
 msgstr ""
 
 #: InvenTree/models.py:115
-#, fuzzy
-#| msgid "External Link"
 msgid "Missing external link"
-msgstr "Harici Bağlantı"
+msgstr ""
 
 #: InvenTree/models.py:126 stock/models.py:1874
 #: templates/js/translated/attachment.js:117
@@ -3365,10 +3363,8 @@ msgid "Select Supplier Part"
 msgstr "Tedarikçi Parçası Seçin"
 
 #: order/templates/order/order_wizard/po_upload.html:8
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Return to Orders"
-msgstr "Yapım İşi Emirleri için Gerekli"
+msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:17
 msgid "Upload File for Purchase Order"
@@ -4601,10 +4597,8 @@ msgid "Unsuffitient privileges."
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
-#, fuzzy
-#| msgid "Required Part"
 msgid "Return to Parts"
-msgstr "Gerekli Parça"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
@@ -4834,8 +4828,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6343,20 +6336,16 @@ msgid "Add a 3rd Party Account"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:179
-#, fuzzy
-#| msgid "Actions"
 msgid "Active Sessions"
-msgstr "İşlemler"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:185
 msgid "Log out active sessions (except this one)"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:186
-#, fuzzy
-#| msgid "Actions"
 msgid "Log Out Active Sessions"
-msgstr "İşlemler"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:195
 msgid "<em>unknown on unknown</em>"
@@ -6367,10 +6356,8 @@ msgid "<em>unknown</em>"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:200
-#, fuzzy
-#| msgid "Address"
 msgid "IP Address"
-msgstr "Adres"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:201
 msgid "Device"
@@ -6558,16 +6545,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -6652,10 +6637,8 @@ msgid "View in administration panel"
 msgstr ""
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
-#, fuzzy
-#| msgid "Link"
 msgid "Add Link"
-msgstr "Bağlantı"
+msgstr ""
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -6809,10 +6792,8 @@ msgid "Edit Attachment"
 msgstr "Ek Düzenle"
 
 #: templates/js/translated/attachment.js:108
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Delete"
-msgstr "Silmeyi Onayla"
+msgstr ""
 
 #: templates/js/translated/attachment.js:109
 msgid "Delete Attachment"
@@ -7954,16 +7935,12 @@ msgid "Serialize Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:88 templates/js/translated/stock.js:167
-#, fuzzy
-#| msgid "Next available serial number is"
 msgid "Next available serial number"
-msgstr "Sonraki müsait seri numarası"
+msgstr ""
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
-#, fuzzy
-#| msgid "Latest Serial Number"
 msgid "Latest serial number"
-msgstr "Son Seri Numarası"
+msgstr ""
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
@@ -7974,10 +7951,8 @@ msgid "New Stock Location"
 msgstr ""
 
 #: templates/js/translated/stock.js:180
-#, fuzzy
-#| msgid "This action cannot be easily undone"
 msgid "This part cannot be serialized"
-msgstr "Bu işlem kolayca geri alınamaz"
+msgstr ""
 
 #: templates/js/translated/stock.js:219
 msgid "Enter initial quantity for this stock item"
@@ -8681,3 +8656,4 @@ msgstr ""
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr ""
+

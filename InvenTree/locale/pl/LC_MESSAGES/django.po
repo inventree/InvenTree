@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Potwierdzenie adresu email"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
@@ -119,10 +119,8 @@ msgid "Missing file"
 msgstr ""
 
 #: InvenTree/models.py:115
-#, fuzzy
-#| msgid "External Link"
 msgid "Missing external link"
-msgstr "Link Zewnętrzny"
+msgstr ""
 
 #: InvenTree/models.py:126 stock/models.py:1874
 #: templates/js/translated/attachment.js:117
@@ -188,7 +186,7 @@ msgstr ""
 
 #: InvenTree/models.py:220
 msgid "Error renaming file"
-msgstr ""
+msgstr "Błąd zmiany nazwy pliku"
 
 #: InvenTree/models.py:255
 msgid "Invalid choice"
@@ -240,7 +238,7 @@ msgstr "Numer musi być prawidłowy"
 
 #: InvenTree/serializers.py:285
 msgid "Filename"
-msgstr ""
+msgstr "Nazwa pliku"
 
 #: InvenTree/settings.py:670
 msgid "German"
@@ -260,7 +258,7 @@ msgstr "Hiszpański"
 
 #: InvenTree/settings.py:674
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Hiszpański (Meksyk)"
 
 #: InvenTree/settings.py:675
 msgid "French"
@@ -296,7 +294,7 @@ msgstr "Polski"
 
 #: InvenTree/settings.py:683
 msgid "Portugese"
-msgstr ""
+msgstr "Portugalski"
 
 #: InvenTree/settings.py:684
 msgid "Russian"
@@ -4599,10 +4597,8 @@ msgid "Unsuffitient privileges."
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Return to Parts"
-msgstr "Zamów części"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
@@ -4832,8 +4828,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6341,20 +6336,16 @@ msgid "Add a 3rd Party Account"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:179
-#, fuzzy
-#| msgid "Actions"
 msgid "Active Sessions"
-msgstr "Akcje"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:185
 msgid "Log out active sessions (except this one)"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:186
-#, fuzzy
-#| msgid "Actions"
 msgid "Log Out Active Sessions"
-msgstr "Akcje"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:195
 msgid "<em>unknown on unknown</em>"
@@ -6365,10 +6356,8 @@ msgid "<em>unknown</em>"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:200
-#, fuzzy
-#| msgid "Address"
 msgid "IP Address"
-msgstr "Adres"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:201
 msgid "Device"
@@ -6556,16 +6545,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -6650,10 +6637,8 @@ msgid "View in administration panel"
 msgstr ""
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
-#, fuzzy
-#| msgid "Add Line Item"
 msgid "Add Link"
-msgstr "Dodaj element zamówienia"
+msgstr ""
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -6807,10 +6792,8 @@ msgid "Edit Attachment"
 msgstr "Edytuj załącznik"
 
 #: templates/js/translated/attachment.js:108
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Delete"
-msgstr "Potwierdź usunięcie"
+msgstr ""
 
 #: templates/js/translated/attachment.js:109
 msgid "Delete Attachment"
@@ -7952,16 +7935,12 @@ msgid "Serialize Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:88 templates/js/translated/stock.js:167
-#, fuzzy
-#| msgid "Assigned serial number"
 msgid "Next available serial number"
-msgstr "Przypisano numer seryjny"
+msgstr ""
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
-#, fuzzy
-#| msgid "Latest Serial Number"
 msgid "Latest serial number"
-msgstr "Ostatni numer seryjny"
+msgstr ""
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
@@ -8678,5 +8657,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "Purchase Order Details"
-#~ msgstr "Szczegóły zamówienia"

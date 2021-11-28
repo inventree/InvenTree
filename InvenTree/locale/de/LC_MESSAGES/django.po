@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -116,13 +116,11 @@ msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) üb
 
 #: InvenTree/models.py:114
 msgid "Missing file"
-msgstr ""
+msgstr "Fehlende Datei"
 
 #: InvenTree/models.py:115
-#, fuzzy
-#| msgid "External Link"
 msgid "Missing external link"
-msgstr "Externer Link"
+msgstr "Fehlender externer Link"
 
 #: InvenTree/models.py:126 stock/models.py:1874
 #: templates/js/translated/attachment.js:117
@@ -922,19 +920,19 @@ msgstr "Endprodukt"
 
 #: build/serializers.py:146
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Endprodukt stimmt nicht mit übergeordnetem Bauauftrag überein"
 
 #: build/serializers.py:150
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Endprodukt entspricht nicht dem Teil des Bauauftrags"
 
 #: build/serializers.py:154
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Dieses Endprodukt wurde bereits fertiggestellt"
 
 #: build/serializers.py:158
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Dieses Endprodukt ist nicht vollständig zugewiesen"
 
 #: build/serializers.py:190 order/serializers.py:219 order/serializers.py:287
 #: stock/forms.py:236 stock/serializers.py:318 stock/serializers.py:685
@@ -951,7 +949,7 @@ msgstr "Lagerort"
 
 #: build/serializers.py:191
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Lagerort für fertige Endprodukte"
 
 #: build/serializers.py:197 build/templates/build/build_base.html:129
 #: build/templates/build/detail.html:63 order/models.py:572
@@ -965,7 +963,7 @@ msgstr "Status"
 
 #: build/serializers.py:213
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Eine Liste von Endprodukten muss angegeben werden"
 
 #: build/serializers.py:259 build/serializers.py:308 part/models.py:2700
 #: part/models.py:2859
@@ -978,11 +976,11 @@ msgstr "Endprodukt"
 
 #: build/serializers.py:278
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Endprodukt muss auf den gleichen Bauauftrag verweisen"
 
 #: build/serializers.py:319
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part muss auf dasselbe Teil verweisen wie der Bauauftrag"
 
 #: build/serializers.py:334
 msgid "Item must be in stock"
@@ -1000,15 +998,15 @@ msgstr "Verfügbare Menge ({q}) überschritten"
 
 #: build/serializers.py:396
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "Für Zuweisung von verfolgten Teilen muss ein Endprodukt angegeben sein"
 
 #: build/serializers.py:403
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "Endprodukt kann bei Zuweisung nicht-verfolgter Teile nicht angegeben werden"
 
 #: build/serializers.py:431
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "Zuweisungen müssen angegeben werden"
 
 #: build/tasks.py:92
 msgid "Stock required for build order"
@@ -1360,15 +1358,15 @@ msgstr "Listen-Ansicht"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr ""
+msgstr "Bauauftragdetails"
 
 #: build/templates/build/sidebar.html:12
 msgid "Pending Items"
-msgstr ""
+msgstr "Ausstehende Einträge"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Items"
-msgstr ""
+msgstr "Abgeschlossene Elemente"
 
 #: build/views.py:76
 msgid "Build was cancelled"
@@ -1936,7 +1934,7 @@ msgstr "Abonnierte Teile anzeigen"
 
 #: common/models.py:1002
 msgid "Show subscribed parts on the homepage"
-msgstr "Abonnierte Teile auf der Startseite anzeigen"
+msgstr "Zeige abonnierte Teile auf der Startseite"
 
 #: common/models.py:1007
 msgid "Show subscribed categories"
@@ -1944,7 +1942,7 @@ msgstr "Abonnierte Kategorien anzeigen"
 
 #: common/models.py:1008
 msgid "Show subscribed part categories on the homepage"
-msgstr "Abonnierte Teilkategorien auf der Startseite anzeigen"
+msgstr "Zeige abonnierte Teilkategorien auf der Startseite"
 
 #: common/models.py:1013
 msgid "Show latest parts"
@@ -1968,7 +1966,7 @@ msgstr "Nicht validierte Stücklisten anzeigen"
 
 #: common/models.py:1027
 msgid "Show BOMs that await validation on the homepage"
-msgstr ""
+msgstr "Zeige Stücklisten, die noch nicht validiert sind, auf der Startseite"
 
 #: common/models.py:1032
 msgid "Show recent stock changes"
@@ -2000,7 +1998,7 @@ msgstr "Lerren Bestand anzeigen"
 
 #: common/models.py:1051
 msgid "Show depleted stock items on the homepage"
-msgstr ""
+msgstr "Zeige aufgebrauchte Lagerartikel auf der Startseite"
 
 #: common/models.py:1056
 msgid "Show needed stock"
@@ -2016,7 +2014,7 @@ msgstr "Abgelaufenen Bestand anzeigen"
 
 #: common/models.py:1063
 msgid "Show expired stock items on the homepage"
-msgstr "Zeige Abgelaufene Lagerbestände auf der Startseite"
+msgstr "Zeige abgelaufene Lagerbestände auf der Startseite"
 
 #: common/models.py:1068
 msgid "Show stale stock"
@@ -2024,7 +2022,7 @@ msgstr "Alten Bestand anzeigen"
 
 #: common/models.py:1069
 msgid "Show stale stock items on the homepage"
-msgstr ""
+msgstr "Zeige überfällige Lagerartikel auf der Startseite"
 
 #: common/models.py:1074
 msgid "Show pending builds"
@@ -2048,7 +2046,7 @@ msgstr "Ausstehende POs anzeigen"
 
 #: common/models.py:1087
 msgid "Show outstanding POs on the homepage"
-msgstr "Ausstehende POs auf der Startseite anzeigen"
+msgstr "Zeige ausstehende POs auf der Startseite"
 
 #: common/models.py:1092
 msgid "Show overdue POs"
@@ -2056,7 +2054,7 @@ msgstr "Überfällige POs anzeigen"
 
 #: common/models.py:1093
 msgid "Show overdue POs on the homepage"
-msgstr "Überfällige POs auf der Startseite anzeigen"
+msgstr "Zeige überfällige POs auf der Startseite"
 
 #: common/models.py:1098
 msgid "Show outstanding SOs"
@@ -2064,7 +2062,7 @@ msgstr "Ausstehende SOs anzeigen"
 
 #: common/models.py:1099
 msgid "Show outstanding SOs on the homepage"
-msgstr "Ausstehende SOs auf der Startseite anzeigen"
+msgstr "Zeige ausstehende SOs auf der Startseite"
 
 #: common/models.py:1104
 msgid "Show overdue SOs"
@@ -2072,7 +2070,7 @@ msgstr "Überfällige SOs anzeigen"
 
 #: common/models.py:1105
 msgid "Show overdue SOs on the homepage"
-msgstr "Überfällige SOs auf der Startseite anzeigen"
+msgstr "Zeige überfällige SOs auf der Startseite"
 
 #: common/models.py:1111
 msgid "Inline label display"
@@ -2709,19 +2707,19 @@ msgstr "Parameter löschen"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Hergestellte Teile"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Zuliefererteile"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr ""
+msgstr "Zugelieferte Lagerartikel"
 
 #: company/templates/company/sidebar.html:22
 msgid "Assigned Stock Items"
-msgstr ""
+msgstr "Zugewiesene Lagerartikel"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:492
@@ -3365,10 +3363,8 @@ msgid "Select Supplier Part"
 msgstr "Zulieferer-Teil auswählen"
 
 #: order/templates/order/order_wizard/po_upload.html:8
-#, fuzzy
-#| msgid "Return to stock"
 msgid "Return to Orders"
-msgstr "zu Bestand zurückgeben"
+msgstr "Zurück zu Bestellungen"
 
 #: order/templates/order/order_wizard/po_upload.html:17
 msgid "Upload File for Purchase Order"
@@ -3452,7 +3448,7 @@ msgstr "Positionen"
 
 #: order/templates/order/po_sidebar.html:7
 msgid "Received Stock"
-msgstr ""
+msgstr "Empfangene Lagerartikel"
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
@@ -4235,7 +4231,7 @@ msgstr "Teil auswählen"
 
 #: part/templates/part/bom_upload/upload_file.html:8
 msgid "Return to BOM"
-msgstr ""
+msgstr "Zurück zur Stückliste"
 
 #: part/templates/part/bom_upload/upload_file.html:13
 msgid "Upload Bill of Materials"
@@ -4404,7 +4400,7 @@ msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die oberste Kat. v
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
-msgstr ""
+msgstr "Teile importieren"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:366
 msgid "Duplicate Part"
@@ -4601,10 +4597,8 @@ msgid "Unsuffitient privileges."
 msgstr "Unzureichende Benutzerrechte."
 
 #: part/templates/part/import_wizard/part_upload.html:8
-#, fuzzy
-#| msgid "Return to stock"
 msgid "Return to Parts"
-msgstr "zu Bestand zurückgeben"
+msgstr "Zurück zu Teilen"
 
 #: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
@@ -4818,15 +4812,15 @@ msgstr "Details"
 
 #: part/templates/part/part_sidebar.html:13
 msgid "Variants"
-msgstr ""
+msgstr "Varianten"
 
 #: part/templates/part/part_sidebar.html:27
 msgid "Used In"
-msgstr ""
+msgstr "Benutzt in"
 
 #: part/templates/part/part_sidebar.html:43
 msgid "Test Templates"
-msgstr ""
+msgstr "Testvorlagen"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -4834,12 +4828,10 @@ msgstr "Aus vorhandenen Bildern auswählen"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
-msgstr ""
-"Teil '<strong>%(full_name)s</strong>' kann nicht gelöscht werden, da er noch als <strong>aktiv</strong>markiert ist.\n"
+msgstr "Teil '<strong>%(full_name)s</strong>' kann nicht gelöscht werden, da er noch als <strong>aktiv</strong>markiert ist.\n"
 "    <br>Deaktivieren Sie das Attribut \"Aktiv\" und versuchen Sie es erneut.\n"
 "    "
 
@@ -5086,7 +5078,7 @@ msgstr "Interne Preisspanne löschen"
 #: report/api.py:234 report/api.py:278
 #, python-brace-format
 msgid "Template file '{filename}' is missing or does not exist"
-msgstr ""
+msgstr "Vorlagendatei '{filename}' fehlt oder existiert nicht"
 
 #: report/models.py:182
 msgid "Template name"
@@ -5219,7 +5211,7 @@ msgstr "fehlgeschlagen"
 #: report/templates/report/inventree_test_report_base.html:123
 #: stock/templates/stock/stock_sidebar.html:12
 msgid "Installed Items"
-msgstr ""
+msgstr "Verbaute Objekte"
 
 #: report/templates/report/inventree_test_report_base.html:137
 #: templates/js/translated/stock.js:2177
@@ -5872,11 +5864,11 @@ msgstr "Lade..."
 
 #: stock/templates/stock/stock_sidebar.html:5
 msgid "Stock Tracking"
-msgstr ""
+msgstr "Lagerartikel-Verfolgung"
 
 #: stock/templates/stock/stock_sidebar.html:16
 msgid "Child Items"
-msgstr ""
+msgstr "Untergeordnete Objekte"
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
@@ -6198,7 +6190,7 @@ msgstr "Keine Teilparametervorlagen gefunden"
 
 #: templates/InvenTree/settings/settings.html:253
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/InvenTree/settings/sidebar.html:5
 #: templates/InvenTree/settings/user_settings.html:9
@@ -6217,7 +6209,7 @@ msgstr "Anzeigeeinstellungen"
 
 #: templates/InvenTree/settings/sidebar.html:12
 msgid "Home Page"
-msgstr ""
+msgstr "Startseite"
 
 #: templates/InvenTree/settings/sidebar.html:14
 #: templates/InvenTree/settings/user_search.html:9
@@ -6226,28 +6218,28 @@ msgstr "Sucheinstellungen"
 
 #: templates/InvenTree/settings/sidebar.html:16
 msgid "Label Printing"
-msgstr ""
+msgstr "Etikettendruck"
 
 #: templates/InvenTree/settings/sidebar.html:18
 #: templates/InvenTree/settings/sidebar.html:34
 msgid "Reporting"
-msgstr ""
+msgstr "Berichte"
 
 #: templates/InvenTree/settings/sidebar.html:23
 msgid "Global Settings"
-msgstr ""
+msgstr "Allgemeine Einstellungen"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Server Configuration"
-msgstr ""
+msgstr "Serverkonfiguration"
 
 #: templates/InvenTree/settings/sidebar.html:32
 msgid "Currencies"
-msgstr ""
+msgstr "Währungen"
 
 #: templates/InvenTree/settings/sidebar.html:38
 msgid "Categories"
-msgstr ""
+msgstr "Kategorien"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
@@ -6346,20 +6338,16 @@ msgid "Add a 3rd Party Account"
 msgstr "Drittanbieter-Konto hinzufügen"
 
 #: templates/InvenTree/settings/user.html:179
-#, fuzzy
-#| msgid "Actions"
 msgid "Active Sessions"
-msgstr "Aktionen"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:185
 msgid "Log out active sessions (except this one)"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:186
-#, fuzzy
-#| msgid "Actions"
 msgid "Log Out Active Sessions"
-msgstr "Aktionen"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:195
 msgid "<em>unknown on unknown</em>"
@@ -6370,10 +6358,8 @@ msgid "<em>unknown</em>"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:200
-#, fuzzy
-#| msgid "Address"
 msgid "IP Address"
-msgstr "Adresse"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:201
 msgid "Device"
@@ -6440,7 +6426,7 @@ msgstr "Zeige nur ausreichende"
 
 #: templates/InvenTree/settings/user_display.html:95
 msgid "and hidden."
-msgstr ""
+msgstr "und versteckt."
 
 #: templates/InvenTree/settings/user_display.html:95
 msgid "Show them too"
@@ -6561,16 +6547,14 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -6655,10 +6639,8 @@ msgid "View in administration panel"
 msgstr "Im Administrationsbereich anzeigen"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
-#, fuzzy
-#| msgid "Add Line Item"
 msgid "Add Link"
-msgstr "Position hinzufügen"
+msgstr "Link hinzufügen"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -6812,10 +6794,8 @@ msgid "Edit Attachment"
 msgstr "Anhang bearbeiten"
 
 #: templates/js/translated/attachment.js:108
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Delete"
-msgstr "Löschung bestätigen"
+msgstr "Löschen bestätigen"
 
 #: templates/js/translated/attachment.js:109
 msgid "Delete Attachment"
@@ -6938,7 +6918,7 @@ msgstr "Ersatzteil entfernen"
 
 #: templates/js/translated/bom.js:228
 msgid "Select and add a new variant item using the input below"
-msgstr ""
+msgstr "Wählen Sie eine neue Variante aus und fügen Sie sie mit den folgenden Eingaben hinzu"
 
 #: templates/js/translated/bom.js:239
 msgid "Are you sure you wish to remove this substitute part link?"
@@ -7799,11 +7779,11 @@ msgstr "Keine Varianten gefunden"
 
 #: templates/js/translated/part.js:765
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Teile-Beziehung löschen"
 
 #: templates/js/translated/part.js:789
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Teile-Beziehung löschen"
 
 #: templates/js/translated/part.js:856 templates/js/translated/part.js:1116
 msgid "No parts found"
@@ -7957,16 +7937,12 @@ msgid "Serialize Stock Item"
 msgstr "Lagerartikel serialisieren"
 
 #: templates/js/translated/stock.js:88 templates/js/translated/stock.js:167
-#, fuzzy
-#| msgid "Next available serial number is"
 msgid "Next available serial number"
-msgstr "Nächste verfügbare Seriennummer ist"
+msgstr "Nächste verfügbare Seriennummer"
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
-#, fuzzy
-#| msgid "Latest Serial Number"
 msgid "Latest serial number"
-msgstr "letzte Seriennummer"
+msgstr "Letzte Seriennummer"
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
@@ -7977,10 +7953,8 @@ msgid "New Stock Location"
 msgstr "Neuer Lagerstandort"
 
 #: templates/js/translated/stock.js:180
-#, fuzzy
-#| msgid "This action cannot be easily undone"
 msgid "This part cannot be serialized"
-msgstr "Diese Aktion kann nicht einfach rückgängig gemacht werden"
+msgstr "Dieser Teil kann nicht serialisiert werden"
 
 #: templates/js/translated/stock.js:219
 msgid "Enter initial quantity for this stock item"
@@ -8685,11 +8659,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Purchase Order Attachments"
-#~ msgstr "Bestellungs-Anhänge"
-
-#~ msgid "Purchase Order Details"
-#~ msgstr "Bestellungs-Details"
-
-#~ msgid "Received Stock Items"
-#~ msgstr "Lagerartikel empfangen"

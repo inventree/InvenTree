@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -4597,10 +4597,8 @@ msgid "Unsuffitient privileges."
 msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Return to Parts"
-msgstr "パーツの注文"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
@@ -4830,8 +4828,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6548,16 +6545,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -6797,10 +6792,8 @@ msgid "Edit Attachment"
 msgstr ""
 
 #: templates/js/translated/attachment.js:108
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Delete"
-msgstr "削除の確認"
+msgstr ""
 
 #: templates/js/translated/attachment.js:109
 msgid "Delete Attachment"
@@ -7946,10 +7939,8 @@ msgid "Next available serial number"
 msgstr ""
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Latest serial number"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
@@ -8665,3 +8656,4 @@ msgstr ""
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr ""
+

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-25 05:07\n"
+"PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -58,15 +58,15 @@ msgstr ""
 
 #: InvenTree/forms.py:176
 msgid "Confirm password"
-msgstr ""
+msgstr "Xác nhận mật khẩu"
 
 #: InvenTree/forms.py:177
 msgid "Confirm new password"
-msgstr ""
+msgstr "Xác nhận mật khẩu mới"
 
 #: InvenTree/forms.py:209
 msgid "Select Category"
-msgstr ""
+msgstr "Chọn danh mục"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
@@ -146,7 +146,7 @@ msgstr ""
 
 #: InvenTree/models.py:137 templates/js/translated/attachment.js:161
 msgid "Comment"
-msgstr ""
+msgstr "Bình luận"
 
 #: InvenTree/models.py:137
 msgid "File comment"
@@ -157,15 +157,15 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2084
 msgid "User"
-msgstr ""
+msgstr "Người dùng"
 
 #: InvenTree/models.py:147
 msgid "upload date"
-msgstr ""
+msgstr "Ngày tải lên"
 
 #: InvenTree/models.py:170
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Tên tập tin không được để trống"
 
 #: InvenTree/models.py:193
 msgid "Invalid attachment directory"
@@ -222,11 +222,11 @@ msgstr ""
 #: templates/js/translated/stock.js:1151 templates/js/translated/stock.js:1889
 #: templates/js/translated/stock.js:1934
 msgid "Description"
-msgstr ""
+msgstr "Mô tả"
 
 #: InvenTree/models.py:279
 msgid "Description (optional)"
-msgstr ""
+msgstr "Mô tả (tùy chọn)"
 
 #: InvenTree/models.py:287
 msgid "parent"
@@ -238,7 +238,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:285
 msgid "Filename"
-msgstr ""
+msgstr "Tên tập tin"
 
 #: InvenTree/settings.py:670
 msgid "German"
@@ -523,7 +523,7 @@ msgstr ""
 
 #: InvenTree/views.py:883 templates/navbar.html:101
 msgid "System Information"
-msgstr ""
+msgstr "Thông tin hệ thống"
 
 #: barcodes/api.py:53 barcodes/api.py:150
 msgid "Must provide barcode_data parameter"
@@ -640,7 +640,7 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:397
 msgid "Build Order"
-msgstr ""
+msgstr "Tạo đơn hàng"
 
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -650,7 +650,7 @@ msgstr ""
 #: templates/InvenTree/search.html:145
 #: templates/InvenTree/settings/sidebar.html:42 users/models.py:44
 msgid "Build Orders"
-msgstr ""
+msgstr "Tạo đơn hàng"
 
 #: build/models.py:198
 msgid "Build Order Reference"
@@ -705,7 +705,7 @@ msgstr ""
 #: templates/js/translated/part.js:985 templates/js/translated/stock.js:508
 #: templates/js/translated/stock.js:1108 templates/js/translated/stock.js:2159
 msgid "Part"
-msgstr ""
+msgstr "Nguyên liệu"
 
 #: build/models.py:233
 msgid "Select part to build"
@@ -783,7 +783,7 @@ msgstr ""
 #: build/models.py:300 order/models.py:291
 #: templates/js/translated/build.js:1697
 msgid "Completion Date"
-msgstr ""
+msgstr "Ngày hoàn thành"
 
 #: build/models.py:306
 msgid "completed by"
@@ -959,7 +959,7 @@ msgstr ""
 #: templates/js/translated/order.js:1091 templates/js/translated/stock.js:1226
 #: templates/js/translated/stock.js:2038 templates/js/translated/stock.js:2187
 msgid "Status"
-msgstr ""
+msgstr "Trạng thái"
 
 #: build/serializers.py:213
 msgid "A list of build outputs must be provided"
@@ -1103,7 +1103,7 @@ msgstr ""
 #: templates/js/translated/build.js:1641
 #: templates/js/translated/table_filters.js:304
 msgid "Completed"
-msgstr ""
+msgstr "Đã hoàn thành"
 
 #: build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:95 order/models.py:857
@@ -1946,11 +1946,11 @@ msgstr ""
 
 #: common/models.py:1013
 msgid "Show latest parts"
-msgstr ""
+msgstr "Hiển thị nguyên liệu mới nhất"
 
 #: common/models.py:1014
 msgid "Show latest parts on the homepage"
-msgstr ""
+msgstr "Hiển thị nguyên liệu mới nhất trên trang chủ"
 
 #: common/models.py:1019
 msgid "Recent Part Count"
@@ -2306,7 +2306,7 @@ msgstr ""
 #: templates/js/translated/company.js:514
 #: templates/js/translated/company.js:797 templates/js/translated/part.js:229
 msgid "Manufacturer"
-msgstr ""
+msgstr "Nhà sản xuất"
 
 #: company/models.py:336 templates/js/translated/part.js:230
 msgid "Select manufacturer"
@@ -2378,7 +2378,7 @@ msgstr ""
 #: templates/js/translated/company.js:771 templates/js/translated/order.js:660
 #: templates/js/translated/part.js:210
 msgid "Supplier"
-msgstr ""
+msgstr "Nhà cung cấp"
 
 #: company/models.py:546 templates/js/translated/part.js:211
 msgid "Select supplier"
@@ -2806,7 +2806,7 @@ msgstr ""
 #: templates/js/translated/part.js:1039 templates/js/translated/stock.js:509
 #: templates/js/translated/stock.js:1162 templates/navbar.html:26
 msgid "Stock"
-msgstr ""
+msgstr "Kiện hàng"
 
 #: company/templates/company/supplier_part_navbar.html:22
 msgid "Orders"
@@ -3097,7 +3097,7 @@ msgstr ""
 #: templates/js/translated/order.js:638 templates/js/translated/stock.js:1300
 #: templates/js/translated/stock.js:1983
 msgid "Purchase Order"
-msgstr ""
+msgstr "Đơn hàng"
 
 #: order/models.py:790
 msgid "Supplier part"
@@ -3117,7 +3117,7 @@ msgstr ""
 #: stock/serializers.py:163 stock/templates/stock/item_base.html:332
 #: templates/js/translated/stock.js:1354
 msgid "Purchase Price"
-msgstr ""
+msgstr "Giá mua"
 
 #: order/models.py:806
 msgid "Unit purchase price"
@@ -3808,7 +3808,7 @@ msgstr ""
 #: templates/js/translated/part.js:1416 templates/navbar.html:19
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "Nguyên liệu"
 
 #: part/models.py:450
 msgid "Invalid choice for parent part"
@@ -4436,7 +4436,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:97
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Số seri mới nhất"
 
 #: part/templates/part/detail.html:124
 msgid "Part Stock"
@@ -4828,8 +4828,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -4942,7 +4941,7 @@ msgstr ""
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
-msgstr ""
+msgstr "Hàng còn ít"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
@@ -5324,7 +5323,7 @@ msgstr ""
 #: stock/models.py:498 stock/templates/stock/location.html:12
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "Kho hàng"
 
 #: stock/models.py:501
 msgid "Where is this stock item located?"
@@ -6021,7 +6020,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:108
 msgid "Latest Parts"
-msgstr ""
+msgstr "Nguyên liệu mới nhất"
 
 #: templates/InvenTree/index.html:119
 msgid "BOM Waiting Validation"
@@ -6159,15 +6158,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:11 templates/navbar.html:93
 msgid "Settings"
-msgstr ""
+msgstr "Cài đặt"
 
 #: templates/InvenTree/settings/settings.html:65
 msgid "Edit Global Setting"
-msgstr ""
+msgstr "Chỉnh sửa cài đặt toàn cục"
 
 #: templates/InvenTree/settings/settings.html:65
 msgid "Edit User Setting"
-msgstr ""
+msgstr "Chỉnh sửa cài đặt người dùng"
 
 #: templates/InvenTree/settings/settings.html:148
 msgid "No category parameter templates found"
@@ -6194,17 +6193,17 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:5
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Cài đặt người dùng"
 
 #: templates/InvenTree/settings/sidebar.html:8
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "Cài đặt tài khoản"
 
 #: templates/InvenTree/settings/sidebar.html:10
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
-msgstr ""
+msgstr "Thiết đặt hiển thị"
 
 #: templates/InvenTree/settings/sidebar.html:12
 msgid "Home Page"
@@ -6213,7 +6212,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:14
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
-msgstr ""
+msgstr "Cài đặt tìm kiếm"
 
 #: templates/InvenTree/settings/sidebar.html:16
 msgid "Label Printing"
@@ -6226,7 +6225,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:23
 msgid "Global Settings"
-msgstr ""
+msgstr "Cài đặt toàn cục"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Server Configuration"
@@ -6384,7 +6383,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:25
 msgid "Theme Settings"
-msgstr ""
+msgstr "Thiết lập giao diện"
 
 #: templates/InvenTree/settings/user_display.html:35
 msgid "Select theme"
@@ -6396,7 +6395,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:54
 msgid "Language Settings"
-msgstr ""
+msgstr "Thiết lập ngôn ngữ"
 
 #: templates/InvenTree/settings/user_display.html:63
 msgid "Select language"
@@ -6442,7 +6441,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Thiết lập trang chủ"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
@@ -6546,16 +6545,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -6578,15 +6575,15 @@ msgstr ""
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "Đăng xuất"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "Bạn có chắc bạn muốn đăng xuất không?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "Quay lại website"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -7943,7 +7940,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:90 templates/js/translated/stock.js:169
 msgid "Latest serial number"
-msgstr ""
+msgstr "Số seri mới nhất"
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
@@ -8454,19 +8451,19 @@ msgstr ""
 
 #: templates/navbar.html:40
 msgid "Buy"
-msgstr ""
+msgstr "Mua"
 
 #: templates/navbar.html:52
 msgid "Sell"
-msgstr ""
+msgstr "Bán"
 
 #: templates/navbar.html:86 users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "Quản trị"
 
 #: templates/navbar.html:88
 msgid "Logout"
-msgstr ""
+msgstr "Đăng xuất"
 
 #: templates/navbar.html:90
 msgid "Login"
@@ -8474,7 +8471,7 @@ msgstr ""
 
 #: templates/navbar.html:111
 msgid "About InvenTree"
-msgstr ""
+msgstr "Giới thiệu"
 
 #: templates/navbar_demo.html:5
 msgid "InvenTree demo mode"
@@ -8659,3 +8656,4 @@ msgstr ""
 #: users/models.py:204
 msgid "Permission to delete items"
 msgstr ""
+
