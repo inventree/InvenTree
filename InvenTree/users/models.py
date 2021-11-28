@@ -152,6 +152,7 @@ class RuleSet(models.Model):
         'common_inventreesetting',
         'common_inventreeusersetting',
         'common_notificationentry',
+        'common_notificationmessage',
         'company_contact',
         'users_owner',
 
