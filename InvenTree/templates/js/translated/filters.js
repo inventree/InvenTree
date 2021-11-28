@@ -273,7 +273,7 @@ function setupFilterList(tableKey, table, target) {
 
     var element = $(target);
 
-    if (!element) {
+    if (!element || !element.exists()) {
         console.log(`WARNING: setupFilterList could not find target '${target}'`);
         return;
     }

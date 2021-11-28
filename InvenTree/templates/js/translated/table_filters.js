@@ -74,6 +74,12 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    // Filters for the "related parts" table
+    if (tableKey == 'related') {
+        return {
+        };
+    }
+
     // Filters for the "used in" table
     if (tableKey == 'usedin') {
         return {
