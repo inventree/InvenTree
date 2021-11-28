@@ -279,7 +279,6 @@ def content_excludes():
 
     excludes = [
         "contenttypes",
-        "sessions.session",
         "auth.permission",
         "authtoken.token",
         "error_report.error",
@@ -291,7 +290,7 @@ def content_excludes():
         "exchange.rate",
         "exchange.exchangebackend",
         "common.notificationentry",
-        "sessions.session",
+        "django_session",
     ]
 
     output = ""
