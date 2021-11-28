@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 12:02+0000\n"
-"PO-Revision-Date: 2021-11-28 18:48\n"
+"PO-Revision-Date: 2021-11-28 19:48\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4952,60 +4952,60 @@ msgstr "Crear nueva variante de pieza"
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr ""
+msgstr "Crear una nueva variante de la plantilla <em>'%(full_name)s'</em>."
 
 #: part/templatetags/inventree_extras.py:113
 msgid "Unknown database"
-msgstr ""
+msgstr "Base de datos desconocida"
 
 #: part/views.py:92
 msgid "Set Part Category"
-msgstr ""
+msgstr "Definir Categoría de Parte"
 
 #: part/views.py:142
 #, python-brace-format
 msgid "Set category for {n} parts"
-msgstr ""
+msgstr "Establecer categoría para {n} partes"
 
 #: part/views.py:214
 msgid "Match References"
-msgstr ""
+msgstr "Coincidir Referencias"
 
 #: part/views.py:498
 msgid "None"
-msgstr ""
+msgstr "Ninguna"
 
 #: part/views.py:557
 msgid "Part QR Code"
-msgstr ""
+msgstr "Código QR de Parte"
 
 #: part/views.py:659
 msgid "Select Part Image"
-msgstr ""
+msgstr "Seleccionar Imagen de Parte"
 
 #: part/views.py:685
 msgid "Updated part image"
-msgstr ""
+msgstr "Imagen de parte actualizada"
 
 #: part/views.py:688
 msgid "Part image not found"
-msgstr ""
+msgstr "Imagen de parte no encontrada"
 
 #: part/views.py:700
 msgid "Duplicate BOM"
-msgstr ""
+msgstr "Duplicar BOM"
 
 #: part/views.py:730
 msgid "Confirm duplication of BOM from parent"
-msgstr ""
+msgstr "Confirmar duplicación de BOM desde principal"
 
 #: part/views.py:772
 msgid "Confirm that the BOM is valid"
-msgstr ""
+msgstr "Confirme que la BOM es válida"
 
 #: part/views.py:783
 msgid "Validated Bill of Materials"
-msgstr ""
+msgstr "Validación de Lista de Materiales"
 
 #: part/views.py:856
 msgid "Match Parts"
@@ -5238,69 +5238,69 @@ msgstr ""
 
 #: stock/forms.py:150
 msgid "Destination for serialized stock (by default, will remain in current location)"
-msgstr ""
+msgstr "Destino para el stock serializado (por defecto, permanecerá en la ubicación actual)"
 
 #: stock/forms.py:152
 msgid "Serial numbers"
-msgstr ""
+msgstr "Números de serie"
 
 #: stock/forms.py:152
 msgid "Unique serial numbers (must match quantity)"
-msgstr ""
+msgstr "Números de serie únicos (deben coincidir con la cantidad)"
 
 #: stock/forms.py:154 stock/forms.py:238
 msgid "Add transaction note (optional)"
-msgstr ""
+msgstr "Añadir nota de transacción (opcional)"
 
 #: stock/forms.py:194
 msgid "Stock item to install"
-msgstr ""
+msgstr "Artículo de stock a instalar"
 
 #: stock/forms.py:224
 msgid "Must not exceed available quantity"
-msgstr ""
+msgstr "No debe exceder la cantidad disponible"
 
 #: stock/forms.py:236
 msgid "Destination location for uninstalled items"
-msgstr ""
+msgstr "Ubicación de destino para elementos desinstalados"
 
 #: stock/forms.py:240
 msgid "Confirm uninstall"
-msgstr ""
+msgstr "Confirmar desinstalación"
 
 #: stock/forms.py:240
 msgid "Confirm removal of installed stock items"
-msgstr ""
+msgstr "Confirmar la eliminación de los artículos de stock instalados"
 
 #: stock/models.py:60 stock/models.py:624
 #: stock/templates/stock/item_base.html:422
 msgid "Owner"
-msgstr ""
+msgstr "Propietario"
 
 #: stock/models.py:61 stock/models.py:625
 msgid "Select Owner"
-msgstr ""
+msgstr "Seleccionar Propietario"
 
 #: stock/models.py:352
 msgid "StockItem with this serial number already exists"
-msgstr ""
+msgstr "Ya existe un Stock con este número de serie"
 
 #: stock/models.py:388
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
-msgstr ""
+msgstr "Tipo de pieza ('{pf}') debe ser {pe}"
 
 #: stock/models.py:398 stock/models.py:407
 msgid "Quantity must be 1 for item with a serial number"
-msgstr ""
+msgstr "La cantidad debe ser 1 para el artículo con un número de serie"
 
 #: stock/models.py:399
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr ""
+msgstr "Número de serie no se puede establecer si la cantidad es mayor que 1"
 
 #: stock/models.py:421
 msgid "Item cannot belong to itself"
-msgstr ""
+msgstr "El objeto no puede pertenecer a sí mismo"
 
 #: stock/models.py:427
 msgid "Item must have a build reference if is_building=True"
@@ -5312,48 +5312,48 @@ msgstr "La referencia de la construcción no apunta al mismo objeto de parte"
 
 #: stock/models.py:476
 msgid "Parent Stock Item"
-msgstr ""
+msgstr "Artículo de stock padre"
 
 #: stock/models.py:485
 msgid "Base part"
-msgstr ""
+msgstr "Parte base"
 
 #: stock/models.py:493
 msgid "Select a matching supplier part for this stock item"
-msgstr ""
+msgstr "Seleccione una parte del proveedor correspondiente para este artículo de stock"
 
 #: stock/models.py:498 stock/templates/stock/location.html:12
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "Ubicación de Stock"
 
 #: stock/models.py:501
 msgid "Where is this stock item located?"
-msgstr ""
+msgstr "¿Dónde se encuentra este artículo de stock?"
 
 #: stock/models.py:508
 msgid "Packaging this stock item is stored in"
-msgstr ""
+msgstr "Empaquetar este elemento de stock se almacena en"
 
 #: stock/models.py:513 stock/templates/stock/item_base.html:271
 msgid "Installed In"
-msgstr ""
+msgstr "Instalado en"
 
 #: stock/models.py:516
 msgid "Is this item installed in another item?"
-msgstr ""
+msgstr "¿Está este elemento instalado en otro elemento?"
 
 #: stock/models.py:532
 msgid "Serial number for this item"
-msgstr ""
+msgstr "Número de serie para este elemento"
 
 #: stock/models.py:546
 msgid "Batch code for this stock item"
-msgstr ""
+msgstr "Código de lote para este artículo de stock"
 
 #: stock/models.py:550
 msgid "Stock Quantity"
-msgstr ""
+msgstr "Cantidad de Stock"
 
 #: stock/models.py:559
 msgid "Source Build"
@@ -5365,27 +5365,27 @@ msgstr "Build para este item de stock"
 
 #: stock/models.py:572
 msgid "Source Purchase Order"
-msgstr ""
+msgstr "Orden de compra de origen"
 
 #: stock/models.py:575
 msgid "Purchase order for this stock item"
-msgstr ""
+msgstr "Orden de compra para este artículo de stock"
 
 #: stock/models.py:581
 msgid "Destination Sales Order"
-msgstr ""
+msgstr "Orden de venta de destino"
 
 #: stock/models.py:588
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
-msgstr ""
+msgstr "Fecha de caducidad del artículo de stock. El stock se considerará caducado después de esta fecha"
 
 #: stock/models.py:601
 msgid "Delete on deplete"
-msgstr ""
+msgstr "Eliminar al agotar"
 
 #: stock/models.py:601
 msgid "Delete this Stock Item when stock is depleted"
-msgstr ""
+msgstr "Eliminar este artículo de stock cuando se agoten las existencias"
 
 #: stock/models.py:611 stock/templates/stock/item.html:111
 msgid "Stock Item Notes"
@@ -5393,73 +5393,73 @@ msgstr "Notas del artículo de stock"
 
 #: stock/models.py:620
 msgid "Single unit purchase price at time of purchase"
-msgstr ""
+msgstr "Precio de compra único en el momento de la compra"
 
 #: stock/models.py:630
 msgid "Scheduled for deletion"
-msgstr ""
+msgstr "Programado para su eliminación"
 
 #: stock/models.py:631
 msgid "This StockItem will be deleted by the background worker"
-msgstr ""
+msgstr "Este elemento de stock será eliminado por el trabajador en segundo plano"
 
 #: stock/models.py:1094
 msgid "Part is not set as trackable"
-msgstr ""
+msgstr "La parte no está establecida como rastreable"
 
 #: stock/models.py:1100
 msgid "Quantity must be integer"
-msgstr ""
+msgstr "Cantidad debe ser un entero"
 
 #: stock/models.py:1106
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
-msgstr ""
+msgstr "La cantidad no debe exceder la cantidad disponible de existencias ({n})"
 
 #: stock/models.py:1109
 msgid "Serial numbers must be a list of integers"
-msgstr ""
+msgstr "Los números de serie deben ser una lista de enteros"
 
 #: stock/models.py:1112
 msgid "Quantity does not match serial numbers"
-msgstr ""
+msgstr "La cantidad no coincide con los números de serie"
 
 #: stock/models.py:1119
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
-msgstr ""
+msgstr "Los números de serie ya existen: {exists}"
 
 #: stock/models.py:1277
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr ""
+msgstr "Stock no se puede mover porque no está en stock"
 
 #: stock/models.py:1775
 msgid "Entry notes"
-msgstr ""
+msgstr "Notas de entrada"
 
 #: stock/models.py:1832
 msgid "Value must be provided for this test"
-msgstr ""
+msgstr "Debe proporcionarse un valor para esta prueba"
 
 #: stock/models.py:1838
 msgid "Attachment must be uploaded for this test"
-msgstr ""
+msgstr "El archivo adjunto debe ser subido para esta prueba"
 
 #: stock/models.py:1856
 msgid "Test name"
-msgstr ""
+msgstr "Nombre del test"
 
 #: stock/models.py:1862 templates/js/translated/table_filters.js:266
 msgid "Test result"
-msgstr ""
+msgstr "Resultado de la prueba"
 
 #: stock/models.py:1868
 msgid "Test output value"
-msgstr ""
+msgstr "Valor de salida de prueba"
 
 #: stock/models.py:1875
 msgid "Test result attachment"
-msgstr ""
+msgstr "Adjunto de resultados de prueba"
 
 #: stock/models.py:1881
 msgid "Test notes"
@@ -5785,208 +5785,208 @@ msgstr ""
 
 #: stock/templates/stock/item_install.html:21
 msgid "Install this Stock Item in another stock item."
-msgstr ""
+msgstr "Instalar este elemento de stock en otro elemento de stock."
 
 #: stock/templates/stock/item_install.html:27
 msgid "The part associated to this Stock Item belongs to another part's BOM"
-msgstr ""
+msgstr "La parte asociada a este artículo de stock pertenece al BOM de otra parte"
 
 #: stock/templates/stock/item_install.html:28
 msgid "This Stock Item is serialized and does not belong to another item"
-msgstr ""
+msgstr "Este artículo de stock está serializado y no pertenece a otro artículo"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr ""
+msgstr "Crear artículos serializados a partir de este artículo de stock."
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
-msgstr ""
+msgstr "Seleccione la cantidad para serializar y números de serie únicos."
 
 #: stock/templates/stock/location.html:33
 msgid "Check-in Items"
-msgstr ""
+msgstr "Objetos de Check-in"
 
 #: stock/templates/stock/location.html:61
 msgid "Location actions"
-msgstr ""
+msgstr "Acciones de ubicación"
 
 #: stock/templates/stock/location.html:63
 msgid "Edit location"
-msgstr ""
+msgstr "Editar ubicación"
 
 #: stock/templates/stock/location.html:65
 msgid "Delete location"
-msgstr ""
+msgstr "Eliminar ubicación"
 
 #: stock/templates/stock/location.html:75
 msgid "Create new stock location"
-msgstr ""
+msgstr "Crear nueva ubicación de stock"
 
 #: stock/templates/stock/location.html:76
 msgid "New Location"
-msgstr ""
+msgstr "Nueva Ubicación"
 
 #: stock/templates/stock/location.html:86
 msgid "Top level stock location"
-msgstr ""
+msgstr "Ubicación de stock superior"
 
 #: stock/templates/stock/location.html:95
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
-msgstr ""
+msgstr "No estás en la lista de propietarios de esta ubicación. Esta ubicación de stock no puede ser editada."
 
 #: stock/templates/stock/location.html:113
 #: stock/templates/stock/location.html:160
 #: stock/templates/stock/location_sidebar.html:5
 msgid "Sublocations"
-msgstr ""
+msgstr "Sub-ubicación"
 
 #: stock/templates/stock/location.html:127 templates/InvenTree/search.html:170
 #: templates/stats.html:97 users/models.py:42
 msgid "Stock Locations"
-msgstr ""
+msgstr "Ubicaciones de Stock"
 
 #: stock/templates/stock/location.html:167 templates/stock_table.html:30
 msgid "Printing Actions"
-msgstr ""
+msgstr "Acciones de impresión"
 
 #: stock/templates/stock/location.html:171 templates/stock_table.html:34
 msgid "Print labels"
-msgstr ""
+msgstr "Imprimir Etiquetas"
 
 #: stock/templates/stock/location_delete.html:7
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "¿Está seguro que desea eliminar esta ubicación?"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
-msgstr ""
+msgstr "Cargando..."
 
 #: stock/templates/stock/stock_sidebar.html:5
 msgid "Stock Tracking"
-msgstr ""
+msgstr "Seguimiento de Stock"
 
 #: stock/templates/stock/stock_sidebar.html:16
 msgid "Child Items"
-msgstr ""
+msgstr "Elementos secundarios"
 
 #: stock/templates/stock/stock_uninstall.html:8
 msgid "The following stock items will be uninstalled"
-msgstr ""
+msgstr "Se desinstalarán los siguientes elementos de stock"
 
 #: stock/templates/stock/stockitem_convert.html:7 stock/views.py:912
 msgid "Convert Stock Item"
-msgstr ""
+msgstr "Convertir artículo de stock"
 
 #: stock/templates/stock/stockitem_convert.html:8
 #, python-format
 msgid "This stock item is current an instance of <em>%(part)s</em>"
-msgstr ""
+msgstr "Este artículo de stock es actualmente una instancia de <em>%(part)s</em>"
 
 #: stock/templates/stock/stockitem_convert.html:9
 msgid "It can be converted to one of the part variants listed below."
-msgstr ""
+msgstr "Puede ser convertido a una de las variantes de piezas listadas a continuación."
 
 #: stock/templates/stock/stockitem_convert.html:14
 msgid "This action cannot be easily undone"
-msgstr ""
+msgstr "Esta acción no se puede deshacer fácilmente"
 
 #: stock/templates/stock/tracking_delete.html:6
 msgid "Are you sure you want to delete this stock tracking entry?"
-msgstr ""
+msgstr "¿Está seguro que desea eliminar este elemento de stock?"
 
 #: stock/views.py:162
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Editar ubicación de stock"
 
 #: stock/views.py:269 stock/views.py:891 stock/views.py:1017
 #: stock/views.py:1299
 msgid "Owner is required (ownership control is enabled)"
-msgstr ""
+msgstr "El propietario es requerido (el control de propiedad está habilitado)"
 
 #: stock/views.py:284
 msgid "Stock Location QR code"
-msgstr ""
+msgstr "Código QR de ubicación de stock"
 
 #: stock/views.py:303
 msgid "Assign to Customer"
-msgstr ""
+msgstr "Asignar al Cliente"
 
 #: stock/views.py:312
 msgid "Customer must be specified"
-msgstr ""
+msgstr "El cliente debe ser especificado"
 
 #: stock/views.py:336
 msgid "Return to Stock"
-msgstr ""
+msgstr "Volver a Stock"
 
 #: stock/views.py:345
 msgid "Specify a valid location"
-msgstr ""
+msgstr "Especifique una ubicación válida"
 
 #: stock/views.py:356
 msgid "Stock item returned from customer"
-msgstr ""
+msgstr "Artículo de stock devuelto por el cliente"
 
 #: stock/views.py:367
 msgid "Delete All Test Data"
-msgstr ""
+msgstr "Borrar todos los datos de prueba"
 
 #: stock/views.py:384
 msgid "Confirm test data deletion"
-msgstr ""
+msgstr "Confirmar eliminación de datos de prueba"
 
 #: stock/views.py:489
 msgid "Stock Item QR Code"
-msgstr ""
+msgstr "Código QR de Item de Stock"
 
 #: stock/views.py:663
 msgid "Uninstall Stock Items"
-msgstr ""
+msgstr "Desinstalar artículos de stock"
 
 #: stock/views.py:760 templates/js/translated/stock.js:648
 msgid "Confirm stock adjustment"
-msgstr ""
+msgstr "Confirmar ajuste de stock"
 
 #: stock/views.py:771
 msgid "Uninstalled stock items"
-msgstr ""
+msgstr "Artículos de stock desinstalados"
 
 #: stock/views.py:793 templates/js/translated/stock.js:318
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "Editar artículo de stock"
 
 #: stock/views.py:943
 msgid "Create new Stock Location"
-msgstr ""
+msgstr "Crear nueva ubicación de stock"
 
 #: stock/views.py:1044
 msgid "Create new Stock Item"
-msgstr ""
+msgstr "Crear nuevo artículo de stock"
 
 #: stock/views.py:1186 templates/js/translated/stock.js:298
 msgid "Duplicate Stock Item"
-msgstr ""
+msgstr "Duplicar artículo de stock"
 
 #: stock/views.py:1268
 msgid "Quantity cannot be negative"
-msgstr ""
+msgstr "La cantidad no puede ser negativa"
 
 #: stock/views.py:1368
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "Eliminar ubicación de stock"
 
 #: stock/views.py:1381
 msgid "Delete Stock Item"
-msgstr ""
+msgstr "Eliminar elemento de stock"
 
 #: stock/views.py:1392
 msgid "Delete Stock Tracking Entry"
-msgstr ""
+msgstr "Eliminar registro de stock"
 
 #: stock/views.py:1399
 msgid "Edit Stock Tracking Entry"
-msgstr ""
+msgstr "Editar registro de stock"
 
 #: stock/views.py:1408
 msgid "Add Stock Tracking Entry"
@@ -6218,198 +6218,198 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:16
 msgid "Label Printing"
-msgstr ""
+msgstr "Impresión de etiquetas"
 
 #: templates/InvenTree/settings/sidebar.html:18
 #: templates/InvenTree/settings/sidebar.html:34
 msgid "Reporting"
-msgstr ""
+msgstr "Informando"
 
 #: templates/InvenTree/settings/sidebar.html:23
 msgid "Global Settings"
-msgstr ""
+msgstr "Configuración Global"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Server Configuration"
-msgstr ""
+msgstr "Configuración del Servidor"
 
 #: templates/InvenTree/settings/sidebar.html:32
 msgid "Currencies"
-msgstr ""
+msgstr "Monedas"
 
 #: templates/InvenTree/settings/sidebar.html:38
 msgid "Categories"
-msgstr ""
+msgstr "Categorías"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
-msgstr ""
+msgstr "Configuración de orden de venta"
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
+msgstr "Configuración de Stock"
 
 #: templates/InvenTree/settings/user.html:18
 #: templates/js/translated/helpers.js:26
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: templates/InvenTree/settings/user.html:20
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
-msgstr ""
+msgstr "Cambiar Contraseña"
 
 #: templates/InvenTree/settings/user.html:31
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: templates/InvenTree/settings/user.html:35
 msgid "First Name"
-msgstr ""
+msgstr "Nombre"
 
 #: templates/InvenTree/settings/user.html:39
 msgid "Last Name"
-msgstr ""
+msgstr "Apellido"
 
 #: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Las siguientes direcciones de correo electrónico están asociadas con tu cuenta:"
 
 #: templates/InvenTree/settings/user.html:74
 msgid "Verified"
-msgstr ""
+msgstr "Verificado"
 
 #: templates/InvenTree/settings/user.html:76
 msgid "Unverified"
-msgstr ""
+msgstr "Sin verificar"
 
 #: templates/InvenTree/settings/user.html:78
 msgid "Primary"
-msgstr ""
+msgstr "Principal"
 
 #: templates/InvenTree/settings/user.html:84
 msgid "Make Primary"
-msgstr ""
+msgstr "Hacer Principal"
 
 #: templates/InvenTree/settings/user.html:85
 msgid "Re-send Verification"
-msgstr ""
+msgstr "Reenviar verificación"
 
 #: templates/InvenTree/settings/user.html:86
 #: templates/InvenTree/settings/user.html:153
 msgid "Remove"
-msgstr ""
+msgstr "Eliminar"
 
 #: templates/InvenTree/settings/user.html:93
 msgid "Warning:"
-msgstr ""
+msgstr "Advertencia:"
 
 #: templates/InvenTree/settings/user.html:94
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
-msgstr ""
+msgstr "Actualmente no tiene ninguna dirección de correo electrónico configurada. Realmente deberías añadir una dirección de correo electrónico para que puedas recibir notificaciones, restablecer tu contraseña, etc."
 
 #: templates/InvenTree/settings/user.html:101
 msgid "Add Email Address"
-msgstr ""
+msgstr "Añadir correo electrónico"
 
 #: templates/InvenTree/settings/user.html:111
 msgid "Enter e-mail address"
-msgstr ""
+msgstr "Introduzca dirección de e-mail"
 
 #: templates/InvenTree/settings/user.html:113
 msgid "Add Email"
-msgstr ""
+msgstr "Agregar Email"
 
 #: templates/InvenTree/settings/user.html:123
 msgid "Social Accounts"
-msgstr ""
+msgstr "Cuentas Sociales"
 
 #: templates/InvenTree/settings/user.html:128
 msgid "You can sign in to your account using any of the following third party accounts:"
-msgstr ""
+msgstr "Puede iniciar sesión en su cuenta utilizando cualquiera de las siguientes cuentas de terceros:"
 
 #: templates/InvenTree/settings/user.html:162
 msgid "There are no social network accounts connected to your InvenTree account"
-msgstr ""
+msgstr "No hay cuentas de redes sociales conectadas a tu cuenta de InvenTree"
 
 #: templates/InvenTree/settings/user.html:167
 msgid "Add a 3rd Party Account"
-msgstr ""
+msgstr "Añadir una cuenta de terceros"
 
 #: templates/InvenTree/settings/user.html:177
 msgid "Language Settings"
-msgstr ""
+msgstr "Configuración de Idioma"
 
 #: templates/InvenTree/settings/user.html:186
 msgid "Select language"
-msgstr ""
+msgstr "Seleccionar idioma"
 
 #: templates/InvenTree/settings/user.html:202
 #, python-format
 msgid "%(lang_translated)s%% translated"
-msgstr ""
+msgstr "%(lang_translated)s%% traducido"
 
 #: templates/InvenTree/settings/user.html:204
 msgid "No translations available"
-msgstr ""
+msgstr "No hay traducciones disponibles"
 
 #: templates/InvenTree/settings/user.html:211
 msgid "Set Language"
-msgstr ""
+msgstr "Definir Idioma"
 
 #: templates/InvenTree/settings/user.html:214
 msgid "Some languages are not complete"
-msgstr ""
+msgstr "Algunos idiomas no están completos"
 
 #: templates/InvenTree/settings/user.html:216
 msgid "Show only sufficent"
-msgstr ""
+msgstr "Mostrar solo el contenido"
 
 #: templates/InvenTree/settings/user.html:218
 msgid "and hidden."
-msgstr ""
+msgstr "y oculto."
 
 #: templates/InvenTree/settings/user.html:218
 msgid "Show them too"
-msgstr ""
+msgstr "Mostrar también"
 
 #: templates/InvenTree/settings/user.html:224
 msgid "Help the translation efforts!"
-msgstr ""
+msgstr "¡Ayuda a los esfuerzos de traducción!"
 
 #: templates/InvenTree/settings/user.html:225
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "La traducción nativa de la aplicación web de InvenTree es <a href=\"%(link)s\"> un aporte de la comunidad a través de crowdin</a>. Las contribuciones son bienvenidas y animadas."
 
 #: templates/InvenTree/settings/user.html:233
 msgid "Do you really want to remove the selected email address?"
-msgstr ""
+msgstr "¿Realmente desea eliminar la dirección de correo electrónico seleccionada?"
 
 #: templates/InvenTree/settings/user_display.html:25
 msgid "Theme Settings"
-msgstr ""
+msgstr "Configuración del Tema"
 
 #: templates/InvenTree/settings/user_display.html:35
 msgid "Select theme"
-msgstr ""
+msgstr "Seleccionar tema"
 
 #: templates/InvenTree/settings/user_display.html:46
 msgid "Set Theme"
-msgstr ""
+msgstr "Establecer tema"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Ajustes de página de inicio"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "Ajustes de Etiqueta"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
-msgstr ""
+msgstr "Información de la versión de InvenTree"
 
 #: templates/about.html:11 templates/about.html:105
 #: templates/js/translated/bom.js:283 templates/js/translated/modals.js:53
@@ -6417,15 +6417,15 @@ msgstr ""
 #: templates/js/translated/modals.js:964 templates/modals.html:15
 #: templates/modals.html:27 templates/modals.html:39 templates/modals.html:50
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: templates/about.html:20
 msgid "InvenTree Version"
-msgstr ""
+msgstr "Versión de InvenTree"
 
 #: templates/about.html:25
 msgid "Development Version"
-msgstr ""
+msgstr "Versión de Desarrollo"
 
 #: templates/about.html:28
 msgid "Up to Date"
@@ -6681,7 +6681,7 @@ msgstr ""
 
 #: templates/image_download.html:12
 msgid "Remote server must be accessible"
-msgstr ""
+msgstr "Servidor remoto debe ser accesible"
 
 #: templates/image_download.html:13
 msgid "Remote image must not exceed maximum allowable file size"
