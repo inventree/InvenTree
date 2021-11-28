@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-28 21:45\n"
+"PO-Revision-Date: 2021-11-28 22:41\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6339,45 +6339,45 @@ msgstr "Drittanbieter-Konto hinzufügen"
 
 #: templates/InvenTree/settings/user.html:179
 msgid "Active Sessions"
-msgstr ""
+msgstr "Aktive Sitzungen"
 
 #: templates/InvenTree/settings/user.html:185
 msgid "Log out active sessions (except this one)"
-msgstr ""
+msgstr "Aktive Sitzungen abmelden (ausgenommen diese)"
 
 #: templates/InvenTree/settings/user.html:186
 msgid "Log Out Active Sessions"
-msgstr ""
+msgstr "Aktive Sitzungen abmelden"
 
 #: templates/InvenTree/settings/user.html:195
 msgid "<em>unknown on unknown</em>"
-msgstr ""
+msgstr "<em>unbekannt auf unbekanntem</em>"
 
 #: templates/InvenTree/settings/user.html:196
 msgid "<em>unknown</em>"
-msgstr ""
+msgstr "<em>unbekannt</em>"
 
 #: templates/InvenTree/settings/user.html:200
 msgid "IP Address"
-msgstr ""
+msgstr "IP Adresse"
 
 #: templates/InvenTree/settings/user.html:201
 msgid "Device"
-msgstr ""
+msgstr "Gerät"
 
 #: templates/InvenTree/settings/user.html:202
 msgid "Last Activity"
-msgstr ""
+msgstr "Letzte Aktivität"
 
 #: templates/InvenTree/settings/user.html:211
 #, python-format
 msgid "%(time)s ago (this session)"
-msgstr ""
+msgstr "%(time)s vor (diese Sitzung)"
 
 #: templates/InvenTree/settings/user.html:213
 #, python-format
 msgid "%(time)s ago"
-msgstr ""
+msgstr "%(time)s vor"
 
 #: templates/InvenTree/settings/user.html:224
 msgid "Do you really want to remove the selected email address?"
