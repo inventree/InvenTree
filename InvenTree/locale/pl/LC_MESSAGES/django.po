@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 20:33+0000\n"
-"PO-Revision-Date: 2021-11-28 20:46\n"
+"POT-Creation-Date: 2021-11-28 21:12+0000\n"
+"PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -509,11 +509,11 @@ msgstr "Usuń element"
 msgid "Check box to confirm item deletion"
 msgstr "Zaznacz pole aby potwierdzić usunięcie elementu"
 
-#: InvenTree/views.py:602 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
 msgstr "Edytuj informacje użytkownika"
 
-#: InvenTree/views.py:613 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Ustaw hasło"
 
@@ -6247,15 +6247,15 @@ msgstr ""
 msgid "Stock Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:19
-#: templates/js/translated/helpers.js:26
-msgid "Edit"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:21
+#: templates/InvenTree/settings/user.html:18
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:22
+#: templates/js/translated/helpers.js:26
+msgid "Edit"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:32
@@ -6335,50 +6335,49 @@ msgstr ""
 msgid "Add a 3rd Party Account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:178
+#: templates/InvenTree/settings/user.html:179
 msgid "Active Sessions"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:182
+#: templates/InvenTree/settings/user.html:185
+msgid "Log out active sessions (except this one)"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:186
+msgid "Log Out Active Sessions"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:195
 msgid "<em>unknown on unknown</em>"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:183
+#: templates/InvenTree/settings/user.html:196
 msgid "<em>unknown</em>"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:187
+#: templates/InvenTree/settings/user.html:200
 msgid "IP Address"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:188
+#: templates/InvenTree/settings/user.html:201
 msgid "Device"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:189
+#: templates/InvenTree/settings/user.html:202
 msgid "Last Activity"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:198
+#: templates/InvenTree/settings/user.html:211
 #, python-format
 msgid "%(time)s ago (this session)"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:200
+#: templates/InvenTree/settings/user.html:213
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:210
-msgid "You can also end all other sessions but the current.\n"
-"        This will log you out on all other devices."
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:212
-msgid "End All Other Sessions"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:220
+#: templates/InvenTree/settings/user.html:224
 msgid "Do you really want to remove the selected email address?"
 msgstr ""
 
