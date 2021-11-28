@@ -275,24 +275,6 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
     The only real addition here is that we support "renaming" of the attachment file.
     """
 
-    def validate(self, data):
-        """
-        Validation for an attachment. Either a file or external link must be provided
-        """
-
-        data = super().validate(data)
-
-        attachment = data.get('attachment', None)
-        link = data.get('link', None)
-
-        if not attachment and not link:
-            raise ValidationError({
-                'attachment': _('Missing file'),
-                'link': _('Missing external link'),
-            })
-
-        return data
-
     attachment = InvenTreeAttachmentSerializerField(
         required=False,
         allow_null=False,

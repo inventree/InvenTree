@@ -98,6 +98,7 @@ class InvenTreeAttachment(models.Model):
         user: User associated with file upload
         upload_date: Date the file was uploaded
     """
+
     def getSubdir(self):
         """
         Return the subdirectory under which attachments should be stored.
@@ -106,6 +107,16 @@ class InvenTreeAttachment(models.Model):
 
         return "attachments"
 
+    def save(self, *args, **kwargs):
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)

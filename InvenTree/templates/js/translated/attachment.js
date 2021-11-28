@@ -88,6 +88,12 @@ function loadAttachmentTable(url, options) {
                         link: {},
                         comment: {}, 
                     },
+                    processResults: function(data, fields, opts) {
+                        // Remove the "link" field if the attachment is a file!
+                        if (data.attachment) {
+                            delete opts.fields.link;
+                        }
+                    },
                     onSuccess: reloadAttachmentTable,
                     title: '{% trans "Edit Attachment" %}',
                 });
