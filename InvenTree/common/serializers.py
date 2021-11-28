@@ -98,14 +98,14 @@ class UserSettingsSerializer(SettingsSerializer):
         ]
 
 
-class NotificationMessageSerializer(SettingsSerializer):
+class NotificationMessageSerializer(InvenTreeModelSerializer):
     """
     Serializer for the InvenTreeUserSetting model
     """
 
-    target = serializers.SerializerMethodField()
+    target = serializers.SerializerMethodField(read_only=True)
 
-    source = serializers.SerializerMethodField()
+    source = serializers.SerializerMethodField(read_only=True)
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -117,11 +117,11 @@ class NotificationMessageSerializer(SettingsSerializer):
 
     creation = serializers.CharField(read_only=True)
 
-    age = serializers.IntegerField()
+    age = serializers.IntegerField(read_only=True)
 
-    age_human = serializers.CharField()
+    age_human = serializers.CharField(read_only=True)
 
-    read = serializers.BooleanField()
+    read = serializers.BooleanField(read_only=True)
 
     def get_target(self, obj):
         return get_objectreference(obj, 'target_content_type', 'target_object_id')
