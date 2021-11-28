@@ -21,7 +21,8 @@ from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
-from .validators import validate_tree_name
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.validators import validate_tree_name
 
 
 logger = logging.getLogger('inventree')
@@ -89,6 +90,8 @@ class ReferenceIndexingMixin(models.Model):
 class InvenTreeAttachment(models.Model):
     """ Provides an abstracted class for managing file attachments.
 
+    An attachment can be either an uploaded file, or an external URL
+
     Attributes:
         attachment: File
         comment: String descriptor for the attachment
@@ -107,7 +110,15 @@ class InvenTreeAttachment(models.Model):
         return os.path.basename(self.attachment.name)
 
     attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
-                                  help_text=_('Select file to attach'))
+                                  help_text=_('Select file to attach'),
+                                  blank=True, null=True
+                                  )
+
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL')
+    )
 
     comment = models.CharField(blank=True, max_length=100, verbose_name=_('Comment'), help_text=_('File comment'))
 
