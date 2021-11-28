@@ -420,8 +420,6 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
     user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
-    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
-
     # TODO: Record the uploading user when creating or updating an attachment!
 
     class Meta:

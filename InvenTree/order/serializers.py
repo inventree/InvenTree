@@ -377,8 +377,6 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the PurchaseOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = PurchaseOrderAttachment
 
@@ -597,8 +595,6 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """
-
-    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = SalesOrderAttachment

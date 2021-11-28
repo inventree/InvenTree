@@ -516,8 +516,6 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializer for a BuildAttachment
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = BuildOrderAttachment
 

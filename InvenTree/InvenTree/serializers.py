@@ -239,22 +239,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
-    """
-    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
-    """
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'),
-        required=False,
-        source='basename',
-        allow_blank=False,
-    )
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """
     Override the DRF native FileField serializer,
@@ -282,6 +266,46 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
+
+
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    def validate(self, data):
+        """
+        Validation for an attachment. Either a file or external link must be provided
+        """
+
+        data = super().validate(data)
+
+        attachment = data.get('attachment', None)
+        link = data.get('link', None)
+
+        if not attachment and not link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        return data
+
+    attachment = InvenTreeAttachmentSerializerField(
+        required=False,
+        allow_null=False,
+    )
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='basename',
+        allow_blank=False,
+    )
+
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):

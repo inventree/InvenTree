@@ -107,7 +107,10 @@ class InvenTreeAttachment(models.Model):
         return "attachments"
 
     def __str__(self):
-        return os.path.basename(self.attachment.name)
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        else:
+            return str(self.link)
 
     attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
                                   help_text=_('Select file to attach'),
@@ -134,7 +137,10 @@ class InvenTreeAttachment(models.Model):
 
     @property
     def basename(self):
-        return os.path.basename(self.attachment.name)
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        else:
+            return None
 
     @basename.setter
     def basename(self, fn):
