@@ -763,10 +763,12 @@
                     part_2: {
                         label: '{% trans "Related Part" %}',
                         filters: {
+                            exclude_id: {{ part.pk }},
                             exclude_related: {{ part.pk }},
                         }
                     }
                 },
+                focus: 'part_2',
                 title: '{% trans "Add Related Part" %}',
                 onSuccess: function() {
                     $('#related-parts-table').bootstrapTable('refresh');
@@ -997,36 +999,17 @@
     });
 
     onPanelLoad("part-attachments", function() {
-        loadAttachmentTable(
-            '{% url "api-part-attachment-list" %}',
-            {
-                filters: {
-                    part: {{ part.pk }},
-                },
-                onEdit: function(pk) {
-                    var url = `/api/part/attachment/${pk}/`;
-    
-                    constructForm(url, {
-                        fields: {
-                            filename: {},
-                            comment: {},
-                        },
-                        title: '{% trans "Edit Attachment" %}',
-                        onSuccess: reloadAttachmentTable,
-                    });
-                },
-                onDelete: function(pk) {
-                    var url = `/api/part/attachment/${pk}/`;
-    
-                    constructForm(url, {
-                        method: 'DELETE',
-                        confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                        title: '{% trans "Delete Attachment" %}',
-                        onSuccess: reloadAttachmentTable,
-                    });
+        loadAttachmentTable('{% url "api-part-attachment-list" %}', {
+            filters: {
+                part: {{ part.pk }},
+            },
+            fields: {
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true
                 }
             }
-        );
+        });
     
         enableDragAndDrop(
             '#attachment-dropzone',
@@ -1041,26 +1024,6 @@
                 }
             }
         );
-    
-        $("#new-attachment").click(function() {
-    
-            constructForm(
-                '{% url "api-part-attachment-list" %}',
-                {
-                    method: 'POST',
-                    fields: {
-                        attachment: {},
-                        comment: {},
-                        part: {
-                            value: {{ part.pk }},
-                            hidden: true,
-                        }
-                    },
-                    onSuccess: reloadAttachmentTable,
-                    title: '{% trans "Add Attachment" %}',
-                }
-            )
-        });
     });
 
 

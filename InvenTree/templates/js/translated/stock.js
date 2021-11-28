@@ -80,6 +80,20 @@ function serializeStockItem(pk, options={}) {
         notes: {},
     };
 
+    if (options.part) {
+        // Work out the next available serial number
+        inventreeGet(`/api/part/${options.part}/serial-numbers/`, {}, {
+            success: function(data) {
+                if (data.next) {
+                    options.fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                } else if (data.latest) {
+                    options.fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                }
+            },
+            async: false,
+        });
+    }
+
     constructForm(url, options);
 }
 
@@ -144,10 +158,26 @@ function stockItemFields(options={}) {
                     // If a "trackable" part is selected, enable serial number field
                     if (data.trackable) {
                         enableFormInput('serial_numbers', opts);
-                        // showFormInput('serial_numbers', opts);
+
+                        // Request part serial number information from the server
+                        inventreeGet(`/api/part/${data.pk}/serial-numbers/`, {}, {
+                            success: function(data) {
+                                var placeholder = '';
+                                if (data.next) {
+                                    placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                                } else if (data.latest) {
+                                    placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                                }
+
+                                setFormInputPlaceholder('serial_numbers', placeholder, opts);
+                            }
+                        });
+
                     } else {
                         clearFormInput('serial_numbers', opts);
                         disableFormInput('serial_numbers', opts);
+
+                        setFormInputPlaceholder('serial_numbers', '{% trans "This part cannot be serialized" %}', opts);
                     }
 
                     // Enable / disable fields based on purchaseable status

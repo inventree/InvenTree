@@ -695,6 +695,23 @@ function loadPurchaseOrderTable(table, options) {
                 title: '{% trans "Items" %}',
                 sortable: true,
             },
+            {
+                field: 'responsible',
+                title: '{% trans "Responsible" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == 'group') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
+                }
+            },
         ],
     });
 }

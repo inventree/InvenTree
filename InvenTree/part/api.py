@@ -42,7 +42,7 @@ from build.models import Build
 
 from . import serializers as part_serializers
 
-from InvenTree.helpers import str2bool, isNull
+from InvenTree.helpers import str2bool, isNull, increment
 from InvenTree.api import AttachmentMixin
 
 from InvenTree.status_codes import BuildStatus
@@ -408,6 +408,33 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     filter_backends = [
         DjangoFilterBackend
     ]
+
+
+class PartSerialNumberDetail(generics.RetrieveAPIView):
+    """
+    API endpoint for returning extra serial number information about a particular part
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        # Calculate the "latest" serial number
+        latest = part.getLatestSerialNumber()
+
+        data = {
+            'latest': latest,
+        }
+
+        if latest is not None:
+            next = increment(latest)
+
+            if next != increment:
+                data['next'] = next
+
+        return Response(data)
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1512,7 +1539,14 @@ part_api_urls = [
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
+    url(r'^(?P<pk>\d+)/', include([
+
+        # Endpoint for extra serial number information
+        url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
+
+        # Part detail endpoint
+        url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
+    ])),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
