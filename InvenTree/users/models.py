@@ -159,6 +159,7 @@ class RuleSet(models.Model):
         'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
+        'django_session',
 
         # Django-q
         'django_q_ormq',
