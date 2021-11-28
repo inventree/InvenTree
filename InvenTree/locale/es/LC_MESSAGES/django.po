@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 12:02+0000\n"
-"PO-Revision-Date: 2021-11-28 16:53\n"
+"PO-Revision-Date: 2021-11-28 18:48\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4831,121 +4831,123 @@ msgstr "Seleccionar de imágenes existentes"
 msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
-msgstr ""
+msgstr "Parte '<strong>%(full_name)s</strong>' no se puede eliminar ya que todavía está marcada como <strong>activa</strong>.\n"
+"    <br>Desactiva el atributo \"Activo\" y vuelve a intentarlo.\n"
+"    "
 
 #: part/templates/part/partial_delete.html:17
 #, python-format
 msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-msgstr ""
+msgstr "¿Está seguro que desea eliminar la parte '<strong>%(full_name)s</strong>'?"
 
 #: part/templates/part/partial_delete.html:22
 #, python-format
 msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
-msgstr ""
+msgstr "Esta parte se utiliza en BOMs para otras %(count)s partes. Si eliminas esta parte, se actualizarán los BOMs de las siguientes partes"
 
 #: part/templates/part/partial_delete.html:32
 #, python-format
 msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
-msgstr ""
+msgstr "Hay %(count)s entradas de stock definidas para esta parte. Si elimina esta parte, también se eliminarán las siguientes entradas de stock:"
 
 #: part/templates/part/partial_delete.html:43
 #, python-format
 msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-msgstr ""
+msgstr "Hay %(count)s fabricantes definidos para esta parte. Si la elimina, también se eliminarán las siguientes partes del fabricante:"
 
 #: part/templates/part/partial_delete.html:54
 #, python-format
 msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
-msgstr ""
+msgstr "Hay %(count)s proveedores definidos para esta parte. Si la elimina, también se eliminarán:"
 
 #: part/templates/part/partial_delete.html:65
 #, python-format
 msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this part will permanently remove this tracking information."
-msgstr ""
+msgstr "Hay %(count)s partes únicas registradas para '%(full_name)s'. Al eliminar esta parte se eliminará permanentemente esta información de seguimiento."
 
 #: part/templates/part/prices.html:16
 msgid "Pricing ranges"
-msgstr ""
+msgstr "Rangos de precio"
 
 #: part/templates/part/prices.html:22
 msgid "Show supplier cost"
-msgstr ""
+msgstr "Mostrar coste del proveedor"
 
 #: part/templates/part/prices.html:23
 msgid "Show purchase price"
-msgstr ""
+msgstr "Mostrar precio de compra"
 
 #: part/templates/part/prices.html:50
 msgid "Show BOM cost"
-msgstr ""
+msgstr "Mostrar coste de BOM"
 
 #: part/templates/part/prices.html:117
 msgid "Show sale cost"
-msgstr ""
+msgstr "Mostrar coste de venta"
 
 #: part/templates/part/prices.html:118
 msgid "Show sale price"
-msgstr ""
+msgstr "Mostrar precio de venta"
 
 #: part/templates/part/prices.html:140
 msgid "Calculation parameters"
-msgstr ""
+msgstr "Parámetros de cálculo"
 
 #: part/templates/part/prices.html:155 templates/js/translated/bom.js:514
 msgid "Supplier Cost"
-msgstr ""
+msgstr "Coste de Proveedor"
 
 #: part/templates/part/prices.html:156 part/templates/part/prices.html:177
 #: part/templates/part/prices.html:201 part/templates/part/prices.html:231
 #: part/templates/part/prices.html:257 part/templates/part/prices.html:285
 msgid "Jump to overview"
-msgstr ""
+msgstr "Ir a la vista general"
 
 #: part/templates/part/prices.html:181
 msgid "Stock Pricing"
-msgstr ""
+msgstr "Precio de Stock"
 
 #: part/templates/part/prices.html:190
 msgid "No stock pricing history is available for this part."
-msgstr ""
+msgstr "No hay historial de precios de stock disponible para esta parte."
 
 #: part/templates/part/prices.html:200
 msgid "Internal Cost"
-msgstr ""
+msgstr "Coste Interno"
 
 #: part/templates/part/prices.html:215 part/views.py:1784
 msgid "Add Internal Price Break"
-msgstr ""
+msgstr "Añadir salto de precio interno"
 
 #: part/templates/part/prices.html:230
 msgid "BOM Cost"
-msgstr ""
+msgstr "Coste BOM"
 
 #: part/templates/part/prices.html:256
 msgid "Sale Cost"
-msgstr ""
+msgstr "Coste de Venta"
 
 #: part/templates/part/prices.html:296
 msgid "No sale pice history available for this part."
-msgstr ""
+msgstr "No hay historial de precios de venta disponible para esta parte."
 
 #: part/templates/part/set_category.html:9
 msgid "Set category for the following parts"
-msgstr ""
+msgstr "Establecer categoría para las siguientes partes"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:476
 #: templates/js/translated/part.js:429 templates/js/translated/part.js:875
 #: templates/js/translated/part.js:1062
 msgid "No Stock"
-msgstr ""
+msgstr "Sin Stock"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
-msgstr ""
+msgstr "Bajo Stock"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "Crear nueva variante de pieza"
 
 #: part/templates/part/variant_part.html:10
 #, python-format
