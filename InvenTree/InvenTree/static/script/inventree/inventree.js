@@ -219,7 +219,7 @@ function inventreeDocReady() {
     showCachedAlerts();
 
     // Start notification background worker to check every 5 seconds if notifications are available
-    var notificationRunner = setInterval(notificationCheck, 5000);
+    setInterval(notificationCheck, 5000);
 
     // also run when the focus returns
     $(document).on('focus', function(e){
@@ -232,7 +232,6 @@ function inventreeDocReady() {
  * The notification checker is initiated when the doc is loaded. It checks if there are unread notifications
  * if unread messages exist the alert flag is raised by making it visible
  **/
-var current_alert_state = false;
 function notificationCheck() {
     // only refresh state if in focus
     if (document.hasFocus()) {
