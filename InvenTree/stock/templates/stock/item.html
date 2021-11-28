@@ -221,55 +221,16 @@
             }
         );
 
-    loadAttachmentTable(
-        '{% url "api-stock-attachment-list" %}',
-        {
-            filters: {
-                stock_item: {{ item.pk }},
-            },
-            onEdit: function(pk) {
-                var url = `/api/stock/attachment/${pk}/`;
-
-                constructForm(url, {
-                    fields: {
-                        filename: {},
-                        comment: {},
-                    },
-                    title: '{% trans "Edit Attachment" %}',
-                    onSuccess: reloadAttachmentTable 
-                });
-            },
-            onDelete: function(pk) {
-                var url = `/api/stock/attachment/${pk}/`;
-
-                constructForm(url, {
-                    method: 'DELETE',
-                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                    title: '{% trans "Delete Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
+    loadAttachmentTable('{% url "api-stock-attachment-list" %}', {
+        filters: {
+            stock_item: {{ item.pk }},
+        },
+        fields: {
+            stock_item: {
+                value: {{ item.pk }},
+                hidden: true,
             }
         }
-    );
-
-    $("#new-attachment").click(function() {
-
-        constructForm(
-            '{% url "api-stock-attachment-list" %}',
-            {
-                method: 'POST',
-                fields: {
-                    attachment: {},
-                    comment: {},
-                    stock_item: {
-                        value: {{ item.pk }},
-                        hidden: true,
-                    },
-                },
-                reload: true,
-                title: '{% trans "Add Attachment" %}',
-            }
-        );
     });
 
     loadStockTestResultsTable(

@@ -431,53 +431,17 @@ enableDragAndDrop(
     }
 );
 
-// Callback for creating a new attachment
-$('#new-attachment').click(function() {
-
-    constructForm('{% url "api-build-attachment-list" %}', {
-        fields: {
-            attachment: {},
-            comment: {},
-            build: {
-                value: {{ build.pk }},
-                hidden: true,
-            }
-        },
-        method: 'POST',
-        onSuccess: reloadAttachmentTable,
-        title: '{% trans "Add Attachment" %}',
-    });
-});
-
-loadAttachmentTable(
-    '{% url "api-build-attachment-list" %}',
-    {
-        filters: {
-            build: {{ build.pk }},
-        },
-        onEdit: function(pk) {
-            var url = `/api/build/attachment/${pk}/`;
-
-            constructForm(url, {
-                fields: {
-                    filename: {},
-                    comment: {},
-                },
-                onSuccess: reloadAttachmentTable,
-                title: '{% trans "Edit Attachment" %}',
-            });
-        },
-        onDelete: function(pk) {
-
-            constructForm(`/api/build/attachment/${pk}/`, {
-                method: 'DELETE',
-                confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                title: '{% trans "Delete Attachment" %}',
-                onSuccess: reloadAttachmentTable,
-            });
+loadAttachmentTable('{% url "api-build-attachment-list" %}', {
+    filters: {
+        build: {{ build.pk }},
+    },
+    fields: {
+        build: {
+            value: {{ build.pk }},
+            hidden: true,
         }
     }
-);
+});
 
 $('#edit-notes').click(function() {
     constructForm('{% url "api-build-detail" build.pk %}', {
