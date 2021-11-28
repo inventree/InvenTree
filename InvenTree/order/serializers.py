@@ -24,7 +24,6 @@ from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
 from InvenTree.status_codes import StockStatus
 
 from part.serializers import PartBriefSerializer
@@ -377,8 +376,6 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the PurchaseOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = PurchaseOrderAttachment
 
@@ -386,6 +383,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'order',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',
@@ -597,8 +595,6 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the SalesOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = SalesOrderAttachment
 
@@ -607,6 +603,7 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
             'order',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]
