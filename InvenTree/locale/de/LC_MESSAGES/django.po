@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 12:02+0000\n"
-"PO-Revision-Date: 2021-11-28 12:09\n"
+"PO-Revision-Date: 2021-11-28 17:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -116,11 +116,11 @@ msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) üb
 
 #: InvenTree/models.py:114
 msgid "Missing file"
-msgstr ""
+msgstr "Fehlende Datei"
 
 #: InvenTree/models.py:115
 msgid "Missing external link"
-msgstr ""
+msgstr "Fehlender externer Link"
 
 #: InvenTree/models.py:126 stock/models.py:1874
 #: templates/js/translated/attachment.js:117
@@ -6598,7 +6598,7 @@ msgstr "Im Administrationsbereich anzeigen"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
-msgstr ""
+msgstr "Link hinzufügen"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -6753,7 +6753,7 @@ msgstr "Anhang bearbeiten"
 
 #: templates/js/translated/attachment.js:108
 msgid "Confirm Delete"
-msgstr ""
+msgstr "Löschen bestätigen"
 
 #: templates/js/translated/attachment.js:109
 msgid "Delete Attachment"
