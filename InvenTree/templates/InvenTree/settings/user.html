@@ -15,11 +15,11 @@
 {% block actions %}
 {% inventree_demo_mode as demo %}
 {% if not demo %}
+<div class='btn btn-outline-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+    <span class='fas fa-key'></span> {% trans "Set Password" %}
+</div>
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
-</div>
-<div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-    <span class='fas fa-key'></span> {% trans "Set Password" %}
 </div>
 {% endif %}
 {% endblock %}
@@ -175,7 +175,20 @@
 </div>
 
 <div class='panel-heading'>
-    <h4>{% trans "Active Sessions" %}</h4>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Active Sessions" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            {% if session_list.count > 1 %}
+            <form method="post" action="{% url 'session_delete_other' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-default btn-danger" title='{% trans "Log out active sessions (except this one)" %}'>
+                    {% trans "Log Out Active Sessions" %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 <div>
@@ -203,15 +216,6 @@
         </tr>
     {% endfor %}
     </table>
-
-    {% if session_list.count > 1 %}
-    <form method="post" action="{% url 'session_delete_other' %}">
-        {% csrf_token %}
-        <p>{% blocktrans %}You can also end all other sessions but the current.
-        This will log you out on all other devices.{% endblocktrans %}
-        <button type="submit" class="btn btn-sm btn-default btn-danger">{% trans "End All Other Sessions" %}</button></p>
-    </form>
-    {% endif %}
 </div>
 {% endblock %}
 
