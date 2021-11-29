@@ -20,6 +20,7 @@
 
 /* exported
     allocateStockToSalesOrder,
+    completeShipment,
     createSalesOrder,
     editPurchaseOrderLineItem,
     exportOrder,
@@ -49,6 +50,26 @@ function salesOrderShipmentFields(options={}) {
     }
 
     return fields;
+}
+
+
+/*
+ * Complete a shipment
+ */
+function completeShipment(shipment_id) {
+
+    constructForm(`/api/order/so/shipment/${shipment_id}/ship/`, {
+        method: 'POST',
+        title: '{% trans "Complete Shipment" %}',
+        fields: {
+            tracking_number: {},
+        },
+        confirm: true,
+        confirmMessage: '{% trans "Confirm Shipment" %}',
+        onSuccess: function(data) {
+            // TODO
+        }
+    });
 }
 
 
@@ -1183,6 +1204,8 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
         html += makeIconButton('fa-edit icon-blue', 'button-shipment-edit', pk, '{% trans "Edit shipment" %}');
 
+        html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
+
         html += `</div>`;
 
         return html;
@@ -1204,6 +1227,12 @@ function loadSalesOrderShipmentTable(table, options={}) {
                     $(table).bootstrapTable('refresh');
                 }
             });
+        });
+
+        $(table).find('.button-shipment-ship').click(function() {
+            var pk = $(this).attr('pk');
+
+            completeShipment(pk);
         });
     }
 
@@ -1505,7 +1534,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
                             // Exclude expired stock?
                             if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
-                                fields.item.filters.expired = false;
+                                filters.expired = false;
                             }
 
                             return filters;
@@ -1781,14 +1810,16 @@ function showAllocationSubTable(index, row, element, options) {
                 title: '{% trans "Location" %}',
                 formatter: function(value, row, index, field) {
 
-                    // Location specified
-                    if (row.location) {
+                    if (shipped) {
+                        return `<em>{% trans "Shipped to customer" %}</em>`;
+                    } else if (row.location) {
+                        // Location specified
                         return renderLink(
                             row.location_detail.pathstring || '{% trans "Location" %}',
                             `/stock/location/${row.location}/`
                         );
                     } else {
-                        return `<i>{% trans "Stock location not specified" %}`;
+                        return `<em>{% trans "Stock location not specified" %}</em>`;
                     }
                 },
             },

@@ -767,6 +767,32 @@ class SOShipmentDetail(generics.RetrieveUpdateAPIView):
     serializer_class = serializers.SalesOrderShipmentSerializer
 
 
+class SOShipmentComplete(generics.CreateAPIView):
+    """
+    API endpoint for completing (shipping) a SalesOrderShipment
+    """
+
+    queryset = models.SalesOrderShipment.objects.all()
+    serializer_class = serializers.SalesOrderShipmentCompleteSerializer
+
+    def get_serializer_context(self):
+        """
+        Pass the request object to the serializer
+        """
+
+        ctx = super().get_serializer_context()
+        ctx['request'] = self.request
+
+        try:
+            ctx['shipment'] = models.SalesOrderShipment.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except:
+            pass
+
+        return ctx
+
+
 class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
@@ -829,6 +855,7 @@ order_api_urls = [
 
         url(r'^shipment/', include([
             url(r'^(?P<pk>\d+)/', include([
+                url(r'^ship/$', SOShipmentComplete.as_view(), name='api-so-shipment-ship'),
                 url(r'^.*$', SOShipmentDetail.as_view(), name='api-so-shipment-detail'),
             ])),
             url(r'^.*$', SOShipmentList.as_view(), name='api-so-shipment-list'),

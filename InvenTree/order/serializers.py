@@ -25,7 +25,6 @@ from InvenTree.helpers import normalize
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
 from InvenTree.status_codes import StockStatus
 
 import order.models
@@ -615,6 +614,46 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'tracking_number',
             'notes',
         ]
+
+
+class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
+    """
+    Serializer for completing (shipping) a SalesOrderShipment
+    """
+
+    class Meta:
+        model = order.models.SalesOrderShipment
+
+        fields = [
+            'tracking_number',
+        ]
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        shipment = self.context.get('shipment', None)
+
+        if not shipment:
+            raise ValidationError(_("No shipment details provided"))
+
+        shipment.check_can_complete()
+
+        return data
+
+    def save(self):
+
+        shipment = self.context.get('shipment', None)
+
+        if not shipment:
+            return
+
+        data = self.validated_data
+        
+        request = self.context['request']
+        user = request.user
+
+        shipment.complete_shipment(user)
 
 
 class SOShipmentAllocationItemSerializer(serializers.Serializer):

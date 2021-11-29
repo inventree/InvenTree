@@ -996,6 +996,15 @@ class SalesOrderShipment(models.Model):
         help_text=_('Shipment tracking information'),
     )
 
+    def check_can_complete(self):
+
+        if self.shipment_date:
+            # Shipment has already been sent!
+            raise ValidationError(_("Shipment has already been sent"))
+ 
+        if self.allocations.count() == 0:
+            raise ValidationError(_("Shipment has no allocated stock items"))
+
     @transaction.atomic
     def complete_shipment(self, user):
         """
@@ -1006,12 +1015,13 @@ class SalesOrderShipment(models.Model):
         3. Set the "shipment_date" to now
         """
 
-        if self.shipment_date:
-            # Ignore, shipment has already been sent!
-            return
+        # Check if the shipment can be completed (throw error if not)
+        self.check_can_complete()
+
+        allocations = self.allocations.all()
 
         # Iterate through each stock item assigned to this shipment
-        for allocation in self.allocations.all():
+        for allocation in allocations:
             
             # Mark the allocation as "complete"
             allocation.complete_allocation(user)

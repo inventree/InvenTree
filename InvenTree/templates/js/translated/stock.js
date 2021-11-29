@@ -94,6 +94,9 @@ function serializeStockItem(pk, options={}) {
         });
     }
 
+    options.confirm = true;
+    options.confirmMessage = '{% trans "Confirm Stock Serialization" %}';
+
     constructForm(url, options);
 }
 
