@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-29 20:25\n"
+"PO-Revision-Date: 2021-11-29 21:22\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -3269,7 +3269,7 @@ msgstr ""
 
 #: order/templates/order/order_cancel.html:8
 msgid "Cancelling this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Cancelar este pedido significa que la orden y los elementos de línea ya no serán editables."
 
 #: order/templates/order/order_complete.html:7
 msgid "Mark this order as complete?"
@@ -3277,15 +3277,15 @@ msgstr ""
 
 #: order/templates/order/order_complete.html:10
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Este pedido tiene artículos de línea que no han sido marcados como recibidos."
 
 #: order/templates/order/order_complete.html:11
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Completar este pedido significa que los artículos de orden y línea ya no serán editables."
 
 #: order/templates/order/order_issue.html:8
 msgid "After placing this purchase order, line items will no longer be editable."
-msgstr ""
+msgstr "Después de realizar esta orden de compra, los artículos de línea ya no serán editables."
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/bom_upload/match_fields.html:9
@@ -3616,7 +3616,7 @@ msgstr ""
 #: order/views.py:891
 #, python-brace-format
 msgid "Allocated {n} items"
-msgstr ""
+msgstr "{n} elementos asignados"
 
 #: order/views.py:907
 msgid "Select line item"
@@ -3746,7 +3746,7 @@ msgstr ""
 
 #: part/forms.py:103
 msgid "Clear existing BOM items"
-msgstr ""
+msgstr "Borrar elementos BOM existentes"
 
 #: part/forms.py:109
 msgid "Confirm BOM duplication"
@@ -4219,7 +4219,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
-msgstr ""
+msgstr "Eliminar elementos"
 
 #: part/templates/part/bom_duplicate.html:13
 msgid "This part already has a Bill of Materials"
@@ -4545,11 +4545,11 @@ msgstr "Eliminar partes del fabricante"
 
 #: part/templates/part/detail.html:660
 msgid "Delete selected BOM items?"
-msgstr ""
+msgstr "¿Eliminar elementos BOM seleccionados?"
 
 #: part/templates/part/detail.html:661
 msgid "All selected BOM items will be deleted"
-msgstr ""
+msgstr "Todos los elementos BOM seleccionados serán eliminados"
 
 #: part/templates/part/detail.html:712
 msgid "Create BOM Item"
@@ -5114,7 +5114,7 @@ msgstr ""
 
 #: report/models.py:332
 msgid "Include test results for stock items installed inside assembled item"
-msgstr ""
+msgstr "Incluye resultados de prueba para artículos de stock instalados dentro del artículo ensamblado"
 
 #: report/models.py:382
 msgid "Build Filters"
@@ -5211,7 +5211,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:123
 #: stock/templates/stock/stock_sidebar.html:12
 msgid "Installed Items"
-msgstr ""
+msgstr "Elementos instalados"
 
 #: report/templates/report/inventree_test_report_base.html:137
 #: templates/js/translated/stock.js:2177
@@ -5475,7 +5475,7 @@ msgstr "Moneda de compra de ítem de stock"
 
 #: stock/serializers.py:287
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Introduzca el número de elementos de stock para serializar"
 
 #: stock/serializers.py:302
 #, python-brace-format
@@ -5484,7 +5484,7 @@ msgstr ""
 
 #: stock/serializers.py:308
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "Introduzca números de serie para nuevos elementos"
 
 #: stock/serializers.py:319 stock/serializers.py:686
 msgid "Destination stock location"
@@ -5508,7 +5508,7 @@ msgstr ""
 
 #: stock/serializers.py:594
 msgid "A list of stock items must be provided"
-msgstr ""
+msgstr "Debe proporcionarse una lista de artículos de stock"
 
 #: stock/templates/stock/item.html:18
 msgid "Stock Tracking Information"
@@ -7542,11 +7542,11 @@ msgstr ""
 
 #: templates/js/translated/order.js:449
 msgid "Confirm receipt of items"
-msgstr ""
+msgstr "Confirmar recepción de artículos"
 
 #: templates/js/translated/order.js:450
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Recibir artículos de orden de compra"
 
 #: templates/js/translated/order.js:627
 msgid "No purchase orders found"
