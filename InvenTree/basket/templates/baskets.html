@@ -16,11 +16,9 @@
 <div id='table-buttons'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
-            {% if roles.purchase_order.add %}
             <button class='btn btn-success' type='button' id='b-create' title='{% trans "Create new basket" %}'>
                 <span class='fas fa-plus-circle'></span> {% trans "New Basket" %}
             </button>
-            {% endif %}
             <button id='order-print' class='btn btn-default' title='{% trans "Print Basket Reports" %}'>
                 <span class='fas fa-print'></span>
             </button>

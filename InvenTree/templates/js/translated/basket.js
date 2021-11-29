@@ -88,7 +88,7 @@ function createBasket(options={}) {
             // }
         },
         onSuccess: function(data) {
-            location.href = `/order/sales-order/${data.pk}/`;
+            location.href = `/basket/${data.pk}/`;
         },
         title: '{% trans "Create Basket" %}',
     });

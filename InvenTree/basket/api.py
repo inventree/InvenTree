@@ -98,17 +98,11 @@ class BasketList(generics.ListCreateAPIView):
 
 class BasketDetail(generics.RetrieveUpdateDestroyAPIView):
     """
-    API endpoint for detail view of a SalesOrder object.
+    API endpoint for detail view of a Basket object.
     """
 
     queryset = SalesOrderBasket.objects.all()
     serializer_class = SOBasketSerializer
-
-    def get_serializer(self, *args, **kwargs):
-
-
-        kwargs['context'] = self.get_serializer_context()
-        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
 
@@ -135,9 +129,7 @@ class AddOrderToBasket(APIView):
 
 basket_api_urls = [
     # API endpoints for baskets
-    url(r'^b/', include([
-        url(r'^(?P<pk>\d+)/$', BasketDetail.as_view(), name='api-basket-detail'),
-        url(r'^scan/', AddOrderToBasket.as_view(), name='api-basket-addorder'),
-        url(r'^.*$', BasketList.as_view(), name='api-basket-list'),
-    ])),
+    url(r'^(?P<pk>\d+/?)', BasketDetail.as_view(), name='api-basket-detail'),
+    url(r'^scan/', AddOrderToBasket.as_view(), name='api-basket-addorder'),
+    url(r'^.*$', BasketList.as_view(), name='api-basket-list'),
 ]

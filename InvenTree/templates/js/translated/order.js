@@ -48,7 +48,7 @@ function createSalesOrder(options={}) {
                     title: '{% trans "Add Customer" %}',
                     fields: function() {
                         var fields = companyFormFields();
-                        
+
                         fields.is_customer.value = true;
 
                         return fields;
@@ -153,7 +153,7 @@ function newSupplierPartFromOrderWizard(e) {
     createSupplierPart({
         part: part,
         onSuccess: function(data) {
-                        
+
             // TODO: 2021-08-23 - This whole form wizard needs to be refactored.
             // In the future, use the API forms functionality to add the new item
             // For now, this hack will have to do...
@@ -190,9 +190,9 @@ function newSupplierPartFromOrderWizard(e) {
 
 /**
  * Export an order (PurchaseOrder or SalesOrder)
- * 
+ *
  * - Display a simple form which presents the user with export options
- * 
+ *
  */
 function exportOrder(redirect_url, options={}) {
 
@@ -271,26 +271,26 @@ function newPurchaseOrderFromOrderWizard(e) {
                         var dropdown = `#id-purchase-order-${supplier}`;
 
                         var option = new Option(text, pk, true, true);
-            
+
                         $('#modal-form').find(dropdown).append(option).trigger('change');
                     }
                 }
             );
         }
-    }); 
+    });
 }
 
 
 /**
  * Receive stock items against a PurchaseOrder
  * Uses the POReceive API endpoint
- * 
+ *
  * arguments:
  * - order_id, ID / PK for the PurchaseOrder instance
  * - line_items: A list of PurchaseOrderLineItems objects to be allocated
- * 
+ *
  * options:
- *  - 
+ *  -
  */
 function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
@@ -310,7 +310,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         var thumb = thumbnailImage(line_item.part_detail.thumbnail);
 
         var quantity = (line_item.quantity || 0) - (line_item.received || 0);
-        
+
         if (quantity < 0) {
             quantity = 0;
         }
@@ -584,7 +584,7 @@ function editPurchaseOrderLineItem(e) {
 
 function removePurchaseOrderLineItem(e) {
 
-    /* Delete a purchase order line item in a modal form 
+    /* Delete a purchase order line item in a modal form
      */
 
     e = e || window.event;
@@ -592,7 +592,7 @@ function removePurchaseOrderLineItem(e) {
     var src = e.target || e.srcElement;
 
     var url = $(src).attr('url');
-    
+
     // TODO: Migrate this to the API forms
     launchModalForm(url, {
         reload: true,
@@ -653,7 +653,7 @@ function loadPurchaseOrderTable(table, options) {
 
                     return html;
                 }
-            },  
+            },
             {
                 field: 'supplier_detail',
                 title: '{% trans "Supplier" %}',
@@ -701,7 +701,7 @@ function loadPurchaseOrderTable(table, options) {
 
 /**
  * Load a table displaying line items for a particular PurchasesOrder
- * @param {String} table - HTML ID tag e.g. '#table' 
+ * @param {String} table - HTML ID tag e.g. '#table'
  * @param {Object} options - options which must provide:
  *      - order (integer PK)
  *      - supplier (integer PK)
@@ -720,7 +720,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
-    
+
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
     setupFilterList('purchaseorderlineitem', $(table), target);
@@ -819,7 +819,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 formatter: function(value, row, index, field) {
                     if (row.part) {
                         return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
-                    } else { 
+                    } else {
                         return '-';
                     }
                 },
@@ -908,7 +908,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                             currency: currency
                         }
                     );
-                    
+
                     return formatter.format(total);
                 }
             },
@@ -923,14 +923,14 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     });
                 },
                 sorter: function(valA, valB, rowA, rowB) {
-    
+
                     if (rowA.received == 0 && rowB.received == 0) {
                         return (rowA.quantity > rowB.quantity) ? 1 : -1;
                     }
-    
+
                     var progressA = parseFloat(rowA.received) / rowA.quantity;
                     var progressB = parseFloat(rowB.received) / rowB.quantity;
-    
+
                     return (progressA < progressB) ? 1 : -1;
                 }
             },
@@ -955,9 +955,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '',
                 formatter: function(value, row, index, field) {
                     var html = `<div class='btn-group'>`;
-    
+
                     var pk = row.pk;
-    
+
                     if (options.allow_edit) {
                         html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
@@ -966,9 +966,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     if (options.allow_receive && row.received < row.quantity) {
                         html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
                     }
-        
+
                     html += `</div>`;
-    
+
                     return html;
                 },
             }
@@ -981,8 +981,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 function loadSalesOrderTable(table, options) {
     options.params = options.params || {};
     options.params['customer_detail'] = true;
-
-    if (options.basket) {
+    if (options.basket !== undefined) {
         options.params.basket = options.basket;
     }
 
@@ -994,7 +993,6 @@ function loadSalesOrderTable(table, options) {
 
     options.url = options.url || '{% url "api-so-list" %}';
     setupFilterList('salesorder', $(table));
-
     $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
@@ -1017,7 +1015,7 @@ function loadSalesOrderTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row) {
-
+                    console.log(row)
                     var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
                     if (prefix) {
@@ -1025,7 +1023,25 @@ function loadSalesOrderTable(table, options) {
                     }
 
                     var html = renderLink(value, `/order/sales-order/${row.pk}/`);
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
+                    }
 
+                    return html;
+                },
+            },
+            {
+                sortable: true,
+                field: 'reference',
+                title: '{% trans "Sales Order" %}',
+                formatter: function(value, row) {
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
+
+                    if (prefix) {
+                        value = `${prefix}${value}`;
+                    }
+
+                    var html = renderLink(value, `/order/sales-order/${row.pk}/`);
                     if (row.overdue) {
                         html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
                     }
@@ -1039,7 +1055,6 @@ function loadSalesOrderTable(table, options) {
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
                 formatter: function(value, row) {
-
                     if (!row.customer_detail) {
                         return '{% trans "Invalid Customer" %}';
                     }
@@ -1160,7 +1175,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                     if (!value) {
                         return '{% trans "Location not specified" %}';
                     }
-                    
+
                     var link = `/stock/location/${value}`;
                     var text = row.location_detail.description;
 
@@ -1179,12 +1194,12 @@ function loadSalesOrderAllocationTable(table, options={}) {
 
 /**
  * Display an "allocations" sub table, showing stock items allocated againt a sales order
- * @param {*} index 
- * @param {*} row 
- * @param {*} element 
+ * @param {*} index
+ * @param {*} row
+ * @param {*} element
  */
 function showAllocationSubTable(index, row, element, options) {
-    
+
     // Construct a sub-table element
     var html = `
     <div class='sub-table'>
@@ -1224,7 +1239,7 @@ function showAllocationSubTable(index, row, element, options) {
         // Add callbacks for 'delete' buttons
         table.find('.button-allocation-delete').click(function() {
             var pk = $(this).attr('pk');
-            
+
             constructForm(
                 `/api/order/so-allocation/${pk}/`,
                 {
@@ -1315,7 +1330,7 @@ function showFulfilledSubTable(index, row, element, options) {
     }
 
     var id = `fulfilled-table-${row.pk}`;
-    
+
     var html = `
     <div class='sub-table'>
         <table class='table table-striped table-condensed' id='${id}'>
@@ -1361,7 +1376,7 @@ function showFulfilledSubTable(index, row, element, options) {
 
 /**
  * Load a table displaying line items for a particular SalesOrder
- * 
+ *
  * @param {String} table : HTML ID tag e.g. '#table'
  * @param {Object} options : object which contains:
  *      - order {integer} : pk of the SalesOrder
@@ -1386,7 +1401,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params.order = options.order;
     options.params.part_detail = true;
     options.params.allocations = true;
-    
+
     var filters = loadTableFilters('salesorderlineitem');
 
     for (var key in options.params) {
@@ -1484,15 +1499,15 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 }, 0);
 
                 var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
-                
+
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
-                        style: 'currency', 
+                        style: 'currency',
                         currency: currency
                     }
                 );
-                
+
                 return formatter.format(total);
             }
         },
@@ -1629,7 +1644,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                             success: reloadTable,
                             data: {
                                 line: pk,
-                                part: response.part, 
+                                part: response.part,
                             }
                         });
                     }
@@ -1656,7 +1671,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         in_stock: true,
                         part: line_item.part,
                         exclude_so_allocation: options.order,
-                    } 
+                    }
                 },
                 quantity: {
                 },
@@ -1684,11 +1699,11 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
             // Extract the row data from the table!
             var idx = $(this).closest('tr').attr('data-index');
-    
+
             var row = $(table).bootstrapTable('getData')[idx];
-    
+
             var quantity = 1;
-    
+
             if (row.allocated < row.quantity) {
                 quantity = row.quantity - row.allocated;
             }

@@ -255,6 +255,10 @@
     background: var(--label-red);
 }
 
+.label-purple {
+    background: var(--label-purple);
+}
+
 .label-large-blue {
     color: var(--label-blue);
     border-color: var(--label-blue);

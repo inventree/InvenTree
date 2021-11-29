@@ -4,9 +4,9 @@ from .models import SalesOrderBasket
 from rest_framework import serializers
 
 
-class SOBasketSerializer(InvenTreeModelSerializer):
+class SOBasketSerializer(serializers.ModelSerializer):
     """
-    Serializers for the SalesOrderAttachment model
+    Serializers for the SOBasket model
     """
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -19,20 +19,4 @@ class SOBasketSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
             'creation_date',
-            'sales_orders',
         ]
-
-        read_only_fields = [
-            'status',
-            'creation_date',
-            'status_text',
-            'sales_orders',
-        ]
-
-        # extra_kwargs = {
-        #     "name": {"required": False, "allow_null": True, "allow_blank": True},
-        #     "status": {"required": False, "allow_null": True, "allow_blank": True},
-        #     "status_text": {"required": False, "allow_null": True, "allow_blank": True},
-        #     "creation_date": {"required": False, "allow_null": True, "allow_blank": True}
-        # }
-

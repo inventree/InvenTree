@@ -557,6 +557,7 @@ class SalesOrder(Order):
         on_delete=models.SET_NULL,
         related_name='sales_orders',
         null=True,
+        blank=True,
         verbose_name=_('Basket'),
         help_text=_('Select basket to put order')
     )

@@ -35,5 +35,14 @@ $('#show-qr-code').click(function() {
 
 $('#print-label').click(function() {
     printBasketLabels([{{ basket.pk }}]);
-  });
+});
+
+$('#basket-delete').click(function() {
+    constructForm('{% url "api-basket-detail" basket.pk %}', {
+        method: 'DELETE',
+        title: '{% trans "Delete Basket" %}',
+        redirect: '{% url "basket-index" %}',
+    });
+});
+
 {% endblock %}
