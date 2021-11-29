@@ -603,32 +603,6 @@ class SalesOrder(Order):
 
         return all([line.is_completed() for line in self.lines.all()])
 
-    @transaction.atomic
-    def ship_order(self, user):
-        """ Mark this order as 'shipped' """
-
-        # The order can only be 'shipped' if the current status is PENDING
-        if not self.status == SalesOrderStatus.PENDING:
-            raise ValidationError({'status': _("SalesOrder cannot be shipped as it is not currently pending")})
-
-        # Complete the allocation for each allocated StockItem
-        for line in self.lines.all():
-            for allocation in line.allocations.all():
-                allocation.complete_allocation(user)
-
-                # Remove the allocation from the database once it has been 'fulfilled'
-                if allocation.item.sales_order == self:
-                    allocation.delete()
-                else:
-                    raise ValidationError("Could not complete order - allocation item not fulfilled")
-
-        # Ensure the order status is marked as "Shipped"
-        self.status = SalesOrderStatus.SHIPPED
-        self.shipment_date = datetime.now().date()
-        self.shipped_by = user
-        self.save()
-
-        return True
 
     def can_cancel(self):
         """
