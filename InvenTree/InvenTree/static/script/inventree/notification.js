@@ -146,8 +146,26 @@ function showMessage(message, options={}) {
 }
 
 
+/**
+ * Returns the html for a read / unread button
+ **/
+function getReadEditButton(pk, state) {
+    if (state) {
+        var bReadText = '{% trans "Mark as unread" %}';
+        var bReadIcon = 'fa-uncheck icon-red';
+        var bReadTarget = 'unread';
+    } else {
+        var bReadText = '{% trans "Mark as read" %}';
+        var bReadIcon = 'fa-check icon-green';
+        var bReadTarget = 'read';
+    }
+    return `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='fas ${bReadIcon}'></span></button>`;
+}
+
+
 function openNotificationPanel() {
     var html = '';
+    var center_ref = '#notification-center';
 
     inventreeGet(
         '/api/notifications/',
@@ -175,6 +193,7 @@ function openNotificationPanel() {
                         }
                         html += '<div>';
                         html += `<span class="text-muted">${item.age_human}</span>`;
+                        html += getReadEditButton(item.pk, item.read);
                         html += "</div></li>";
                     });
 
@@ -183,10 +202,26 @@ function openNotificationPanel() {
                 }
 
                 // set html
-                $('#notification-center').html(html);
+                $(center_ref).html(html);
             }
         }
     );
+
+    $(center_ref).on('click', '.notification-read', function() {
+        caller = $(this);
+        var url = `/api/notifications/${caller.attr('pk')}/${caller.attr('target')}/`;
+
+        inventreePut(url, {}, {
+        method: 'POST',
+        success: function() {
+            // update the notification tables if they exsist
+            if (window.updateNotifications) {
+                window.updateNotifications();
+            }
+            caller.parent().parent().remove()
+        }
+        });
+    });
 }
 
 

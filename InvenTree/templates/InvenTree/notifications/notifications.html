@@ -26,6 +26,8 @@ function updateNotificationTables() {
     $("#inbox-table").bootstrapTable('refresh');
     $("#history-table").bootstrapTable('refresh');
 }
+// this allows the global notification panel to update the tables
+window.updateNotifications = updateNotificationTables
 
 function loadNotificationTable(table, options={}) {
 
@@ -87,16 +89,7 @@ function loadNotificationTable(table, options={}) {
             },
             {
                 formatter: function(value, row, index, field) {
-                    if (row.read) {
-                        var bReadText = '{% trans "Mark as unread" %}';
-                        var bReadIcon = 'fa-uncheck icon-red';
-                        var bReadTarget = 'unread';
-                    } else {
-                        var bReadText = '{% trans "Mark as read" %}';
-                        var bReadIcon = 'fa-check icon-green';
-                        var bReadTarget = 'read';
-                    }
-                    var bRead = `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${row.pk}' target='${bReadTarget}'><span class='fas ${bReadIcon}'></span></button>`;
+                    var bRead = getReadEditButton(row.pk, row.read)
                     var html = "<div class='btn-group float-right' role='group'>" + bRead + "</div>";
                     return html;
                 }
