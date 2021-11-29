@@ -971,6 +971,35 @@ class SalesOrderShipment(models.Model):
         help_text=_('Shipment notes'),
     )
 
+    tracking_number = models.CharField(
+        max_length=100,
+        blank=True,
+        unique=False,
+        verbose_name=_('Tracking Number'),
+        help_text=_('Shipment tracking information'),
+    )
+
+    @transaction.atomic
+    def complete_shipment(self):
+        """
+        Complete this particular shipment:
+
+        1. Update any stock items associated with this shipment
+        2. Update the "shipped" quantity of all associated line items
+        3. Set the "shipment_date" to now
+        """
+
+        # Iterate through each stock item assigned to this shipment
+        for allocation in self.allocations.all():
+            pass
+
+
+
+        # Update the "shipment" date 
+        self.shipment_date = datetime.now()
+        self.save()
+
+
 
 class SalesOrderAllocation(models.Model):
     """

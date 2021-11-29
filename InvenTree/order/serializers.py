@@ -18,8 +18,8 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
 from common.settings import currency_code_mappings
-
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+
 from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.helpers import normalize
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -34,6 +34,8 @@ from part.serializers import PartBriefSerializer
 
 import stock.models
 import stock.serializers
+
+from users.serializers import OwnerSerializer
 
 
 class POSerializer(InvenTreeModelSerializer):
@@ -84,6 +86,8 @@ class POSerializer(InvenTreeModelSerializer):
 
     reference = serializers.CharField(required=True)
 
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
+
     class Meta:
         model = order.models.PurchaseOrder
 
@@ -98,6 +102,7 @@ class POSerializer(InvenTreeModelSerializer):
             'overdue',
             'reference',
             'responsible',
+            'responsible_detail',
             'supplier',
             'supplier_detail',
             'supplier_reference',
@@ -372,8 +377,6 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the PurchaseOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = order.models.PurchaseOrderAttachment
 
@@ -381,6 +384,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'order',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',
@@ -608,6 +612,7 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'shipment_date',
             'checked_by',
             'reference',
+            'tracking_number',
             'notes',
         ]
 
@@ -771,8 +776,6 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the SalesOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = order.models.SalesOrderAttachment
 
@@ -781,6 +784,7 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
             'order',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]

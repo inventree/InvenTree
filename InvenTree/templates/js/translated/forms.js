@@ -28,6 +28,7 @@
     disableFormInput,
     enableFormInput,
     hideFormInput,
+    setFormInputPlaceholder,
     setFormGroupVisibility,
     showFormInput,
 */
@@ -1274,6 +1275,11 @@ function initializeGroups(fields, options) {
             hideFormGroup(group, options);
         }
     }
+}
+
+// Set the placeholder value for a field
+function setFormInputPlaceholder(name, placeholder, options) {
+    $(options.modal).find(`#id_${name}`).attr('placeholder', placeholder);
 }
 
 // Clear a form input
