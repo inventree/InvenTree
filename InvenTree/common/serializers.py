@@ -144,3 +144,11 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
             'age_human',
             'read',
         ]
+
+
+class NotificationReadSerializer(NotificationMessageSerializer):
+
+    def is_valid(self, raise_exception=False):
+        self.instance = self.context['instance']  # set instance that should be returned
+        self._validated_data = True
+        return True

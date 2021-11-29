@@ -91,9 +91,10 @@ function loadNotificationTable(table, options={}) {
     });
 
     $(table).on('click', '.notification-read', function() {
-        var url = "/notifications/" + $(this).attr('pk') + "/";
+        var url = "/api/notifications/" + $(this).attr('pk') + "/read/";
 
-        inventreeDelete(url, {
+        inventreePut(url, {}, {
+        method: 'POST',
             success: function() {
                 $(table).bootstrapTable('refresh');
             }

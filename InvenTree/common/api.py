@@ -9,6 +9,7 @@ from django.conf.urls import url, include
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, permissions
+from rest_framework import serializers
 
 import common.models
 import common.serializers
@@ -186,6 +187,33 @@ class NotificationDetail(generics.RetrieveDestroyAPIView):
     ]
 
 
+class NotificationRead(generics.CreateAPIView):
+    """
+    API endpoint to mark a notification as read.
+    """
+
+    queryset = common.models.NotificationMessage.objects.all()
+    serializer_class = common.serializers.NotificationReadSerializer
+
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        if self.request:
+            context['instance'] = self.get_object()
+        return context
+
+    def perform_create(self, serializer):
+        message = self.get_object()
+        try:
+            message.read = True
+            message.save()
+        except Exception as exc:
+            raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
+
+
 settings_api_urls = [
     # User settings
     url(r'^user/', include([
@@ -210,7 +238,13 @@ common_api_urls = [
 
     # Notifications
     url(r'^notifications/', include([
-        url(r'^(?P<pk>\d+)/', NotificationDetail.as_view(), name='api-notifications-detail'),
+        # Individual purchase order detail URLs
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
+            url(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
+        ])),
+
+        # Notification messages list 
         url(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
     ])),
 
