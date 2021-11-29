@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:12+0000\n"
-"PO-Revision-Date: 2021-11-28 23:43\n"
+"PO-Revision-Date: 2021-11-29 20:25\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -3111,7 +3111,7 @@ msgstr ""
 
 #: order/models.py:798
 msgid "Number of items received"
-msgstr ""
+msgstr "Número de artículos recibidos"
 
 #: order/models.py:805 part/templates/part/prices.html:176 stock/models.py:619
 #: stock/serializers.py:163 stock/templates/stock/item_base.html:332
@@ -3190,7 +3190,7 @@ msgstr ""
 
 #: order/serializers.py:220 order/serializers.py:288
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Seleccione la ubicación de destino para los artículos recibidos"
 
 #: order/serializers.py:244
 msgid "Barcode Hash"
@@ -3206,7 +3206,7 @@ msgstr ""
 
 #: order/serializers.py:300
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Se deben proporcionar elementos de línea"
 
 #: order/serializers.py:317
 msgid "Destination location must be specified"
@@ -3246,7 +3246,7 @@ msgstr ""
 
 #: order/templates/order/order_base.html:56
 msgid "Receive items"
-msgstr ""
+msgstr "Recibir artículos"
 
 #: order/templates/order/order_base.html:93
 #: order/templates/order/sales_order_base.html:98
