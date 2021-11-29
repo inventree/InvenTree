@@ -900,35 +900,6 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-def get_next_shipment_number():
-    """
-    Returns the next available SalesOrderShipment reference number"
-    """
-
-    if SalesOrderShipment.objects.count() == 0:
-        return "001"
-
-    shipment = SalesOrderShipment.objects.exclude(reference=None).last()
-
-    attempts = set([shipment.reference])
-
-    reference = shipment.reference
-
-    while 1:
-        reference = increment(reference)
-
-        if reference in attempts:
-            # Escape infinite recursion
-            return reference
-
-        if SalesOrderShipment.objects.filter(reference=reference).exists():
-            attempts.add(reference)
-        else:
-            break
-
-    return reference
-
-
 class SalesOrderShipment(models.Model):
     """
     The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
@@ -944,6 +915,12 @@ class SalesOrderShipment(models.Model):
         reference: Custom reference text for this shipment (e.g. consignment number?)
         notes: Custom notes field for this shipment
     """
+
+    class Meta:
+        # Shipment reference must be unique for a given sales order
+        unique_together = [
+            'order', 'reference',
+        ]
 
     @staticmethod
     def get_api_url():
@@ -976,10 +953,9 @@ class SalesOrderShipment(models.Model):
     reference = models.CharField(
         max_length=100,
         blank=False,
-        unique=True,
-        verbose_name=('Reference'),
-        help_text=_('Shipment reference'),
-        default=get_next_shipment_number,
+        verbose_name=('Shipment'),
+        help_text=_('Shipment number'),
+        default='1',
     )
 
     notes = MarkdownxField(

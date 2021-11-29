@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('shipment_date', models.DateField(blank=True, help_text='Date of shipment', null=True, verbose_name='Shipment Date')),
-                ('reference', models.CharField(default=order.models.get_next_shipment_number, unique=True, help_text='Shipment reference', max_length=100, verbose_name='Reference')),
+                ('reference', models.CharField(default='1', help_text='Shipment reference', max_length=100, verbose_name='Reference')),
                 ('notes', markdownx.models.MarkdownxField(blank=True, help_text='Shipment notes', verbose_name='Notes')),
                 ('checked_by', models.ForeignKey(blank=True, help_text='User who checked this shipment', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Checked By')),
                 ('order', models.ForeignKey(help_text='Sales Order', on_delete=django.db.models.deletion.CASCADE, related_name='shipments', to='order.salesorder', verbose_name='Order')),

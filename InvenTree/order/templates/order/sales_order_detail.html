@@ -155,6 +155,7 @@
         $('#new-shipment').click(function() {
             createSalesOrderShipment({
                 order: {{ order.pk }},
+                reference: '{{ order.reference }}',
                 onSuccess: function(data) {
                     $('#pending-shipments-table').bootstrapTable('refresh');
                 }

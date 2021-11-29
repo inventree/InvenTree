@@ -7,10 +7,14 @@ from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 
 from company.models import Company
-from stock.models import StockItem
-from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
-from part.models import Part
+
 from InvenTree import status_codes as status
+
+from order.models import SalesOrder, SalesOrderLineItem, SalesOrderShipment, SalesOrderAllocation
+
+from part.models import Part
+
+from stock.models import StockItem
 
 
 class SalesOrderTest(TestCase):

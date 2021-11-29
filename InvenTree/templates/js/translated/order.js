@@ -75,16 +75,56 @@ function completeShipment(shipment_id) {
 
 // Open a dialog to create a new sales order shipment
 function createSalesOrderShipment(options={}) {
-    constructForm('{% url "api-so-shipment-list" %}', {
-        method: 'POST',
-        fields: salesOrderShipmentFields(options),
-        title: '{% trans "Create New Shipment" %}',
-        onSuccess: function(data) {
-            if (options.onSuccess) {
-                options.onSuccess(data);
+
+    // Work out the next shipment number for the given order
+    inventreeGet(
+        '{% url "api-so-shipment-list" %}',
+        {
+            order: options.order,
+        },
+        {
+            success: function(results) {
+                // "predict" the next reference number
+                var ref = results.length + 1;
+
+                var found = false;
+
+                while (!found) {
+
+                    var no_match = true;
+
+                    for (var ii = 0; ii < results.length; ii++) {
+                        if (ref.toString() == results[ii].reference.toString()) {
+                            no_match = false;
+                            break;
+                        }
+                    }
+
+                    if (no_match) {
+                        break;
+                    } else {
+                        ref++;
+                    }
+                }
+
+                var fields = salesOrderShipmentFields(options);
+
+                fields.reference.value = ref;
+                fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+
+                constructForm('{% url "api-so-shipment-list" %}', {
+                    method: 'POST',
+                    fields: fields,
+                    title: '{% trans "Create New Shipment" %}',
+                    onSuccess: function(data) {
+                        if (options.onSuccess) {
+                            options.onSuccess(data);
+                        }
+                    }
+                });
             }
         }
-    });
+    );
 }
 
 
@@ -1272,14 +1312,19 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 switchable: false,
             },
             {
-                field: 'status',
-                title: '{% trans "Status" %}',
-            },
-            {
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
-                visible: options.shipped,
-                switchable: false,
+                formatter: function(value, row) {
+                    if (value) {
+                        return value;
+                    } else {
+                        return '{% trans "Not shipped" %}';
+                    }
+                }
+            },
+            {
+                field: 'tracking_number',
+                title: '{% trans "Tracking" %}',
             },
             {
                 field: 'notes',
@@ -1711,7 +1756,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 sortable: true,
-            }
+            },
         ]
     });
 }
