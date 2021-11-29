@@ -1492,9 +1492,7 @@ class NotificationMessage(models.Model):
     )
 
     creation = models.DateTimeField(
-        auto_now=True,
-        null=False,
-        editable=False,
+        auto_now_add=True,
     )
 
     read = models.BooleanField(
