@@ -595,6 +595,14 @@ class SalesOrder(Order):
 
         return False
 
+    def is_completed(self):
+        """
+        Check if this order is "shipped" (all line items delivered),
+        and mark it as "shipped" if so.
+        """
+
+        return all([line.is_completed() for line in self.lines.all()])
+
     @transaction.atomic
     def ship_order(self, user):
         """ Mark this order as 'shipped' """
@@ -786,13 +794,15 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     def get_destination(self):
-        """Show where the line item is or should be placed"""
-        # NOTE: If a line item gets split when recieved, only an arbitrary
-        # stock items location will be reported as the location for the
-        # entire line.
-        for stock in stock_models.StockItem.objects.filter(
-            supplier_part=self.part, purchase_order=self.order
-        ):
+        """
+        Show where the line item is or should be placed
+        
+        NOTE: If a line item gets split when recieved, only an arbitrary
+              stock items location will be reported as the location for the
+              entire line.
+        """
+
+        for stock in stock_models.StockItem.objects.filter(supplier_part=self.part, purchase_order=self.order):
             if stock.location:
                 return stock.location
         if self.destination:
@@ -881,6 +891,13 @@ class SalesOrderLineItem(OrderLineItem):
     def is_over_allocated(self):
         """ Return True if this line item is over allocated """
         return self.allocated_quantity() > self.quantity
+
+    def is_completed(self):
+        """
+        Return True if this line item is completed (has been fully shipped)
+        """
+
+        return self.shipped >= self.quantity
 
 
 def get_next_shipment_number():
@@ -980,7 +997,7 @@ class SalesOrderShipment(models.Model):
     )
 
     @transaction.atomic
-    def complete_shipment(self):
+    def complete_shipment(self, user):
         """
         Complete this particular shipment:
 
@@ -989,16 +1006,25 @@ class SalesOrderShipment(models.Model):
         3. Set the "shipment_date" to now
         """
 
+        if self.shipment_date:
+            # Ignore, shipment has already been sent!
+            return
+
         # Iterate through each stock item assigned to this shipment
         for allocation in self.allocations.all():
-            pass
-
-
+            
+            # Mark the allocation as "complete"
+            allocation.complete_allocation(user)
 
         # Update the "shipment" date 
         self.shipment_date = datetime.now()
+        self.shipped_by = user
         self.save()
 
+        # Finally, check if the order is fully shipped
+        if self.order.is_completed():
+            self.order.status = SalesOrderStatus.SHIPPED
+            self.order.save()
 
 
 class SalesOrderAllocation(models.Model):
@@ -1133,6 +1159,10 @@ class SalesOrderAllocation(models.Model):
             order=order,
             user=user
         )
+
+        # Update the 'shipped' quantity
+        self.line.shipped += self.quantity
+        self.line.save()
 
         # Update our own reference to the StockItem
         # (It may have changed if the stock was split)
