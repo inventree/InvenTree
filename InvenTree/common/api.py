@@ -259,7 +259,7 @@ common_api_urls = [
             url(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
 
-        # Notification messages list 
+        # Notification messages list
         url(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
     ])),
 
