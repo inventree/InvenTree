@@ -65,17 +65,6 @@ class CancelSalesOrderForm(HelperForm):
         ]
 
 
-class ShipSalesOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Ship order'))
-
-    class Meta:
-        model = SalesOrder
-        fields = [
-            'confirm',
-        ]
-
-
 class AllocateSerialsToSalesOrderForm(forms.Form):
     """
     Form for assigning stock to a sales order,

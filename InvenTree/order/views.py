@@ -213,48 +213,6 @@ class PurchaseOrderComplete(AjaxUpdateView):
         }
 
 
-class SalesOrderShip(AjaxUpdateView):
-    """ View for 'shipping' a SalesOrder """
-    form_class = order_forms.ShipSalesOrderForm
-    model = SalesOrder
-    context_object_name = 'order'
-    ajax_template_name = 'order/sales_order_ship.html'
-    ajax_form_title = _('Ship Order')
-
-    def post(self, request, *args, **kwargs):
-
-        self.request = request
-
-        order = self.get_object()
-        self.object = order
-
-        form = self.get_form()
-
-        confirm = str2bool(request.POST.get('confirm', False))
-
-        valid = False
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order shipment'))
-        else:
-            valid = True
-
-        if valid:
-            if not order.ship_order(request.user):
-                form.add_error(None, _('Could not ship order'))
-                valid = False
-
-        data = {
-            'form_valid': valid,
-        }
-
-        context = self.get_context_data()
-
-        context['order'] = order
-
-        return self.renderJsonResponse(request, form, data, context)
-
-
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 
@@ -834,6 +792,9 @@ class OrderParts(AjaxView):
                 order.add_line_item(supplier_part, quantity, purchase_price=purchase_price)
 
 
+
+#### TODO: This class MUST be converted to the API forms!
+#### TODO: We MUST select the shipment
 class SalesOrderAssignSerials(AjaxView, FormMixin):
     """
     View for assigning stock items to a sales order,
