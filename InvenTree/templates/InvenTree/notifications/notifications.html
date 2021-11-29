@@ -22,6 +22,11 @@
 {% block js_ready %}
 {{ block.super }}
 
+function updateNotificationTables() {
+    $("#inbox-table").bootstrapTable('refresh');
+    $("#history-table").bootstrapTable('refresh');
+}
+
 function loadNotificationTable(table, options={}) {
 
     var params = options.params || {};
@@ -82,7 +87,16 @@ function loadNotificationTable(table, options={}) {
             },
             {
                 formatter: function(value, row, index, field) {
-                    var bRead = "<button title='{% trans "Mark as read" %}' class='notification-read btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-check icon-green'></span></button>";
+                    if (row.read) {
+                        var bReadText = '{% trans "Mark as unread" %}';
+                        var bReadIcon = 'fa-uncheck icon-red';
+                        var bReadTarget = 'unread';
+                    } else {
+                        var bReadText = '{% trans "Mark as read" %}';
+                        var bReadIcon = 'fa-check icon-green';
+                        var bReadTarget = 'read';
+                    }
+                    var bRead = `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${row.pk}' target='${bReadTarget}'><span class='fas ${bReadIcon}'></span></button>`;
                     var html = "<div class='btn-group float-right' role='group'>" + bRead + "</div>";
                     return html;
                 }
@@ -91,13 +105,11 @@ function loadNotificationTable(table, options={}) {
     });
 
     $(table).on('click', '.notification-read', function() {
-        var url = "/api/notifications/" + $(this).attr('pk') + "/read/";
+        var url = `/api/notifications/${$(this).attr('pk')}/${$(this).attr('target')}/`;
 
         inventreePut(url, {}, {
         method: 'POST',
-            success: function() {
-                $(table).bootstrapTable('refresh');
-            }
+        success: function() { updateNotificationTables(); }
         });
     });
 }
