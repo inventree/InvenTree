@@ -187,9 +187,9 @@ class NotificationDetail(generics.RetrieveDestroyAPIView):
     ]
 
 
-class NotificationRead(generics.CreateAPIView):
+class NotificationReadEdit(generics.CreateAPIView):
     """
-    API endpoint to mark a notification as read.
+    general API endpoint to manipulate read state of a notification
     """
 
     queryset = common.models.NotificationMessage.objects.all()
@@ -208,10 +208,24 @@ class NotificationRead(generics.CreateAPIView):
     def perform_create(self, serializer):
         message = self.get_object()
         try:
-            message.read = True
+            message.read = self.target
             message.save()
         except Exception as exc:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
+
+
+class NotificationRead(NotificationReadEdit):
+    """
+    API endpoint to mark a notification as read.
+    """
+    target = True
+
+
+class NotificationUnread(NotificationReadEdit):
+    """
+    API endpoint to mark a notification as unread.
+    """
+    target = False
 
 
 settings_api_urls = [
@@ -241,6 +255,7 @@ common_api_urls = [
         # Individual purchase order detail URLs
         url(r'^(?P<pk>\d+)/', include([
             url(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
+            url(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
             url(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
 
