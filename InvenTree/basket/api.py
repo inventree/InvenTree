@@ -17,10 +17,10 @@ from rest_framework import permissions
 
 class BasketList(generics.ListCreateAPIView):
     """
-    API endpoint for accessing a list of SalesOrder objects.
+    API endpoint for accessing a list of Basket objects.
 
-    - GET: Return list of SO objects (with filters)
-    - POST: Create a new SalesOrder
+    - GET: Return list of Basket objects (with filters)
+    - POST: Create a new Basket
     """
 
     queryset = SalesOrderBasket.objects.all()
