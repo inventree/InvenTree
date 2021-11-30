@@ -218,6 +218,9 @@ function inventreeDocReady() {
     // Display any cached alert messages
     showCachedAlerts();
 
+    // start watcher
+    startNotificationWatcher();
+
     // always refresh when the focus returns
     $(document).focus(function(){
         startNotificationWatcher();
