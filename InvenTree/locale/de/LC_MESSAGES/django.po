@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 05:01+0000\n"
+"POT-Creation-Date: 2021-11-30 21:49+0000\n"
 "PO-Revision-Date: 2021-11-28 21:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -2154,7 +2154,7 @@ msgstr "Stückpreis für die angegebene Anzahl"
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:289
 #: part/templates/part/bom_upload/upload_file.html:52
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:212
-#: part/views.py:854
+#: part/views.py:858
 msgid "Upload File"
 msgstr "Datei hochgeladen"
 
@@ -2162,7 +2162,7 @@ msgstr "Datei hochgeladen"
 #: order/views.py:290 part/templates/part/bom_upload/match_fields.html:52
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:213
-#: part/views.py:855
+#: part/views.py:859
 msgid "Match Fields"
 msgstr "Übereinstimmende Felder"
 
@@ -2771,7 +2771,7 @@ msgstr "Preisinformationen ansehen"
 
 #: company/templates/company/supplier_part.html:184
 #: company/templates/company/supplier_part.html:290
-#: part/templates/part/prices.html:271 part/views.py:1713
+#: part/templates/part/prices.html:271 part/views.py:1717
 msgid "Add Price Break"
 msgstr "Preisstaffel hinzufügen"
 
@@ -2779,11 +2779,11 @@ msgstr "Preisstaffel hinzufügen"
 msgid "No price break information found"
 msgstr "Keine Informationen zur Preisstaffel gefunden"
 
-#: company/templates/company/supplier_part.html:224 part/views.py:1775
+#: company/templates/company/supplier_part.html:224 part/views.py:1779
 msgid "Delete Price Break"
 msgstr "Preisstaffel löschen"
 
-#: company/templates/company/supplier_part.html:238 part/views.py:1761
+#: company/templates/company/supplier_part.html:238 part/views.py:1765
 msgid "Edit Price Break"
 msgstr "Preisstaffel bearbeiten"
 
@@ -2857,20 +2857,20 @@ msgstr "Firmen"
 msgid "New Company"
 msgstr "Neue Firma"
 
-#: company/views.py:129 part/views.py:580
+#: company/views.py:129 part/views.py:584
 msgid "Download Image"
 msgstr "Bild herunterladen"
 
-#: company/views.py:158 part/views.py:612
+#: company/views.py:158 part/views.py:616
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "Bildgröße überschreitet maximal-erlaubte Größe für Downloads"
 
-#: company/views.py:165 part/views.py:619
+#: company/views.py:165 part/views.py:623
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Ungültige Antwort {code}"
 
-#: company/views.py:174 part/views.py:628
+#: company/views.py:174 part/views.py:632
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
@@ -4507,7 +4507,7 @@ msgstr "Stückliste hochladen"
 msgid "Copy BOM"
 msgstr "Stückliste kopieren"
 
-#: part/templates/part/detail.html:365 part/views.py:751
+#: part/templates/part/detail.html:365 part/views.py:755
 msgid "Validate BOM"
 msgstr "Stückliste überprüfen"
 
@@ -4917,7 +4917,7 @@ msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 msgid "Internal Cost"
 msgstr "Interne Kosten"
 
-#: part/templates/part/prices.html:215 part/views.py:1784
+#: part/templates/part/prices.html:215 part/views.py:1788
 msgid "Add Internal Price Break"
 msgstr "Interne Preisspanne hinzufügen"
 
@@ -4973,107 +4973,107 @@ msgstr "Kategorie für {n} Teile setzen"
 msgid "Match References"
 msgstr "Referenzen zuteilen"
 
-#: part/views.py:498
+#: part/views.py:502
 msgid "None"
 msgstr "Kein(e)"
 
-#: part/views.py:557
+#: part/views.py:561
 msgid "Part QR Code"
 msgstr "Teil-QR-Code"
 
-#: part/views.py:659
+#: part/views.py:663
 msgid "Select Part Image"
 msgstr "Teilbild auswählen"
 
-#: part/views.py:685
+#: part/views.py:689
 msgid "Updated part image"
 msgstr "Teilbild aktualisiert"
 
-#: part/views.py:688
+#: part/views.py:692
 msgid "Part image not found"
 msgstr "Teilbild nicht gefunden"
 
-#: part/views.py:700
+#: part/views.py:704
 msgid "Duplicate BOM"
 msgstr "Stückliste duplizieren"
 
-#: part/views.py:730
+#: part/views.py:734
 msgid "Confirm duplication of BOM from parent"
 msgstr "bestätige Duplizierung Stückliste von übergeordneter Stückliste"
 
-#: part/views.py:772
+#: part/views.py:776
 msgid "Confirm that the BOM is valid"
 msgstr "Bestätigen, dass Stückliste korrekt ist"
 
-#: part/views.py:783
+#: part/views.py:787
 msgid "Validated Bill of Materials"
 msgstr "überprüfte Stückliste"
 
-#: part/views.py:856
+#: part/views.py:860
 msgid "Match Parts"
 msgstr "Teile zuordnen"
 
-#: part/views.py:1192
+#: part/views.py:1196
 msgid "Export Bill of Materials"
 msgstr "Stückliste exportieren"
 
-#: part/views.py:1244
+#: part/views.py:1248
 msgid "Confirm Part Deletion"
 msgstr "Löschen des Teils bestätigen"
 
-#: part/views.py:1251
+#: part/views.py:1255
 msgid "Part was deleted"
 msgstr "Teil wurde gelöscht"
 
-#: part/views.py:1260
+#: part/views.py:1264
 msgid "Part Pricing"
 msgstr "Teilbepreisung"
 
-#: part/views.py:1409
+#: part/views.py:1413
 msgid "Create Part Parameter Template"
 msgstr "Teilparametervorlage anlegen"
 
-#: part/views.py:1419
+#: part/views.py:1423
 msgid "Edit Part Parameter Template"
 msgstr "Teilparametervorlage bearbeiten"
 
-#: part/views.py:1426
+#: part/views.py:1430
 msgid "Delete Part Parameter Template"
 msgstr "Teilparametervorlage löschen"
 
-#: part/views.py:1485 templates/js/translated/part.js:310
+#: part/views.py:1489 templates/js/translated/part.js:310
 msgid "Edit Part Category"
 msgstr "Teil-Kategorie bearbeiten"
 
-#: part/views.py:1523
+#: part/views.py:1527
 msgid "Delete Part Category"
 msgstr "Teil-Kategorie löschen"
 
-#: part/views.py:1529
+#: part/views.py:1533
 msgid "Part category was deleted"
 msgstr "Teil-Kategorie wurde gelöscht"
 
-#: part/views.py:1538
+#: part/views.py:1542
 msgid "Create Category Parameter Template"
 msgstr "Kategorieparametervorlage anlegen"
 
-#: part/views.py:1639
+#: part/views.py:1643
 msgid "Edit Category Parameter Template"
 msgstr "Kategorieparametervorlage bearbeiten"
 
-#: part/views.py:1695
+#: part/views.py:1699
 msgid "Delete Category Parameter Template"
 msgstr "Kategorieparametervorlage löschen"
 
-#: part/views.py:1717
+#: part/views.py:1721
 msgid "Added new price break"
 msgstr "neue Preisstaffel hinzufügt"
 
-#: part/views.py:1793
+#: part/views.py:1797
 msgid "Edit Internal Price Break"
 msgstr "Interne Preisspanne bearbeiten"
 
-#: part/views.py:1801
+#: part/views.py:1805
 msgid "Delete Internal Price Break"
 msgstr "Interne Preisspanne löschen"
 
