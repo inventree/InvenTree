@@ -122,7 +122,10 @@ function showMessage(message, options={}) {
 var notificationUpdateTic = 0;
 /**
  * The notification checker is initiated when the document is loaded. It checks if there are unread notifications
- * if unread messages exist the alert flag is raised by making it visible
+ * if unread messages exist the notification indicator is updated
+ * 
+ * options:
+ * - force: set true to force an update now (if you got in focus for example)
  **/
 function notificationCheck(force = false) {
     notificationUpdateTic = notificationUpdateTic + 1;
