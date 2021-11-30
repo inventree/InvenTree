@@ -12,10 +12,15 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 17
+INVENTREE_API_VERSION = 18
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v18 -> 2021-11-15
+    - Adds the ability to filter BomItem API by "uses" field
+    - This returns a list of all BomItems which "use" the specified part
+    - Includes inherited BomItem objects
 
 v17 -> 2021-11-09
     - Adds API endpoints for GLOBAL and USER settings objects
@@ -115,10 +120,10 @@ def isInvenTreeDevelopmentVersion():
 def inventreeDocsVersion():
     """
     Return the version string matching the latest documentation.
-    
+
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
-    
+
     """
 
     if isInvenTreeDevelopmentVersion():

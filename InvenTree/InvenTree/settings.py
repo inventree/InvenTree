@@ -26,6 +26,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+import django.conf.locale
 
 
 def _is_true(x):
@@ -90,6 +91,12 @@ with open(cfg_filename, 'r') as cfg:
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
+))
+
+# Determine if we are running in "demo mode"
+DEMO_MODE = _is_true(get_setting(
+    'INVENTREE_DEMO',
+    CONFIG.get('demo', False)
 ))
 
 DOCKER = _is_true(get_setting(
@@ -234,7 +241,10 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 MEDIA_URL = '/media/'
 
 if DEBUG:
-    logger.info("InvenTree running in DEBUG mode")
+    logger.info("InvenTree running with DEBUG enabled")
+
+if DEMO_MODE:
+    logger.warning("InvenTree running in DEMO mode")
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -247,7 +257,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'user_sessions',                # db user sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
@@ -289,7 +299,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -297,7 +307,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
 ])
 
 # Error reporting middleware
@@ -616,6 +626,12 @@ if _cache_host:
     # as well
     Q_CLUSTER["django_redis"] = "worker"
 
+# database user sessions
+SESSION_ENGINE = 'user_sessions.backends.db'
+LOGOUT_REDIRECT_URL = 'index'
+SILENCED_SYSTEM_CHECKS = [
+    'admin.E410',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -655,6 +671,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('es-mx', _('Spanish (Mexican)')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
@@ -663,6 +680,7 @@ LANGUAGES = [
     ('nl', _('Dutch')),
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('pt', _('Portugese')),
     ('ru', _('Russian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
@@ -670,6 +688,25 @@ LANGUAGES = [
     ('vi', _('Vietnamese')),
     ('zh-cn', _('Chinese')),
 ]
+
+# Testing interface translations
+if get_setting('TEST_TRANSLATIONS', False):
+    # Set default language
+    LANGUAGE_CODE = 'xx'
+
+    # Add to language catalog
+    LANGUAGES.append(('xx', 'Test'))
+
+    # Add custom languages not provided by Django
+    EXTRA_LANG_INFO = {
+        'xx': {
+            'code': 'xx',
+            'name': 'Test',
+            'name_local': 'Test'
+        },
+    }
+    LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
+    django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
 CURRENCIES = CONFIG.get(

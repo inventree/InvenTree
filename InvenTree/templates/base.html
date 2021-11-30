@@ -5,6 +5,7 @@
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
+{% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -85,10 +86,20 @@
             </div>
         </div>
         <main class='col ps-md-2 pt-2 pe-2'>
-
+            
             {% block alerts %}
             <div class='notification-area' id='alerts'>
                 <!-- Div for displayed alerts -->
+                {% if server_restart_required %}
+                <div id='alert-restart-server' class='alert alert-danger' role='alert'>
+                    <span class='fas fa-server'></span>
+                    <b>{% trans "Server Restart Required" %}</b>
+                    <small>
+                        <br>
+                        {% trans "A configuration option has been changed which requires a server restart" %}. {% trans "Contact your system administrator for further information" %}
+                    </small>
+                </div>
+                {% endif %}
             </div>
             {% endblock %}
 

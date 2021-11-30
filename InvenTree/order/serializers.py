@@ -17,14 +17,14 @@ from rest_framework.serializers import ValidationError
 
 from sql_util.utils import SubqueryCount
 
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializer
-from InvenTree.serializers import InvenTreeMoneySerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
-
-from InvenTree.status_codes import StockStatus
-
+from common.settings import currency_code_mappings
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+
+from InvenTree.serializers import InvenTreeAttachmentSerializer
+from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.serializers import InvenTreeMoneySerializer
+from InvenTree.status_codes import StockStatus
 
 from part.serializers import PartBriefSerializer
 
@@ -36,7 +36,7 @@ from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
-from common.settings import currency_code_mappings
+from users.serializers import OwnerSerializer
 
 
 class POSerializer(InvenTreeModelSerializer):
@@ -85,6 +85,8 @@ class POSerializer(InvenTreeModelSerializer):
 
     reference = serializers.CharField(required=True)
 
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
+
     class Meta:
         model = PurchaseOrder
 
@@ -99,6 +101,7 @@ class POSerializer(InvenTreeModelSerializer):
             'overdue',
             'reference',
             'responsible',
+            'responsible_detail',
             'supplier',
             'supplier_detail',
             'supplier_reference',
@@ -373,8 +376,6 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the PurchaseOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = PurchaseOrderAttachment
 
@@ -382,6 +383,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'order',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',
@@ -551,11 +553,11 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
     fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
-    
+
     sale_price = InvenTreeMoneySerializer(
         allow_null=True
     )
@@ -593,8 +595,6 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializers for the SalesOrderAttachment model
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = SalesOrderAttachment
 
@@ -603,6 +603,7 @@ class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
             'order',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]

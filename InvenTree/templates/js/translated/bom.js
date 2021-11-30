@@ -16,6 +16,7 @@
 /* exported
     newPartFromBomWizard,
     loadBomTable,
+    loadUsedInTable,
     removeRowFromBomWizard,
     removeColFromBomWizard,
 */
@@ -191,6 +192,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 </a>
             </td>
             <td id='description-${pk}'><em>${part.description}</em></td>
+            <td id='stock-${pk}'><em>${part.stock}</em></td>
             <td>${buttons}</td>
         </tr>
         `;
@@ -211,6 +213,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             <tr>
                 <th>{% trans "Part" %}</th>
                 <th>{% trans "Description" %}</th>
+                <th>{% trans "Stock" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -311,7 +314,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 }
 
 
-function loadBomTable(table, options) {
+function loadBomTable(table, options={}) {
     /* Load a BOM table with some configurable options.
      * 
      * Following options are available:
@@ -395,7 +398,7 @@ function loadBomTable(table, options) {
 
                 var sub_part = row.sub_part_detail;
 
-                html += makePartIcons(row.sub_part_detail);
+                html += makePartIcons(sub_part);
 
                 if (row.substitutes && row.substitutes.length > 0) {
                     html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
@@ -672,8 +675,9 @@ function loadBomTable(table, options) {
 
                     table.treegrid('collapseAll');
                 },
-                error: function() {
+                error: function(xhr) {
                     console.log('Error requesting BOM for part=' + part_pk);
+                    showApiError(xhr);
                 }
             }
         );
@@ -834,4 +838,167 @@ function loadBomTable(table, options) {
             );
         });
     }
+}
+
+
+/*
+ * Load a table which shows the assemblies which "require" a certain part.
+ *
+ * Arguments:
+ * - table: The ID string of the table element e.g. '#used-in-table'
+ * - part_id: The ID (PK) of the part we are interested in
+ * 
+ * Options:
+ * - 
+ * 
+ * The following "options" are available.
+ */
+function loadUsedInTable(table, part_id, options={}) {
+
+    var params = options.params || {};
+
+    params.uses = part_id;
+    params.part_detail = true;
+    params.sub_part_detail = true,
+    params.show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('usedin');
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('usedin', $(table), options.filterTarget || '#filter-list-usedin');
+
+    function loadVariantData(row) {
+        // Load variants information for inherited BOM rows
+
+        inventreeGet(
+            '{% url "api-part-list" %}',
+            {
+                assembly: true,
+                ancestor: row.part,
+            },
+            {
+                success: function(variantData) {
+                    // Iterate through each variant item
+                    for (var jj = 0; jj < variantData.length; jj++) {
+                        variantData[jj].parent = row.pk;
+                        
+                        var variant = variantData[jj];
+
+                        // Add this variant to the table, augmented
+                        $(table).bootstrapTable('append', [{
+                            // Point the parent to the "master" assembly row 
+                            parent: row.pk,
+                            part: variant.pk,                       
+                            part_detail: variant,
+                            sub_part: row.sub_part,
+                            sub_part_detail: row.sub_part_detail,
+                            quantity: row.quantity,
+                        }]);
+                    }
+                },
+                error: function(xhr) {
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
+
+    $(table).inventreeTable({
+        url: options.url || '{% url "api-bom-list" %}',
+        name: options.table_name || 'usedin',
+        sortable: true,
+        search: true,
+        showColumns: true,
+        queryParams: filters,
+        original: params,
+        rootParentId: 'top-level-item',
+        idField: 'pk',
+        uniqueId: 'pk',
+        parentIdField: 'parent',
+        treeShowField: 'part',
+        onLoadSuccess: function(tableData) {
+            // Once the initial data are loaded, check if there are any "inherited" BOM lines
+            for (var ii = 0; ii < tableData.length; ii++) {
+                var row = tableData[ii];
+
+                // This is a "top level" item in the table
+                row.parent = 'top-level-item';
+
+                // Ignore this row as it is not "inherited" by variant parts
+                if (!row.inherited) {
+                    continue;
+                }
+
+                loadVariantData(row);
+            }
+        },
+        onPostBody: function() {
+            $(table).treegrid({
+                treeColumn: 0,
+            });
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'part',
+                title: '{% trans "Assembly" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${value}/?display=bom`;
+                    var html = '';
+
+                    var part = row.part_detail;
+
+                    html += imageHoverIcon(part.thumbnail);
+                    html += renderLink(part.full_name, url);
+                    html += makePartIcons(part);
+
+                    return html;
+                }
+            },
+            {
+                field: 'sub_part',
+                title: '{% trans "Required Part" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${value}/`;
+                    var html = '';
+
+                    var sub_part = row.sub_part_detail;
+
+                    html += imageHoverIcon(sub_part.thumbnail);
+                    html += renderLink(sub_part.full_name, url);
+                    html += makePartIcons(sub_part);
+
+                    return html;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Required Quantity" %}',
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.parent && row.parent != 'top-level-item') {
+                        html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
+                    }
+
+                    return html;
+                }
+            }
+        ]
+    });
 }

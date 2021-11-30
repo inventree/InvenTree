@@ -6,9 +6,56 @@
 */
 
 /* exported
+    addAttachmentButtonCallbacks,
     loadAttachmentTable,
     reloadAttachmentTable,
 */
+
+
+/*
+ * Add callbacks to buttons for creating new attachments.
+ * 
+ * Note: Attachments can also be external links!
+ */
+function addAttachmentButtonCallbacks(url, fields={}) {
+
+    // Callback for 'new attachment' button
+    $('#new-attachment').click(function() {
+
+        var file_fields = {
+            attachment: {},
+            comment: {},
+        };
+
+        Object.assign(file_fields, fields);
+
+        constructForm(url, {
+            fields: file_fields,
+            method: 'POST',
+            onSuccess: reloadAttachmentTable,
+            title: '{% trans "Add Attachment" %}',
+        });
+    });
+
+    // Callback for 'new link' button
+    $('#new-attachment-link').click(function() {
+
+        var link_fields = {
+            link: {},
+            comment: {},
+        };
+
+        Object.assign(link_fields, fields);
+        
+        constructForm(url, {
+            fields: link_fields,
+            method: 'POST',
+            onSuccess: reloadAttachmentTable,
+            title: '{% trans "Add Link" %}',
+        });
+    });
+}
+
 
 function reloadAttachmentTable() {
 
@@ -19,6 +66,8 @@ function reloadAttachmentTable() {
 function loadAttachmentTable(url, options) {
 
     var table = options.table || '#attachment-table';
+
+    addAttachmentButtonCallbacks(url, options.fields || {});
 
     $(table).inventreeTable({
         url: url,
@@ -34,56 +83,77 @@ function loadAttachmentTable(url, options) {
             $(table).find('.button-attachment-edit').click(function() {
                 var pk = $(this).attr('pk');
 
-                if (options.onEdit) {
-                    options.onEdit(pk);
-                }
+                constructForm(`${url}${pk}/`, {
+                    fields: {
+                        link: {},
+                        comment: {}, 
+                    },
+                    processResults: function(data, fields, opts) {
+                        // Remove the "link" field if the attachment is a file!
+                        if (data.attachment) {
+                            delete opts.fields.link;
+                        }
+                    },
+                    onSuccess: reloadAttachmentTable,
+                    title: '{% trans "Edit Attachment" %}',
+                });
             });
             
             // Add callback for 'delete' button
             $(table).find('.button-attachment-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                if (options.onDelete) {
-                    options.onDelete(pk);
-                }
+                constructForm(`${url}${pk}/`, {
+                    method: 'DELETE',
+                    confirmMessage: '{% trans "Confirm Delete" %}',
+                    title: '{% trans "Delete Attachment" %}',
+                    onSuccess: reloadAttachmentTable,
+                });
             });
         },
         columns: [
             {
                 field: 'attachment',
-                title: '{% trans "File" %}',
-                formatter: function(value) {
+                title: '{% trans "Attachment" %}',
+                formatter: function(value, row) {
 
-                    var icon = 'fa-file-alt';
+                    if (row.attachment) {
+                        var icon = 'fa-file-alt';
 
-                    var fn = value.toLowerCase();
+                        var fn = value.toLowerCase();
 
-                    if (fn.endsWith('.csv')) {
-                        icon = 'fa-file-csv';
-                    } else if (fn.endsWith('.pdf')) {
-                        icon = 'fa-file-pdf';
-                    } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
-                        icon = 'fa-file-excel';
-                    } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
-                        icon = 'fa-file-word';
-                    } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
-                        icon = 'fa-file-archive';
+                        if (fn.endsWith('.csv')) {
+                            icon = 'fa-file-csv';
+                        } else if (fn.endsWith('.pdf')) {
+                            icon = 'fa-file-pdf';
+                        } else if (fn.endsWith('.xls') || fn.endsWith('.xlsx')) {
+                            icon = 'fa-file-excel';
+                        } else if (fn.endsWith('.doc') || fn.endsWith('.docx')) {
+                            icon = 'fa-file-word';
+                        } else if (fn.endsWith('.zip') || fn.endsWith('.7z')) {
+                            icon = 'fa-file-archive';
+                        } else {
+                            var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
+
+                            images.forEach(function(suffix) {
+                                if (fn.endsWith(suffix)) {
+                                    icon = 'fa-file-image';
+                                }
+                            });
+                        }
+
+                        var split = value.split('/');
+                        var filename = split[split.length - 1];
+
+                        var html = `<span class='fas ${icon}'></span> ${filename}`;
+
+                        return renderLink(html, value);
+                    } else if (row.link) {
+                        var html = `<span class='fas fa-link'></span> ${row.link}`;
+                        return renderLink(html, row.link);
                     } else {
-                        var images = ['.png', '.jpg', '.bmp', '.gif', '.svg', '.tif'];
-
-                        images.forEach(function(suffix) {
-                            if (fn.endsWith(suffix)) {
-                                icon = 'fa-file-image';
-                            }
-                        });
+                        return '-';
                     }
-
-                    var split = value.split('/');
-                    var filename = split[split.length - 1];
-
-                    var html = `<span class='fas ${icon}'></span> ${filename}`;
-
-                    return renderLink(html, value);
                 }
             },
             {

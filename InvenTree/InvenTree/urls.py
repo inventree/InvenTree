@@ -38,6 +38,7 @@ from rest_framework.documentation import include_docs_urls
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
+from .views import CustomSessionDeleteView, CustomSessionDeleteOtherView
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
@@ -77,7 +78,7 @@ apipatterns = [
 settings_urls = [
 
     url(r'^i18n/?', include('django.conf.urls.i18n')),
-    
+
     url(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     url(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
 
@@ -155,6 +156,10 @@ urlpatterns = [
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^markdownx/', include('markdownx.urls')),
+
+    # DB user sessions
+    url(r'^accounts/sessions/other/delete/$', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
+    url(r'^accounts/sessions/(?P<pk>\w+)/delete/$', view=CustomSessionDeleteView.as_view(), name='session_delete', ),
 
     # Single Sign On / allauth
     # overrides of urlpatterns

@@ -28,6 +28,7 @@
     disableFormInput,
     enableFormInput,
     hideFormInput,
+    setFormInputPlaceholder,
     setFormGroupVisibility,
     showFormInput,
 */
@@ -924,8 +925,8 @@ function handleFormSuccess(response, options) {
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
     // Display any messages
-    if (response && response.success) {
-        showAlertOrCache(response.success, cache, {style: 'success'});
+    if (response && (response.success || options.successMessage)) {
+        showAlertOrCache(response.success || options.successMessage, cache, {style: 'success'});
     }
     
     if (response && response.info) {
@@ -1274,6 +1275,11 @@ function initializeGroups(fields, options) {
             hideFormGroup(group, options);
         }
     }
+}
+
+// Set the placeholder value for a field
+function setFormInputPlaceholder(name, placeholder, options) {
+    $(options.modal).find(`#id_${name}`).attr('placeholder', placeholder);
 }
 
 // Clear a form input

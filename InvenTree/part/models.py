@@ -1587,7 +1587,7 @@ class Part(MPTTModel):
         # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
         used_in = self.get_used_in().all()
 
-        parts = parts.exclude(id__in=[item.part.id for item in used_in])
+        parts = parts.exclude(id__in=[part.id for part in used_in])
 
         return parts
 
@@ -2118,7 +2118,7 @@ class Part(MPTTModel):
         """
         Returns True if the total stock for this part is less than the minimum stock level
         """
-        
+
         return self.get_stock_count() < self.minimum_stock
 
 
@@ -2133,20 +2133,6 @@ def after_save_part(sender, instance: Part, created, **kwargs):
 
         # Run this check in the background
         InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
-
-
-def attach_file(instance, filename):
-    """ Function for storing a file for a PartAttachment
-
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
-
-    Returns:
-        path to store file, format: 'part_file_<pk>_filename'
-    """
-    # Construct a path to store a file attachment
-    return os.path.join('part_files', str(instance.part.id), filename)
 
 
 class PartAttachment(InvenTreeAttachment):
@@ -2169,7 +2155,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     """
     Represents a price break for selling this part
     """
-    
+
     @staticmethod
     def get_api_url():
         return reverse('api-part-sale-price-list')

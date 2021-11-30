@@ -124,6 +124,7 @@ function supplierPartFields() {
                 part_detail: true,
                 manufacturer_detail: true,
             },
+            auto_fill: true,
         },
         description: {},
         link: {

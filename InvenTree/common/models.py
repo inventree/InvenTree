@@ -63,13 +63,15 @@ class BaseInvenTreeSetting(models.Model):
         Enforce validation and clean before saving
         """
 
+        self.key = str(self.key).upper()
+
         self.clean()
         self.validate_unique()
 
         super().save()
 
     @classmethod
-    def allValues(cls, user=None):
+    def allValues(cls, user=None, exclude_hidden=False):
         """
         Return a dict of "all" defined global settings.
 
@@ -94,13 +96,21 @@ class BaseInvenTreeSetting(models.Model):
         for key in cls.GLOBAL_SETTINGS.keys():
 
             if key.upper() not in settings:
-
                 settings[key.upper()] = cls.get_setting_default(key)
+
+            if exclude_hidden:
+                hidden = cls.GLOBAL_SETTINGS[key].get('hidden', False)
+
+                if hidden:
+                    # Remove hidden items
+                    del settings[key.upper()]
 
         for key, value in settings.items():
             validator = cls.get_setting_validator(key)
 
-            if cls.validator_is_bool(validator):
+            if cls.is_protected(key):
+                value = '***'
+            elif cls.validator_is_bool(validator):
                 value = InvenTree.helpers.str2bool(value)
             elif cls.validator_is_int(validator):
                 try:
@@ -477,7 +487,7 @@ class BaseInvenTreeSetting(models.Model):
 
         elif self.is_int():
             return 'integer'
-        
+
         else:
             return 'string'
 
@@ -530,6 +540,19 @@ class BaseInvenTreeSetting(models.Model):
 
         return value
 
+    @classmethod
+    def is_protected(cls, key):
+        """
+        Check if the setting value is protected
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            return cls.GLOBAL_SETTINGS[key].get('protected', False)
+        else:
+            return False
+
 
 def settings_group_options():
     """build up group tuple for settings based on gour choices"""
@@ -544,6 +567,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    def save(self, *args, **kwargs):
+        """
+        When saving a global setting, check to see if it requires a server restart.
+        If so, set the "SERVER_RESTART_REQUIRED" setting to True
+        """
+
+        super().save()
+
+        if self.requires_restart():
+            InvenTreeSetting.set_setting('SERVER_REQUIRES_RESTART', True, None)
 
     """
     Dict of all global settings values:
@@ -562,6 +596,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     """
 
     GLOBAL_SETTINGS = {
+
+        'SERVER_RESTART_REQUIRED': {
+            'name': _('Restart required'),
+            'description': _('A setting has been changed which requires a server restart'),
+            'default': False,
+            'validator': bool,
+            'hidden': True,
+        },
 
         'INVENTREE_INSTANCE': {
             'name': _('InvenTree Instance Name'),
@@ -935,6 +977,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         """
 
         return self.__class__.get_setting(self.key)
+
+    def requires_restart(self):
+        """
+        Return True if this setting requires a server restart after changing
+        """
+
+        options = InvenTreeSetting.GLOBAL_SETTINGS.get(self.key, None)
+
+        if options:
+            return options.get('requires_restart', False)
+        else:
+            return False
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):

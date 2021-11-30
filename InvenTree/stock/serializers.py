@@ -32,6 +32,7 @@ from company.serializers import SupplierPartSerializer
 
 import InvenTree.helpers
 import InvenTree.serializers
+from InvenTree.serializers import InvenTreeDecimalField
 
 from part.serializers import PartBriefSerializer
 
@@ -55,7 +56,8 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
-    quantity = serializers.FloatField()
+
+    quantity = InvenTreeDecimalField()
 
     class Meta:
         model = StockItem
@@ -78,6 +80,15 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
+
+    def update(self, instance, validated_data):
+        """
+        Custom update method to pass the user information through to the instance
+        """
+
+        instance._user = self.context['user']
+
+        return super().update(instance, validated_data)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -136,7 +147,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
 
-    # quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
@@ -409,8 +420,6 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
     user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
-    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
-
     # TODO: Record the uploading user when creating or updating an attachment!
 
     class Meta:
@@ -421,6 +430,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
             'stock_item',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
             'user',
@@ -604,7 +614,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
 
                 stock_item = item['pk']
                 quantity = item['quantity']
-                
+
                 stock_item.stocktake(
                     quantity,
                     request.user,
@@ -643,7 +653,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
     """
 
     def save(self):
-        
+
         request = self.context['request']
 
         data = self.validated_data
@@ -696,7 +706,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         request = self.context['request']
 
         data = self.validated_data
-        
+
         items = data['items']
         notes = data.get('notes', '')
         location = data['location']

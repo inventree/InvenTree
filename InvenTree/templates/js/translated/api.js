@@ -54,6 +54,7 @@ function inventreeGet(url, filters={}, options={}) {
         data: filters,
         dataType: 'json',
         contentType: 'application/json',
+        async: (options.async == false) ? false : true,
         success: function(response) {
             if (options.success) {
                 options.success(response);
@@ -217,8 +218,10 @@ function showApiError(xhr, url) {
         break;
     }
 
-    message += '<hr>';
-    message += `URL: ${url}`;
+    if (url) {
+        message += '<hr>';
+        message += `URL: ${url}`;
+    }
 
     showMessage(title, {
         style: 'danger',

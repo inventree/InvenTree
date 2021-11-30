@@ -4,6 +4,7 @@
 {% load inventree_extras %}
 {% load socialaccount %}
 {% load crispy_forms_tags %}
+{% load user_sessions i18n %}
 
 {% block label %}account{% endblock %}
 
@@ -12,12 +13,15 @@
 {% endblock %}
 
 {% block actions %}
+{% inventree_demo_mode as demo %}
+{% if not demo %}
+<div class='btn btn-outline-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+    <span class='fas fa-key'></span> {% trans "Set Password" %}
+</div>
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
 </div>
-<div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-    <span class='fas fa-key'></span> {% trans "Set Password" %}
-</div>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -171,58 +175,48 @@
 </div>
 
 <div class='panel-heading'>
-    <h4>{% trans "Language Settings" %}</h4>
-</div>
-
-<div class="row">
-    <div class="col">
-        <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{% url 'settings' %}">
-            <label for='language' class=' requiredField'>
-                {% trans "Select language" %}
-            </label>
-            <div class='form-group input-group mb-3'>
-                <select name="language" class="select form-control w-25">
-                    {% get_current_language as LANGUAGE_CODE %}
-                    {% get_available_languages as LANGUAGES %}
-                    {% get_language_info_list for LANGUAGES as languages %}
-                    {% if 'alllang' in request.GET %}{% define True as ALL_LANG %}{% endif %}
-                    {% for language in languages %}
-                        {% define language.code as lang_code %}
-                        {% define locale_stats|keyvalue:lang_code as lang_translated %}
-                        {% if lang_translated > 10 or lang_code == 'en' or lang_code == LANGUAGE_CODE %}{% define True as use_lang %}{% else %}{% define False as use_lang %}{% endif %}
-                        {% if ALL_LANG or use_lang  %}
-                        <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
-                            {{ language.name_local }} ({{ lang_code }}) 
-                            {% if lang_translated %}
-                                {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
-                            {% else %}
-                                {% if lang_code == 'en' %}-{% else %}{% trans 'No translations available' %}{% endif %}
-                            {% endif %}
-                        </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <div class='input-group-append'>
-                    <input type="submit" value="{% trans 'Set Language' %}" class="btn btn btn-primary">
-                </div>
-                <p>{% trans "Some languages are not complete" %}
-                {% if ALL_LANG %}
-                . <a href="{% url 'settings' %}">{% trans "Show only sufficent" %}</a>
-                {% else %}
-                and hidden. <a href="?alllang">{% trans "Show them too" %}</a>
-                {% endif %}
-                </p>
-            </div>
-    </form>
-    </div>
-    <div class="col-sm-6">
-        <h4>{% trans "Help the translation efforts!" %}</h4>
-        <p>{% blocktrans with link="https://crowdin.com/project/inventree" %}Native language translation of the InvenTree web application is <a href="{{link}}">community contributed via crowdin</a>. Contributions are welcomed and encouraged.{% endblocktrans %}</p>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Active Sessions" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            {% if session_list.count > 1 %}
+            <form method="post" action="{% url 'session_delete_other' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-default btn-danger" title='{% trans "Log out active sessions (except this one)" %}'>
+                    {% trans "Log Out Active Sessions" %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
     </div>
 </div>
 
+<div>
+    {% trans "<em>unknown on unknown</em>" as unknown_on_unknown %}
+    {% trans "<em>unknown</em>" as unknown %}
+    <table class="table table-striped table-condensed">
+    <thead>
+        <tr>
+        <th>{% trans "IP Address" %}</th>
+        <th>{% trans "Device" %}</th>
+        <th>{% trans "Last Activity" %}</th>
+        </tr>
+    </thead>
+    {% for object in session_list %}
+        <tr {% if object.session_key == session_key %}class="active"{% endif %}>
+        <td>{{ object.ip }}</td>
+        <td>{{ object.user_agent|device|default_if_none:unknown_on_unknown|safe }}</td>
+        <td>
+            {% if object.session_key == session_key %}
+            {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago (this session){% endblocktrans %}
+            {% else %}
+            {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago{% endblocktrans %}
+            {% endif %}
+        </td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
 {% endblock %}
 
 {% block js_ready %}
