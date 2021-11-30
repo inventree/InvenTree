@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 05:01+0000\n"
-"PO-Revision-Date: 2021-11-30 05:04\n"
+"POT-Creation-Date: 2021-11-30 21:49+0000\n"
+"PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2154,7 +2154,7 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:289
 #: part/templates/part/bom_upload/upload_file.html:52
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:212
-#: part/views.py:854
+#: part/views.py:858
 msgid "Upload File"
 msgstr "Carica file"
 
@@ -2162,7 +2162,7 @@ msgstr "Carica file"
 #: order/views.py:290 part/templates/part/bom_upload/match_fields.html:52
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:213
-#: part/views.py:855
+#: part/views.py:859
 msgid "Match Fields"
 msgstr "Abbina Campi"
 
@@ -2771,7 +2771,7 @@ msgstr "Informazioni Prezzi"
 
 #: company/templates/company/supplier_part.html:184
 #: company/templates/company/supplier_part.html:290
-#: part/templates/part/prices.html:271 part/views.py:1713
+#: part/templates/part/prices.html:271 part/views.py:1717
 msgid "Add Price Break"
 msgstr "Aggiungi riduzione prezzo"
 
@@ -2779,11 +2779,11 @@ msgstr "Aggiungi riduzione prezzo"
 msgid "No price break information found"
 msgstr "Nessuna informazione di riduzione di prezzo trovata"
 
-#: company/templates/company/supplier_part.html:224 part/views.py:1775
+#: company/templates/company/supplier_part.html:224 part/views.py:1779
 msgid "Delete Price Break"
 msgstr "Elimina riduzione di prezzo"
 
-#: company/templates/company/supplier_part.html:238 part/views.py:1761
+#: company/templates/company/supplier_part.html:238 part/views.py:1765
 msgid "Edit Price Break"
 msgstr ""
 
@@ -2857,20 +2857,20 @@ msgstr "Aziende"
 msgid "New Company"
 msgstr "Nuova Azienda"
 
-#: company/views.py:129 part/views.py:580
+#: company/views.py:129 part/views.py:584
 msgid "Download Image"
 msgstr "Download Immagine"
 
-#: company/views.py:158 part/views.py:612
+#: company/views.py:158 part/views.py:616
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "La dimensione dell'immagine supera la dimensione massima consentita per il download"
 
-#: company/views.py:165 part/views.py:619
+#: company/views.py:165 part/views.py:623
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Risposta non valida: {code}"
 
-#: company/views.py:174 part/views.py:628
+#: company/views.py:174 part/views.py:632
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fornito non è un file immagine valido"
 
@@ -4507,7 +4507,7 @@ msgstr ""
 msgid "Copy BOM"
 msgstr ""
 
-#: part/templates/part/detail.html:365 part/views.py:751
+#: part/templates/part/detail.html:365 part/views.py:755
 msgid "Validate BOM"
 msgstr ""
 
@@ -4913,7 +4913,7 @@ msgstr ""
 msgid "Internal Cost"
 msgstr ""
 
-#: part/templates/part/prices.html:215 part/views.py:1784
+#: part/templates/part/prices.html:215 part/views.py:1788
 msgid "Add Internal Price Break"
 msgstr ""
 
@@ -4969,107 +4969,107 @@ msgstr "Imposta categoria per {n} articoli"
 msgid "Match References"
 msgstr ""
 
-#: part/views.py:498
+#: part/views.py:502
 msgid "None"
 msgstr ""
 
-#: part/views.py:557
+#: part/views.py:561
 msgid "Part QR Code"
 msgstr ""
 
-#: part/views.py:659
+#: part/views.py:663
 msgid "Select Part Image"
 msgstr ""
 
-#: part/views.py:685
+#: part/views.py:689
 msgid "Updated part image"
 msgstr ""
 
-#: part/views.py:688
+#: part/views.py:692
 msgid "Part image not found"
 msgstr ""
 
-#: part/views.py:700
+#: part/views.py:704
 msgid "Duplicate BOM"
 msgstr ""
 
-#: part/views.py:730
+#: part/views.py:734
 msgid "Confirm duplication of BOM from parent"
 msgstr ""
 
-#: part/views.py:772
+#: part/views.py:776
 msgid "Confirm that the BOM is valid"
 msgstr ""
 
-#: part/views.py:783
+#: part/views.py:787
 msgid "Validated Bill of Materials"
 msgstr ""
 
-#: part/views.py:856
+#: part/views.py:860
 msgid "Match Parts"
 msgstr ""
 
-#: part/views.py:1192
+#: part/views.py:1196
 msgid "Export Bill of Materials"
 msgstr "Esporta Distinta base"
 
-#: part/views.py:1244
+#: part/views.py:1248
 msgid "Confirm Part Deletion"
 msgstr ""
 
-#: part/views.py:1251
+#: part/views.py:1255
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:1260
+#: part/views.py:1264
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:1409
+#: part/views.py:1413
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1419
+#: part/views.py:1423
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1426
+#: part/views.py:1430
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1485 templates/js/translated/part.js:310
+#: part/views.py:1489 templates/js/translated/part.js:310
 msgid "Edit Part Category"
 msgstr "Modifica Categoria Articoli"
 
-#: part/views.py:1523
+#: part/views.py:1527
 msgid "Delete Part Category"
 msgstr "Elimina categoria"
 
-#: part/views.py:1529
+#: part/views.py:1533
 msgid "Part category was deleted"
 msgstr "La Categoria articoli è stata eliminata"
 
-#: part/views.py:1538
+#: part/views.py:1542
 msgid "Create Category Parameter Template"
 msgstr "Crea Template Parametro Categoria"
 
-#: part/views.py:1639
+#: part/views.py:1643
 msgid "Edit Category Parameter Template"
 msgstr "Modifica Modello Parametro Categoria"
 
-#: part/views.py:1695
+#: part/views.py:1699
 msgid "Delete Category Parameter Template"
 msgstr "Elimina Modello Parametro Categoria"
 
-#: part/views.py:1717
+#: part/views.py:1721
 msgid "Added new price break"
 msgstr ""
 
-#: part/views.py:1793
+#: part/views.py:1797
 msgid "Edit Internal Price Break"
 msgstr ""
 
-#: part/views.py:1801
+#: part/views.py:1805
 msgid "Delete Internal Price Break"
 msgstr ""
 
