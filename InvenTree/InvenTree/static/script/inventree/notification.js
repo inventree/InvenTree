@@ -143,6 +143,12 @@ function notificationCheck() {
 
 /**
  * handles read / unread buttons and UI rebuilding
+ * 
+ * arguments:
+ * - btn: element that got clicked / fired the event -> must contain pk and target as attributes
+ * 
+ * options:
+ * - panel_caller: this button was clicked in the notification panel
  **/
 function updateNotificationReadState(btn, panel_caller=false) {
     var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
@@ -175,6 +181,10 @@ function updateNotificationReadState(btn, panel_caller=false) {
 
 /**
  * Returns the html for a read / unread button
+ * 
+ * arguments:
+ * - pk: primary key of the notification
+ * - state: current state of the notification (read / unread) -> just pass what you were handed by the api
  **/
 function getReadEditButton(pk, state) {
     if (state) {
