@@ -562,12 +562,20 @@
     });
     {% endif %}
 
+    // Callback function when the "part details" panel is shown
     $('#collapse-part-details').on('show.bs.collapse', function() {
         $('#toggle-details-button').html('{% trans "Hide Part Details" %}');
+        inventreeSave('show-part-details', true);
     });
     
+    // Callback function when the "part details" panel is hidden
     $('#collapse-part-details').on('hide.bs.collapse', function() {
         $('#toggle-details-button').html('{% trans "Show Part Details" %}');
+        inventreeSave('show-part-details', false);
     });
+
+    if (inventreeLoad('show-part-details', false).toString() == 'true') {
+        $('#collapse-part-details').collapse('show');
+    }
 
 {% endblock %}
