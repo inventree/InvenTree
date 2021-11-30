@@ -1,15 +1,14 @@
-from django.conf.urls import url, include
-from InvenTree.helpers import str2bool
+from django.conf.urls import url
+
 
 from basket.models import SalesOrderBasket
 from basket.serializers import SOBasketSerializer
 
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import permission_classes
 from rest_framework import filters, status
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework import permissions
 
@@ -42,13 +41,11 @@ class BasketList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
         kwargs['context'] = self.get_serializer_context()
-
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
-        print(queryset)
         queryset = queryset.prefetch_related(
             'sales_orders',
         )
@@ -99,9 +96,7 @@ class BasketList(generics.ListCreateAPIView):
 class BasketDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a Basket object.
-    - DELETE: Delete object
     """
-
     queryset = SalesOrderBasket.objects.all()
     serializer_class = SOBasketSerializer
 
@@ -112,7 +107,6 @@ class BasketDetail(generics.RetrieveUpdateDestroyAPIView):
 
 @permission_classes((permissions.IsAuthenticated,))
 class AddOrderToBasket(APIView):
-
     """For allow post method """
     def post(self, request):
         try:
@@ -125,7 +119,7 @@ class AddOrderToBasket(APIView):
             print(Exception)
             return Response('Error while adding order to basket')
         return Response()
-   
+
 
 basket_api_urls = [
     # API endpoints for baskets

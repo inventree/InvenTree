@@ -488,6 +488,7 @@ class SalesOrder(Order):
     Attributes:
         customer: Reference to the company receiving the goods in the order
         customer_reference: Optional field for customer order reference code
+        is_packable: Determinate should order be process to packing before shiping
         target_date: Target date for SalesOrder completion (optional)
     """
 
@@ -592,6 +593,8 @@ class SalesOrder(Order):
         related_name='+',
         verbose_name=_('shipped by')
     )
+
+    is_packable = models.BooleanField(default=False,  verbose_name=_('is packable'), help_text=_('Do you packing order before shiping?'))
 
     @property
     def is_overdue(self):

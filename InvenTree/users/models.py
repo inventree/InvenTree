@@ -44,6 +44,7 @@ class RuleSet(models.Model):
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
+        ('basket', _('Baskets')),
     ]
 
     RULESET_NAMES = [
@@ -67,7 +68,6 @@ class RuleSet(models.Model):
             'report_billofmaterialsreport',
             'report_purchaseorderreport',
             'report_salesorderreport',
-
         ],
         'part_category': [
             'part_partcategory',
@@ -128,6 +128,9 @@ class RuleSet(models.Model):
             'order_salesorderattachment',
             'order_salesorderlineitem',
             'order_salesorderallocation',
+        ],
+        'basket': [
+            'basket_salesorderbasket',
         ]
     }
 

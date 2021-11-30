@@ -2,9 +2,7 @@
 from InvenTree.serializers import InvenTreeModelSerializer
 from .models import SalesOrderBasket
 from rest_framework import serializers
-
-
-class SOBasketSerializer(serializers.ModelSerializer):
+class SOBasketSerializer(InvenTreeModelSerializer):
     """
     Serializers for the SOBasket model
     """
@@ -18,5 +16,9 @@ class SOBasketSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'status_text',
+            'sales_orders',
             'creation_date',
+        ]
+        read_only_fields = [
+            'sales_orders',
         ]
