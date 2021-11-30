@@ -98,24 +98,7 @@ function loadNotificationTable(table, options={}) {
     });
 
     $(table).on('click', '.notification-read', function() {
-        var url = `/api/notifications/${$(this).attr('pk')}/${$(this).attr('target')}/`;
-
-        inventreePut(url, {}, {
-        method: 'POST',
-        success: function() {
-            updateNotificationTables();
-
-            // update current notification count
-            var count = parseInt($("#notification-counter").html());
-            if ($(this).attr('target') == 'read') {
-                count = count - 1;
-            } else {
-                count = count + 1;
-            }
-            // update notification indicator now
-            updateNotificationIndicator(count);
-        }
-        });
+        updateNotificationReadState($(this));
     });
 }
 

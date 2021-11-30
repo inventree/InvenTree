@@ -216,19 +216,7 @@ function openNotificationPanel() {
     );
 
     $(center_ref).on('click', '.notification-read', function() {
-        caller = $(this);
-        var url = `/api/notifications/${caller.attr('pk')}/${caller.attr('target')}/`;
-
-        inventreePut(url, {}, {
-        method: 'POST',
-        success: function() {
-            // update the notification tables if they exsist
-            if (window.updateNotifications) {
-                window.updateNotifications();
-            }
-            caller.parent().parent().remove()
-        }
-        });
+        updateNotificationReadState($(this), true);
     });
 }
 
@@ -236,3 +224,33 @@ function openNotificationPanel() {
 function closeNotificationPanel() {
     $('#notification-center').html(`<p class='text-muted'>{% trans "Notifications will load here" %}</p>`);
 }
+
+
+function updateNotificationReadState(btn, panel_caller=false) {
+    var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
+
+    inventreePut(url, {}, {
+    method: 'POST',
+    success: function() {
+        // update the notification tables if they exsist
+        if (window.updateNotifications) {
+            window.updateNotifications();
+        }
+
+        // update current notification count
+        var count = parseInt($("#notification-counter").html());
+        if (btn.attr('target') == 'read') {
+            count = count - 1;
+        } else {
+            count = count + 1;
+        }
+        // update notification indicator now
+        updateNotificationIndicator(count);
+
+        // remove notification if in panel
+        if (panel_caller) {
+            btn.parent().parent().remove()
+        }
+    }
+    });
+};
