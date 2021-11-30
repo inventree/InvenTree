@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 22:21+0000\n"
-"PO-Revision-Date: 2021-11-30 21:52\n"
+"PO-Revision-Date: 2021-11-30 22:55\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1047,10 +1047,8 @@ msgid "Complete Build"
 msgstr "生产完成"
 
 #: build/templates/build/build_base.html:82
-#, fuzzy
-#| msgid "Description"
 msgid "Build Description"
-msgstr "描述信息"
+msgstr ""
 
 #: build/templates/build/build_base.html:91
 #, python-format
@@ -2463,10 +2461,8 @@ msgid "Create Purchase Order"
 msgstr "创建采购订单"
 
 #: company/templates/company/company_base.html:26
-#, fuzzy
-#| msgid "Company description"
 msgid "Company actions"
-msgstr "公司简介"
+msgstr ""
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
@@ -2478,10 +2474,8 @@ msgid "Edit Company"
 msgstr "编辑公司信息"
 
 #: company/templates/company/company_base.html:36
-#, fuzzy
-#| msgid "Delete Company"
 msgid "Delete company"
-msgstr "删除该公司"
+msgstr ""
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
@@ -3286,10 +3280,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
-#, fuzzy
-#| msgid "Description"
 msgid "Order Description"
-msgstr "描述信息"
+msgstr ""
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -4722,10 +4714,8 @@ msgstr ""
 
 #: part/templates/part/part_base.html:156
 #: part/templates/part/part_base.html:572
-#, fuzzy
-#| msgid "Show latest parts"
 msgid "Show Part Details"
-msgstr "显示最近商品"
+msgstr ""
 
 #: part/templates/part/part_base.html:173
 #, python-format
@@ -4779,10 +4769,8 @@ msgid "No matching images found"
 msgstr ""
 
 #: part/templates/part/part_base.html:566
-#, fuzzy
-#| msgid "Build Details"
 msgid "Hide Part Details"
-msgstr "生产详情"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
@@ -4859,8 +4847,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5857,10 +5844,8 @@ msgstr "新建仓储地点"
 
 #: stock/templates/stock/location.html:95
 #: stock/templates/stock/location.html:101
-#, fuzzy
-#| msgid "Location"
 msgid "Location Path"
-msgstr "地点"
+msgstr ""
 
 #: stock/templates/stock/location.html:102
 msgid "Top level stock location"
@@ -6582,16 +6567,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8696,5 +8679,3 @@ msgstr "编辑项目权限"
 msgid "Permission to delete items"
 msgstr "删除项目权限"
 
-#~ msgid "Category Description"
-#~ msgstr "类别说明"
