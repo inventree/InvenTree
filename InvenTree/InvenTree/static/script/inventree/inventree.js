@@ -218,11 +218,12 @@ function inventreeDocReady() {
     // Display any cached alert messages
     showCachedAlerts();
 
-    // Start notification background worker to check every 5 seconds if notifications are available
-    setInterval(notificationCheck, 5000);
+    // Start notification background worker to check every 1 seconds if notifications are available
+    setInterval(notificationCheck, 1000);
+
     // also run when the focus returns
     $(document).on('focus', function(e){
-        notificationCheck();
+        notificationCheck(force = true);
     });
 
     $('#offcanvasRight').on('show.bs.offcanvas', openNotificationPanel)  // listener for opening the notification panel

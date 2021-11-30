@@ -119,14 +119,20 @@ function showMessage(message, options={}) {
     });
 }
 
-
+var notificationUpdateTic = 0;
 /**
  * The notification checker is initiated when the document is loaded. It checks if there are unread notifications
  * if unread messages exist the alert flag is raised by making it visible
  **/
-function notificationCheck() {
-    // only refresh state if in focus
-    if (document.hasFocus()) {
+function notificationCheck(force = false) {
+    notificationUpdateTic = notificationUpdateTic + 1;
+
+    console.log(notificationUpdateTic);
+
+    // refresh if forced or
+    // if in focus and was not refreshed in the last 5 seconds
+    if (force || (document.hasFocus() && notificationUpdateTic >= 5)) {
+        notificationUpdateTic = 0;
         inventreeGet(
             '/api/notifications/',
             {
@@ -262,6 +268,9 @@ function closeNotificationPanel() {
  * updates the notification counter
  **/
 function updateNotificationIndicator(count) {
+    // reset update Ticker -> safe some API bandwidth
+    notificationUpdateTic = 0;
+
     if (count == 0) {
         $("#notification-alert").addClass("d-none");
     } else {
