@@ -141,13 +141,13 @@ function showMessage(message, options={}) {
     }
 }
 
-function updateNotificationIndicator(counter) {
-    if (counter == 0) {
+function updateNotificationIndicator(count) {
+    if (count == 0) {
         $("#notification-alert").addClass("d-none");
     } else {
         $("#notification-alert").removeClass("d-none");
     }
-    $("#notification-counter").html(counter);
+    $("#notification-counter").html(count);
 }
 
 
