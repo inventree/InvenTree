@@ -100,7 +100,9 @@
     <!-- Edit stock item -->
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
-        <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
+        <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+            <span class='fas fa-tools'></span> <span class='caret'></span>
+        </button>
         <ul class='dropdown-menu' role='menu'>
             {% if item.part.can_convert %}
             <li><a class='dropdown-item' href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
