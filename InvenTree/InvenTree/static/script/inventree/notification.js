@@ -134,15 +134,20 @@ function showMessage(message, options={}) {
             },
             {
                 success: function(response) {
-                    if (response.length == 0) {
-                        $("#notification-alert").addClass("d-none");
-                    } else {
-                        $("#notification-alert").removeClass("d-none");
-                    }
+                    updateNotificationIndicator(response.length);
                 }
             }
         );
     }
+}
+
+function updateNotificationIndicator(counter) {
+    if (counter == 0) {
+        $("#notification-alert").addClass("d-none");
+    } else {
+        $("#notification-alert").removeClass("d-none");
+    }
+    $("#notification-counter").html(counter);
 }
 
 
