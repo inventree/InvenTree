@@ -152,14 +152,14 @@ function showMessage(message, options={}) {
 function getReadEditButton(pk, state) {
     if (state) {
         var bReadText = '{% trans "Mark as unread" %}';
-        var bReadIcon = 'fa-uncheck icon-red';
+        var bReadIcon = 'fas fa-bookmark icon-red';
         var bReadTarget = 'unread';
     } else {
         var bReadText = '{% trans "Mark as read" %}';
-        var bReadIcon = 'fa-check icon-green';
+        var bReadIcon = 'far fa-bookmark icon-green';
         var bReadTarget = 'read';
     }
-    return `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='fas ${bReadIcon}'></span></button>`;
+    return `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
 }
 
 
