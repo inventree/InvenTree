@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 22:21+0000\n"
-"PO-Revision-Date: 2021-11-30 22:55\n"
+"PO-Revision-Date: 2021-11-30 23:53\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1048,7 +1048,7 @@ msgstr "Bauauftrag fertigstellen"
 
 #: build/templates/build/build_base.html:82
 msgid "Build Description"
-msgstr ""
+msgstr "Baubeschreibung"
 
 #: build/templates/build/build_base.html:91
 #, python-format
@@ -2462,7 +2462,7 @@ msgstr "Bestellung anlegen"
 
 #: company/templates/company/company_base.html:26
 msgid "Company actions"
-msgstr ""
+msgstr "Firmenaktionen"
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
@@ -2475,7 +2475,7 @@ msgstr "Firma bearbeiten"
 
 #: company/templates/company/company_base.html:36
 msgid "Delete company"
-msgstr ""
+msgstr "Unternehmen löschen"
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
@@ -3281,7 +3281,7 @@ msgstr "Bestellreferenz"
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
 msgid "Order Description"
-msgstr ""
+msgstr "Bestellungsbeschreibung"
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -4715,7 +4715,7 @@ msgstr "Inaktiv"
 #: part/templates/part/part_base.html:156
 #: part/templates/part/part_base.html:572
 msgid "Show Part Details"
-msgstr ""
+msgstr "Teildetails anzeigen"
 
 #: part/templates/part/part_base.html:173
 #, python-format
@@ -4770,7 +4770,7 @@ msgstr "Keine passenden Bilder gefunden"
 
 #: part/templates/part/part_base.html:566
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Teildetails ausblenden"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
@@ -5847,7 +5847,7 @@ msgstr "Neuer Lagerort"
 #: stock/templates/stock/location.html:95
 #: stock/templates/stock/location.html:101
 msgid "Location Path"
-msgstr ""
+msgstr "Lagerortpfad"
 
 #: stock/templates/stock/location.html:102
 msgid "Top level stock location"
