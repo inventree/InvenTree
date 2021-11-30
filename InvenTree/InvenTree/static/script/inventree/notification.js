@@ -141,6 +141,9 @@ function showMessage(message, options={}) {
     }
 }
 
+/**
+ * updates the notification counter
+ **/
 function updateNotificationIndicator(count) {
     if (count == 0) {
         $("#notification-alert").addClass("d-none");
