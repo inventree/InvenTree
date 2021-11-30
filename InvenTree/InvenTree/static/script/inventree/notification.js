@@ -124,7 +124,7 @@ function showMessage(message, options={}) {
  * The notification checker is initiated when the document is loaded. It checks if there are unread notifications
  * if unread messages exist the alert flag is raised by making it visible
  **/
- function notificationCheck() {
+function notificationCheck() {
     // only refresh state if in focus
     if (document.hasFocus()) {
         inventreeGet(
@@ -142,17 +142,36 @@ function showMessage(message, options={}) {
 }
 
 /**
- * updates the notification counter
+ * handles read / unread buttons and UI rebuilding
  **/
-function updateNotificationIndicator(count) {
-    if (count == 0) {
-        $("#notification-alert").addClass("d-none");
-    } else {
-        $("#notification-alert").removeClass("d-none");
-    }
-    $("#notification-counter").html(count);
-}
+function updateNotificationReadState(btn, panel_caller=false) {
+    var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
 
+    inventreePut(url, {}, {
+    method: 'POST',
+    success: function() {
+        // update the notification tables if they were declared
+        if (window.updateNotifications) {
+            window.updateNotifications();
+        }
+
+        // update current notification count
+        var count = parseInt($("#notification-counter").html());
+        if (btn.attr('target') == 'read') {
+            count = count - 1;
+        } else {
+            count = count + 1;
+        }
+        // update notification indicator now
+        updateNotificationIndicator(count);
+
+        // remove notification if called from notification panel
+        if (panel_caller) {
+            btn.parent().parent().remove()
+        }
+    }
+    });
+};
 
 /**
  * Returns the html for a read / unread button
@@ -225,32 +244,14 @@ function closeNotificationPanel() {
     $('#notification-center').html(`<p class='text-muted'>{% trans "Notifications will load here" %}</p>`);
 }
 
-
-function updateNotificationReadState(btn, panel_caller=false) {
-    var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
-
-    inventreePut(url, {}, {
-    method: 'POST',
-    success: function() {
-        // update the notification tables if they were declared
-        if (window.updateNotifications) {
-            window.updateNotifications();
-        }
-
-        // update current notification count
-        var count = parseInt($("#notification-counter").html());
-        if (btn.attr('target') == 'read') {
-            count = count - 1;
-        } else {
-            count = count + 1;
-        }
-        // update notification indicator now
-        updateNotificationIndicator(count);
-
-        // remove notification if called from notification panel
-        if (panel_caller) {
-            btn.parent().parent().remove()
-        }
+/**
+ * updates the notification counter
+ **/
+function updateNotificationIndicator(count) {
+    if (count == 0) {
+        $("#notification-alert").addClass("d-none");
+    } else {
+        $("#notification-alert").removeClass("d-none");
     }
-    });
-};
+    $("#notification-counter").html(count);
+}
