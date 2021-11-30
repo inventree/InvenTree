@@ -232,7 +232,7 @@ function updateNotificationReadState(btn, panel_caller=false) {
     inventreePut(url, {}, {
     method: 'POST',
     success: function() {
-        // update the notification tables if they exsist
+        // update the notification tables if they were declared
         if (window.updateNotifications) {
             window.updateNotifications();
         }
@@ -247,7 +247,7 @@ function updateNotificationReadState(btn, panel_caller=false) {
         // update notification indicator now
         updateNotificationIndicator(count);
 
-        // remove notification if in panel
+        // remove notification if called from notification panel
         if (panel_caller) {
             btn.parent().parent().remove()
         }
