@@ -102,7 +102,19 @@ function loadNotificationTable(table, options={}) {
 
         inventreePut(url, {}, {
         method: 'POST',
-        success: function() { updateNotificationTables(); }
+        success: function() {
+            updateNotificationTables();
+
+            // update current notification count
+            var count = parseInt($("#notification-counter").html());
+            if ($(this).attr('target') == 'read') {
+                count = count - 1;
+            } else {
+                count = count + 1;
+            }
+            // update notification indicator now
+            updateNotificationIndicator(count);
+        }
         });
     });
 }
