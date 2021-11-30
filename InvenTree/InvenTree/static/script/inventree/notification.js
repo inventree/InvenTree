@@ -147,8 +147,6 @@ var notificationUpdateTic = 0;
 function notificationCheck(force = false) {
     notificationUpdateTic = notificationUpdateTic + 1;
 
-    console.log(notificationUpdateTic);
-
     // refresh if forced or
     // if in focus and was not refreshed in the last 5 seconds
     if (force || (document.hasFocus() && notificationUpdateTic >= 5)) {
