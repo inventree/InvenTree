@@ -227,7 +227,7 @@ function inventreeDocReady() {
     });
 
     // kill notification watcher if focus is lost -> respect your users cycles
-    $(document).focusout(function(){
+    $(document).blur(function(){
         stopNotificationWatcher();
     });
 
