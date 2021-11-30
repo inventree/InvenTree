@@ -76,6 +76,13 @@
         <td>{% trans "Category Path" %}</td>
         <td>{{ category.pathstring }}</td>
     </tr>
+    {% if category.default_keywords %}
+    <tr>
+        <td><span class='fas fa-key'></span></td>
+        <td>{% trans "Keywords" %}</td>
+        <td>{{ category.default_keywords }}</td>
+    </tr>
+    {% endif %}
     {% else %}
     <tr>
         <td><span class='fas fa-sitemap'></span></td>
@@ -96,13 +103,6 @@
         <td><span class='fas fa-map-marker-alt'></span></td>
         <td>{% trans "Default Location" %}</td>
         <td><a href="{% url 'stock-location-detail' category.default_location.pk %}">{{ category.default_location.pathstring }}</a></td>
-    </tr>
-    {% endif %}
-    {% if category.default_keywords %}
-    <tr>
-        <td><span class='fas fa-key'></span></td>
-        <td>{% trans "Keywords" %}</td>
-        <td>{{ category.default_keywords }}</td>
     </tr>
     {% endif %}
     <tr>

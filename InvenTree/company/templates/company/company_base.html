@@ -56,7 +56,29 @@
 {% endblock %}
 
 {% block details %}
-<p>{{ company.description }}</p>
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Description" %}</td>
+        <td>{{ company.description }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-industry'></span></td>
+        <td>{%trans "Manufacturer" %}</td>
+        <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-building'></span></td>
+        <td>{% trans "Supplier" %}</td>
+        <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+    </tr>
+</table>
 
 {% endblock %}
 
@@ -110,22 +132,6 @@
     <td>{{ company.contact }}{% include "clip.html"%}</td>
 </tr>
 {% endif %}
-
-<tr>
-    <td><span class='fas fa-industry'></span></td>
-    <td>{%trans "Manufacturer" %}</td>
-    <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
-</tr>
-<tr>
-    <td><span class='fas fa-building'></span></td>
-    <td>{% trans "Supplier" %}</td>
-    <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
-</tr>
-<tr>
-    <td><span class='fas fa-user-tie'></span></td>
-    <td>{% trans "Customer" %}</td>
-    <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
-</tr>
 </table>
 {% endblock %}
 
