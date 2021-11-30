@@ -146,8 +146,7 @@
         </div>
             
         {% include "spacer.html" %}        
-        <button type='button' class='btn btn-outline-secondary'>
-            <span class='fas fa-info-circle'></span>
+        <button type='button' class='btn btn-outline-secondary' data-bs-toggle='collapse' href='#collapse-part-details' role='button' id='toggle-details-button'>
             {% trans "Show Part Details" %}
         </button>
     </div>
@@ -255,7 +254,7 @@
 
 {% block details_below %}
 <!-- Part Details -->
-<div class='xcollapse' id='collapse-part-details'>
+<div class='collapse' id='collapse-part-details'>
     <div class='row flex-wrap'>
         <div class='col-sm-6'>
                     <!-- Details Table -->
@@ -562,5 +561,13 @@
         );
     });
     {% endif %}
+
+    $('#collapse-part-details').on('show.bs.collapse', function() {
+        $('#toggle-details-button').html('{% trans "Hide Part Details" %}');
+    });
+    
+    $('#collapse-part-details').on('hide.bs.collapse', function() {
+        $('#toggle-details-button').html('{% trans "Show Part Details" %}');
+    });
 
 {% endblock %}
