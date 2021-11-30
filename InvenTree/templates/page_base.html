@@ -24,6 +24,8 @@
     
     {% block page_info %}
     <div class='panel-content'>
+        {% block details_above %}
+        {% endblock details_above %}
         <div class='row'>
             <div class='col-sm-6' id='detail-panel-left'>
                 <div class='card'>
@@ -31,23 +33,25 @@
                     <div class='row g-0'>
                         <div class='col-md-4'>
                             {% block thumbnail %}
-                            {% endblock %}
+                            {% endblock thumbnail %}
                         </div>
                         <div class='col-md-8'>
                             {% block details %}
-                            {% endblock %}
+                            {% endblock details %}
                         </div>
                     </div>
-                    {% endblock %}
+                    {% endblock details_left %}
                 </div>
             </div>
             <div class='col-sm-6' id='detail-panel-right'>
                 <div class='card'>
                     {% block details_right %}
                     block details_right
-                    {% endblock %}
+                    {% endblock details_right %}
                 </div>
             </div>
+            {% block details_below %}
+            {% endblock details_below %}
         </div>
     </div>
     {% endblock %}
