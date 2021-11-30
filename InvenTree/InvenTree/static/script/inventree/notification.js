@@ -119,6 +119,23 @@ function showMessage(message, options={}) {
     });
 }
 
+var notificationWatcher = null;  // reference for the notificationWatcher
+/**
+ * start the regular notification checks
+ **/
+function startNotificationWatcher() {
+    notificationCheck(force=true);
+    notificationWatcher = setInterval(notificationCheck, 1000);
+}
+
+/**
+ * stop the regular notification checks
+ **/
+function stopNotificationWatcher() {
+    clearInterval(notificationWatcher);
+}
+
+
 var notificationUpdateTic = 0;
 /**
  * The notification checker is initiated when the document is loaded. It checks if there are unread notifications
