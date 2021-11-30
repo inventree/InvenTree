@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 05:01+0000\n"
-"PO-Revision-Date: 2021-11-30 05:04\n"
+"PO-Revision-Date: 2021-11-30 06:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -70,15 +70,15 @@ msgstr "选择分类"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (再次)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Email 地址确认"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "您必须输入相同的 Email 。"
 
 #: InvenTree/helpers.py:430
 #, python-brace-format
@@ -116,7 +116,7 @@ msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 
 #: InvenTree/models.py:114
 msgid "Missing file"
-msgstr ""
+msgstr "缺少文件"
 
 #: InvenTree/models.py:115
 msgid "Missing external link"
