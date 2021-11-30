@@ -1015,7 +1015,6 @@ function loadSalesOrderTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row) {
-                    console.log(row)
                     var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
                     if (prefix) {
@@ -1417,6 +1416,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
+    var in_basket = options.status == {{SalesOrderStatus.IN_BASKET}}
+
     // Has the order shipped?
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
 
@@ -1513,7 +1514,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         },
     ];
 
-    if (pending) {
+    if (pending || in_basket) {
         columns.push(
             {
                 field: 'stock',
@@ -1528,19 +1529,19 @@ function loadSalesOrderLineItemTable(table, options={}) {
     columns.push(
         {
             field: 'allocated',
-            title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
+            title: pending || in_basket ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
 
-                var quantity = pending ? row.allocated : row.fulfilled;
+                var quantity = pending || in_basket ? row.allocated : row.fulfilled;
                 return makeProgressBar(quantity, row.quantity, {
                     id: `order-line-progress-${row.pk}`,
                 });
             },
             sorter: function(valA, valB, rowA, rowB) {
 
-                var A = pending ? rowA.allocated : rowA.fulfilled;
-                var B = pending ? rowB.allocated : rowB.fulfilled;
+                var A = pending || in_basket ? rowA.allocated : rowA.fulfilled;
+                var B = pending || in_basket ? rowB.allocated : rowB.fulfilled;
 
                 if (A == 0 && B == 0) {
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
@@ -1558,7 +1559,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         },
     );
 
-    if (pending) {
+    if (pending || in_basket) {
         columns.push({
             field: 'buttons',
             formatter: function(value, row, index, field) {
@@ -1771,7 +1772,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         detailView: show_detail,
         detailViewByClick: show_detail,
         detailFilter: function(index, row) {
-            if (pending) {
+            if (pending || in_basket) {
                 // Order is pending
                 return row.allocated > 0;
             } else {
@@ -1779,7 +1780,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             }
         },
         detailFormatter: function(index, row, element) {
-            if (pending) {
+            if (pending || in_basket) {
                 return showAllocationSubTable(index, row, element, options);
             } else {
                 return showFulfilledSubTable(index, row, element, options);
