@@ -209,8 +209,9 @@ function updateNotificationReadState(btn, panel_caller=false) {
  * arguments:
  * - pk: primary key of the notification
  * - state: current state of the notification (read / unread) -> just pass what you were handed by the api
+ * - small: should the button be small
  **/
-function getReadEditButton(pk, state) {
+function getReadEditButton(pk, state, small=false) {
     if (state) {
         var bReadText = '{% trans "Mark as unread" %}';
         var bReadIcon = 'fas fa-bookmark icon-red';
@@ -220,7 +221,9 @@ function getReadEditButton(pk, state) {
         var bReadIcon = 'far fa-bookmark icon-green';
         var bReadTarget = 'read';
     }
-    return `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
+
+    var style = (small) ? 'btn-sm ' : '';
+    return `<button title='${bReadText}' class='notification-read btn ${style}btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
 }
 
 /**
@@ -256,7 +259,7 @@ function openNotificationPanel() {
                         }
                         html += '<div>';
                         html += `<span class="text-muted">${item.age_human}</span>`;
-                        html += getReadEditButton(item.pk, item.read);
+                        html += getReadEditButton(item.pk, item.read, true);
                         html += "</div></li>";
                     });
 
