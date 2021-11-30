@@ -199,7 +199,9 @@ function getReadEditButton(pk, state) {
     return `<button title='${bReadText}' class='notification-read btn btn-outline-secondary' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
 }
 
-
+/**
+ * fills the notification panel when opened
+ **/
 function openNotificationPanel() {
     var html = '';
     var center_ref = '#notification-center';
@@ -249,7 +251,9 @@ function openNotificationPanel() {
     });
 }
 
-
+/**
+ * clears the notification panel when closed
+ **/
 function closeNotificationPanel() {
     $('#notification-center').html(`<p class='text-muted'>{% trans "Notifications will load here" %}</p>`);
 }
