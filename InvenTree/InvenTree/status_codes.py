@@ -141,6 +141,7 @@ class SalesOrderStatus(StatusCode):
     CANCELLED = 40  # Order has been cancelled
     LOST = 50  # Order was lost
     RETURNED = 60  # Order was returned
+    WAITING_FOR_PACKING = 70 # Order allocated and wait for packing
 
     options = {
         PENDING: _("Pending"),
@@ -149,6 +150,7 @@ class SalesOrderStatus(StatusCode):
         CANCELLED: _("Cancelled"),
         LOST: _("Lost"),
         RETURNED: _("Returned"),
+        WAITING_FOR_PACKING: _("Waiting for packing")
     }
 
     colors = {
@@ -158,6 +160,7 @@ class SalesOrderStatus(StatusCode):
         LOST: 'yellow',
         IN_BASKET:"purple",
         RETURNED: 'yellow',
+        WAITING_FOR_PACKING: 'orange'
     }
 
     # Open orders

@@ -414,6 +414,7 @@ class SOList(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         
         item = serializer.save()
+        
         item.created_by = request.user
         item.save()
 
@@ -572,6 +573,7 @@ class SOLineItemList(generics.ListCreateAPIView):
 
     queryset = SalesOrderLineItem.objects.all()
     serializer_class = SOLineItemSerializer
+   
 
     def get_serializer(self, *args, **kwargs):
 
@@ -647,9 +649,23 @@ class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
     """
-
     queryset = SalesOrderAllocation.objects.all()
     serializer_class = SalesOrderAllocationSerializer
+
+     # Check order if_packable and fully_allocated and if so set status to WAITING TO PACKING
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        item = serializer.save()
+
+        # order_line_item = SalesOrderLineItem.objects.filter(order=).first()
+        order = SalesOrder.objects.filter(pk=item.line.order.pk).first()
+        if order.is_fully_allocated() and order.is_packable:
+            order.status = SalesOrderStatus.WAITING_FOR_PACKING
+            order.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
     def get_serializer(self, *args, **kwargs):
 

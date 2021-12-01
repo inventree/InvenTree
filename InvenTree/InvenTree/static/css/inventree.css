@@ -10,6 +10,7 @@
     --label-grey: #aaa;
     --label-yellow: #fdc82a;
     --label-purple: #DA70D6;
+    --label-orange: #ff4d00;
 }
 
 .login-screen {
@@ -255,8 +256,22 @@
     background: var(--label-red);
 }
 
+.label-large-purple {
+    color: var(--label-purple);
+    border-color: var(--label-purple);
+}
+
 .label-purple {
     background: var(--label-purple);
+}
+
+.label-large-orange {
+    color: var(--label-orange);
+    border-color: var(--label-orange);
+}
+
+.label-orange {
+    background: var(--label-orange);
 }
 
 .label-large-blue {
@@ -289,10 +304,6 @@
 .label-large-yellow {
     color: var(--label-yellow);
     border-color: var(--label-yellow);
-}
-.label-large-purple {
-    color: var(--label-purple);
-    border-color: var(--label-purple);
 }
 
 .label-yellow {

@@ -460,6 +460,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'status_text',
             'shipment_date',
             'target_date',
+            'is_packable',
         ]
 
         read_only_fields = [
