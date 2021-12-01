@@ -172,7 +172,7 @@ class NotificationList(generics.ListAPIView):
         return queryset
 
 
-class NotificationDetail(generics.RetrieveDestroyAPIView):
+class NotificationDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Detail view for an individual notification object
 
