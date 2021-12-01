@@ -105,6 +105,33 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(data['pk'], 1)
         self.assertEqual(data['description'], 'Ordering some screws')
 
+    def test_po_reference(self):
+        """test that a reference with a too big / small reference is not possible"""
+        url = reverse('api-po-list')
+        huge_numer = 9223372036854775808
+
+        # too big
+        self.post(
+            url,
+            {
+                'supplier': 1,
+                'reference': huge_numer,
+                'description': 'PO not created via the API',
+            },
+            expected_code=400
+        )
+
+        # too small
+        self.post(
+            url,
+            {
+                'supplier': 1,
+                'reference': -huge_numer,
+                'description': 'PO not created via the API',
+            },
+            expected_code=400
+        )
+
     def test_po_attachments(self):
 
         url = reverse('api-po-attachment-list')
