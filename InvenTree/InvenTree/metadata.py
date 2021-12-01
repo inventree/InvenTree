@@ -58,10 +58,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
             actions = metadata.get('actions', None)
 
+            check = users.models.RuleSet.check_table_permission
+
             if actions is not None:
-
-                check = users.models.RuleSet.check_table_permission
-
                 # Map the request method to a permission type
                 rolemap = {
                     'POST': 'add',
@@ -77,15 +76,18 @@ class InvenTreeMetadata(SimpleMetadata):
 
                     if method in actions and not result:
                         del actions[method]
+            else:
+                actions = {}  # actions can be empty if neither PUT nor POST option exsists
 
-                # Add a 'DELETE' action if we are allowed to delete
-                if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
-                    actions['DELETE'] = True
+            # Add a 'DELETE' action if we are allowed to delete
+            if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
+                actions['DELETE'] = True
 
-                # Add a 'VIEW' action if we are allowed to view
-                if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                    actions['GET'] = True
+            # Add a 'VIEW' action if we are allowed to view
+            if 'GET' in view.allowed_methods and check(user, table, 'view'):
+                actions['GET'] = True
 
+            metadata['actions'] = actions
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta
             # then we don't need a permission
