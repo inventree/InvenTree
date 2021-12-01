@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 22:21+0000\n"
-"PO-Revision-Date: 2021-12-01 20:02\n"
+"PO-Revision-Date: 2021-12-01 21:06\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1638,7 +1638,7 @@ msgstr "Samenstelling"
 
 #: common/models.py:711
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "Onderdelen kunnen standaard vanuit andere delen worden samengesteld"
 
 #: common/models.py:717 part/models.py:894
 #: templates/js/translated/table_filters.js:389
@@ -2277,11 +2277,11 @@ msgstr ""
 
 #: company/models.py:148
 msgid "is manufacturer"
-msgstr ""
+msgstr "is fabrikant"
 
 #: company/models.py:148
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Fabriceert dit bedrijf onderdelen?"
 
 #: company/models.py:152 company/serializers.py:270
 #: company/templates/company/company_base.html:103 stock/serializers.py:172
@@ -2309,11 +2309,11 @@ msgstr ""
 #: templates/js/translated/company.js:514
 #: templates/js/translated/company.js:797 templates/js/translated/part.js:229
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabrikant"
 
 #: company/models.py:336 templates/js/translated/part.js:230
 msgid "Select manufacturer"
-msgstr ""
+msgstr "Fabrikant selecteren"
 
 #: company/models.py:342 company/templates/company/manufacturer_part.html:96
 #: company/templates/company/supplier_part.html:105
@@ -2321,26 +2321,26 @@ msgstr ""
 #: templates/js/translated/company.js:815 templates/js/translated/order.js:874
 #: templates/js/translated/part.js:240
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
 #: company/models.py:343 templates/js/translated/part.js:241
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Fabrikant artikel nummer (MPN)"
 
 #: company/models.py:349
 msgid "URL for external manufacturer part link"
-msgstr ""
+msgstr "URL voor externe link van het fabrikant onderdeel"
 
 #: company/models.py:355
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Omschrijving onderdeel fabrikant"
 
 #: company/models.py:409 company/models.py:558
 #: company/templates/company/manufacturer_part.html:6
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:384
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Fabrikant onderdeel"
 
 #: company/models.py:416
 msgid "Parameter name"
@@ -2370,7 +2370,7 @@ msgstr ""
 
 #: company/models.py:502
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "Gekoppeld fabrikant onderdeel moet verwijzen naar hetzelfde basis onderdeel"
 
 #: company/models.py:545 company/templates/company/company_base.html:78
 #: company/templates/company/supplier_part.html:87 order/models.py:263
@@ -2399,7 +2399,7 @@ msgstr ""
 
 #: company/models.py:559
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Selecteer fabrikant onderdeel"
 
 #: company/models.py:565
 msgid "URL for external supplier part link"
@@ -2557,15 +2557,15 @@ msgstr ""
 
 #: company/templates/company/detail.html:62 templates/InvenTree/search.html:109
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Fabrikant onderdelen"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Maak nieuw fabrikant onderdeel"
 
 #: company/templates/company/detail.html:67 part/templates/part/detail.html:360
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Nieuw fabrikant onderdeel"
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
@@ -2645,7 +2645,7 @@ msgstr ""
 #: part/templates/part/prices.html:167 templates/InvenTree/search.html:184
 #: templates/navbar.html:44
 msgid "Manufacturers"
-msgstr ""
+msgstr "Fabrikanten"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:34
@@ -2657,12 +2657,12 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:40
 #: templates/js/translated/company.js:562
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "Fabrikant onderdeel bewerken"
 
 #: company/templates/company/manufacturer_part.html:44
 #: templates/js/translated/company.js:563
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "Fabrikant onderdeel verwijderen"
 
 #: company/templates/company/manufacturer_part.html:66
 #: company/templates/company/supplier_part.html:63
@@ -2723,7 +2723,7 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Gefabriceerde onderdelen"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
@@ -2854,7 +2854,7 @@ msgstr ""
 
 #: company/views.py:56
 msgid "New Manufacturer"
-msgstr ""
+msgstr "Nieuwe fabrikant"
 
 #: company/views.py:61 templates/InvenTree/search.html:214
 #: templates/navbar.html:55
@@ -3744,11 +3744,11 @@ msgstr ""
 
 #: part/forms.py:73
 msgid "Include Manufacturer Data"
-msgstr ""
+msgstr "Voeg fabrikantgegevens toe"
 
 #: part/forms.py:73
 msgid "Include part manufacturer data in exported BOM"
-msgstr ""
+msgstr "Voeg fabrikantgegevens toe aan geëxporteerde BOM"
 
 #: part/forms.py:75
 msgid "Include Supplier Data"
@@ -4544,11 +4544,11 @@ msgstr ""
 
 #: part/templates/part/detail.html:356
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "Fabrikanten"
 
 #: part/templates/part/detail.html:372
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "Fabrikant onderdeel verwijderen"
 
 #: part/templates/part/detail.html:553
 msgid "Delete selected BOM items?"
@@ -4685,7 +4685,7 @@ msgstr "Onderdeel kan vanuit andere delen worden samengesteld"
 
 #: part/templates/part/part_base.html:120
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Onderdeel kan gebruikt worden voor samenstellingen"
 
 #: part/templates/part/part_base.html:124
 msgid "Part stock is tracked by serial number"
@@ -4870,7 +4870,7 @@ msgstr ""
 #: part/templates/part/partial_delete.html:43
 #, python-format
 msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-msgstr ""
+msgstr "Er zijn %(count)s fabrikanten gedefinieerd voor dit onderdeel. Als u dit onderdeel verwijdert, worden de volgende onderdelen ook verwijderd:"
 
 #: part/templates/part/partial_delete.html:54
 #, python-format
@@ -5758,7 +5758,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:378
 msgid "No manufacturer set"
-msgstr ""
+msgstr "Geen fabrikant geselecteerd"
 
 #: stock/templates/stock/item_base.html:403
 msgid "Tests"
@@ -7189,19 +7189,19 @@ msgstr ""
 
 #: templates/js/translated/company.js:65
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "Fabrikant toevoegen"
 
 #: templates/js/translated/company.js:78 templates/js/translated/company.js:177
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "Fabrikant onderdeel toevoegen"
 
 #: templates/js/translated/company.js:99
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "Fabrikant onderdeel bewerken"
 
 #: templates/js/translated/company.js:108
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "Fabrikant onderdeel verwijderen"
 
 #: templates/js/translated/company.js:165 templates/js/translated/order.js:90
 msgid "Add Supplier"
@@ -7229,7 +7229,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:372
 msgid "Parts Manufactured"
-msgstr ""
+msgstr "Gefabriceerde onderdelen"
 
 #: templates/js/translated/company.js:386
 msgid "No company information found"
@@ -7237,15 +7237,15 @@ msgstr ""
 
 #: templates/js/translated/company.js:405
 msgid "The following manufacturer parts will be deleted"
-msgstr ""
+msgstr "De volgende fabricage onderdelen worden verwijderd"
 
 #: templates/js/translated/company.js:422
 msgid "Delete Manufacturer Parts"
-msgstr ""
+msgstr "Verwijder fabricage onderdelen"
 
 #: templates/js/translated/company.js:477
 msgid "No manufacturer parts found"
-msgstr ""
+msgstr "Geen fabricage onderdelen gevonden"
 
 #: templates/js/translated/company.js:497
 #: templates/js/translated/company.js:754 templates/js/translated/part.js:449
@@ -7257,7 +7257,7 @@ msgstr ""
 #: templates/js/translated/company.js:758 templates/js/translated/part.js:453
 #: templates/js/translated/part.js:538
 msgid "Assembled part"
-msgstr ""
+msgstr "Samengesteld onderdeel"
 
 #: templates/js/translated/company.js:628 templates/js/translated/part.js:626
 msgid "No parameters found"
@@ -7502,7 +7502,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:293
 msgid "Manufacturer Part ID"
-msgstr ""
+msgstr "Onderdeelnummer fabrikant"
 
 #: templates/js/translated/model_renderers.js:322
 msgid "Supplier Part ID"
@@ -8231,7 +8231,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:60
 msgid "Assembled Part"
-msgstr ""
+msgstr "Samengesteld onderdeel"
 
 #: templates/js/translated/table_filters.js:64
 msgid "Validated"
@@ -8309,7 +8309,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:169
 msgid "Part is an assembly"
-msgstr ""
+msgstr "Samengesteld onderdeel"
 
 #: templates/js/translated/table_filters.js:173
 msgid "Is allocated"
