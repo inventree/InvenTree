@@ -49,6 +49,9 @@ class ReferenceIndexingMixin(models.Model):
     """
     A mixin for keeping track of numerical copies of the "reference" field.
 
+    !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
+    ensure the reference field is not too big
+
     Here, we attempt to convert a "reference" field value (char) to an integer,
     for performing fast natural sorting.
 
