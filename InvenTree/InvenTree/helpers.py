@@ -736,3 +736,18 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
         'model': str(model_cls._meta.verbose_name),
         **ret
     }
+
+
+def inheritors(cls):
+    """
+    Return all classes that are subclasses from the supplied cls
+    """
+    subcls = set()
+    work = [cls]
+    while work:
+        parent = work.pop()
+        for child in parent.__subclasses__():
+            if child not in subcls:
+                subcls.add(child)
+                work.append(child)
+    return subcls
