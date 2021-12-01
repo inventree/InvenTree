@@ -884,7 +884,7 @@ class SalesOrderLineItem(OrderLineItem):
         """
 
         query = self.order.stock_items.filter(part=self.part).aggregate(fulfilled=Coalesce(Sum('quantity'), Decimal(0)))
-
+    
         return query['fulfilled']
 
     def allocated_quantity(self):
