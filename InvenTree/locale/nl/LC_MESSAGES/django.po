@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 22:21+0000\n"
-"PO-Revision-Date: 2021-11-30 22:55\n"
+"PO-Revision-Date: 2021-12-01 20:02\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -70,15 +70,15 @@ msgstr "Categorie selecteren"
 
 #: InvenTree/forms.py:230
 msgid "Email (again)"
-msgstr ""
+msgstr "E-mailadres (opnieuw)"
 
 #: InvenTree/forms.py:234
 msgid "Email address confirmation"
-msgstr ""
+msgstr "E-mailadres bevestiging"
 
 #: InvenTree/forms.py:254
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "U moet elke keer hetzelfde e-mailadres invoeren."
 
 #: InvenTree/helpers.py:430
 #, python-brace-format
@@ -116,11 +116,11 @@ msgstr "Aantal unieke serienummer ({s}) moet overeenkomen met de hoeveelheid ({q
 
 #: InvenTree/models.py:114
 msgid "Missing file"
-msgstr ""
+msgstr "Ontbrekend bestand"
 
 #: InvenTree/models.py:115
 msgid "Missing external link"
-msgstr ""
+msgstr "Externe link ontbreekt"
 
 #: InvenTree/models.py:126 stock/models.py:1874
 #: templates/js/translated/attachment.js:117
@@ -137,7 +137,7 @@ msgstr "Bestand als bijlage selecteren"
 #: templates/js/translated/company.js:537
 #: templates/js/translated/company.js:826 templates/js/translated/part.js:1077
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: InvenTree/models.py:134 build/models.py:330 part/models.py:798
 #: stock/models.py:540
@@ -259,7 +259,7 @@ msgstr "Spaans"
 
 #: InvenTree/settings.py:674
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spaans (Mexicaans)"
 
 #: InvenTree/settings.py:675
 msgid "French"
@@ -295,7 +295,7 @@ msgstr "Pools"
 
 #: InvenTree/settings.py:683
 msgid "Portugese"
-msgstr ""
+msgstr "Portugees"
 
 #: InvenTree/settings.py:684
 msgid "Russian"
@@ -742,7 +742,7 @@ msgstr "Bouwkwaliteit"
 
 #: build/models.py:267
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Aantal voorraaditems om te bouwen"
 
 #: build/models.py:271
 msgid "Completed items"
@@ -1271,7 +1271,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:208
 msgid "Allocate selected items"
-msgstr ""
+msgstr "Geselecteerde items toewijzen"
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
@@ -1634,7 +1634,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:168
 #: templates/js/translated/table_filters.js:385
 msgid "Assembly"
-msgstr ""
+msgstr "Samenstelling"
 
 #: common/models.py:711
 msgid "Parts can be assembled from other components by default"
@@ -4528,7 +4528,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:277
 msgid "Assemblies"
-msgstr ""
+msgstr "Samenstellingen"
 
 #: part/templates/part/detail.html:294
 msgid "Part Builds"
@@ -4681,7 +4681,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:116
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Onderdeel kan vanuit andere delen worden samengesteld"
 
 #: part/templates/part/part_base.html:120
 msgid "Part can be used in assemblies"
