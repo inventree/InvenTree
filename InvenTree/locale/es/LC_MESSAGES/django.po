@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 22:21+0000\n"
-"PO-Revision-Date: 2021-11-30 22:55\n"
+"PO-Revision-Date: 2021-12-01 18:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -921,7 +921,7 @@ msgstr ""
 
 #: build/serializers.py:146
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Salida de armado no coincide con armado principal"
 
 #: build/serializers.py:150
 msgid "Output part does not match BuildOrder part"
@@ -3760,11 +3760,11 @@ msgstr ""
 
 #: part/forms.py:96 part/models.py:2427
 msgid "Parent Part"
-msgstr ""
+msgstr "Parte principal"
 
 #: part/forms.py:97 part/templates/part/bom_duplicate.html:7
 msgid "Select parent part to copy BOM from"
-msgstr ""
+msgstr "Seleccionar parte principal de la que copiar BOM"
 
 #: part/forms.py:103
 msgid "Clear existing BOM items"
@@ -3834,7 +3834,7 @@ msgstr ""
 
 #: part/models.py:450
 msgid "Invalid choice for parent part"
-msgstr ""
+msgstr "Parte inválida para parte principal"
 
 #: part/models.py:502 part/models.py:514
 #, python-brace-format
@@ -4106,7 +4106,7 @@ msgstr ""
 
 #: part/models.py:2561
 msgid "Select parent part"
-msgstr ""
+msgstr "Seleccionar parte principal"
 
 #: part/models.py:2569
 msgid "Sub part"
@@ -4191,7 +4191,7 @@ msgstr ""
 
 #: part/models.py:2860
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Artículo BOM principal"
 
 #: part/models.py:2868
 msgid "Substitute part"
@@ -4411,7 +4411,7 @@ msgstr ""
 #: part/templates/part/category_delete.html:27
 #, python-format
 msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
-msgstr ""
+msgstr "Si se elimina esta categoría, estas partes se moverán a la categoría principal %(path)s"
 
 #: part/templates/part/category_delete.html:29
 msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
@@ -5014,7 +5014,7 @@ msgstr ""
 
 #: part/views.py:734
 msgid "Confirm duplication of BOM from parent"
-msgstr ""
+msgstr "Confirmar duplicación de BOM desde principal"
 
 #: part/views.py:776
 msgid "Confirm that the BOM is valid"
@@ -5329,7 +5329,7 @@ msgstr ""
 
 #: stock/models.py:476
 msgid "Parent Stock Item"
-msgstr ""
+msgstr "Artículo de stock principal"
 
 #: stock/models.py:485
 msgid "Base part"
@@ -5754,7 +5754,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:360
 msgid "Parent Item"
-msgstr ""
+msgstr "Artículo principal"
 
 #: stock/templates/stock/item_base.html:378
 msgid "No manufacturer set"
@@ -7023,7 +7023,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:996
 msgid "Inherited from parent BOM"
-msgstr ""
+msgstr "Heredado de BOM principal"
 
 #: templates/js/translated/build.js:78
 msgid "Edit Build Order"
@@ -7747,7 +7747,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:289
 msgid "Parent part category"
-msgstr ""
+msgstr "Categoría principal de parte"
 
 #: templates/js/translated/part.js:333
 msgid "Edit Part"
@@ -7849,7 +7849,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:1511
 msgid "This test is defined for a parent part"
-msgstr ""
+msgstr "Esta prueba está definida para una parte principal"
 
 #: templates/js/translated/part.js:1533
 msgid "Edit Test Result Template"
@@ -7962,7 +7962,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:104
 msgid "Parent stock location"
-msgstr ""
+msgstr "Ubicación del stock principal"
 
 #: templates/js/translated/stock.js:140
 msgid "New Stock Location"
