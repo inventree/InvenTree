@@ -1419,7 +1419,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
     var in_basket = options.status == {{SalesOrderStatus.IN_BASKET}};
 
     var waiting_for_package = options.status == {{SalesOrderStatus.WAITING_FOR_PACKING}};
-    
 
     // Has the order shipped?
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
@@ -1602,7 +1601,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
     }
 
     if (waiting_for_package) {
-        console.log(waiting_for_package)
         columns.push({
             field: 'buttons',
             formatter: function(value, row, index, field) {
@@ -1613,7 +1611,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 if (row.part) {
                     var part = row.part_detail;
-                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Fullfill stock" %}');
+                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-fill', pk, '{% trans "Fulfill stock" %}');
                 }
 
                 html += `</div>`;
@@ -1679,6 +1677,46 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
         // Callback for allocation stock items to the order
         $(table).find('.button-add').click(function() {
+            var pk = $(this).attr('pk');
+
+            var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+            var fields = {
+                // SalesOrderLineItem reference
+                line: {
+                    hidden: true,
+                    value: pk,
+                },
+                item: {
+                    filters: {
+                        part_detail: true,
+                        location_detail: true,
+                        in_stock: true,
+                        part: line_item.part,
+                        exclude_so_allocation: options.order,
+                    }
+                },
+                quantity: {
+                },
+            };
+
+            // Exclude expired stock?
+            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
+                fields.item.filters.expired = false;
+            }
+
+            constructForm(
+                `/api/order/so-allocation/`,
+                {
+                    method: 'POST',
+                    fields: fields,
+                    title: '{% trans "Allocate Stock Item" %}',
+                    onSuccess: reloadTable,
+                }
+            );
+        });
+
+        $(table).find('.button-fill').click(function() {
             var pk = $(this).attr('pk');
 
             var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
