@@ -257,7 +257,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'user_sessions',                # db user sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
@@ -299,7 +299,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -626,6 +626,12 @@ if _cache_host:
     # as well
     Q_CLUSTER["django_redis"] = "worker"
 
+# database user sessions
+SESSION_ENGINE = 'user_sessions.backends.db'
+LOGOUT_REDIRECT_URL = 'index'
+SILENCED_SYSTEM_CHECKS = [
+    'admin.E410',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
