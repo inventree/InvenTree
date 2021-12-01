@@ -1414,9 +1414,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     setupFilterList('salesorderlineitems', $(table), filter_target);
 
     // Is the order pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
+    var pending = options.status == {{SalesOrderStatus.PENDING}};
 
-    var in_basket = options.status == {{SalesOrderStatus.IN_BASKET}}
+    var in_basket = options.status == {{SalesOrderStatus.IN_BASKET}};
+
+    var waiting_for_package = options.status == {{SalesOrderStatus.WAITING_FOR_PACKING}};
+    
 
     // Has the order shipped?
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
@@ -1598,13 +1601,34 @@ function loadSalesOrderLineItemTable(table, options={}) {
         });
     }
 
+    if (waiting_for_package) {
+        console.log(waiting_for_package)
+        columns.push({
+            field: 'buttons',
+            formatter: function(value, row, index, field) {
+
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                var pk = row.pk;
+
+                if (row.part) {
+                    var part = row.part_detail;
+                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Fullfill stock" %}');
+                }
+
+                html += `</div>`;
+
+                return html;
+            }
+        });
+    }
+
     function reloadTable() {
         $(table).bootstrapTable('refresh');
     }
 
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
-
         // Callback for editing line items
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
