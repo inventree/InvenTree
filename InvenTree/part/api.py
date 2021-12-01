@@ -1075,6 +1075,7 @@ class PartList(generics.ListCreateAPIView):
         'revision',
         'keywords',
         'category__name',
+        'MPN',
     ]
 
 
