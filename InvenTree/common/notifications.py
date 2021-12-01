@@ -1,10 +1,16 @@
-from django.utils.translation import ugettext_lazy as _
+import logging
+from datetime import timedelta
+
 from django.template.loader import render_to_string
 
 from allauth.account.models import EmailAddress
 
 from InvenTree.helpers import inheritors
+from common.models import NotificationEntry
 import InvenTree.tasks
+
+
+logger = logging.getLogger('inventree')
 
 
 # region notification classes
@@ -14,7 +20,7 @@ class NotificationMethod:
 
     def __init__(self, obj, entry_name, receivers) -> None:
         # check if a sending fnc is defined
-        if (not 'send' in self) and (not 'send_bulk' in self):
+        if ('send' not in self) and ('send_bulk' not in self):
             raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
 
         # define arguments
@@ -42,6 +48,7 @@ class BulkNotificationMethod(NotificationMethod):
         raise NotImplementedError('The `send` method must be overriden!')
 # endregion
 
+
 # region implementations
 class EmailNotification(BulkNotificationMethod):
     method_name = 'mail'
@@ -54,11 +61,11 @@ class EmailNotification(BulkNotificationMethod):
     def send_bulk(self, context):
         # TODO: In the future, include the part image in the email template
 
-        if not 'template' in context:
+        if 'template' not in context:
             raise NotImplementedError('Templates must be provided in the `context`')
-        if not 'html' in context['template']:
+        if 'html' not in context['template']:
             raise NotImplementedError("template['html'] must be provided in the `context`")
-        if not 'subject' in context['template']:
+        if 'subject' not in context['template']:
             raise NotImplementedError("template['subject'] must be provided in the `context`")
 
         html_message = render_to_string(context['template']['html'], context)
@@ -71,11 +78,7 @@ class EmailNotification(BulkNotificationMethod):
 # endregion
 
 
-def trigger_notifaction(
-    obj, entry_name=None, obj_ref='pk',
-    receivers=None, receiver_fnc=None, receiver_args=[], receiver_kwargs={},
-    notification_context={}
-    ):
+def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, receiver_fnc=None, receiver_args=[], receiver_kwargs={}, notification_context={}):
     """
     Send out an notification
     """
@@ -93,7 +96,6 @@ def trigger_notifaction(
         obj_ref_value = getattr(obj, 'id')
     if not obj_ref_value:
         raise KeyError(f"Could not resolve an object reference for '{str(obj)}' with {obj_ref}, pk, id")
-
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
