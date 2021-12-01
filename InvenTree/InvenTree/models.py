@@ -84,7 +84,7 @@ class ReferenceIndexingMixin(models.Model):
 
         self.reference_int = ref_int
 
-    reference_int = models.IntegerField(default=0)
+    reference_int = models.BigIntegerField(default=0)
 
 
 class InvenTreeAttachment(models.Model):
