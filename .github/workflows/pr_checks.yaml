@@ -26,7 +26,7 @@ env:
   INVENTREE_STATIC_ROOT: ./static
 
   # for full databases
-  INVENTREE_DB_USER: inventree
+  INVENTREE_DB_USER: root
   INVENTREE_DB_PASSWORD: password
   INVENTREE_DB_HOST: '127.0.0.1'
   INVENTREE_DEBUG: info
