@@ -18,7 +18,7 @@ env:
 jobs:
 
   check_version:
-    name: check version number
+    name: version number
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,7 @@ jobs:
           python3 ci/check_version_number.py --branch ${{ github.base_ref }}
 
   pep_style:
+    name: PEP style (python)
     needs: check_version
     runs-on: ubuntu-latest
 
