@@ -124,7 +124,6 @@ class PurchaseOrderTest(OrderTest):
             expected_code=400
         )
 
-
     def test_po_attachments(self):
 
         url = reverse('api-po-attachment-list')
