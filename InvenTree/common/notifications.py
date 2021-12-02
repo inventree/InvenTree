@@ -28,11 +28,11 @@ class NotificationMethod:
         self.entry_name = entry_name
         self.receiers = receivers
 
-        # gather recipiends
-        self.recipiends = self.get_recipiends()
+        # gather recipients
+        self.recipients = self.get_recipients()
 
-    def get_recipiends(self):
-        raise NotImplementedError('The `get_recipiends` method must be implemented!')
+    def get_recipients(self):
+        raise NotImplementedError('The `get_recipients` method must be implemented!')
 
     def cleanup(self):
         return True
@@ -53,7 +53,7 @@ class BulkNotificationMethod(NotificationMethod):
 class EmailNotification(BulkNotificationMethod):
     method_name = 'mail'
 
-    def get_recipiends(self):
+    def get_recipients(self):
         return EmailAddress.objects.filter(
             user__in=self.receiers,
         )
@@ -69,7 +69,7 @@ class EmailNotification(BulkNotificationMethod):
             raise NotImplementedError("template['subject'] must be provided in the `context`")
 
         html_message = render_to_string(context['template']['html'], context)
-        recipients = self.recipiends.values_list('email', flat=True)
+        recipients = self.recipients.values_list('email', flat=True)
 
         InvenTree.tasks.send_email(context['template']['subject'], '', recipients, html_message=html_message)
 
@@ -132,7 +132,7 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
     # Init delivery method
     method = cls(obj, entry_name, receivers)
 
-    if method.recipiends and method.recipiends.count() > 0:
+    if method.recipients and method.recipients.count() > 0:
         # Log start
         logger.info(f"Notify users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}'")
 
@@ -142,10 +142,10 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
         # Select delivery method and execute it
         if hasattr(method, 'send_bulk'):
             success = method.send_bulk(notification_context)
-            success_count = method.recipiends.count()
+            success_count = method.recipients.count()
 
         elif hasattr(method, 'send'):
-            for rec in method.recipiends:
+            for rec in method.recipients:
                 if method.send(rec, notification_context):
                     success_count += 1
                 else:
