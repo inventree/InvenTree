@@ -8,24 +8,25 @@ on:
     types:
       - completed
 
+env:
+  # Database backend configuration
+  INVENTREE_DB_ENGINE: django.db.backends.postgresql
+  INVENTREE_DB_NAME: inventree
+  INVENTREE_DB_USER: inventree
+  INVENTREE_DB_PASSWORD: password
+  INVENTREE_DB_HOST: '127.0.0.1'
+  INVENTREE_DB_PORT: 5432
+  INVENTREE_DEBUG: info
+  INVENTREE_MEDIA_ROOT: ./media
+  INVENTREE_STATIC_ROOT: ./static
+  INVENTREE_CACHE_HOST: localhost
+
+
 jobs:
 
   test:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
-    env:
-      # Database backend configuration
-      INVENTREE_DB_ENGINE: django.db.backends.postgresql
-      INVENTREE_DB_NAME: inventree
-      INVENTREE_DB_USER: inventree
-      INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
-      INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: info
-      INVENTREE_MEDIA_ROOT: ./media
-      INVENTREE_STATIC_ROOT: ./static
-      INVENTREE_CACHE_HOST: localhost
 
     services:
       postgres:
