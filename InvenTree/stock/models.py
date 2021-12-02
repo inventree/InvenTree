@@ -39,6 +39,7 @@ import label.models
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.serializers import extract_int
 
 from users.models import Owner
 
@@ -236,17 +237,7 @@ class StockItem(MPTTModel):
         serial_int = 0
 
         if serial is not None:
-
-            serial = str(serial)
-
-            # Look at the start of the string - can it be "integerized"?
-            result = re.match(r'^(\d+)', serial)
-
-            if result and len(result.groups()) == 1:
-                try:
-                    serial_int = int(result.groups()[0])
-                except:
-                    serial_int = 0
+            serial_int = extract_int(str(serial))
 
         self.serial_int = serial_int
 

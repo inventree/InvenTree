@@ -32,7 +32,7 @@ from company.serializers import SupplierPartSerializer
 
 import InvenTree.helpers
 import InvenTree.serializers
-from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.serializers import InvenTreeDecimalField, extract_int
 
 from part.serializers import PartBriefSerializer
 
@@ -72,6 +72,11 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_part',
             'uid',
         ]
+    
+    def validate_serial(self, value):
+        if extract_int(value) > 2147483647:
+            raise serializers.ValidationError('serial is to to big')
+        return value
 
 
 class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
