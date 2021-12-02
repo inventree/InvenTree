@@ -26,6 +26,7 @@ from InvenTree.helpers import normalize
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
+from InvenTree.serializers import ReferenceIndexingSerializerMixin
 from InvenTree.status_codes import StockStatus
 
 import order.models
@@ -38,10 +39,8 @@ import stock.serializers
 from users.serializers import OwnerSerializer
 
 
-class POSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for a PurchaseOrder object
-    """
+class POSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+    """ Serializer for a PurchaseOrder object """
 
     def __init__(self, *args, **kwargs):
 
@@ -395,7 +394,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
         ]
 
 
-class SalesOrderSerializer(InvenTreeModelSerializer):
+class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializers for the SalesOrder object
     """

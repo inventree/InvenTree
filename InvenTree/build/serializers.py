@@ -16,7 +16,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
@@ -32,7 +32,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializes a Build object
     """
