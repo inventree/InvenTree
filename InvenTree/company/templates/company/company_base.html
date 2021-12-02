@@ -19,21 +19,26 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if company.is_supplier and roles.purchase_order.add %}
-<button type='button' class='btn btn-outline-secondary' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
+<button type='button' class='btn btn-outline-primary' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
     <span class='fas fa-shopping-cart'/>
 </button>
 {% endif %}
-{% if perms.company.change_company %}
-<button type='button' class='btn btn-outline-secondary' id='company-edit' title='{% trans "Edit company information" %}'>
-    <span class='fas fa-edit icon-green'/>
+<button id='company-edit-actions' title='{% trans "Company actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+    <span class='fas fa-tools'></span> <span class='caret'></span>
 </button>
-{% endif %}
-{% if perms.company.delete_company %}
-<button type='button' class='btn btn-outline-secondary' id='company-delete' title='{% trans "Delete Company" %}'>
-    <span class='fas fa-trash-alt icon-red'/>
-</button>
-{% endif %}
-{% endblock %}
+<ul class='dropdown-menu' role='menu'>
+    {% if perms.company.change_company %}
+    <li><a class='dropdown-item' href='#' id='company-edit' title='{% trans "Edit company information" %}'>
+        <span class='fas fa-edit icon-green'></span> {% trans "Edit Company" %}
+    </a></li>
+    {% endif %}
+    {% if perms.company.delete_company %}
+    <li><a class='dropdown-item' href='#' id='company-delete' title='{% trans "Delete company" %}'>
+        <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Company" %}
+    </a></li>
+    {% endif %}
+</ul>
+{% endblock actions %}
 
 {% block thumbnail %}
 <div class='dropzone part-thumb-container' id='company-thumb'>
@@ -56,7 +61,29 @@
 {% endblock %}
 
 {% block details %}
-<p>{{ company.description }}</p>
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Description" %}</td>
+        <td>{{ company.description }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-industry'></span></td>
+        <td>{%trans "Manufacturer" %}</td>
+        <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-building'></span></td>
+        <td>{% trans "Supplier" %}</td>
+        <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+    </tr>
+</table>
 
 {% endblock %}
 
@@ -110,22 +137,6 @@
     <td>{{ company.contact }}{% include "clip.html"%}</td>
 </tr>
 {% endif %}
-
-<tr>
-    <td><span class='fas fa-industry'></span></td>
-    <td>{%trans "Manufacturer" %}</td>
-    <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
-</tr>
-<tr>
-    <td><span class='fas fa-building'></span></td>
-    <td>{% trans "Supplier" %}</td>
-    <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
-</tr>
-<tr>
-    <td><span class='fas fa-user-tie'></span></td>
-    <td>{% trans "Customer" %}</td>
-    <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
-</tr>
 </table>
 {% endblock %}
 

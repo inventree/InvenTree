@@ -439,10 +439,14 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                         line['price_part'] = stock_item.supplier_part.unit_pricing
 
                 # set date for graph labels
-                if stock_item.purchase_order:
+                if stock_item.purchase_order and stock_item.purchase_order.issue_date:
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
-                else:
+                elif stock_item.tracking_info.count() > 0:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                else:
+                    # Not enough information
+                    continue
+
                 price_history.append(line)
 
             ctx['price_history'] = price_history
