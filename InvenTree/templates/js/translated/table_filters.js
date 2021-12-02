@@ -173,6 +173,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is allocated" %}',
                 description: '{% trans "Item has been allocated" %}',
             },
+            available: {
+                type: 'bool',
+                title: '{% trans "Available" %}',
+                description: '{% trans "Stock is available for use" %}',
+            },
             cascade: {
                 type: 'bool',
                 title: '{% trans "Include sublocations" %}',
