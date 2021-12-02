@@ -29,7 +29,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'npm'
       - run: npm install
       - name: Setup Python
         uses: actions/setup-python@v2
