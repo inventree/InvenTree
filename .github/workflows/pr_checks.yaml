@@ -162,8 +162,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      INVENTREE_DB_NAME: './test_db.sqlite'
-      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
+      INVENTREE_DB_ENGINE: sqlite3
 
     steps:
       - name: Checkout Code
@@ -187,7 +186,7 @@ jobs:
           invoke migrate
           invoke import-fixtures
           invoke export-records -f data.json
-          rm test_db.sqlite
+          rm ${{ env.INVENTREE_DB_NAME }}.sqlite
           invoke migrate
           invoke import-records -f data.json
           invoke import-records -f data.json
