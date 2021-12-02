@@ -248,8 +248,6 @@ class ReferenceIndexingSerializerMixin():
     for the BigIntegerField
     """
     def validate_reference(self, value):
-        if extract_int(value) < -models.BigIntegerField.MAX_BIGINT:
-            raise serializers.ValidationError('reference is to to small')
         if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
             raise serializers.ValidationError('reference is to to big')
         return value

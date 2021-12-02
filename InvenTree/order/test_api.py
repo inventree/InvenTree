@@ -124,16 +124,6 @@ class PurchaseOrderTest(OrderTest):
             expected_code=400
         )
 
-        # too small
-        self.post(
-            url,
-            {
-                'supplier': 1,
-                'reference': -huge_numer,
-                'description': 'PO not created via the API',
-            },
-            expected_code=400
-        )
 
     def test_po_attachments(self):
 
