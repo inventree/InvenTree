@@ -238,6 +238,7 @@ jobs:
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
       INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
+      INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
       INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
       INVENTREE_DB_PORT: ${{needs.job1.outputs.port_postgres }}
       INVENTREE_CACHE_HOST: localhost
@@ -249,7 +250,7 @@ jobs:
           POSTGRES_USER: ${{needs.job1.outputs.user }}
           POSTGRES_PASSWORD: ${{needs.job1.outputs.password }}
         ports:
-          - ${{needs.job1.outputs.port }}:${{needs.job1.outputs.port_postgres }}
+          - ${{needs.job1.outputs.port_postgres }}:${{needs.job1.outputs.port_postgres }}
 
       redis:
         image: redis
