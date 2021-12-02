@@ -21,6 +21,7 @@ env:
   # general database settings
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
+  INVENTREE_DB_NAME_main: inventree
   INVENTREE_MEDIA_ROOT: ./media
   INVENTREE_STATIC_ROOT: ./static
 
@@ -169,6 +170,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      INVENTREE_DB_NAME: './${{ env.INVENTREE_DB_NAME_main }}.sqlite'
       INVENTREE_DB_ENGINE: sqlite3
 
     steps:
@@ -193,7 +195,7 @@ jobs:
           invoke migrate
           invoke import-fixtures
           invoke export-records -f data.json
-          rm ${{ env.INVENTREE_DB_NAME }}.sqlite
+          rm ${{ env.INVENTREE_DB_NAME_main }}.sqlite
           invoke migrate
           invoke import-records -f data.json
           invoke import-records -f data.json
