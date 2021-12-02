@@ -91,7 +91,7 @@ jobs:
 
   html:
     name: html template files
-    needs: javascript
+    needs: pep_style
     runs-on: ubuntu-latest
 
     steps:
