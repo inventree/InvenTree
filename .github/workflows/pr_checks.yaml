@@ -1,6 +1,6 @@
-# Check that the version number format matches the current branch
+# Checks for each PR
 
-name: Version Numbering
+name: PR checks
 
 on:
   pull_request:
@@ -9,7 +9,8 @@ on:
 
 jobs:
 
-  check:
+  check_version:
+    name: check version number
     runs-on: ubuntu-latest
 
     steps:
