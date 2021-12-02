@@ -20,6 +20,10 @@ v19 -> 2021-11-16
     - Adds support for multiple "Shipments" against a SalesOrder
     - Refactors process for stock allocation against a SalesOrder
 
+v19 -> 2021-12-02
+    - Adds the ability to filter the StockItem API by "part_tree"
+    - Returns only stock items which match a particular part.tree_id field
+
 v18 -> 2021-11-15
     - Adds the ability to filter BomItem API by "uses" field
     - This returns a list of all BomItems which "use" the specified part

@@ -44,6 +44,7 @@
     editStockItem,
     editStockLocation,
     exportStock,
+    findStockItemBySerialNumber,
     loadInstalledInTable,
     loadStockLocationTable,
     loadStockTable,
@@ -395,6 +396,87 @@ function createNewStockItem(options={}) {
     }
 
     constructForm(url, options);
+}
+
+/*
+ * Launch a modal form to find a particular stock item by serial number.
+ * Arguments:
+ * - part: ID (PK) of the part in question
+ */
+
+function findStockItemBySerialNumber(part_id) {
+
+    constructFormBody({}, {
+        title: '{% trans "Find Serial Number" %}',
+        fields: {
+            serial: {
+                label: '{% trans "Serial Number" %}',
+                help_text: '{% trans "Enter serial number" %}',
+                placeholder: '{% trans "Enter serial number" %}',
+                required: true,
+                type: 'string',
+                value: '',
+            }
+        },
+        onSubmit: function(fields, opts) {
+
+            var serial = getFormFieldValue('serial', fields['serial'], opts);
+        
+            serial = serial.toString().trim();
+
+            if (!serial) {
+                handleFormErrors(
+                    {
+                        'serial': [
+                            '{% trans "Enter a serial number" %}',
+                        ]
+                    }, fields, opts
+                );
+                return;
+            }
+
+            inventreeGet(
+                '{% url "api-stock-list" %}',
+                {
+                    part_tree: part_id,
+                    serial: serial,
+                },
+                {
+                    success: function(response) {
+                        if (response.length == 0) {
+                            // No results!
+                            handleFormErrors(
+                                {
+                                    'serial': [
+                                        '{% trans "No matching serial number" %}',
+                                    ]
+                                }, fields, opts
+                            );
+                        } else if (response.length > 1) {
+                            // Too many results!
+                            handleFormErrors(
+                                {
+                                    'serial': [
+                                        '{% trans "More than one matching result found" %}',
+                                    ]
+                                }, fields, opts
+                            );
+                        } else {
+                            $(opts.modal).modal('hide');
+
+                            // Redirect
+                            var pk = response[0].pk;
+                            location.href = `/stock/item/${pk}/`;
+                        }
+                    },
+                    error: function(xhr) {
+                        showApiError(xhr, opts.url);
+                        $(opts.modal).modal('hide');
+                    }
+                }
+            );
+        }
+    });
 }
 
 

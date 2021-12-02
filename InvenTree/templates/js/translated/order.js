@@ -796,6 +796,11 @@ function loadPurchaseOrderTable(table, options) {
                 switchable: true,
                 sortable: false,
                 formatter: function(value, row) {
+                    
+                    if (!row.responsible_detail) {
+                        return '-';
+                    }
+                    
                     var html = row.responsible_detail.name;
 
                     if (row.responsible_detail.label == 'group') {
