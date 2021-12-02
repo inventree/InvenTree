@@ -90,7 +90,7 @@ class SettingsTest(TestCase):
                     raise ValueError(f'Non-boolean default value specified for {key}')
 
 
-class NotificationTest(TestCase):
+class NotificationEntryTest(TestCase):
 
     def test_check_notification_entries(self):
 
