@@ -115,7 +115,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
         # collect possible methods
         delivery_methods = inheritors(NotificationMethod)
 
-        for method in delivery_methods:
+        for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.method_name}'")
             try:
                 deliver_notification(method, obj, entry_name, receivers, notification_context)
