@@ -23,6 +23,8 @@ env:
   INVENTREE_MEDIA_ROOT: ./media
   INVENTREE_STATIC_ROOT: ./static
 
+  INVENTREE_DB_USER: inventree
+
 
 jobs:
 
@@ -204,7 +206,7 @@ jobs:
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
-      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_USER: ${{ env.INVENTREE_DB_USER }}
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 5432
@@ -215,7 +217,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: inventree
+          POSTGRES_USER: ${{ env.INVENTREE_DB_USER }}
           POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
@@ -270,7 +272,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
-          MYSQL_USER: inventree
+          MYSQL_USER: ${{ env.INVENTREE_DB_USER }}
           MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
