@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 from django.db.models import Q, F
 
+from django.http import Http404
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
@@ -644,6 +645,29 @@ class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = SalesOrderAllocation.objects.all()
     serializer_class = SalesOrderAllocationSerializer
 
+class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detali view of a SalesOrderAllocation object
+    """
+
+    queryset = SalesOrderAllocation.objects.all()
+    serializer_class = SalesOrderAllocationSerializer
+
+    def delete (self, request, *args, **kwargs):
+        try:
+            quantity = request.data.get('quantity', None)
+            instance = self.get_object()
+            if quantity is not None and quantity < instance.quantity:
+                instance.complete_allocation(quantity=quantity)
+                instance.quantity = instance.quantity - quantity
+                instance.save()
+            else:
+                instance.complete_allocation()
+                self.perform_destroy(instance)
+        except Http404:
+            pass
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class SOAllocationList(generics.ListCreateAPIView):
     """
@@ -658,7 +682,7 @@ class SOAllocationList(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         item = serializer.save()
 
-        # order_line_item = SalesOrderLineItem.objects.filter(order=).first()
+        
         order = SalesOrder.objects.filter(pk=item.line.order.pk).first()
         if order.is_fully_allocated() and order.is_packable:
             order.status = SalesOrderStatus.WAITING_FOR_PACKING
@@ -795,6 +819,7 @@ order_api_urls = [
 
     # API endpoints for sales order allocations
     url(r'^so-allocation/', include([
+        url(r'^fulfill/(?P<pk>\d+)', SOAllocationFulFill.as_view(), name='api-so-allocation-fulfill'),
         url(r'^(?P<pk>\d+)/$', SOAllocationDetail.as_view(), name='api-so-allocation-detail'),
         url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
     ])),

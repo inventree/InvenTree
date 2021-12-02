@@ -255,6 +255,21 @@ class SalesOrderShip(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context)
 
 
+class SalesOrderAllocationFulfill(AjaxUpdateView):
+    """ View for 'fulfill' a SalesOrderLineItem """
+    model = SalesOrderAllocation
+    context_object_name = 'so_allocation'
+    ajax_template_name = 'order/sales_order_line_allocation_fulfill.html'
+    ajax_form_title = _('Fulfill Stock Item')
+
+    def post(self, request, *args, **kwargs):
+        self.request = request
+        context = self.get_context_data()
+        # context['order'] = order
+
+        return self.renderJsonResponse(request, context)
+
+
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 

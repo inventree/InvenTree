@@ -1,0 +1,30 @@
+{% extends "modal_form.html" %}
+
+{% load i18n %}
+
+{% block pre_form_content %}
+
+<!-- {% if not order.is_fully_allocated %}
+<div class='alert alert-block alert-danger'>
+    <h4>{% trans "Warning" %}</h4>
+    {% trans "This order has not been fully allocated. If the order is marked as shipped, it can no longer be adjusted." %}
+    <br>
+    {% trans "Ensure that the order allocation is correct before shipping the order." %}
+</div>
+{% endif %} -->
+
+<!-- {% if order.is_over_allocated %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Some line items in this order have been over-allocated" %}
+    <br>
+    {% trans "Ensure that this is correct before shipping the order." %}
+</div>
+{% endif %} -->
+
+<div class='alert alert-block alert-info'>
+    <strong>{% trans "Sales Order Line Allocation" %} {{ so_allocation.quantity }} - {{ so_allocation.item }}</strong>
+    <br>
+    <!-- {% trans "Shipping this order means that the order will no longer be editable." %} -->
+</div>
+
+{% endblock %}

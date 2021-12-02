@@ -1198,7 +1198,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
  * @param {*} element
  */
 function showAllocationSubTable(index, row, element, options) {
-
+    
     // Construct a sub-table element
     var html = `
     <div class='sub-table'>
@@ -1212,7 +1212,7 @@ function showAllocationSubTable(index, row, element, options) {
 
     // Is the parent SalesOrder pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
-
+    var in_basket =  options.status == {{ SalesOrderStatus.IN_BASKET }};
     function setupCallbacks() {
         // Add callbacks for 'edit' buttons
         table.find('.button-allocation-edit').click(function() {
@@ -1304,7 +1304,7 @@ function showAllocationSubTable(index, row, element, options) {
                     var html = `<div class='btn-group float-right' role='group'>`;
                     var pk = row.pk;
 
-                    if (pending) {
+                    if (pending || in_basket) {
                         html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
@@ -1424,7 +1424,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
 
     // Show detail view if the PurchaseOrder is PENDING or SHIPPED
-    var show_detail = pending || shipped;
+    var show_detail = pending || shipped || in_basket || waiting_for_package;
 
     // Table columns to display
     var columns = [
@@ -1606,7 +1606,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
             formatter: function(value, row, index, field) {
 
                 var html = `<div class='btn-group float-right' role='group'>`;
-
                 var pk = row.pk;
 
                 if (row.part) {
@@ -1718,39 +1717,38 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
         $(table).find('.button-fill').click(function() {
             var pk = $(this).attr('pk');
+            // var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-            var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
-
-            var fields = {
-                // SalesOrderLineItem reference
-                line: {
-                    hidden: true,
-                    value: pk,
-                },
-                item: {
-                    filters: {
-                        part_detail: true,
-                        location_detail: true,
-                        in_stock: true,
-                        part: line_item.part,
-                        exclude_so_allocation: options.order,
-                    }
-                },
-                quantity: {
-                },
-            };
+            // var fields = {
+            //     // SalesOrderLineItem reference
+            //     // line: {
+            //     //     hidden: true,
+            //     //     value: pk,
+            //     // },
+            //     // item: {
+            //     //     // filters: {
+            //     //     //     part_detail: true,
+            //     //     //     location_detail: true,
+            //     //     //     in_stock: true,
+            //     //     //     part: line_item.part,
+            //     //     //     exclude_so_allocation: options.order,
+            //     //     // }
+            //     // },
+            //     quantity: {
+            //     },
+            // };
 
             // Exclude expired stock?
-            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
-                fields.item.filters.expired = false;
-            }
+            // if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
+            //     fields.item.filters.expired = false;
+            // }
 
             constructForm(
-                `/api/order/so-allocation/`,
+                `/api/order/so-allocation/fulfill/${pk}`,
                 {
-                    method: 'POST',
-                    fields: fields,
-                    title: '{% trans "Allocate Stock Item" %}',
+                    method: 'DELETE',
+                    // fields: fields,
+                    title: '{% trans "Fulfill Stock Item" %}',
                     onSuccess: reloadTable,
                 }
             );
