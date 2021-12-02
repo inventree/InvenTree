@@ -172,7 +172,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      INVENTREE_DB_NAME: './${{ env.INVENTREE_DB_NAME_main }}.sqlite'
+      INVENTREE_DB_NAME: ./${{ env.INVENTREE_DB_NAME_main }}.sqlite
       INVENTREE_DB_ENGINE: sqlite3
 
     steps:
