@@ -39,7 +39,7 @@ class NotificationMethod:
 
 
 class SingleNotificationMethod(NotificationMethod):
-    def send(self, context):
+    def send(self, receiver, context):
         raise NotImplementedError('The `send` method must be overriden!')
 
 
@@ -139,7 +139,7 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
 
         elif 'send' in method:
             for rec in method.recipiends:
-                method.send(notification_context)
+                method.send(rec, notification_context)
 
         else:
             raise NotImplementedError('No delivery method found')
