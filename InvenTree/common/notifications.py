@@ -20,7 +20,7 @@ class NotificationMethod:
 
     def __init__(self, obj, entry_name, receivers) -> None:
         # check if a sending fnc is defined
-        if ('send' not in self) and ('send_bulk' not in self):
+        if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
             raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
 
         # define arguments
