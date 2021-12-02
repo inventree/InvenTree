@@ -122,7 +122,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
             except Exception as error:
                 logger.error(error)
 
-        # save delivery flag
+        # Set delivery flag
         NotificationEntry.notify(entry_name, obj_ref_value)
     else:
         logger.info(f"No possible users for notification '{entry_name}'")
