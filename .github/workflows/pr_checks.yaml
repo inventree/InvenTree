@@ -14,7 +14,6 @@ on:
 env:
   python_version: 3.7
   node_version: 16
-
   server_start_sleep: 60
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -219,10 +218,10 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: inventree
-          POSTGRES_PASSWORD: password
+          POSTGRES_USER: ${{ env.INVENTREE_DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
         ports:
-          - 5432:5432
+          - ${{ env.INVENTREE_DB_PORT }}:${{ env.INVENTREE_DB_PORT }}
 
       redis:
         image: redis
@@ -270,12 +269,12 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
-          MYSQL_USER: inventree
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: ${{ env.INVENTREE_DB_USER }}
+          MYSQL_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
-          - 3306:3306
+          - ${{ env.INVENTREE_DB_PORT }}:${{ env.INVENTREE_DB_PORT }}
 
     steps:
       - name: Checkout Code
