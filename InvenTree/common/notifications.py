@@ -134,10 +134,10 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
     if method.recipiends and method.recipiends.count() > 0:
         logger.info(f"Notify users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}'")
 
-        if 'send_bulk' in method:
+        if hasattr(method, 'send_bulk'):
             method.send_bulk(notification_context)
 
-        elif 'send' in method:
+        elif hasattr(method, 'send'):
             for rec in method.recipiends:
                 method.send(rec, notification_context)
 
