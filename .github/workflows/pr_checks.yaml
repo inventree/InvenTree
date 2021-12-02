@@ -29,6 +29,19 @@ env:
 
 jobs:
 
+  init:
+    name: set parameters
+    runs-on: ubuntu-latest
+    outputs:
+      user: ${{ steps.step1.outputs.user }}
+      password: ${{ steps.step1.outputs.password }}
+
+    steps:
+    - id: step1
+      run: |
+        echo "::set-output name=user::${{ env.INVENTREE_DB_USER }}"
+        echo "::set-output name=password::${{ env.INVENTREE_DB_PASSWORD }}"
+
   check_version:
     name: version number
     runs-on: ubuntu-latest
@@ -42,7 +55,7 @@ jobs:
 
   pep_style:
     name: PEP style (python)
-    needs: check_version
+    needs: ['init', 'check_version']
     runs-on: ubuntu-latest
 
     steps:
@@ -207,8 +220,8 @@ jobs:
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
-      INVENTREE_DB_USER: ${{ env.INVENTREE_DB_USER }}
-      INVENTREE_DB_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+      INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
+      INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
@@ -262,7 +275,7 @@ jobs:
       # Database backend configuration
       INVENTREE_DB_ENGINE: django.db.backends.mysql
       INVENTREE_DB_USER: root
-      INVENTREE_DB_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+      INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 3306
       INVENTREE_DEBUG: info
