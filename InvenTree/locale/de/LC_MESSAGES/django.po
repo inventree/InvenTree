@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-02 13:31+0000\n"
-"PO-Revision-Date: 2021-12-02 14:28\n"
+"PO-Revision-Date: 2021-12-02 16:33\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4763,7 +4763,7 @@ msgstr "letzte Seriennummer"
 #: part/templates/part/part_base.html:328
 #: stock/templates/stock/item_base.html:159
 msgid "Search for serial number"
-msgstr ""
+msgstr "Nach Seriennummer suchen"
 
 #: part/templates/part/part_base.html:449 part/templates/part/prices.html:144
 msgid "Calculate"
@@ -5678,7 +5678,7 @@ msgstr "vorherige Seite"
 
 #: stock/templates/stock/item_base.html:154
 msgid "Navigate to previous serial number"
-msgstr ""
+msgstr "Zur vorherigen Seriennummer wechseln"
 
 #: stock/templates/stock/item_base.html:163
 msgid "next page"
@@ -5686,7 +5686,7 @@ msgstr "nächste Seite"
 
 #: stock/templates/stock/item_base.html:163
 msgid "Navigate to next serial number"
-msgstr ""
+msgstr "Zur nächsten Seriennummer wechseln"
 
 #: stock/templates/stock/item_base.html:190
 #, python-format
@@ -8006,23 +8006,23 @@ msgstr "Mehrere Lagerartikel erstellt"
 
 #: templates/js/translated/stock.js:407
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Seriennummer finden"
 
 #: templates/js/translated/stock.js:411 templates/js/translated/stock.js:412
 msgid "Enter serial number"
-msgstr ""
+msgstr "Seriennummer eingeben"
 
 #: templates/js/translated/stock.js:428
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Eine Seriennummer eingeben"
 
 #: templates/js/translated/stock.js:448
 msgid "No matching serial number"
-msgstr ""
+msgstr "Keine passende Seriennummer"
 
 #: templates/js/translated/stock.js:457
 msgid "More than one matching result found"
-msgstr ""
+msgstr "Mehrere Ergebnisse gefunden"
 
 #: templates/js/translated/stock.js:502
 msgid "Export Stock"
