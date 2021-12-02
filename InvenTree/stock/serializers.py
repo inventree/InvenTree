@@ -72,7 +72,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_part',
             'uid',
         ]
-    
+
     def validate_serial(self, value):
         if extract_int(value) > 2147483647:
             raise serializers.ValidationError('serial is to to big')

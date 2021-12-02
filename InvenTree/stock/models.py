@@ -7,7 +7,6 @@ Stock database model definitions
 from __future__ import unicode_literals
 
 import os
-import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
