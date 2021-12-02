@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
@@ -26,6 +27,8 @@ from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import DecimalField
+
+from .models import extract_int
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -237,6 +240,17 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             raise ValidationError(data)
 
         return data
+
+
+class ReferenceIndexingSerializerMixin():
+    """
+    This serializer mixin ensures the the reference is not to big / small
+    for the BigIntegerField
+    """
+    def validate_reference(self, value):
+        if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
+            raise serializers.ValidationError('reference is to to big')
+        return value
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
