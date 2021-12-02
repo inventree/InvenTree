@@ -34,6 +34,9 @@ class NotificationMethod:
     def get_recipients(self):
         raise NotImplementedError('The `get_recipients` method must be implemented!')
 
+    def setup(self):
+        return True
+
     def cleanup(self):
         return True
 
@@ -136,6 +139,9 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
         # Log start
         logger.info(f"Notify users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}'")
 
+        # Run setup for delivery method
+        method.setup()
+
         success = True
         success_count = 0
 
@@ -153,6 +159,9 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
 
         else:
             raise NotImplementedError('No delivery method found')
+
+        # Run cleanup for delivery method
+        method.cleanup()
 
         # Log results
         logger.info(f"Notified {success_count} users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}' successfully")
