@@ -15,6 +15,8 @@ env:
   python_version: 3.7
   node_version: 16
 
+  server_start_sleep: 60
+
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
@@ -128,6 +130,9 @@ jobs:
     needs: pep_style
     runs-on: ubuntu-latest
 
+    env:
+      wrapper_name: inventree-python
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -140,14 +145,13 @@ jobs:
           invoke migrate
       - name: Download Python Code
         run: |
-          git clone --depth 1 https://github.com/inventree/inventree-python ./inventree-python
+          git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start Server
         run: |
-          invoke import-records -f ./inventree-python/test/test_data.json
+          invoke import-records -f ./${{ env.wrapper_name }}/test/test_data.json
           invoke server -a 127.0.0.1:8000 &
-          sleep 60
+          sleep ${{ env.server_start_sleep }}
       - name: Run Tests
         run: |
-          cd inventree-python
+          cd ${{ env.wrapper_name }}
           invoke test
-  
