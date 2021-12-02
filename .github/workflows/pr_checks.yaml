@@ -269,7 +269,7 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: inventree
+          MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
           MYSQL_USER: inventree
           MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
