@@ -128,3 +128,4 @@ class NotificationTests(TestCase):
         with self.assertRaises(NotImplementedError):
             AnotherFalseNotificationMethod('', '', '')
 
+# A integration test for notifications is provided in test_part.PartNotificationTest

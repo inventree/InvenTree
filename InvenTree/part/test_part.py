@@ -468,7 +468,7 @@ class PartSubscriptionTests(TestCase):
 
 
 class PartNotificationTest(TestCase):
-    """ Tests for the Part model """
+    """ Integration test for part notifications """
 
     fixtures = [
         'location',
