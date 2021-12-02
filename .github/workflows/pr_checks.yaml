@@ -3,9 +3,18 @@
 name: PR checks
 
 on:
+  push:
+    branches-ignore:
+      - l10*
+
   pull_request:
     branches-ignore:
       - l10*
+
+inputs:
+  python_version:
+    description: “Python version”
+    default: 3.7
 
 jobs:
 
@@ -19,3 +28,22 @@ jobs:
       - name: Check version number
         run: |
           python3 ci/check_version_number.py --branch ${{ github.base_ref }}
+
+  pep_style:
+    needs: check_version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python ${{inputs.python_version}}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{inputs.python_version}}
+      - name: Install deps
+        run: |
+          pip install flake8==3.8.3
+          pip install pep8-naming==0.11.1
+      - name: flake8
+        run: |
+          flake8 InvenTree
