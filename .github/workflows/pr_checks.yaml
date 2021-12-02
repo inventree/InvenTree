@@ -228,10 +228,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Setup Python
+      - name: Setup Python ${{ env.python_version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: ${{ env.python_version }}
       - name: Install Dependencies
         run: |
           sudo apt-get install libpq-dev
