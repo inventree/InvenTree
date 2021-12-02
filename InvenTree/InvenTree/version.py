@@ -12,10 +12,14 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 18
+INVENTREE_API_VERSION = 19
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v19 -> 2021-12-02
+    - Adds the ability to filter the StockItem API by "part_tree"
+    - Returns only stock items which match a particular part.tree_id field
 
 v18 -> 2021-11-15
     - Adds the ability to filter BomItem API by "uses" field
@@ -120,10 +124,10 @@ def isInvenTreeDevelopmentVersion():
 def inventreeDocsVersion():
     """
     Return the version string matching the latest documentation.
-    
+
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
-    
+
     """
 
     if isInvenTreeDevelopmentVersion():

@@ -27,7 +27,7 @@
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
                 {% elif order.status == PurchaseOrderStatus.PLACED %}
-                <button type='button' class='btn btn-success' id='receive-selected-items' title='{% trans "Receive selected items" %}'>
+                <button type='button' class='btn btn-primary' id='receive-selected-items' title='{% trans "Receive selected items" %}'>
                     <span class='fas fa-sign-in-alt'></span> {% trans "Receive Items" %}
                 </button>
                 {% endif %}
@@ -124,51 +124,16 @@
         }
     );
 
-    loadAttachmentTable(
-        '{% url "api-po-attachment-list" %}',
-        {
-            filters: {
-                order: {{ order.pk }},
-            },
-            onEdit: function(pk) {
-                var url = `/api/order/po/attachment/${pk}/`;
-
-                constructForm(url, {
-                    fields: {
-                        filename: {},
-                        comment: {},
-                    },
-                    onSuccess: reloadAttachmentTable,
-                    title: '{% trans "Edit Attachment" %}',
-                });
-            },
-            onDelete: function(pk) {
-
-                constructForm(`/api/order/po/attachment/${pk}/`, {
-                    method: 'DELETE',
-                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                    title: '{% trans "Delete Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
+    loadAttachmentTable('{% url "api-po-attachment-list" %}', {
+        filters: {
+            order: {{ order.pk }},
+        },
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
             }
         }
-    );
-
-    $("#new-attachment").click(function() {
-
-        constructForm('{% url "api-po-attachment-list" %}', {
-            method: 'POST',
-            fields: {
-                attachment: {},
-                comment: {},
-                order: {
-                    value: {{ order.pk }},
-                    hidden: true,
-                },
-            },
-            reload: true,
-            title: '{% trans "Add Attachment" %}',
-        });
     });
 
     loadStockTable($("#stock-table"), {

@@ -11,113 +11,6 @@
 
 {% block page_content %}
 
-<div class='panel panel-hidden' id='panel-part-details'>
-    <div class='panel-heading'>
-        <h4>{% trans "Part Details" %}</h4>
-    </div>
-    <div class='panel-content'>
-        
-        <!-- Details Table -->
-        <table class="table table-striped table-condensed">
-            <col width='25'>
-            <tr>
-                <td><span class='fas fa-shapes'></span></td>
-                <td>{% trans "Name" %}</td>
-                <td>{{ part.name }}{% include "clip.html"%}</td>
-            </tr>
-            <tr>
-                <td><span class='fas fa-info-circle'></span></td>
-                <td>{% trans "Description" %}</td>
-                <td>{{ part.description }}{% include "clip.html"%}</td>
-            </tr>
-            {% if part.category %}
-            <tr>
-                <td><span class='fas fa-sitemap'></span></td>
-                <td>{% trans "Category" %}</td>
-                <td>
-                    <a href='{% url "category-detail" part.category.pk %}'>{{ part.category.name }}</a>
-                </td>
-            </tr>
-            {% endif %}
-            {% if part.IPN %}
-            <tr>
-                <td><span class='fas fa-tag'></span></td>
-                <td>{% trans "IPN" %}</td>
-                <td>{{ part.IPN }}{% include "clip.html"%}</td>
-            </tr>
-            {% endif %}
-            {% if part.revision %}
-            <tr>
-                <td><span class='fas fa-code-branch'></span></td>
-                <td>{% trans "Revision" %}</td>
-                <td>{{ part.revision }}{% include "clip.html"%}</td>
-            </tr>
-            {% endif %}
-            {% if part.units %}
-            <tr>
-                <td></td>
-                <td>{% trans "Units" %}</td>
-                <td>{{ part.units }}</td>
-            </tr>
-            {% endif %}
-            {% if part.minimum_stock %}
-            <tr>
-                <td><span class='fas fa-flag'></span></td>
-                <td>{% trans "Minimum stock level" %}</td>
-                <td>{{ part.minimum_stock }}</td>
-            </tr>
-            {% endif %}
-            {% if part.keywords %}
-            <tr>
-                <td><span class='fas fa-key'></span></td>
-                <td>{% trans "Keywords" %}</td>
-                <td>{{ part.keywords }}{% include "clip.html"%}</td>
-            </tr>
-            {% endif %}
-            {% if part.link %}
-            <tr>
-                <td><span class='fas fa-link'></span></td>
-                <td>{% trans "External Link" %}</td>
-                <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
-            </tr>
-            {% endif %}
-            <tr>
-                <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Creation Date" %}</td>
-                <td>
-                    {{ part.creation_date }}
-                    {% if part.creation_user %}
-                    <span class='badge badge-right rounded-pill bg-dark'>{{ part.creation_user }}</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% if part.trackable and part.getLatestSerialNumber %}
-            <tr>
-                <td><span class='fas fa-hashtag'></span></td>
-                <td>{% trans "Latest Serial Number" %}</td>
-                <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
-            </tr>
-            {% endif %}
-            {% if part.default_location %}
-            <tr>
-                <td><span class='fas fa-search-location'></span></td>
-                <td>{% trans "Default Location" %}</td>
-                <td>
-                    <a href='{% url "stock-location-detail" part.default_location.pk %}'>{{ part.default_location }}</a>
-                </td>
-            </tr>
-            {% endif %}
-            {% if part.default_supplier %}
-            <tr>
-                <td><span class='fas fa-building'></span></td>
-                <td>{% trans "Default Supplier" %}</td>
-                <td>{{ part.default_supplier }}</td>
-            </tr>
-            {% endif %}
-        </table>
-    </div>
-</div>
-
 <div class='panel panel-hidden' id='panel-part-stock'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -329,34 +222,8 @@
                 {% include "filter_list.html" with id="related" %}
             </div>
         </div>
-        
-        <table id='table-related-part' class='table table-condensed table-striped' data-toolbar='#related-button-toolbar'>
-            <thead>
-                <tr>
-                    <th data-field='part' data-serachable='true'>{% trans "Part" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in part.get_related_parts %}
-                {% with part_related=item.0 part=item.1 %}
-                    <tr>
-                        <td>
-                            <a class='hover-icon'>
-                                <img class='hover-img-thumb' src='{{ part.get_thumbnail_url }}'>
-                                <img class='hover-img-large' src='{{ part.get_thumbnail_url }}'>
-                            </a>
-                            <a href='/part/{{ part.id }}/'>{{ part }}</a>
-                            <div class='btn-group' style='float: right;'>
-                                {% if roles.part.change %}
-                                <button title='{% trans "Delete" %}' class='btn btn-outline-secondary delete-related-part' url="{% url 'part-related-delete' part_related.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                {% endwith %}
-                {% endfor %}
-            </tbody>
-        </table>
+
+        <table id='related-parts-table' class='table table-striped table-condensed' data-toolbar='#related-button-toolbar'></table>
     </div>
 </div>
 
@@ -771,15 +638,34 @@
 
     // Load the "related parts" tab
     onPanelLoad("related-parts", function() {
-        $('#table-related-part').inventreeTable({
-        });
+
+        loadRelatedPartsTable(
+            "#related-parts-table",
+            {{ part.pk }}
+        );
 
         $("#add-related-part").click(function() {
-            launchModalForm("{% url 'part-related-create' %}", {
-                data: {
-                    part: {{ part.id }},
+
+            constructForm('{% url "api-part-related-list" %}', {
+                method: 'POST',
+                fields: {
+                    part_1: {
+                        hidden: true,
+                        value: {{ part.pk }},
+                    },
+                    part_2: {
+                        label: '{% trans "Related Part" %}',
+                        filters: {
+                            exclude_id: {{ part.pk }},
+                            exclude_related: {{ part.pk }},
+                        }
+                    }
                 },
-                reload: true,
+                focus: 'part_2',
+                title: '{% trans "Add Related Part" %}',
+                onSuccess: function() {
+                    $('#related-parts-table').bootstrapTable('refresh');
+                }
             });
         });
 
@@ -1006,36 +892,17 @@
     });
 
     onPanelLoad("part-attachments", function() {
-        loadAttachmentTable(
-            '{% url "api-part-attachment-list" %}',
-            {
-                filters: {
-                    part: {{ part.pk }},
-                },
-                onEdit: function(pk) {
-                    var url = `/api/part/attachment/${pk}/`;
-    
-                    constructForm(url, {
-                        fields: {
-                            filename: {},
-                            comment: {},
-                        },
-                        title: '{% trans "Edit Attachment" %}',
-                        onSuccess: reloadAttachmentTable,
-                    });
-                },
-                onDelete: function(pk) {
-                    var url = `/api/part/attachment/${pk}/`;
-    
-                    constructForm(url, {
-                        method: 'DELETE',
-                        confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                        title: '{% trans "Delete Attachment" %}',
-                        onSuccess: reloadAttachmentTable,
-                    });
+        loadAttachmentTable('{% url "api-part-attachment-list" %}', {
+            filters: {
+                part: {{ part.pk }},
+            },
+            fields: {
+                part: {
+                    value: {{ part.pk }},
+                    hidden: true
                 }
             }
-        );
+        });
     
         enableDragAndDrop(
             '#attachment-dropzone',
@@ -1050,26 +917,6 @@
                 }
             }
         );
-    
-        $("#new-attachment").click(function() {
-    
-            constructForm(
-                '{% url "api-part-attachment-list" %}',
-                {
-                    method: 'POST',
-                    fields: {
-                        attachment: {},
-                        comment: {},
-                        part: {
-                            value: {{ part.pk }},
-                            hidden: true,
-                        }
-                    },
-                    onSuccess: reloadAttachmentTable,
-                    title: '{% trans "Add Attachment" %}',
-                }
-            )
-        });
     });
 
 

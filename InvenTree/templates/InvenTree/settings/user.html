@@ -4,6 +4,7 @@
 {% load inventree_extras %}
 {% load socialaccount %}
 {% load crispy_forms_tags %}
+{% load user_sessions i18n %}
 
 {% block label %}account{% endblock %}
 
@@ -14,11 +15,11 @@
 {% block actions %}
 {% inventree_demo_mode as demo %}
 {% if not demo %}
+<div class='btn btn-outline-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
+    <span class='fas fa-key'></span> {% trans "Set Password" %}
+</div>
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
-</div>
-<div class='btn btn-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
-    <span class='fas fa-key'></span> {% trans "Set Password" %}
 </div>
 {% endif %}
 {% endblock %}
@@ -238,6 +239,7 @@
             </div>
         </form>
     </div>
+</div>
 
 <div class="row">
     <div class='panel-heading'>
@@ -294,6 +296,51 @@
     </div>
 </div>
 
+<div class="row">
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Active Sessions" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if session_list.count > 1 %}
+                <form method="post" action="{% url 'session_delete_other' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-default btn-danger" title='{% trans "Log out active sessions (except this one)" %}'>
+                        {% trans "Log Out Active Sessions" %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        {% trans "<em>unknown on unknown</em>" as unknown_on_unknown %}
+        {% trans "<em>unknown</em>" as unknown %}
+        <table class="table table-striped table-condensed">
+        <thead>
+            <tr>
+            <th>{% trans "IP Address" %}</th>
+            <th>{% trans "Device" %}</th>
+            <th>{% trans "Last Activity" %}</th>
+            </tr>
+        </thead>
+        {% for object in session_list %}
+            <tr {% if object.session_key == session_key %}class="active"{% endif %}>
+            <td>{{ object.ip }}</td>
+            <td>{{ object.user_agent|device|default_if_none:unknown_on_unknown|safe }}</td>
+            <td>
+                {% if object.session_key == session_key %}
+                {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago (this session){% endblocktrans %}
+                {% else %}
+                {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago{% endblocktrans %}
+                {% endif %}
+            </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
 
 {% block js_ready %}

@@ -26,6 +26,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+import django.conf.locale
 
 
 def _is_true(x):
@@ -256,7 +257,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'user_sessions',                # db user sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
@@ -304,7 +305,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -634,6 +635,12 @@ if _cache_host:
     # as well
     Q_CLUSTER["django_redis"] = "worker"
 
+# database user sessions
+SESSION_ENGINE = 'user_sessions.backends.db'
+LOGOUT_REDIRECT_URL = 'index'
+SILENCED_SYSTEM_CHECKS = [
+    'admin.E410',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -673,7 +680,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
-    ('es-mx', _('Spanish (Mexican')),
+    ('es-mx', _('Spanish (Mexican)')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
@@ -690,6 +697,25 @@ LANGUAGES = [
     ('vi', _('Vietnamese')),
     ('zh-cn', _('Chinese')),
 ]
+
+# Testing interface translations
+if get_setting('TEST_TRANSLATIONS', False):
+    # Set default language
+    LANGUAGE_CODE = 'xx'
+
+    # Add to language catalog
+    LANGUAGES.append(('xx', 'Test'))
+
+    # Add custom languages not provided by Django
+    EXTRA_LANG_INFO = {
+        'xx': {
+            'code': 'xx',
+            'name': 'Test',
+            'name_local': 'Test'
+        },
+    }
+    LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
+    django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
 CURRENCIES = CONFIG.get(

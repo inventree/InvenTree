@@ -25,7 +25,7 @@ from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute,
-                     Part, PartAttachment, PartCategory,
+                     Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -75,8 +75,6 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializer for the PartAttachment class
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = PartAttachment
 
@@ -85,6 +83,7 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
             'part',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]
@@ -388,6 +387,25 @@ class PartSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartRelationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a PartRelated model
+    """
+
+    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'pk',
+            'part_1',
+            'part_1_detail',
+            'part_2',
+            'part_2_detail',
+        ]
+
+
 class PartStarSerializer(InvenTreeModelSerializer):
     """ Serializer for a PartStar object """
 
@@ -446,9 +464,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
     purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
 
     purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
-    
+
     purchase_price_avg = serializers.SerializerMethodField()
-    
+
     purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -520,7 +538,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     def get_purchase_price_avg(self, obj):
         """ Return purchase price average """
-        
+
         try:
             purchase_price_avg = obj.purchase_price_avg
         except AttributeError:

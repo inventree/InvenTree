@@ -110,55 +110,21 @@
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                reloadAttachmentTable();
             }
         }
     );
 
-    loadAttachmentTable(
-        '{% url "api-so-attachment-list" %}',
-        {
-            filters: {
-                order: {{ order.pk }},
+    loadAttachmentTable('{% url "api-so-attachment-list" %}', {
+        filters: {
+            order: {{ order.pk }},
+        },
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
             },
-            onEdit: function(pk) {
-                var url = `/api/order/so/attachment/${pk}/`;
-
-                constructForm(url, {
-                    fields: {
-                        filename: {},
-                        comment: {},
-                    },
-                    onSuccess: reloadAttachmentTable,
-                    title: '{% trans "Edit Attachment" %}',
-                });
-            },
-            onDelete: function(pk) {
-                constructForm(`/api/order/so/attachment/${pk}/`, {
-                    method: 'DELETE',
-                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                    title: '{% trans "Delete Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
-            }
         }
-    );
-
-    $("#new-attachment").click(function() {
-
-        constructForm('{% url "api-so-attachment-list" %}', {
-            method: 'POST',
-            fields: {
-                attachment: {},
-                comment: {},
-                order: {
-                    value: {{ order.pk }},
-                    hidden: true
-                }
-            },
-            onSuccess: reloadAttachmentTable,
-            title: '{% trans "Add Attachment" %}'
-        });
     });
 
     loadBuildTable($("#builds-table"), {

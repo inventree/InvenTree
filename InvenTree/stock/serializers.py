@@ -32,7 +32,7 @@ from company.serializers import SupplierPartSerializer
 
 import InvenTree.helpers
 import InvenTree.serializers
-from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.serializers import InvenTreeDecimalField, extract_int
 
 from part.serializers import PartBriefSerializer
 
@@ -56,7 +56,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
-    
+
     quantity = InvenTreeDecimalField()
 
     class Meta:
@@ -72,6 +72,11 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
             'supplier_part',
             'uid',
         ]
+
+    def validate_serial(self, value):
+        if extract_int(value) > 2147483647:
+            raise serializers.ValidationError('serial is to to big')
+        return value
 
 
 class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -420,8 +425,6 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
     user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
-    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
-
     # TODO: Record the uploading user when creating or updating an attachment!
 
     class Meta:
@@ -432,6 +435,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
             'stock_item',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
             'user',
@@ -615,7 +619,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
 
                 stock_item = item['pk']
                 quantity = item['quantity']
-                
+
                 stock_item.stocktake(
                     quantity,
                     request.user,
@@ -654,7 +658,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
     """
 
     def save(self):
-        
+
         request = self.context['request']
 
         data = self.validated_data
@@ -707,7 +711,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         request = self.context['request']
 
         data = self.validated_data
-        
+
         items = data['items']
         notes = data.get('notes', '')
         location = data['location']

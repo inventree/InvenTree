@@ -30,7 +30,7 @@ import io
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartRelated
+from .models import PartCategory, Part
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
 from .models import BomItem
@@ -83,75 +83,6 @@ class PartIndex(InvenTreeRoleMixin, ListView):
         context['part_count'] = Part.objects.count()
 
         return context
-
-
-class PartRelatedCreate(AjaxCreateView):
-    """ View for creating a new PartRelated object
-
-    - The view only makes sense if a Part object is passed to it
-    """
-    model = PartRelated
-    form_class = part_forms.CreatePartRelatedForm
-    ajax_form_title = _("Add Related Part")
-    ajax_template_name = "modal_form.html"
-
-    def get_initial(self):
-        """ Set parent part as part_1 field """
-
-        initials = {}
-
-        part_id = self.request.GET.get('part', None)
-
-        if part_id:
-            try:
-                initials['part_1'] = Part.objects.get(pk=part_id)
-            except (Part.DoesNotExist, ValueError):
-                pass
-
-        return initials
-
-    def get_form(self):
-        """ Create a form to upload a new PartRelated
-
-        - Hide the 'part_1' field (parent part)
-        - Display parts which are not yet related
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['part_1'].widget = HiddenInput()
-
-        try:
-            # Get parent part
-            parent_part = self.get_initial()['part_1']
-            # Get existing related parts
-            related_parts = [related_part[1].pk for related_part in parent_part.get_related_parts()]
-
-            # Build updated choice list excluding
-            # - parts already related to parent part
-            # - the parent part itself
-            updated_choices = []
-            for choice in form.fields["part_2"].choices:
-                if (choice[0] not in related_parts) and (choice[0] != parent_part.pk):
-                    updated_choices.append(choice)
-
-            # Update choices for related part
-            form.fields['part_2'].choices = updated_choices
-        except KeyError:
-            pass
-
-        return form
-
-
-class PartRelatedDelete(AjaxDeleteView):
-    """ View for deleting a PartRelated object """
-
-    model = PartRelated
-    ajax_form_title = _("Delete Related Part")
-    context_object_name = "related"
-
-    # Explicit role requirement
-    role_required = 'part.change'
 
 
 class PartSetCategory(AjaxUpdateView):
@@ -459,7 +390,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         part = self.get_object()
 
         ctx = part.get_context_data(self.request)
-        
+
         context.update(**ctx)
 
         # Pricing information
@@ -508,10 +439,14 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                         line['price_part'] = stock_item.supplier_part.unit_pricing
 
                 # set date for graph labels
-                if stock_item.purchase_order:
+                if stock_item.purchase_order and stock_item.purchase_order.issue_date:
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
-                else:
+                elif stock_item.tracking_info.count() > 0:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                else:
+                    # Not enough information
+                    continue
+
                 price_history.append(line)
 
             ctx['price_history'] = price_history
@@ -1056,7 +991,7 @@ class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
                     matches = sorted(matches, key=lambda item: item['match'], reverse=True)
 
                     part_options = [m['part'] for m in matches]
-            
+
             # Supply list of part options for each row, sorted by how closely they match the part name
             row['item_options'] = part_options
 
@@ -1520,11 +1455,11 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
             # Prefetch parts parameters
             parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
-            
+
             # Get table headers (unique parameters names)
             context['headers'] = category.get_unique_parameters(cascade=cascade,
                                                                 prefetch=parts_parameters)
-            
+
             # Insert part information
             context['headers'].insert(0, 'description')
             context['headers'].insert(0, 'part')

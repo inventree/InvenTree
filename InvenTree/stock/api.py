@@ -91,7 +91,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         Instead of "deleting" the StockItem
         (which may take a long time)
         we instead schedule it for deletion at a later date.
-        
+
         The background worker will delete these in the future
         """
 
@@ -134,7 +134,7 @@ class StockAdjustView(generics.CreateAPIView):
     queryset = StockItem.objects.none()
 
     def get_serializer_context(self):
-            
+
         context = super().get_serializer_context()
 
         context['request'] = self.request
@@ -313,7 +313,7 @@ class StockFilter(rest_filters.FilterSet):
     # Serial number filtering
     serial_gte = rest_filters.NumberFilter(label='Serial number GTE', field_name='serial', lookup_expr='gte')
     serial_lte = rest_filters.NumberFilter(label='Serial number LTE', field_name='serial', lookup_expr='lte')
-    serial = rest_filters.NumberFilter(label='Serial number', field_name='serial', lookup_expr='exact')
+    serial = rest_filters.CharFilter(label='Serial number', field_name='serial', lookup_expr='exact')
 
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
@@ -348,7 +348,7 @@ class StockFilter(rest_filters.FilterSet):
             queryset = queryset.exclude(customer=None)
         else:
             queryset = queryset.filter(customer=None)
-            
+
         return queryset
 
     depleted = rest_filters.BooleanFilter(label='Depleted', method='filter_depleted')
@@ -437,7 +437,7 @@ class StockList(generics.ListCreateAPIView):
                 })
 
         with transaction.atomic():
-            
+
             # Create an initial stock item
             item = serializer.save()
 
@@ -701,6 +701,18 @@ class StockList(generics.ListCreateAPIView):
                 )
 
             except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        # Filter by "part tree" - only allow parts within a given variant tree
+        part_tree = params.get('part_tree', None)
+
+        if part_tree is not None:
+            try:
+                part = Part.objects.get(pk=part_tree)
+
+                if part.tree_id is not None:
+                    queryset = queryset.filter(part__tree_id=part.tree_id)
+            except:
                 pass
 
         # Filter by 'allocated' parts?

@@ -16,7 +16,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
@@ -32,7 +32,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializes a Build object
     """
@@ -309,7 +309,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_bom_item(self, bom_item):
-        
+
         # TODO: Fix this validation - allow for variants and substitutes!
 
         build = self.context['build']
@@ -332,7 +332,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         if not stock_item.in_stock:
             raise ValidationError(_("Item must be in stock"))
-        
+
         return stock_item
 
     quantity = serializers.DecimalField(
@@ -398,7 +398,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         # Output *cannot* be set for un-tracked parts
         if output is not None and not bom_item.sub_part.trackable:
-            
+
             raise ValidationError({
                 'output': _('Build output cannot be specified for allocation of untracked parts')
             })
@@ -422,14 +422,14 @@ class BuildAllocationSerializer(serializers.Serializer):
         """
         Validation
         """
-        
+
         super().validate(data)
 
         items = data.get('items', [])
 
         if len(items) == 0:
             raise ValidationError(_('Allocation items must be provided'))
-        
+
         return data
 
     def save(self):
@@ -516,8 +516,6 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializer for a BuildAttachment
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = BuildOrderAttachment
 
@@ -525,6 +523,7 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'build',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',
