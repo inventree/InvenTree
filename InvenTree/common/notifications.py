@@ -131,7 +131,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
 def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receivers, notification_context: dict):
     method = cls(obj, entry_name, receivers)
 
-    if method.recipiends and method.recipiends > 0:
+    if method.recipiends and method.recipiends.count() > 0:
         logger.info(f"Notify users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}'")
 
         if 'send_bulk' in method:
