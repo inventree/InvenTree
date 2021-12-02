@@ -225,7 +225,7 @@ jobs:
       postgres:
         image: postgres
         ports:
-          - ${{ env.INVENTREE_DB_PORT }}:${{ env.INVENTREE_DB_PORT }}
+          - 5432:5432
 
       redis:
         image: redis
@@ -278,7 +278,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
-          - ${{ env.INVENTREE_DB_PORT }}:${{ env.INVENTREE_DB_PORT }}
+          - 3306:3306
 
     steps:
       - name: Checkout Code
