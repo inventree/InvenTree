@@ -654,7 +654,10 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         request = self.context['request']
         user = request.user
 
-        shipment.complete_shipment(user)
+        # Extract provided tracking number (optional)
+        tracking_number = data.get('tracking_number', None)
+
+        shipment.complete_shipment(user, tracking_number=tracking_number)
 
 
 class SOShipmentAllocationItemSerializer(serializers.Serializer):

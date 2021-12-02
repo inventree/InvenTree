@@ -956,7 +956,7 @@ class SalesOrderShipment(models.Model):
             raise ValidationError(_("Shipment has no allocated stock items"))
 
     @transaction.atomic
-    def complete_shipment(self, user):
+    def complete_shipment(self, user, **kwargs):
         """
         Complete this particular shipment:
 
@@ -979,6 +979,13 @@ class SalesOrderShipment(models.Model):
         # Update the "shipment" date 
         self.shipment_date = datetime.now()
         self.shipped_by = user
+
+        # Was a tracking number provided?
+        tracking_number = kwargs.get('tracking_number', None)
+
+        if tracking_number is not None:
+            self.tracking_number = tracking_number
+
         self.save()
 
         # Finally, check if the order is fully shipped

@@ -67,7 +67,10 @@ function completeShipment(shipment_id) {
         confirm: true,
         confirmMessage: '{% trans "Confirm Shipment" %}',
         onSuccess: function(data) {
-            // TODO
+            // Reload tables
+            $('#so-lines-table').bootstrapTable('refresh');
+            $('#pending-shipments-table').bootstrapTable('refresh');
+            $('#completed-shipments-table').bootstrapTable('refresh');
         }
     });
 }
@@ -1249,7 +1252,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
         html += makeIconButton('fa-edit icon-blue', 'button-shipment-edit', pk, '{% trans "Edit shipment" %}');
 
-        html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
+        if (!options.shipped) {
+            html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
+        }
 
         html += `</div>`;
 
@@ -1300,7 +1305,10 @@ function loadSalesOrderShipmentTable(table, options={}) {
         onPostBody: function() {
             setupShipmentCallbacks();
 
-            $(table).bootstrapTable('expandAllRows');
+            // Auto-expand rows on the "pending" table
+            if (!options.shipped) {
+                $(table).bootstrapTable('expandAllRows');
+            }
         },
         formatNoMatches: function() {
             return '{% trans "No matching shipments found" %}';
@@ -1557,6 +1565,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             in_stock: true,
                             part_detail: true,
                             location_detail: true,
+                            available: true,
                         },
                         model: 'stockitem',
                         required: true,
@@ -2296,7 +2305,11 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 ],
                 {
                     success: function() {
+                        // Reload this table
                         $(table).bootstrapTable('refresh');
+
+                        // Reload the pending shipment table
+                        $('#pending-shipments-table').bootstrapTable('refresh');
                     }
                 }
             );
