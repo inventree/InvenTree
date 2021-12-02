@@ -49,6 +49,9 @@ class ReferenceIndexingMixin(models.Model):
     """
     A mixin for keeping track of numerical copies of the "reference" field.
 
+    !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
+    ensure the reference field is not too big
+
     Here, we attempt to convert a "reference" field value (char) to an integer,
     for performing fast natural sorting.
 
@@ -69,22 +72,25 @@ class ReferenceIndexingMixin(models.Model):
 
         reference = getattr(self, 'reference', '')
 
-        # Default value if we cannot convert to an integer
-        ref_int = 0
+        self.reference_int = extract_int(reference)
 
-        # Look at the start of the string - can it be "integerized"?
-        result = re.match(r"^(\d+)", reference)
+    reference_int = models.BigIntegerField(default=0)
 
-        if result and len(result.groups()) == 1:
-            ref = result.groups()[0]
-            try:
-                ref_int = int(ref)
-            except:
-                ref_int = 0
 
-        self.reference_int = ref_int
+def extract_int(reference):
+    # Default value if we cannot convert to an integer
+    ref_int = 0
 
-    reference_int = models.IntegerField(default=0)
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r"^(\d+)", reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except:
+            ref_int = 0
+    return ref_int
 
 
 class InvenTreeAttachment(models.Model):
