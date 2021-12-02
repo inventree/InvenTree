@@ -196,3 +196,58 @@ jobs:
         run: python3 ci/check_migration_files.py
       - name: Upload Coverage Report
         run: coveralls
+
+  postgres:
+    name: Postgres
+    needs: ['javascript', 'html']
+    runs-on: ubuntu-latest
+
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: info
+      INVENTREE_CACHE_HOST: localhost
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install libpq-dev
+          pip3 install invoke
+          pip3 install psycopg2
+          pip3 install django-redis>=5.0.0
+          invoke install
+      - name: Run Tests
+        run: invoke test
+      - name: Data Import Export
+        run: |
+          invoke migrate
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-fixtures
+          invoke export-records -f data.json
+          python3 ./InvenTree/manage.py flush --noinput
+          invoke import-records -f data.json
+          invoke import-records -f data.json
+
