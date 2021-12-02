@@ -502,7 +502,7 @@ class PartNotificationTest(TestCase):
         # There should be no notification as no-one is subscribed
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
-        # subscribe and run again
+        # Subscribe and run again
         self.r1.set_starred(self.user, True)
         self.r1.save()
 
