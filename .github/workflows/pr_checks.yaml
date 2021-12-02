@@ -122,3 +122,32 @@ jobs:
           npx markuplint InvenTree/templates/*.html
           npx markuplint InvenTree/templates/InvenTree/*.html
           npx markuplint InvenTree/templates/InvenTree/settings/*.html
+
+  python:
+    name: python bindings
+    needs: pep_style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Install InvenTree
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3-dev python3-pip python3-venv
+          pip3 install invoke
+          invoke install
+          invoke migrate
+      - name: Download Python Code
+        run: |
+          git clone --depth 1 https://github.com/inventree/inventree-python ./inventree-python
+      - name: Start Server
+        run: |
+          invoke import-records -f ./inventree-python/test/test_data.json
+          invoke server -a 127.0.0.1:8000 &
+          sleep 60
+      - name: Run Tests
+        run: |
+          cd inventree-python
+          invoke test
+  
