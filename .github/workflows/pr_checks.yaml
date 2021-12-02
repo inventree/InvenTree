@@ -1,6 +1,6 @@
-# Checks for each PR
+# Checks for each PR / push
 
-name: PR checks
+name: QC checks
 
 on:
   push:
