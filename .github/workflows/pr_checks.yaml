@@ -30,6 +30,8 @@ env:
   INVENTREE_DB_PASSWORD: password
   INVENTREE_DB_HOST: '127.0.0.1'
   INVENTREE_DEBUG: info
+  DB_PORT_mysql: 3306
+  DB_PORT_postgres: 5432
 
 
 jobs:
@@ -41,6 +43,8 @@ jobs:
       user: ${{ steps.step1.outputs.user }}
       password: ${{ steps.step1.outputs.password }}
       host: ${{ steps.step1.outputs.host }}
+      port_mysql: ${{ steps.step1.outputs.host }}
+      port_postgres: ${{ steps.step1.outputs.host }}
 
     steps:
     - id: step1
@@ -48,6 +52,8 @@ jobs:
         echo "::set-output name=user::${{ env.INVENTREE_DB_USER }}"
         echo "::set-output name=password::${{ env.INVENTREE_DB_PASSWORD }}"
         echo "::set-output name=host::${{ env.INVENTREE_DB_HOST }}"
+        echo "::set-output name=port_mysql::${{ env.DB_PORT_mysql }}"
+        echo "::set-output name=port_postgres::${{ env.DB_PORT_postgres }}"
 
   check_version:
     name: version number
@@ -234,7 +240,7 @@ jobs:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
       INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
       INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
-      INVENTREE_DB_PORT: 5432
+      INVENTREE_DB_PORT: ${{needs.job1.outputs.port_postgres }}
       INVENTREE_CACHE_HOST: localhost
 
     services:
@@ -244,7 +250,7 @@ jobs:
           POSTGRES_USER: ${{needs.job1.outputs.user }}
           POSTGRES_PASSWORD: ${{needs.job1.outputs.password }}
         ports:
-          - 5432:5432
+          - ${{needs.job1.outputs.port }}:${{needs.job1.outputs.port_postgres }}
 
       redis:
         image: redis
@@ -287,7 +293,7 @@ jobs:
       INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
       INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
       INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
-      INVENTREE_DB_PORT: 3306
+      INVENTREE_DB_PORT: ${{needs.job1.outputs.port_mysql }}
 
     services:
       mysql:
@@ -300,7 +306,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{needs.job1.outputs.password }}
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
-          - 3306:3306
+          - ${{needs.job1.outputs.port_mysql }}:${{needs.job1.outputs.port_mysql }}
 
     steps:
       - name: Checkout Code
