@@ -599,4 +599,8 @@ $("#stock-return-from-customer").click(function() {
 
 {% endif %}
 
+$('#serial-number-search').click(function() {
+    findStockItemBySerialNumber({{ item.part.pk }});
+});
+
 {% endblock %}
