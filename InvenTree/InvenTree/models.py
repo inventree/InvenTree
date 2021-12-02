@@ -21,7 +21,8 @@ from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
-from .validators import validate_tree_name
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.validators import validate_tree_name
 
 
 logger = logging.getLogger('inventree')
@@ -48,6 +49,9 @@ class ReferenceIndexingMixin(models.Model):
     """
     A mixin for keeping track of numerical copies of the "reference" field.
 
+    !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
+    ensure the reference field is not too big
+
     Here, we attempt to convert a "reference" field value (char) to an integer,
     for performing fast natural sorting.
 
@@ -68,26 +72,31 @@ class ReferenceIndexingMixin(models.Model):
 
         reference = getattr(self, 'reference', '')
 
-        # Default value if we cannot convert to an integer
-        ref_int = 0
+        self.reference_int = extract_int(reference)
 
-        # Look at the start of the string - can it be "integerized"?
-        result = re.match(r"^(\d+)", reference)
+    reference_int = models.BigIntegerField(default=0)
 
-        if result and len(result.groups()) == 1:
-            ref = result.groups()[0]
-            try:
-                ref_int = int(ref)
-            except:
-                ref_int = 0
 
-        self.reference_int = ref_int
+def extract_int(reference):
+    # Default value if we cannot convert to an integer
+    ref_int = 0
 
-    reference_int = models.IntegerField(default=0)
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r"^(\d+)", reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except:
+            ref_int = 0
+    return ref_int
 
 
 class InvenTreeAttachment(models.Model):
     """ Provides an abstracted class for managing file attachments.
+
+    An attachment can be either an uploaded file, or an external URL
 
     Attributes:
         attachment: File
@@ -95,6 +104,7 @@ class InvenTreeAttachment(models.Model):
         user: User associated with file upload
         upload_date: Date the file was uploaded
     """
+
     def getSubdir(self):
         """
         Return the subdirectory under which attachments should be stored.
@@ -103,11 +113,32 @@ class InvenTreeAttachment(models.Model):
 
         return "attachments"
 
+    def save(self, *args, **kwargs):
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return os.path.basename(self.attachment.name)
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        else:
+            return str(self.link)
 
     attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
-                                  help_text=_('Select file to attach'))
+                                  help_text=_('Select file to attach'),
+                                  blank=True, null=True
+                                  )
+
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL')
+    )
 
     comment = models.CharField(blank=True, max_length=100, verbose_name=_('Comment'), help_text=_('File comment'))
 
@@ -123,7 +154,10 @@ class InvenTreeAttachment(models.Model):
 
     @property
     def basename(self):
-        return os.path.basename(self.attachment.name)
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        else:
+            return None
 
     @basename.setter
     def basename(self, fn):

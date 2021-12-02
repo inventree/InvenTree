@@ -46,7 +46,7 @@ from build.models import Build
 
 from . import serializers as part_serializers
 
-from InvenTree.helpers import str2bool, isNull
+from InvenTree.helpers import str2bool, isNull, increment
 from InvenTree.api import AttachmentMixin
 
 from InvenTree.status_codes import BuildStatus
@@ -412,6 +412,33 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     filter_backends = [
         DjangoFilterBackend
     ]
+
+
+class PartSerialNumberDetail(generics.RetrieveAPIView):
+    """
+    API endpoint for returning extra serial number information about a particular part
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        # Calculate the "latest" serial number
+        latest = part.getLatestSerialNumber()
+
+        data = {
+            'latest': latest,
+        }
+
+        if latest is not None:
+            next = increment(latest)
+
+            if next != increment:
+                data['next'] = next
+
+        return Response(data)
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1052,6 +1079,7 @@ class PartList(generics.ListCreateAPIView):
         'revision',
         'keywords',
         'category__name',
+        'manufacturer_parts__MPN',
     ]
 
 
@@ -1614,7 +1642,12 @@ part_api_urls = [
     ])),
 
     url(r'^(?P<pk>\d+)/', include([
-        url(r'^bom-upload', BomUpload.as_view(), name='api-bom-upload'),
+
+	url(r'^bom-upload', BomUpload.as_view(), name='api-bom-upload'),
+        # Endpoint for extra serial number information
+        url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
+
+        # Part detail endpoint
         url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
     ])),
 

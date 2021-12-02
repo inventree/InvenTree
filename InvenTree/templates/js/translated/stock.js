@@ -44,6 +44,7 @@
     editStockItem,
     editStockLocation,
     exportStock,
+    findStockItemBySerialNumber,
     loadInstalledInTable,
     loadStockLocationTable,
     loadStockTable,
@@ -79,6 +80,20 @@ function serializeStockItem(pk, options={}) {
         },
         notes: {},
     };
+
+    if (options.part) {
+        // Work out the next available serial number
+        inventreeGet(`/api/part/${options.part}/serial-numbers/`, {}, {
+            success: function(data) {
+                if (data.next) {
+                    options.fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                } else if (data.latest) {
+                    options.fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                }
+            },
+            async: false,
+        });
+    }
 
     constructForm(url, options);
 }
@@ -144,10 +159,26 @@ function stockItemFields(options={}) {
                     // If a "trackable" part is selected, enable serial number field
                     if (data.trackable) {
                         enableFormInput('serial_numbers', opts);
-                        // showFormInput('serial_numbers', opts);
+
+                        // Request part serial number information from the server
+                        inventreeGet(`/api/part/${data.pk}/serial-numbers/`, {}, {
+                            success: function(data) {
+                                var placeholder = '';
+                                if (data.next) {
+                                    placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                                } else if (data.latest) {
+                                    placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                                }
+
+                                setFormInputPlaceholder('serial_numbers', placeholder, opts);
+                            }
+                        });
+
                     } else {
                         clearFormInput('serial_numbers', opts);
                         disableFormInput('serial_numbers', opts);
+
+                        setFormInputPlaceholder('serial_numbers', '{% trans "This part cannot be serialized" %}', opts);
                     }
 
                     // Enable / disable fields based on purchaseable status
@@ -362,6 +393,87 @@ function createNewStockItem(options={}) {
     }
 
     constructForm(url, options);
+}
+
+/*
+ * Launch a modal form to find a particular stock item by serial number.
+ * Arguments:
+ * - part: ID (PK) of the part in question
+ */
+
+function findStockItemBySerialNumber(part_id) {
+
+    constructFormBody({}, {
+        title: '{% trans "Find Serial Number" %}',
+        fields: {
+            serial: {
+                label: '{% trans "Serial Number" %}',
+                help_text: '{% trans "Enter serial number" %}',
+                placeholder: '{% trans "Enter serial number" %}',
+                required: true,
+                type: 'string',
+                value: '',
+            }
+        },
+        onSubmit: function(fields, opts) {
+
+            var serial = getFormFieldValue('serial', fields['serial'], opts);
+        
+            serial = serial.toString().trim();
+
+            if (!serial) {
+                handleFormErrors(
+                    {
+                        'serial': [
+                            '{% trans "Enter a serial number" %}',
+                        ]
+                    }, fields, opts
+                );
+                return;
+            }
+
+            inventreeGet(
+                '{% url "api-stock-list" %}',
+                {
+                    part_tree: part_id,
+                    serial: serial,
+                },
+                {
+                    success: function(response) {
+                        if (response.length == 0) {
+                            // No results!
+                            handleFormErrors(
+                                {
+                                    'serial': [
+                                        '{% trans "No matching serial number" %}',
+                                    ]
+                                }, fields, opts
+                            );
+                        } else if (response.length > 1) {
+                            // Too many results!
+                            handleFormErrors(
+                                {
+                                    'serial': [
+                                        '{% trans "More than one matching result found" %}',
+                                    ]
+                                }, fields, opts
+                            );
+                        } else {
+                            $(opts.modal).modal('hide');
+
+                            // Redirect
+                            var pk = response[0].pk;
+                            location.href = `/stock/item/${pk}/`;
+                        }
+                    },
+                    error: function(xhr) {
+                        showApiError(xhr, opts.url);
+                        $(opts.modal).modal('hide');
+                    }
+                }
+            );
+        }
+    });
 }
 
 
