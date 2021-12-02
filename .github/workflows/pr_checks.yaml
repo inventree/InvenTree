@@ -11,10 +11,10 @@ on:
     branches-ignore:
       - l10*
 
-inputs:
-  python_version:
-    description: “Python version”
-    default: 3.7
+# inputs:
+#   python_version:
+#     description: “Python version”
+#     default: 3.7
 
 jobs:
 
@@ -36,10 +36,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Set up Python ${{inputs.python_version}}
+      - name: Set up Python 3.7
         uses: actions/setup-python@v2
         with:
-          python-version: ${{inputs.python_version}}
+          python-version: 3.7
       - name: Install deps
         run: |
           pip install flake8==3.8.3
