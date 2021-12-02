@@ -3,6 +3,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from allauth.account.models import EmailAddress
 
 from django.contrib.auth import get_user_model
 
@@ -486,6 +487,8 @@ class PartNotificationTest(TestCase):
             password='password',
             is_staff=True
         )
+        # Add Mailadress
+        EmailAddress.objects.create(user=self.user, email='test@testing.com')
 
     def test_notification(self):
         # There  should be no notification runs
