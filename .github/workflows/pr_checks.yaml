@@ -218,12 +218,19 @@ jobs:
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_USER: ${{ env.INVENTREE_DB_USER }}
+      INVENTREE_DB_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+      INVENTREE_DB_HOST: ${{ env.INVENTREE_DB_HOST }}
       INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: ${{ env.INVENTREE_DEBUG }}
       INVENTREE_CACHE_HOST: localhost
 
     services:
       postgres:
         image: postgres
+        env:
+          POSTGRES_USER: ${{ env.INVENTREE_DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
         ports:
           - 5432:5432
 
@@ -265,7 +272,11 @@ jobs:
     env:
       # Database backend configuration
       INVENTREE_DB_ENGINE: django.db.backends.mysql
+      INVENTREE_DB_USER: ${{ env.INVENTREE_DB_USER }}
+      INVENTREE_DB_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+      INVENTREE_DB_HOST: ${{ env.INVENTREE_DB_HOST }}
       INVENTREE_DB_PORT: 3306
+      INVENTREE_DEBUG: ${{ env.INVENTREE_DEBUG }}
 
     services:
       mysql:
