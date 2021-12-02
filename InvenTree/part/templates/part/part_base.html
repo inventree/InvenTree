@@ -322,7 +322,14 @@
                 <tr>
                     <td><span class='fas fa-hashtag'></span></td>
                     <td>{% trans "Latest Serial Number" %}</td>
-                    <td>{{ part.getLatestSerialNumber }}{% include "clip.html"%}</td>
+                    <td>
+                        {{ part.getLatestSerialNumber }}
+                        <div class='btn-group float-right' role='group'>
+                            <a class='btn btn-small btn-outline-secondary text-sm' href='#' id='serial-number-search' title='{% trans "Search for serial number" %}'>
+                                <span class='fas fa-search'></span>
+                            </a>
+                        </div>
+                    </td>
                 </tr>
                 {% endif %}
                 {% if part.default_location %}
@@ -576,5 +583,9 @@
     if (inventreeLoad('show-part-details', false).toString() == 'true') {
         $('#collapse-part-details').collapse('show');
     }
+
+    $('#serial-number-search').click(function() {
+        findStockItemBySerialNumber({{ part.pk }});
+    });    
 
 {% endblock %}

@@ -148,17 +148,24 @@
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Serial Number" %}</td>
         <td>
-        {% if previous %}
-            <a class="btn btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
-                <small>{{ previous.serial }}</small>  ‹
-            </a>
-        {% endif %}
-        {{ item.serial }}
-        {% if next %}
-            <a class="btn btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
-                ›  <small>{{ next.serial }}</small>
-            </a>
-        {% endif %}
+            {{ item.serial }}
+            <div class='btn-group float-right' role='group'>
+                {% if previous %}
+                <a class="btn btn-small btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}" title='{% trans "Navigate to previous serial number" %}'>
+                    <span class='fas fa-angle-left'></span>
+                    <small>{{ previous.serial }}</small>
+                </a>
+                {% endif %}
+                <a class='btn btn-small btn-outline-secondary text-sm' href='#' id='serial-number-search' title='{% trans "Search for serial number" %}'>
+                    <span class='fas fa-search'></span>
+                </a>
+                {% if next %}
+                <a class="btn btn-small btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}" title='{% trans "Navigate to next serial number" %}'>
+                    <small>{{ next.serial }}</small>
+                    <span class='fas fa-angle-right'></span>
+                </a>
+                {% endif %}
+            </div>
         </td>
     </tr>
     {% else %}
@@ -591,5 +598,9 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
+
+$('#serial-number-search').click(function() {
+    findStockItemBySerialNumber({{ item.part.pk }});
+});
 
 {% endblock %}

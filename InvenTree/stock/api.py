@@ -313,7 +313,7 @@ class StockFilter(rest_filters.FilterSet):
     # Serial number filtering
     serial_gte = rest_filters.NumberFilter(label='Serial number GTE', field_name='serial', lookup_expr='gte')
     serial_lte = rest_filters.NumberFilter(label='Serial number LTE', field_name='serial', lookup_expr='lte')
-    serial = rest_filters.NumberFilter(label='Serial number', field_name='serial', lookup_expr='exact')
+    serial = rest_filters.CharFilter(label='Serial number', field_name='serial', lookup_expr='exact')
 
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
@@ -701,6 +701,18 @@ class StockList(generics.ListCreateAPIView):
                 )
 
             except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        # Filter by "part tree" - only allow parts within a given variant tree
+        part_tree = params.get('part_tree', None)
+
+        if part_tree is not None:
+            try:
+                part = Part.objects.get(pk=part_tree)
+
+                if part.tree_id is not None:
+                    queryset = queryset.filter(part__tree_id=part.tree_id)
+            except:
                 pass
 
         # Filter by 'allocated' parts?
