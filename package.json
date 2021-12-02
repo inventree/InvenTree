@@ -1,0 +1,27 @@
+{
+  "name": "inventree",
+  "version": "1.0.0",
+  "description": "<img src=\"images/logo/inventree.png\" alt=\"InvenTree\" width=\"128\"/>",
+  "main": "index.js",
+  "dependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-google": "^0.14.0",
+    "html-lint": "^2.4.2",
+    "htmllint": "^0.8.0",
+    "markuplint": "^1.11.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SchrodingersGat/InvenTree.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SchrodingersGat/InvenTree/issues"
+  },
+  "homepage": "https://github.com/SchrodingersGat/InvenTree#readme"
+}
