@@ -526,6 +526,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'order_detail',
             'part',
             'part_detail',
+            'shipment',
         ]
 
 
