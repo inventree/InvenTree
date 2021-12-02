@@ -17,7 +17,7 @@ from .templatetags import inventree_extras
 
 import part.settings
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, NotificationEntry
 
 
 class TemplateTagTest(TestCase):
@@ -464,3 +464,44 @@ class PartSubscriptionTests(TestCase):
 
         # Check part
         self.assertTrue(self.part.is_starred_by(self.user))
+
+
+class PartNotificationTest(TestCase):
+    """ Tests for the Part model """
+
+    fixtures = [
+        'location',
+        'category',
+        'part',
+        'stock'
+    ]
+
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+
+        self.user = user.objects.create_user(
+            username='testuser',
+            email='test@testing.com',
+            password='password',
+            is_staff=True
+        )
+
+    def test_notification(self):
+        # There  should be no notification runs
+        self.assertEqual(NotificationEntry.objects.all().count(), 0)
+
+        # Test that notifications run through without errors
+        self.r1 = Part.objects.get(name='R_2K2_0805')
+        self.r1.minimum_stock = self.r1.get_stock_count() + 1  # make sure minimum is one higher than current count
+        self.r1.save()
+
+        # There should be no notification as no-one is subscribed
+        self.assertEqual(NotificationEntry.objects.all().count(), 0)
+
+        # subscribe and run again
+        self.r1.set_starred(self.user, True)
+        self.r1.save()
+
+        # There should be 1 notification
+        self.assertEqual(NotificationEntry.objects.all().count(), 1)
