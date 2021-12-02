@@ -3,13 +3,10 @@
 name: PostgreSQL
 
 on:
-  push:
-    branches-ignore:
-      - l10*
-
-  pull_request:
-    branches-ignore:
-      - l10*
+  workflow_run:
+    workflows: ['PR checks']
+    types:
+      - completed
 
 jobs:
 
