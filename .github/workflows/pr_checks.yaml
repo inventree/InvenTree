@@ -203,8 +203,11 @@ jobs:
         run: invoke translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
-      - name: Upload Coverage Report
-        run: coveralls
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          git-commit: ${{ env.GITHUB_SHA }}
 
   postgres:
     name: Postgres
