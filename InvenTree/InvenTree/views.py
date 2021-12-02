@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.utils.timezone import now
 from django.shortcuts import redirect
 from django.conf import settings
 
@@ -29,6 +30,7 @@ from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.views import ConnectionsView
+from user_sessions.views import SessionDeleteView, SessionDeleteOtherView
 
 from common.settings import currency_code_default, currency_codes
 
@@ -733,6 +735,10 @@ class SettingsView(TemplateView):
         ctx["request"] = self.request
         ctx['social_form'] = DisconnectForm(request=self.request)
 
+        # user db sessions
+        ctx['session_key'] = self.request.session.session_key
+        ctx['session_list'] = self.request.user.session_set.filter(expire_date__gt=now()).order_by('-last_activity')
+
         return ctx
 
 
@@ -764,6 +770,20 @@ class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow
     """
     success_url = reverse_lazy("account_login")
+
+
+class UserSessionOverride():
+    """overrides sucessurl to lead to settings"""
+    def get_success_url(self):
+        return str(reverse_lazy('settings'))
+
+
+class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
+    pass
+
+
+class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
+    pass
 
 
 class CurrencyRefreshView(RedirectView):

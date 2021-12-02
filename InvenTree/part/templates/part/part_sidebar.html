@@ -5,8 +5,6 @@
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
 
-{% trans "Details" as text %}
-{% include "sidebar_item.html" with label="part-details" text=text icon="fa-shapes" %}
 {% trans "Parameters" as text %}
 {% include "sidebar_item.html" with label="part-parameters" text=text icon="fa-th-list" %}
 {% if part.is_template %}
