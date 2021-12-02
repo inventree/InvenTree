@@ -196,8 +196,6 @@ jobs:
         run: python3 ci/check_migration_files.py
       - name: Upload Coverage Report
         run: coveralls
-        with:
-          git-commit: ${{ env.GITHUB_SHA }}
 
   postgres:
     name: Postgres
