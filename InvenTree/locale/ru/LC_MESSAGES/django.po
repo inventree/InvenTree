@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-02 05:27+0000\n"
-"PO-Revision-Date: 2021-12-02 05:29\n"
+"PO-Revision-Date: 2021-12-02 11:28\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -116,11 +116,11 @@ msgstr "Число уникальных серийных номеров ({s}) д
 
 #: InvenTree/models.py:114
 msgid "Missing file"
-msgstr ""
+msgstr "Файл не найден"
 
 #: InvenTree/models.py:115
 msgid "Missing external link"
-msgstr ""
+msgstr "Отсутствует внешняя ссылка"
 
 #: InvenTree/models.py:126 stock/models.py:1874
 #: templates/js/translated/attachment.js:117
@@ -137,7 +137,7 @@ msgstr "Выберите файл для вложения"
 #: templates/js/translated/company.js:537
 #: templates/js/translated/company.js:826 templates/js/translated/part.js:1077
 msgid "Link"
-msgstr ""
+msgstr "Ссылка"
 
 #: InvenTree/models.py:134 build/models.py:330 part/models.py:798
 #: stock/models.py:540
