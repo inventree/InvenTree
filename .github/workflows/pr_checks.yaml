@@ -88,3 +88,39 @@ jobs:
           npm install eslint eslint-config-google
           invoke render-js-files
           npx eslint js_tmp/*.js
+
+  html:
+    name: html template files
+    needs: javascript
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Install node.js ${{ env.node_version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
+      - run: npm install
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install gettext
+          pip3 install invoke
+          invoke install
+          invoke static
+      - name: Check HTML Files
+        run: |
+          npm install markuplint
+          npx markuplint InvenTree/build/templates/build/*.html
+          npx markuplint InvenTree/company/templates/company/*.html
+          npx markuplint InvenTree/order/templates/order/*.html
+          npx markuplint InvenTree/part/templates/part/*.html
+          npx markuplint InvenTree/stock/templates/stock/*.html
+          npx markuplint InvenTree/templates/*.html
+          npx markuplint InvenTree/templates/InvenTree/*.html
+          npx markuplint InvenTree/templates/InvenTree/settings/*.html
