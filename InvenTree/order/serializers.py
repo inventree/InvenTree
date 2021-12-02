@@ -11,7 +11,6 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField, ExpressionWrapper, F
-from InvenTree.InvenTree.status_codes import SalesOrderStatus
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -27,7 +26,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import ReferenceIndexingSerializerMixin
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import StockStatus, SalesOrderStatus
 
 import order.models
 
