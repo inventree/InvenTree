@@ -20,7 +20,7 @@ def notify_low_stock(part: part.models.Part):
         # Pass the "Part" object through to the template context
         'part': part,
         'link': InvenTree.helpers.construct_absolute_url(part.get_absolute_url()),
-        'templates': {
+        'template': {
             'html': 'email/low_stock_notification.html',
             'subject': "[InvenTree] " + _("Low stock notification"),
         },
