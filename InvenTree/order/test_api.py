@@ -107,6 +107,9 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_reference(self):
         """test that a reference with a too big / small reference is not possible"""
+        # get permissions
+        self.assignRole('purchase_order.add')
+
         url = reverse('api-po-list')
         huge_numer = 9223372036854775808
 
