@@ -27,17 +27,31 @@ env:
 
   # for full databases
   INVENTREE_DB_USER: inventree
-  POSTGRES_USER: inventree
   INVENTREE_DB_PASSWORD: password
-  POSTGRES_PASSWORD: password
   INVENTREE_DB_HOST: '127.0.0.1'
   INVENTREE_DEBUG: info
 
 
 jobs:
 
+  init:
+    name: set parameters
+    runs-on: ubuntu-latest
+    outputs:
+      user: ${{ steps.step1.outputs.user }}
+      password: ${{ steps.step1.outputs.password }}
+      host: ${{ steps.step1.outputs.host }}
+
+    steps:
+    - id: step1
+      run: |
+        echo "::set-output name=user::${{ env.INVENTREE_DB_USER }}"
+        echo "::set-output name=password::${{ env.INVENTREE_DB_PASSWORD }}"
+        echo "::set-output name=host::${{ env.INVENTREE_DB_HOST }}"
+
   check_version:
     name: version number
+    needs: init
     runs-on: ubuntu-latest
 
     steps:
@@ -218,19 +232,17 @@ jobs:
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
-      INVENTREE_DB_USER: ${{ env.INVENTREE_DB_USER }}
-      INVENTREE_DB_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
-      INVENTREE_DB_HOST: ${{ env.INVENTREE_DB_HOST }}
+      INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
+      INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
       INVENTREE_DB_PORT: 5432
-      INVENTREE_DEBUG: ${{ env.INVENTREE_DEBUG }}
       INVENTREE_CACHE_HOST: localhost
 
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: ${{ env.INVENTREE_DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+          POSTGRES_USER: ${{needs.job1.outputs.user }}
+          POSTGRES_PASSWORD: ${{needs.job1.outputs.password }}
         ports:
           - 5432:5432
 
@@ -272,11 +284,10 @@ jobs:
     env:
       # Database backend configuration
       INVENTREE_DB_ENGINE: django.db.backends.mysql
-      INVENTREE_DB_USER: ${{ env.INVENTREE_DB_USER }}
-      INVENTREE_DB_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
-      INVENTREE_DB_HOST: ${{ env.INVENTREE_DB_HOST }}
+      INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
+      INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
+      INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
       INVENTREE_DB_PORT: 3306
-      INVENTREE_DEBUG: ${{ env.INVENTREE_DEBUG }}
 
     services:
       mysql:
@@ -284,9 +295,9 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
-          MYSQL_USER: ${{ env.INVENTREE_DB_USER }}
-          MYSQL_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
+          MYSQL_USER: ${{needs.job1.outputs.user }}
+          MYSQL_PASSWORD: ${{needs.job1.outputs.password }}
+          MYSQL_ROOT_PASSWORD: ${{needs.job1.outputs.password }}
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
           - 3306:3306
