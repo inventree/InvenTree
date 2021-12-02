@@ -1029,11 +1029,6 @@ class SalesOrderShipment(models.Model):
 
         self.save()
 
-        # Finally, check if the order is fully shipped
-        if self.order.is_completed():
-            self.order.status = SalesOrderStatus.SHIPPED
-            self.order.save()
-
 
 class SalesOrderAllocation(models.Model):
     """
