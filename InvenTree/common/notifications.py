@@ -26,7 +26,7 @@ class NotificationMethod:
         # define arguments
         self.obj = obj
         self.entry_name = entry_name
-        self.receiers = receivers
+        self.receivers = receivers
 
         # gather recipients
         self.recipients = self.get_recipients()
@@ -55,7 +55,7 @@ class EmailNotification(BulkNotificationMethod):
 
     def get_recipients(self):
         return EmailAddress.objects.filter(
-            user__in=self.receiers,
+            user__in=self.receivers,
         )
 
     def send_bulk(self, context):
