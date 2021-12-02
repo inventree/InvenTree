@@ -40,6 +40,7 @@ from rest_framework.documentation import include_docs_urls
 from .views import auth_request
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
+from .views import CustomSessionDeleteView, CustomSessionDeleteOtherView
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
@@ -162,6 +163,10 @@ urlpatterns = [
     get_plugin_urls(),  # appends currently loaded plugin urls = None
 
     url(r'^markdownx/', include('markdownx.urls')),
+
+    # DB user sessions
+    url(r'^accounts/sessions/other/delete/$', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
+    url(r'^accounts/sessions/(?P<pk>\w+)/delete/$', view=CustomSessionDeleteView.as_view(), name='session_delete', ),
 
     # Single Sign On / allauth
     # overrides of urlpatterns

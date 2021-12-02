@@ -14,7 +14,7 @@
 
 {% block heading %}
     {% trans "Stock Item" %}: {{ item.part.full_name}}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 
@@ -100,7 +100,9 @@
     <!-- Edit stock item -->
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
-        <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
+        <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+            <span class='fas fa-tools'></span> <span class='caret'></span>
+        </button>
         <ul class='dropdown-menu' role='menu'>
             {% if item.part.can_convert %}
             <li><a class='dropdown-item' href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
@@ -118,37 +120,100 @@
     </div>
     {% endif %}
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block thumbnail %}
 <img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
+
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-shapes'></span></td>
+        <td>{% trans "Base Part" %}</td>
+        <td>
+            {% if roles.part.view %}
+            <a href="{% url 'part-detail' item.part.id %}">
+            {% endif %}
+            {{ item.part.full_name }}
+            {% if roles.part.view %}
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% if item.serialized %}
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Serial Number" %}</td>
+        <td>
+            {{ item.serial }}
+            <div class='btn-group float-right' role='group'>
+                {% if previous %}
+                <a class="btn btn-small btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}" title='{% trans "Navigate to previous serial number" %}'>
+                    <span class='fas fa-angle-left'></span>
+                    <small>{{ previous.serial }}</small>
+                </a>
+                {% endif %}
+                <a class='btn btn-small btn-outline-secondary text-sm' href='#' id='serial-number-search' title='{% trans "Search for serial number" %}'>
+                    <span class='fas fa-search'></span>
+                </a>
+                {% if next %}
+                <a class="btn btn-small btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}" title='{% trans "Navigate to next serial number" %}'>
+                    <small>{{ next.serial }}</small>
+                    <span class='fas fa-angle-right'></span>
+                </a>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td></td>
+        <td>{% trans "Quantity" %}</td>
+        <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Status" %}</td>
+        <td>{% stock_status_label item.status %}</td>
+    </tr>
+    {% if item.expiry_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt{% if item.is_expired %} icon-red{% endif %}'></span></td>
+        <td>{% trans "Expiry Date" %}</td>
+        <td>
+            {{ item.expiry_date }}
+            {% if item.is_expired %}
+            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger badge-right'>{% trans "Expired" %}</span>
+            {% elif item.is_stale %}
+            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning badge-right'>{% trans "Stale" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Last Updated" %}</td>
+        <td>{{ item.updated }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Last Stocktake" %}</td>
+        {% if item.stocktake_date %}
+        <td>{{ item.stocktake_date }} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
+        {% else %}
+        <td><em>{% trans "No stocktake performed" %}</em></td>
+        {% endif %}
+    </tr>
+</table>
 
 {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 {% if owner_control.value == "True" %}
     {% authorized_owners item.owner as owners %}
 {% endif %}
-
-<h4>
-    {% if item.is_expired %}
-    <span class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
-    {% else %}
-    {% if roles.stock.change %}
-    <a href='#' id='stock-edit-status'>
-    {% endif %}
-    {% stock_status_label item.status large=True %}
-    {% if roles.stock.change %}
-    </a>
-    {% endif %}
-    {% if item.is_stale %}
-    <span class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
-    {% endif %}
-    {% endif %}
-</h4>
-
-
 
 <div class='info-messages'>
 
@@ -214,49 +279,12 @@
     {% endif %}
     
 </div>
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
-<table class="table table-striped">
+<table class="table table-striped table-condensed">
     <col width='25'>
-    <tr>
-        <td><span class='fas fa-shapes'></span></td>
-        <td>{% trans "Base Part" %}</td>
-        <td>
-            {% if roles.part.view %}
-            <a href="{% url 'part-detail' item.part.id %}">
-            {% endif %}
-            {{ item.part.full_name }}
-            {% if roles.part.view %}
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    {% if item.serialized %}
-    <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Serial Number" %}</td>
-        <td>
-        {% if previous %}
-            <a class="btn btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}">
-                <small>{{ previous.serial }}</small>  ‹
-            </a>
-        {% endif %}
-        {{ item.serial }}
-        {% if next %}
-            <a class="btn btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}">
-                ›  <small>{{ next.serial }}</small>
-            </a>
-        {% endif %}
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td></td>
-        <td>{% trans "Quantity" %}</td>
-        <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
-    </tr>
-    {% endif %}
+
     {% if item.customer %}
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
@@ -376,39 +404,6 @@
         <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
     </tr>
     {% endif %}
-    {% if item.expiry_date %}
-    <tr>
-        <td><span class='fas fa-calendar-alt{% if item.is_expired %} icon-red{% endif %}'></span></td>
-        <td>{% trans "Expiry Date" %}</td>
-        <td>
-            {{ item.expiry_date }}
-            {% if item.is_expired %}
-            <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger'>{% trans "Expired" %}</span>
-            {% elif item.is_stale %}
-            <span title='{% blocktrans %}This StockItem expires on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-warning'>{% trans "Stale" %}</span>
-            {% endif %}
-        </td>
-    </tr>
-    {% endif %}
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Last Updated" %}</td>
-        <td>{{ item.updated }}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Last Stocktake" %}</td>
-        {% if item.stocktake_date %}
-        <td>{{ item.stocktake_date }} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
-        {% else %}
-        <td><em>{% trans "No stocktake performed" %}</em></td>
-        {% endif %}
-    </tr>
-    <tr>
-        <td><span class='fas fa-info'></span></td>
-        <td>{% trans "Status" %}</td>
-        <td>{% stock_status_label item.status %}</td>
-    </tr>
     {% if item.hasRequiredTests %}
     <tr>
         <td><span class='fas fa-vial'></span></td>
@@ -603,5 +598,9 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
+
+$('#serial-number-search').click(function() {
+    findStockItemBySerialNumber({{ item.part.pk }});
+});
 
 {% endblock %}

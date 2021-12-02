@@ -24,29 +24,35 @@
     
     {% block page_info %}
     <div class='panel-content'>
-        <div class='row'>
-            <div class='col-sm-6' id='detail-panel-left'>
-                <div class='card'>
-                    {% block details_left %}
-                    <div class='row g-0'>
-                        <div class='col-md-4'>
-                            {% block thumbnail %}
-                            {% endblock %}
+        {% block details_above %}
+        {% endblock details_above %}
+        <div class='container' style='max-width: 100%; padding: 5px;'>
+            <div class='row'>
+                <div class='col' id='detail-panel-left'>
+                    <div class='card'>
+                        {% block details_left %}
+                        <div class='row'>
+                            <div class='col' style='max-width: 220px;'>
+                                {% block thumbnail %}
+                                {% endblock thumbnail %}
+                            </div>
+                            <div class='col'>
+                                {% block details %}
+                                {% endblock details %}
+                            </div>
                         </div>
-                        <div class='col-md-8'>
-                            {% block details %}
-                            {% endblock %}
-                        </div>
+                        {% endblock details_left %}
                     </div>
-                    {% endblock %}
                 </div>
-            </div>
-            <div class='col-sm-6' id='detail-panel-right'>
-                <div class='card'>
-                    {% block details_right %}
-                    block details_right
-                    {% endblock %}
+                <div class='col' id='detail-panel-right'>
+                    <div class='card'>
+                        {% block details_right %}
+                        block details_right
+                        {% endblock details_right %}
+                    </div>
                 </div>
+                {% block details_below %}
+                {% endblock details_below %}
             </div>
         </div>
     </div>

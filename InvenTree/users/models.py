@@ -146,7 +146,6 @@ class RuleSet(models.Model):
         # Core django models (not user configurable)
         'admin_logentry',
         'contenttypes_contenttype',
-        'sessions_session',
 
         # Models which currently do not require permissions
         'common_colortheme',
@@ -160,6 +159,7 @@ class RuleSet(models.Model):
         'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
+        'user_sessions_session',
 
         # Django-q
         'django_q_ormq',
